@@ -1,0 +1,69 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+#easemobChat {
+    position: fixed;
+    overflow: hidden;
+    border: 2px solid #00A0CB;
+    border-top: 6px solid #00A0CB;
+    border-bottom: 0;
+    border-radius: 6px 6px 0 0;
+    box-shadow: 4px 6px 4px #aaa;
+}
+.easemobDown {
+    animation: down .2s;
+    -webkit-animation: down .2s;
+    -moz-animation: down .2s;
+    -ms-animation: down .2s;
+    -o-animation: down .2s;
+}
+@-webkit-keyframes down {
+    from {height: 40px;}
+    50% {height: 0;}
+}
+.e-bottom {
+    bottom: 0;
+    right: 100px;
+}
+#easemobChat iframe {
+    border: 0;
+    width: 100%;
+    height: 40px;
+    display: none;
+    transition: all .2s;
+}
+/*header*/
+.kefu-header {
+    background-color: #00A0CB;
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
+    cursor: pointer;
+    transition: all .1s;
+}
+.kefu-header div {
+    display: inline-block;
+    background-color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin: 0 16px 0 34px;;
+    text-align: center;
+    line-height: 32px;
+    vertical-align: middle;
+}
+.kefu-header label {
+    font-size: 16px;
+    vertical-align: middle;
+}
+.kefu-header i {
+    display: inline-block;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAZCAMAAAAR624oAAAAjVBMVEX///////+XzeLG5O/h8ffD4+7///+Ty+E4n8f///8akb82n8cXj75Qq84llsIilcH8/v4rmcQHiLl0vNgynMWy2uo6oMjd7/ak0+Y9oskRjLzW6/RKqMzO6PKYzuKAwtxZr9EAhLf2+/3v+Pus1+ig0uSPyeB6v9puuddnttQckr/o9PnC4u663uyLxt560hf/AAAACHRSTlPx8vHy8vLk8fF6KfQAAAEDSURBVCjPpc/ZdoIwFIXhaBFyQgyEIZIwD8qg7fs/XiPDWloKveh/+12cs5GJ0Mmyji9ZRwNNaYSqJ5S8RVkEc+iQewG238JMPSY9IINz/DNB+4VPjo1XsQTqeIfPENPO1fyxwRen9PeY8yHd44Be/8XRH7y5e2GDBysVpIDUGfnQeysOvAYyao98T4jAWHJKlqjKASSbGODGbEFk68917SeATwWm15GzgavkAi/VPtUP00Zz9VUq1lYQR+Fck0tiC+EEd82pLG6xvuCV3lypuMDSUSFodl3QuVlyXipsR2BWpPBkWHKXIJYqIDnMvK7uiPKyJ8PvPXw5hADIRFsZBjK/AcqBI1RRaUdhAAAAAElFTkSuQmCC) no-repeat;
+    height: 20px;
+    width: 20px;
+    background-size: 100%;
+    vertical-align: middle;
+}
