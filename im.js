@@ -10,6 +10,7 @@
 	//temp
 	var easemobConfig = {
 		sdkconfig: {
+			preloadurl:	'http://kefutest4.easemob.com',
 			clientId:	'jxdyfjinxiang',
 			appkey:     'jxdyf#jinxiang',
 			to:         'duo1baitest4321ah123z1'
@@ -495,16 +496,18 @@
 // 				memberIm:	searchPart.memberIm,
 // 				tenantIm:	searchPart.tenantIm
 // 			})
-		var PRE_INFO_URL_ROOT = "http://172.16.1.164:8585";
 
 		// 创建用户
 		var vinfoDefer = $.Deferred(function(){
-			$.get(PRE_INFO_URL_ROOT + "/webim/initChat", {
-				clientId:	easemobConfig.sdkconfig.clientId,
-				appkey:		easemobConfig.sdkconfig.appkey,
-				tenantIm:	easemobConfig.sdkconfig.to,
-				memberIm:	new Date().getTime() + "" + (Math.random()*1E6>>0)
-			})
+			$.get(
+				easemobConfig.sdkconfig.preloadurl + "/webim/initChat",
+				{
+					clientId:	easemobConfig.sdkconfig.clientId,
+					appkey:		easemobConfig.sdkconfig.appkey,
+					tenantIm:	easemobConfig.sdkconfig.to,
+					memberIm:	new Date().getTime() + "" + (Math.random()*1E6>>0)
+				}
+			)
 			.done(function(info){
 				vinfoDefer.resolve(info);
 			})
@@ -515,12 +518,15 @@
 
 		// 获取地域
 		var ipinfoDefer = $.Deferred(function(){
-			$.get(PRE_INFO_URL_ROOT + "/webim/requestInfo", {
-				clientId:	easemobConfig.sdkconfig.clientId,
-				appkey:		easemobConfig.sdkconfig.appkey,
-				tenantIm:	easemobConfig.sdkconfig.to,
-				memberIm:	new Date().getTime() + "" + (Math.random()*1E6>>0)
-			})
+			$.get(
+				easemobConfig.sdkconfig.preloadurl + "/webim/requestInfo",
+				{
+					clientId:	easemobConfig.sdkconfig.clientId,
+					appkey:		easemobConfig.sdkconfig.appkey,
+					tenantIm:	easemobConfig.sdkconfig.to,
+					memberIm:	new Date().getTime() + "" + (Math.random()*1E6>>0)
+				}
+			)
 			.done(function(info){
 				ipinfoDefer.resolve(info);
 			})
