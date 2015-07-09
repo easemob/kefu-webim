@@ -115,7 +115,7 @@
 			var me = this;
 			me.conn = new Easemob.im.Connection();
 			me.impromise = me.conn.init({
-				https: false,
+				https: true,
 				onOpened: function(){
 					me.conn.setPresence();
 				},
