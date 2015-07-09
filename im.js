@@ -5,15 +5,16 @@
 
 ;(function(window, undefined){
    
-	var JSDOMAIN = 'http://webim.easemob.com';
+	//var JSDOMAIN = 'http://webim.easemob.com';
+	var JSDOMAIN = 'lib';//for jinxiang
 	
 	//temp
 	var easemobConfig = {
 		sdkconfig: {
-			preloadurl:	'http://kefutest4.easemob.com',
+			preloadurl:	'https://kefu.easemob.com',
 			clientId:	'jxdyfjinxiang',
 			appkey:     'jxdyf#jinxiang',
-			to:         'duo1baitest4321ah123z1'
+			to:         'lichuanjun'
 		}
 	};
 	
@@ -362,7 +363,7 @@
 				<div class='easemobWebimKefu-visit'>\
 					<p class='e-message'><a href='"+file.url+"' target='_blank'><img src='"+file.url+"'/></a></p>\
 					<span class='e-angle'></span>\
-					<label class='e-date'>12月30日 04:04</label>\
+					<label class='e-date'></label>\
 				</div>");
 			
 			// real send
@@ -411,7 +412,7 @@
 				<div class='easemobWebimKefu-visit'>\
 					<pre class='e-message'>"+me.face(me.encode(txt))+"</pre>\
 					<span class='e-angle'></span>\
-					<label class='e-date'>12月30日 04:04</label>\
+					<label class='e-date'></label>\
 				</div>");
 			me.textarea.val('');
 			me.scrollBottom();
@@ -453,7 +454,7 @@
 					<p style='display:none;' class='e-name'>"+msg.from+":</p>\
 					<p class='e-message'>"+value+"</p>\
 					<span class='e-angle'></span>\
-					<label class='e-date'>12月30日 04:04</label>\
+					<label class='e-date'></label>\
 				</div>");
 			me.scrollBottom();
 		}
