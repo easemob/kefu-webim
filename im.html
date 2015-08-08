@@ -2,53 +2,59 @@
 <html>
 <head>
 <meta charset='utf-8'>
-<link href='im.css' rel='stylesheet'>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+<meta name="format-detection" content="telephone=no"/>
+<link href='theme/base.css' rel='stylesheet'>
+<script src="js/jquery-1.11.1.js"></script>
+<script src="js/strophe.js"></script>
+<script src="js/json2.js"></script>
+<script src="js/easemob.im-1.0.7.js"></script>
+<script src="js/easemob.utils.js"></script>
+<script src="js/swfupload/swfupload.js"></script>
+<style id='easemobWidgetStyle'></style>
 </head>
 <body>
-<div id='easemobWebimKefu'>
-	<div class='easemobWebimKefu-body'>
-		<div class='easemobWebimKefu-title'>
-			<img class='easemobWebimKefu-title-icon' src='sculpture.png' alt='头像'/>
-			<div class='easemobWebimKefu-return'>返回</div>
-			<div class='easemobWebimKefu-title-name'></div>
-			<div class='easemobWebimKefu-title-func'>
-				<span class='e-vol'></span>
-				<span class='e-add'>+</span>
-				<span class='e-min'>-</span>
-			</div>
-		</div>
-		<div class='easemobWebimKefu-wrapper'>
-			<div class='easemobWebimKefu-chat'>
-				<div class="easemobWebimKefu-welcome">
-					<p>感谢您访问金象网，您已经进入服务队列，大概需要等待10秒。如果座席繁忙，您可致电：<span class="e-font-notice">400-650-6600</span>咨询或者在线留言。</p>
-					<p>药师服务时间<span class="e-font-notice">9:00--18:00</span></p>
-					<p>
-						<span>常规问题解答请点击：</span>
-						<a href="http://www.jxdyf.com/help/gouwuliucheng.html" target="_blank">【订购方式】</a> 
-						<a href="http://www.jxdyf.com/help/changjianwenti.html" target="_blank">【常见问题】</a>
-						<a href="http://www.jxdyf.com/help/peisongshuoming.html" target="_blank">【配送范围及费用】</a>
-						<a href="http://www.jxdyf.com/help/huiyuanshuoming.html" target="_blank">【成为会员】</a>
-						<a href="http://www.jxdyf.com/help/tuihuanhuozhengce.html" target="_blank">【退货或换货】</a>
-						<a href="http://www.jxdyf.com/help/yanhuojiqianshou.html" target="_blank">【签收或拒收】</a>
-					</p>
-				</div>
-			</div>
-		</div>
-		<div class='easemobWebimKefu-send'>
-			<i class='easemobWebimKefu-face e-face'></i>
-			<i class='easemobWebimKefu-file'>
-				<form>
-					<input class='e-upload' type='button'/>
-					<input id='e-realfile' name='' type='file' accept='image/*'/>
-				</form>
-			</i>
-			<div class='textwrapper'><textarea></textarea></div>
-			<button id='e-send'>发送</button>
-		</div>
-		<div class='easemobWebimKefu-face-wrapper e-face e-slideDown'></div>
-		<audio src='msg.mp3'></audio>
-	</div>
+<!--popbar-->
+<div id='easemobWidgetPopBar' class='hide'>
+    <a class='easemobWidget-pop-bar bg-color' href='javascript:;'><i></i>联系客服</a>
+    <span class='easemobWidget-msgcount hide'></span>
 </div>
-<script src='im.js'></script>
+<div id='easemobWidgetOffline' class='hide'>
+    offline
+</div>
+<div class='easemobWidgetWrapper hide'>
+    <!--header-->
+    <div id='easemobWidgetHeader' class='easemobWidgetHeader-wrapper bg-color border-color'>
+        <div class='easemobWidgetHeader-bar'>
+            <img class='easemobWidgetHeader-portrait border-color' src='resources/avatar.jpg' title=''/>
+            <i class='easemobWidgetHeader-status online'></i>
+        </div>
+        <span class='easemobWidgetHeader-nickname'>客服姓名</span><span class='easemobWidgetHeader-word-status'>(在线)</span>
+        <a href='javascript:;' class='easemobWidgetHeader-min bg-color border-color'><p></p></a>
+    </div>
+    <!--im-->
+    <div class='easemobWidget-word'>
+        <span>欢迎使用今日特卖在线客服，客服上班时间为<a class='easemobWidget-Prompt' href='javascript:;'>9:00-20:00</a>其他时间，请致电<a class='easemobWidget-Prompt' href='tel:400-800-1253'>400-800-1253</a></span>
+        <a class='easemobWidget-word-close' href='javascript:;'>×</a>
+    </div>
+    <div id='easemobWidgetBody' style='display: block' class='easemobWidgetBody-wrapper'>
+        <div class='easemobWidget-chat'></div>
+        <div class='easemobWidget-face-wrapper e-face hide'>
+            <i class='easeWidget-face-rec'></i>
+            <ul class='easemobWidget-face-container'></ul>
+        </div>
+        <p class='easemobWidget-error-prompt hide'></p>
+    </div>
+    <div id='easemobWidgetSend' class='easemobWidget-send-wrapper'>
+        <i class='easemobWidget-face e-face'></i>
+        <i class='easemobWidget-file' id='easemobWidgetFile'></i>
+        <input id='easemobWidgetFileInput' type='file' accept='image/*' style='visibility:hidden;'/>
+        <textarea spellcheck='false'></textarea>
+        <a href='javascript:;' class='easemobWidget-send bg-color disabled' id='easemobWidgetSendBtn'>发送</a>
+    </div>
+    <audio src='resources/msg.mp3' class='hide'></audio>
+    <a id='easemobWidgetLink' target='_blank'></a>
+</div>
+<script src='js/im.js'></script>
 </body>
 </html>

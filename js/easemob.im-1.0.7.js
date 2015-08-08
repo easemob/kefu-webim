@@ -5,12 +5,12 @@ if (typeof jQuery == 'undefined') {
 } else {
 
 (function($) {
-
 if (typeof Easemob == 'undefined') {
     Easemob = {};
 }
 if (typeof Easemob.im == 'undefined') {
     Easemob.im = {};
+    Easemob.im.version="1.0.7";
 }
 if (typeof Easemob.im.Connection !== 'undefined') {
     return;
@@ -140,6 +140,7 @@ EASEMOB_IM_CONNCTION_SERVER_CLOSE_ERROR = tempIndex++;
 EASEMOB_IM_CONNCTION_SERVER_ERROR = tempIndex++;
 EASEMOB_IM_CONNCTION_IQ_ERROR = tempIndex++;
 EASEMOB_IM_CONNCTION_PING_ERROR = tempIndex++;
+EASEMOB_IM_CONNCTION_NOTIFYVERSION_ERROR = tempIndex++;
 EASEMOB_IM_CONNCTION_GETROSTER_ERROR = tempIndex++;
 EASEMOB_IM_CONNCTION_CROSSDOMAIN_ERROR = tempIndex++;
 EASEMOB_IM_CONNCTION_LISTENING_OUTOF_MAXRETRIES = tempIndex++;
@@ -179,7 +180,7 @@ EASEMOB_IM_MESSAGE_SED_AUDIO_FILE = tempIndex++;
 EASEMOB_IM_MESSAGE_SED_VEDIO = tempIndex++;
 EASEMOB_IM_MESSAGE_SED_VEDIO_FILE = tempIndex++;
 EASEMOB_IM_MESSAGE_SED_FILE = tempIndex++;
-
+EASEMOB_IM_FILESIZE_LIMIT = 10485760;
 var emotionPicData = {
         "[):]":"data:image/png;base64,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",
         "[:D]":"data:image/png;base64,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",
@@ -297,7 +298,6 @@ function getIEVersion(){
     }
     return null;
 };
-var ieVersion = getIEVersion();
 
 var tepmxhr = xmlrequest();
 var hasSetRequestHeader = (tepmxhr.setRequestHeader || false );
@@ -416,8 +416,10 @@ var registerUserFn = function(options){
         });
         return;
     }
-    var prefix = options.https ? 'https' : 'http';
-    var restUrl = options.url || prefix + '://a1.easemob.com/'+ orgName + '/' + appName + '/users';
+
+    var url = options.https ? 'https://a1.easemob.com' : 'http://a1.easemob.com';
+    var apiUrl = options.apiUrl || url;
+    var restUrl = apiUrl + '/' + orgName + '/' + appName + '/users';
 
     var userjson = {
             username : options.username,
@@ -445,6 +447,7 @@ var getFileUrlFn = function(fileInputId) {
         filetype : ''
     };
 
+    if(!isCanUploadFileAsync) return uri;
     var wu = window.URL || window.webkitURL || window.mozURL || window.msURL;
     if (wu && wu.createObjectURL) {
         var fileItems = document.getElementById(fileInputId).files;
@@ -492,23 +495,36 @@ var getFileSizeFn = function(fileInputId){
     return fileSize;
 };
 
+var hasFlash = (function() {
+    if (/*@cc_on!@*/0) {//ie
+        return new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+    } else {
+        if (navigator.plugins && navigator.plugins.length > 0) {
+            return navigator.plugins["Shockwave Flash"];
+        }
+    }
+    return 0;
+}());
+
 var hasFormData = (typeof FormData != 'undefined');
-var isCanUploadFile = (hasSetRequestHeader && hasFormData);
+var isCanUploadFileAsync = hasSetRequestHeader && hasFormData;
+var isCanUploadFile = isCanUploadFileAsync || hasFlash;
+var uploadUrl = '';
+var parseUploadResponse = function(response) {
+    return response.indexOf('callback') > -1 ? //lte ie9
+        response.slice(9, -1) : response;
+}
+var parseDownloadResponse = function(response) {
+    return ((response && response.type && response.type === 'application/json') 
+        || 0 > Object.prototype.toString.call(response).indexOf('Blob')) ? 
+            this.url+'?token=' : window.URL.createObjectURL(response);
+}
 var uploadFn = function(options) {
     options = options || {};
     options.onFileUploadProgress = options.onFileUploadProgress || emptyFn;
     options.onFileUploadComplete = options.onFileUploadComplete || emptyFn;
     options.onFileUploadError = options.onFileUploadError || emptyFn;
     options.onFileUploadCanceled = options.onFileUploadCanceled || emptyFn;
-
-    if (!isCanUploadFile) {
-        options.onFileUploadError({
-            type : EASEMOB_IM_UPLOADFILE_BROWSER_ERROR,
-            msg : '当前浏览器不支持异步上传文件,请换用其他浏览器'
-        });
-        return;
-    }
-
     var acc = options.accessToken;
     if (!acc) {
         options.onFileUploadError({
@@ -535,8 +551,23 @@ var uploadFn = function(options) {
         });
         return;
     }
+    var apiUrl = options.apiUrl || 'http://a1.easemob.com';
+    var uploadUrl = apiUrl + '/' + orgName + '/' + appName + '/chatfiles';
+    if (!isCanUploadFileAsync) {
+		if(hasFlash && typeof options.flashUpload === 'function') {
+            options.flashUpload && options.flashUpload(uploadUrl, options); 
+        } else {
+            this.onError({
+                type : EASEMOB_IM_UPLOADFILE_BROWSER_ERROR,
+                msg : '当前浏览器不支持异步上传！'
+            });
+        }
+        return;
+    }
+
+    
     var fileSize = getFileSizeFn(options.fileInputId);
-    if(fileSize > 10485760){
+    if(fileSize > EASEMOB_IM_FILESIZE_LIMIT){
         options.onFileUploadError({
             type : EASEMOB_IM_UPLOADFILE_ERROR,
             msg : '上传文件超过服务器大小限制（10M）'
@@ -549,8 +580,6 @@ var uploadFn = function(options) {
         });
         return ;
     }
-    var apiUrl = options.apiUrl || 'http://a1.easemob.com';
-    var uploadUrl = apiUrl + "/" + orgName + '/' + appName + '/chatfiles';
 
     var xhr = xmlrequest();
     var onError = function(e) {
@@ -634,14 +663,7 @@ var isCanDownLoadFile = (hasSetRequestHeader && (hasBlob || hasOverrideMimeType)
 var downloadFn = function(options){
     options.onFileDownloadComplete = options.onFileDownloadComplete || emptyFn;
     options.onFileDownloadError = options.onFileDownloadError || emptyFn;
-
-    if (!isCanDownLoadFile) {
-        options.onFileDownloadError({
-            type : EASEMOB_IM_DOWNLOADFILE_BROWSER_ERROR,
-            msg : '当前浏览器不支持异步下载文件,请换用其他浏览器'
-        });
-        return;
-    }
+    
     var accessToken = options.accessToken || '';
     if (!accessToken) {
         options.onFileDownloadError({
@@ -658,6 +680,10 @@ var downloadFn = function(options){
             xhr : xhr,
             e : e
         });
+    }
+    if (!isCanDownLoadFile) {
+        options.onFileDownloadComplete();
+        return;
     }
     var xhr = xmlrequest();
     if("addEventListener" in xhr){
@@ -955,6 +981,7 @@ var dologin2UserGrid = function(apiUrl,user,pwd,orgName,appName,suc,error) {
     var param = doAjaxRequest(options);
     return param;
 };
+
 var innerCheck = function(options,conn){
     if (conn.isOpened() || conn.isOpening()) {
         conn.onError({
@@ -999,10 +1026,14 @@ var innerCheck = function(options,conn){
         });
         return false;
     }
-    var jid = appKey + "_" + user + "@" + conn.domain;// jid =
-                                                        // {appkey}_{username}@domain/resource
+    
+    // jid = {appkey}_{username}@domain/resource
+    var jid = appKey + "_" + user + "@" + conn.domain;
 
-    var resource = options.resource || "webim";
+    //var resource_value = Math.floor(Math.random()*1000);
+    var resource_value = "webim";
+    
+    var resource = options.resource || resource_value;
     if(resource != ""){
         jid = jid + "/" + resource;
     }
@@ -1011,6 +1042,7 @@ var innerCheck = function(options,conn){
     conn.context.appKey = appKey;
     conn.context.appName = appName;
     conn.context.orgName = orgName;
+    
     return true;
 };
 var parseMessageType = function(msginfo){
@@ -1077,6 +1109,7 @@ var login2ImCallback = function (status,msg,conn){
             supportSedMessage.push(EASEMOB_IM_MESSAGE_REC_PHOTO);
             supportSedMessage.push(EASEMOB_IM_MESSAGE_REC_AUDIO_FILE);
         }
+        conn.notifyVersion();
         conn.onOpened({
             canReceive : supportRecMessage,
             canSend : supportSedMessage,
@@ -1132,21 +1165,26 @@ var STATUS_CLOSED = tempIndex++;
 var connection = function() {
 }
 connection.prototype.init = function(options) {
-    var prefix = options.https ? 'https' : 'http';
-    this.url = options.url || prefix + '://im-api.easemob.com/http-bind/';
+    if (window.WebSocket) {
+        var prefix = options.wss ? 'wss' : 'ws';
+        this.url = options.url || prefix + '://im-api.easemob.com/ws/';
+    } else {
+        var prefix = options.https ? 'https' : 'http';
+        this.url = ((options.url && options.url.indexOf('ws:') > 0) ? '' : options.url) || prefix + '://im-api.easemob.com/http-bind/';
+    }
+
     this.https = options.https || false;
-    this.wait = options.wait || 60;
+    this.wait = options.wait || 30;
     this.hold = options.hold || 1;
     if(options.route){
         this.route = options.route;
     }
 
     this.domain = options.domain || "easemob.com";
-    this.inactivity = options.inactivity || 60;
+    this.inactivity = options.inactivity || 30;
     this.maxRetries = options.maxRetries || 5;
     this.pollingTime = options.pollingTime || 800;
     this.stropheConn = false;
-
     this.onOpened = options.onOpened || emptyFn;
     this.onClosed = options.onClosed || emptyFn;
     this.onTextMessage = options.onTextMessage || emptyFn;
@@ -1181,7 +1219,7 @@ var dologin2IM = function(options,conn){
     }
     conn.context.accessToken = options.access_token;
     conn.context.accessTokenExpires = options.expires_in;
-    var stropheConn = new Strophe.Connection(conn.url,{
+    var stropheConn = conn.context.stropheConn || new Strophe.Connection(conn.url,{
                         inactivity : conn.inactivity,
                         maxRetries : conn.maxRetries,
                         pollingTime : conn.pollingTime
@@ -1204,6 +1242,7 @@ connection.prototype.open = function(options) {
     if(pass == false){
         return;
     }
+    
     var conn = this;
     if(options.accessToken){
         options.access_token = options.accessToken;
@@ -1241,6 +1280,7 @@ connection.prototype.open = function(options) {
         this.context.status = STATUS_DOLOGIN_USERGRID;
         dologin2UserGrid(apiUrl,userId,pwd,orgName,appName,suc,error);
     }
+
 };
 connection.prototype.attach = function(options) {
     var pass = innerCheck(options,this);
@@ -1310,6 +1350,25 @@ connection.prototype.close = function() {
 // see stropheConn.addHandler
 connection.prototype.addHandler = function (handler, ns, name, type, id, from, options){
     this.context.stropheConn.addHandler(handler, ns, name, type, id, from, options);
+};
+connection.prototype.notifyVersion = function (suc,fail){
+    var jid = getJid({},this);
+    var dom = $iq({
+            from : this.context.jid || '',
+            to: this.domain,
+            type: "result"
+    }).c("query", {xmlns: "jabber:iq:version"}).c("name").t("easemob").up().c("version").t(Easemob.im.version).up().c("os").t("webim");
+    suc = suc || emptyFn;
+    error = fail || this.onError;
+    var failFn = function(ele){
+        error({
+            type : EASEMOB_IM_CONNCTION_NOTIFYVERSION_ERROR,
+            msg : '发送版本信息给服务器时失败',
+            data : ele
+        });
+    };
+    this.context.stropheConn.sendIQ(dom.tree(),suc,failFn);
+    return;
 };
 connection.prototype.handlePresence = function(msginfo){
     if(this.isClosed()){
@@ -1592,17 +1651,34 @@ connection.prototype.sendTextMessage = function(options) {
     }).c("body").t(jsonstr);
     this.sendCommand(dom.tree());
 };
+connection.prototype.heartBeat = function(conn) {
+    var options = {
+        to : conn.domain,
+        type : "normal"
+    };
+    conn.heartBeatID = setInterval(function() {
+        conn.sendHeartBeatMessage(options);
+    }, 60000);
+}
+connection.prototype.sendHeartBeatMessage = function(options) {
+    var json = {};
+    var jsonstr = JSON.stringify(json);
+    var dom = $msg({
+        to : options.to,
+        type : options.type,
+        id : this.getUniqueId(),
+        xmlns : "jabber:client"
+    }).c("body").t(jsonstr);
+    this.sendCommand(dom.tree());
+};
+connection.prototype.stopHeartBeat = function(conn) {
+    clearInterval(conn.heartBeatID);
+};
 connection.prototype.sendPicture = function(options) {
     var onerror =  options.onFileUploadError || this.onError || emptyFn;
-    if(!isCanUploadFile){
-      onerror({
-            type : EASEMOB_IM_UPLOADFILE_BROWSER_ERROR,
-            msg : '当前浏览器不支持异步上传文件,请换用其他浏览器'
-        });
-      return;
-    }
-    var conn = this;
     var onFileUploadComplete = options.onFileUploadComplete || emptyFn;
+    var conn = this;
+
     var myUploadComplete = function(data) {
         options["url"] = data.uri;
         options["secret"] = data.entities[0]["share-secret"];
@@ -1621,7 +1697,14 @@ connection.prototype.sendPicture = function(options) {
     };
     options.onFileUploadComplete = myUploadComplete;
     options.onFileUploadError = options.onFileUploadError|| this.onError || emptyFn;
-
+    if(!isCanUploadFileAsync){
+        options.appName = conn.context.appName || '';
+        options.orgName = conn.context.orgName || '';
+        options.accessToken = conn.context.accessToken || '';
+        uploadFn.call(this, options);
+        return;
+    }
+    
     var image = new Image();
     var imageLoadFn = function() {
         image.onload = null;
@@ -1707,31 +1790,29 @@ connection.prototype.sendPictureMessage = function(options) {
 };
 connection.prototype.sendAudio = function(options) {
     var onerror =  options.onFileUploadError || this.onError || emptyFn;
-    if(!isCanUploadFile){
-      onerror({
-            type : EASEMOB_IM_UPLOADFILE_BROWSER_ERROR,
-            msg : '当前浏览器不支持异步上传文件,请换用其他浏览器'
-        });
-      return;
-    }
+	var onFileUploadComplete = options.onFileUploadComplete || emptyFn;
     var conn = this;
-    var onFileUploadComplete = options.onFileUploadComplete || emptyFn;
-    var myonComplete = function(data) {
-        onFileUploadComplete(data);
-        options["url"] = data.uri;
-        options["secret"] = data.entities[0]["share-secret"];
-        if(data.entities[0]["file-metadata"]){
-            options["file_length"] = data.entities[0]["file-metadata"]["content-length"];
-            options["filetype"] = data.entities[0]["file-metadata"]["content-type"];
-        }
-        options["uuid"] = data.entities[0].uuid;
-        options["length"] = data.duration;
-        conn.sendAudioMessage(options);
-    };
-    options.appName = this.context.appName || '';
-    options.orgName = this.context.orgName || '';
-    options.accessToken = this.context.accessToken || '';
-    options.onFileUploadComplete = myonComplete;
+	var myonComplete = function(data) {
+		options["url"] = data.uri;
+		options["secret"] = data.entities[0]["share-secret"];
+		if(data.entities[0]["file-metadata"]){
+			options["file_length"] = data.entities[0]["file-metadata"]["content-length"];
+			options["filetype"] = data.entities[0]["file-metadata"]["content-type"];
+		}
+		options["uuid"] = data.entities[0].uuid;
+		options["length"] = data.duration;
+		onFileUploadComplete(data);
+		conn.sendAudioMessage(options);
+	};
+	options.appName = this.context.appName || '';
+	options.orgName = this.context.orgName || '';
+	options.accessToken = this.context.accessToken || '';
+	options.onFileUploadComplete = myonComplete;
+
+	if(!isCanUploadFileAsync){
+        uploadFn.call(this, options);
+        return;
+	}
 
     var file = getFileUrlFn(options.fileInputId);
     options.fileInfo = file;
@@ -2055,7 +2136,7 @@ connection.prototype.queryRoomInfo = function(options){
                 var field = fields[i];
                 if(field.getAttribute('label') == 'owner'){
                     var mem = {
-                            jid : field.textContent + "@" + domain,
+                            jid : (field.textContent||field.text) + "@" + domain,
                             affiliation : 'owner'
                         };
                     members.push(mem);
@@ -2178,30 +2259,34 @@ connection.prototype.clear = function() {
 
 Easemob.im.Connection = connection;
 
-if (typeof Easemob.im.Helper == 'undefined') {
-    Easemob.im.Helper = {};
+Easemob.im.Helper = Easemob.im.Helper || {};
 
-    // method
-    Easemob.im.Helper.getFileUrl = getFileUrlFn;
-    Easemob.im.Helper.upload = uploadFn;
-    Easemob.im.Helper.download = downloadFn;
-    Easemob.im.Helper.getFileSize = getFileSizeFn;
-    Easemob.im.Helper.xhr = doAjaxRequest;
-    Easemob.im.Helper.parseTextMessage = parseTextMessageFn;
-    Easemob.im.Helper.login2UserGrid = login2UserGrid;
+// method
+Easemob.im.Helper.getFileUrl = getFileUrlFn;
+Easemob.im.Helper.upload = uploadFn;
+Easemob.im.Helper.download = downloadFn;
+Easemob.im.Helper.getFileSize = getFileSizeFn;
+Easemob.im.Helper.xhr = doAjaxRequest;
+Easemob.im.Helper.parseTextMessage = parseTextMessageFn;
+Easemob.im.Helper.login2UserGrid = login2UserGrid;
+Easemob.im.Helper.parseUploadResponse = parseUploadResponse;
+Easemob.im.Helper.parseDownloadResponse = parseDownloadResponse;
+Easemob.im.Helper.getIEVersion = getIEVersion;
 
-    // attritue
-    Easemob.im.Helper.isCanUploadFile = isCanUploadFile;
-    Easemob.im.Helper.isCanDownLoadFile = isCanDownLoadFile;
-    Easemob.im.Helper.hasSetRequestHeader = hasSetRequestHeader;
-    Easemob.im.Helper.hasOverrideMimeType = hasOverrideMimeType;
+// attritue
+Easemob.im.Helper.isCanUploadFile = isCanUploadFile;
+Easemob.im.Helper.isCanUploadFileAsync = isCanUploadFileAsync;
+Easemob.im.Helper.isCanDownLoadFile = isCanDownLoadFile;
+Easemob.im.Helper.hasSetRequestHeader = hasSetRequestHeader;
+Easemob.im.Helper.hasOverrideMimeType = hasOverrideMimeType;
+Easemob.im.Helper.uploadUrl = '';
 
-    // object
-    Easemob.im.Helper.Base64 = innerBase64;
-    Easemob.im.Helper.EmotionPicData = emotionPicData;
+// object
+Easemob.im.Helper.Base64 = innerBase64;
+Easemob.im.Helper.EmotionPicData = emotionPicData;
 
-    //user
-    Easemob.im.Helper.registerUser = registerUserFn;
-}
+//user
+Easemob.im.Helper.registerUser = registerUserFn;
+
 })(jQuery)
 }
