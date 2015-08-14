@@ -3,8 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
-<h3>在每个需要客服的页面的&lt;/body&gt;之前加入&lt;script src="//172.16.4.76:8585/webim/easemob.js?tenantId=XXX"&gt;&lt;/script&gt;</h3>
-<script src="//172.16.4.76:8585/webim/easemob.js?tenantId=1411"></script>
+<style>
+input {
+    width: 400px;
+    height: 40px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    box-shadow: 0 0 8px #1DA8FF;
+    font-size: 14px;
+    padding: 0 6px;
+}
+button {
+    display: block;
+    margin-top: 20px;
+    width: 100px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    font-size: 20px;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    background-color: #1DA8FF;
+}
+</style>
+</head>
+<body>
+<h3>登录客服-》管理面板-》渠道设置-》浏览器插件设置</h3>
+<h3>将生成的script代码 例如&lt;script src="//XXX.XXX.XXX/webim/easemob.js?tenantId=XXX"&gt;&lt;/script&gt;加入需要接入的页面&lt;/body&gt;之前</h3>
+<p>可将代码加入下方输入框，点击按钮进行测试</p>
+<input id='test' type='text' width='800' height='40'/>
+<button id='button'>测试</button>
+
+
+<script>
+
+    var i = document.getElementById('test');
+    var b = document.getElementById('button');
+    
+    b.onclick = function(){
+        var dom = document.createElement('div');
+        dom.innerHTML = i.value;
+        var s = dom.childNodes[0];
+        var script = document.createElement('script');
+        script.src = s.getAttribute('src');
+        (document.head || document.getElementsByTagName('head')[0]).appendChild(script);
+    }
+</script>
 
 </head>
 <body>
