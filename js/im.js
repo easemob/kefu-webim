@@ -29,6 +29,24 @@ var getTo = $.Deferred(function(){
         getTo.reject();
     });
 });
+var getTheme = $.Deferred(function(){
+    $.get('/v1/webimplugin/theme/options', {tenantId: tenantId})
+    .done(function(info){
+        getTheme.resolve(info);
+    })
+    .fail(function(){
+        getTheme.reject();
+    });
+});
+var getWord = $.Deferred(function(){
+    $.get('/v1/webimplugin/notice/options', {tenantId: tenantId})
+    .done(function(info){
+        getWord.resolve(info);
+    })
+    .fail(function(){
+        getWord.reject();
+    });
+});
 var getStatus = $.Deferred(function(){
     $.get('/v1/webimplugin/timeOffDuty', {tenantId: tenantId})
     .done(function(info){
@@ -38,15 +56,17 @@ var getStatus = $.Deferred(function(){
         getStatus.reject();
     });
 });
-$.when(getTo, getStatus)
-.done(function(toinfo, sinfo){
+$.when(getTo, getStatus, getTheme, getWord)
+.done(function(toinfo, sinfo, tinfo, winfo){
     if(!toinfo || 0 > toinfo.length) return;
 
-    config.offline = sinfo;
+    config.offline = false && sinfo;
     config.to = toinfo[0].imServiceNumber;
     config.orgName = toinfo[0].orgName;
     config.appName = toinfo[0].appName;
     config.appkey = toinfo[0].orgName + '#' + toinfo[0].appName;
+    config.theme = tinfo && tinfo.length ? tinfo[0].optionValue : '天空之城';
+    config.word = winfo && winfo.length ? winfo[0].optionValue : '';
     $.ajax({
         url: '/v1/webimplugin/visitors'
         , contentType: 'application/json'
@@ -87,9 +107,10 @@ var im = {
         this.msgCount = 0;
         this.getDom();
         this.changeTheme();
-        if(!config.json.hide) this.fixedBtn.removeClass('hide');
+        if(!config.json.hide && window.top !== window) this.fixedBtn.removeClass('hide');
         this.fillFace();
-        window.top === window && (this.min.hide(),this.toggleChatWindow());//if open in new window, hide
+        this.setWord();
+        window.top === window && (this.min.addClass('hide'),this.toggleChatWindow());
         //this.audioAlert();//init audio
         this.mobileInit();
         if(!Easemob.im.Helper.isCanUploadFileAsync && Easemob.im.Helper.isCanUploadFile && typeof uploadShim === 'function') {
@@ -120,6 +141,9 @@ var im = {
         this.sendbtn.parent().addClass('easemobWidgetSend-mobile');
         this.textarea.addClass('textarea-mobile');
         this.Im.find('.easeWidget-face-rec').addClass('easeWidget-face-rec-mobile');
+    }
+    , setWord: function(){
+        config.word ? this.word.find('span').html(config.word) : (this.word.addClass('hide'),this.chatWrapper.parent().css('top', '43px'));
     }
     , fillFace: function(){
         var faceStr = '<li class="e-face">',
@@ -157,6 +181,7 @@ var im = {
             this.headBar.css('background-color', color);
             this.sendbtn.css('background-color', color);
         } else if(config.theme) {
+            if(!this.theme[config.theme]) config.theme = '天空之城';
             $('head').append('<style type="text/css">\
                 .bg-color{background-color:' + this.theme[config.theme].bgcolor + '}\
                 .border-color{border:1px solid ' + this.theme[config.theme].bordercolor + '}\
@@ -165,6 +190,7 @@ var im = {
         } 
     }
     , showFixedBtn: function() {
+        !this.fixedBtn && this.getDom();
         this.fixedBtn.removeClass('hide');
     }
     , toggleChatWindow: function() {
