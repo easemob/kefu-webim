@@ -538,7 +538,7 @@ var im = {
         //me.playaudio();
         switch(type){
             case 'txt':
-                value = '<p>' + me.addLink(msg.data) + '</p>';
+                value = '<p>' + me.addLink(me.encode(msg.data)) + '</p>';
                 break;
             case 'audio':
                 var options = msg;
@@ -589,6 +589,7 @@ var im = {
             case 'face':
                 value = '<p>';
                 $.each(msg.data, function(k, v){
+                    v.data = v.data.replace(/>/g, "&gt;");
                     if(0 > v.data.indexOf('data:image')) {
                         value += v.data;
                     } else {
