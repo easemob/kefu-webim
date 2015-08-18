@@ -10,7 +10,22 @@ typeof HTMLAudioElement !== 'undefined' && (HTMLAudioElement.prototype.stop = fu
 });
 
 var swfupload = null;
+var DEBUG = false;
 var config = EasemobWidget.utils.getConfig();
+DEBUG ? (config = {
+    json: {
+        tenantId: '123'
+    }
+    , offline: true
+    , to: ''
+    , orgName: 'easemob-demo'
+    , appName: 'chatdemoui'
+    , appkey: 'easemob-demo#chatdemoui'
+    , theme: '天空之城'
+    , word: 'testtest'
+    , user: ''
+    , password: ''
+},setTimeout(function(){im.init()}, 0)) : config;
 var tenantId = config.json.tenantId;
 var pictype = {
     jpg : true,
@@ -18,7 +33,7 @@ var pictype = {
     png : true,
     bmp : true
 }
-
+if(!DEBUG) {
 //get info
 var getTo = $.Deferred(function(){
     $.get('/v1/webimplugin/targetChannels', {tenantId: tenantId})
@@ -60,7 +75,7 @@ $.when(getTo, getStatus, getTheme, getWord)
 .done(function(toinfo, sinfo, tinfo, winfo){
     if(!toinfo || 0 > toinfo.length) return;
 
-    config.offline = false && sinfo;
+    config.offline = sinfo;
     config.to = toinfo[0].imServiceNumber;
     config.orgName = toinfo[0].orgName;
     config.appName = toinfo[0].appName;
@@ -84,7 +99,7 @@ $.when(getTo, getStatus, getTheme, getWord)
     });
 })
 .fail(function(){});
-
+}
 //listen parent's msg
 var message = new EmMessage().listenToParent(function(msg){
     switch(msg) {
@@ -107,12 +122,13 @@ var im = {
         this.msgCount = 0;
         this.getDom();
         this.changeTheme();
-        if(!config.json.hide && window.top !== window) this.fixedBtn.removeClass('hide');
+        if(!config.json.hide && window.top != window) this.fixedBtn.removeClass('hide');
         this.fillFace();
         this.setWord();
-        window.top === window && (this.min.addClass('hide'),this.toggleChatWindow());
+        window.top == window && (this.min.addClass('hide'),this.toggleChatWindow());
         //this.audioAlert();//init audio
         this.mobileInit();
+        this.setOffline();
         if(!Easemob.im.Helper.isCanUploadFileAsync && Easemob.im.Helper.isCanUploadFile && typeof uploadShim === 'function') {
             swfupload = uploadShim('easemobWidgetFileInput');
         }
@@ -193,12 +209,35 @@ var im = {
         !this.fixedBtn && this.getDom();
         this.fixedBtn.removeClass('hide');
     }
+    , setOffline: function() {
+        var me = this;
+        if(!config.offline) {
+            me.offline.addClass('hide');
+            me.word.removeClass('hide');
+            me.chatWrapper.parent().removeClass('hide');
+            me.sendbtn.parent().removeClass('hide');
+            me.dutyStatus.html('(在线)');
+            me.headBar.find('.easemobWidgetHeader-bar').removeClass('offline').addClass('online');
+            me.fixedBtn.find('a').removeClass('easemobWidget-offline-bg');
+            return;
+        }
+        me.fixedBtn.find('a').addClass('easemobWidget-offline-bg');
+        me.headBar.find('.easemobWidgetHeader-bar').removeClass('online').addClass('offline');
+        me.offline.removeClass('hide');
+        me.word.addClass('hide');
+        me.chatWrapper.parent().addClass('hide');
+        me.sendbtn.parent().addClass('hide');
+        me.dutyStatus.html('(离线)');
+    }
     , toggleChatWindow: function() {
         var me = this;
-        (!config.json.hide && window.top !== window) && me.fixedBtn.toggleClass('hide');
-
-        config.offline ? me.offline.toggleClass('hide') : me.Im.toggleClass('hide');
-        message.sendToParent((config.offline ? me.offline.hasClass('hide') : me.Im.hasClass('hide')) ? 'minChat' : 'showChat');
+        (!config.json.hide && window.top != window) && me.fixedBtn.toggleClass('hide');
+        if(window.top != window) {
+            message.sendToParent(me.Im.hasClass('hide') ? 'showChat' : 'minChat');
+            me.Im.toggleClass('hide');
+        } else {
+            me.Im.removeClass('hide');
+        }
 
         if(me.Im.hasClass('hide')) {
             me.isOpened = false;
@@ -259,12 +298,15 @@ var im = {
     }
     , getDom: function(){
         this.offline = $('#easemobWidgetOffline');
+        this.leaveMsgBtn = this.offline.find('button');
+        this.contact = this.offline.find('input');
+        this.leaveMsg = this.offline.find('textarea');
         this.relStyle = $('#easemobWidgetStyle');
         this.fixedBtn = $('#easemobWidgetPopBar');
         this.Im = $('.easemobWidgetWrapper');
         this.audio = $('audio').get(0);
         this.chatWrapper = this.Im.find('.easemobWidget-chat');
-        this.textarea = this.Im.find('textarea');
+        this.textarea = this.Im.find('.easemobWidget-textarea');
         this.sendbtn = this.Im.find('#easemobWidgetSendBtn');
         this.facebtn = this.Im.find('.easemobWidget-face');
         this.uploadbtn = this.Im.find('#easemobWidgetFile');
@@ -277,6 +319,7 @@ var im = {
         this.messageCount = this.fixedBtn.find('.easemobWidget-msgcount');
         this.ePrompt = this.Im.find('.easemobWidget-error-prompt');
         this.mobileLink = this.Im.find('#easemobWidgetLink');
+        this.dutyStatus = this.Im.find('.easemobWidgetHeader-word-status');
     }
     , audioAlert: function(){
         var me = this;
@@ -423,6 +466,26 @@ var im = {
             me.sendTextMsg();
             EasemobWidget.utils.isMobile && me.textarea.blur();
         });
+        me.leaveMsgBtn.on('click', function(){
+            if(!me.contact.val() && !me.leaveMsg.val()) {
+                me.errorPrompt('联系方式和留言不能为空');
+            } else if(!me.contact.val()) {
+                me.errorPrompt('联系方式');
+            } else if(!me.leaveMsg.val()) {
+                me.errorPrompt('留言不能为空');
+            } else if(!/^\d{5,11}$/g.test(me.contact.val()) && !/^[a-zA-Z0-9-_]+@[a-zA-Z0-9-][.][a-zA-Z]+$/g.test(me.contact.val())) {
+                me.errorPrompt('请输入正确的手机号码/邮箱/QQ号');
+            } else {
+                me.conn.sendTextMessage({
+                    to: config.to
+                    , msg: '手机号码/邮箱/QQ号：' + me.contact.val() + '   留言：' + me.leaveMsg.val()
+                    , type : 'chat'
+                });
+                me.errorPrompt('留言成功');
+                me.contact.val('');
+                me.leaveMsg.val('');
+            }
+        });
     }
     , scrollBottom: function(){
         var ocw = this.chatWrapper.parent().get(0);
@@ -475,7 +538,7 @@ var im = {
         var s = "";
         if (str.length == 0) return "";
         s = str.replace(/&/g, "&amp;");
-        //s = s.replace(/</g, "&lt;");
+        s = s.replace(/</g, "&lt;");
         s = s.replace(/>/g, "&gt;");
         //s = s.replace(/\'/g, "&#39;");
         s = s.replace(/\"/g, "&quot;");

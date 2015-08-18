@@ -3,7 +3,6 @@
  * version 1.0.0
 */
 ;(function(window, undefined) {
-
     var message, iframe;
     
     var getConfig = function(key){//get config from current script
@@ -41,12 +40,12 @@
         return {
             str: that
             , json: obj
-            , domain: domain
+            , domain: domain + '/'
         };
     }
     
     var config = getConfig('easemob.js');
-
+    
     //open Api
     var open = function(){
         message.listenToIframe(function(msg){
@@ -103,7 +102,7 @@
             height:0;\
             display:none;\
             transition:all .1s;';
-        iframe.src = config.domain + '/webim/im.html?tenantId=' + config.json.tenantId + (!!config.json.hide ? '&hide=true' : '') + (!!config.json.color ? '&color=' + config.json.color : '');
+        iframe.src = config.domain + 'webim/im.html?tenantId=' + config.json.tenantId + (!!config.json.hide ? '&hide=true' : '') + (!!config.json.color ? '&color=' + config.json.color : '');
         if(!config.json.hide) {
             iframe.style.height = '40px';
             iframe.style.width = '100px';
@@ -136,7 +135,7 @@
 
     //append easemob.utils.js
     var script = document.createElement('script');
-    script.src = config.domain + '/webim/js/easemob.utils.js';
+    script.src = config.domain + 'webim/js/easemob.utils.js';
     (document.head || document.getElementsByTagName('head')[0]).appendChild(script);
     if(script.readyState) {
         script.onreadystatechange = function() {

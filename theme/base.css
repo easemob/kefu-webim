@@ -7,6 +7,7 @@ html, body {
     height: 100%;
     font-size: 13px;
     font-family: 'Arial';
+    background-color: #fff;
 }
 a {
     color: #009EEC;
@@ -95,6 +96,16 @@ img {
     left: 10px;
     top: 5.5px;
 }
+.easemobWidgetHeader-bar.online i{
+    background-color: #00FF00;
+}
+.easemobWidgetHeader-bar.offline i{
+    background-color: #E6E6E6;
+}
+.easemobWidgetHeader-bar.offline img {
+    -webkit-filter: grayscale(1);
+    filter: gray;   
+}
 .easemobWidgetHeader-portrait {
     width: 100%;
     border-radius: 50%;
@@ -108,12 +119,6 @@ img {
     bottom: -1px;
     right: -1px;
     box-shadow: 0 1px 1px #aaa;
-}
-.online {
-    background-color: #00FF00;
-}
-.offline {
-    background-color: #E6E6E6;
 }
 .easemobWidgetHeader-nickname {
     margin-left: 50px;
@@ -481,6 +486,54 @@ object {
     position: absolute;
     bottom: 0;
     height: 0;
+}
+body .easemobWidget-offline-bg {
+    background-color: #ccc;
+}
+.easemobWidget-offline {
+    width: 95%;
+    max-width: 400px;
+    margin: auto;
+    position: relative;
+}
+.easemobWidget-offline h3,
+.easemobWidget-offline p,
+.easemobWidget-offline input,
+.easemobWidget-offline button,
+.easemobWidget-offline textarea {
+    display: block;
+    font-size: 14px;
+    font-weight: normal;
+    width: 100%;
+    outline: none;
+    margin: 10px 0;
+}
+.easemobWidget-offline input,
+.easemobWidget-offline textarea {
+    border: 1px solid #D8D9DA;
+    border-radius: 4px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+.easemobWidget-offline h3 {
+    margin-top: 15px;
+}
+.easemobWidget-offline input {
+    height: 36px;
+}
+.easemobWidget-offline textarea {
+    height: 100px;
+    resize: none;
+}
+.easemobWidget-offline button {
+    float: right;
+    width: 100px;
+    height: 36px;
+    border-radius: 4px;
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
 }
 /*mobile*/
 .easemobWidgetHeader-mobile {

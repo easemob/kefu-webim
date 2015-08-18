@@ -4,8 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
 <style>
+h3 {
+    width: 100%;
+    word-break: break-all;
+}
+a {
+    display: block;
+    background-color: #00A5FF;
+    width: 200px;
+    padding: 10px;
+    line-height: 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-top: 30px;
+    color: #fff;
+}
 input {
-    width: 400px;
+    width: 90%;
+    max-width: 400px;
     height: 40px;
     border: 1px solid #aaa;
     border-radius: 4px;
@@ -35,7 +51,7 @@ button {
 <input id='test' type='text' width='800' height='40'/>
 <button id='button'>测试</button>
 
-
+<a href='javascript:;' onclick='easemobIM()'>为用户开发自定义按钮,考虑到移动端的兼容性，建议使用a标签；例如：&lt;a href='javascript:;' onclick='easemobIM()'&gt; 点击看效果</a>
 <script>
 
     var i = document.getElementById('test');
@@ -50,7 +66,6 @@ button {
         (document.head || document.getElementsByTagName('head')[0]).appendChild(script);
     }
 </script>
-
 </head>
 <body>
 

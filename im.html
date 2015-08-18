@@ -19,9 +19,6 @@
     <a class='easemobWidget-pop-bar bg-color' href='javascript:;'><i></i>联系客服</a>
     <span class='easemobWidget-msgcount hide'></span>
 </div>
-<div id='easemobWidgetOffline' class='hide'>
-    offline
-</div>
 <div class='easemobWidgetWrapper hide'>
     <!--header-->
     <div id='easemobWidgetHeader' class='easemobWidgetHeader-wrapper bg-color border-color'>
@@ -32,26 +29,34 @@
         <span class='easemobWidgetHeader-nickname'>客服姓名</span><span class='easemobWidgetHeader-word-status'>(在线)</span>
         <a href='javascript:;' class='easemobWidgetHeader-min bg-color border-color'><p></p></a>
     </div>
+    <!--offline-->
+    <div id='easemobWidgetOffline' class='easemobWidget-offline hide'>
+        <h3>请留下您的联系方式，以方便客服再次联系您</h3>
+        <input type='text' placeholder='请输入手机/邮箱/QQ号'/>
+        <p>请留下您的联系方式，以方便客服再次联系您</p>
+        <textarea spellcheck='false' placeholder='请输入留言'></textarea>
+        <button class='bg-color'>留言</button>
+    </div>
     <!--im-->
     <div class='easemobWidget-word'>
         <span>欢迎使用今日特卖在线客服，客服上班时间为<a class='easemobWidget-Prompt' href='javascript:;'>9:00-20:00</a>其他时间，请致电<a class='easemobWidget-Prompt' href='tel:400-800-1253'>400-800-1253</a></span>
         <a class='easemobWidget-word-close' href='javascript:;'>×</a>
     </div>
-    <div id='easemobWidgetBody' style='display: block' class='easemobWidgetBody-wrapper'>
+    <div id='easemobWidgetBody' class='easemobWidgetBody-wrapper'>
         <div class='easemobWidget-chat'></div>
         <div class='easemobWidget-face-wrapper e-face hide'>
             <i class='easeWidget-face-rec'></i>
             <ul class='easemobWidget-face-container'></ul>
         </div>
-        <p class='easemobWidget-error-prompt hide'></p>
     </div>
     <div id='easemobWidgetSend' class='easemobWidget-send-wrapper'>
         <i class='easemobWidget-face e-face'></i>
         <i class='easemobWidget-file' id='easemobWidgetFile'></i>
         <input id='easemobWidgetFileInput' type='file' accept='image/*' style='visibility:hidden;'/>
-        <textarea spellcheck='false'></textarea>
+        <textarea class='easemobWidget-textarea' spellcheck='false'></textarea>
         <a href='javascript:;' class='easemobWidget-send bg-color disabled' id='easemobWidgetSendBtn'>发送</a>
     </div>
+    <p class='easemobWidget-error-prompt hide'></p>
     <audio src='resources/msg.mp3' class='hide'></audio>
     <a id='easemobWidgetLink' target='_blank'></a>
 </div>
