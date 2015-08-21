@@ -18,7 +18,7 @@
         } else {
             that = location.href;
         }
-
+        
         var obj = {}
         if(!that) return {
             str: ''
@@ -45,7 +45,7 @@
     }
     
     var config = getConfig('easemob.js');
-    
+    config.json.hide = config.json.hide == 'false' ? false : config.json.hide;
     //open Api
     var open = function(){
         message.listenToIframe(function(msg){
@@ -59,9 +59,9 @@
                 case 'minChat'://show Chat window
                     iframe.style.boxShadow = 'none';
                     iframe.style.borderRadius = '4px;';
-                    iframe.style.right = '-7px';
+                    iframe.style.right = '-5px';
                     if(!config.json.hide) {
-                        iframe.style.height = '42px';
+                        iframe.style.height = '37px';
                         iframe.style.width = '102px';
                     } else {
                         iframe.style.width = '0';
@@ -96,24 +96,30 @@
             overflow:hidden;\
             position:fixed;\
             bottom:10px;\
-            right:-7px;\
+            right:-5px;\
             border:none;\
             width:400px;\
             height:0;\
             display:none;\
             transition:all .1s;';
-        iframe.src = config.domain + 'webim/im.html?tenantId=' + config.json.tenantId + (!!config.json.hide ? '&hide=true' : '') + (!!config.json.color ? '&color=' + config.json.color : '');
+        iframe.src = config.domain + 'webim/im.html?tenantId=' + config.json.tenantId 
+            + (!!config.json.hide ? '&hide=true' : '') 
+            + (!!config.json.color ? '&color=' + config.json.color : '')
+            + (!!config.json.preview ? '&preview=' + config.json.preview : '');
         if(!config.json.hide) {
-            iframe.style.height = '40px';
+            iframe.style.height = '37px';
             iframe.style.width = '100px';
         }
         if(EasemobWidget.utils.isMobile) {
             iframe.style.cssText += 'left:0;bottom:0';
             iframe.style.width = '100%';   
         }
-
-        document.body.appendChild(iframe);
-        
+        if(config.json && config.json.preview) {
+            var curDom = document.getElementById(config.json.previewid);
+            curDom ? curDom.appendChild(iframe) : document.body.appendChild(iframe);
+        } else {
+            document.body.appendChild(iframe);
+        }
         if(iframe.readyState) {
             iframe.onreadystatechange = function() {
                 if(iframe.readyState == "loaded" || iframe.readyState == "complete") {

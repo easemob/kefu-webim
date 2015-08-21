@@ -1,5 +1,5 @@
 /*
- * version: 1.0.0
+    version: 1.0.0
  */
 ;(function(window, undefined){
 
@@ -12,29 +12,35 @@ typeof HTMLAudioElement !== 'undefined' && (HTMLAudioElement.prototype.stop = fu
 var swfupload = null;
 var DEBUG = false;
 var config = EasemobWidget.utils.getConfig();
-DEBUG ? (config = {
-    json: {
-        tenantId: '123'
-    }
-    , offline: true
-    , to: ''
-    , orgName: 'easemob-demo'
-    , appName: 'chatdemoui'
-    , appkey: 'easemob-demo#chatdemoui'
-    , theme: '天空之城'
-    , word: 'testtest'
-    , user: ''
-    , password: ''
-},setTimeout(function(){im.init()}, 0)) : config;
+config.json.hide = config.json.hide == 'false' ? false : config.json.hide;
 var tenantId = config.json.tenantId;
+var preview = config.json.preview;
 var pictype = {
     jpg : true,
     gif : true,
     png : true,
     bmp : true
 }
-if(!DEBUG) {
-//get info
+
+DEBUG && (config = {
+    json: {
+        tenantId: '123'
+        , preview: false
+    }
+    , offline: true
+    , to: ''
+    , orgName: 'easemob-demo'
+    , appName: 'chatdemoui'
+    , theme: '天空之城'
+    , appkey: 'easemob-demo#chatdemoui'
+    , word: 'testtest'
+    , user: ''
+    , password: ''
+}, setTimeout(function(){im.init()}, 0));
+    
+/*
+    get info
+*/
 var getTo = $.Deferred(function(){
     $.get('/v1/webimplugin/targetChannels', {tenantId: tenantId})
     .done(function(info){
@@ -42,6 +48,15 @@ var getTo = $.Deferred(function(){
     })
     .fail(function(){
         getTo.reject();
+    });
+});
+var getStatus = $.Deferred(function(){
+    $.get('/v1/webimplugin/timeOffDuty', {tenantId: tenantId})
+    .done(function(info){
+        getStatus.resolve(info);
+    })
+    .fail(function(){
+        getStatus.reject();
     });
 });
 var getTheme = $.Deferred(function(){
@@ -62,45 +77,44 @@ var getWord = $.Deferred(function(){
         getWord.reject();
     });
 });
-var getStatus = $.Deferred(function(){
-    $.get('/v1/webimplugin/timeOffDuty', {tenantId: tenantId})
-    .done(function(info){
-        getStatus.resolve(info);
-    })
-    .fail(function(){
-        getStatus.reject();
-    });
-});
 $.when(getTo, getStatus, getTheme, getWord)
 .done(function(toinfo, sinfo, tinfo, winfo){
-    if(!toinfo || 0 > toinfo.length) return;
 
-    config.offline = sinfo;
-    config.to = toinfo[0].imServiceNumber;
-    config.orgName = toinfo[0].orgName;
-    config.appName = toinfo[0].appName;
-    config.appkey = toinfo[0].orgName + '#' + toinfo[0].appName;
+    config.offline = false && sinfo;
+    if(toinfo.length > 0) {
+        config.to = toinfo[0].imServiceNumber;
+        config.orgName = toinfo[0].orgName;
+        config.appName = toinfo[0].appName;
+        config.tenantName = toinfo[0].tenantName;
+        config.appkey = toinfo[0].orgName + '#' + toinfo[0].appName;
+    } else {
+        if(!preview) return;
+    }
     config.theme = tinfo && tinfo.length ? tinfo[0].optionValue : '天空之城';
     config.word = winfo && winfo.length ? winfo[0].optionValue : '';
-    $.ajax({
-        url: '/v1/webimplugin/visitors'
-        , contentType: 'application/json'
-        , type: 'post'
-        , data: JSON.stringify({
-            orgName: config.orgName
-            , appName: config.appName
-            , imServiceNumber: config.to
+    !preview ? 
+        $.ajax({
+            url: '/v1/webimplugin/visitors'
+            , contentType: 'application/json'
+            , type: 'post'
+            , data: JSON.stringify({
+                orgName: config.orgName
+                , appName: config.appName
+                , imServiceNumber: config.to
+            })
+            , success: function(info) {
+                config.user = info.userId;
+                config.password = info.userPassword;
+                im.init();
+            }
         })
-        , success: function(info) {
-            config.user = info.userId;
-            config.password = info.userPassword;
-            im.init();
-        }
-    });
+        : im.init();
 })
 .fail(function(){});
-}
-//listen parent's msg
+
+/*
+    listen parent's msg
+*/
 var message = new EmMessage().listenToParent(function(msg){
     switch(msg) {
         case 'imclick'://toggle chat window to show or hide 
@@ -125,19 +139,24 @@ var im = {
         if(!config.json.hide && window.top != window) this.fixedBtn.removeClass('hide');
         this.fillFace();
         this.setWord();
-        window.top == window && (this.min.addClass('hide'),this.toggleChatWindow());
+        this.setTitle();
+        (preview || window.top == window) && (!preview && this.min.addClass('hide'),this.toggleChatWindow());
         //this.audioAlert();//init audio
         this.mobileInit();
         this.setOffline();
         if(!Easemob.im.Helper.isCanUploadFileAsync && Easemob.im.Helper.isCanUploadFile && typeof uploadShim === 'function') {
             swfupload = uploadShim('easemobWidgetFileInput');
         }
-        this.sdkInit();
+        !preview && this.sdkInit();
         this.bindEvents();
+    }
+    , setTitle: function(){
+        this.headBar.find('.easemobWidgetHeader-nickname').html(config.tenantName);
+        document.title = this.headBar.html() + '-客服';
     }
     , mobileInit: function(){
         if(!EasemobWidget.utils.isMobile) return;
-        this.fixedBtn.css('width', '100%');
+        this.fixedBtn.css({width: '100%', top: '0'});
         this.fixedBtn.children().css({
             width: '100%'
             , 'border-radius': '0'
@@ -159,7 +178,12 @@ var im = {
         this.Im.find('.easeWidget-face-rec').addClass('easeWidget-face-rec-mobile');
     }
     , setWord: function(){
-        config.word ? this.word.find('span').html(config.word) : (this.word.addClass('hide'),this.chatWrapper.parent().css('top', '43px'));
+        if(config.word) {
+            this.word.find('span').html(this.addLink(config.word));
+        } else {
+            this.word.addClass('hide');
+            this.chatWrapper.parent().css('top', '43px');
+        }
     }
     , fillFace: function(){
         var faceStr = '<li class="e-face">',
@@ -167,7 +191,7 @@ var im = {
         $.each(this.face_map, function(k, v){
             count += 1;
             faceStr += "<div class='easemobWidget-face-bg e-face'>\
-                    <img class='easemobWidget-face-img e-face' src='resources/faces/"+v+".png' data-value='"+k+"' />\
+                    <img class='easemobWidget-face-img e-face' src='resources/faces/"+v+".png' data-value="+k+" />\
                 </div>";
             if(count % 7 == 0) {
                 faceStr += '</li><li class="e-face">';
@@ -186,7 +210,7 @@ var im = {
         me.ePrompt.html(msg).removeClass('hide');
         setTimeout(function(){
             me.ePrompt.html(msg).addClass('hide');
-        }, 700); 
+        }, 1500); 
     }
     , changeTheme: function() {
         
@@ -207,13 +231,13 @@ var im = {
     }
     , showFixedBtn: function() {
         !this.fixedBtn && this.getDom();
-        this.fixedBtn.removeClass('hide');
+        config.to && this.fixedBtn.removeClass('hide');
     }
     , setOffline: function() {
         var me = this;
         if(!config.offline) {
             me.offline.addClass('hide');
-            me.word.removeClass('hide');
+            config.word && me.word.removeClass('hide');
             me.chatWrapper.parent().removeClass('hide');
             me.sendbtn.parent().removeClass('hide');
             me.dutyStatus.html('(在线)');
@@ -445,6 +469,10 @@ var im = {
                 me.errorPrompt('当前浏览器不支持发送图片');
                 return false;    
             }
+            if(preview) {
+                me.errorPrompt('预览状态不支持发送图片');
+                return false;    
+            }
             me.realfile.get(0).click();
         });
         me.textarea.on("keydown", function(evt){
@@ -476,6 +504,10 @@ var im = {
             } else if(!/^\d{5,11}$/g.test(me.contact.val()) && !/^[a-zA-Z0-9-_]+@[a-zA-Z0-9-][.][a-zA-Z]+$/g.test(me.contact.val())) {
                 me.errorPrompt('请输入正确的手机号码/邮箱/QQ号');
             } else {
+                if(preview) {
+                    me.errorPrompt('预览状态不支持留言');
+                    return;
+                }
                 me.conn.sendTextMessage({
                     to: config.to
                     , msg: '手机号码/邮箱/QQ号：' + me.contact.val() + '   留言：' + me.leaveMsg.val()
@@ -532,13 +564,13 @@ var im = {
             }
             , flashUpload: Easemob.im.Helper.isCanUploadFileAsync ? null : flashUpload
         };
-        me.conn.sendPicture(opt);
+        !preview && me.conn.sendPicture(opt);
     }
     , encode: function(str){
         var s = "";
         if (str.length == 0) return "";
         s = str.replace(/&/g, "&amp;");
-        s = s.replace(/</g, "&lt;");
+        s = s.replace(/<(?=[^o][^)])/g, "&lt;");
         s = s.replace(/>/g, "&gt;");
         //s = s.replace(/\'/g, "&#39;");
         s = s.replace(/\"/g, "&quot;");
@@ -565,7 +597,7 @@ var im = {
         ");
         me.textarea.val('');
         me.scrollBottom();
-        me.conn.sendTextMessage({
+        !preview && me.conn.sendTextMessage({
             to: config.to
             , msg: txt
             , type : 'chat'
@@ -708,7 +740,7 @@ var im = {
         , '青草田间': {
             bgcolor: '#9ec100'
             , bordercolor: '#809a00'
-            , hovercolor: '#809a00'
+            , hovercolor: '#bad921'
         }
         , '湖光山色': {
             bgcolor: '#00cccd' 
