@@ -389,7 +389,6 @@ img {
 /*send*/
 .easemobWidget-send-wrapper {
     position: absolute;
-    cursor: pointer;
     height: 140px;
     width: 100%;
     bottom: 0;
@@ -592,6 +591,13 @@ body .easemobWidget-offline-bg {
     height: 34px;
     line-height: 34px;
     font-size: 14px;
+}
+.easemobWidget-logo {
+    position: absolute;
+    color: #eee;
+    font-size: 12px;
+    left: 10px;
+    bottom: 10px;
 }
 @media 
 (-webkit-min-device-pixel-ratio: 2) {

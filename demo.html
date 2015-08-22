@@ -59,7 +59,8 @@ button {
     
     b.onclick = function(){
         var dom = document.createElement('div');
-        dom.innerHTML = i.value;
+        dom.innerText = i.value;
+        dom.innerHTML = dom.innerHTML;
         var s = dom.childNodes[0];
         var script = document.createElement('script');
         script.src = s.getAttribute('src');

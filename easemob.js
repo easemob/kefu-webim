@@ -93,6 +93,7 @@
         iframe.id = 'EasemobIframe';
         iframe.frameBorder = 0;
         iframe.style.cssText = '\
+            z-index:16777270;\
             overflow:hidden;\
             position:fixed;\
             bottom:10px;\
@@ -101,7 +102,7 @@
             width:400px;\
             height:0;\
             display:none;\
-            transition:all .1s;';
+            transition:all .01s;';
         iframe.src = config.domain + 'webim/im.html?tenantId=' + config.json.tenantId 
             + (!!config.json.hide ? '&hide=true' : '') 
             + (!!config.json.color ? '&color=' + config.json.color : '')
