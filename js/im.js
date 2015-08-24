@@ -766,8 +766,7 @@
                         <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
                     </div>\
                 </div>";
-            me.chatWrapper.append(temp);
-            !isHistory && me.scrollBottom();
+            isHistory ? me.chatWrapper.prepend(temp) : (me.chatWrapper.append(temp),me.scrollBottom());
         }
         , theme: {
             '天空之城': {
