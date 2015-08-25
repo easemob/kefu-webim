@@ -97,7 +97,8 @@
         config.word = winfo && winfo.length ? winfo[0].optionValue : '';
 
         if(!preview) {
-            var curUser = im.getUser();
+            var curUser = im.getChannel() != config.appkey ? null : im.getUser();
+            im.setChannel();
             if(curUser) {
                 config.user = curUser;
                 var getPwd = $.Deferred(function(){
@@ -854,6 +855,15 @@
         }
         , getUser: function() {
             var results = document.cookie.match('(^|;) ?emKefuUser=([^;]*)(;|$)'); 
+            return results ? (unescape(results[2])) : null; 
+        }
+        , setChannel: function() {
+            var date = new Date();
+            date.setTime(date.getTime() + 30*24*3600*1000);
+            document.cookie = 'emKefuChannel=' + escape(config.appkey) + ';expires=' + date.toGMTString();
+        }
+        , getChannel: function() {
+            var results = document.cookie.match('(^|;) ?emKefuChannel=([^;]*)(;|$)'); 
             return results ? (unescape(results[2])) : null; 
         }
     };
