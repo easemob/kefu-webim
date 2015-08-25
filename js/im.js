@@ -709,10 +709,10 @@
             me.textarea.get(0).focus();// reset
         }
         , addLink: function(msg) {
-            var reg = new RegExp('(https?:\/\/|www)\.[a-zA-Z0-9-]+\.[a-zA-Z]+', 'gm');
+            var reg = new RegExp('(http(s)?:\/\/|www\.)[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+', 'gm');
             var res = msg.match(reg);
             if(res && res.length) {
-                msg = msg.replace(reg, "<a href='//"+res[0]+"' target='_blank'>"+res[0]+"</a>");
+                msg = msg.replace(reg, "<a href='"+res[0]+"' target='_blank'>"+res[0]+"</a>");
             }
             return msg;
         }
