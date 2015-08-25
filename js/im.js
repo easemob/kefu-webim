@@ -236,7 +236,7 @@
         }
         , mobileInit: function(){
             if(!EasemobWidget.utils.isMobile) return;
-            this.IM.find('.easemobWidget-logo').hide();
+            this.Im.find('.easemobWidget-logo').hide();
             this.fixedBtn.css({width: '100%', top: '0'});
             this.fixedBtn.children().css({
                 width: '100%'
