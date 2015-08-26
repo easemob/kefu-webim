@@ -449,6 +449,8 @@
                 msg = '[' + msg[0] + ']';
             }
             else if(/\[.*\]/.test(msg)){
+                msg = msg.replace(/&#39;/g, '\'');
+                msg = msg.replace(/&lt;/g, '\<');
                 $.each(me.face_map, function(k, v){
                     while(msg.indexOf(k) >= 0){
                         msg = msg.replace(k, '<img class=\"chat-face-all\" src=\"resources/faces/' + me.face_map[k] + '.png\">');
@@ -754,7 +756,7 @@
                     value = me.addLink(value);
                     break;
                 case 'img':
-                    value = '<a href="'+msg.url+'" blank="_blank"><img src="'+(msg.thumb || msg.url)+'"></a>';   
+                    value = '<a href="'+msg.url+'" target="_blank"><img src="'+(msg.thumb || msg.url)+'"></a>';   
                     break;
                 default: break;
             }
