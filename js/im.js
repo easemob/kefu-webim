@@ -304,7 +304,7 @@
                 this.sendbtn.css('background-color', color);
             } else if(config.theme) {
                 if(!this.theme[config.theme]) config.theme = '天空之城';
-                $('head').append('<link rel="stylesheet" href="http://172.16.4.206/webim/theme/'+config.theme+'.css" />');
+                $('head').append('<link rel="stylesheet" href="/webim/theme/'+config.theme+'.css" />');
             } 
         }
         , showFixedBtn: function() {
