@@ -82,7 +82,7 @@
     $.when(getTo, getStatus, getTheme, getWord)
     .done(function(toinfo, sinfo, tinfo, winfo){
 
-        config.offline = false && sinfo;
+        config.offline = sinfo;
         if(toinfo.length > 0) {
             config.to = toinfo[0].imServiceNumber;
             config.orgName = toinfo[0].orgName;
@@ -738,7 +738,7 @@
             //me.playaudio();
             switch(type){
                 case 'txt':
-                    value = '<p>' + me.addLink(me.encode(isHistory ? msg.msg : msg.data)) + '</p>';
+                    value = '<p>' + me.face(me.addLink(me.encode(isHistory ? msg.msg : msg.data))) + '</p>';
                     break;
                 case 'face':
                     value = '<p>';

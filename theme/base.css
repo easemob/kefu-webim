@@ -277,6 +277,7 @@ img {
 .easemobWidget-msg-container img {
     border-radius: 2px;
     max-width: 100%;
+    *width: 200px;
     word-wrap: break-word;
     margin: 0 2px;
 }
@@ -304,6 +305,7 @@ img {
     display: inline-block;
     border-radius: 4px;
     max-width: 230px;
+    *width: 230px;
     box-shadow: 0 1px 1px rgba(0,0,0,.1), 0 -1px 1px rgba(0,0,0,.2) inset;
     padding: 10px;
     min-width: 20px;
@@ -493,6 +495,7 @@ body .easemobWidget-offline-bg {
 .easemobWidget-offline {
     width: 95%;
     max-width: 400px;
+    *width: 400px;
     margin: auto;
     position: relative;
 }
