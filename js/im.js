@@ -304,11 +304,7 @@
                 this.sendbtn.css('background-color', color);
             } else if(config.theme) {
                 if(!this.theme[config.theme]) config.theme = '天空之城';
-                $('head').append('<style type="text/css">\
-                    .bg-color{background-color:' + this.theme[config.theme].bgcolor + '}\
-                    .border-color{border:1px solid ' + this.theme[config.theme].bordercolor + '}\
-                    .hover-color{background-color:' + this.theme[config.theme].hovercolor + '}\
-                </style>');
+                $('head').append('<link rel="stylesheet" href="http://172.16.4.206/webim/theme/'+config.theme+'.css" />');
             } 
         }
         , showFixedBtn: function() {
@@ -351,6 +347,7 @@
                 !EasemobWidget.utils.isMobile && me.textarea.get(0).focus();
                 me.isOpened = true;
                 me.messageCount.html('').addClass('hide');
+                setTimeout(function(){!config.json.hide && me.fixedBtn.addClass('hide');}, 0);
             }
         }
         , sdkInit: function(){
@@ -407,7 +404,6 @@
             this.leaveMsgBtn = this.offline.find('button');
             this.contact = this.offline.find('input');
             this.leaveMsg = this.offline.find('textarea');
-            this.relStyle = $('#easemobWidgetStyle');
             this.fixedBtn = $('#easemobWidgetPopBar');
             this.Im = $('.easemobWidgetWrapper');
             this.audio = $('audio').get(0);
@@ -449,6 +445,7 @@
                 msg = '[' + msg[0] + ']';
             }
             else if(/\[.*\]/.test(msg)){
+                msg = msg.replace(/&amp;/g, '&');
                 msg = msg.replace(/&#39;/g, '\'');
                 msg = msg.replace(/&lt;/g, '\<');
                 $.each(me.face_map, function(k, v){
