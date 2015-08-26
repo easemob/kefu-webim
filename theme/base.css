@@ -226,6 +226,10 @@ img {
     border-radius: 4px;
     padding-bottom: 10px;
 }
+.easemobWidget-msg-container .chat-face-all {
+    width: 24px;
+    height: 24px;
+}
 .easeWidget-face-rec {
     position: absolute;
     z-index: 1;

@@ -895,7 +895,7 @@
                 if(this.getStats().files_queued > 1) {
                     this.cancelUpload();
                 }
-                if(!pictype[file.type.slice(1)]) {
+                if(!pictype[file.type.slice(1).toLowerCase()]) {
                     im.errorPrompt('不支持此文件类型' + file.type);
                     this.cancelUpload();
                 } else if(10485760 < file.size) {

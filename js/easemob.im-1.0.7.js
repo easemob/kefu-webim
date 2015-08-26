@@ -1706,8 +1706,8 @@ connection.prototype.sendPicture = function(options) {
     var image = new Image();
     var imageLoadFn = function() {
         image.onload = null;
-        if (!this.readyState || this.readyState == 'loaded'
-                || this.readyState == 'complete') {
+        if (!this.readyState || this.readyState == 'uninitialized' 
+                || this.readyState == 'loaded' || this.readyState == 'complete') {
             var heigth = image.height;
             var width = image.width;
             options.height = heigth;

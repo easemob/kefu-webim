@@ -54,10 +54,12 @@
                     iframe.style.width = '400px';
                     iframe.style.height = '500px';
                     iframe.style.right = '10px';
+                    iframe.style.border = '*1px solid #eee';
                     iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;';
                     break;
                 case 'minChat'://show Chat window
                     iframe.style.boxShadow = 'none';
+                    iframe.style.border = '*1px solid #eee';
                     iframe.style.borderRadius = '4px;';
                     iframe.style.right = '-5px';
                     if(!config.json.hide) {
