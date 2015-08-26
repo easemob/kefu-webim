@@ -543,7 +543,7 @@
                 } else if(!me.leaveMsg.val()) {
                     me.errorPrompt('留言不能为空');
                 } else if(!/^\d{5,11}$/g.test(me.contact.val()) 
-                    && !/^[a-zA-Z0-9-_]+@[a-zA-Z0-9-][.][a-zA-Z]+$/g.test(me.contact.val())) {
+                    && !/^[a-zA-Z0-9-_]+@([a-zA-Z0-9-]+[.])+[a-zA-Z]+$/g.test(me.contact.val())) {
                     me.errorPrompt('请输入正确的手机号码/邮箱/QQ号');
                 } else {
                     if(preview) {
