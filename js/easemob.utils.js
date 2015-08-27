@@ -181,7 +181,19 @@
 
         return message;
     }());
-
+    
+    var c = {
+        setcookie: function(key, value) {
+            var date = new Date();
+            date.setTime(date.getTime() + 30*24*3600*1000);
+            document.cookie = key + '=' + escape(value) + ';expires=' + date.toGMTString();
+        }
+        , getcookie: function(key) {
+            var results = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)'); 
+            return results ? (unescape(results[2])) : null;
+        }
+    }
     window.EasemobWidget = EasemobWidget;
     window.EmMessage = EmMessage;
+    window.Emc = c;
 }(window, undefined));

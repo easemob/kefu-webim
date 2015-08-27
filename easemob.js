@@ -3,7 +3,7 @@
  * version 1.0.0
 */
 ;(function(window, undefined) {
-    var message, iframe, iframeId;
+    var message, iframe, iframeId, curChannel, curUser;
     
     var getConfig = function(key){//get config from current script
         var that;
@@ -46,9 +46,21 @@
     
     var config = getConfig('easemob.js');
     config.json.hide = config.json.hide == 'false' ? false : config.json.hide;
+
     //open Api
     var open = function(){
         message.listenToIframe(function(msg){
+            var user, channel;
+            if(msg.indexOf('setuser') > -1) {
+                user = msg.split('@').length > 0 ? msg.split('@')[1] : '';
+                msg = msg.split('@').length > 0 ? msg.split('@')[0] : '';
+            }
+
+            if(msg.indexOf('setchannel') > -1) {
+                channel = msg.split('@').length > 0 ? msg.split('@')[1] : '';
+                msg = msg.split('@').length > 0 ? msg.split('@')[0] : '';
+            }
+
             switch(msg) {
                 case 'showChat'://show Chat window
                     iframe.style.width = '400px';
@@ -67,6 +79,12 @@
                         iframe.style.width = '0';
                         iframe.style.height = '0';
                     }
+                    break;
+                case 'setuser':
+                    Emc.setcookie('emKefuUser', user);
+                    break;
+                case 'setchannel':
+                    Emc.setcookie('emKefuChannel', channel);
                     break;
                 default: break;
             }   
@@ -108,6 +126,8 @@
             + (!!config.json.hide ? '&hide=true' : '') 
             + (!!config.json.color ? '&color=' + config.json.color : '')
             + (!!config.json.preview ? '&preview=' + config.json.preview : '')
+            + (!!curChannel ? '&c=' + curChannel : '')
+            + (!!curUser ? '&u=' + curUser : '')
             + '&v=' + new Date().getTime();
         if(!config.json.hide) {
             iframe.style.height = '37px';
@@ -149,11 +169,15 @@
     if(script.readyState) {
         script.onreadystatechange = function() {
             if(script.readyState == "loaded" || script.readyState == "complete") {
+                curUser = Emc.getcookie('emKefuUser');
+                curChannel = Emc.getcookie('emKefuChannel');
                 appendIframe();
             }
         }
     } else {
         script.onload = function() {
+            curUser = Emc.getcookie('emKefuUser');
+            curChannel = Emc.getcookie('emKefuChannel');
             appendIframe();
         }
     }

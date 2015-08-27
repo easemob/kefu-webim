@@ -11,6 +11,9 @@
     var eventList = [];
     var swfupload = null;
     var DEBUG = false;
+    var emKefuChannel;
+    var emKefuUser;
+    var root = window.top == window;
     var historyStartId = 0;
     var listSpan = 50;
     var disableHistory = false;
@@ -39,7 +42,7 @@
         , user: ''
         , password: ''
     }, setTimeout(function(){im.init()}, 0));
-    if(!DEBUG) {    
+    if(!DEBUG) {
     /*
         get info
     */
@@ -97,8 +100,14 @@
         config.word = winfo && winfo.length ? winfo[0].optionValue : '';
 
         if(!preview) {
-            var curUser = im.getChannel() != (config.to + '#' + config.appkey) ? null : im.getUser();
-            im.setChannel();
+            var curUser;
+            if(root) {
+                curUser = Emc.getcookie('emKefuChannel') != (config.to + '*' + config.orgName + '*' + config.appName) ? null : Emc.getcookie('emKefuUser');
+                Emc.setcookie('emKefuChannel', config.to + '*' + config.orgName + '*' + config.appName);
+            } else {
+                curUser = config.json.c != (config.to + '*' + config.orgName + '*' + config.appName) ? null : config.json.u;
+                message.sendToParent('setchannel@' + config.to + '*' + config.orgName + '*' + config.appName);
+            }
             if(curUser) {
                 config.user = curUser;
                 var getPwd = $.Deferred(function(){
@@ -154,7 +163,7 @@
                     , success: function(info) {
                         config.user = info.userId;
                         config.password = info.userPassword;
-                        im.setUser();
+                        root ? Emc.setcookie('emKefuUser', config.user) : message.sendToParent('setuser@' + config.user);
                         im.init();
                     }
                 });
@@ -169,6 +178,11 @@
         listen parent's msg
     */
     var message = new EmMessage().listenToParent(function(msg){
+        var value;
+        if(msg.indexOf('@') > 0) {
+            value = msg.split('@')[1];
+            msg = msg.split('@')[0];
+        }
         switch(msg) {
             case 'imclick'://toggle chat window to show or hide 
                 setTimeout(function(){
@@ -192,11 +206,11 @@
             this.msgCount = 0;
             this.getDom();
             this.changeTheme();
-            if(!config.json.hide && window.top != window) this.fixedBtn.removeClass('hide');
+            if(!config.json.hide && !root) this.fixedBtn.removeClass('hide');
             this.fillFace();
             this.setWord();
             this.setTitle();
-            (preview || window.top == window) && (!preview && this.min.addClass('hide'),this.toggleChatWindow());
+            (preview || root) && (!preview && this.min.addClass('hide'),this.toggleChatWindow());
             //this.audioAlert();//init audio
             this.mobileInit();
             this.setOffline();
@@ -343,7 +357,7 @@
                 eventList.push(im.toggleChatWindow);
                 return;
             }
-            if(window.top != window) {
+            if(!root) {
                 !config.json.hide && me.fixedBtn.toggleClass('hide');
                 message.sendToParent(me.Im.hasClass('hide') ? 'showChat' : 'minChat');
                 me.Im.toggleClass('hide');
@@ -856,24 +870,6 @@
             '[(F)]': 'ee_33',
             '[(W)]': 'ee_34',
             '[(D)]': 'ee_35'
-        }
-        , setUser: function() {
-            var date = new Date();
-            date.setTime(date.getTime() + 30*24*3600*1000);
-            document.cookie = 'emKefuUser=' + escape(config.user) + ';expires=' + date.toGMTString();
-        }
-        , getUser: function() {
-            var results = document.cookie.match('(^|;) ?emKefuUser=([^;]*)(;|$)'); 
-            return results ? (unescape(results[2])) : null; 
-        }
-        , setChannel: function() {
-            var date = new Date();
-            date.setTime(date.getTime() + 30*24*3600*1000);
-            document.cookie = 'emKefuChannel=' + escape(config.to + '#' + config.appkey) + ';expires=' + date.toGMTString();
-        }
-        , getChannel: function() {
-            var results = document.cookie.match('(^|;) ?emKefuChannel=([^;]*)(;|$)'); 
-            return results ? (unescape(results[2])) : null; 
         }
     };
     
