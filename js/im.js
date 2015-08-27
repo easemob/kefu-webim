@@ -8,7 +8,7 @@
         this.pause(); 
         this.currentTime = 0.0; 
     });
-
+    var eventList = [];
     var swfupload = null;
     var DEBUG = false;
     var historyStartId = 0;
@@ -206,6 +206,11 @@
             !preview && this.sdkInit();
             this.bindEvents();
             this.handleHistory();
+            this.loaded = true;
+            this.handleEvents();
+        }
+        , handleEvents: function() {
+            eventList.length > 0 && eventList[0].call(this);
         }
         , handleHistory: function(){
             if(config.history && config.history.length > 0) {
@@ -333,6 +338,11 @@
         }
         , toggleChatWindow: function() {
             var me = this;
+            if(!me.loaded) {
+                eventList = [];
+                eventList.push(im.toggleChatWindow);
+                return;
+            }
             if(window.top != window) {
                 !config.json.hide && me.fixedBtn.toggleClass('hide');
                 message.sendToParent(me.Im.hasClass('hide') ? 'showChat' : 'minChat');

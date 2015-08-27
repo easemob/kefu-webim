@@ -3,7 +3,7 @@
  * version 1.0.0
 */
 ;(function(window, undefined) {
-    var message, iframe;
+    var message, iframe, iframeId;
     
     var getConfig = function(key){//get config from current script
         var that;
@@ -54,12 +54,10 @@
                     iframe.style.width = '400px';
                     iframe.style.height = '500px';
                     iframe.style.right = '10px';
-                    iframe.style.border = '*1px solid #eee';
                     iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;';
                     break;
                 case 'minChat'://show Chat window
                     iframe.style.boxShadow = 'none';
-                    iframe.style.border = '*1px solid #eee';
                     iframe.style.borderRadius = '4px;';
                     iframe.style.right = '-5px';
                     if(!config.json.hide) {
@@ -77,7 +75,7 @@
         //open to customers
         window.easemobIM = function(){
             if(EasemobWidget.utils.isMobile) {
-                var i = document.getElementById('EasemobIframe');
+                var i = document.getElementById(iframeId);
                 var a = window.event.srcElement || window.event.target;
                 a.setAttribute('href', i.getAttribute('src'));
                 a.setAttribute('target', '_blank');
@@ -91,8 +89,9 @@
     //add kefu widget
     var appendIframe = function(){
         iframe = document.createElement('iframe');
-
-        iframe.id = 'EasemobIframe';
+        iframeId = 'EasemobIframe' + new Date().getTime();
+        iframe.id = iframeId;
+        iframe.name = new Date().getTime();
         iframe.frameBorder = 0;
         iframe.style.cssText = '\
             z-index:16777270;\
@@ -108,7 +107,8 @@
         iframe.src = config.domain + 'webim/im.html?tenantId=' + config.json.tenantId 
             + (!!config.json.hide ? '&hide=true' : '') 
             + (!!config.json.color ? '&color=' + config.json.color : '')
-            + (!!config.json.preview ? '&preview=' + config.json.preview : '');
+            + (!!config.json.preview ? '&preview=' + config.json.preview : '')
+            + '&v=' + new Date().getTime();
         if(!config.json.hide) {
             iframe.style.height = '37px';
             iframe.style.width = '100px';
@@ -127,7 +127,7 @@
             iframe.onreadystatechange = function() {
                 if(iframe.readyState == "loaded" || iframe.readyState == "complete") {
                     this.style.display = 'block';
-                    message = new EmMessage('EasemobIframe');
+                    message = new EmMessage(iframeId);
                     !config.json.hide && (message.sendToIframe('showBtn'));
                     open();
                 }
@@ -135,7 +135,7 @@
         } else {
             iframe.onload = function() {
                 this.style.display = 'block';
-                message = new EmMessage('EasemobIframe');
+                message = new EmMessage(iframeId);
                 !config.json.hide && (message.sendToIframe('showBtn'));
                 open();
             }
