@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<META xmlns="http://www.w3.org/2002/01/P3Pv1"> 
-    <POLICY-REFERENCES> 
-        <POLICY-REF about="http://example.com/w3c/policy.xml#policy"> 
-            <INCLUDE>/*</INCLUDE> 
-            <COOKIE-INCLUDE name="*" value="*" domain="*" path="/"/> 
-        </POLICY-REF> 
-    </POLICY-REFERENCES> 
-</META>

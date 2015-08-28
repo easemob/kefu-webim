@@ -1,0 +1,16 @@
+{
+  "name": "easemob",
+  "description": "optimizing js css and png.",
+  "version": "0.1.0",
+  "author": {
+    "name": "easemob",
+    "url": "http://easemob.com/"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.7.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.4",
+    "grunt-contrib-cssmin": "~0.6.2",
+    "grunt": "~0.4.1"
+  }
+}
