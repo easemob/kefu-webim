@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+<style>
+h3 {
+    width: 100%;
+    word-break: break-all;
+}
+a {
+    display: block;
+    background-color: #00A5FF;
+    width: 200px;
+    padding: 10px;
+    line-height: 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-top: 30px;
+    color: #fff;
+}
+input {
+    width: 90%;
+    max-width: 400px;
+    height: 40px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    box-shadow: 0 0 8px #1DA8FF;
+    font-size: 14px;
+    padding: 0 6px;
+}
+button {
+    display: block;
+    margin-top: 20px;
+    width: 100px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    font-size: 20px;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    background-color: #1DA8FF;
+}
+</style>
+<script id='demo'></script>
+</head>
+<body>
+<h3>登录客服-》管理面板-》渠道设置-》浏览器插件设置</h3>
+<h3>将生成的script代码 例如&lt;script src="//XXX.XXX.XXX/webim/easemob.js?tenantId=XXX"&gt;&lt;/script&gt;加入需要接入的页面&lt;/body&gt;之前</h3>
+<p>可将环信客服网页插件页的代码加入下方输入框，点击按钮进行测试</p>
+<input id='test' type='text' width='800' height='40'/>
+<button id='button'>测试</button>
+
+<a href='javascript:;' onclick='easemobIM()'>自定义按钮!!例如：&lt;a href='javascript:;' onclick='easemobIM()'&gt; 点击看效果</a>
+<script>
+
+    function getIEVersion(){
+        var ua = navigator.userAgent,matches,tridentMap={'4':8,'5':9,'6':10,'7':11};
+        matches = ua.match(/MSIE (\d+)/i);
+        if(matches&&matches[1])
+        {
+            return +matches[1];
+        }
+        matches = ua.match(/Trident\/(\d+)/i);
+        if(matches&&matches[1])
+        {
+            return tridentMap[matches[1]]||null;
+        }
+        return null;
+    };
+
+    var i = document.getElementById('test');
+    var b = document.getElementById('button');
+    
+    b.onclick = function(){
+        var v = i.value;
+        if(!v) return false;
+        var script = document.createElement('script');
+        script.src = v.slice(v.indexOf('src')+5, v.indexOf('async')-2);
+        (document.head || document.getElementsByTagName('head')[0]).appendChild(script);
+    }
+</script>
+</head>
+<body>
+
+</body>
+</html>
