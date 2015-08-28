@@ -497,7 +497,11 @@ var getFileSizeFn = function(fileInputId){
 
 var hasFlash = (function() {
     if (getIEVersion()) {//ie
-        return new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+        try {
+            return new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+        } catch (ex) {
+            return 0;
+        }
     } else {
         if (navigator.plugins && navigator.plugins.length > 0) {
             return navigator.plugins["Shockwave Flash"];
