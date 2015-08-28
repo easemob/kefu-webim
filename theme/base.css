@@ -225,6 +225,7 @@ img {
     background-color: #fff;
     border-radius: 4px;
     padding-bottom: 10px;
+    *width: 238px;
 }
 .easemobWidget-msg-container .chat-face-all {
     width: 24px;
@@ -253,6 +254,7 @@ img {
     border-radius: 2px;
     text-align: center;
     margin: 10px 10px 0 0;
+    *float: left;
 }
 .easemobWidget-face-img:hover {
     cursor: pointer;

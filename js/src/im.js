@@ -57,7 +57,7 @@
             get channel 相关信息
         */
         var getTo = $.Deferred(function(){
-            $.get('/v1/webimplugin/targetChannels', {tenantId: tenantId})
+            $.ajax({url:'/v1/webimplugin/targetChannels', data:{tenantId: tenantId}, cache: false})
             .done(function(info){
                 getTo.resolve(info);
             })
@@ -69,7 +69,7 @@
             get 上下班状态
         */
         var getStatus = $.Deferred(function(){
-            $.get('/v1/webimplugin/timeOffDuty', {tenantId: tenantId})
+            $.ajax({url: '/v1/webimplugin/timeOffDuty', data: {tenantId: tenantId}, cache: false})
             .done(function(info){
                 getStatus.resolve(info);
             })
@@ -81,7 +81,7 @@
             get theme
         */
         var getTheme = $.Deferred(function(){
-            $.get('/v1/webimplugin/theme/options', {tenantId: tenantId})
+            $.ajax({url:'/v1/webimplugin/theme/options', data:{tenantId: tenantId}, cache: false})
             .done(function(info){
                 getTheme.resolve(info);
             })
@@ -93,7 +93,7 @@
             get 广告语
         */
         var getWord = $.Deferred(function(){
-            $.get('/v1/webimplugin/notice/options', {tenantId: tenantId})
+            $.ajax({url: '/v1/webimplugin/notice/options', data: {tenantId: tenantId}, cache: false})
             .done(function(info){
                 getWord.resolve(info);
             })
@@ -130,7 +130,7 @@
                 if(curUser) {//如果取到缓存user，获取密码，否则新创建
                     config.user = curUser;
                     var getPwd = $.Deferred(function(){
-                        $.get('/v1/webimplugin/visitors/password', {userId: curUser})
+                        $.ajax({url:'/v1/webimplugin/visitors/password', data: {userId: curUser}, cache: false})
                         .done(function(info){
                             getPwd.resolve(info);
                         })
@@ -139,7 +139,7 @@
                         });
                     });
                     var getGroup = $.Deferred(function(){
-                        $.get('/v1/webimplugin/visitors/' + curUser + '/ChatGroupId?techChannelInfo='+escape(config.orgName + '#' + config.appName + '#' + config.to))
+                        $.ajax({url: '/v1/webimplugin/visitors/' + curUser + '/ChatGroupId?techChannelInfo='+escape(config.orgName + '#' + config.appName + '#' + config.to), cache: false})
                         .done(function(info){
                             getGroup.resolve(info);
                         })
@@ -151,11 +151,11 @@
                     .done(function(p, g){
                         config.group = g;
                         config.password = p;
-                        !disableHistory && $.get('/v1/webimplugin/visitors/msgHistory', {
+                        !disableHistory && $.ajax({url: '/v1/webimplugin/visitors/msgHistory', data:{
                             fromSeqId: historyStartId
                             , size: listSpan
                             , chatGroupId: g
-                        })
+                        }, cache: false})
                         .done(function(info){
                             if(info && info.length == listSpan) {
                                 historyStartId = Number(info[listSpan - 1].chatGroupSeqId) - 1;
@@ -206,15 +206,11 @@
         }
         switch(msg) {
             case 'imclick'://toggle chat window to show or hide 
-                setTimeout(function(){
-                    im.toggleChatWindow.call(im);
-                }, 0);
+                im.toggleChatWindow.call(im);
                 break;
-            case 'showBtn':
-                setTimeout(function(){
-                    im.showFixedBtn.call(im);
-                }, 0);
-                break;
+            /*case 'showBtn':
+                im.showFixedBtn.call(im);
+                break;*/
             default: break;
         }
     });
@@ -242,6 +238,7 @@
             this.bindEvents();
             this.handleHistory();
             this.loaded = true;
+            this.showFixedBtn();
             this.handleEvents();
         }
         , handleEvents: function() {
@@ -348,8 +345,7 @@
             } 
         }
         , showFixedBtn: function() {
-            !this.fixedBtn && this.getDom();
-            config.to && this.fixedBtn.removeClass('hide');
+            !config.json.hide && this.fixedBtn.removeClass('hide');
         }
         , setOffline: function() {
             var me = this;
@@ -613,11 +609,11 @@
                     st = setTimeout(function(){
                         if($t.scrollTop() < 200) {
                             !disableHistory && me.errorPrompt('正在玩命获取历史消息...');
-                            !disableHistory && $.get('/v1/webimplugin/visitors/msgHistory', {
+                            !disableHistory && $.ajax({url: '/v1/webimplugin/visitors/msgHistory', data:{
                                 fromSeqId: historyStartId
                                 , size: listSpan
                                 , chatGroupId: config.group
-                            })
+                            }, cache: false})
                             .done(function(info){
                                 if(info && info.length == listSpan) {
                                     historyStartId = Number(info[listSpan - 1].chatGroupSeqId) - 1;

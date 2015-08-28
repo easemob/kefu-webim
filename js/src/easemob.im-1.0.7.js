@@ -496,7 +496,7 @@ var getFileSizeFn = function(fileInputId){
 };
 
 var hasFlash = (function() {
-    if (/*@cc_on!@*/0) {//ie
+    if (getIEVersion()) {//ie
         return new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
     } else {
         if (navigator.plugins && navigator.plugins.length > 0) {

@@ -148,7 +148,6 @@
                 if(iframe.readyState == "loaded" || iframe.readyState == "complete") {
                     this.style.display = 'block';
                     message = new EmMessage(iframeId);
-                    !config.json.hide && (message.sendToIframe('showBtn'));
                     open();
                 }
             }
@@ -156,7 +155,6 @@
             iframe.onload = function() {
                 this.style.display = 'block';
                 message = new EmMessage(iframeId);
-                !config.json.hide && (message.sendToIframe('showBtn'));
                 open();
             }
         }
