@@ -162,7 +162,7 @@
 
     //append easemob.utils.js
     var script = document.createElement('script');
-    script.src = config.domain + 'webim/js/easemob.utils.js';
+    script.src = config.domain + 'webim/easemob.utils.js';
     (document.head || document.getElementsByTagName('head')[0]).appendChild(script);
     if(script.readyState) {
         script.onreadystatechange = function() {

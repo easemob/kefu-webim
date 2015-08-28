@@ -21,6 +21,9 @@ module.exports = function(grunt) {
                     'easemob.js':[
                         'js/src/easemob.js'
                     ],
+                    'easemob.utils.js':[
+                        'js/src/easemob.utils.js'
+                    ],
                     'js/emkf.min.js':[
                         'js/src/jquery-1.11.1.js',
                         'js/src/strophe.js',
