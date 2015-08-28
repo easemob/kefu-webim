@@ -8,25 +8,34 @@
         this.pause(); 
         this.currentTime = 0.0; 
     });
-    var eventList = [];
-    var swfupload = null;
+
+    
     var DEBUG = false;
-    var emKefuChannel;
-    var emKefuUser;
-    var root = window.top == window;
-    var historyStartId = 0;
-    var listSpan = 50;
-    var disableHistory = false;
+
+    var eventList = [];//事件列表,防止iframe没有加载完，父级元素post过来消息执行出错
+    var swfupload = null;//flash 上传利器
+    var emKefuChannel;//用于记录当前channel
+    var emKefuUser;//用于记录当前user
+    var root = window.top == window;//是否在iframe当中
+    var historyStartId = 0;//获取历史记录起始ID
+    var listSpan = 50;//获取历史记录的条数
+    var disableHistory = false;//如果获取的历史记录条数小于listSpan，则置为true，表明不需要再发送请求获取
+
+    //获取当前url所带的各种参数
     var config = EasemobWidget.utils.getConfig();
     config.json.hide = config.json.hide == 'false' ? false : config.json.hide;
     var tenantId = config.json.tenantId;
-    var preview = config.json.preview;
+    var preview = config.json.preview;//是否预览状态，本来用于客服配置页，但由于缓存太重，弃之
+
+    //支持的图片格式
     var pictype = {
         jpg : true,
         gif : true,
         png : true,
         bmp : true
     }
+
+
     DEBUG && (config = {
         json: {
             tenantId: '123'
@@ -42,138 +51,150 @@
         , user: ''
         , password: ''
     }, setTimeout(function(){im.init()}, 0));
+
     if(!DEBUG) {
-    /*
-        get info
-    */
-    var getTo = $.Deferred(function(){
-        $.get('/v1/webimplugin/targetChannels', {tenantId: tenantId})
-        .done(function(info){
-            getTo.resolve(info);
-        })
-        .fail(function(){
-            getTo.reject();
+        /*
+            get channel 相关信息
+        */
+        var getTo = $.Deferred(function(){
+            $.get('/v1/webimplugin/targetChannels', {tenantId: tenantId})
+            .done(function(info){
+                getTo.resolve(info);
+            })
+            .fail(function(){
+                getTo.reject();
+            });
         });
-    });
-    var getStatus = $.Deferred(function(){
-        $.get('/v1/webimplugin/timeOffDuty', {tenantId: tenantId})
-        .done(function(info){
-            getStatus.resolve(info);
-        })
-        .fail(function(){
-            getStatus.reject();
+        /*
+            get 上下班状态
+        */
+        var getStatus = $.Deferred(function(){
+            $.get('/v1/webimplugin/timeOffDuty', {tenantId: tenantId})
+            .done(function(info){
+                getStatus.resolve(info);
+            })
+            .fail(function(){
+                getStatus.reject();
+            });
         });
-    });
-    var getTheme = $.Deferred(function(){
-        $.get('/v1/webimplugin/theme/options', {tenantId: tenantId})
-        .done(function(info){
-            getTheme.resolve(info);
-        })
-        .fail(function(){
-            getTheme.reject();
+        /*
+            get theme
+        */
+        var getTheme = $.Deferred(function(){
+            $.get('/v1/webimplugin/theme/options', {tenantId: tenantId})
+            .done(function(info){
+                getTheme.resolve(info);
+            })
+            .fail(function(){
+                getTheme.reject();
+            });
         });
-    });
-    var getWord = $.Deferred(function(){
-        $.get('/v1/webimplugin/notice/options', {tenantId: tenantId})
-        .done(function(info){
-            getWord.resolve(info);
-        })
-        .fail(function(){
-            getWord.reject();
+        /*
+            get 广告语
+        */
+        var getWord = $.Deferred(function(){
+            $.get('/v1/webimplugin/notice/options', {tenantId: tenantId})
+            .done(function(info){
+                getWord.resolve(info);
+            })
+            .fail(function(){
+                getWord.reject();
+            });
         });
-    });
-    $.when(getTo, getStatus, getTheme, getWord)
-    .done(function(toinfo, sinfo, tinfo, winfo){
+        $.when(getTo, getStatus, getTheme, getWord)
+        .done(function(toinfo, sinfo, tinfo, winfo){
 
-        config.offline = sinfo;
-        if(toinfo.length > 0) {
-            config.to = toinfo[0].imServiceNumber;
-            config.orgName = toinfo[0].orgName;
-            config.appName = toinfo[0].appName;
-            config.tenantName = toinfo[0].tenantName;
-            config.appkey = toinfo[0].orgName + '#' + toinfo[0].appName;
-        } else {
-            if(!preview) return;
-        }
-
-        config.theme = tinfo && tinfo.length ? tinfo[0].optionValue : '天空之城';
-        config.word = winfo && winfo.length ? winfo[0].optionValue : '';
-
-        if(!preview) {
-            var curUser;
-            if(root) {
-                curUser = Emc.getcookie('emKefuChannel') != (config.to + '*' + config.orgName + '*' + config.appName) ? null : Emc.getcookie('emKefuUser');
-                Emc.setcookie('emKefuChannel', config.to + '*' + config.orgName + '*' + config.appName);
+            config.offline = sinfo;
+            if(toinfo.length > 0) {
+                config.to = toinfo[0].imServiceNumber;
+                config.orgName = toinfo[0].orgName;
+                config.appName = toinfo[0].appName;
+                config.tenantName = toinfo[0].tenantName;
+                config.appkey = toinfo[0].orgName + '#' + toinfo[0].appName;
             } else {
-                curUser = config.json.c != (config.to + '*' + config.orgName + '*' + config.appName) ? null : config.json.u;
-                message.sendToParent('setchannel@' + config.to + '*' + config.orgName + '*' + config.appName);
+                if(!preview) return;
             }
-            if(curUser) {
-                config.user = curUser;
-                var getPwd = $.Deferred(function(){
-                    $.get('/v1/webimplugin/visitors/password', {userId: curUser})
-                    .done(function(info){
-                        getPwd.resolve(info);
-                    })
-                    .fail(function(){
-                        getPwd.reject();
+
+            config.theme = tinfo && tinfo.length ? tinfo[0].optionValue : '天空之城';
+            config.word = winfo && winfo.length ? winfo[0].optionValue : '';
+
+            if(!preview) {
+                var curUser;
+                if(root) {
+                    curUser = Emc.getcookie('emKefuChannel') != (config.to + '*' + config.orgName + '*' + config.appName) ? null : Emc.getcookie('emKefuUser');
+                    Emc.setcookie('emKefuChannel', config.to + '*' + config.orgName + '*' + config.appName);
+                } else {
+                    curUser = config.json.c != (config.to + '*' + config.orgName + '*' + config.appName) ? null : config.json.u;
+                    message.sendToParent('setchannel@' + config.to + '*' + config.orgName + '*' + config.appName);
+                }
+                if(curUser) {//如果取到缓存user，获取密码，否则新创建
+                    config.user = curUser;
+                    var getPwd = $.Deferred(function(){
+                        $.get('/v1/webimplugin/visitors/password', {userId: curUser})
+                        .done(function(info){
+                            getPwd.resolve(info);
+                        })
+                        .fail(function(){
+                            getPwd.reject();
+                        });
                     });
-                });
-                var getGroup = $.Deferred(function(){
-                    $.get('/v1/webimplugin/visitors/' + curUser + '/ChatGroupId?techChannelInfo='+escape(config.orgName + '#' + config.appName + '#' + config.to))
-                    .done(function(info){
-                        getGroup.resolve(info);
-                    })
-                    .fail(function(){
-                        getGroup.reject();
+                    var getGroup = $.Deferred(function(){
+                        $.get('/v1/webimplugin/visitors/' + curUser + '/ChatGroupId?techChannelInfo='+escape(config.orgName + '#' + config.appName + '#' + config.to))
+                        .done(function(info){
+                            getGroup.resolve(info);
+                        })
+                        .fail(function(){
+                            getGroup.reject();
+                        });
                     });
-                });
-                $.when(getPwd, getGroup)
-                .done(function(p, g){
-                    config.group = g;
-                    config.password = p;
-                    !disableHistory && $.get('/v1/webimplugin/visitors/msgHistory', {
-                        fromSeqId: historyStartId
-                        , size: listSpan
-                        , chatGroupId: g
-                    })
-                    .done(function(info){
-                        if(info && info.length == listSpan) {
-                            historyStartId = Number(info[listSpan - 1].chatGroupSeqId) - 1;
-                            disableHistory = false;
-                        } else {
-                            disableHistory = true;
-                        }
-                        config.history = info;
-                        im.init();
+                    $.when(getPwd, getGroup)
+                    .done(function(p, g){
+                        config.group = g;
+                        config.password = p;
+                        !disableHistory && $.get('/v1/webimplugin/visitors/msgHistory', {
+                            fromSeqId: historyStartId
+                            , size: listSpan
+                            , chatGroupId: g
+                        })
+                        .done(function(info){
+                            if(info && info.length == listSpan) {
+                                historyStartId = Number(info[listSpan - 1].chatGroupSeqId) - 1;
+                                disableHistory = false;
+                            } else {
+                                disableHistory = true;
+                            }
+                            config.history = info;
+                            im.init();
+                        })
+                        .fail(function(){});
                     })
                     .fail(function(){});
-                })
-                .fail(function(){});
+                } else {
+                    $.ajax({
+                        url: '/v1/webimplugin/visitors'
+                        , contentType: 'application/json'
+                        , type: 'post'
+                        , data: JSON.stringify({
+                            orgName: config.orgName
+                            , appName: config.appName
+                            , imServiceNumber: config.to
+                        })
+                        , success: function(info) {
+                            config.user = info.userId;
+                            config.password = info.userPassword;
+                            root ? Emc.setcookie('emKefuUser', config.user) : message.sendToParent('setuser@' + config.user);
+                            im.init();
+                        }
+                    });
+                }
             } else {
-                $.ajax({
-                    url: '/v1/webimplugin/visitors'
-                    , contentType: 'application/json'
-                    , type: 'post'
-                    , data: JSON.stringify({
-                        orgName: config.orgName
-                        , appName: config.appName
-                        , imServiceNumber: config.to
-                    })
-                    , success: function(info) {
-                        config.user = info.userId;
-                        config.password = info.userPassword;
-                        root ? Emc.setcookie('emKefuUser', config.user) : message.sendToParent('setuser@' + config.user);
-                        im.init();
-                    }
-                });
+                im.init();
             }
-        } else {
-            im.init();
-        }
-    })
-    .fail(function(){});
-}
+        })
+        .fail(function(){});
+    }
+
+
     /*
         listen parent's msg
     */
@@ -254,7 +275,7 @@
             nn.html(config.tenantName);
             document.title = nn.html() + '-客服';
         }
-        , mobileInit: function(){
+        , mobileInit: function(){//移动端初始化
             if(!EasemobWidget.utils.isMobile) return;
             this.Im.find('.easemobWidget-logo').hide();
             this.fixedBtn.css({width: '100%', top: '0'});
@@ -286,7 +307,7 @@
                 this.chatWrapper.parent().css('top', '43px');
             }
         }
-        , fillFace: function(){
+        , fillFace: function(){//动态创建表情
             var faceStr = '<li class="e-face">',
                 count = 0;
             $.each(this.face_map, function(k, v){
@@ -306,7 +327,7 @@
             this.faceWrapper.html(faceStr);
             faceStr = null;
         }
-        , errorPrompt: function(msg) {
+        , errorPrompt: function(msg) {//暂时所有的提示都用这个方法
             var me = this;
             me.ePrompt.html(msg).removeClass('hide');
             setTimeout(function(){
@@ -350,7 +371,7 @@
             me.sendbtn.parent().addClass('hide');
             me.dutyStatus.html('(离线)');
         }
-        , toggleChatWindow: function() {
+        , toggleChatWindow: function() {//主要用于展开收起聊天窗口
             var me = this;
             if(!me.loaded) {
                 eventList = [];
@@ -374,7 +395,7 @@
                 setTimeout(function(){!config.json.hide && me.fixedBtn.addClass('hide');}, 0);
             }
         }
-        , sdkInit: function(){
+        , sdkInit: function(){//使用接口数据初始化js sdk相关方法
             var me = this;
             me.conn = new Easemob.im.Connection();
             me.impromise = me.conn.init({
@@ -1065,19 +1086,4 @@ me.chatWrapper.on('click', '.easemobWidget-msg-voice', function(){
     }, 500);
     
 });
-DEBUG && (config = {
-        json: {
-            tenantId: '123'
-            , preview: false
-        }
-        , offline: true
-        , to: ''
-        , orgName: 'easemob-demo'
-        , appName: 'chatdemoui'
-        , theme: '天空之城'
-        , appkey: 'easemob-demo#chatdemoui'
-        , word: 'testtest'
-        , user: ''
-        , password: ''
-    }, setTimeout(function(){im.init()}, 0));
 */
