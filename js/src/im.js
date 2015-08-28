@@ -933,11 +933,12 @@
             }
             , upload_complete_handler: function(){}
             , upload_success_handler: function(file, response){
+                if(!file || !response) return;
                 try{
                     var res = Easemob.im.Helper.parseUploadResponse(response);
                     
                     res = $.parseJSON(res);
-                    //res.filename = file.name;
+                    res.filename = file.name;
                     if(file && !file.url && res.entities && res.entities.length > 0) {
                         file.url = res.uri + '/' + res.entities[0].uuid;
                     }
@@ -953,6 +954,7 @@
                         </div>\
                     ");
                     im.chatWrapper.append(temp);
+                    this.uploadOptions.onFileUploadComplete(res);
                 } catch (e) {
                     im.errorPrompt('上传图片发生错误');
                 }
@@ -966,6 +968,7 @@
     var flashUpload = function(url, options){
         swfupload.setUploadURL(url);
         swfupload.startUpload();
+        swfupload.uploadOptions = options;
     }
 
 }(window, undefined));
