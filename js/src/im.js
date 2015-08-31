@@ -2,7 +2,7 @@
     version: 1.0.0
  */
 ;(function(window, undefined){
-    
+
     window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
     typeof HTMLAudioElement !== 'undefined' && (HTMLAudioElement.prototype.stop = function() {
         this.pause(); 
@@ -395,7 +395,7 @@
             var me = this;
             me.conn = new Easemob.im.Connection();
             me.impromise = me.conn.init({
-                https: location.potocol == 'https:' ? true : false
+                https: location.protocol == 'https:' ? true : false
                 , onOpened: function(){
                     me.conn.setPresence();
                 }
