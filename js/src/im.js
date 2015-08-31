@@ -395,7 +395,7 @@
             var me = this;
             me.conn = new Easemob.im.Connection();
             me.impromise = me.conn.init({
-                https: location.potocol == 'https' ? true : false
+                https: location.potocol == 'https:' ? true : false
                 , onOpened: function(){
                     me.conn.setPresence();
                 }
