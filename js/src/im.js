@@ -397,6 +397,7 @@
             me.impromise = me.conn.init({
                 //https: location.protocol == 'https:' ? true : false
                 https: true
+                , apiURL: 'https://a1.easemob.com'
                 , onOpened: function(){
                     me.conn.setPresence();
                 }
