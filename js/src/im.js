@@ -677,7 +677,7 @@
             }
             var opt = {
                 fileInputId: me.realfile.attr('id')
-                , apiURL: 'https://a1.easemob.com'
+                , apiUrl: 'https://a1.easemob.com'
                 , to: config.to
                 , type : 'chat'
                 , onFileUploadError : function(error) {
