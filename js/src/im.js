@@ -397,7 +397,6 @@
             me.impromise = me.conn.init({
                 //https: location.protocol == 'https:' ? true : false
                 https: true
-                , apiURL: 'https://a1.easemob.com'
                 , onOpened: function(){
                     me.conn.setPresence();
                 }
@@ -678,6 +677,7 @@
             }
             var opt = {
                 fileInputId: me.realfile.attr('id')
+                , apiURL: 'https://a1.easemob.com'
                 , to: config.to
                 , type : 'chat'
                 , onFileUploadError : function(error) {
