@@ -284,7 +284,6 @@ img {
     max-width: 100%;
     *width: 200px;
     word-wrap: break-word;
-    margin: 0 2px;
 }
 .easemobWidget-msg-container p {
     margin-top: 2px;
@@ -633,5 +632,10 @@ body .easemobWidget-offline-bg {
     background: url(base@2x.png) no-repeat;
     background-size: 64px;
     background-position: -35px -34px;
+}
+.easemobWidget-msg-status i {
+    background: url(base@2x.png) no-repeat;
+    background-size: 64px;
+    background-position: 2px -393px;
 }
 }
