@@ -3,7 +3,7 @@
  * version 1.0.0
 */
 ;(function(window, undefined) {
-    var message, iframe, iframeId, curChannel, curUser, https = 'https:';
+    var message, iframe, iframeId, curChannel, curUser;
     
     var getConfig = function(key){//get config from current script
         var that;
@@ -123,7 +123,7 @@
             height:0;\
             display:none;\
             transition:all .01s;';
-        iframe.src = https + config.domain + 'webim/im.html?tenantId=' + config.json.tenantId 
+        iframe.src = config.domain + 'webim/im.html?tenantId=' + config.json.tenantId 
             + (!!config.json.hide ? '&hide=true' : '') 
             + (!!config.json.color ? '&color=' + config.json.color : '')
             + (!!config.json.preview ? '&preview=' + config.json.preview : '')
@@ -163,7 +163,7 @@
 
     //append easemob.utils.js
     var script = document.createElement('script');
-    script.src = https + config.domain + 'webim/easemob.utils.js';
+    script.src = config.domain + 'webim/easemob.utils.js';
     (document.head || document.getElementsByTagName('head')[0]).appendChild(script);
     if(script.readyState) {
         script.onreadystatechange = function() {

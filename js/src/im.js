@@ -11,7 +11,8 @@
 
     
     var DEBUG = false;
-
+    
+    var https = location.protocol == 'https:' ? true : false;
     var eventList = [];//事件列表,防止iframe没有加载完，父级元素post过来消息执行出错
     var swfupload = null;//flash 上传利器
     var emKefuChannel;//用于记录当前channel
@@ -395,9 +396,8 @@
             var me = this;
             me.conn = new Easemob.im.Connection();
             me.impromise = me.conn.init({
-                //https: location.protocol == 'https:' ? true : false
-                https: true
-                , xmppURL: 'https://im-api.easemob.com/http-bind/'
+                https: https ? true : false
+                , xmppURL: (https ? 'https:' : 'http:') + '//im-api.easemob.com/http-bind/'
                 , onOpened: function(){
                     me.conn.setPresence();
                 }
@@ -678,7 +678,7 @@
             }
             var opt = {
                 fileInputId: me.realfile.attr('id')
-                , apiUrl: 'https://a1.easemob.com'
+                , apiUrl: (https ? 'https:' : 'http:') + '//a1.easemob.com'
                 , to: config.to
                 , type : 'chat'
                 , onFileUploadError : function(error) {
@@ -686,7 +686,7 @@
                 }
                 , onFileUploadComplete: function(data){
                     if(Easemob.im.Helper.isCanUploadFileAsync) {
-                        me.chatWrapper.append(temp);
+                        //me.chatWrapper.append(temp);
                     } else {
                         swfupload.settings.upload_success_handler();
                     }
@@ -695,7 +695,8 @@
                 , flashUpload: Easemob.im.Helper.isCanUploadFileAsync ? null : flashUpload
             };
             !preview && me.conn.sendPicture(opt);
-            me.errorPrompt('图片发送中，请稍后...');
+            //me.errorPrompt('图片发送中，请稍后...');
+            !preview && me.chatWrapper.append(temp);
         }
         , encode: function(str){
             if (!str || str.length == 0) return "";
@@ -753,7 +754,7 @@
             me.textarea.get(0).focus();// reset
         }
         , addLink: function(msg) {
-            var reg = new RegExp('(http(s)?:\/\/|www\.)[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+', 'gm');
+            var reg = new RegExp('(http(s)?:\/\/|www[.])[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+', 'gm');
             var res = msg.match(reg);
             if(res && res.length) {
                 msg = msg.replace(reg, "<a href='"+res[0]+"' target='_blank'>"+res[0]+"</a>");

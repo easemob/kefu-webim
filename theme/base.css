@@ -127,6 +127,8 @@ img {
 .easemobWidgetHeader-word-status {
     margin-left: 4px;
     color: rgba(255,255,255,.7);
+    *color: #fff;
+    *filter: alpha(opacity=70);
 }
 .easemobWidgetHeader-min {
     position: absolute;
@@ -581,6 +583,7 @@ body .easemobWidget-offline-bg {
     padding: 0 80px 0 36px;
     box-sizing: border-box;
     background-color: #E7EAF4;
+    -webkit-backface-visibility:hidden
 }
 .easemobWidget-send-wrapper .textarea-mobile {
     height: 34px;
@@ -588,6 +591,7 @@ body .easemobWidget-offline-bg {
     margin-top: 4px;
     border-radius: 4px;
     padding-right: 36px;
+    overflow: hidden;
 }
 .easeWidget-face-rec-mobile {
     display: none;
