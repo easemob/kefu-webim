@@ -111,6 +111,7 @@
         iframe.id = iframeId;
         iframe.name = new Date().getTime();
         iframe.frameBorder = 0;
+        iframe.allowTransparency = 'true';
         iframe.style.cssText = '\
             z-index:16777270;\
             overflow:hidden;\

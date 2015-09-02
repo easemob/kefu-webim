@@ -7,7 +7,6 @@ html, body {
     height: 100%;
     font-size: 13px;
     font-family: 'Microsoft YaHei', 'Arial';
-    background-color: #fff;
 }
 a {
     color: #009EEC;
@@ -400,6 +399,7 @@ img {
     height: 140px;
     width: 100%;
     bottom: 0;
+    background-color: #fff;
 }
 #easemobWidgetSendBtn.disabled {
     background-color: #ccc;
@@ -603,7 +603,7 @@ body .easemobWidget-offline-bg {
 }
 .easemobWidget-logo {
     position: absolute;
-    color: #eee;
+    color: #ccc;
     font-size: 12px;
     left: 10px;
     bottom: 10px;

@@ -397,6 +397,7 @@
             me.impromise = me.conn.init({
                 //https: location.protocol == 'https:' ? true : false
                 https: true
+                , xmppURL: 'https://im-api.easemob.com/http-bind/'
                 , onOpened: function(){
                     me.conn.setPresence();
                 }
