@@ -66,12 +66,13 @@
                     iframe.style.width = '400px';
                     iframe.style.height = '500px';
                     iframe.style.right = '10px';
-                    iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;';
+                    iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;*border: 1px solid #ccc;border: 1px solid #ccc\\9;';
                     break;
                 case 'minChat'://show Chat window
                     iframe.style.boxShadow = 'none';
                     iframe.style.borderRadius = '4px;';
                     iframe.style.right = '-5px';
+                    iframe.style.border = 'none';
                     if(!config.json.hide) {
                         iframe.style.height = '37px';
                         iframe.style.width = '102px';
