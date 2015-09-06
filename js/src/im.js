@@ -19,7 +19,6 @@
     var emKefuUser;//用于记录当前user
     var root = window.top == window;//是否在iframe当中
     var historyStartId = 0;//获取历史记录起始ID
-    var historyFirst = true;//第一次获取历史记录
     var listSpan = 50;//获取历史记录的条数
     var disableHistory = false;//如果获取的历史记录条数小于listSpan，则置为true，表明不需要再发送请求获取
 
@@ -267,10 +266,6 @@
                         }
                     }
                 });
-                if(historyFirst) {
-                    this.scrollBottom();
-                    historyFirst = false;
-                }
             }
         }
         , setTitle: function(){
@@ -562,14 +557,13 @@
             });
             me.textarea.on("keydown", function(evt){
                 var that = $(this);
-                if((EasemobWidget.utils.isMobile && evt.keyCode == 13) || (evt.ctrlKey && evt.keyCode == 13) || (evt.shiftKey && evt.keyCode == 13)){
+                if(!EasemobWidget.utils.isMobile && evt.ctrlKey && evt.keyCode == 13){
                     that.val($(this).val()+'\n');
                     return false;
                 } else if(evt.keyCode == 13) {
                     if(me.sendbtn.hasClass('disabled')) {
                         return false;
                     }
-                    im.faceWrapper.parent().addClass('hide');
                     me.sendTextMsg();
                     setTimeout(function(){
                         that.val('');
@@ -609,55 +603,33 @@
                     me.leaveMsg.val('');
                 }
             });
-            var st, memPos = 0, _startY, _y, touch, DIS=200, _fired=false;
-            var triggerGetHistory = function(){
-                !disableHistory && $.ajax({url: '/v1/webimplugin/visitors/msgHistory', data:{
-                    fromSeqId: historyStartId
-                    , size: listSpan
-                    , chatGroupId: config.group
-                }, cache: false})
-                .done(function(info){
-                    if(info && info.length == listSpan) {
-                        historyStartId = Number(info[listSpan - 1].chatGroupSeqId) - 1;
-                        disableHistory = false;
-                    } else {
-                        disableHistory = true;
-                    }
-                    config.history = info;
-                    im.handleHistory();
-                });
-            }
-            me.chatWrapper.parent().on('touchstart', function(e){
-                if(e.originalEvent.touches && e.originalEvent.touches.length>0) {
-                    _startY = touch[0].pageY;
-                }
-            })
-            .on('touchmove', function(e){
-                $t = $(this);
-                if(e.originalEvent.touches && e.originalEvent.touches.length>0) {
-
-					touch = e.originalEvent.touches;
-					_y = touch[0].pageY;
-					if(_startY-_y > 8 && $t.scrollTop() <= 50) {
-                        clearTimeout(st);
-                        st = setTimeout(function(){
-			    			triggerGetHistory();
-                        }, 100);
-					}
-				}
-            });
-            me.chatWrapper.parent().on('mousewheel DOMMouseScroll', function(e){
-                var ev = window.event || e;
+            var st, memPos = 0;
+            me.chatWrapper.parent().on('scroll', function(){
                 var $t = $(this);
-                
-                if(ev.originalEvent.wheelDelta % 120 > 0 || ev.originalEvent.detail < 0) {//up
+                if(memPos >= $t.scrollTop()) {
                     clearTimeout(st);
                     st = setTimeout(function(){
-                        if($t.scrollTop() <= 50) {
-                            triggerGetHistory();
+                        if($t.scrollTop() < 200) {
+                            !disableHistory && me.errorPrompt('正在玩命获取历史消息...');
+                            !disableHistory && $.ajax({url: '/v1/webimplugin/visitors/msgHistory', data:{
+                                fromSeqId: historyStartId
+                                , size: listSpan
+                                , chatGroupId: config.group
+                            }, cache: false})
+                            .done(function(info){
+                                if(info && info.length == listSpan) {
+                                    historyStartId = Number(info[listSpan - 1].chatGroupSeqId) - 1;
+                                    disableHistory = false;
+                                } else {
+                                    disableHistory = true;
+                                }
+                                config.history = info;
+                                im.handleHistory();
+                            });
                         }
-                    }, 400);
+                    }, 1000);
                 }
+                memPos = $t.scrollTop();
             });
         }
         , scrollBottom: function(){
@@ -684,7 +656,6 @@
                 me.chatWrapper.prepend(temp);
                 return;
             }
-            me.open();//某些andriod选择图库的时候断开连接。==b
             if(Easemob.im.Helper.isCanUploadFileAsync) {
                 if(!me.realfile.val()) return;
 
@@ -1025,7 +996,6 @@
 case 'audio':
     var options = msg;
     options.onFileDownloadComplete = function(response, xhr) {
-
         var audio = document.createElement('audio');
         if (Easemob.im.Helper.isCanUploadFileAsync && ("src" in audio) && ("controls" in audio)) {
             var objectURL = window.URL.createObjectURL(response);
@@ -1076,7 +1046,6 @@ case 'location':
 ***********************************************
 var ts = 0;
 me.chatWrapper.on('click', '.easemobWidget-msg-voice', function(){
-
     if(!Easemob.im.Helper.isCanUploadFileAsync || EasemobWidget.utils.isAndroid) {
         me.errorPrompt('当前浏览器不支持语音播放');
         return false;    
