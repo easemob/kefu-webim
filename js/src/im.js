@@ -15,6 +15,8 @@
     var https = location.protocol == 'https:' ? true : false;
     var eventList = [];//事件列表,防止iframe没有加载完，父级元素post过来消息执行出错
     var swfupload = null;//flash 上传利器
+    var click = 'touchstart' in window ? 'click' : 'touchstart';
+    var scbT = 0;
     var emKefuChannel;//用于记录当前channel
     var emKefuUser;//用于记录当前user
     var root = window.top == window;//是否在iframe当中
@@ -269,8 +271,8 @@
                     }
                 });
                 if(historyFirst) {
+                    im.chatWrapper.find('img:last').on('load', im.scrollBottom);
                     im.scrollBottom();
-                    im.chatWrapper.find('img:last').on('load', function(){im.scrollBottom();});
                     historyFirst = false;
                 }
             }
@@ -512,23 +514,20 @@
         }
         , bindEvents: function(){
             var me = this;
-            me.closeWord.on('click touchstart', function(){
+            me.closeWord.on(click, function(){
                 me.word.fadeOut();
                 me.chatWrapper.parent().css('top', '43px');
             });
+            //EasemobWidget.utils.isMobile && me.textarea.autogrow();
             me.textarea.on('keyup change', function(){
                 $(this).val() ? me.sendbtn.removeClass('disabled') : me.sendbtn.addClass('disabled');
             })
-            .on('touchstart', function() {
-                setTimeout(function() {
-                    me.scrollBottom();
-                }, 500);
-            });
+            .on('touchstart', me.scrollBottom);
             me.min.on('mouseenter mouseleave', function(){
                 $(this).toggleClass('hover-color');
             });
-            me.facebtn.on('click touchstart', me.toggleFaceWrapper);//slide up and down face wrapper
-            me.faceWrapper.on('click touchstart', 'img', function(){//face click event
+            me.facebtn.on(click, me.toggleFaceWrapper);//slide up and down face wrapper
+            me.faceWrapper.on('click', 'img', function(){//face click event
                 !EasemobWidget.utils.isMobile && me.textarea.focus();
                 me.textarea.val(me.textarea.val()+$(this).data('value'));
                 me.sendbtn.removeClass('disabled');
@@ -558,14 +557,11 @@
                     me.faceWrapper.parent().addClass('hide');
                 }
             });
-            $('body').on('touchstart', function(e){
-                var e = window.event || ev,
-                    t = $(e.srcElement || e.target);
-                if(!t.hasClass('easemobWidget-textarea') && !t.hasClass('easemobWidget-send')) {
-                    me.textarea.blur();
-                }
+            $('.e-face, .easemobWidgetBody-wrapper')
+            .on('touchstart', function(e){
+                me.textarea.blur();
             });
-            me.uploadbtn.on('click touchstart', function(){
+            me.uploadbtn.on(click, function(){
                 if(!Easemob.im.Helper.isCanUploadFile) {
                     me.errorPrompt('当前浏览器不支持发送图片');
                     return false;    
@@ -578,8 +574,8 @@
             });
             me.textarea.on("keydown", function(evt){
                 var that = $(this);
-                if(!EasemobWidget.utils.isMobile && evt.ctrlKey && evt.keyCode == 13){
-                //if((EasemobWidget.utils.isMobile && evt.keyCode == 13) || (evt.ctrlKey && evt.keyCode == 13) || (evt.shiftKey && evt.keyCode == 13)){
+                //if(!EasemobWidget.utils.isMobile && evt.ctrlKey && evt.keyCode == 13){
+                if((EasemobWidget.utils.isMobile && evt.keyCode == 13) || (evt.ctrlKey && evt.keyCode == 13) || (evt.shiftKey && evt.keyCode == 13)){
                     that.val($(this).val()+'\n');
                     return false;
                 } else if(evt.keyCode == 13) {
@@ -593,15 +589,16 @@
                     }, 0);
                 }
             });
-            me.sendbtn.on('click touchstart', function(){
+            me.sendbtn.on('click', function(){//不能用touch，无法触发focus
                 if(me.sendbtn.hasClass('disabled')) {
                     return false;
                 }
+                me.faceWrapper.parent().addClass('hide');
                 me.sendTextMsg();
-                me.textarea.focus();
-                setTimeout(function(){me.scrollBottom();}, 500);
+                me.scrollBottom('fast');
+                me.textarea.css('height', '34px').focus();
             });
-            me.leaveMsgBtn.on('click touchstart', function(){
+            me.leaveMsgBtn.on(click, function(){
                 if(!me.contact.val() && !me.leaveMsg.val()) {
                     me.errorPrompt('联系方式和留言不能为空');
                 } else if(!me.contact.val()) {
@@ -662,7 +659,7 @@
                 if(e.originalEvent.touches && e.originalEvent.touches.length>0) {
 
 					touch = e.originalEvent.touches;
-					_y = touch[0].pageY;console.log(_startY,'   ', _y, '   ' , $t.scrollTop());
+					_y = touch[0].pageY;
 					if(_y-_startY > 8 && $t.scrollTop() <= 50) {
                         clearTimeout(st);
                         st = setTimeout(function(){
@@ -684,11 +681,12 @@
                 }
             });
         }
-        , scrollBottom: function(){
+        , scrollBottom: function(type){
             var ocw = im.chatWrapper.parent().get(0);
-            setTimeout(function(){
+            clearTimeout(scbT);
+            var scbT = setTimeout(function(){
                 ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000;
-            }, 0);
+            }, type == 'fast' ? 0 : 500);
         }
         , sendImgMsg: function(msg) {
             var me = this;
@@ -1031,8 +1029,63 @@
 }(window, undefined));
 
 
+/*
+    the third plugins: autogrow
+*/
+(function($) {
 
-
+    /*
+     * Auto-growing textareas; technique ripped from Facebook
+     */
+    $.fn.autogrow = function(options) {
+        
+        this.filter('textarea').each(function() {
+            
+            var $this       = $(this),
+                minHeight   = $this.height(),
+                lineHeight  = $this.css('lineHeight');
+            
+            var shadow = $('<div></div>').css({
+                position:   'absolute',
+                top:        -10000,
+                left:       -10000,
+                width:      $(this).width() - parseInt($this.css('paddingLeft')) - parseInt($this.css('paddingRight')),
+                fontSize:   $this.css('fontSize'),
+                fontFamily: $this.css('fontFamily'),
+                lineHeight: $this.css('lineHeight'),
+                resize:     'none'
+            }).appendTo(document.body);
+            
+            var update = function() {
+    
+                var times = function(string, number) {
+                    for (var i = 0, r = ''; i < number; i ++) r += string;
+                    return r;
+                };
+                
+                var val = this.value.replace(/</g, '&lt;')
+                                    .replace(/>/g, '&gt;')
+                                    .replace(/&/g, '&amp;')
+                                    .replace(/\n$/, '<br/>&nbsp;')
+                                    .replace(/\n/g, '<br/>')
+                                    .replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
+                
+                shadow.html(val);
+                $(this).css('height', Math.max(shadow.height() + 34, minHeight));
+            
+            }
+            
+            $(this).change(update).keyup(update).keydown(update);
+            
+            update.apply(this);
+            
+        });
+        
+        return this;
+        
+    }
+    
+})(jQuery);
 
 
 

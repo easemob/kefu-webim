@@ -593,18 +593,21 @@ body .easemobWidget-offline-bg {
     top: 6px;
 }
 .easemobWidgetSend-mobile {
-    height: 42px;
+    height: auto;
     padding: 0 80px 0 36px;
     box-sizing: border-box;
     background-color: #E7EAF4;
 }
 .easemobWidget-send-wrapper .textarea-mobile {
     height: 34px;
+    max-height: 70px;
     bottom: 0;
     margin-top: 4px;
+    margin-bottom: 1px;
     border-radius: 4px;
     padding-right: 36px;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     line-height: 17px;
     font-size: 17px;
 }
