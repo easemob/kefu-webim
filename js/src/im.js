@@ -512,7 +512,7 @@
         }
         , bindEvents: function(){
             var me = this;
-            me.closeWord.on('click', function(){
+            me.closeWord.on('click touchstart', function(){
                 me.word.fadeOut();
                 me.chatWrapper.parent().css('top', '43px');
             });
@@ -527,9 +527,9 @@
             me.min.on('mouseenter mouseleave', function(){
                 $(this).toggleClass('hover-color');
             });
-            me.facebtn.on('click', me.toggleFaceWrapper);//slide up and down face wrapper
-            me.faceWrapper.on('click', 'img', function(){//face click event
-                !EasemobWidget.utils.isMobile && me.textarea.get(0).focus();
+            me.facebtn.on('click touchstart', me.toggleFaceWrapper);//slide up and down face wrapper
+            me.faceWrapper.on('click touchstart', 'img', function(){//face click event
+                !EasemobWidget.utils.isMobile && me.textarea.focus();
                 me.textarea.val(me.textarea.val()+$(this).data('value'));
                 me.sendbtn.removeClass('disabled');
             });
@@ -551,12 +551,21 @@
                 me.sendImgMsg();
             });
             $(document).on('click', function(ev){//hide face wrapper
-                var e = window.event || ev;
-                if(!$(e.srcElement || e.target).hasClass('e-face')) {
+                var e = window.event || ev,
+                    t = $(e.srcElement || e.target);
+
+                if(!t.hasClass('e-face')) {
                     me.faceWrapper.parent().addClass('hide');
                 }
             });
-            me.uploadbtn.on('click', function(){
+            $('body').on('touchstart', function(e){
+                var e = window.event || ev,
+                    t = $(e.srcElement || e.target);
+                if(!t.hasClass('easemobWidget-textarea') && !t.hasClass('easemobWidget-send')) {
+                    me.textarea.blur();
+                }
+            });
+            me.uploadbtn.on('click touchstart', function(){
                 if(!Easemob.im.Helper.isCanUploadFile) {
                     me.errorPrompt('当前浏览器不支持发送图片');
                     return false;    
@@ -584,15 +593,15 @@
                     }, 0);
                 }
             });
-            me.sendbtn.on('click', function(){
+            me.sendbtn.on('click touchstart', function(){
                 if(me.sendbtn.hasClass('disabled')) {
                     return false;
                 }
                 me.sendTextMsg();
-                me.textarea.get(0).focus();
+                me.textarea.focus();
                 setTimeout(function(){me.scrollBottom();}, 500);
             });
-            me.leaveMsgBtn.on('click', function(){
+            me.leaveMsgBtn.on('click touchstart', function(){
                 if(!me.contact.val() && !me.leaveMsg.val()) {
                     me.errorPrompt('联系方式和留言不能为空');
                 } else if(!me.contact.val()) {
