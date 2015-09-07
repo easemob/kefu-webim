@@ -1001,6 +1001,7 @@
                         </div>\
                     ");
                     im.chatWrapper.append(temp);
+                    im.chatWrapper.find('img:last').on('load', im.scrollBottom);
                     this.uploadOptions.onFileUploadComplete(res);
                 } catch (e) {
                     im.errorPrompt('上传图片发生错误');

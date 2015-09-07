@@ -138,9 +138,8 @@ img {
 }
 .easemobWidgetHeader-word-status {
     margin-left: 4px;
+    color: #efefef;
     color: rgba(255,255,255,.7);
-    *color: #fff;
-    *filter: alpha(opacity=70);
 }
 .easemobWidgetHeader-min {
     position: absolute;
