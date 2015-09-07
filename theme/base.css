@@ -1,6 +1,16 @@
 * {
 	margin: 0;
 	padding: 0;
+    -webkit-text-size-adjust: none;
+	-moz-text-size-adjust:none; 
+	-ms-text-size-adjust: none;
+	-o-text-size-adjust: none;
+	text-size-adjust: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-ms-appearance: none;
+	-o-appearance: none;
+	appearance: none;
 }
 html, body {
     width: 100%;
@@ -123,7 +133,7 @@ img {
     box-shadow: 0 1px 1px #aaa;
 }
 .easemobWidgetHeader-nickname {
-    margin-left: 50px;
+    margin-left: 10px;
     color: #fff;
 }
 .easemobWidgetHeader-word-status {
@@ -214,6 +224,7 @@ img {
 }
 .easemobWidget-face-wrapper {
     position: fixed;
+    z-index: 1;
     bottom: 144px;
     left: 5px;
     background-color: #fff;
@@ -401,7 +412,7 @@ img {
     position: absolute;
     height: 140px;
     width: 100%;
-    bottom: 0;
+    bottom: 0!important;
     background-color: #fff;
 }
 #easemobWidgetSendBtn.disabled {
@@ -506,7 +517,7 @@ body .easemobWidget-offline-bg {
     max-width: 400px;
     *width: 400px;
     margin: auto;
-    position: relative;
+    *position: relative;
 }
 .easemobWidget-offline h3,
 .easemobWidget-offline p,
@@ -554,8 +565,10 @@ body .easemobWidget-offline-bg {
     box-shadow: none;
 }
 .easemobWidgetBody-mobile {
-    font-size: 14px;
     bottom: 42px;
+}
+.easemobWidgetBody-mobile .easemobWidget-msg-container {
+    font-size: 17px;
 }
 .easemobWidget-face-wrapper-mobile {
     width: 100%;
@@ -580,12 +593,10 @@ body .easemobWidget-offline-bg {
     top: 6px;
 }
 .easemobWidgetSend-mobile {
-    position: fixed;
     height: 42px;
     padding: 0 80px 0 36px;
     box-sizing: border-box;
     background-color: #E7EAF4;
-    -webkit-backface-visibility:hidden
 }
 .easemobWidget-send-wrapper .textarea-mobile {
     height: 34px;
@@ -594,6 +605,8 @@ body .easemobWidget-offline-bg {
     border-radius: 4px;
     padding-right: 36px;
     overflow: hidden;
+    line-height: 17px;
+    font-size: 17px;
 }
 .easeWidget-face-rec-mobile {
     display: none;
@@ -612,6 +625,36 @@ body .easemobWidget-offline-bg {
     font-size: 12px;
     left: 10px;
     bottom: 10px;
+}
+.easemobWidget-leavemsg-success {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 43px;
+    left: 0;
+    background: rgba(255,255,255,.8);
+}
+.easemobWidget-leavemsg-success p {
+    position: absolute;
+    top: 50%;
+    margin-top: 20px;
+    font-size: 13px;
+    width: 100%;
+    color: #59BE00;
+    text-align: center;
+}
+.easemobWidget-leavemsg-success i {
+    position: absolute;
+    z-index: 1;
+    margin-left: -50px;
+    margin-top: -90px;
+    left: 50%;
+    top: 50%;
+    background: url(succeed.png) no-repeat;
+    background-size: 100%;
+    width: 100px;
+    height: 100px;
+    background-position: 0 0;
 }
 @media 
 (-webkit-min-device-pixel-ratio: 2) {

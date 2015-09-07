@@ -19,7 +19,8 @@
     var emKefuUser;//用于记录当前user
     var root = window.top == window;//是否在iframe当中
     var historyStartId = 0;//获取历史记录起始ID
-    var listSpan = 50;//获取历史记录的条数
+    var historyFirst = true;//第一次获取历史记录
+    var listSpan = 20;//获取历史记录的条数
     var disableHistory = false;//如果获取的历史记录条数小于listSpan，则置为true，表明不需要再发送请求获取
 
     //获取当前url所带的各种参数
@@ -156,6 +157,7 @@
                             fromSeqId: historyStartId
                             , size: listSpan
                             , chatGroupId: g
+                            , tenantId: tenantId
                         }, cache: false})
                         .done(function(info){
                             if(info && info.length == listSpan) {
@@ -266,6 +268,11 @@
                         }
                     }
                 });
+                if(historyFirst) {
+                    im.scrollBottom();
+                    im.chatWrapper.find('img:last').on('load', function(){im.scrollBottom();});
+                    historyFirst = false;
+                }
             }
         }
         , setTitle: function(){
@@ -386,7 +393,7 @@
             if(me.Im.hasClass('hide')) {
                 me.isOpened = false;
             } else {
-                !EasemobWidget.utils.isMobile && me.textarea.get(0).focus();
+                me.textarea.focus();
                 me.isOpened = true;
                 me.messageCount.html('').addClass('hide');
                 setTimeout(function(){!config.json.hide && me.fixedBtn.addClass('hide');}, 0);
@@ -511,14 +518,19 @@
             });
             me.textarea.on('keyup change', function(){
                 $(this).val() ? me.sendbtn.removeClass('disabled') : me.sendbtn.addClass('disabled');
+            })
+            .on('touchstart', function() {
+                setTimeout(function() {
+                    me.scrollBottom();
+                }, 500);
             });
             me.min.on('mouseenter mouseleave', function(){
                 $(this).toggleClass('hover-color');
             });
             me.facebtn.on('click', me.toggleFaceWrapper);//slide up and down face wrapper
             me.faceWrapper.on('click', 'img', function(){//face click event
+                !EasemobWidget.utils.isMobile && me.textarea.get(0).focus();
                 me.textarea.val(me.textarea.val()+$(this).data('value'));
-                me.textarea.get(0).focus();
                 me.sendbtn.removeClass('disabled');
             });
             me.fixedBtn.find('a').on('click', function(){
@@ -558,16 +570,17 @@
             me.textarea.on("keydown", function(evt){
                 var that = $(this);
                 if(!EasemobWidget.utils.isMobile && evt.ctrlKey && evt.keyCode == 13){
+                //if((EasemobWidget.utils.isMobile && evt.keyCode == 13) || (evt.ctrlKey && evt.keyCode == 13) || (evt.shiftKey && evt.keyCode == 13)){
                     that.val($(this).val()+'\n');
                     return false;
                 } else if(evt.keyCode == 13) {
+                    me.faceWrapper.parent().addClass('hide');
                     if(me.sendbtn.hasClass('disabled')) {
                         return false;
                     }
                     me.sendTextMsg();
                     setTimeout(function(){
                         that.val('');
-                        EasemobWidget.utils.isMobile && that.blur();
                     }, 0);
                 }
             });
@@ -576,7 +589,8 @@
                     return false;
                 }
                 me.sendTextMsg();
-                EasemobWidget.utils.isMobile && me.textarea.blur();
+                me.textarea.get(0).focus();
+                setTimeout(function(){me.scrollBottom();}, 500);
             });
             me.leaveMsgBtn.on('click', function(){
                 if(!me.contact.val() && !me.leaveMsg.val()) {
@@ -598,38 +612,67 @@
                         , msg: '手机号码/邮箱/QQ号：' + me.contact.val() + '   留言：' + me.leaveMsg.val()
                         , type : 'chat'
                     });
-                    me.errorPrompt('留言成功');
+                    //me.errorPrompt('留言成功');
+                    var succeed = me.leaveMsgBtn.parent().find('.easemobWidget-leavemsg-success');
+                    succeed.removeClass('hide');
+                    setTimeout(function(){
+                        succeed.addClass('hide');
+                    }, 2000);
                     me.contact.val('');
                     me.leaveMsg.val('');
                 }
             });
-            var st, memPos = 0;
-            me.chatWrapper.parent().on('scroll', function(){
+            var st, memPos = 0, _startY, _y, touch, DIS=200, _fired=false;
+            var triggerGetHistory = function(){
+                !disableHistory && $.ajax({url: '/v1/webimplugin/visitors/msgHistory', data:{
+                    fromSeqId: historyStartId
+                    , size: listSpan
+                    , chatGroupId: config.group
+                    , tenantId: tenantId
+                }, cache: false})
+                .done(function(info){
+                    if(info && info.length == listSpan) {
+                        historyStartId = Number(info[listSpan - 1].chatGroupSeqId) - 1;
+                        disableHistory = false;
+                    } else {
+                        disableHistory = true;
+                    }
+                    config.history = info;
+                    im.handleHistory();
+                });
+            }
+            me.chatWrapper.parent().on('touchstart', function(e){
+				var touch = e.originalEvent.touches;
+                if(e.originalEvent.touches && e.originalEvent.touches.length>0) {
+                    _startY = touch[0].pageY;
+                }
+            })
+            .on('touchmove', function(e){
+                $t = $(this);
+				var touch = e.originalEvent.touches;
+                if(e.originalEvent.touches && e.originalEvent.touches.length>0) {
+
+					touch = e.originalEvent.touches;
+					_y = touch[0].pageY;console.log(_startY,'   ', _y, '   ' , $t.scrollTop());
+					if(_y-_startY > 8 && $t.scrollTop() <= 50) {
+                        clearTimeout(st);
+                        st = setTimeout(function(){
+			    			triggerGetHistory();
+                        }, 100);
+					}
+				}
+            });
+            me.chatWrapper.parent().on('mousewheel DOMMouseScroll', function(e){
                 var $t = $(this);
-                if(memPos >= $t.scrollTop()) {
+                
+                if(e.originalEvent.wheelDelta % 120 > 0 || e.originalEvent.detail < 0) {//up
                     clearTimeout(st);
                     st = setTimeout(function(){
-                        if($t.scrollTop() < 200) {
-                            !disableHistory && me.errorPrompt('正在玩命获取历史消息...');
-                            !disableHistory && $.ajax({url: '/v1/webimplugin/visitors/msgHistory', data:{
-                                fromSeqId: historyStartId
-                                , size: listSpan
-                                , chatGroupId: config.group
-                            }, cache: false})
-                            .done(function(info){
-                                if(info && info.length == listSpan) {
-                                    historyStartId = Number(info[listSpan - 1].chatGroupSeqId) - 1;
-                                    disableHistory = false;
-                                } else {
-                                    disableHistory = true;
-                                }
-                                config.history = info;
-                                im.handleHistory();
-                            });
+                        if($t.scrollTop() <= 50) {
+                            triggerGetHistory();
                         }
-                    }, 1000);
+                    }, 400);
                 }
-                memPos = $t.scrollTop();
             });
         }
         , scrollBottom: function(){
@@ -697,6 +740,7 @@
             !preview && me.conn.sendPicture(opt);
             //me.errorPrompt('图片发送中，请稍后...');
             !preview && me.chatWrapper.append(temp);
+            me.chatWrapper.find('img:last').on('load', me.scrollBottom);
         }
         , encode: function(str){
             if (!str || str.length == 0) return "";
@@ -751,7 +795,6 @@
                 , msg: txt
                 , type : 'chat'
             });
-            me.textarea.get(0).focus();// reset
         }
         , addLink: function(msg) {
             var reg = new RegExp('(http(s)?:\/\/|www[.])[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+', 'gm');
