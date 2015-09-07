@@ -261,7 +261,6 @@ img {
     -o-transform: rotate(-45deg);
     background-color: #fff;
     display: none\9;
-    *display: none;
 }
 .easemobWidget-face-bg {
     display: inline-block;
@@ -643,18 +642,14 @@ body .easemobWidget-offline-bg {
     color: #59BE00;
     text-align: center;
 }
-.easemobWidget-leavemsg-success i {
+.easemobWidget-leavemsg-success img {
     position: absolute;
     z-index: 1;
     margin-left: -50px;
     margin-top: -90px;
     left: 50%;
     top: 50%;
-    background: url(succeed.png) no-repeat;
-    background-size: 100%;
     width: 100px;
-    height: 100px;
-    background-position: 0 0;
 }
 @media 
 (-webkit-min-device-pixel-ratio: 2) {

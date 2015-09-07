@@ -676,7 +676,7 @@
             });
         }
         , scrollBottom: function(){
-            var ocw = this.chatWrapper.parent().get(0);
+            var ocw = im.chatWrapper.parent().get(0);
             setTimeout(function(){
                 ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000;
             }, 0);
