@@ -861,7 +861,7 @@
                 message.sendToParent('msgPrompt');
             } else {
                 this.msgCount = 0;
-                me.messageCount.html('').addClass('hide');
+                this.messageCount.html('').addClass('hide');
                 message.sendToParent('recoveryTitle');
             }
         }
