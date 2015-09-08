@@ -25,6 +25,7 @@
     var historyFirst = true;//第一次获取历史记录
     var listSpan = 20;//获取历史记录的条数
     var disableHistory = false;//如果获取的历史记录条数小于listSpan，则置为true，表明不需要再发送请求获取
+    var msgTimeSpan = new Date().getTime();//用于处理1分钟之内的消息只显示一次时间
 
     //获取当前url所带的各种参数
     var config = EasemobWidget.utils.getConfig();
@@ -426,6 +427,9 @@
                 , onAudioMessage: function(message) {
                     me.receiveMsg(message, 'audio');
                 }
+                , onReceivedMessage: function(message) {
+                    //me.addDate();
+                }
                 , onError: function(e){
                     switch(e.type){
                         case 1://offline
@@ -440,6 +444,9 @@
                 }
             });
             me.open();
+        }
+        , addDate: function() {
+            this.chatWrapper.append(new Date().getTime()); 
         }
         , setFailedStatus: function() {
             this.chatWrapper.find('.easemobWidget-right:last .easemobWidget-msg-status').removeClass('hide');
@@ -631,7 +638,7 @@
                 if(!me.contact.val() && !me.leaveMsg.val()) {
                     me.errorPrompt('联系方式和留言不能为空');
                 } else if(!me.contact.val()) {
-                    me.errorPrompt('联系方式');
+                    me.errorPrompt('联系方式不能为空');
                 } else if(!me.leaveMsg.val()) {
                     me.errorPrompt('留言不能为空');
                 } else if(!/^\d{5,11}$/g.test(me.contact.val()) 
@@ -783,6 +790,7 @@
                 }
                 , flashUpload: Easemob.im.Helper.isCanUploadFileAsync ? null : flashUpload
             };
+            !preview && me.open();
             !preview && me.conn.sendPicture(opt);
             //me.errorPrompt('图片发送中，请稍后...');
             !preview && me.chatWrapper.append(temp);
