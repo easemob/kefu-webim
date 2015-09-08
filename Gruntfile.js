@@ -30,6 +30,7 @@ module.exports = function(grunt) {
                         'js/src/json2.js',
                         'js/src/easemob.im-1.0.7.js',
                         'js/src/easemob.utils.js',
+                        'js/src/jquery.autogrow.js',
                         'js/src/im.js'
                     ]
                 }

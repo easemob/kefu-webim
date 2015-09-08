@@ -579,18 +579,23 @@ body .easemobWidget-offline-bg {
 }
 .easemobWidget-face-mobile {
     z-index: 1;
-    top: 6px;
+    top: auto;
+    bottom: 6px;
     left: 3px;
 }
 .easemobWidget-face-bg-mobile {
     width: 14.2%;
+    margin: 0;
+}
+.easemobWidget-face-bg-mobile .easemobWidget-face-img {
     margin: 8px 0;
 }
 .easemobWidget-file-mobile {
     z-index: 1;
     right: 82px;
     left: auto;
-    top: 6px;
+    top: auto;
+    bottom: 7px;
 }
 .easemobWidgetSend-mobile {
     height: auto;
@@ -600,14 +605,19 @@ body .easemobWidget-offline-bg {
 }
 .easemobWidget-send-wrapper .textarea-mobile {
     height: 34px;
-    max-height: 70px;
+    max-height: 88px;
     bottom: 0;
     margin-top: 4px;
     margin-bottom: 1px;
     border-radius: 4px;
     padding-right: 36px;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: hidden;
+    user-select: text!important;
+    -webkit-user-select: text!important;
+    -moz-user-select: text!important;
+    -ms-user-select: text!important;
+    -o-user-select: text!important;
     line-height: 17px;
     font-size: 17px;
 }
@@ -617,7 +627,8 @@ body .easemobWidget-offline-bg {
 .easemobWidgetSendBtn-mobile {
     width: 64px;
     right: 8px;
-    top: 4px;
+    top: auto;
+    bottom: 5px;
     height: 34px;
     line-height: 34px;
     font-size: 14px;

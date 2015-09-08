@@ -12,11 +12,12 @@
     
     var DEBUG = false;
     
+    var textAreaOp = {};
     var https = location.protocol == 'https:' ? true : false;
     var eventList = [];//事件列表,防止iframe没有加载完，父级元素post过来消息执行出错
     var swfupload = null;//flash 上传利器
-    var click = 'touchstart' in window ? 'click' : 'touchstart';
-    var scbT = 0;
+    var click = EasemobWidget.utils.isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click';
+    var scbT = 0;//sroll bottom timeout stamp
     var emKefuChannel;//用于记录当前channel
     var emKefuUser;//用于记录当前user
     var root = window.top == window;//是否在iframe当中
@@ -320,7 +321,7 @@
             $.each(this.face_map, function(k, v){
                 count += 1;
                 faceStr += "<div class='easemobWidget-face-bg e-face'>\
-                        <img class='easemobWidget-face-img e-face' src='resources/faces/"+v+".png' data-value="+k+" />\
+                        <img class='easemobWidget-face-img' src='resources/faces/"+v+".png' data-value="+k+" />\
                     </div>";
                 if(count % 7 == 0) {
                     faceStr += '</li><li class="e-face">';
@@ -509,7 +510,8 @@
             return msg;
         }
         , toggleFaceWrapper: function(e){
-            im.faceWrapper.parent().toggleClass('hide');
+            var h = im.sendbtn.parent().outerHeight();
+            im.faceWrapper.parent().css('bottom', h + 'px').toggleClass('hide');
             return false;
         }
         , bindEvents: function(){
@@ -518,19 +520,34 @@
                 me.word.fadeOut();
                 me.chatWrapper.parent().css('top', '43px');
             });
-            //EasemobWidget.utils.isMobile && me.textarea.autogrow();
+            //autogrow  callback
+            textAreaOp.callback = function() {
+                var h = im.sendbtn.parent().outerHeight();
+                im.faceWrapper.parent().css('bottom', h + 'px');
+            };
+            EasemobWidget.utils.isMobile && me.textarea.autogrow(textAreaOp);
             me.textarea.on('keyup change', function(){
                 $(this).val() ? me.sendbtn.removeClass('disabled') : me.sendbtn.addClass('disabled');
             })
-            .on('touchstart', me.scrollBottom);
+            .on('touchstart', function(){
+                me.scrollBottom('slow');
+                me.textarea.css('overflow-y', 'auto');
+            })
+            EasemobWidget.utils.isMobile && me.textarea.on('input', textAreaOp.update);
             me.min.on('mouseenter mouseleave', function(){
                 $(this).toggleClass('hover-color');
             });
             me.facebtn.on(click, me.toggleFaceWrapper);//slide up and down face wrapper
-            me.faceWrapper.on('click', 'img', function(){//face click event
+            me.faceWrapper.on(click, '.easemobWidget-face-bg', function(e){//face click event
+                e.originalEvent.preventDefault && e.originalEvent.preventDefault();
                 !EasemobWidget.utils.isMobile && me.textarea.focus();
-                me.textarea.val(me.textarea.val()+$(this).data('value'));
+                me.textarea.val(me.textarea.val()+$(this).find('img').data('value'));
+                EasemobWidget.utils.isMobile && textAreaOp.update();//update autogrow
+                setTimeout(function(){
+                    me.textarea.get(0).scrollTop = 10000;
+                }, 100);
                 me.sendbtn.removeClass('disabled');
+                e.originalEvent.stopPropagation && e.originalEvent.stopPropagation();
             });
             me.fixedBtn.find('a').on('click', function(){
                 if(EasemobWidget.utils.isMobile) {
@@ -560,6 +577,7 @@
             $('.e-face, .easemobWidgetBody-wrapper')
             .on('touchstart', function(e){
                 me.textarea.blur();
+                !me.textarea.val() && me.textarea.css('overflow-y', 'hidden');
             });
             me.uploadbtn.on(click, function(){
                 if(!Easemob.im.Helper.isCanUploadFile) {
@@ -596,7 +614,10 @@
                 me.faceWrapper.parent().addClass('hide');
                 me.sendTextMsg();
                 me.scrollBottom('fast');
-                me.textarea.css('height', '34px').focus();
+                me.textarea.css({
+                    height: '34px'
+                    , overflowY: 'hidden'
+                }).focus();
             });
             me.leaveMsgBtn.on(click, function(){
                 if(!me.contact.val() && !me.leaveMsg.val()) {
@@ -684,9 +705,19 @@
         , scrollBottom: function(type){
             var ocw = im.chatWrapper.parent().get(0);
             clearTimeout(scbT);
+            var stamp;
+            switch(type) {
+                case 'fast':
+                    stamp = 0;
+                    break;
+                case 'slow':
+                    stamp = 800;
+                    break;
+                default: stamp = 500;
+            }
             var scbT = setTimeout(function(){
                 ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000;
-            }, type == 'fast' ? 0 : 500);
+            }, stamp);
         }
         , sendImgMsg: function(msg) {
             var me = this;
@@ -804,10 +835,11 @@
             });
         }
         , addLink: function(msg) {
-            var reg = new RegExp('(http(s)?:\/\/|www[.])[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+', 'gm');
+            var reg = new RegExp('(http(s)?:\/\/|www[.])[a-zA-Z0-9-]+([.][a-zA-Z0-9-]+)+', 'gm');
             var res = msg.match(reg);
             if(res && res.length) {
-                msg = msg.replace(reg, "<a href='"+res[0]+"' target='_blank'>"+res[0]+"</a>");
+                var prefix = /^https?:\/\//.test(res[0]);
+                msg = msg.replace(reg, "<a href='"+(prefix ? res[0] : '\/\/' + res[0])+"' target='_blank'>"+res[0]+"</a>");
             }
             return msg;
         }
@@ -818,6 +850,8 @@
                 } else {
                     this.messageCount.removeClass('mutiCount').html(this.msgCount);
                 }
+            } else {
+                this.msgCount = 0;
             }
         }
         , receiveMsg: function(msg, type, isHistory){
@@ -1027,73 +1061,6 @@
     }
 
 }(window, undefined));
-
-
-/*
-    the third plugins: autogrow
-*/
-(function($) {
-
-    /*
-     * Auto-growing textareas; technique ripped from Facebook
-     */
-    $.fn.autogrow = function(options) {
-        
-        this.filter('textarea').each(function() {
-            
-            var $this       = $(this),
-                minHeight   = $this.height(),
-                lineHeight  = $this.css('lineHeight');
-            
-            var shadow = $('<div></div>').css({
-                position:   'absolute',
-                top:        -10000,
-                left:       -10000,
-                width:      $(this).width() - parseInt($this.css('paddingLeft')) - parseInt($this.css('paddingRight')),
-                fontSize:   $this.css('fontSize'),
-                fontFamily: $this.css('fontFamily'),
-                lineHeight: $this.css('lineHeight'),
-                resize:     'none'
-            }).appendTo(document.body);
-            
-            var update = function() {
-    
-                var times = function(string, number) {
-                    for (var i = 0, r = ''; i < number; i ++) r += string;
-                    return r;
-                };
-                
-                var val = this.value.replace(/</g, '&lt;')
-                                    .replace(/>/g, '&gt;')
-                                    .replace(/&/g, '&amp;')
-                                    .replace(/\n$/, '<br/>&nbsp;')
-                                    .replace(/\n/g, '<br/>')
-                                    .replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
-                
-                shadow.html(val);
-                $(this).css('height', Math.max(shadow.height() + 34, minHeight));
-            
-            }
-            
-            $(this).change(update).keyup(update).keydown(update);
-            
-            update.apply(this);
-            
-        });
-        
-        return this;
-        
-    }
-    
-})(jQuery);
-
-
-
-
-
-
-
-
 
 
 
