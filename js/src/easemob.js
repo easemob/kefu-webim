@@ -3,7 +3,9 @@
  * version 1.0.0
 */
 ;(function(window, undefined) {
-    var message, iframe, iframeId, curChannel, curUser;
+    'use strict';
+    var message, iframe, iframeId, curChannel, curUser, eTitle = document.title,
+        newTitle = '\-\新\消\息\提\醒', titleST = 0;
     
     var getConfig = function(key){//get config from current script
         var that;
@@ -62,6 +64,19 @@
             }
 
             switch(msg) {
+                case 'msgPrompt'://title slide
+                    var l = 1, p, tArr = (eTitle + newTitle).split('');
+                    clearInterval(titleST);
+                    titleST = setInterval(function() {
+                        p = tArr.shift();
+                        document.title = p + Array.prototype.join.call(tArr, '');
+                        tArr.push(p);
+                    }, 100);
+                    break;
+                case 'recoveryTitle':
+                    clearInterval(titleST);
+                    document.title = eTitle;
+                    break;
                 case 'showChat'://show Chat window
                     iframe.style.width = '400px';
                     iframe.style.height = '500px';

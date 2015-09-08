@@ -566,6 +566,7 @@ body .easemobWidget-offline-bg {
 }
 .easemobWidgetBody-mobile {
     bottom: 42px;
+    padding-bottom: 70px;
 }
 .easemobWidgetBody-mobile .easemobWidget-msg-container {
     font-size: 17px;

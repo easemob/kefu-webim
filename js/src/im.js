@@ -398,9 +398,9 @@
             } else {
                 me.textarea.focus();
                 me.isOpened = true;
-                me.messageCount.html('').addClass('hide');
                 setTimeout(function(){!config.json.hide && me.fixedBtn.addClass('hide');}, 0);
             }
+            me.addPrompt();
         }
         , sdkInit: function(){//使用接口数据初始化js sdk相关方法
             var me = this;
@@ -516,6 +516,11 @@
         }
         , bindEvents: function(){
             var me = this;
+
+            if('onpopstate' in window) {
+                $(window).on('popstate', me.open);
+            }
+
             me.closeWord.on(click, function(){
                 me.word.fadeOut();
                 me.chatWrapper.parent().css('top', '43px');
@@ -533,7 +538,10 @@
                 me.scrollBottom('slow');
                 me.textarea.css('overflow-y', 'auto');
             })
-            EasemobWidget.utils.isMobile && me.textarea.on('input', textAreaOp.update);
+            EasemobWidget.utils.isMobile && me.textarea.on('input', function(){
+                textAreaOp.update();
+                me.scrollBottom('slow');
+            });
             me.min.on('mouseenter mouseleave', function(){
                 $(this).toggleClass('hover-color');
             });
@@ -566,7 +574,7 @@
             me.realfile.on('change', function(){
                 me.sendImgMsg();
             });
-            $(document).on('click', function(ev){//hide face wrapper
+            $(document).on(click, function(ev){//hide face wrapper
                 var e = window.event || ev,
                     t = $(e.srcElement || e.target);
 
@@ -844,14 +852,17 @@
             return msg;
         }
         , addPrompt: function(){
-            if(!this.isOpened) {
+            if(!this.isOpened && this.msgCount > 0) {
                 if(this.msgCount > 9) {
                     this.messageCount.addClass('mutiCount').html('...');
                 } else {
                     this.messageCount.removeClass('mutiCount').html(this.msgCount);
                 }
+                message.sendToParent('msgPrompt');
             } else {
                 this.msgCount = 0;
+                me.messageCount.html('').addClass('hide');
+                message.sendToParent('recoveryTitle');
             }
         }
         , receiveMsg: function(msg, type, isHistory){
