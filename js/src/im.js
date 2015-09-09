@@ -324,7 +324,7 @@
             $.each(this.face_map, function(k, v){
                 count += 1;
                 faceStr += "<div class='easemobWidget-face-bg e-face'>\
-                        <img class='easemobWidget-face-img' src='resources/faces/"+v+".png' data-value="+k+" />\
+                        <img class='easemobWidget-face-img e-face' src='resources/faces/"+v+".png' data-value="+k+" />\
                     </div>";
                 if(count % 7 == 0) {
                     faceStr += '</li><li class="e-face">';
@@ -447,7 +447,7 @@
             });
             me.open();
         }
-        , addDate: function(date, isHistory) {
+        , addDate: function(date, isHistory) {return;
             var htmlPre = '<div class="easemobWidget-date">',
                 htmlEnd = '</div>',
                 fmt = 'M月d日 hh:mm';
@@ -574,10 +574,12 @@
                 e.originalEvent.preventDefault && e.originalEvent.preventDefault();
                 !EasemobWidget.utils.isMobile && me.textarea.focus();
                 me.textarea.val(me.textarea.val()+$(this).find('img').data('value'));
-                EasemobWidget.utils.isMobile && textAreaOp.update();//update autogrow
-                setTimeout(function(){
-                    me.textarea.get(0).scrollTop = 10000;
-                }, 100);
+                if(EasemobWidget.utils.isMobile){
+                    textAreaOp.update();//update autogrow
+                    setTimeout(function(){
+                        me.textarea.get(0).scrollTop = 10000;
+                    }, 100);
+                }
                 me.sendbtn.removeClass('disabled');
                 e.originalEvent.stopPropagation && e.originalEvent.stopPropagation();
             });
