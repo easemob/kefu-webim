@@ -669,6 +669,12 @@ body .easemobWidget-offline-bg {
     top: 50%;
     width: 100px;
 }
+.easemobWidget-date {
+    text-align: center;
+    clear: both;
+    padding: 20px 0 0 0;
+    color: #ADAEAF;
+}
 @media 
 (-webkit-min-device-pixel-ratio: 2) {
 .easemobWidget-face-mobile:hover {

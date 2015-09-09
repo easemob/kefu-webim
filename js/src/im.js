@@ -25,7 +25,7 @@
     var historyFirst = true;//第一次获取历史记录
     var listSpan = 20;//获取历史记录的条数
     var disableHistory = false;//如果获取的历史记录条数小于listSpan，则置为true，表明不需要再发送请求获取
-    var msgTimeSpan = new Date().getTime();//用于处理1分钟之内的消息只显示一次时间
+    var msgTimeSpan;//用于处理1分钟之内的消息只显示一次时间
 
     //获取当前url所带的各种参数
     var config = EasemobWidget.utils.getConfig();
@@ -177,6 +177,7 @@
                     })
                     .fail(function(){});
                 } else {
+                    disableHistory = true;//新用户不获取历史记录
                     $.ajax({
                         url: '/v1/webimplugin/visitors'
                         , contentType: 'application/json'
@@ -270,6 +271,7 @@
                         } else {
                             im.receiveMsg(msg, msg.type, 'history');
                         }
+                        im.addDate(v.body.timestamp, true);//isHistory
                     }
                 });
                 if(historyFirst) {
@@ -408,7 +410,7 @@
             me.conn = new Easemob.im.Connection();
             me.impromise = me.conn.init({
                 https: https ? true : false
-                , xmppURL: (https ? 'https:' : 'http:') + '//im-api.easemob.com/http-bind/'
+                , url: (https ? 'https:' : 'http:') + '//im-api.easemob.com/http-bind/'
                 , onOpened: function(){
                     me.conn.setPresence();
                 }
@@ -428,7 +430,7 @@
                     me.receiveMsg(message, 'audio');
                 }
                 , onReceivedMessage: function(message) {
-                    //me.addDate();
+                    me.addDate();
                 }
                 , onError: function(e){
                     switch(e.type){
@@ -445,8 +447,23 @@
             });
             me.open();
         }
-        , addDate: function() {
-            this.chatWrapper.append(new Date().getTime()); 
+        , addDate: function(date, isHistory) {
+            var htmlPre = '<div class="easemobWidget-date">',
+                htmlEnd = '</div>',
+                fmt = 'M月d日 hh:mm';
+
+            if(!!date) {
+                $(htmlPre + new Date(date).format(fmt) + htmlEnd)
+                .insertAfter(this.chatWrapper.find('div:first')); 
+            } else if(!isHistory) {
+                if(!msgTimeSpan || (new Date().getTime() - msgTimeSpan > 60000)) {//间隔大于1min  dis
+                    this.chatWrapper.append(htmlPre + new Date().format(fmt) + htmlEnd); 
+                }
+                this.resetSpan();
+            }
+        }
+        , resetSpan: function() {
+            msgTimeSpan = new Date().getTime();
         }
         , setFailedStatus: function() {
             this.chatWrapper.find('.easemobWidget-right:last .easemobWidget-msg-status').removeClass('hide');
@@ -877,6 +894,7 @@
             var me = this;
             var value = '';
             
+            
             if(!isHistory && !me.isOpened) {
                 me.messageCount.html('').removeClass('hide');
                 me.msgCount += 1;
@@ -914,7 +932,15 @@
                         <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
                     </div>\
                 </div>";
-            isHistory ? me.chatWrapper.prepend(temp) : (me.chatWrapper.append(temp),me.scrollBottom());
+
+            if(!isHistory) {
+                me.chatWrapper.append(temp);
+                me.addDate();
+                me.resetSpan();
+                me.scrollBottom();
+            } else {
+                me.chatWrapper.prepend(temp);
+            }
         }
         , theme: {
             '天空之城': {
