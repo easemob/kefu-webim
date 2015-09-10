@@ -644,12 +644,13 @@ var uploadFn = function(options) {
             }
         }
     }
-
+    
     xhr.open("POST", uploadUrl);
 
     xhr.setRequestHeader('restrict-access', 'true');
+    xhr.setRequestHeader('Accept', '*/*');//android qq browser has some problem at this attr
     xhr.setRequestHeader('Authorization', 'Bearer ' + acc);
-
+    
     var localFile = '';
     var fileInput = document.getElementById(options.fileInputId);
     var localFile = null;

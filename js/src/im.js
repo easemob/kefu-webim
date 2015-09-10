@@ -809,7 +809,7 @@
                 }
                 , flashUpload: Easemob.im.Helper.isCanUploadFileAsync ? null : flashUpload
             };
-            !preview && me.open();
+            
             !preview && me.conn.sendPicture(opt);
             //me.errorPrompt('图片发送中，请稍后...');
             !preview && me.chatWrapper.append(temp);
