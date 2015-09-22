@@ -11,17 +11,18 @@
                 minHeight   = $this.height(),
                 lineHeight  = $this.css('lineHeight');
             
-            var shadow = $('<div></div>').css({
+            var shadow = $('<div>').css({
                 position:   'absolute',
                 top:        -10000,
                 left:       -10000,
-                width:      $(this).width() - parseInt($this.css('paddingLeft')) - parseInt($this.css('paddingRight')),
+                width:      $(this).width(),
                 fontSize:   $this.css('fontSize'),
                 fontFamily: $this.css('fontFamily'),
                 lineHeight: $this.css('lineHeight'),
-                resize:     'none'
+                resize:     'none',
+                'word-wrap': 'break-word'
             }).appendTo(document.body);
-            
+
             var update = function() {
     
                 var times = function(string, number) {
@@ -37,7 +38,7 @@
                                     .replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
                 
                 shadow.html(val);
-                $(this).css('height', Math.max(shadow.height() + 34, minHeight));
+                val && $(this).css('height', Math.max(shadow.height() + 17, minHeight));
                 typeof options.callback == 'function' && options.callback();
             }
             

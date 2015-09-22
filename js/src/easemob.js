@@ -1,9 +1,10 @@
 /*
- * 客服接入js
- * version 1.0.0
+    客服接入js
+    version 1.0.0
 */
 ;(function(window, undefined) {
     'use strict';
+
     var message, iframe, iframeId, curChannel, curUser, eTitle = document.title,
         newTitle = '\-\新\消\息\提\醒', titleST = 0;
     
@@ -52,7 +53,7 @@
     //open Api
     var open = function(){
         message.listenToIframe(function(msg){
-            var user, channel;
+            var user, channel, group;
             if(msg.indexOf('setuser') > -1) {
                 user = msg.split('@').length > 0 ? msg.split('@')[1] : '';
                 msg = msg.split('@').length > 0 ? msg.split('@')[0] : '';
@@ -61,6 +62,14 @@
             if(msg.indexOf('setchannel') > -1) {
                 channel = msg.split('@').length > 0 ? msg.split('@')[1] : '';
                 msg = msg.split('@').length > 0 ? msg.split('@')[0] : '';
+            }
+            
+            if(msg.indexOf('setgroupuser') > -1) {
+                var idx = msg.indexOf('@emgroupuser@');
+                
+                user = msg.slice(12, idx);
+                group = unescape(msg.slice(idx + 13));
+                msg = 'setgroupuser';
             }
 
             switch(msg) {
@@ -99,6 +108,9 @@
                 case 'setuser':
                     Emc.setcookie('emKefuUser', user);
                     break;
+                case 'setgroupuser':
+                    Emc.setcookie(group, user);
+                    break;
                 case 'setchannel':
                     Emc.setcookie('emKefuChannel', channel);
                     break;
@@ -107,14 +119,24 @@
         });
 
         //open to customers
-        window.easemobIM = function(){
+        window.easemobIM = function(group){
             if(EasemobWidget.utils.isMobile) {
                 var i = document.getElementById(iframeId);
                 var a = window.event.srcElement || window.event.target;
-                a.setAttribute('href', i.getAttribute('src'));
-                a.setAttribute('target', '_blank');
+                if(!!group) {//技能组
+                    a.setAttribute('href', i.getAttribute('src') + '&emgroup=' + escape(group));
+                    a.setAttribute('target', '_blank');
+                } else {
+                    a.setAttribute('href', i.getAttribute('src'));
+                    a.setAttribute('target', '_blank');
+                }
             } else {
-                message.sendToIframe('imclick');
+                if(!!group) {//技能组
+                    var groupUser = Emc.getcookie(group);
+                    message.sendToIframe('emgroup@' + groupUser + '@emgroupuser@' + escape(group));
+                } else {
+                    message.sendToIframe('imclick');
+                }
             }
         }
         //...etc.

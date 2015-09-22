@@ -1,292 +1,288 @@
 /*
+    im业务代码
     version: 1.0.0
  */
 ;(function(window, undefined){
-
+    'use strict';
+    
     window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
     typeof HTMLAudioElement !== 'undefined' && (HTMLAudioElement.prototype.stop = function() {
         this.pause(); 
         this.currentTime = 0.0; 
     });
 
-    
-    var DEBUG = false;
-    
-    var textAreaOp = {};
-    var https = location.protocol == 'https:' ? true : false;
-    var eventList = [];//事件列表,防止iframe没有加载完，父级元素post过来消息执行出错
+    var groupUser = '';//记录当前技能组对应的webim user
+    var isGroupChat = false;//当前是否技能组聊天窗口
+    var isShowDirect = false;
+    var curGroup = '';//记录当前技能组，如果父级页面切换技能组，则直接打开chatwindow，不toggle   
     var swfupload = null;//flash 上传利器
-    var click = EasemobWidget.utils.isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click';
-    var scbT = 0;//sroll bottom timeout stamp
-    var emKefuChannel;//用于记录当前channel
-    var emKefuUser;//用于记录当前user
-    var root = window.top == window;//是否在iframe当中
-    var historyStartId = 0;//获取历史记录起始ID
-    var historyFirst = true;//第一次获取历史记录
-    var listSpan = 20;//获取历史记录的条数
-    var disableHistory = false;//如果获取的历史记录条数小于listSpan，则置为true，表明不需要再发送请求获取
-    var msgTimeSpan;//用于处理1分钟之内的消息只显示一次时间
+    var https = location.protocol == 'https:' ? true : false;
+    var click = EasemobWidget.utils.isMobile && ('ontouchstart' in window) 
+        ? 'touchstart' 
+        : 'click';
 
+    
     //获取当前url所带的各种参数
     var config = EasemobWidget.utils.getConfig();
-    config.json.hide = config.json.hide == 'false' ? false : config.json.hide;
-    var tenantId = config.json.tenantId;
-    var preview = config.json.preview;//是否预览状态，本来用于客服配置页，但由于缓存太重，弃之
 
-    //支持的图片格式
-    var pictype = {
-        jpg : true,
-        gif : true,
-        png : true,
-        bmp : true
-    }
+    config.root = window.top == window;//是否在iframe当中
+    config.json.hide = config.json.hide == 'false' 
+        ? false 
+        : config.json.hide;
 
+    //如果获取的历史记录条数小于EasemobWidget.LISTSPAN，则置为true，表明不需要再发送请求获取
+    config.disableHistory = false
+    config.historyStartId = 0//获取历史记录起始ID
 
-    DEBUG && (config = {
-        json: {
-            tenantId: '123'
-            , preview: false
-        }
-        , offline: false
-        , to: ''
-        , orgName: 'easemob-demo'
-        , appName: 'chatdemoui'
-        , theme: '天空之城'
-        , appkey: 'easemob-demo#chatdemoui'
-        , word: 'testtest'
-        , user: ''
-        , password: ''
-    }, setTimeout(function(){im.init()}, 0));
+    
+    /*
+        处理技能组user切换
+    */
+    var handleGroupUser = function() {
+        groupUser 
+        ? $.when(EasemobWidget.api.getPwd({user: groupUser}))
+        .done(function(info){
+            config.user = groupUser;
+            config.password = info.userPassword;
+            
+            config.root 
+            ? Emc.setcookie(curGroup, config.user) 
+            : message.sendToParent('setgroupuser@' + config.user + '@emgroupuser@' + curGroup);
 
-    if(!DEBUG) {
-        /*
-            get channel 相关信息
-        */
-        var getTo = $.Deferred(function(){
-            $.ajax({url:'/v1/webimplugin/targetChannels', data:{tenantId: tenantId}, cache: false})
-            .done(function(info){
-                getTo.resolve(info);
-            })
-            .fail(function(){
-                getTo.reject();
-            });
-        });
-        /*
-            get 上下班状态
-        */
-        var getStatus = $.Deferred(function(){
-            $.ajax({url: '/v1/webimplugin/timeOffDuty', data: {tenantId: tenantId}, cache: false})
-            .done(function(info){
-                getStatus.resolve(info);
-            })
-            .fail(function(){
-                getStatus.reject();
-            });
-        });
-        /*
-            get theme
-        */
-        var getTheme = $.Deferred(function(){
-            $.ajax({url:'/v1/webimplugin/theme/options', data:{tenantId: tenantId}, cache: false})
-            .done(function(info){
-                getTheme.resolve(info);
-            })
-            .fail(function(){
-                getTheme.reject();
-            });
-        });
-        /*
-            get 广告语
-        */
-        var getWord = $.Deferred(function(){
-            $.ajax({url: '/v1/webimplugin/notice/options', data: {tenantId: tenantId}, cache: false})
-            .done(function(info){
-                getWord.resolve(info);
-            })
-            .fail(function(){
-                getWord.reject();
-            });
-        });
-        $.when(getTo, getStatus, getTheme, getWord)
-        .done(function(toinfo, sinfo, tinfo, winfo){
+            im.open();
 
-            config.offline = sinfo;
-            if(toinfo.length > 0) {
-                config.to = toinfo[0].imServiceNumber;
-                config.orgName = toinfo[0].orgName;
-                config.appName = toinfo[0].appName;
-                config.tenantName = toinfo[0].tenantName;
-                config.appkey = toinfo[0].orgName + '#' + toinfo[0].appName;
-            } else {
-                if(!preview) return;
-            }
-
-            config.theme = tinfo && tinfo.length ? tinfo[0].optionValue : '天空之城';
-            config.word = winfo && winfo.length ? winfo[0].optionValue : '';
-
-            if(!preview) {
-                var curUser;
-                if(root) {
-                    curUser = Emc.getcookie('emKefuChannel') != (config.to + '*' + config.orgName + '*' + config.appName) ? null : Emc.getcookie('emKefuUser');
-                    Emc.setcookie('emKefuChannel', config.to + '*' + config.orgName + '*' + config.appName);
-                } else {
-                    curUser = config.json.c != (config.to + '*' + config.orgName + '*' + config.appName) ? null : config.json.u;
-                    message.sendToParent('setchannel@' + config.to + '*' + config.orgName + '*' + config.appName);
-                }
-                if(curUser) {//如果取到缓存user，获取密码，否则新创建
-                    config.user = curUser;
-                    var getPwd = $.Deferred(function(){
-                        $.ajax({url:'/v1/webimplugin/visitors/password', data: {userId: curUser}, cache: false})
-                        .done(function(info){
-                            getPwd.resolve(info);
-                        })
-                        .fail(function(){
-                            getPwd.reject();
-                        });
-                    });
-                    var getGroup = $.Deferred(function(){
-                        $.ajax({url: '/v1/webimplugin/visitors/' + curUser + '/ChatGroupId?techChannelInfo='+escape(config.orgName + '#' + config.appName + '#' + config.to), cache: false})
-                        .done(function(info){
-                            getGroup.resolve(info);
-                        })
-                        .fail(function(){
-                            getGroup.reject();
-                        });
-                    });
-                    $.when(getPwd, getGroup)
-                    .done(function(p, g){
-                        config.group = g;
-                        config.password = p;
-                        !disableHistory && $.ajax({url: '/v1/webimplugin/visitors/msgHistory', data:{
-                            fromSeqId: historyStartId
-                            , size: listSpan
-                            , chatGroupId: g
-                            , tenantId: tenantId
-                        }, cache: false})
-                        .done(function(info){
-                            if(info && info.length == listSpan) {
-                                historyStartId = Number(info[listSpan - 1].chatGroupSeqId) - 1;
-                                disableHistory = false;
-                            } else {
-                                disableHistory = true;
-                            }
-                            config.history = info;
-                            im.init();
-                        })
-                        .fail(function(){});
-                    })
-                    .fail(function(){});
-                } else {
-                    disableHistory = true;//新用户不获取历史记录
-                    $.ajax({
-                        url: '/v1/webimplugin/visitors'
-                        , contentType: 'application/json'
-                        , type: 'post'
-                        , data: JSON.stringify({
-                            orgName: config.orgName
-                            , appName: config.appName
-                            , imServiceNumber: config.to
-                        })
-                        , success: function(info) {
-                            config.user = info.userId;
-                            config.password = info.userPassword;
-                            root ? Emc.setcookie('emKefuUser', config.user) : message.sendToParent('setuser@' + config.user);
-                            im.init();
-                        }
-                    });
-                }
-            } else {
-                im.init();
-            }
+            im.toggleChatWindow(isShowDirect ? 'show' : '')
         })
-        .fail(function(){});
+        : $.when(EasemobWidget.api.getUser(config))
+        .done(function(info){
+            config.user = info.userId;
+            config.password = info.userPassword;
+            
+            config.root 
+            ? Emc.setcookie(curGroup, config.user) 
+            : message.sendToParent('setgroupuser@' + config.user + '@emgroupuser@' + curGroup);
+
+            im.open();
+
+            im.toggleChatWindow(isShowDirect ? 'show' : '')
+        });
     }
 
 
     /*
-        listen parent's msg
+        监听父级窗口发来的消息
     */
     var message = new EmMessage().listenToParent(function(msg){
         var value;
-        if(msg.indexOf('@') > 0) {
+        if(msg.indexOf('emgroup@') == 0) {//技能组消息
+            value = msg.slice(8);
+            msg = 'emgroup';
+        } else if(msg.indexOf('@') > 0) {//从父级页面cookie读取相关信息
             value = msg.split('@')[1];
             msg = msg.split('@')[0];
         }
+
         switch(msg) {
-            case 'imclick'://toggle chat window to show or hide 
-                im.toggleChatWindow.call(im);
+            case 'imclick'://关闭 或 展开 iframe 聊天窗口
+                isGroupChat = false;
+                if(im && im.loaded) {
+                    im.chatWrapper = $('#normal');
+                    im.chatWrapper.removeClass('hide').siblings().addClass('hide');
+                    config.user = im.curUser.user;
+                    config.password = im.curUser.password;
+                    im.open();
+                    im.setTitle();
+                    im.group = false;
+                    im.toggleChatWindow(curGroup ? 'show' : '');
+                } else {
+                    im.toggleChatWindow();
+                }
+                curGroup = '';
                 break;
-            /*case 'showBtn':
-                im.showFixedBtn.call(im);
-                break;*/
+            case 'emgroup'://技能组
+                isGroupChat = true;
+
+
+                var idx = value.indexOf('@emgroupuser@');
+
+                if(idx > 0) {
+                    groupUser = value.slice(1, idx);
+                } else {
+                    groupUser = null;
+                }
+                value = value.slice(idx + 13);
+
+                if(curGroup != value) {
+                    curGroup = value;
+                    isShowDirect = true;
+                } else {
+                    isShowDirect = false;
+                }
+
+
+                if(im && im.loaded) {
+
+                    if(!isShowDirect) {
+                        im.toggleChatWindow();
+                        return;
+                    }
+
+                    im.handleGroup(value);
+
+                    handleGroupUser();
+                } else {
+                    isShowDirect
+                    ? im.toggleChatWindow('show')
+                    : im.toggleChatWindow()
+                }
+
+                break;
             default: break;
         }
     });
     
     /*
-        core
+        聊天窗口所有业务代码
     */
-    var im = {
+    var im = ({
+        
         init: function(){
-            this.msgCount = 0;
-            this.getDom();
-            this.changeTheme();
-            if(!config.json.hide && !root) this.fixedBtn.removeClass('hide');
-            this.fillFace();
-            this.setWord();
-            this.setTitle();
-            (preview || root) && (!preview && this.min.addClass('hide'),this.toggleChatWindow());
-            //this.audioAlert();//init audio
-            this.mobileInit();
-            this.setOffline();
-            if(!Easemob.im.Helper.isCanUploadFileAsync && Easemob.im.Helper.isCanUploadFile && typeof uploadShim === 'function') {
+
+            this.getDom();//绑定所有相关dom至this
+            this.changeTheme();//设置相应主题
+
+            //独立窗口不展示悬浮小按钮
+            if(!config.json.hide && !config.root) this.fixedBtn.removeClass('hide');
+            //独立页面
+            config.root && (
+                this.min.addClass('hide')//隐藏最小化按钮
+                , this.toggleChatWindow()//展示聊天窗口内容
+                , !!config.json.emgroup && im.handleGroup(config.json.emgroup)//处理技能组
+            );
+            
+            //不支持异步upload的浏览器使用flash插件搞定
+            if(!Easemob.im.Helper.isCanUploadFileAsync && Easemob.im.Helper.isCanUploadFile) {
                 swfupload = uploadShim('easemobWidgetFileInput');
             }
-            !preview && this.sdkInit();
-            this.bindEvents();
-            this.handleHistory();
-            this.loaded = true;
-            this.showFixedBtn();
-            this.handleEvents();
+
+            this.fillFace();//遍历FACE，添加所有表情
+            this.setWord();//设置广告语
+            this.setTitle();//设置im.html的标题
+            //this.audioAlert();//init audio
+            this.mobileInit();//h5 适配，为防止media query不准确，js动态添加class
+            this.setOffline();//根据状态展示上下班不同view
+            this.sdkInit();//调用js sdk相关api，初始化聊天相关操作
+
+            this.loaded = true;//im ready
+            this.handleEvents();//执行post过来的消息，清空事件列表
+
+            this.bindEvents();//开始绑定dom各种事件
+            this.handleHistory();//处理拿到的历史记录
+            this.showFixedBtn();//展示悬浮小按钮
+
+        }
+        , setAttribute: function() {
+            this.msgCount = 0;//未读消息数
+            this.eventList = []//事件列表,防止iframe没有加载完，父级元素post过来消息执行出错
+            this.scbT = 0//sroll bottom timeout stamp
+            this.autoGrowOptions = {}
+            this.historyFirst = true//第一次获取历史记录
+            this.msgTimeSpan//用于处理1分钟之内的消息只显示一次时间
+            
+            return this;
         }
         , handleEvents: function() {
-            eventList.length > 0 && eventList[0].call(this);
+            this.eventList.length > 0 && this.eventList[0].call(this);
         }
-        , handleHistory: function(){
-            if(config.history && config.history.length > 0) {
-                
-                $.each(config.history, function(k, v){
-                
-                    if(v.body && v.body.bodies.length > 0) {
-                        var msg = v.body.bodies[0];
-                        if(v.body.from == config.user) {
-                            switch(msg.type) {
-                                case 'img':
-                                    im.sendImgMsg(msg);
-                                    break;
-                                case 'txt':
-                                    im.sendTextMsg(msg);
-                                    break;
-                            }
-                        } else {
-                            im.receiveMsg(msg, msg.type, 'history');
-                        }
-                        im.addDate(v.body.timestamp, true);//isHistory
-                    }
-                });
-                if(historyFirst) {
-                    im.chatWrapper.find('img:last').on('load', im.scrollBottom);
-                    im.scrollBottom();
-                    historyFirst = false;
+        , handleGroup: function(type) {
+            if(typeof type === 'string') {
+                type = unescape(type);
+                im.group = type;
+                im.handleChatContainer(im.group);
+            } else {
+                if(!im.group) {
+                    type.ext = {};
+                    return;
+                }
+                type.ext = type.ext || {};
+                type.ext.weichat = {
+                    queueName: im.group          
                 }
             }
         }
-        , setTitle: function(){
-            var nn = this.headBar.find('.easemobWidgetHeader-nickname');
-            nn.html(config.tenantName);
-            document.title = nn.html() + '-客服';
+        , handleChatContainer: function(groupId) {
+            var curChatContainer = $(document.getElementById(groupId));
+
+            if(curChatContainer.length > 0) {
+                this.chatWrapper = curChatContainer;
+                this.setTitle(groupId);
+                curChatContainer.removeClass('hide').siblings('.easemobWidget-chat').addClass('hide');
+            } else {
+                curChatContainer = $('<div id="' + groupId + '" class="easemobWidget-chat"></div>');
+                this.chatWrapper.parent().prepend(curChatContainer);
+                this.handleChatContainer(groupId);     
+            }
         }
-        , mobileInit: function(){//移动端初始化
+        , handleHistory: function(){
+            var me = this;
+            if(config.history && config.history.length > 0) {
+                
+                $.each(config.history, function(k, v){
+                    
+                    var wrapper = this.chatWrapper;
+                    
+                    var msg = v.body;
+                    if(msg.ext && msg.ext.weichat) {
+                        var groupId = msg.ext.weichat.queueName;
+                        
+                        if($('#' + groupId).length == 0) {
+                            me.chatWrapper.parent()
+                            .prepend($('<div id="' + groupId + '" class="easemobWidget-chat"></div>'));   
+                        }
+                        wrapper = $('#' + groupId);
+                    } else {
+                        wrapper = $('#normal');
+                    }
+
+
+    
+                    if(v.body && v.body.bodies.length > 0) {
+                        var msg = v.body.bodies[0];
+                        if(v.body.from && v.body.from.indexOf('webim-visitor') > -1) {
+                            switch(msg.type) {
+                                case 'img':
+                                    im.sendImgMsg(msg, wrapper);
+                                    break;
+                                case 'txt':
+                                    im.sendTextMsg(msg, wrapper);
+                                    break;
+                            }
+                        } else {
+                            im.receiveMsg(msg, msg.type, 'history', wrapper);
+                        }
+                        /*
+                            @param1:
+                            @param2(boolean); true: 历史记录
+                        */
+                        im.addDate(v.timestamp || v.body.timestamp, true, wrapper);
+                    }
+                });
+
+                //此坑防止第一次获取历史记录图片loaded后，不能滚动到底部
+                if(im.historyFirst) {
+                    im.chatWrapper.find('img:last').on('load', im.scrollBottom);
+                    im.scrollBottom();
+                    im.historyFirst = false;
+                }
+            }
+        }
+        , setTitle: function(title){
+            var nn = this.headBar.find('.easemobWidgetHeader-nickname');
+            
+            nn.html(config.tenantName + (title ? '-' + title : ''));
+            document.title = nn.html() + (title ? '' : '-客服');
+        }
+        , mobileInit: function(){
             if(!EasemobWidget.utils.isMobile) return;
             this.Im.find('.easemobWidget-logo').hide();
             this.fixedBtn.css({width: '100%', top: '0'});
@@ -318,25 +314,30 @@
                 this.chatWrapper.parent().css('top', '43px');
             }
         }
-        , fillFace: function(){//动态创建表情
+        , fillFace: function(){
             var faceStr = '<li class="e-face">',
                 count = 0;
-            $.each(this.face_map, function(k, v){
+
+            $.each(EasemobWidget.FACE, function(k, v){
                 count += 1;
                 faceStr += "<div class='easemobWidget-face-bg e-face'>\
-                        <img class='easemobWidget-face-img e-face' src='resources/faces/"+v+".png' data-value="+k+" />\
-                    </div>";
+                                <img class='easemobWidget-face-img e-face' \
+                                    src='resources/faces/"+v+".png' \
+                                    data-value="+k+" />\
+                            </div>";
+
                 if(count % 7 == 0) {
                     faceStr += '</li><li class="e-face">';
                 }
             });
+
             if(count % 7 == 0) {
                 faceStr = faceStr.slice(0, -('<li class="e-face">').length);
             } else {
                 faceStr += '</li>';
             }
-            this.faceWrapper.html(faceStr);
-            faceStr = null;
+
+            this.faceWrapper.html(faceStr), faceStr = null;
         }
         , errorPrompt: function(msg) {//暂时所有的提示都用这个方法
             var me = this;
@@ -354,7 +355,7 @@
                 this.headBar.css('background-color', color);
                 this.sendbtn.css('background-color', color);
             } else if(config.theme) {
-                if(!this.theme[config.theme]) config.theme = '天空之城';
+                if(!EasemobWidget.THEME[config.theme]) config.theme = '天空之城';
                 $('head').append('<link rel="stylesheet" href="/webim/theme/'+config.theme+'.css" />');
             } 
         }
@@ -381,17 +382,34 @@
             me.sendbtn.parent().addClass('hide');
             me.dutyStatus.html('(离线)');
         }
-        , toggleChatWindow: function() {//主要用于展开收起聊天窗口
+        , toggleChatWindow: function(windowStatus) {
             var me = this;
+
+            //not ready
             if(!me.loaded) {
-                eventList = [];
-                eventList.push(im.toggleChatWindow);
+                me.eventList = [];
+
+                if(isGroupChat) {
+                    me.eventList.push(function(){
+                        handleGroupUser();
+                    });  
+                } else {
+                    me.eventList.push(im.toggleChatWindow);
+                }
                 return;
             }
-            if(!root) {
-                !config.json.hide && me.fixedBtn.toggleClass('hide');
-                message.sendToParent(me.Im.hasClass('hide') ? 'showChat' : 'minChat');
-                me.Im.toggleClass('hide');
+
+            if(!config.root) {
+                setTimeout(function(){
+                    !config.json.hide && me.fixedBtn.toggleClass('hide');
+                }, 100);
+                message.sendToParent(windowStatus == 'show' || me.Im.hasClass('hide') ? 'showChat' : 'minChat');
+                windowStatus == 'show' 
+                    ? (
+                        me.fixedBtn.removeClass('hide')
+                        , me.Im.removeClass('hide')
+                    ) 
+                    : me.Im.toggleClass('hide');
             } else {
                 me.Im.removeClass('hide');
             }
@@ -401,14 +419,13 @@
             } else {
                 me.textarea.focus();
                 me.isOpened = true;
-                setTimeout(function(){!config.json.hide && me.fixedBtn.addClass('hide');}, 0);
             }
             me.addPrompt();
         }
-        , sdkInit: function(){//使用接口数据初始化js sdk相关方法
+        , sdkInit: function(){
             var me = this;
             me.conn = new Easemob.im.Connection();
-            me.impromise = me.conn.init({
+            me.conn.init({
                 https: https ? true : false
                 , url: (https ? 'https:' : 'http:') + '//im-api.easemob.com/http-bind/'
                 , onOpened: function(){
@@ -445,25 +462,31 @@
                     }
                 }
             });
+            me.curUser = {
+                user: config.user
+                , pwd: config.password
+            };
             me.open();
         }
-        , addDate: function(date, isHistory) {return;
+        , addDate: function(date, isHistory, wrapper) {
             var htmlPre = '<div class="easemobWidget-date">',
                 htmlEnd = '</div>',
                 fmt = 'M月d日 hh:mm';
 
+            wrapper = wrapper || this.chatWrapper;
+
             if(!!date) {
                 $(htmlPre + new Date(date).format(fmt) + htmlEnd)
-                .insertAfter(this.chatWrapper.find('div:first')); 
+                .insertAfter(wrapper.find('div:first')); 
             } else if(!isHistory) {
-                if(!msgTimeSpan || (new Date().getTime() - msgTimeSpan > 60000)) {//间隔大于1min  dis
-                    this.chatWrapper.append(htmlPre + new Date().format(fmt) + htmlEnd); 
+                if(!this.msgTimeSpan || (new Date().getTime() - this.msgTimeSpan > 60000)) {//间隔大于1min  show
+                    wrapper.append(htmlPre + new Date().format(fmt) + htmlEnd); 
                 }
                 this.resetSpan();
             }
         }
         , resetSpan: function() {
-            msgTimeSpan = new Date().getTime();
+            this.msgTimeSpan = new Date().getTime();
         }
         , setFailedStatus: function() {
             this.chatWrapper.find('.easemobWidget-right:last .easemobWidget-msg-status').removeClass('hide');
@@ -475,6 +498,7 @@
                 , pwd : config.password
                 , appKey : config.appkey
             });
+            
         }
         , getDom: function(){
             this.offline = $('#easemobWidgetOffline');
@@ -509,7 +533,7 @@
             }
         }
         , getface: function(img){
-            $.each(this.face_map, function(k, v){
+            $.each(EasemobWidget.FACE, function(k, v){
                 if(img == v){
                     return k;
                 }
@@ -525,9 +549,12 @@
                 msg = msg.replace(/&amp;/g, '&');
                 msg = msg.replace(/&#39;/g, '\'');
                 msg = msg.replace(/&lt;/g, '\<');
-                $.each(me.face_map, function(k, v){
+                $.each(EasemobWidget.FACE, function(k, v){
                     while(msg.indexOf(k) >= 0){
-                        msg = msg.replace(k, '<img class=\"chat-face-all\" src=\"resources/faces/' + me.face_map[k] + '.png\">');
+                        msg = msg.replace(k
+                            , '<img class=\"chat-face-all\" src=\"resources/faces/' 
+                                + EasemobWidget.FACE[k] 
+                                + '.png\">');
                     }
                 });
             }
@@ -541,41 +568,58 @@
         , bindEvents: function(){
             var me = this;
 
+            //防止点击前进后退cache 导致的offline
             if('onpopstate' in window) {
                 $(window).on('popstate', me.open);
             }
 
+            //关闭广告语按钮
             me.closeWord.on(click, function(){
                 me.word.fadeOut();
                 me.chatWrapper.parent().css('top', '43px');
             });
+
             //autogrow  callback
-            textAreaOp.callback = function() {
+            me.autoGrowOptions.callback = function() {
                 var h = im.sendbtn.parent().outerHeight();
                 im.faceWrapper.parent().css('bottom', h + 'px');
             };
-            EasemobWidget.utils.isMobile && me.textarea.autogrow(textAreaOp);
+
+            EasemobWidget.utils.isMobile && me.textarea.autogrow(me.autoGrowOptions);
+            
+            //
             me.textarea.on('keyup change', function(){
                 $(this).val() ? me.sendbtn.removeClass('disabled') : me.sendbtn.addClass('disabled');
             })
-            .on('touchstart', function(){
+            .on('touchstart', function(){//防止android部分机型滚动条常驻，看着像bug ==b
                 me.scrollBottom('slow');
                 me.textarea.css('overflow-y', 'auto');
+                me.textarea.parent().css('bottom', '275px');
             })
+            .on('blur', function(){
+                me.textarea.parent().css('bottom', '0');
+            });
+
             EasemobWidget.utils.isMobile && me.textarea.on('input', function(){
-                textAreaOp.update();
+                me.autoGrowOptions.update();
                 me.scrollBottom('slow');
             });
+
+            //最小化按钮的多态
             me.min.on('mouseenter mouseleave', function(){
                 $(this).toggleClass('hover-color');
             });
-            me.facebtn.on(click, me.toggleFaceWrapper);//slide up and down face wrapper
-            me.faceWrapper.on(click, '.easemobWidget-face-bg', function(e){//face click event
+
+            //表情的展开和收起
+            me.facebtn.on(click, me.toggleFaceWrapper);
+
+            //表情的选中
+            me.faceWrapper.on(click, '.easemobWidget-face-bg', function(e){
                 e.originalEvent.preventDefault && e.originalEvent.preventDefault();
                 !EasemobWidget.utils.isMobile && me.textarea.focus();
                 me.textarea.val(me.textarea.val()+$(this).find('img').data('value'));
                 if(EasemobWidget.utils.isMobile){
-                    textAreaOp.update();//update autogrow
+                    me.autoGrowOptions.update();//update autogrow
                     setTimeout(function(){
                         me.textarea.get(0).scrollTop = 10000;
                     }, 100);
@@ -583,6 +627,8 @@
                 me.sendbtn.removeClass('disabled');
                 e.originalEvent.stopPropagation && e.originalEvent.stopPropagation();
             });
+
+            //悬浮小按钮的点击事件
             me.fixedBtn.find('a').on('click', function(){
                 if(EasemobWidget.utils.isMobile) {
                     $(this).attr({
@@ -590,17 +636,24 @@
                         , href: location.href
                     });
                 } else {
+                    me.chatWrapper.removeClass('hide').siblings().addClass('hide');
                     me.toggleChatWindow();
                     me.scrollBottom();
                 }
             });
+
+            //最小化按钮
             me.min.on('click', function(){
                 me.toggleChatWindow();
             });
+
+            //选中文件并发送
             me.realfile.on('change', function(){
                 me.sendImgMsg();
             });
-            $(document).on(click, function(ev){//hide face wrapper
+
+            //hide face wrapper
+            $(document).on(click, function(ev){
                 var e = window.event || ev,
                     t = $(e.srcElement || e.target);
 
@@ -608,26 +661,33 @@
                     me.faceWrapper.parent().addClass('hide');
                 }
             });
+
+            //主要用于移动端触发virtual keyboard的收起
             $('.e-face, .easemobWidgetBody-wrapper')
             .on('touchstart', function(e){
                 me.textarea.blur();
+
+                //此坑用于防止android部分机型滚动条常驻，看着像bug ==b
                 !me.textarea.val() && me.textarea.css('overflow-y', 'hidden');
             });
+
+            //弹出文件选择框
             me.uploadbtn.on(click, function(){
                 if(!Easemob.im.Helper.isCanUploadFile) {
                     me.errorPrompt('当前浏览器不支持发送图片');
                     return false;    
                 }
-                if(preview) {
-                    me.errorPrompt('预览状态不支持发送图片');
-                    return false;    
-                }
+                
                 me.realfile.get(0).click();
             });
+
+            //hot key
             me.textarea.on("keydown", function(evt){
                 var that = $(this);
-                //if(!EasemobWidget.utils.isMobile && evt.ctrlKey && evt.keyCode == 13){
-                if((EasemobWidget.utils.isMobile && evt.keyCode == 13) || (evt.ctrlKey && evt.keyCode == 13) || (evt.shiftKey && evt.keyCode == 13)){
+                if((EasemobWidget.utils.isMobile && evt.keyCode == 13) 
+                    || (evt.ctrlKey && evt.keyCode == 13) 
+                    || (evt.shiftKey && evt.keyCode == 13)) {
+
                     that.val($(this).val()+'\n');
                     return false;
                 } else if(evt.keyCode == 13) {
@@ -641,7 +701,9 @@
                     }, 0);
                 }
             });
-            me.sendbtn.on('click', function(){//不能用touch，无法触发focus
+
+            //不能用touch，无法触发focus
+            me.sendbtn.on('click', function(){
                 if(me.sendbtn.hasClass('disabled')) {
                     return false;
                 }
@@ -653,6 +715,8 @@
                     , overflowY: 'hidden'
                 }).focus();
             });
+
+            //
             me.leaveMsgBtn.on(click, function(){
                 if(!me.contact.val() && !me.leaveMsg.val()) {
                     me.errorPrompt('联系方式和留言不能为空');
@@ -664,15 +728,13 @@
                     && !/^[a-zA-Z0-9-_]+@([a-zA-Z0-9-]+[.])+[a-zA-Z]+$/g.test(me.contact.val())) {
                     me.errorPrompt('请输入正确的手机号码/邮箱/QQ号');
                 } else {
-                    if(preview) {
-                        me.errorPrompt('预览状态不支持留言');
-                        return;
-                    }
-                    me.conn.sendTextMessage({
+                    var opt = {
                         to: config.to
                         , msg: '手机号码/邮箱/QQ号：' + me.contact.val() + '   留言：' + me.leaveMsg.val()
                         , type : 'chat'
-                    });
+                    }
+                    me.handleGroup(opt);
+                    me.conn.sendTextMessage(opt);
                     //me.errorPrompt('留言成功');
                     var succeed = me.leaveMsgBtn.parent().find('.easemobWidget-leavemsg-success');
                     succeed.removeClass('hide');
@@ -683,25 +745,30 @@
                     me.leaveMsg.val('');
                 }
             });
+
+            //pc 和 wap 的上划加载历史记录的方法
             var st, memPos = 0, _startY, _y, touch, DIS=200, _fired=false;
             var triggerGetHistory = function(){
-                !disableHistory && $.ajax({url: '/v1/webimplugin/visitors/msgHistory', data:{
-                    fromSeqId: historyStartId
-                    , size: listSpan
-                    , chatGroupId: config.group
-                    , tenantId: tenantId
-                }, cache: false})
+                
+                !config.disableHistory && $.when(EasemobWidget.api.getHistory(
+                    config.historyStartId
+                    , EasemobWidget.LISTSPAN
+                    , config.group
+                    , config.json.tenantId
+                ))
                 .done(function(info){
-                    if(info && info.length == listSpan) {
-                        historyStartId = Number(info[listSpan - 1].chatGroupSeqId) - 1;
-                        disableHistory = false;
+                    if(info && info.length == EasemobWidget.LISTSPAN) {
+                        config.historyStartId = Number(info[EasemobWidget.LISTSPAN - 1].chatGroupSeqId) - 1;
+                        config.disableHistory = false;
                     } else {
-                        disableHistory = true;
+                        config.disableHistory = true;
                     }
                     config.history = info;
                     im.handleHistory();
                 });
             }
+
+            //wap
             me.chatWrapper.parent().on('touchstart', function(e){
 				var touch = e.originalEvent.touches;
                 if(e.originalEvent.touches && e.originalEvent.touches.length>0) {
@@ -709,7 +776,7 @@
                 }
             })
             .on('touchmove', function(e){
-                $t = $(this);
+                var $t = $(this);
 				var touch = e.originalEvent.touches;
                 if(e.originalEvent.touches && e.originalEvent.touches.length>0) {
 
@@ -723,6 +790,8 @@
 					}
 				}
             });
+
+            //pc
             me.chatWrapper.parent().on('mousewheel DOMMouseScroll', function(e){
                 var $t = $(this);
                 
@@ -738,7 +807,7 @@
         }
         , scrollBottom: function(type){
             var ocw = im.chatWrapper.parent().get(0);
-            clearTimeout(scbT);
+            clearTimeout(this.scbT);
             var stamp;
             switch(type) {
                 case 'fast':
@@ -749,13 +818,14 @@
                     break;
                 default: stamp = 500;
             }
-            var scbT = setTimeout(function(){
+            this.scbT = setTimeout(function(){
                 ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000;
             }, stamp);
         }
-        , sendImgMsg: function(msg) {
+        , sendImgMsg: function(msg, wrapper) {
             var me = this;
-            
+            wrapper = wrapper || me.chatWrapper;
+
             if(msg) {
                 var temp = $("\
                     <div class='easemobWidget-right'>\
@@ -763,12 +833,12 @@
                             <i class='easemobWidget-right-corner'></i>\
                             <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                             <div class='easemobWidget-msg-container'>\
-                                <a href='"+msg.url+"' target='_blank'><img src='"+msg.url+"' alt='' title='' target='_blank'/></a>\
+                                <a href='"+msg.url+"' target='_blank'><img src='"+msg.url+"'/></a>\
                             </div>\
                         </div>\
                     </div>\
                 ");
-                me.chatWrapper.prepend(temp);
+                wrapper.prepend(temp);
                 return;
             }
             if(Easemob.im.Helper.isCanUploadFileAsync) {
@@ -782,7 +852,7 @@
                             <i class='easemobWidget-right-corner'></i>\
                             <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                             <div class='easemobWidget-msg-container'>\
-                                <a href='"+file.url+"' target='_blank'><img src='"+file.url+"' alt='' title='' target='_blank'/></a>\
+                                <a href='"+file.url+"' target='_blank'><img src='"+file.url+"'/></a>\
                             </div>\
                         </div>\
                     </div>\
@@ -809,10 +879,9 @@
                 }
                 , flashUpload: Easemob.im.Helper.isCanUploadFileAsync ? null : flashUpload
             };
-            
-            !preview && me.conn.sendPicture(opt);
-            //me.errorPrompt('图片发送中，请稍后...');
-            !preview && me.chatWrapper.append(temp);
+            me.handleGroup(opt);
+            me.conn.sendPicture(opt);
+            me.chatWrapper.append(temp);
             me.chatWrapper.find('img:last').on('load', me.scrollBottom);
         }
         , encode: function(str){
@@ -826,11 +895,12 @@
             s = s.replace(/\n/g, "<br>");
             return s;
         }
-        , sendTextMsg: function(msg){
+        , sendTextMsg: function(msg, wrapper){
             var me = this;
+            wrapper = wrapper || me.chatWrapper;
 
             if(msg) {
-                me.chatWrapper.prepend("\
+                wrapper.prepend("\
                     <div class='easemobWidget-right'>\
                         <div class='easemobWidget-msg-wrapper'>\
                             <i class='easemobWidget-right-corner'></i>\
@@ -850,7 +920,7 @@
             var txt = me.textarea.val();
             
             //local append
-            me.chatWrapper.append("\
+            wrapper.append("\
                 <div class='easemobWidget-right'>\
                     <div class='easemobWidget-msg-wrapper'>\
                         <i class='easemobWidget-right-corner'></i>\
@@ -863,22 +933,32 @@
             ");
             me.textarea.val('');
             me.scrollBottom();
-            !preview && me.conn.sendTextMessage({
+
+            var opt = {
                 to: config.to
                 , msg: txt
                 , type : 'chat'
-            });
+            }
+            me.handleGroup(opt);
+            me.conn.sendTextMessage(opt);
         }
         , addLink: function(msg) {
             var reg = new RegExp('(http(s)?:\/\/|www[.])[a-zA-Z0-9-]+([.][a-zA-Z0-9-]+)+', 'gm');
             var res = msg.match(reg);
             if(res && res.length) {
                 var prefix = /^https?:\/\//.test(res[0]);
-                msg = msg.replace(reg, "<a href='"+(prefix ? res[0] : '\/\/' + res[0])+"' target='_blank'>"+res[0]+"</a>");
+                msg = msg.replace(reg
+                    , "<a href='" 
+                        + (prefix 
+                            ? res[0] 
+                            : '\/\/' + res[0]) 
+                        + "' target='_blank'>" 
+                        + res[0] 
+                        + "</a>");
             }
             return msg;
         }
-        , addPrompt: function(){
+        , addPrompt: function(){//未读消息提醒，以及让父级页面title滚动
             if(!this.isOpened && this.msgCount > 0) {
                 if(this.msgCount > 9) {
                     this.messageCount.addClass('mutiCount').html('...');
@@ -892,11 +972,12 @@
                 message.sendToParent('recoveryTitle');
             }
         }
-        , receiveMsg: function(msg, type, isHistory){
+        , receiveMsg: function(msg, type, isHistory, wrapper){
             var me = this;
             var value = '';
             
-            
+            wrapper = wrapper || me.chatWrapper;
+
             if(!isHistory && !me.isOpened) {
                 me.messageCount.html('').removeClass('hide');
                 me.msgCount += 1;
@@ -934,99 +1015,29 @@
                         <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
                     </div>\
                 </div>";
+            
 
             if(!isHistory) {
-                me.chatWrapper.append(temp);
+                wrapper.append(temp);
                 me.addDate();
                 me.resetSpan();
                 me.scrollBottom();
             } else {
-                me.chatWrapper.prepend(temp);
+                wrapper.prepend(temp);
             }
         }
-        , theme: {
-            '天空之城': {
-                bgcolor: '#42b8f4'
-                , bordercolor: '#00a0e7'
-                , hovercolor:'#7dcdf7'
-            }
-            , '丛林物语': {
-                bgcolor: '#00b45f'
-                , bordercolor: '#009a51'
-                , hovercolor:'#16cd77'
-            }
-            , '红瓦洋房': {
-                bgcolor: '#b50e03'
-                , bordercolor: '#811916'
-                , hovercolor:'#e92b25'
-            }
-            , '鲜美橙汁': {
-                bgcolor: '#f49300'
-                , bordercolor: '#ce7800'
-                , hovercolor:'#ffb030'
-            }
-            , '青草田间': {
-                bgcolor: '#9ec100'
-                , bordercolor: '#809a00'
-                , hovercolor: '#bad921'
-            }
-            , '湖光山色': {
-                bgcolor: '#00cccd' 
-                , bordercolor: '#12b3b4'
-                , hovercolor: '#38e6e7'
-            }
-            , '冷峻山峰': {
-                bgcolor: '#5b799a' 
-                , bordercolor: '#48627b'
-                , hovercolor: '#6a8eb5'
-            }
-            , '月色池塘': {
-                bgcolor: '#3977cf' 
-                , bordercolor: '#2b599b'
-                , hovercolor: '#548bdc'
-            }
-        }
-        , face_map: {
-            '[):]': 'ee_1',
-            '[:D]': 'ee_2',
-            '[;)]': 'ee_3',
-            '[:-o]': 'ee_4',
-            '[:p]': 'ee_5',
-            '[(H)]': 'ee_6',
-            '[:@]': 'ee_7',
-            '[:s]': 'ee_8',
-            '[:$]': 'ee_9',
-            '[:(]': 'ee_10',
-            '[:\'(]': 'ee_11',
-            '[:|]': 'ee_12',
-            '[(a)]': 'ee_13',
-            '[8o|]': 'ee_14',
-            '[8-|]': 'ee_15',
-            '[+o(]': 'ee_16',
-            '[<o)]': 'ee_17',
-            '[|-)]': 'ee_18',
-            '[*-)]': 'ee_19',
-            '[:-#]': 'ee_20',
-            '[:-*]': 'ee_21',
-            '[^o)]': 'ee_22',
-            '[8-)]': 'ee_23',
-            '[(|)]': 'ee_24',
-            '[(u)]': 'ee_25',
-            '[(S)]': 'ee_26',
-            '[(*)]': 'ee_27',
-            '[(#)]': 'ee_28',
-            '[(R)]': 'ee_29',
-            '[({)]': 'ee_30',
-            '[(})]': 'ee_31',
-            '[(k)]': 'ee_32',
-            '[(F)]': 'ee_33',
-            '[(W)]': 'ee_34',
-            '[(D)]': 'ee_35'
-        }
-    };
+    }.setAttribute());
     
+
+    EasemobWidget.getInfoFromApi(config, function() {
+        im.init.call(im);
+    });
+
+
+
     /*
         upload by flash
+        param1: input file ID
     */
     var uploadShim = function(fileInputId) {
         if(!Easemob.im.Helper.isCanUploadFile) {
@@ -1050,7 +1061,7 @@
                 if(this.getStats().files_queued > 1) {
                     this.cancelUpload();
                 }
-                if(!pictype[file.type.slice(1).toLowerCase()]) {
+                if(!EasemobWidget.PICTYPE[file.type.slice(1).toLowerCase()]) {
                     im.errorPrompt('不支持此文件类型' + file.type);
                     this.cancelUpload();
                 } else if(10485760 < file.size) {
@@ -1083,7 +1094,7 @@
                                 <i class='easemobWidget-right-corner'></i>\
                                 <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                                 <div class='easemobWidget-msg-container'>\
-                                    <a href='"+file.url+"' target='_blank'><img src='"+file.url+"' alt='' title='' target='_blank'/></a>\
+                                    <a href='"+file.url+"' target='_blank'><img src='"+file.url+"'/></a>\
                                 </div>\
                             </div>\
                         </div>\
@@ -1108,6 +1119,26 @@
     }
 
 }(window, undefined));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1205,6 +1236,5 @@ me.chatWrapper.on('click', '.easemobWidget-msg-voice', function(){
         }
         cur == 9999 && (cur = 0);
     }, 500);
-    
 });
 */

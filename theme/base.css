@@ -412,7 +412,7 @@ img {
     position: absolute;
     height: 140px;
     width: 100%;
-    bottom: 0!important;
+    bottom: 0;
     background-color: #fff;
 }
 #easemobWidgetSendBtn.disabled {

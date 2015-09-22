@@ -1,7 +1,9 @@
 /*
- * Easemob widget utils
+    Easemob widget utils
+    version: 1.0.0
 */
 ;(function(window, undefined) {
+    'use strict';
 
     var EasemobWidget = EasemobWidget || {};
     EasemobWidget.utils = EasemobWidget.utils || {};
@@ -190,7 +192,7 @@
         }
         , getcookie: function(key) {
             var results = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)'); 
-            return results ? (unescape(results[2])) : null;
+            return results ? (unescape(results[2])) : '';
         }
     }
 
