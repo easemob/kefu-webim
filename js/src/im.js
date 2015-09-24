@@ -704,11 +704,8 @@
             .on('touchstart', function(){//防止android部分机型滚动条常驻，看着像bug ==b
                 me.scrollBottom('slow');
                 me.textarea.css('overflow-y', 'auto');
-                me.textarea.parent().css('bottom', '275px');
             })
-            .on('blur', function(){
-                me.textarea.parent().css('bottom', '0');
-            });
+            .on('blur', function(){});
 
             EasemobWidget.utils.isMobile && me.textarea.on('input', function(){
                 me.autoGrowOptions.update();
