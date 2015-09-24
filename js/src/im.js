@@ -1,15 +1,19 @@
 /*
-    im业务代码
-    version: 1.0.0
- */
+    im业务逻辑代码
+    version: 1.4.0
+*/
+
 ;(function(window, undefined){
     'use strict';
-    
+
+   
     window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+
     typeof HTMLAudioElement !== 'undefined' && (HTMLAudioElement.prototype.stop = function() {
         this.pause(); 
         this.currentTime = 0.0; 
     });
+
 
     var groupUser = '';//记录当前技能组对应的webim user
     var isGroupChat = false;//当前是否技能组聊天窗口
@@ -122,14 +126,16 @@
 
                 if(im && im.loaded) {
 
-                    if(!isShowDirect) {
-                        im.toggleChatWindow();
-                        return;
-                    }
+                    
 
                     im.handleGroup(value);
 
                     handleGroupUser();
+
+                    if(!isShowDirect) {
+                        im.toggleChatWindow();
+                        return;
+                    }
                 } else {
                     isShowDirect
                     ? im.toggleChatWindow('show')
@@ -140,9 +146,11 @@
             default: break;
         }
     });
-    
+
+
+   
     /*
-        聊天窗口所有业务代码
+        聊天窗口所有业务逻辑代码
     */
     var im = ({
         
@@ -167,7 +175,7 @@
 
             this.fillFace();//遍历FACE，添加所有表情
             this.setWord();//设置广告语
-            this.setTitle();//设置im.html的标题
+            config.json.emgroup || this.setTitle();//设置im.html的标题
             //this.audioAlert();//init audio
             this.mobileInit();//h5 适配，为防止media query不准确，js动态添加class
             this.setOffline();//根据状态展示上下班不同view
@@ -183,11 +191,11 @@
         }
         , setAttribute: function() {
             this.msgCount = 0;//未读消息数
-            this.eventList = []//事件列表,防止iframe没有加载完，父级元素post过来消息执行出错
-            this.scbT = 0//sroll bottom timeout stamp
-            this.autoGrowOptions = {}
-            this.historyFirst = true//第一次获取历史记录
-            this.msgTimeSpan//用于处理1分钟之内的消息只显示一次时间
+            this.eventList = [];//事件列表,防止iframe没有加载完，父级元素post过来消息执行出错
+            this.scbT = 0;//sroll bottom timeout stamp
+            this.autoGrowOptions = {};
+            this.historyFirst = true;//第一次获取历史记录
+            this.msgTimeSpan = {};//用于处理1分钟之内的消息只显示一次时间
             
             return this;
         }
@@ -201,13 +209,16 @@
                 im.handleChatContainer(im.group);
             } else {
                 if(!im.group) {
-                    type.ext = {};
+                    type.ext 
+                    && type.ext.weichat 
+                    && type.ext.weichat.queueName 
+                    && delete type.ext.weichat.queueName;
+
                     return;
                 }
                 type.ext = type.ext || {};
-                type.ext.weichat = {
-                    queueName: im.group          
-                }
+                type.ext.weichat = type.ext.weichat || {};
+                type.ext.weichat.queueName = im.group;
             }
         }
         , handleChatContainer: function(groupId) {
@@ -226,9 +237,10 @@
         , handleHistory: function(){
             var me = this;
             if(config.history && config.history.length > 0) {
-                
+           
                 $.each(config.history, function(k, v){
                     
+                    //处理技能组的消息     
                     var wrapper = this.chatWrapper;
                     
                     var msg = v.body;
@@ -245,10 +257,20 @@
                     }
 
 
-    
                     if(v.body && v.body.bodies.length > 0) {
+                        
+
                         var msg = v.body.bodies[0];
                         if(v.body.from && v.body.from.indexOf('webim-visitor') > -1) {
+
+                            //访客发送的满意度评价不在历史记录中展示
+                            if(v.body.ext 
+                            && v.body.ext.weichat 
+                            && v.body.ext.weichat.ctrlType 
+                            && v.body.ext.weichat.ctrlType == 'enquiry') {
+                                return;
+                            }
+
                             switch(msg.type) {
                                 case 'img':
                                     im.sendImgMsg(msg, wrapper);
@@ -258,11 +280,22 @@
                                     break;
                             }
                         } else {
+
+                            //判断是否为满意度调查的消息
+                            if(v.body.ext 
+                            && v.body.ext.weichat 
+                            && v.body.ext.weichat.ctrlType 
+                            && v.body.ext.weichat.ctrlType == 'enquiry') {
+                                msg = v.body;
+                            }
+
                             im.receiveMsg(msg, msg.type, 'history', wrapper);
                         }
+
                         /*
                             @param1:
                             @param2(boolean); true: 历史记录
+                            @param3(dom); 需要append消息的wrapper 
                         */
                         im.addDate(v.timestamp || v.body.timestamp, true, wrapper);
                     }
@@ -277,10 +310,10 @@
             }
         }
         , setTitle: function(title){
-            var nn = this.headBar.find('.easemobWidgetHeader-nickname');
+            var nickName = this.headBar.find('.easemobWidgetHeader-nickname');
             
-            nn.html(config.tenantName + (title ? '-' + title : ''));
-            document.title = nn.html() + (title ? '' : '-客服');
+            nickName.html(config.tenantName + (title ? '-' + title : ''));
+            document.title = nickName.html() + (title ? '' : '-客服');
         }
         , mobileInit: function(){
             if(!EasemobWidget.utils.isMobile) return;
@@ -294,8 +327,10 @@
                 , 'height': '40px'
                 , 'line-height': '40px'
             });
+            this.evaluate.addClass('hide');
             this.mobileLink.attr('href', location.href);
             this.sendbtn.removeClass('disabled').addClass('easemobWidgetSendBtn-mobile');
+            this.satisDialog.addClass('easemobWidget-satisfaction-dialog-mobile');
             this.headBar.addClass('easemobWidgetHeader-mobile');
             this.chatWrapper.parent().addClass('easemobWidgetBody-mobile');
             this.faceWrapper.parent().addClass('easemobWidget-face-wrapper-mobile');
@@ -344,7 +379,7 @@
             me.ePrompt.html(msg).removeClass('hide');
             setTimeout(function(){
                 me.ePrompt.html(msg).addClass('hide');
-            }, 1000); 
+            }, 2000); 
         }
         , changeTheme: function() {
             
@@ -419,6 +454,7 @@
             } else {
                 me.textarea.focus();
                 me.isOpened = true;
+                me.scrollBottom();
             }
             me.addPrompt();
         }
@@ -475,18 +511,22 @@
 
             wrapper = wrapper || this.chatWrapper;
 
+            var id = wrapper.attr('id');
+
             if(!!date) {
                 $(htmlPre + new Date(date).format(fmt) + htmlEnd)
                 .insertAfter(wrapper.find('div:first')); 
             } else if(!isHistory) {
-                if(!this.msgTimeSpan || (new Date().getTime() - this.msgTimeSpan > 60000)) {//间隔大于1min  show
+                if(!this.msgTimeSpan[id] 
+                || (new Date().getTime() - this.msgTimeSpan[id] > 60000)) {//间隔大于1min  show
+
                     wrapper.append(htmlPre + new Date().format(fmt) + htmlEnd); 
                 }
-                this.resetSpan();
+                this.resetSpan(id);
             }
         }
-        , resetSpan: function() {
-            this.msgTimeSpan = new Date().getTime();
+        , resetSpan: function(id) {
+            this.msgTimeSpan[id] = new Date().getTime();
         }
         , setFailedStatus: function() {
             this.chatWrapper.find('.easemobWidget-right:last .easemobWidget-msg-status').removeClass('hide');
@@ -511,6 +551,7 @@
             this.chatWrapper = this.Im.find('.easemobWidget-chat');
             this.textarea = this.Im.find('.easemobWidget-textarea');
             this.sendbtn = this.Im.find('#easemobWidgetSendBtn');
+            this.evaluate = this.sendbtn.parent().find('.easemobWidget-satisfaction');
             this.facebtn = this.Im.find('.easemobWidget-face');
             this.uploadbtn = this.Im.find('#easemobWidgetFile');
             this.realfile = this.Im.find('#easemobWidgetFileInput');
@@ -523,6 +564,7 @@
             this.ePrompt = this.Im.find('.easemobWidget-error-prompt');
             this.mobileLink = this.Im.find('#easemobWidgetLink');
             this.dutyStatus = this.Im.find('.easemobWidgetHeader-word-status');
+            this.satisDialog = this.Im.find('.easemobWidget-satisfaction-dialog');
         }
         , audioAlert: function(){
             var me = this;
@@ -572,6 +614,74 @@
             if('onpopstate' in window) {
                 $(window).on('popstate', me.open);
             }
+            
+            /*
+                满意度调查
+            */
+            me.evaluate.on(click, function(){
+                //clear cache
+                me.satisDialog.get(0).inviteId = '';
+                me.satisDialog.get(0).targetId = '';
+
+                me.satisDialog.removeClass('hide');
+            });
+            me.Im.on(click, '.easemobWidget-satisfy-btn button', function(){
+                var that = $(this);
+
+                //cache
+                me.satisDialog.get(0).inviteId = that.data('inviteid');
+                me.satisDialog.get(0).targetId = that.data('targetid');
+
+                me.satisDialog.removeClass('hide');
+                return false;
+            });
+            me.satisDialog.on(click, 'i, .js_cancel', function(){
+                me.satisDialog.addClass('hide');
+            });
+            me.satisDialog.on(click, '.js_satisfy', function(){
+                var suc = me.satisDialog.find('.js_suc'),
+                    level = me.satisDialog.find('li.sel').length,
+                    text = me.satisDialog.find('textarea');
+
+                if(level == 0) {
+                    me.errorPrompt('请先选择星级');
+                    return false;
+                }
+                
+                me.sendSatisfaction(level, text.val());
+
+                suc.removeClass('hide');
+
+                setTimeout(function(){
+                    text.val('');
+
+                    $.each(me.satisDialog.find('li.sel'), function(k, v){
+                        $(v).removeClass('sel');
+                    });
+
+                    suc.addClass('hide');
+                    me.satisDialog.addClass('hide');
+                }, 3000);
+
+            });
+            me.satisDialog.on(click, 'li', function(e){
+                e.originalEvent.preventDefault && e.originalEvent.preventDefault();
+
+                var that = $(this),
+                    par = that.parent(),
+                    temp = par.find('li');
+
+                for(var i=0;i<5;i++) {
+                    if(i <= that.index()) {
+                        temp.eq(i).addClass('sel');
+                    } else {
+                        temp.eq(i).removeClass('sel');
+                    }
+                }
+
+                e.originalEvent.stopPropagation && e.originalEvent.stopPropagation();
+            });
+
 
             //关闭广告语按钮
             me.closeWord.on(click, function(){
@@ -942,6 +1052,30 @@
             me.handleGroup(opt);
             me.conn.sendTextMessage(opt);
         }
+        , sendSatisfaction: function(level, content) {
+            var me = this;
+            
+            var opt = {
+                to: config.to
+                , msg: ''
+                , type : 'chat'
+                , ext: {
+                    weichat: {
+                        ctrlType: 'enquiry'
+                        , ctrlArgs: {
+                            inviteId: me.satisDialog.get(0).inviteId || ''
+                            , targetId: me.satisDialog.get(0).targetId || ''
+                            , detail: content
+                            , summary: level
+                        }
+                    }
+                }
+            }
+
+            this.handleGroup(opt);
+            
+            this.conn.sendTextMessage(opt);
+        }
         , addLink: function(msg) {
             var reg = new RegExp('(http(s)?:\/\/|www[.])[a-zA-Z0-9-]+([.][a-zA-Z0-9-]+)+', 'gm');
             var res = msg.match(reg);
@@ -983,6 +1117,17 @@
                 me.msgCount += 1;
                 me.addPrompt();
             }
+
+
+            //满意度评价
+            
+            if(msg.ext 
+            && msg.ext.weichat 
+            && msg.ext.weichat.ctrlType 
+            && msg.ext.weichat.ctrlType == 'inviteEnquiry') {
+                type = 'satisfactionEvaluation';  
+            }
+
             //me.playaudio();
             switch(type){
                 case 'txt':
@@ -1004,6 +1149,8 @@
                 case 'img':
                     value = '<a href="'+msg.url+'" target="_blank"><img src="'+(msg.thumb || msg.url)+'"></a>';   
                     break;
+                case 'satisfactionEvaluation':
+                    value = '<p>请对我的服务做出评价</p>'
                 default: break;
             }
             
@@ -1013,10 +1160,15 @@
                         <i class='easemobWidget-left-corner'></i>\
                         <div class='easemobWidget-msg-container'>" + value +"</div>\
                         <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
-                    </div>\
-                </div>";
+                    </div>"
+                    + (type == 'satisfactionEvaluation'
+                    ? '<div class="easemobWidget-satisfy-btn">\
+                            <button data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '" data-targetid="' + msg.ext.weichat.ctrlArgs.targetId + '">立即评价</button>\
+                       </div>'
+                    : '') +
+                "</div>";
             
-
+            
             if(!isHistory) {
                 wrapper.append(temp);
                 me.addDate();

@@ -49,12 +49,32 @@
         <i class='easemobWidget-file' id='easemobWidgetFile'></i>
         <input id='easemobWidgetFileInput' type='file' accept='image/*' style='visibility:hidden;'/>
         <textarea class='easemobWidget-textarea' spellcheck='false'></textarea>
-        <span class='easemobWidget-logo'>客服软件由环信提供</span>
+        <span class='easemobWidget-satisfaction'>请对服务做出评价</span>
+        <span class='easemobWidget-logo hide'>客服软件由环信提供</span>
         <a href='javascript:;' class='easemobWidget-send bg-color disabled' id='easemobWidgetSendBtn'>发送</a>
     </div>
     <p class='easemobWidget-error-prompt hide'></p>
     <audio src='resources/msg.mp3' class='hide'></audio>
     <a id='easemobWidgetLink' target='_blank'></a>
+    <div class='easemobWidget-satisfaction-dialog hide'>
+        <h3>请对我的服务做出评价</h3>
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <textarea spellcheck='false' placeholder='请输入留言'></textarea>
+        <div>
+            <button class='easemobWidget-satisfaction-cancel js_cancel'>取消</button>
+            <button class='bg-color js_satisfy'>提交</button>
+        </div>
+        <i>×</i>
+        <div class='easemobWidget-leavemsg-success easemobWidget-satisfaction-success js_suc hide'>
+            <img src='theme/succeed1.png'/><p>提交成功</p>
+        </div>
+    </div>
 </div>
 <script src="js/swfupload/swfupload.min.js"></script>
 <script src="js/emkf.min.js"></script>
