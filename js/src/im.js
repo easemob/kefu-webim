@@ -318,15 +318,18 @@
         , mobileInit: function(){
             if(!EasemobWidget.utils.isMobile) return;
             this.Im.find('.easemobWidget-logo').hide();
-            this.fixedBtn.css({width: '100%', top: '0'});
-            this.fixedBtn.children().css({
-                width: '100%'
-                , 'border-radius': '0'
-                , 'text-align': 'center'
-                , 'font-size': '18px'
-                , 'height': '40px'
-                , 'line-height': '40px'
-            });
+
+            if(!config.json.hide && !config.root) {
+                this.fixedBtn.css({width: '100%', top: '0'});
+                this.fixedBtn.children().css({
+                    width: '100%'
+                    , 'border-radius': '0'
+                    , 'text-align': 'center'
+                    , 'font-size': '18px'
+                    , 'height': '40px'
+                    , 'line-height': '40px'
+                });
+            }
             this.evaluate.addClass('hide');
             this.mobileLink.attr('href', location.href);
             this.sendbtn.removeClass('disabled').addClass('easemobWidgetSendBtn-mobile');
@@ -395,7 +398,7 @@
             } 
         }
         , showFixedBtn: function() {
-            !config.json.hide && this.fixedBtn.removeClass('hide');
+            !config.json.hide && !config.root && this.fixedBtn.removeClass('hide');
         }
         , setOffline: function() {
             var me = this;
