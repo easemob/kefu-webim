@@ -17,7 +17,8 @@
 
     var groupUser = '';//记录当前技能组对应的webim user
     var isGroupChat = false;//当前是否技能组聊天窗口
-    var isShowDirect = false;
+    var isShowDirect = false;//不同技能组之间，直接显示
+    var isSatisfy = false;//满意度评价不显示时间
     var curGroup = '';//记录当前技能组，如果父级页面切换技能组，则直接打开chatwindow，不toggle   
     var swfupload = null;//flash 上传利器
     var https = location.protocol == 'https:' ? true : false;
@@ -486,7 +487,7 @@
                     me.receiveMsg(message, 'audio');
                 }
                 , onReceivedMessage: function(message) {
-                    me.addDate();
+                    !isSatisfy && me.addDate();
                 }
                 , onError: function(e){
                     switch(e.type){
@@ -624,7 +625,7 @@
             me.evaluate.on(click, function(){
                 //clear cache
                 me.satisDialog.get(0).inviteId = '';
-                me.satisDialog.get(0).targetId = '';
+                me.satisDialog.get(0).serviceSessionId = '';
 
                 me.satisDialog.removeClass('hide');
             });
@@ -633,7 +634,7 @@
 
                 //cache
                 me.satisDialog.get(0).inviteId = that.data('inviteid');
-                me.satisDialog.get(0).targetId = that.data('targetid');
+                me.satisDialog.get(0).serviceSessionId = that.data('servicesessionid');
 
                 me.satisDialog.removeClass('hide');
                 return false;
@@ -650,7 +651,7 @@
                     me.errorPrompt('请先选择星级');
                     return false;
                 }
-                
+                isSatisfy = true;
                 me.sendSatisfaction(level, text.val());
 
                 suc.removeClass('hide');
@@ -726,6 +727,7 @@
             //表情的选中
             me.faceWrapper.on(click, '.easemobWidget-face-bg', function(e){
                 e.originalEvent.preventDefault && e.originalEvent.preventDefault();
+
                 !EasemobWidget.utils.isMobile && me.textarea.focus();
                 me.textarea.val(me.textarea.val()+$(this).find('img').data('value'));
                 if(EasemobWidget.utils.isMobile){
@@ -735,6 +737,7 @@
                     }, 100);
                 }
                 me.sendbtn.removeClass('disabled');
+
                 e.originalEvent.stopPropagation && e.originalEvent.stopPropagation();
             });
 
@@ -759,6 +762,7 @@
 
             //选中文件并发送
             me.realfile.on('change', function(){
+                isSatisfy = false;
                 me.sendImgMsg();
             });
 
@@ -805,6 +809,7 @@
                     if(me.sendbtn.hasClass('disabled')) {
                         return false;
                     }
+                    isSatisfy = false;
                     me.sendTextMsg();
                     setTimeout(function(){
                         that.val('');
@@ -817,6 +822,7 @@
                 if(me.sendbtn.hasClass('disabled')) {
                     return false;
                 }
+                isSatisfy = false;
                 me.faceWrapper.parent().addClass('hide');
                 me.sendTextMsg();
                 me.scrollBottom('fast');
@@ -1064,7 +1070,7 @@
                         ctrlType: 'enquiry'
                         , ctrlArgs: {
                             inviteId: me.satisDialog.get(0).inviteId || ''
-                            , targetId: me.satisDialog.get(0).targetId || ''
+                            , serviceSessionId: me.satisDialog.get(0).serviceSessionId || ''
                             , detail: content
                             , summary: level
                         }
@@ -1163,7 +1169,7 @@
                     </div>"
                     + (type == 'satisfactionEvaluation'
                     ? '<div class="easemobWidget-satisfy-btn">\
-                            <button data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '" data-targetid="' + msg.ext.weichat.ctrlArgs.targetId + '">立即评价</button>\
+                            <button data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '" data-servicesessionid="' + msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
                        </div>'
                     : '') +
                 "</div>";
