@@ -48,7 +48,7 @@
         ? $.when(EasemobWidget.api.getPwd({user: groupUser}))
         .done(function(info){
             config.user = groupUser;
-            config.password = info.userPassword;
+            config.password = info;
             
             config.root 
             ? Emc.setcookie(curGroup, config.user) 
@@ -489,6 +489,9 @@
                 , onReceivedMessage: function(message) {
                     !isSatisfy && me.addDate();
                 }
+                , onClosed: function() {
+                    me.open();
+                }
                 , onError: function(e){
                     switch(e.type){
                         case 1://offline
@@ -536,12 +539,19 @@
             this.chatWrapper.find('.easemobWidget-right:last .easemobWidget-msg-status').removeClass('hide');
         }
         , open: function(){
+            
             var me = this;
-            this.conn.open({
-                user : config.user
-                , pwd : config.password
-                , appKey : config.appkey
-            });
+            
+            if(me.conn.isOpening() || me.conn.isOpened()){
+                me.conn.close();
+
+            } else {
+                me.conn.open({
+                    user : config.user
+                    , pwd : config.password
+                    , appKey : config.appkey
+                });
+            }
             
         }
         , getDom: function(){
