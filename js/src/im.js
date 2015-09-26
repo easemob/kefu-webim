@@ -35,28 +35,58 @@
         ? false 
         : config.json.hide;
 
-    //如果获取的历史记录条数小于EasemobWidget.LISTSPAN，则置为true，表明不需要再发送请求获取
-    config.disableHistory = false
-    config.historyStartId = 0//获取历史记录起始ID
-
     
     /*
         处理技能组user切换
     */
     var handleGroupUser = function() {
         groupUser 
-        ? $.when(EasemobWidget.api.getPwd({user: groupUser}))
-        .done(function(info){
+        ? $.when(
+            EasemobWidget.api.getPwd({user: groupUser})
+            , EasemobWidget.api.getGroup({
+                user: groupUser
+                , orgName: config.orgName
+                , appName: config.appName
+                , to: config.to
+            })
+        )
+        .done(function(info, group){
             config.user = groupUser;
             config.password = info;
             
+            im.chatWrapper.attr('data-group', group);
+
             config.root 
             ? Emc.setcookie(curGroup, config.user) 
             : message.sendToParent('setgroupuser@' + config.user + '@emgroupuser@' + curGroup);
 
             im.open();
 
-            im.toggleChatWindow(isShowDirect ? 'show' : '')
+            //每次切换不在重新获取，除非用户trigger           
+            if (im.chatWrapper.data('hised')) return;
+
+            $.when(EasemobWidget.api.getHistory(
+                0 
+                , EasemobWidget.LISTSPAN
+                , im.chatWrapper.data('group')
+                , config.json.tenantId
+            ))
+            .done(function(info){
+                im.chatWrapper.attr('data-hised', 1);
+
+                if(info && info.length == EasemobWidget.LISTSPAN) {
+                    im.chatWrapper.attr('data-start', Number(info[EasemobWidget.LISTSPAN - 1].chatGroupSeqId) - 1);
+                    im.chatWrapper.attr('data-history', 0);
+                } else {
+                    im.chatWrapper.attr('data-history', 1);
+                }
+
+                config.history = info;
+                im.handleHistory();
+
+                im.toggleChatWindow(isShowDirect ? 'show' : '')
+            });
+
         })
         : $.when(EasemobWidget.api.getUser(config))
         .done(function(info){
@@ -94,7 +124,7 @@
                     im.chatWrapper = $('#normal');
                     im.chatWrapper.removeClass('hide').siblings().addClass('hide');
                     config.user = im.curUser.user;
-                    config.password = im.curUser.password;
+                    config.password = im.curUser.pwd;
                     im.open();
                     im.setTitle();
                     im.group = false;
@@ -230,7 +260,7 @@
                 this.setTitle(groupId);
                 curChatContainer.removeClass('hide').siblings('.easemobWidget-chat').addClass('hide');
             } else {
-                curChatContainer = $('<div id="' + groupId + '" class="easemobWidget-chat"></div>');
+                curChatContainer = $('<div data-start="0" data-history="1" id="' + groupId + '" class="easemobWidget-chat"></div>');
                 this.chatWrapper.parent().prepend(curChatContainer);
                 this.handleChatContainer(groupId);     
             }
@@ -876,18 +906,26 @@
             var st, memPos = 0, _startY, _y, touch, DIS=200, _fired=false;
             var triggerGetHistory = function(){
                 
-                !config.disableHistory && $.when(EasemobWidget.api.getHistory(
-                    config.historyStartId
+                me.chatWrapper.attr('data-history') != 1 
+                && $.when(EasemobWidget.api.getHistory(
+                    me.chatWrapper.attr('data-start')
                     , EasemobWidget.LISTSPAN
-                    , config.group
+                    , me.chatWrapper.data('group')
                     , config.json.tenantId
                 ))
                 .done(function(info){
+
                     if(info && info.length == EasemobWidget.LISTSPAN) {
-                        config.historyStartId = Number(info[EasemobWidget.LISTSPAN - 1].chatGroupSeqId) - 1;
-                        config.disableHistory = false;
+                        var start = Number(info[EasemobWidget.LISTSPAN - 1].chatGroupSeqId) - 1;
+                        start == 0 && setTimeout(function() {
+                            me.chatWrapper.attr('data-history', 1);
+                        }, 0);
+                        me.chatWrapper.attr('data-start', start);
+                        me.chatWrapper.attr('data-history', 0);
                     } else {
-                        config.disableHistory = true;
+                        setTimeout(function() {
+                            me.chatWrapper.attr('data-history', 1);
+                        }, 0);
                     }
                     config.history = info;
                     im.handleHistory();
@@ -1196,7 +1234,6 @@
         }
     }.setAttribute());
     
-
     EasemobWidget.getInfoFromApi(config, function() {
         im.init.call(im);
     });

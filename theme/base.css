@@ -653,6 +653,7 @@ body .easemobWidget-offline-bg {
     margin-top: -180px;
     border-radius: 5px;
     overflow: hidden;
+    border: 1px solid #efefef\9;
 }
 .easemobWidget-satisfaction-dialog h3 {
     font-size: 16px;
@@ -684,6 +685,14 @@ body .easemobWidget-offline-bg {
     background-position: 0 -40px;
     margin-left: 10px;
     cursor: pointer;
+
+    width: 80px\9;
+    height: 80px\9;
+    background-position: 0 -80px\9;
+    zoom: 50%\9;
+
+    *display: inline;
+    
 }
 .easemobWidget-satisfaction-dialog li.sel {
     background-position: 0 0; 
@@ -701,6 +710,7 @@ body .easemobWidget-offline-bg {
     border-radius: 6px;
     font-size: 14px;
     outline: none;
+    *margin-left: 55%;
 }
 .easemobWidget-satisfaction-dialog button {
     width: 32%;

@@ -2,7 +2,8 @@
     从接口获取相关数据
 */
 EasemobWidget.getInfoFromApi = function(obj, callback) {
-
+    
+    var wrapper = $('#normal');
     var message = new EmMessage();
     var tenantId = obj.json.tenantId;
 
@@ -55,20 +56,20 @@ EasemobWidget.getInfoFromApi = function(obj, callback) {
                 , EasemobWidget.api.getGroup(obj)
             )
             .done(function(p, g){
-                obj.group = g;
+                wrapper.attr('data-group', g);
                 obj.password = p;
-                !obj.disableHistory && $.when(EasemobWidget.api.getHistory(
-                    obj.historyStartId
+                $.when(EasemobWidget.api.getHistory(
+                    0 
                     , EasemobWidget.LISTSPAN
                     , g
                     , tenantId
                 ))
                 .done(function(info){
                     if(info && info.length == EasemobWidget.LISTSPAN) {
-                        obj.historyStartId = Number(info[EasemobWidget.LISTSPAN - 1].chatGroupSeqId) - 1;
-                        obj.disableHistory = false;
+                        wrapper.attr('data-start', Number(info[EasemobWidget.LISTSPAN - 1].chatGroupSeqId) - 1);
+                        wrapper.attr('data-history', 0);
                     } else {
-                        obj.disableHistory = true;
+                        wrapper.attr('data-history', 1);
                     }
                     obj.history = info;
                     typeof callback == 'function' && callback();
@@ -76,7 +77,7 @@ EasemobWidget.getInfoFromApi = function(obj, callback) {
             })
             .fail(function(){});
         } else {
-            obj.disableHistory = true;//新用户不获取历史记录
+            wrapper.attr('data-history', 1);//新用户不获取历史记录
             $.when(EasemobWidget.api.getUser(obj))
             .done(function(info){
                 obj.user = info.userId;
