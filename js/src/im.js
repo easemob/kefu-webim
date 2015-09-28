@@ -82,7 +82,7 @@
                 }
 
                 config.history = info;
-                im.handleHistory();
+                im.handleHistory(im.chatWrapper);
 
                 im.toggleChatWindow(isShowDirect ? 'show' : '')
             });
@@ -162,16 +162,11 @@
                     im.handleGroup(value);
 
                     handleGroupUser();
-
-                    if(!isShowDirect) {
-                        im.toggleChatWindow();
-                        return;
-                    }
-                } else {
-                    isShowDirect
-                    ? im.toggleChatWindow('show')
-                    : im.toggleChatWindow()
                 }
+                
+                isShowDirect
+                ? im.toggleChatWindow('show')
+                : im.toggleChatWindow()
 
                 break;
             default: break;
@@ -265,27 +260,15 @@
                 this.handleChatContainer(groupId);     
             }
         }
-        , handleHistory: function(){
+        , handleHistory: function(cwrapper){
             var me = this;
             if(config.history && config.history.length > 0) {
            
                 $.each(config.history, function(k, v){
                     
-                    //处理技能组的消息     
-                    var wrapper = this.chatWrapper;
+                    var wrapper = cwrapper || this.chatWrapper;
                     
                     var msg = v.body;
-                    if(msg.ext && msg.ext.weichat) {
-                        var groupId = msg.ext.weichat.queueName;
-                        
-                        if($('#' + groupId).length == 0) {
-                            me.chatWrapper.parent()
-                            .prepend($('<div id="' + groupId + '" class="easemobWidget-chat"></div>'));   
-                        }
-                        wrapper = $('#' + groupId);
-                    } else {
-                        wrapper = $('#normal');
-                    }
 
 
                     if(v.body && v.body.bodies.length > 0) {
