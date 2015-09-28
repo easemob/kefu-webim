@@ -299,7 +299,7 @@
                             if(v.body.ext 
                             && v.body.ext.weichat 
                             && v.body.ext.weichat.ctrlType 
-                            && v.body.ext.weichat.ctrlType == 'enquiry') {
+                            && v.body.ext.weichat.ctrlType == 'inviteEnquiry') {
                                 msg = v.body;
                             }
 
@@ -939,10 +939,11 @@
             });
 
             //pc
-            me.chatWrapper.parent().on('mousewheel DOMMouseScroll', function(e){
+            me.Im.on('mousewheel DOMMouseScroll', '.easemobWidget-chat', function(e){
                 var $t = $(this);
                 
-                if(e.originalEvent.wheelDelta % 120 > 0 || e.originalEvent.detail < 0) {//up
+                if(e.originalEvent.wheelDelta / 120 > 0 || e.originalEvent.detail < 0) {//up
+                    
                     clearTimeout(st);
                     st = setTimeout(function(){
                         if($t.scrollTop() <= 50) {

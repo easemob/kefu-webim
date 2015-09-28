@@ -584,6 +584,7 @@ body .easemobWidget-offline-bg {
     border: none;
     width: 100px;
     height: 36px;
+    line-height: 36px;
     color: #000;
     font-size: 14px;
     background-color: #fafafa;
