@@ -9,7 +9,7 @@
     EasemobWidget.utils = EasemobWidget.utils || {};
     
     EasemobWidget.utils.queryString = function(url, key) {//queryString
-        var r = url.match(new RegExp('[?&]?'+key+'=[0-9a-zA-Z%._-]*[^&]', 'g'));
+        var r = url.match(new RegExp('[?&]?'+key+'=[0-9a-zA-Z%@._-]*[^&]', 'g'));
         r = r && r[0] ? (r[0][0]=='?' || r[0][0]=='&' ? r[0].slice(1) : r[0]) : '';
 
         return r.slice(key.length+1);

@@ -141,7 +141,7 @@
                 var idx = value.indexOf('@emgroupuser@');
 
                 if(idx > 0) {
-                    groupUser = value.slice(1, idx);
+                    groupUser = value.slice(0, idx);
                 } else {
                     groupUser = null;
                 }
@@ -191,7 +191,6 @@
             config.root && (
                 this.min.addClass('hide')//隐藏最小化按钮
                 , this.toggleChatWindow()//展示聊天窗口内容
-                , !!config.json.emgroup && im.handleGroup(config.json.emgroup)//处理技能组
             );
             
             //不支持异步upload的浏览器使用flash插件搞定
@@ -211,7 +210,7 @@
             this.handleEvents();//执行post过来的消息，清空事件列表
 
             this.bindEvents();//开始绑定dom各种事件
-            this.handleHistory();//处理拿到的历史记录
+            !config.json.emgroup && this.handleHistory();//处理拿到的历史记录
             this.showFixedBtn();//展示悬浮小按钮
 
         }
@@ -357,6 +356,17 @@
             this.sendbtn.parent().addClass('easemobWidgetSend-mobile');
             this.textarea.addClass('textarea-mobile');
             this.Im.find('.easeWidget-face-rec').addClass('easeWidget-face-rec-mobile');
+
+            if(config.json.emgroup && config.root) {//处理技能组
+                var value = unescape(config.json.emgroup);
+
+                im.handleGroup(value);
+
+                groupUser = Emc.getcookie(value);
+                curGroup = value;
+                handleGroupUser();
+            }
+
         }
         , setWord: function(){
             if(config.word) {
