@@ -6,7 +6,7 @@
 ;(function(window, undefined){
     'use strict';
 
-   
+
     window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 
     typeof HTMLAudioElement !== 'undefined' && (HTMLAudioElement.prototype.stop = function() {
@@ -56,10 +56,6 @@
             
             im.chatWrapper.attr('data-group', group);
 
-            config.root 
-            ? Emc.setcookie(curGroup, config.user) 
-            : message.sendToParent('setgroupuser@' + config.user + '@emgroupuser@' + curGroup);
-
             im.open();
 
             //每次切换不在重新获取，除非用户trigger           
@@ -94,7 +90,7 @@
             config.password = info.userPassword;
             
             config.root 
-            ? Emc.setcookie(curGroup, config.user) 
+            ? Emc.setcookie(escape(curGroup), config.user) 
             : message.sendToParent('setgroupuser@' + config.user + '@emgroupuser@' + curGroup);
 
             im.open();
@@ -200,7 +196,7 @@
 
             this.fillFace();//遍历FACE，添加所有表情
             this.setWord();//设置广告语
-            this.setTitle(unescape(config.json.emgroup) || '');//设置im.html的标题
+            this.setTitle(config.json.emgroup ? unescape(config.json.emgroup) : '');//设置im.html的标题
             //this.audioAlert();//init audio
             this.mobileInit();//h5 适配，为防止media query不准确，js动态添加class
             this.setOffline();//根据状态展示上下班不同view
@@ -210,7 +206,7 @@
             this.handleEvents();//执行post过来的消息，清空事件列表
 
             this.bindEvents();//开始绑定dom各种事件
-            !config.json.emgroup && this.handleHistory();//处理拿到的历史记录
+            EasemobWidget.utils.isMobile && config.json.emgroup || this.handleHistory();//处理拿到的历史记录
             this.showFixedBtn();//展示悬浮小按钮
 
         }
@@ -362,7 +358,7 @@
 
                 im.handleGroup(value);
 
-                groupUser = Emc.getcookie(value);
+                groupUser = Emc.getcookie(escape(value));
                 curGroup = value;
                 handleGroupUser();
             }
@@ -532,7 +528,7 @@
                 user: config.user
                 , pwd: config.password
             };
-            me.open();
+            EasemobWidget.utils.isMobile && config.json.emgroup || me.open();
         }
         , addDate: function(date, isHistory, wrapper) {
             var htmlPre = '<div class="easemobWidget-date">',
