@@ -200,7 +200,7 @@
 
             this.fillFace();//遍历FACE，添加所有表情
             this.setWord();//设置广告语
-            config.json.emgroup || this.setTitle();//设置im.html的标题
+            this.setTitle(unescape(config.json.emgroup) || '');//设置im.html的标题
             //this.audioAlert();//init audio
             this.mobileInit();//h5 适配，为防止media query不准确，js动态添加class
             this.setOffline();//根据状态展示上下班不同view
