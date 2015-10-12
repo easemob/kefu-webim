@@ -498,7 +498,7 @@ var getFileSizeFn = function(fileInputId){
 var hasFlash = (function() {
     if (getIEVersion()) {//ie
         try {
-            return new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+            return parseInt(new ActiveXObject('ShockwaveFlash.ShockwaveFlash').GetVariable("$version").split(" ")[1].split(",")[0]) < 10 ? 0 : 1;
         } catch (ex) {
             return 0;
         }

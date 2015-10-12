@@ -60,25 +60,13 @@
 
             //每次切换不在重新获取，除非用户trigger           
             if (im.chatWrapper.data('hised')) return;
-
-            $.when(EasemobWidget.api.getHistory(
-                0 
-                , EasemobWidget.LISTSPAN
-                , im.chatWrapper.data('group')
-                , config.json.tenantId
-            ))
-            .done(function(info){
-                im.chatWrapper.attr('data-hised', 1);
-
-                if(info && info.length == EasemobWidget.LISTSPAN) {
-                    im.chatWrapper.attr('data-start', Number(info[EasemobWidget.LISTSPAN - 1].chatGroupSeqId) - 1);
-                    im.chatWrapper.attr('data-history', 0);
-                } else {
-                    im.chatWrapper.attr('data-history', 1);
-                }
+            
+            im.getHistory(0, im.chatWrapper, function(wrapper, info){
+            
+                wrapper.attr('data-hised', 1);
 
                 config.history = info;
-                im.handleHistory(im.chatWrapper);
+                im.handleHistory(wrapper);
 
                 im.toggleChatWindow(isShowDirect ? 'show' : '')
             });
@@ -209,6 +197,31 @@
             EasemobWidget.utils.isMobile && config.json.emgroup || this.handleHistory();//处理拿到的历史记录
             this.showFixedBtn();//展示悬浮小按钮
 
+            this.getHistory(0, $('#normal'), function(wrapper, info){
+                config.history = info;
+                im.handleHistory(wrapper);
+            });
+
+        }
+        , getHistory: function(from, wrapper, callback) {
+            var me = this;
+            wrapper = wrapper || im.chatWrapper;
+
+            $.when(EasemobWidget.api.getHistory(
+                from 
+                , EasemobWidget.LISTSPAN
+                , wrapper.data('group')
+                , config.json.tenantId
+            ))
+            .done(function(info){
+                if(info && info.length == EasemobWidget.LISTSPAN) {
+                    wrapper.attr('data-start', Number(info[EasemobWidget.LISTSPAN - 1].chatGroupSeqId) - 1);
+                    wrapper.attr('data-history', 0);
+                } else {
+                    wrapper.attr('data-history', 1);
+                }
+                callback instanceof Function && callback(wrapper, info);
+            });
         }
         , setAttribute: function() {
             this.msgCount = 0;//未读消息数
@@ -414,7 +427,8 @@
                 this.sendbtn.css('background-color', color);
             } else if(config.theme) {
                 if(!EasemobWidget.THEME[config.theme]) config.theme = '天空之城';
-                $('head').append('<link rel="stylesheet" href="/webim/theme/'+config.theme+'.css" />');
+                //$('head').append('<link rel="stylesheet" href="/webim/theme/'+encodeURIComponent(config.theme)+'.css" />');
+                $('<style type="text/css">' + EasemobWidget.THEME[config.theme].css + '</style>').appendTo('head');
             } 
         }
         , showFixedBtn: function() {

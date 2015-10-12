@@ -58,7 +58,8 @@ EasemobWidget.getInfoFromApi = function(obj, callback) {
             .done(function(p, g){
                 wrapper.attr('data-group', g);
                 obj.password = p;
-                $.when(EasemobWidget.api.getHistory(
+                typeof callback == 'function' && callback();
+                /*$.when(EasemobWidget.api.getHistory(
                     0 
                     , EasemobWidget.LISTSPAN
                     , g
@@ -73,7 +74,7 @@ EasemobWidget.getInfoFromApi = function(obj, callback) {
                     }
                     obj.history = info;
                     typeof callback == 'function' && callback();
-                });
+                });*/
             })
             .fail(function(){});
         } else {
