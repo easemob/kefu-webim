@@ -338,6 +338,7 @@ img {
 }
 .easemobWidget-right .easemobWidget-msg-container {
     background-color: #E1EBFE;
+    float: right;
 }
 .easemobWidget-left .easemobWidget-msg-wrapper {
     float: left;

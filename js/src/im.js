@@ -207,6 +207,8 @@
             var me = this;
             wrapper = wrapper || im.chatWrapper;
 
+            if(!wrapper.data('group')) return;
+
             $.when(EasemobWidget.api.getHistory(
                 from 
                 , EasemobWidget.LISTSPAN
@@ -829,7 +831,7 @@
             });
 
             //弹出文件选择框
-            me.uploadbtn.on(click, function(){
+            me.uploadbtn.on('click', function(){
                 if(!Easemob.im.Helper.isCanUploadFile) {
                     me.errorPrompt('当前浏览器不支持发送图片');
                     return false;    
