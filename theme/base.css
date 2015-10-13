@@ -296,7 +296,7 @@ img {
 }
 .easemobWidget-msg-container img {
     border-radius: 2px;
-    max-width: 100%;
+    max-width: 190px;
     *width: 200px;
     word-wrap: break-word;
 }
