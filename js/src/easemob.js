@@ -6,7 +6,7 @@
     'use strict';
 
     var message, iframe, iframeId, curChannel, curUser, eTitle = document.title,
-        newTitle = '\-\新\消\息\提\醒', titleST = 0;
+        newTitle = '\-\新\消\息\提\醒', titleST = 0, initdata;
     
     var getConfig = function(key){//get config from current script
         var that;
@@ -146,7 +146,9 @@
     
     //add kefu widget
     var appendIframe = function(){
-        iframe = document.createElement('iframe');
+        iframe = (/MSIE (6|7|8)/).test(navigator.userAgent)
+            ? document.createElement('<iframe name="' + new Date().getTime() + '">')
+            : document.createElement('iframe');
         iframeId = 'EasemobIframe' + new Date().getTime();
         iframe.id = iframeId;
         iframe.name = new Date().getTime();
@@ -163,13 +165,17 @@
             height:0;\
             display:none;\
             transition:all .01s;';
-        iframe.src = config.domain + 'webim/im.html?tenantId=' + config.json.tenantId 
-            + (!!config.json.hide ? '&hide=true' : '') 
-            + (!!config.json.color ? '&color=' + config.json.color : '')
-            + (!!config.json.preview ? '&preview=' + config.json.preview : '')
-            + (!!curChannel ? '&c=' + curChannel : '')
-            + (!!curUser ? '&u=' + curUser : '')
-            + '&v=' + new Date().getTime();
+
+        
+        initdata = 'initdata:' + config.domain + 'webim/im.html?tenantId=' + config.json.tenantId 
+            + (config.json.hide ? '&hide=true' : '') 
+            + (config.json.color ? '&color=' + config.json.color : '')
+            + (config.json.preview ? '&preview=' + config.json.preview : '')
+            + (curChannel ? '&c=' + curChannel : '')
+            + (curUser ? '&u=' + curUser : '')
+            + '&time=' + new Date().getTime();
+        iframe.src = config.domain + 'webim/im.html?tenantId=' + config.json.tenantId;
+
         if(!config.json.hide) {
             iframe.style.height = '37px';
             iframe.style.width = '100px';
@@ -190,6 +196,7 @@
                     this.style.display = 'block';
                     message = new EmMessage(iframeId);
                     open();
+                    message.sendToIframe(initdata);
                 }
             }
         } else {
@@ -197,6 +204,7 @@
                 this.style.display = 'block';
                 message = new EmMessage(iframeId);
                 open();
+                message.sendToIframe(initdata);
             }
         }
     }

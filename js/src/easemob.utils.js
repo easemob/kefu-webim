@@ -17,14 +17,8 @@
 
     EasemobWidget.utils.getConfig = function(key){//get config from current script
         var that;
-        if(!!key) {
-            var scripts = document.scripts;
-            for(var s = 0, l=scripts.length; s<l; s++) {
-                if(scripts[s].src && 0 < scripts[s].src.indexOf(key)) {
-                    that = scripts[s].src;
-                    break;
-                }
-            }
+        if(key) {
+            that = key;
         } else {
             that = location.href;
         }

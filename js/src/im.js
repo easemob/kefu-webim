@@ -14,6 +14,22 @@
         this.currentTime = 0.0; 
     });
 
+    var config = {};
+    config.root = window.top == window;//是否在iframe当中
+    
+
+    //ie8的iframe的cache实在是。。。#￥%&&, 不得不跟父级通信
+    new EmMessage().listenToParent(function(msg){
+        
+        if(msg.indexOf('initdata:') == 0) {
+            config = EasemobWidget.utils.getConfig(msg.slice(9));
+            main();
+        }
+    });
+
+            
+
+    var main = function() {
 
     var groupUser = '';//记录当前技能组对应的webim user
     var isGroupChat = false;//当前是否技能组聊天窗口
@@ -28,13 +44,13 @@
 
     
     //获取当前url所带的各种参数
-    var config = EasemobWidget.utils.getConfig();
+    /*var config = EasemobWidget.utils.getConfig();
 
     config.root = window.top == window;//是否在iframe当中
     config.json.hide = config.json.hide == 'false' 
         ? false 
         : config.json.hide;
-
+    */
     
     /*
         处理技能组user切换
@@ -1328,7 +1344,7 @@
         swfupload.startUpload();
         swfupload.uploadOptions = options;
     }
-
+    }
 }(window, undefined));
 
 
