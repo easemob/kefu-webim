@@ -72,7 +72,7 @@
             }
 
             , isCanUploadFileAsync: function() {
-                return false && Utils.isCanSetRequestHeader() && Utils.hasFormData;
+                return Utils.isCanSetRequestHeader() && Utils.hasFormData;
             }
 
             , isCanUploadFile: function() {
