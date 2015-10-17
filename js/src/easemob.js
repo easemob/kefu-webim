@@ -6,6 +6,11 @@
     'use strict';
 
     var message, iframe, iframeId, curChannel, curUser, eTitle = document.title,
+        iframePosition = {//iframe position
+            x: 0
+            , y: 0
+        },
+        shadow = document.createElement('div'),
         newTitle = '\-\新\消\息\提\醒', titleST = 0, initdata;
     
     var getConfig = function(key){//get config from current script
@@ -89,13 +94,20 @@
                 case 'showChat'://show Chat window
                     iframe.style.width = '400px';
                     iframe.style.height = '500px';
-                    iframe.style.right = '10px';
+                    if(iframePosition.x == 0 && iframePosition.y == 0) {
+                        iframe.style.right = '10px';
+                    } else {
+                        iframe.style.right = iframePosition.x + 'px';
+                        iframe.style.bottom = iframePosition.y + 'px';
+                    }
+                    
                     iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;*border: 1px solid #ccc;border: 1px solid #ccc\\9;';
                     break;
                 case 'minChat'://show Chat window
                     iframe.style.boxShadow = 'none';
                     iframe.style.borderRadius = '4px;';
                     iframe.style.right = '-5px';
+                    iframe.style.bottom = '10px';
                     iframe.style.border = 'none';
                     if(!config.json.hide) {
                         iframe.style.height = '37px';
@@ -113,6 +125,11 @@
                     break;
                 case 'setchannel':
                     Emc.setcookie('emKefuChannel', channel);
+                    break;
+                case 'dragready':
+                    shadow.style.display = 'block';
+                    iframe.style.display = 'none';
+                    EasemobWidget.utils.on(document, 'mousemove', _move);
                     break;
                 default: break;
             }   
@@ -155,7 +172,7 @@
         iframe.frameBorder = 0;
         iframe.allowTransparency = 'true';
         iframe.style.cssText = '\
-            z-index:16777270;\
+            z-index:16777269;\
             overflow:hidden;\
             position:fixed;\
             bottom:10px;\
@@ -165,6 +182,18 @@
             height:0;\
             display:none;\
             transition:all .01s;';
+        shadow.style.cssText = '\
+            display:none;\
+            cursor:move;\
+            z-index:16777270;\
+            position:fixed;\
+            bottom:10px;\
+            right:-5px;\
+            border:none;\
+            width:400px;\
+            height:500px;\
+            background-color:rgb(200,200,200);\
+            background-color:rgba(0,0,0,.1);';
 
         
         initdata = 'initdata:' + config.domain + 'webim/im.html?tenantId=' + config.json.tenantId 
@@ -188,6 +217,7 @@
             var curDom = document.getElementById(config.json.previewid);
             curDom ? curDom.appendChild(iframe) : document.body.appendChild(iframe);
         } else {
+            document.body.appendChild(shadow);
             document.body.appendChild(iframe);
         }
         if(iframe.readyState) {
@@ -219,6 +249,7 @@
                 curUser = Emc.getcookie('emKefuUser');
                 curChannel = Emc.getcookie('emKefuChannel');
                 appendIframe();
+                EasemobWidget.utils.on(shadow, 'mouseup', _moveend);
             }
         }
     } else {
@@ -226,7 +257,35 @@
             curUser = Emc.getcookie('emKefuUser');
             curChannel = Emc.getcookie('emKefuChannel');
             appendIframe();
+            EasemobWidget.utils.on(shadow, 'mouseup', _moveend);
         }
     }
+
+    var _st = 0;
+    var _move = function(e){
+
+        var ev = window.event || e,
+            _x = document.body.clientWidth - e.clientX,
+            _y = document.body.clientHeight - e.clientY;
+
+        shadow.style.right = _x + 'px';
+        shadow.style.bottom = _y + 'px';
+        iframePosition = {
+            x: _x
+            , y: _y
+        }
+        
+        clearTimeout(_st);
+        _st = setTimeout(_moveend, 700);
+    }
+    var _moveend = function(){
+
+        EasemobWidget.utils.remove(document, 'mousemove', _move);
+        iframe.style.right = iframePosition.x + 'px';
+        iframe.style.bottom = iframePosition.y + 'px';
+        shadow.style.display = 'none';
+        iframe.style.display = 'block';
+    }
+    
 
 }(window, undefined));

@@ -59,22 +59,6 @@ EasemobWidget.getInfoFromApi = function(obj, callback) {
                 wrapper.attr('data-group', g);
                 obj.password = p;
                 typeof callback == 'function' && callback();
-                /*$.when(EasemobWidget.api.getHistory(
-                    0 
-                    , EasemobWidget.LISTSPAN
-                    , g
-                    , tenantId
-                ))
-                .done(function(info){
-                    if(info && info.length == EasemobWidget.LISTSPAN) {
-                        wrapper.attr('data-start', Number(info[EasemobWidget.LISTSPAN - 1].chatGroupSeqId) - 1);
-                        wrapper.attr('data-history', 0);
-                    } else {
-                        wrapper.attr('data-history', 1);
-                    }
-                    obj.history = info;
-                    typeof callback == 'function' && callback();
-                });*/
             })
             .fail(function(){});
         } else {

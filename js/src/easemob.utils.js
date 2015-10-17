@@ -50,6 +50,30 @@
     EasemobWidget.utils.isAndroid = /Android/i.test(navigator.userAgent);//is mobile
     EasemobWidget.utils.isMobile = /mobile/i.test(navigator.userAgent);//is mobile
 
+
+    var _on = function(target, ev, fn) {
+        if(target.addEventListener) {
+            target.addEventListener(ev, fn);
+        } else if(target.attachEvent) {
+            target.attachEvent('on' + ev, fn);
+        } else {
+            target['on' + ev] = fn;
+        }
+    }
+    var _remove = function(target, ev, fn) {
+        if(target.removeEventListener) {
+            target.removeEventListener(ev, fn);
+        } else if(target.detachEvent) {
+            target.detachEvent('on' + ev, fn);
+        } else {
+            target['on' + ev] = null;
+        }
+    }
+
+    EasemobWidget.utils.on = _on;
+    EasemobWidget.utils.remove = _remove;
+
+
     /*
      * message transfer
      * easemob.com
@@ -61,15 +85,6 @@
         var _supportPostMessage = 'postMessage' in window;
 
         //method
-        var _on = function(target, ev, fn) {
-            if(target.addEventListener) {
-                target.addEventListener(ev, fn);
-            } else if(target.attachEvent) {
-                target.attachEvent('on' + ev, fn);
-            } else {
-                target['on' + ev] = fn;
-            }
-        }
         var _hasHash = function(url) {
             var idx = url.lastIndexOf('/'),
                 idxj = url.lastIndexOf('#');

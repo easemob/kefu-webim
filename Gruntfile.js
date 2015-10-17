@@ -27,8 +27,7 @@ module.exports = function(grunt) {
                     'js/emkf.min.js':[
                         'js/src/jquery-1.11.1.js',
                         'js/src/strophe.js',
-                        'js/src/json2.js',
-                        'js/src/easemob.im-1.0.7.js',
+                        'js/src/easemob.im-2.0.js',
                         'js/src/easemob.utils.js',
                         'js/src/jquery.autogrow.js',
                         'js/src/const.js',
