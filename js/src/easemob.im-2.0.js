@@ -829,6 +829,11 @@
                 , id: message.id
                 , xmlns: "jabber:client"
             }).c("body").t(jsonstr);
+            setTimeout(function(){
+                if(_msgHash[message.id] && _msgHash[message.id].msg.fail instanceof Function) {
+                    _msgHash[message.id].msg.fail(message.id);
+                }
+            }, 60000);
             conn.sendCommand(dom.tree(), message.id);
         }
 
@@ -1349,7 +1354,7 @@
         };
 
         connection.prototype.attach = function(options) {
-            var pass = _innerCheck(options,this);
+            var pass = _innerCheck(options, this);
             if(pass == false)
                 return;{
             }
@@ -1655,10 +1660,10 @@
             var rcv = message.getElementsByTagName('received');
             var id = rcv.length > 0 ? rcv[0].innerHTML || rcv[0].innerText : 0;
 
-            _msgHash[id] 
-            && _msgHash[id].msg.success instanceof Function 
-            && _msgHash[id].msg.success(id) 
-            && delete _msgHash[id];
+            if(_msgHash[id]) {
+                _msgHash[id].msg.success instanceof Function && _msgHash[id].msg.success(id);
+                delete _msgHash[id];
+            }
         };
 
         connection.prototype.handleInviteMessage = function(message){

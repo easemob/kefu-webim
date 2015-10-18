@@ -1057,11 +1057,9 @@
                         me.addDate();
                     }
                     , fail: function(id) {
-                        var msg = $('#' + id),
-                            loading = msg.find('.easemobWidget-msg-loading');
+                        var msg = $('#' + id);
 
-                        if(loading.hasClass('hide')) return;
-                        loading.addClass('hide');
+                        msg.find('.easemobWidget-msg-loading').addClass('hide');
                         msg.find('.easemobWidget-msg-status').removeClass('hide');
                     }
                     , flashUpload: Easemob.im.Utils.isCanUploadFileAsync() ? null : flashUpload
@@ -1135,11 +1133,9 @@
                         me.addDate();
                     }
                     , fail: function(id) {
-                        var msg = $('#' + id),
-                            loading = msg.find('.easemobWidget-msg-loading');
+                        var msg = $('#' + id);
 
-                        if(loading.hasClass('hide')) return;
-                        loading.addClass('hide');
+                        msg.find('.easemobWidget-msg-loading').addClass('hide');
                         msg.find('.easemobWidget-msg-status').removeClass('hide');
                     }
                 }
@@ -1158,15 +1154,12 @@
                             if(me.conn.isOpening()) {
                                 me.conn.close();
                             }
-                        }, 10000);
+                        }, 20000);
                     } else {
                         me.open();
                     }
                 } else {
                     me.conn.send(option);
-                    setTimeout(function(){
-                        option.fail instanceof Function && option.fail(option.id);
-                    }, 30000);
                 }
             }
             , sendSatisfaction: function(level, content) {
