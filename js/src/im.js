@@ -498,7 +498,7 @@
                     onOpened: function(){
                         me.conn.setPresence();
                         me.conn.heartBeat(me.conn);
-                        while(sendQueue[config.user].length) {
+                        while(sendQueue[config.user] && sendQueue[config.user].length) {
                             me.conn.send(sendQueue[config.user].pop());
                         }
                     }
@@ -534,7 +534,6 @@
                                     me.open();
                                 }
                                 break;
-                            //case 7://unknown
                             case 8://conflict
                                 break;
                             default:
@@ -1058,8 +1057,11 @@
                         me.addDate();
                     }
                     , fail: function(id) {
-                        var msg = $('#' + id);
-                        msg.find('.easemobWidget-msg-loading').addClass('hide');
+                        var msg = $('#' + id),
+                            loading = msg.find('.easemobWidget-msg-loading');
+
+                        if(loading.hasClass('hide')) return;
+                        loading.addClass('hide');
                         msg.find('.easemobWidget-msg-status').removeClass('hide');
                     }
                     , flashUpload: Easemob.im.Utils.isCanUploadFileAsync() ? null : flashUpload
@@ -1133,8 +1135,11 @@
                         me.addDate();
                     }
                     , fail: function(id) {
-                        var msg = $('#' + id);
-                        msg.find('.easemobWidget-msg-loading').addClass('hide');
+                        var msg = $('#' + id),
+                            loading = msg.find('.easemobWidget-msg-loading');
+
+                        if(loading.hasClass('hide')) return;
+                        loading.addClass('hide');
                         msg.find('.easemobWidget-msg-status').removeClass('hide');
                     }
                 }
@@ -1148,8 +1153,20 @@
 
                 if(!me.conn.isOpened()) {
                     sendQueue[config.user].push(option);
+                    if(me.conn.isOpening()) {
+                        setTimeout(function(){
+                            if(me.conn.isOpening()) {
+                                me.conn.close();
+                            }
+                        }, 10000);
+                    } else {
+                        me.open();
+                    }
                 } else {
                     me.conn.send(option);
+                    setTimeout(function(){
+                        option.fail instanceof Function && option.fail(option.id);
+                    }, 30000);
                 }
             }
             , sendSatisfaction: function(level, content) {
