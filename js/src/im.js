@@ -14,7 +14,7 @@
 
     var config;
 
-    var sendQueue = [];
+    var sendQueue = {};
 
     var main = function() {
         var groupUser = '';//记录当前技能组对应的webim user
@@ -498,8 +498,8 @@
                     onOpened: function(){
                         me.conn.setPresence();
                         me.conn.heartBeat(me.conn);
-                        while(sendQueue.length) {
-                            me.conn.send(sendQueue.pop());
+                        while(sendQueue[config.user].length) {
+                            me.conn.send(sendQueue[config.user].pop());
                         }
                     }
                     , onTextMessage: function(message){
@@ -1144,8 +1144,10 @@
             , send: function(option) {
                 var me = this;
 
+                sendQueue[config.user] || (sendQueue[config.user] = []);
+
                 if(!me.conn.isOpened()) {
-                    sendQueue.push(option);
+                    sendQueue[config.user].push(option);
                 } else {
                     me.conn.send(option);
                 }
