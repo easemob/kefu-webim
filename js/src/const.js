@@ -73,6 +73,6 @@ Easemob.im.EMOTIONS = {
         '[(k)]': 'ee_32.png',
         '[(F)]': 'ee_33.png',
         '[(W)]': 'ee_34.png',
-        '[(D)]': 'ee_35.png',
+        '[(D)]': 'ee_35.png'
     }
 };

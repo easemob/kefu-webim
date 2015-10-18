@@ -167,7 +167,6 @@ img {
     margin-top: -1px;
     height: 2px;
     background-color: #fff;
-    *font-size: 1px;
 }
 #easemobWidgetFileInput {
     visibility: hidden;
@@ -197,7 +196,6 @@ img {
     color: #535252;
     background-color: #FFECD5;
     border: 1px solid #ECD0B5;
-    *border: none;
     box-sizing: border-box;
     line-height: 44px;
 }
@@ -241,7 +239,6 @@ img {
     background-color: #fff;
     border-radius: 4px;
     padding-bottom: 10px;
-    *width: 238px;
 }
 .easemobWidget-msg-container .chat-face-all {
     width: 24px;
@@ -269,7 +266,6 @@ img {
     border-radius: 2px;
     text-align: center;
     margin: 10px 10px 0 0;
-    *float: left;
 }
 .easemobWidget-face-img:hover {
     cursor: pointer;
@@ -325,7 +321,6 @@ img {
     display: inline-block;
     border-radius: 4px;
     max-width: 190px;
-    *width: 190px;
     box-shadow: 0 1px 1px rgba(0,0,0,.1), 0 -1px 1px rgba(0,0,0,.2) inset;
     padding: 10px;
     min-width: 20px;
@@ -488,7 +483,6 @@ img {
     height: 70px;
     border: none;
     padding: 10px;
-    *padding: 0;
     box-sizing: border-box;
     outline: none;
     margin-top: 30px;
@@ -566,7 +560,6 @@ object {
     border-radius: 4px;
     transition: all .5s;
     opacity: .9;
-    *filter: alpha(opacity=90);
 }
 #easemobWidgetLink {
     visibility: hidden;
@@ -580,9 +573,7 @@ body .easemobWidget-offline-bg {
 .easemobWidget-offline {
     width: 95%;
     max-width: 400px;
-    *width: 400px;
     margin: auto;
-    *position: relative;
 }
 .easemobWidget-offline h3,
 .easemobWidget-offline p,
@@ -755,9 +746,6 @@ body .easemobWidget-offline-bg {
     height: 80px\9;
     background-position: 0 -80px\9;
     zoom: 50%\9;
-
-    *display: inline;
-    
 }
 .easemobWidget-satisfaction-dialog li.sel {
     background-position: 0 0; 
@@ -766,7 +754,6 @@ body .easemobWidget-offline-bg {
     resize: none;
     width: 90%;
     padding: 6px;
-    *padding: 0;
     box-sizing: border-box;
     height: 120px;
     margin: 40px auto;
@@ -775,7 +762,6 @@ body .easemobWidget-offline-bg {
     border-radius: 6px;
     font-size: 14px;
     outline: none;
-    *margin-left: 55%;
 }
 .easemobWidget-satisfaction-dialog button {
     width: 32%;

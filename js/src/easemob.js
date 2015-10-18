@@ -11,7 +11,7 @@
             , y: 0
         },
         shadow = document.createElement('div'),
-        newTitle = '\-\新\消\息\提\醒', titleST = 0, initdata;
+        newTitle = '\-\新\消\息\提\醒  ', titleST = 0, initdata;
     
     var getConfig = function(key){//get config from current script
         var that;
@@ -85,7 +85,8 @@
                         p = tArr.shift();
                         document.title = p + Array.prototype.join.call(tArr, '');
                         tArr.push(p);
-                    }, 100);
+                    }, 360);
+                    notify('//kefu.easemob.com/webim/resources/avatar2.png', '提醒', '您有1条新消息');
                     break;
                 case 'recoveryTitle':
                     clearInterval(titleST);
@@ -287,5 +288,28 @@
         iframe.style.display = 'block';
     }
     
+
+    var notify = function(img, title, content) {
+        img = img || '';
+        title = title || '';
+        content = content || '';
+        try {
+            if(window.Notification) {
+                if(Notification.permission==='granted'){
+                    var notification = new Notification(
+                        title
+                        , {
+                            icon: img
+                            , body: content
+                        }
+                    );
+                }else {
+                    Notification.requestPermission();
+                }
+            } else {} 
+        } catch (e) {
+
+        }
+    }
 
 }(window, undefined));

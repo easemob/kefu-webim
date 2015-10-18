@@ -1737,7 +1737,8 @@
                 to: conn.domain
                 , type: "normal"
             };
-            conn.heartBeatID = setInterval(function() {
+            clearTimeout(conn.heartBeatID);
+            conn.heartBeatID = setTimeout(function() {
                 conn.sendHeartBeatMessage(options);
             }, 60000);
         };
@@ -1755,7 +1756,7 @@
         };
 
         connection.prototype.stopHeartBeat = function(conn) {
-            clearInterval(conn.heartBeatID);
+            clearTimeout(conn.heartBeatID);
         };
 
         connection.prototype.addRoster = function(options) {

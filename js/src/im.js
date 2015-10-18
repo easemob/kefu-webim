@@ -14,8 +14,7 @@
 
     var config;
 
-    var limitReopen = 5;
-
+    var sendQueue = [];
 
     var main = function() {
         var groupUser = '';//记录当前技能组对应的webim user
@@ -54,7 +53,7 @@
                 
                 im.chatWrapper.attr('data-group', group);
 
-                im.open();
+                im.open(true);
 
                 //每次切换不在重新获取，除非用户trigger           
                 if (im.chatWrapper.data('hised')) return;
@@ -79,7 +78,7 @@
                 ? Emc.setcookie(escape(curGroup), config.user) 
                 : message.sendToParent('setgroupuser@' + config.user + '@emgroupuser@' + curGroup);
 
-                im.open();
+                im.open(true);
 
                 im.toggleChatWindow(isShowDirect ? 'show' : '')
             });
@@ -108,7 +107,7 @@
                         if(config.user != im.curUser.user) {
                             config.user = im.curUser.user;
                             config.password = im.curUser.pwd;
-                            im.open();
+                            im.open(true);
                             im.setTitle();
                         }
                         im.group = false;
@@ -499,9 +498,9 @@
                     onOpened: function(){
                         me.conn.setPresence();
                         me.conn.heartBeat(me.conn);
-                    }
-                    , onClosed: function(){
-                        me.open();
+                        while(sendQueue.length) {
+                            me.conn.send(sendQueue.pop());
+                        }
                     }
                     , onTextMessage: function(message){
                         me.receiveMsg(message, 'txt');
@@ -518,17 +517,24 @@
                     , onAudioMessage: function(message) {
                         me.receiveMsg(message, 'audio');
                     }
-                    , onClosed: function() {}
+                    , onClosed: function() {
+                        me.open();
+                    }
                     , onError: function(e){
                         me.conn.stopHeartBeat(me.conn);
 
                         switch(e.type){
                             case 1://offline
                                 me.open();
+                            case 3://signin failed
+                            case 7://unknow
+                                if(me.conn.isOpened() || me.conn.isOpening()) {
+                                    me.conn.close();
+                                } else if(me.conn.isClosed() || me.conn.isClosing()) {
+                                    me.open();
+                                }
                                 break;
-                            case 7://unknown
-                                limitReopen && me.conn.close();
-                                limitReopen > 0 && (limitReopen -= 1);
+                            //case 7://unknown
                             case 8://conflict
                                 break;
                             default:
@@ -566,11 +572,16 @@
             , resetSpan: function(id) {
                 this.msgTimeSpan[id] = new Date().getTime();
             }
-            , open: function(){
+            , open: function(force){
                 
                 var me = this;
                 
-                if(!me.conn.isOpening() && !me.conn.isOpened()){
+
+                if(force) {
+                    if(me.conn.isOpening(), me.conn.isOpened()) {
+                        me.conn.close();
+                    }
+                } else if(!me.conn.isOpening() && !me.conn.isOpened()){
                     me.conn.open({
                         user : config.user
                         , pwd : config.password
@@ -655,7 +666,7 @@
 
                     that.addClass('hide');
                     w.find('.easemobWidget-msg-loading').removeClass('hide');
-                    me.conn.send(id);
+                    me.send(id);
                 });                
 
                 /*
@@ -893,7 +904,7 @@
                             , type : 'chat'
                         }
                         me.handleGroup(opt);
-                        me.conn.send(opt);
+                        me.send(opt);
                         //me.errorPrompt('留言成功');
                         var succeed = me.leaveMsgBtn.parent().find('.easemobWidget-leavemsg-success');
                         succeed.removeClass('hide');
@@ -1054,7 +1065,7 @@
                     , flashUpload: Easemob.im.Utils.isCanUploadFileAsync() ? null : flashUpload
                 };
                 me.handleGroup(opt);
-                me.conn.send(opt);
+                me.send(opt);
                 me.chatWrapper.append(temp);
                 me.chatWrapper.find('img:last').on('load', me.scrollBottom);
             }
@@ -1128,7 +1139,16 @@
                     }
                 }
                 me.handleGroup(opt);
-                me.conn.send(opt);
+                me.send(opt);
+            }
+            , send: function(option) {
+                var me = this;
+
+                if(!me.conn.isOpened()) {
+                    sendQueue.push(option);
+                } else {
+                    me.conn.send(option);
+                }
             }
             , sendSatisfaction: function(level, content) {
                 var me = this;
@@ -1152,7 +1172,7 @@
 
                 this.handleGroup(opt);
                 
-                this.conn.send(opt);
+                this.send(opt);
             }
             , addPrompt: function(){//未读消息提醒，以及让父级页面title滚动
                 if(!this.isOpened && this.msgCount > 0) {
