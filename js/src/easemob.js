@@ -7,6 +7,10 @@
 
     var message, iframe, iframeId, curChannel, curUser, eTitle = document.title,
         iframePosition = {//iframe position
+            x: 10
+            , y: 10
+        },
+        _startPosition = {
             x: 0
             , y: 0
         },
@@ -63,7 +67,14 @@
                 user = msg.split('@').length > 0 ? msg.split('@')[1] : '';
                 msg = msg.split('@').length > 0 ? msg.split('@')[0] : '';
             }
+            if(msg.indexOf('dragready') > -1) {
+                var pos = msg.slice(9);
 
+                
+                _startPosition.x = isNaN(Number(pos.split('&')[0])) ? 0 : Number(pos.split('&')[0]);
+                _startPosition.y = isNaN(Number(pos.split('&')[1])) ? 0 : Number(pos.split('&')[1]);
+                msg = 'dragready';
+            }
             if(msg.indexOf('setchannel') > -1) {
                 channel = msg.split('@').length > 0 ? msg.split('@')[1] : '';
                 msg = msg.split('@').length > 0 ? msg.split('@')[0] : '';
@@ -95,12 +106,9 @@
                 case 'showChat'://show Chat window
                     iframe.style.width = '400px';
                     iframe.style.height = '500px';
-                    if(iframePosition.x == 0 && iframePosition.y == 0) {
-                        iframe.style.right = '10px';
-                    } else {
-                        iframe.style.right = iframePosition.x + 'px';
-                        iframe.style.bottom = iframePosition.y + 'px';
-                    }
+                    
+                    iframe.style.right = iframePosition.x + 'px';
+                    iframe.style.bottom = iframePosition.y + 'px';
                     
                     iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;*border: 1px solid #ccc;border: 1px solid #ccc\\9;';
                     break;
@@ -266,11 +274,24 @@
     var _move = function(e){
 
         var ev = window.event || e,
-            _x = document.body.clientWidth - e.clientX,
-            _y = document.body.clientHeight - e.clientY;
-
+            _x = document.body.clientWidth - e.clientX - 400 + _startPosition.x + 18,
+            _y = document.body.scrollHeight - e.clientY - 500 + _startPosition.y;
+        
+        if(e.clientX - _startPosition.x <= 0 ) {//left
+            _x = document.body.clientWidth - 400 + 18;
+        } else if(e.clientX + 400 - _startPosition.x -18 >= document.body.clientWidth) {//right
+            _x = 0;
+        }
+        if(e.clientY - _startPosition.y <= 0 ) {//top
+            _y = document.body.scrollHeight - 500;
+        } else if(e.clientY + 500 - _startPosition.y >= document.body.scrollHeight) {//bottom
+            _y = 0;
+        }
         shadow.style.right = _x + 'px';
         shadow.style.bottom = _y + 'px';
+
+        
+
         iframePosition = {
             x: _x
             , y: _y

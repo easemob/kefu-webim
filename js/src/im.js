@@ -671,8 +671,9 @@
                 /*
                     drag
                 */
-                me.headBar.on('mousedown', function(){
-                    message.sendToParent('dragready');
+                me.headBar.on('mousedown', function(e){
+                    var ev = e.originalEvent;
+                    message.sendToParent('dragready' + ev.clientX + '&' + ev.clientY);
                 });
                 
 
