@@ -14,8 +14,12 @@
 
     var config;
 
-    var sendQueue = {};
+    var sendQueue = {};//记录消息发送失败
 
+
+    /*
+        main
+    */
     var main = function() {
         var groupUser = '';//记录当前技能组对应的webim user
         var isGroupChat = false;//当前是否技能组聊天窗口

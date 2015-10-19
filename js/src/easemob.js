@@ -197,7 +197,7 @@
             z-index:16777270;\
             position:fixed;\
             bottom:10px;\
-            right:-5px;\
+            right:10px;\
             border:none;\
             width:400px;\
             height:500px;\
