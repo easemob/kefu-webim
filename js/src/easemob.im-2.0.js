@@ -82,7 +82,7 @@
             , isCanDownLoadFile: function() {
                 return Utils.isCanSetRequestHeader() && (Utils.hasBlob || Utils.hasOverrideMimeType());
             }
-
+            
             , stringify: function(json) {
                 if(JSON && JSON.stringify) {
                     return JSON.stringify(json);
@@ -930,7 +930,7 @@
             return occupants;
         }
 
-        var _parseResponseMessageFn = function(msginfo) {
+        var _parseResponseMessage = function(msginfo) {
             var parseMsgData = {errorMsg:true,data:[]};
 
             var msgBodies = msginfo.getElementsByTagName("body");
@@ -1526,7 +1526,7 @@
             this.sendReceiptsMessage({
                 id: id
             });
-            var parseMsgData = _parseResponseMessageFn(msginfo);
+            var parseMsgData = _parseResponseMessage(msginfo);
             if(parseMsgData.errorMsg) {
                 return;
             }
@@ -1657,8 +1657,16 @@
         connection.prototype.handleReceivedMessage = function(message){
             this.onReceivedMessage(message);
 
-            var rcv = message.getElementsByTagName('received');
-            var id = rcv.length > 0 ? rcv[0].innerHTML || rcv[0].innerText : 0;
+            var rcv = message.getElementsByTagName('received'),
+                id = undefined;
+
+            if(rcv.length > 0) {
+                if(rcv[0].childNodes && rcv[0].childNodes.length > 0) {
+                    id = rcv[0].childNodes[0].nodeValue;
+                } else {
+                    id = rcv[0].innerHTML || rcv[0].innerText;
+                }
+            }
 
             if(_msgHash[id]) {
                 _msgHash[id].msg.success instanceof Function && _msgHash[id].msg.success(id);

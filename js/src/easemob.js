@@ -68,7 +68,7 @@
                 msg = msg.split('@').length > 0 ? msg.split('@')[0] : '';
             }
             if(msg.indexOf('notify') > -1) {
-                msgDetail = msg.slice(9);
+                msgDetail = msg.slice(6);
                 msg = 'notify';
             }
             if(msg.indexOf('dragready') > -1) {
