@@ -201,9 +201,11 @@
             border:none;\
             width:400px;\
             height:500px;\
-            background-color:rgb(200,200,200);\
-            background-color:rgba(0,0,0,.1);';
+            border-radius:4px;\
+            box-shadow: 0 4px 8px rgba(0,0,0,.2);\
+            border-radius: 4px;';
 
+        shadow.style.background = 'url(' + config.domain + 'webim/resources/drag.png) no-repeat';
         
         initdata = 'initdata:' + config.domain + 'webim/im.html?tenantId=' + config.json.tenantId 
             + (config.json.hide ? '&hide=true' : '') 
@@ -255,36 +257,40 @@
     if(script.readyState) {
         script.onreadystatechange = function() {
             if(script.readyState == "loaded" || script.readyState == "complete") {
-                curUser = Emc.getcookie('emKefuUser');
-                curChannel = Emc.getcookie('emKefuChannel');
-                appendIframe();
-                EasemobWidget.utils.on(shadow, 'mouseup', _moveend);
+                ready();       
             }
         }
     } else {
         script.onload = function() {
-            curUser = Emc.getcookie('emKefuUser');
-            curChannel = Emc.getcookie('emKefuChannel');
-            appendIframe();
-            EasemobWidget.utils.on(shadow, 'mouseup', _moveend);
+            ready();       
         }
+    }
+
+    var ready = function() {
+        curUser = Emc.getcookie('emKefuUser');
+        curChannel = Emc.getcookie('emKefuChannel');
+        appendIframe();
+        EasemobWidget.utils.on(shadow, 'mouseup', _moveend);
+        resize();
     }
 
     var _st = 0;
     var _move = function(e){
 
         var ev = window.event || e,
-            _x = document.body.clientWidth - e.clientX - 400 + _startPosition.x + 18,
-            _y = document.body.scrollHeight - e.clientY - 500 + _startPosition.y;
+            _width = document.documentElement.clientWidth,
+            _height = document.documentElement.clientHeight,
+            _x = _width - e.clientX - 400 + _startPosition.x + 18,
+            _y = _height - e.clientY - 500 + _startPosition.y;
         
         if(e.clientX - _startPosition.x <= 0 ) {//left
-            _x = document.body.clientWidth - 400 + 18;
-        } else if(e.clientX + 400 - _startPosition.x -18 >= document.body.clientWidth) {//right
+            _x = _width - 400 + 18;
+        } else if(e.clientX + 400 - _startPosition.x -18 >= _width) {//right
             _x = 0;
         }
         if(e.clientY - _startPosition.y <= 0 ) {//top
-            _y = document.body.scrollHeight - 500;
-        } else if(e.clientY + 500 - _startPosition.y >= document.body.scrollHeight) {//bottom
+            _y = _height - 500;
+        } else if(e.clientY + 500 - _startPosition.y >= _height) {//bottom
             _y = 0;
         }
         shadow.style.right = _x + 'px';
@@ -308,8 +314,37 @@
         shadow.style.display = 'none';
         iframe.style.display = 'block';
     }
-    
+       
+    var resize = function() {
+        EasemobWidget.utils.on(window, 'resize', function(){
+            var _width = document.documentElement.clientWidth,
+                _height = document.documentElement.clientHeight,
+                _right = Number(iframe.style.right.slice(0, -2)),
+                _bottom = Number(iframe.style.bottom.slice(0, -2));
+            
+            //width
+            if(_width < 400) {
+                iframe.style.left = 'auto';
+                iframe.style.right = 0;
+            } else if(_width - _right < 400) {
+                iframe.style.right = _width - 400 + 'px';
+                iframe.style.left = 0;
+            } else {
+                iframe.style.left = 'auto';
+            }
 
+            //height
+            if(_height < 500) {
+                iframe.style.top = 'auto';
+                iframe.style.bottom = 0;
+            } else if(_height - _bottom < 500) {
+                iframe.style.bottom = _height - 500 + 'px';
+                iframe.style.top = 0;
+            } else {
+                iframe.style.top = 'auto';
+            }
+        });
+    }
     var notify = function(img, title, content) {
         img = img || '';
         title = title || '';

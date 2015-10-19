@@ -1049,13 +1049,23 @@
                     }
                     , onFileUploadError : function(error) {
                         //显示图裂，无法重新发送
-                        //todo
-                        var id = error.id;
-                        
-                        me.scrollBottom();
+                        if(!Easemob.im.Utils.isCanUploadFileAsync()) {
+                            swfupload && swfupload.settings.upload_error_handler();
+                        } else {
+                            setTimeout(function() {
+                                var id = error.id,
+                                    w = $('#' + id),
+                                    img = w.find('img:last');
+
+                                img.parent().attr('href', 'javascript:;');
+                                img.attr('src', config.domain + '/webim/resources/unimage@2x.png');
+                                w.find('.easemobWidget-msg-loading').addClass('hide');
+                                me.scrollBottom();
+                            }, 0);
+                        }
                     }
                     , onFileUploadComplete: function(data){
-                        me.scrollBottom();
+                        me.chatWrapper.find('img:last').on('load', im.scrollBottom);
                     }
                     , success: function(id) {
                         $('#' + id).find('.easemobWidget-msg-loading').addClass('hide');
@@ -1327,7 +1337,19 @@
                     if(code != SWFUpload.UPLOAD_ERROR.FILE_CANCELLED
                     && code != SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED 
                     && code != SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED) {
-                        im.errorPrompt('图片发送失败');
+                        var temp = $("\
+                            <div class='easemobWidget-right'>\
+                                <div class='easemobWidget-msg-wrapper'>\
+                                    <i class='easemobWidget-right-corner'></i>\
+                                    <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
+                                    <div class='easemobWidget-msg-container'>\
+                                        <a href='javascript:;'><img src='"+config.domain + "/webim/resources/unimage@2x.png'/></a>\
+                                    </div>\
+                                </div>\
+                            </div>\
+                        ");
+                        im.chatWrapper.append(temp);
+                        im.chatWrapper.find('img:last').on('load', im.scrollBottom);
                     }
                 }
                 , upload_complete_handler: function(){}
@@ -1354,7 +1376,6 @@
                         ");
                         im.chatWrapper.append(temp);
                         im.chatWrapper.find('img:last').on('load', im.scrollBottom);
-                        this.uploadOptions.onFileUploadComplete(res);
                     } catch (e) {
                         im.errorPrompt('上传图片发生错误');
                     }
