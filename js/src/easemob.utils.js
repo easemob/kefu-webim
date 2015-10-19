@@ -73,6 +73,14 @@
     EasemobWidget.utils.on = _on;
     EasemobWidget.utils.remove = _remove;
 
+    /*
+        detect the browser if minimize
+    */
+    EasemobWidget.utils.isMin = function() {
+        if(document.visibilityState && document.visibilityState == 'hidden' || document.hidden) {
+            return true;
+        } 
+    }
 
     /*
      * message transfer

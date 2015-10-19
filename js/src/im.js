@@ -5,7 +5,7 @@
 
 ;(function(window, undefined){
     'use strict';
-
+    
 
     typeof HTMLAudioElement !== 'undefined' && (HTMLAudioElement.prototype.stop = function() {
         this.pause(); 
@@ -1201,7 +1201,7 @@
                 
                 this.send(opt);
             }
-            , addPrompt: function(){//未读消息提醒，以及让父级页面title滚动
+            , addPrompt: function(detail){//未读消息提醒，以及让父级页面title滚动
                 if(!this.isOpened && this.msgCount > 0) {
                     if(this.msgCount > 9) {
                         this.messageCount.addClass('mutiCount').html('...');
@@ -1209,23 +1209,21 @@
                         this.messageCount.removeClass('mutiCount').html(this.msgCount);
                     }
                     message.sendToParent('msgPrompt');
+                    this.notify(detail || '');
                 } else {
                     this.msgCount = 0;
                     this.messageCount.html('').addClass('hide');
                     message.sendToParent('recoveryTitle');
                 }
             }
+            , notify: function(detail) {
+                message.sendToParent('notify' + (detail || ''));
+            }
             , receiveMsg: function(msg, type, isHistory, wrapper){
                 var me = this;
-                var value = '';
+                var value = '', msgDetail = '';
                 
                 wrapper = wrapper || me.chatWrapper;
-
-                if(!isHistory && !me.isOpened) {
-                    me.messageCount.html('').removeClass('hide');
-                    me.msgCount += 1;
-                    me.addPrompt();
-                }
 
 
                 //满意度评价
@@ -1240,26 +1238,33 @@
                 //me.playaudio();
                 switch(type){
                     case 'txt':
-                        value = '<p>' + me.face(Easemob.im.Utils.parseLink(me.encode(isHistory ? msg.msg : msg.data))) + '</p>';
+                        msgDetail = msg.msg || msg.data;
+                        msgDetail = (msgDetail > 30 ? msgDetail.slice(0, 30) + '...' : msgDetail);
+                        value = me.face(Easemob.im.Utils.parseLink(me.encode(isHistory ? msg.msg : msg.data)));
+                        value = '<p>' + value + '</p>';
                         break;
                     case 'face':
-                        value = '<p>';
+                        msgDetail = '';
                         $.each(msg.data, function(k, v){
                             v.data = v.data.replace(/>/g, "&gt;");
+                            msgDetail += v.data;
                             if(0 > v.data.indexOf('data:image')) {
                                 value += v.data;
                             } else {
                                 value += '<img class="chat-face-all" src="'+v.data+'">';   
                             }
                         });
-                        value += '</p>';
+                        msgDetail = (value.length > 30 ? value.slice(0, 30) + '...' : value);
+                        value = '<p>' + value + '</p>';
                         value = Easemob.im.Utils.parseLink(value);
                         break;
                     case 'img':
                         value = '<a href="'+msg.url+'" target="_blank"><img src="'+(msg.thumb || msg.url)+'"></a>';   
+                        msgDetail = '[图片]';
                         break;
                     case 'satisfactionEvaluation':
                         value = '<p>请对我的服务做出评价</p>'
+                        msgDetail = '请对我的服务做出评价';
                     default: break;
                 }
                 
@@ -1285,6 +1290,15 @@
                     me.scrollBottom();
                 } else {
                     wrapper.prepend(temp);
+                }
+                if(!isHistory) {
+                    if(!me.isOpened) {
+                        me.messageCount.html('').removeClass('hide');
+                        me.msgCount += 1;
+                        me.addPrompt(msgDetail);
+                    } else if(EasemobWidget.utils.isMin()) {
+                        me.notify(msgDetail);
+                    }
                 }
             }
         }.setAttribute());

@@ -62,10 +62,14 @@
     //open Api
     var open = function(){
         message.listenToIframe(function(msg){
-            var user, channel, group;
+            var user, channel, group, msgDetail = '新消息提醒';
             if(msg.indexOf('setuser') > -1) {
                 user = msg.split('@').length > 0 ? msg.split('@')[1] : '';
                 msg = msg.split('@').length > 0 ? msg.split('@')[0] : '';
+            }
+            if(msg.indexOf('notify') > -1) {
+                msgDetail = msg.slice(9);
+                msg = 'notify';
             }
             if(msg.indexOf('dragready') > -1) {
                 var pos = msg.slice(9);
@@ -91,13 +95,16 @@
             switch(msg) {
                 case 'msgPrompt'://title slide
                     var l = 1, p, tArr = (eTitle + newTitle).split('');
+
                     clearInterval(titleST);
                     titleST = setInterval(function() {
                         p = tArr.shift();
                         document.title = p + Array.prototype.join.call(tArr, '');
                         tArr.push(p);
                     }, 360);
-                    notify('//kefu.easemob.com/webim/resources/avatar2.png', '提醒', '您有1条新消息');
+                    break;
+                case 'notify'://title slide
+                    notify(config.domain + 'webim/resources/notify.png', '未读消息', msgDetail);
                     break;
                 case 'recoveryTitle':
                     clearInterval(titleST);
@@ -359,6 +366,9 @@
                             , body: content
                         }
                     );
+                    setTimeout(function(){
+                        notification.close();
+                    }, 3000);
                 }else {
                     Notification.requestPermission();
                 }
