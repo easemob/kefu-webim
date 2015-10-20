@@ -41,6 +41,7 @@
             处理技能组user切换
         */
         var handleGroupUser = function() {
+
             groupUser 
             ? $.when(
                 EasemobWidget.api.getPwd({user: groupUser})
@@ -103,6 +104,9 @@
             }
 
             switch(msg) {
+                case 'dragend':
+                    im.scrollBottom();
+                    break;
                 case 'imclick'://关闭 或 展开 iframe 聊天窗口
                     isGroupChat = false;
                     if(im && im.loaded) {
@@ -178,6 +182,7 @@
                 //不支持异步upload的浏览器使用flash插件搞定
                 if(!Easemob.im.Utils.isCanUploadFileAsync() && Easemob.im.Utils.isCanUploadFile()) {
                     swfupload = uploadShim('easemobWidgetFileInput');
+                    $('object[id^="SWFUpload"]').attr('title', '图片');
                 }
 
                 this.fillFace();//遍历FACE，添加所有表情
@@ -502,8 +507,11 @@
                     onOpened: function(){
                         me.conn.setPresence();
                         me.conn.heartBeat(me.conn);
-                        while(sendQueue[config.user] && sendQueue[config.user].length) {
-                            me.conn.send(sendQueue[config.user].pop());
+                        
+                        var key = isGroupChat ? curGroup : config.user;
+                        
+                        while(sendQueue[key] && sendQueue[key].length) {
+                            me.conn.send(sendQueue[key].pop());
                         }
                     }
                     , onTextMessage: function(message){
@@ -581,7 +589,7 @@
                 
 
                 if(force) {
-                    if(me.conn.isOpening(), me.conn.isOpened()) {
+                    if(me.conn.isOpening() || me.conn.isOpened()) {
                         me.conn.close();
                     }
                 } else if(!me.conn.isOpening() && !me.conn.isOpened()){
@@ -591,7 +599,6 @@
                         , appKey : config.appkey
                     });
                 }
-                
             }
             , getDom: function(){
                 this.offline = $('#easemobWidgetOffline');
@@ -819,7 +826,7 @@
                 //最小化按钮
                 me.min.on('mousedown', function(e){
                     me.toggleChatWindow();
-                    e.originalEvent.stopPropagation && e.originalEvent.stopPropagation();
+                    return false;
                 });
 
                 //选中文件并发送
@@ -1158,12 +1165,14 @@
                 me.send(opt);
             }
             , send: function(option) {
-                var me = this;
+                var me = this,
+                    key = isGroupChat ? curGroup : config.user;
 
-                sendQueue[config.user] || (sendQueue[config.user] = []);
 
-                if(!me.conn.isOpened()) {
-                    sendQueue[config.user].push(option);
+                sendQueue[key] || (sendQueue[key] = []);
+
+                if(!me.conn.isOpened() || isGroupChat) {
+                    sendQueue[key].push(option);
                     if(me.conn.isOpening()) {
                         setTimeout(function(){
                             if(me.conn.isOpening()) {
@@ -1171,7 +1180,7 @@
                             }
                         }, 20000);
                     } else {
-                        me.open();
+                        me.open(true);
                     }
                 } else {
                     me.conn.send(option);
@@ -1239,7 +1248,7 @@
                 switch(type){
                     case 'txt':
                         msgDetail = msg.msg || msg.data;
-                        msgDetail = (msgDetail > 30 ? msgDetail.slice(0, 30) + '...' : msgDetail);
+                        msgDetail = (msgDetail.length > 30 ? msgDetail.slice(0, 30) + '...' : msgDetail);
                         value = me.face(Easemob.im.Utils.parseLink(me.encode(isHistory ? msg.msg : msg.data)));
                         value = '<p>' + value + '</p>';
                         break;
@@ -1390,6 +1399,7 @@
                         ");
                         im.chatWrapper.append(temp);
                         im.chatWrapper.find('img:last').on('load', im.scrollBottom);
+                        this.uploadOptions.onFileUploadComplete(res);
                     } catch (e) {
                         im.errorPrompt('上传图片发生错误');
                     }
