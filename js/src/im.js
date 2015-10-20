@@ -591,6 +591,8 @@
                 if(force) {
                     if(me.conn.isOpening() || me.conn.isOpened()) {
                         me.conn.close();
+                    } else {
+                        me.open();
                     }
                 } else if(!me.conn.isOpening() && !me.conn.isOpened()){
                     me.conn.open({
