@@ -23,6 +23,7 @@
     var main = function() {
         var groupUser = '';//记录当前技能组对应的webim user
         var isGroupChat = false;//当前是否技能组聊天窗口
+        var isGroupOpened = false;//当前是否技能组用户是否连接完毕
         var isShowDirect = false;//不同技能组之间，直接显示
         var curGroup = '';//记录当前技能组，如果父级页面切换技能组，则直接打开chatwindow，不toggle   
         var swfupload = null;//flash 上传利器
@@ -127,7 +128,7 @@
                     break;
                 case 'emgroup'://技能组
                     isGroupChat = true;
-
+                    isGroupOpened = false; 
 
                     var idx = value.indexOf('@emgroupuser@');
 
@@ -507,7 +508,7 @@
                     onOpened: function(){
                         me.conn.setPresence();
                         me.conn.heartBeat(me.conn);
-                        
+                        isGroupChat && (isGroupOpened = true);
                         var key = isGroupChat ? curGroup : config.user;
                         
                         while(sendQueue[key] && sendQueue[key].length) {
@@ -1168,22 +1169,36 @@
             }
             , send: function(option) {
                 var me = this,
-                    key = isGroupChat ? curGroup : config.user;
+                    key = isGroupChat ? curGroup : config.user,
+                    resend = typeof option == 'string',
+                    id = resend ? option : option.id;
 
+                if(!resend) {
+                    sendQueue[key] || (sendQueue[key] = []);
+                }
 
-                sendQueue[key] || (sendQueue[key] = []);
-
-                if(!me.conn.isOpened() || isGroupChat) {
-                    sendQueue[key].push(option);
+                if(!me.conn.isOpened() || (isGroupChat && !isGroupOpened)) {
+                    resend || sendQueue[key].push(option);
                     if(me.conn.isOpening()) {
                         setTimeout(function(){
                             if(me.conn.isOpening()) {
                                 me.conn.close();
                             }
-                        }, 20000);
+                        }, 10000);
                     } else {
                         me.open(true);
                     }
+                    setTimeout(function(){
+                        var w = $('#' + id),
+                            l = w.find('.easemobWidget-msg-loading');
+
+                        if(!l.hasClass('hide')) {
+                            option.fail instanceof Function 
+                            ? option.fail(id)
+                            : (l.addClass('hide'), w.find('.easemobWidget-msg-status').removeClass('hide')); 
+                        }
+                        w = null, l = null;
+                    }, EasemobWidget.TIMEOUT);
                 } else {
                     me.conn.send(option);
                 }

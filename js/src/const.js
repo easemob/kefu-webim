@@ -1,4 +1,5 @@
 EasemobWidget.LISTSPAN = 20;
+EasemobWidget.TIMEOUT = 40000;
 EasemobWidget.PICTYPE = {//支持的图片格式
     jpg : true
     , gif : true

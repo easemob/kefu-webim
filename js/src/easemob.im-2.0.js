@@ -833,7 +833,7 @@
                 if(_msgHash[message.id] && _msgHash[message.id].msg.fail instanceof Function) {
                     _msgHash[message.id].msg.fail(message.id);
                 }
-            }, 60000);
+            }, 40000);
             conn.sendCommand(dom.tree(), message.id);
         }
 
