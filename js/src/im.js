@@ -508,11 +508,10 @@
                     onOpened: function(){
                         me.conn.setPresence();
                         me.conn.heartBeat(me.conn);
+
                         isGroupChat && (isGroupOpened = true);
-                        var key = isGroupChat ? curGroup : config.user;
-                        
-                        while(sendQueue[key] && sendQueue[key].length) {
-                            me.conn.send(sendQueue[key].pop());
+                        while(sendQueue[curGroup] && sendQueue[curGroup].length) {
+                            me.conn.send(sendQueue[curGroup].pop());
                         }
                     }
                     , onTextMessage: function(message){
@@ -541,7 +540,7 @@
                                 me.open();
                             case 3://signin failed
                             case 7://unknow
-                                if(me.conn.isOpened() || me.conn.isOpening()) {
+                                if(me.conn.isOpened()) {
                                     me.conn.close();
                                 } else if(me.conn.isClosed() || me.conn.isClosing()) {
                                     me.open();
@@ -1169,36 +1168,15 @@
             }
             , send: function(option) {
                 var me = this,
-                    key = isGroupChat ? curGroup : config.user,
                     resend = typeof option == 'string',
                     id = resend ? option : option.id;
 
                 if(!resend) {
-                    sendQueue[key] || (sendQueue[key] = []);
+                    sendQueue[curGroup] || (sendQueue[curGroup] = []);
                 }
 
-                if(!me.conn.isOpened() || (isGroupChat && !isGroupOpened)) {
-                    resend || sendQueue[key].push(option);
-                    if(me.conn.isOpening()) {
-                        setTimeout(function(){
-                            if(me.conn.isOpening()) {
-                                me.conn.close();
-                            }
-                        }, 10000);
-                    } else {
-                        me.open(true);
-                    }
-                    setTimeout(function(){
-                        var w = $('#' + id),
-                            l = w.find('.easemobWidget-msg-loading');
-
-                        if(!l.hasClass('hide')) {
-                            option.fail instanceof Function 
-                            ? option.fail(id)
-                            : (l.addClass('hide'), w.find('.easemobWidget-msg-status').removeClass('hide')); 
-                        }
-                        w = null, l = null;
-                    }, EasemobWidget.TIMEOUT);
+                if(isGroupChat && !isGroupOpened) {
+                    resend || sendQueue[curGroup].push(option);
                 } else {
                     me.conn.send(option);
                 }

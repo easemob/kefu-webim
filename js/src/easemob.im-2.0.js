@@ -829,11 +829,22 @@
                 , id: message.id
                 , xmlns: "jabber:client"
             }).c("body").t(jsonstr);
-            setTimeout(function(){
-                if(_msgHash[message.id] && _msgHash[message.id].msg.fail instanceof Function) {
-                    _msgHash[message.id].msg.fail(message.id);
+            me.st = setTimeout(function() {
+                if(_msgHash[message.id]) {
+                    if(typeof _msgHash[message.id].timeout == 'undefined') {
+                        _msgHash[message.id].timeout = 4;
+                    }
+                    if(_msgHash[message.id].timeout == 0) {
+                        clearTimeout(me.st);
+                        _msgHash[message.id].timeout = 4;
+                        _msgHash[message.id].msg.fail instanceof Function 
+                        && _msgHash[message.id].msg.fail(message.id);
+                    } else {
+                        _msgHash[message.id].timeout -= 1;
+                        _send(message);
+                    }
                 }
-            }, 40000);
+            }, 10000);
             conn.sendCommand(dom.tree(), message.id);
         }
 
@@ -1702,10 +1713,6 @@
             if(this.isOpened()){
                 this.context.stropheConn.send(dom);
             } else {
-                _msgHash[messageId] 
-                && _msgHash[messageId].msg.fail instanceof Function 
-                && _msgHash[messageId].msg.fail(messageId);
-
                 this.onError({
                     type: EASEMOB_IM_CONNCTION_OPEN_ERROR
                     , msg: '连接还未建立,请先登录或等待登录处理完毕'
