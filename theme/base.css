@@ -28,6 +28,9 @@ ul, li {
 img {
     border: none;
 }
+button, textarea, input {
+    outline: none;
+}
 .easemobWidget-pop-bar i,
 .easemobWidget-msgcount,
 .easemobWidget-left-corner,
@@ -205,6 +208,12 @@ img {
     vertical-align: middle;
     line-height: 18px;
     margin-left: 10px;
+    word-break: break-all;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-inline-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 .easemobWidget-word-close {
     position: absolute;
@@ -484,7 +493,6 @@ img {
     border: none;
     padding: 10px;
     box-sizing: border-box;
-    outline: none;
     margin-top: 30px;
     font-size: 13px;
     resize: none;
@@ -584,7 +592,6 @@ body .easemobWidget-offline-bg {
     font-size: 14px;
     font-weight: normal;
     width: 100%;
-    outline: none;
     margin: 10px 0;
 }
 .easemobWidget-offline input,
@@ -761,7 +768,6 @@ body .easemobWidget-offline-bg {
     border: 1px solid #E4E4E4;
     border-radius: 6px;
     font-size: 14px;
-    outline: none;
 }
 .easemobWidget-satisfaction-dialog button {
     width: 32%;
@@ -771,7 +777,6 @@ body .easemobWidget-offline-bg {
     border: none;
     font-size: 13px;
     margin: 0 16px;
-    outline: none;
     cursor: pointer;
 }
 .easemobWidget-satisfaction-dialog

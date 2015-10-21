@@ -534,6 +534,10 @@
                     }
                     , onError: function(e){
                         me.conn.stopHeartBeat(me.conn);
+                        
+                        while(sendQueue[curGroup] && sendQueue[curGroup].length) {
+                            me.conn.send(sendQueue[curGroup].pop());
+                        }
 
                         switch(e.type){
                             case 1://offline
@@ -776,19 +780,24 @@
                     $(this).val() ? me.sendbtn.removeClass('disabled') : me.sendbtn.addClass('disabled');
                 })
                 .on('touchstart', function(){//防止android部分机型滚动条常驻，看着像bug ==b
-                    me.scrollBottom('slow');
+                    me.scrollBottom(800);
                     me.textarea.css('overflow-y', 'auto');
                 })
                 .on('blur', function(){});
 
                 EasemobWidget.utils.isMobile && me.textarea.on('input', function(){
                     me.autoGrowOptions.update();
-                    me.scrollBottom('slow');
+                    me.scrollBottom(800);
                 });
 
                 //最小化按钮的多态
                 me.min.on('mouseenter mouseleave', function(){
                     $(this).toggleClass('hover-color');
+                }).on('mousedown', function(e){//最小化按钮
+                    return false;
+                }).on('click', function(){//最小化按钮
+                    me.toggleChatWindow();
+                    return false;
                 });
 
                 //表情的展开和收起
@@ -821,14 +830,8 @@
                     } else {
                         me.chatWrapper.removeClass('hide').siblings().addClass('hide');
                         me.toggleChatWindow();
-                        me.scrollBottom('fast');
+                        me.scrollBottom();
                     }
-                });
-
-                //最小化按钮
-                me.min.on('mousedown', function(e){
-                    me.toggleChatWindow();
-                    return false;
                 });
 
                 //选中文件并发送

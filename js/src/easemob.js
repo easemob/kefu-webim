@@ -122,7 +122,9 @@
                 case 'minChat'://show Chat window
                     iframe.style.boxShadow = 'none';
                     iframe.style.borderRadius = '4px;';
+                    iframe.style.left = 'auto';
                     iframe.style.right = '-5px';
+                    iframe.style.top = 'auto';
                     iframe.style.bottom = '10px';
                     iframe.style.border = 'none';
                     if(!config.json.hide) {
