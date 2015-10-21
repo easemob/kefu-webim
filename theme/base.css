@@ -172,9 +172,8 @@ button, textarea, input {
     background-color: #fff;
 }
 #easemobWidgetFileInput {
-    visibility: hidden;
     position: absolute;
-    left: -10000px;
+    right: -10000px;
 }
 /*body*/
 .easemobWidgetBody-wrapper {
@@ -796,6 +795,15 @@ body .easemobWidget-offline-bg {
     font-style: normal;
 }
 /*mobile*/
+/*.easemobWidgetFileInput-mobile {
+    z-index: 1;
+    width: 30px;
+    height: 30px;
+    right: 83px!important;
+    bottom: 8px;
+    overflow: hidden;
+    opacity: 0;
+}*/
 .easemobWidgetHeader-mobile {
     font-size: 16px;
     border-radius: 0;

@@ -361,6 +361,7 @@
                 this.satisDialog.addClass('easemobWidget-satisfaction-dialog-mobile');
                 this.headBar.addClass('easemobWidgetHeader-mobile');
                 this.chatWrapper.parent().addClass('easemobWidgetBody-mobile');
+                //this.realfile.addClass('easemobWidgetFileInput-mobile');
                 this.faceWrapper.parent().addClass('easemobWidget-face-wrapper-mobile');
                 this.facebtn.addClass('easemobWidget-face-mobile');
                 $('.easemobWidget-face-bg').addClass('easemobWidget-face-bg-mobile');
@@ -502,6 +503,7 @@
                 var me = this;
                 me.conn = new Easemob.im.Connection({
                     https: https ? true : false
+                    , wait: 60
                     , url: (https ? 'https:' : 'http:') + '//im-api.easemob.com/http-bind/'
                 });
                 me.conn.listen({
@@ -837,6 +839,12 @@
                 //选中文件并发送
                 me.realfile.on('change', function(){
                     me.sendImgMsg();
+                })
+                .on('click', function(){
+                    if(!Easemob.im.Utils.isCanUploadFile()) {
+                        me.errorPrompt('当前浏览器不支持发送图片');
+                        return false;    
+                    }
                 });
 
                 //hide face wrapper
@@ -865,7 +873,7 @@
                         return false;    
                     }
                     
-                    me.realfile.get(0).click();
+                    me.realfile.click();
                 });
 
                 //hot key
