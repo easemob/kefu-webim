@@ -149,6 +149,8 @@
                     iframe.style.display = 'none';
                     EasemobWidget.utils.on(document, 'mousemove', _move);
                     break;
+                case 'dragend':
+                    _moveend();
                 default: break;
             }   
         });

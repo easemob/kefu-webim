@@ -690,9 +690,14 @@
                 /*
                     drag
                 */
-                me.headBar.on('mousedown', function(e){
+                me.headBar.find('.js_drag').on('mousedown', function(e){
                     var ev = e.originalEvent;
+                    me.textarea.blur();//ie a  ie...
                     message.sendToParent('dragready' + ev.clientX + '&' + ev.clientY);
+                    return false;
+                }).on('mouseup', function(){
+                    message.sendToParent('dragend');
+                    return false;
                 });
                 
 
@@ -795,9 +800,7 @@
                 //最小化按钮的多态
                 me.min.on('mouseenter mouseleave', function(){
                     $(this).toggleClass('hover-color');
-                }).on('mousedown', function(e){//最小化按钮
-                    return false;
-                }).on('click', function(){//最小化按钮
+                }).on('click', function(e){
                     me.toggleChatWindow();
                     return false;
                 });
