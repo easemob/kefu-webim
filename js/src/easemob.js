@@ -120,6 +120,7 @@
                     iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;*border: 1px solid #ccc;border: 1px solid #ccc\\9;';
                     break;
                 case 'minChat'://show Chat window
+                    _st && cleatTimeout(_st);
                     iframe.style.boxShadow = 'none';
                     iframe.style.borderRadius = '4px;';
                     iframe.style.left = 'auto';
@@ -291,12 +292,12 @@
         var ev = window.event || e,
             _width = document.documentElement.clientWidth,
             _height = document.documentElement.clientHeight,
-            _x = _width - e.clientX - 400 + _startPosition.x + 18,
+            _x = _width - e.clientX - 400 + _startPosition.x,
             _y = _height - e.clientY - 500 + _startPosition.y;
         
         if(e.clientX - _startPosition.x <= 0 ) {//left
-            _x = _width - 400 + 18;
-        } else if(e.clientX + 400 - _startPosition.x -18 >= _width) {//right
+            _x = _width - 400;
+        } else if(e.clientX + 400 - _startPosition.x >= _width) {//right
             _x = 0;
         }
         if(e.clientY - _startPosition.y <= 0 ) {//top
@@ -315,7 +316,7 @@
         }
         
         clearTimeout(_st);
-        _st = setTimeout(_moveend, 700);
+        _st = setTimeout(_moveend, 500);
     }
     var _moveend = function(){
 

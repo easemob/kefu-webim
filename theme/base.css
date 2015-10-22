@@ -365,6 +365,14 @@ button, textarea, input {
     bottom: 0;
     cursor: pointer;
 }
+.easemobWidget-loading {
+    width: 100%;
+    height: 100%;
+    -webkit-animation: easemobWidget-loading 1s linear 0s infinite;
+    -moz-animation: easemobWidget-loading 1s linear 0s infinite;
+    -ms-animation: easemobWidget-loading 1s linear 0s infinite;
+    animation: easemobWidget-loading 1s linear 0s infinite;
+}
 .easemobWidget-msg-loading {
     position: absolute;
     left: -38px;
@@ -373,10 +381,7 @@ button, textarea, input {
     margin: auto;
     width: 40px;
     height: 40px;
-    -webkit-animation: easemobWidget-loading 1s linear 0s infinite;
-    -moz-animation: easemobWidget-loading 1s linear 0s infinite;
-    -ms-animation: easemobWidget-loading 1s linear 0s infinite;
-    animation: easemobWidget-loading 1s linear 0s infinite;
+    overflow: hidden;
 }
 @-moz-keyframes easemobWidget-loading {
     0% {
