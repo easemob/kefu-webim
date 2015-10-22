@@ -120,7 +120,7 @@
                     iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;*border: 1px solid #ccc;border: 1px solid #ccc\\9;';
                     break;
                 case 'minChat'://show Chat window
-                    _st && cleatTimeout(_st);
+                    _st && clearTimeout(_st);
                     iframe.style.boxShadow = 'none';
                     iframe.style.borderRadius = '4px;';
                     iframe.style.left = 'auto';
