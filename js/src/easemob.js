@@ -117,7 +117,7 @@
                     iframe.style.right = iframePosition.x + 'px';
                     iframe.style.bottom = iframePosition.y + 'px';
                     
-                    iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;*border: 1px solid #ccc;border: 1px solid #ccc\\9;';
+                    iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;border: 1px solid #ccc\\9;';
                     break;
                 case 'minChat'://show Chat window
                     _st && clearTimeout(_st);
@@ -132,8 +132,8 @@
                         iframe.style.height = '37px';
                         iframe.style.width = '102px';
                     } else {
-                        iframe.style.width = '0';
-                        iframe.style.height = '0';
+                        iframe.style.width = '12px';
+                        iframe.style.height = '12px';
                     }
                     break;
                 case 'setuser':
@@ -231,6 +231,9 @@
         if(!config.json.hide) {
             iframe.style.height = '37px';
             iframe.style.width = '100px';
+        } else {
+            iframe.style.height = '12px';
+            iframe.style.width = '12px';
         }
         if(EasemobWidget.utils.isMobile) {
             iframe.style.cssText += 'left:0;bottom:0';
