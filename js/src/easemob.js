@@ -104,7 +104,7 @@
                     }, 360);
                     break;
                 case 'notify'://title slide
-                    notify(config.domain + 'webim/resources/notify.png', '未读消息', msgDetail);
+                    notify(config.domain + 'webim/resources/notify.png', '新消息', msgDetail);
                     break;
                 case 'recoveryTitle':
                     clearInterval(titleST);

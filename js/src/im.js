@@ -56,7 +56,7 @@
             .done(function(info, group){
                 config.user = groupUser;
                 config.password = info;
-                
+                   
                 im.chatWrapper.attr('data-group', group);
 
                 im.open(true);
@@ -65,7 +65,7 @@
                 if (im.chatWrapper.data('hised')) return;
                 
                 im.getHistory(0, im.chatWrapper, function(wrapper, info){
-                
+                    
                     wrapper.attr('data-hised', 1);
 
                     config.history = info;
@@ -1107,15 +1107,23 @@
                 me.chatWrapper.append(temp);
                 me.chatWrapper.find('img:last').on('load', me.scrollBottom);
             }
-            , encode: function(str){
+            , encode: function(str, history){
                 if (!str || str.length == 0) return "";
-                var s = "";
-                s = str.replace(/&/g, "&amp;");
+                var s = '';
+                s = !history
+                ? str.replace(/&(?!amp;)/g, "&amp;")
+                : str.replace(/&amp;/g, "&");
                 s = s.replace(/<(?=[^o][^)])/g, "&lt;");
                 s = s.replace(/>/g, "&gt;");
                 //s = s.replace(/\'/g, "&#39;");
                 s = s.replace(/\"/g, "&quot;");
                 s = s.replace(/\n/g, "<br>");
+                return s;
+            }
+            , decode: function(str) {
+                if (!str || str.length == 0) return "";
+                var s = '';
+                s = str.replace(/&amp;/g, "&");
                 return s;
             }
             , sendTextMsg: function(msg, wrapper){
@@ -1128,9 +1136,9 @@
                             <div class='easemobWidget-msg-wrapper'>\
                                 <i class='easemobWidget-right-corner'></i>\
                                 <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
-                                <div class='easemobWidget-msg-loading hide'>" + EasemobWidget.LOADING +"</div>
+                                <div class='easemobWidget-msg-loading hide'>" + EasemobWidget.LOADING + "</div>
                                 <div class='easemobWidget-msg-container'>\
-                                    <p>"+Easemob.im.Utils.parseLink(me.face(me.encode(msg.msg)))+"</p>\
+                                    <p>" + Easemob.im.Utils.parseLink(me.face(me.encode(msg.msg, true))) + "</p>\
                                 </div>\
                             </div>\
                         </div>\
@@ -1153,13 +1161,13 @@
                             <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                             <div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING +"</div>
                             <div class='easemobWidget-msg-container'>\
-                                <p>"+Easemob.im.Utils.parseLink(me.face(me.encode(txt)))+"</p>\
+                                <p>" + Easemob.im.Utils.parseLink(me.face(me.encode(txt))) + "</p>\
                             </div>\
                         </div>\
                     </div>\
                 ");
                 me.textarea.val('');
-                me.scrollBottom();
+                me.scrollBottom(EasemobWidget.utils.isMobile ? 700 : undefined);
 
                 var opt = {
                     id: msgid
@@ -1257,8 +1265,9 @@
                 switch(type){
                     case 'txt':
                         msgDetail = msg.msg || msg.data;
-                        msgDetail = (msgDetail.length > 30 ? msgDetail.slice(0, 30) + '...' : msgDetail);
-                        value = me.face(Easemob.im.Utils.parseLink(me.encode(isHistory ? msg.msg : msg.data)));
+                        msgDetail = msgDetail.replace(/\n/mg, '');
+                        msgDetail = (msgDetail.length > 15 ? msgDetail.slice(0, 15) + '...' : msgDetail);
+                        value = me.face(Easemob.im.Utils.parseLink(me.encode(isHistory ? msg.msg : msg.data, isHistory)));
                         value = '<p>' + value + '</p>';
                         break;
                     case 'face':
@@ -1272,7 +1281,8 @@
                                 value += '<img class="chat-face-all" src="'+v.data+'">';   
                             }
                         });
-                        msgDetail = (value.length > 30 ? value.slice(0, 30) + '...' : value);
+                        msgDetail = value.replace(/\n/mg, '');
+                        msgDetail = (msgDetail.length > 15 ? msgDetail.slice(0, 15) + '...' : msgDetail);
                         value = '<p>' + value + '</p>';
                         value = Easemob.im.Utils.parseLink(value);
                         break;
