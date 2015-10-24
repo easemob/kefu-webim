@@ -5,161 +5,31 @@
 
 ;(function(window, undefined){
     'use strict';
+
     
-
-    typeof HTMLAudioElement !== 'undefined' && (HTMLAudioElement.prototype.stop = function() {
-        this.pause(); 
-        this.currentTime = 0.0; 
-    });
-
-    var config;
-
-    var sendQueue = {};//记录消息发送失败
-
-
-    /*
-        main
-    */
-    var main = function() {
-        var groupUser = '';//记录当前技能组对应的webim user
+    var main = function(config) {
+        var sendQueue = {};//记录消息发送失败
+        var userHash = {};//记录所有user相关
         var isGroupChat = false;//当前是否技能组聊天窗口
         var isGroupOpened = false;//当前是否技能组用户是否连接完毕
         var isShowDirect = false;//不同技能组之间，直接显示
         var curGroup = '';//记录当前技能组，如果父级页面切换技能组，则直接打开chatwindow，不toggle   
-        var swfupload = null;//flash 上传利器
+        var swfupload = null;//flash 上传利器-_-b
         var https = location.protocol == 'https:' ? true : false;
-        var click = EasemobWidget.utils.isMobile && ('ontouchstart' in window) 
-            ? 'touchstart' 
-            : 'click';
-
-        config.root = window.top == window;//是否在iframe当中
-        config.json.hide = config.json.hide == 'false' 
-            ? false 
-            : config.json.hide;
-        
-
-        /*
-            处理技能组user切换
-        */
-        var handleGroupUser = function() {
-
-            groupUser 
-            ? $.when(
-                EasemobWidget.api.getPwd({user: groupUser})
-                , EasemobWidget.api.getGroup({
-                    user: groupUser
-                    , orgName: config.orgName
-                    , appName: config.appName
-                    , to: config.to
-                })
-            )
-            .done(function(info, group){
-                config.user = groupUser;
-                config.password = info;
-                   
-                im.chatWrapper.attr('data-group', group);
-
-                im.open(true);
-
-                //每次切换不在重新获取，除非用户trigger           
-                if (im.chatWrapper.data('hised')) return;
-                
-                im.getHistory(0, im.chatWrapper, function(wrapper, info){
-                    
-                    wrapper.attr('data-hised', 1);
-
-                    config.history = info;
-                    im.handleHistory(wrapper);
-
-                    im.toggleChatWindow(isShowDirect ? 'show' : '')
-                });
-
-            })
-            : $.when(EasemobWidget.api.getUser(config))
-            .done(function(info){
-                config.user = info.userId;
-                config.password = info.userPassword;
-                
-                config.root 
-                ? Emc.setcookie(escape(curGroup), config.user) 
-                : message.sendToParent('setgroupuser@' + config.user + '@emgroupuser@' + curGroup);
-
-                im.open(true);
-
-                im.toggleChatWindow(isShowDirect ? 'show' : '')
-            });
-        }
+        var click = EasemobWidget.utils.isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click';
+        config.root = window.top == window;
+        config.json.hide = config.json.hide == 'false' ? false : config.json.hide;
 
 
-        /*
-            监听父级窗口发来的消息
-        */
-        var message = new EmMessage().listenToParent(function(msg){
-            var value;
-            if(msg.indexOf('emgroup@') == 0) {//技能组消息
-                value = msg.slice(8);
-                msg = 'emgroup';
-            } else if(msg.indexOf('@') > 0) {//从父级页面cookie读取相关信息
-                value = msg.split('@')[1];
-                msg = msg.split('@')[0];
-            }
+        //
+        EasemobWidget.init(config, function() {
+            userHash.normal = {
+                user: config.user
+                , password: config.password
+            };
 
-            switch(msg) {
-                case 'dragend':
-                    im.scrollBottom();
-                    break;
-                case 'imclick'://关闭 或 展开 iframe 聊天窗口
-                    isGroupChat = false;
-                    if(im && im.loaded) {
-                        im.chatWrapper = $('#normal');
-                        im.chatWrapper.removeClass('hide').siblings().addClass('hide');
-                        if(config.user != im.curUser.user) {
-                            config.user = im.curUser.user;
-                            config.password = im.curUser.pwd;
-                            im.open(true);
-                            im.setTitle();
-                        }
-                        im.group = false;
-                        im.toggleChatWindow(curGroup ? 'show' : '');
-                    } else {
-                        im.toggleChatWindow();
-                    }
-                    curGroup = '';
-                    break;
-                case 'emgroup'://技能组
-                    isGroupChat = true;
-                    isGroupOpened = false; 
-
-                    var idx = value.indexOf('@emgroupuser@');
-
-                    if(idx > 0) {
-                        groupUser = value.slice(0, idx);
-                    } else {
-                        groupUser = null;
-                    }
-                    value = value.slice(idx + 13);
-
-                    if(curGroup != value) {
-                        curGroup = value;
-                        isShowDirect = true;
-                    } else {
-                        isShowDirect = false;
-                    }
-
-
-                    if(im && im.loaded) {
-                        im.handleGroup(value);
-                        handleGroupUser();
-                    }
-                    
-                    isShowDirect
-                    ? im.toggleChatWindow('show')
-                    : im.toggleChatWindow()
-                    break;
-                default: break;
-            }
+            im.init();
         });
-
 
        
         /*
@@ -168,44 +38,38 @@
         var im = ({
             
             init: function(){
-
                 this.getDom();//绑定所有相关dom至this
                 this.changeTheme();//设置相应主题
-
-                //独立窗口不展示悬浮小按钮
-                if(!config.json.hide && !config.root) this.fixedBtn.removeClass('hide');
-                //独立页面
-                config.root && (
-                    this.min.addClass('hide')//隐藏最小化按钮
-                    , this.toggleChatWindow()//展示聊天窗口内容
-                );
-                
-                //不支持异步upload的浏览器使用flash插件搞定
-                if(!Easemob.im.Utils.isCanUploadFileAsync() && Easemob.im.Utils.isCanUploadFile()) {
-                    swfupload = uploadShim('easemobWidgetFileInput');
-                    $('object[id^="SWFUpload"]').attr('title', '图片');
-                }
-
+                config.root && (this.min.addClass('hide'), this.toggleChatWindow())//展示聊天窗口内容
+                this.handleFixedBtn();//展示悬浮小按钮
                 this.fillFace();//遍历FACE，添加所有表情
                 this.setWord();//设置广告语
                 this.setTitle(config.json.emgroup ? unescape(config.json.emgroup) : '');//设置im.html的标题
-                //this.audioAlert();//init audio
+                this.audioAlert();//init audio
                 this.mobileInit();//h5 适配，为防止media query不准确，js动态添加class
                 this.setOffline();//根据状态展示上下班不同view
-                this.sdkInit();//调用js sdk相关api，初始化聊天相关操作
-
-                this.loaded = true;//im ready
-                this.handleEvents();//执行post过来的消息，清空事件列表
-
                 this.bindEvents();//开始绑定dom各种事件
-                EasemobWidget.utils.isMobile && config.json.emgroup || this.handleHistory();//处理拿到的历史记录
-                this.showFixedBtn();//展示悬浮小按钮
+                this.open();
 
-                this.getHistory(0, $('#normal'), function(wrapper, info){
+                this.getHistory(0, $('#normal'), function(wrapper, info){//
                     config.history = info;
                     im.handleHistory(wrapper);
                 });
-
+                if(config.json.emgroup && config.root) {//处理技能组
+                    var value = unescape(config.json.emgroup);
+                    this.handleGroup(value);
+                    userHash[value] = userHash[value] || {};
+                    userHash[value].user = Emc.getcookie(escape(value));
+                    curGroup = value;
+                    handleGroupUser(curGroup);
+                }
+            }
+            , getConnection: function() {
+                return new Easemob.im.Connection({
+                    https: https ? true : false
+                    , wait: 60
+                    , url: (https ? 'https:' : 'http:') + '//im-api.easemob.com/http-bind/'
+                });
             }
             , getHistory: function(from, wrapper, callback) {
                 var me = this;
@@ -231,16 +95,12 @@
             }
             , setAttribute: function() {
                 this.msgCount = 0;//未读消息数
-                this.eventList = [];//事件列表,防止iframe没有加载完，父级元素post过来消息执行出错
                 this.scbT = 0;//sroll bottom timeout stamp
                 this.autoGrowOptions = {};
                 this.historyFirst = true;//第一次获取历史记录
                 this.msgTimeSpan = {};//用于处理1分钟之内的消息只显示一次时间
                 
                 return this;
-            }
-            , handleEvents: function() {
-                this.eventList.length > 0 && this.eventList[0].call(this);
             }
             , handleGroup: function(type) {
                 if(typeof type === 'string') {
@@ -369,17 +229,6 @@
                 this.sendbtn.parent().addClass('easemobWidgetSend-mobile');
                 this.textarea.addClass('textarea-mobile');
                 this.Im.find('.easeWidget-face-rec').addClass('easeWidget-face-rec-mobile');
-
-                if(config.json.emgroup && config.root) {//处理技能组
-                    var value = unescape(config.json.emgroup);
-
-                    im.handleGroup(value);
-
-                    groupUser = Emc.getcookie(escape(value));
-                    curGroup = value;
-                    handleGroupUser();
-                }
-
             }
             , setWord: function(){
                 if(config.word) {
@@ -435,8 +284,10 @@
                     $('<style type="text/css">' + EasemobWidget.THEME[config.theme].css + '</style>').appendTo('head');
                 } 
             }
-            , showFixedBtn: function() {
-                !config.json.hide && !config.root && this.fixedBtn.removeClass('hide');
+            , handleFixedBtn: function() {
+                if(!config.json.hide && !config.root) {
+                     this.fixedBtn.removeClass('hide');
+                }
             }
             , setOffline: function() {
                 var me = this;
@@ -461,19 +312,6 @@
             , toggleChatWindow: function(windowStatus) {
                 var me = this;
 
-                //not ready
-                if(!me.loaded) {
-                    me.eventList = [];
-
-                    if(isGroupChat) {
-                        me.eventList.push(function(){
-                            handleGroupUser();
-                        });  
-                    } else {
-                        me.eventList.push(im.toggleChatWindow);
-                    }
-                    return;
-                }
 
                 if(!config.root) {
                     setTimeout(function(){
@@ -499,21 +337,17 @@
                 }
                 me.addPrompt();
             }
-            , sdkInit: function(){
+            , sdkInit: function(conn){
                 var me = this;
-                me.conn = new Easemob.im.Connection({
-                    https: https ? true : false
-                    , wait: 60
-                    , url: (https ? 'https:' : 'http:') + '//im-api.easemob.com/http-bind/'
-                });
-                me.conn.listen({
+                
+                conn.listen({
                     onOpened: function(){
-                        me.conn.setPresence();
-                        me.conn.heartBeat(me.conn);
+                        conn.setPresence();
+                        conn.heartBeat(conn);
 
                         isGroupChat && (isGroupOpened = true);
                         while(sendQueue[curGroup] && sendQueue[curGroup].length) {
-                            me.conn.send(sendQueue[curGroup].pop());
+                            conn.send(sendQueue[curGroup].pop());
                         }
                     }
                     , onTextMessage: function(message){
@@ -535,10 +369,10 @@
                         me.open();
                     }
                     , onError: function(e){
-                        me.conn.stopHeartBeat(me.conn);
+                        conn.stopHeartBeat(conn);
                         
                         while(sendQueue[curGroup] && sendQueue[curGroup].length) {
-                            me.conn.send(sendQueue[curGroup].pop());
+                            conn.send(sendQueue[curGroup].pop());
                         }
 
                         switch(e.type){
@@ -546,9 +380,9 @@
                                 me.open();
                             case 3://signin failed
                             case 7://unknow
-                                if(me.conn.isOpened()) {
-                                    me.conn.close();
-                                } else if(me.conn.isClosed() || me.conn.isClosing()) {
+                                if(conn.isOpened()) {
+                                    conn.close();
+                                } else if(conn.isClosed() || conn.isClosing()) {
                                     me.open();
                                 }
                                 break;
@@ -559,11 +393,6 @@
                         }
                     }
                 });
-                me.curUser = {
-                    user: config.user
-                    , pwd: config.password
-                };
-                EasemobWidget.utils.isMobile && config.json.emgroup || me.open();
             }
             , addDate: function(date, isHistory, wrapper) {
                 var htmlPre = '<div class="easemobWidget-date">',
@@ -589,21 +418,20 @@
             , resetSpan: function(id) {
                 this.msgTimeSpan[id] = new Date().getTime();
             }
-            , open: function(force){
-                
-                var me = this;
-                
+            , open: function(){
+                var me = this,
+                    key = isGroupChat ? curGroup : 'normal';
 
-                if(force) {
-                    if(me.conn.isOpening() || me.conn.isOpened()) {
-                        me.conn.close();
-                    } else {
-                        me.open();
-                    }
-                } else if(!me.conn.isOpening() && !me.conn.isOpened()){
+                if(!userHash[key].conn) {
+                    userHash[key].conn = me.getConnection();
+                    me.sdkInit(userHash[key].conn);
+                }
+                me.conn = userHash[key].conn;
+
+                if(!me.conn.isOpened()) {
                     me.conn.open({
-                        user : config.user
-                        , pwd : config.password
+                        user : userHash[key].user
+                        , pwd : userHash[key].password
                         , appKey : config.appkey
                     });
                 }
@@ -635,6 +463,7 @@
                 this.satisDialog = this.Im.find('.easemobWidget-satisfaction-dialog');
             }
             , audioAlert: function(){
+                return;
                 var me = this;
                 if(window.HTMLAudioElement && this.audio) {
                     me.playaudio = function(){
@@ -650,7 +479,7 @@
                 else if(/\[.*\]/.test(msg)){
                     msg = msg.replace(/&amp;/g, '&');
                     msg = msg.replace(/&#39;/g, '\'');
-                    msg = msg.replace(/&lt;/g, '\<');
+                    msg = msg.replace(/&lt;/g, '<');
                     $.each(Easemob.im.EMOTIONS.map, function(k, v){
                         while(msg.indexOf(k) >= 0){
                             msg = msg.replace(k
@@ -673,10 +502,7 @@
                     $(window).on('popstate', me.open);
                 }
                 
-
-                /*
-                    resend
-                */
+                //resend
                 me.Im.on(click, '.easemobWidget-msg-status', function(){
                     var that = $(this),
                         w = that.parent().parent(),
@@ -687,9 +513,7 @@
                     me.send(id);
                 });                
 
-                /*
-                    drag
-                */
+                //drag
                 me.headBar.find('.js_drag').on('mousedown', function(e){
                     var ev = e.originalEvent;
                     me.textarea.blur();//ie a  ie...
@@ -701,9 +525,7 @@
                 });
                 
 
-                /*
-                    满意度调查
-                */
+                //满意度调查
                 me.evaluate.on(click, function(){
                     //clear cache
                     me.satisDialog.get(0).inviteId = '';
@@ -1009,6 +831,50 @@
                         }, 400);
                     }
                 });
+                /*
+                var ts = 0;
+                me.chatWrapper.on('click', '.easemobWidget-msg-voice', function(){
+                    if(!Easemob.im.Helper.isCanUploadFileAsync || EasemobWidget.utils.isAndroid) {
+                        me.errorPrompt('当前浏览器不支持语音播放');
+                        return false;    
+                    }
+                    
+                    var $t = $(this),
+                        $a = $t.next(),
+                        aud = $a.get(0),
+                        cur = 0;
+                    var clear = function(){
+                        clearInterval(ts);
+                        $t.removeClass('one');
+                        $t.removeClass('two');
+                    }
+                    if(!aud.paused && !aud.ended && 0 < aud.currentTime) {
+                        aud.stop();
+                        clear();
+                        return false;
+                    }
+                    aud.play();
+                    $a.on('ended', function(){
+                        clear();
+                    });
+                    ts = setInterval(function(){
+                        cur += 1;
+                        switch(cur % 3) {
+                            case 0:
+                                $t.removeClass('two');
+                                break;
+                            case 1:
+                                $t.addClass('one');
+                                break;
+                            case 2:
+                                $t.removeClass('one');
+                                $t.addClass('two');
+                                break;
+                        }
+                        cur == 9999 && (cur = 0);
+                    }, 500);
+                });
+                */
             }
             , scrollBottom: function(type){
                 var ocw = im.chatWrapper.parent().get(0);
@@ -1197,11 +1063,7 @@
                     sendQueue[curGroup] || (sendQueue[curGroup] = []);
                 }
 
-                if(isGroupChat && !isGroupOpened) {
-                    resend || sendQueue[curGroup].push(option);
-                } else {
-                    me.conn.send(option);
-                }
+                me.conn.send(option);
             }
             , sendSatisfaction: function(level, content) {
                 var me = this;
@@ -1293,6 +1155,57 @@
                     case 'satisfactionEvaluation':
                         value = '<p>请对我的服务做出评价</p>'
                         msgDetail = '请对我的服务做出评价';
+                    /*
+                    case 'audio':
+                        var options = msg;
+                        options.onFileDownloadComplete = function(response, xhr) {
+                            var audio = document.createElement('audio');
+                            if (Easemob.im.Helper.isCanUploadFileAsync && ("src" in audio) && ("controls" in audio)) {
+                                var objectURL = window.URL.createObjectURL(response);
+                                audio = null;
+                                var temp = "\
+                                    <div class='easemobWidget-left'>\
+                                        <div class='easemobWidget-msg-wrapper'>\
+                                            <i class='easemobWidget-left-corner'></i>\
+                                            <div class='easemobWidget-msg-container'>\
+                                                <i class='easemobWidget-msg-voice'></i>\
+                                                <audio src='"+objectURL+"' controls class='hide'/>\
+                                            </div>\
+                                            <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
+                                        </div>\
+                                    </div>";
+                                me.chatWrapper.append(temp);
+                                me.scrollBottom();
+                            } else {
+                                var temp = "\
+                                    <div class='easemobWidget-left'>\
+                                        <div class='easemobWidget-msg-wrapper'>\
+                                            <i class='easemobWidget-left-corner'></i>\
+                                            <div class='easemobWidget-msg-container'>\
+                                                <i class='easemobWidget-msg-voice' data-id=''></i>\
+                                                <audio id='' class='hide' src='' controls/>\
+                                            </div>\
+                                            <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
+                                        </div>\
+                                    </div>";
+                                me.chatWrapper.append(temp);
+                                me.scrollBottom();
+                                audio = null;
+                            }
+                        };
+                        options.onFileDownloadError = function(e) {
+                            //appendMsg(from, contactDivId, e.msg + ",下载音频" + filename + "失败");
+                        };
+                        options.headers = {
+                            "Accept" : "audio/mp3"
+                        };
+                        Easemob.im.Helper.download(options);
+                        return ;
+                    case 'location':
+                        value = "\
+                                <div class='easemobWidget-msg-mapinfo'>" + msg.addr + "</div>\
+                                <img class='easemobWidget-msg-mapico' src='theme/map.png' />";
+                        break;*/
                     default: break;
                 }
                 
@@ -1330,13 +1243,140 @@
                 }
             }
         }.setAttribute());
-        
-        EasemobWidget.getInfoFromApi(config, function() {
-            im.init.call(im);
+
+
+        /*
+            提供上传接口
+        */
+        var flashUpload = function(url, options){
+            swfupload.setUploadURL(url);
+            swfupload.startUpload();
+            swfupload.uploadOptions = options;
+        }
+
+
+        /*
+            处理技能组user切换
+        */
+        var handleGroupUser = function(name) {
+            userHash[name].user
+            ? $.when(
+                userHash[name].password ? null : EasemobWidget.api.getPwd({user: userHash[name].user})
+                , userHash[name].group ? null : EasemobWidget.api.getGroup({
+                    user: userHash[name].user
+                    , orgName: config.orgName
+                    , appName: config.appName
+                    , to: config.to
+                })
+            )
+            .done(function(info, group){
+                config.user = userHash[name].user;
+                if(group) {
+                    userHash[name].group = group;
+                    im.chatWrapper.attr('data-group', group);
+                }
+                if(info) {
+                    config.password = info;
+                    userHash[name].password = info;
+                }
+                   
+
+                im.open();
+
+                //每次切换不在重新获取，除非用户trigger           
+                if (im.chatWrapper.data('hised')) return;
+                
+                im.getHistory(0, im.chatWrapper, function(wrapper, info){
+                    
+                    wrapper.attr('data-hised', 1);
+
+                    config.history = info;
+                    im.handleHistory(wrapper);
+
+                    im.toggleChatWindow(isShowDirect ? 'show' : '')
+                });
+
+            })
+            : $.when(EasemobWidget.api.getUser(config))
+            .done(function(info){
+                config.user = info.userId;
+                userHash[name].user = info.userId;
+                config.password = info.userPassword;
+                userHash[name].password = info.userPassword;
+                
+                config.root 
+                ? Emc.setcookie(escape(name), config.user) 
+                : message.sendToParent('setgroupuser@' + config.user + '@emgroupuser@' + name);
+
+                im.open();
+
+                im.toggleChatWindow(isShowDirect ? 'show' : '')
+            });
+        }
+
+
+        /*
+            监听父级窗口发来的消息
+        */
+        var message = new EmMessage().listenToParent(function(msg){
+            var value;
+            if(msg.indexOf('emgroup@') == 0) {//技能组消息
+                value = msg.slice(8);
+                msg = 'emgroup';
+            } else if(msg.indexOf('@') > 0) {//从父级页面cookie读取相关信息
+                value = msg.split('@')[1];
+                msg = msg.split('@')[0];
+            }
+
+            switch(msg) {
+                case 'dragend':
+                    im.scrollBottom();
+                    break;
+                case 'imclick'://关闭 或 展开 iframe 聊天窗口
+                    isGroupChat = false;
+                    im.chatWrapper = $('#normal');
+                    im.chatWrapper.removeClass('hide').siblings().addClass('hide');
+                    if(config.user != userHash.normal.user) {
+                        config.user = userHash.normal.user;
+                        config.password = userHash.normal.password;
+                        im.open();
+                        im.setTitle();
+                    }
+                    im.group = false;
+                    im.toggleChatWindow(curGroup ? 'show' : '');
+                    curGroup = '';
+                    break;
+                case 'emgroup'://技能组
+                    isGroupChat = true;
+                    isGroupOpened = false; 
+
+                    var idx = value.indexOf('@emgroupuser@'),
+                        user = null;
+
+
+                    if(idx > 0) {
+                        user = value.slice(0, idx);
+                    }
+                    value = value.slice(idx + 13);
+                    userHash[value] = userHash[value] || {};
+                    userHash[value].user = user;
+
+                    if(curGroup != value) {
+                        curGroup = value;
+                        isShowDirect = true;
+                    } else {
+                        isShowDirect = false;
+                    }
+
+                    im.handleGroup(value);
+                    handleGroupUser(curGroup);
+                    isShowDirect ? im.toggleChatWindow('show') : im.toggleChatWindow();
+                    break;
+                default: break;
+            }
         });
 
-
-
+        
         /*
             upload by flash
             param1: input file ID
@@ -1425,147 +1465,22 @@
                 }
             });
         }
-
-        /*
-            提供上传接口
-        */
-        var flashUpload = function(url, options){
-            swfupload.setUploadURL(url);
-            swfupload.startUpload();
-            swfupload.uploadOptions = options;
+        //不支持异步upload的浏览器使用flash插件搞定
+        if(!Easemob.im.Utils.isCanUploadFileAsync() && Easemob.im.Utils.isCanUploadFile()) {
+            swfupload = uploadShim('easemobWidgetFileInput');
+            $('object[id^="SWFUpload"]').attr('title', '图片');
         }
     }
 
-    //ie8的iframe的cache实在是。。。#￥%&&, 不得不跟父级通信
+    /*
+        
+    */
     window.top == window 
-    ? (
-        config = EasemobWidget.utils.getConfig(),
-        main()
-    )
+    ? main(EasemobWidget.utils.getConfig())
     : new EmMessage().listenToParent(function(msg){
         
         if(msg.indexOf('initdata:') == 0) {
-            config = EasemobWidget.utils.getConfig(msg.slice(9));
-            main();
+            main(EasemobWidget.utils.getConfig(msg.slice(9)));
         }
     });
 }(window, undefined));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/***********************************************/
-/*
-case 'audio':
-    var options = msg;
-    options.onFileDownloadComplete = function(response, xhr) {
-        var audio = document.createElement('audio');
-        if (Easemob.im.Helper.isCanUploadFileAsync && ("src" in audio) && ("controls" in audio)) {
-            var objectURL = window.URL.createObjectURL(response);
-            audio = null;
-            var temp = "\
-                <div class='easemobWidget-left'>\
-                    <div class='easemobWidget-msg-wrapper'>\
-                        <i class='easemobWidget-left-corner'></i>\
-                        <div class='easemobWidget-msg-container'>\
-                            <i class='easemobWidget-msg-voice'></i>\
-                            <audio src='"+objectURL+"' controls class='hide'/>\
-                        </div>\
-                        <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
-                    </div>\
-                </div>";
-            me.chatWrapper.append(temp);
-            me.scrollBottom();
-        } else {
-            var temp = "\
-                <div class='easemobWidget-left'>\
-                    <div class='easemobWidget-msg-wrapper'>\
-                        <i class='easemobWidget-left-corner'></i>\
-                        <div class='easemobWidget-msg-container'>\
-                            <i class='easemobWidget-msg-voice' data-id=''></i>\
-                            <audio id='' class='hide' src='' controls/>\
-                        </div>\
-                        <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
-                    </div>\
-                </div>";
-            me.chatWrapper.append(temp);
-            me.scrollBottom();
-            audio = null;
-        }
-    };
-    options.onFileDownloadError = function(e) {
-        //appendMsg(from, contactDivId, e.msg + ",下载音频" + filename + "失败");
-    };
-    options.headers = {
-        "Accept" : "audio/mp3"
-    };
-    Easemob.im.Helper.download(options);
-    return ;
-case 'location':
-    value = "\
-            <div class='easemobWidget-msg-mapinfo'>" + msg.addr + "</div>\
-            <img class='easemobWidget-msg-mapico' src='theme/map.png' />";
-    break;
-***********************************************
-var ts = 0;
-me.chatWrapper.on('click', '.easemobWidget-msg-voice', function(){
-    if(!Easemob.im.Helper.isCanUploadFileAsync || EasemobWidget.utils.isAndroid) {
-        me.errorPrompt('当前浏览器不支持语音播放');
-        return false;    
-    }
-    
-    var $t = $(this),
-        $a = $t.next(),
-        aud = $a.get(0),
-        cur = 0;
-    var clear = function(){
-        clearInterval(ts);
-        $t.removeClass('one');
-        $t.removeClass('two');
-    }
-    if(!aud.paused && !aud.ended && 0 < aud.currentTime) {
-        aud.stop();
-        clear();
-        return false;
-    }
-    aud.play();
-    $a.on('ended', function(){
-        clear();
-    });
-    ts = setInterval(function(){
-        cur += 1;
-        switch(cur % 3) {
-            case 0:
-                $t.removeClass('two');
-                break;
-            case 1:
-                $t.addClass('one');
-                break;
-            case 2:
-                $t.removeClass('one');
-                $t.addClass('two');
-                break;
-        }
-        cur == 9999 && (cur = 0);
-    }, 500);
-});
-*/

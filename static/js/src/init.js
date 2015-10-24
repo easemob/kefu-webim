@@ -1,8 +1,14 @@
 /*
-    从接口获取相关数据
+    数据和配置参数初始化
 */
-EasemobWidget.getInfoFromApi = function(obj, callback) {
-    
+EasemobWidget.init = function(obj, callback) {
+    //音频暂停的兼容，还未使用
+    typeof HTMLAudioElement !== 'undefined' && (HTMLAudioElement.prototype.stop = function() {
+        this.pause(); 
+        this.currentTime = 0.0; 
+    });
+
+
     var wrapper = $('#normal');
     var message = new EmMessage();
     var tenantId = obj.json.tenantId;

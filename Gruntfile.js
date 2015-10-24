@@ -11,7 +11,25 @@ module.exports = function(grunt) {
 
     // Project configuration.
     grunt.initConfig({
-        
+        jshint: {
+            options: {
+                multistr: true,
+                laxbreak: true,
+                laxcomma: true,
+                curly: true,
+                eqeqeq: true,
+                newcap: true,
+                noarg: true,
+                sub: true,
+                undef: true,
+                boss: true,
+                node: true
+            },
+            globals: {
+                exports: true
+            }
+            , all: ['static/js/src/*.js']
+        },       
         uglify: {
             options: {
                 mangle: false
@@ -19,21 +37,21 @@ module.exports = function(grunt) {
             my_target: {
                 files: {
                     'easemob.js':[
-                        'js/src/easemob.js'
+                        'static/js/src/easemob.js'
                     ],
-                    'easemob.utils.js':[
-                        'js/src/easemob.utils.js'
+                    'static/js/easemob.utils.js':[
+                        'static/js/src/easemob.utils.js'
                     ],
-                    'js/emkf.min.js':[
-                        'js/src/jquery-1.11.1.js',
-                        'js/src/strophe.js',
-                        'js/src/easemob.im-2.0.js',
-                        'js/src/easemob.utils.js',
-                        'js/src/jquery.autogrow.js',
-                        'js/src/const.js',
-                        'js/src/api.js',
-                        'js/src/getinfo.js',
-                        'js/src/im.js'
+                    'static/js/emkf.min.js':[
+                        'static/js/lib/jquery-1.11.1.js',
+                        'static/js/lib/strophe.js',
+                        'static/js/lib/easemob.im-2.0.js',
+                        'static/js/src/easemob.utils.js',
+                        'static/js/lib/jquery.autogrow.js',
+                        'static/js/src/const.js',
+                        'static/js/src/api.js',
+                        'static/js/src/init.js',
+                        'static/js/src/im.js'
                     ]
                 }
             }
@@ -47,8 +65,8 @@ module.exports = function(grunt) {
             },
             combine: {
                 files: {
-                    'theme/base.min.css': [
-                        'theme/base.css'
+                    'static/css/base.min.css': [
+                        'static/css/src/base.css'
                     ],
                 }
             }
@@ -66,5 +84,6 @@ module.exports = function(grunt) {
     //grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.registerTask('default', ['uglify']);
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.registerTask('build', ['uglify', 'cssmin']);
 };

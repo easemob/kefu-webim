@@ -7,7 +7,7 @@ EasemobWidget.api = {
         var getTo = $.Deferred(function(){
             $.ajax({
                 url: '/v1/webimplugin/targetChannels'
-                , data:{
+                , data: {
                     tenantId: tenantId
                 }
                 , cache: false
@@ -190,4 +190,3 @@ EasemobWidget.api = {
         return getUser;
     }
 };
-

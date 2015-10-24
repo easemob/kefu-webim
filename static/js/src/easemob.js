@@ -15,7 +15,7 @@
             , y: 0
         },
         shadow = document.createElement('div'),
-        newTitle = '\-\新\消\息\提\醒  ', titleST = 0, initdata;
+        newTitle = '-新消息提醒  ', titleST = 0, initdata;
     
     var getConfig = function(key){//get config from current script
         var that;
@@ -31,12 +31,14 @@
             that = location.href;
         }
         
-        var obj = {}
-        if(!that) return {
-            str: ''
-            , json: obj
-            , domain: ''
-        };
+        var obj = {};
+        if(!that) {
+            return {
+                str: ''
+                , json: obj
+                , domain: ''
+            };
+        }
 
         var tmp,
             idx = that.indexOf('?'),
@@ -45,7 +47,7 @@
             arr = that.slice(idx+1).split('&');
         
         obj.src = that.slice(0, idx);
-        for(var i=0,l=arr.length;i<l;i++) {
+        for(var i=0,len=arr.length;i<len;i++) {
             tmp = arr[i].split('=');
             obj[tmp[0]] = tmp.length>1 ? tmp[1] : '';
         }
@@ -54,10 +56,10 @@
             , json: obj
             , domain: domain + '/'
         };
-    }
+    };
     
     var config = getConfig('easemob.js');
-    config.json.hide = config.json.hide == 'false' ? false : config.json.hide;
+    config.json.hide = config.json.hide === 'false' ? false : config.json.hide;
 
     //open Api
     var open = function(){
@@ -152,6 +154,7 @@
                     break;
                 case 'dragend':
                     _moveend();
+                    break;
                 default: break;
             }   
         });
@@ -248,7 +251,7 @@
         }
         if(iframe.readyState) {
             iframe.onreadystatechange = function() {
-                if(iframe.readyState == "loaded" || iframe.readyState == "complete") {
+                if(iframe.readyState === "loaded" || iframe.readyState === "complete") {
                     this.style.display = 'block';
                     message = new EmMessage(iframeId);
                     open();
