@@ -221,6 +221,7 @@
                     url: ''
                     , filename: ''
                     , filetype: ''
+                    , data: ''
                 };
 
                 if(!Utils.isCanUploadFileAsync()) return uri;
@@ -228,6 +229,7 @@
                     var fileItems = document.getElementById(fileInputId).files;
                     if (fileItems.length > 0) {
                         var u = fileItems.item(0);
+                        uri.data = u;
                         uri.url = window.URL.createObjectURL(u);
                         uri.filename = u.name || '';
                     }
@@ -292,17 +294,18 @@
             }
 
             , parseLink: function(msg) {
-                var reg = new RegExp('(http(s)?:\/\/|www[.])[a-zA-Z0-9-]+([.][a-zA-Z0-9-]+)+', 'gm');
+                var reg = new RegExp('(http(s)?:\/\/|www[.])[a-zA-Z0-9-]+[.][0-9a-zA-Z]+(([/]?[a-zA-Z0-9-]+[.]?[a-zA-Z0-9]*)+)?([/]?[?]?[_0-9a-zA-Z&=#]+)?', 'gm');
                 var res = msg.match(reg);
+                var src = res && res[0] ? res[0] : ''; 
                 if(res && res.length) {
-                    var prefix = /^https?:\/\//.test(res[0]);
+                    var prefix = /^https?:\/\//.test(src);
                     msg = msg.replace(reg
                         , "<a href='" 
                             + (prefix 
-                                ? res[0] 
-                                : '\/\/' + res[0]) 
+                                ? src 
+                                : '\/\/' + src) 
                             + "' target='_blank'>" 
-                            + res[0] 
+                            + src 
                             + "</a>");
                 }
                 return msg;
@@ -397,8 +400,7 @@
                     return;
                 }
 
-                
-                var fileSize = Utils.getFileSizeFn(options.fileInputId);
+                var fileSize = options.file.data ? options.file.data.size : undefined;
                 if(fileSize > EASEMOB_IM_FILESIZE_LIMIT){
                     options.onFileUploadError({
                         type: EASEMOB_IM_UPLOADFILE_ERROR
@@ -482,16 +484,8 @@
                 xhr.setRequestHeader('Accept', '*/*');//android qq browser has some problem at this attr
                 xhr.setRequestHeader('Authorization', 'Bearer ' + acc);
 
-                var localFile = '';
-                var fileInput = document.getElementById(options.fileInputId);
-                var localFile = null;
-                if ("files" in fileInput) {
-                    localFile = fileInput.files[0];
-                } else {
-                    localFile = fileInput.value;
-                }
                 var formData = new FormData();
-                formData.append("file", localFile);
+                formData.append("file", options.file.data);
                 xhr.send(formData);
             }
 
@@ -829,28 +823,31 @@
                 , id: message.id
                 , xmlns: "jabber:client"
             }).c("body").t(jsonstr);
-            me.st = setTimeout(function() {
-                if(_msgHash[message.id]) {
-                    if(typeof _msgHash[message.id].timeout == 'undefined') {
-                        _msgHash[message.id].timeout = 4;
+            if(!conn.isOpened()) {
+                me.st = setTimeout(function() {
+                    if(_msgHash[message.id]) {
+                        if(typeof _msgHash[message.id].timeout == 'undefined') {
+                            _msgHash[message.id].timeout = 4;
+                        }
+                        if(_msgHash[message.id].timeout == 0) {
+                            _msgHash[message.id].timeout = 4;
+                            _msgHash[message.id].msg.fail instanceof Function 
+                            && _msgHash[message.id].msg.fail(message.id);
+                        } else {
+                            _msgHash[message.id].timeout -= 1;
+                            _send(message);
+                        }
                     }
-                    if(_msgHash[message.id].timeout == 0) {
-                        clearTimeout(me.st);
-                        _msgHash[message.id].timeout = 4;
-                        _msgHash[message.id].msg.fail instanceof Function 
-                        && _msgHash[message.id].msg.fail(message.id);
-                    } else {
-                        _msgHash[message.id].timeout -= 1;
-                        _send(message);
-                    }
-                }
-            }, 10000);
-            conn.sendCommand(dom.tree(), message.id);
+                }, 10000);
+            } else {
+                me.st && clearTimeout(me.st);
+            }
+            conn.sendCommand(dom.tree());
         }
 
 
 
-        if(me.msg.filename) {
+        if(me.msg.file) {
 
             if(me.msg.body && me.msg.body.url) {//only send msg
                 _send(me.msg);
@@ -872,7 +869,7 @@
                     type: me.msg.ext.messageType || 'file'
                     , url: data.uri + '/' + data.entities[0]['uuid']
                     , secret: data.entities[0]['share-secret']
-                    , filename: me.msg.filename
+                    , filename: me.msg.file.filename
                     , thumb: data.uri + '/' + data.entities[0].uuid
                     , thumb_secret: ''
                     , size: {
@@ -1678,7 +1675,7 @@
                     id = rcv[0].innerHTML || rcv[0].innerText;
                 }
             }
-
+            
             if(_msgHash[id]) {
                 _msgHash[id].msg.success instanceof Function && _msgHash[id].msg.success(id);
                 delete _msgHash[id];
@@ -1709,7 +1706,7 @@
             });
         };
 
-        connection.prototype.sendCommand = function(dom, messageId) {
+        connection.prototype.sendCommand = function(dom) {
             if(this.isOpened()){
                 this.context.stropheConn.send(dom);
             } else {

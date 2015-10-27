@@ -64,6 +64,27 @@
                     handleGroupUser(curGroup);
                 }
             }
+            , paste: function(obj, callback) {
+                $(obj).on('paste', function(e) {
+                    var ev = e.originalEvent;
+
+                    try {
+                        if(ev.clipboardData && ev.clipboardData.types) {
+                            if(ev.clipboardData.items.length > 0) {
+                                if(/^image\/\w+$/.test(ev.clipboardData.items[0].type)) {
+                                    callback instanceof Function && callback(ev.clipboardData.items[0].getAsFile());
+                                }
+                            }
+                        } else if(window.clipboardData) {
+                            var url = window.clipboardData.getData('URL');
+                            alert(url);
+                            callback instanceof Function && callback(url);
+                        }
+                    } catch(e) {
+                        callback instanceof Function && callback();
+                    }
+                });
+            }
             , getConnection: function() {
                 return new Easemob.im.Connection({
                     https: https ? true : false
@@ -161,7 +182,7 @@
                                         im.sendImgMsg(msg, wrapper);
                                         break;
                                     case 'txt':
-                                        im.sendTextMsg(msg, wrapper);
+                                        im.sendTextMsg(msg, wrapper, true);
                                         break;
                                 }
                             } else {
@@ -173,7 +194,12 @@
                                 && v.body.ext.weichat.ctrlType == 'inviteEnquiry') {
                                     msg = v.body;
                                 }
-
+                                //机器人自定义菜单
+                                if(v.body.ext 
+                                && v.body.ext.msgtype 
+                                && v.body.ext.msgtype) {
+                                    msg = v.body;
+                                }
                                 im.receiveMsg(msg, msg.type, 'history', wrapper);
                             }
 
@@ -378,7 +404,11 @@
                         switch(e.type){
                             case 1://offline
                                 me.open();
+                                break;
                             case 3://signin failed
+                            case 6://
+                                conn.close();
+                                break;
                             case 7://unknow
                                 if(conn.isOpened()) {
                                     conn.close();
@@ -443,6 +473,7 @@
                 this.leaveMsg = this.offline.find('textarea');
                 this.fixedBtn = $('#easemobWidgetPopBar');
                 this.Im = $('.easemobWidgetWrapper');
+                this.pasteWrapper = $('.easemobWidget-paste-wrapper');
                 this.audio = $('audio').get(0);
                 this.chatWrapper = this.Im.find('.easemobWidget-chat');
                 this.textarea = this.Im.find('.easemobWidget-textarea');
@@ -497,6 +528,30 @@
             , bindEvents: function(){
                 var me = this;
 
+                (function(){
+                    var f = null;
+                    me.paste(me.textarea, function(blob){
+                        if(!blob) {
+                            return;
+                        }
+                        me.pasteWrapper.removeClass('hide');
+                        window.URL.createObjectURL
+                        && (f = blob)
+                        && me.pasteWrapper.find('.easemobWidget-paste-image').append($('<img src="' + window.URL.createObjectURL(blob) + '"/>'));
+                    });
+                    me.pasteWrapper.on('click', '.js_cancelsend', function(){
+                        me.pasteWrapper.find('.easemobWidget-paste-image').html('');
+                        me.pasteWrapper.addClass('hide');
+                    });
+                    me.pasteWrapper.on('click', '.js_sendimg', function(){
+                        if(!f) {
+                            return false;
+                        }
+                        me.sendImgMsg(null, null, {data: f, url: me.pasteWrapper.find('.easemobWidget-paste-image img').attr('src')}, me.conn.getUniqueId());
+                        me.pasteWrapper.find('.easemobWidget-paste-image').html('');
+                        me.pasteWrapper.addClass('hide');
+                    });
+                }());
                 //防止点击前进后退cache 导致的offline
                 if('onpopstate' in window) {
                     $(window).on('popstate', me.open);
@@ -533,7 +588,7 @@
 
                     me.satisDialog.removeClass('hide');
                 });
-                me.Im.on(click, '.easemobWidget-satisfy-btn button', function(){
+                me.Im.on(click, '.js_satisfybtn button', function(){
                     var that = $(this);
 
                     //cache
@@ -557,6 +612,7 @@
                     }
                     me.sendSatisfaction(level, text.val());
 
+                    text.blur();
                     suc.removeClass('hide');
 
                     setTimeout(function(){
@@ -565,10 +621,9 @@
                         $.each(me.satisDialog.find('li.sel'), function(k, v){
                             $(v).removeClass('sel');
                         });
-
                         suc.addClass('hide');
                         me.satisDialog.addClass('hide');
-                    }, 3000);
+                    }, 1500);
 
                 });
                 me.satisDialog.on(click, 'li', function(e){
@@ -588,7 +643,12 @@
 
                     e.originalEvent.stopPropagation && e.originalEvent.stopPropagation();
                 });
-
+                //机器人列表
+                me.Im.on(click, '.js_robertbtn button', function(){
+                    var that = $(this);
+                    me.sendTextMsg(that.html());
+                    return false;
+                });
 
                 //关闭广告语按钮
                 me.closeWord.on(click, function(){
@@ -885,7 +945,7 @@
                 }, type))
                 : (ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000);
             }
-            , sendImgMsg: function(msg, wrapper, filename, msgId) {
+            , sendImgMsg: function(msg, wrapper, file, msgId) {
                 var me = this;
                 wrapper = wrapper || me.chatWrapper;
 
@@ -907,9 +967,11 @@
 
                 var msgid = msgId || me.conn.getUniqueId();
                 if(Easemob.im.Utils.isCanUploadFileAsync()) {
-                    if(!me.realfile.val()) return;
-
-                    var file = Easemob.im.Utils.getFileUrl(me.realfile.attr('id'));
+                    if(me.realfile.val()) {
+                        file = Easemob.im.Utils.getFileUrl(me.realfile.attr('id'));
+                    } else if(!file) {
+                        return;
+                    }
 
                     var temp = $("\
                         <div id='" + msgid + "' class='easemobWidget-right'>\
@@ -928,11 +990,10 @@
 
                 var opt = {
                     id: msgid 
-                    , fileInputId: me.realfile.attr('id')
+                    , file: file 
                     , apiUrl: (https ? 'https:' : 'http:') + '//a1.easemob.com'
                     , to: config.to
                     , type : 'chat'
-                    , filename: file && file.filename || filename || ''
                     , ext: {
                         messageType: 'img'
                     }
@@ -976,9 +1037,10 @@
             , encode: function(str, history){
                 if (!str || str.length == 0) return "";
                 var s = '';
-                s = !history
+                /*s = !history
                 ? str.replace(/&(?!amp;)/g, "&amp;")
-                : str.replace(/&amp;/g, "&");
+                : str.replace(/&amp;/g, "&");*/
+                s = str.replace(/&amp;/g, "&");
                 s = s.replace(/<(?=[^o][^)])/g, "&lt;");
                 s = s.replace(/>/g, "&gt;");
                 //s = s.replace(/\'/g, "&#39;");
@@ -992,11 +1054,11 @@
                 s = str.replace(/&amp;/g, "&");
                 return s;
             }
-            , sendTextMsg: function(msg, wrapper){
+            , sendTextMsg: function(msg, wrapper, isHistory){
                 var me = this;
                 wrapper = wrapper || me.chatWrapper;
 
-                if(msg) {
+                if(isHistory) {
                     wrapper.prepend("\
                         <div class='easemobWidget-right'>\
                             <div class='easemobWidget-msg-wrapper'>\
@@ -1012,10 +1074,10 @@
                     return;
                 }
 
-                if(!me.textarea.val()) {
+                if(!msg && !me.textarea.val()) {
                     return;
                 }
-                var txt = me.textarea.val();
+                var txt = msg || me.textarea.val();
                 
 
                 var msgid = me.conn.getUniqueId();
@@ -1115,22 +1177,28 @@
 
 
                 //满意度评价
-                
                 if(msg.ext 
                 && msg.ext.weichat 
                 && msg.ext.weichat.ctrlType 
                 && msg.ext.weichat.ctrlType == 'inviteEnquiry') {
                     type = 'satisfactionEvaluation';  
                 }
-
+                //机器人自定义菜单
+                if(msg.ext 
+                && msg.ext.msgtype
+                && msg.ext.msgtype.choice) {
+                    type = 'robertList';  
+                }
                 //me.playaudio();
                 switch(type){
                     case 'txt':
                         msgDetail = msg.msg || msg.data;
-                        msgDetail = msgDetail.replace(/\n/mg, '');
-                        msgDetail = (msgDetail.length > 15 ? msgDetail.slice(0, 15) + '...' : msgDetail);
-                        value = me.face(Easemob.im.Utils.parseLink(me.encode(isHistory ? msg.msg : msg.data, isHistory)));
-                        value = '<p>' + value + '</p>';
+                        if(msgDetail) {
+                            msgDetail = msgDetail.replace(/\n/mg, '');
+                            msgDetail = (msgDetail.length > 15 ? msgDetail.slice(0, 15) + '...' : msgDetail);
+                            value = me.face(Easemob.im.Utils.parseLink(me.encode(isHistory ? msg.msg : msg.data, isHistory)));
+                            value = '<p>' + value + '</p>';
+                        }
                         break;
                     case 'face':
                         msgDetail = '';
@@ -1155,6 +1223,10 @@
                     case 'satisfactionEvaluation':
                         value = '<p>请对我的服务做出评价</p>'
                         msgDetail = '请对我的服务做出评价';
+                        break;
+                    case 'robertList':
+                        value = '<p>' + msg.ext.msgtype.choice.title + '</p>'
+                        break;
                     /*
                     case 'audio':
                         var options = msg;
@@ -1216,13 +1288,30 @@
                             <div class='easemobWidget-msg-container'>" + value +"</div>\
                             <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
                         </div>"
-                        + (type == 'satisfactionEvaluation'
-                        ? '<div class="easemobWidget-satisfy-btn">\
-                                <button data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '" data-servicesessionid="' + msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
-                           </div>'
-                        : '') +
+                        + (function() {
+                            var str = '';
+                            switch(type) {
+                                case 'satisfactionEvaluation':
+                                    str = '<div class="easemobWidget-list-btn js_satisfybtn">'
+                                        + '<button data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '" data-servicesessionid="'
+                                        + msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>'
+                                        + '</div>';
+                                    break;
+                                case 'robertList':
+                                    if(msg.ext.msgtype.choice.list.length > 0) {
+                                        var list = msg.ext.msgtype.choice.list;
+                                        str = '<div class="easemobWidget-list-btn js_robertbtn">';
+                                        for(var i=0,l=list.length;i<l;i++) {
+                                            str += '<button>' + list[i] + '</button>'
+                                        }
+                                        str += '</div>';
+                                    }
+                                    break;
+                                default: break;
+                            }
+                            return str;
+                        }()) +
                     "</div>";
-                
                 
                 if(!isHistory) {
                     wrapper.append(temp);
@@ -1411,7 +1500,7 @@
                         this.cancelUpload();
                     } else {
                         this.fileMsgId = im.conn.getUniqueId();
-                        im.sendImgMsg(null, null, file.name, this.fileMsgId);
+                        im.sendImgMsg(null, null, {name: file.name, data: file}, this.fileMsgId);
                     }
                 }
                 , file_dialog_start_handler: function() {}
@@ -1457,7 +1546,7 @@
                             </div>\
                         ");
                         im.chatWrapper.append(temp);
-                        im.chatWrapper.find('img:last').on('load', im.scrollBottom);
+                        im.scrollBottom();
                         this.uploadOptions.onFileUploadComplete(res);
                     } catch (e) {
                         im.errorPrompt('上传图片发生错误');

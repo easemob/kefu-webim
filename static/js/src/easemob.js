@@ -311,10 +311,10 @@
         } else if(e.clientY + 500 - _startPosition.y >= _height) {//bottom
             _y = 0;
         }
+        shadow.style.left = 'auto';
+        shadow.style.top = 'auto';
         shadow.style.right = _x + 'px';
         shadow.style.bottom = _y + 'px';
-
-        
 
         iframePosition = {
             x: _x
@@ -327,8 +327,14 @@
     var _moveend = function(){
 
         EasemobWidget.utils.remove(document, 'mousemove', _move);
+        iframe.style.left = 'auto';
+        iframe.style.top = 'auto';
         iframe.style.right = iframePosition.x + 'px';
         iframe.style.bottom = iframePosition.y + 'px';
+        shadow.style.left = 'auto';
+        shadow.style.top = 'auto';
+        shadow.style.right = iframePosition.x + 'px';
+        shadow.style.bottom = iframePosition.y + 'px';
         shadow.style.display = 'none';
         iframe.style.display = 'block';
         message.sendToIframe('dragend');
@@ -345,11 +351,16 @@
             if(_width < 400) {
                 iframe.style.left = 'auto';
                 iframe.style.right = 0;
+                shadow.style.left = 'auto';
+                shadow.style.right = 0;
             } else if(_width - _right < 400) {
                 iframe.style.right = _width - 400 + 'px';
                 iframe.style.left = 0;
+                shadow.style.right = _width - 400 + 'px';
+                shadow.style.left = 0;
             } else {
                 iframe.style.left = 'auto';
+                shadow.style.left = 'auto';
             }
 
             //height
