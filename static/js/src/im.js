@@ -545,7 +545,7 @@
                     
                 });
 
-                (function(){
+                (function(){return;
                     var f = null;
                     me.paste(me.textarea, function(blob){
                         if(!blob) {

@@ -37,7 +37,7 @@ EasemobWidget.THEME = {//当前支持的所有主题
     }
 };
 Easemob.im.EMOTIONS = {
-    path: 'resources/faces/'
+    path: 'static/img/faces/'
     , map: {
         '[):]': 'ee_1.png',
         '[:D]': 'ee_2.png',

@@ -106,7 +106,7 @@
                     }, 360);
                     break;
                 case 'notify'://title slide
-                    notify(config.domain + 'webim/resources/notify.png', '新消息', msgDetail);
+                    notify(config.domain + 'webim/static/img/notify.png', '新消息', msgDetail);
                     break;
                 case 'recoveryTitle':
                     clearInterval(titleST);
@@ -220,7 +220,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,.2);\
             border-radius: 4px;';
 
-        shadow.style.background = 'url(' + config.domain + 'webim/resources/drag.png) no-repeat';
+        shadow.style.background = 'url(' + config.domain + 'webim/static/img/drag.png) no-repeat';
         
         initdata = 'initdata:' + config.domain + 'webim/im.html?tenantId=' + config.json.tenantId 
             + (config.json.hide ? '&hide=true' : '') 
