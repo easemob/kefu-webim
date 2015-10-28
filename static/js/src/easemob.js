@@ -132,7 +132,7 @@
                     iframe.style.border = 'none';
                     if(!config.json.hide) {
                         iframe.style.height = '37px';
-                        iframe.style.width = '102px';
+                        iframe.style.width = '104px';
                     } else {
                         iframe.style.width = '12px';
                         iframe.style.height = '12px';
@@ -233,7 +233,7 @@
 
         if(!config.json.hide) {
             iframe.style.height = '37px';
-            iframe.style.width = '100px';
+            iframe.style.width = '104px';
         } else {
             iframe.style.height = '12px';
             iframe.style.width = '12px';

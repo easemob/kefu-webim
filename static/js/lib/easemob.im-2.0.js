@@ -842,7 +842,9 @@
             } else {
                 me.st && clearTimeout(me.st);
             }
-            conn.sendCommand(dom.tree());
+            try {
+                conn.sendCommand(dom.tree());
+            } catch(e) {}
         }
 
 

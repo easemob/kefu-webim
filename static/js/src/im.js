@@ -77,7 +77,7 @@
                             }
                         } else if(window.clipboardData) {
                             var url = window.clipboardData.getData('URL');
-                            alert(url);
+                            
                             callback instanceof Function && callback(url);
                         }
                     } catch(e) {
@@ -88,7 +88,6 @@
             , getConnection: function() {
                 return new Easemob.im.Connection({
                     https: https ? true : false
-                    , wait: 60
                     , url: (https ? 'https:' : 'http:') + '//im-api.easemob.com/http-bind/'
                 });
             }
@@ -162,7 +161,12 @@
                     $.each(config.history, function(k, v){
                         
                         var wrapper = cwrapper || this.chatWrapper;
-                        
+                        /*
+                            @param1:
+                            @param2(boolean); true: 历史记录
+                            @param3(dom); 需要append消息的wrapper 
+                        */
+                        im.addDate(v.timestamp || v.body.timestamp, true, wrapper);
                         var msg = v.body;
 
                         if(v.body && v.body.bodies.length > 0) {
@@ -202,13 +206,6 @@
                                 }
                                 im.receiveMsg(msg, msg.type, 'history', wrapper);
                             }
-
-                            /*
-                                @param1:
-                                @param2(boolean); true: 历史记录
-                                @param3(dom); 需要append消息的wrapper 
-                            */
-                            im.addDate(v.timestamp || v.body.timestamp, true, wrapper);
                         }
                     });
 
@@ -241,6 +238,8 @@
                         , 'line-height': '40px'
                     });
                 }
+                this.word.find('span').css('font-size', '14px');
+                this.Im.find('.js_drag').css('text-align', 'center');
                 this.evaluate.addClass('hide');
                 this.mobileLink.attr('href', location.href);
                 this.sendbtn.removeClass('disabled').addClass('easemobWidgetSendBtn-mobile');
@@ -527,6 +526,24 @@
             }
             , bindEvents: function(){
                 var me = this;
+                
+
+                //add hove fix theme
+                me.Im.on('mouseenter', '.easemobWidget-list-btn button', function(){
+                    $(this).addClass('bg-color');
+                })
+                .on('mouseleave', '.easemobWidget-list-btn button', function(){
+                    $(this).removeClass('bg-color');
+
+                })
+                .on('touchstart', '.easemobWidget-list-btn button', function(){
+                    $(this).addClass('bg-color');
+                    
+                })
+                .on('touchend', '.easemobWidget-list-btn button', function(){
+                    $(this).removeClass('bg-color');
+                    
+                });
 
                 (function(){
                     var f = null;
@@ -688,7 +705,13 @@
                 });
 
                 //表情的展开和收起
-                me.facebtn.on(click, me.toggleFaceWrapper);
+                me.facebtn.on(click, me.toggleFaceWrapper)
+                .on('mouseenter', function(){
+                    $(this).addClass('theme-color');
+                })
+                .on('mouseleave', function(){
+                    $(this).removeClass('theme-color');
+                });;
 
                 //表情的选中
                 me.faceWrapper.on(click, '.easemobWidget-face-bg', function(e){
@@ -759,6 +782,12 @@
                     }
                     
                     me.realfile.click();
+                })
+                .on('mouseenter', function(){
+                    $(this).addClass('theme-color');
+                })
+                .on('mouseleave', function(){
+                    $(this).removeClass('theme-color');
                 });
 
                 //hot key
@@ -815,11 +844,11 @@
                         me.handleGroup(opt);
                         me.send(opt);
                         //me.errorPrompt('留言成功');
-                        var succeed = me.leaveMsgBtn.parent().find('.easemobWidget-leavemsg-success');
+                        var succeed = me.leaveMsgBtn.parent().find('.easemobWidget-success-prompt');
                         succeed.removeClass('hide');
                         setTimeout(function(){
                             succeed.addClass('hide');
-                        }, 2000);
+                        }, 1500);
                         me.contact.val('');
                         me.leaveMsg.val('');
                     }
@@ -953,10 +982,10 @@
                     var temp = $("\
                         <div class='easemobWidget-right'>\
                             <div class='easemobWidget-msg-wrapper'>\
-                                <i class='easemobWidget-right-corner'></i>\
+                                <i class='easemobWidget-right-corner'>J</i>\
                                 <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                                 <div class='easemobWidget-msg-container'>\
-                                    <a href='"+msg.url+"' target='_blank'><img src='"+msg.url+"'/></a>\
+                                    <a class='easemobWidget-noline' href='"+msg.url+"' target='_blank'><img src='"+msg.url+"'/></a>\
                                 </div>\
                             </div>\
                         </div>\
@@ -976,11 +1005,11 @@
                     var temp = $("\
                         <div id='" + msgid + "' class='easemobWidget-right'>\
                             <div class='easemobWidget-msg-wrapper'>\
-                                <i class='easemobWidget-right-corner'></i>\
+                                <i class='easemobWidget-right-corner'>J</i>\
                                 <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                                 <div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING +"</div>
                                 <div class='easemobWidget-msg-container'>\
-                                    <a href='"+file.url+"' target='_blank'><img src='"+file.url+"'/></a>\
+                                    <a class='easemobWidget-noline' href='"+file.url+"' target='_blank'><img src='"+file.url+"'/></a>\
                                 </div>\
                             </div>\
                         </div>\
@@ -1005,10 +1034,9 @@
                             setTimeout(function() {
                                 var id = error.id,
                                     w = $('#' + id),
-                                    img = w.find('img:last');
+                                    a = w.find('img:last').parent();
 
-                                img.parent().attr('href', 'javascript:;');
-                                img.attr('src', config.domain + '/webim/resources/unimage@2x.png');
+                                a.html('').append($('<i class="easemobWidget-unimage">I</i>'));
                                 w.find('.easemobWidget-msg-loading').addClass('hide');
                                 me.scrollBottom();
                             }, 0);
@@ -1019,7 +1047,6 @@
                     }
                     , success: function(id) {
                         $('#' + id).find('.easemobWidget-msg-loading').addClass('hide');
-                        me.addDate();
                     }
                     , fail: function(id) {
                         var msg = $('#' + id);
@@ -1031,6 +1058,7 @@
                 };
                 me.handleGroup(opt);
                 me.send(opt);
+                me.addDate();
                 me.chatWrapper.append(temp);
                 me.chatWrapper.find('img:last').on('load', me.scrollBottom);
             }
@@ -1062,7 +1090,7 @@
                     wrapper.prepend("\
                         <div class='easemobWidget-right'>\
                             <div class='easemobWidget-msg-wrapper'>\
-                                <i class='easemobWidget-right-corner'></i>\
+                                <i class='easemobWidget-right-corner'>J</i>\
                                 <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                                 <div class='easemobWidget-msg-loading hide'>" + EasemobWidget.LOADING + "</div>
                                 <div class='easemobWidget-msg-container'>\
@@ -1081,11 +1109,12 @@
                 
 
                 var msgid = me.conn.getUniqueId();
+                me.addDate();
                 //local append
                 wrapper.append("\
                     <div id='" + msgid + "' class='easemobWidget-right'>\
                         <div class='easemobWidget-msg-wrapper'>\
-                            <i class='easemobWidget-right-corner'></i>\
+                            <i class='easemobWidget-right-corner'>J</i>\
                             <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                             <div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING +"</div>
                             <div class='easemobWidget-msg-container'>\
@@ -1104,7 +1133,6 @@
                     , type : 'chat'
                     , success: function(id) {
                         $('#' + id).find('.easemobWidget-msg-loading').addClass('hide');
-                        me.addDate();
                     }
                     , fail: function(id) {
                         var msg = $('#' + id);
@@ -1284,7 +1312,7 @@
                 var temp = "\
                     <div class='easemobWidget-left'>\
                         <div class='easemobWidget-msg-wrapper'>\
-                            <i class='easemobWidget-left-corner'></i>\
+                            <i class='easemobWidget-left-corner'>K</i>\
                             <div class='easemobWidget-msg-container'>" + value +"</div>\
                             <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
                         </div>"
@@ -1314,8 +1342,8 @@
                     "</div>";
                 
                 if(!isHistory) {
-                    wrapper.append(temp);
                     me.addDate();
+                    wrapper.append(temp);
                     me.resetSpan();
                     me.scrollBottom();
                 } else {
@@ -1493,10 +1521,10 @@
                         this.cancelUpload();
                     }
                     if(!EasemobWidget.PICTYPE[file.type.slice(1).toLowerCase()]) {
-                        im.errorPrompt('不支持此文件类型' + file.type);
+                        im.errorPrompt('不支持此类型' + file.type);
                         this.cancelUpload();
                     } else if(10485760 < file.size) {
-                        im.errorPrompt('文件大小超过限制！请上传大小不超过10M的文件');
+                        im.errorPrompt('请上传大小不超过10M的文件');
                         this.cancelUpload();
                     } else {
                         this.fileMsgId = im.conn.getUniqueId();
@@ -1511,10 +1539,10 @@
                         var temp = $("\
                             <div class='easemobWidget-right'>\
                                 <div class='easemobWidget-msg-wrapper'>\
-                                    <i class='easemobWidget-right-corner'></i>\
+                                    <i class='easemobWidget-right-corner'>J</i>\
                                     <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                                     <div class='easemobWidget-msg-container'>\
-                                        <a href='javascript:;'><img src='"+config.domain + "/webim/resources/unimage@2x.png'/></a>\
+                                        <a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>\
                                     </div>\
                                 </div>\
                             </div>\
@@ -1536,11 +1564,11 @@
                         var temp = $("\
                             <div id='" + this.fileMsgId + "' class='easemobWidget-right'>\
                                 <div class='easemobWidget-msg-wrapper'>\
-                                    <i class='easemobWidget-right-corner'></i>\
+                                    <i class='easemobWidget-right-corner'>J</i>\
                                     <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                                     <div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING +"</div>
                                     <div class='easemobWidget-msg-container'>\
-                                        <a href='"+file.url+"' target='_blank'><img src='"+file.url+"'/></a>\
+                                        <a class='easemobWidget-noline' href='"+file.url+"' target='_blank'><img src='"+file.url+"'/></a>\
                                     </div>\
                                 </div>\
                             </div>\
