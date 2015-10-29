@@ -32,9 +32,11 @@ img {
 button, textarea, input {
     outline: none;
 }
-@font-face {font-family: "easemobim";
+@font-face {
+    font-family: "easemobim";
     src: url('font/iconfont.eot'); /* IE9*/
-    src: url('font/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    /*src: url('font/iconfont.eot?#iefix') format('embedded-opentype'),  IE6-IE8 */
+    src: url('font/iconfont.eot?#iefix') format('eot'), /* IE6-IE8 */
     url('font/iconfont.woff') format('woff'), /* chrome、firefox */
     url('font/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
     url('font/iconfont.svg#easemob im') format('svg'); /* iOS 4.1- */
@@ -42,21 +44,21 @@ button, textarea, input {
 .easemobWidget-noline {
     text-decoration: none;
 }
-.easemobWidget-pop-bar i,
-.easemobWidgetHeader-min,
-.easemobWidget-word-close,
-.easemobWidget-msgcount,
-.easemobWidget-msgcount.mutiCount,
-.easemobWidget-left-corner,
-.easemobWidget-right-corner,
+.easemobWidget-pop-bar i:after,
+.easemobWidgetHeader-min:after,
+.easemobWidget-word-close:after,
+.easemobWidget-msgcount:after,
+.easemobWidget-msgcount.mutiCount:after,
+.easemobWidget-left-corner:after,
+.easemobWidget-right-corner:after,
 .easemobWidget-left .easemobWidget-msg-voice,
 .easemobWidget-msg-status i,
-.easemobWidget-face,
+.easemobWidget-face:after,
 .easemobWidget-satisfaction-dialog li,
 .easemobWidget-unimage,
 .easemobWidget-success-prompt i,
-.easemobWidget-file {
-    font-family: 'easemobim' !important;
+.easemobWidget-file:after {
+    font-family: "easemobim" !important;
     font-size: 30px;
     font-style: normal;
     text-align: center;
@@ -87,11 +89,12 @@ button, textarea, input {
 .easemobWidget-pop-bar:hover i {
 }
 .easemobWidget-pop-bar i {
+    width: 30px;
     display: inline-block;
     vertical-align: middle;
-    width: 30px;
-    height: 30px;
-    line-height: 28px;
+}
+.easemobWidget-pop-bar i:after {
+    content: 'E';
 }
 .easemobWidgetWrapper {
     position: relative;
@@ -217,7 +220,6 @@ button, textarea, input {
     background-color: #F4F7FA;
     width: 100%;
     border-bottom: 1px solid #E5E9F3;
-    padding: 0 0 20px 0;
     color: #1a1a1a;
     overflow-x: hidden;
     transition: top .3s;
@@ -247,12 +249,14 @@ button, textarea, input {
 }
 .easemobWidget-word-close {
     position: absolute;
-    width: 30px;
-    height: 30px;
     right: 10px;
-    top: 10px;
+    top: 9px;
+    height: 30px;
     color: #EBCFB3;
     text-decoration: none;
+}
+.easemobWidget-word-close:after {
+    content: 'C';
 }
 .easemobWidget-Prompt {
     cursor: default;
@@ -335,6 +339,16 @@ button, textarea, input {
     line-height: 60px;
 }
 /*chat*/
+.easemobWidget-chat {
+    padding-bottom: 20px;
+}
+.easemobWidget-chat:after {
+    content: '';
+    display: block;
+    clear: both;
+    zoom: 1;
+    overflow: hidden;
+}
 .easemobWidget-left {
     float: left;
 }
@@ -371,6 +385,9 @@ button, textarea, input {
     color: #fff;
     text-shadow: -1px 0 1px rgba(0,0,0,.1);
 }
+.easemobWidget-left-corner:after {
+    content: 'K';
+}
 .easemobWidget-right-corner {
     position: absolute;
     top: 5px;
@@ -379,6 +396,9 @@ button, textarea, input {
     height: 30px;
     color: #e3ecfc;
     text-shadow: 1px 0 1px rgba(0,0,0,.1);
+}
+.easemobWidget-right-corner:after {
+    content: 'J';
 }
 .easemobWidget-msg-container {
     display: inline-block;
@@ -413,7 +433,8 @@ button, textarea, input {
 .easemobWidget-msg-status {
     position: absolute;
     width: 86px;
-    height: 32px;
+    height: 30px;
+    line-height: 30px;
     left: -88px;
     margin: auto;
     top: 0;
@@ -523,12 +544,18 @@ button, textarea, input {
     border-bottom-right-radius: 4px;
 }
 .easemobWidget-msg-status i {
-    vertical-align: middle;
     width: 30px;
     height: 30px;
     position: relative;
 }
 .easemobWidget-msg-status i:before {
+    content: 'A';
+    position: absolute;
+    color: #FF0000;
+    left: 0;
+    top: 0;
+}
+.easemobWidget-msg-status i:after {
     z-index: 1;
     position: absolute;
     content: 'B';
@@ -536,15 +563,9 @@ button, textarea, input {
     left: 0;
     top: 0;
 }
-.easemobWidget-msg-status i:after {
-    content: 'A';
-    position: absolute;
-    color: #FF0000;
-    left: 0;
-    top: 0;
-}
 .easemobWidget-msg-status span {
-    vertical-align: middle;
+    line-height: 30px;
+    vertical-align: top;
     display: inline-block;
     color: #999;
 }
@@ -586,9 +607,10 @@ button, textarea, input {
     position: absolute;
     top: 5px;
     left: 5px;
-    width: 30px;
-    height: 30px;
     color: #4d4d4d;
+}
+.easemobWidget-face:after {
+    content: 'D';
 }
 .easemobWidget-face:hover {
     cursor: pointer;
@@ -597,9 +619,10 @@ button, textarea, input {
     position: absolute;
     top: 5px;
     left: 36px;
-    width: 30px;
-    height: 30px;
     color: #4d4d4d;
+}
+.easemobWidget-file:after {
+    content: 'L';
 }
 .easemobWidget-file:hover {
     cursor: pointer;
@@ -786,6 +809,7 @@ body .easemobWidget-offline-bg {
     clear: both;
     padding: 20px 0 0 0;
     color: #ADAEAF;
+    font-size: 12px;
 }
 /*
     satisfaction dialog
@@ -948,7 +972,8 @@ body .easemobWidget-offline-bg {
     -ms-user-select: text!important;
     -o-user-select: text!important;
     line-height: 17px;
-    font-size: 17px;
+    font-size: 15px;
+    color: #1a1a1a;
 }
 .easeWidget-face-rec-mobile {
     display: none;

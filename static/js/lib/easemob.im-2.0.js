@@ -823,28 +823,23 @@
                 , id: message.id
                 , xmlns: "jabber:client"
             }).c("body").t(jsonstr);
-            if(!conn.isOpened()) {
-                me.st = setTimeout(function() {
-                    if(_msgHash[message.id]) {
-                        if(typeof _msgHash[message.id].timeout == 'undefined') {
-                            _msgHash[message.id].timeout = 4;
-                        }
-                        if(_msgHash[message.id].timeout == 0) {
-                            _msgHash[message.id].timeout = 4;
-                            _msgHash[message.id].msg.fail instanceof Function 
-                            && _msgHash[message.id].msg.fail(message.id);
-                        } else {
-                            _msgHash[message.id].timeout -= 1;
-                            _send(message);
-                        }
+            setTimeout(function() {
+                if(_msgHash[message.id]) {
+                    if(typeof _msgHash[message.id].timeout == 'undefined') {
+                        _msgHash[message.id].timeout = 4;
                     }
-                }, 10000);
-            } else {
-                me.st && clearTimeout(me.st);
-            }
-            try {
-                conn.sendCommand(dom.tree());
-            } catch(e) {}
+                    if(_msgHash[message.id].timeout == 0) {
+                        _msgHash[message.id].timeout = 4;
+                        _msgHash[message.id].sending = false;
+                        _msgHash[message.id].msg.fail instanceof Function 
+                        && _msgHash[message.id].msg.fail(message.id);
+                    } else {
+                        _msgHash[message.id].timeout -= 1;
+                        _send(message);
+                    }
+                }
+            }, 6000);
+            _msgHash[message.id] && _msgHash[message.id].sending || conn.sendCommand(dom.tree(), message.id);
         }
 
 
@@ -1708,8 +1703,11 @@
             });
         };
 
-        connection.prototype.sendCommand = function(dom) {
+        connection.prototype.sendCommand = function(dom, id) {
             if(this.isOpened()){
+                if(id && _msgHash[id]) {
+                    _msgHash[id].sending = true;
+                }
                 this.context.stropheConn.send(dom);
             } else {
                 this.onError({

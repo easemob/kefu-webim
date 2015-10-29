@@ -982,7 +982,7 @@
                     var temp = $("\
                         <div class='easemobWidget-right'>\
                             <div class='easemobWidget-msg-wrapper'>\
-                                <i class='easemobWidget-right-corner'>J</i>\
+                                <i class='easemobWidget-right-corner'></i>\
                                 <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                                 <div class='easemobWidget-msg-container'>\
                                     <a class='easemobWidget-noline' href='"+msg.url+"' target='_blank'><img src='"+msg.url+"'/></a>\
@@ -1005,7 +1005,7 @@
                     var temp = $("\
                         <div id='" + msgid + "' class='easemobWidget-right'>\
                             <div class='easemobWidget-msg-wrapper'>\
-                                <i class='easemobWidget-right-corner'>J</i>\
+                                <i class='easemobWidget-right-corner'></i>\
                                 <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                                 <div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING +"</div>
                                 <div class='easemobWidget-msg-container'>\
@@ -1090,7 +1090,7 @@
                     wrapper.prepend("\
                         <div class='easemobWidget-right'>\
                             <div class='easemobWidget-msg-wrapper'>\
-                                <i class='easemobWidget-right-corner'>J</i>\
+                                <i class='easemobWidget-right-corner'></i>\
                                 <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                                 <div class='easemobWidget-msg-loading hide'>" + EasemobWidget.LOADING + "</div>
                                 <div class='easemobWidget-msg-container'>\
@@ -1114,7 +1114,7 @@
                 wrapper.append("\
                     <div id='" + msgid + "' class='easemobWidget-right'>\
                         <div class='easemobWidget-msg-wrapper'>\
-                            <i class='easemobWidget-right-corner'>J</i>\
+                            <i class='easemobWidget-right-corner'></i>\
                             <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                             <div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING +"</div>
                             <div class='easemobWidget-msg-container'>\
@@ -1312,7 +1312,7 @@
                 var temp = "\
                     <div class='easemobWidget-left'>\
                         <div class='easemobWidget-msg-wrapper'>\
-                            <i class='easemobWidget-left-corner'>K</i>\
+                            <i class='easemobWidget-left-corner'></i>\
                             <div class='easemobWidget-msg-container'>" + value +"</div>\
                             <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
                         </div>"
@@ -1539,7 +1539,7 @@
                         var temp = $("\
                             <div class='easemobWidget-right'>\
                                 <div class='easemobWidget-msg-wrapper'>\
-                                    <i class='easemobWidget-right-corner'>J</i>\
+                                    <i class='easemobWidget-right-corner'></i>\
                                     <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                                     <div class='easemobWidget-msg-container'>\
                                         <a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>\
@@ -1564,7 +1564,7 @@
                         var temp = $("\
                             <div id='" + this.fileMsgId + "' class='easemobWidget-right'>\
                                 <div class='easemobWidget-msg-wrapper'>\
-                                    <i class='easemobWidget-right-corner'>J</i>\
+                                    <i class='easemobWidget-right-corner'></i>\
                                     <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
                                     <div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING +"</div>
                                     <div class='easemobWidget-msg-container'>\
