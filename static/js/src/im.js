@@ -707,10 +707,10 @@
                 //表情的展开和收起
                 me.facebtn.on(click, me.toggleFaceWrapper)
                 .on('mouseenter', function(){
-                    $(this).addClass('theme-color');
+                    EasemobWidget.utils.isMobile || $(this).addClass('theme-color');
                 })
                 .on('mouseleave', function(){
-                    $(this).removeClass('theme-color');
+                    EasemobWidget.utils.isMobile || $(this).removeClass('theme-color');
                 });;
 
                 //表情的选中
@@ -784,10 +784,10 @@
                     me.realfile.click();
                 })
                 .on('mouseenter', function(){
-                    $(this).addClass('theme-color');
+                    EasemobWidget.utils.isMobile || $(this).addClass('theme-color');
                 })
                 .on('mouseleave', function(){
-                    $(this).removeClass('theme-color');
+                    EasemobWidget.utils.isMobile || $(this).removeClass('theme-color');
                 });
 
                 //hot key
@@ -811,7 +811,6 @@
                     }
                 });
 
-                //不能用touch，无法触发focus
                 me.sendbtn.on('click', function(){
                     if(me.sendbtn.hasClass('disabled')) {
                         return false;
@@ -822,6 +821,7 @@
                         height: '34px'
                         , overflowY: 'hidden'
                     }).focus();
+                    return false;
                 });
 
                 //
