@@ -49,7 +49,7 @@
     }
     EasemobWidget.utils.isAndroid = /Android/i.test(navigator.userAgent);//is mobile
     EasemobWidget.utils.isMobile = /mobile/i.test(navigator.userAgent);//is mobile
-
+    EasemobWidget.utils.isQQBrowserInAndroid = EasemobWidget.utils.isAndroid && /MQQBrowser/.test(navigator.userAgent);
 
     var _on = function(target, ev, fn) {
         if(target.addEventListener) {

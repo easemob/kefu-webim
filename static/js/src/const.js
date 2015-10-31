@@ -1,15 +1,20 @@
 EasemobWidget.LISTSPAN = 20;
+
 EasemobWidget.PICTYPE = {//支持的图片格式
     jpg : true
     , gif : true
     , png : true
     , bmp : true
 };
-EasemobWidget.LOADING = '<div class="easemobWidget-loading"><svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\
-    viewBox="0 0 70 70" enable-background="new 0 0 70 70" xml:space="preserve">\
-    <circle opacity="0.3" fill="none" stroke="#000000" stroke-width="4" stroke-miterlimit="10" cx="35" cy="35" r="11"/>\
-    <path fill="none" stroke="#E5E5E5" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M24,35c0-6.1,4.9-11,11-11\
-    c2.8,0,5.3,1,7.3,2.8"/><image src="/webim/static/img/loading.gif" width="20" style="margin-top:10px;" /></svg></div>';
+
+EasemobWidget.LOADING = !EasemobWidget.utils.isQQBrowserInAndroid
+    ? "<div class='easemobWidget-loading'><svg version='1.1' id='图层_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px'\
+    viewBox='0 0 70 70' enable-background='new 0 0 70 70' xml:space='preserve'>\
+    <circle opacity='0.3' fill='none' stroke='#000000' stroke-width='4' stroke-miterlimit='10' cx='35' cy='35' r='11'/>\
+    <path fill='none' stroke='#E5E5E5' stroke-width='4' stroke-linecap='round' stroke-miterlimit='10' d='M24,35c0-6.1,4.9-11,11-11\
+    c2.8,0,5.3,1,7.3,2.8'/><image src='/webim/static/img/loading.gif' width='20' style='margin-top:10px;' /></svg></div>"
+    : "<img src='/webim/static/img/loading.gif' width='20' style='margin-top:10px;'/>";
+
 EasemobWidget.THEME = {//当前支持的所有主题
     '天空之城': {
         css: 'body .theme-color{color:#42b8f4;}body .bg-color{background-color:#42b8f4}.border-color{border:1px solid #00a0e7}.hover-color{background-color:#7dcdf7}'

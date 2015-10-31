@@ -1,4 +1,4 @@
-* {
+html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,i,span,em {
 	margin: 0;
 	padding: 0;
     -webkit-text-size-adjust: none;
@@ -11,6 +11,8 @@
 	-ms-appearance: none;
 	-o-appearance: none;
 	appearance: none;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
+    -webkit-tap-highlight-color: transparent;
 }
 html, body {
     width: 100%;
@@ -40,6 +42,8 @@ button, textarea, input {
     url("font/iconfont.woff")  format('woff'),
     url("font/iconfont.ttf")  format('truetype');
     src: url("font/iconfont.eot") \9;
+    font-weight: normal;
+    font-style: normal;
 }
 
 .easemobWidget-noline {
@@ -214,7 +218,6 @@ button, textarea, input {
 }
 /*body*/
 .easemobWidgetBody-wrapper {
-    overflow-y: auto;
     position: absolute;
     top: 90px;
     bottom: 140px;
@@ -223,7 +226,9 @@ button, textarea, input {
     border-bottom: 1px solid #E5E9F3;
     color: #1a1a1a;
     overflow-x: hidden;
+    overflow-y: auto;
     transition: top .3s;
+    -webkit-overflow-scrolling: touch;
 }
 .easemobWidget-word {
     z-index: 2;
@@ -342,6 +347,7 @@ button, textarea, input {
 /*chat*/
 .easemobWidget-chat {
     padding-bottom: 20px;
+    overflow: hidden;
 }
 .easemobWidget-chat:after {
     content: '';
@@ -443,14 +449,17 @@ button, textarea, input {
     cursor: pointer;
 }
 .easemobWidget-loading {
+    position: relative;
     width: 100%;
     height: 100%;
-    -webkit-animation: easemobWidget-loading 1s linear 0s infinite;
-    -moz-animation: easemobWidget-loading 1s linear 0s infinite;
-    -ms-animation: easemobWidget-loading 1s linear 0s infinite;
-    animation: easemobWidget-loading 1s linear 0s infinite;
+    overflow: hidden;
+    -webkit-animation: easemobWidget-loading-frame 1s linear infinite;
+    -moz-animation: easemobWidget-loading-frame 1s linear infinite;
+    -ms-animation: easemobWidget-loading-frame 1s linear infinite;
+    animation: easemobWidget-loading-frame 1s linear infinite;
 }
 .easemobWidget-msg-loading {
+    z-index: 1;
     position: absolute;
     left: -38px;
     top: 0;
@@ -460,47 +469,35 @@ button, textarea, input {
     height: 40px;
     overflow: hidden;
 }
-@-moz-keyframes easemobWidget-loading {
-    0% {
+@-moz-keyframes easemobWidget-loading-frame {
+    from {
         -moz-transform: rotate(0);
     }
-    50% {
-        -moz-transform: rotate(180deg);
-    }
-    100% {
+    to {
         -moz-transform: rotate(360deg);
     }
 }
-@-ms-keyframes easemobWidget-loading {
-    0% {
+@-ms-keyframes easemobWidget-loading-frame {
+    from {
         -ms-transform: rotate(0);
     }
-    50% {
-        -ms-transform: rotate(180deg);
-    }
-    100% {
+    to {
         -ms-transform: rotate(360deg);
     }
 }
-@-webkit-keyframes easemobWidget-loading {
-    0% {
+@-webkit-keyframes easemobWidget-loading-frame {
+    from {
         -webkit-transform: rotate(0);
     }
-    50% {
-        -webkit-transform: rotate(180deg);
-    }
-    100% {
+    to {
         -webkit-transform: rotate(360deg);
     }
 }
-@keyframes easemobWidget-loading {
-    0% {
+@keyframes easemobWidget-loading-frame {
+    from {
         transform: rotate(0)
     }
-    50% {
-        transform: rotate(180deg)
-    }
-    100% {
+    to {
         transform: rotate(360deg)
     }
 }
@@ -920,7 +917,6 @@ body .easemobWidget-offline-bg {
 }
 .easemobWidgetBody-mobile {
     bottom: 42px;
-    padding-bottom: 70px;
 }
 .easemobWidgetBody-mobile .easemobWidget-msg-container {
     font-size: 17px;

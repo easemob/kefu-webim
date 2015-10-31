@@ -5,8 +5,8 @@
 
 ;(function(window, undefined){
     'use strict';
-
     
+
     var main = function(config) {
         var sendQueue = {};//记录消息发送失败
         var userHash = {};//记录所有user相关
@@ -432,9 +432,9 @@
 
                 var id = wrapper.attr('id');
 
-                if(!!date) {
+                if(date) {
                     $(htmlPre + new Date(date).format(fmt) + htmlEnd)
-                    .insertAfter(wrapper.find('div:first')); 
+                    .insertBefore(wrapper.find('div:first')); 
                 } else if(!isHistory) {
                     if(!this.msgTimeSpan[id] 
                     || (new Date().getTime() - this.msgTimeSpan[id] > 60000)) {//间隔大于1min  show
@@ -1110,13 +1110,14 @@
 
                 var msgid = me.conn.getUniqueId();
                 me.addDate();
+                
                 //local append
                 wrapper.append("\
                     <div id='" + msgid + "' class='easemobWidget-right'>\
                         <div class='easemobWidget-msg-wrapper'>\
                             <i class='easemobWidget-right-corner'></i>\
                             <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
-                            <div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING +"</div>
+                            <div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING + "</div>\
                             <div class='easemobWidget-msg-container'>\
                                 <p>" + Easemob.im.Utils.parseLink(me.face(me.encode(txt))) + "</p>\
                             </div>\
