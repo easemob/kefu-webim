@@ -7,11 +7,12 @@
     "url": "http://easemob.com/"
   },
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-cssmin": "~0.6.2",
-    "grunt-contrib-jshint": "~0.7.0",
-    "grunt-contrib-uglify": "~0.2.4",
-    "grunt-restful-mock": "^0.1.21"
+    "gulp": "~3.9.0",
+    "gulp-minify-css": "",
+    "gulp-clean": "",
+    "gulp-jshint": "~1.12.0",
+    "gulp-concat": "",
+    "gulp-webserver": "",
+    "gulp-uglify": "~0.2.0"
   }
 }

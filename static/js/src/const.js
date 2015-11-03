@@ -1,3 +1,4 @@
+var EasemobWidget = EasemobWidget || {};
 EasemobWidget.LISTSPAN = 20;
 
 EasemobWidget.PICTYPE = {//支持的图片格式

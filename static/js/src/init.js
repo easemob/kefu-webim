@@ -1,6 +1,7 @@
 /*
     数据和配置参数初始化
 */
+var EasemobWidget = EasemobWidget || {};
 EasemobWidget.init = function(obj, callback) {
     window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
     //音频暂停的兼容，还未使用

@@ -823,7 +823,7 @@
                 , id: message.id
                 , xmlns: "jabber:client"
             }).c("body").t(jsonstr);
-            setTimeout(function() {
+            setTimeout(function() {//50s 5times
                 if(_msgHash[message.id]) {
                     if(typeof _msgHash[message.id].timeout == 'undefined') {
                         _msgHash[message.id].timeout = 4;
@@ -838,14 +838,12 @@
                         _send(message);
                     }
                 }
-            }, 6000);
+            }, 10000);
             _msgHash[message.id] && _msgHash[message.id].sending || conn.sendCommand(dom.tree(), message.id);
         }
 
 
-
         if(me.msg.file) {
-
             if(me.msg.body && me.msg.body.url) {//only send msg
                 _send(me.msg);
                 return;
@@ -882,7 +880,6 @@
             };
 
             me.msg.onFileUploadComplete = _complete;
-
             Utils.uploadFile.call(conn, me.msg);
         } else {
             me.msg.body = {
@@ -1046,14 +1043,23 @@
             }
             conn.context.accessToken = options.access_token;
             conn.context.accessTokenExpires = options.expires_in;
-            var stropheConn = conn.context.stropheConn || new Strophe.Connection(conn.url, {
-                inactivity: conn.inactivity
-                , maxRetries: conn.maxRetries
-                , pollingTime: conn.pollingTime
-            });
+            var stropheConn = null;
+            if(conn.isOpened() || conn.isOpening() && conn.context.stropheConn){
+                stropheConn = conn.context.stropheConn;
+                conn.context.status == STATUS_OPENED;
+                return;
+            } else {
+                stropheConn = new Strophe.Connection(conn.url, {
+                    inactivity: conn.inactivity
+                    , maxRetries: conn.maxRetries
+                    , pollingTime: conn.pollingTime
+                });
+            }
+
             var callback = function(status,msg){
                 _login2ImCallback(status,msg,conn);
             };
+
             var jid = conn.context.jid;
             conn.context.stropheConn = stropheConn;
             if(conn.route){
@@ -1175,17 +1181,8 @@
             return jid;
         };
         
-        var _innerCheck = function(options,conn) {
-            if (conn.isOpened() || conn.isOpening()) {
-                conn.onError({
-                    type: EASEMOB_IM_CONNCTION_REOPEN_ERROR
-                    , msg: '重复打开连接,请先关闭连接再打开'
-                });
-                return false;
-            }
+        var _innerCheck = function(options, conn) {
             options = options || {};
-
-            var user = options.user || '';
             if (options.user == '') {
                 conn.onError({
                     type: EASEMOB_IM_CONNCTION_USER_NOT_ASSIGN_ERROR
@@ -1194,6 +1191,7 @@
                 return false;
             }
 
+            var user = options.user || '';
             var appKey = options.appKey || "";
             var devInfos = appKey.split('#');
             if(devInfos.length!=2){
@@ -1280,7 +1278,7 @@
             this.onCmdMessage = options.onCmdMessage || EMPTYFN;
             this.onPresence = options.onPresence || EMPTYFN;
             this.onRoster = options.onRoster || EMPTYFN;
-            this.onError = options.onError || EMPTYFN; 
+            this.onError = options.onError || EMPTYFN;
             this.onReceivedMessage = options.onReceivedMessage || EMPTYFN;
             this.onInviteMessage = options.onInviteMessage || EMPTYFN;
         }
@@ -1299,15 +1297,15 @@
 
         connection.prototype.open = function(options) {
             var pass = _innerCheck(options,this);
-            if(pass == false){
+            if(pass == false) {
                 return;
             }
             
             var conn = this;
-            if(options.accessToken){
+            if(options.accessToken) {
                 options.access_token = options.accessToken;
                 _dologin2IM(options,conn);
-            }else{
+            } else {
                 var loginUrl = this.https ? "https://a1.easemob.com" : "http://a1.easemob.com";
                 var apiUrl = options.apiUrl || loginUrl;
                 var userId = this.context.userId;
@@ -1320,6 +1318,7 @@
                     _dologin2IM(data,conn);
                 };
                 var error = function(res,xhr,msg){
+                    conn.clear();
                     if(res.error && res.error_description){
                         conn.onError({
                             type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
@@ -1335,7 +1334,6 @@
                             , xhr: xhr
                         });
                     }
-                    conn.clear();
                 };
                 this.context.status = STATUS_DOLOGIN_USERGRID;
 
@@ -1360,8 +1358,8 @@
 
         connection.prototype.attach = function(options) {
             var pass = _innerCheck(options, this);
-            if(pass == false)
-                return;{
+            if(pass == false) {
+                return;
             }
             options = options || {};
 
@@ -1711,8 +1709,8 @@
                 this.context.stropheConn.send(dom);
             } else {
                 this.onError({
-                    type: EASEMOB_IM_CONNCTION_OPEN_ERROR
-                    , msg: '连接还未建立,请先登录或等待登录处理完毕'
+                    type : EASEMOB_IM_CONNCTION_OPEN_ERROR,
+                    msg : '连接还未建立,请先登录或等待登录处理完毕'
                 });
             }
         };
@@ -1748,33 +1746,6 @@
                 _msgHash[message] && _msgHash[message].send(this);
             }
         }
-
-        connection.prototype.heartBeat = function(conn) {
-            var options = {
-                to: conn.domain
-                , type: "normal"
-            };
-            clearTimeout(conn.heartBeatID);
-            conn.heartBeatID = setTimeout(function() {
-                conn.sendHeartBeatMessage(options);
-            }, 60000);
-        };
-
-        connection.prototype.sendHeartBeatMessage = function(options) {
-            var json = {};
-            var jsonstr = Utils.stringify(json);
-            var dom = $msg({
-                to: options.to
-                , type: options.type
-                , id: this.getUniqueId()
-                , xmlns: "jabber:client"
-            }).c("body").t(jsonstr);
-            this.sendCommand(dom.tree());
-        };
-
-        connection.prototype.stopHeartBeat = function(conn) {
-            clearTimeout(conn.heartBeatID);
-        };
 
         connection.prototype.addRoster = function(options) {
             var jid = _getJid(options,this);

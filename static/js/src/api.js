@@ -1,3 +1,4 @@
+var EasemobWidget = EasemobWidget || {};
 EasemobWidget.api = {
 
     /*

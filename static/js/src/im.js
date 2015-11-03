@@ -8,7 +8,6 @@
     
 
     var main = function(config) {
-        var sendQueue = {};//记录消息发送失败
         var userHash = {};//记录所有user相关
         var isGroupChat = false;//当前是否技能组聊天窗口
         var isGroupOpened = false;//当前是否技能组用户是否连接完毕
@@ -368,12 +367,6 @@
                 conn.listen({
                     onOpened: function(){
                         conn.setPresence();
-                        conn.heartBeat(conn);
-
-                        isGroupChat && (isGroupOpened = true);
-                        while(sendQueue[curGroup] && sendQueue[curGroup].length) {
-                            conn.send(sendQueue[curGroup].pop());
-                        }
                     }
                     , onTextMessage: function(message){
                         me.receiveMsg(message, 'txt');
@@ -394,32 +387,7 @@
                         me.open();
                     }
                     , onError: function(e){
-                        conn.stopHeartBeat(conn);
-                        
-                        while(sendQueue[curGroup] && sendQueue[curGroup].length) {
-                            conn.send(sendQueue[curGroup].pop());
-                        }
-
-                        switch(e.type){
-                            case 1://offline
-                                me.open();
-                                break;
-                            case 3://signin failed
-                            case 6://
-                                conn.close();
-                                break;
-                            case 7://unknow
-                                if(conn.isOpened()) {
-                                    conn.close();
-                                } else if(conn.isClosed() || conn.isClosing()) {
-                                    me.open();
-                                }
-                                break;
-                            case 8://conflict
-                                break;
-                            default:
-                                break;
-                        }
+                        e.type == 3 || me.open();
                     }
                 });
             }
@@ -457,13 +425,11 @@
                 }
                 me.conn = userHash[key].conn;
 
-                if(!me.conn.isOpened()) {
-                    me.conn.open({
-                        user : userHash[key].user
-                        , pwd : userHash[key].password
-                        , appKey : config.appkey
-                    });
-                }
+                me.conn.open({
+                    user : userHash[key].user
+                    , pwd : userHash[key].password
+                    , appKey : config.appkey
+                });
             }
             , getDom: function(){
                 this.offline = $('#easemobWidgetOffline');
@@ -1146,13 +1112,7 @@
                 me.send(opt);
             }
             , send: function(option) {
-                var me = this,
-                    resend = typeof option == 'string',
-                    id = resend ? option : option.id;
-
-                if(!resend) {
-                    sendQueue[curGroup] || (sendQueue[curGroup] = []);
-                }
+                var me = this;
 
                 me.conn.send(option);
             }
