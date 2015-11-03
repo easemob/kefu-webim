@@ -151,8 +151,9 @@ button, textarea, input {
 .easemobWidget-msgcount.mutiCount:after {
     content: 'M';
     position: absolute;
-    top: -1px;
-    left: -2px;
+    top: -7px;
+    left: -1px;
+    font-size: 24px;
 }
 .easemobWidgetHeader-bar {
     position: absolute;
@@ -391,6 +392,7 @@ button, textarea, input {
     height: 30px;
     color: #fff;
     text-shadow: -1px 0 1px rgba(0,0,0,.1);
+    -webkit-text-shadow: -1px 0 1px rgba(0,0,0,.1);
 }
 .easemobWidget-left-corner:after {
     content: 'K';

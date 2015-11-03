@@ -18,6 +18,8 @@
     Easemob.im = Easemob.im || {};
     Easemob.im.version="2.0";
 
+    var https = location.protocol === 'https:';
+
     window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 
 
@@ -143,7 +145,7 @@
                     return;
                 }
 
-                var url = options.https ? 'https://a1.easemob.com' : 'http://a1.easemob.com';
+                var url = (https ? 'https' : 'http') + '://a1.easemob.com';
                 var apiUrl = options.apiUrl || url;
                 var restUrl = apiUrl + '/' + orgName + '/' + appName + '/users';
 
@@ -196,8 +198,7 @@
                 var user = options.user || '';
                 var pwd = options.pwd || '';
 
-                var https = options.https;
-                var url = https ? 'https://a1.easemob.com' : 'http://a1.easemob.com';
+                var url = (https ? 'https' : 'http') + '://a1.easemob.com';
                 var apiUrl = options.apiUrl || url;
 
                 var loginJson = {
@@ -1243,16 +1244,36 @@
                 return new Connection(options);
             }
 
-            var _prefix;
+            var options = options || {};
+
             if (window.WebSocket) {
-                _prefix = options.wss ? 'wss' : 'ws';
-                this.url = options.url || _prefix + '://im-api.easemob.com/ws/';
+                if ( options.url ) {
+                    if ( https ) {
+                        if ( options.url && options.url.indexOf('ws:') === 0 ) {
+                            options.url = options.url.replace(/^ws:/, 'wss:');
+                        }
+                    } else {
+                        if ( options.url && options.url.indexOf('wss:') === 0 ) {
+                            options.url = options.url.replace(/^wss:/, 'ws:');
+                        }
+                    }
+                }
+                this.url = options.url || (https ? 'wss' : 'ws') + '://im-api.easemob.com/ws/';
             } else {
-                _prefix = options.https ? 'https' : 'http';
-                this.url = ((options.url && options.url.indexOf('ws:') > -1) ? '' : options.url) || _prefix + '://im-api.easemob.com/http-bind/';
+                if ( options.url ) {
+                    if ( https ) {
+                        if ( options.url && options.url.indexOf('http:') === 0 ) {
+                            options.url = options.url.replace(/^http:/, 'https:');
+                        }
+                    } else {
+                        if ( options.url && options.url.indexOf('https:') === 0 ) {
+                            options.url = options.url.replace(/^https:/, 'http:');
+                        }
+                    }
+                }
+                this.url = ((options.url && options.url.indexOf('ws') > -1) ? '' : options.url) || (https ? 'https' : 'http') + '://im-api.easemob.com/http-bind/';
             }
 
-            this.https = options.https || false;
             this.wait = options.wait || 30;
             this.hold = options.hold || 1;
             options.route && (this.route = options.route);
@@ -1306,7 +1327,7 @@
                 options.access_token = options.accessToken;
                 _dologin2IM(options,conn);
             } else {
-                var loginUrl = this.https ? "https://a1.easemob.com" : "http://a1.easemob.com";
+                var loginUrl = (https ? 'https' : 'http') + '://a1.easemob.com';
                 var apiUrl = options.apiUrl || loginUrl;
                 var userId = this.context.userId;
                 var pwd = options.pwd || '';

@@ -85,10 +85,7 @@
                 });
             }
             , getConnection: function() {
-                return new Easemob.im.Connection({
-                    https: https ? true : false
-                    , url: (https ? 'https:' : 'http:') + '//im-api.easemob.com/http-bind/'
-                });
+                return new Easemob.im.Connection();
             }
             , getHistory: function(from, wrapper, callback) {
                 var me = this;
@@ -424,12 +421,13 @@
                     me.sdkInit(userHash[key].conn);
                 }
                 me.conn = userHash[key].conn;
-
-                me.conn.open({
-                    user : userHash[key].user
-                    , pwd : userHash[key].password
-                    , appKey : config.appkey
-                });
+                if ( !me.conn.isOpened()) {
+                    me.conn.open({
+                        user : userHash[key].user
+                        , pwd : userHash[key].password
+                        , appKey : config.appkey
+                    });
+                }
             }
             , getDom: function(){
                 this.offline = $('#easemobWidgetOffline');
