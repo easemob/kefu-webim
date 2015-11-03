@@ -384,7 +384,7 @@
                         me.open();
                     }
                     , onError: function(e){
-                        e.type == 3 || me.open();
+                        e.reconnect && me.open();
                     }
                 });
             }
@@ -421,7 +421,7 @@
                     me.sdkInit(userHash[key].conn);
                 }
                 me.conn = userHash[key].conn;
-                if ( !me.conn.isOpened()) {
+                if ( !me.conn.isOpened() ) {
                     me.conn.open({
                         user : userHash[key].user
                         , pwd : userHash[key].password

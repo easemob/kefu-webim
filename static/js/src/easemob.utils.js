@@ -205,7 +205,7 @@
         setcookie: function(key, value) {
             var date = new Date();
             date.setTime(date.getTime() + 30*24*3600*1000);
-            document.cookie = key + '=' + escape(value) + ';expires=' + date.toGMTString();
+            document.cookie = key + '=' + escape(value) + ';path=/;expires=' + date.toGMTString();
         }
         , getcookie: function(key) {
             var results = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)'); 

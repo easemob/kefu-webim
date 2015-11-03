@@ -394,8 +394,8 @@
                         options.flashUpload && options.flashUpload(uploadUrl, options); 
                     } else {
                         this.onError({
-                            type : EASEMOB_IM_UPLOADFILE_BROWSER_ERROR,
-                            msg : '当前浏览器不支持异步上传！'
+                            type : EASEMOB_IM_UPLOADFILE_BROWSER_ERROR
+                            , msg : '当前浏览器不支持异步上传！'
                         });
                     }
                     return;
@@ -824,23 +824,22 @@
                 , id: message.id
                 , xmlns: "jabber:client"
             }).c("body").t(jsonstr);
-            setTimeout(function() {//50s 5times
+            setTimeout(function() {//60s 3times
                 if(_msgHash[message.id]) {
                     if(typeof _msgHash[message.id].timeout == 'undefined') {
-                        _msgHash[message.id].timeout = 4;
+                        _msgHash[message.id].timeout = 3;
                     }
                     if(_msgHash[message.id].timeout == 0) {
-                        _msgHash[message.id].timeout = 4;
-                        _msgHash[message.id].sending = false;
+                        _msgHash[message.id].timeout = 3;
                         _msgHash[message.id].msg.fail instanceof Function 
                         && _msgHash[message.id].msg.fail(message.id);
                     } else {
                         _msgHash[message.id].timeout -= 1;
-                        _send(message);
+                        conn.isOpened() && _send(message);
                     }
                 }
-            }, 10000);
-            _msgHash[message.id] && _msgHash[message.id].sending || conn.sendCommand(dom.tree(), message.id);
+            }, 20000);
+            conn.sendCommand(dom.tree(), message.id);
         }
 
 
@@ -1045,9 +1044,10 @@
             conn.context.accessToken = options.access_token;
             conn.context.accessTokenExpires = options.expires_in;
             var stropheConn = null;
-            if(conn.isOpened() || conn.isOpening() && conn.context.stropheConn){
+            if(conn.isOpening() && conn.context.stropheConn) {
                 stropheConn = conn.context.stropheConn;
-                conn.context.status == STATUS_OPENED;
+            } else if(conn.isOpened() && conn.context.stropheConn){
+                stropheConn = conn.context.stropheConn;
                 return;
             } else {
                 stropheConn = new Strophe.Connection(conn.url, {
@@ -1061,12 +1061,11 @@
                 _login2ImCallback(status,msg,conn);
             };
 
-            var jid = conn.context.jid;
             conn.context.stropheConn = stropheConn;
             if(conn.route){
-                stropheConn.connect(jid,"$t$" + accessToken,callback,conn.wait,conn.hold,conn.route);
+                stropheConn.connect(conn.context.jid,"$t$" + accessToken,callback,conn.wait,conn.hold,conn.route);
             } else {
-                stropheConn.connect(jid,"$t$" + accessToken,callback,conn.wait,conn.hold);
+                stropheConn.connect(conn.context.jid,"$t$" + accessToken,callback,conn.wait,conn.hold);
             }
 
         };
@@ -1090,6 +1089,7 @@
                 conn.onError({
                     type: EASEMOB_IM_CONNCTION_SERVER_CLOSE_ERROR
                     , msg: msg
+                    , reconnect: true
                 });
             } else if ((status == Strophe.Status.ATTACHED) || (status == Strophe.Status.CONNECTED)){
                 var handleMessage = function(msginfo){
@@ -1148,6 +1148,7 @@
                     conn.onError({
                         type: EASEMOB_IM_CONNCTION_SERVER_CLOSE_ERROR
                         , msg: msg
+                        , reconnect: true
                     });
                 }
             } else if (status == Strophe.Status.DISCONNECTED) {
@@ -1724,14 +1725,12 @@
 
         connection.prototype.sendCommand = function(dom, id) {
             if(this.isOpened()){
-                if(id && _msgHash[id]) {
-                    _msgHash[id].sending = true;
-                }
                 this.context.stropheConn.send(dom);
             } else {
                 this.onError({
                     type : EASEMOB_IM_CONNCTION_OPEN_ERROR,
                     msg : '连接还未建立,请先登录或等待登录处理完毕'
+                    , reconnect: true
                 });
             }
         };
