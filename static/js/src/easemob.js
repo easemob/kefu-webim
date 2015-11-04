@@ -375,30 +375,40 @@
             }
         });
     }
-    var notify = function(img, title, content) {
-        img = img || '';
-        title = title || '';
-        content = content || '';
-        try {
-            if(window.Notification) {
-                if(Notification.permission==='granted'){
-                    var notification = new Notification(
-                        title
-                        , {
-                            icon: img
-                            , body: content
-                        }
-                    );
-                    setTimeout(function(){
-                        notification.close();
-                    }, 3000);
-                }else {
-                    Notification.requestPermission();
-                }
-            } else {} 
-        } catch (e) {
+    var notify = (function() {
 
+        var st = 0;
+        return function(img, title, content) {
+            if ( st != 0 ) {
+                return;
+            }
+            st = setTimeout(function(){
+                st = 0;
+            }, 3000);
+            img = img || '';
+            title = title || '';
+            content = content || '';
+            try {
+                if(window.Notification) {
+                    if(Notification.permission==='granted'){
+                        var notification = new Notification(
+                            title
+                            , {
+                                icon: img
+                                , body: content
+                            }
+                        );
+                        setTimeout(function(){
+                            notification.close();
+                        }, 3000);
+                    }else {
+                        Notification.requestPermission();
+                    }
+                } else {} 
+            } catch (e) {
+
+            }
         }
-    }
+    }());
 
 }(window, undefined));

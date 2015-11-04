@@ -7,7 +7,20 @@
 
     var EasemobWidget = EasemobWidget || {};
     EasemobWidget.utils = EasemobWidget.utils || {};
-    
+ 
+    EasemobWidget.utils.getIEVersion = function() {
+        var ua = navigator.userAgent,matches,tridentMap={'4':8,'5':9,'6':10,'7':11};
+        matches = ua.match(/MSIE (\d+)/i);
+        if(matches&&matches[1]) {
+            return +matches[1];
+        }
+        matches = ua.match(/Trident\/(\d+)/i);
+        if(matches&&matches[1]) {
+            return tridentMap[matches[1]]||null;
+        }
+        return null;
+    };
+   
     EasemobWidget.utils.queryString = function(url, key) {//queryString
         var r = url.match(new RegExp('[?&]?'+key+'=[0-9a-zA-Z%@._-]*[^&]', 'g'));
         r = r && r[0] ? (r[0][0]=='?' || r[0][0]=='&' ? r[0].slice(1) : r[0]) : '';

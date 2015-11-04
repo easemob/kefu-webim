@@ -824,21 +824,21 @@
                 , id: message.id
                 , xmlns: "jabber:client"
             }).c("body").t(jsonstr);
-            setTimeout(function() {//60s 3times
+            setTimeout(function() {//40s retry 4times
                 if(_msgHash[message.id]) {
                     if(typeof _msgHash[message.id].timeout == 'undefined') {
-                        _msgHash[message.id].timeout = 3;
+                        _msgHash[message.id].timeout = 4;
                     }
                     if(_msgHash[message.id].timeout == 0) {
-                        _msgHash[message.id].timeout = 3;
+                        _msgHash[message.id].timeout = 4;
                         _msgHash[message.id].msg.fail instanceof Function 
                         && _msgHash[message.id].msg.fail(message.id);
                     } else {
                         _msgHash[message.id].timeout -= 1;
-                        conn.isOpened() && _send(message);
+                        _send(message);
                     }
                 }
-            }, 20000);
+            }, 10000);
             conn.sendCommand(dom.tree(), message.id);
         }
 

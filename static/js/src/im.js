@@ -8,9 +8,9 @@
     
 
     var main = function(config) {
+        var sendQueue = {};//记录技能组切换时的登录间隙所发送的消息
         var userHash = {};//记录所有user相关
         var isGroupChat = false;//当前是否技能组聊天窗口
-        var isGroupOpened = false;//当前是否技能组用户是否连接完毕
         var isShowDirect = false;//不同技能组之间，直接显示
         var curGroup = '';//记录当前技能组，如果父级页面切换技能组，则直接打开chatwindow，不toggle   
         var swfupload = null;//flash 上传利器-_-b
@@ -364,6 +364,9 @@
                 conn.listen({
                     onOpened: function(){
                         conn.setPresence();
+                        while(sendQueue[curGroup] && sendQueue[curGroup].length) {
+                            conn.send(sendQueue[curGroup].pop());
+                        }
                     }
                     , onTextMessage: function(message){
                         me.receiveMsg(message, 'txt');
@@ -448,6 +451,7 @@
                 this.faceWrapper = this.Im.find('.easemobWidget-face-container');
                 this.headBar = this.Im.find('#easemobWidgetHeader');
                 this.min = this.Im.find('.easemobWidgetHeader-min');
+                this.audioSign = this.Im.find('.easemobWidgetHeader-audio');
                 this.closeWord = this.Im.find('.easemobWidget-word-close');
                 this.word = this.Im.find('.easemobWidget-word');
                 this.messageCount = this.fixedBtn.find('.easemobWidget-msgcount');
@@ -457,10 +461,22 @@
                 this.satisDialog = this.Im.find('.easemobWidget-satisfaction-dialog');
             }
             , audioAlert: function(){
-                return;
                 var me = this;
-                if(window.HTMLAudioElement && this.audio) {
+
+                //if lte ie 8 , return
+                var isIE = EasemobWidget.utils.getIEVersion();
+                if ( isIE !== null && isIE < 9 ) {
+                    return new Function();
+                }
+                if ( window.HTMLAudioElement && this.audio ) {
+                    var ast = 0;
                     me.playaudio = function(){
+                        if ( (EasemobWidget.utils.isMin() ? false : me.isOpened) || ast !== 0 || me.silence ) {
+                            return;
+                        }
+                        ast = setTimeout(function() {
+                            ast = 0;
+                        }, 3000);
                         !EasemobWidget.utils.isMobile &&  me.audio.play();
                     }
                 }
@@ -509,7 +525,7 @@
                     
                 });
 
-                (function(){return;
+                (function(){
                     var f = null;
                     me.paste(me.textarea, function(blob){
                         if(!blob) {
@@ -665,6 +681,14 @@
                     $(this).toggleClass('hover-color');
                 }).on('click', function(e){
                     me.toggleChatWindow();
+                    return false;
+                });
+
+                //音频按钮静音
+                me.audioSign.on('click', function(e){
+                    var that = $(this);
+                    me.silence = me.silence ? false : true;
+                    that.toggleClass('easemobWidgetHeader-silence');
                     return false;
                 });
 
@@ -1110,9 +1134,19 @@
                 me.send(opt);
             }
             , send: function(option) {
-                var me = this;
+                var me = this,
+                    resend = typeof option == 'string',
+                    id = resend ? option : option.id;
 
-                me.conn.send(option);
+                if(!resend && isGroupChat) {
+                    sendQueue[curGroup] || (sendQueue[curGroup] = []);
+                }
+
+                if(isGroupChat && (userHash[curGroup] && !userHash[curGroup].conn.isOpened())) {
+                    resend || sendQueue[curGroup].push(option);
+                } else {
+                    me.conn.send(option);
+                }
             }
             , sendSatisfaction: function(level, content) {
                 var me = this;
@@ -1176,7 +1210,6 @@
                 && msg.ext.msgtype.choice) {
                     type = 'robertList';  
                 }
-                //me.playaudio();
                 switch(type){
                     case 'txt':
                         msgDetail = msg.msg || msg.data;
@@ -1301,6 +1334,7 @@
                     "</div>";
                 
                 if(!isHistory) {
+                    me.playaudio();
                     me.addDate();
                     wrapper.append(temp);
                     me.resetSpan();
@@ -1424,11 +1458,9 @@
                     break;
                 case 'emgroup'://技能组
                     isGroupChat = true;
-                    isGroupOpened = false; 
 
                     var idx = value.indexOf('@emgroupuser@'),
                         user = null;
-
 
                     if(idx > 0) {
                         user = value.slice(0, idx);
