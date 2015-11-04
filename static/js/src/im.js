@@ -466,7 +466,9 @@
                 //if lte ie 8 , return
                 var isIE = EasemobWidget.utils.getIEVersion();
                 if ( isIE !== null && isIE < 9 ) {
-                    return new Function();
+                    this.audioSign.addClass('hide');
+                    me.playaudio = new Function();
+                    return;
                 }
                 if ( window.HTMLAudioElement && this.audio ) {
                     var ast = 0;
