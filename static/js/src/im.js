@@ -86,6 +86,7 @@
             }
             , getConnection: function() {
                 return new Easemob.im.Connection();
+                //return new Easemob.im.Connection({url: 'http://im-api.easemob.com/http-bind/'});
             }
             , getHistory: function(from, wrapper, callback) {
                 var me = this;

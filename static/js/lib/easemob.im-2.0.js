@@ -2114,8 +2114,10 @@
         };
 
         connection.prototype.clear = function() {
+            var key = this.context.appKey;
             this.context = {
                 status: STATUS_INIT
+                , appKey: key
             };
         };
 
