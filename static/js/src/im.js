@@ -5,7 +5,7 @@
 
 ;(function(window, undefined){
     'use strict';
-    
+   
 
     var main = function(config) {
         var sendQueue = {};//记录技能组切换时的登录间隙所发送的消息
@@ -43,7 +43,7 @@
                 this.handleFixedBtn();//展示悬浮小按钮
                 this.fillFace();//遍历FACE，添加所有表情
                 this.setWord();//设置广告语
-                this.setTitle(config.json.emgroup ? unescape(config.json.emgroup) : '');//设置im.html的标题
+                this.setTitle(config.json.emgroup ? config.json.emgroup : '');//设置im.html的标题
                 this.audioAlert();//init audio
                 this.mobileInit();//h5 适配，为防止media query不准确，js动态添加class
                 this.setOffline();//根据状态展示上下班不同view
@@ -55,10 +55,10 @@
                     im.handleHistory(wrapper);
                 });
                 if(config.json.emgroup && config.root) {//处理技能组
-                    var value = unescape(config.json.emgroup);
+                    var value = config.json.emgroup;
                     this.handleGroup(value);
                     userHash[value] = userHash[value] || {};
-                    userHash[value].user = Emc.getcookie(escape(value));
+                    userHash[value].user = Emc.getcookie(value);
                     curGroup = value;
                     handleGroupUser(curGroup);
                 }
@@ -120,7 +120,7 @@
             }
             , handleGroup: function(type) {
                 if(typeof type === 'string') {
-                    type = unescape(type);
+                    type = type;
                     im.group = type;
                     im.handleChatContainer(im.group);
                 } else {
@@ -237,6 +237,7 @@
                 this.word.find('span').css('font-size', '14px');
                 this.Im.find('.js_drag').css('text-align', 'center');
                 this.evaluate.addClass('hide');
+                this.audioSign.addClass('hide');
                 this.mobileLink.attr('href', location.href);
                 this.sendbtn.removeClass('disabled').addClass('easemobWidgetSendBtn-mobile');
                 this.satisDialog.addClass('easemobWidget-satisfaction-dialog-mobile');
@@ -424,13 +425,11 @@
                     me.sdkInit(userHash[key].conn);
                 }
                 me.conn = userHash[key].conn;
-                if ( !me.conn.isOpened() ) {
-                    me.conn.open({
-                        user : userHash[key].user
-                        , pwd : userHash[key].password
-                        , appKey : config.appkey
-                    });
-                }
+                me.conn.open({
+                    user : userHash[key].user
+                    , pwd : userHash[key].password
+                    , appKey : config.appkey
+                });
             }
             , getDom: function(){
                 this.offline = $('#easemobWidgetOffline');
@@ -473,13 +472,13 @@
                 if ( window.HTMLAudioElement && this.audio ) {
                     var ast = 0;
                     me.playaudio = function(){
-                        if ( (EasemobWidget.utils.isMin() ? false : me.isOpened) || ast !== 0 || me.silence ) {
+                        if ( (EasemobWidget.utils.isMin() ? false : me.isOpened) || ast !== 0 || me.silence || EasemobWidget.utils.isMobile) {
                             return;
                         }
                         ast = setTimeout(function() {
                             ast = 0;
                         }, 3000);
-                        !EasemobWidget.utils.isMobile &&  me.audio.play();
+                        me.audio.play();
                     }
                 }
             }
@@ -1144,7 +1143,7 @@
                     sendQueue[curGroup] || (sendQueue[curGroup] = []);
                 }
 
-                if(isGroupChat && (userHash[curGroup] && !userHash[curGroup].conn.isOpened())) {
+                if(isGroupChat && userHash[curGroup] && (!userHash[curGroup].conn || !userHash[curGroup].conn.isOpened())) {
                     resend || sendQueue[curGroup].push(option);
                 } else {
                     me.conn.send(option);
@@ -1417,7 +1416,7 @@
                 userHash[name].password = info.userPassword;
                 
                 config.root 
-                ? Emc.setcookie(escape(name), config.user) 
+                ? Emc.setcookie(name, config.user) 
                 : message.sendToParent('setgroupuser@' + config.user + '@emgroupuser@' + name);
 
                 im.open();

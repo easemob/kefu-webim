@@ -8,7 +8,7 @@ EasemobWidget.PICTYPE = {//支持的图片格式
     , bmp : true
 };
 
-EasemobWidget.LOADING = !EasemobWidget.utils.isQQBrowserInAndroid
+EasemobWidget.LOADING = !EasemobWidget.utils.isQQBrowserInAndroid && !(EasemobWidget.utils.getIEVersion() && EasemobWidget.utils.getIEVersion() == 9)
     ? "<div class='easemobWidget-loading'><svg version='1.1' id='图层_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px'\
     viewBox='0 0 70 70' enable-background='new 0 0 70 70' xml:space='preserve'>\
     <circle opacity='0.3' fill='none' stroke='#000000' stroke-width='4' stroke-miterlimit='10' cx='35' cy='35' r='11'/>\

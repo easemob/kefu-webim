@@ -119,42 +119,40 @@ button, textarea, input {
     box-shadow: 0 1px 1px rgba(255,255,255,.3) inset;
     cursor: move;
 }
-.easemobWidget-msgcount {
-    z-index: 1;
-    position: absolute;
+.easemobWidget-msgcount, .easemobWidget-msgcount:after {
     width: 18px;
     height: 18px;
-    right: -9px;
-    top: -6px;
     line-height: 18px;
-    color: #fff;
     text-align: center;
-    font-size: 12px;
 }
 .easemobWidget-msgcount:after {
     content: 'A';
-    position: absolute;
     font-size: 26px;
-    left: -4px;
-    top: 0px;
-    width: 18px;
-    height: 18px;
     z-index: -1;
     color: #fc662b;
-    text-align: center;
-    line-height: 18px;
+    position: relative;
+    margin-left: -16px;
+    top: 2px;
+}
+.easemobWidget-msgcount {
+    z-index: 1;
+    right: -12px;
+    top: -8px;
+    color: #fff;
+    font-size: 12px;
+    position: absolute;
 }
 .easemobWidget-msgcount.mutiCount {
     width: 22px;
     height: 17px;
     font-size: 20px;
-    line-height: 5px;
+    margin-top: -12px;
 }
 .easemobWidget-msgcount.mutiCount:after {
     content: 'M';
-    position: absolute;
-    top: -7px;
-    left: -1px;
+    position: relative;
+    top: 7px;
+    left: -4px;
     font-size: 24px;
 }
 .easemobWidgetHeader-bar {
@@ -211,7 +209,7 @@ button, textarea, input {
     content: 'F';
     position: absolute;
     left: -5px;
-    top: -5px;
+    top: -4px;
     text-align: center;
     color: #fff;
 }
@@ -227,15 +225,17 @@ button, textarea, input {
 }
 .easemobWidgetHeader-audio:after,
 .easemobWidgetHeader-silence:after {
-    content: 'x';
     position: absolute;
     left: -5px;
     top: -5px;
     text-align: center;
     color: #fff;
 }
+.easemobWidgetHeader-audio:after {
+    content: 'x';
+}
 .easemobWidgetHeader-silence:after {
-    content: 'X';
+    content: '\X';
 }
 #easemobWidgetFileInput {
     position: absolute;
@@ -944,6 +944,9 @@ body .easemobWidget-offline-bg {
     overflow: hidden;
     opacity: 0;
 }*/
+.easemobWidgetBody-mobile .easemobWidget-chat {
+    padding-bottom: 50px;
+}
 .easemobWidgetHeader-mobile {
     font-size: 16px;
     border-radius: 0;

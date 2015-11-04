@@ -218,11 +218,11 @@
         setcookie: function(key, value) {
             var date = new Date();
             date.setTime(date.getTime() + 30*24*3600*1000);
-            document.cookie = key + '=' + escape(value) + ';path=/;expires=' + date.toGMTString();
+            document.cookie = encodeURIComponent(key) + '=' + encodeURIComponent(value) + ';path=/;expires=' + date.toGMTString();
         }
         , getcookie: function(key) {
-            var results = document.cookie.match('(^|;) ?' + key + '=([^;]*)(;|$)'); 
-            return results ? (unescape(results[2])) : '';
+            var results = document.cookie.match('(^|;) ?' + encodeURIComponent(key) + '=([^;]*)(;|$)'); 
+            return results ? decodeURIComponent(results[2]) : '';
         }
     }
 

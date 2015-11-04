@@ -90,7 +90,7 @@
                 var idx = msg.indexOf('@emgroupuser@');
                 
                 user = msg.slice(13, idx);
-                group = unescape(msg.slice(idx + 13));
+                group = msg.slice(idx + 13);
                 msg = 'setgroupuser';
             }
 
@@ -166,7 +166,7 @@
                 var a = window.event.srcElement || window.event.target;
                 if(!!group) {//技能组
 
-                    a.setAttribute('href', i.getAttribute('src') + '&emgroup=' + escape(group));
+                    a.setAttribute('href', i.getAttribute('src') + '&emgroup=' + group);
                     a.setAttribute('target', '_blank');
                 } else {
                     a.setAttribute('href', i.getAttribute('src'));
@@ -176,7 +176,7 @@
                 if(!!group) {//技能组
                     var groupUser = Emc.getcookie(group);
 
-                    message.sendToIframe('emgroup@' + groupUser + '@emgroupuser@' + escape(group));
+                    message.sendToIframe('emgroup@' + groupUser + '@emgroupuser@' + group);
                 } else {
                     message.sendToIframe('imclick');
                 }

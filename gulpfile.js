@@ -48,6 +48,7 @@ gulp.task('uglify', function() {
         'static/js/lib/jquery-1.11.1.js',
         'static/js/lib/strophe.js',
         'static/js/lib/easemob.im-2.0.js',
+        'static/js/lib/jquery.autogrow.js',
         'static/js/src/easemob.utils.js',
         'static/js/src/const.js',
         'static/js/src/api.js',

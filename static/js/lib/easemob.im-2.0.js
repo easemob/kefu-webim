@@ -979,59 +979,61 @@
             }
             return parseMsgData;
         }
-        var _parseNameFromJidFn = function(jid,domain) {
-                domain = domain || "";
-                var tempstr = jid;
-                var findex = tempstr.indexOf("_");
-                if(findex!=-1){
-                    tempstr = tempstr.substring(findex+1);
-                }
-                var atindex = tempstr.indexOf("@" + domain);
-                if(atindex!=-1){
-                    tempstr = tempstr.substring(0,atindex);
-                }
-                return tempstr;
-            }
-        var _parseFriendFn = function(queryTag) {
-                var rouster = [];
-                var items = queryTag.getElementsByTagName("item");
-                if(items){
-                    for(var i=0;i<items.length;i++){
-                        var item = items[i];
-                        var jid = item.getAttribute('jid');
-                        if(!jid){
-                            continue;
-                        }
-                        var subscription = item.getAttribute('subscription');
-                        var friend = {
-                            subscription: subscription
-                            , jid: jid
-                        };
-                        var ask = item.getAttribute('ask');
-                        if(ask){
-                            friend.ask = ask;
-                        }
-                        var name = item.getAttribute('name');
-                        if(name){
-                            friend.name = name;
-                        } else {
-                            var n = _parseNameFromJidFn(jid);
-                            friend.name = n;
-                        }
-                        var groups = [];
-                        Strophe.forEachChild(item, 'group',function(group){
-                            groups.push(Strophe.getText(group));
-                        });
-                        friend.groups = groups;
-                        rouster.push(friend);
-                    }
-                }
-                return rouster;
-            }
 
-        var _dologin2IM = function(options,conn) {
+        var _parseNameFromJidFn = function(jid,domain) {
+            domain = domain || "";
+            var tempstr = jid;
+            var findex = tempstr.indexOf("_");
+            if(findex!=-1){
+                tempstr = tempstr.substring(findex+1);
+            }
+            var atindex = tempstr.indexOf("@" + domain);
+            if(atindex!=-1){
+                tempstr = tempstr.substring(0,atindex);
+            }
+            return tempstr;
+        }
+
+        var _parseFriendFn = function(queryTag) {
+            var rouster = [];
+            var items = queryTag.getElementsByTagName("item");
+            if(items){
+                for(var i=0;i<items.length;i++){
+                    var item = items[i];
+                    var jid = item.getAttribute('jid');
+                    if(!jid){
+                        continue;
+                    }
+                    var subscription = item.getAttribute('subscription');
+                    var friend = {
+                        subscription: subscription
+                        , jid: jid
+                    };
+                    var ask = item.getAttribute('ask');
+                    if(ask){
+                        friend.ask = ask;
+                    }
+                    var name = item.getAttribute('name');
+                    if(name){
+                        friend.name = name;
+                    } else {
+                        var n = _parseNameFromJidFn(jid);
+                        friend.name = n;
+                    }
+                    var groups = [];
+                    Strophe.forEachChild(item, 'group',function(group){
+                        groups.push(Strophe.getText(group));
+                    });
+                    friend.groups = groups;
+                    rouster.push(friend);
+                }
+            }
+            return rouster;
+        }
+
+        var _dologin2IM = function ( options, conn ) {
             var accessToken = options.access_token || '';
-            if(accessToken == ''){
+            if ( accessToken == '' ) {
                 var loginfo = Utils.stringify(options);
                 conn.onError({
                     type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
@@ -1044,10 +1046,9 @@
             conn.context.accessToken = options.access_token;
             conn.context.accessTokenExpires = options.expires_in;
             var stropheConn = null;
-            if(conn.isOpening() && conn.context.stropheConn) {
+            if ( conn.isOpening() && conn.context.stropheConn ) {
                 stropheConn = conn.context.stropheConn;
-            } else if(conn.isOpened() && conn.context.stropheConn){
-                stropheConn = conn.context.stropheConn;
+            } else if ( conn.isOpened() && conn.context.stropheConn ) {
                 return;
             } else {
                 stropheConn = new Strophe.Connection(conn.url, {
@@ -1057,17 +1058,16 @@
                 });
             }
 
-            var callback = function(status,msg){
+            var callback = function ( status, msg ) {
                 _login2ImCallback(status,msg,conn);
             };
 
             conn.context.stropheConn = stropheConn;
-            if(conn.route){
+            if ( conn.route ) {
                 stropheConn.connect(conn.context.jid,"$t$" + accessToken,callback,conn.wait,conn.hold,conn.route);
             } else {
                 stropheConn.connect(conn.context.jid,"$t$" + accessToken,callback,conn.wait,conn.hold);
             }
-
         };
 
         var _parseMessageType = function(msginfo) {
@@ -1324,6 +1324,11 @@
             }
             
             var conn = this;
+
+            if ( conn.isOpening() || conn.isOpened() ) {
+                return;
+            }
+
             if(options.accessToken) {
                 options.access_token = options.accessToken;
                 _dologin2IM(options,conn);
