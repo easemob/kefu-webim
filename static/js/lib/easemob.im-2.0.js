@@ -810,6 +810,12 @@
         var me = this;
 
         var _send = function(message) {
+
+            message.ext = message.ext || {};
+            message.ext.weichat = message.ext.weichat || {};
+            message.ext.weichat.visitor = message.ext.weichat.visitor || {};
+            message.ext.weichat.visitor.source = message.ext.weichat.visitor.source || 'webim';
+
             var json = {
                 from: conn.context.userId || ''
                 , to: message.to

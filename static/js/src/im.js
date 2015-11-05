@@ -240,6 +240,7 @@
                 this.evaluate.addClass('hide');
                 this.audioSign.addClass('hide');
                 this.mobileLink.attr('href', location.href);
+                this.ePrompt.addClass('easemobWidget-error-prompt-mobile');
                 this.sendbtn.removeClass('disabled').addClass('easemobWidgetSendBtn-mobile');
                 this.satisDialog.addClass('easemobWidget-satisfaction-dialog-mobile');
                 this.headBar.addClass('easemobWidgetHeader-mobile');
@@ -509,6 +510,12 @@
             , bindEvents: function(){
                 var me = this;
                 
+
+                //orientation
+                $(window).on('orientationchange', function() {
+                    me.textarea.blur();
+                    me.scrollBottom( 500 );
+                });
 
                 //add hove fix theme
                 me.Im.on('mouseenter', '.easemobWidget-list-btn button', function(){
