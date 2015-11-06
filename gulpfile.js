@@ -11,6 +11,9 @@ var gulp = require('gulp'),
     clean = require('gulp-clean');
 
 
+var mockData = require('./mock.json');
+
+
 //clean
 gulp.task('clean', function() {
     return gulp.src([
@@ -37,8 +40,12 @@ gulp.task('cssmin', function() {
 //jshint
 gulp.task('lint', function() {
     return gulp.src('static/js/src/*.js')
-    .pipe(jshint())
-    .pipe(jshint.reporter('/usr/sk/easemob/report'));
+    .pipe(jshint({
+        "laxcomma" : true,
+        "laxbreak" : true,
+        "expr" : true
+    }))
+    .pipe(jshint.reporter());
 });
 
 
@@ -75,7 +82,7 @@ gulp.task('server', function() {
     .pipe(server({
         livereload: true,
         directoryListing: {
-            enable:true,
+            enable: true,
             path: '.'
         }
         , port: 8000
@@ -85,44 +92,36 @@ gulp.task('server', function() {
 
             switch (urlObj.pathname) {
                 case '/v1/webimplugin/visitors/password':
-                    var data = '7WX9EYTHR3';
                     res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(data));
+                    res.end(JSON.stringify(mockData.password));
                     break;
                 case '/v1/webimplugin/visitors/msgHistory':
-                    var data = [];
                     res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(data));
+                    res.end(JSON.stringify(mockData.history));
                     break;
                 case '/v1/webimplugin/visitors/webim-visitor-MX9RKPXTR3/ChatGroupId':
-                    var data = '190970';
                     res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(data));
+                    res.end(JSON.stringify(mockData.groupId));
                     break;
                 case '/v1/webimplugin/targetChannels':
-                    var data = [{"tenantName":"环信dev","orgName":"sipsoft","appName":"sandbox","imServiceNumber":"190970"}];
                     res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(data));
+                    res.end(JSON.stringify(mockData.channels));
                     break;
                 case '/v1/webimplugin/timeOffDuty':
-                    var data = false;
                     res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(data));
+                    res.end(JSON.stringify(mockData.duty));
                     break;
                 case '/v1/webimplugin/theme/options':
-                    var data = {"optionId":"5e094765-3485-4e77-86f8-50c7197d1bbb","tenantId":1920,"optionName":"webimPluginThemeName","optionValue":"丛林物语","createDateTime":"2015-09-01 12:14:56","lastUpdateDateTime":"2015-10-12 07:50:30"};
                     res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(data));
+                    res.end(JSON.stringify(mockData.options.theme));
                     break;
                 case '/v1/webimplugin/notice/options':
-                    var data = {"optionId":"502dbccf-ec74-4979-b431-cad046ddf53e","tenantId":1920,"optionName":"webimPluginNotice","optionValue":"www.zhuyouyou.com","createDateTime":"2015-09-01 12:14:56","lastUpdateDateTime":"2015-09-08 12:57:23"};
                     res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(data));
+                    res.end(JSON.stringify(mockData.options.notice));
                     break;
                 case '/v1/webimplugin/visitors':
-                    var data = {"id":0,"userId":"webim-visitor-MX9RKPXTR3","userPassword":"7WX9EYTHR3"};
                     res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(data));
+                    res.end(JSON.stringify(mockData.visitor));
                     break;
                 default:
                     break;

@@ -181,9 +181,9 @@
                     message.sendToIframe('imclick');
                 }
             }
-        }
+        };
         //...etc.
-    }
+    };
     
     //add kefu widget
     var appendIframe = function(){
@@ -195,30 +195,30 @@
         iframe.name = new Date().getTime();
         iframe.frameBorder = 0;
         iframe.allowTransparency = 'true';
-        iframe.style.cssText = '\
-            z-index:16777269;\
-            overflow:hidden;\
-            position:fixed;\
-            bottom:10px;\
-            right:-5px;\
-            border:none;\
-            width:400px;\
-            height:0;\
-            display:none;\
-            transition:all .01s;';
-        shadow.style.cssText = '\
-            display:none;\
-            cursor:move;\
-            z-index:16777270;\
-            position:fixed;\
-            bottom:10px;\
-            right:10px;\
-            border:none;\
-            width:400px;\
-            height:500px;\
-            border-radius:4px;\
-            box-shadow: 0 4px 8px rgba(0,0,0,.2);\
-            border-radius: 4px;';
+        iframe.style.cssText = [
+            'z-index:16777269;',
+            'overflow:hidden;',
+            'position:fixed;',
+            'bottom:10px;',
+            'right:-5px;',
+            'border:none;',
+            'width:400px;',
+            'height:0;',
+            'display:none;',
+            'transition:all .01s;'].join('');
+        shadow.style.cssText = [
+            'display:none;',
+            'cursor:move;',
+            'z-index:16777270;',
+            'position:fixed;',
+            'bottom:10px;',
+            'right:10px;',
+            'border:none;',
+            'width:400px;',
+            'height:500px;',
+            'border-radius:4px;',
+            'box-shadow: 0 4px 8px rgba(0,0,0,.2);',
+            'border-radius: 4px;'].join('');
 
         shadow.style.background = 'url(' + config.domain + 'webim/static/img/drag.png) no-repeat';
         
@@ -257,16 +257,16 @@
                     open();
                     message.sendToIframe(initdata);
                 }
-            }
+            };
         } else {
             iframe.onload = function() {
                 this.style.display = 'block';
                 message = new EmMessage(iframeId);
                 open();
                 message.sendToIframe(initdata);
-            }
+            };
         }
-    }
+    };
 
     //append easemob.utils.js
     var script = document.createElement('script');
@@ -277,11 +277,11 @@
             if(script.readyState == "loaded" || script.readyState == "complete") {
                 ready();       
             }
-        }
+        };
     } else {
         script.onload = function() {
             ready();       
-        }
+        };
     }
 
     var ready = function() {
@@ -290,7 +290,7 @@
         appendIframe();
         EasemobWidget.utils.on(shadow, 'mouseup', _moveend);
         resize();
-    }
+    };
 
     var _st = 0;
     var _move = function(e){
@@ -319,11 +319,11 @@
         iframePosition = {
             x: _x
             , y: _y
-        }
+        };
         
         clearTimeout(_st);
         _st = setTimeout(_moveend, 500);
-    }
+    };
     var _moveend = function(){
 
         EasemobWidget.utils.remove(document, 'mousemove', _move);
@@ -338,7 +338,7 @@
         shadow.style.display = 'none';
         iframe.style.display = 'block';
         message.sendToIframe('dragend');
-    }
+    };
        
     var resize = function() {
         EasemobWidget.utils.on(window, 'resize', function(){
@@ -374,12 +374,12 @@
                 iframe.style.top = 'auto';
             }
         });
-    }
+    };
     var notify = (function() {
 
         var st = 0;
         return function(img, title, content) {
-            if ( st != 0 ) {
+            if ( st !== 0 ) {
                 return;
             }
             st = setTimeout(function(){
@@ -408,7 +408,7 @@
             } catch (e) {
 
             }
-        }
+        };
     }());
 
 }(window, undefined));

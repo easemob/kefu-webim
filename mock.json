@@ -1,0 +1,19 @@
+{
+    "channels" : [{"tenantName":"环信dev","orgName":"sipsoft","appName":"sandbox","imServiceNumber":"190970"}],
+
+    "duty" : false,
+
+    "groupId" : "190970",
+
+    "history" : [],
+
+    "options" : {
+        "theme" : {"optionId":"5e094765-3485-4e77-86f8-50c7197d1bbb","tenantId":1920,"optionName":"webimPluginThemeName","optionValue":"丛林物语","createDateTime":"2015-09-01 12:14:56","lastUpdateDateTime":"2015-10-12 07:50:30"},
+
+        "notice" : {"optionId":"502dbccf-ec74-4979-b431-cad046ddf53e","tenantId":1920,"optionName":"webimPluginNotice","optionValue":"www.zhuyouyou.com","createDateTime":"2015-09-01 12:14:56","lastUpdateDateTime":"2015-09-08 12:57:23"}
+    },
+
+    "visitor" : {"id":0,"userId":"webim-visitor-MX9RKPXTR3","userPassword":"7WX9EYTHR3"},
+
+    "password" : "7WX9EYTHR3"
+}

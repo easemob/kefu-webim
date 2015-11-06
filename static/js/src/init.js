@@ -81,4 +81,4 @@ EasemobWidget.init = function(obj, callback) {
         }
     })
     .fail(function(){});
-}
+};

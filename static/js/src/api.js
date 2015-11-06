@@ -122,10 +122,10 @@ EasemobWidget.api = {
     , getGroup: function(obj) {
         var getGroup = $.Deferred(function(){
             $.ajax({
-                url: '/v1/webimplugin/visitors/' 
-                    + obj.user 
-                    + '/ChatGroupId?techChannelInfo=' 
-                    + escape(obj.orgName + '#' + obj.appName + '#' + obj.to)
+                url: ['/v1/webimplugin/visitors/',
+                    obj.user,
+                    '/ChatGroupId?techChannelInfo=',
+                    encodeURIComponent(obj.orgName + '#' + obj.appName + '#' + obj.to)].join('')
                 , cache: false
             })
             .done(function(info){

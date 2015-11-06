@@ -39,7 +39,7 @@
             init: function(){
                 this.getDom();//绑定所有相关dom至this
                 this.changeTheme();//设置相应主题
-                config.root && (this.min.addClass('hide'), this.toggleChatWindow())//展示聊天窗口内容
+                config.root && (this.min.addClass('hide'), this.toggleChatWindow());//展示聊天窗口内容
                 this.handleFixedBtn();//展示悬浮小按钮
                 this.fillFace();//遍历FACE，添加所有表情
                 this.setWord();//设置广告语
@@ -79,7 +79,7 @@
                             
                             callback instanceof Function && callback(url);
                         }
-                    } catch(e) {
+                    } catch(ex) {/*error Value of 'err' may be overwritten in IE 8 and earlier.*/
                         callback instanceof Function && callback();
                     }
                 });
@@ -167,7 +167,7 @@
                         var msg = v.body;
 
                         if(v.body && v.body.bodies.length > 0) {
-                            var msg = v.body.bodies[0];
+                            msg = v.body.bodies[0];
                             if(v.body.from && v.body.from.indexOf('webim-visitor') > -1) {
 
                                 //访客发送的满意度评价不在历史记录中展示
@@ -268,18 +268,18 @@
 
                 $.each(Easemob.im.EMOTIONS.map, function(k, v){
                     count += 1;
-                    faceStr += "<div class='easemobWidget-face-bg e-face'>\
-                                    <img class='easemobWidget-face-img e-face' \
-                                        src='"+Easemob.im.EMOTIONS.path + v + "' \
-                                        data-value="+k+" />\
-                                </div>";
+                    faceStr += ["<div class='easemobWidget-face-bg e-face'>",
+                                    "<img class='easemobWidget-face-img e-face' ",
+                                        "src='" + Easemob.im.EMOTIONS.path + v + "' ",
+                                        "data-value=" + k + " />",
+                                "</div>"].join('');
 
-                    if(count % 7 == 0) {
+                    if(count % 7 === 0) {
                         faceStr += '</li><li class="e-face">';
                     }
                 });
 
-                if(count % 7 == 0) {
+                if(count % 7 === 0) {
                     faceStr = faceStr.slice(0, -('<li class="e-face">').length);
                 } else {
                     faceStr += '</li>';
@@ -468,7 +468,7 @@
                 var isIE = EasemobWidget.utils.getIEVersion();
                 if ( isIE !== null && isIE < 9 ) {
                     this.audioSign.addClass('hide');
-                    me.playaudio = new Function();
+                    me.playaudio = function () {};
                     return;
                 }
                 if ( window.HTMLAudioElement && this.audio ) {
@@ -481,7 +481,7 @@
                             ast = 0;
                         }, 3000);
                         me.audio.play();
-                    }
+                    };
                 }
             }
             , face: function(msg){
@@ -612,7 +612,7 @@
                         level = me.satisDialog.find('li.sel').length,
                         text = me.satisDialog.find('textarea');
 
-                    if(level == 0) {
+                    if(level === 0) {
                         me.errorPrompt('请先选择星级');
                         return false;
                     }
@@ -708,7 +708,7 @@
                 })
                 .on('mouseleave', function(){
                     EasemobWidget.utils.isMobile || $(this).removeClass('theme-color');
-                });;
+                });
 
                 //表情的选中
                 me.faceWrapper.on(click, '.easemobWidget-face-bg', function(e){
@@ -837,7 +837,7 @@
                             to: config.to
                             , msg: '手机号码/邮箱/QQ号：' + me.contact.val() + '   留言：' + me.leaveMsg.val()
                             , type : 'chat'
-                        }
+                        };
                         me.handleGroup(opt);
                         me.send(opt);
                         //me.errorPrompt('留言成功');
@@ -866,7 +866,7 @@
 
                         if(info && info.length == EasemobWidget.LISTSPAN) {
                             var start = Number(info[EasemobWidget.LISTSPAN - 1].chatGroupSeqId) - 1;
-                            start == 0 && setTimeout(function() {
+                            start === 0 && setTimeout(function() {
                                 me.chatWrapper.attr('data-history', 1);
                             }, 0);
                             me.chatWrapper.attr('data-start', start);
@@ -879,7 +879,7 @@
                         config.history = info;
                         im.handleHistory();
                     });
-                }
+                };
 
                 //wap
                 me.chatWrapper.parent().on('touchstart', function(e){
@@ -972,21 +972,21 @@
                 : (ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000);
             }
             , sendImgMsg: function(msg, wrapper, file, msgId) {
-                var me = this;
+                var me = this, temp;
                 wrapper = wrapper || me.chatWrapper;
 
                 if(msg) {
-                    var temp = $("\
-                        <div class='easemobWidget-right'>\
-                            <div class='easemobWidget-msg-wrapper'>\
-                                <i class='easemobWidget-right-corner'></i>\
-                                <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
-                                <div class='easemobWidget-msg-container'>\
-                                    <a class='easemobWidget-noline' href='"+msg.url+"' target='_blank'><img src='"+msg.url+"'/></a>\
-                                </div>\
-                            </div>\
-                        </div>\
-                    ");
+                    temp = $([
+                        "<div class='easemobWidget-right'>",
+                            "<div class='easemobWidget-msg-wrapper'>",
+                                "<i class='easemobWidget-right-corner'></i>",
+                                "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
+                                "<div class='easemobWidget-msg-container'>",
+                                    "<a class='easemobWidget-noline' href='" + msg.url + "' target='_blank'><img src='" + msg.url + "'/></a>",
+                                "</div>",
+                            "</div>",
+                        "</div>"
+                    ].join(''));
                     wrapper.prepend(temp);
                     return;
                 }
@@ -999,18 +999,18 @@
                         return;
                     }
 
-                    var temp = $("\
-                        <div id='" + msgid + "' class='easemobWidget-right'>\
-                            <div class='easemobWidget-msg-wrapper'>\
-                                <i class='easemobWidget-right-corner'></i>\
-                                <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
-                                <div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING +"</div>
-                                <div class='easemobWidget-msg-container'>\
-                                    <a class='easemobWidget-noline' href='"+file.url+"' target='_blank'><img src='"+file.url+"'/></a>\
-                                </div>\
-                            </div>\
-                        </div>\
-                    ");
+                    temp = $([
+                        "<div id='" + msgid + "' class='easemobWidget-right'>",
+                            "<div class='easemobWidget-msg-wrapper'>",
+                                "<i class='easemobWidget-right-corner'></i>",
+                                "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
+                                "<div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING + "</div>",
+                                "<div class='easemobWidget-msg-container'>",
+                                    "<a class='easemobWidget-noline' href='" + file.url + "' target='_blank'><img src='" + file.url + "'/></a>",
+                                "</div>",
+                            "</div>",
+                        "</div>"
+                    ].join(''));
                     
                 }
 
@@ -1060,7 +1060,7 @@
                 me.chatWrapper.find('img:last').on('load', me.scrollBottom);
             }
             , encode: function(str, history){
-                if (!str || str.length == 0) return "";
+                if (!str || str.length === 0) return "";
                 var s = '';
                 /*s = !history
                 ? str.replace(/&(?!amp;)/g, "&amp;")
@@ -1074,7 +1074,7 @@
                 return s;
             }
             , decode: function(str) {
-                if (!str || str.length == 0) return "";
+                if (!str || str.length === 0) return "";
                 var s = '';
                 s = str.replace(/&amp;/g, "&");
                 return s;
@@ -1084,18 +1084,18 @@
                 wrapper = wrapper || me.chatWrapper;
 
                 if(isHistory) {
-                    wrapper.prepend("\
-                        <div class='easemobWidget-right'>\
-                            <div class='easemobWidget-msg-wrapper'>\
-                                <i class='easemobWidget-right-corner'></i>\
-                                <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
-                                <div class='easemobWidget-msg-loading hide'>" + EasemobWidget.LOADING + "</div>
-                                <div class='easemobWidget-msg-container'>\
-                                    <p>" + Easemob.im.Utils.parseLink(me.face(me.encode(msg.msg, true))) + "</p>\
-                                </div>\
-                            </div>\
-                        </div>\
-                    ");
+                    wrapper.prepend([
+                        "<div class='easemobWidget-right'>",
+                            "<div class='easemobWidget-msg-wrapper'>",
+                                "<i class='easemobWidget-right-corner'></i>",
+                                "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
+                                "<div class='easemobWidget-msg-loading hide'>" + EasemobWidget.LOADING + "</div>",
+                                "<div class='easemobWidget-msg-container'>",
+                                    "<p>" + Easemob.im.Utils.parseLink(me.face(me.encode(msg.msg, true))) + "</p>",
+                                "</div>",
+                            "</div>",
+                        "</div>"
+                    ].join(''));
                     return;
                 }
 
@@ -1109,18 +1109,18 @@
                 me.addDate();
                 
                 //local append
-                wrapper.append("\
-                    <div id='" + msgid + "' class='easemobWidget-right'>\
-                        <div class='easemobWidget-msg-wrapper'>\
-                            <i class='easemobWidget-right-corner'></i>\
-                            <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
-                            <div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING + "</div>\
-                            <div class='easemobWidget-msg-container'>\
-                                <p>" + Easemob.im.Utils.parseLink(me.face(me.encode(txt))) + "</p>\
-                            </div>\
-                        </div>\
-                    </div>\
-                ");
+                wrapper.append([
+                    "<div id='" + msgid + "' class='easemobWidget-right'>",
+                        "<div class='easemobWidget-msg-wrapper'>",
+                            "<i class='easemobWidget-right-corner'></i>",
+                            "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
+                            "<div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING + "</div>",
+                            "<div class='easemobWidget-msg-container'>",
+                                "<p>" + Easemob.im.Utils.parseLink(me.face(me.encode(txt))) + "</p>",
+                            "</div>",
+                        "</div>",
+                    "</div>"
+                ].join(''));
                 me.textarea.val('');
                 me.scrollBottom(EasemobWidget.utils.isMobile ? 700 : undefined);
 
@@ -1138,7 +1138,7 @@
                         msg.find('.easemobWidget-msg-loading').addClass('hide');
                         msg.find('.easemobWidget-msg-status').removeClass('hide');
                     }
-                }
+                };
                 me.handleGroup(opt);
                 me.send(opt);
             }
@@ -1175,7 +1175,7 @@
                             }
                         }
                     }
-                }
+                };
 
                 this.handleGroup(opt);
                 
@@ -1250,11 +1250,11 @@
                         msgDetail = '[图片]';
                         break;
                     case 'satisfactionEvaluation':
-                        value = '<p>请对我的服务做出评价</p>'
+                        value = '<p>请对我的服务做出评价</p>';
                         msgDetail = '请对我的服务做出评价';
                         break;
                     case 'robertList':
-                        value = '<p>' + msg.ext.msgtype.choice.title + '</p>'
+                        value = '<p>' + msg.ext.msgtype.choice.title + '</p>';
                         break;
                     /*
                     case 'audio':
@@ -1310,13 +1310,13 @@
                     default: break;
                 }
                 
-                var temp = "\
-                    <div class='easemobWidget-left'>\
-                        <div class='easemobWidget-msg-wrapper'>\
-                            <i class='easemobWidget-left-corner'></i>\
-                            <div class='easemobWidget-msg-container'>" + value +"</div>\
-                            <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
-                        </div>"
+                var temp = [
+                    "<div class='easemobWidget-left'>",
+                        "<div class='easemobWidget-msg-wrapper'>",
+                            "<i class='easemobWidget-left-corner'></i>",
+                            "<div class='easemobWidget-msg-container'>" + value + "</div>",
+                            "<div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>",
+                        "</div>"].join('')
                         + (function() {
                             var str = '';
                             switch(type) {
@@ -1331,7 +1331,7 @@
                                         var list = msg.ext.msgtype.choice.list;
                                         str = '<div class="easemobWidget-list-btn js_robertbtn">';
                                         for(var i=0,l=list.length;i<l;i++) {
-                                            str += '<button>' + list[i] + '</button>'
+                                            str += '<button>' + list[i] + '</button>';
                                         }
                                         str += '</div>';
                                     }
@@ -1371,7 +1371,7 @@
             swfupload.setUploadURL(url);
             swfupload.startUpload();
             swfupload.uploadOptions = options;
-        }
+        };
 
 
         /*
@@ -1412,7 +1412,7 @@
                     config.history = info;
                     im.handleHistory(wrapper);
 
-                    im.toggleChatWindow(isShowDirect ? 'show' : '')
+                    im.toggleChatWindow(isShowDirect ? 'show' : '');
                 });
 
             })
@@ -1429,9 +1429,9 @@
 
                 im.open();
 
-                im.toggleChatWindow(isShowDirect ? 'show' : '')
+                im.toggleChatWindow(isShowDirect ? 'show' : '');
             });
-        }
+        };
 
 
         /*
@@ -1439,7 +1439,7 @@
         */
         var message = new EmMessage().listenToParent(function(msg){
             var value;
-            if(msg.indexOf('emgroup@') == 0) {//技能组消息
+            if(msg.indexOf('emgroup@') === 0) {//技能组消息
                 value = msg.slice(8);
                 msg = 'emgroup';
             } else if(msg.indexOf('@') > 0) {//从父级页面cookie读取相关信息
@@ -1536,17 +1536,17 @@
                     if(code != SWFUpload.UPLOAD_ERROR.FILE_CANCELLED
                     && code != SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED 
                     && code != SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED) {
-                        var temp = $("\
-                            <div class='easemobWidget-right'>\
-                                <div class='easemobWidget-msg-wrapper'>\
-                                    <i class='easemobWidget-right-corner'></i>\
-                                    <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
-                                    <div class='easemobWidget-msg-container'>\
-                                        <a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>\
-                                    </div>\
-                                </div>\
-                            </div>\
-                        ");
+                        var temp = $([
+                            "<div class='easemobWidget-right'>",
+                                "<div class='easemobWidget-msg-wrapper'>",
+                                    "<i class='easemobWidget-right-corner'></i>",
+                                    "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
+                                    "<div class='easemobWidget-msg-container'>",
+                                        "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>",
+                                    "</div>",
+                                "</div>",
+                            "</div>"
+                        ].join(''));
                         im.chatWrapper.append(temp);
                         im.chatWrapper.find('img:last').on('load', im.scrollBottom);
                     }
@@ -1561,18 +1561,18 @@
                         if(file && !file.url && res.entities && res.entities.length > 0) {
                             file.url = res.uri + '/' + res.entities[0].uuid;
                         }
-                        var temp = $("\
-                            <div id='" + this.fileMsgId + "' class='easemobWidget-right'>\
-                                <div class='easemobWidget-msg-wrapper'>\
-                                    <i class='easemobWidget-right-corner'></i>\
-                                    <div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>\
-                                    <div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING +"</div>
-                                    <div class='easemobWidget-msg-container'>\
-                                        <a class='easemobWidget-noline' href='"+file.url+"' target='_blank'><img src='"+file.url+"'/></a>\
-                                    </div>\
-                                </div>\
-                            </div>\
-                        ");
+                        var temp = $([
+                            "<div id='" + this.fileMsgId + "' class='easemobWidget-right'>",
+                                "<div class='easemobWidget-msg-wrapper'>",
+                                    "<i class='easemobWidget-right-corner'></i>",
+                                    "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
+                                    "<div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING + "</div>",
+                                    "<div class='easemobWidget-msg-container'>",
+                                        "<a class='easemobWidget-noline' href='" + file.url + "' target='_blank'><img src='" + file.url + "'/></a>",
+                                    "</div>",
+                                "</div>",
+                            "</div>"
+                        ].join(''));
                         im.chatWrapper.append(temp);
                         im.scrollBottom();
                         this.uploadOptions.onFileUploadComplete(res);
@@ -1581,13 +1581,13 @@
                     }
                 }
             });
-        }
+        };
         //不支持异步upload的浏览器使用flash插件搞定
         if(!Easemob.im.Utils.isCanUploadFileAsync() && Easemob.im.Utils.isCanUploadFile()) {
             swfupload = uploadShim('easemobWidgetFileInput');
             $('object[id^="SWFUpload"]').attr('title', '图片');
         }
-    }
+    };
 
     /*
         
@@ -1596,7 +1596,7 @@
     ? main(EasemobWidget.utils.getConfig())
     : new EmMessage().listenToParent(function(msg){
         
-        if(msg.indexOf('initdata:') == 0) {
+        if(msg.indexOf('initdata:') === 0) {
             main(EasemobWidget.utils.getConfig(msg.slice(9)));
         }
     });

@@ -26,7 +26,7 @@
         r = r && r[0] ? (r[0][0]=='?' || r[0][0]=='&' ? r[0].slice(1) : r[0]) : '';
 
         return r.slice(key.length+1);
-    }
+    };
 
     EasemobWidget.utils.getConfig = function(key){//get config from current script
         var that;
@@ -36,7 +36,7 @@
             that = location.href;
         }
 
-        var obj = {}
+        var obj = {};
         if(!that) return {
             str: ''
             , json: obj
@@ -59,7 +59,7 @@
             , json: obj
             , domain: domain
         };
-    }
+    };
     EasemobWidget.utils.isAndroid = /Android/i.test(navigator.userAgent);//is mobile
     EasemobWidget.utils.isMobile = /mobile/i.test(navigator.userAgent);//is mobile
     EasemobWidget.utils.isQQBrowserInAndroid = EasemobWidget.utils.isAndroid && /MQQBrowser/.test(navigator.userAgent);
@@ -72,7 +72,7 @@
         } else {
             target['on' + ev] = fn;
         }
-    }
+    };
     var _remove = function(target, ev, fn) {
         if(target.removeEventListener) {
             target.removeEventListener(ev, fn);
@@ -81,7 +81,7 @@
         } else {
             target['on' + ev] = null;
         }
-    }
+    };
 
     EasemobWidget.utils.on = _on;
     EasemobWidget.utils.remove = _remove;
@@ -93,7 +93,7 @@
         if(document.visibilityState && document.visibilityState == 'hidden' || document.hidden) {
             return true;
         } 
-    }
+    };
 
     /*
      * message transfer
@@ -112,13 +112,13 @@
 
             if(0 > idxj) return false;
             if(url.indexOf('#') > idx && idxj != url.length) return true;
-        }
+        };
         var _parseHash = function(url, key) {
             var res = url.match(new RegExp(key + '\\w*' + key, 'g'));
             return res ? 
                 res[0] ? res[0].slice(key.length, -key.length) : ''
                 : '';
-        }
+        };
         var _getMsg = function(key, url) {
             var str = key.toString(),
                 arr = url.match(new RegExp(str + '\\w*' + str, 'g'));
@@ -126,23 +126,23 @@
                 return arr[0].slice(str.length, -str.length);
             }
             return '';
-        }
+        };
         var _appendMsg = function(key, msg, url) {
             return url.replace(new RegExp(key + '\\w*' + key, 'g'), key + msg + key);
-        }
+        };
         
         //core: message
-        var message = function(iframeId, prefix){
+        var Message = function(iframeId, prefix){
             
-            if(!(this instanceof message)) {
-                 return new message();
+            if(!(this instanceof Message)) {
+                 return new Message();
             }
             this.t = new Date().getTime();
             this.iframe = document.getElementById(iframeId);
             this.prefix = prefix || '_em_';
             delete this.t;
-        }
-        message.prototype.sendToParent = function(msg){
+        };
+        Message.prototype.sendToParent = function(msg){
             if(typeof msg !== 'string') {
                 throw 'msg must be string';
             }
@@ -153,8 +153,8 @@
             }
 
             return this;
-        }
-        message.prototype.sendToIframe = function(msg){
+        };
+        Message.prototype.sendToIframe = function(msg){
             if(typeof msg !== 'string') {
                 throw 'msg must be string';
             }
@@ -172,12 +172,12 @@
                     this.iframe.setAttribute('src', src + '&' + this.prefix + msg + this.prefix);
                 }
             } else {
-                this.iframe.setAttribute('src', src += '#' + this.prefix + msg + this.prefix)
+                this.iframe.setAttribute('src', src += '#' + this.prefix + msg + this.prefix);
             }
 
             return this;
-        }
-        message.prototype.listenToParent = function(callback){
+        };
+        Message.prototype.listenToParent = function(callback){
             if(_supportPostMessage) {
                 _on(window, 'message', function(e){
                     callback(e.data);
@@ -187,7 +187,7 @@
             if(window.onhashchange) {
                 window.onhashchange = function(){
                     callback(_parseHash(location.href, this.prefix));
-                }
+                };
             } else {
                 var that = this;
                 var memHref = location.href,
@@ -201,17 +201,17 @@
             }
 
             return this;
-        }
-        message.prototype.listenToIframe = function(callback){
+        };
+        Message.prototype.listenToIframe = function(callback){
             if(_supportPostMessage) {
                 _on(window, 'message', function(e){
                     callback(e.data);
                 });
             }
             return this;
-        }
+        };
 
-        return message;
+        return Message;
     }());
     
     var c = {
@@ -224,7 +224,7 @@
             var results = document.cookie.match('(^|;) ?' + encodeURIComponent(key) + '=([^;]*)(;|$)'); 
             return results ? decodeURIComponent(results[2]) : '';
         }
-    }
+    };
 
     /*
         date format
@@ -247,7 +247,7 @@
             }
         }
         return fmt;   
-    }
+    };
 
     /*
         open
