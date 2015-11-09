@@ -28,20 +28,30 @@
         return r.slice(key.length+1);
     };
 
-    EasemobWidget.utils.getConfig = function(key){//get config from current script
+    EasemobWidget.utils.getConfig = function(key, searchScript){//get config from current script
         var that;
-        if(key) {
+        if(key && searchScript) {
+            var scripts = document.scripts;
+            for(var s = 0, l=scripts.length; s<l; s++) {
+                if(scripts[s].src && 0 < scripts[s].src.indexOf(key)) {
+                    that = scripts[s].src;
+                    break;
+                }
+            }
+        } else if(key) {
             that = key;
         } else {
             that = location.href;
         }
 
         var obj = {};
-        if(!that) return {
-            str: ''
-            , json: obj
-            , domain: ''
-        };
+        if(!that) {
+            return {
+                str: ''
+                , json: obj
+                , domain: ''
+            };
+        }
 
         var tmp,
             idx = that.indexOf('?'),
@@ -50,9 +60,9 @@
             arr = that.slice(idx+1).split('&');
         
         obj.src = that.slice(0, idx);
-        for(var i=0,l=arr.length;i<l;i++) {
+        for(var i=0,len=arr.length;i<len;i++) {
             tmp = arr[i].split('=');
-            obj[tmp[0]] = tmp.length>1 ? tmp[1] : '';
+            obj[tmp[0]] = tmp.length>1 ? decodeURIComponent(tmp[1]) : '';
         }
         return {
             str: that

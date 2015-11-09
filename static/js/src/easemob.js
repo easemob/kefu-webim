@@ -17,9 +17,9 @@
         shadow = document.createElement('div'),
         newTitle = '-新消息提醒  ', titleST = 0, initdata;
     
-    var getConfig = function(key){//get config from current script
+    var getConfig = function(key, searchScript){//get config from current script
         var that;
-        if(!!key) {
+        if(key && searchScript) {
             var scripts = document.scripts;
             for(var s = 0, l=scripts.length; s<l; s++) {
                 if(scripts[s].src && 0 < scripts[s].src.indexOf(key)) {
@@ -27,10 +27,12 @@
                     break;
                 }
             }
+        } else if(key) {
+            that = key;
         } else {
             that = location.href;
         }
-        
+
         var obj = {};
         if(!that) {
             return {
@@ -49,16 +51,16 @@
         obj.src = that.slice(0, idx);
         for(var i=0,len=arr.length;i<len;i++) {
             tmp = arr[i].split('=');
-            obj[tmp[0]] = tmp.length>1 ? tmp[1] : '';
+            obj[tmp[0]] = tmp.length>1 ? decodeURIComponent(tmp[1]) : '';
         }
         return {
             str: that
             , json: obj
-            , domain: domain + '/'
+            , domain: domain
         };
     };
-    
-    var config = getConfig('easemob.js');
+
+    var config = getConfig('easemob.js', true);
     config.json.hide = config.json.hide === 'false' ? false : config.json.hide;
 
     //open Api
@@ -106,7 +108,7 @@
                     }, 360);
                     break;
                 case 'notify'://title slide
-                    notify(config.domain + 'webim/static/img/notify.png', '新消息', msgDetail);
+                    notify(config.domain + '/webim/static/img/notify.png', '新消息', msgDetail);
                     break;
                 case 'recoveryTitle':
                     clearInterval(titleST);
@@ -115,6 +117,7 @@
                 case 'showChat'://show Chat window
                     iframe.style.width = '400px';
                     iframe.style.height = '500px';
+                    iframe.style.visibility = 'visible';
                     
                     iframe.style.right = iframePosition.x + 'px';
                     iframe.style.bottom = iframePosition.y + 'px';
@@ -134,6 +137,7 @@
                         iframe.style.height = '37px';
                         iframe.style.width = '104px';
                     } else {
+                        iframe.style.visibility = 'hidden';
                         iframe.style.width = '12px';
                         iframe.style.height = '12px';
                     }
@@ -220,16 +224,16 @@
             'box-shadow: 0 4px 8px rgba(0,0,0,.2);',
             'border-radius: 4px;'].join('');
 
-        shadow.style.background = 'url(' + config.domain + 'webim/static/img/drag.png) no-repeat';
+        shadow.style.background = 'url(' + config.domain + '/webim/static/img/drag.png) no-repeat';
         
-        initdata = 'initdata:' + config.domain + 'webim/im.html?tenantId=' + config.json.tenantId 
+        initdata = 'initdata:' + config.domain + '/webim/im.html?tenantId=' + config.json.tenantId 
             + (config.json.hide ? '&hide=true' : '') 
             + (config.json.color ? '&color=' + config.json.color : '')
             + (config.json.preview ? '&preview=' + config.json.preview : '')
             + (curChannel ? '&c=' + curChannel : '')
             + (curUser ? '&u=' + curUser : '')
             + '&time=' + new Date().getTime();
-        iframe.src = config.domain + 'webim/im.html?tenantId=' + config.json.tenantId;
+        iframe.src = config.domain + '/webim/im.html?tenantId=' + config.json.tenantId;
 
         if(!config.json.hide) {
             iframe.style.height = '37px';
@@ -270,7 +274,7 @@
 
     //append easemob.utils.js
     var script = document.createElement('script');
-    script.src = config.domain + 'webim/static/js/easemob.utils.js';
+    script.src = config.domain + '/webim/static/js/easemob.utils.js';
     (document.head || document.getElementsByTagName('head')[0]).appendChild(script);
     if(script.readyState) {
         script.onreadystatechange = function() {

@@ -344,7 +344,7 @@
                     message.sendToParent(windowStatus == 'show' || me.Im.hasClass('hide') ? 'showChat' : 'minChat');
                     windowStatus == 'show' 
                         ? (
-                            me.fixedBtn.removeClass('hide')
+                            config.json.hide || me.fixedBtn.removeClass('hide')
                             , me.Im.removeClass('hide')
                         ) 
                         : me.Im.toggleClass('hide');
@@ -357,7 +357,7 @@
                 } else {
                     me.textarea.focus();
                     me.isOpened = true;
-                    me.scrollBottom();
+                    me.scrollBottom(50);
                 }
                 me.addPrompt();
             }
