@@ -155,25 +155,10 @@ button, textarea, input {
     left: -4px;
     font-size: 24px;
 }
-.easemobWidgetHeader-bar {
-    position: absolute;
-    height: 30px;
-    width: 30px;
-    left: 10px;
-    top: 5.5px;
-}
-.easemobWidgetHeader-bar.online i{
-    background-color: #00FF00;
-}
-.easemobWidgetHeader-bar.offline i{
-    background-color: #E6E6E6;
-}
-.easemobWidgetHeader-bar.offline img {
-    -webkit-filter: grayscale(1);
-    filter: gray;   
-}
 .easemobWidgetHeader-portrait {
-    width: 100%;
+    width: 30px;
+    vertical-align: middle;
+    margin: -2px -8px 0 5px;
     border-radius: 50%;
     border: 1px solid #1aa1e4;
 }
@@ -379,6 +364,36 @@ button, textarea, input {
 .easemobWidget-chat {
     padding-bottom: 20px;
     overflow: hidden;
+}
+.easemobWidget-chat.link:after,
+.easemobWidget-chat.transfer:after {
+    padding: 5px 10px;
+    background-color: #ccc;
+    position: fixed;
+    bottom: 145px;
+    left: 5px;
+    border-radius: 5px;
+    color: #fff;
+}
+.easemobWidget-chat.transfer:after {
+    content: '转接中...';
+}
+.easemobWidget-chat.link:after {
+    content: '正在为您分配客服，请稍等...';
+}
+.easemobWidget-transferring {
+    text-align: center;
+    font-size: 12px;
+    background-color: #ccc;
+    position: absolute;
+    bottom: 145px;
+    left: 5px;
+    border-radius: 5px;
+    color: #fff;
+}
+.easemobWidget-transferring span {
+    display: inline-block;
+    padding: 5px 10px;
 }
 .easemobWidget-chat:after {
     content: '';
@@ -938,80 +953,109 @@ body .easemobWidget-offline-bg {
     font-size: 13px;
 }
 /*mobile*/
-/*.easemobWidgetFileInput-mobile {
-    z-index: 1;
-    width: 30px;
-    height: 30px;
-    right: 83px!important;
-    bottom: 8px;
-    overflow: hidden;
-    opacity: 0;
-}*/
-.easemobWidgetBody-mobile .easemobWidget-right-corner,
-.easemobWidgetBody-mobile .easemobWidget-left-corner {
+.easemobWidgetWrapper-mobile .easemobWidgetBody-wrapper {
+    bottom: 42px;
+}
+.easemobWidgetWrapper-mobile .easemobWidget-word span {
+    font-size: 14px;
+}
+.easemobWidgetWrapper-mobile .easemobWidgetHeader-wrapper {
+    font-size: 16px;
+    border-radius: 0;
+    box-shadow: none;
+}
+.easemobWidgetWrapper-mobile .easemobWidgetHeader-wrapper > div {
+    text-align: center;
+}
+.easemobWidgetWrapper-mobile .easemobWidget-chat.link:after,
+.easemobWidgetWrapper-mobile .easemobWidget-chat.transfer:after {
+    left: 0;
+    top: 0;
+    border-radius: 0;
+    width: 100%;
+    font-size: 17px;
+    height: 43px;
+    line-height: 32px;
+    box-sizing: border-box;
+    background: transparent;
+}
+.easemobWidgetWrapper-mobile .easemobWidgetHeader-portrait {
+    position: absolute;
+    top: 8px;
+    left: 2px;
+}
+.easemobWidgetWrapper-mobile .easemobWidget-right-corner,
+.easemobWidgetWrapper-mobile .easemobWidget-left-corner {
     top: 4px;
 }
-.easemobWidgetBody-mobile .easemobWidget-chat {
+.easemobWidgetWrapper-mobile .easemobWidget-chat {
     padding-bottom: 50px;
 }
-.easemobWidgetHeader-mobile {
+.easemobWidgetWrapper-mobile .easemobWidgetHeader {
     font-size: 17px;
     border-radius: 0;
     box-shadow: none;
 }
-.easemobWidgetBody-mobile {
+.easemobWidgetWrapper-mobile .easemobWidgetBody {
     bottom: 42px;
 }
-.easemobWidgetBody-mobile .easemobWidget-list-btn button,
-.easemobWidgetBody-mobile .easemobWidget-msg-container {
+.easemobWidgetWrapper-mobile .easemobWidget-list-btn button,
+.easemobWidgetWrapper-mobile .easemobWidget-msg-container {
     font-size: 17px;
 }
-.easemobWidgetBody-mobile .easemobWidget-list-btn button {
+.easemobWidgetWrapper-mobile .easemobWidget-list-btn button {
     height: 32px;
     line-height: 32px;
     box-shadow: none;
 }
-.easemobWidgetBody-mobile .easemobWidget-msg-container {
+.easemobWidgetWrapper-mobile .easemobWidget-msg-container {
     padding: 8px 10px;
 }
-.easemobWidgetBody-mobile .easemobWidget-list-btn button:hover {
+.easemobWidgetWrapper-mobile .easemobWidget-list-btn button:hover {
     color: #000;
 }
-.easemobWidget-face-wrapper-mobile {
+.easemobWidgetWrapper-mobile .easemobWidget-face-wrapper {
     width: 100%;
     left: 0;
     border-radius: 0;
     padding-left: 0;
     bottom: 44px;
 }
-.easemobWidget-face-mobile {
+.easemobWidgetWrapper-mobile .easemobWidget-face {
     z-index: 1;
     top: auto;
     bottom: 8px;
     left: 3px;
 }
-.easemobWidget-face-bg-mobile {
+.easemobWidgetWrapper-mobile .easemobWidget-face-bg {
     width: 14.2%;
     margin: 0;
 }
-.easemobWidget-face-bg-mobile .easemobWidget-face-img {
+.easemobWidgetWrapper-mobile .easemobWidget-face-bg .easemobWidget-face-img {
     margin: 8px 0;
 }
-.easemobWidget-file-mobile {
+.easemobWidgetWrapper-mobile .easemobWidget-file {
     z-index: 1;
     right: 82px;
     left: auto;
     top: auto;
     bottom: 8px;
 }
-.easemobWidgetSend-mobile {
+.easemobWidgetWrapper-mobile .easemobWidgetSend {
     height: auto;
     padding: 3px 80px 3px 36px;
     box-sizing: border-box;
     background-color: #fff;
     box-shadow: 0 -1px 0 #e5e5e5;
 }
-.easemobWidget-send-wrapper .textarea-mobile {
+.easemobWidgetWrapper-mobile .easemobWidget-send-wrapper {
+    height: auto;
+    padding: 3px 80px 3px 36px;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 -1px 0 #e5e5e5;
+}
+.easemobWidgetWrapper-mobile .easemobWidget-textarea {
     height: 34px;
     max-height: 88px;
     bottom: 0;
@@ -1032,10 +1076,7 @@ body .easemobWidget-offline-bg {
     color: #1a1a1a;
     box-shadow: 0 1px 3px rgba(0,0,0,.2) inset;
 }
-.easeWidget-face-rec-mobile {
-    display: none;
-}
-.easemobWidgetSendBtn-mobile {
+.easemobWidgetWrapper-mobile .easemobWidget-send {
     width: 64px;
     right: 8px;
     top: auto;
@@ -1044,7 +1085,19 @@ body .easemobWidget-offline-bg {
     line-height: 33px;
     font-size: 15px;
 }
-.easemobWidget-satisfaction-dialog-mobile {
+.easemobWidgetWrapper-mobile .easeWidget-face-rec {
+    display: none;
+}
+.easemobWidgetWrapper-mobile .easemobWidgetSendBtn {
+    width: 64px;
+    right: 8px;
+    top: auto;
+    bottom: 8px;
+    height: 33px;
+    line-height: 33px;
+    font-size: 15px;
+}
+.easemobWidgetWrapper-mobile .easemobWidget-satisfaction-dialog {
     width: 100%;
     height: 100%;
     position: fixed;
@@ -1054,13 +1107,13 @@ body .easemobWidget-offline-bg {
     border-radius: 0;
     font-size: 15px;
 }
-.easemobWidget-error-prompt-mobile,
-.easemobWidget-satisfaction-dialog-mobile h3,
-.easemobWidget-satisfaction-dialog-mobile button,
-.easemobWidget-satisfaction-dialog-mobile textarea {
+.easemobWidgetWrapper-mobile .easemobWidget-error-prompt,
+.easemobWidgetWrapper-mobile .easemobWidget-satisfaction-dialog h3,
+.easemobWidgetWrapper-mobile .easemobWidget-satisfaction-dialog button,
+.easemobWidgetWrapper-mobile .easemobWidget-satisfaction-dialog textarea {
     font-size: 15px;
 }
-.easemobWidget-satisfaction-dialog-mobile button {
+.easemobWidgetWrapper-mobile .easemobWidget-satisfaction-dialog button {
     height: 32px;
     line-height: 32px;
 }

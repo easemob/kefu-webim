@@ -214,10 +214,12 @@
                     }
                 }
             }
-            , setTitle: function(title){
-                var nickName = this.headBar.find('.easemobWidgetHeader-nickname');
-                
-                nickName.html(config.tenantName + (title ? '-' + title : ''));
+            , setTitle: function(title, info){
+                var nickName = this.headBar.find('.easemobWidgetHeader-nickname'),
+                    avatar = this.headBar.find('.easemobWidgetHeader-portrait');
+
+                nickName.html(info && info.userNickname ? info.userNickname : (config.tenantName + (title ? '-' + title : '')));
+                avatar.attr('src', info && info.avatar ? info.avatar : 'static/img/avatar2.png').removeClass('hide');
                 document.title = nickName.html() + (title ? '' : '-客服');
             }
             , mobileInit: function(){
@@ -235,24 +237,11 @@
                         , 'line-height': '40px'
                     });
                 }
-                this.word.find('span').css('font-size', '14px');
-                this.Im.find('.js_drag').css('text-align', 'center');
+                this.Im.addClass('easemobWidgetWrapper-mobile');
                 this.evaluate.addClass('hide');
                 this.audioSign.addClass('hide');
                 this.mobileLink.attr('href', location.href);
-                this.ePrompt.addClass('easemobWidget-error-prompt-mobile');
-                this.sendbtn.removeClass('disabled').addClass('easemobWidgetSendBtn-mobile');
-                this.satisDialog.addClass('easemobWidget-satisfaction-dialog-mobile');
-                this.headBar.addClass('easemobWidgetHeader-mobile');
-                this.chatWrapper.parent().addClass('easemobWidgetBody-mobile');
-                //this.realfile.addClass('easemobWidgetFileInput-mobile');
-                this.faceWrapper.parent().addClass('easemobWidget-face-wrapper-mobile');
-                this.facebtn.addClass('easemobWidget-face-mobile');
-                $('.easemobWidget-face-bg').addClass('easemobWidget-face-bg-mobile');
-                this.uploadbtn.addClass('easemobWidget-file-mobile');
-                this.sendbtn.parent().addClass('easemobWidgetSend-mobile');
-                this.textarea.addClass('textarea-mobile');
-                this.Im.find('.easeWidget-face-rec').addClass('easeWidget-face-rec-mobile');
+                this.sendbtn.removeClass('disabled');
             }
             , setWord: function(){
                 if(config.word) {
@@ -321,12 +310,10 @@
                     me.chatWrapper.parent().removeClass('hide');
                     me.sendbtn.parent().removeClass('hide');
                     me.dutyStatus.html('(在线)');
-                    me.headBar.find('.easemobWidgetHeader-bar').removeClass('offline').addClass('online');
                     me.fixedBtn.find('a').removeClass('easemobWidget-offline-bg');
                     return;
                 }
                 me.fixedBtn.find('a').addClass('easemobWidget-offline-bg');
-                me.headBar.find('.easemobWidgetHeader-bar').removeClass('online').addClass('offline');
                 me.offline.removeClass('hide');
                 me.word.addClass('hide');
                 me.chatWrapper.parent().addClass('hide');
@@ -336,7 +323,7 @@
             , toggleChatWindow: function(windowStatus) {
                 var me = this;
 
-
+                me.handleTransfer();
                 if(!config.root) {
                     setTimeout(function(){
                         !config.json.hide && me.fixedBtn.toggleClass('hide');
@@ -380,14 +367,14 @@
                     , onPictureMessage: function(message){
                         me.receiveMsg(message, 'img');
                     }
-                    , onLocationMessage: function(message){
-                        me.receiveMsg(message, 'location');
+                    , onCmdMessage: function(message){
+                        me.receiveMsg(message, 'cmd');
                     }
                     , onAudioMessage: function(message) {
                         me.receiveMsg(message, 'audio');
                     }
                     , onClosed: function() {
-                        me.open();
+                        //me.open();
                     }
                     , onError: function(e){
                         e.reconnect && me.open();
@@ -460,6 +447,7 @@
                 this.mobileLink = this.Im.find('#easemobWidgetLink');
                 this.dutyStatus = this.Im.find('.easemobWidgetHeader-word-status');
                 this.satisDialog = this.Im.find('.easemobWidget-satisfaction-dialog');
+                this.transfer = this.Im.find('.easemobWidget-transferring');
             }
             , audioAlert: function(){
                 var me = this;
@@ -1040,6 +1028,7 @@
                         }
                     }
                     , onFileUploadComplete: function(data){
+                        me.handleTransfer('sending');
                         me.chatWrapper.find('img:last').on('load', im.scrollBottom);
                     }
                     , success: function(id) {
@@ -1079,7 +1068,29 @@
                 s = str.replace(/&amp;/g, "&");
                 return s;
             }
-            , sendTextMsg: function(msg, wrapper, isHistory){
+            , handleTransfer: function(action, wrapper, info) {
+                var key = isGroupChat ? curGroup : 'normal';
+
+                var wrap = wrapper || this.chatWrapper;
+
+                if ( action === 'sending' ) {
+                    if ( !userHash[key].firstMsg ) {
+                        userHash[key].firstMsg = true;
+                        wrap.addClass('link').removeClass('transfer');
+                        EasemobWidget.utils.isMobile && this.headBar.find('.js_drag').addClass('hide');
+                    }
+                } else if ( action === 'transfer' ) {
+                    wrap.addClass('transfer').removeClass('link');
+                    EasemobWidget.utils.isMobile && this.headBar.find('.js_drag').addClass('hide');
+                } else if ( action === 'reply' ) {
+                    wrap.removeClass('transfer link');
+                    info && this.setTitle('', info);
+                    EasemobWidget.utils.isMobile && this.headBar.find('.js_drag').removeClass('hide');
+                }
+            }
+            , sendTextMsg: function(msg, wrapper, isHistory) {
+               
+ 
                 var me = this;
                 wrapper = wrapper || me.chatWrapper;
 
@@ -1102,6 +1113,7 @@
                 if(!msg && !me.textarea.val()) {
                     return;
                 }
+                me.handleTransfer('sending');
                 var txt = msg || me.textarea.val();
                 
 
@@ -1204,7 +1216,6 @@
                 var value = '', msgDetail = '';
                 
                 wrapper = wrapper || me.chatWrapper;
-
 
                 //满意度评价
                 if(msg.ext 
@@ -1343,15 +1354,37 @@
                     "</div>";
                 
                 if(!isHistory) {
+                    if ( msg.ext 
+                    && msg.ext.weichat 
+                    && msg.ext.weichat.queueName ) {
+                        var n = msg.ext.weichat.queueName,
+                            w = $('#' + n);
+
+                        if ( w.length > 0 ) {
+                            wrapper = w;
+                        }
+                    } else {
+                        wrapper = $('#normal');
+                    }
+
+                    if ( msg.ext 
+                    && msg.ext.weichat 
+                    && msg.ext.weichat.event 
+                    && msg.ext.weichat.event.eventName ) {//transfer msg
+                        me.handleTransfer('transfer', wrapper, msg.ext.weichat.agent);
+                    } else {//normal msg
+                        me.handleTransfer('reply', wrapper);
+                    }
+                    if ( type === 'cmd' ) {
+                        return;
+                    }
                     me.playaudio();
                     me.addDate();
                     wrapper.append(temp);
                     me.resetSpan();
                     me.scrollBottom();
-                } else {
-                    wrapper.prepend(temp);
-                }
-                if(!isHistory) {
+
+                    // send prompt & notification
                     if(!me.isOpened) {
                         me.messageCount.html('').removeClass('hide');
                         me.msgCount += 1;
@@ -1359,6 +1392,8 @@
                     } else if(EasemobWidget.utils.isMin()) {
                         me.notify(msgDetail);
                     }
+                } else {
+                    wrapper.prepend(temp);
                 }
             }
         }.setAttribute());
