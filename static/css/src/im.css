@@ -882,7 +882,9 @@ body .easemobWidget-offline-bg {
 }
 .easemobWidget-dialog button {
     width: 40%;
+    padding: 0;
     height: 30px;
+    line-height: 30px;
     border-radius: 4px;
     color: #fff;
     border: none;

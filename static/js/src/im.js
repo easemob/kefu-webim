@@ -63,7 +63,80 @@
                     handleGroupUser(curGroup);
                 }
             }
+            , getBase64: (function() {
+                var canvas = $('<canvas>').get(0),
+                    ctx = canvas.getContext("2d"),
+                    img = new Image();
+
+                return function(url, callback) {
+                    img.onload = function () {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(this, 0, 0);
+                        typeof callback === 'function' && callback(canvas.toDataURL('image/png'));
+                    }
+                    img.src = url;
+                };
+            }())
+            , getBlob: function(base64) {
+                var me = this;
+                try {
+                    if ( base64.indexOf('data:image') < 0 ) {
+                        this.getBase64(base64, function(blob) {
+                            me.getBlob(blob);
+                        });
+                    }
+                    var bytes = window.atob(base64.split(',')[1]),
+                        ab = new ArrayBuffer(bytes.length),
+                        ia = new Uint8Array(ab);
+
+                    for (var i = 0,l = bytes.length;i < l;i++) {
+                        ia[i] = bytes.charCodeAt(i);
+                    }
+                    return new Blob( [ab], {type : 'image/png', encoding: 'utf-8'});
+                } catch (e) {
+                    return null;
+                }
+            }
             , paste: function(obj, callback) {
+                var ctrl_pressed = false,
+                    me = this;
+
+                $(document).on('keydown', function( e ) {
+                    var ev = e.originalEvent,
+                        k = ev.keyCode;
+
+                    if ( k === 17 || ev.metaKey || ev.ctrlKey ) {
+                        ctrl_pressed = true;
+                    }
+                    if ( k === 86 ) {
+                        if ( ctrl_pressed === true && !window.Clipboard ) {
+                            pw.focus();
+                        }
+                    }
+                });
+
+                var pw = $('<div>');
+                pw.attr('contenteditable', '');
+                pw.css({'opacity': 0, position: 'fixed', top: '-10px', left: '-10px', width: '1px', height: '1px', overflow: 'hidden'});
+                pw.on('DOMSubtreeModified', function() {
+                    if ( !ctrl_pressed ) {
+                        return true;
+                    } else {
+                        ctrl_pressed = false;
+                    }
+                    var img = pw.find('img');
+                    if ( img.length > 0 && img.attr('src') ) {
+                        var b = me.getBlob(img.attr('src'));
+                        if ( b ) {
+                            callback instanceof Function && callback(b);
+                        } else {
+                            callback instanceof Function && callback();
+                        }
+                    }
+                    pw.html('');
+                });
+                $('body').append(pw);
+
                 $(obj).on('paste', function(e) {
                     var ev = e.originalEvent;
 
@@ -147,7 +220,7 @@
                     curChatContainer.removeClass('hide').siblings('.easemobWidget-chat').addClass('hide');
                 } else {
                     curChatContainer = $('<div data-start="0" data-history="1" id="' + groupId + '" class="easemobWidget-chat"></div>');
-                    this.chatWrapper.parent().prepend(curChatContainer);
+                    $('#normal').parent().prepend(curChatContainer);
                     this.handleChatContainer(groupId);     
                 }
             }
@@ -218,7 +291,7 @@
                 var nickName = this.headBar.find('.easemobWidgetHeader-nickname'),
                     avatar = this.headBar.find('.easemobWidgetHeader-portrait');
 
-                nickName.html(info && info.userNickname ? info.userNickname : (config.tenantName + (title ? '-' + title : '')));
+                nickName.html(info && info.userNicename ? info.userNicename : (config.tenantName + (title ? '-' + title : '')));
                 avatar.attr('src', info && info.avatar ? info.avatar : 'static/img/avatar2.png').removeClass('hide');
                 document.title = nickName.html() + (title ? '' : '-客服');
             }
@@ -524,7 +597,7 @@
 
                 (function(){
                     var f = null;
-                    me.paste(me.textarea, function(blob){
+                    me.paste(document, function(blob){
                         if(!blob) {
                             return;
                         }
@@ -538,6 +611,7 @@
                         me.pasteWrapper.addClass('hide');
                     });
                     me.pasteWrapper.on('click', '.js_sendimg', function(){
+                        me.realfile.val('');
                         if(!f) {
                             return false;
                         }
@@ -1353,10 +1427,10 @@
                         }()) +
                     "</div>";
                 
-                if(!isHistory) {
-                    if ( msg.ext 
-                    && msg.ext.weichat 
-                    && msg.ext.weichat.queueName ) {
+                if ( !isHistory ) {
+                    if ( msg.ext.weichat.agent && msg.ext.weichat.agent.userNicename === '调度员' ) {
+
+                    } else if ( msg.ext.weichat && msg.ext.weichat.queueName ) {
                         var n = msg.ext.weichat.queueName,
                             w = $('#' + n);
 
@@ -1367,13 +1441,15 @@
                         wrapper = $('#normal');
                     }
 
-                    if ( msg.ext 
-                    && msg.ext.weichat 
+                    if ( msg.ext.weichat 
                     && msg.ext.weichat.event 
-                    && msg.ext.weichat.event.eventName ) {//transfer msg
-                        me.handleTransfer('transfer', wrapper, msg.ext.weichat.agent);
+                    && msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' ) {//transfer msg
+                        me.handleTransfer('transfer', wrapper);
                     } else {//normal msg
-                        me.handleTransfer('reply', wrapper);
+                        msg.ext.weichat
+                        && msg.ext.weichat.agent
+                        && msg.ext.weichat.agent.userNicename !== '调度员'
+                        && me.handleTransfer('reply', wrapper, msg.ext.weichat.agent);
                     }
                     if ( type === 'cmd' ) {
                         return;
@@ -1393,6 +1469,9 @@
                         me.notify(msgDetail);
                     }
                 } else {
+                    if ( msg.type === 'cmd' ) {
+                        return;
+                    }
                     wrapper.prepend(temp);
                 }
             }
@@ -1487,6 +1566,10 @@
                     im.scrollBottom();
                     break;
                 case 'imclick'://关闭 或 展开 iframe 聊天窗口
+
+                    if ( !userHash.normal ) {
+                        return false;
+                    }
                     isGroupChat = false;
                     im.chatWrapper = $('#normal');
                     im.chatWrapper.removeClass('hide').siblings().addClass('hide');
