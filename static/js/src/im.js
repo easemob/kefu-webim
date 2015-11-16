@@ -1437,7 +1437,7 @@
                         if ( w.length > 0 ) {
                             wrapper = w;
                         }
-                    } else {
+                    } else if ( !isGroupChat ) {
                         wrapper = $('#normal');
                     }
 
