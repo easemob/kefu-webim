@@ -813,8 +813,7 @@
 
             message.ext = message.ext || {};
             message.ext.weichat = message.ext.weichat || {};
-            message.ext.weichat.visitor = message.ext.weichat.visitor || {};
-            message.ext.weichat.visitor.source = message.ext.weichat.visitor.source || 'webim';
+            message.ext.weichat.originType = message.ext.weichat.originType || 'webim';
 
             var json = {
                 from: conn.context.userId || ''
