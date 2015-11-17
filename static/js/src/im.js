@@ -1428,7 +1428,7 @@
                     "</div>";
                 
                 if ( !isHistory ) {
-                    if ( msg.ext.weichat.agent && msg.ext.weichat.agent.userNicename === '调度员' ) {
+                    if ( msg.ext.weichat && msg.ext.weichat.agent && msg.ext.weichat.agent.userNicename === '调度员' ) {
 
                     } else if ( msg.ext.weichat && msg.ext.weichat.queueName ) {
                         var n = msg.ext.weichat.queueName,
@@ -1445,11 +1445,10 @@
                     && msg.ext.weichat.event 
                     && msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' ) {//transfer msg
                         me.handleTransfer('transfer', wrapper);
-                    } else {//normal msg
-                        msg.ext.weichat
-                        && msg.ext.weichat.agent
-                        && msg.ext.weichat.agent.userNicename !== '调度员'
-                        && me.handleTransfer('reply', wrapper, msg.ext.weichat.agent);
+                    } else if ( msg.ext.weichat && msg.ext.weichat.agent) {//version23:normal msg
+                        msg.ext.weichat.agent.userNicename !== '调度员' && me.handleTransfer('reply', wrapper, msg.ext.weichat.agent);
+                    } else {//before v23:normal msg
+                        me.handleTransfer('reply');
                     }
                     if ( type === 'cmd' ) {
                         return;
