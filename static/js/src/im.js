@@ -5,7 +5,6 @@
 
 ;(function(window, undefined){
     'use strict';
-   
 
     var main = function(config) {
         var sendQueue = {};//记录技能组切换时的登录间隙所发送的消息
@@ -64,8 +63,12 @@
                 }
             }
             , getBase64: (function() {
-                var canvas = $('<canvas>').get(0),
-                    ctx = canvas.getContext("2d"),
+
+                var canvas = $('<canvas>').get(0);
+                if ( !canvas.getContext ) {
+                    return;
+                }
+                var ctx = canvas.getContext("2d"),
                     img = new Image();
 
                 return function(url, callback) {
@@ -73,7 +76,7 @@
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
                         ctx.drawImage(this, 0, 0);
                         typeof callback === 'function' && callback(canvas.toDataURL('image/png'));
-                    }
+                    };
                     img.src = url;
                 };
             }())
@@ -101,6 +104,9 @@
                 var ctrl_pressed = false,
                     me = this;
 
+                if ( me.isIE !== null && me.isIE < 11 ) {
+                    return;
+                }
                 $(document).on('keydown', function( e ) {
                     var ev = e.originalEvent,
                         k = ev.keyCode;
@@ -133,6 +139,8 @@
                             callback instanceof Function && callback();
                         }
                     }
+                    var word = pw.children().length === 0 ? pw.html() : pw.children().eq(0).html();
+                    me.textarea.val(me.textarea.val() + word);
                     pw.html('');
                 });
                 $('body').append(pw);
@@ -189,6 +197,7 @@
                 this.autoGrowOptions = {};
                 this.historyFirst = true;//第一次获取历史记录
                 this.msgTimeSpan = {};//用于处理1分钟之内的消息只显示一次时间
+                this.isIE = EasemobWidget.utils.getIEVersion();
                 
                 return this;
             }
@@ -526,8 +535,7 @@
                 var me = this;
 
                 //if lte ie 8 , return
-                var isIE = EasemobWidget.utils.getIEVersion();
-                if ( isIE !== null && isIE < 9 ) {
+                if ( me.isIE !== null && me.isIE < 9 ) {
                     this.audioSign.addClass('hide');
                     me.playaudio = function () {};
                     return;
@@ -733,7 +741,7 @@
                 EasemobWidget.utils.isMobile && me.textarea.autogrow(me.autoGrowOptions);
                 
                 //
-                me.textarea.on('keyup change', function(){
+                me.textarea.on('keyup change input', function(){
                     $(this).val() ? me.sendbtn.removeClass('disabled') : me.sendbtn.addClass('disabled');
                 })
                 .on('touchstart', function(){//防止android部分机型滚动条常驻，看着像bug ==b
