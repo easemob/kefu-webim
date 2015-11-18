@@ -145,7 +145,7 @@ button, textarea, input {
 .easemobWidget-msgcount.mutiCount {
     width: 22px;
     height: 17px;
-    font-size: 20px;
+    font-size: 14px;
     margin-top: -12px;
 }
 .easemobWidget-msgcount.mutiCount:after {

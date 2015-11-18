@@ -107,7 +107,8 @@
                 if ( me.isIE !== null && me.isIE < 11 ) {
                     return;
                 }
-                $(document).on('keydown', function( e ) {
+                
+                me.headBar.add($('#easemobWidgetSend')).add($('#easemobWidgetBody')).on('keydown', function( e ) {
                     var ev = e.originalEvent,
                         k = ev.keyCode;
 
@@ -117,6 +118,9 @@
                     if ( k === 86 ) {
                         if ( ctrl_pressed === true && !window.Clipboard ) {
                             pw.focus();
+                            setTimeout(function () {
+                                ctrl_pressed = false;
+                            }, 50);
                         }
                     }
                 });
@@ -124,6 +128,7 @@
                 var pw = $('<div>');
                 pw.attr('contenteditable', '');
                 pw.css({'opacity': 0, position: 'fixed', top: '-10px', left: '-10px', width: '1px', height: '1px', overflow: 'hidden'});
+                //pw.css({'opacity': 1, position: 'fixed', top: '0', left: '0', width: '100px', height: '40px', overflow: 'hidden', border: '1px solid'});
                 pw.on('DOMSubtreeModified', function() {
                     if ( !ctrl_pressed ) {
                         return true;
@@ -140,7 +145,7 @@
                         }
                     }
                     var word = pw.children().length === 0 ? pw.html() : pw.children().eq(0).html();
-                    me.textarea.val(me.textarea.val() + word);
+                    me.textarea.val(me.textarea.val() + word).change();
                     pw.html('');
                 });
                 $('body').append(pw);
@@ -1278,7 +1283,7 @@
             , addPrompt: function(detail){//未读消息提醒，以及让父级页面title滚动
                 if(!this.isOpened && this.msgCount > 0) {
                     if(this.msgCount > 9) {
-                        this.messageCount.addClass('mutiCount').html('...');
+                        this.messageCount.addClass('mutiCount').html('\…');
                     } else {
                         this.messageCount.removeClass('mutiCount').html(this.msgCount);
                     }
