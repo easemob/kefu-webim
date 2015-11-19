@@ -15,5 +15,78 @@
 
     "visitor" : {"id":0,"userId":"webim-visitor-MX9RKPXTR3","userPassword":"7WX9EYTHR3"},
 
-    "password" : "7WX9EYTHR3"
+    "password" : "7WX9EYTHR3",
+
+    "session" : {
+      "tenantId": 28,
+      "serviceSessionId": "77650ee7-d647-440f-802d-f6f9911f8ff1",
+      "techChannelId": 39,
+      "visitorUser": {
+        "tenantId": 28,
+        "userId": "2a5f52c0-70fd-413a-8797-1e5f2ca96a0d",
+        "userType": "Visitor",
+        "nicename": "79143abf78814fa9b76f2408e10dd6d7",
+        "username": null,
+        "techChannelType": null,
+        "techChannelId": 0,
+        "techChannelInfo": null,
+        "uri": null,
+        "chatGroupId": 0,
+        "trueName": null,
+        "sex": 0,
+        "qq": null,
+        "email": null,
+        "phone": null,
+        "companyName": null,
+        "description": null,
+        "weixin": null,
+        "createDateTime": null,
+        "lastUpdateDateTime": null,
+        "sendMessageCount": 0
+      },
+      "queueId": 28,
+      "chatRoomId": null,
+      "state": "Processing",
+      "chatGroupId": 78,
+      "messageSeqId": 1,
+      "agentUserId": "b554af42-6ee7-45f6-9156-2330e28c84df",
+      "agentUserNiceName": "Admin(Alex)",
+      "agentUserType": 1,
+      "startDateTime": "2015-11-18 20:57:46",
+      "stopDateTime": null,
+      "categoryId": 0,
+      "createDatetime": "2015-11-18 20:57:46",
+      "lastChatMessage": {
+        "msgId": "65c0584a-9df8-4bca-a5c6-49d59c576566",
+        "tenantId": 28,
+        "chatGroupId": 0,
+        "messageType": "ChatMessage",
+        "contentType": "application/easemob-msg",
+        "body": {
+          "bodies": [
+            {
+              "type": "txt",
+              "msg": "美女吧",
+              "type": "txt"
+            }
+          ],
+          "from": "79143abf78814fa9b76f2408e10dd6d7",
+          "to": "kefu_1108_1",
+          "channelType": "easemob",
+          "timestamp": 1447851466279,
+          "tenantId": 28,
+          "originType": "app",
+          "to_jid": "alexgreenbar#kefu_kefu_1108_1@easemob.com",
+          "msg_id": "130080240847290960",
+          "channel_id": 39
+        },
+        "chatGroupSeqId": 0,
+        "sessionServiceSeqId": 0,
+        "createDateTime": 1447851466705,
+        "timestamp": 1447851466000
+      },
+      "techChannelType": "easemob",
+      "firstMessage": null,
+      "subcategoryId": 0
+    }
 }

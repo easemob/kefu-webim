@@ -151,7 +151,7 @@ button, textarea, input {
 .easemobWidget-msgcount.mutiCount:after {
     content: 'M';
     position: relative;
-    top: 7px;
+    top: 6px;
     left: -4px;
     font-size: 24px;
 }
@@ -365,23 +365,32 @@ button, textarea, input {
     padding-bottom: 20px;
     overflow: hidden;
 }
-.easemobWidget-chat.link:after,
-.easemobWidget-chat.transfer:after {
-    padding: 5px 10px;
-    background-color: #ccc;
+.easemobWidget-status-prompt {
     position: fixed;
     bottom: 145px;
+    left: 0;
+}
+.easemobWidget-status-prompt.link:after,
+.easemobWidget-status-prompt.transfer:after {
+    z-index: 1;
+    padding: 5px 10px;
+    background-color: #ccc;
+    position: absolute;
+    bottom: 0;
     left: 5px;
     border-radius: 5px;
     color: #fff;
 }
-.easemobWidget-chat.transfer:after {
+.easemobWidget-status-prompt.transfer:after {
     content: '转接中...';
+    width: 52px;
 }
-.easemobWidget-chat.link:after {
+.easemobWidget-status-prompt.link:after {
     content: '正在为您分配客服，请稍等...';
+    width: 168px;
 }
 .easemobWidget-transferring {
+    z-index: 1;
     text-align: center;
     font-size: 12px;
     background-color: #ccc;
@@ -969,10 +978,16 @@ body .easemobWidget-offline-bg {
 .easemobWidgetWrapper-mobile .easemobWidgetHeader-wrapper > div {
     text-align: center;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-chat.link:after,
-.easemobWidgetWrapper-mobile .easemobWidget-chat.transfer:after {
-    left: 0;
+.easemobWidgetWrapper-mobile .easemobWidget-status-prompt {
     top: 0;
+    bottom: auto;
+    width: 100%;
+}
+.easemobWidgetWrapper-mobile .easemobWidget-status-prompt.link:after,
+.easemobWidgetWrapper-mobile .easemobWidget-status-prompt.transfer:after {
+    bottom: auto;
+    top: 0;
+    left: 0;
     border-radius: 0;
     width: 100%;
     font-size: 17px;

@@ -45,7 +45,7 @@
                 this.setTitle(config.json.emgroup ? config.json.emgroup : '');//设置im.html的标题
                 this.audioAlert();//init audio
                 this.mobileInit();//h5 适配，为防止media query不准确，js动态添加class
-                this.setOffline();//根据状态展示上下班不同view
+                //this.setOffline();//根据状态展示上下班不同view
                 this.bindEvents();//开始绑定dom各种事件
                 this.open();
 
@@ -61,6 +61,19 @@
                     curGroup = value;
                     handleGroupUser(curGroup);
                 }
+
+                this.getSession();
+            }
+            , getSession: function () {
+                var value = isGroupChat ? curGroup : 'normal';
+
+                $.when(EasemobWidget.api.getSession(userHash[value].user, config))
+                .done(function(info){
+                    userHash[value].session = info;
+                    this.setTitle('', {
+                        userNicename: info.agentUserNiceName
+                    });
+                });
             }
             , getBase64: (function() {
 
@@ -232,9 +245,11 @@
                     this.chatWrapper = curChatContainer;
                     this.setTitle(groupId);
                     curChatContainer.removeClass('hide').siblings('.easemobWidget-chat').addClass('hide');
+                    this.Im.find('#' + groupId + '-transfer').removeClass('hide').siblings('.easemobWidget-status-prompt').addClass('hide');
                 } else {
                     curChatContainer = $('<div data-start="0" data-history="1" id="' + groupId + '" class="easemobWidget-chat"></div>');
                     $('#normal').parent().prepend(curChatContainer);
+                    $('#normal').parent().parent().append('<div id="' + groupId + '-transfer" class="easemobWidget-status-prompt"></div>');
                     this.handleChatContainer(groupId);     
                 }
             }
@@ -811,6 +826,7 @@
                         });
                     } else {
                         me.chatWrapper.removeClass('hide').siblings().addClass('hide');
+                        me.Im.find('#' + me.chatWrapper.attr('id') + '-transfer').removeClass('hide').siblings('.easemobWidget-status-prompt').addClass('hide');
                         me.toggleChatWindow();
                         me.scrollBottom();
                     }
@@ -1161,18 +1177,22 @@
                 var wrap = wrapper || this.chatWrapper;
 
                 if ( action === 'sending' ) {
-                    if ( !userHash[key].firstMsg ) {
+                    if ( !userHash[key].firstMsg && !userHash[key].session ) {
                         userHash[key].firstMsg = true;
-                        wrap.addClass('link').removeClass('transfer');
-                        EasemobWidget.utils.isMobile && this.headBar.find('.js_drag').addClass('hide');
+                        this.Im.find('#' + wrap.attr('id') + '-transfer').addClass('link').removeClass('transfer');
+                        if ( EasemobWidget.utils.isMobile ) {
+                            this.headBar.find('.js_drag').addClass('hide');
+                        }
                     }
                 } else if ( action === 'transfer' ) {
-                    wrap.addClass('transfer').removeClass('link');
+                    this.Im.find('#' + wrap.attr('id') + '-transfer').addClass('transfer').removeClass('link');
                     EasemobWidget.utils.isMobile && this.headBar.find('.js_drag').addClass('hide');
                 } else if ( action === 'reply' ) {
-                    wrap.removeClass('transfer link');
+                    this.Im.find('#' + wrap.attr('id') + '-transfer').removeClass('transfer link');
                     info && this.setTitle('', info);
-                    EasemobWidget.utils.isMobile && this.headBar.find('.js_drag').removeClass('hide');
+                    if ( EasemobWidget.utils.isMobile ) {
+                        this.headBar.find('.js_drag').removeClass('hide');
+                    }
                 }
             }
             , sendTextMsg: function(msg, wrapper, isHistory) {
@@ -1585,6 +1605,7 @@
                     isGroupChat = false;
                     im.chatWrapper = $('#normal');
                     im.chatWrapper.removeClass('hide').siblings().addClass('hide');
+                    im.Im.find('#' + im.chatWrapper.attr('id') + '-transfer').removeClass('hide').siblings('.easemobWidget-status-prompt').addClass('hide');
                     if(config.user != userHash.normal.user) {
                         config.user = userHash.normal.user;
                         config.password = userHash.normal.password;

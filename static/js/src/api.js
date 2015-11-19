@@ -190,4 +190,23 @@ EasemobWidget.api = {
 
         return getUser;
     }
+    /*
+        get session
+    */
+    , getSession: function(user, obj) {
+        var getSession = $.Deferred(function(){
+            $.ajax({
+                url: '/v1/webimplugin/visitors/' + user + '/CurrentServiceSession?techChannelInfo=' + obj.orgName + '%23' + obj.appName + '%23' + obj.to + '&tenantId=' + obj.json.tenantId
+                , contentType: 'application/json'
+            })
+            .done(function(info) {
+                getSession.resolve(info);
+            })
+            .fail(function(){
+                getSession.reject();
+            });
+        });
+
+        return getSession;
+    }
 };
