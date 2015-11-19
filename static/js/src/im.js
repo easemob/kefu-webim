@@ -341,7 +341,6 @@
                 }
                 this.Im.addClass('easemobWidgetWrapper-mobile');
                 this.evaluate.addClass('hide');
-                this.audioSign.addClass('hide');
                 this.mobileLink.attr('href', location.href);
                 this.sendbtn.removeClass('disabled');
             }
@@ -530,7 +529,6 @@
                 this.fixedBtn = $('#easemobWidgetPopBar');
                 this.Im = $('.easemobWidgetWrapper');
                 this.pasteWrapper = $('.easemobWidget-paste-wrapper');
-                this.audio = $('audio').get(0);
                 this.chatWrapper = this.Im.find('.easemobWidget-chat');
                 this.textarea = this.Im.find('.easemobWidget-textarea');
                 this.sendbtn = this.Im.find('#easemobWidgetSendBtn');
@@ -555,15 +553,18 @@
                 var me = this;
 
                 //if lte ie 8 , return
-                if ( me.isIE !== null && me.isIE < 9 ) {
+                if ( me.isIE !== null && me.isIE < 9 || EasemobWidget.utils.isMobile ) {
                     this.audioSign.addClass('hide');
                     me.playaudio = function () {};
                     return;
                 }
-                if ( window.HTMLAudioElement && this.audio ) {
+                if ( window.HTMLAudioElement ) {
                     var ast = 0;
+                    
+                    me.audio = $('<audio src="static/mp3/msg.m4a"></audio>').get(0);
+
                     me.playaudio = function(){
-                        if ( (EasemobWidget.utils.isMin() ? false : me.isOpened) || ast !== 0 || me.silence || EasemobWidget.utils.isMobile) {
+                        if ( (EasemobWidget.utils.isMin() ? false : me.isOpened) || ast !== 0 || me.silence ) {
                             return;
                         }
                         ast = setTimeout(function() {
