@@ -65,12 +65,13 @@
                 this.getSession();
             }
             , getSession: function () {
-                var value = isGroupChat ? curGroup : 'normal';
+                var value = isGroupChat ? curGroup : 'normal',
+                    me = this;
 
                 $.when(EasemobWidget.api.getSession(userHash[value].user, config))
                 .done(function(info){
                     userHash[value].session = info;
-                    this.setTitle('', {
+                    me.setTitle('', {
                         userNicename: info.agentUserNiceName
                     });
                 });
@@ -1462,9 +1463,9 @@
                     "</div>";
                 
                 if ( !isHistory ) {
-                    if ( msg.ext.weichat && msg.ext.weichat.agent && msg.ext.weichat.agent.userNicename === '调度员' ) {
+                    if ( msg.ext && msg.ext.weichat && msg.ext.weichat.agent && msg.ext.weichat.agent.userNicename === '调度员' ) {
 
-                    } else if ( msg.ext.weichat && msg.ext.weichat.queueName ) {
+                    } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.queueName ) {
                         var n = msg.ext.weichat.queueName,
                             w = $('#' + n);
 
@@ -1475,12 +1476,13 @@
                         wrapper = $('#normal');
                     }
 
-                    if ( msg.ext.weichat 
+                    if ( msg.ext
+                    && msg.ext.weichat 
                     && msg.ext.weichat.event 
                     && msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' ) {//transfer msg
                         me.handleTransfer('transfer', wrapper);
-                    } else if ( msg.ext.weichat && msg.ext.weichat.agent) {//version23:normal msg
-                        msg.ext.weichat.agent.userNicename !== '调度员' && me.handleTransfer('reply', wrapper, msg.ext.weichat.agent);
+                    } else if ( msg.ext && msg.ext.weichat && (msg.ext.weichat.agent || msg.ext.weichat.agent === null) ) {//version23:normal msg
+                        msg.ext.weichat.agent && msg.ext.weichat.agent.userNicename !== '调度员' && me.handleTransfer('reply', wrapper, msg.ext.weichat.agent);
                     } else {//before v23:normal msg
                         me.handleTransfer('reply');
                     }
