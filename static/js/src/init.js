@@ -39,12 +39,18 @@ EasemobWidget.init = function(obj, callback) {
         obj.word = winfo && winfo.length ? winfo[0].optionValue : '';
 
         var curUser;
-        if(obj.root) {
-            curUser = Emc.getcookie('emKefuChannel') != (obj.to + '*' + obj.orgName + '*' + obj.appName) 
-                ? null 
-                : Emc.getcookie('emKefuUser');
+        if ( obj.root ) {
+            if ( Emc.getcookie('emKefuChannel') != (obj.to + '*' + obj.orgName + '*' + obj.appName) ) {
+                curUser = null;
+                Emc.setcookie('emKefuChannel', obj.to + '*' + obj.orgName + '*' + obj.appName);
+            } else {
+                if ( obj.json && obj.json.emgroup ) {
+                    curUser = Emc.getcookie(obj.json.emgroup);
+                } else {
+                    curUser = Emc.getcookie('emKefuUser');
+                }
+            }
 
-            Emc.setcookie('emKefuChannel', obj.to + '*' + obj.orgName + '*' + obj.appName);
         } else {
             curUser = obj.json.c != (obj.to + '*' + obj.orgName + '*' + obj.appName) 
                 ? null 

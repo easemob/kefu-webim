@@ -21,10 +21,20 @@
 
         //
         EasemobWidget.init(config, function() {
-            userHash.normal = {
-                user: config.user
-                , password: config.password
-            };
+            if ( config.root && config.json && config.json.emgroup ) {
+                isGroupChat = true;
+                curGroup = config.json.emgroup;
+                userHash[curGroup]  = {
+                    user: config.user
+                    , password: config.password
+                };
+            } else {
+                userHash.normal  = {
+                    user: config.user
+                    , password: config.password
+                };
+            }
+            
 
             im.init();
         });
@@ -67,14 +77,23 @@
             , getSession: function () {
                 var value = isGroupChat ? curGroup : 'normal',
                     me = this;
+                
 
-                $.when(EasemobWidget.api.getSession(userHash[value].user, config))
-                .done(function(info){
-                    userHash[value].session = info;
-                    me.setTitle('', {
-                        userNicename: info.agentUserNiceName
+                if ( userHash[value].session || userHash[value].session === null ) {
+                    (!isGroupChat || userHash[value].session) && me.setTitle('', userHash[value].agent);
+                } else {
+                    userHash[value].agent = userHash[value].agent || {};
+
+                    $.when(EasemobWidget.api.getSession(userHash[value].user, config))
+                    .done(function(info){
+                        userHash[value].session = info;
+                        userHash[value].agent.userNicename = info.agentUserNiceName;
+                        me.setTitle('', userHash[value].agent);
+                    })
+                    .fail(function(){
+                        userHash[value].session = null;
                     });
-                });
+                }
             }
             , getBase64: (function() {
 
@@ -475,9 +494,7 @@
                     , onAudioMessage: function(message) {
                         me.receiveMsg(message, 'audio');
                     }
-                    , onClosed: function() {
-                        //me.open();
-                    }
+                    , onClosed: function() {}
                     , onError: function(e){
                         e.reconnect && me.open();
                     }
@@ -1191,7 +1208,12 @@
                     EasemobWidget.utils.isMobile && this.headBar.find('.js_drag').addClass('hide');
                 } else if ( action === 'reply' ) {
                     this.Im.find('#' + wrap.attr('id') + '-transfer').removeClass('transfer link');
-                    info && this.setTitle('', info);
+                    if ( info ) {
+                        userHash[key].agent = userHash[key].agent || {};
+                        userHash[key].agent.userNicename = info.userNicename;
+                        userHash[key].agent.avatar = info.avatar;
+                        info && this.setTitle('', userHash[key].agent);
+                    }
                     if ( EasemobWidget.utils.isMobile ) {
                         this.headBar.find('.js_drag').removeClass('hide');
                     }
@@ -1550,7 +1572,7 @@
                    
 
                 im.open();
-
+                im.getSession();
                 //每次切换不在重新获取，除非用户trigger           
                 if (im.chatWrapper.data('hised')) return;
                 
@@ -1609,11 +1631,11 @@
                     im.chatWrapper = $('#normal');
                     im.chatWrapper.removeClass('hide').siblings().addClass('hide');
                     im.Im.find('#' + im.chatWrapper.attr('id') + '-transfer').removeClass('hide').siblings('.easemobWidget-status-prompt').addClass('hide');
-                    if(config.user != userHash.normal.user) {
+                    if ( config.user != userHash.normal.user ) {
                         config.user = userHash.normal.user;
                         config.password = userHash.normal.password;
                         im.open();
-                        im.setTitle();
+                        im.getSession();
                     }
                     im.group = false;
                     im.toggleChatWindow(curGroup ? 'show' : '');
@@ -1640,7 +1662,14 @@
                     }
 
                     im.handleGroup(value);
-                    handleGroupUser(curGroup);
+                    if ( userHash[curGroup].conn ) {
+                        config.user = userHash[curGroup].user;
+                        config.password = userHash[curGroup].password;
+                        im.open();
+                        im.getSession();
+                    } else {
+                        handleGroupUser(curGroup);
+                    }
                     isShowDirect ? im.toggleChatWindow('show') : im.toggleChatWindow();
                     break;
                 default: break;
