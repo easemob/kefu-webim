@@ -382,12 +382,12 @@ button, textarea, input {
     color: #fff;
 }
 .easemobWidget-status-prompt.transfer:after {
-    content: '转接中...';
-    width: 52px;
+    content: '转接中…';
+    width: 53px;
 }
 .easemobWidget-status-prompt.link:after {
-    content: '正在为您分配客服，请稍等...';
-    width: 168px;
+    content: '正在为您分配客服，请稍等…';
+    width: 169px;
 }
 .easemobWidget-transferring {
     z-index: 1;
@@ -941,14 +941,12 @@ body .easemobWidget-offline-bg {
     height: 80px\9;
     zoom: 50%\9;
 }
-.easemobWidget-satisfaction-dialog li:after {
-    content: 'H';
-    position: absolute;
+.easemobWidget-satisfaction-dialog li {
     font-size: 60px;
     left: -2.5px;
     color: #ccc;
 }
-.easemobWidget-satisfaction-dialog li.sel:after {
+.easemobWidget-satisfaction-dialog li.sel {
     color: #ffb31a;
 }
 .easemobWidget-satisfaction-dialog textarea {

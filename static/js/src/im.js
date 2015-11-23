@@ -748,8 +748,8 @@
                         par = that.parent(),
                         temp = par.find('li');
 
-                    for(var i=0;i<5;i++) {
-                        if(i <= that.index()) {
+                    for ( var i = 0; i < 5; i++ ) {
+                        if ( i <= that.index() ) {
                             temp.eq(i).addClass('sel');
                         } else {
                             temp.eq(i).removeClass('sel');
