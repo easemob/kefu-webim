@@ -55,7 +55,7 @@
                 this.setTitle(config.json.emgroup ? config.json.emgroup : '');//设置im.html的标题
                 this.audioAlert();//init audio
                 this.mobileInit();//h5 适配，为防止media query不准确，js动态添加class
-                //this.setOffline();//根据状态展示上下班不同view
+                this.setOffline();//根据状态展示上下班不同view
                 this.bindEvents();//开始绑定dom各种事件
                 this.open();
 
@@ -285,11 +285,11 @@
                             @param2(boolean); true: 历史记录
                             @param3(dom); 需要append消息的wrapper 
                         */
-                        im.addDate(v.timestamp || v.body.timestamp, true, wrapper);
                         var msg = v.body;
 
                         if(v.body && v.body.bodies.length > 0) {
                             msg = v.body.bodies[0];
+                            msg.type != 'cmd' && im.addDate(v.timestamp || v.body.timestamp, true, wrapper);
                             if(v.body.from && v.body.from.indexOf('webim-visitor') > -1) {
 
                                 //访客发送的满意度评价不在历史记录中展示
@@ -430,7 +430,7 @@
                     config.word && me.word.removeClass('hide');
                     me.chatWrapper.parent().removeClass('hide');
                     me.sendbtn.parent().removeClass('hide');
-                    me.dutyStatus.html('(在线)');
+                    //me.dutyStatus.html('(在线)');
                     me.fixedBtn.find('a').removeClass('easemobWidget-offline-bg');
                     return;
                 }
@@ -439,7 +439,7 @@
                 me.word.addClass('hide');
                 me.chatWrapper.parent().addClass('hide');
                 me.sendbtn.parent().addClass('hide');
-                me.dutyStatus.html('(离线)');
+                //me.dutyStatus.html('(离线)');
             }
             , toggleChatWindow: function(windowStatus) {
                 var me = this;
