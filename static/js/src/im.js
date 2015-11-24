@@ -1506,7 +1506,11 @@
                     && msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' ) {//transfer msg
                         me.handleTransfer('transfer', wrapper);
                     } else if ( msg.ext && msg.ext.weichat && (msg.ext.weichat.agent || msg.ext.weichat.agent === null) ) {//version23:normal msg
-                        msg.ext.weichat.agent && msg.ext.weichat.agent.userNicename !== '调度员' && me.handleTransfer('reply', wrapper, msg.ext.weichat.agent);
+                        if ( msg.ext.weichat.agent === null ) {//switch off
+                            me.handleTransfer('reply', wrapper);
+                        } else {//switch on
+                            msg.ext.weichat.agent && msg.ext.weichat.agent.userNicename !== '调度员' && me.handleTransfer('reply', wrapper, msg.ext.weichat.agent);
+                        }
                     } else {//before v23:normal msg
                         me.handleTransfer('reply');
                     }
