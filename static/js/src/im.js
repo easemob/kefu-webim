@@ -1693,7 +1693,7 @@
 
             return new SWFUpload({ 
                 file_post_name: 'file'
-                , flash_url: "js/swfupload/swfupload.swf"
+                , flash_url: "static/js/swfupload/swfupload.swf"
                 , button_placeholder_id: fileInputId
                 , button_width: uploadBtn.width() || 120
                 , button_height: uploadBtn.height() || 30
