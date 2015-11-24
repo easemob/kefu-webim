@@ -57,19 +57,20 @@
                 this.mobileInit();//h5 适配，为防止media query不准确，js动态添加class
                 this.setOffline();//根据状态展示上下班不同view
                 this.bindEvents();//开始绑定dom各种事件
-                this.open();
 
                 this.getHistory(0, $('#normal'), function(wrapper, info){//
                     config.history = info;
                     im.handleHistory(wrapper);
                 });
-                if(config.json.emgroup && config.root) {//处理技能组
+                if(config.json && config.json.emgroup && config.root) {//处理技能组
                     var value = config.json.emgroup;
                     this.handleGroup(value);
                     userHash[value] = userHash[value] || {};
                     userHash[value].user = Emc.getcookie(value);
                     curGroup = value;
                     handleGroupUser(curGroup);
+                } else {
+                    this.open();
                 }
 
                 this.getSession();
@@ -924,7 +925,7 @@
                     }
                     me.faceWrapper.parent().addClass('hide');
                     me.sendTextMsg();
-                    me.textarea.css({
+                    EasemobWidget.utils.isMobile && me.textarea.css({
                         height: '34px'
                         , overflowY: 'hidden'
                     }).focus();
@@ -1169,6 +1170,7 @@
                 me.addDate();
                 me.chatWrapper.append(temp);
                 me.chatWrapper.find('img:last').on('load', me.scrollBottom);
+                me.realfile.val('');
             }
             , encode: function(str, history){
                 if (!str || str.length === 0) return "";

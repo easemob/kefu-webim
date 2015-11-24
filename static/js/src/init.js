@@ -81,7 +81,15 @@ EasemobWidget.init = function(obj, callback) {
             .done(function(info){
                 obj.user = info.userId;
                 obj.password = info.userPassword;
-                obj.root ? Emc.setcookie('emKefuUser', obj.user) : message.sendToParent('setuser@' + obj.user);
+                if ( obj.root ) {
+                    if ( obj.json && obj.json.emgroup ) {
+                        Emc.setcookie(obj.json.emgroup, obj.user);
+                    } else {
+                        Emc.setcookie('emKefuUser', obj.user);
+                    }
+                } else {
+                    message.sendToParent('setuser@' + obj.user);
+                }
                 typeof callback == 'function' && callback();
             });
         }
