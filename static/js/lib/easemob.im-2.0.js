@@ -295,7 +295,7 @@
             }
 
             , parseLink: function(msg) {
-                var reg = new RegExp('(http(s)?:\/\/|www[.])[a-zA-Z0-9-]+[.][0-9a-zA-Z]+(([/]?[a-zA-Z0-9-]+[.]?[a-zA-Z0-9]*)+)?([/]?[?]?[_0-9a-zA-Z&=#]+)?', 'gm');
+                var reg = /(https?\:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(\:[0-9]{2,4})?\/?((\.[0-9a-zA-Z]+)|[0-9a-zA-Z]*\/?)*\??[#@*&%0-9a-zA-Z/=]*/gm;
                 var res = msg.match(reg);
                 var src = res && res[0] ? res[0] : ''; 
                 if(res && res.length) {

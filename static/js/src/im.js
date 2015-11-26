@@ -622,8 +622,7 @@
 
                 //orientation
                 $(window).on('orientationchange', function() {
-                    me.textarea.blur();
-                    me.scrollBottom( 500 );
+                    //setTimeout(me.textarea.focus, 1000);
                 });
 
                 //add hove fix theme
@@ -784,16 +783,45 @@
                 me.textarea.on('keyup change input', function(){
                     $(this).val() ? me.sendbtn.removeClass('disabled') : me.sendbtn.addClass('disabled');
                 })
-                .on('touchstart', function(){//防止android部分机型滚动条常驻，看着像bug ==b
-                    me.scrollBottom(800);
-                    me.textarea.css('overflow-y', 'auto');
-                })
-                .on('blur', function(){});
+                .on("keydown", function(evt){//hot key
+                    var that = $(this);
+                    if((EasemobWidget.utils.isMobile && evt.keyCode == 13) 
+                        || (evt.ctrlKey && evt.keyCode == 13) 
+                        || (evt.shiftKey && evt.keyCode == 13)) {
 
-                EasemobWidget.utils.isMobile && me.textarea.on('input', function(){
-                    me.autoGrowOptions.update();
-                    me.scrollBottom(800);
+                        that.val($(this).val()+'\n');
+                        return false;
+                    } else if(evt.keyCode == 13) {
+                        me.faceWrapper.parent().addClass('hide');
+                        if(me.sendbtn.hasClass('disabled')) {
+                            return false;
+                        }
+                        me.sendTextMsg();
+                        setTimeout(function(){
+                            that.val('');
+                        }, 0);
+                    }
                 });
+                if ( EasemobWidget.utils.isMobile ) {
+                    var handleFocus = function () {
+                        me.textarea.css('overflow-y', 'auto');
+                        var scrollTimer = function () {
+                            $('html, body').scrollTop(me.textarea.offset().top + 47);
+                            me.focusText = setTimeout(scrollTimer, 200);
+                        };
+                        scrollTimer();
+                        me.scrollBottom(800);
+                    }
+                    me.textarea.on('input', function(){
+                        me.autoGrowOptions.update();
+                        me.scrollBottom(800);
+                    })
+                    .on('focus', handleFocus)
+                    .one('touchstart', handleFocus)//防止android部分机型滚动条常驻，看着像bug ==b
+                    .on('blur', function(){
+                        clearTimeout(me.focusText);
+                    })
+                }
 
                 //最小化按钮的多态
                 me.min.on('mouseenter mouseleave', function(){
@@ -874,8 +902,7 @@
                 });
 
                 //主要用于移动端触发virtual keyboard的收起
-                $('.e-face, .easemobWidgetBody-wrapper')
-                .on('touchstart', function(e){
+                $('.e-face').on('touchstart', function(e){
                     me.textarea.blur();
 
                     //此坑用于防止android部分机型滚动条常驻，看着像bug ==b
@@ -896,27 +923,6 @@
                 })
                 .on('mouseleave', function(){
                     EasemobWidget.utils.isMobile || $(this).removeClass('theme-color');
-                });
-
-                //hot key
-                me.textarea.on("keydown", function(evt){
-                    var that = $(this);
-                    if((EasemobWidget.utils.isMobile && evt.keyCode == 13) 
-                        || (evt.ctrlKey && evt.keyCode == 13) 
-                        || (evt.shiftKey && evt.keyCode == 13)) {
-
-                        that.val($(this).val()+'\n');
-                        return false;
-                    } else if(evt.keyCode == 13) {
-                        me.faceWrapper.parent().addClass('hide');
-                        if(me.sendbtn.hasClass('disabled')) {
-                            return false;
-                        }
-                        me.sendTextMsg();
-                        setTimeout(function(){
-                            that.val('');
-                        }, 0);
-                    }
                 });
 
                 me.sendbtn.on('click', function(){

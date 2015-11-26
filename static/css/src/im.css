@@ -108,7 +108,7 @@ button, textarea, input {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: #fff;
+    background: transparent;
 }
 /*header*/
 .easemobWidgetHeader-wrapper {
@@ -259,7 +259,7 @@ button, textarea, input {
     word-break: break-all;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-inline-box;
+    display: inline-block;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 }
@@ -1004,7 +1004,7 @@ body .easemobWidget-offline-bg {
     top: 4px;
 }
 .easemobWidgetWrapper-mobile .easemobWidget-chat {
-    padding-bottom: 50px;
+    /*padding-bottom: 50px;*/
 }
 .easemobWidgetWrapper-mobile .easemobWidgetHeader {
     font-size: 17px;
@@ -1056,14 +1056,8 @@ body .easemobWidget-offline-bg {
     top: auto;
     bottom: 8px;
 }
-.easemobWidgetWrapper-mobile .easemobWidgetSend {
-    height: auto;
-    padding: 3px 80px 3px 36px;
-    box-sizing: border-box;
-    background-color: #fff;
-    box-shadow: 0 -1px 0 #e5e5e5;
-}
 .easemobWidgetWrapper-mobile .easemobWidget-send-wrapper {
+    position: absolute;
     height: auto;
     padding: 3px 80px 3px 36px;
     box-sizing: border-box;
