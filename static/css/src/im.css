@@ -108,7 +108,8 @@ button, textarea, input {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: transparent;
+    background-color: #fff;
+    border-radius: 4px;
 }
 /*header*/
 .easemobWidgetHeader-wrapper {
