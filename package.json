@@ -7,7 +7,7 @@
     "url": "http://easemob.com/"
   },
   "devDependencies": {
-    "gulp": "~3.9.0",
+    "gulp": "",
     "gulp-minify-css": "",
     "gulp-clean": "",
     "gulp-jshint": "~1.12.0",
