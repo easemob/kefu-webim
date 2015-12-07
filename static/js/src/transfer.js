@@ -41,7 +41,7 @@ easemobIM.Transfer = (function () {
                 handleMsg(e, callback);
             }, false);
         } else if ( window.attachEvent ) {
-            window.attachEvent('message', function ( e ) {
+            window.attachEvent('onmessage', function ( e ) {
                 handleMsg(e, callback);
             });
         }
