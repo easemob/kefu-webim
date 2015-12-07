@@ -73,6 +73,25 @@ gulp.task('uglify', function() {
     gulp.src('static/js/src/easemob.utils.js')
     .pipe(uglify())
     .pipe(gulp.dest('static/js/'));
+
+    gulp.src([
+        'static/js/src/strophe.js',
+        'static/js/src/easemob.im-2.0.js',
+        'static/js/swfupload/swfupload.min.js',
+        'static/js/src/transfer.js',
+    ])
+    .pipe(concat('em-open.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('static/js/'));
+
+    gulp.src([
+        'static/js/src/ajax.js',
+        'static/js/src/transfer.js',
+        'static/js/src/test.js',
+    ])
+    .pipe(concat('em-transfer.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('static/js/'));
 });
 
 
