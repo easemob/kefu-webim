@@ -81,7 +81,7 @@ gulp.task('uglify', function() {
         'static/js/src/transfer.js',
     ])
     .pipe(concat('em-open.js'))
-    .pipe(uglify())
+    //.pipe(uglify())
     .pipe(gulp.dest('static/js/'));
 
     gulp.src([

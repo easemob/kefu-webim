@@ -90,6 +90,15 @@
 window.easemobIM = window.easemobIM || function () {};
 easemobIM.Transfer = (function () {
     
+    var handleMsg = function ( e ) {
+        if ( JSON && JSON.parse ) {
+            var msg = e.data;
+            msg = JSON.parse(msg);
+            this.targetOrigin = msg.data.origin;
+            typeof callback === 'function' && callback(msg);
+        }
+    };
+
     var Message = function ( iframeId ) {
         if ( !(this instanceof Message) ) {
              return new Message();
@@ -112,14 +121,11 @@ easemobIM.Transfer = (function () {
     };
 
     Message.prototype.listen = function ( callback ) {
-        window.onmessage = function ( e ) {
-            if ( JSON && JSON.parse ) {
-                var msg = e.data;
-                msg = JSON.parse(msg);
-                this.targetOrigin = msg.data.origin;
-                typeof callback === 'function' && callback(msg);
-            }
-        };
+        if ( window.addEventListener ) {
+            window.addEventListener('message', handleMsg, false);
+        } else if ( window.attachEvent ) {
+            window.attachEvent('message', handleMsg);
+        }
         return this;
     };
 
