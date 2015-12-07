@@ -90,7 +90,7 @@ gulp.task('uglify', function() {
         'static/js/src/test.js',
     ])
     .pipe(concat('em-transfer.js'))
-    .pipe(uglify())
+    //.pipe(uglify())
     .pipe(gulp.dest('static/js/'));
 });
 
