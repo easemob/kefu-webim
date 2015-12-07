@@ -4,7 +4,7 @@
 window.easemobIM = window.easemobIM || function () {};
 easemobIM.Transfer = (function () {
     
-    var handleMsg = function ( e ) {
+    var handleMsg = function ( e, callback ) {
         if ( JSON && JSON.parse ) {
             var msg = e.data;
             msg = JSON.parse(msg);
@@ -35,10 +35,15 @@ easemobIM.Transfer = (function () {
     };
 
     Message.prototype.listen = function ( callback ) {
+
         if ( window.addEventListener ) {
-            window.addEventListener('message', handleMsg, false);
+            window.addEventListener('message', function ( e ) {
+                handleMsg(e, callback);
+            }, false);
         } else if ( window.attachEvent ) {
-            window.attachEvent('message', handleMsg);
+            window.attachEvent('message', function ( e ) {
+                handleMsg(e, callback);
+            });
         }
         return this;
     };
