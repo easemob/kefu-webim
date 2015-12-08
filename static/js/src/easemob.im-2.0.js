@@ -795,13 +795,12 @@
                 var type = options.type || "POST";
                 xhr.open(type, options.url);
 
-                var headers = options.headers || {};
-                for(var key in headers){
-                    if(Utils.isCanSetRequestHeader()){
-                        xhr.setRequestHeader(key, headers[key]);
-                    } else {
-                        error('',xhr,"当前浏览器不支持设置header");
-                        return null;
+                if ( Utils.isCanSetRequestHeader() ) {
+                    var headers = options.headers || {};
+                    for ( var key in headers ) {
+                        if ( headers.hasOwnProperty(key) ) {
+                            xhr.setRequestHeader(key, headers[key]);
+                        }
                     }
                 }
 
