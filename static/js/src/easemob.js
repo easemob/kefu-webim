@@ -341,7 +341,9 @@
         shadow.style.bottom = iframePosition.y + 'px';
         shadow.style.display = 'none';
         iframe.style.display = 'block';
-        message.sendToIframe('dragend');
+        setTimeout(function () {
+            message.sendToIframe('dragend');
+        }, 3000);
     };
        
     var resize = function() {
