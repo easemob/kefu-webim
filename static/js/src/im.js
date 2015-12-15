@@ -76,9 +76,13 @@
                 this.getSession();
             }
             , getSession: function () {
+
+                if ( config.offline ) {
+                    return;
+                }
+
                 var value = isGroupChat ? curGroup : 'normal',
                     me = this;
-                
 
                 if ( userHash[value].session || userHash[value].session === null ) {
                     (!isGroupChat || userHash[value].session) && me.setTitle('', userHash[value].agent);
@@ -209,6 +213,11 @@
                 //return new Easemob.im.Connection({url: 'http://im-api.easemob.com/http-bind/'});
             }
             , getHistory: function(from, wrapper, callback) {
+
+                if ( config.offline ) {
+                    return;
+                }
+
                 var me = this;
                 wrapper = wrapper || im.chatWrapper;
 
@@ -337,12 +346,12 @@
                     }
                 }
             }
-            , setTitle: function(title, info){
+            , setTitle: function ( title, info ) {
                 var nickName = this.headBar.find('.easemobWidgetHeader-nickname'),
                     avatar = this.headBar.find('.easemobWidgetHeader-portrait');
 
                 nickName.html(info && info.userNicename ? info.userNicename : (config.tenantName + (title ? '-' + title : '')));
-                avatar.attr('src', info && info.avatar ? info.avatar : 'static/img/avatar2.png').removeClass('hide');
+                avatar.attr('src', info && info.avatar ? info.avatar : config.avatar).removeClass('hide');
                 document.title = nickName.html() + (title ? '' : '-客服');
             }
             , mobileInit: function(){
@@ -761,7 +770,11 @@
                 //机器人列表
                 me.Im.on(click, '.js_robertbtn button', function(){
                     var that = $(this);
-                    me.sendTextMsg(that.html());
+                    me.sendTextMsg(that.html(), null, null, {
+                        msgtype: {
+                            choice: { menuid: that.data('id') }
+                        }
+                    });
                     return false;
                 });
 
@@ -1227,7 +1240,7 @@
                     }
                 }
             }
-            , sendTextMsg: function(msg, wrapper, isHistory) {
+            , sendTextMsg: function(msg, wrapper, isHistory, ext) {
                
  
                 var me = this;
@@ -1279,6 +1292,7 @@
                     id: msgid
                     , to: config.to
                     , msg: txt
+                    , ext: ext || {}
                     , type : 'chat'
                     , success: function(id) {
                         $('#' + id).find('.easemobWidget-msg-loading').addClass('hide');
@@ -1477,11 +1491,11 @@
                                         + '</div>';
                                     break;
                                 case 'robertList':
-                                    if(msg.ext.msgtype.choice.list.length > 0) {
-                                        var list = msg.ext.msgtype.choice.list;
+                                    if(msg.ext.msgtype.choice.items.length > 0) {
+                                        var list = msg.ext.msgtype.choice.items;
                                         str = '<div class="easemobWidget-list-btn js_robertbtn">';
                                         for(var i=0,l=list.length;i<l;i++) {
-                                            str += '<button>' + list[i] + '</button>';
+                                            str += '<button data-id="' + list[i].id + '">' + list[i].name + '</button>';
                                         }
                                         str += '</div>';
                                     }
@@ -1491,8 +1505,9 @@
                             return str;
                         }()) +
                     "</div>";
-                
-                if ( !isHistory ) {
+                if ( config.offline ) {
+                    return;
+                } else if ( !isHistory ) {
                     if ( msg.ext && msg.ext.weichat && msg.ext.weichat.agent && msg.ext.weichat.agent.userNicename === '调度员' ) {
 
                     } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.queueName ) {

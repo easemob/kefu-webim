@@ -37,7 +37,7 @@ button, textarea, input {
 @font-face {
     font-family: 'easemobim';
     src: url("font/iconfont.eot") ;
-    src: url("font/iconfont.eot?#iefix")  format('embedded-opentype'),
+    src: url('//at.alicdn.com/t/font_1446550811_550383.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
     url("font/iconfont.svg")  format('svg'),
     url("font/iconfont.woff")  format('woff'),
     url("font/iconfont.ttf")  format('truetype');
