@@ -849,13 +849,13 @@
                 , id: message.id
                 , xmlns: "jabber:client"
             }).c("body").t(jsonstr);
-            setTimeout(function() {//40s retry 4times
+            setTimeout(function() {//40s retry
                 if(_msgHash[message.id]) {
                     if(typeof _msgHash[message.id].timeout == 'undefined') {
-                        _msgHash[message.id].timeout = 4;
+                        _msgHash[message.id].timeout = 2;
                     }
                     if(_msgHash[message.id].timeout == 0) {
-                        _msgHash[message.id].timeout = 4;
+                        _msgHash[message.id].timeout = 2;
                         _msgHash[message.id].msg.fail instanceof Function 
                         && _msgHash[message.id].msg.fail(message.id);
                     } else {
@@ -863,7 +863,7 @@
                         _send(message);
                     }
                 }
-            }, 10000);
+            }, 20000);
             conn.sendCommand(dom.tree(), message.id);
         }
 

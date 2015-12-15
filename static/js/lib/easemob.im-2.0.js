@@ -294,8 +294,29 @@
                     : str.replace(/^\s|\s$/g, '');
             }
 
+            , parseEmotions: function ( msg ) {
+                if ( typeof Easemob.im.EMOTIONS === 'undefined' || typeof Easemob.im.EMOTIONS.map === 'undefined' ) {
+                    return msg;
+                } else {
+                    var emotion = Easemob.im.EMOTIONS,
+                        reg = null;
+                    msg = msg.replace(/&amp;/g, '&');
+                    msg = msg.replace(/&#39;/g, '\'');
+                    msg = msg.replace(/&lt;/g, '<');
+
+                    for ( var face in emotion.map ) {
+                        if ( emotion.map.hasOwnProperty(face) ) {
+                            while ( msg.indexOf(face) >= 0 ) {
+                                msg = msg.replace(face, '<img src="' + emotion.path + emotion.map[face] + '" alt="表情">');
+                            }
+                        }
+                    }
+                    return msg;
+                }
+            }
+
             , parseLink: function(msg) {
-                var reg = /(https?\:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(\:[0-9]{2,4})?\/?((\.[0-9a-zA-Z]+)|[0-9a-zA-Z]*\/?)*\??[#@*&%0-9a-zA-Z/=]*/gm;
+                var reg = /(https?\:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(\:[0-9]{2,4})?\/?((\.[0-9a-zA-Z-]+)|[0-9a-zA-Z-]*\/?)*\??[#@*&%0-9a-zA-Z-/=]*/gm;
                 var res = msg.match(reg);
                 var src = res && res[0] ? res[0] : ''; 
                 if(res && res.length) {
@@ -774,13 +795,12 @@
                 var type = options.type || "POST";
                 xhr.open(type, options.url);
 
-                var headers = options.headers || {};
-                for(var key in headers){
-                    if(Utils.isCanSetRequestHeader()){
-                        xhr.setRequestHeader(key, headers[key]);
-                    } else {
-                        error('',xhr,"当前浏览器不支持设置header");
-                        return null;
+                if ( Utils.isCanSetRequestHeader() ) {
+                    var headers = options.headers || {};
+                    for ( var key in headers ) {
+                        if ( headers.hasOwnProperty(key) ) {
+                            xhr.setRequestHeader(key, headers[key]);
+                        }
                     }
                 }
 
@@ -829,13 +849,13 @@
                 , id: message.id
                 , xmlns: "jabber:client"
             }).c("body").t(jsonstr);
-            setTimeout(function() {//40s retry 4times
+            setTimeout(function() {//40s retry
                 if(_msgHash[message.id]) {
                     if(typeof _msgHash[message.id].timeout == 'undefined') {
-                        _msgHash[message.id].timeout = 4;
+                        _msgHash[message.id].timeout = 2;
                     }
                     if(_msgHash[message.id].timeout == 0) {
-                        _msgHash[message.id].timeout = 4;
+                        _msgHash[message.id].timeout = 2;
                         _msgHash[message.id].msg.fail instanceof Function 
                         && _msgHash[message.id].msg.fail(message.id);
                     } else {
@@ -843,7 +863,7 @@
                         _send(message);
                     }
                 }
-            }, 10000);
+            }, 20000);
             conn.sendCommand(dom.tree(), message.id);
         }
 
