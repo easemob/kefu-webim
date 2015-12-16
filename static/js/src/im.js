@@ -1491,11 +1491,11 @@
                                         + '</div>';
                                     break;
                                 case 'robertList':
-                                    if(msg.ext.msgtype.choice.items.length > 0) {
-                                        var list = msg.ext.msgtype.choice.items;
+                                    var robertV = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
+                                    if ( robertV.length > 0 ) {
                                         str = '<div class="easemobWidget-list-btn js_robertbtn">';
-                                        for(var i=0,l=list.length;i<l;i++) {
-                                            str += '<button data-id="' + list[i].id + '">' + list[i].name + '</button>';
+                                        for(var i=0,l=robertV.length;i<l;i++) {
+                                            str += '<button data-id="' + robertV[i].id + '">' + (robertV[i].name || robertV[i]) + '</button>';
                                         }
                                         str += '</div>';
                                     }
