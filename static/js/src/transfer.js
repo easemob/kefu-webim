@@ -18,7 +18,7 @@ easemobIM.Transfer = (function () {
              return new Message();
         }
         this.iframe = document.getElementById(iframeId);
-        this.origin = location.protocol + '//' + document.domain + location.port;
+        this.origin = location.protocol + '//' + document.domain + (location.port ? ':' + location.port : '');
     };
 
     Message.prototype.send = function ( msg ) {

@@ -1,10 +1,10 @@
 ;(function () {
     var getData = new easemobIM.Transfer();
 
-    var createObject = function ( url, msg, type ) {
+    var createObject = function ( url, msg, type, excludeData ) {
         return {
             url: url
-            , data: msg.data
+            , data: excludeData ? null : msg.data
             , type: type || 'GET'
             , success: function ( info ) {
                 try {
@@ -44,13 +44,13 @@
                 easemobIM.emajax(createObject('/v1/webimplugin/visitors', msg, 'POST'));
                 break;
             case 'getSession':
-                easemobIM.emajax(createObject('/v1/webimplugin/visitors/' + msg.data.id + '/CurrentServiceSession?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId, msg));
+                easemobIM.emajax(createObject('/v1/webimplugin/visitors/' + msg.data.id + '/CurrentServiceSession?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId, msg, true));
                 break;
             case 'getPassword':
                 easemobIM.emajax(createObject('/v1/webimplugin/visitors/password', msg));
                 break;
             case 'getGroup':
-                easemobIM.emajax(createObject('/v1/webimplugin/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId, msg));
+                easemobIM.emajax(createObject('/v1/webimplugin/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId, msg, true));
                 break;
             case 'getHistory':
                 easemobIM.emajax(createObject('/v1/webimplugin/visitors/msgHistory', msg));
