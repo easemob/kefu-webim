@@ -62,7 +62,7 @@
             data = options.data || {},
             tempData = '';
 
-        if ( type === 'GET' ) {
+        if ( type.toLowerCase() === 'get' ) {
             for ( var o in data ) {
                 if ( data.hasOwnProperty(o) ) {
                     tempData += o + '=' + data[o] + '&';

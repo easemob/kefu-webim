@@ -1,18 +1,18 @@
 ;(function () {
     var getData = new easemobIM.Transfer();
 
-    var createObject = function ( url, msg, type, excludeData ) {
+    var createObject = function ( options ) {
         return {
-            url: url
-            , data: excludeData ? null : msg.data
-            , type: type || 'GET'
+            url: options.url
+            , data: options.excludeData ? null : options.msg.data
+            , type: options.type || 'GET'
             , success: function ( info ) {
                 try {
                     info = JSON.parse(info);
                 } catch ( e ) {}
                 getData.send({
-                    call: msg.api
-                    , timespan: msg.timespan
+                    call: options.msg.api
+                    , timespan: options.msg.timespan
                     , status: 0
                     , data: info
                 });
@@ -22,7 +22,7 @@
                     info = JSON.parse(info);
                 } catch ( e ) {}
                 getData.send({
-                    call: msg.api
+                    call: options.msg.api
                     , status: 1
                     , data: info
                 });
@@ -35,25 +35,55 @@
 
         switch ( msg.api ) {
             case 'getRelevanceList':
-                easemobIM.emajax(createObject('/v1/webimplugin/targetChannels', msg));
+                easemobIM.emajax(createObject({
+                    url: '/v1/webimplugin/targetChannels', 
+                    msg: msg
+                }));
                 break;
             case 'getDutyStatus':
-                easemobIM.emajax(createObject('/v1/webimplugin/timeOffDuty', msg));
+                easemobIM.emajax(createObject({
+                    url: '/v1/webimplugin/timeOffDuty',
+                    msg: msg
+                }));
                 break;
             case 'createVisitor':
-                easemobIM.emajax(createObject('/v1/webimplugin/visitors', msg, 'POST'));
+                easemobIM.emajax(createObject({
+                    url: '/v1/webimplugin/visitors',
+                    msg: msg,
+                    type: 'POST'
+                }));
                 break;
             case 'getSession':
-                easemobIM.emajax(createObject('/v1/webimplugin/visitors/' + msg.data.id + '/CurrentServiceSession?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId, msg, true));
+                easemobIM.emajax(createObject({
+                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/CurrentServiceSession?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
+                    msg: msg,
+                    excludeData: true
+                }));
                 break;
             case 'getPassword':
-                easemobIM.emajax(createObject('/v1/webimplugin/visitors/password', msg));
+                easemobIM.emajax(createObject({
+                    url: '/v1/webimplugin/visitors/password',
+                    msg: msg
+                }));
                 break;
             case 'getGroup':
-                easemobIM.emajax(createObject('/v1/webimplugin/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId, msg, true));
+                easemobIM.emajax(createObject({
+                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
+                    msg: msg,
+                    excludeData: true
+                }));
                 break;
             case 'getHistory':
-                easemobIM.emajax(createObject('/v1/webimplugin/visitors/msgHistory', msg));
+                easemobIM.emajax(createObject({
+                    url: '/v1/webimplugin/visitors/msgHistory',
+                    msg: msg
+                }));
+                break;
+            case 'getSlogan':
+                easemobIM.emajax(createObject({
+                    url: '/v1/webimplugin/notice/options',
+                    msg: msg
+                }));
                 break;
             default:
                 break;
