@@ -158,6 +158,7 @@ button, textarea, input {
 }
 .easemobWidgetHeader-portrait {
     width: 30px;
+    height: 30px;
     vertical-align: middle;
     margin: -2px -8px 0 5px;
     border-radius: 50%;
