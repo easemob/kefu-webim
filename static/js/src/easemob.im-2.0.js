@@ -1330,6 +1330,34 @@
             this.onInviteMessage = options.onInviteMessage || EMPTYFN;
         }
 
+        connection.prototype.heartBeat = function ( conn ) {
+            var options = {
+                to : conn.domain,
+                type : "normal"
+            };
+            conn.heartBeatID = setInterval(function () {
+                conn.sendHeartBeatMessage(options);
+            }, 60000);
+        };
+
+        connection.prototype.sendHeartBeatMessage = function ( options ) {
+            var json = {},
+                jsonstr = Utils.stringify(json),
+                dom = $msg({
+                    to : options.to,
+                    type : options.type,
+                    id : this.getUniqueId(),
+                    xmlns : "jabber:client"
+                }).c("body").t(jsonstr);
+
+            this.sendCommand(dom.tree());
+        };
+
+        connection.prototype.stopHeartBeat = function ( conn ) {
+            clearInterval(conn.heartBeatID);
+        };
+
+
         connection.prototype.sendReceiptsMessage = function(options){
             var dom = $msg({
                 from: this.context.jid || ''

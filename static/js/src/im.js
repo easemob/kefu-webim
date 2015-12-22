@@ -485,6 +485,7 @@
                 conn.listen({
                     onOpened: function(){
                         conn.setPresence();
+                        conn.heartBeat(conn);
                         while(sendQueue[curGroup] && sendQueue[curGroup].length) {
                             conn.send(sendQueue[curGroup].pop());
                         }
@@ -506,7 +507,7 @@
                     }
                     , onClosed: function() {}
                     , onError: function(e){
-                        e.reconnect && me.open();
+                        e.reconnect ? me.open() : conn.stopHeartBeat(conn);
                     }
                 });
             }

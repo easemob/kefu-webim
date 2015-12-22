@@ -52,10 +52,10 @@ gulp.task('lint', function() {
 //compress
 gulp.task('uglify', function() {
     gulp.src([
-        'static/js/lib/jquery-1.11.1.js',
-        'static/js/lib/strophe.js',
-        'static/js/lib/easemob.im-2.0.js',
-        'static/js/lib/jquery.autogrow.js',
+        'static/js/src/jquery-1.11.1.js',
+        'static/js/src/strophe.js',
+        'static/js/src/easemob.im-2.0.js',
+        'static/js/src/jquery.autogrow.js',
         'static/js/src/easemob.utils.js',
         'static/js/src/const.js',
         'static/js/src/api.js',
