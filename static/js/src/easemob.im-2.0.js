@@ -307,7 +307,7 @@
                     for ( var face in emotion.map ) {
                         if ( emotion.map.hasOwnProperty(face) ) {
                             while ( msg.indexOf(face) >= 0 ) {
-                                msg = msg.replace(face, '<img src="' + emotion.path + emotion.map[face] + '" alt="表情">');
+                                msg = msg.replace(face, '<img class="em-emotion" src="' + emotion.path + emotion.map[face] + '" alt="表情">');
                             }
                         }
                     }
