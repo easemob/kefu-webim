@@ -5,6 +5,7 @@
  *      utils: 简单的工具类
  *      autogrow: 移动端输入框高度随内容变化的插件
  *      notify: 浏览器通知方法,仅支持该方法的浏览器可用
+ *      imgView: 点击图片放大
  *      ctrl + v粘贴发送截图: 仅pc端火狐，ie11，谷歌，safari等webkit内核浏览器支持
  *      聊天窗口拖拽
  *      satisfaction: 满意度评价
@@ -120,7 +121,7 @@
             utils.on(document, ev, function ( e ) {
                 var ev = e || window.event,
                     tar = ev.target || ev.srcElement,
-                    targetList = utils.$Class(target);
+                    targetList = target.split('.').length < 2 ? document.getElementsByTagName(target) : utils.$Class(target);
 
                 if ( targetList.length ) {
                     for ( var len = targetList.length, i = 0; i < len; i++ ) {
@@ -418,6 +419,41 @@
         swfupload = null,//flash 上传
         https = location.protocol == 'https:' ? true : false,
         click = config.mobile && ('ontouchstart' in window) ? 'touchstart' : 'click';
+
+
+    /**
+     * img view
+     */
+    var imgView = (function () {
+        if ( !config.imgView ) {
+            return false;
+        }
+
+        var imgViewWrap = document.createElement('div'),
+            img = document.createElement('img');
+
+        imgViewWrap.appendChild(img);
+        utils.addClass(imgViewWrap, 'easemobWidget-view em-hide');
+        im.appendChild(imgViewWrap);
+
+        utils.on(imgViewWrap, click, function () {
+            utils.addClass(imgViewWrap, 'em-hide');
+        }, false);
+
+        utils.live('img.easemobWidget-img', click, function () {
+            imgView.show(this.getAttribute('src'));
+        });
+
+        return {
+            show: function ( url ) {
+                img.setAttribute('src', url);
+                utils.removeClass(imgViewWrap, 'em-hide');
+            }
+        };
+    }());
+
+
+
 
 
     /**
@@ -1903,7 +1939,7 @@
                     this.id ? "<div id='" + this.id + "_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
                     this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + config.LOADING + "</div>" : "",
                     "<div class='easemobWidget-msg-container'>",
-                        this.value === null ? "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>" : "<a class='easemobWidget-noline' href='" + this.value.url + "' target='_blank'><img src='" + this.value.url + "'/></a>",
+                        this.value === null ? "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>" : "<img class='easemobWidget-img' src='" + this.value.url + "'/>",
                     "</div>",
                 "</div>",
             "</div>"

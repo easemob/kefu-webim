@@ -388,6 +388,9 @@
     bottom: 145px;
     left: 0;
 }
+#EasemobKefuWebim .easemobWidget-img {
+    cursor: pointer;
+}
 #EasemobKefuWebim .easemobWidget-status-prompt.link:after,
 #EasemobKefuWebim .easemobWidget-status-prompt.transfer:after {
     z-index: 1;
@@ -893,6 +896,43 @@ body .easemobWidget-offline-bg {
     color: #ADAEAF;
     font-size: 12px;
 }
+/*
+    img view
+*/
+#EasemobKefuWebim .easemobWidget-view {
+    z-index: 10000;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: rgba(0,0,0,.3);
+}
+#EasemobKefuWebim .easemobWidget-view img {
+    position: absolute;
+    max-width: 90%;
+    max-height: 90%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}
+/*#EasemobKefuWebim .easemobWidget-view a {
+    position: absolute;
+    width: 160px;
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
+    margin: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    bottom: 10px;
+    font-size: 20px;
+    border-radius: 4px;
+    text-decoration: none;
+}*/
 /*
     pop dialog
 */

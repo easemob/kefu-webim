@@ -34,21 +34,23 @@ static/js/im.js: 包含现有网页端客服的所有交互模块
 
     4.notify: 浏览器通知方法,仅支持该方法的浏览器可用
 
-    5.ctrl + v粘贴发送截图: 仅pc端火狐，ie11，谷歌，safari等webkit内核浏览器支持
+    5.imgView: 点击图片放大
 
-    6.聊天窗口拖拽
+    6.ctrl + v粘贴发送截图: 仅pc端火狐，ie11，谷歌，safari等webkit内核浏览器支持
 
-    7.satisfaction: 满意度评价
+    7.聊天窗口拖拽
 
-    8.leaveMessage: 留言，如需修改留言引导语，找到留言对应的代码模块即可修改相关代码
+    8.satisfaction: 满意度评价
 
-    9.titleSlide: 不在当前tab或聊天窗口最小化则浏览器标题滚动
+    9.leaveMessage: 留言，如需修改留言引导语，找到留言对应的代码模块即可修改相关代码
 
-    10.chat: 聊天窗口的所有交互
+    10.titleSlide: 不在当前tab或聊天窗口最小化则浏览器标题滚动
 
-    11.Message: 当前所有消息类型封装，文本消息，图片消息等，开发者可改写或自定义添加类型
+    11.chat: 聊天窗口的所有交互
 
-    12.Emotions: 环信webim自定义表情包扩展
+    12.Message: 当前所有消息类型封装，文本消息，图片消息等，开发者可改写或自定义添加类型
+
+    13.Emotions: 环信webim自定义表情包扩展
 
 
 
