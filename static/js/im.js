@@ -1294,7 +1294,7 @@
                     utils.addClass(me.ePrompt, 'em-hide');
                 }, 2000);
             }
-            , getDefaultMessage: function () {
+            , getGreeting: function () {
                 var me = this;
 
                 var msg = new Message('txt', me.conn.getUniqueId());
@@ -1305,7 +1305,7 @@
                         console.log(arguments[0]);
                     }
                 });
-                msg.body.type = 'cmd';
+                //msg.body.type = 'cmd';
                 me.conn.send(msg.body);
             }
             , setOffline: function () {
@@ -1354,7 +1354,7 @@
                             utils.removeClass(sendBtn, 'disabled');
                         }
                         utils.html(sendBtn, '发送');
-                        me.getDefaultMessage();
+                        me.getGreeting();
                     }
                     , onTextMessage: function ( message ) {
                         me.receiveMsg(message, 'txt');
