@@ -48,6 +48,7 @@ button, textarea, input {
 
 .easemobWidget-noline {
     text-decoration: none;
+    cursor: zoom-in;
 }
 .easemobWidget-pop-bar i:after,
 .easemobWidgetHeader-min:after,

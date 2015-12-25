@@ -1113,7 +1113,7 @@
                                 "<i class='easemobWidget-right-corner'></i>",
                                 "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
                                 "<div class='easemobWidget-msg-container'>",
-                                    "<a class='easemobWidget-noline' href='" + msg.url + "' target='_blank'><img src='" + msg.url + "'/></a>",
+                                    "<a class='easemobWidget-noline' href='view.html?url=" + encodeURIComponent(msg.url) + "' target='_blank'><img src='" + msg.url + "'/></a>",
                                 "</div>",
                             "</div>",
                         "</div>"
@@ -1137,7 +1137,7 @@
                                 "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
                                 "<div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING + "</div>",
                                 "<div class='easemobWidget-msg-container'>",
-                                    "<a class='easemobWidget-noline' href='" + file.url + "' target='_blank'><img src='" + file.url + "'/></a>",
+                                    "<a class='easemobWidget-noline' href='javascript:;' target='_blank'><img src='" + file.url + "'/></a>",
                                 "</div>",
                             "</div>",
                         "</div>"
@@ -1164,15 +1164,16 @@
                                     w = $('#' + id),
                                     a = w.find('img:last').parent();
 
-                                a.html('').append($('<i class="easemobWidget-unimage">I</i>'));
+                                a.removeClass('easemobWidget-noline').html('').append($('<i class="easemobWidget-unimage">I</i>'));
                                 w.find('.easemobWidget-msg-loading').addClass('hide');
                                 me.scrollBottom();
                             }, 0);
                         }
                     }
-                    , onFileUploadComplete: function(data){
+                    , onFileUploadComplete: function(data, id){
                         me.handleTransfer('sending');
                         me.chatWrapper.find('img:last').on('load', im.scrollBottom);
+                        $('#' + id).find('.easemobWidget-noline').attr('href', 'view.html?url=' + encodeURIComponent(data.uri + '/' + data.entities[0].uuid));
                     }
                     , success: function(id) {
                         $('#' + id).find('.easemobWidget-msg-loading').addClass('hide');
@@ -1411,7 +1412,8 @@
                         value = Easemob.im.Utils.parseLink(value);
                         break;
                     case 'img':
-                        value = '<a href="'+msg.url+'" target="_blank"><img src="'+(msg.thumb || msg.url)+'"></a>';   
+                        var u = msg.url.indexOf('http') > -1 ? msg.url : location.protocol + '//' + document.domain + msg.url;
+                        value = '<a href="/webim/view.html?url=' + encodeURIComponent(u) + '" target="_blank" class="easemobWidget-noline"><img src="'+(msg.thumb || msg.url)+'"></a>';   
                         msgDetail = '[图片]';
                         break;
                     case 'satisfactionEvaluation':
@@ -1753,7 +1755,7 @@
                                     "<i class='easemobWidget-right-corner'></i>",
                                     "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
                                     "<div class='easemobWidget-msg-container'>",
-                                        "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>",
+                                        "<a href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>",
                                     "</div>",
                                 "</div>",
                             "</div>"
@@ -1779,7 +1781,7 @@
                                     "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
                                     "<div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING + "</div>",
                                     "<div class='easemobWidget-msg-container'>",
-                                        "<a class='easemobWidget-noline' href='" + file.url + "' target='_blank'><img src='" + file.url + "'/></a>",
+                                        "<a class='easemobWidget-noline' href='view.html?url=" + encodeURIComponent(file.url) + "' target='_blank'><img src='" + file.url + "'/></a>",
                                     "</div>",
                                 "</div>",
                             "</div>"
