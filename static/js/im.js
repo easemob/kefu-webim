@@ -1294,7 +1294,21 @@
                     utils.addClass(me.ePrompt, 'em-hide');
                 }, 2000);
             }
-            , setOffline: function() {
+            , getDefaultMessage: function () {
+                var me = this;
+
+                var msg = new Message('txt', me.conn.getUniqueId());
+                msg.set({
+                    value: 'a',
+                    to: config.toUser,
+                    success: function () {
+                        console.log(arguments[0]);
+                    }
+                });
+                msg.body.type = 'cmd';
+                me.conn.send(msg.body);
+            }
+            , setOffline: function () {
                 leaveMessage();
                 this.slogan && utils.addClass(this.slogan, 'em-hide');
                 utils.addClass(imBtn.getElementsByTagName('a')[0], 'easemobWidget-offline-bg');
@@ -1340,6 +1354,7 @@
                             utils.removeClass(sendBtn, 'disabled');
                         }
                         utils.html(sendBtn, '发送');
+                        me.getDefaultMessage();
                     }
                     , onTextMessage: function ( message ) {
                         me.receiveMsg(message, 'txt');
