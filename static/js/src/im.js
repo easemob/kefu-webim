@@ -58,6 +58,11 @@
                 this.setOffline();//根据状态展示上下班不同view
                 this.bindEvents();//开始绑定dom各种事件
 
+                if ( config.json && config.json.sat ) {
+                    this.Im.find('.easemobWidget-logo').addClass('hide');
+                    this.Im.find('.easemobWidget-satisfaction').removeClass('hide');
+                }
+
                 this.getHistory(0, $('#normal'), function(wrapper, info){//
                     config.history = info;
                     im.handleHistory(wrapper);
@@ -356,7 +361,8 @@
             }
             , mobileInit: function(){
                 if(!EasemobWidget.utils.isMobile) return;
-                this.Im.find('.easemobWidget-logo').hide();
+                this.Im.find('.easemobWidget-logo').addClass('hide');
+                this.Im.find('.easemobWidget-satisfaction').addClass('hide');
 
                 if(!config.json.hide && !config.root) {
                     this.fixedBtn.css({width: '100%', top: '0'});

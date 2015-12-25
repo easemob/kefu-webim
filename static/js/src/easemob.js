@@ -61,7 +61,8 @@
     };
 
     var config = getConfig('easemob.js', true);
-    config.json.hide = config.json.hide === 'false' ? false : config.json.hide;
+    config.json.hide = config.json.hide === 'false' ? false : true;
+    config.json.sat = config.json.sat === 'false' ? false : true;
 
     //open Api
     var open = function(){
@@ -228,6 +229,7 @@
         
         initdata = 'initdata:' + config.domain + '/webim/im.html?tenantId=' + config.json.tenantId 
             + (config.json.hide ? '&hide=true' : '') 
+            + (config.json.sat ? '&sat=true' : '') 
             + (config.json.color ? '&color=' + config.json.color : '')
             + (config.json.preview ? '&preview=' + config.json.preview : '')
             + (curChannel ? '&c=' + curChannel : '')
