@@ -908,7 +908,7 @@
             Utils.uploadFile.call(conn, me.msg);
         } else {
             me.msg.body = {
-                type: me.msg.body.type === 'cmd' ? 'cmd' : 'txt'
+                type: me.msg.type === 'chat' ? 'txt' : me.msg.type
                 , msg: me.msg.msg 
             };
             _send(me.msg);
