@@ -1,18 +1,18 @@
-环信移动客服网页端开发者版集成说明：
+# 环信移动客服网页端开发者版集成说明
 
 
 
-一.集成方式
+## 一.集成方式
 
 1.下载源码：https://github.com/easemob/kefu-webim/releases tag:open_1.0
 
 2.解压源码包，将其放到您的服务器所指向的文件目录
 
-3.将路径static/js/中的easemob.js 引入到</body>前即可完成集成
+3.将路径static/js/中的easemob.js 引入到`</body>`前即可完成集成
 
 
 
-二.文件目录
+## 二.文件目录
 
 demo.html: 集成环信网页端客服demo页
 
@@ -55,10 +55,10 @@ static/js/im.js: 包含现有网页端客服的所有交互模块
 
 
 
-三.配置示例
+## 三.配置示例
 
-以下示例在demo.html和h5.html均有包含
-
+以下示例在`demo.html`和`h5.html`均有包含
+```html
 <!--CONFIG DEMO-->
 
 <script>
@@ -120,74 +120,60 @@ easemobIM.config.user = {
 };
 
 </script>
-
-配置项需要在引入easemob.js前配置完毕，接下来引入easemob.js
-
+```
+配置项需要在引入`easemob.js`前配置完毕，接下来引入`easemob.js`
+```html
 <script src='static/js/easemob.js'></script>
+```
 
 
 
-
-四.修改主题
+## 四.修改主题
 
 static/css/im.css文件最底部包含了主题样式的设定（theme-color,bg-color,border-color,hover-color共四个属性）
 
 
 
-五.集成用户
+## 五.集成用户
 
 参考环信服务器端用户体系集成http://docs.easemob.com/doku.php?id=start:100serverintegration:20users
 
-获取环信后台userid和password写入easemobIM.config.user完成集成指定用户
+获取环信后台`userid`和`password`写入`easemobIM.config.user`完成集成指定用户
 
 
 
 
-六.技能组绑定
+## 六.技能组绑定
 
-在环信客服管理员操作面板使用相同appkey创建多个关联，并使用关联绑定技能组功能。调用easemobIM（’技能组名称’，‘IM用户id’）方法并传入指定参数完成技能组绑定
+在环信客服管理员操作面板使用相同`appkey`创建多个关联，并使用关联绑定技能组功能。调用`easemobIM（’技能组名称’，‘IM用户id’）`方法并传入指定参数完成技能组绑定
 
-例如自定义一个按钮<button onclick='easemobIM（’技能组名称’，‘IM用户id’）'>自定义按钮</button>即可完成指定技能组功能
-
-
+例如自定义一个按钮`<button onclick='easemobIM（’技能组名称’，‘IM用户id’）'>自定义按钮</button>`即可完成指定技能组功能
 
 
-七.自定义消息体：
+
+
+## 七.自定义消息体：
 
 例如需要传入访客相关信息：
+```javascript
+    var msg = new Message('txt', conn.getUniqueId());
 
-    var msg = new Message('txt’, conn.getUniqueId());
+    msg.set({value: '这是一条文本消息', to: toUser});
 
-        msg.set({value: ‘这是一条文本消息', to: toUser});
+    utils.extend(msg.body, { ext: {
+                                weichat: {
+                                    visitor: {
+                                        trueName: '张杰',
+                                        qq: '123456',
+                                        phone: '15811111111',
+                                        companyName: '环信',
+                                        userNickname: '张杰',
+                                        description: '描述信息',
+                                        email: '123456@qq.com'
+                                    }
+                                }
+                            } });
 
-            utils.extend(msg.body, {
+    conn.send(msg.body);//发送消息
 
-            ext: {
-
-                    weichat: {
-
-                visitor: {
-
-                    trueName: "张杰”,
-
-                    qq: "123456”,
-
-                    phone: "15811111111”,
-
-                    companyName: "环信”,
-
-                    userNickname: "张杰”,
-
-                    description: "描述信息”,
-
-                    email: "123456@qq.com”
-
-                }
-
-            }
-
-        }
-
-        });
-
-        conn.send(msg.body);//发送消息
+```
