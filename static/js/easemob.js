@@ -40,7 +40,7 @@
     easemobIM.config.titleSlide = setDefault(easemobIM.config.titleSlide, true);//是否允许收到消息的时候网页title滚动
     easemobIM.config.error = setDefault(easemobIM.config.error, function ( error ) { /*alert(error);*/ });//错误回调
     easemobIM.config.onReceive = setDefault(easemobIM.config.onReceive, function ( from, to, message ) { /*console.log('收到一条消息', arguments);*/ });//收消息回调
-    easemobIM.config.base = '//sandbox.kefu.easemob.com';
+    easemobIM.config.base = '//sandbox3.kefu.easemob.com';
 
     easemobIM.config.authMode = setDefault(easemobIM.config.authMode, 'token' || 'password');//验证方式
     easemobIM.config.user = setDefault(easemobIM.config.user, {
@@ -116,11 +116,11 @@
         };
 
         var imScript = document.getElementById('EasemobKefuWebimDepScript');
-        imScript.onload = loadIm;
-        imScript.onreadystatechange = function () {
-            if ( this.readyState === 'loaded' ) {
-                loadIm();
-            }
-        };
+
+		imScript.onload = imScript.onreadystatechange = function () {
+			if ( !this.readyState || this.readyState === 'loaded' || this.readyState === 'complete' ) {
+				loadIm();
+			}
+		}
     };
 }());

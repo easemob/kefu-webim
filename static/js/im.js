@@ -17,6 +17,11 @@
  */
 ;(function ( window, undefined ) {
     'use strict';
+
+	if ( typeof easemobIM === 'function' ) {
+		return false;
+	}
+
     var getData = new easemobIM.Transfer('EasemobKefuWebimIframe'),
         https = location.protocol === 'https:',
         config = window.easemobIM.config;
@@ -292,9 +297,11 @@
             return this.isAndroid && /MQQBrowser/.test(navigator.userAgent);
         }
         , isMin: function () {//detect the browser if minimize
-            if(document.visibilityState && document.visibilityState == 'hidden' || document.hidden) {
+            if ( document.visibilityState && document.visibilityState === 'hidden' || document.hidden ) {
                 return true;
-            } 
+            } else {
+				return false;
+			}
         }
         , setcookie: function ( key, value ) {
             var date = new Date();
@@ -1185,7 +1192,9 @@
                 min.setAttribute('title', '关闭');
                 utils.addClass(min, 'easemobWidgetHeader-min bg-color border-color');
                 dragHeader.appendChild(min);
-                utils.on(min, click, this.hide);
+                utils.on(min, click, function () {
+					chat.hide();
+				});
                 utils.on(min, 'mouseenter', function () {
                     utils.addClass(this, 'hover-color');
                 });
