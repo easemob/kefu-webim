@@ -378,7 +378,7 @@
                 this.Im.addClass('easemobWidgetWrapper-mobile');
                 this.evaluate.addClass('hide');
                 this.mobileLink.attr('href', location.href);
-                this.sendbtn.removeClass('disabled');
+				this.sendbtn.removeClass('disabled');
             }
             , setWord: function(){
                 if(config.word) {
@@ -490,6 +490,7 @@
                 
                 conn.listen({
                     onOpened: function(){
+						me.sendbtn.removeClass('em-init').html('发送');
                         conn.setPresence();
                         conn.heartBeat(conn);
                         while(sendQueue[curGroup] && sendQueue[curGroup].length) {
@@ -550,11 +551,13 @@
                     me.sdkInit(userHash[key].conn);
                 }
                 me.conn = userHash[key].conn;
-                me.conn.open({
-                    user : userHash[key].user
-                    , pwd : userHash[key].password
-                    , appKey : config.appkey
-                });
+				setTimeout(function () {
+					me.conn.open({
+						user : userHash[key].user
+						, pwd : userHash[key].password
+						, appKey : config.appkey
+					});
+				}, 500);
             }
             , getDom: function(){
                 this.offline = $('#easemobWidgetOffline');
@@ -801,7 +804,7 @@
                 
                 //
                 me.textarea.on('keyup change input', function(){
-                    $(this).val() ? me.sendbtn.removeClass('disabled') : me.sendbtn.addClass('disabled');
+                    $(this).val() && !me.sendbtn.hasClass('em-init') ? me.sendbtn.removeClass('disabled') : me.sendbtn.addClass('disabled');
                 })
                 .on("keydown", function(evt){//hot key
                     var that = $(this);
@@ -813,7 +816,7 @@
                         return false;
                     } else if(evt.keyCode == 13) {
                         me.faceWrapper.parent().addClass('hide');
-                        if(me.sendbtn.hasClass('disabled')) {
+                        if(me.sendbtn.hasClass('disabled') || me.sendbtn.hasClass('em-init')) {
                             return false;
                         }
                         me.sendTextMsg();
@@ -946,7 +949,7 @@
                 });
 
                 me.sendbtn.on('click', function(){
-                    if(me.sendbtn.hasClass('disabled')) {
+                    if(me.sendbtn.hasClass('disabled') || me.sendbtn.hasClass('em-init')) {
                         return false;
                     }
                     me.faceWrapper.parent().addClass('hide');
