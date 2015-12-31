@@ -1215,6 +1215,7 @@ body .easemobWidget-offline-bg {
 */
 #EasemobKefuWebim i.theme-color {
     color: #42b8f4;
+	background: none;
 }
 #EasemobKefuWebim .theme-color {
     background-color: #42b8f4

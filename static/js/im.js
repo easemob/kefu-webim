@@ -926,7 +926,7 @@
 
         return new SWFUpload({ 
             file_post_name: 'file'
-            , flash_url: '//kefu.easemob.com/webim/static/js/swfupload/swfupload.swf'
+            , flash_url: 'https://kefu.easemob.com/webim/static/js/swfupload/swfupload.swf'
             , button_placeholder_id: fileInputId
             , button_width: 120
             , button_height: 30
@@ -1136,7 +1136,7 @@
                             if ( msgBody.from === config.user.name ) {
                                 switch ( msg.type ) {
                                     case 'img':
-                                        msg.url = '//kefu.easemob.com' + msg.url;
+                                        msg.url = 'https://kefu.easemob.com' + msg.url;
                                         msg.to = msgBody.to;
                                         me.sendImgMsg(msg, true);
                                         break;
@@ -1153,7 +1153,7 @@
                                 } else {
                                     me.receiveMsg({
                                         data: msg.msg,
-                                        url: '//kefu.easemob.com' + msg.url,
+                                        url: 'https://kefu.easemob.com' + msg.url,
                                         from: msgBody.from,
                                         to: msgBody.to
                                     }, msg.type, true);
@@ -1308,13 +1308,12 @@
 
                 var msg = new Message('txt', me.conn.getUniqueId());
                 msg.set({
-                    value: 'a',
+                    value: '',
                     to: config.toUser,
                     success: function () {
                         console.log(arguments[0]);
                     }
                 });
-                //msg.body.type = 'cmd';
                 me.conn.send(msg.body);
             }
             , setOffline: function () {
@@ -1363,7 +1362,7 @@
                             utils.removeClass(sendBtn, 'disabled');
                         }
                         utils.html(sendBtn, '发送');
-                        me.getGreeting();
+                        config.greeting && me.getGreeting();
                     }
                     , onTextMessage: function ( message ) {
                         me.receiveMsg(message, 'txt');
@@ -1944,7 +1943,7 @@
             id: this.id
             , to: opt.to
             , msg: this.value 
-            , type : 'chat'
+            , type : this.type
             , success: opt.success
             , fail: opt.fail
         };
@@ -1979,10 +1978,7 @@
             , file: this.value 
             , apiUrl: (https ? 'https:' : 'http:') + '//a1.easemob.com'
             , to: opt.to
-            , type : 'chat'
-            , ext: {
-                messageType: 'img'
-            }
+            , type : this.type
             , onFileUploadError : opt.uploadError
             , onFileUploadComplete: opt.uploadComplete
             , success: opt.success

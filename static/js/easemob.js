@@ -35,6 +35,7 @@
     easemobIM.config.visitorSatisfactionEvaluate = setDefault(easemobIM.config.visitorSatisfactionEvaluate, true);//是否允许访客主动发起满意度评价
     easemobIM.config.soundReminder = setDefault(easemobIM.config.soundReminder, true);//是否启用声音提醒
     easemobIM.config.imgView = setDefault(easemobIM.config.imgView, true);//是否启动图片点击放大功能
+    easemobIM.config.greeting = setDefault(easemobIM.config.greeting, false);//窗口打开时是否自动接收默认欢迎语
     easemobIM.config.fixedButtonPosition = setDefault(easemobIM.config.fixedButtonPosition, {x: '10px', y: '10px'});//悬浮初始位置，坐标以视口右边距和下边距为基准
     easemobIM.config.dialogPosition = setDefault(easemobIM.config.dialogPosition, {x: '10px', y: '10px'});//窗口初始位置，坐标以视口右边距和下边距为基准
     easemobIM.config.titleSlide = setDefault(easemobIM.config.titleSlide, true);//是否允许收到消息的时候网页title滚动
@@ -87,7 +88,7 @@
                 (easemobIM.config.mobile || !easemobIM.config.visitorSatisfactionEvaluate ? "" : "<span id='EasemobKefuWebimSatisfy' class='easemobWidget-satisfaction'>请对服务做出评价</span>") + "\
                 <a href='javascript:;' class='easemobWidget-send theme-color disabled' id='easemobWidgetSendBtn'>连接中</a>\
             </div>\
-            <iframe id='EasemobKefuWebimIframe' width='0' height='0' frameborder='0' src='//kefu.easemob.com/webim/transfer.html'></iframe>\
+            <iframe id='EasemobKefuWebimIframe' width='0' height='0' frameborder='0' src='https://kefu.easemob.com/webim/transfer.html'></iframe>\
         </div>\
     ";
     document.body.appendChild(webim);
@@ -103,7 +104,7 @@
     document.getElementById('EasemobKefuWebimIframe').onload = function () {
         var script = document.createElement('script');
         script.id = 'EasemobKefuWebimDepScript';
-        script.src = '//kefu.easemob.com/webim/static/js/em-open.js';
+        script.src = 'https://kefu.easemob.com/webim/static/js/em-open.js';
         head.appendChild(script);
         script = null;
 
