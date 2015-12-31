@@ -97,7 +97,7 @@
                     $.when(EasemobWidget.api.getSession(userHash[value].user, config))
                     .done(function(info){
                         userHash[value].session = info;
-                        userHash[value].agent.userNicename = info.agentUserNiceName;
+                        userHash[value].agent.userNickname = info.agentUserNiceName;
                         me.setTitle('', userHash[value].agent);
                     })
                     .fail(function(){
@@ -355,7 +355,7 @@
                 var nickName = this.headBar.find('.easemobWidgetHeader-nickname'),
                     avatar = this.headBar.find('.easemobWidgetHeader-portrait');
 
-                nickName.html(info && info.userNicename ? info.userNicename : (config.tenantName + (title ? '-' + title : '')));
+                nickName.html(info && info.userNickname ? info.userNickname : (config.tenantName + (title ? '-' + title : '')));
                 avatar.attr('src', info && info.avatar ? info.avatar : config.avatar).removeClass('hide');
                 document.title = nickName.html() + (title ? '' : '-客服');
             }
@@ -1242,7 +1242,7 @@
                     this.Im.find('#' + wrap.attr('id') + '-transfer').removeClass('transfer link');
                     if ( info ) {
                         userHash[key].agent = userHash[key].agent || {};
-                        userHash[key].agent.userNicename = info.userNicename;
+                        userHash[key].agent.userNickname = info.userNickname;
                         userHash[key].agent.avatar = info.avatar;
                         info && this.setTitle('', userHash[key].agent);
                     }
@@ -1520,7 +1520,7 @@
                 if ( config.offline ) {
                     return;
                 } else if ( !isHistory ) {
-                    if ( msg.ext && msg.ext.weichat && msg.ext.weichat.agent && msg.ext.weichat.agent.userNicename === '调度员' ) {
+                    if ( msg.ext && msg.ext.weichat && msg.ext.weichat.agent && msg.ext.weichat.agent.userNickname === '调度员' ) {
 
                     } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.queueName ) {
                         var n = msg.ext.weichat.queueName,
@@ -1542,7 +1542,7 @@
                         if ( msg.ext.weichat.agent === null ) {//switch off
                             me.handleTransfer('reply', wrapper);
                         } else {//switch on
-                            msg.ext.weichat.agent && msg.ext.weichat.agent.userNicename !== '调度员' && me.handleTransfer('reply', wrapper, msg.ext.weichat.agent);
+                            msg.ext.weichat.agent && msg.ext.weichat.agent.userNickname !== '调度员' && me.handleTransfer('reply', wrapper, msg.ext.weichat.agent);
                         }
                     } else {//before v23:normal msg
                         me.handleTransfer('reply');
