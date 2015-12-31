@@ -542,7 +542,7 @@
                     for ( var i = 0, l = bytes.length; i < l; i++ ) {
                         ia[i] = bytes.charCodeAt(i);
                     }
-                    return new Blob( [ab], {type : 'image/png', encoding: 'utf-8'});
+                    return new Blob( [ab], {type: 'image/png', encoding: 'utf-8'});
                 } catch ( e ) {/*error Value of 'err' may be overwritten in IE 8 and earlier.*/
                     return null;
                 }
@@ -1159,7 +1159,11 @@
                                     }, msg.type, true);
                                 }
                             }
-                            msg.type === 'cmd' || me.appendDate(v.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
+							if ( msg.type === 'cmd' || msg.type === 'txt' && !msg.msg ) {
+								
+							} else {
+								me.appendDate(v.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
+							}
                         }
                     });
                 }
@@ -1309,11 +1313,9 @@
                 var msg = new Message('txt', me.conn.getUniqueId());
                 msg.set({
                     value: '',
-                    to: config.toUser,
-                    success: function () {
-                        console.log(arguments[0]);
-                    }
+                    to: config.toUser
                 });
+				msg.body.type = 'cmd';
                 me.conn.send(msg.body);
             }
             , setOffline: function () {
@@ -1943,7 +1945,7 @@
             id: this.id
             , to: opt.to
             , msg: this.value 
-            , type : this.type
+            , type: 'chat'//this.type
             , success: opt.success
             , fail: opt.fail
         };
@@ -1978,7 +1980,7 @@
             , file: this.value 
             , apiUrl: (https ? 'https:' : 'http:') + '//a1.easemob.com'
             , to: opt.to
-            , type : this.type
+            , type: 'chat'//this.type
             , onFileUploadError : opt.uploadError
             , onFileUploadComplete: opt.uploadComplete
             , success: opt.success
