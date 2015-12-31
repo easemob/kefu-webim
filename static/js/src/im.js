@@ -138,7 +138,7 @@
                     for (var i = 0,l = bytes.length;i < l;i++) {
                         ia[i] = bytes.charCodeAt(i);
                     }
-                    return new Blob( [ab], {type : 'image/png', encoding: 'utf-8'});
+                    return new Blob( [ab], {type: 'image/png', encoding: 'utf-8'});
                 } catch (e) {
                     return null;
                 }
@@ -976,7 +976,7 @@
                         var opt = {
                             to: config.to
                             , msg: '手机号码/邮箱/QQ号：' + me.contact.val() + '   留言：' + me.leaveMsg.val()
-                            , type : 'chat'
+                            , type: 'txt'
                         };
                         me.handleGroup(opt);
                         me.send(opt);
@@ -1159,11 +1159,8 @@
                     , file: file 
                     , apiUrl: (https ? 'https:' : 'http:') + '//a1.easemob.com'
                     , to: config.to
-                    , type : 'chat'
-                    , ext: {
-                        messageType: 'img'
-                    }
-                    , onFileUploadError : function(error) {
+                    , type: 'img'
+                    , onFileUploadError: function(error) {
                         //显示图裂，无法重新发送
                         if(!Easemob.im.Utils.isCanUploadFileAsync()) {
                             swfupload && swfupload.settings.upload_error_handler();
@@ -1304,7 +1301,7 @@
                     , to: config.to
                     , msg: txt
                     , ext: ext || {}
-                    , type : 'chat'
+                    , type: 'txt'
                     , success: function(id) {
                         $('#' + id).find('.easemobWidget-msg-loading').addClass('hide');
                     }
@@ -1339,7 +1336,7 @@
                 var opt = {
                     to: config.to
                     , msg: ''
-                    , type : 'chat'
+                    , type: 'txt'
                     , ext: {
                         weichat: {
                             ctrlType: 'enquiry'

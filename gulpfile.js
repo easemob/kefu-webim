@@ -54,7 +54,7 @@ gulp.task('uglify', function() {
     gulp.src([
         'static/js/src/jquery-1.11.1.js',
         'static/js/src/strophe.js',
-        'static/js/src/easemob.im-2.0.js',
+        'static/js/src/easemob.im-1.0.8.js',
         'static/js/src/jquery.autogrow.js',
         'static/js/src/easemob.utils.js',
         'static/js/src/const.js',
@@ -76,7 +76,7 @@ gulp.task('uglify', function() {
 
     gulp.src([
         'static/js/src/strophe.js',
-        'static/js/src/easemob.im-2.0.js',
+        'static/js/src/easemob.im-1.0.8.js',
         'static/js/swfupload/swfupload.min.js',
         'static/js/src/transfer.js',
     ])

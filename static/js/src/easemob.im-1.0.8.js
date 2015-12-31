@@ -1,122 +1,123 @@
 /**************************************************************************
 ***                             Easemob WebIm Js SDK                    ***
-***                             v2.0                                    ***
+***                             v1.1.0                                  ***
 **************************************************************************/
-/*
-    Module1:    工具类，开放给开发者 
-    Module2:    Message
-    Module3:    Connection
-*/
+/**
+ * Module1: Utility
+ * Module2: EmMessage
+ * Module3: Message
+ * Module4: Connection
+ */
 
 ;(function(window, undefined) {
 
-    if(typeof Strophe == 'undefined'){
+    if ( typeof Strophe == 'undefined' ) {
         throw 'need Strophe';
     }
 
     var Easemob = Easemob || {};
     Easemob.im = Easemob.im || {};
-    Easemob.im.version="2.0";
+    Easemob.im.version="1.0.8";
 
     var https = location.protocol === 'https:';
 
     window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 
 
-    /*
-        Module1:    工具类，开放给开发者 
-    */
+    /**
+     * Module1: Utility
+     */
     var Utils = (function() {
         
-        var _createStandardXHR = function() {
+        var _createStandardXHR = function () {
             try {
                 return new window.XMLHttpRequest();
             } catch( e ) {
                 return false;
             }
-        }
+        };
         
-        var _createActiveXHR = function() {
+        var _createActiveXHR = function () {
             try {
                 return new window.ActiveXObject( "Microsoft.XMLHTTP" );
             } catch( e ) {
                 return false;
             }
-        }
+        };
 
-        if (window.XDomainRequest) {
+        if ( window.XDomainRequest ) {
             XDomainRequest.prototype.oldsend = XDomainRequest.prototype.send;
-            XDomainRequest.prototype.send = function() {
+            XDomainRequest.prototype.send = function () {
                 XDomainRequest.prototype.oldsend.apply(this, arguments);
                 this.readyState = 2;
             };
         }
 
-        Strophe.Request.prototype._newXHR = function(){
+        Strophe.Request.prototype._newXHR = function () {
             var xhr =  Utils.xmlrequest(true);
-            if (xhr.overrideMimeType) {
+            if ( xhr.overrideMimeType ) {
                 xhr.overrideMimeType("text/xml");
             }
             xhr.onreadystatechange = this.func.bind(null, this);
             return xhr;
-        }
+        };
        
         return {
-            hasFormData: typeof FormData != 'undefined'
-            , hasBlob: typeof Blob != 'undefined'
+            hasFormData: typeof FormData !== 'undefined'
+            , hasBlob: typeof Blob !== 'undefined'
 
-            , isCanSetRequestHeader: function() {
+            , isCanSetRequestHeader: function () {
                 return Utils.xmlrequest().setRequestHeader || false;
             }
 
-            , hasOverrideMimeType: function() {
+            , hasOverrideMimeType: function () {
                 return Utils.xmlrequest().overrideMimeType || false;
             }
 
-            , isCanUploadFileAsync: function() {
+            , isCanUploadFileAsync: function () {
                 return Utils.isCanSetRequestHeader() && Utils.hasFormData;
             }
 
-            , isCanUploadFile: function() {
+            , isCanUploadFile: function () {
                 return Utils.isCanUploadFileAsync() || Utils.hasFlash;
             }
 
-            , isCanDownLoadFile: function() {
+            , isCanDownLoadFile: function () {
                 return Utils.isCanSetRequestHeader() && (Utils.hasBlob || Utils.hasOverrideMimeType());
             }
             
-            , stringify: function(json) {
-                if(JSON && JSON.stringify) {
+            , stringify: function ( json ) {
+                if ( JSON && JSON.stringify ) {
                     return JSON.stringify(json);
                 } else {
                     var s = '',
                         arr = [];
 
-                    var iterate = function(json) {
+                    var iterate = function ( json ) {
                         var isArr = false;
 
-                        if(Object.prototype.toString.call(json) == '[object Array]') {
+                        if ( Object.prototype.toString.call(json) == '[object Array]' ) {
                             arr.push(']', '[');
                             isArr = true;
-                        } else if(Object.prototype.toString.call(json) == '[object Object]') {
+                        } else if ( Object.prototype.toString.call(json) == '[object Object]' ) {
                             arr.push('}', '{');
                         }
 
-                        for(var o in json) {
-                            if(Object.prototype.toString.call(json[o]) == '[object Null]') {
+                        for ( var o in json ) {
+                            if ( Object.prototype.toString.call(json[o]) == '[object Null]' ) {
                                 json[o] = 'null';
-                            } else if(Object.prototype.toString.call(json[o]) == '[object Undefined]') {
+                            } else if ( Object.prototype.toString.call(json[o]) == '[object Undefined]' ) {
                                 json[o] = 'undefined';
                             }
 
-                            if(json[o] && typeof json[o] == 'object') {
+                            if ( json[o] && typeof json[o] == 'object' ) {
                                 s += ',' + (isArr ? '' : '"' + o + '":' + (isArr ? '"' : '')) + iterate(json[o]) + '';
                             } else {
                                 s += ',"' + (isArr ? '' : o + '":"') + json[o] + '"';
                             }
                         }
                 
-                        if(s != "") {
+                        if ( s != '' ) {
                             s = s.slice(1);
                         }
 
@@ -126,18 +127,18 @@
                 }
             }
 
-            , registerUserFn: function(options) {
+            , registerUserFn: function ( options ) {
                 var orgName = options.orgName || '';
                 var appName = options.appName || '';
                 var appKey = options.appKey || '';
-                if(!orgName && !appName && appKey){
+                if ( !orgName && !appName && appKey ) {
                     var devInfos = appKey.split('#');
-                    if(devInfos.length==2){
+                    if ( devInfos.length === 2 ) {
                         orgName = devInfos[0];
                         appName = devInfos[1];
                     }
                 }
-                if(!orgName && !appName){
+                if ( !orgName && !appName ) {
                     options.error({
                         type: EASEMOB_IM_RESISTERUSER_ERROR
                         , msg: '没有指定开发者信息'
@@ -150,9 +151,9 @@
                 var restUrl = apiUrl + '/' + orgName + '/' + appName + '/users';
 
                 var userjson = {
-                        username: options.username
-                        , password: options.password
-                        , nickname: options.nickname || ''
+                    username: options.username
+                    , password: options.password
+                    , nickname: options.nickname || ''
                 };
 
                 var userinfo = Utils.stringify(userjson);
@@ -165,34 +166,36 @@
                 };
                 return Utils.ajax(options);
             }
-            , login2UserGrid: function(options) {
+            , login2UserGrid: function ( options ) {
                 options = options || {};
 
                 var appKey = options.appKey || '';
                 var devInfos = appKey.split('#');
-                if(devInfos.length!=2){
+                if ( devInfos.length !== 2 ) {
                     error({
                         type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
                         , msg: '请指定正确的开发者信息(appKey)'
                     });
                     return false;
                 }
+
                 var orgName = devInfos[0];
                 var appName = devInfos[1];
-                if(!orgName){
+                if ( !orgName ) {
                     error({
                         type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
                         , msg: '请指定正确的开发者信息(appKey)'
                     });
                     return false;
                 }
-                if(!appName){
+                if ( !appName ) {
                     error({
                         type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
                         , msg: '请指定正确的开发者信息(appKey)'
                     });
                     return false;
                 }
+
                 var suc = options.success || EMPTYFN;
                 var error = options.error || EMPTYFN;
                 var user = options.user || '';
@@ -217,7 +220,7 @@
                 };
                 return Utils.ajax(options);
             }
-            , getFileUrl: function(fileInputId) {
+            , getFileUrl: function ( fileInputId ) {
                 var uri = {
                     url: ''
                     , filename: ''
@@ -225,8 +228,10 @@
                     , data: ''
                 };
 
-                if(!Utils.isCanUploadFileAsync()) return uri;
-                if (window.URL.createObjectURL) {
+                if ( !Utils.isCanUploadFileAsync() ) {
+                    return uri;
+                }
+                if ( window.URL.createObjectURL ) {
                     var fileItems = document.getElementById(fileInputId).files;
                     if (fileItems.length > 0) {
                         var u = fileItems.item(0);
@@ -246,21 +251,21 @@
                         uri.filename = u.substring(pos + 1);
                 }
                 var index = uri.filename.lastIndexOf(".");
-                if (index != -1) {
+                if ( index != -1 ) {
                     uri.filetype = uri.filename.substring(index+1).toLowerCase();
                 }
                 return uri;
             }
 
-            , getFileSizeFn: function(fileInputId) {
+            , getFileSizeFn: function ( fileInputId ) {
                 var file = document.getElementById(fileInputId)
                 var fileSize = 0;
-                if(file){
-                    if(file.files){
-                        if(file.files.length>0){
+                if ( file ) {
+                    if ( file.files ) {
+                        if ( file.files.length > 0 ) {
                             fileSize = file.files[0].size;
                         }
-                    } else if(file.select && 'ActiveXObject' in window) {
+                    } else if ( file.select && 'ActiveXObject' in window ) {
                         file.select();
                         var fileobject = new ActiveXObject ("Scripting.FileSystemObject");
                         var file = fileobject.GetFile (file.value);
@@ -270,22 +275,22 @@
                 return fileSize;
             }
 
-            , hasFlash: (function() {
-                if ('ActiveXObject' in window) {
+            , hasFlash: (function () {
+                if ( 'ActiveXObject' in window ) {
                     try {
                         return new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
-                    } catch (ex) {
+                    } catch ( ex ) {
                         return 0;
                     }
                 } else {
-                    if (navigator.plugins && navigator.plugins.length > 0) {
+                    if ( navigator.plugins && navigator.plugins.length > 0 ) {
                         return navigator.plugins["Shockwave Flash"];
                     }
                 }
                 return 0;
             }())
 
-            , trim: function(str) {
+            , trim: function( str ) {
 
                 str = typeof str === 'string' ? str : '';
 
@@ -300,13 +305,14 @@
                 } else {
                     var emotion = Easemob.im.EMOTIONS,
                         reg = null;
+
                     msg = msg.replace(/&amp;/g, '&');
                     msg = msg.replace(/&#39;/g, '\'');
                     msg = msg.replace(/&lt;/g, '<');
 
                     for ( var face in emotion.map ) {
                         if ( emotion.map.hasOwnProperty(face) ) {
-                            while ( msg.indexOf(face) >= 0 ) {
+                            while ( msg.indexOf(face) > -1 ) {
                                 msg = msg.replace(face, '<img class="em-emotion" src="' + emotion.path + emotion.map[face] + '" alt="表情">');
                             }
                         }
@@ -315,11 +321,11 @@
                 }
             }
 
-            , parseLink: function(msg) {
+            , parseLink: function( msg ) {
                 var reg = /(https?\:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(\:[0-9]{2,4})?\/?((\.[0-9a-zA-Z-]+)|[0-9a-zA-Z-]*\/?)*\??[#@*&%0-9a-zA-Z-/=]*/gm;
                 var res = msg.match(reg);
                 var src = res && res[0] ? res[0] : ''; 
-                if(res && res.length) {
+                if ( res && res.length ) {
                     var prefix = /^https?:\/\//.test(src);
                     msg = msg.replace(reg
                         , "<a href='" 
@@ -333,9 +339,9 @@
                 return msg;
             }
 
-            , parseJSON: function(data) {
+            , parseJSON: function ( data ) {
 
-                if (window.JSON && window.JSON.parse) {
+                if ( window.JSON && window.JSON.parse ) {
                     return window.JSON.parse(data + "");
                 }
 
@@ -345,7 +351,7 @@
 
                 return str && !Utils.trim(
                     str.replace(/(,)|(\[|{)|(}|])|"(?:[^"\\\r\n]|\\["\\\/bfnrt]|\\u[\da-fA-F]{4})*"\s*:?|true|false|null|-?(?!0\d)\d+(?:\.\d+|)(?:[eE][+-]?\d+|)/g
-                    , function( token, comma, open, close ) {
+                    , function ( token, comma, open, close ) {
 
                         if ( requireNonComma && comma ) {
                             depth = 0;
@@ -364,17 +370,17 @@
                 : (Function("Invalid JSON: " + data))();
             }
             
-            , parseUploadResponse: function(response) {
+            , parseUploadResponse: function ( response ) {
                 return response.indexOf('callback') > -1 ? //lte ie9
                     response.slice(9, -1) : response;
             }
             
-            , parseDownloadResponse: function(response) {
+            , parseDownloadResponse: function ( response ) {
                 return ((response && response.type && response.type === 'application/json') 
                     || 0 > Object.prototype.toString.call(response).indexOf('Blob')) ? 
                         this.url+'?token=' : window.URL.createObjectURL(response);
             }
-            , uploadFile: function(options) {
+            , uploadFile: function ( options ) {
                 options = options || {};
                 options.onFileUploadProgress = options.onFileUploadProgress || EMPTYFN;
                 options.onFileUploadComplete = options.onFileUploadComplete || EMPTYFN;
@@ -811,11 +817,30 @@
         };
     }());
 
+    /**
+     * Module2: EmMessage: Various types of messages
+     */
+    var EmMessage = function ( type, id ) {
+        if ( !(this instanceof EmMessage) ) {
+            return new EmMessage(type);
+        }
+
+        this._msg = {};
+
+        if ( typeof EmMessage[type] === 'function' ) {
+            this._msg = new EmMessage[type](id);
+        }
+        return this._msg;
+    }
+    EmMessage.prototype.setGroup = function ( groupValue ) {
+        this._msg.body.type = groupValue;
+    }
 
 
-    /*
-        Module2:    Message
-    */
+
+    /**
+     *  Module3: Message
+     */
     var _msgHash = {};
     var Message = function(message) {
 
@@ -844,7 +869,7 @@
             
             var jsonstr = Utils.stringify(json);
             var dom = $msg({
-                type: message.type || 'chat'
+                type: 'chat'
                 , to: message.toJid
                 , id: message.id
                 , xmlns: "jabber:client"
@@ -886,7 +911,7 @@
                 }
                 
                 me.msg.body = {
-                    type: me.msg.ext.messageType || 'file'
+                    type: me.msg.type || 'file'
                     , url: data.uri + '/' + data.entities[0]['uuid']
                     , secret: data.entities[0]['share-secret']
                     , filename: me.msg.file.filename
@@ -918,8 +943,8 @@
     
 
     /*
-        Module3: Connection
-    */
+     * Module4: Connection
+     */
     var Connection = (function() {
 
         var _parseRoomFn = function(result) {
@@ -2174,13 +2199,21 @@
             };
         };
 
+
+        /*
+         * compatible with old version
+         */
+        connection.prototype.init = function () {
+            connection.prototype.listen.apply(this, arguments);   
+        };
+
         return connection;
     }());
 
 
 
     /*
-        CONST     
+     * CONST     
     */
     var EMPTYFN = function() {};
 
@@ -2251,7 +2284,8 @@
 
 
     Easemob.im.Connection = Connection;
-    Easemob.im.Utils = Utils;
+    Easemob.im.EmMessage = EmMessage;
+    Easemob.im.Helper = Easemob.im.Utils = Utils;
     window.Easemob = Easemob;
 
 }(window, undefined));
