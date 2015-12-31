@@ -475,7 +475,7 @@
             <div class='easemobWidget-paste-image'></div>\
             <div>\
                 <button class='easemobWidget-cancel'>取消</button>\
-                <button class='bg-color'>发送</button>\
+                <button class='theme-color'>发送</button>\
             </div>\
         ");
         imChat.appendChild(dom);
@@ -743,7 +743,7 @@
             <textarea spellcheck='false' placeholder='请输入留言'></textarea>\
             <div>\
                 <button class='easemobWidget-cancel'>取消</button>\
-                <button class='bg-color'>提交</button>\
+                <button class='theme-color'>提交</button>\
             </div>\
             <div class='easemobWidget-success-prompt em-hide'><i>A</i><p>提交成功</p></div>\
         ");
@@ -839,7 +839,7 @@
             <input type='text' placeholder='请输入手机/邮箱/QQ号'/>\
             <p>留言内容</p>\
             <textarea spellcheck='false' placeholder='请输入留言'></textarea>\
-            <button class='bg-color'>留言</button>\
+            <button class='theme-color'>留言</button>\
             <div class='easemobWidget-success-prompt em-hide'><i>A</i><p>留言发送成功</p></div>\
         ");
         imChat.appendChild(leaveMessage.dom);
@@ -926,7 +926,7 @@
 
         return new SWFUpload({ 
             file_post_name: 'file'
-            , flash_url: easemobIM.config.base + '/webim/static/js/swfupload/swfupload.swf'
+            , flash_url: '//kefu.easemob.com/webim/static/js/swfupload/swfupload.swf'
             , button_placeholder_id: fileInputId
             , button_width: 120
             , button_height: 30
@@ -993,17 +993,17 @@
 
         return {
             init: function () {
+                this.setConnection();
                 this.scbT = 0;//sroll bottom timeout stamp
                 this.msgTimeSpan = {};//用于处理1分钟之内的消息只显示一次时间
                 this.opened = false;//聊天窗口是否已展示
 
-                this.setSlogan();//设置广告语
-                this.setMinmum();//设置最小化按钮
-                this.soundReminder();//设置声音提醒
-                this.bindEvents();//开始绑定dom各种事件
+                this.setMinmum();
+                this.soundReminder();
+                this.bindEvents();
             }
             , ready: function () {
-                this.setConnection();
+                this.setNotice();
                 this.sdkInit();
                 this.open();
                 this.handleGroup();
@@ -1102,7 +1102,7 @@
             , handleChatContainer: function ( userName ) {
                 var curChatContainer = utils.$Dom(userName);
 
-                this.setAgentProfile( {userNicename: config.title} );
+                this.setAgentProfile( {userNickname: config.title} );
                 if ( curChatContainer ) {
                     utils.removeClass(curChatContainer, 'em-hide');
                     utils.addClass(utils.siblings(curChatContainer, 'easemobWidget-chat'), 'em-hide');
@@ -1136,7 +1136,7 @@
                             if ( msgBody.from === config.user.name ) {
                                 switch ( msg.type ) {
                                     case 'img':
-                                        msg.url = config.base + msg.url;
+                                        msg.url = '//kefu.easemob.com' + msg.url;
                                         msg.to = msgBody.to;
                                         me.sendImgMsg(msg, true);
                                         break;
@@ -1153,7 +1153,7 @@
                                 } else {
                                     me.receiveMsg({
                                         data: msg.msg,
-                                        url: config.base + msg.url,
+                                        url: '//kefu.easemob.com' + msg.url,
                                         from: msgBody.from,
                                         to: msgBody.to
                                     }, msg.type, true);
@@ -1168,7 +1168,7 @@
                 var nickName = utils.$Class('span.easemobWidgetHeader-nickname')[0],
                     avatar = utils.$Class('img.easemobWidgetHeader-portrait')[0];
 
-                utils.html(nickName, info && info.userNicename ? info.userNicename : (info && info.agentUserNiceName || config.defaultAgentName));
+                utils.html(nickName, info && info.userNickname ? info.userNickname : (info && info.agentUserNiceName || config.defaultAgentName));
 
                 this.currentAvatar = info && info.avatar ? info.avatar : config.defaultAvatar;
                 if ( avatar.getAttribute('src') != this.currentAvatar ) {
@@ -1190,7 +1190,7 @@
                 var min = document.createElement('a');
                 min.setAttribute('href', 'javascript:;');
                 min.setAttribute('title', '关闭');
-                utils.addClass(min, 'easemobWidgetHeader-min bg-color border-color');
+                utils.addClass(min, 'easemobWidgetHeader-min theme-color border-color');
                 dragHeader.appendChild(min);
                 utils.on(min, click, function () {
 					chat.hide();
@@ -1203,10 +1203,10 @@
                 });
                 min = null;
             }
-            , setSlogan: function () {
+            , setNotice: function () {
                 var me = this;
 
-                if ( me.slogan ) {
+                if ( me.slogan || config.offDuty ) {
                     return;
                 }
 
@@ -1407,12 +1407,14 @@
                 this.msgTimeSpan[id] = new Date().getTime();
             }
             , open: function () {
-                this.conn.open({
-                    user: config.user.name
-                    , pwd: config.authMode === 'password' && config.user.password
-                    , accessToken: config.authMode === 'token' && config.user.token
-                    , appKey: config.appKey
-                });
+				var me = this;
+
+				me.conn.open({
+					user: config.user.name
+					, pwd: config.authMode === 'password' && config.user.password
+					, accessToken: config.authMode === 'token' && config.user.token
+					, appKey: config.appKey
+				});
             }
             , soundReminder: function () {
                 var me = this;
@@ -1425,7 +1427,7 @@
 
                 me.reminder = document.createElement('a');
                 me.reminder.setAttribute('href', 'javascript:;');
-                utils.addClass(me.reminder, 'easemobWidgetHeader-audio bg-color');
+                utils.addClass(me.reminder, 'easemobWidgetHeader-audio theme-color');
                 dragHeader.appendChild(me.reminder);
 
                 //音频按钮静音
@@ -1454,10 +1456,10 @@
                 }
             }
             , setThemeBackground: function ( obj ) {
-                config.mobile || utils.addClass(obj, 'bg-color');
+                config.mobile || utils.addClass(obj, 'theme-color');
             }
             , clearThemeBackground: function ( obj ) {
-                config.mobile || utils.removeClass(obj, 'bg-color');
+                config.mobile || utils.removeClass(obj, 'theme-color');
             }
             , setThemeColor: function ( obj ) {
                 config.mobile || utils.addClass(obj, 'theme-color');
@@ -1727,7 +1729,7 @@
                     utils.removeClass(wrap, 'link');
                     if ( info ) {
                         info && this.setAgentProfile({
-                            userNicename: info.userNicename,
+                            userNickname: info.userNickname,
                             avatar: info.avatar
                         });
                     }
@@ -1762,7 +1764,7 @@
                     success: function ( id ) {
                         utils.$Remove(utils.$Dom(id + '_loading'));
                         utils.$Remove(utils.$Dom(id + '_failed'));
-                        me.handleTransfer('sending');
+                        config.offDuty || me.handleTransfer('sending');
                     },
                     fail: function ( id ) {
                         utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
@@ -1778,9 +1780,9 @@
 
                 if ( !isHistory ) {
                     me.conn.send(msg.body);
-                    textarea.value = '';
-                    me.appendDate(new Date().getTime(), config.toUser);
-                    me.appendMsg(config.user.name, config.toUser, msg);
+					textarea.value = '';
+					me.appendDate(new Date().getTime(), config.toUser);
+					me.appendMsg(config.user.name, config.toUser, msg);
                 } else {
                     me.appendMsg(config.user.name, isHistory, msg, true);
                 }
@@ -1865,7 +1867,7 @@
                     } else if ( msg.ext && msg.ext.weichat && (msg.ext.weichat.agent || msg.ext.weichat.agent === null) ) {//version23:normal msg
                         if ( msg.ext.weichat.agent === null ) {
                             this.handleTransfer('reply');//switch off
-                        } else if ( msg.ext.weichat.agent && msg.ext.weichat.agent.userNicename !== '调度员' ) {//switch on
+                        } else if ( msg.ext.weichat.agent && msg.ext.weichat.agent.userNickname !== '调度员' ) {//switch on
                              this.handleTransfer('reply', msg.ext.weichat.agent);
                         }
                     } else {

@@ -15,7 +15,7 @@
     /**
      * 开发版无需在环信客服后台做网页插件相关设置，以下面参数为主
      * 配置以及回调
-     * 主题可自定义色值，更改static/css/im.css文件的末尾.theme-color, .bg-color, .border-color等
+     * 主题可自定义色值，更改static/css/im.css文件的末尾.theme-color, .border-color等
      */
     ////必填////
     easemobIM.config.tenantId = setDefault(easemobIM.config.tenantId || '');//企业id
@@ -40,7 +40,6 @@
     easemobIM.config.titleSlide = setDefault(easemobIM.config.titleSlide, true);//是否允许收到消息的时候网页title滚动
     easemobIM.config.error = setDefault(easemobIM.config.error, function ( error ) { /*alert(error);*/ });//错误回调
     easemobIM.config.onReceive = setDefault(easemobIM.config.onReceive, function ( from, to, message ) { /*console.log('收到一条消息', arguments);*/ });//收消息回调
-    easemobIM.config.base = '//sandbox3.kefu.easemob.com';
 
     easemobIM.config.authMode = setDefault(easemobIM.config.authMode, 'token' || 'password');//验证方式
     easemobIM.config.user = setDefault(easemobIM.config.user, {
@@ -67,10 +66,10 @@
     
     webim.innerHTML = "\
         <div id='easemobWidgetPopBar'" + (easemobIM.config.hide || !easemobIM.config.minimum ? " class='em-hide'" : "") + "'>\
-            <a class='easemobWidget-pop-bar bg-color' href='javascript:;' style='right: " + easemobIM.config.fixedButtonPosition.x + ";bottom: " + easemobIM.config.fixedButtonPosition.y + "'><i></i>" + easemobIM.config.buttonText + "</a>\
+            <a class='easemobWidget-pop-bar theme-color' href='javascript:;' style='right: " + easemobIM.config.fixedButtonPosition.x + ";bottom: " + easemobIM.config.fixedButtonPosition.y + "'><i></i>" + easemobIM.config.buttonText + "</a>\
         </div>\
         <div id='EasemobKefuWebimChat' class='easemobWidgetWrapper" + (easemobIM.config.minimum ? " em-hide'" : "") + "'>\
-            <div id='easemobWidgetHeader' class='easemobWidgetHeader-wrapper bg-color border-color'>\
+            <div id='easemobWidgetHeader' class='easemobWidgetHeader-wrapper theme-color border-color'>\
                 <div id='easemobWidgetDrag'>\
                     <img class='easemobWidgetHeader-portrait'/>\
                     <span class='easemobWidgetHeader-nickname'></span>\
@@ -86,9 +85,9 @@
                 <input id='easemobWidgetFileInput' type='file' accept='image/*'/>\
                 <textarea class='easemobWidget-textarea' spellcheck='false'></textarea>" +
                 (easemobIM.config.mobile || !easemobIM.config.visitorSatisfactionEvaluate ? "" : "<span id='EasemobKefuWebimSatisfy' class='easemobWidget-satisfaction'>请对服务做出评价</span>") + "\
-                <a href='javascript:;' class='easemobWidget-send bg-color disabled' id='easemobWidgetSendBtn'>连接中</a>\
+                <a href='javascript:;' class='easemobWidget-send theme-color disabled' id='easemobWidgetSendBtn'>连接中</a>\
             </div>\
-            <iframe id='EasemobKefuWebimIframe' width='0' height='0' frameborder='0' src='" + easemobIM.config.base + "/webim/transfer.html'></iframe>\
+            <iframe id='EasemobKefuWebimIframe' width='0' height='0' frameborder='0' src='//kefu.easemob.com/webim/transfer.html'></iframe>\
         </div>\
     ";
     document.body.appendChild(webim);
@@ -104,7 +103,7 @@
     document.getElementById('EasemobKefuWebimIframe').onload = function () {
         var script = document.createElement('script');
         script.id = 'EasemobKefuWebimDepScript';
-        script.src = easemobIM.config.base + '/webim/static/js/em-open.js';
+        script.src = '//kefu.easemob.com/webim/static/js/em-open.js';
         head.appendChild(script);
         script = null;
 

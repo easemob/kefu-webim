@@ -704,16 +704,6 @@
 #EasemobKefuWebim .easemobWidget-file:hover {
     cursor: pointer;
 }
-/*theme*/
-#EasemobKefuWebim .default-bg-color {
-  background-color: #49b9f1;
-}
-#EasemobKefuWebim .default-border-color {
-  border: 1px solid #1aa1e4;
-}
-#EasemobKefuWebim .default-hover-color {
-    background-color: #80cef5;
-}
 #EasemobKefuWebim object {
     width: 30px;
     height: 40px;
@@ -827,6 +817,8 @@ body .easemobWidget-offline-bg {
 }
 #EasemobKefuWebim .easemobWidget-offline h3 {
     margin-top: 15px;
+	text-align: left;
+	background: none;
 }
 #EasemobKefuWebim .easemobWidget-offline input {
     height: 36px;
@@ -1221,10 +1213,10 @@ body .easemobWidget-offline-bg {
 /**
  * 主题色的更改在这里，共4个属性值
 */
-#EasemobKefuWebim .theme-color {
+#EasemobKefuWebim i.theme-color {
     color: #42b8f4;
 }
-#EasemobKefuWebim .bg-color {
+#EasemobKefuWebim .theme-color {
     background-color: #42b8f4
 }
 #EasemobKefuWebim .border-color {

@@ -130,7 +130,7 @@ easemobIM.config.user = {
 
 四.修改主题
 
-static/css/im.css文件最底部包含了主题样式的设定（theme-color,bg-color,border-color,hover-color共四个属性）
+static/css/im.css文件最底部包含了主题样式的设定（theme-color,border-color,hover-color共三个属性）
 
 
 
