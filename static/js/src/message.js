@@ -54,7 +54,7 @@ Easemob.im.EmMessage.img.prototype.get = function ( isReceive ) {
 				this.id ? "<div id='" + this.id + "_failed' class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>" : "",
 				this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING + "</div>" : "",
 				"<div class='easemobWidget-msg-container'>",
-					this.value === null ? "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>" : "<img class='easemobWidget-img' src='" + this.value.url + "'/>",
+					this.value === null ? "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>" : "<a class='easemobWidget-noline' href='view.html?url=" + encodeURIComponent(this.value.url) + "' target='_blank'><img src='" + this.value.url + "'/></a>",,
 				"</div>",
 			"</div>",
 		"</div>"
