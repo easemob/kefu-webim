@@ -1069,7 +1069,7 @@
                 var me = this;
                 wrapper = wrapper || me.chatWrapper;
 
-				var msge = new Easemob.im.EmMessage('img', msg ? null : me.conn.getUniqueId());
+				var msge = new Easemob.im.EmMessage('img', msgId || (msg ? null : me.conn.getUniqueId()));
 
                 if ( msg ) {
 					msge.set({file: msg});
@@ -1124,9 +1124,11 @@
                 me.handleGroup(msge.body);
                 me.send(msge.body);
                 me.addDate();
-                me.chatWrapper.append(msge.get());
                 me.chatWrapper.find('img:last').on('load', me.scrollBottom);
                 me.realfile.val('');
+				if ( Easemob.im.Utils.isCanUploadFileAsync() ) {
+					me.chatWrapper.append(msge.get());
+				}
             }
             , handleTransfer: function(action, wrapper, info) {
                 var key = isGroupChat ? curGroup : 'normal';
@@ -1530,8 +1532,7 @@
                         im.errorPrompt('请上传大小不超过10M的文件');
                         this.cancelUpload();
                     } else {
-                        this.fileMsgId = im.conn.getUniqueId();
-                        im.sendImgMsg(null, null, {name: file.name, data: file}, this.fileMsgId);
+                        im.sendImgMsg(null, null, {name: file.name, data: file});
                     }
                 }
                 , file_dialog_start_handler: function() {}
@@ -1539,7 +1540,7 @@
                     if(code != SWFUpload.UPLOAD_ERROR.FILE_CANCELLED
                     && code != SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED 
                     && code != SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED) {
-						var msg = new Easemob.im.EmMessage('img', this.fileMsgId);
+						var msg = new Easemob.im.EmMessage('img');
 						msg.set({file: null});
                         im.chatWrapper.append(msg.get());
                     }
@@ -1555,13 +1556,11 @@
                         if ( file && !file.url && res.entities && res.entities.length > 0 ) {
                             file.url = res.uri + '/' + res.entities[0].uuid;
                         }
-
 						var msg = new Easemob.im.EmMessage('img');
-						msg.set({file: file});
 
+						msg.set({file: file});
                         im.chatWrapper.append(msg.get());
-                        im.scrollBottom();
-                        this.uploadOptions.onFileUploadComplete(res);
+						this.uploadOptions.onFileUploadComplete(res);
                     } catch ( e ) {
                         im.errorPrompt('上传图片发生错误');
                     }
