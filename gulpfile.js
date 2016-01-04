@@ -60,6 +60,7 @@ gulp.task('uglify', function() {
         'static/js/src/const.js',
         'static/js/src/api.js',
         'static/js/src/init.js',
+        'static/js/src/message.js',
         'static/js/src/im.js'
     ])
     .pipe(concat('emkf.min.js'))

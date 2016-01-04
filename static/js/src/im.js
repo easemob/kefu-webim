@@ -34,7 +34,6 @@
                     , password: config.password
                 };
             }
-            
 
             im.init();
         });
@@ -44,7 +43,6 @@
             聊天窗口所有业务逻辑代码
         */
         var im = ({
-            
             init: function(){
                 this.getDom();//绑定所有相关dom至this
                 this.changeTheme();//设置相应主题
@@ -81,7 +79,6 @@
                 this.getSession();
             }
             , getSession: function () {
-
                 if ( config.offline ) {
                     return;
                 }
@@ -100,13 +97,12 @@
                         userHash[value].agent.userNickname = info.agentUserNiceName;
                         me.setTitle('', userHash[value].agent);
                     })
-                    .fail(function(){
+                    .fail(function () {
                         userHash[value].session = null;
                     });
                 }
             }
-            , getBase64: (function() {
-
+            , getBase64: (function () {
                 var canvas = $('<canvas>').get(0);
                 if ( !canvas.getContext ) {
                     return;
@@ -114,7 +110,7 @@
                 var ctx = canvas.getContext("2d"),
                     img = new Image();
 
-                return function(url, callback) {
+                return function ( url, callback ) {
                     img.onload = function () {
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
                         ctx.drawImage(this, 0, 0);
@@ -123,7 +119,7 @@
                     img.src = url;
                 };
             }())
-            , getBlob: function(base64) {
+            , getBlob: function ( base64 ) {
                 var me = this;
                 try {
                     if ( base64.indexOf('data:image') < 0 ) {
@@ -135,15 +131,15 @@
                         ab = new ArrayBuffer(bytes.length),
                         ia = new Uint8Array(ab);
 
-                    for (var i = 0,l = bytes.length;i < l;i++) {
+                    for ( var i = 0, l = bytes.length; i < l; i++ ) {
                         ia[i] = bytes.charCodeAt(i);
                     }
                     return new Blob( [ab], {type: 'image/png', encoding: 'utf-8'});
-                } catch (e) {
+                } catch ( e ) {
                     return null;
                 }
             }
-            , paste: function(obj, callback) {
+            , paste: function ( obj, callback ) {
                 var ctrl_pressed = false,
                     me = this;
 
@@ -171,7 +167,6 @@
                 var pw = $('<div>');
                 pw.attr('contenteditable', '');
                 pw.css({'opacity': 0, position: 'fixed', top: '-10px', left: '-10px', width: '1px', height: '1px', overflow: 'hidden'});
-                //pw.css({'opacity': 1, position: 'fixed', top: '0', left: '0', width: '100px', height: '40px', overflow: 'hidden', border: '1px solid'});
                 pw.on('DOMSubtreeModified', function() {
                     if ( !ctrl_pressed ) {
                         return true;
@@ -193,32 +188,31 @@
                 });
                 $('body').append(pw);
 
-                $(obj).on('paste', function(e) {
+                $(obj).on('paste', function ( e ) {
                     var ev = e.originalEvent;
 
                     try {
-                        if(ev.clipboardData && ev.clipboardData.types) {
-                            if(ev.clipboardData.items.length > 0) {
-                                if(/^image\/\w+$/.test(ev.clipboardData.items[0].type)) {
+                        if (ev.clipboardData && ev.clipboardData.types ) {
+                            if (ev.clipboardData.items.length > 0 ) {
+                                if ( /^image\/\w+$/.test(ev.clipboardData.items[0].type) ) {
                                     callback instanceof Function && callback(ev.clipboardData.items[0].getAsFile());
                                 }
                             }
-                        } else if(window.clipboardData) {
+                        } else if ( window.clipboardData ) {
                             var url = window.clipboardData.getData('URL');
                             
                             callback instanceof Function && callback(url);
                         }
-                    } catch(ex) {/*error Value of 'err' may be overwritten in IE 8 and earlier.*/
+                    } catch ( ex ) {/*error Value of 'err' may be overwritten in IE 8 and earlier.*/
                         callback instanceof Function && callback();
                     }
                 });
             }
-            , getConnection: function() {
+            , getConnection: function () {
                 return new Easemob.im.Connection();
                 //return new Easemob.im.Connection({url: 'http://im-api.easemob.com/http-bind/'});
             }
-            , getHistory: function(from, wrapper, callback) {
-
+            , getHistory: function ( from, wrapper, callback ) {
                 if ( config.offline ) {
                     return;
                 }
@@ -234,8 +228,8 @@
                     , wrapper.data('group')
                     , config.json.tenantId
                 ))
-                .done(function(info){
-                    if(info && info.length == EasemobWidget.LISTSPAN) {
+                .done(function ( info ) {
+                    if ( info && info.length == EasemobWidget.LISTSPAN ) {
                         wrapper.attr('data-start', Number(info[EasemobWidget.LISTSPAN - 1].chatGroupSeqId) - 1);
                         wrapper.attr('data-history', 0);
                     } else {
@@ -244,7 +238,7 @@
                     callback instanceof Function && callback(wrapper, info);
                 });
             }
-            , setAttribute: function() {
+            , setAttribute: function () {
                 this.msgCount = 0;//未读消息数
                 this.scbT = 0;//sroll bottom timeout stamp
                 this.autoGrowOptions = {};
@@ -254,13 +248,13 @@
                 
                 return this;
             }
-            , handleGroup: function(type) {
-                if(typeof type === 'string') {
+            , handleGroup: function ( type ) {
+                if ( typeof type === 'string' ) {
                     type = type;
                     im.group = type;
                     im.handleChatContainer(im.group);
                 } else {
-                    if(!im.group) {
+                    if ( !im.group ) {
                         type.ext 
                         && type.ext.weichat 
                         && type.ext.weichat.queueName 
@@ -273,10 +267,10 @@
                     type.ext.weichat.queueName = im.group;
                 }
             }
-            , handleChatContainer: function(groupId) {
+            , handleChatContainer: function ( groupId ) {
                 var curChatContainer = $(document.getElementById(groupId));
 
-                if(curChatContainer.length > 0) {
+                if ( curChatContainer.length > 0 ) {
                     this.chatWrapper = curChatContainer;
                     this.setTitle(groupId);
                     curChatContainer.removeClass('hide').siblings('.easemobWidget-chat').addClass('hide');
@@ -288,11 +282,11 @@
                     this.handleChatContainer(groupId);     
                 }
             }
-            , handleHistory: function(cwrapper){
+            , handleHistory: function ( cwrapper ) {
                 var me = this;
-                if(config.history && config.history.length > 0) {
+                if ( config.history && config.history.length > 0 ) {
                
-                    $.each(config.history, function(k, v){
+                    $.each(config.history, function ( k, v ) {
                         
                         var wrapper = cwrapper || this.chatWrapper;
                         /*
@@ -302,10 +296,10 @@
                         */
                         var msg = v.body;
 
-                        if(v.body && v.body.bodies.length > 0) {
+                        if ( v.body && v.body.bodies.length > 0 ) {
                             msg = v.body.bodies[0];
                             msg.type != 'cmd' && im.addDate(v.timestamp || v.body.timestamp, true, wrapper);
-                            if(v.body.from && v.body.from.indexOf('webim-visitor') > -1) {
+                            if ( v.body.from && v.body.from.indexOf('webim-visitor') > -1 ) {
 
                                 //访客发送的满意度评价不在历史记录中展示
                                 if(v.body.ext 
@@ -1200,7 +1194,7 @@
                 me.realfile.val('');
             }
             , encode: function(str, history){
-                if (!str || str.length === 0) return "";
+                if ( !str || str.length === 0 ) return "";
                 var s = '';
                 /*s = !history
                 ? str.replace(/&(?!amp;)/g, "&amp;")
@@ -1248,60 +1242,19 @@
                     }
                 }
             }
-            , sendTextMsg: function(msg, wrapper, isHistory, ext) {
-               
- 
+            , sendTextMsg: function ( msg, wrapper, isHistory, ext ) {
                 var me = this;
                 wrapper = wrapper || me.chatWrapper;
 
-                if(isHistory) {
-                    wrapper.prepend([
-                        "<div class='easemobWidget-right'>",
-                            "<div class='easemobWidget-msg-wrapper'>",
-                                "<i class='easemobWidget-right-corner'></i>",
-                                "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
-                                "<div class='easemobWidget-msg-loading hide'>" + EasemobWidget.LOADING + "</div>",
-                                "<div class='easemobWidget-msg-container'>",
-                                    "<p>" + Easemob.im.Utils.parseLink(me.face(me.encode(msg.msg, true))) + "</p>",
-                                "</div>",
-                            "</div>",
-                        "</div>"
-                    ].join(''));
+				if ( !msg && !me.textarea.val() ) {
                     return;
                 }
 
-                if(!msg && !me.textarea.val()) {
-                    return;
-                }
-                me.handleTransfer('sending');
-                var txt = msg || me.textarea.val();
-                
-
-                var msgid = me.conn.getUniqueId();
-                me.addDate();
-                
-                //local append
-                wrapper.append([
-                    "<div id='" + msgid + "' class='easemobWidget-right'>",
-                        "<div class='easemobWidget-msg-wrapper'>",
-                            "<i class='easemobWidget-right-corner'></i>",
-                            "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
-                            "<div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING + "</div>",
-                            "<div class='easemobWidget-msg-container'>",
-                                "<p>" + Easemob.im.Utils.parseLink(me.face(me.encode(txt))) + "</p>",
-                            "</div>",
-                        "</div>",
-                    "</div>"
-                ].join(''));
-                me.textarea.val('');
-                me.scrollBottom(EasemobWidget.utils.isMobile ? 700 : undefined);
-
-                var opt = {
-                    id: msgid
+				var msge = new Message('txt', isHistory ? null : me.conn.getUniqueId());
+				msge.set({
+                    value: msg.msg || me.textarea.val()
                     , to: config.to
-                    , msg: txt
-                    , ext: ext || {}
-                    , type: 'txt'
+                    , ext: ext
                     , success: function(id) {
                         $('#' + id).find('.easemobWidget-msg-loading').addClass('hide');
                     }
@@ -1311,20 +1264,33 @@
                         msg.find('.easemobWidget-msg-loading').addClass('hide');
                         msg.find('.easemobWidget-msg-status').removeClass('hide');
                     }
-                };
-                me.handleGroup(opt);
-                me.send(opt);
+                });
+
+                if(isHistory) {
+                    wrapper.prepend(msge.get());
+                    return;
+                }
+
+                me.handleTransfer('sending');
+                me.addDate();
+                
+                //local append
+                wrapper.append(msge.get());
+                me.textarea.val('');
+                me.scrollBottom(EasemobWidget.utils.isMobile ? 700 : undefined);
+                me.handleGroup(msge.body);
+                me.send(msge.body);
             }
-            , send: function(option) {
+            , send: function ( option ) {
                 var me = this,
                     resend = typeof option == 'string',
                     id = resend ? option : option.id;
 
-                if(!resend && isGroupChat) {
+                if ( !resend && isGroupChat ) {
                     sendQueue[curGroup] || (sendQueue[curGroup] = []);
                 }
 
-                if(isGroupChat && userHash[curGroup] && (!userHash[curGroup].conn || !userHash[curGroup].conn.isOpened())) {
+                if ( isGroupChat && userHash[curGroup] && (!userHash[curGroup].conn || !userHash[curGroup].conn.isOpened()) ) {
                     resend || sendQueue[curGroup].push(option);
                 } else {
                     me.conn.send(option);
