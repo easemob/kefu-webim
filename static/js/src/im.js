@@ -57,7 +57,6 @@
                 this.bindEvents();//开始绑定dom各种事件
 
                 if ( config.json && config.json.sat ) {
-                    this.Im.find('.easemobWidget-logo').addClass('hide');
                     this.Im.find('.easemobWidget-satisfaction').removeClass('hide');
                 }
 
@@ -78,6 +77,13 @@
 
                 this.getSession();
             }
+			, getNickName: function ( nameObj ) {
+				if ( nameObj ) {
+					return nameObj.userNicename || nameObj.userNickname;
+				} else {
+					return null;
+				}
+			}
             , getSession: function () {
                 if ( config.offline ) {
                     return;
@@ -347,13 +353,13 @@
                 var nickName = this.headBar.find('.easemobWidgetHeader-nickname'),
                     avatar = this.headBar.find('.easemobWidgetHeader-portrait');
 
-                nickName.html(info && info.userNickname ? info.userNickname : (config.tenantName + (title ? '-' + title : '')));
+				var nName = this.getNickName(info);
+                nickName.html(nName ? nName : (config.tenantName + (title ? '-' + title : '')));
                 avatar.attr('src', info && info.avatar ? info.avatar : config.avatar).removeClass('hide');
                 document.title = nickName.html() + (title ? '' : '-客服');
             }
             , mobileInit: function(){
                 if(!EasemobWidget.utils.isMobile) return;
-                this.Im.find('.easemobWidget-logo').addClass('hide');
                 this.Im.find('.easemobWidget-satisfaction').addClass('hide');
 
                 if(!config.json.hide && !config.root) {
@@ -1142,7 +1148,7 @@
                     this.Im.find('#' + wrap.attr('id') + '-transfer').removeClass('transfer link');
                     if ( info ) {
                         userHash[key].agent = userHash[key].agent || {};
-                        userHash[key].agent.userNickname = info.userNickname;
+                        userHash[key].agent.userNickname = this.getNickName(info);
                         userHash[key].agent.avatar = info.avatar;
                         info && this.setTitle('', userHash[key].agent);
                     }
@@ -1299,7 +1305,7 @@
                 }
                 
                 if ( !isHistory ) {
-                    if ( msg.ext && msg.ext.weichat && msg.ext.weichat.agent && msg.ext.weichat.agent.userNickname === '调度员' ) {
+                    if ( msg.ext && msg.ext.weichat && msg.ext.weichat.agent && me.getNickName(msg.ext.weichat.agent) === '调度员' ) {
 
                     } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.queueName ) {
                         var n = msg.ext.weichat.queueName,
@@ -1318,7 +1324,7 @@
                         if ( msg.ext.weichat.agent === null ) {//switch off
                             me.handleTransfer('reply', wrapper);
                         } else {//switch on
-                            msg.ext.weichat.agent && msg.ext.weichat.agent.userNickname !== '调度员' && me.handleTransfer('reply', wrapper, msg.ext.weichat.agent);
+                            msg.ext.weichat.agent && me.getNickName(msg.ext.weichat.agent) !== '调度员' && me.handleTransfer('reply', wrapper, msg.ext.weichat.agent);
                         }
                     } else {//before v23:normal msg
                         me.handleTransfer('reply');
@@ -1336,9 +1342,9 @@
                     if ( !me.isOpened ) {
                         me.messageCount.html('').removeClass('hide');
                         me.msgCount += 1;
-                        me.addPrompt(msgDetail);
+                        me.addPrompt(message.brief);
                     } else if ( EasemobWidget.utils.isMin() ) {
-                        me.notify(msgDetail);
+                        me.notify(message.brief);
                     }
                 } else {
                     if ( msg.type === 'cmd' ) {
