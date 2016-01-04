@@ -3,10 +3,10 @@
     version: 1.4.0
 */
 
-;(function(window, undefined){
+;(function ( window, undefined ) {
     'use strict';
 
-    var main = function(config) {
+    var main = function ( config ) {
         var sendQueue = {};//记录技能组切换时的登录间隙所发送的消息
         var userHash = {};//记录所有user相关
         var isGroupChat = false;//当前是否技能组聊天窗口
@@ -284,11 +284,10 @@
             }
             , handleHistory: function ( cwrapper ) {
                 var me = this;
+
                 if ( config.history && config.history.length > 0 ) {
-               
                     $.each(config.history, function ( k, v ) {
-                        
-                        var wrapper = cwrapper || this.chatWrapper;
+						var wrapper = cwrapper || this.chatWrapper;
                         /*
                             @param1:
                             @param2(boolean); true: 历史记录
@@ -298,7 +297,7 @@
 
                         if ( v.body && v.body.bodies.length > 0 ) {
                             msg = v.body.bodies[0];
-                            msg.type != 'cmd' && im.addDate(v.timestamp || v.body.timestamp, true, wrapper);
+                            msg.msg && msg.type != 'cmd' && im.addDate(v.timestamp || v.body.timestamp, true, wrapper);
                             if ( v.body.from && v.body.from.indexOf('webim-visitor') > -1 ) {
 
                                 //访客发送的满意度评价不在历史记录中展示
@@ -337,8 +336,7 @@
                         }
                     });
 
-                    //此坑防止第一次获取历史记录图片loaded后，不能滚动到底部
-                    if(im.historyFirst) {
+                    if ( im.historyFirst ) {
                         im.chatWrapper.find('img:last').on('load', im.scrollBottom);
                         im.scrollBottom();
                         im.historyFirst = false;
@@ -774,7 +772,7 @@
                 //机器人列表
                 me.Im.on(click, '.js_robertbtn button', function(){
                     var that = $(this);
-                    me.sendTextMsg(that.html(), null, null, {
+                    me.sendTextMsg({msg: that.html()}, null, null, {
                         msgtype: {
                             choice: { menuid: that.data('id') }
                         }
@@ -1051,50 +1049,6 @@
                         }, 400);
                     }
                 });
-                /*
-                var ts = 0;
-                me.chatWrapper.on('click', '.easemobWidget-msg-voice', function(){
-                    if(!Easemob.im.Helper.isCanUploadFileAsync || EasemobWidget.utils.isAndroid) {
-                        me.errorPrompt('当前浏览器不支持语音播放');
-                        return false;    
-                    }
-                    
-                    var $t = $(this),
-                        $a = $t.next(),
-                        aud = $a.get(0),
-                        cur = 0;
-                    var clear = function(){
-                        clearInterval(ts);
-                        $t.removeClass('one');
-                        $t.removeClass('two');
-                    }
-                    if(!aud.paused && !aud.ended && 0 < aud.currentTime) {
-                        aud.stop();
-                        clear();
-                        return false;
-                    }
-                    aud.play();
-                    $a.on('ended', function(){
-                        clear();
-                    });
-                    ts = setInterval(function(){
-                        cur += 1;
-                        switch(cur % 3) {
-                            case 0:
-                                $t.removeClass('two');
-                                break;
-                            case 1:
-                                $t.addClass('one');
-                                break;
-                            case 2:
-                                $t.removeClass('one');
-                                $t.addClass('two');
-                                break;
-                        }
-                        cur == 9999 && (cur = 0);
-                    }, 500);
-                });
-                */
             }
             , scrollBottom: function(type){
                 var ocw = im.chatWrapper.parent().get(0);
@@ -1105,58 +1059,32 @@
                 }, type))
                 : (ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000);
             }
-            , sendImgMsg: function(msg, wrapper, file, msgId) {
-                var me = this, temp;
+            , sendImgMsg: function ( msg, wrapper, file, msgId ) {
+                var me = this;
                 wrapper = wrapper || me.chatWrapper;
 
-                if(msg) {
-                    temp = $([
-                        "<div class='easemobWidget-right'>",
-                            "<div class='easemobWidget-msg-wrapper'>",
-                                "<i class='easemobWidget-right-corner'></i>",
-                                "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
-                                "<div class='easemobWidget-msg-container'>",
-                                    "<a class='easemobWidget-noline' href='view.html?url=" + encodeURIComponent(msg.url) + "' target='_blank'><img src='" + msg.url + "'/></a>",
-                                "</div>",
-                            "</div>",
-                        "</div>"
-                    ].join(''));
-                    wrapper.prepend(temp);
+				var msge = new Easemob.im.EmMessage('img', msg ? null : me.conn.getUniqueId());
+
+                if ( msg ) {
+					msge.set({file: msg});
+                    wrapper.prepend(msge.get());
                     return;
                 }
 
-                var msgid = msgId || me.conn.getUniqueId();
-                if(Easemob.im.Utils.isCanUploadFileAsync()) {
-                    if(me.realfile.val()) {
+                if ( Easemob.im.Utils.isCanUploadFileAsync() ) {
+                    if ( me.realfile.val() ) {
                         file = Easemob.im.Utils.getFileUrl(me.realfile.attr('id'));
-                    } else if(!file) {
+                    } else if ( !file ) {
                         return;
                     }
-
-                    temp = $([
-                        "<div id='" + msgid + "' class='easemobWidget-right'>",
-                            "<div class='easemobWidget-msg-wrapper'>",
-                                "<i class='easemobWidget-right-corner'></i>",
-                                "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
-                                "<div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING + "</div>",
-                                "<div class='easemobWidget-msg-container'>",
-                                    "<a class='easemobWidget-noline' href='javascript:;' target='_blank'><img src='" + file.url + "'/></a>",
-                                "</div>",
-                            "</div>",
-                        "</div>"
-                    ].join(''));
-                    
                 }
 
-                var opt = {
-                    id: msgid 
-                    , file: file 
-                    , apiUrl: (https ? 'https:' : 'http:') + '//a1.easemob.com'
-                    , to: config.to
-                    , type: 'img'
-                    , onFileUploadError: function(error) {
+				msge.set({
+                    file: file,
+                    to: config.to,
+                    uploadError: function ( error ) {
                         //显示图裂，无法重新发送
-                        if(!Easemob.im.Utils.isCanUploadFileAsync()) {
+                        if ( !Easemob.im.Utils.isCanUploadFileAsync() ) {
                             swfupload && swfupload.settings.upload_error_handler();
                         } else {
                             setTimeout(function() {
@@ -1169,49 +1097,30 @@
                                 me.scrollBottom();
                             }, 0);
                         }
-                    }
-                    , onFileUploadComplete: function(data, id){
+                    },
+                    uploadComplete: function ( data, id ) {
                         me.handleTransfer('sending');
                         me.chatWrapper.find('img:last').on('load', im.scrollBottom);
                         $('#' + id).find('.easemobWidget-noline').attr('href', 'view.html?url=' + encodeURIComponent(data.uri + '/' + data.entities[0].uuid));
-                    }
-                    , success: function(id) {
+                    },
+                    success: function ( id ) {
                         $('#' + id).find('.easemobWidget-msg-loading').addClass('hide');
-                    }
-                    , fail: function(id) {
-                        var msg = $('#' + id);
+                    },
+                    fail: function ( id ) {
+						var msg = $('#' + id);
 
                         msg.find('.easemobWidget-msg-loading').addClass('hide');
                         msg.find('.easemobWidget-msg-status').removeClass('hide');
-                    }
-                    , flashUpload: Easemob.im.Utils.isCanUploadFileAsync() ? null : flashUpload
-                };
-                me.handleGroup(opt);
-                me.send(opt);
+                    },
+                    flashUpload: flashUpload
+                });
+
+                me.handleGroup(msge.body);
+                me.send(msge.body);
                 me.addDate();
-                me.chatWrapper.append(temp);
+                me.chatWrapper.append(msge.get());
                 me.chatWrapper.find('img:last').on('load', me.scrollBottom);
                 me.realfile.val('');
-            }
-            , encode: function(str, history){
-                if ( !str || str.length === 0 ) return "";
-                var s = '';
-                /*s = !history
-                ? str.replace(/&(?!amp;)/g, "&amp;")
-                : str.replace(/&amp;/g, "&");*/
-                s = str.replace(/&amp;/g, "&");
-                s = s.replace(/<(?=[^o][^)])/g, "&lt;");
-                s = s.replace(/>/g, "&gt;");
-                //s = s.replace(/\'/g, "&#39;");
-                s = s.replace(/\"/g, "&quot;");
-                s = s.replace(/\n/g, "<br>");
-                return s;
-            }
-            , decode: function(str) {
-                if (!str || str.length === 0) return "";
-                var s = '';
-                s = str.replace(/&amp;/g, "&");
-                return s;
             }
             , handleTransfer: function(action, wrapper, info) {
                 var key = isGroupChat ? curGroup : 'normal';
@@ -1250,9 +1159,9 @@
                     return;
                 }
 
-				var msge = new Message('txt', isHistory ? null : me.conn.getUniqueId());
+				var msge = new Easemob.im.EmMessage('txt', isHistory ? null : me.conn.getUniqueId());
 				msge.set({
-                    value: msg.msg || me.textarea.val()
+                    value: msg ? msg.msg : me.textarea.val()
                     , to: config.to
                     , ext: ext
                     , success: function(id) {
@@ -1272,7 +1181,7 @@
                 }
 
                 me.handleTransfer('sending');
-                me.addDate();
+                msge.value && me.addDate();
                 
                 //local append
                 wrapper.append(msge.get());
@@ -1335,154 +1244,61 @@
                     message.sendToParent('recoveryTitle');
                 }
             }
-            , notify: function(detail) {
+            , notify: function ( detail ) {
                 message.sendToParent('notify' + (detail || ''));
             }
-            , receiveMsg: function(msg, type, isHistory, wrapper){
-                var me = this;
-                var value = '', msgDetail = '';
-                
+            , receiveMsg: function ( msg, type, isHistory, wrapper ) {
+				if ( config.offline ) {
+                    return;
+                }
+
+                var me = this,
+					message = null;
+
                 wrapper = wrapper || me.chatWrapper;
 
                 //满意度评价
-                if(msg.ext 
-                && msg.ext.weichat 
-                && msg.ext.weichat.ctrlType 
-                && msg.ext.weichat.ctrlType == 'inviteEnquiry') {
+                if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType && msg.ext.weichat.ctrlType == 'inviteEnquiry' ) {
                     type = 'satisfactionEvaluation';  
                 }
                 //机器人自定义菜单
-                if(msg.ext 
-                && msg.ext.msgtype
-                && msg.ext.msgtype.choice) {
+                if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {
                     type = 'robertList';  
                 }
-                switch(type){
-                    case 'txt':
-                        msgDetail = msg.msg || msg.data;
-                        if(msgDetail) {
-                            msgDetail = msgDetail.replace(/\n/mg, '');
-                            msgDetail = (msgDetail.length > 15 ? msgDetail.slice(0, 15) + '...' : msgDetail);
-                            value = me.face(Easemob.im.Utils.parseLink(me.encode(isHistory ? msg.msg : msg.data, isHistory)));
-                            value = '<p>' + value + '</p>';
-                        }
-                        break;
-                    case 'face':
-                        msgDetail = '';
-                        $.each(msg.data, function(k, v){
-                            v.data = v.data.replace(/>/g, "&gt;");
-                            msgDetail += v.data;
-                            if(0 > v.data.indexOf('data:image')) {
-                                value += v.data;
-                            } else {
-                                value += '<img class="chat-face-all" src="'+v.data+'">';   
-                            }
-                        });
-                        msgDetail = value.replace(/\n/mg, '');
-                        msgDetail = (msgDetail.length > 15 ? msgDetail.slice(0, 15) + '...' : msgDetail);
-                        value = '<p>' + value + '</p>';
-                        value = Easemob.im.Utils.parseLink(value);
-                        break;
+
+                switch ( type ) {
                     case 'img':
-                        var u = msg.url.indexOf('http') > -1 ? msg.url : location.protocol + '//' + document.domain + msg.url;
-                        value = '<a href="/webim/view.html?url=' + encodeURIComponent(u) + '" target="_blank" class="easemobWidget-noline"><img src="'+(msg.thumb || msg.url)+'"></a>';   
-                        msgDetail = '[图片]';
+						message = new Easemob.im.EmMessage('img');
+                        message.set({file: {url: msg.url}});
                         break;
                     case 'satisfactionEvaluation':
-                        value = '<p>请对我的服务做出评价</p>';
-                        msgDetail = '请对我的服务做出评价';
+						message = new Easemob.im.EmMessage('list');
+                        message.set({value: '请对我的服务做出评价', list: ['\
+                            <div class="easemobWidget-list-btns easemobWidget-list-btn js_satisfybtn">\
+                                <button data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '" data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
+                            </div>']});
                         break;
                     case 'robertList':
-                        value = '<p>' + msg.ext.msgtype.choice.title + '</p>';
-                        break;
-                    /*
-                    case 'audio':
-                        var options = msg;
-                        options.onFileDownloadComplete = function(response, xhr) {
-                            var audio = document.createElement('audio');
-                            if (Easemob.im.Helper.isCanUploadFileAsync && ("src" in audio) && ("controls" in audio)) {
-                                var objectURL = window.URL.createObjectURL(response);
-                                audio = null;
-                                var temp = "\
-                                    <div class='easemobWidget-left'>\
-                                        <div class='easemobWidget-msg-wrapper'>\
-                                            <i class='easemobWidget-left-corner'></i>\
-                                            <div class='easemobWidget-msg-container'>\
-                                                <i class='easemobWidget-msg-voice'></i>\
-                                                <audio src='"+objectURL+"' controls class='hide'/>\
-                                            </div>\
-                                            <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
-                                        </div>\
-                                    </div>";
-                                me.chatWrapper.append(temp);
-                                me.scrollBottom();
-                            } else {
-                                var temp = "\
-                                    <div class='easemobWidget-left'>\
-                                        <div class='easemobWidget-msg-wrapper'>\
-                                            <i class='easemobWidget-left-corner'></i>\
-                                            <div class='easemobWidget-msg-container'>\
-                                                <i class='easemobWidget-msg-voice' data-id=''></i>\
-                                                <audio id='' class='hide' src='' controls/>\
-                                            </div>\
-                                            <div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>\
-                                        </div>\
-                                    </div>";
-                                me.chatWrapper.append(temp);
-                                me.scrollBottom();
-                                audio = null;
+						message = new Easemob.im.EmMessage('list');
+                        var str = '',
+                            robertV = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
+
+                        if ( robertV.length > 0 ) {
+                            str = '<div class="easemobWidget-list-btns easemobWidget-list-btn js_robertbtn">';
+                            for ( var i = 0, l = robertV.length; i < l; i++ ) {
+                                str += '<button data-id="' + robertV[i].id + '">' + (robertV[i].name || robertV[i]) + '</button>';
                             }
-                        };
-                        options.onFileDownloadError = function(e) {
-                            //appendMsg(from, contactDivId, e.msg + ",下载音频" + filename + "失败");
-                        };
-                        options.headers = {
-                            "Accept" : "audio/mp3"
-                        };
-                        Easemob.im.Helper.download(options);
-                        return ;
-                    case 'location':
-                        value = "\
-                                <div class='easemobWidget-msg-mapinfo'>" + msg.addr + "</div>\
-                                <img class='easemobWidget-msg-mapico' src='theme/map.png' />";
-                        break;*/
-                    default: break;
+                            str += '</div>';
+                        }
+                        message.set({value: msg.ext.msgtype.choice.title, list: str});
+                        break;
+                    default: 
+						message = new Easemob.im.EmMessage('txt');
+                        message.set({value: msg.data || msg.msg});
+						break;
                 }
                 
-                var temp = [
-                    "<div class='easemobWidget-left'>",
-                        "<div class='easemobWidget-msg-wrapper'>",
-                            "<i class='easemobWidget-left-corner'></i>",
-                            "<div class='easemobWidget-msg-container'>" + value + "</div>",
-                            "<div class='easemobWidget-msg-status hide'><i></i><span>发送失败</span></div>",
-                        "</div>"].join('')
-                        + (function() {
-                            var str = '';
-                            switch(type) {
-                                case 'satisfactionEvaluation':
-                                    str = '<div class="easemobWidget-list-btn js_satisfybtn">'
-                                        + '<button data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '" data-servicesessionid="'
-                                        + msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>'
-                                        + '</div>';
-                                    break;
-                                case 'robertList':
-                                    var robertV = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
-                                    if ( robertV.length > 0 ) {
-                                        str = '<div class="easemobWidget-list-btn js_robertbtn">';
-                                        for(var i=0,l=robertV.length;i<l;i++) {
-                                            str += '<button data-id="' + robertV[i].id + '">' + (robertV[i].name || robertV[i]) + '</button>';
-                                        }
-                                        str += '</div>';
-                                    }
-                                    break;
-                                default: break;
-                            }
-                            return str;
-                        }()) +
-                    "</div>";
-                if ( config.offline ) {
-                    return;
-                } else if ( !isHistory ) {
+                if ( !isHistory ) {
                     if ( msg.ext && msg.ext.weichat && msg.ext.weichat.agent && msg.ext.weichat.agent.userNickname === '调度员' ) {
 
                     } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.queueName ) {
@@ -1496,10 +1312,7 @@
                         wrapper = $('#normal');
                     }
 
-                    if ( msg.ext
-                    && msg.ext.weichat 
-                    && msg.ext.weichat.event 
-                    && msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' ) {//transfer msg
+                    if ( msg.ext && msg.ext.weichat && msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' ) {//transfer msg
                         me.handleTransfer('transfer', wrapper);
                     } else if ( msg.ext && msg.ext.weichat && (msg.ext.weichat.agent || msg.ext.weichat.agent === null) ) {//version23:normal msg
                         if ( msg.ext.weichat.agent === null ) {//switch off
@@ -1515,27 +1328,26 @@
                     }
                     me.playaudio();
                     me.addDate();
-                    wrapper.append(temp);
+                    wrapper.append(message.get(true));
                     me.resetSpan();
                     me.scrollBottom();
 
                     // send prompt & notification
-                    if(!me.isOpened) {
+                    if ( !me.isOpened ) {
                         me.messageCount.html('').removeClass('hide');
                         me.msgCount += 1;
                         me.addPrompt(msgDetail);
-                    } else if(EasemobWidget.utils.isMin()) {
+                    } else if ( EasemobWidget.utils.isMin() ) {
                         me.notify(msgDetail);
                     }
                 } else {
                     if ( msg.type === 'cmd' ) {
                         return;
                     }
-                    wrapper.prepend(temp);
+                    wrapper.prepend(message.get(true));
                 }
             }
         }.setAttribute());
-
 
         /*
             提供上传接口
@@ -1610,7 +1422,7 @@
         /*
             监听父级窗口发来的消息
         */
-        var message = new EmMessage().listenToParent(function(msg){
+        var message = new TransferMessage().listenToParent(function(msg){
             var value;
             if(msg.indexOf('emgroup@') === 0) {//技能组消息
                 value = msg.slice(8);
@@ -1721,47 +1533,30 @@
                     if(code != SWFUpload.UPLOAD_ERROR.FILE_CANCELLED
                     && code != SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED 
                     && code != SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED) {
-                        var temp = $([
-                            "<div class='easemobWidget-right'>",
-                                "<div class='easemobWidget-msg-wrapper'>",
-                                    "<i class='easemobWidget-right-corner'></i>",
-                                    "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
-                                    "<div class='easemobWidget-msg-container'>",
-                                        "<a href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>",
-                                    "</div>",
-                                "</div>",
-                            "</div>"
-                        ].join(''));
-                        im.chatWrapper.append(temp);
-                        im.chatWrapper.find('img:last').on('load', im.scrollBottom);
+						var msg = new Easemob.im.EmMessage('img', this.fileMsgId);
+						msg.set({file: null});
+                        im.chatWrapper.append(msg.get());
                     }
                 }
-                , upload_complete_handler: function(){}
                 , upload_success_handler: function(file, response){
-                    if(!file || !response) return;
-                    try{
+                    if ( !file || !response ) {
+						return;
+					}
+                    try {
                         var res = Easemob.im.Utils.parseUploadResponse(response);
                         
                         res = $.parseJSON(res);
-                        if(file && !file.url && res.entities && res.entities.length > 0) {
+                        if ( file && !file.url && res.entities && res.entities.length > 0 ) {
                             file.url = res.uri + '/' + res.entities[0].uuid;
                         }
-                        var temp = $([
-                            "<div id='" + this.fileMsgId + "' class='easemobWidget-right'>",
-                                "<div class='easemobWidget-msg-wrapper'>",
-                                    "<i class='easemobWidget-right-corner'></i>",
-                                    "<div class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>",
-                                    "<div class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING + "</div>",
-                                    "<div class='easemobWidget-msg-container'>",
-                                        "<a class='easemobWidget-noline' href='view.html?url=" + encodeURIComponent(file.url) + "' target='_blank'><img src='" + file.url + "'/></a>",
-                                    "</div>",
-                                "</div>",
-                            "</div>"
-                        ].join(''));
-                        im.chatWrapper.append(temp);
+
+						var msg = new Easemob.im.EmMessage('img');
+						msg.set({file: file});
+
+                        im.chatWrapper.append(msg.get());
                         im.scrollBottom();
                         this.uploadOptions.onFileUploadComplete(res);
-                    } catch (e) {
+                    } catch ( e ) {
                         im.errorPrompt('上传图片发生错误');
                     }
                 }
@@ -1779,9 +1574,9 @@
     */
     window.top == window 
     ? main(EasemobWidget.utils.getConfig())
-    : new EmMessage().listenToParent(function(msg){
+    : new TransferMessage().listenToParent(function ( msg ) {
         
-        if(msg.indexOf('initdata:') === 0) {
+        if ( msg.indexOf('initdata:') === 0 ) {
             main(EasemobWidget.utils.getConfig(msg.slice(9)));
         }
     });

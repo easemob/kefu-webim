@@ -12,7 +12,7 @@ EasemobWidget.init = function(obj, callback) {
 
 
     var wrapper = $('#normal');
-    var message = new EmMessage();
+    var message = new TransferMessage();
     var tenantId = obj.json.tenantId;
 
     

@@ -7,7 +7,26 @@
 
     var EasemobWidget = EasemobWidget || {};
     EasemobWidget.utils = EasemobWidget.utils || {};
- 
+
+	EasemobWidget.utils.encode = function ( str, history ) {
+		if ( !str || str.length === 0 ) return "";
+		var s = '';
+		s = str.replace(/&amp;/g, "&");
+		s = s.replace(/<(?=[^o][^)])/g, "&lt;");
+		s = s.replace(/>/g, "&gt;");
+		//s = s.replace(/\'/g, "&#39;");
+		s = s.replace(/\"/g, "&quot;");
+		s = s.replace(/\n/g, "<br>");
+		return s;
+	};
+
+	EasemobWidget.utils.decode = function ( str ) {
+		if ( !str || str.length === 0 ) return "";
+		var s = '';
+		s = str.replace(/&amp;/g, "&");
+		return s;
+	};
+
     EasemobWidget.utils.getIEVersion = function() {
         var ua = navigator.userAgent,matches,tridentMap={'4':8,'5':9,'6':10,'7':11};
         matches = ua.match(/MSIE (\d+)/i);
@@ -263,6 +282,6 @@
         open
     */
     window.EasemobWidget = EasemobWidget;
-    window.EmMessage = EmMessage;
+    window.TransferMessage = EmMessage;
     window.Emc = c;
 }(window, undefined));

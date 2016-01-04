@@ -61,8 +61,8 @@
     };
 
     var config = getConfig('easemob.js', true);
-    config.json.hide = config.json.hide === 'false' ? false : true;
-    config.json.sat = config.json.sat === 'false' ? false : true;
+    config.json.hide = config.json.hide === 'false' ? false : config.json.hide;
+    config.json.sat = config.json.sat === 'false' ? false : config.json.sat;
 
     //open Api
     var open = function(){
@@ -259,7 +259,7 @@
             iframe.onreadystatechange = function() {
                 if(iframe.readyState === "loaded" || iframe.readyState === "complete") {
                     this.style.display = 'block';
-                    message = new EmMessage(iframeId);
+                    message = new TransferMessage(iframeId);
                     open();
                     message.sendToIframe(initdata);
                 }
@@ -267,7 +267,7 @@
         } else {
             iframe.onload = function() {
                 this.style.display = 'block';
-                message = new EmMessage(iframeId);
+                message = new TransferMessage(iframeId);
                 open();
                 message.sendToIframe(initdata);
             };
