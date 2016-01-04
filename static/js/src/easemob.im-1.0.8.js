@@ -58,7 +58,7 @@
             if ( xhr.overrideMimeType ) {
                 xhr.overrideMimeType("text/xml");
             }
-            xhr.onreadystatechange = this.func.bind(null, this);
+            xhr.onreadystatechange = this.func.stropheBind(null, this);
             return xhr;
         };
        
