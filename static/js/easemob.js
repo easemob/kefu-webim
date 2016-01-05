@@ -35,7 +35,6 @@
     easemobIM.config.visitorSatisfactionEvaluate = setDefault(easemobIM.config.visitorSatisfactionEvaluate, true);//是否允许访客主动发起满意度评价
     easemobIM.config.soundReminder = setDefault(easemobIM.config.soundReminder, true);//是否启用声音提醒
     easemobIM.config.imgView = setDefault(easemobIM.config.imgView, true);//是否启动图片点击放大功能
-    easemobIM.config.greeting = setDefault(easemobIM.config.greeting, false);//窗口打开时是否自动接收默认欢迎语
     easemobIM.config.fixedButtonPosition = setDefault(easemobIM.config.fixedButtonPosition, {x: '10px', y: '10px'});//悬浮初始位置，坐标以视口右边距和下边距为基准
     easemobIM.config.dialogPosition = setDefault(easemobIM.config.dialogPosition, {x: '10px', y: '10px'});//窗口初始位置，坐标以视口右边距和下边距为基准
     easemobIM.config.titleSlide = setDefault(easemobIM.config.titleSlide, true);//是否允许收到消息的时候网页title滚动

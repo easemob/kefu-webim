@@ -12,7 +12,7 @@
  *      leaveMessage: 留言
  *      titleSlide: 当不在当前tab或聊天窗口最小化则浏览器标题滚动
  *      chat: 聊天窗口的所有交互
- *      Message: 当前所有消息类型封装，文本消息，图片消息等，开发者可改写或自定义添加类型
+ *      Easemob.im.EmMessage: 当前所有消息类型封装，文本消息，图片消息等，开发者可改写或自定义添加类型
  *      Emotions: easemob webim自定义表情包扩展
  */
 ;(function ( window, undefined ) {
@@ -952,7 +952,7 @@
                 if ( code != SWFUpload.UPLOAD_ERROR.FILE_CANCELLED
                 && code != SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED 
                 && code != SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED ) {
-                    var msg = new Message('img', this.fileMsgId);
+                    var msg = new Easemob.im.EmMessage('img', this.fileMsgId);
                     msg.set({file: null});
                     me.appendMsg(config.user.name, config.toUser, msg);
                     me.appendDate(new Date().getTime(), config.toUser);
@@ -968,7 +968,7 @@
                     if (file && !file.url && res.entities && res.entities.length > 0 ) {
                         file.url = res.uri + '/' + res.entities[0].uuid;
                     }
-                    var msg = new Message('img');
+                    var msg = new Easemob.im.EmMessage('img');
                     msg.set({file: file});
                     chat.appendDate(new Date().getTime(), config.toUser);
                     chat.appendMsg(config.user.name, config.toUser, msg);
@@ -1145,10 +1145,9 @@
                                         break;
                                 }
                             } else {
-                                //判断是否为满意度调查的消息
-                                if ( msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType && msgBody.ext.weichat.ctrlType == 'inviteEnquiry'
-                                //机器人自定义菜单
-                                || msgBody.ext && msgBody.ext.msgtype && msgBody.ext.msgtype.choice ) {
+                                if ( msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType && msgBody.ext.weichat.ctrlType == 'inviteEnquiry'//判断是否为满意度调查的消息
+                                || msgBody.ext && msgBody.ext.msgtype && msgBody.ext.msgtype.choice//机器人自定义菜单
+                                || msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType === 'TransferToKfHint' ) {//机器人转人工
                                     me.receiveMsg(msgBody, '', true);
                                 } else {
                                     me.receiveMsg({
@@ -1307,17 +1306,6 @@
                     utils.addClass(me.ePrompt, 'em-hide');
                 }, 2000);
             }
-            , getGreeting: function () {
-                var me = this;
-
-                var msg = new Message('txt', me.conn.getUniqueId());
-                msg.set({
-                    value: '',
-                    to: config.toUser
-                });
-				msg.body.type = 'cmd';
-                me.conn.send(msg.body);
-            }
             , setOffline: function () {
                 leaveMessage();
                 this.slogan && utils.addClass(this.slogan, 'em-hide');
@@ -1364,7 +1352,6 @@
                             utils.removeClass(sendBtn, 'disabled');
                         }
                         utils.html(sendBtn, '发送');
-                        config.greeting && me.getGreeting();
                     }
                     , onTextMessage: function ( message ) {
                         me.receiveMsg(message, 'txt');
@@ -1552,6 +1539,13 @@
                     me.conn.send(id);
                 });
 
+				utils.live('button.js_robertTransferBtn', click,  function () {
+                    var that = this;
+
+                    me.transferToKf(that.getAttribute('data-id'), that.getAttribute('data-session-id'));
+                    return false;
+                });
+
                 //机器人列表
                 utils.live('button.js_robertbtn', click, function () {
                     var that = this;
@@ -1665,7 +1659,7 @@
             }
             , sendImgMsg: function ( file, isHistory ) {
                 var me = this,
-                    msg = new Message('img', isHistory ? null : me.conn.getUniqueId());
+                    msg = new Easemob.im.EmMessage('img', isHistory ? null : me.conn.getUniqueId());
 
                 msg.set({
                     file: file || Easemob.im.Utils.getFileUrl(realFile.getAttribute('id')),
@@ -1758,7 +1752,7 @@
             , sendTextMsg: function ( message, isHistory, ext ) {
                 var me = this;
                 
-                var msg = new Message('txt', isHistory ? null : me.conn.getUniqueId());
+                var msg = new Easemob.im.EmMessage('txt', isHistory ? null : me.conn.getUniqueId());
                 msg.set({
                     value: message || textarea.value,
                     to: config.toUser,
@@ -1788,10 +1782,28 @@
                     me.appendMsg(config.user.name, isHistory, msg, true);
                 }
             }
+			, transferToKf: function ( id, sessionId ) {
+                var me = this;
+
+				var msg = new Easemob.im.EmMessage('cmd');
+				msg.set({
+                    to: config.to
+					, action: 'TransferToKf'
+                    , ext: {
+                        weichat: {
+                            ctrlArgs: {
+                                id: id,
+								serviceSessionId: sessionId,
+                            }
+                        }
+                    }
+                });
+                me.conn.send(msg.body);
+            }
             , sendSatisfaction: function ( level, content, session, invite ) {
                 var me = this;
 
-                var msg = new Message('txt', me.conn.getUniqueId());
+                var msg = new Easemob.im.EmMessage('txt', me.conn.getUniqueId());
                 msg.set({value: '', to: config.toUser});
                 utils.extend(msg.body, {
                     ext: {
@@ -1828,22 +1840,24 @@
                     type = 'satisfactionEvaluation';  
                 } else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {//机器人自定义菜单
                     type = 'robertList';  
-                }
+                } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {//机器人转人工
+                    type = 'robertTransfer';  
+				}
 
                 switch ( type ) {
                     case 'img':
-                        message = new Message('img');
+                        message = new Easemob.im.EmMessage('img');
                         message.set({file: {url: msg.url}});
                         break;
                     case 'satisfactionEvaluation':
-                        message = new Message('list');
+                        message = new Easemob.im.EmMessage('list');
                         message.set({value: '请对我的服务做出评价', list: ['\
                             <div class="easemobWidget-list-btns">\
                                 <button class="easemobWidget-list-btn js_satisfybtn" data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '" data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
                             </div>']});
                         break;
                     case 'robertList':
-                        message = new Message('list');
+                        message = new Easemob.im.EmMessage('list');
                         var str = '',
                             robertV = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
 
@@ -1856,8 +1870,22 @@
                         }
                         message.set({value: msg.ext.msgtype.choice.title, list: str});
                         break;
+					case 'robertTransfer':
+						message = new Easemob.im.EmMessage('list');
+                        var str = '',
+                            robertV = [msg.ext.weichat.ctrlArgs];
+
+                        if ( robertV.length > 0 ) {
+                            str = '<div class="easemobWidget-list-btns">';
+                            for ( var i = 0, l = robertV.length; i < l; i++ ) {
+                                str += '<button class="easemobWidget-list-btn js_robertTransferBtn" data-sessionid="' + robertV[i].serviceSessionId + '" data-id="' + robertV[i].id + '">' + robertV[i].label + '</button>';
+                            }
+                            str += '</div>';
+                        }
+                        message.set({value: msg.ext.msgtype.choice.title, list: str});
+                        break;
                     default:
-                        message = new Message('txt');
+                        message = new Easemob.im.EmMessage('txt');
                         message.set({value: msg.data});
                         break;
                 }
@@ -1895,30 +1923,14 @@
     }());
 
 
-    /**
-     * 消息类
-     */
-    var Message = function ( type, id ) {
-        if ( !(this instanceof Message) ) {
-            return new Message(type);
-        }
-
-        this._msg = {};
-
-        if ( typeof Message[type] === 'function' ) {
-            this._msg = new Message[type](id);
-        }
-        return this._msg;
-    }
-
     //文本消息
-    Message.txt = function ( id ) {
+    Easemob.im.EmMessage.txt = function ( id ) {
         this.id = id;
         this.type = 'txt';
         this.brief = '';
         this.body = {};
     };
-    Message.txt.prototype.get = function ( isReceive ) {
+    Easemob.im.EmMessage.txt.prototype.get = function ( isReceive ) {
         if ( !this.value ) {
             return '';
         }
@@ -1935,7 +1947,7 @@
             "</div>"
         ].join('');
     };
-    Message.txt.prototype.set = function ( opt ) {
+    Easemob.im.EmMessage.txt.prototype.set = function ( opt ) {
         this.value = opt.value;
         if ( this.value ) {
             this.brief = this.value.replace(/\n/mg, '');
@@ -1952,13 +1964,13 @@
     };
 
     //图片消息
-    Message.img = function ( id ) {
+    Easemob.im.EmMessage.img = function ( id ) {
         this.id = id;
         this.type = 'img';
         this.brief = '图片';
         this.body = {};
     }
-    Message.img.prototype.get = function ( isReceive ) {
+    Easemob.im.EmMessage.img.prototype.get = function ( isReceive ) {
         return [
             !isReceive ? "<div id='" + this.id + "' class='easemobWidget-right'>" : "<div class='easemobWidget-left'>",
                 "<div class='easemobWidget-msg-wrapper'>",
@@ -1972,7 +1984,7 @@
             "</div>"
         ].join('');
     }
-    Message.img.prototype.set = function ( opt ) {
+    Easemob.im.EmMessage.img.prototype.set = function ( opt ) {
         this.value = opt.file;
                     
         this.body = {
@@ -1989,13 +2001,13 @@
         };
     }
     //按钮列表消息，机器人回复，满意度调查
-    Message.list = function ( id ) {
+    Easemob.im.EmMessage.list = function ( id ) {
         this.id = id;
         this.type = 'list';
         this.brief = '';
         this.body = {};
     };
-    Message.list.prototype.get = function ( isReceive ) {
+    Easemob.im.EmMessage.list.prototype.get = function ( isReceive ) {
         if ( !this.value ) {
             return '';
         }
@@ -2012,7 +2024,7 @@
             "</div>"
         ].join('');
     };
-    Message.list.prototype.set = function ( opt ) {
+    Easemob.im.EmMessage.list.prototype.set = function ( opt ) {
         this.value = opt.value;
         if ( this.value ) {
             this.brief = this.value.replace(/\n/mg, '');
