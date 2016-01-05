@@ -1124,11 +1124,11 @@
                 me.handleGroup(msge.body);
                 me.send(msge.body);
                 me.addDate();
-                me.chatWrapper.find('img:last').on('load', me.scrollBottom);
                 me.realfile.val('');
 				if ( Easemob.im.Utils.isCanUploadFileAsync() ) {
 					me.chatWrapper.append(msge.get());
 				}
+                me.chatWrapper.find('img:last').on('load', me.scrollBottom);
             }
             , handleTransfer: function(action, wrapper, info) {
                 var key = isGroupChat ? curGroup : 'normal';
@@ -1560,6 +1560,7 @@
 
 						msg.set({file: file});
                         im.chatWrapper.append(msg.get());
+						im.chatWrapper.find('img:last').on('load', me.scrollBottom);
 						this.uploadOptions.onFileUploadComplete(res);
                     } catch ( e ) {
                         im.errorPrompt('上传图片发生错误');
