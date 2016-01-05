@@ -190,4 +190,4 @@ static/css/im.css文件最底部包含了主题样式的设定（theme-color,bor
 
         });
 
-        conn.send(msg.body);//发送消息
+        conn.send(msg.body);//发送消息 
