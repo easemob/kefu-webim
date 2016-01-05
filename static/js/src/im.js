@@ -1551,7 +1551,6 @@
 					}
                     try {
                         var res = Easemob.im.Utils.parseUploadResponse(response);
-                        
                         res = $.parseJSON(res);
                         if ( file && !file.url && res.entities && res.entities.length > 0 ) {
                             file.url = res.uri + '/' + res.entities[0].uuid;
@@ -1560,7 +1559,9 @@
 
 						msg.set({file: file});
                         im.chatWrapper.append(msg.get());
-						im.chatWrapper.find('img:last').on('load', me.scrollBottom);
+						im.chatWrapper.find('img:last').on('load', function () {
+							im.scrollBottom(500);
+						});
 						this.uploadOptions.onFileUploadComplete(res);
                     } catch ( e ) {
                         im.errorPrompt('上传图片发生错误');
