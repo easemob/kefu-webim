@@ -1039,6 +1039,9 @@ body .easemobWidget-offline-bg {
 #EasemobKefuWebim.em-mobile .easemobWidget-pop-bar {
     text-align: center;
 }
+#EasemobKefuWebim.em-mobile .easemobWidgetWrapper {
+    border-radius: 0;
+}
 #EasemobKefuWebim.em-mobile .easemobWidgetBody-wrapper {
     bottom: 42px;
 }

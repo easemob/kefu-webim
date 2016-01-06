@@ -23,6 +23,7 @@
 	}
 
     var getData = new easemobIM.Transfer('EasemobKefuWebimIframe'),
+		base = 'https://kefu.easemob.com',
         https = location.protocol === 'https:',
         config = window.easemobIM.config;
 
@@ -926,7 +927,7 @@
 
         return new SWFUpload({ 
             file_post_name: 'file'
-            , flash_url: 'https://kefu.easemob.com/webim/static/js/swfupload/swfupload.swf'
+            , flash_url: base + '/webim/static/js/swfupload/swfupload.swf'
             , button_placeholder_id: fileInputId
             , button_width: 120
             , button_height: 30
@@ -1136,7 +1137,7 @@
                             if ( msgBody.from === config.user.name ) {
                                 switch ( msg.type ) {
                                     case 'img':
-                                        msg.url = 'https://kefu.easemob.com' + msg.url;
+                                        msg.url = base + msg.url;
                                         msg.to = msgBody.to;
                                         me.sendImgMsg(msg, true);
                                         break;
@@ -1152,7 +1153,7 @@
                                 } else {
                                     me.receiveMsg({
                                         data: msg.msg,
-                                        url: 'https://kefu.easemob.com' + msg.url,
+                                        url: base + msg.url,
                                         from: msgBody.from,
                                         to: msgBody.to
                                     }, msg.type, true);
