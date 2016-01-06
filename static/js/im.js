@@ -1958,7 +1958,7 @@
             id: this.id
             , to: opt.to
             , msg: this.value 
-            , type: 'chat'//this.type
+            , type: this.type
             , success: opt.success
             , fail: opt.fail
         };
@@ -1993,7 +1993,7 @@
             , file: this.value 
             , apiUrl: (https ? 'https:' : 'http:') + '//a1.easemob.com'
             , to: opt.to
-            , type: 'chat'//this.type
+            , type: this.type
             , onFileUploadError : opt.uploadError
             , onFileUploadComplete: opt.uploadComplete
             , success: opt.success
