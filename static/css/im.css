@@ -460,6 +460,7 @@
 }
 #EasemobKefuWebim .easemobWidget-left .easemobWidget-corner {
     position: absolute;
+	z-index: 1;
     top: 5px;
     left: -17px;
     width: 30px;
@@ -494,6 +495,34 @@
     text-align: left;
     font-size: 13px;
     border: 1px solid #e5e5e5;
+}
+#EasemobKefuWebim .easemobWidget-msg-file .easemobWidget-msg-container {
+	padding: 0;
+	min-width: 200px;
+	height: 80px;
+	overflow: hidden;
+}
+#EasemobKefuWebim img.easemobWidget-msg-fileicon {
+	width: 80px;
+    height: 80px;
+    position: absolute;
+    right: 1px;
+	border-radius: 4px;
+}
+#EasemobKefuWebim  .easemobWidget-msg-file a {
+	display: block;
+    width: 100%;
+    height: 100%;
+	text-decoration: none;
+}
+#EasemobKefuWebim  .easemobWidget-msg-file span {
+	position: absolute;
+    right: 90px;
+    left: 10px;
+    top: 6px;
+    word-wrap: break-word;
+    margin: auto;
+    line-height: 24px;
 }
 #EasemobKefuWebim .easemobWidget-left .easemobWidget-msg-container {
     background-color: #fff;

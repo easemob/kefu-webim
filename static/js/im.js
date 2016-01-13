@@ -23,8 +23,10 @@
 	}
 
     var getData = new easemobIM.Transfer('EasemobKefuWebimIframe'),
-		base = 'https://kefu.easemob.com',
-        https = location.protocol === 'https:',
+        protocol = location.protocol === 'https' ? 'https:' : 'http:',
+		domain = '//kefu.easemob.com',
+		ssl = 'https:' + domain,
+		base = protocol + domain,
         config = window.easemobIM.config;
 
 
@@ -425,7 +427,6 @@
         dragHeader = utils.$Dom('easemobWidgetDrag'),
         chatFaceWrapper = utils.$Dom('EasemobKefuWebimFaceWrapper'),
         swfupload = null,//flash 上传
-        https = location.protocol == 'https:' ? true : false,
         click = config.mobile && ('ontouchstart' in window) ? 'touchstart' : 'click';
 
 
@@ -935,6 +936,9 @@
             , button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT
             , file_size_limit: 10485760
             , file_upload_limit: 0
+            , file_queued_error_handler: function () {}
+			, file_dialog_start_handler: function () {}
+			, file_dialog_complete_handler: function () {}
             , file_queued_handler: function(file) {
                 if ( this.getStats().files_queued > 1 ) {
                     this.cancelUpload();
@@ -1359,6 +1363,9 @@
                     }
                     , onPictureMessage: function ( message ) {
                         me.receiveMsg(message, 'img');
+                    }
+					, onFileMessage: function ( message ) {
+                        me.receiveMsg(message, 'file');
                     }
                     , onCmdMessage: function ( message ) {
                         me.receiveMsg(message, 'cmd');
@@ -1850,6 +1857,10 @@
                         message = new Easemob.im.EmMessage('img');
                         message.set({file: {url: msg.url}});
                         break;
+					case 'file':
+                        message = new Easemob.im.EmMessage('file');
+                        message.set({file: {url: msg.url}, filename: msg.filename});
+                        break;
                     case 'satisfactionEvaluation':
                         message = new Easemob.im.EmMessage('list');
                         message.set({value: '请对我的服务做出评价', list: ['\
@@ -1991,7 +2002,46 @@
         this.body = {
             id: this.id 
             , file: this.value 
-            , apiUrl: (https ? 'https:' : 'http:') + '//a1.easemob.com'
+            , apiUrl: protocol + '//a1.easemob.com'
+            , to: opt.to
+            , type: this.type
+            , onFileUploadError : opt.uploadError
+            , onFileUploadComplete: opt.uploadComplete
+            , success: opt.success
+            , fail: opt.fail
+            , flashUpload: opt.flashUpload
+        };
+    }
+	//文件消息
+    Easemob.im.EmMessage.file = function ( id ) {
+        this.id = id;
+        this.type = 'file';
+        this.brief = '文件';
+        this.body = {};
+    }
+    Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
+        return [
+            !isReceive ? "<div id='" + this.id + "' class='easemobWidget-right'>" : "<div class='easemobWidget-left'>",
+                "<div class='easemobWidget-msg-wrapper easemobWidget-msg-file'>",
+                    "<i class='easemobWidget-corner'></i>",
+                    this.id ? "<div id='" + this.id + "_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
+                    this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + config.LOADING + "</div>" : "",
+                    "<div class='easemobWidget-msg-container'>",
+                        this.value === null ? "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>" : "<a href='" + this.value.url + "' class='easemobWidget-fileMsg' title='" + this.filename + "'><img class='easemobWidget-msg-fileicon' src=''/><span>" + (this.filename.length > 19 ? this.filename.slice(0, 19) + '...': this.filename) + "</span></a>",
+                    "</div>",
+                "</div>",
+            "</div>"
+        ].join('');
+    }
+    Easemob.im.EmMessage.file.prototype.set = function ( opt ) {
+        this.value = opt.file;
+		this.filename = opt.filename || this.value.filename || '文件';
+   
+        this.body = {
+            id: this.id 
+            , file: this.value
+			, filename: this.filename
+            , apiUrl: protocol + '//a1.easemob.com'
             , to: opt.to
             , type: this.type
             , onFileUploadError : opt.uploadError
