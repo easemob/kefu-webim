@@ -445,11 +445,11 @@
         utils.addClass(imgViewWrap, 'easemobWidget-view em-hide');
         im.appendChild(imgViewWrap);
 
-        utils.on(imgViewWrap, click, function () {
+        utils.on(imgViewWrap, 'click', function () {
             utils.addClass(imgViewWrap, 'em-hide');
         }, false);
 
-        utils.live('img.easemobWidget-img', click, function () {
+        utils.live('img.easemobWidget-img', 'click', function () {
             imgView.show(this.getAttribute('src'));
         });
 
@@ -814,6 +814,9 @@
                 that = ev.target || ev.srcElement,
                 cur = that.getAttribute('idx');
 
+			if ( !cur ) {
+				return false;
+			}
             for ( var i = 0; i < lis.length; i++ ) {
                 if ( i < Number(cur) ) {
                     utils.addClass(lis[i], 'sel');
@@ -1274,15 +1277,16 @@
                     config.mobile || utils.removeClass(this, 'theme-color');
                 });
                 utils.on(faceBtn, click, function () {
+					textarea.blur();
                     utils.hasClass(chatFaceWrapper, 'em-hide')
                     ? utils.removeClass(chatFaceWrapper, 'em-hide')
                     : utils.addClass(chatFaceWrapper, 'em-hide')
                 });
 
                 //表情的选中
-                utils.on(chatFaceWrapper.getElementsByTagName('img'), click, function ( e ) {
+                utils.on(chatFaceWrapper.getElementsByTagName('div'), click, function ( e ) {
                     !config.mobile && textarea.focus();
-                    textarea.value = textarea.value + this.getAttribute('data-value');
+                    textarea.value = textarea.value + this.getElementsByTagName('img')[0].getAttribute('data-value');
                     utils.removeClass(sendBtn, 'disabled');
                     if ( config.mobile ) {
                         me.autoGrowOptions.update();//update autogrow
@@ -1466,6 +1470,10 @@
             , bindEvents: function () {
                 var me = this;
 
+				utils.on(imChatBody, 'click', function () {
+					textarea.blur();
+				});
+
                 utils.on(document, 'mouseover', function () {
                     titleSlide.stop();
                 }); 
@@ -1576,14 +1584,17 @@
                 
                 if ( config.mobile ) {
                     var handleFocus = function () {
-                        textarea.style.overflowY = 'auto';
-                        var scrollTimer = function () {
-                            document.body.scrollTop = 10000;
-                            me.focusText = setTimeout(scrollTimer, 200);
-                        };
-                        scrollTimer();
-                        me.scrollBottom(800);
-                    }
+						clearTimeout(me.handleDelay);
+						me.handleDelay = setTimeout(function () {
+							textarea.style.overflowY = 'auto';
+							var scrollTimer = function () {
+								document.body.scrollTop = 10000;
+								me.focusText = setTimeout(scrollTimer, 200);
+							};
+							scrollTimer();
+							me.scrollBottom(800);
+						}, 1000);
+					};
                     utils.on(textarea, 'input', function () {
                         me.autoGrowOptions.update();
                         me.scrollBottom(800);
@@ -1591,7 +1602,6 @@
                     utils.on(textarea, 'focus', handleFocus);
                     utils.one(textarea, 'touchstart', handleFocus);
                     utils.on(textarea, 'blur', function () {
-                    
                         clearTimeout(me.focusText);
                     });
                 }

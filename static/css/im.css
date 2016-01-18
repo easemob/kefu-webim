@@ -648,9 +648,10 @@
     border-bottom-right-radius: 4px;
 }
 #EasemobKefuWebim .easemobWidget-msg-status i {
+	display: inline-block;
+    position: relative;
     width: 30px;
     height: 30px;
-    position: relative;
 }
 #EasemobKefuWebim .easemobWidget-msg-status i:before {
     content: 'A';

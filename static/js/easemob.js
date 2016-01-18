@@ -103,9 +103,6 @@
     document.getElementById('EasemobKefuWebimIframe').onload = function () {
         var script = document.createElement('script');
         script.id = 'EasemobKefuWebimDepScript';
-        script.src = 'https://kefu.easemob.com/webim/static/js/em-open.js';
-        head.appendChild(script);
-        script = null;
 
         var loadIm = function () {
             script = document.createElement('script');
@@ -114,12 +111,13 @@
             script = null;
         };
 
-        var imScript = document.getElementById('EasemobKefuWebimDepScript');
-
-		imScript.onload = imScript.onreadystatechange = function () {
+		script.onload = script.onreadystatechange = function () {
 			if ( !this.readyState || this.readyState === 'loaded' || this.readyState === 'complete' ) {
 				loadIm();
 			}
-		}
+		};
+
+        script.src = 'https://kefu.easemob.com/webim/static/js/em-open.js';
+        head.appendChild(script);
     };
 }());
