@@ -1120,9 +1120,6 @@ body .easemobWidget-offline-bg {
     border-radius: 0;
     box-shadow: none;
 }
-#EasemobKefuWebim.em-mobile .easemobWidgetBody {
-    bottom: 42px;
-}
 #EasemobKefuWebim.em-mobile .easemobWidget-list-btn,
 #EasemobKefuWebim.em-mobile .easemobWidget-msg-container {
     font-size: 17px;

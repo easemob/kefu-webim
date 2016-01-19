@@ -1474,8 +1474,9 @@
             , bindEvents: function () {
                 var me = this;
 
-				utils.on(imChatBody, 'click', function () {
+				utils.on(imChatBody, click, function () {
 					textarea.blur();
+					return false;
 				});
 
                 utils.on(document, 'mouseover', function () {
@@ -1623,6 +1624,9 @@
                     }
                 });
 
+				utils.on(sendFileBtn, 'touchend', function () {
+                    textarea.blur();
+                });
                 //弹出文件选择框
                 utils.on(sendFileBtn, 'click', function () {
                     if ( !Easemob.im.Utils.isCanUploadFileAsync() ) {
