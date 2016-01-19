@@ -38,8 +38,8 @@
     easemobIM.config.fixedButtonPosition = setDefault(easemobIM.config.fixedButtonPosition, {x: '10px', y: '10px'});//悬浮初始位置，坐标以视口右边距和下边距为基准
     easemobIM.config.dialogPosition = setDefault(easemobIM.config.dialogPosition, {x: '10px', y: '10px'});//窗口初始位置，坐标以视口右边距和下边距为基准
     easemobIM.config.titleSlide = setDefault(easemobIM.config.titleSlide, true);//是否允许收到消息的时候网页title滚动
-    easemobIM.config.error = setDefault(easemobIM.config.error, function ( error ) { /*alert(error);*/ });//错误回调
-    easemobIM.config.onReceive = setDefault(easemobIM.config.onReceive, function ( from, to, message ) { /*console.log('收到一条消息', arguments);*/ });//收消息回调
+    easemobIM.config.error = setDefault(easemobIM.config.error, function ( error ) { });//错误回调
+    easemobIM.config.onReceive = setDefault(easemobIM.config.onReceive, function ( from, to, message ) { });//收消息回调
 
     easemobIM.config.authMode = setDefault(easemobIM.config.authMode, 'token' || 'password');//验证方式
     easemobIM.config.user = setDefault(easemobIM.config.user, {
