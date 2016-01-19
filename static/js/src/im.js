@@ -50,6 +50,7 @@
                 this.handleFixedBtn();//展示悬浮小按钮
                 this.fillFace();//遍历FACE，添加所有表情
                 this.setWord();//设置广告语
+                this.setLogo();//设置企业logo
                 this.setTitle(config.json.emgroup ? config.json.emgroup : '');//设置im.html的标题
                 this.audioAlert();//init audio
                 this.mobileInit();//h5 适配，为防止media query不准确，js动态添加class
@@ -99,15 +100,54 @@
 
                     $.when(EasemobWidget.api.getSession(userHash[value].user, config))
                     .done(function(info){
-                        userHash[value].session = info;
-                        userHash[value].agent.userNickname = info.agentUserNiceName;
-                        me.setTitle('', userHash[value].agent);
+						if ( !info ) {
+							me.getGreeting();
+						} else {
+							userHash[value].session = info;
+							userHash[value].agent.userNickname = info.agentUserNiceName;
+							me.setTitle('', userHash[value].agent);
+						}
                     })
                     .fail(function () {
                         userHash[value].session = null;
+						me.getGreeting();
                     });
                 }
             }
+			, getGreeting: function () {
+				var me = this;
+
+				$.when(
+					EasemobWidget.api.getSystemGreeting(config)
+					, EasemobWidget.api.getRobertGreeting(config)
+				)
+				.done(function(sGreeting, rGreeting){
+					var msg = null;
+					if ( sGreeting ) {
+						msg = {
+							msg: sGreeting,
+							type: 'txt'
+						};
+						msg && me.receiveMsg(msg);
+					}
+					if ( rGreeting ) {
+						switch ( rGreeting.greetingTextType ) {
+							case 0:
+								msg = {
+									msg: rGreeting.greetingText,
+									type: 'txt'
+								};
+								break;
+							case 1:
+								msg = { ext: rGreeting.greetingText.ext };
+								break;
+							default: break;
+						}
+						msg && me.receiveMsg(msg);
+					}
+				})
+				.fail(function(){});
+			}
             , getBase64: (function () {
                 var canvas = $('<canvas>').get(0);
                 if ( !canvas.getContext ) {
@@ -303,7 +343,6 @@
 
                         if ( v.body && v.body.bodies.length > 0 ) {
                             msg = v.body.bodies[0];
-                            msg.msg && msg.type != 'cmd' && im.addDate(v.timestamp || v.body.timestamp, true, wrapper);
                             if ( v.body.from && v.body.from.indexOf('webim-visitor') > -1 ) {
 
                                 //访客发送的满意度评价不在历史记录中展示
@@ -325,20 +364,14 @@
                             } else {
 
                                 //判断是否为满意度调查的消息
-                                if(v.body.ext 
-                                && v.body.ext.weichat 
-                                && v.body.ext.weichat.ctrlType 
-                                && v.body.ext.weichat.ctrlType == 'inviteEnquiry') {
-                                    msg = v.body;
-                                }
-                                //机器人自定义菜单
-                                if(v.body.ext 
-                                && v.body.ext.msgtype 
-                                && v.body.ext.msgtype) {
+                                if(v.body.ext && v.body.ext.weichat && v.body.ext.weichat.ctrlType && v.body.ext.weichat.ctrlType == 'inviteEnquiry'
+								|| v.body.ext && v.body.ext.msgtype && v.body.ext.msgtype.choice
+								|| v.body.ext && v.body.ext.weichat && v.body.ext.weichat.ctrlType === 'TransferToKfHint' ) {
                                     msg = v.body;
                                 }
                                 im.receiveMsg(msg, msg.type, 'history', wrapper);
                             }
+                            msg.msg && msg.type != 'cmd' && im.addDate(v.timestamp || v.body.timestamp, true, wrapper);
                         }
                     });
 
@@ -386,6 +419,11 @@
                     this.chatWrapper.parent().css('top', '43px');
                 }
             }
+			, setLogo: function () {
+				if ( config.logo ) {
+					this.chatWrapper.prepend('<div class="easemobWidget-tenant-logo"><img src="' + config.logo + '"></div>');
+				}
+			}
             , fillFace: function(){
                 var faceStr = '<li class="e-face">',
                     count = 0;
@@ -526,8 +564,13 @@
                 var id = wrapper.attr('id');
 
                 if(date) {
-                    $(htmlPre + new Date(date).format(fmt) + htmlEnd)
-                    .insertBefore(wrapper.find('div:first')); 
+					var logo = wrapper.find('.easemobWidget-tenant-logo');
+					
+					if ( logo.length > 0 ) {
+						$(htmlPre + new Date(date).format(fmt) + htmlEnd).insertAfter(logo); 
+					} else {
+						$(htmlPre + new Date(date).format(fmt) + htmlEnd).insertBefore(wrapper.find('div:first')); 
+					}
                 } else if(!isHistory) {
                     if(!this.msgTimeSpan[id] 
                     || (new Date().getTime() - this.msgTimeSpan[id] > 60000)) {//间隔大于1min  show
@@ -775,6 +818,13 @@
 
                     e.originalEvent.stopPropagation && e.originalEvent.stopPropagation();
                 });
+
+                me.Im.on(click, '.js_robertTransferBtn button', function(){
+                    var that = this;
+                    me.transferToKf(that.getAttribute('data-id'), that.getAttribute('data-session-id'));
+                    return false;
+                });
+
                 //机器人列表
                 me.Im.on(click, '.js_robertbtn button', function(){
                     var that = $(this);
@@ -1184,7 +1234,13 @@
                 });
 
                 if(isHistory) {
-                    wrapper.prepend(msge.get());
+					var logo = wrapper.find('.easemobWidget-tenant-logo');
+					
+					if ( logo.length > 0 ) {
+						$(msge.get()).insertAfter(wrapper.find('.easemobWidget-tenant-logo'));
+					} else {
+						wrapper.prepend(msge.get());
+					}
                     return;
                 }
 
@@ -1212,6 +1268,25 @@
                 } else {
                     me.conn.send(option);
                 }
+            }
+			, transferToKf: function ( id, sessionId ) {
+                var me = this;
+
+				var msg = new Easemob.im.EmMessage('cmd');
+				msg.set({
+                    to: config.to
+					, action: 'TransferToKf'
+                    , ext: {
+                        weichat: {
+                            ctrlArgs: {
+                                id: id,
+								serviceSessionId: sessionId,
+                            }
+                        }
+                    }
+                });
+				me.handleGroup(msg.body);
+                me.send(msg.body);
             }
             , sendSatisfaction: function(level, content) {
                 var me = this;
@@ -1265,14 +1340,14 @@
 
                 wrapper = wrapper || me.chatWrapper;
 
-                //满意度评价
-                if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType && msg.ext.weichat.ctrlType == 'inviteEnquiry' ) {
+                
+                if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType && msg.ext.weichat.ctrlType == 'inviteEnquiry' ) {//满意度评价
                     type = 'satisfactionEvaluation';  
-                }
-                //机器人自定义菜单
-                if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {
+                } else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {//机器人自定义菜单
                     type = 'robertList';  
-                }
+                }  else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {//机器人转人工
+                    type = 'robertTransfer';  
+				}
 
                 switch ( type ) {
                     case 'img':
@@ -1295,6 +1370,20 @@
                             str = '<div class="easemobWidget-list-btns easemobWidget-list-btn js_robertbtn">';
                             for ( var i = 0, l = robertV.length; i < l; i++ ) {
                                 str += '<button data-id="' + robertV[i].id + '">' + (robertV[i].name || robertV[i]) + '</button>';
+                            }
+                            str += '</div>';
+                        }
+                        message.set({value: msg.ext.msgtype.choice.title, list: str});
+                        break;
+					case 'robertTransfer':
+						message = new Easemob.im.EmMessage('list');
+                        var str = '',
+                            robertV = [msg.ext.weichat.ctrlArgs];
+
+                        if ( robertV.length > 0 ) {
+                            str = '<div class="easemobWidget-list-btns easemobWidget-list-btn js_robertTransferBtn">';
+                            for ( var i = 0, l = robertV.length; i < l; i++ ) {
+                                str += '<button data-sessionid="' + robertV[i].serviceSessionId + '" data-id="' + robertV[i].id + '">' + robertV[i].label + '</button>';
                             }
                             str += '</div>';
                         }
@@ -1352,7 +1441,13 @@
                     if ( msg.type === 'cmd' ) {
                         return;
                     }
-                    wrapper.prepend(message.get(true));
+					var logo = wrapper.find('.easemobWidget-tenant-logo');
+					
+					if ( logo.length > 0 ) {
+						$(message.get(true)).insertAfter(wrapper.find('.easemobWidget-tenant-logo'));
+					} else {
+						wrapper.prepend(message.get(true));
+					}
                 }
             }
         }.setAttribute());

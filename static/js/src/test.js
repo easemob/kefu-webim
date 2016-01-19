@@ -85,6 +85,18 @@
                     msg: msg
                 }));
                 break;
+			case 'getSystemGreeting':
+                easemobIM.emajax(createObject({
+                    url: '/v1/webimplugin/welcome?tenantId=' + msg.data.tenantId,
+                    msg: msg
+                }));
+                break;
+			case 'getRobertGreeting':
+                easemobIM.emajax(createObject({
+                    url: '/v1/Tenants/' + msg.data.tenantId + '/robots/visitor/greetings',
+                    msg: msg
+                }));
+                break;
             default:
                 break;
         }

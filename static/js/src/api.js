@@ -209,4 +209,42 @@ EasemobWidget.api = {
 
         return getSession;
     }
+	/*
+        get system welcome
+    */
+    , getSystemGreeting: function(obj) {
+        var getSysGreeting = $.Deferred(function(){
+            $.ajax({
+				url: '/v1/webimplugin/welcome?tenantId=' + obj.json.tenantId
+                , contentType: 'application/json'
+            })
+            .done(function(info) {
+                getSysGreeting.resolve(info);
+            })
+            .fail(function(){
+                //getSysGreeting.reject();
+            });
+        });
+
+        return getSysGreeting;
+    }
+	/*
+        get robert welcome
+    */
+    , getRobertGreeting: function(obj) {
+        var getRobGreeting = $.Deferred(function(){
+            $.ajax({
+				url: '/v1/Tenants/' + obj.json.tenantId + '/robots/visitor/greetings'
+                , contentType: 'application/json'
+            })
+            .done(function(info) {
+                getRobGreeting.resolve(info);
+            })
+            .fail(function(){
+                //getRobGreeting.reject();
+            });
+        });
+
+        return getRobGreeting;
+    }
 };

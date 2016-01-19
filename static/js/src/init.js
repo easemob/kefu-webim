@@ -32,6 +32,7 @@ EasemobWidget.init = function(obj, callback) {
             obj.avatar = toinfo[0].tenantAvatar || 'static/img/default_avatar.png';
             obj.tenantName = toinfo[0].tenantName;
             obj.appkey = toinfo[0].orgName + '#' + toinfo[0].appName;
+			obj.logo = toinfo[0].tenantLogo || '';
         } else {
             return;
         }

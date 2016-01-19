@@ -108,3 +108,42 @@ Easemob.im.EmMessage.list.prototype.set = function ( opt ) {
 	}
 	this.listDom = opt.list;
 };
+//文件消息
+Easemob.im.EmMessage.file = function ( id ) {
+	this.id = id;
+	this.type = 'file';
+	this.brief = '文件';
+	this.body = {};
+}
+Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
+	return [
+		!isReceive ? "<div id='" + this.id + "' class='easemobWidget-right'>" : "<div class='easemobWidget-left'>",
+			"<div class='easemobWidget-msg-wrapper easemobWidget-msg-file'>",
+				"<i class='easemobWidget-corner'></i>",
+				this.id ? "<div id='" + this.id + "_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
+				this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + config.LOADING + "</div>" : "",
+				"<div class='easemobWidget-msg-container'>",
+					this.value === null ? "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>" : "<a href='" + this.value.url + "' class='easemobWidget-fileMsg' title='" + this.filename + "'><img class='easemobWidget-msg-fileicon' src=''/><span>" + (this.filename.length > 19 ? this.filename.slice(0, 19) + '...': this.filename) + "</span></a>",
+				"</div>",
+			"</div>",
+		"</div>"
+	].join('');
+}
+Easemob.im.EmMessage.file.prototype.set = function ( opt ) {
+	this.value = opt.file;
+	this.filename = opt.filename || this.value.filename || '文件';
+
+	this.body = {
+		id: this.id 
+		, file: this.value
+		, filename: this.filename
+		, apiUrl: protocol + '//a1.easemob.com'
+		, to: opt.to
+		, type: this.type
+		, onFileUploadError : opt.uploadError
+		, onFileUploadComplete: opt.uploadComplete
+		, success: opt.success
+		, fail: opt.fail
+		, flashUpload: opt.flashUpload
+	};
+}
