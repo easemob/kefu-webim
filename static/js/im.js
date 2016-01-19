@@ -123,7 +123,7 @@
             if(matches&&matches[1]) {
                 return tridentMap[matches[1]]||null;
             }
-            return null;
+            return 10000;
         }
         , live: function ( target, ev, fn ) {
             utils.on(document, ev, function ( e ) {
@@ -240,15 +240,16 @@
             }
             return false;
         }
-        , $Class: function ( DomDotClass ) {
+        , $Class: function ( DomDotClass, parentNode ) {
             var temp = DomDotClass.split('.'),
                 tag = temp[0],
                 className = temp[1];
 
-            if ( document.getElementsByClassName ) {
-                return document.getElementsByClassName(className);
+			var parent = parentNode || document;
+            if ( parent.getElementsByClassName ) {
+                return parent.getElementsByClassName(className);
             } else {
-                var tags = document.getElementsByTagName(tag),
+                var tags = parent.getElementsByTagName(tag),
                     arr = [];
                 for ( var i = 0, l = tags.length; i < l; i++ ) {
                     if ( this.hasClass(tags[i], className) ) {
@@ -553,7 +554,7 @@
                 var ctrl_pressed = false,
                     me = this;
 
-                if ( utils.getIEVersion() && utils.getIEVersion() < 11 ) {
+                if ( utils.getIEVersion() < 11 ) {
                     return;
                 }
                 
@@ -781,16 +782,18 @@
             session = null;
             invite = null;
             utils.removeClass(dom, 'em-hide');
+			clearInterval(chat.focusText);
         });
-        utils.live('button.js_satisfybtn', click, function () {
+        utils.live('button.js_satisfybtn', 'click', function () {
             session = this.getAttribute('data-servicesessionid');
             invite = this.getAttribute('data-inviteid');
             utils.removeClass(dom, 'em-hide');
+			clearInterval(chat.focusText);
         });
-        utils.on(cancelBtn, click, function () {
+        utils.on(cancelBtn, 'click', function () {
             utils.addClass(dom, 'em-hide');
         });
-        utils.on(submitBtn, click, function () {
+        utils.on(submitBtn, 'click', function () {
             var level = getStarLevel();
 
             if ( level === 0 ) {
@@ -809,7 +812,7 @@
                 utils.addClass(dom, 'em-hide');
             }, 1500);
         });
-        utils.on(starsUl, click, function ( e ) {
+        utils.on(starsUl, 'click', function ( e ) {
             var ev = e || window.event,
                 that = ev.target || ev.srcElement,
                 cur = that.getAttribute('idx');
@@ -980,6 +983,7 @@
                     msg.set({file: file});
                     chat.appendDate(new Date().getTime(), config.toUser);
                     chat.appendMsg(config.user.name, config.toUser, msg);
+                    chat.scrollBottom(1000);
                     this.uploadOptions.onFileUploadComplete(res);
                 } catch ( e ) {
                     chat.errorPrompt('上传图片发生错误');
@@ -1420,7 +1424,7 @@
                 var me = this;
 
                 //if lte ie 8 , return
-                if ( utils.getIEVersion() && utils.getIEVersion() < 9 || config.mobile || !config.soundReminder ) {
+                if ( utils.getIEVersion() < 9 || config.mobile || !config.soundReminder ) {
                     me.soundReminder = function () {};
                     return;
                 }
@@ -1584,16 +1588,14 @@
                 
                 if ( config.mobile ) {
                     var handleFocus = function () {
-						clearTimeout(me.handleDelay);
-						me.handleDelay = setTimeout(function () {
-							textarea.style.overflowY = 'auto';
-							var scrollTimer = function () {
-								document.body.scrollTop = 10000;
-								me.focusText = setTimeout(scrollTimer, 200);
-							};
-							scrollTimer();
-							me.scrollBottom(800);
-						}, 1000);
+						textarea.style.overflowY = 'auto';
+						me.scrollBottom(800);
+						if ( me.focusText ) {
+							return;
+						}
+						me.focusText = setInterval(function () {
+							document.body.scrollTop = 100000;
+						}, 200);
 					};
                     utils.on(textarea, 'input', function () {
                         me.autoGrowOptions.update();
@@ -1602,7 +1604,7 @@
                     utils.on(textarea, 'focus', handleFocus);
                     utils.one(textarea, 'touchstart', handleFocus);
                     utils.on(textarea, 'blur', function () {
-                        clearTimeout(me.focusText);
+                        clearInterval(me.focusText);
                     });
                 }
 
@@ -1668,7 +1670,7 @@
             }
             , scrollBottom: function ( type ) {
                 var ocw = imChatBody;
-                
+
                 type 
                 ? (clearTimeout(this.scbT), this.scbT = setTimeout(function () {
                     ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000;
@@ -1753,6 +1755,7 @@
             }
             , appendMsg: function ( from, to, msg, isHistory ) {//消息上屏
                 var isSelf = from == config.user.name,
+					me = this,
                     curWrapper = utils.$Dom(isSelf ? to : from || config.toUser);
 
                 var div = document.createElement('div');
@@ -1763,7 +1766,17 @@
                     utils.insertBefore(curWrapper, div, curWrapper.childNodes[0]);
                 } else {
                     curWrapper.appendChild(div);
-                    this.scrollBottom(config.mobile ? 700 : undefined);
+					me.scrollBottom(config.mobile ? 700 : null);
+
+					var imgList = utils.$Class('img.easemobWidget-img', div),
+						img = imgList.length > 0 ? imgList[0] : null;
+						
+					if ( img ) {
+						utils.on(img, 'load', function () {
+							me.scrollBottom(utils.getIEVersion() < 9 ? 700 : null);
+							img = null;
+						});
+					}
                 }
                 div = null;
             }
