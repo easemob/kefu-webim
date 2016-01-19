@@ -1354,6 +1354,10 @@
 						message = new Easemob.im.EmMessage('img');
                         message.set({file: {url: msg.url}});
                         break;
+					case 'file':
+						message = new Easemob.im.EmMessage('file');
+                        message.set({file: {url: msg.url, filename: msg.filename}});
+                        break;
                     case 'satisfactionEvaluation':
 						message = new Easemob.im.EmMessage('list');
                         message.set({value: '请对我的服务做出评价', list: ['\
