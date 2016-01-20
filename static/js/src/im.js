@@ -821,7 +821,7 @@
 
                 me.Im.on(click, '.js_robertTransferBtn button', function(){
                     var that = this;
-                    me.transferToKf(that.getAttribute('data-id'), that.getAttribute('data-session-id'));
+                    me.transferToKf(that.getAttribute('data-id'), that.getAttribute('data-sessionid'));
                     return false;
                 });
 
