@@ -1372,9 +1372,6 @@
                     , onPictureMessage: function ( message ) {
                         me.receiveMsg(message, 'img');
                     }
-					, onFileMessage: function ( message ) {
-                        me.receiveMsg(message, 'file');
-                    }
                     , onCmdMessage: function ( message ) {
                         me.receiveMsg(message, 'cmd');
                     }
@@ -1563,7 +1560,7 @@
 				utils.live('button.js_robertTransferBtn', click,  function () {
                     var that = this;
 
-                    me.transferToKf(that.getAttribute('data-id'), that.getAttribute('data-session-id'));
+                    me.transferToKf(that.getAttribute('data-id'), that.getAttribute('data-sessionid'));
                     return false;
                 });
 
@@ -1880,13 +1877,13 @@
 				}
 
                 switch ( type ) {
+					case 'txt':
+                        message = new Easemob.im.EmMessage('txt');
+                        message.set({value: msg.data});
+                        break;
                     case 'img':
                         message = new Easemob.im.EmMessage('img');
                         message.set({file: {url: msg.url}});
-                        break;
-					case 'file':
-                        message = new Easemob.im.EmMessage('file');
-                        message.set({file: {url: msg.url}, filename: msg.filename});
                         break;
                     case 'satisfactionEvaluation':
                         message = new Easemob.im.EmMessage('list');
@@ -1924,9 +1921,7 @@
                         message.set({value: msg.ext.msgtype.choice.title, list: str});
                         break;
                     default:
-                        message = new Easemob.im.EmMessage('txt');
-                        message.set({value: msg.data});
-                        break;
+                        return;
                 }
                 
                 if ( !isHistory ) {
@@ -2002,6 +1997,24 @@
         };
     };
 
+	//cmd消息
+	Easemob.im.EmMessage.cmd = function ( id ) {
+		this.id = id;
+		this.type = 'cmd';
+		this.body = {};
+	};
+	Easemob.im.EmMessage.cmd.prototype.set = function ( opt ) {
+		this.value = '';
+
+		this.body = {
+			to: opt.to
+			, action: opt.action
+			, msg: this.value 
+			, type : this.type 
+			, ext: opt.ext || {}
+		};
+	};
+
     //图片消息
     Easemob.im.EmMessage.img = function ( id ) {
         this.id = id;
@@ -2039,45 +2052,7 @@
             , flashUpload: opt.flashUpload
         };
     }
-	//文件消息
-    Easemob.im.EmMessage.file = function ( id ) {
-        this.id = id;
-        this.type = 'file';
-        this.brief = '文件';
-        this.body = {};
-    }
-    Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
-        return [
-            !isReceive ? "<div id='" + this.id + "' class='easemobWidget-right'>" : "<div class='easemobWidget-left'>",
-                "<div class='easemobWidget-msg-wrapper easemobWidget-msg-file'>",
-                    "<i class='easemobWidget-corner'></i>",
-                    this.id ? "<div id='" + this.id + "_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
-                    this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + config.LOADING + "</div>" : "",
-                    "<div class='easemobWidget-msg-container'>",
-                        this.value === null ? "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>" : "<a href='" + this.value.url + "' class='easemobWidget-fileMsg' title='" + this.filename + "'><img class='easemobWidget-msg-fileicon' src=''/><span>" + (this.filename.length > 19 ? this.filename.slice(0, 19) + '...': this.filename) + "</span></a>",
-                    "</div>",
-                "</div>",
-            "</div>"
-        ].join('');
-    }
-    Easemob.im.EmMessage.file.prototype.set = function ( opt ) {
-        this.value = opt.file;
-		this.filename = opt.filename || this.value.filename || '文件';
-   
-        this.body = {
-            id: this.id 
-            , file: this.value
-			, filename: this.filename
-            , apiUrl: protocol + '//a1.easemob.com'
-            , to: opt.to
-            , type: this.type
-            , onFileUploadError : opt.uploadError
-            , onFileUploadComplete: opt.uploadComplete
-            , success: opt.success
-            , fail: opt.fail
-            , flashUpload: opt.flashUpload
-        };
-    }
+
     //按钮列表消息，机器人回复，满意度调查
     Easemob.im.EmMessage.list = function ( id ) {
         this.id = id;
