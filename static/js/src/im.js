@@ -1391,7 +1391,7 @@
                             }
                             str += '</div>';
                         }
-                        message.set({value: msg.ext.msgtype.choice.title, list: str});
+                        message.set({value: msg.ext.weichat.ctrlArgs.label, list: str});
                         break;
                     default: 
 						message = new Easemob.im.EmMessage('txt');
