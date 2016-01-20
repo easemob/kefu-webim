@@ -545,8 +545,8 @@
                     , onCmdMessage: function(message){
                         me.receiveMsg(message, 'cmd');
                     }
-                    , onAudioMessage: function(message) {
-                        me.receiveMsg(message, 'audio');
+                    , onFileMessage: function(message) {
+                        me.receiveMsg(message, 'file');
                     }
                     , onClosed: function() {}
                     , onError: function(e){

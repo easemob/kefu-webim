@@ -32,10 +32,28 @@ Easemob.im.EmMessage.txt.prototype.set = function ( opt ) {
 		id: this.id
 		, to: opt.to
 		, msg: this.value 
-		, type : 'chat'
+		, type : this.type
 		, ext: opt.ext || {}
 		, success: opt.success
 		, fail: opt.fail
+	};
+};
+
+//cmd消息
+Easemob.im.EmMessage.cmd = function ( id ) {
+	this.id = id;
+	this.type = 'cmd';
+	this.body = {};
+};
+Easemob.im.EmMessage.cmd.prototype.set = function ( opt ) {
+	this.value = '';
+
+	this.body = {
+		to: opt.to
+		, action: opt.action
+		, msg: this.value 
+		, type : this.type 
+		, ext: opt.ext || {}
 	};
 };
 
@@ -68,7 +86,7 @@ Easemob.im.EmMessage.img.prototype.set = function ( opt ) {
 		, file: this.value 
 		, apiUrl: (location.protocol == 'https:' ? 'https:' : 'http:') + '//a1.easemob.com'
 		, to: opt.to
-		, type : 'img'
+		, type : this.type
 		, onFileUploadError : opt.uploadError
 		, onFileUploadComplete: opt.uploadComplete
 		, success: opt.success
@@ -123,7 +141,7 @@ Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 				this.id ? "<div id='" + this.id + "_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
 				this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + config.LOADING + "</div>" : "",
 				"<div class='easemobWidget-msg-container'>",
-					this.value === null ? "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>" : "<a href='" + this.value.url + "' class='easemobWidget-fileMsg' title='" + this.filename + "'><img class='easemobWidget-msg-fileicon' src=''/><span>" + (this.filename.length > 19 ? this.filename.slice(0, 19) + '...': this.filename) + "</span></a>",
+					this.value === null ? "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>" : "<a href='" + this.value.url + "' class='easemobWidget-fileMsg' title='" + this.filename + "'><img class='easemobWidget-msg-fileicon' src='static/img/avatar2.png'/><span>" + (this.filename.length > 19 ? this.filename.slice(0, 19) + '...': this.filename) + "</span></a>",
 				"</div>",
 			"</div>",
 		"</div>"
@@ -137,7 +155,7 @@ Easemob.im.EmMessage.file.prototype.set = function ( opt ) {
 		id: this.id 
 		, file: this.value
 		, filename: this.filename
-		, apiUrl: protocol + '//a1.easemob.com'
+		, apiUrl: (location.protocol == 'https:' ? 'https:' : 'http:') + '//a1.easemob.com'
 		, to: opt.to
 		, type: this.type
 		, onFileUploadError : opt.uploadError
