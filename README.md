@@ -4,7 +4,7 @@
 
 ## 一.集成方式
 
-1.下载源码：https://github.com/easemob/kefu-webim/releases tag:open_1.0
+1.下载源码：https://github.com/easemob/kefu-webim/releases tag:EasemobKefuWebim1.0
 
 2.解压源码包，将其放到您的服务器所指向的文件目录
 
