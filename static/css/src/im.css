@@ -518,6 +518,10 @@ img.easemobWidget-msg-fileicon {
     word-wrap: break-word;
     margin: auto;
     line-height: 24px;
+	text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 50%;
+    overflow: hidden;
 }
 .easemobWidget-left .easemobWidget-msg-container {
     background-color: #fff;
