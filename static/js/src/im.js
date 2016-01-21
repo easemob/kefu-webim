@@ -128,7 +128,7 @@
 							msg: sGreeting,
 							type: 'txt'
 						};
-						msg && me.receiveMsg(msg);
+						msg && me.receiveMsg(msg, null, null, null, true);
 					}
 					if ( rGreeting ) {
 						switch ( rGreeting.greetingTextType ) {
@@ -143,7 +143,7 @@
 								break;
 							default: break;
 						}
-						msg && me.receiveMsg(msg);
+						msg && me.receiveMsg(msg, null, null, null, true);
 					}
 				})
 				.fail(function(){});
@@ -1330,7 +1330,7 @@
             , notify: function ( detail ) {
                 message.sendToParent('notify' + (detail || ''));
             }
-            , receiveMsg: function ( msg, type, isHistory, wrapper ) {
+            , receiveMsg: function ( msg, type, isHistory, wrapper, noPrompt ) {
 				if ( config.offline ) {
                     return;
                 }
@@ -1433,6 +1433,9 @@
                     me.resetSpan();
                     me.scrollBottom();
 
+					if ( noPrompt ) {
+						return;
+					}
                     // send prompt & notification
                     if ( !me.isOpened ) {
                         me.messageCount.html('').removeClass('hide');
