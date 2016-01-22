@@ -1427,7 +1427,6 @@
                     if ( type === 'cmd' ) {
                         return;
                     }
-                    me.playaudio();
                     me.addDate();
                     wrapper.append(message.get(true));
                     me.resetSpan();
@@ -1436,6 +1435,7 @@
 					if ( noPrompt ) {
 						return;
 					}
+                    me.playaudio();
                     // send prompt & notification
                     if ( !me.isOpened ) {
                         me.messageCount.html('').removeClass('hide');
