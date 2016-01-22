@@ -140,7 +140,7 @@
 								break;
 							case 1:
 								try {
-									msg = { ext: $.parseJSON(n.greetingText.replace(/&quot;/g, '"')).ext };
+									msg = { ext: $.parseJSON(rGreeting.greetingText.replace(/&quot;/g, '"')).ext };
 								} catch ( e ) {
 									msg = {};
 								}
