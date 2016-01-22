@@ -867,10 +867,6 @@
                 , ext: message.ext || {}
             };
 
-			if ( message.type === 'cmd' ) {
-				json.action = message.action;
-			}
-
             var jsonstr = Utils.stringify(json);
             var dom = $msg({
                 type: 'chat'
@@ -940,6 +936,10 @@
                 type: me.msg.type === 'chat' ? 'txt' : me.msg.type
                 , msg: me.msg.msg 
             };
+			if ( me.msg.type === 'cmd' ) {
+				me.msg.body.action = me.msg.action;
+			}
+
             _send(me.msg);
         }
     }
