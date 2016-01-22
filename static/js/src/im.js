@@ -139,7 +139,11 @@
 								};
 								break;
 							case 1:
-								msg = { ext: rGreeting.greetingText.ext };
+								try {
+									msg = { ext: $.parseJSON(n.greetingText.replace(/&quot;/g, '"')).ext };
+								} catch ( e ) {
+									msg = {};
+								}
 								break;
 							default: break;
 						}
