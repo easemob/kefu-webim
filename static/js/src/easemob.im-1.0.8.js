@@ -866,7 +866,11 @@
                 , bodies: [message.body]
                 , ext: message.ext || {}
             };
-            
+
+			if ( message.type === 'cmd' ) {
+				json.action = message.action;
+			}
+
             var jsonstr = Utils.stringify(json);
             var dom = $msg({
                 type: 'chat'
