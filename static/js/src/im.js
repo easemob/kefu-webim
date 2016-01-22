@@ -1357,6 +1357,7 @@
 					case 'txt':
 						message = new Easemob.im.EmMessage('txt');
                         message.set({value: msg.data || msg.msg});
+						break;
                     case 'img':
 						message = new Easemob.im.EmMessage('img');
                         message.set({file: {url: msg.url}});
