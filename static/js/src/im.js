@@ -1354,6 +1354,9 @@
 				}
 
                 switch ( type ) {
+					case 'txt':
+						message = new Easemob.im.EmMessage('txt');
+                        message.set({value: msg.data || msg.msg});
                     case 'img':
 						message = new Easemob.im.EmMessage('img');
                         message.set({file: {url: msg.url}});
@@ -1395,12 +1398,10 @@
                             }
                             str += '</div>';
                         }
-                        message.set({value: msg.ext.weichat.ctrlArgs.label, list: str});
+                        message.set({value: msg.data || msg.ext.weichat.ctrlArgs.label, list: str});
                         break;
                     default: 
-						message = new Easemob.im.EmMessage('txt');
-                        message.set({value: msg.data || msg.msg});
-						break;
+						return;
                 }
                 
                 if ( !isHistory ) {
