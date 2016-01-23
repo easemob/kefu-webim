@@ -1378,14 +1378,18 @@
                         var str = '',
                             robertV = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
 
-                        if ( robertV.length > 0 ) {
+                        if ( robertV && robertV.length > 0 ) {
                             str = '<div class="easemobWidget-list-btns easemobWidget-list-btn js_robertbtn">';
                             for ( var i = 0, l = robertV.length; i < l; i++ ) {
                                 str += '<button data-id="' + robertV[i].id + '">' + (robertV[i].name || robertV[i]) + '</button>';
                             }
                             str += '</div>';
-                        }
-                        message.set({value: msg.ext.msgtype.choice.title, list: str});
+                        } else {
+							if ( !msg.ext.msgtype.choice.title ) {
+								return;
+							}
+						}
+                        message.set({value: msg.ext.msgtype.choice.title || ' ', list: str});
                         break;
 					case 'robertTransfer':
 						message = new Easemob.im.EmMessage('list');
