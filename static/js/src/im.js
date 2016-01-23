@@ -128,7 +128,7 @@
 							msg: sGreeting,
 							type: 'txt'
 						};
-						msg && me.receiveMsg(msg, null, null, null, true);
+						msg && me.receiveMsg(msg, 'txt', null, null, true);
 					}
 					if ( rGreeting ) {
 						switch ( rGreeting.greetingTextType ) {
