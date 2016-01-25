@@ -137,17 +137,16 @@
 									msg: rGreeting.greetingText,
 									type: 'txt'
 								};
+								me.receiveMsg(msg, 'txt', null, null, true);
 								break;
 							case 1:
 								try {
 									msg = { ext: $.parseJSON(rGreeting.greetingText.replace(/&quot;/g, '"')).ext };
-								} catch ( e ) {
-									msg = {};
-								}
+									me.receiveMsg(msg, null, null, null, true);
+								} catch ( e ) {}
 								break;
 							default: break;
 						}
-						msg && me.receiveMsg(msg, null, null, null, true);
 					}
 				})
 				.fail(function(){});
