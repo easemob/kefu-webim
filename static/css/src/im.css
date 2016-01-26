@@ -873,6 +873,7 @@ body .easemobWidget-offline-bg {
     top: 10px;
     text-align: center;
     clear: both;
+	max-width: 100%;
 }
 .easemobWidget-list-btn:after {
     content: '';
@@ -884,7 +885,8 @@ body .easemobWidget-offline-bg {
     border: none;
     padding: 0 5px;
     min-width: 100px;
-    height: 30px;
+	width: 100%;
+	word-break: break-all;
     line-height: 30px;
     color: #000;
     background-color: #fafafa;
