@@ -141,8 +141,17 @@
 								break;
 							case 1:
 								try {
-									msg = { ext: $.parseJSON(rGreeting.greetingText.replace(/&quot;/g, '"')).ext };
-									me.receiveMsg(msg, null, null, null, true);
+									var greetingObj = $.parseJSON(rGreeting.greetingText.replace(/&quot;/g, '"'));
+									if ( rGreeting.greetingText === '{}' ) {
+										msg = {
+											msg: '该菜单不存在',
+											type: 'txt'
+										};
+										me.receiveMsg(msg, 'txt', null, null, true);
+									} else {
+										msg = { ext: greetingObj.ext };
+										me.receiveMsg(msg, null, null, null, true);	
+									}
 								} catch ( e ) {}
 								break;
 							default: break;
