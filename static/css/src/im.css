@@ -231,7 +231,7 @@ button, textarea, input {
 /*body*/
 .easemobWidgetBody-wrapper {
     position: absolute;
-    top: 90px;
+    top: 43px;
     bottom: 140px;
     background-color: #F4F7FA;
     width: 100%;
@@ -277,7 +277,7 @@ button, textarea, input {
     content: 'C';
 }
 .easemobWidget-tenant-logo {
-	width: 370px;
+	max-width: 370px;
     height: 70px;
     margin: 10px auto -10px;
     text-align: center;

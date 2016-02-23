@@ -1,6 +1,7 @@
 /*
-    数据和配置参数初始化
-*/
+ * 数据和配置参数初始化
+ */
+
 var EasemobWidget = EasemobWidget || {};
 EasemobWidget.init = function(obj, callback) {
     window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
@@ -20,9 +21,8 @@ EasemobWidget.init = function(obj, callback) {
         EasemobWidget.api.getTo(tenantId)
         , EasemobWidget.api.getStatus(tenantId)
         , EasemobWidget.api.getTheme(tenantId)
-        , EasemobWidget.api.getWord(tenantId)
     )
-    .done(function(toinfo, sinfo, tinfo, winfo){
+    .done(function(toinfo, sinfo, tinfo){
 
         obj.offline = sinfo;
         if(toinfo.length > 0) {
@@ -38,7 +38,6 @@ EasemobWidget.init = function(obj, callback) {
         }
 
         obj.theme = tinfo && tinfo.length ? tinfo[0].optionValue : '天空之城';
-        obj.word = winfo && winfo.length ? winfo[0].optionValue : '';
 
         var curUser;
         if ( obj.root ) {
@@ -75,11 +74,11 @@ EasemobWidget.init = function(obj, callback) {
                 wrapper.attr('data-group', g);
                 obj.password = p;
                 typeof callback == 'function' && callback();
-            })
-            .fail(function(){});
+            });
         } else {
             wrapper.attr('data-history', 1);//新用户不获取历史记录
-            $.when(EasemobWidget.api.getUser(obj))
+
+            EasemobWidget.api.getUser(obj)
             .done(function(info){
                 obj.user = info.userId;
                 obj.password = info.userPassword;
@@ -95,6 +94,5 @@ EasemobWidget.init = function(obj, callback) {
                 typeof callback == 'function' && callback();
             });
         }
-    })
-    .fail(function(){});
+    });
 };
