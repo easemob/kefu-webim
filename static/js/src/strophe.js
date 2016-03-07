@@ -27,7 +27,8 @@
 // Base64 code from Tyler Akins -- http://rumkin.com
 
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
+    //if (typeof define === 'function' && define.amd) {
+    if (false) {
         define('strophe-base64', function () {
             return factory();
         });
@@ -127,7 +128,8 @@
 /* Some functions and variables have been stripped for use with Strophe */
 
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
+    //if (typeof define === 'function' && define.amd) {
+    if (false) {
         define('strophe-sha1', function () {
             return factory();
         });
@@ -322,7 +324,8 @@ return {
  */
 
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
+    //if (typeof define === 'function' && define.amd) {
+    if (false) {
         define('strophe-md5', function () {
             return factory();
         });
@@ -625,7 +628,8 @@ if (!Array.prototype.indexOf)
 /*global define, document, window, setTimeout, clearTimeout, console, ActiveXObject, DOMParser */
 
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
+    //if (typeof define === 'function' && define.amd) {
+    if (false) {
         define('strophe-core', [
             'strophe-sha1',
             'strophe-base64',
@@ -4027,7 +4031,8 @@ return {
 /* global define, window, setTimeout, clearTimeout, XMLHttpRequest, ActiveXObject, Strophe, $build */
 
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
+    //if (typeof define === 'function' && define.amd) {
+    if (false) {
         define('strophe-bosh', ['strophe-core'], function (core) {
             return factory(
                 core.Strophe,
@@ -4956,7 +4961,8 @@ return Strophe;
 /* global define, window, clearTimeout, WebSocket, DOMParser, Strophe, $build */
 
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
+    //if (typeof define === 'function' && define.amd) {
+    if (false) {
         define('strophe-websocket', ['strophe-core'], function (core) {
             return factory(
                 core.Strophe,
