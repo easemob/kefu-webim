@@ -45,21 +45,22 @@ EasemobWidget.api = {
 		}).then(function ( r ) { return r; });
     }
 
-    , getPwd: function ( obj ) {
+    , getPwd: function ( obj, tenantId ) {
 		return $.ajax({
 			url: '/v1/webimplugin/visitors/password'
 			, data: {
-				userId: obj.user
+				userId: obj.user,
+				tenantId: tenantId
 			}
 			, cache: false
 		}).then(function ( r ) { return r; });
     }
 
-    , getGroup: function ( obj ) {
+    , getGroup: function ( obj, tenantId ) {
         return $.ajax({
 			url: ['/v1/webimplugin/visitors/',
 				obj.user,
-				'/ChatGroupId?techChannelInfo=',
+				'/ChatGroupId?tenantId=' + tenantId + '&techChannelInfo=',
 				encodeURIComponent(obj.orgName + '#' + obj.appName + '#' + obj.to)].join('')
 			, cache: false
 		}).then(function ( r ) { return r; });
@@ -79,8 +80,7 @@ EasemobWidget.api = {
 		}).then(function ( r ) { return r; });
     }
 
-    
-    , getUser: function ( obj ) {
+    , getUser: function ( obj, tenantId ) {
         return $.ajax({
 			url: '/v1/webimplugin/visitors'
 			, contentType: 'application/json'
@@ -89,6 +89,7 @@ EasemobWidget.api = {
 				orgName: obj.orgName
 				, appName: obj.appName
 				, imServiceNumber: obj.to
+				, tenantId: tenantId
 			})
 		}).then(function ( r ) { return r; });
     }

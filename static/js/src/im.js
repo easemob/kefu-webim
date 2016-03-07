@@ -1523,7 +1523,7 @@
                     , orgName: config.orgName
                     , appName: config.appName
                     , to: config.to
-                })
+                }, config.json.tenantId)
             )
             .done(function(info, group){
                 config.user = userHash[name].user;
@@ -1553,7 +1553,7 @@
                 });
 
             })
-            : EasemobWidget.api.getUser(config)
+            : EasemobWidget.api.getUser(config, config.json.tenantId)
             .done(function(info){
                 config.user = info.userId;
                 userHash[name].user = info.userId;

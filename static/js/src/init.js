@@ -67,8 +67,8 @@ EasemobWidget.init = function(obj, callback) {
             obj.user = curUser;
             
             $.when(
-                EasemobWidget.api.getPwd(obj)
-                , EasemobWidget.api.getGroup(obj)
+                EasemobWidget.api.getPwd(obj, tenantId)
+                , EasemobWidget.api.getGroup(obj, tenantId)
             )
             .done(function(p, g){
                 wrapper.attr('data-group', g);
@@ -78,7 +78,7 @@ EasemobWidget.init = function(obj, callback) {
         } else {
             wrapper.attr('data-history', 1);//新用户不获取历史记录
 
-            EasemobWidget.api.getUser(obj)
+            EasemobWidget.api.getUser(obj, tenantId)
             .done(function(info){
                 obj.user = info.userId;
                 obj.password = info.userPassword;
