@@ -15,7 +15,7 @@ EasemobWidget.api = {
     //get 上下班状态
     , getStatus: function ( tenantId ) {
         return $.ajax({
-			url: '/v1/webimplugin/timeOffDuty'
+			url: '/v1/webimplugin/showMessage'
 			, data: {
 				tenantId: tenantId
 			}
