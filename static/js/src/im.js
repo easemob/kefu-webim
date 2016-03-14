@@ -89,6 +89,10 @@
 			, getNotice: function () {
 				var me = this;
 
+				if ( config.offline ) {
+					return;
+				}
+
 				EasemobWidget.api.getWord(config.json.tenantId)
 				.done(function ( winfo ) {
 					config.word = winfo && winfo.length ? winfo[0].optionValue : '';
