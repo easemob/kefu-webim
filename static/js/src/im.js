@@ -50,6 +50,7 @@
 				this.showChatIfRoot();//展示聊天窗口内容
                 this.handleFixedBtn();//展示悬浮小按钮
                 this.setLogo();//设置企业logo
+                this.setOffline();//设置企业logo
                 this.setTitle(config.json.emgroup ? config.json.emgroup : '');//设置im.html的标题
                 this.audioAlert();//init audio
                 this.mobileInit();//h5 适配
