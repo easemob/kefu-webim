@@ -114,13 +114,15 @@
                 var value = isGroupChat ? curGroup : 'normal',
                     me = this;
 
-                if ( userHash[value].session || userHash[value].session === null ) {
+                if ( userHash[value].sessionGetted ) {
                     (!isGroupChat || userHash[value].session) && me.setTitle('', userHash[value].agent);
                 } else {
                     userHash[value].agent = userHash[value].agent || {};
 
                     EasemobWidget.api.getSession(userHash[value].user, config)
                     .done(function(info){
+						userHash[value].sessionGetted = true;
+
 						if ( !info ) {
 							me.getGreeting();
 						} else {
@@ -136,7 +138,8 @@
                 }
             }
 			, getGreeting: function () {
-				var me = this;
+				var me = this,
+					wrapper = me.chatWrapper || null;
 
 				$.when(
 					EasemobWidget.api.getSystemGreeting(config)
@@ -149,7 +152,7 @@
 							msg: sGreeting,
 							type: 'txt'
 						};
-						msg && me.receiveMsg(msg, 'txt', null, null, true);
+						msg && me.receiveMsg(msg, 'txt', null, wrapper, true);
 					}
 					if ( rGreeting ) {
 						switch ( rGreeting.greetingTextType ) {
@@ -158,7 +161,7 @@
 									msg: rGreeting.greetingText,
 									type: 'txt'
 								};
-								me.receiveMsg(msg, 'txt', null, null, true);
+								me.receiveMsg(msg, 'txt', null, wrapper, true);
 								break;
 							case 1:
 								try {
@@ -168,10 +171,10 @@
 											msg: '该菜单不存在',
 											type: 'txt'
 										};
-										me.receiveMsg(msg, 'txt', null, null, true);
+										me.receiveMsg(msg, 'txt', null, wrapper, true);
 									} else {
 										msg = { ext: greetingObj.ext };
-										me.receiveMsg(msg, null, null, null, true);	
+										me.receiveMsg(msg, null, null, wrapper, true);	
 									}
 								} catch ( e ) {}
 								break;
@@ -1570,7 +1573,7 @@
                 : message.sendToParent('setgroupuser@' + config.user + '@emgroupuser@' + name);
 
                 im.open();
-
+				im.getSession();
                 im.toggleChatWindow(isShowDirect ? 'show' : '');
             });
         };
