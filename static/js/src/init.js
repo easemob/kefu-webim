@@ -17,14 +17,9 @@ EasemobWidget.init = function(obj, callback) {
     var tenantId = obj.json.tenantId;
 
     
-    $.when(
-        EasemobWidget.api.getTo(tenantId)
-        , EasemobWidget.api.getStatus(tenantId)
-        , EasemobWidget.api.getTheme(tenantId)
-    )
-    .done(function(toinfo, sinfo, tinfo){
+	EasemobWidget.api.getTo(tenantId)
+    .done(function(toinfo){
 
-        obj.offline = sinfo;
         if(toinfo.length > 0) {
             obj.to = toinfo[0].imServiceNumber;
             obj.orgName = toinfo[0].orgName;
@@ -36,8 +31,6 @@ EasemobWidget.init = function(obj, callback) {
         } else {
             return;
         }
-
-        obj.theme = tinfo && tinfo.length ? tinfo[0].optionValue : '天空之城';
 
         var curUser;
         if ( obj.root ) {
@@ -60,39 +53,8 @@ EasemobWidget.init = function(obj, callback) {
             message.sendToParent('setchannel@' + obj.to + '*' + obj.orgName + '*' + obj.appName);
         }
 
-        /*
-            如果取到缓存user，获取密码，否则新创建
-        */
-        if(curUser) {
-            obj.user = curUser;
-            
-            $.when(
-                EasemobWidget.api.getPwd(obj, tenantId)
-                , EasemobWidget.api.getGroup(obj, tenantId)
-            )
-            .done(function(p, g){
-                wrapper.attr('data-group', g);
-                obj.password = p;
-                typeof callback == 'function' && callback();
-            });
-        } else {
-            wrapper.attr('data-history', 1);//新用户不获取历史记录
-
-            EasemobWidget.api.getUser(obj, tenantId)
-            .done(function(info){
-                obj.user = info.userId;
-                obj.password = info.userPassword;
-                if ( obj.root ) {
-                    if ( obj.json && obj.json.emgroup ) {
-                        Emc.setcookie(obj.json.emgroup, obj.user);
-                    } else {
-                        Emc.setcookie('emKefuUser', obj.user);
-                    }
-                } else {
-                    message.sendToParent('setuser@' + obj.user);
-                }
-                typeof callback == 'function' && callback();
-            });
-        }
+		obj.user = curUser;
+		typeof callback == 'function' && callback();
+        
     });
 };

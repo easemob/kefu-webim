@@ -1012,6 +1012,9 @@ body .easemobWidget-offline-bg {
     font-size: 13px;
 }
 /*mobile*/
+.easemobWidgetWrapper-mobile {
+    border-radius: 0;
+}
 .easemobWidgetWrapper-mobile .easemobWidgetBody-wrapper {
     bottom: 42px;
 }
