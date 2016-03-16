@@ -311,7 +311,7 @@
                 this.msgCount = 0;//未读消息数
                 this.scbT = 0;//sroll bottom timeout stamp
                 this.autoGrowOptions = {};
-                this.historyFirst = true;//第一次获取历史记录
+                this.historyGetted = { normal: false };//第一次获取历史记录
                 this.msgTimeSpan = {};//用于处理1分钟之内的消息只显示一次时间
                 this.isIE = EasemobWidget.utils.getIEVersion();
                 
@@ -394,14 +394,15 @@
                                 }
                                 im.receiveMsg(msg, msg.type, 'history', wrapper);
                             }
-                            msg.msg && msg.type != 'cmd' && im.addDate(v.timestamp || v.body.timestamp, true, wrapper);
+                            (msg.msg || msg.filename) && msg.type != 'cmd' && im.addDate(v.timestamp || v.body.timestamp, true, wrapper);
                         }
                     });
 
-                    if ( im.historyFirst ) {
+					var key = isGroupChat ? curGroup : 'normal';
+                    if ( !im.historyGetted[key] ) {
                         im.chatWrapper.find('img:last').on('load', im.scrollBottom);
                         im.scrollBottom();
-                        im.historyFirst = false;
+                        im.historyGetted[key] = true;
                     }
                 }
             }
@@ -1341,7 +1342,7 @@
                     }
                 });
 
-                if(isHistory) {
+                if ( isHistory ) {
 					var logo = wrapper.find('.easemobWidget-tenant-logo');
 					
 					if ( logo.length > 0 ) {
