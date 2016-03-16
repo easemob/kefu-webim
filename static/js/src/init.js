@@ -34,14 +34,14 @@ EasemobWidget.init = function(obj, callback) {
 
         var curUser;
         if ( obj.root ) {
-            if ( Emc.getcookie('emKefuChannel') != (obj.to + '*' + obj.orgName + '*' + obj.appName) ) {
+            if ( Emc.get('emKefuChannel' + tenantId) != (obj.to + '*' + obj.orgName + '*' + obj.appName) ) {
                 curUser = null;
-                Emc.setcookie('emKefuChannel', obj.to + '*' + obj.orgName + '*' + obj.appName);
+                Emc.set('emKefuChannel' + tenantId, obj.to + '*' + obj.orgName + '*' + obj.appName);
             } else {
                 if ( obj.json && obj.json.emgroup ) {
-                    curUser = Emc.getcookie(obj.json.emgroup);
+                    curUser = Emc.get(obj.json.emgroup + tenantId);
                 } else {
-                    curUser = Emc.getcookie('emKefuUser');
+                    curUser = Emc.get('emKefuUser' + tenantId);
                 }
             }
 

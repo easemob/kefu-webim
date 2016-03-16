@@ -244,14 +244,17 @@
     }());
     
     var c = {
-        setcookie: function(key, value) {
-            var date = new Date();
-            date.setTime(date.getTime() + 30*24*3600*1000);
-            document.cookie = encodeURIComponent(key) + '=' + encodeURIComponent(value) + ';path=/;expires=' + date.toGMTString();
+        set: function ( key, value ) {
+			if ( 'localStorage' in window ) {
+				localStorage.setItem(encodeURIComponent(key), encodeURIComponent(value));
+			}
         }
-        , getcookie: function(key) {
-            var results = document.cookie.match('(^|;) ?' + encodeURIComponent(key) + '=([^;]*)(;|$)'); 
-            return results ? decodeURIComponent(results[2]) : '';
+        , get: function ( key ) {
+			if ( 'localStorage' in window ) {
+				var value = localStorage.getItem(encodeURIComponent(key));
+				return value ? value : ''; 
+			}
+			return '';
         }
     };
 

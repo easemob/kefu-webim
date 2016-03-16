@@ -144,13 +144,13 @@
                     }
                     break;
                 case 'setuser':
-                    Emc.setcookie('emKefuUser', user);
+                    Emc.set('emKefuUser' + config.json.tenantId, user);
                     break;
                 case 'setgroupuser':
-                    Emc.setcookie(group, user);
+                    Emc.set(group + config.json.tenantId, user);
                     break;
                 case 'setchannel':
-                    Emc.setcookie('emKefuChannel', channel);
+                    Emc.set('emKefuChannel' + config.json.tenantId, channel);
                     break;
                 case 'dragready':
                     shadow.style.display = 'block';
@@ -179,7 +179,7 @@
                 }
             } else {
                 if(!!group) {//技能组
-                    var groupUser = Emc.getcookie(group);
+                    var groupUser = Emc.get(group + config.json.tenantId);
 
                     message.sendToIframe('emgroup@' + groupUser + '@emgroupuser@' + group);
                 } else {
@@ -291,8 +291,8 @@
     }
 
     var ready = function() {
-        curUser = Emc.getcookie('emKefuUser');
-        curChannel = Emc.getcookie('emKefuChannel');
+        curUser = Emc.get('emKefuUser' + config.json.tenantId);
+        curChannel = Emc.get('emKefuChannel' + config.json.tenantId);
         appendIframe();
         EasemobWidget.utils.on(shadow, 'mouseup', _moveend);
         resize();

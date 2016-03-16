@@ -71,7 +71,7 @@
                     var value = config.json.emgroup;
                     this.handleGroup(value);
                     userHash[value] = userHash[value] || {};
-                    userHash[value].user = Emc.getcookie(value);
+                    userHash[value].user = Emc.get(value + config.json.tenantId);
                     curGroup = value;
                 }
 				this.open();
@@ -1275,9 +1275,9 @@
 
 						if ( config.root ) {
 							if ( config.json && config.json.emgroup ) {
-								Emc.setcookie(config.json.emgroup, cache.user);
+								Emc.set(config.json.emgroup + config.json.tenantId, cache.user);
 							} else {
-								Emc.setcookie('emKefuUser', cache.user);
+								Emc.set('emKefuUser' + config.json.tenantId, cache.user);
 							}
 						} else {
 							key ? message.sendToParent('setgroupuser@' + cache.user + '@emgroupuser@' + key)
@@ -1591,7 +1591,7 @@
             if(msg.indexOf('emgroup@') === 0) {//技能组消息
                 value = msg.slice(8);
                 msg = 'emgroup';
-            } else if(msg.indexOf('@') > 0) {//从父级页面cookie读取相关信息
+            } else if(msg.indexOf('@') > 0) {//从父级页面读取相关信息
                 value = msg.split('@')[1];
                 msg = msg.split('@')[0];
             }
