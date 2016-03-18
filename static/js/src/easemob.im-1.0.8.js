@@ -87,7 +87,7 @@
             }
             
             , stringify: function ( json ) {
-                if ( JSON && JSON.stringify ) {
+                if ( typeof JSON !== 'undefined' && JSON.stringify ) {
                     return JSON.stringify(json);
                 } else {
                     var s = '',
