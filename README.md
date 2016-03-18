@@ -67,58 +67,58 @@ static/js/im.js: 包含现有网页端客服的所有交互模块
 var easemobIM = { config: {} };
 
 ////必填////
-
 easemobIM.config.tenantId = '';//企业id
 
 easemobIM.config.to = '';//必填, 指定关联对应的im号
 
 easemobIM.config.appKey = '';//必填, appKey
 
+
 ////非必填////
+easemobIM.config.staticPath = setDefault(easemobIM.config.staticPath, './static');//引用static的路径
 
-easemobIM.config.buttonText = '联系客服';//设置小按钮的文案
+easemobIM.config.apiUrl = setDefault(easemobIM.config.apiUrl, 'a1.easemob.com');//环信api地址
 
-easemobIM.config.hide = false;//是否隐藏小的悬浮按钮
+easemobIM.config.buttonText = setDefault(easemobIM.config.buttonText, '联系客服');//设置小按钮的文案
 
-easemobIM.config.mobile = /mobile/i.test(navigator.userAgent);//是否做移动端适配
+easemobIM.config.hide = setDefault(easemobIM.config.hide, false);//是否隐藏小的悬浮按钮
 
-easemobIM.config.dragEnable = true;//是否允许拖拽
+easemobIM.config.mobile = setDefault(easemobIM.config.mobile, /mobile/i.test(navigator.userAgent));//是否做移动端适配
 
-easemobIM.config.dialogWidth = '400px';//聊天窗口宽度,建议宽度不小于400px
+easemobIM.config.dragEnable = setDefault(easemobIM.config.dragEnable, false);//是否允许拖拽
 
-easemobIM.config.dialogHeight = '500px';//聊天窗口高度,建议宽度不小于500px
+easemobIM.config.dialogWidth = setDefault(easemobIM.config.dialogWidth, '400px');//聊天窗口宽度,建议宽度不小于400px
 
-easemobIM.config.defaultAvatar = 'static/img/avatar.png';//默认头像
+easemobIM.config.dialogHeight = setDefault(easemobIM.config.dialogHeight, '500px');//聊天窗口高度,建议高度不小于500px
 
-easemobIM.config.minimum = true;//是否允许窗口最小化，如不允许则默认展开
+easemobIM.config.defaultAvatar = setDefault(easemobIM.config.defaultAvatar, easemobIM.config.staticPath + '/img/avatar.png');//默认头像
 
-easemobIM.config.visitorSatisfactionEvaluate = false;//是否允许访客主动发起满意度评价
+easemobIM.config.minimum = setDefault(easemobIM.config.minimum, true);//是否允许窗口最小化，如不允许则默认展开
 
-easemobIM.config.soundReminder = true;//是否启用声音提醒
+easemobIM.config.visitorSatisfactionEvaluate = setDefault(easemobIM.config.visitorSatisfactionEvaluate, true);//是否允许访客主动发起满意度评价
 
-easemobIM.config.fixedButtonPosition = {x: '10px', y: '10px'};//悬浮初始位置，坐标以视口右边距和下边距为基准
+easemobIM.config.soundReminder = setDefault(easemobIM.config.soundReminder, true);//是否启用声音提醒
 
-easemobIM.config.dialogPosition = {x: '10px', y: '10px'};//窗口初始位置，坐标以视口右边距和下边距为基准
+easemobIM.config.imgView = setDefault(easemobIM.config.imgView, true);//是否启动图片点击放大功能
 
-easemobIM.config.titleSlide = true;//是否允许收到消息的时候网页title滚动
+easemobIM.config.fixedButtonPosition = setDefault(easemobIM.config.fixedButtonPosition, {x: '10px', y: '10px'});//悬浮初始位置，坐标以视口右边距和下边距为>    基准
 
-easemobIM.config.error = function ( error ) { alert(error); };//错误回调
+easemobIM.config.dialogPosition = setDefault(easemobIM.config.dialogPosition, {x: '10px', y: '10px'});//窗口初始位置，坐标以视口右边距和下边距为基准
 
-easemobIM.config.onReceive = function ( from, to, message ) { /*console.log('收到一条消息', arguments);*/ };//收消息回调
+easemobIM.config.titleSlide = setDefault(easemobIM.config.titleSlide, true);//是否允许收到消息的时候网页title滚动
 
-easemobIM.config.authMode = 'token' || 'password';//验证方式
+easemobIM.config.error = setDefault(easemobIM.config.error, function ( error ) { });//错误回调
 
-easemobIM.config.user = {
+easemobIM.config.onReceive = setDefault(easemobIM.config.onReceive, function ( from, to, message ) { });//收消息回调
 
-    //可集成自己的用户，如不集成，则使用当前的appkey创建随机访客
+easemobIM.config.authMode = setDefault(easemobIM.config.authMode, 'token' || 'password');//验证方式
 
-    name: '',//集成时必填
-
-    password: '',//authMode设置为password时必填,与token二选一
-
-    token: ''//authMode设置为token时必填,与password二选一
-
-};
+easemobIM.config.user = setDefault(easemobIM.config.user, {
+    //可集成自己的用户，如不集成，则使用当前的appkey创建随机访客
+    name: '',//集成时必填
+    password: '',//authMode设置为password时必填,与token二选一
+    token: ''//authMode设置为token时必填,与password二选一
+});
 
 </script>
 ```
