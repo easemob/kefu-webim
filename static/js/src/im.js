@@ -1515,16 +1515,17 @@
                 }
                 
                 if ( !isHistory ) {
-                    if ( msg.ext && msg.ext.weichat && msg.ext.weichat.agent && me.getNickName(msg.ext.weichat.agent) === '调度员' ) {
-
-                    } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.queueName ) {
+					
+                    if ( msg.ext && msg.ext.weichat && msg.ext.weichat.agent && me.getNickName(msg.ext.weichat.agent) === '调度员' || !msg.from ) {
+						//current chat wrapper
+                    } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.queueName ) {//skill group
                         var n = msg.ext.weichat.queueName,
                             w = $('#' + n);
 
                         if ( w.length > 0 ) {
                             wrapper = w;
                         }
-                    } else if ( !isGroupChat ) {
+                    } else {//normal
                         wrapper = $('#normal');
                     }
 
@@ -1542,7 +1543,7 @@
                     if ( type === 'cmd' ) {
                         return;
                     }
-                    me.addDate();
+                    me.addDate(null, null, wrapper);
                     wrapper.append(message.get(true));
                     me.resetSpan();
                     me.scrollBottom();
