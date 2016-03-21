@@ -1289,7 +1289,7 @@
 				}
 			}
 
-            , handleTransfer: function(action, wrapper, info) {
+            , handleTransfer: function ( action, wrapper, info ) {
                 var key = isGroupChat ? curGroup : 'normal';
 
                 var wrap = wrapper || this.chatWrapper;
@@ -1311,7 +1311,7 @@
                         userHash[key].agent = userHash[key].agent || {};
                         userHash[key].agent.userNickname = this.getNickName(info);
                         userHash[key].agent.avatar = info.avatar;
-                        info && this.setTitle('', userHash[key].agent);
+                        info && userHash[wrap.attr('id')].user === config.user && this.setTitle('', userHash[key].agent);
                     }
                     if ( EasemobWidget.utils.isMobile ) {
                         this.headBar.find('.js_drag').removeClass('hide');
@@ -1531,14 +1531,12 @@
 
                     if ( msg.ext && msg.ext.weichat && msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' ) {//transfer msg
                         me.handleTransfer('transfer', wrapper);
-                    } else if ( msg.ext && msg.ext.weichat && (msg.ext.weichat.agent || msg.ext.weichat.agent === null) ) {//version23:normal msg
+                    } else if ( msg.ext && msg.ext.weichat && (msg.ext.weichat.agent || msg.ext.weichat.agent === null) ) {
                         if ( msg.ext.weichat.agent === null ) {//switch off
                             me.handleTransfer('reply', wrapper);
                         } else {//switch on
                             msg.ext.weichat.agent && me.getNickName(msg.ext.weichat.agent) !== '调度员' && me.handleTransfer('reply', wrapper, msg.ext.weichat.agent);
                         }
-                    } else {//before v23:normal msg
-                        me.handleTransfer('reply');
                     }
                     if ( type === 'cmd' ) {
                         return;
