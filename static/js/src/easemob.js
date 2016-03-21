@@ -406,6 +406,10 @@
                                 , body: content
                             }
                         );
+						notification.onclick = function () {
+							typeof window.focus === 'function' && window.focus();
+                            this.close();
+						};
                         setTimeout(function(){
                             notification.close();
                         }, 3000);

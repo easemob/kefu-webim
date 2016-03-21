@@ -1516,7 +1516,7 @@
                 
                 if ( !isHistory ) {
 					
-                    if ( msg.ext && msg.ext.weichat && msg.ext.weichat.agent && me.getNickName(msg.ext.weichat.agent) === '调度员' || !msg.from ) {
+                    if ( !msg.from ) {
 						//current chat wrapper
                     } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.queueName ) {//skill group
                         var n = msg.ext.weichat.queueName,
