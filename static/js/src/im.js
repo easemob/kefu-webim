@@ -103,12 +103,12 @@
                 if ( userHash[value].sessionGetted ) {
                     (!isGroupChat || userHash[value].session) && me.setTitle('', userHash[value].agent);
                 } else {
+					userHash[value].sessionGetted = true;
                     userHash[value].agent = userHash[value].agent || {};
 					me.setLogo();//设置企业logo
 
                     EasemobWidget.api.getSession(userHash[value].user, config)
                     .done(function(info){
-						userHash[value].sessionGetted = true;
 
 						if ( !info ) {
 							me.getGreeting();
