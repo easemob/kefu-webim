@@ -42,7 +42,7 @@
                 break;
             case 'getDutyStatus':
                 easemobIM.emajax(createObject({
-                    url: '/v1/webimplugin/showMessage',
+                    url: '/v1/webimplugin/timeOffDuty',
                     msg: msg
                 }));
                 break;

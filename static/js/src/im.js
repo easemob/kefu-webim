@@ -17,6 +17,8 @@
         var click = EasemobWidget.utils.isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click';
         config.root = window.top == window;
         config.json.hide = config.json.hide == 'false' ? false : config.json.hide;
+        config.json.sat = config.json.sat == 'false' ? false : config.json.sat;
+        config.json.tenants = config.json.tenants == 'false' ? false : config.json.tenants;
 
 
         //
@@ -71,7 +73,7 @@
                     var value = config.json.emgroup;
                     this.handleGroup(value);
                     userHash[value] = userHash[value] || {};
-                    userHash[value].user = Emc.get(value + config.json.tenantId);
+                    userHash[value].user = Emc.get(value + config.json.tenantId, config.json.tenants);
                     curGroup = value;
                 }
 				this.open();
@@ -1275,9 +1277,9 @@
 
 						if ( config.root ) {
 							if ( config.json && config.json.emgroup ) {
-								Emc.set(config.json.emgroup + config.json.tenantId, cache.user);
+								Emc.set(config.json.emgroup + config.json.tenantId, cache.user, config.json.tenants);
 							} else {
-								Emc.set('emKefuUser' + config.json.tenantId, cache.user);
+								Emc.set('emKefuUser' + config.json.tenantId, cache.user, config.json.tenants);
 							}
 						} else {
 							key ? message.sendToParent('setgroupuser@' + cache.user + '@emgroupuser@' + key)

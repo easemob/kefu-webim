@@ -63,6 +63,7 @@
     var config = getConfig('easemob.js', true);
     config.json.hide = config.json.hide === 'false' ? false : config.json.hide;
     config.json.sat = config.json.sat === 'false' ? false : config.json.sat;
+    config.json.tenants = config.json.tenants === 'false' ? false : config.json.tenants;
 
     //open Api
     var open = function(){
@@ -144,13 +145,13 @@
                     }
                     break;
                 case 'setuser':
-                    Emc.set('emKefuUser' + config.json.tenantId, user);
+                    Emc.set('emKefuUser' + config.json.tenantId, user, config.json.tenants);
                     break;
                 case 'setgroupuser':
-                    Emc.set(group + config.json.tenantId, user);
+                    Emc.set(group + config.json.tenantId, user, config.json.tenants);
                     break;
                 case 'setchannel':
-                    Emc.set('emKefuChannel' + config.json.tenantId, channel);
+                    Emc.set('emKefuChannel' + config.json.tenantId, channel, config.json.tenants);
                     break;
                 case 'dragready':
                     shadow.style.display = 'block';
@@ -179,7 +180,7 @@
                 }
             } else {
                 if(!!group) {//技能组
-                    var groupUser = Emc.get(group + config.json.tenantId);
+                    var groupUser = Emc.get(group + config.json.tenantId, config.json.tenants);
 
                     message.sendToIframe('emgroup@' + groupUser + '@emgroupuser@' + group);
                 } else {
@@ -291,8 +292,8 @@
     }
 
     var ready = function() {
-        curUser = Emc.get('emKefuUser' + config.json.tenantId);
-        curChannel = Emc.get('emKefuChannel' + config.json.tenantId);
+        curUser = Emc.get('emKefuUser' + config.json.tenantId, config.json.tenants);
+        curChannel = Emc.get('emKefuChannel' + config.json.tenantId, config.json.tenants);
         appendIframe();
         EasemobWidget.utils.on(shadow, 'mouseup', _moveend);
         resize();
