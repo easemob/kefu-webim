@@ -283,6 +283,7 @@
                 return new Easemob.im.Connection();
             }
             , getHistory: function ( from, wrapper, callback ) {
+
                 if ( config.offline ) {
                     return;
                 }
@@ -291,6 +292,12 @@
                 wrapper = wrapper || im.chatWrapper;
 
                 if(!wrapper.data('group')) return;
+
+				if ( wrapper.data('hised') ) {
+                    return;
+                }
+
+				wrapper.attr('data-hised', 1);
 
                 EasemobWidget.api.getHistory(
                     from 
@@ -627,13 +634,17 @@
 				if ( userHash[key].user && userHash[key].password ) {
 					me.connectToServer(key);
 					me.getSession();
+
+					me.chatWrapper.data('hised') || me.getHistory(0, me.chatWrapper, function ( wrapper, info ) {
+						config.history = info;
+						me.handleHistory(wrapper);
+					});
 				} else {
 					me.handleUser(userHash[key], function () {
 						me.connectToServer(key);
 						me.getSession();
 
 						me.getHistory(0, me.chatWrapper, function ( wrapper, info ) {
-							wrapper.attr('data-hised', 1);
 							config.history = info;
 							me.handleHistory(wrapper);
 						});
@@ -1267,7 +1278,7 @@
 						typeof callback == 'function' && callback();
 					});
 				} else {
-					wrapper.attr('data-history', 1);//新用户不获取历史记录
+					wrapper.attr('data-hised', 1);//新用户不获取历史记录
 
 					EasemobWidget.api.getUser(config, config.json.tenantId)
 					.done(function ( info ) {
