@@ -84,7 +84,7 @@ Easemob.im.EmMessage.img.prototype.set = function ( opt ) {
 	this.body = {
 		id: this.id 
 		, file: this.value 
-		, apiUrl: (location.protocol == 'https:' ? 'https:' : 'http:') + '//a1.easemob.com'
+		, apiUrl: opt.apiUrl
 		, to: opt.to
 		, type : this.type
 		, onFileUploadError : opt.uploadError
@@ -155,7 +155,7 @@ Easemob.im.EmMessage.file.prototype.set = function ( opt ) {
 		id: this.id 
 		, file: this.value
 		, filename: this.filename
-		, apiUrl: (location.protocol == 'https:' ? 'https:' : 'http:') + '//a1.easemob.com'
+		, apiUrl: opt.apiUrl
 		, to: opt.to
 		, type: this.type
 		, onFileUploadError : opt.uploadError

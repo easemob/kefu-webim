@@ -19,15 +19,17 @@ EasemobWidget.init = function(obj, callback) {
     
 	EasemobWidget.api.getTo(tenantId)
     .done(function(toinfo){
+		var curIdx = 0;
 
         if(toinfo.length > 0) {
-            obj.to = toinfo[0].imServiceNumber;
-            obj.orgName = toinfo[0].orgName;
-            obj.appName = toinfo[0].appName;
-            obj.avatar = toinfo[0].tenantAvatar || 'static/img/default_avatar.png';
-            obj.tenantName = toinfo[0].tenantName;
-            obj.appkey = toinfo[0].orgName + '#' + toinfo[0].appName;
-			obj.logo = toinfo[0].tenantLogo || '';
+            obj.to = toinfo[curIdx].imServiceNumber;
+            obj.orgName = toinfo[curIdx].orgName;
+            obj.appName = toinfo[curIdx].appName;
+            obj.apiUrl = toinfo[curIdx].restDomain ? '//' + toinfo[curIdx].restDomain : '//a1.easemob.com';
+            obj.avatar = toinfo[curIdx].tenantAvatar || 'static/img/default_avatar.png';
+            obj.tenantName = toinfo[curIdx].tenantName;
+            obj.appkey = toinfo[curIdx].orgName + '#' + toinfo[curIdx].appName;
+			obj.logo = toinfo[curIdx].tenantLogo || '';
         } else {
             return;
         }

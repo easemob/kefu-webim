@@ -281,7 +281,6 @@
             }
             , getConnection: function () {
                 return new Easemob.im.Connection();
-                //return new Easemob.im.Connection({url: 'http://im-api.easemob.com/http-bind/'});
             }
             , getHistory: function ( from, wrapper, callback ) {
                 if ( config.offline ) {
@@ -655,6 +654,7 @@
 						user : userHash[key].user
 						, pwd : userHash[key].password
 						, appKey : config.appkey
+						, apiUrl: config.apiUrl
 					});
 				}, 500);
 			}
@@ -1203,6 +1203,7 @@
 				msge.set({
                     file: file,
                     to: config.to,
+					apiUrl: config.apiUrl,
                     uploadError: function ( error ) {
                         //显示图裂，无法重新发送
                         if ( !Easemob.im.Utils.isCanUploadFileAsync() ) {
