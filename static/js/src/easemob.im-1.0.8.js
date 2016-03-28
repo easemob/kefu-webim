@@ -1293,6 +1293,32 @@
             return true;
         }
 
+		var _getXmppUrl = function ( baseUrl, https ) {
+			if ( /^(ws|http)s:\/\/?/.test(baseUrl) ) {
+				return baseUrl;
+			}
+
+			var url = {
+				prefix: 'http',
+				base: '://' + (baseUrl || 'im-api.easemob.com'),
+				suffix: '/http-bind/'
+			};
+
+			if ( https && Utils.isSupportWss ) {
+				url.prefix = 'wss';
+				url.suffix = '/ws/';
+            } else {
+                if ( https ) {
+					url.prefix = 'https';
+				} else if ( window.WebSocket ) {
+					url.prefix = 'ws';
+					url.suffix = '/ws/';
+				}   
+            }
+
+			return url.prefix + url.base + url.suffix;
+		};
+
         //class
         var connection = function(options) {
             if(!(this instanceof Connection)) {
@@ -1301,39 +1327,12 @@
 
             var options = options || {};
 
-            if (window.WebSocket) {
-                if ( options.url ) {
-                    if ( https ) {
-                        if ( options.url && options.url.indexOf('ws:') === 0 ) {
-                            options.url = options.url.replace(/^ws:/, 'wss:');
-                        }
-                    } else {
-                        if ( options.url && options.url.indexOf('wss:') === 0 ) {
-                            options.url = options.url.replace(/^wss:/, 'ws:');
-                        }
-                    }
-                }
-                this.url = options.url || (https ? 'wss' : 'ws') + '://im-api.easemob.com/ws/';
-            } else {
-                if ( options.url ) {
-                    if ( https ) {
-                        if ( options.url && options.url.indexOf('http:') === 0 ) {
-                            options.url = options.url.replace(/^http:/, 'https:');
-                        }
-                    } else {
-                        if ( options.url && options.url.indexOf('https:') === 0 ) {
-                            options.url = options.url.replace(/^https:/, 'http:');
-                        }
-                    }
-                }
-                this.url = ((options.url && options.url.indexOf('ws') > -1) ? '' : options.url) || (https ? 'https' : 'http') + '://im-api.easemob.com/http-bind/';
-            }
-
             this.wait = options.wait || 30;
             this.hold = options.hold || 1;
             options.route && (this.route = options.route);
 
             this.domain = options.domain || "easemob.com";
+			this.url = _getXmppUrl(options.url, https);
             this.inactivity = options.inactivity || 30;
             this.maxRetries = options.maxRetries || 5;
             this.pollingTime = options.pollingTime || 800;

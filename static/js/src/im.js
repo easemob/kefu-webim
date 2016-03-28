@@ -281,7 +281,7 @@
             }
             , getConnection: function () {
                 return new Easemob.im.Connection({
-					url: 'ws://im-api' + config.cluster + '.easemob.com/ws/'
+					url: 'im-api' + config.cluster + '.easemob.com'
 				});
             }
             , getHistory: function ( from, wrapper, callback ) {
