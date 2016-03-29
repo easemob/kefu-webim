@@ -97,6 +97,13 @@
                     msg: msg
                 }));
                 break;
+			case 'sendVisitorInfo':
+                easemobIM.emajax(createObject({
+                    url: '/v1/webimplugin/tenants/' + msg.data.tenantId + '/visitors/' + msg.data.visitorId + '/attributes',
+                    msg: msg,
+                    type: 'POST'
+                }));
+                break;
             default:
                 break;
         }

@@ -117,4 +117,12 @@ EasemobWidget.api = {
 			, contentType: 'application/json'
 		}).then(function ( r ) { return r; });
     }
+
+	, sendVisitorInfo: function ( tenantId, visitorId ) {
+        return $.ajax({
+			url: '/v1/webimplugin/tenants/' + tenantId + '/visitors/' + visitorId
+			, type: 'post'
+			, contentType: 'application/json'
+		}).then(function ( r ) { return r; });
+    }
 };

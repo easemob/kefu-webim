@@ -1268,6 +1268,7 @@
 				if ( cache.user ) {
 					config.user = cache.user;
 	
+					EasemobWidget.api.sendVisitorInfo(config.json.tenantId, config.user);//ref info
 					$.when(
 						EasemobWidget.api.getPwd(config, config.json.tenantId),
 						EasemobWidget.api.getGroup(config, config.json.tenantId)
@@ -1284,6 +1285,7 @@
 
 					EasemobWidget.api.getUser(config, config.json.tenantId)
 					.done(function ( info ) {
+						EasemobWidget.api.sendVisitorInfo(config.json.tenantId, info.userId);//ref info
 						cache.user = info.userId;
 						cache.password = info.userPassword;
 						config.user = info.userId;
