@@ -120,7 +120,7 @@ EasemobWidget.api = {
 
 	, sendVisitorInfo: function ( tenantId, visitorId ) {
         return $.ajax({
-			url: '/v1/webimplugin/tenants/' + tenantId + '/visitors/' + visitorId
+			url: '/v1/webimplugin/tenants/' + tenantId + '/visitors/' + visitorId + '/attributes'
 			, type: 'post'
 			, contentType: 'application/json'
 		}).then(function ( r ) { return r; });

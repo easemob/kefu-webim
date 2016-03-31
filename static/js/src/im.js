@@ -173,7 +173,7 @@
 				})
 				.fail(function(){});
 			}
-            , getBase64: (function () {
+            /*, getBase64: (function () {
                 var canvas = $('<canvas>').get(0);
                 if ( !canvas.getContext ) {
                     return;
@@ -209,16 +209,16 @@
                 } catch ( e ) {
                     return null;
                 }
-            }
+            }*/
             , paste: function ( obj, callback ) {
-                var ctrl_pressed = false,
-                    me = this;
+                var me = this;
+                    //ctrl_pressed = false;
 
-                if ( me.isIE !== null && me.isIE < 11 ) {
+                /*if ( me.isIE !== null && me.isIE < 11 ) {
                     return;
-                }
+                }*/
                 
-                me.headBar.add($('#easemobWidgetSend')).add($('#easemobWidgetBody')).on('keydown', function( e ) {
+                /*me.headBar.add($('#easemobWidgetSend')).add($('#easemobWidgetBody')).on('keydown', function( e ) {
                     var ev = e.originalEvent,
                         k = ev.keyCode;
 
@@ -233,9 +233,9 @@
                             }, 50);
                         }
                     }
-                });
+                });*/
 
-                var pw = $('<div>');
+                /*var pw = $('<div>');
                 pw.attr('contenteditable', '');
                 pw.css({'opacity': 0, position: 'fixed', top: '-10px', left: '-10px', width: '1px', height: '1px', overflow: 'hidden'});
                 pw.on('DOMSubtreeModified', function() {
@@ -257,14 +257,14 @@
                     me.textarea.val(me.textarea.val() + word).change();
                     pw.html('');
                 });
-                $('body').append(pw);
+                $('body').append(pw);*/
 
                 $(obj).on('paste', function ( e ) {
                     var ev = e.originalEvent;
 
                     try {
-                        if (ev.clipboardData && ev.clipboardData.types ) {
-                            if (ev.clipboardData.items.length > 0 ) {
+                        if ( ev.clipboardData && ev.clipboardData.types ) {
+                            if ( ev.clipboardData.items.length > 0 ) {
                                 if ( /^image\/\w+$/.test(ev.clipboardData.items[0].type) ) {
                                     callback instanceof Function && callback(ev.clipboardData.items[0].getAsFile());
                                 }
@@ -425,8 +425,14 @@
                     avatar = this.headBar.find('.easemobWidgetHeader-portrait');
 
 				var nName = this.getNickName(info);
+
+				var avatarSrc = info && info.avatar ? info.avatar : config.avatar;
+
+				if ( !/ossimages/.test(avatarSrc) ) {
+					avatarSrc = '//' + location.host + '/ossimages/' + avatarSrc;
+				}
                 nickName.html(nName ? nName : (config.tenantName + (title ? '-' + title : '')));
-                avatar.attr('src', info && info.avatar ? info.avatar : config.avatar).removeClass('hide');
+                avatar.attr('src', avatarSrc).removeClass('hide');
                 document.title = nickName.html() + (title ? '' : '-客服');
             }
             , mobileInit: function(){

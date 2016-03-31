@@ -85,7 +85,29 @@
             , isCanDownLoadFile: function () {
                 return Utils.isCanSetRequestHeader() && (Utils.hasBlob || Utils.hasOverrideMimeType());
             }
-            
+
+			, isSupportWss: (function () { 
+                var notSupportList = [
+                    //1:qq broswser X5 core
+                    /MQQBrowser[\/]5([.]\d+)?\sTBS/
+
+                    //2:etc.
+                    //...
+                ];   
+
+                if ( !window.WebSocket ) {
+                    return false;
+                }    
+
+                var ua = window.navigator.userAgent;
+                for ( var i = 0, l = notSupportList.length; i < l; i++ ) {
+                    if ( notSupportList[i].test(ua) ) {
+                        return false;
+                    }    
+                }    
+                return true; 
+            }())
+
             , stringify: function ( json ) {
                 if ( typeof JSON !== 'undefined' && JSON.stringify ) {
                     return JSON.stringify(json);
@@ -322,7 +344,7 @@
             }
 
             , parseLink: function( msg ) {
-                var reg = /(https?\:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(\:[0-9]{2,4})?\/?((\.[0-9a-zA-Z-]+)|[0-9a-zA-Z-]*\/?)*\??[#@*&%0-9a-zA-Z-/=]*/gm;
+                var reg = /(https?\:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(\:[0-9]{2,4})?\/?((\.[0-9a-zA-Z-:_]+)|[0-9a-zA-Z-:_]*\/?)*\??[:_#@*&%0-9a-zA-Z-/=]*/gm;
                 var res = msg.match(reg);
                 var src = res && res[0] ? res[0] : ''; 
                 if ( res && res.length ) {
