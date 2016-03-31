@@ -98,14 +98,12 @@
 					return null;
 				}
 			}
-            , getSession: function () {
+            , getSession: function ( resendUntilHasSession ) {
                 var value = isGroupChat ? curGroup : 'normal',
                     me = this;
 
-                if ( userHash[value].sessionGetted ) {
-                    (!isGroupChat || userHash[value].session) && me.setTitle('', userHash[value].agent);
-                } else {
-					userHash[value].sessionGetted = true;
+				if ( (resendUntilHasSession && !userHash[value].session) || !userHash[value].sessionSent ) {
+					userHash[value].sessionSent = true;
                     userHash[value].agent = userHash[value].agent || {};
 					me.setLogo();//设置企业logo
 
@@ -127,6 +125,8 @@
                         userHash[value].session = null;
 						me.getGreeting();
                     });
+				} else {
+                    (!isGroupChat || userHash[value].session) && me.setTitle('', userHash[value].agent);
                 }
             }
 			, getGreeting: function () {
@@ -1474,7 +1474,7 @@
 
                 wrapper = wrapper || me.chatWrapper;
 
-                
+
                 if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType && msg.ext.weichat.ctrlType == 'inviteEnquiry' ) {//满意度评价
                     type = 'satisfactionEvaluation';  
                 } else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {//机器人自定义菜单
@@ -1541,6 +1541,8 @@
                 
                 if ( !isHistory ) {
 					
+					me.getSession('resendUntilGetSession');
+
                     if ( !msg.from ) {
 						//current chat wrapper
                     } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.queueName ) {//skill group
