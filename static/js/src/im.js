@@ -1474,7 +1474,6 @@
 
                 wrapper = wrapper || me.chatWrapper;
 
-
                 if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType && msg.ext.weichat.ctrlType == 'inviteEnquiry' ) {//满意度评价
                     type = 'satisfactionEvaluation';  
                 } else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {//机器人自定义菜单
@@ -1541,7 +1540,7 @@
                 
                 if ( !isHistory ) {
 					
-					me.getSession('resendUntilGetSession');
+					noPrompt || me.getSession('resendUntilGetSession');
 
                     if ( !msg.from ) {
 						//current chat wrapper
