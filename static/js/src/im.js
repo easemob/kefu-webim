@@ -429,7 +429,7 @@
 				var avatarSrc = info && info.avatar ? info.avatar : config.avatar;
 
 				if ( !/ossimages/.test(avatarSrc) ) {
-					avatarSrc = '//' + location.host + '/ossimages/' + avatarSrc;
+					avatarSrc = '//' + location.host + '/ossimages/' + avatarSrc.replace(/^https?:\/\//, '');
 				}
                 nickName.html(nName ? nName : (config.tenantName + (title ? '-' + title : '')));
                 avatar.attr('src', avatarSrc).removeClass('hide');
