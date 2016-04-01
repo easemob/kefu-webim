@@ -15,7 +15,10 @@
             , y: 0
         },
         shadow = document.createElement('div'),
-        newTitle = '-新消息提醒  ', titleST = 0, initdata;
+        newTitle = '-新消息提醒  ',
+		titleST = 0,
+		referrer = document.referrer,
+		initdata;
     
     var getConfig = function(key, searchScript){//get config from current script
         var that;
@@ -235,7 +238,8 @@
             + (config.json.preview ? '&preview=' + config.json.preview : '')
             + (curChannel ? '&c=' + curChannel : '')
             + (curUser ? '&u=' + curUser : '')
-            + '&time=' + new Date().getTime();
+            + '&time=' + new Date().getTime()
+			+ '&referrer=' + encodeURIComponent(referrer)
         iframe.src = config.domain + '/webim/im.html?tenantId=' + config.json.tenantId;
 
         if(!config.json.hide) {

@@ -18,6 +18,7 @@
         config.root = window.top == window;
         config.json.hide = config.json.hide == 'false' ? false : config.json.hide;
         config.json.sat = config.json.sat == 'false' ? false : config.json.sat;
+        config.referrer = config.json.referrer;
         config.json.tenants = config.json.tenants == 'false' ? false : config.json.tenants;
 
 
@@ -118,7 +119,7 @@
 							me.setTitle('', userHash[value].agent);
 							info.visitorUser 
 							&& info.visitorUser.userId 
-							&& EasemobWidget.api.sendVisitorInfo(config.json.tenantId, info.visitorUser.userId);//ref info
+							&& EasemobWidget.api.sendVisitorInfo(config.json.tenantId, info.visitorUser.userId, decodeURIComponent(config.json.referrer) || document.referrer);//ref info
 						}
                     })
                     .fail(function () {
@@ -431,8 +432,8 @@
 
 				var avatarSrc = info && info.avatar ? info.avatar : config.avatar;
 
-				if ( !/ossimages/.test(avatarSrc) ) {
-					avatarSrc = '//' + location.host + '/ossimages/' + avatarSrc.replace(/^https?:\/\//, '');
+				if ( !/ossimages/.test(avatarSrc) && /img-cn/.test(avatarSrc) ) {
+					avatarSrc = '//' + location.host + '/ossimages/' + avatarSrc.replace(/^(https?:)?\/\//, '');
 				}
                 nickName.html(nName ? nName : (config.tenantName + (title ? '-' + title : '')));
                 avatar.attr('src', avatarSrc).removeClass('hide');
@@ -466,7 +467,7 @@
                 }
             }
 			, setLogo: function () {
-				if ( config.logo ) {
+				if ( !this.chatWrapper.find('.easemobWidget-tenant-logo').length && config.logo ) {
 					this.chatWrapper.prepend('<div class="easemobWidget-tenant-logo"><img src="' + config.logo + '"></div>');
 				}
 			}

@@ -73,7 +73,7 @@ EasemobWidget.api = {
 			, data:{
 				fromSeqId: from 
 				, size: size 
-				, chatGroupId: chatGroupId
+				, chatGroupId: chatGroupId || -1
 				, tenantId: tenantId
 			}
 			, cache: false
@@ -118,11 +118,12 @@ EasemobWidget.api = {
 		}).then(function ( r ) { return r; });
     }
 
-	, sendVisitorInfo: function ( tenantId, visitorId ) {
+	, sendVisitorInfo: function ( tenantId, visitorId, referrer ) {
         return $.ajax({
 			url: '/v1/webimplugin/tenants/' + tenantId + '/visitors/' + visitorId + '/attributes'
 			, type: 'post'
 			, contentType: 'application/json'
+			, data: JSON.stringify({ referrer: referrer })
 		}).then(function ( r ) { return r; });
     }
 };
