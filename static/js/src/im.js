@@ -119,7 +119,7 @@
 							me.setTitle('', userHash[value].agent);
 							info.visitorUser 
 							&& info.visitorUser.userId 
-							&& EasemobWidget.api.sendVisitorInfo(config.json.tenantId, info.visitorUser.userId, decodeURIComponent(config.json.referrer) || document.referrer);//ref info
+							&& EasemobWidget.api.sendVisitorInfo(config.json.tenantId, info.visitorUser.userId, config.referrer ? decodeURIComponent(config.referrer) : document.referrer);//ref info
 						}
                     })
                     .fail(function () {
