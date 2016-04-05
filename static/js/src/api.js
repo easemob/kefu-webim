@@ -123,7 +123,7 @@ EasemobWidget.api = {
 			url: '/v1/webimplugin/tenants/' + tenantId + '/visitors/' + visitorId + '/attributes'
 			, type: 'post'
 			, contentType: 'application/json'
-			, data: JSON.stringify({ referrer: referrer })
+			, data: JSON.stringify({ referer: referrer || location.href })
 		}).then(function ( r ) { return r; });
     }
 };
