@@ -5,7 +5,7 @@
 ## 一.集成方式
 0.开发者版最新源码：open分支
 
-1.下载源码：https://github.com/easemob/kefu-webim/releases tag:easemob-webim-plugin-open1.0
+1.下载源码：https://github.com/easemob/kefu-webim/releases/easemob-webim-plugin-open1.0
 
 2.解压源码包，将其放到您的服务器所指向的文件目录
 
