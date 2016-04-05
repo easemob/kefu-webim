@@ -39,7 +39,7 @@ static/js/im.js: 包含现有网页端客服的所有交互模块
 
     5.imgView: 点击图片放大
 
-    6.ctrl + v粘贴发送截图: 仅pc端火狐，ie11，谷歌，safari等webkit内核浏览器支持
+    6.ctrl + v粘贴发送截图: 仅pc端chrome和其他webkit内核浏览器支持(注：safari不支持)
 
     7.聊天窗口拖拽
 
