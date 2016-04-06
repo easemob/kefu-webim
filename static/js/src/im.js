@@ -132,8 +132,14 @@
             }
 			, getGreeting: function () {
 				var me = this,
+					value = isGroupChat ? curGroup : 'normal',
 					wrapper = me.chatWrapper || null;
 
+				if ( userHash[value].greetingGetted ) {
+					return;
+				}
+
+				userHash[value].greetingGetted = true;
 				$.when(
 					EasemobWidget.api.getSystemGreeting(config)
 					, EasemobWidget.api.getRobertGreeting(config)
