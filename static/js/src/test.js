@@ -48,7 +48,7 @@
                 break;
             case 'createVisitor':
                 easemobIM.emajax(createObject({
-                    url: '/v1/webimplugin/visitors',
+                    url: '/v1/webimplugin/visitors?tenantId=' + msg.data.tenantId,
                     msg: msg,
                     type: 'POST'
                 }));
@@ -87,7 +87,7 @@
                 break;
 			case 'getSystemGreeting':
                 easemobIM.emajax(createObject({
-                    url: '/v1/webimplugin/welcome?tenantId=' + msg.data.tenantId,
+                    url: '/v1/webimplugin/welcome',
                     msg: msg
                 }));
                 break;
@@ -99,7 +99,7 @@
                 break;
 			case 'sendVisitorInfo':
                 easemobIM.emajax(createObject({
-                    url: '/v1/webimplugin/tenants/' + msg.data.tenantId + '/visitors/' + msg.data.visitorId + '/attributes',
+                    url: '/v1/webimplugin/tenants/' + msg.data.tenantId + '/visitors/' + msg.data.visitorId + '/attributes?tenantId=' + msg.data.tenantId,
                     msg: msg,
                     type: 'POST'
                 }));

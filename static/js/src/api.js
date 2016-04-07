@@ -82,7 +82,7 @@ EasemobWidget.api = {
 
     , getUser: function ( obj, tenantId ) {
         return $.ajax({
-			url: '/v1/webimplugin/visitors'
+			url: '/v1/webimplugin/visitors?tenantId=' + tenantId
 			, contentType: 'application/json'
 			, type: 'post'
 			, data: JSON.stringify({
@@ -113,14 +113,14 @@ EasemobWidget.api = {
 
     , getRobertGreeting: function ( obj ) {
         return $.ajax({
-			url: '/v1/Tenants/' + obj.json.tenantId + '/robots/visitor/greetings'
+			url: '/v1/Tenants/' + obj.json.tenantId + '/robots/visitor/greetings?tenantId=' + obj.json.tenantId
 			, contentType: 'application/json'
 		}).then(function ( r ) { return r; });
     }
 
 	, sendVisitorInfo: function ( tenantId, visitorId, referrer ) {
         return $.ajax({
-			url: '/v1/webimplugin/tenants/' + tenantId + '/visitors/' + visitorId + '/attributes'
+			url: '/v1/webimplugin/tenants/' + tenantId + '/visitors/' + visitorId + '/attributes?tenantId=' + tenantId
 			, type: 'post'
 			, contentType: 'application/json'
 			, data: JSON.stringify({ referer: referrer || location.href })
