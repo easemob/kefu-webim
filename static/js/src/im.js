@@ -1289,11 +1289,16 @@
 						EasemobWidget.api.getGroup(config, config.json.tenantId)
 					)
 					.done(function ( p, g ) {
-						wrapper.attr('data-group', g);
-						cache.password = p;
-						config.password = p;
+						if ( !p ) {
+							cache.user = null;
+							me.handleUser(cache, callback, key);
+						} else {
+							wrapper.attr('data-group', g);
+							cache.password = p;
+							config.password = p;
 
-						typeof callback == 'function' && callback();
+							typeof callback == 'function' && callback();
+						}
 					});
 				} else {
 					wrapper.attr('data-hised', 1);//新用户不获取历史记录
