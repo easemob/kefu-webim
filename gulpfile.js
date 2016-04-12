@@ -10,7 +10,7 @@ var gulp = require('gulp'),
     server = require('gulp-webserver'),
     clean = require('gulp-clean');
 
-
+var debug = false;
 var mockData = require('./mock.json');
 
 
@@ -51,10 +51,10 @@ gulp.task('lint', function() {
 
 //compress
 gulp.task('uglify', function() {
-    gulp.src([
+    var emkf = gulp.src([
         'static/js/src/jquery-1.11.1.js',
         'static/js/src/strophe.js',
-        'static/js/src/easemob.im-1.0.8.js',
+        'static/js/src/easemob.im-1.1.js',
         'static/js/src/jquery.autogrow.js',
         'static/js/src/easemob.utils.js',
         'static/js/src/const.js',
@@ -63,36 +63,36 @@ gulp.task('uglify', function() {
         'static/js/src/message.js',
         'static/js/src/im.js'
     ])
-    .pipe(concat('emkf.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('static/js/'));
+    .pipe(concat('emkf.min.js'));
+    debug || emkf.pipe(uglify());
+    emkf.pipe(gulp.dest('static/js/'));
 
-    gulp.src('static/js/src/easemob.js')
-    .pipe(uglify())
-    .pipe(gulp.dest('.'));
+    var ejs = gulp.src([
+        'static/js/src/easemob.utils.js',
+        'static/js/src/easemob.js',
+    ])
+    .pipe(concat('easemob.js'));
+    debug || ejs.pipe(uglify());
+    ejs.pipe(gulp.dest('.'));
 
-    gulp.src('static/js/src/easemob.utils.js')
-    .pipe(uglify())
-    .pipe(gulp.dest('static/js/'));
-
-    gulp.src([
+    var open = gulp.src([
         'static/js/src/strophe.js',
         'static/js/src/easemob.im-1.0.8.js',
         'static/js/swfupload/swfupload.min.js',
         'static/js/src/transfer.js',
     ])
-    .pipe(concat('em-open.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('static/js/'));
+    .pipe(concat('em-open.js'));
+    debug || open.pipe(uglify());
+    open.pipe(gulp.dest('static/js/'));
 
-    gulp.src([
+    var transfer = gulp.src([
         'static/js/src/ajax.js',
         'static/js/src/transfer.js',
         'static/js/src/test.js',
     ])
-    .pipe(concat('em-transfer.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('static/js/'));
+    .pipe(concat('em-transfer.js'));
+    debug || transfer.pipe(uglify());
+    transfer.pipe(gulp.dest('static/js/'));
 });
 
 

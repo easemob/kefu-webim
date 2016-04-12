@@ -6,52 +6,72 @@
 ;(function ( window, undefined ) {
     'use strict';
 
+    window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+
     var main = function ( config ) {
+		if ( !config.json.tenantId ) { return; }
+
+		var tenantId = config.json.tenantId;
         var sendQueue = {};//记录技能组切换时的登录间隙所发送的消息
         var userHash = {};//记录所有user相关
         var isGroupChat = false;//当前是否技能组聊天窗口
-        var isShowDirect = false;//不同技能组之间，直接显示
         var curGroup = '';//记录当前技能组，如果父级页面切换技能组，则直接打开chatwindow，不toggle   
         var swfupload = null;//flash "上传利器"-_-b
         var https = location.protocol === 'https:' ? true : false;
-        var click = EasemobWidget.utils.isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click';
-        config.root = window.top == window;
-        config.json.hide = config.json.hide == 'false' ? false : config.json.hide;
-        config.json.sat = config.json.sat == 'false' ? false : config.json.sat;
-        config.referrer = config.json.referrer;
-        config.json.tenants = config.json.tenants == 'false' ? false : config.json.tenants;
-
+		var mobile = config.mobile = EasemobWidget.utils.isMobile || window.top == window;
+        var click = mobile && ('ontouchstart' in window) ? 'touchstart' : 'click';
+        config.json.hide = EasemobWidget.utils.convertFalse(config.json.hide);
+        config.json.sat = EasemobWidget.utils.convertFalse(config.json.sat);
+        config.json.tenants = EasemobWidget.utils.convertFalse(config.json.tenants);
+        config.json.show = EasemobWidget.utils.convertFalse(config.json.show);
+        config.json.resources = EasemobWidget.utils.convertFalse(config.json.resources);
+		config.user = config.json.user;
+		
+		/*
+            监听父级窗口发来的消息
+        */
+        var message = new TransferMessage().listenToParent(function ( msg ) {
+            switch ( msg.event ) {
+                case 'dragend':
+                    im.scrollBottom();
+                    break;
+                default: break;
+            }
+        });
 
         //
-        EasemobWidget.init(config, function () {
-            if ( config.root && config.json && config.json.emgroup ) {
-                isGroupChat = true;
-                curGroup = config.json.emgroup;
-				userHash[curGroup]  = {
-					user: config.user,
-					password: config.password
-				};
-                
-            } else {
-				userHash.normal  = {
-					user: config.user,
-					password: config.password
-				};
-            }
+        var start = (function ( cb ) {
+			EasemobWidget.init(config, function () {
+				if ( config.json && config.json.emgroup ) {
+					isGroupChat = true;
+					curGroup = config.json.emgroup;
+					userHash[curGroup]  = {
+						user: config.user,
+						password: config.password
+					};
+					
+				} else {
+					userHash.normal  = {
+						user: config.user,
+						password: config.password
+					};
+				}
 
-            im.init();
-        });
+				im.init();
+				cb instanceof Function && cb();
+			});
+		}());
 
        
         /*
             聊天窗口所有业务逻辑代码
         */
         var im = ({
-            init: function(){
+            init: function () {
 				this.getNotice();//
                 this.getDom();//绑定所有相关dom至this
                 this.setTheme();//设置相应主题
-				this.showChatIfRoot();//展示聊天窗口内容
+				this.showChatIfShow();//展示聊天窗口内容
                 this.handleFixedBtn();//展示悬浮小按钮
                 this.setOffline();//设置企业logo
                 this.setTitle(config.json.emgroup ? config.json.emgroup : '');//设置im.html的标题
@@ -66,15 +86,15 @@
                     this.Im.find('.easemobWidget-satisfaction').removeClass('hide');
                 }
 			}
-			, showChatIfRoot: function () {
-				config.root && (this.min.addClass('hide'), this.toggleChatWindow());
+			, showChatIfShow: function () {
+				config.json.show && this.toggleChatWindow();
 			}
 			, handleSkill: function () {
-				if ( config.json && config.json.emgroup && config.root ) {//处理技能组
+				if ( config.json && config.json.emgroup && mobile ) {//处理技能组
                     var value = config.json.emgroup;
                     this.handleGroup(value);
                     userHash[value] = userHash[value] || {};
-                    userHash[value].user = Emc.get(value + config.json.tenantId, config.json.tenants);
+                    userHash[value].user = Emc.get(value + tenantId, config.json.tenants);
                     curGroup = value;
                 }
 				this.open();
@@ -86,7 +106,7 @@
 					return;
 				}
 
-				EasemobWidget.api.getWord(config.json.tenantId)
+				EasemobWidget.api.getWord(tenantId)
 				.done(function ( winfo ) {
 					config.word = winfo && winfo.length ? winfo[0].optionValue : '';
 					me.setWord();
@@ -119,7 +139,7 @@
 							me.setTitle('', userHash[value].agent);
 							info.visitorUser 
 							&& info.visitorUser.userId 
-							&& EasemobWidget.api.sendVisitorInfo(config.json.tenantId, info.visitorUser.userId, config.referrer ? decodeURIComponent(config.referrer) : document.referrer);//ref info
+							&& EasemobWidget.api.sendVisitorInfo(tenantId, info.visitorUser.userId, config.referrer ? decodeURIComponent(config.referrer) : document.referrer);//ref info
 						}
                     })
                     .fail(function () {
@@ -183,91 +203,8 @@
 				})
 				.fail(function(){});
 			}
-            /*, getBase64: (function () {
-                var canvas = $('<canvas>').get(0);
-                if ( !canvas.getContext ) {
-                    return;
-                }
-                var ctx = canvas.getContext("2d"),
-                    img = new Image();
-
-                return function ( url, callback ) {
-                    img.onload = function () {
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        ctx.drawImage(this, 0, 0);
-                        typeof callback === 'function' && callback(canvas.toDataURL('image/png'));
-                    };
-                    img.src = url;
-                };
-            }())
-            , getBlob: function ( base64 ) {
-                var me = this;
-                try {
-                    if ( base64.indexOf('data:image') < 0 ) {
-                        this.getBase64(base64, function(blob) {
-                            me.getBlob(blob);
-                        });
-                    }
-                    var bytes = window.atob(base64.split(',')[1]),
-                        ab = new ArrayBuffer(bytes.length),
-                        ia = new Uint8Array(ab);
-
-                    for ( var i = 0, l = bytes.length; i < l; i++ ) {
-                        ia[i] = bytes.charCodeAt(i);
-                    }
-                    return new Blob( [ab], {type: 'image/png', encoding: 'utf-8'});
-                } catch ( e ) {
-                    return null;
-                }
-            }*/
             , paste: function ( obj, callback ) {
                 var me = this;
-                    //ctrl_pressed = false;
-
-                /*if ( me.isIE !== null && me.isIE < 11 ) {
-                    return;
-                }*/
-                
-                /*me.headBar.add($('#easemobWidgetSend')).add($('#easemobWidgetBody')).on('keydown', function( e ) {
-                    var ev = e.originalEvent,
-                        k = ev.keyCode;
-
-                    if ( k === 17 || ev.metaKey || ev.ctrlKey ) {
-                        ctrl_pressed = true;
-                    }
-                    if ( k === 86 ) {
-                        if ( ctrl_pressed === true && !window.Clipboard ) {
-                            pw.focus();
-                            setTimeout(function () {
-                                ctrl_pressed = false;
-                            }, 50);
-                        }
-                    }
-                });*/
-
-                /*var pw = $('<div>');
-                pw.attr('contenteditable', '');
-                pw.css({'opacity': 0, position: 'fixed', top: '-10px', left: '-10px', width: '1px', height: '1px', overflow: 'hidden'});
-                pw.on('DOMSubtreeModified', function() {
-                    if ( !ctrl_pressed ) {
-                        return true;
-                    } else {
-                        ctrl_pressed = false;
-                    }
-                    var img = pw.find('img');
-                    if ( img.length > 0 && img.attr('src') ) {
-                        var b = me.getBlob(img.attr('src'));
-                        if ( b ) {
-                            callback instanceof Function && callback(b);
-                        } else {
-                            callback instanceof Function && callback();
-                        }
-                    }
-                    var word = pw.children().length === 0 ? pw.html() : pw.children().eq(0).html();
-                    me.textarea.val(me.textarea.val() + word).change();
-                    pw.html('');
-                });
-                $('body').append(pw);*/
 
                 $(obj).on('paste', function ( e ) {
                     var ev = e.originalEvent;
@@ -290,9 +227,12 @@
                 });
             }
             , getConnection: function () {
-                return new Easemob.im.Connection({
-					url: 'im-api' + config.cluster + '.easemob.com'
-				});
+				var op = {
+					url: 'im-api' + config.cluster + '.easemob.com',
+				};
+				config.json.resources && (op.multiResources = true);
+
+                return new Easemob.im.Connection(op);
             }
             , getHistory: function ( from, wrapper, callback ) {
 
@@ -315,7 +255,7 @@
                     from 
                     , EasemobWidget.LISTSPAN
                     , wrapper.data('group')
-                    , config.json.tenantId
+                    , tenantId
                 )
                 .done(function ( info ) {
                     if ( info && info.length == EasemobWidget.LISTSPAN ) {
@@ -331,7 +271,9 @@
                 this.msgCount = 0;//未读消息数
                 this.scbT = 0;//sroll bottom timeout stamp
                 this.autoGrowOptions = {};
-                this.historyGetted = { normal: false };//第一次获取历史记录
+                this.historyGetted = {//第一次获取历史记录
+					normal: false
+				};
                 this.msgTimeSpan = {};//用于处理1分钟之内的消息只显示一次时间
                 this.isIE = EasemobWidget.utils.getIEVersion();
                 
@@ -446,10 +388,13 @@
                 document.title = nickName.html() + (title ? '' : '-客服');
             }
             , mobileInit: function(){
-                if(!EasemobWidget.utils.isMobile) return;
+                if ( !mobile ) {
+					return;
+				}
+
                 this.Im.find('.easemobWidget-satisfaction').addClass('hide');
 
-                if(!config.json.hide && !config.root) {
+                if ( !config.json.hide && mobile ) {
                     this.fixedBtn.css({width: '100%', top: '0'});
                     this.fixedBtn.children().css({
                         width: '100%'
@@ -460,6 +405,7 @@
                         , 'line-height': '40px'
                     });
                 }
+				this.min.addClass('hide');
                 this.Im.addClass('easemobWidgetWrapper-mobile');
                 this.evaluate.addClass('hide');
                 this.mobileLink.attr('href', location.href);
@@ -511,34 +457,28 @@
                 }, 2000); 
             }
             , setTheme: function() {
-                
-				EasemobWidget.api.getTheme(config.json.tenantId)
+                var me = this;
+
+				EasemobWidget.api.getTheme(tenantId)
 				.always(function ( tinfo ) {
 					config.theme = tinfo && tinfo.length ? tinfo[0].optionValue : '天空之城';
 
-					if ( config.json.color ) {
-						var color = config.json.color;
-						this.min.css('background-color', color);
-						this.fixedBtn.children().css('background-color', color);
-						this.headBar.css('background-color', color);
-						this.sendbtn.css('background-color', color);
-					} else if ( config.theme ) {
+					if ( config.theme ) {
 						if(!EasemobWidget.THEME[config.theme]) config.theme = '天空之城';
-						//$('head').append('<link rel="stylesheet" href="/webim/theme/'+encodeURIComponent(config.theme)+'.css" />');
 						$('<style type="text/css">' + EasemobWidget.THEME[config.theme].css + '</style>').appendTo('head');
 					}
 				})
                  
             }
-            , handleFixedBtn: function() {
-                if(!config.json.hide && !config.root) {
+            , handleFixedBtn: function () {
+                if ( !config.json.show && !config.json.hide ) {
                      this.fixedBtn.removeClass('hide');
                 }
             }
             , setOffline: function() {
                 var me = this;
 
-				EasemobWidget.api.getStatus(config.json.tenantId)
+				EasemobWidget.api.getStatus(tenantId)
 				.done(function ( offline ) {
 					config.offline = offline;
 					if ( !offline ) {
@@ -555,32 +495,29 @@
 					}
 				});
             }
-            , toggleChatWindow: function(windowStatus) {
+            , toggleChatWindow: function () {
                 var me = this;
 
                 me.handleTransfer();
-                if(!config.root) {
-                    setTimeout(function(){
-                        !config.json.hide && me.fixedBtn.toggleClass('hide');
-                    }, 100);
-                    message.sendToParent(windowStatus == 'show' || me.Im.hasClass('hide') ? 'showChat' : 'minChat');
-                    windowStatus == 'show' 
-                        ? (
-                            config.json.hide || me.fixedBtn.removeClass('hide')
-                            , me.Im.removeClass('hide')
-                        ) 
-                        : me.Im.toggleClass('hide');
-                } else {
+
+                if ( mobile ) {
                     me.Im.removeClass('hide');
+                } else {
+                    me.isOpened = me.Im.hasClass('hide');
+					message.sendToParent({ event: me.isOpened ? 'showChat' : 'minChat' });
+                    me.Im.toggleClass('hide');
                 }
 
-                if(me.Im.hasClass('hide')) {
-                    me.isOpened = false;
-                } else {
+                if ( me.isOpened ) {
                     me.textarea.focus();
                     me.isOpened = true;
                     me.scrollBottom(50);
                 }
+
+				!mobile && !config.json.hide && setTimeout(function () {
+					 me.isOpened ? me.fixedBtn.addClass('hide') : me.fixedBtn.removeClass('hide');
+				}, 100);
+
                 me.addPrompt();
             }
             , sdkInit: function(conn){
@@ -719,7 +656,7 @@
                 var me = this;
 
                 //if lte ie 8 , return
-                if ( me.isIE !== null && me.isIE < 9 || EasemobWidget.utils.isMobile ) {
+                if ( me.isIE !== null && me.isIE < 9 || mobile ) {
                     this.audioSign.addClass('hide');
                     me.playaudio = function () {};
                     return;
@@ -768,33 +705,24 @@
             , bindEvents: function(){
                 var me = this;
                 
-
-                //orientation
-                $(window).on('orientationchange', function() {
-                    //setTimeout(me.textarea.focus, 1000);
-                });
-
                 //add hove fix theme
                 me.Im.on('mouseenter', '.easemobWidget-list-btn button', function(){
                     $(this).addClass('bg-color');
                 })
                 .on('mouseleave', '.easemobWidget-list-btn button', function(){
                     $(this).removeClass('bg-color');
-
                 })
                 .on('touchstart', '.easemobWidget-list-btn button', function(){
                     $(this).addClass('bg-color');
-                    
                 })
                 .on('touchend', '.easemobWidget-list-btn button', function(){
                     $(this).removeClass('bg-color');
-                    
                 });
 
-                (function(){
+                (function () {
                     var f = null;
-                    me.paste(document, function(blob){
-                        if(!blob) {
+                    me.paste(document, function ( blob ) {
+                        if ( !blob ) {
                             return;
                         }
                         me.pasteWrapper.removeClass('hide');
@@ -802,13 +730,13 @@
                         && (f = blob)
                         && me.pasteWrapper.find('.easemobWidget-paste-image').append($('<img src="' + window.URL.createObjectURL(blob) + '"/>'));
                     });
-                    me.pasteWrapper.on('click', '.js_cancelsend', function(){
+                    me.pasteWrapper.on('click', '.js_cancelsend', function () {
                         me.pasteWrapper.find('.easemobWidget-paste-image').html('');
                         me.pasteWrapper.addClass('hide');
                     });
-                    me.pasteWrapper.on('click', '.js_sendimg', function(){
+                    me.pasteWrapper.on('click', '.js_sendimg', function () {
                         me.realfile.val('');
-                        if(!f) {
+                        if ( !f ) {
                             return false;
                         }
                         me.sendImgMsg(null, null, {data: f, url: me.pasteWrapper.find('.easemobWidget-paste-image img').attr('src')}, me.conn.getUniqueId());
@@ -818,7 +746,7 @@
                 }());
                 
                 //resend
-                me.Im.on(click, '.easemobWidget-msg-status', function(){
+                me.Im.on(click, '.easemobWidget-msg-status', function () {
                     var that = $(this),
                         w = that.parent().parent(),
                         id = w.attr('id');
@@ -829,26 +757,26 @@
                 });                
 
                 //drag
-                me.headBar.find('.js_drag').on('mousedown', function(e){
+                me.headBar.find('.js_drag').on('mousedown', function ( e ) {
                     var ev = e.originalEvent;
                     me.textarea.blur();//ie a  ie...
-                    message.sendToParent('dragready' + ev.clientX + '&' + ev.clientY);
+                    message.sendToParent({ event: 'dragready', x: ev.clientX, y: ev.clientY });
                     return false;
-                }).on('mouseup', function(){
-                    message.sendToParent('dragend');
+                }).on('mouseup', function () {
+                    message.sendToParent({ event: 'dragend' });
                     return false;
                 });
                 
 
                 //满意度调查
-                me.evaluate.on(click, function(){
+                me.evaluate.on(click, function () {
                     //clear cache
                     me.satisDialog.get(0).inviteId = '';
                     me.satisDialog.get(0).serviceSessionId = '';
 
                     me.satisDialog.removeClass('hide');
                 });
-                me.Im.on(click, '.js_satisfybtn button', function(){
+                me.Im.on(click, '.js_satisfybtn button', function () {
                     var that = $(this);
 
                     //cache
@@ -858,15 +786,15 @@
                     me.satisDialog.removeClass('hide');
                     return false;
                 });
-                me.satisDialog.on(click, 'i, .js_cancel', function(){
+                me.satisDialog.on(click, 'i, .js_cancel', function () {
                     me.satisDialog.addClass('hide');
                 });
-                me.satisDialog.on(click, '.js_satisfy', function(){
+                me.satisDialog.on(click, '.js_satisfy', function () {
                     var suc = me.satisDialog.find('.js_suc'),
                         level = me.satisDialog.find('li.sel').length,
                         text = me.satisDialog.find('textarea');
 
-                    if(level === 0) {
+                    if ( level === 0 ) {
                         me.errorPrompt('请先选择星级');
                         return false;
                     }
@@ -875,10 +803,10 @@
                     text.blur();
                     suc.removeClass('hide');
 
-                    setTimeout(function(){
+                    setTimeout(function () {
                         text.val('');
 
-                        $.each(me.satisDialog.find('li.sel'), function(k, v){
+                        $.each(me.satisDialog.find('li.sel'), function ( k, v ) {
                             $(v).removeClass('sel');
                         });
                         suc.addClass('hide');
@@ -886,7 +814,7 @@
                     }, 1500);
 
                 });
-                me.satisDialog.on(click, 'li', function(e){
+                me.satisDialog.on(click, 'li', function ( e ) {
                     e.originalEvent.preventDefault && e.originalEvent.preventDefault();
 
                     var that = $(this),
@@ -933,7 +861,7 @@
                     im.faceWrapper.parent().css('bottom', h + 'px');
                 };
 
-                EasemobWidget.utils.isMobile && me.textarea.autogrow(me.autoGrowOptions);
+                mobile && me.textarea.autogrow(me.autoGrowOptions);
                 
                 //
                 me.textarea.on('keyup change input', function(){
@@ -941,9 +869,9 @@
                 })
                 .on("keydown", function(evt){//hot key
                     var that = $(this);
-                    if((EasemobWidget.utils.isMobile && evt.keyCode == 13) 
+                    if ( (mobile && evt.keyCode == 13) 
                         || (evt.ctrlKey && evt.keyCode == 13) 
-                        || (evt.shiftKey && evt.keyCode == 13)) {
+                        || (evt.shiftKey && evt.keyCode == 13) ) {
 
                         that.val($(this).val()+'\n');
                         return false;
@@ -958,7 +886,7 @@
                         }, 0);
                     }
                 });
-                if ( EasemobWidget.utils.isMobile ) {
+                if ( mobile ) {
                     var handleFocus = function () {
                         me.textarea.css('overflow-y', 'auto');
                         var scrollTimer = function () {
@@ -998,19 +926,19 @@
                 //表情的展开和收起
                 me.facebtn.on(click, me.toggleFaceWrapper)
                 .on('mouseenter', function(){
-                    EasemobWidget.utils.isMobile || $(this).addClass('theme-color');
+                    mobile || $(this).addClass('theme-color');
                 })
                 .on('mouseleave', function(){
-                    EasemobWidget.utils.isMobile || $(this).removeClass('theme-color');
+                    mobile || $(this).removeClass('theme-color');
                 });
 
                 //表情的选中
                 me.faceWrapper.on(click, '.easemobWidget-face-bg', function(e){
                     e.originalEvent.preventDefault && e.originalEvent.preventDefault();
 
-                    !EasemobWidget.utils.isMobile && me.textarea.focus();
+                    !mobile && me.textarea.focus();
                     me.textarea.val(me.textarea.val()+$(this).find('img').data('value'));
-                    if(EasemobWidget.utils.isMobile){
+                    if ( mobile ) {
                         me.autoGrowOptions.update();//update autogrow
                         setTimeout(function(){
                             me.textarea.get(0).scrollTop = 10000;
@@ -1022,11 +950,11 @@
                 });
 
                 //悬浮小按钮的点击事件
-                me.fixedBtn.find('a').on('click', function(){
-                    if(EasemobWidget.utils.isMobile) {
+                me.fixedBtn.find('a').on('click', function () {
+                    if ( mobile ) {
                         $(this).attr({
                             target: '_blank'
-                            , href: location.href
+                            , href: location.href + '&show=true'
                         });
                     } else {
                         me.chatWrapper.removeClass('hide').siblings().addClass('hide');
@@ -1041,7 +969,7 @@
                     me.sendImgMsg();
                 })
                 .on('click', function(){
-                    if(!Easemob.im.Utils.isCanUploadFile()) {
+                    if(!Easemob.im.Utils.isCanUploadFile) {
                         me.errorPrompt('当前浏览器不支持发送图片');
                         return false;    
                     }
@@ -1067,7 +995,7 @@
 
                 //弹出文件选择框
                 me.uploadbtn.on('click', function(){
-                    if(!Easemob.im.Utils.isCanUploadFile()) {
+                    if(!Easemob.im.Utils.isCanUploadFile) {
                         me.errorPrompt('当前浏览器不支持发送图片');
                         return false;    
                     }
@@ -1075,10 +1003,10 @@
                     me.realfile.click();
                 })
                 .on('mouseenter', function(){
-                    EasemobWidget.utils.isMobile || $(this).addClass('theme-color');
+                    mobile || $(this).addClass('theme-color');
                 })
                 .on('mouseleave', function(){
-                    EasemobWidget.utils.isMobile || $(this).removeClass('theme-color');
+                    mobile || $(this).removeClass('theme-color');
                 });
 
                 me.sendbtn.on('click', function(){
@@ -1087,7 +1015,7 @@
                     }
                     me.faceWrapper.parent().addClass('hide');
                     me.sendTextMsg();
-                    EasemobWidget.utils.isMobile && me.textarea.css({
+                    mobile && me.textarea.css({
                         height: '34px'
                         , overflowY: 'hidden'
                     }).focus();
@@ -1133,7 +1061,7 @@
                         me.chatWrapper.attr('data-start')
                         , EasemobWidget.LISTSPAN
                         , me.chatWrapper.data('group')
-                        , config.json.tenantId
+                        , tenantId
                     )
                     .done(function(info){
 
@@ -1195,7 +1123,7 @@
                 var ocw = im.chatWrapper.parent().get(0);
                 
                 type 
-                ? (clearTimeout(this.scbT), this.scbT = setTimeout(function(){
+                ? (clearTimeout(this.scbT), this.scbT = setTimeout(function () {
                     ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000;
                 }, type))
                 : (ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000);
@@ -1221,7 +1149,7 @@
                     return;
                 }
 
-                if ( Easemob.im.Utils.isCanUploadFileAsync() ) {
+                if ( Easemob.im.Utils.isCanUploadFileAsync ) {
                     if ( me.realfile.val() ) {
                         file = Easemob.im.Utils.getFileUrl(me.realfile.attr('id'));
                     } else if ( !file ) {
@@ -1235,7 +1163,7 @@
 					apiUrl: config.apiUrl,
                     uploadError: function ( error ) {
                         //显示图裂，无法重新发送
-                        if ( !Easemob.im.Utils.isCanUploadFileAsync() ) {
+                        if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
                             swfupload && swfupload.settings.upload_error_handler();
                         } else {
                             setTimeout(function() {
@@ -1270,7 +1198,7 @@
                 me.send(msge.body);
                 me.addDate();
                 me.realfile.val('');
-				if ( Easemob.im.Utils.isCanUploadFileAsync() ) {
+				if ( Easemob.im.Utils.isCanUploadFileAsync ) {
 					me.chatWrapper.append(msge.get());
 				}
                 me.chatWrapper.find('img:last').on('load', me.scrollBottom);
@@ -1285,8 +1213,8 @@
 					config.user = cache.user;
 	
 					$.when(
-						EasemobWidget.api.getPwd(config, config.json.tenantId),
-						EasemobWidget.api.getGroup(config, config.json.tenantId)
+						EasemobWidget.api.getPwd(config, tenantId),
+						EasemobWidget.api.getGroup(config, tenantId)
 					)
 					.done(function ( p, g ) {
 						if ( !p ) {
@@ -1303,22 +1231,23 @@
 				} else {
 					wrapper.attr('data-hised', 1);//新用户不获取历史记录
 
-					EasemobWidget.api.getUser(config, config.json.tenantId)
+					EasemobWidget.api.getUser(config, tenantId)
 					.done(function ( info ) {
 						cache.user = info.userId;
 						cache.password = info.userPassword;
 						config.user = info.userId;
 						config.password = info.userPassword;
 
-						if ( config.root ) {
+						if ( mobile ) {
 							if ( config.json && config.json.emgroup ) {
-								Emc.set(config.json.emgroup + config.json.tenantId, cache.user, config.json.tenants);
+								Emc.set(config.json.emgroup + tenantId, cache.user, config.json.tenants);
 							} else {
-								Emc.set('emKefuUser' + config.json.tenantId, cache.user, config.json.tenants);
+								Emc.set('emKefuUser' + tenantId, cache.user, config.json.tenants);
 							}
 						} else {
-							key ? message.sendToParent('setgroupuser@' + cache.user + '@emgroupuser@' + key)
-							: message.sendToParent('setuser@' + cache.user);
+							key 
+							? message.sendToParent({ event: 'setgroupuser', user: cache.user, group: key, tenantId: tenantId })
+							: message.sendToParent({ event: 'setuser', user: cache.user, tenantId: tenantId });
 						}
 
 						typeof callback == 'function' && callback();
@@ -1335,13 +1264,13 @@
                     if ( !userHash[key].firstMsg && !userHash[key].session ) {
                         userHash[key].firstMsg = true;
                         this.Im.find('#' + wrap.attr('id') + '-transfer').addClass('link').removeClass('transfer');
-                        if ( EasemobWidget.utils.isMobile ) {
+                        if ( mobile ) {
                             this.headBar.find('.js_drag').addClass('hide');
                         }
                     }
                 } else if ( action === 'transfer' ) {
                     this.Im.find('#' + wrap.attr('id') + '-transfer').addClass('transfer').removeClass('link');
-                    EasemobWidget.utils.isMobile && this.headBar.find('.js_drag').addClass('hide');
+                    mobile && this.headBar.find('.js_drag').addClass('hide');
                 } else if ( action === 'reply' ) {
                     this.Im.find('#' + wrap.attr('id') + '-transfer').removeClass('transfer link');
                     if ( info ) {
@@ -1350,7 +1279,7 @@
                         userHash[key].agent.avatar = info.avatar;
                         info && userHash[wrap.attr('id')].user === config.user && this.setTitle('', userHash[key].agent);
                     }
-                    if ( EasemobWidget.utils.isMobile ) {
+                    if ( mobile ) {
                         this.headBar.find('.js_drag').removeClass('hide');
                     }
                 }
@@ -1396,7 +1325,7 @@
                 //local append
                 wrapper.append(msge.get());
                 me.textarea.val('');
-                me.scrollBottom(EasemobWidget.utils.isMobile ? 700 : undefined);
+                me.scrollBottom(mobile ? 700 : undefined);
                 me.handleGroup(msge.body);
                 me.send(msge.body);
             }
@@ -1465,16 +1394,16 @@
                     } else {
                         this.messageCount.removeClass('mutiCount').html(this.msgCount);
                     }
-                    message.sendToParent('msgPrompt');
+                    message.sendToParent({ event: 'msgPrompt' });
                     this.notify(detail || '');
                 } else {
                     this.msgCount = 0;
                     this.messageCount.html('').addClass('hide');
-                    message.sendToParent('recoveryTitle');
+                    message.sendToParent({ event: 'recoveryTitle' });
                 }
             }
             , notify: function ( detail ) {
-                message.sendToParent('notify' + (detail || ''));
+                message.sendToParent({ event: 'notify', detail: detail || '' });
             }
             , receiveMsg: function ( msg, type, isHistory, wrapper, noPrompt ) {
 				if ( config.offline ) {
@@ -1625,83 +1554,13 @@
             swfupload.uploadOptions = options;
         };
 
-        /*
-            监听父级窗口发来的消息
-        */
-        var message = new TransferMessage().listenToParent(function(msg){
-            var value;
-            if(msg.indexOf('emgroup@') === 0) {//技能组消息
-                value = msg.slice(8);
-                msg = 'emgroup';
-            } else if(msg.indexOf('@') > 0) {//从父级页面读取相关信息
-                value = msg.split('@')[1];
-                msg = msg.split('@')[0];
-            }
-
-            switch(msg) {
-                case 'dragend':
-                    im.scrollBottom();
-                    break;
-                case 'imclick'://关闭 或 展开 iframe 聊天窗口
-                    if ( !userHash.normal ) {
-                        return false;
-                    }
-
-                    isGroupChat = false;
-                    im.chatWrapper = $('#normal');
-                    im.chatWrapper.removeClass('hide').siblings().addClass('hide');
-                    im.Im.find('#' + im.chatWrapper.attr('id') + '-transfer')
-					.removeClass('hide')
-					.siblings('.easemobWidget-status-prompt').addClass('hide');
-
-                    if ( config.user != userHash.normal.user ) {
-                        config.user = userHash.normal.user;
-                        config.password = userHash.normal.password;
-                        im.open();
-                    }
-                    im.group = false;
-                    im.toggleChatWindow(curGroup ? 'show' : '');
-                    curGroup = '';
-                    break;
-                case 'emgroup'://技能组
-                    isGroupChat = true;
-
-                    var idx = value.indexOf('@emgroupuser@'),
-                        user = null;
-
-                    if(idx > 0) {
-                        user = value.slice(0, idx);
-                    }
-                    value = value.slice(idx + 13);
-                    userHash[value] = userHash[value] || {};
-                    userHash[value].user = user;
-
-                    if(curGroup != value) {
-                        curGroup = value;
-                        isShowDirect = true;
-                    } else {
-                        isShowDirect = false;
-                    }
-
-                    im.handleGroup(value);
-                    if ( userHash[curGroup].conn ) {
-                        config.user = userHash[curGroup].user;
-                        config.password = userHash[curGroup].password;
-                    }
-					im.open();
-                    isShowDirect ? im.toggleChatWindow('show') : im.toggleChatWindow();
-                    break;
-                default: break;
-            }
-        });
-
         
         /*
             upload by flash
             param1: input file ID
         */
         var uploadShim = function ( fileInputId ) {
-            if ( !Easemob.im.Utils.isCanUploadFile() ) {
+            if ( !Easemob.im.Utils.isCanUploadFile ) {
                 return;
             }
             var pageTitle = document.title;
@@ -1767,7 +1626,7 @@
             });
         };
         //不支持异步upload的浏览器使用flash插件搞定
-        if ( !Easemob.im.Utils.isCanUploadFileAsync() && Easemob.im.Utils.isCanUploadFile() ) {
+        if ( !Easemob.im.Utils.isCanUploadFileAsync && Easemob.im.Utils.isCanUploadFile ) {
 			$.getScript('/webim/static/js/swfupload/swfupload.min.js', function () {
 				swfupload = uploadShim('easemobWidgetFileInput');
 				$('object[id^="SWFUpload"]').attr('title', '图片');
@@ -1776,15 +1635,6 @@
         }
     };
 
-    /*
-        
-    */
-    window.top == window 
-    ? main(EasemobWidget.utils.getConfig())
-    : new TransferMessage().listenToParent(function ( msg ) {
-        
-        if ( msg.indexOf('initdata:') === 0 ) {
-            main(EasemobWidget.utils.getConfig(msg.slice(9)));
-        }
-    });
+    //
+    main(EasemobWidget.utils.getConfig())
 }(window, undefined));
