@@ -74,7 +74,7 @@
     config.json.tenants = convertFalse(config.json.tenants);
 
 	var updateAttribute = function ( link, attr ) {
-		var url = link || '//' + location.host + '/webim/im.html?tenantId=';
+		var url = link || config.domain + '/webim/im.html?tenantId=';
 
 		for ( var o in attr ) {
 			if ( attr.hasOwnProperty(o) ) {
@@ -171,6 +171,8 @@
 	window.easemobIMS = function ( tenantId, group ) {
 		tenantId = tenantId || config.json.tenantId;
 
+		if ( !tenantId ) { return; }
+
 		iframe || ready(tenantId, 'initIframWithoutSettingSrc');
 
 		var url = '', user;
@@ -194,7 +196,7 @@
 
     //add kefu widget
     var appendIframe = function ( tenantId, flag ) {
-		if ( iframe ) {
+		if ( !tenantId || iframe ) {
 			return;
 		}
 
