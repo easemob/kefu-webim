@@ -18,14 +18,15 @@
         var curGroup = '';//记录当前技能组，如果父级页面切换技能组，则直接打开chatwindow，不toggle   
         var swfupload = null;//flash "上传利器"-_-b
         var https = location.protocol === 'https:' ? true : false;
-		var mobile = config.mobile = EasemobWidget.utils.isMobile || window.top == window;
+		var mobile = config.mobile = EasemobWidget.utils.isMobile;
+		var root = window.top == window;
         var click = mobile && ('ontouchstart' in window) ? 'touchstart' : 'click';
         config.json.hide = EasemobWidget.utils.convertFalse(config.json.hide);
         config.json.sat = EasemobWidget.utils.convertFalse(config.json.sat);
         config.json.tenants = EasemobWidget.utils.convertFalse(config.json.tenants);
         config.json.show = EasemobWidget.utils.convertFalse(config.json.show);
         config.json.resources = EasemobWidget.utils.convertFalse(config.json.resources);
-		config.user = config.json.user;
+		config.user = config.json.user || Emc.get('emKefuUser' + tenantId);
 		
 		/*
             监听父级窗口发来的消息
@@ -87,10 +88,10 @@
                 }
 			}
 			, showChatIfShow: function () {
-				config.json.show && this.toggleChatWindow();
+				(config.json.show || root) && this.toggleChatWindow();
 			}
 			, handleSkill: function () {
-				if ( config.json && config.json.emgroup && mobile ) {//处理技能组
+				if ( config.json && config.json.emgroup && root ) {//处理技能组
                     var value = config.json.emgroup;
                     this.handleGroup(value);
                     userHash[value] = userHash[value] || {};
@@ -394,7 +395,7 @@
 
                 this.Im.find('.easemobWidget-satisfaction').addClass('hide');
 
-                if ( !config.json.hide && mobile ) {
+                if ( !config.json.hide ) {
                     this.fixedBtn.css({width: '100%', top: '0'});
                     this.fixedBtn.children().css({
                         width: '100%'
@@ -500,7 +501,7 @@
 
                 me.handleTransfer();
 
-                if ( mobile ) {
+                if ( root ) {
                     me.Im.removeClass('hide');
                 } else {
                     me.isOpened = me.Im.hasClass('hide');
@@ -1238,7 +1239,7 @@
 						config.user = info.userId;
 						config.password = info.userPassword;
 
-						if ( mobile ) {
+						if ( root ) {
 							if ( config.json && config.json.emgroup ) {
 								Emc.set(config.json.emgroup + tenantId, cache.user, config.json.tenants);
 							} else {
