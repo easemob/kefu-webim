@@ -91,7 +91,7 @@
 				(config.json.show || root) && this.toggleChatWindow();
 			}
 			, handleSkill: function () {
-				if ( config.json && config.json.emgroup && root ) {//处理技能组
+				if ( config.json && config.json.emgroup ) {//处理技能组
                     var value = config.json.emgroup;
                     this.handleGroup(value);
                     userHash[value] = userHash[value] || {};
