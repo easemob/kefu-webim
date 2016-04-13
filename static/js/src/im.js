@@ -138,9 +138,9 @@
 							userHash[value].session = info;
 							userHash[value].agent.userNickname = info.agentUserNiceName;
 							me.setTitle('', userHash[value].agent);
-							info.visitorUser 
+							/*info.visitorUser 
 							&& info.visitorUser.userId 
-							&& EasemobWidget.api.sendVisitorInfo(tenantId, info.visitorUser.userId, config.referrer ? decodeURIComponent(config.referrer) : document.referrer);//ref info
+							&& EasemobWidget.api.sendVisitorInfo(tenantId, info.visitorUser.userId, config.referrer ? decodeURIComponent(config.referrer) : document.referrer);//ref info*/
 						}
                     })
                     .fail(function () {
