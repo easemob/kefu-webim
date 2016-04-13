@@ -74,7 +74,7 @@
     config.json.tenants = convertFalse(config.json.tenants);
 
 	var updateAttribute = function ( link, attr ) {
-		var url = link || '//kefu.easemob.com/webim/im.html?tenantId=';
+		var url = link || '//' + location.host + '/webim/im.html?tenantId=';
 
 		for ( var o in attr ) {
 			if ( attr.hasOwnProperty(o) ) {
