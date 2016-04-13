@@ -95,7 +95,6 @@
                     var value = config.json.emgroup;
                     this.handleGroup(value);
                     userHash[value] = userHash[value] || {};
-                    userHash[value].user = Emc.get(value + tenantId, config.json.tenants);
                     curGroup = value;
                 }
 				this.open();
