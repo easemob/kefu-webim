@@ -77,7 +77,7 @@ gulp.task('uglify', function() {
 
     var open = gulp.src([
         'static/js/src/strophe.js',
-        'static/js/src/easemob.im-1.0.8.js',
+        'static/js/src/easemob.im-1.1.js',
         'static/js/swfupload/swfupload.min.js',
         'static/js/src/transfer.js',
     ])
