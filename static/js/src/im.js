@@ -91,7 +91,7 @@
 				(config.json.show || root) && this.toggleChatWindow();
 			}
 			, handleSkill: function () {
-				if ( config.json && config.json.emgroup && root ) {//处理技能组
+				if ( config.json && config.json.emgroup ) {//处理技能组
                     var value = config.json.emgroup;
                     this.handleGroup(value);
                     userHash[value] = userHash[value] || {};
@@ -138,9 +138,9 @@
 							userHash[value].session = info;
 							userHash[value].agent.userNickname = info.agentUserNiceName;
 							me.setTitle('', userHash[value].agent);
-							/*info.visitorUser 
+							info.visitorUser 
 							&& info.visitorUser.userId 
-							&& EasemobWidget.api.sendVisitorInfo(tenantId, info.visitorUser.userId, config.referrer ? decodeURIComponent(config.referrer) : document.referrer);//ref info*/
+							&& EasemobWidget.api.sendVisitorInfo(tenantId, info.visitorUser.userId, config.referrer ? decodeURIComponent(config.referrer) : document.referrer);//ref info
 						}
                     })
                     .fail(function () {
