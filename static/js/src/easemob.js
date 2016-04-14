@@ -175,13 +175,24 @@
 
 		iframe || ready(tenantId, 'initIframWithoutSettingSrc');
 
-		var url = '', user;
+		var url = '', user,
+			op = {
+				tenantId: tenantId,
+				sat: config.json.sat,
+				user: '',
+				referrer: encodeURIComponent(referrer),
+				show: true
+			};
+
 		if ( !!group ) {//技能组
 			user = Emc.get(group + tenantId, config.json.tenants);
-			url = updateAttribute(iframe.getAttribute('src'), { tenantId: tenantId, emgroup: group, user: user, show: 'true' });
+			op.emgroup = group;
+			op.user = user;
+			url = updateAttribute(iframe.getAttribute('src'), op);
 		} else {
 			user = Emc.get('emKefuUser' + tenantId, config.json.tenants);
-			url = updateAttribute(iframe.getAttribute('src'), { tenantId: tenantId, user: user, emgroup: '', show: 'true' });
+			op.user = user;
+			url = updateAttribute(iframe.getAttribute('src'), op);
 		}
 
 		if ( EasemobWidget.utils.isMobile ) {

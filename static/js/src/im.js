@@ -526,6 +526,9 @@
                 conn.listen({
                     onOpened: function(){
 						me.sendbtn.removeClass('em-init').html('发送');
+						if ( me.textarea.val() ) {
+							me.sendbtn.removeClass('disabled');
+						}
                         conn.setPresence();
                         conn.heartBeat(conn);
                         while(sendQueue[curGroup] && sendQueue[curGroup].length) {
