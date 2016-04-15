@@ -5,6 +5,8 @@
 ;(function ( window, undefined ) {
     'use strict';
 
+	var COUNT = 5;
+
     var message, iframe, iframeId, curUser, eTitle = document.title,
         iframePosition = {//iframe position
             x: 10
@@ -198,7 +200,16 @@
 		}
 
 		if ( EasemobWidget.utils.isMobile ) {
-			var a = window.event.srcElement || window.event.target;
+			var a = window.event.srcElement || window.event.target,
+				counter = COUNT;
+
+			while( a.nodeName !== 'A' && counter-- ) {
+				a = a.parentNode;
+			}
+
+			if ( a.nodeName !== 'A' ) {
+				return;
+			}
 
 			a.setAttribute('href', url);
 			a.setAttribute('target', '_blank');
