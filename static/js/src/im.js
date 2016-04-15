@@ -26,7 +26,7 @@
         config.json.tenants = EasemobWidget.utils.convertFalse(config.json.tenants);
         config.json.show = EasemobWidget.utils.convertFalse(config.json.show);
         config.json.resources = EasemobWidget.utils.convertFalse(config.json.resources);
-		config.user = config.json.user || Emc.get('emKefuUser' + tenantId);
+		config.user = config.json.user;
 		
 		/*
             监听父级窗口发来的消息
@@ -44,6 +44,8 @@
         var start = (function ( cb ) {
 			EasemobWidget.init(config, function () {
 				if ( config.json && config.json.emgroup ) {
+					
+					config.user = config.json.user || Emc.get(config.json.emgroup + tenantId);
 					isGroupChat = true;
 					curGroup = config.json.emgroup;
 					userHash[curGroup]  = {
@@ -52,6 +54,7 @@
 					};
 					
 				} else {
+					config.user = config.json.user || Emc.get('emKefuUser' + tenantId);
 					userHash.normal  = {
 						user: config.user,
 						password: config.password
@@ -83,7 +86,7 @@
                 this.handleSkill();
             }
 			, handleSatisEntry: function () {
-				if ( config.json && config.json.sat ) {
+				if ( config.json && config.json.sat && !mobile ) {
                     this.Im.find('.easemobWidget-satisfaction').removeClass('hide');
                 }
 			}
@@ -783,6 +786,8 @@
                 me.Im.on(click, '.js_satisfybtn button', function () {
                     var that = $(this);
 
+					me.textarea.blur();
+
                     //cache
                     me.satisDialog.get(0).inviteId = that.data('inviteid');
                     me.satisDialog.get(0).serviceSessionId = that.data('servicesessionid');
@@ -905,7 +910,7 @@
                         me.scrollBottom(800);
                     })
                     .on('focus', handleFocus)
-                    .one('touchstart', handleFocus)//防止android部分机型滚动条常驻，看着像bug ==b
+                    .one('touchstart', handleFocus)
                     .on('blur', function(){
                         clearTimeout(me.focusText);
                     })
@@ -945,7 +950,7 @@
                     if ( mobile ) {
                         me.autoGrowOptions.update();//update autogrow
                         setTimeout(function(){
-                            me.textarea.get(0).scrollTop = 10000;
+                            me.textarea.get(0).scrollTop = 100000;
                         }, 100);
                     }
                     me.sendbtn.removeClass('disabled');
@@ -1123,14 +1128,14 @@
                     }
                 });
             }
-            , scrollBottom: function(type){
+            , scrollBottom: function ( type ) {
                 var ocw = im.chatWrapper.parent().get(0);
                 
                 type 
                 ? (clearTimeout(this.scbT), this.scbT = setTimeout(function () {
-                    ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000;
+                    ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 100000;
                 }, type))
-                : (ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000);
+                : (ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 100000);
             }
             , sendImgMsg: function ( msg, wrapper, file, msgId ) {
                 var me = this;
