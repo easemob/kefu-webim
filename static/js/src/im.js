@@ -367,7 +367,7 @@
 					var key = isGroupChat ? curGroup : 'normal';
                     if ( !im.historyGetted[key] ) {
                         im.chatWrapper.find('img:last').on('load', im.scrollBottom);
-                        im.scrollBottom();
+                        im.scrollBottom(mobile ? 700 : null);
                         im.historyGetted[key] = true;
                     }
                 }
@@ -1129,13 +1129,14 @@
                 });
             }
             , scrollBottom: function ( type ) {
-                var ocw = im.chatWrapper.parent().get(0);
+				var wrap = im.chatWrapper,
+					ocw = wrap.parent().get(0);
                 
                 type 
                 ? (clearTimeout(this.scbT), this.scbT = setTimeout(function () {
-                    ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 100000;
+                    ocw.scrollTop = wrap.find('.easemobWidget-msg-wrapper').last().offset().top + 10000;
                 }, type))
-                : (ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 100000);
+                : (ocw.scrollTop = wrap.find('.easemobWidget-msg-wrapper').last().offset().top + 10000);
             }
             , sendImgMsg: function ( msg, wrapper, file, msgId ) {
                 var me = this;
