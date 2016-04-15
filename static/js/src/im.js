@@ -229,6 +229,7 @@
             , getConnection: function () {
 				var op = {
 					url: 'im-api' + config.cluster + '.easemob.com',
+					retry: true
 				};
 				config.json.resources && (op.multiResources = true);
 

@@ -184,6 +184,8 @@
 				show: true
 			};
 
+		config.json.resources && (op.resources = config.json.resources);
+
 		if ( !!group ) {//技能组
 			user = Emc.get(group + tenantId, config.json.tenants);
 			op.emgroup = group;
