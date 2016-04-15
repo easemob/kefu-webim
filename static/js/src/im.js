@@ -367,7 +367,7 @@
 					var key = isGroupChat ? curGroup : 'normal';
                     if ( !im.historyGetted[key] ) {
                         im.chatWrapper.find('img:last').on('load', im.scrollBottom);
-                        im.scrollBottom(mobile ? 700 : null);
+                        im.scrollBottom(1000);
                         im.historyGetted[key] = true;
                     }
                 }
@@ -515,7 +515,7 @@
                 if ( me.isOpened ) {
                     me.textarea.focus();
                     me.isOpened = true;
-                    me.scrollBottom(50);
+                    me.scrollBottom();
                 }
 
 				!mobile && !config.json.hide && setTimeout(function () {
@@ -703,8 +703,11 @@
                 return msg;
             }
             , toggleFaceWrapper: function(e){
-				!im.faceFilled && im.fillFace();
-
+				if ( !im.faceFilled ) {
+					setTimeout(function () {
+						im.fillFace();
+					}, 0);
+				}
                 var h = im.sendbtn.parent().outerHeight();
                 im.faceWrapper.parent().css('bottom', h + 'px').toggleClass('hide');
                 return false;
@@ -903,11 +906,11 @@
                             me.focusText = setTimeout(scrollTimer, 200);
                         };
                         scrollTimer();
-                        me.scrollBottom(800);
+                        me.scrollBottom();
                     }
                     me.textarea.on('input', function(){
                         me.autoGrowOptions.update();
-                        me.scrollBottom(800);
+                        me.scrollBottom();
                     })
                     .on('focus', handleFocus)
                     .one('touchstart', handleFocus)
@@ -1128,15 +1131,18 @@
                     }
                 });
             }
-            , scrollBottom: function ( type ) {
-				var wrap = im.chatWrapper,
-					ocw = wrap.parent().get(0);
-                
-                type 
-                ? (clearTimeout(this.scbT), this.scbT = setTimeout(function () {
-                    ocw.scrollTop = wrap.find('.easemobWidget-msg-wrapper').last().offset().top + 10000;
-                }, type))
-                : (ocw.scrollTop = wrap.find('.easemobWidget-msg-wrapper').last().offset().top + 10000);
+            , scrollBottom: function ( wait ) {
+				var me = this,
+					wrap = im.chatWrapper,
+					ocw = wrap.parent();
+
+                EasemobWidget.utils.isAndroid && (wait = wait || 700);
+
+                wait 
+                ? (clearTimeout(me.scbT), me.scbT = setTimeout(function () {
+					ocw.scrollTop(wrap.height());
+                }, wait))
+                : (ocw.scrollTop(wrap.height()));
             }
             , sendImgMsg: function ( msg, wrapper, file, msgId ) {
                 var me = this;
@@ -1335,7 +1341,7 @@
                 //local append
                 wrapper.append(msge.get());
                 me.textarea.val('');
-                me.scrollBottom(mobile ? 700 : undefined);
+                me.scrollBottom();
                 me.handleGroup(msge.body);
                 me.send(msge.body);
             }
@@ -1626,7 +1632,7 @@
 						msg.set({file: file});
                         im.chatWrapper.append(msg.get());
 						im.chatWrapper.find('img:last').on('load', function () {
-							im.scrollBottom(500);
+							im.scrollBottom();
 						});
 						this.uploadOptions.onFileUploadComplete(res);
                     } catch ( e ) {

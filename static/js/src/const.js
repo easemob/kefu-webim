@@ -1,5 +1,5 @@
 var EasemobWidget = EasemobWidget || {};
-EasemobWidget.LISTSPAN = 20;
+EasemobWidget.LISTSPAN = 10;
 
 EasemobWidget.PICTYPE = {//支持的图片格式
     jpg : true
