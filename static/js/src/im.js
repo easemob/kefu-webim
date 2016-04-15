@@ -230,8 +230,10 @@
                 });
             }
             , getConnection: function () {
+				var cluster = config.cluster ? '-' + config.cluster : '';
+
 				var op = {
-					url: 'im-api' + config.cluster + '.easemob.com',
+					url: 'im-api' + cluster + '.easemob.com',
 					retry: true
 				};
 				config.json.resources && (op.multiResources = true);
