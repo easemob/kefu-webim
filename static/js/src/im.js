@@ -537,27 +537,27 @@
 						}
                         conn.setPresence();
                         conn.heartBeat(conn);
-                        while(sendQueue[curGroup] && sendQueue[curGroup].length) {
+                        while ( sendQueue[curGroup] && sendQueue[curGroup].length ) {
                             conn.send(sendQueue[curGroup].pop());
                         }
                     }
-                    , onTextMessage: function(message){
+                    , onTextMessage: function ( message ) {
                         me.receiveMsg(message, 'txt');
                     }
-                    , onEmotionMessage: function(message){
-                        me.receiveMsg(message, 'face');
+                    , onEmotionMessage: function ( message ) {
+                        me.receiveMsg(message, 'txt');
                     }
-                    , onPictureMessage: function(message){
+                    , onPictureMessage: function ( message ) {
                         me.receiveMsg(message, 'img');
                     }
-                    , onCmdMessage: function(message){
+                    , onCmdMessage: function ( message ) {
                         me.receiveMsg(message, 'cmd');
                     }
-                    , onFileMessage: function(message) {
+                    , onFileMessage: function ( message ) {
                         me.receiveMsg(message, 'file');
                     }
-                    , onClosed: function() {}
-                    , onError: function(e){
+                    , onClosed: function () {}
+                    , onError: function ( e ) {
                         e.reconnect ? me.open() : conn.stopHeartBeat(conn);
                     }
                 });
