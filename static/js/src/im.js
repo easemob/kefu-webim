@@ -545,7 +545,7 @@
                         me.receiveMsg(message, 'txt');
                     }
                     , onEmotionMessage: function(message){
-                        me.receiveMsg(message, 'face');
+                        me.receiveMsg(message, 'txt');
                     }
                     , onPictureMessage: function(message){
                         me.receiveMsg(message, 'img');
