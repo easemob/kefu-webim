@@ -545,7 +545,7 @@
                         me.receiveMsg(message, 'txt');
                     }
                     , onEmotionMessage: function ( message ) {
-                        me.receiveMsg(message, 'txt');
+                        me.receiveMsg(message, 'face');
                     }
                     , onPictureMessage: function ( message ) {
                         me.receiveMsg(message, 'img');
@@ -1445,6 +1445,15 @@
 					case 'txt':
 						message = new Easemob.im.EmMessage('txt');
                         message.set({value: msg.data || msg.msg});
+						break;
+					case 'face':
+						message = new Easemob.im.EmMessage('txt');
+						var msgStr = '';
+
+						for ( var i = 0, l = msg.data.length; i < l; i++ ) {
+							msgStr += msg.data[i].type === 'emotion' ? "\<img class=\'em-emotion\' src=\'" + msg.data[i].data + "\' alt=\'表情\'\/\>" : msg.data[i].data;
+						}
+                        message.set({value: msgStr, emotion: true});
 						break;
                     case 'img':
 						message = new Easemob.im.EmMessage('img');
