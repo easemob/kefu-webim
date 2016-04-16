@@ -1448,12 +1448,13 @@
 						break;
 					case 'face':
 						message = new Easemob.im.EmMessage('txt');
-						var msgStr = '';
+						var msgStr = '', brief = '';
 
 						for ( var i = 0, l = msg.data.length; i < l; i++ ) {
+							brief += msg.data[i].type === 'emotion' ? "[表情]" : msg.data[i].data;
 							msgStr += msg.data[i].type === 'emotion' ? "\<img class=\'em-emotion\' src=\'" + msg.data[i].data + "\' alt=\'表情\'\/\>" : msg.data[i].data;
 						}
-                        message.set({value: msgStr, emotion: true});
+                        message.set({value: msgStr, emotion: true, brief: brief});
 						break;
                     case 'img':
 						message = new Easemob.im.EmMessage('img');
