@@ -26,7 +26,7 @@ Easemob.im.EmMessage.txt.prototype.set = function ( opt ) {
 	this.value = opt.value;
 	this.emotion = opt.emotion;
 	if ( this.value ) {
-		this.brief = this.value.replace(/\n/mg, '');
+		this.brief = (opt.brief || this.value).replace(/\n/mg, '');
 		this.brief = (this.brief.length > 15 ? this.brief.slice(0, 15) + '...' : this.brief);
 	}
 	this.body = {
