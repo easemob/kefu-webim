@@ -537,27 +537,27 @@
 						}
                         conn.setPresence();
                         conn.heartBeat(conn);
-                        while(sendQueue[curGroup] && sendQueue[curGroup].length) {
+                        while ( sendQueue[curGroup] && sendQueue[curGroup].length ) {
                             conn.send(sendQueue[curGroup].pop());
                         }
                     }
-                    , onTextMessage: function(message){
+                    , onTextMessage: function ( message ) {
                         me.receiveMsg(message, 'txt');
                     }
-                    , onEmotionMessage: function(message){
-                        me.receiveMsg(message, 'txt');
+                    , onEmotionMessage: function ( message ) {
+                        me.receiveMsg(message, 'face');
                     }
-                    , onPictureMessage: function(message){
+                    , onPictureMessage: function ( message ) {
                         me.receiveMsg(message, 'img');
                     }
-                    , onCmdMessage: function(message){
+                    , onCmdMessage: function ( message ) {
                         me.receiveMsg(message, 'cmd');
                     }
-                    , onFileMessage: function(message) {
+                    , onFileMessage: function ( message ) {
                         me.receiveMsg(message, 'file');
                     }
-                    , onClosed: function() {}
-                    , onError: function(e){
+                    , onClosed: function () {}
+                    , onError: function ( e ) {
                         e.reconnect ? me.open() : conn.stopHeartBeat(conn);
                     }
                 });
@@ -1445,6 +1445,16 @@
 					case 'txt':
 						message = new Easemob.im.EmMessage('txt');
                         message.set({value: msg.data || msg.msg});
+						break;
+					case 'face':
+						message = new Easemob.im.EmMessage('txt');
+						var msgStr = '', brief = '';
+
+						for ( var i = 0, l = msg.data.length; i < l; i++ ) {
+							brief += msg.data[i].type === 'emotion' ? "[表情]" : msg.data[i].data;
+							msgStr += msg.data[i].type === 'emotion' ? "\<img class=\'em-emotion\' src=\'" + msg.data[i].data + "\' alt=\'表情\'\/\>" : msg.data[i].data;
+						}
+                        message.set({value: msgStr, emotion: true, brief: brief});
 						break;
                     case 'img':
 						message = new Easemob.im.EmMessage('img');

@@ -16,7 +16,7 @@ Easemob.im.EmMessage.txt.prototype.get = function ( isReceive ) {
 				this.id ? "<div id='" + this.id + "_failed' class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>" : "",
 				this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + EasemobWidget.LOADING + "</div>" : "",
 				"<div class='easemobWidget-msg-container'>",
-					"<p>" + Easemob.im.Utils.parseLink(Easemob.im.Utils.parseEmotions(EasemobWidget.utils.encode(this.value))) + "</p>",
+					"<p>" + Easemob.im.Utils.parseLink(this.emotion ? this.value : Easemob.im.Utils.parseEmotions(EasemobWidget.utils.encode(this.value))) + "</p>",
 				"</div>",
 			"</div>",
 		"</div>"
@@ -24,8 +24,9 @@ Easemob.im.EmMessage.txt.prototype.get = function ( isReceive ) {
 };
 Easemob.im.EmMessage.txt.prototype.set = function ( opt ) {
 	this.value = opt.value;
+	this.emotion = opt.emotion;
 	if ( this.value ) {
-		this.brief = this.value.replace(/\n/mg, '');
+		this.brief = (opt.brief || this.value).replace(/\n/mg, '');
 		this.brief = (this.brief.length > 15 ? this.brief.slice(0, 15) + '...' : this.brief);
 	}
 	this.body = {
