@@ -1278,19 +1278,22 @@
 
                 var wrap = wrapper || this.chatWrapper;
 
-                if ( action === 'sending' ) {
-                    if ( !userHash[key].firstMsg && !userHash[key].session && userHash[key].agentCount > 0 ) {
+				if ( userHash[key].agentCount  == 0 && !info ) {
+					this.Im.find('#' + wrap.attr('id') + '-transfer').addClass('none').removeClass('link transfer');
+                    mobile && this.headBar.find('.js_drag').addClass('hide');
+				} else if ( action === 'sending' ) {
+                    if ( !userHash[key].firstMsg && !userHash[key].session ) {
                         userHash[key].firstMsg = true;
-                        this.Im.find('#' + wrap.attr('id') + '-transfer').addClass('link').removeClass('transfer');
+                        this.Im.find('#' + wrap.attr('id') + '-transfer').addClass('link').removeClass('transfer none');
                         if ( mobile ) {
                             this.headBar.find('.js_drag').addClass('hide');
                         }
                     }
-                } else if ( action === 'transfer' ) {
-                    this.Im.find('#' + wrap.attr('id') + '-transfer').addClass('transfer').removeClass('link');
+				} else if ( action === 'transfer' ) {
+                    this.Im.find('#' + wrap.attr('id') + '-transfer').addClass('transfer').removeClass('link none');
                     mobile && this.headBar.find('.js_drag').addClass('hide');
                 } else if ( action === 'reply' ) {
-                    this.Im.find('#' + wrap.attr('id') + '-transfer').removeClass('transfer link');
+                    this.Im.find('#' + wrap.attr('id') + '-transfer').removeClass('transfer link none');
                     if ( info ) {
                         userHash[key].agent = userHash[key].agent || {};
                         userHash[key].agent.userNickname = this.getNickName(info);

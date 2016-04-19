@@ -387,6 +387,7 @@ button, textarea, input {
     left: 0;
 }
 .easemobWidget-status-prompt.link:after,
+.easemobWidget-status-prompt.none:after,
 .easemobWidget-status-prompt.transfer:after {
     z-index: 1;
     padding: 5px 10px;
@@ -396,6 +397,10 @@ button, textarea, input {
     left: 5px;
     border-radius: 5px;
     color: #fff;
+}
+.easemobWidget-status-prompt.none:after {
+    content: '当前暂无客服在线，请您留下联系方式和咨询事项，稍后我们将主动联系您';
+    width: 253px;
 }
 .easemobWidget-status-prompt.transfer:after {
     content: '转接中…';
