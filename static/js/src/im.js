@@ -135,7 +135,7 @@
                     .done(function(info){
 						var ref = config.referrer ? decodeURIComponent(config.referrer) : document.referrer;
 
-						userHash[key].agentCount = info.onlineAgentCount;
+						userHash[value].agentCount = info.onlineAgentCount;
 
 						if ( !info.serviceSession ) {
 							me.getGreeting();
