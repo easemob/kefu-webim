@@ -402,7 +402,7 @@ button, textarea, input {
     width: 53px;
 }
 .easemobWidget-status-prompt.link:after {
-    content: '正在为您分配客服，请稍等…';
+    content: '正在排队，请您耐心等待…';
     width: 169px;
 }
 .easemobWidget-transferring {
