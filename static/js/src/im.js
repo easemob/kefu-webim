@@ -131,18 +131,17 @@
                     userHash[value].agent = userHash[value].agent || {};
 					me.setLogo();//设置企业logo
 
-                    EasemobWidget.api.getSession(userHash[value].user, config)
+                    EasemobWidget.api.getSessionAndAgentCount(userHash[value].user, config)
                     .done(function(info){
+						var ref = config.referrer ? decodeURIComponent(config.referrer) : document.referrer;
 
-						if ( !info ) {
+						if ( !info.serviceSession && info.onlineAgentCount > 0 ) {
 							me.getGreeting();
 						} else {
 							userHash[value].session = info;
-							//userHash[value].agent.userNickname = info.agentUserNiceName;
-							//me.setTitle('', userHash[value].agent);
 							info.visitorUser 
 							&& info.visitorUser.userId 
-							&& EasemobWidget.api.sendVisitorInfo(tenantId, info.visitorUser.userId, config.referrer ? decodeURIComponent(config.referrer) : document.referrer);//ref info
+							&& EasemobWidget.api.sendVisitorInfo(tenantId, info.visitorUser.userId, ref);//ref info
 						}
                     })
                     .fail(function () {
