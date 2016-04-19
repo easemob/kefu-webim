@@ -1,6 +1,6 @@
 /**************************************************************************
 ***                             Easemob WebIm Js SDK                    ***
-***                             v1.1                                  ***
+***                             v1.1.0                                  ***
 **************************************************************************/
 /**
  * Module1: Utility
@@ -17,13 +17,24 @@
 
     var Easemob = Easemob || {};
     Easemob.im = Easemob.im || {};
-    Easemob.im.version = "1.1";
+    Easemob.im.version = "1.1.0";
 
     var https = location.protocol === 'https:';
 
     window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 
-
+	Strophe.Websocket.prototype._closeSocket = function () {
+		var me = this;
+        if ( me.socket ) {
+			setTimeout(function () {
+				try {
+					me.socket.close();
+				} catch ( e ) {}
+			}, 0);
+		} else {
+			me.socket = null;
+		}
+	}
 
     /**
      * Module1: Utility
@@ -1205,6 +1216,14 @@
             return msgtype;
         };
 
+		var _handleQueueMessage = function ( conn ) {
+			for ( var i in _msgHash ) {
+				if ( _msgHash.hasOwnProperty(i) ) {
+					_msgHash[i].send(conn);
+				}
+			}
+		};
+
         var _login2ImCallback = function ( status, msg, conn ) {
             if ( status == Strophe.Status.CONNFAIL ) {
                 conn.onError({
@@ -1261,6 +1280,7 @@
                     supportSedMessage.push(EASEMOB_IM_MESSAGE_REC_AUDIO_FILE);
                 }
                 conn.notifyVersion();
+				conn.retry && _handleQueueMessage(conn);
                 conn.onOpened({
                     canReceive: supportRecMessage
                     , canSend: supportSedMessage
@@ -1365,7 +1385,7 @@
         }
 
 		var _getXmppUrl = function ( baseUrl, https ) {
-			if ( /^(ws|http)s:\/\/?/.test(baseUrl) ) {
+			if ( /^(ws|http)s?:\/\/?/.test(baseUrl) ) {
 				return baseUrl;
 			}
 
@@ -1661,7 +1681,6 @@
                 , toJid: to
                 , type: type
 				, chatroom: msginfo.getElementsByTagName('roomtype').length ? true : false
-				, destroy: msginfo.getElementsByTagName('destroy').length ? true : false
             };
 
             var showTags = msginfo.getElementsByTagName("show");
@@ -1673,6 +1692,7 @@
             if ( statusTags && statusTags.length > 0 ) {
                 var statusTag = statusTags[0];
                 info.status = Strophe.getText(statusTag);
+                info.code = statusTag.getAttribute('code');
             }
 
             var priorityTags = msginfo.getElementsByTagName("priority");
@@ -1680,6 +1700,50 @@
                 var priorityTag = priorityTags[0];
                 info.priority  = Strophe.getText(priorityTag);
             }
+
+			var error = msginfo.getElementsByTagName("error");
+            if ( error && error.length > 0 ) {
+                var error = error[0];
+                info.error = {
+					code: error.getAttribute('code')
+				};
+            }
+
+			var destroy = msginfo.getElementsByTagName("destroy");
+            if ( destroy && destroy.length > 0 ) {
+                var destroy = destroy[0];
+                info.destroy = true;
+
+				var reason = destroy.getElementsByTagName("reason");
+				if ( reason && reason.length > 0 ) {
+					info.reason = Strophe.getText(reason[0]);
+				}
+            }
+
+			if ( info.chatroom ) {
+				var reflectUser = from.slice(from.lastIndexOf('/') + 1);
+
+				if ( reflectUser === this.context.userId ) {
+					if ( info.type === '' && !info.code ) {
+						info.type = 'joinChatRoomSuccess';
+					} else if ( info.type === 'unavailable' ) {
+						if ( !info.status ) {//web正常退出
+							info.type = 'leaveChatRoom';
+						} else if ( info.code == 110 ) {//app先退或被管理员踢
+							info.type = 'leaveChatRoom';
+						} else if ( info.error && info.error.code == 406 ) {//聊天室人已满，无法加入
+							info.type = 'joinChatRoomFailed';
+						}
+					}
+				}
+			} else if ( type === 'unavailable' ) {//聊天室被删除没有roomtype, 需要区分群组被踢和解散
+				if ( info.destroy ) {//群组和聊天室被删除
+					info.type = 'deleteGroupChat';
+				} else if ( info.code == 307 ) {//群组被踢
+					info.type = 'leaveGroup';
+				}
+			}
+			
             this.onPresence(info,msginfo);
         };
 
