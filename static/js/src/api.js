@@ -103,6 +103,14 @@ EasemobWidget.api = {
     }
 
 
+	//get session and available agents 相关信息
+    , getSessionAndAgentCount: function ( user, obj ) {
+        return $.ajax({
+			url: '/v1/webimplugin/visitors/' + user + '/schedule-data?techChannelInfo=' + obj.orgName + '%23' + obj.appName + '%23' + obj.to + '&tenantId=' + obj.json.tenantId
+			, contentType: 'application/json'
+		}).then(function ( r ) { return r; });
+    }
+
     , getSystemGreeting: function ( obj ) {
         return $.ajax({
 			url: '/v1/webimplugin/welcome?tenantId=' + obj.json.tenantId
