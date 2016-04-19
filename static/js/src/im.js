@@ -1410,6 +1410,11 @@
 				message.sendToParent({ event: 'recoveryTitle' });
 			}
             , addPrompt: function ( detail ) {//未读消息提醒，以及让父级页面title滚动
+
+				if ( root ) {
+					return;
+				}
+
 				var me = this;
 
 				if ( !me.isOpened ) {
@@ -1515,6 +1520,7 @@
                         }
                         message.set({value: msg.data || msg.ext.weichat.ctrlArgs.label, list: str});
                         break;
+					case 'cmd': break;
                     default: 
 						return;
                 }
