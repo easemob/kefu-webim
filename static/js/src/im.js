@@ -135,10 +135,12 @@
                     .done(function(info){
 						var ref = config.referrer ? decodeURIComponent(config.referrer) : document.referrer;
 
-						if ( !info.serviceSession && info.onlineAgentCount > 0 ) {
+						userHash[key].agentCount = info.onlineAgentCount;
+
+						if ( !info.serviceSession ) {
 							me.getGreeting();
 						} else {
-							userHash[value].session = info;
+							userHash[value].session = info.serviceSession;
 							info.visitorUser 
 							&& info.visitorUser.userId 
 							&& EasemobWidget.api.sendVisitorInfo(tenantId, info.visitorUser.userId, ref);//ref info
@@ -1277,7 +1279,7 @@
                 var wrap = wrapper || this.chatWrapper;
 
                 if ( action === 'sending' ) {
-                    if ( !userHash[key].firstMsg && !userHash[key].session ) {
+                    if ( !userHash[key].firstMsg && !userHash[key].session && userHash[key].agentCount > 0 ) {
                         userHash[key].firstMsg = true;
                         this.Im.find('#' + wrap.attr('id') + '-transfer').addClass('link').removeClass('transfer');
                         if ( mobile ) {
