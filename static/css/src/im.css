@@ -399,7 +399,7 @@ button, textarea, input {
     color: #fff;
 }
 .easemobWidget-status-prompt.none:after {
-    content: '当前暂无客服在线，请您留下联系方式和咨询事项，稍后我们将主动联系您';
+    content: '当前暂无客服在线，请您留下联系方式，稍后我们将主动联系您';
     width: 253px;
 }
 .easemobWidget-status-prompt.transfer:after {
