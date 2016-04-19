@@ -141,9 +141,9 @@
 							me.getGreeting();
 						} else {
 							userHash[value].session = info.serviceSession;
-							info.visitorUser 
-							&& info.visitorUser.userId 
-							&& EasemobWidget.api.sendVisitorInfo(tenantId, info.visitorUser.userId, ref);//ref info
+							info.serviceSession.visitorUser 
+							&& info.serviceSession.visitorUser.userId 
+							&& EasemobWidget.api.sendVisitorInfo(tenantId, info.serviceSession.visitorUser.userId, ref);//ref info
 						}
                     })
                     .fail(function () {
