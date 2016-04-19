@@ -54,7 +54,7 @@ gulp.task('uglify', function() {
     var emkf = gulp.src([
         'static/js/src/jquery-1.11.1.js',
         'static/js/src/strophe.js',
-        'static/js/src/easemob.im-1.1.js',
+        'static/js/src/easemob.im-1.1.0.js',
         'static/js/src/jquery.autogrow.js',
         'static/js/src/easemob.utils.js',
         'static/js/src/const.js',

@@ -518,13 +518,12 @@
                     me.textarea.focus();
                     me.isOpened = true;
                     me.scrollBottom();
+					me.resetPrompt();
                 }
 
 				!mobile && !config.json.hide && setTimeout(function () {
 					 me.isOpened ? me.fixedBtn.addClass('hide') : me.fixedBtn.removeClass('hide');
 				}, 100);
-
-                me.addPrompt();
             }
             , sdkInit: function(conn){
                 var me = this;
@@ -675,8 +674,8 @@
                     
                     me.audio = $('<audio src="static/mp3/msg.m4a"></audio>').get(0);
 
-                    me.playaudio = function(){
-                        if ( (EasemobWidget.utils.isMin() ? false : me.isOpened) || ast !== 0 || me.silence ) {
+                    me.playaudio = function () {
+                        if ( ast !== 0 || me.silence ) {
                             return;
                         }
                         ast = setTimeout(function() {
@@ -1405,20 +1404,33 @@
                 
                 this.send(opt);
             }
-            , addPrompt: function(detail){//未读消息提醒，以及让父级页面title滚动
-                if(!this.isOpened && this.msgCount > 0) {
-                    if(this.msgCount > 9) {
-                        this.messageCount.addClass('mutiCount').html('\…');
-                    } else {
-                        this.messageCount.removeClass('mutiCount').html(this.msgCount);
-                    }
-                    message.sendToParent({ event: 'msgPrompt' });
-                    this.notify(detail || '');
-                } else {
-                    this.msgCount = 0;
-                    this.messageCount.html('').addClass('hide');
-                    message.sendToParent({ event: 'recoveryTitle' });
-                }
+			, resetPrompt: function () {
+				this.msgCount = 0;
+				this.messageCount.html('').addClass('hide');
+				message.sendToParent({ event: 'recoveryTitle' });
+			}
+            , addPrompt: function ( detail ) {//未读消息提醒，以及让父级页面title滚动
+				var me = this;
+
+				if ( !me.isOpened ) {
+					me.messageCount.html('').removeClass('hide');
+					me.msgCount += 1;
+
+					if ( me.msgCount > 9 ) {
+						me.messageCount.addClass('mutiCount').html('\…');
+					} else {
+						me.messageCount.removeClass('mutiCount').html(me.msgCount);
+					}
+
+					message.sendToParent({ event: 'msgPrompt' });
+				} else {
+					me.resetPrompt();
+				}
+
+				if ( EasemobWidget.utils.isMin() || !me.isOpened ) {
+					me.playaudio();
+					me.notify(detail || '');
+				}
             }
             , notify: function ( detail ) {
                 message.sendToParent({ event: 'notify', detail: detail || '' });
@@ -1549,15 +1561,8 @@
 					if ( noPrompt ) {
 						return;
 					}
-                    me.playaudio();
                     // send prompt & notification
-                    if ( !me.isOpened ) {
-                        me.messageCount.html('').removeClass('hide');
-                        me.msgCount += 1;
-                        me.addPrompt(message.brief);
-                    } else if ( EasemobWidget.utils.isMin() ) {
-                        me.notify(message.brief);
-                    }
+					me.addPrompt(message.brief);
                 } else {
                     if ( msg.type === 'cmd' ) {
                         return;
