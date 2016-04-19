@@ -1278,7 +1278,11 @@
 
                 var wrap = wrapper || this.chatWrapper;
 
-				if ( userHash[key].agentCount  == 0 && !info ) {
+				if ( info && userHash[key].agentCount == 0 ) {
+					userHash[key].agentCount = 1;//fake
+				}
+
+				if ( userHash[key].agentCount == 0 ) {
 					this.Im.find('#' + wrap.attr('id') + '-transfer').addClass('none').removeClass('link transfer');
                     mobile && this.headBar.find('.js_drag').addClass('hide');
 				} else if ( action === 'sending' ) {
