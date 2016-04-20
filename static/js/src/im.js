@@ -1556,7 +1556,7 @@
                         me.handleTransfer('transfer', wrapper);
                     } else if ( msg.ext && msg.ext.weichat ) {
                         if ( !msg.ext.weichat.agent ) {//switch off
-                            me.handleTransfer('reply', wrapper);
+                            me.handleTransfer('reply', wrapper, true);
                         } else {//switch on
                             msg.ext.weichat.agent 
 							&& me.getNickName(msg.ext.weichat.agent) !== '调度员' 
