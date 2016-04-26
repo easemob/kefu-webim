@@ -1,74 +1,79 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
-<style>
-h3 {
-    width: 100%;
-    word-break: break-all;
-}
-a {
-    display: block;
-    background-color: #00A5FF;
-    width: 200px;
-    padding: 10px;
-    line-height: 20px;
-    text-decoration: none;
-    border-radius: 4px;
-    margin-top: 30px;
-    color: #fff;
-}
-input {
-    width: 90%;
-    max-width: 400px;
-    height: 40px;
-    border: 1px solid #aaa;
-    border-radius: 4px;
-    box-shadow: 0 0 8px #1DA8FF;
-    font-size: 14px;
-    padding: 0 6px;
-}
-button {
-    display: block;
-    margin-top: 20px;
-    width: 100px;
-    height: 40px;
-    text-align: center;
-    line-height: 40px;
-    font-size: 20px;
-    border: none;
-    border-radius: 6px;
-    color: #fff;
-    background-color: #1DA8FF;
-}
-</style>
-<script id='demo'></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <style>
+	body { background-color: #eee;color: #555; }
+	button { display: block;margin: 20px 0;background: #00CEB9;border: none;color: #fff;line-height: 40px;min-width: 100px;cursor: pointer;outline: none; }
+	button:hover { box-shadow: 0 0 5px #33CEB9; }
+	button:active { background: #fff;color: #00CEB9; }
+	input { height: 40px;outline: none;width: 300px;text-align: center;font-size: 16px;color: #00CEB9; float: left;border: 1px solid #fff; }
+	</style>
 </head>
-<body>
-<h3>登录客服-》管理面板-》渠道设置-》网页插件</h3>
-<h3>完整复制生成的script代码, 并粘贴到下方输入框，点击测试按钮</h3>
-<input id='test' type='text' width='800' height='40'/>
-<button id='button'>测试</button>
 
-<a href='javascript:;' onclick='easemobIM()'>自定义按钮! 点击看效果</a>
-<script>
-
-
-    var i = document.getElementById('test');
-    var b = document.getElementById('button');
-    
-    b.onclick = function(){
-        var v = i.value;
-        if(!v) return false;
-        b.setAttribute('disabled', 'disabled');
-        var script = document.createElement('script');
-        script.src = v.slice(v.indexOf('src')+5, v.indexOf('async')-2);
-        (document.head || document.getElementsByTagName('head')[0]).appendChild(script);
-    }
-</script>
-</head>
 <body>
 
+	<h1>Demo</h1>
+	<button onclick='easemobim.bind({ tenantId: 10954 })'>10954</button>
+	<button onclick='easemobim.bind({
+		tenantId: 10954,
+		emgroup: "技能组1",
+		buttonText: "技能组1"
+	})'>技能组1</button>
+	<strong>备注:如果绑定访客，那么需要使用环信移动客服技能组绑定关联功能,无需再指定emgroup,可参考官方文档实现此功能</strong>
+
+
+
+
+	
+	<br><br><br><h1>测试</h1>
+	<div><input id='testvalue' type='text' placeholder='请输入您的tenantId，点击测试按钮'/></div>
+	<button id='test'>测试</button><br><br><br>
+	<script>
+	var v = document.getElementById('testvalue');
+	v.value = localStorage.getItem('easemobtest');
+	document.getElementById('test').onclick = function () {
+		if ( v.value && /\d+/.test(v.value) ) {
+			localStorage.setItem('easemobtest', v.value);
+			easemobim.bind({ tenantId: v.value.replace(/\s/g, '') })
+		}
+	};
+	</script>
+
+
+
+
+
+
+	
+	 <h1>两种接入方式：</h1>
+	 <h4>1.第一种：<code>&lt;script src='//kefu.easemob.com/webim/easemob.js?tenantId=10954&hide=false&sat=true'&gt;&lt;/script&gt;</code>线上引用的方式支持参数较少，请参考环信官网文档;</h4>
+	 <h4>2.第二种：将代码下载到本地服务器，<code>&lt;script src='//本地服务器路径/easemob.js'&gt;&lt;/script&gt;;</code></h4>
+	 <h4>3.详细配置参数可参考config.js;参数可以全局设定，也可以在easemobim.bind方法中传入</h4>
+	
+
+
+	<script>
+		window.easemobim = window.easemobim || {};
+		easemobim.config = {
+			onmessage: function ( msg ) {
+				//console.log(msg);
+			},
+			/*绑定访客*/
+			user: {
+				username: '',
+				password: '',
+				token: ''
+			}
+		};
+	</script>
+
+	<!--第一种本地接入-->
+	<script src='easemob.js'></script>
+	<!--第二种-->
+	<!--<script src='//kefu.easemob.com/webim/easemob.js?tenantId=10954'></script>-->
 </body>
 </html>

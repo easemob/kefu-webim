@@ -10,8 +10,7 @@ var gulp = require('gulp'),
     server = require('gulp-webserver'),
     clean = require('gulp-clean');
 
-var debug = false;
-var mockData = require('./mock.json');
+var debug = true;
 
 
 //clean
@@ -51,24 +50,38 @@ gulp.task('lint', function() {
 
 //compress
 gulp.task('uglify', function() {
-    var emkf = gulp.src([
-        'static/js/src/jquery-1.11.1.js',
-        'static/js/src/strophe.js',
-        'static/js/src/easemob.im-1.1.0.js',
-        'static/js/src/jquery.autogrow.js',
-        'static/js/src/easemob.utils.js',
-        'static/js/src/const.js',
-        'static/js/src/api.js',
-        'static/js/src/init.js',
-        'static/js/src/message.js',
-        'static/js/src/im.js'
+    var main = gulp.src([
+        'static/js/src/sdk/strophe.js',
+        'static/js/src/sdk/easemob.im-1.1.0.js',
+        'static/js/src/modules/utils.js',
+        'static/js/src/modules/ajax.js',
+        'static/js/src/modules/common.js',
+        'static/js/src/modules/transfer.js',
+        'static/js/src/modules/api/api.js',
+        'static/js/src/modules/const.js',
+        'static/js/src/modules/eventsEnum.js',
+        'static/js/src/modules/autogrow.js',
+        'static/js/src/modules/init.js',
+        'static/js/src/modules/message.js',
+        'static/js/src/modules/paste.js',
+        'static/js/src/modules/leaveMessage.js',
+        'static/js/src/modules/satisfaction.js',
+		'static/js/src/modules/imgView.js',
+		'static/js/src/modules/uploadShim.js',
+        'static/js/src/main.js',
+        'static/js/src/modules/chat.js'
     ])
-    .pipe(concat('emkf.min.js'));
-    debug || emkf.pipe(uglify());
-    emkf.pipe(gulp.dest('static/js/'));
+    .pipe(concat('main.js'));
+    debug || main.pipe(uglify());
+    main.pipe(gulp.dest('static/js/'));
 
     var ejs = gulp.src([
-        'static/js/src/easemob.utils.js',
+		'static/js/src/modules/utils.js',
+        'static/js/src/modules/transfer.js',
+        'static/js/src/modules/eventsEnum.js',
+        'static/js/src/modules/notify.js',
+        'static/js/src/modules/titleSlide.js',
+		'static/js/src/modules/iframe.js',
         'static/js/src/easemob.js',
     ])
     .pipe(concat('easemob.js'));
@@ -79,76 +92,20 @@ gulp.task('uglify', function() {
         'static/js/src/strophe.js',
         'static/js/src/easemob.im-1.0.8.js',
         'static/js/swfupload/swfupload.min.js',
-        'static/js/src/transfer.js',
+        'static/js/src/modules/transfer.js',
     ])
     .pipe(concat('em-open.js'));
     debug || open.pipe(uglify());
     open.pipe(gulp.dest('static/js/'));
 
     var transfer = gulp.src([
-        'static/js/src/ajax.js',
-        'static/js/src/transfer.js',
-        'static/js/src/test.js',
+        'static/js/src/modules/ajax.js',
+        'static/js/src/modules/transfer.js',
+        'static/js/src/modules/api/api.js',
     ])
     .pipe(concat('em-transfer.js'));
     debug || transfer.pipe(uglify());
     transfer.pipe(gulp.dest('static/js/'));
-});
-
-
-//mock
-gulp.task('server', function() {
-    gulp.src('../')
-    .pipe(server({
-        livereload: true,
-        directoryListing: {
-            enable: true,
-            path: '.'
-        }
-        , port: 8000
-        , middleware: function(req, res, next) {
-            var urlObj = req._parsedUrl,
-                method = req.method;
-
-            switch (urlObj.pathname) {
-                case '/v1/webimplugin/visitors/password':
-                    res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(mockData.password));
-                    break;
-                case '/v1/webimplugin/visitors/msgHistory':
-                    res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(mockData.history));
-                    break;
-                case '/v1/webimplugin/visitors/webim-visitor-MX9RKPXTR3/ChatGroupId':
-                    res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(mockData.groupId));
-                    break;
-                case '/v1/webimplugin/targetChannels':
-                    res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(mockData.channels));
-                    break;
-                case '/v1/webimplugin/timeOffDuty':
-                    res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(mockData.duty));
-                    break;
-                case '/v1/webimplugin/theme/options':
-                    res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(mockData.options.theme));
-                    break;
-                case '/v1/webimplugin/notice/options':
-                    res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(mockData.options.notice));
-                    break;
-                case '/v1/webimplugin/visitors':
-                    res.setHeader('Content-Type', 'application/json');
-                    res.end(JSON.stringify(mockData.visitor));
-                    break;
-                default:
-                    break;
-            }
-            next();
-        }
-    }));
 });
 
 

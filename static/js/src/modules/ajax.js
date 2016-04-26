@@ -80,6 +80,6 @@
         xhr.send(data);
         return xhr;
     };
-    window.easemobIM = window.easemobIM || {};
-    window.easemobIM.emajax = emajax;
+    window.easemobim = window.easemobim || {};
+    window.easemobim.emajax = emajax;
 }());

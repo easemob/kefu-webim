@@ -1,14 +1,27 @@
-var EasemobWidget = EasemobWidget || {};
-EasemobWidget.LISTSPAN = 10;
+window.easemobim = window.easemobim || {};
 
-EasemobWidget.PICTYPE = {//支持的图片格式
-    jpg : true
-    , gif : true
-    , png : true
-    , bmp : true
+//每页历史记录条数
+easemobim.LISTSPAN = 10;
+
+//支持的图片格式
+easemobim.PICTYPE = {
+	jpg: true,
+	gif: true,
+	png: true,
+	bmp: true
 };
 
-EasemobWidget.LOADING = !EasemobWidget.utils.isQQBrowserInAndroid && !(EasemobWidget.utils.getIEVersion() && EasemobWidget.utils.getIEVersion() == 9)
+//自定义支持的文件格式
+easemobim.FILETYPE = {
+	zip: true,
+	doc: true,
+	docx: true,
+	txt: true,
+	gif: true
+};
+
+//loading element
+easemobim.LOADING = !easemobim.utils.isQQBrowserInAndroid && !(easemobim.utils.getIEVersion && easemobim.utils.getIEVersion === 9)
     ? ["<div class='easemobWidget-loading'><svg version='1.1' id='图层_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px'",
     " viewBox='0 0 70 70' enable-background='new 0 0 70 70' xml:space='preserve'>",
     "<circle opacity='0.3' fill='none' stroke='#000000' stroke-width='4' stroke-miterlimit='10' cx='35' cy='35' r='11'/>",
@@ -16,7 +29,8 @@ EasemobWidget.LOADING = !EasemobWidget.utils.isQQBrowserInAndroid && !(EasemobWi
     "c2.8,0,5.3,1,7.3,2.8'/><image src='/webim/static/img/loading.gif' width='20' style='margin-top:10px;' /></svg></div>"].join('')
     : "<img src='/webim/static/img/loading.gif' width='20' style='margin-top:10px;'/>";
 
-EasemobWidget.THEME = {//当前支持的所有主题
+//当前支持的所有主题
+easemobim.THEME = {
     '天空之城': {
         css: 'body .theme-color{color:#42b8f4;}body .bg-color{background-color:#42b8f4}.border-color{border:1px solid #00a0e7}.hover-color{background-color:#7dcdf7}'
     }
@@ -42,6 +56,8 @@ EasemobWidget.THEME = {//当前支持的所有主题
         css: 'body .theme-color{color:#3977cf;}body .bg-color{background-color:#3977cf}.border-color{border:1px solid #2b599b}.hover-color{background-color:#548bdc}'
     }
 };
+
+//表情包
 Easemob.im.EMOTIONS = {
     path: 'static/img/faces/'
     , map: {

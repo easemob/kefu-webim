@@ -45,13 +45,21 @@ button, textarea, input {
     font-weight: normal;
     font-style: normal;
 }
-
+#EasemobKefuWebim {
+	position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
 .easemobWidget-noline {
     text-decoration: none;
     cursor: zoom-in;
 }
 .easemobWidget-pop-bar i:after,
 .easemobWidgetHeader-min:after,
+.easemobWidgetHeader-keyboard-down:after,
+.easemobWidgetHeader-keyboard-up:after,
 .easemobWidgetHeader-audio:after,
 .easemobWidgetHeader-silence:after,
 .easemobWidget-word-close:after,
@@ -75,13 +83,25 @@ button, textarea, input {
     -moz-osx-font-smoothing: grayscale;
 }
 .hide,
+.em-hide,
 .easemobWidgetWrapper .hide {
     display: none;
 }
+#easemobWidgetDrag {
+	position: relative;
+}
+#easemobWidgetDrag p {
+	position: absolute;
+    z-index: 0;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
 #easemobWidgetPopBar {
     position: fixed;
-    top: 7px;
-    left: 0;
+    bottom: 0;
+    right: 14px;
 }
 .easemobWidget-pop-bar {
     display: block;
@@ -118,7 +138,7 @@ button, textarea, input {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     box-shadow: 0 1px 1px rgba(255,255,255,.3) inset;
-    cursor: move;
+    cursor: default;
 }
 .easemobWidget-msgcount, .easemobWidget-msgcount:after {
     width: 18px;
@@ -162,7 +182,6 @@ button, textarea, input {
     vertical-align: middle;
     margin: -2px -8px 0 5px;
     border-radius: 50%;
-    border: 1px solid #1aa1e4;
 }
 .easemobWidgetHeader-status {
     position: absolute;
@@ -199,6 +218,31 @@ button, textarea, input {
     top: -4px;
     text-align: center;
     color: #fff;
+}
+.easemobWidgetHeader-keyboard-up,
+.easemobWidgetHeader-keyboard-down {
+    position: absolute;
+    right: 44px;
+    top: 10px;
+    width: 21px;
+    height: 21px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+.easemobWidgetHeader-keyboard-up:after,
+.easemobWidgetHeader-keyboard-down:after {
+    content: 'F';
+    position: absolute;
+    left: -5px;
+    top: -4px;
+    text-align: center;
+    color: #fff;
+}
+.easemobWidgetHeader-keyboard-up:after {
+    content: 'x';
+}
+.easemobWidgetHeader-keyboard-down:after {
+    content: 'F';
 }
 .easemobWidgetHeader-wrapper .easemobWidgetHeader-audio {
     position: absolute;
@@ -736,7 +780,7 @@ img.easemobWidget-msg-fileicon {
     cursor: pointer;
 }
 /*theme*/
-.default-bg-color {
+.default-theme-color {
   background-color: #49b9f1;
 }
 .default-border-color {
@@ -868,7 +912,7 @@ body .easemobWidget-offline-bg {
     font-size: 14px;
     cursor: pointer;
 }
-.easemobWidget-list-btn {
+.easemobWidget-list-btns {
     position: relative;
     border-radius: 6px;
     background-color: #e4e9f2;
@@ -878,20 +922,18 @@ body .easemobWidget-offline-bg {
     top: 10px;
     text-align: center;
     clear: both;
-	max-width: 100%;
 }
-.easemobWidget-list-btn:after {
+.easemobWidget-list-btns:after {
     content: '';
     clear: both;
 }
-.easemobWidget-list-btn button {
+.easemobWidget-list-btn {
     font-size: 13px;
     display: block;
     border: none;
     padding: 0 5px;
     min-width: 100px;
-	width: 100%;
-	word-break: break-all;
+    height: 30px;
     line-height: 30px;
     color: #000;
     background-color: #fafafa;
@@ -900,7 +942,7 @@ body .easemobWidget-offline-bg {
     cursor: pointer;
     margin: 4px auto 0;
 }
-.easemobWidget-list-btn button:hover {
+.easemobWidget-list-btn:hover {
     color: #fff;
 }
 .easemobWidget-logo,
@@ -925,7 +967,7 @@ body .easemobWidget-offline-bg {
     pop dialog
 */
 .easemobWidget-dialog {
-    z-index: 2;
+    z-index: 3;
     position: absolute;
     width: 320px;
     height: 380px;
@@ -1037,7 +1079,7 @@ body .easemobWidget-offline-bg {
 .easemobWidgetWrapper-mobile .easemobWidget-status-prompt {
     top: 0;
     bottom: auto;
-    width: 100%;
+    width: 80%;
 }
 .easemobWidgetWrapper-mobile .easemobWidget-status-prompt.link:after,
 .easemobWidgetWrapper-mobile .easemobWidget-status-prompt.transfer:after {
@@ -1046,7 +1088,6 @@ body .easemobWidget-offline-bg {
     left: 0;
     border-radius: 0;
     width: 100%;
-    font-size: 17px;
     height: 43px;
     line-height: 32px;
     box-sizing: border-box;
@@ -1071,11 +1112,11 @@ body .easemobWidget-offline-bg {
 .easemobWidgetWrapper-mobile .easemobWidgetBody {
     bottom: 42px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-list-btn button,
+.easemobWidgetWrapper-mobile .easemobWidget-list-btn,
 .easemobWidgetWrapper-mobile .easemobWidget-msg-container {
     font-size: 17px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-list-btn button {
+.easemobWidgetWrapper-mobile .easemobWidget-list-btn {
     height: 32px;
     line-height: 32px;
     box-shadow: none;
@@ -1086,7 +1127,7 @@ body .easemobWidget-offline-bg {
 .easemobWidgetWrapper-mobile .easemobWidget-msg-file .easemobWidget-msg-container {
 	padding: 0;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-list-btn button:hover {
+.easemobWidgetWrapper-mobile .easemobWidget-list-btn:hover {
     color: #000;
 }
 .easemobWidgetWrapper-mobile .easemobWidget-face-wrapper {
