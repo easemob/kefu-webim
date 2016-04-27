@@ -175,9 +175,6 @@
 		me.shareFrame.src = easemobim.utils.protocol + easemobim.config.domain + '/webim/transfer.html';
 		document.body.appendChild(me.shareFrame);
 		me.shareMessage = new easemobim.Transfer(me.shareFrame.id);
-		/*me.shareFrame.onload = function () {
-			me.shareMessage.send(me.config);
-		}*/
 	}
 
 	var Iframe = function ( config, signleton ) {
@@ -356,6 +353,14 @@
 
 		this.message && !trigger && this.message.send(easemobim.EVENTS.CLOSE);
 		return this;
+	};
+
+	Iframe.prototype.send = function ( ext ) {
+		if ( this.message ) {
+			this.message = new easemobim.Transfer(this.iframe.id);
+		}
+		easemobim.EVENTS.EXT.data = ext;	
+		this.message.send(easemobim.EVENTS.EXT);
 	};
 
 	window.easemobim = window.easemobim || {};

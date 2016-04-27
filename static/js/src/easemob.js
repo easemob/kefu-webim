@@ -14,7 +14,7 @@
 		appKey: '',
 		domain: '',
 		path: '',
-		staticPath: '/webim/static',
+		staticPath: '',
 		buttonText: '联系客服',
 		dialogWidth: '400px',
 		dialogHeight: '500px',
@@ -51,7 +51,8 @@
 		easemobim.config.resources = easemobim.utils.convertFalse(resources);
 		easemobim.config.satisfaction = easemobim.utils.convertFalse(sat);
 		easemobim.config.domain = easemobim.config.domain || baseConfig.domain;
-		easemobim.config.path = easemobim.config.domain + '/webim';
+		easemobim.config.path = easemobim.config.path || (baseConfig.domain + '/webim');
+		easemobim.config.staticPath = easemobim.config.staticPath || (baseConfig.domain + '/webim/static');
 	};
 
 	init();
@@ -105,8 +106,12 @@
 	easemobim.titleSlide(easemobim.config);
 	easemobim.notify();
 
+	easemobim.sendExt = function ( ext ) {
+		iframe.send(ext);
+	};
+
 	//
-	if ( easemobim.config.autoConnect && easemobim.config.tenantId ) {
+	if ( (!easemobim.config.hide || easemobim.config.autoConnect) && easemobim.config.tenantId ) {
 		iframe.set(easemobim.config, iframe.close);
 	}
 

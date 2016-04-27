@@ -65,19 +65,24 @@
 		window.easemobim = window.easemobim || {};
 		//更多配置参数可参考config.js
 		easemobim.config = {
-			onmessage: function ( msg ) { },//收消息回调
-			appKey: 'orgName#appName',
-			user: {
-				username: '',
-				password: '',
-				token: ''
+			domain: '//kefu.easemob.com',
+			path: '//t.com/easemob/webim',
+			staticPath: '//t.com/easemob/webim/static',
+			visitor: {
+				trueName: '黎小冷',
+				qq: '567**34',
+				phone: '188****8888',
+				companyName: '环信',
+				userNickname: '我是黎小冷',
+				description: '描述信息',
+				email: '123456@**.com'
 			}
 		};
 	</script>
 
 	<!--第一种本地接入-->
-	<script src='easemob.js'></script>
+	<!--<script src='easemob.js'></script>-->
 	<!--第二种-->
-	<!--<script src='//kefu.easemob.com/webim/easemob.js?tenantId=10954'></script>-->
+	<script src='/webim/easemob.js'></script>
 </body>
 </html>
