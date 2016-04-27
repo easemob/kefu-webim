@@ -388,7 +388,7 @@
 			};
 		}
 		, updateAttribute: function ( link, attr ) {
-			var url = link || _protocol + easemobim.config.domain + '/webim/im.html?tenantId=';
+			var url = link || _protocol + easemobim.config.path + '/im.html?tenantId=';
 
 			for ( var o in attr ) {
 				if ( attr.hasOwnProperty(o) ) {

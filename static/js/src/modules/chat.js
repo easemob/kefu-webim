@@ -44,6 +44,11 @@
 					msg.body.ext.weichat = msg.body.ext.weichat || {};
 					msg.body.ext.weichat.queueName = config.emgroup;
 				}
+				if ( config.visitor ) {
+					msg.body.ext = msg.body.ext || {};
+					msg.body.ext.weichat = msg.body.ext.weichat || {};
+					msg.body.ext.weichat.visitor = config.visitor;
+				}
 			}
 			, setRoot: function () {
 				if ( !utils.root ) { return false; }
@@ -1113,9 +1118,7 @@
                 });
 
                 if ( ext ) {
-                    utils.extend(msg.body, {
-                        ext: ext
-                    });
+                    utils.extend(msg.body, ext);
                 }
 
                 if ( !isHistory ) {

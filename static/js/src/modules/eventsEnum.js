@@ -26,5 +26,8 @@ easemobim.EVENTS = {
 	},
 	ONMESSAGE: {
 		event: 'onMessage'
+	},
+	EXT: {
+		event: 'ext'
 	}
 };

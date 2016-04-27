@@ -74,8 +74,8 @@
 		";
 
 
-		var chat = easemobim.chat(config),
-			api = easemobim.api;
+		window.chat = easemobim.chat(config);
+		var api = easemobim.api;
 
 		config.base = utils.protocol + config.domain;
 		config.sslImgBase = config.domain + '/ossimages/';
@@ -230,6 +230,9 @@
 						break;
 					case easemobim.EVENTS.CLOSE.event:
 						entry.close(true);
+						break;
+					case easemobim.EVENTS.EXT.event:
+						chat.sendTextMsg('', false, msg.data);
 						break;
 				}
 			}

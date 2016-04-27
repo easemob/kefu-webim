@@ -9,6 +9,7 @@ easemobim.config = {
 	staticPath: '',										//访客插件static的路径,		staticPath: '//XXX/webim/static'
 	xmppServer: '',										//环信IM服务器,				xmppServer: 'im-api.easemob.com'
 	restServer: '',										//环信REST服务器,			restServer: 'a1.easemob.com'
+	visitor: '',										//访客信息
 
 	autoConnect: false,									//自动连接
 	buttonText: '联系客服',								//设置小按钮的文案
