@@ -12,14 +12,15 @@
 		tenantId: '',
 		to: '',
 		appKey: '',
-		domain: '//kefu.easemob.com',
-		path: '//kefu.easemob.com/webim/im.html',
-		staticPath: '//kefu.easemob.com/webim/static',
+		domain: '',
+		path: '',
+		staticPath: '/webim/static',
 		buttonText: '联系客服',
 		dialogWidth: '400px',
 		dialogHeight: '500px',
 		dragenable: true,
 		minimum: true,
+		resources: false,
 		soundReminder: true,
 		dialogPosition: { x: '10px', y: '10px' },
 		user: {
@@ -35,20 +36,26 @@
 
 
 	//get parameters from easemob script
-    var baseConfig = easemobim.utils.getConfig('easemob.js', true),
-		iframe = easemobim.Iframe(easemobim.config, true);
+    var baseConfig = easemobim.utils.getConfig('easemob.js', true);
 
 
 	var init = function () {
 		easemobim.config = easemobim.utils.copy(config);
 
-		easemobim.config.tenantId = easemobim.config.tenantId || baseConfig.json.tenantId;
-		easemobim.config.hide = easemobim.utils.convertFalse(easemobim.config.hide) !== '' ? easemobim.config.hide :  baseConfig.json.hide;
-		easemobim.config.resources = easemobim.utils.convertFalse(easemobim.config.resources) !== '' ? easemobim.config.resources :  baseConfig.json.resources;
-		easemobim.config.satisfaction = easemobim.utils.convertFalse(easemobim.config.satisfaction) !== '' ? easemobim.config.satisfaction :  baseConfig.json.sat;
-	};
-	
+		var hide = easemobim.utils.convertFalse(easemobim.config.hide) !== '' ? easemobim.config.hide : baseConfig.json.hide,
+			resources = easemobim.utils.convertFalse(easemobim.config.resources) !== '' ? easemobim.config.resources :  baseConfig.json.resources,
+			sat = easemobim.utils.convertFalse(easemobim.config.satisfaction) !== '' ? easemobim.config.satisfaction :  baseConfig.json.sat;
 
+		easemobim.config.tenantId = easemobim.config.tenantId || baseConfig.json.tenantId;
+		easemobim.config.hide = easemobim.utils.convertFalse(hide);
+		easemobim.config.resources = easemobim.utils.convertFalse(resources);
+		easemobim.config.satisfaction = easemobim.utils.convertFalse(sat);
+		easemobim.config.domain = easemobim.config.domain || baseConfig.domain;
+		easemobim.config.path = easemobim.config.domain + '/webim';
+	};
+
+	init();
+	var iframe = easemobim.Iframe(easemobim.config, true);
 
 
 	/*
@@ -67,19 +74,39 @@
 	 * @param: {Object} config
 	 */
 	easemobim.bind = function ( config ) {
+
 		init();
 		easemobim.utils.extend(easemobim.config, config);
 		easemobim.config.emgroup = config.emgroup;
 
 		if ( !easemobim.config.tenantId ) { return; }
 
-		iframe.set(easemobim.config, iframe.open);
+		iframe.set(easemobim.config, easemobim.utils.isMobile ? null : iframe.open);
+
+		if ( easemobim.utils.isMobile ) {
+			var a = window.event.srcElement || window.event.target,
+				counter = 5;
+
+			while( a && a.nodeName !== 'A' && counter-- ) {
+				a = a.parentNode;
+			}
+
+			if ( !a || a.nodeName !== 'A' ) {
+				return;
+			}
+
+			a.setAttribute('href', iframe.url);
+			a.setAttribute('target', '_blank');
+
+		}
 	};
+
 
 	easemobim.titleSlide(easemobim.config);
 	easemobim.notify();
 
-	if ( !easemobim.config.hide && easemobim.config.tenantId ) {
+	//
+	if ( easemobim.config.autoConnect && easemobim.config.tenantId ) {
 		iframe.set(easemobim.config, iframe.close);
 	}
 

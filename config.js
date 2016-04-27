@@ -3,13 +3,14 @@ window.easemobim = window.easemobim || {};
 easemobim.config = {
 	tenantId: '',										//租户id
 	to: '',												//指定关联对应的im号
-	appKey: '',											//关联的appkey,		appKey: 'orgName#appName'
-	domain: '',											//环信移动客服域,	domain: '//kefu.easemob.com', 
-	xmppServer: '',										//环信IM服务器,		xmppServer: 'im-api.easemob.com'
-	restServer: '',										//环信REST服务器,	restServer: 'a1.easemob.com'
-	path: '',											//im.html的路径,	path: '//kefu.easemobim.com/webim/im.html'
-	staticPath: '',										//引用static的路径,	staticPath: '//kefu.easemob.com/webim/static'
+	appKey: '',											//关联的appkey,				appKey: 'orgName#appName'
+	domain: '',											//环信移动客服域,			domain: '//kefu.easemob.com', 
+	path: '',											//im.html的本机服务器路径,	path: '//XXX/webim'
+	staticPath: '',										//访客插件static的路径,		staticPath: '//XXX/webim/static'
+	xmppServer: '',										//环信IM服务器,				xmppServer: 'im-api.easemob.com'
+	restServer: '',										//环信REST服务器,			restServer: 'a1.easemob.com'
 
+	autoConnect: false,									//自动连接
 	buttonText: '联系客服',								//设置小按钮的文案
 	hide: true,											//是否隐藏小的悬浮按钮
 	resources: false,									//是否启用收消息同步

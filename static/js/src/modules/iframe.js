@@ -98,14 +98,6 @@
 	var _ready = function () {
 		var me = this;
 
-		if ( !me.config.user.username ) {
-			if ( me.config.to ) {
-				me.config.user.username = easemobim.utils.get(me.config.to);
-			} else {
-				me.config.user.username = easemobim.utils.get(me.config.emgroup ? me.config.emgroup + me.config.tenantId : me.config.tenantId);
-			}
-		}
-
 		if ( me.config.dragenable ) {
 			resize.call(me);
 			easemobim.utils.on(me.shadow, 'mouseup', function () {
@@ -131,16 +123,16 @@
 					me.open(msg.data.trigger);
 					break;
 				case easemobim.EVENTS.CLOSE.event://show Chat window
-					me.close(msg.data.trigger);
+					me.close(msg.data ? msg.data.trigger : false);
 					break;
 				case easemobim.EVENTS.NOTIFY.event://notify
 					easemobim.notify(msg.data.avatar, msg.data.title, msg.data.brief);;
 					break;
 				case easemobim.EVENTS.SLIDE.event://title slide
-					me.config.titleSlide && easemobim.titleSlide.start();
+					easemobim.titleSlide.start();
 					break;
 				case easemobim.EVENTS.RECOVERY.event://title recovery 
-					me.config.titleSlide && easemobim.titleSlide.stop();
+					easemobim.titleSlide.stop();
 					break;
 				case easemobim.EVENTS.ONMESSAGE.event://onmessage callback
 					typeof me.config.onmessage === 'function' && me.config.onmessage(msg.data);
@@ -174,6 +166,19 @@
 		me.ready instanceof Function && me.ready();
 		me.config.onready instanceof Function && me.config.onready();
 	};
+
+	var _createShareFrame = function () {
+		var me = this;
+		me.shareFrame = document.createElement('iframe');
+		me.shareFrame.style.display = 'none';
+		me.shareFrame.id = 'EasemobIframe' + new Date().getTime();
+		me.shareFrame.src = easemobim.utils.protocol + easemobim.config.domain + '/webim/transfer.html';
+		document.body.appendChild(me.shareFrame);
+		me.shareMessage = new easemobim.Transfer(me.shareFrame.id);
+		/*me.shareFrame.onload = function () {
+			me.shareMessage.send(me.config);
+		}*/
+	}
 
 	var Iframe = function ( config, signleton ) {
 
@@ -213,62 +218,24 @@
 			};
 		}
 
+		this.shareFrame || _createShareFrame.call(this);
 		Iframe.iframe = this;
-		
+
 		return this;
 	};
+
+	Iframe.prototype.share = function () {
+		var me = this;
+
+		if ( me.shareFrame ) {
+			me.shareMessage.send(me.config);
+		}
+	}
 
 	Iframe.prototype.set = function ( config, callback ) {
 
 		this.config = easemobim.utils.copy(config || this.config);
-
-		this.position = { x: this.config.dialogPosition.x.slice(0, -2), y: this.config.dialogPosition.y.slice(0, -2) };
-		this.rect = { width: this.config.dialogWidth.slice(0, -2)/1, height: this.config.dialogHeight.slice(0, -2)/1 };
-		this.iframe.frameBorder = 0;
-		this.iframe.allowTransparency = 'true';
-
-		this.iframe.style.cssText = [
-			'z-index:16777269;',
-			'overflow:hidden;',
-			'position:fixed;',
-			'bottom:'			+ this.config.dialogPosition.y + ';',
-			'right:'			+ Number(this.config.dialogPosition.x.slice(0, -2) - 15) + 'px;',
-			'border:none;',
-			'width:'			+ this.config.dialogWidth + ';',
-			'height:0;',
-			'display:none;',
-			'transition:all .01s;'].join('');
-		this.shadow.style.cssText = [
-			'display:none;',
-			'cursor:move;',
-			'z-index:16777270;',
-			'position:fixed;',
-			'bottom:'			+ this.config.dialogPosition.y + ';',
-			'right:'			+ this.config.dialogPosition.x + ';',
-			'border:none;',
-			'width:'			+ this.config.dialogWidth + ';',
-			'height:'			+ this.config.dialogHeight + ';',
-			'border-radius:4px;',
-			'box-shadow: 0 4px 8px rgba(0,0,0,.2);',
-			'border-radius: 4px;'].join('');
-
-		this.shadow.style.background = 'url(' + easemobim.utils.protocol + this.config.staticPath + '/img/drag.png) no-repeat';
-		this.shadow.style.backgroundSize = '100% 100%';
-
-		if ( !this.config.hide ) {
-			this.iframe.style.height = '37px';
-			this.iframe.style.width = '104px';
-		} else {
-			this.iframe.style.height = '0';
-			this.iframe.style.width = '0';
-		}
-		if ( easemobim.utils.isMobile ) {
-			this.iframe.style.cssText += 'left:0;bottom:0';
-			this.iframe.style.width = '100%';
-			this.iframe.style.right = '0';
-		}
-
-		this.iframe.src = easemobim.utils.updateAttribute(this.url, {
+		this.url = easemobim.utils.updateAttribute(this.url, {
 			tenantId: this.config.tenantId,
 			hide: this.config.hide,
 			sat: this.config.visitorSatisfactionEvaluate,
@@ -276,7 +243,69 @@
 			emgroup: this.config.emgroup || ''
 		});
 
-		this.ready = callback;
+
+		if ( !this.config.user.username ) {
+			if ( this.config.to ) {
+				this.config.user.username = easemobim.utils.get(this.config.to);
+			} else {
+				this.config.user.username = easemobim.utils.get(this.config.emgroup ? this.config.emgroup + this.config.tenantId : this.config.tenantId);
+			}
+		}
+
+
+		if ( easemobim.utils.isMobile ) {
+			this.share();
+		} else {
+			this.position = { x: this.config.dialogPosition.x.slice(0, -2), y: this.config.dialogPosition.y.slice(0, -2) };
+			this.rect = { width: this.config.dialogWidth.slice(0, -2)/1, height: this.config.dialogHeight.slice(0, -2)/1 };
+			this.iframe.frameBorder = 0;
+			this.iframe.allowTransparency = 'true';
+
+			this.iframe.style.cssText = [
+				'z-index:16777269;',
+				'overflow:hidden;',
+				'position:fixed;',
+				'bottom:'			+ this.config.dialogPosition.y + ';',
+				'right:'			+ Number(this.config.dialogPosition.x.slice(0, -2) - 15) + 'px;',
+				'border:none;',
+				'width:'			+ this.config.dialogWidth + ';',
+				'height:0;',
+				'display:none;',
+				'transition:all .01s;'].join('');
+			this.shadow.style.cssText = [
+				'display:none;',
+				'cursor:move;',
+				'z-index:16777270;',
+				'position:fixed;',
+				'bottom:'			+ this.config.dialogPosition.y + ';',
+				'right:'			+ this.config.dialogPosition.x + ';',
+				'border:none;',
+				'width:'			+ this.config.dialogWidth + ';',
+				'height:'			+ this.config.dialogHeight + ';',
+				'border-radius:4px;',
+				'box-shadow: 0 4px 8px rgba(0,0,0,.2);',
+				'border-radius: 4px;'].join('');
+
+			this.shadow.style.background = 'url(' + easemobim.utils.protocol + this.config.staticPath + '/img/drag.png) no-repeat';
+			this.shadow.style.backgroundSize = '100% 100%';
+
+			if ( !this.config.hide ) {
+				this.iframe.style.height = '37px';
+				this.iframe.style.width = '104px';
+			} else {
+				this.iframe.style.height = '0';
+				this.iframe.style.width = '0';
+			}
+			if ( easemobim.utils.isMobile ) {
+				this.iframe.style.cssText += 'left:0;bottom:0';
+				this.iframe.style.width = '100%';
+				this.iframe.style.right = '0';
+			}
+
+			this.iframe.src = this.url;
+			this.ready = callback;
+		}
+		
 		return this;
 	};
 

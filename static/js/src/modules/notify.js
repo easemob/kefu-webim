@@ -28,7 +28,7 @@ easemobim.notify = function () {
 							window.focus();
 						}
 						this.close();
-						easemobim.config.titleSlide && typeof easemobim.titleSlide === 'object' && easemobim.titleSlide.stop();
+						typeof easemobim.titleSlide === 'object' && easemobim.titleSlide.stop();
 					};
 					setTimeout(function () {
 						notification.close();

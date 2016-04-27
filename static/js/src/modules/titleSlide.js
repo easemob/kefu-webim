@@ -10,15 +10,12 @@ easemobim.titleSlide = function ( config ) {
 
 	easemobim.titleSlide = {
 		stop: function () {
-			if ( !config.titleSlide ) {
-				return;
-			}
 			clearInterval(titleST);
 			titleST = 0;
 			document.title = originTitle;
 		},
 		start: function () {
-			if ( !config.titleSlide || titleST ) {
+			if ( titleST ) {
 				return;
 			}
 			titleST = setInterval(function () {

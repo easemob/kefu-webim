@@ -26,8 +26,8 @@ easemobim.LOADING = !easemobim.utils.isQQBrowserInAndroid && !(easemobim.utils.g
     " viewBox='0 0 70 70' enable-background='new 0 0 70 70' xml:space='preserve'>",
     "<circle opacity='0.3' fill='none' stroke='#000000' stroke-width='4' stroke-miterlimit='10' cx='35' cy='35' r='11'/>",
     "<path fill='none' stroke='#E5E5E5' stroke-width='4' stroke-linecap='round' stroke-miterlimit='10' d='M24,35c0-6.1,4.9-11,11-11",
-    "c2.8,0,5.3,1,7.3,2.8'/><image src='/webim/static/img/loading.gif' width='20' style='margin-top:10px;' /></svg></div>"].join('')
-    : "<img src='/webim/static/img/loading.gif' width='20' style='margin-top:10px;'/>";
+    "c2.8,0,5.3,1,7.3,2.8'/><image src='//kefu.easemob.com/webim/static/img/loading.gif' width='20' style='margin-top:10px;' /></svg></div>"].join('')
+    : "<img src='//kefu.easemob.com/webim/static/img/loading.gif' width='20' style='margin-top:10px;'/>";
 
 //当前支持的所有主题
 easemobim.THEME = {

@@ -1,6 +1,3 @@
-/**
- * support: ie8+ & modern borwsers & mobile browsers
- */
 ;(function ( window, undefined ) {
     'use strict';
 
@@ -8,30 +5,40 @@
 		return false;
 	}
 
-	//set default value
-	/*var setdefault = function ( target, defaultvalue ) {
-		return target || target === false ? target : defaultvalue;
-    };*/
-
 
     var webim = document.getElementById('EasemobKefuWebim'),
 		utils = easemobim.utils,
 		entry;
 
 
-
 	//main entry
 	var main = function ( config ) {
 
+		var tenantId = utils.query('tenantId');
 
-		//如果是H5的方式
-		if ( utils.root ) {
-			config.satisfaction = utils.convertFalse(utis.query('sat'));
-			config.resources = utils.convertFalse(utis.query('resources'));
+
+		if ( !config ) {
+			try {
+				config = JSON.parse(localStorage.getItem('emconfig' + tenantId));
+			} catch ( e ) {}
+		}
+
+
+		if ( utils.root && !config ) {
+			config = {};
+			config.tenantId = tenantId;
+			config.appKey = '';
+			config.emgroup = utils.query('emgroup');
+			config.user = {
+				username: utils.get(config.emgroup ? config.emgroup + config.tenantId : config.tenantId),
+				password: '',
+				token: ''
+			};
+			config.satisfaction = utils.convertFalse(utils.query('sat'));
+			config.resources = utils.convertFalse(utils.query('resources'));
 		}
 
 		//reset
-		config.tenantId = config.tenantId || utis.query('tenantId');
 		config.hide = utils.convertFalse(config.hide);
 		config.resources = utils.convertFalse(config.resources);
 		config.satisfaction = utils.convertFalse(config.satisfaction);
@@ -39,14 +46,14 @@
 
 		//render Tpl
 		webim.innerHTML = "\
-			<div id='easemobWidgetPopBar'" + (!config.minimum || config.hide ? " class='em-hide'" : "") + "'>\
+			<div id='easemobWidgetPopBar'" + (utils.root || !config.minimum || config.hide ? " class='em-hide'" : "") + "'>\
 				<a class='easemobWidget-pop-bar bg-color' href='javascript:;'><i></i>" + config.buttonText + "</a>\
 				<span class='easemobWidget-msgcount em-hide'></span>\
 			</div>\
-			<div id='EasemobKefuWebimChat' class='easemobWidgetWrapper" + (!config.minimum ? "'" : " em-hide'") + ">\
+			<div id='EasemobKefuWebimChat' class='easemobWidgetWrapper" + (utils.root || !config.minimum ? "'" : " em-hide'") + ">\
 				<div id='easemobWidgetHeader' class='easemobWidgetHeader-wrapper bg-color border-color'>\
 					<div id='easemobWidgetDrag'>\
-						<p></p>\
+						" + (utils.isMobile || utils.root ? "" : "<p></p>") + "\
 						<img class='easemobWidgetHeader-portrait border-color'/>\
 						<span class='easemobWidgetHeader-nickname'></span>\
 					</div>\
@@ -63,14 +70,8 @@
 					(utils.isMobile || !config.satisfaction ? "" : "<span id='EasemobKefuWebimSatisfy' class='easemobWidget-satisfaction'>请对服务做出评价</span>") + "\
 					<a href='javascript:;' class='easemobWidget-send bg-color disabled' id='easemobWidgetSendBtn'>连接中</a>\
 				</div>\
-				<iframe id='EasemobKefuWebimIframe' class='em-hide' src='" + config.domain + "/webim/transfer.html'>\ </div>\
+				<iframe id='EasemobKefuWebimIframe' class='em-hide' src='" + (config.domain || '\/\/' + location.host) + "/webim/transfer.html'>\ </div>\
 		";
-
-		if ( utils.isMobile ) {
-			document.getElementById('EasemobKefuWebimChat').style.cssText = 'width:100%;height:100%;right:0;bottom:0;';
-		} else {
-			document.getElementById('EasemobKefuWebimChat').style.cssText = 'width:' + config.dialogWidth + ';height:' + config.dialogHeight + ';';
-		}
 
 
 		var chat = easemobim.chat(config),
@@ -154,7 +155,9 @@
 											username: config.user.username,
 											group: config.user.emgroup
 										};
-										transfer.send(easemobim.EVENTS.CACHEUSER);
+										utils.root
+										? utils.set(config.toUser, config.user.username)
+										: transfer.send(easemobim.EVENTS.CACHEUSER);
 										chat.ready();
 									});
 								} else {
@@ -167,6 +170,7 @@
 								orgName: config.orgName
 								, appName: config.appName
 								, imServiceNumber: config.toUser
+								, tenantId: config.tenantId
 							}, function ( msg ) {
 								config.newuser = true;
 								config.user.username = msg.data.userId;
@@ -175,7 +179,9 @@
 									username: config.user.username,
 									group: config.user.emgroup
 								};
-								transfer.send(easemobim.EVENTS.CACHEUSER);
+								utils.root
+								? utils.set(config.toUser, config.user.username)
+								: transfer.send(easemobim.EVENTS.CACHEUSER);
 								chat.ready();
 							});
 						}
@@ -212,19 +218,23 @@
 
 
 	//Controller
-	window.transfer = new easemobim.Transfer().listen(function ( msg ) {
+	if ( !utils.root ) {
+		window.transfer = new easemobim.Transfer().listen(function ( msg ) {
 
-		if ( msg && msg.tenantId ) {
-			main(msg);
-		} else if ( msg.event ) {
-			switch ( msg.event ) {
-				case easemobim.EVENTS.SHOW.event:
-					entry.open(true);
-					break;
-				case easemobim.EVENTS.CLOSE.event:
-					entry.close(true);
-					break;
+			if ( msg && msg.tenantId ) {
+				main(msg);
+			} else if ( msg.event ) {
+				switch ( msg.event ) {
+					case easemobim.EVENTS.SHOW.event:
+						entry.open(true);
+						break;
+					case easemobim.EVENTS.CLOSE.event:
+						entry.close(true);
+						break;
+				}
 			}
-		}
-	});
+		});
+	} else {
+		main();
+	}
 } ( window, undefined ));

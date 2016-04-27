@@ -86,12 +86,13 @@
 			}
 		}
 		, getIEVersion: _getIEVersion
-		, live: function ( target, ev, fn ) {
-			var me = this;
-			me.on(document, ev, function ( e ) {
+		, live: function ( target, ev, fn, wrapper ) {
+			var me = this,
+				el = wrapper || document;
+			me.on(el, ev, function ( e ) {
 				var ev = e || window.event,
 					tar = ev.target || ev.srcElement,
-					targetList = target.split('.').length < 2 ? document.getElementsByTagName(target) : me.$Class(target);
+					targetList = target.split('.').length < 2 ? el.getElementsByTagName(target) : me.$Class(target);
 
 				if ( targetList.length ) {
 					for ( var len = targetList.length, i = 0; i < len; i++ ) {
@@ -180,6 +181,7 @@
 					target.className += ' ' + className;
 				}
 			}
+			return target;
 		}
 		, removeClass: function ( target, className ) {
 			if ( !target ) {
@@ -196,6 +198,7 @@
 					target.className = target.className.replace(className, '');
 				}
 			}
+			return target;
 		}
 		, hasClass: function ( target, className ) {
 			if ( !target || !target.className ) {
@@ -243,6 +246,7 @@
 					dom.innerHTML = html;
 				}
 			}
+			return dom;
 		}
 		, encode: function ( str ) {
 			if ( !str || str.length === 0 ) {
@@ -384,14 +388,14 @@
 			};
 		}
 		, updateAttribute: function ( link, attr ) {
-			var url = link || _protocol + easemobim.config.path + '?tenantId=';
+			var url = link || _protocol + easemobim.config.domain + '/webim/im.html?tenantId=';
 
 			for ( var o in attr ) {
 				if ( attr.hasOwnProperty(o) ) {
 					if ( url.indexOf(o + '=') < 0 ) {
-						url += '&' + o + '=' + attr[o];
+						url += '&' + o + '=' + (attr[o] || '');
 					} else {
-						url = url.replace(new RegExp(o + '=[^&#?]*', 'gim'), o + '=' + attr[o]);
+						url = url.replace(new RegExp(o + '=[^&#?]*', 'gim'), o + '=' + (attr[o] || ''));
 					}
 				}
 			}

@@ -10,7 +10,7 @@ var gulp = require('gulp'),
     server = require('gulp-webserver'),
     clean = require('gulp-clean');
 
-var debug = true;
+var debug = false;
 
 
 //clean
@@ -57,7 +57,7 @@ gulp.task('uglify', function() {
         'static/js/src/modules/ajax.js',
         'static/js/src/modules/common.js',
         'static/js/src/modules/transfer.js',
-        'static/js/src/modules/api/api.js',
+        'static/js/src/modules/api.js',
         'static/js/src/modules/const.js',
         'static/js/src/modules/eventsEnum.js',
         'static/js/src/modules/autogrow.js',
@@ -68,8 +68,8 @@ gulp.task('uglify', function() {
         'static/js/src/modules/satisfaction.js',
 		'static/js/src/modules/imgView.js',
 		'static/js/src/modules/uploadShim.js',
-        'static/js/src/main.js',
-        'static/js/src/modules/chat.js'
+        'static/js/src/modules/chat.js',
+        'static/js/src/main.js'
     ])
     .pipe(concat('main.js'));
     debug || main.pipe(uglify());
@@ -101,7 +101,7 @@ gulp.task('uglify', function() {
     var transfer = gulp.src([
         'static/js/src/modules/ajax.js',
         'static/js/src/modules/transfer.js',
-        'static/js/src/modules/api/api.js',
+        'static/js/src/modules/api.js',
     ])
     .pipe(concat('em-transfer.js'));
     debug || transfer.pipe(uglify());

@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
     <style>
 	body { background-color: #eee;color: #555; }
-	button { display: block;margin: 20px 0;background: #00CEB9;border: none;color: #fff;line-height: 40px;min-width: 100px;cursor: pointer;outline: none; }
-	button:hover { box-shadow: 0 0 5px #33CEB9; }
-	button:active { background: #fff;color: #00CEB9; }
+	button, a { display: block;margin: 20px 0;background: #00CEB9;border: none;color: #fff;line-height: 40px;width: 200px;cursor: pointer;outline: none;text-align: center; }
+	button:hover, a:hover { box-shadow: 0 0 5px #33CEB9; }
+	button:active, a:active { background: #fff;color: #00CEB9; }
 	input { height: 40px;outline: none;width: 300px;text-align: center;font-size: 16px;color: #00CEB9; float: left;border: 1px solid #fff; }
 	</style>
 </head>
@@ -17,12 +17,17 @@
 <body>
 
 	<h1>Demo</h1>
-	<button onclick='easemobim.bind({ tenantId: 10954 })'>10954</button>
-	<button onclick='easemobim.bind({
+	<a href='javascript:;' onclick='easemobim.bind({
 		tenantId: 10954,
+		to: "830341",
+		dialogWidth: "500px"
+	})'>10954,窗口加宽</a>
+	<a href='javascript:;' onclick='easemobim.bind({
+		tenantId: 10954,
+		to: 'bcd',
 		emgroup: "技能组1",
 		buttonText: "技能组1"
-	})'>技能组1</button>
+	})'>技能组1</a>
 	<strong>备注:如果绑定访客，那么需要使用环信移动客服技能组绑定关联功能,无需再指定emgroup,可参考官方文档实现此功能</strong>
 
 
@@ -33,14 +38,14 @@
 	<div><input id='testvalue' type='text' placeholder='请输入您的tenantId，点击测试按钮'/></div>
 	<button id='test'>测试</button><br><br><br>
 	<script>
-	var v = document.getElementById('testvalue');
-	v.value = localStorage.getItem('easemobtest');
-	document.getElementById('test').onclick = function () {
-		if ( v.value && /\d+/.test(v.value) ) {
-			localStorage.setItem('easemobtest', v.value);
-			easemobim.bind({ tenantId: v.value.replace(/\s/g, '') })
-		}
-	};
+		var v = document.getElementById('testvalue');
+		v.value = localStorage.getItem('easemobtest');
+		document.getElementById('test').onclick = function () {
+			if ( v.value && /\d+/.test(v.value) ) {
+				localStorage.setItem('easemobtest', v.value);
+				easemobim.bind({ tenantId: v.value.replace(/\s/g, '') })
+			}
+		};
 	</script>
 
 
@@ -52,17 +57,16 @@
 	 <h1>两种接入方式：</h1>
 	 <h4>1.第一种：<code>&lt;script src='//kefu.easemob.com/webim/easemob.js?tenantId=10954&hide=false&sat=true'&gt;&lt;/script&gt;</code>线上引用的方式支持参数较少，请参考环信官网文档;</h4>
 	 <h4>2.第二种：将代码下载到本地服务器，<code>&lt;script src='//本地服务器路径/easemob.js'&gt;&lt;/script&gt;;</code></h4>
-	 <h4>3.详细配置参数可参考config.js;参数可以全局设定，也可以在easemobim.bind方法中传入</h4>
+	 <h4>3.更多配置参数可参考config.js;参数可以全局设定，也可以在easemobim.bind方法中传入</h4>
 	
 
 
 	<script>
 		window.easemobim = window.easemobim || {};
+		//更多配置参数可参考config.js
 		easemobim.config = {
-			onmessage: function ( msg ) {
-				//console.log(msg);
-			},
-			/*绑定访客*/
+			onmessage: function ( msg ) { },//收消息回调
+			appKey: 'orgName#appName',
 			user: {
 				username: '',
 				password: '',

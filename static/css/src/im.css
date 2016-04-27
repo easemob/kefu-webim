@@ -36,12 +36,12 @@ button, textarea, input {
 }
 @font-face {
     font-family: 'easemobim';
-    src: url("font/iconfont.eot") ;
-    src: url('//at.alicdn.com/t/font_1446550811_550383.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url("font/iconfont.svg")  format('svg'),
-    url("font/iconfont.woff")  format('woff'),
-    url("font/iconfont.ttf")  format('truetype');
-    src: url("font/iconfont.eot") \9;
+    src: url("font/iconfont.eot?t=1461663094") ;
+    src: url('//at.alicdn.com/t/font_1461663076_9437287.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url("font/iconfont.svg?t=1461663094")  format('svg'),
+    url("font/iconfont.woff?t=1461663094")  format('woff'),
+    url("font/iconfont.ttf?t=1461663094")  format('truetype');
+    src: url("font/iconfont.eot?t=1461663094") \9;
     font-weight: normal;
     font-style: normal;
 }
@@ -84,6 +84,7 @@ button, textarea, input {
 }
 .hide,
 .em-hide,
+#EasemobKefuWebim .em-hide,
 .easemobWidgetWrapper .hide {
     display: none;
 }
@@ -223,7 +224,7 @@ button, textarea, input {
 .easemobWidgetHeader-keyboard-down {
     position: absolute;
     right: 44px;
-    top: 10px;
+    top: 11px;
     width: 21px;
     height: 21px;
     border-radius: 4px;
@@ -231,7 +232,7 @@ button, textarea, input {
 }
 .easemobWidgetHeader-keyboard-up:after,
 .easemobWidgetHeader-keyboard-down:after {
-    content: 'F';
+    content: 'N';
     position: absolute;
     left: -5px;
     top: -4px;
@@ -239,10 +240,10 @@ button, textarea, input {
     color: #fff;
 }
 .easemobWidgetHeader-keyboard-up:after {
-    content: 'x';
+    content: 'O';
 }
 .easemobWidgetHeader-keyboard-down:after {
-    content: 'F';
+    content: 'N';
 }
 .easemobWidgetHeader-wrapper .easemobWidgetHeader-audio {
     position: absolute;
@@ -1062,6 +1063,14 @@ body .easemobWidget-offline-bg {
 .easemobWidgetWrapper-mobile {
     border-radius: 0;
 }
+.easemobWidgetWrapper-mobile .easemobWidgetHeader-nickname {
+	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 55%;
+    display: inline-block;
+    margin: 0;
+}
 .easemobWidgetWrapper-mobile .easemobWidgetBody-wrapper {
     bottom: 42px;
 }
@@ -1081,6 +1090,7 @@ body .easemobWidget-offline-bg {
     bottom: auto;
     width: 80%;
 }
+.easemobWidgetWrapper-mobile .easemobWidget-status-prompt.none:after,
 .easemobWidgetWrapper-mobile .easemobWidget-status-prompt.link:after,
 .easemobWidgetWrapper-mobile .easemobWidget-status-prompt.transfer:after {
     bottom: auto;
@@ -1092,6 +1102,12 @@ body .easemobWidget-offline-bg {
     line-height: 32px;
     box-sizing: border-box;
     background: transparent;
+}
+.easemobWidgetWrapper-mobile .easemobWidget-status-prompt.none:after {
+	content: '当前暂无客服在线，请您留下联系方式，\A稍后我们将主动联系您';
+    width: 253px;
+	white-space: pre;
+	line-height: normal;
 }
 .easemobWidgetWrapper-mobile .easemobWidgetHeader-portrait {
     position: absolute;
