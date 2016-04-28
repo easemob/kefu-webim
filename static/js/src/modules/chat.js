@@ -408,19 +408,17 @@
 				easemobim.api('getTheme', {
 					tenantId: config.tenantId
 				}, function ( msg ) {
-					if ( !msg.data || !msg.data.length ) { return; }
-					config.theme = msg.data[0].optionValue;
-					if ( config.theme ) {
-						if ( !easemobim.THEME[config.theme] ) {
-							config.theme = '天空之城';
-						}
+					config.theme = msg.data && msg.data.length && msg.data[0].optionValue ? msg.data[0].optionValue : '天空之城';
 
-						var style = document.createElement('style');
-						style.setAttribute('type', 'text/css');
-						utils.html(style, easemobim.THEME[config.theme].css);
-						var head = document.head || document.getElementsByTagName('head')[0];
-						head.appendChild(style);
+					if ( !easemobim.THEME[config.theme] ) {
+						config.theme = '天空之城';
 					}
+
+					var style = document.createElement('style');
+					style.setAttribute('type', 'text/css');
+					utils.html(style, easemobim.THEME[config.theme].css);
+					var head = document.head || document.getElementsByTagName('head')[0];
+					head.appendChild(style);
 				});
 
             }
