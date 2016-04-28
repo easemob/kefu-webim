@@ -2,6 +2,8 @@
     gulp config
 */
 
+var debug = false;
+
 var gulp = require('gulp'),
     minifycss = require('gulp-minify-css'),
     jshint = require('gulp-jshint'),
@@ -10,7 +12,6 @@ var gulp = require('gulp'),
     server = require('gulp-webserver'),
     clean = require('gulp-clean');
 
-var debug = false;
 
 
 //clean

@@ -1211,6 +1211,11 @@
                     return;
                 }
 
+				//绑定访客的情况有可能会收到多关联的消息，不是自己的不收
+				if ( !isHistory && msg.from != config.toUser && !msg.noprompt ) {
+					return;
+				}
+
                 var me = this,
                     message = null;
 
