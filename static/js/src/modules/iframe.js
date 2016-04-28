@@ -244,10 +244,12 @@
 
 
 		if ( !this.config.user.username ) {
+			var groupKey = this.config.emgroup ? this.config.emgroup + this.config.tenantId : this.config.tenantId;
+
 			if ( this.config.to ) {
-				this.config.user.username = easemobim.utils.get(this.config.to);
+				this.config.user.username = easemobim.utils.get(this.config.to + groupKey);
 			} else {
-				this.config.user.username = easemobim.utils.get(this.config.emgroup ? this.config.emgroup + this.config.tenantId : this.config.tenantId);
+				this.config.user.username = easemobim.utils.get(groupKey);
 			}
 		}
 
