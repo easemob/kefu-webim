@@ -42,7 +42,7 @@
 				if ( config.emgroup ) {
 					msg.body.ext = msg.body.ext || {};
 					msg.body.ext.weichat = msg.body.ext.weichat || {};
-					msg.body.ext.weichat.queueName = config.emgroup;
+					msg.body.ext.weichat.queueName = decodeURIComponent(config.emgroup);
 				}
 				if ( config.visitor ) {
 					msg.body.ext = msg.body.ext || {};
