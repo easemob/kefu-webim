@@ -110,8 +110,6 @@
 				config.orgName = config.appKey.split('#')[0];
 				config.appName = config.appKey.split('#')[1];
 
-				chat.init();
-
 				api('getRelevanceList', {
 					tenantId: config.tenantId
 				}, function ( msg ) {
@@ -130,8 +128,9 @@
 					config.restServer = config.restServer || msg.data[0].restDomain;
 
 					var cluster = config.restServer ? config.restServer.match(/vip\d/) : '';
-					cluster = cluster ? '-' + cluster : '';
+					cluster = cluster && cluster.length ? '-' + cluster[0] : '';
 					config.xmppServer = config.xmppServer || 'im-api' + cluster + '.easemob.com'; 
+					chat.init();
 
 					if ( config.user.username && (config.user.password || config.user.token) ) {
 						chat.ready();
