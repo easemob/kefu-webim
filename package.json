@@ -10,6 +10,7 @@
     "gulp": "",
     "gulp-minify-css": "",
     "gulp-clean": "",
+    "gulp-watch": "",
     "gulp-jshint": "~1.12.0",
     "gulp-concat": "",
     "gulp-webserver": "",

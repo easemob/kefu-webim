@@ -196,7 +196,7 @@
 										type: 'txt',
 										noprompt: true
 									};
-									me.receiveMsg(msg, 'txt', null, wrapper, true);
+									me.receiveMsg(msg, 'txt');
 									break;
 								case 1:
 									try {

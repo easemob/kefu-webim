@@ -16,9 +16,8 @@ var debug = false;
 //clean
 gulp.task('clean', function() {
     return gulp.src([
-            'static/css/im.min.css',
-            'static/js/emkf.min.js',
-            'static/js/easemob.utils.js',
+            'static/css/im.css',
+            'static/js/main.js',
             'easemob.js'
         ], {
             read: false
@@ -33,6 +32,13 @@ gulp.task('cssmin', function() {
     return gulp.src('static/css/src/im.css')
     .pipe(minifycss({compatibility: 'ie8'}))
     .pipe(gulp.dest('static/css/'));
+});
+
+
+//watch
+gulp.task('watch', function() {
+	gulp.watch(['static/js/src/*.js', 'static/js/src/*/*.js'], ['uglify']);
+	gulp.watch(['static/css/src/*.js'], ['cssmin']);
 });
 
 
