@@ -139,10 +139,12 @@
 					break;
 				case easemobim.EVENTS.CACHEUSER.event://cache username
 					if ( !msg.data.username ) { break; }
+
+					var groupKey = me.config.emgroup ? me.config.emgroup + me.config.tenantId : me.config.tenantId;
 					if ( me.config.to ) {
-						easemobim.utils.set(me.config.to, msg.data.username);
+						easemobim.utils.set(me.config.to + groupKey, msg.data.username);
 					} else {
-						easemobim.utils.set(me.config.emgroup ? me.config.emgroup + me.config.tenantId : me.config.tenantId, msg.data.username);
+						easemobim.utils.set(groupKey, msg.data.username);
 					}
 					break;
 				case easemobim.EVENTS.DRAGREADY.event:
