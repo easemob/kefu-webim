@@ -302,12 +302,12 @@
                             if ( msgBody.from === config.user.username ) {
                                 switch ( msg.type ) {
                                     case 'img':
-                                        msg.url = config.base + msg.url;
+                                        msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
                                         msg.to = msgBody.to;
                                         me.sendImgMsg(msg, true);
                                         break;
 									case 'file':
-                                        msg.url = config.base + msg.url;
+                                        msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
                                         msg.to = msgBody.to;
                                         me.sendFileMsg(msg, true);
                                         break;
@@ -323,7 +323,7 @@
                                 } else {
                                     me.receiveMsg({
                                         data: msg.msg,
-                                        url: config.base + msg.url,
+                                        url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
                                         from: msgBody.from,
                                         to: msgBody.to
                                     }, msg.type, true);
