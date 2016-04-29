@@ -930,6 +930,7 @@
                     msg = new Easemob.im.EmMessage('img', isHistory ? null : me.conn.getUniqueId());
 
                 msg.set({
+					apiUrl: (utils.ssl ? 'https://' : 'http://') + config.restServer,
                     file: file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id')),
                     to: config.toUser,
                     uploadError: function ( error ) {
@@ -982,6 +983,7 @@
 				}
 
                 msg.set({
+					apiUrl: (utils.ssl ? 'https://' : 'http://') + config.restServer,
                     file: file,
                     to: config.toUser,
                     uploadError: function ( error ) {
