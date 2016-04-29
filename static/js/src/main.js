@@ -26,6 +26,7 @@
 
 		if ( utils.root && !config ) {
 			config = {};
+			config.domain = '//' + location.host;
 			config.tenantId = tenantId;
 			config.appKey = '';
 			config.emgroup = utils.query('emgroup');
