@@ -30,7 +30,7 @@
 			config.appKey = '';
 			config.emgroup = utils.query('emgroup');
 			config.user = {
-				username: utils.get(config.emgroup ? config.emgroup + config.tenantId : config.tenantId),
+				username: utils.get('root' + config.emgroup + config.tenantId),
 				password: '',
 				token: ''
 			};
@@ -155,7 +155,7 @@
 											group: config.user.emgroup
 										};
 										utils.root
-										? utils.set(config.toUser, config.user.username)
+										? utils.set('root' + config.emgroup + config.tenantId, config.user.username)
 										: transfer.send(easemobim.EVENTS.CACHEUSER);
 										chat.ready();
 									});
@@ -179,7 +179,7 @@
 									group: config.user.emgroup
 								};
 								utils.root
-								? utils.set(config.toUser, config.user.username)
+								? utils.set('root' + config.emgroup + config.tenantId, config.user.username)
 								: transfer.send(easemobim.EVENTS.CACHEUSER);
 								chat.ready();
 							});
