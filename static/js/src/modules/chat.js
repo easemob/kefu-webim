@@ -552,6 +552,7 @@
             }
             , show: function ( outerTrigger ) {
 				var me = this;
+
 				if ( !outerTrigger ) {
 					easemobim.EVENTS.SHOW.data = { trigger: true };
 					utils.root || transfer.send(easemobim.EVENTS.SHOW);
@@ -708,7 +709,7 @@
 					}
 				});
 				
-				utils.on(easemobim.imBtn, utils.click, function () {
+				!utils.isMobile && utils.on(easemobim.imBtn, utils.click, function () {
 					me.show();
 				});
 				utils.on(easemobim.imChatBody, utils.click, function () {
@@ -1121,16 +1122,17 @@
                     utils.extend(msg.body, ext);
                 }
 
+
+				utils.addClass(easemobim.sendBtn, 'disabled');
                 if ( !isHistory ) {
 					me.setGroup(msg);
                     me.conn.send(msg.body);
-					easemobim.textarea.value = '';
+					if ( msg.body.ext && msg.body.ext.type === 'custom' ) { return; }
 					me.appendDate(new Date().getTime(), config.toUser);
 					me.appendMsg(config.user.username, config.toUser, msg);
                 } else {
                     me.appendMsg(config.user.username, isHistory, msg, true);
                 }
-				utils.addClass(easemobim.sendBtn, 'disabled')
             }
 			, transferToKf: function ( id, sessionId ) {
                 var me = this;
