@@ -16,7 +16,7 @@
 
 		var tenantId = utils.query('tenantId');
 
-		//get config from referrer
+		//get config from referrer's config
 		if ( !config ) {
 			try {
 				config = JSON.parse(utils.get('emconfig' + tenantId));
@@ -24,19 +24,27 @@
 		}
 
 
-		if ( utils.root && (!config || !config.user || !config.user.username || config.user.username != utils.query('user')) ) {
-			config = {};
-			config.domain = '//' + location.host;
-			config.tenantId = tenantId;
-			config.appKey = '';
-			config.emgroup = utils.query('emgroup');
-			config.user = {
-				username: utils.get('root' + config.emgroup + config.tenantId),
-				password: '',
-				token: ''
-			};
-			config.satisfaction = utils.convertFalse(utils.query('sat'));
-			config.resources = utils.convertFalse(utils.query('resources'));
+		if ( utils.root ) {
+			if ( !config ) {
+				config = {};
+				config.domain = '//' + location.host;
+				config.tenantId = tenantId;
+				config.appKey = '';
+				config.emgroup = utils.query('emgroup');
+				config.user = {
+					username: utils.get('root' + config.emgroup + config.tenantId),
+					password: '',
+					token: ''
+				};
+				config.satisfaction = utils.convertFalse(utils.query('sat'));
+				config.resources = utils.convertFalse(utils.query('resources'));
+			} else if ( !config.user || !config.user.username || config.user.username != utils.query('user') ) {
+				config.user = {
+					username: utils.get('root' + config.emgroup + config.tenantId),
+					password: '',
+					token: ''
+				};
+			}
 		}
 
 		//reset
