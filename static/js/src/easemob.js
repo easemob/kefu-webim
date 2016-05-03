@@ -107,7 +107,9 @@
 	easemobim.notify();
 
 	easemobim.sendExt = function ( ext ) {
-		iframe.send(ext);
+		iframe.send({
+			ext: ext
+		});
 	};
 
 	//

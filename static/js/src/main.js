@@ -16,15 +16,15 @@
 
 		var tenantId = utils.query('tenantId');
 
-
+		//get config from referrer
 		if ( !config ) {
 			try {
-				config = JSON.parse(localStorage.getItem('emconfig' + tenantId));
+				config = JSON.parse(utils.get('emconfig' + tenantId));
 			} catch ( e ) {}
 		}
 
 
-		if ( utils.root && !config ) {
+		if ( utils.root && (!config || !config.user || !config.user.username || config.user.username != utils.query('user')) ) {
 			config = {};
 			config.domain = '//' + location.host;
 			config.tenantId = tenantId;
@@ -48,7 +48,7 @@
 		//render Tpl
 		webim.innerHTML = "\
 			<div id='easemobWidgetPopBar'" + (utils.root || !config.minimum || config.hide ? " class='em-hide'" : "") + "'>\
-				<a class='easemobWidget-pop-bar bg-color' href='javascript:;'><i></i>" + config.buttonText + "</a>\
+				<a class='easemobWidget-pop-bar bg-color' href='" + (utils.isMobile ? location.href + "' target='_blank'" : "javascript:;'") + "><i></i>" + config.buttonText + "</a>\
 				<span class='easemobWidget-msgcount em-hide'></span>\
 			</div>\
 			<div id='EasemobKefuWebimChat' class='easemobWidgetWrapper" + (utils.root || !config.minimum ? "'" : " em-hide'") + ">\
@@ -71,8 +71,8 @@
 					(utils.isMobile || !config.satisfaction ? "" : "<span id='EasemobKefuWebimSatisfy' class='easemobWidget-satisfaction'>请对服务做出评价</span>") + "\
 					<a href='javascript:;' class='easemobWidget-send bg-color disabled' id='easemobWidgetSendBtn'>连接中</a>\
 				</div>\
-				<iframe id='EasemobKefuWebimIframe' class='em-hide' src='" + (config.domain || '\/\/' + location.host) + "/webim/transfer.html'>\ </div>\
-		";
+				<iframe id='EasemobKefuWebimIframe' class='em-hide' src='" + (config.domain || '\/\/' + location.host) + "/webim/transfer.html?v='" + new Date().getTime() + ">\
+			</div>";
 
 
 		window.chat = easemobim.chat(config);
@@ -232,7 +232,7 @@
 						entry.close(true);
 						break;
 					case easemobim.EVENTS.EXT.event:
-						chat.sendTextMsg('', false, msg.data);
+						chat.sendTextMsg('custom', false, msg.data);
 						break;
 				}
 			}
