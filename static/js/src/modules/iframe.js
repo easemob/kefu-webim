@@ -281,9 +281,7 @@
 			this.iframe.style.width = '100%';
 			this.iframe.style.right = '0';
 
-			if ( this.config.user && this.config.user.username ) {
-				easemobim.utils.set('emconfig' + this.config.tenantId, JSON.stringify(this.config));
-			}
+			easemobim.utils.set('emconfig' + this.config.tenantId, JSON.stringify(this.config));
 		}
 
 		this.iframe.src = this.url;
