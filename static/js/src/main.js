@@ -59,7 +59,7 @@
 				<a class='easemobWidget-pop-bar bg-color' href='" + (utils.isMobile ? location.href + "' target='_blank'" : "javascript:;'") + "><i></i>" + config.buttonText + "</a>\
 				<span class='easemobWidget-msgcount em-hide'></span>\
 			</div>\
-			<div id='EasemobKefuWebimChat' class='easemobWidgetWrapper" + (utils.root || !config.minimum ? "'" : " em-hide'") + ">\
+			<div id='EasemobKefuWebimChat' class='easemobWidgetWrapper" + (utils.root || !config.minimum ? "" : " em-hide")  + (utils.isMobile ? " easemobWidgetWrapper-mobile" : "") + "'>\
 				<div id='easemobWidgetHeader' class='easemobWidgetHeader-wrapper bg-color border-color'>\
 					<div id='easemobWidgetDrag'>\
 						" + (utils.isMobile || utils.root ? "" : "<p></p>") + "\

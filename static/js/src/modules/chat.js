@@ -54,7 +54,6 @@
 				if ( !utils.root ) { return false; }
 
 				config.dragenable = false;
-                //utils.isMobile && (utils.$Class('i.easemobWidgetHeader-keyboard')[0].style.right = '9px');
 				this.fillFace();
 			}
 			, mobile: function () {
@@ -63,7 +62,6 @@
 				config.dragenable = false;
 				var i = document.createElement('i');
 				i.style.right = '9px';
-                utils.addClass(easemobim.imChat, 'easemobWidgetWrapper-mobile');
 				utils.addClass(i, 'easemobWidgetHeader-keyboard easemobWidgetHeader-keyboard-down');
 				easemobim.dragHeader.appendChild(i);
 			}
