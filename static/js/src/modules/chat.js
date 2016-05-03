@@ -1122,12 +1122,11 @@
                     utils.extend(msg.body, ext);
                 }
 
-
 				utils.addClass(easemobim.sendBtn, 'disabled');
                 if ( !isHistory ) {
 					me.setGroup(msg);
                     me.conn.send(msg.body);
-					me.textarea.value = '';
+					easemobim.textarea.value = '';
 					if ( msg.body.ext && msg.body.ext.type === 'custom' ) { return; }
 					me.appendDate(new Date().getTime(), config.toUser);
 					me.appendMsg(config.user.username, config.toUser, msg);
