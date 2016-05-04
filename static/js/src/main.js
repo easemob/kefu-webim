@@ -106,6 +106,7 @@
 		 */
 		entry = {
 			init: function () {
+				config.toUser = config.toUser || config.to;
 				api('getDutyStatus', {
 					tenantId: config.tenantId
 				}, function ( msg ) {
