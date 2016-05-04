@@ -20,7 +20,6 @@
 		dialogHeight: '500px',
 		dragenable: true,
 		minimum: true,
-		resources: false,
 		soundReminder: true,
 		dialogPosition: { x: '10px', y: '10px' },
 		user: {
