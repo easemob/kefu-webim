@@ -50,6 +50,7 @@ easemobim.config = {
 <script>
 window.easemobim = window.easemobim || {};
 easemobim.config = {
+	tenantId: 'XXX',
 	domain: '',		//环信移动客服域,			domain: '//kefu.easemob.com', 
 	path: '',		//im.html的服务器路径,		path: '//XXX/webim'
 	staticPath: ''	//访客插件static的路径,		staticPath: '//XXX/static'
