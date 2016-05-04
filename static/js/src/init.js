@@ -16,7 +16,8 @@ EasemobWidget.init = function ( obj, callback ) {
             obj.to = toinfo[curIdx].imServiceNumber;
             obj.orgName = toinfo[curIdx].orgName;
             obj.appName = toinfo[curIdx].appName;
-            obj.apiUrl = toinfo[curIdx].restDomain ? '//' + toinfo[curIdx].restDomain : '//a1.easemob.com';
+            //obj.apiUrl = toinfo[curIdx].restDomain ? '//' + toinfo[curIdx].restDomain : '//a1.easemob.com';
+            obj.apiUrl = '//a1.vip1.easemob.com';
 
 			var cluster = toinfo[curIdx].restDomain ? toinfo[curIdx].restDomain.match(/vip\d/) : '';
             obj.cluster = cluster && cluster.length > 0 ? cluster[0] : '';
