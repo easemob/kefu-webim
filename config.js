@@ -15,13 +15,13 @@ easemobim.config = {
 	buttonText: '联系客服',								//设置小按钮的文案
 	hide: true,											//是否隐藏小的悬浮按钮
 	resources: false,									//是否启用收消息同步
-	dragenable: true,									//是否允许拖拽
-	dialogWidth: '400px',								//聊天窗口宽度
-	dialogHeight: '500px',								//聊天窗口高度
-	minimum: true,										//是否允许窗口最小化
+	dragenable: true,									//是否允许拖拽, H5不支持
+	dialogWidth: '400px',								//聊天窗口宽度, H5不支持
+	dialogHeight: '500px',								//聊天窗口高度, H5不支持
+	minimum: true,										//是否允许窗口最小化, H5不支持
 	satisfaction: true,									//是否允许访客主动发起满意度评价
-	soundReminder: true,								//是否启用声音提醒(低版本浏览器不支持)
-	dialogPosition: { x: '10px', y: '10px' },			//聊天窗口初始位置，坐标以视口右边距和下边距为基准
+	soundReminder: true,								//是否启用声音提醒(低版本浏览器和H5不支持)
+	dialogPosition: { x: '10px', y: '10px' },			//聊天窗口初始位置，坐标以视口右边距和下边距为基准, H5不支持
 	onmessage: function ( message ) { },				//收消息回调, 只对当前打开的聊天窗口有效
 	onready: function () { },							//聊天窗口加载成功回调
 
