@@ -233,7 +233,8 @@
 				var cluster = config.cluster ? '-' + config.cluster : '';
 
 				var op = {
-					url: 'im-api' + cluster + '.easemob.com',
+					//url: 'im-api' + cluster + '.easemob.com',
+					url: 'im-api-vip1.easemob.com',
 					retry: true
 				};
 				config.json.resources && (op.multiResources = true);
