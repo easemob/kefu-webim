@@ -31,6 +31,14 @@
     };
 
     getData.listen(function ( msg ) {
+
+		if ( msg && msg.user && msg.tenantId ) {
+			try {
+				easemobim.utils.set('emconfig' + msg.tenantId + msg.ukey, JSON.stringify(msg));
+			} catch ( e ) {}
+			return;
+		}
+
         getData.targetOrigin = msg.origin;
 
         switch ( msg.api ) {
@@ -55,7 +63,7 @@
                 break;
             case 'getSession':
                 easemobIM.emajax(createObject({
-                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/CurrentServiceSession?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
+                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
                     msg: msg,
                     excludeData: true
                 }));
@@ -82,6 +90,12 @@
             case 'getSlogan':
                 easemobIM.emajax(createObject({
                     url: '/v1/webimplugin/notice/options',
+                    msg: msg
+                }));
+                break;
+			case 'getTheme':
+                easemobIM.emajax(createObject({
+                    url: '/v1/webimplugin/theme/options',
                     msg: msg
                 }));
                 break;
