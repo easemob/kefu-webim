@@ -598,7 +598,7 @@
 
 				if ( userHash[key].user && userHash[key].password ) {
 					me.connectToServer(key);
-					//me.getSession();
+					me.getSession();
 
 					me.chatWrapper.data('hised') || me.getHistory(0, me.chatWrapper, function ( wrapper, info ) {
 						config.history = info;
@@ -607,7 +607,7 @@
 				} else {
 					me.handleUser(userHash[key], function () {
 						me.connectToServer(key);
-						//me.getSession();
+						me.getSession();
 
 						me.getHistory(0, me.chatWrapper, function ( wrapper, info ) {
 							config.history = info;
@@ -1510,7 +1510,7 @@
                 
                 if ( !isHistory ) {
 					
-					//noPrompt || me.getSession('resendUntilGetSession');
+					noPrompt || me.getSession('resendUntilGetSession');
 
                     if ( !msg.from ) {
 						//current chat wrapper
