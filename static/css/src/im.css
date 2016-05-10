@@ -968,6 +968,7 @@ body .easemobWidget-offline-bg {
     pop dialog
 */
 .easemobWidget-dialog {
+	z-index: 3;
     position: absolute;
     width: 320px;
     height: 380px;

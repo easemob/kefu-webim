@@ -219,6 +219,8 @@
 			tenantId: this.config.tenantId,
 			hide: this.config.hide,
 			sat: this.config.visitorSatisfactionEvaluate,
+			wechatAuth: this.config.wechatAuth,
+			hideKeyboard: this.config.hideKeyboard,
 			resources: this.config.resources,
 			emgroup: this.config.emgroup || '',
 			user: this.config.user && this.config.user.username ? this.config.user.username : ''
@@ -345,6 +347,14 @@
 		}
 		easemobim.EVENTS.EXT.data = ext;	
 		this.message.send(easemobim.EVENTS.EXT);
+	};
+
+	Iframe.prototype.sendText = function ( msg ) {
+		if ( this.message ) {
+			this.message = new easemobim.Transfer(this.iframe.id);
+		}
+		easemobim.EVENTS.TEXTMSG.data = msg;	
+		this.message.send(easemobim.EVENTS.TEXTMSG);
 	};
 
 	window.easemobim = window.easemobim || {};

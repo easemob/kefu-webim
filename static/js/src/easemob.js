@@ -11,6 +11,7 @@
 	var config = {
 		tenantId: '',
 		to: '',
+		agentName: '',
 		appKey: '',
 		domain: '',
 		path: '',
@@ -109,6 +110,10 @@
 		iframe.send({
 			ext: ext
 		});
+	};
+
+	easemobim.sendText = function ( msg ) {
+		iframe.sendText(msg);
 	};
 
 	//

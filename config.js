@@ -10,12 +10,14 @@ easemobim.config = {
 	xmppServer: '',										//环信IM服务器,				xmppServer: 'im-api.easemob.com'
 	restServer: '',										//环信REST服务器,			restServer: 'a1.easemob.com'
 	visitor: '',										//访客信息
+	agentName: '',										//指定坐席
 
 	autoConnect: false,									//自动连接
 	buttonText: '联系客服',								//设置小按钮的文案
 	hide: true,											//是否隐藏小的悬浮按钮
 	resources: false,									//是否启用收消息同步
 	dragenable: true,									//是否允许拖拽, H5不支持
+	hideKeyboard: false,								//是否隐藏H5右上角的键盘图标
 	dialogWidth: '400px',								//聊天窗口宽度, H5不支持
 	dialogHeight: '500px',								//聊天窗口高度, H5不支持
 	minimum: true,										//是否允许窗口最小化, H5不支持
