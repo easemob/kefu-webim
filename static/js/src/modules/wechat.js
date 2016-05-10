@@ -11,48 +11,16 @@
 
 	var code = easemobim.utils.query('code');
 
-	var getToken = function ( code, callback ) {
-		//step2 get token
-		easemobim.emajax({
-			url: 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx1e7ed77036581061&secret=d6a53d79eedc926b6072b53b56b76833&code=' + code + '&grant_type=authorization_code'
-			, data: null
-			, type: 'GET'
-			, success: function ( info ) {
-				if ( info && info.access_token ) {
-					alert('suc1');
-					typeof callback === 'function' && callback(info);
-				}
-			}
-			, error: function ( info ) {
-				
-				alert(JSON.stringify(info));
-			}
-		});
-	};
-
-	var getProfile = function ( token, openid, callback ) {
+	var getProfile = function ( code, callback ) {
 		//step3 get profile
 		easemobim.emajax({
-			url: 'https://api.weixin.qq.com/sns/userinfo?access_token=' + token + '&openid=' + openid + '&lang=zh_CN'
+			url: ''
 			, data: null
 			, type: 'GET'
 			, success: function ( info ) {
-				if ( info && info.openid ) {
-					alert('suc2');
-					window.easemobim.visitor = {
-						trueName: '',
-						qq: '',
-						phone: '',
-						companyName: '',
-						userNickname: info.nickname,
-						description: '',
-						email: ''
-					};
-					easemobim.utils.extend(easemobim.visitor, info);
-				}
+				
 			}
 			, error: function ( info ) {
-				alert('error2');
 
 			}
 		});
@@ -66,11 +34,8 @@
 
 	} else {
 		
-		getToken(code, function ( resp ) {
+		getProfile(code, function ( resp ) {
 			alert(JSON.stringify(resp));
-			getProfile(resp.access_token, rest.oppenid, function ( resp ) {
-				alert(JSON.stringify(resp));
-			});
 		});
 	}*/
 }());
