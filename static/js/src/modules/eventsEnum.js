@@ -29,5 +29,8 @@ easemobim.EVENTS = {
 	},
 	EXT: {
 		event: 'ext'
+	},
+	TEXTMSG: {
+		event: 'textmsg'
 	}
 };

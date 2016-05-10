@@ -38,16 +38,22 @@
 				this.setRoot();
                 this.bindEvents();
             }
-			, setGroup: function ( msg ) {
+			, setExt: function ( msg ) {
+				msg.body.ext = msg.body.ext || {};
+				msg.body.ext.weichat = msg.body.ext.weichat || {};
+
+				//bind skill group
 				if ( config.emgroup ) {
-					msg.body.ext = msg.body.ext || {};
-					msg.body.ext.weichat = msg.body.ext.weichat || {};
 					msg.body.ext.weichat.queueName = decodeURIComponent(config.emgroup);
 				}
-				if ( config.visitor ) {
-					msg.body.ext = msg.body.ext || {};
-					msg.body.ext.weichat = msg.body.ext.weichat || {};
-					msg.body.ext.weichat.visitor = config.visitor;
+				//bind visitor
+				var visitor = config.visitor || easemobim.visitor;
+				if ( visitor ) {
+					msg.body.ext.weichat.visitor = visitor;
+				}
+				//bind agent
+				if ( config.agentName ) {
+					msg.body.ext.weichat.agentUsername = config.agentName;
 				}
 			}
 			, setRoot: function () {
@@ -60,10 +66,12 @@
 				if ( !utils.isMobile ) { return false; }
 
 				config.dragenable = false;
-				var i = document.createElement('i');
-				i.style.right = '9px';
-				utils.addClass(i, 'easemobWidgetHeader-keyboard easemobWidgetHeader-keyboard-down');
-				easemobim.dragHeader.appendChild(i);
+				if ( !config.hideKeyboard ) {
+					var i = document.createElement('i');
+					i.style.right = '9px';
+					utils.addClass(i, 'easemobWidgetHeader-keyboard easemobWidgetHeader-keyboard-down');
+					easemobim.dragHeader.appendChild(i);
+				}
 			}
             , ready: function () {
                 this.setNotice();
@@ -190,7 +198,7 @@
 							switch ( rGreeting.greetingTextType ) {
 								case 0:
 									msg = {
-										msg: rGreeting.greetingText,
+										data: rGreeting.greetingText,
 										type: 'txt',
 										noprompt: true
 									};
@@ -201,7 +209,7 @@
 										var greetingObj = Easemob.im.Utils.parseJSON(rGreeting.greetingText.replace(/&quot;/g, '"'));
 										if ( rGreeting.greetingText === '{}' ) {
 											msg = {
-												msg: '该菜单不存在',
+												data: '该菜单不存在',
 												type: 'txt',
 												noprompt: true
 											};
@@ -959,7 +967,7 @@
                     flashUpload: easemobim.flashUpload
                 });
                 if ( !isHistory ) {
-					me.setGroup(msg);
+					me.setExt(msg);
                     me.conn.send(msg.body);
                     easemobim.realFile.value = '';
                     if ( Easemob.im.Utils.isCanUploadFileAsync ) {
@@ -1012,7 +1020,7 @@
                     flashUpload: easemobim.flashUpload
                 });
                 if ( !isHistory ) {
-					me.setGroup(msg);
+					me.setExt(msg);
                     me.conn.send(msg.body);
                     easemobim.realFile.value = '';
                     if ( Easemob.im.Utils.isCanUploadFileAsync ) {
@@ -1122,7 +1130,7 @@
 
 				utils.addClass(easemobim.sendBtn, 'disabled');
                 if ( !isHistory ) {
-					me.setGroup(msg);
+					me.setExt(msg);
                     me.conn.send(msg.body);
 					easemobim.textarea.value = '';
 					if ( msg.body.ext && msg.body.ext.type === 'custom' ) { return; }

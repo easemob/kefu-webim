@@ -51,6 +51,8 @@
 		config.hide = utils.convertFalse(config.hide);
 		config.resources = utils.convertFalse(config.resources);
 		config.satisfaction = utils.convertFalse(config.satisfaction);
+		config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
+		config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
 		
 
 		//render Tpl
@@ -241,7 +243,10 @@
 						entry.close(true);
 						break;
 					case easemobim.EVENTS.EXT.event:
-						chat.sendTextMsg('custom', false, msg.data);
+						chat.sendTextMsg('', false, msg.data.ext);
+						break;
+					case easemobim.EVENTS.TEXTMSG.event:
+						chat.sendTextMsg(msg.data.data, false, msg.data.ext);
 						break;
 				}
 			}
