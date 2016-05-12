@@ -16,8 +16,7 @@ v43.0.0更新
 
 
 ## 引用及配置示例
-* 详见`demo.html`
-* 所有参数及其含义见`config.js`, 其中包含设置访客信息
+* 所有参数及其含义见`demo.html`
 * 需要在本地搭建一个服务器环境，使用IP或者域名方式访问, 并且要安装node、gulp等工具,具体可见gulpfile.js 和 packkage.json
 
 
@@ -121,7 +120,7 @@ easemobim.sendExt({
 
 ## 自定义调用按钮
 
-将`easemobim.bind(config/*config支持的参数可见config.js*/)`方法绑定到A标签即可，例如自定义一个按钮
+将`easemobim.bind(config)`方法绑定到A标签即可，例如自定义一个按钮
 ```html
 <a onclick='easemobim.bind({
 	tenantId: "XXX",

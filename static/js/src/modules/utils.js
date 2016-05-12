@@ -159,9 +159,17 @@
 		, extend: function ( object, extend ) {
 			var tmp;
 			for ( var o in extend ) {
-				tmp = this.convertFalse(extend[o]);
-				if ( extend.hasOwnProperty(o) && (tmp || tmp === false) ) {
-					object[o] = extend[o];
+				if ( extend.hasOwnProperty(o) ) {
+					var t = Object.prototype.toString.call(extend[o]);
+					if ( t === '[object Array]' ) {
+						object[o] = [];
+						this.extend(object[o], extend[o]);
+					} else if ( t === '[object Object]' ) {
+						object[o] = {};
+						this.extend(object[o], extend[o]);
+					} else {
+						object[o] = extend[o];
+					}
 				}
 			}
 			return object;
@@ -387,8 +395,8 @@
 				, domain: domain
 			};
 		}
-		, updateAttribute: function ( link, attr ) {
-			var url = link || _protocol + easemobim.config.path + '/im.html?tenantId=';
+		, updateAttribute: function ( link, attr, path ) {
+			var url = link || _protocol + path + '/im.html?tenantId=';
 
 			for ( var o in attr ) {
 				if ( attr.hasOwnProperty(o) ) {
@@ -400,15 +408,9 @@
 				}
 			}
 			return url;
-		}
-		, copy: function ( obj ) {
-			var result = {};
-			for ( var key in obj ) {
-				if ( obj.hasOwnProperty(key) ) {
-					result[key] = typeof obj[key] === 'object' ? this.copy(obj[key]) : obj[key];
-				}
-			} 
-			return result; 
+		},
+		copy: function ( obj ) {
+			return this.extend({}, obj);
 		}
 	};
 }());

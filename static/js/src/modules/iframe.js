@@ -137,6 +137,9 @@
 				case easemobim.EVENTS.ONMESSAGE.event://onmessage callback
 					typeof me.config.onmessage === 'function' && me.config.onmessage(msg.data);
 					break;
+				case easemobim.EVENTS.ONSESSIONCLOSED.event://onservicesessionclosed callback
+					typeof me.config.onsessionclosed === 'function' && me.config.onsessionclosed();
+					break;
 				case easemobim.EVENTS.CACHEUSER.event://cache username
 					if ( !msg.data.username ) { break; }
 
@@ -187,7 +190,7 @@
 			: document.createElement('iframe');
 		this.iframe.id = 'EasemobIframe' + new Date().getTime();
 		this.iframe.name = new Date().getTime();
-		this.iframe.style.cssText = 'width: 0;height: 0;border: none;';
+		this.iframe.style.cssText = 'width: 0;height: 0;border: none; position: fixed;';
 		this.shadow = document.createElement('div');
 		this.config = easemobim.utils.copy(config);
 
@@ -224,7 +227,7 @@
 			resources: this.config.resources,
 			emgroup: this.config.emgroup || '',
 			user: this.config.user && this.config.user.username ? this.config.user.username : ''
-		});
+		}, config.path);
 
 
 		if ( !this.config.user.username ) {

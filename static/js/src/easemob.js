@@ -1,14 +1,11 @@
 /*
- * 两种接入方式：
- * 1.<script src='//kefu.easemob.com/webim/easemob.js?tenantId=10954&hide=false&sat=true'></script>线上引用的方式支持参数较少，请参考环信官网文档；
- * 2.<script src='//本地路径/easemob.js'></script>;详细配置参考demo.html
+ * 环信移动客服WEB访客端插件接入js
  */
-
 
 ;(function ( window, undefined ) {
     'use strict';
 
-	var config = {
+	var CONF = {
 		tenantId: '',
 		to: '',
 		agentName: '',
@@ -28,35 +25,35 @@
 			password: '',
 			token: ''
 		}
+	}, config = easemobim.utils.copy(CONF);
+
+
+	//get parameters from easemob.js
+    var baseConfig = easemobim.utils.getConfig('easemob.js', true),
+		_config = {};
+
+
+	//init _config & concat config and global easemobim.config
+	var reset = function () {
+		config = easemobim.utils.copy(CONF);
+		easemobim.utils.extend(config, easemobim.config);
+		_config = easemobim.utils.copy(config);
+
+		var hide = easemobim.utils.convertFalse(_config.hide) !== '' ? _config.hide : baseConfig.json.hide,
+			resources = easemobim.utils.convertFalse(_config.resources) !== '' ? _config.resources :  baseConfig.json.resources,
+			sat = easemobim.utils.convertFalse(_config.satisfaction) !== '' ? _config.satisfaction :  baseConfig.json.sat;
+
+		_config.tenantId = _config.tenantId || baseConfig.json.tenantId;
+		_config.hide = easemobim.utils.convertFalse(hide);
+		_config.resources = easemobim.utils.convertFalse(resources);
+		_config.satisfaction = easemobim.utils.convertFalse(sat);
+		_config.domain = _config.domain || baseConfig.domain;
+		_config.path = _config.path || (baseConfig.domain + '/webim');
+		_config.staticPath = _config.staticPath || (baseConfig.domain + '/webim/static');
 	};
 
-
-	//save global config
-	easemobim.utils.extend(config, easemobim.config);
-
-
-	//get parameters from easemob script
-    var baseConfig = easemobim.utils.getConfig('easemob.js', true);
-
-
-	var init = function () {
-		easemobim.config = easemobim.utils.copy(config);
-
-		var hide = easemobim.utils.convertFalse(easemobim.config.hide) !== '' ? easemobim.config.hide : baseConfig.json.hide,
-			resources = easemobim.utils.convertFalse(easemobim.config.resources) !== '' ? easemobim.config.resources :  baseConfig.json.resources,
-			sat = easemobim.utils.convertFalse(easemobim.config.satisfaction) !== '' ? easemobim.config.satisfaction :  baseConfig.json.sat;
-
-		easemobim.config.tenantId = easemobim.config.tenantId || baseConfig.json.tenantId;
-		easemobim.config.hide = easemobim.utils.convertFalse(hide);
-		easemobim.config.resources = easemobim.utils.convertFalse(resources);
-		easemobim.config.satisfaction = easemobim.utils.convertFalse(sat);
-		easemobim.config.domain = easemobim.config.domain || baseConfig.domain;
-		easemobim.config.path = easemobim.config.path || (baseConfig.domain + '/webim');
-		easemobim.config.staticPath = easemobim.config.staticPath || (baseConfig.domain + '/webim/static');
-	};
-
-	init();
-	var iframe = easemobim.Iframe(easemobim.config, true);
+	reset();
+	var iframe = easemobim.Iframe(_config, true);
 
 
 	/*
@@ -76,13 +73,12 @@
 	 */
 	easemobim.bind = function ( config ) {
 
-		init();
-		easemobim.utils.extend(easemobim.config, config);
-		easemobim.config.emgroup = config.emgroup;
+		reset();
+		easemobim.utils.extend(_config, config);
 
-		if ( !easemobim.config.tenantId ) { return; }
+		if ( !_config.tenantId ) { return; }
 
-		iframe.set(easemobim.config, easemobim.utils.isMobile ? null : iframe.open);
+		iframe.set(_config, easemobim.utils.isMobile ? null : iframe.open);
 
 		if ( easemobim.utils.isMobile ) {
 			var a = window.event.srcElement || window.event.target,
@@ -103,22 +99,34 @@
 	};
 
 
-	easemobim.titleSlide(easemobim.config);
+	//init title slide function
+	easemobim.titleSlide(_config);
+	//init browser notify function
 	easemobim.notify();
 
+
+	//open api1: send custom extend message
 	easemobim.sendExt = function ( ext ) {
 		iframe.send({
 			ext: ext
 		});
 	};
 
+	//open api2: send text message
+	/*
+	 * @param: {object} 消息体
+	 * {
+	 *		data: "text msg",
+	 *		ext: {}
+	 * }
+	 */
 	easemobim.sendText = function ( msg ) {
 		iframe.sendText(msg);
 	};
 
-	//
-	if ( (!easemobim.config.hide || easemobim.config.autoConnect) && easemobim.config.tenantId ) {
-		iframe.set(easemobim.config, iframe.close);
+	//auto load
+	if ( (!_config.hide || _config.autoConnect) && _config.tenantId ) {
+		iframe.set(_config, iframe.close);
 	}
 
 }(window, undefined));
