@@ -1366,7 +1366,12 @@
 						} else if (  msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionClosedEvent' ) {
 							//service session closed event
 							//hide tip
-							this.session = null, this.sessionSent = false, this.handleTransfer('reply');
+							if ( config.agentList && config.agentList[config.toUser] && config.agentList[config.toUser].firstMsg ) {
+								config.agentList[config.toUser].firstMsg = false;
+							}
+							this.session = null;
+							this.sessionSent = false;
+							this.handleTransfer('reply');
 							utils.root || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED);
 						} else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionOpenedEvent' ) {
 							//service session opened event
