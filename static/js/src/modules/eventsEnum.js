@@ -27,6 +27,9 @@ easemobim.EVENTS = {
 	ONMESSAGE: {
 		event: 'onMessage'
 	},
+	ONSESSIONCLOSED: {
+		event: 'onSessionClosed'
+	},
 	EXT: {
 		event: 'ext'
 	},

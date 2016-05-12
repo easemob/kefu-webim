@@ -6,6 +6,7 @@
     easemobim.chat = function ( config ) {
 		var utils = easemobim.utils;
 
+		//DOM init
 		easemobim.im = utils.$Dom('EasemobKefuWebim'),
 		easemobim.imBtn = utils.$Dom('easemobWidgetPopBar'),
 		easemobim.imChat = utils.$Dom('EasemobKefuWebimChat'),
@@ -23,19 +24,30 @@
 		easemobim.swfupload = null;//flash 上传
 
 
+		//chat window object
         return {
             init: function () {
+				//create & init connection
                 this.setConnection();
-                this.scbT = 0;//sroll bottom timeout stamp
-				this.msgCount = 0;//未读消息数
-                this.msgTimeSpan = {};//用于处理1分钟之内的消息只显示一次时间
-                this.opened = true;//聊天窗口是否已展示
-
+				//sroll bottom timeout stamp
+                this.scbT = 0;
+				//unread message count
+				this.msgCount = 0;
+				//just show date label once in 1 min
+                this.msgTimeSpan = {};
+				//chat window status
+                this.opened = true;
+				//fill theme
 				this.setTheme();
+				//add min icon
                 this.setMinmum();
+				//init sound reminder
                 this.soundReminder();
+				//mobile adjust
 				this.mobile();
+				//root adjust
 				this.setRoot();
+				//bind events on dom
                 this.bindEvents();
             }
 			, setExt: function ( msg ) {
@@ -65,7 +77,9 @@
 			, mobile: function () {
 				if ( !utils.isMobile ) { return false; }
 
+				//mobile need set drag disable
 				config.dragenable = false;
+
 				if ( !config.hideKeyboard ) {
 					var i = document.createElement('i');
 					i.style.right = '9px';
@@ -74,12 +88,19 @@
 				}
 			}
             , ready: function () {
+				//add tenant notice
                 this.setNotice();
+				//add msg callback
                 this.sdkInit();
+				//connect to xmpp server
                 this.open();
+				//create chat container
                 this.handleGroup();
+				//get service serssion info
                 this.getSession();
+				//set tenant logo
 				this.setLogo();
+				//mobile set textarea can growing with inputing
 				this.initAutoGrow();
                 this.chatWrapper.getAttribute('data-getted') || config.newuser || this.getHistory();
             }
@@ -177,6 +198,7 @@
 
 				me.greetingGetted = true;
 
+				//system greeting
 				easemobim.api('getSystemGreeting', {
 					tenantId: config.tenantId
 				}, function ( msg ) {
@@ -189,6 +211,7 @@
 						me.receiveMsg(msg, 'txt');
 					}
 
+					//robert greeting
 					easemobim.api('getRobertGreeting', {
 						tenantId: config.tenantId
 					}, function ( msg ) {
@@ -197,6 +220,7 @@
 
 							switch ( rGreeting.greetingTextType ) {
 								case 0:
+									//robert text greeting
 									msg = {
 										data: rGreeting.greetingText,
 										type: 'txt',
@@ -215,6 +239,7 @@
 											};
 											me.receiveMsg(msg, 'txt');
 										} else {
+											//robert list greeting
 											msg = { 
 												ext: greetingObj.ext,
 												noprompt: true
@@ -254,6 +279,7 @@
 						}
 
 						if ( !msg.data.serviceSession ) {
+							//get greeting only when service session is not exist
 							me.getGreeting();
 						} else {
 							me.session = msg.data.serviceSession;
@@ -306,6 +332,7 @@
                         if ( msgBody && msgBody.bodies.length > 0 ) {
                             msg = msgBody.bodies[0];
                             if ( msgBody.from === config.user.username ) {
+								//visitors' msg
                                 switch ( msg.type ) {
                                     case 'img':
                                         msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
@@ -322,9 +349,14 @@
                                         break;
                                 }
                             } else {
-                                if ( msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType && msgBody.ext.weichat.ctrlType == 'inviteEnquiry'//判断是否为满意度调查的消息
-                                || msgBody.ext && msgBody.ext.msgtype && msgBody.ext.msgtype.choice//机器人自定义菜单
-                                || msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType === 'TransferToKfHint' ) {//机器人转人工
+								//agents' msg
+
+								//判断是否为满意度调查的消息
+                                if ( msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType && msgBody.ext.weichat.ctrlType == 'inviteEnquiry'
+								//机器人自定义菜单
+                                || msgBody.ext && msgBody.ext.msgtype && msgBody.ext.msgtype.choice
+								//机器人转人工
+                                || msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType === 'TransferToKfHint' ) {
                                     me.receiveMsg(msgBody, '', true);
                                 } else {
                                     me.receiveMsg({
@@ -461,6 +493,7 @@
                     }
                 });
             }
+			//fill emotions async
             , fillFace: function () {
                 if ( utils.html(easemobim.chatFaceWrapper.getElementsByTagName('ul')[0]) ) {
                     return;
@@ -545,6 +578,7 @@
 					utils.addClass(easemobim.send, 'em-hide');
 				}
             }
+			//close chat window
             , close: function ( outerTrigger ) {
                 this.opened = false;
 				if ( !config.hide ) {
@@ -556,6 +590,7 @@
 				easemobim.EVENTS.CLOSE.data = { trigger: true };
 				utils.root || transfer.send(easemobim.EVENTS.CLOSE);
             }
+			//show chat window
             , show: function ( outerTrigger ) {
 				var me = this;
 
@@ -932,6 +967,7 @@
                 }, wait))
                 : (ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000);
             }
+			//send image message function
             , sendImgMsg: function ( file, isHistory ) {
                 var me = this,
                     msg = new Easemob.im.EmMessage('img', isHistory ? null : me.conn.getUniqueId());
@@ -978,6 +1014,7 @@
                     me.appendMsg(config.user.username, file.to, msg, true);
                 }
             }
+			//send file message function
 			, sendFileMsg: function ( file, isHistory ) {
                 var me = this,
                     msg = new Easemob.im.EmMessage('file', isHistory ? null : me.conn.getUniqueId()),
@@ -1079,7 +1116,8 @@
 					utils.addClass(easemobim.dragHeader.getElementsByTagName('span')[0], 'em-hide');
 				}
 			}
-            , appendMsg: function ( from, to, msg, isHistory ) {//消息上屏
+			//消息上屏
+            , appendMsg: function ( from, to, msg, isHistory ) {
                 var isSelf = from == config.user.username && (from || config.user.username),
 					me = this,
                     curWrapper = me.chatWrapper;
@@ -1106,6 +1144,7 @@
 				}
                 div = null;
             }
+			//send text message function
             , sendTextMsg: function ( message, isHistory, ext ) {
                 var me = this;
                 
@@ -1158,6 +1197,7 @@
                 });
                 me.conn.send(msg.body);
             }
+			//send satisfaction evaluation message function
             , sendSatisfaction: function ( level, content, session, invite ) {
                 var me = this;
 
@@ -1178,7 +1218,8 @@
                 });
                 me.conn.send(msg.body);
             }
-            , messagePrompt: function ( message ) {//未读消息提醒
+			//未读消息提醒
+            , messagePrompt: function ( message ) {
 
 				if ( utils.isMobile ) {
 					return;
@@ -1216,6 +1257,7 @@
 				utils.addClass(utils.html(easemobim.messageCount, ''), 'em-hide');
 				utils.root || transfer.send(easemobim.EVENTS.RECOVERY);
 			}
+			//receive message function
             , receiveMsg: function ( msg, type, isHistory ) {
                 if ( config.offDuty ) {
                     return;
@@ -1229,20 +1271,24 @@
                 var me = this,
                     message = null;
 
-                //满意度评价
                 if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType && msg.ext.weichat.ctrlType == 'inviteEnquiry' ) {
+					//满意度评价
                     type = 'satisfactionEvaluation';  
-                } else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {//机器人自定义菜单
+                } else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {
+					//机器人自定义菜单
                     type = 'robertList';  
-                } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {//机器人转人工
+                } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {
+					//机器人转人工
                     type = 'robertTransfer';  
 				}
 
                 switch ( type ) {
+					//text message
 					case 'txt':
                         message = new Easemob.im.EmMessage('txt');
                         message.set({value: msg.data});
                         break;
+					//emotion message
 					case 'face':
 						message = new Easemob.im.EmMessage('txt');
 						var msgStr = '', brief = '';
@@ -1253,14 +1299,17 @@
 						}
 						message.set({value: msgStr, emotion: true, brief: brief});
 						break;
+					//image message
                     case 'img':
                         message = new Easemob.im.EmMessage('img');
                         message.set({file: {url: msg.url}});
                         break;
+					//file message
 					case 'file':
                         message = new Easemob.im.EmMessage('file');
                         message.set({file: {url: msg.url, filename: msg.filename}});
                         break;
+					//satisfaction evaluation message
                     case 'satisfactionEvaluation':
                         message = new Easemob.im.EmMessage('list');
                         message.set({value: '请对我的服务做出评价', list: ['\
@@ -1269,6 +1318,7 @@
 								 data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
                             </div>']});
                         break;
+					//robert list message
                     case 'robertList':
                         message = new Easemob.im.EmMessage('list');
                         var str = '',
@@ -1283,6 +1333,7 @@
                         }
                         message.set({value: msg.ext.msgtype.choice.title, list: str});
                         break;
+					//transfer from robert to agent
 					case 'robertTransfer':
 						message = new Easemob.im.EmMessage('list');
                         var str = '',
@@ -1303,42 +1354,61 @@
                 
                 if ( !isHistory ) {
 					
+					//get serssion when receive msg
 					msg.noprompt || this.getSession();
 
-                    if ( msg.ext && msg.ext.weichat && msg.ext.weichat.event && (msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' 
-					|| msg.ext.weichat.event.eventName === 'ServiceSessionTransferedForAgentQueueEvent') ) {
-						//transfer msg, show transfer tip
-                        this.handleTransfer('transfer');
-                    } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionClosedEvent' ) {
-						this.session = null, this.sessionSent = false, this.handleTransfer('reply');//hide tip
-					} else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionOpenedEvent' ) {
-						this.agentCount < 1 && (this.agentCount = 1);//fake
-                        this.handleTransfer('reply');//hide tip
-					} else if ( msg.ext && msg.ext.weichat ) {
-                        if ( !msg.ext.weichat.agent ) {//switch off
-                            this.handleTransfer('reply');
-                        } else {//switch on
-                             msg.ext.weichat.agent && msg.ext.weichat.agent.userNickname !== '调度员' && this.handleTransfer('reply', msg.ext.weichat.agent);
-                        }
-                    }
+                    if ( msg.ext && msg.ext.weichat ) {
+						if ( msg.ext.weichat.event 
+						&& (msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' 
+						|| msg.ext.weichat.event.eventName === 'ServiceSessionTransferedForAgentQueueEvent') ) {
+							//transfer msg, show transfer tip
+							this.handleTransfer('transfer');
+						} else if (  msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionClosedEvent' ) {
+							//service session closed event
+							//hide tip
+							this.session = null, this.sessionSent = false, this.handleTransfer('reply');
+							utils.root || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED);
+						} else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionOpenedEvent' ) {
+							//service session opened event
+							//fake
+							this.agentCount < 1 && (this.agentCount = 1);
+							//hide tip
+							this.handleTransfer('reply');
+						} else {
+							if ( !msg.ext.weichat.agent ) {
+								//switch off
+								this.handleTransfer('reply');
+							} else {
+								//switch on
+								msg.ext.weichat.agent && msg.ext.weichat.agent.userNickname !== '调度员' 
+								&& this.handleTransfer('reply', msg.ext.weichat.agent);
+							}
+						}
+					}
 
-                    if ( !message || !message.value ) {//空消息不显示
+
+					//空消息不显示
+                    if ( !message || !message.value ) {
                         return;
                     }
+
                     if ( !msg.noprompt ) {
 						me.messagePrompt(message);
 					}
 					me.appendDate(new Date().getTime(), msg.from);
                     me.resetSpan();
                     me.appendMsg(msg.from, msg.to, message);
-                    me.scrollBottom();
+                    me.scrollBottom(50);
+
 					if ( config.receive ) {
 						easemobim.EVENTS.ONMESSAGE.data = {
 							from: msg.from,
 							to: msg.to,
 							message: message
 						};
-						utils.root || transfer.send(easemobim.EVENTS.ONMESSAGE);
+						try {
+							utils.root || transfer.send(easemobim.EVENTS.ONMESSAGE);
+						} catch ( e ) {}
 					}
                 } else {
                     if ( !message || !message.value ) {
@@ -1351,33 +1421,34 @@
     };
 
 
-    /**
-     * 调用指定接口获取数据
-    */
-    easemobim.api = function ( apiName, data, callback ) {
-        //cache
-        easemobim.api[apiName] = easemobim.api[apiName] || {};
 
-        var ts = new Date().getTime();
-        easemobim.api[apiName][ts] = callback;
-        easemobim.getData
-        .send({
-            api: apiName
-            , data: data
-            , timespan: ts
-        })
-        .listen(function ( msg ) {
-            if ( easemobim.api[msg.call] && typeof easemobim.api[msg.call][msg.timespan] === 'function' ) {
+	/**
+	 * 调用指定接口获取数据
+	*/
+	easemobim.api = function ( apiName, data, callback ) {
+		//cache
+		easemobim.api[apiName] = easemobim.api[apiName] || {};
 
-                var callback = easemobim.api[msg.call][msg.timespan];
-                delete easemobim.api[msg.call][msg.timespan];
+		var ts = new Date().getTime();
+		easemobim.api[apiName][ts] = callback;
+		easemobim.getData
+		.send({
+			api: apiName
+			, data: data
+			, timespan: ts
+		})
+		.listen(function ( msg ) {
+			if ( easemobim.api[msg.call] && typeof easemobim.api[msg.call][msg.timespan] === 'function' ) {
 
-                if ( msg.status !== 0 ) {
+				var callback = easemobim.api[msg.call][msg.timespan];
+				delete easemobim.api[msg.call][msg.timespan];
+
+				if ( msg.status !== 0 ) {
 					typeof config.onerror === 'function' && config.onerror(msg);
-                } else {
-                    callback(msg);
-                }
-            }
-        });
-    };
+				} else {
+					callback(msg);
+				}
+			}
+		});
+	};
 }());
