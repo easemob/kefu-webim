@@ -1,0 +1,19 @@
+{
+  "name": "easemob",
+  "description": "optimizing js css and png.",
+  "version": "0.1.0",
+  "author": {
+    "name": "easemob",
+    "url": "http://easemob.com/"
+  },
+  "devDependencies": {
+    "gulp": "",
+    "gulp-minify-css": "",
+    "gulp-clean": "",
+    "gulp-watch": "",
+    "gulp-jshint": "~1.12.0",
+    "gulp-concat": "",
+    "gulp-webserver": "",
+    "gulp-uglify": "~0.2.0"
+  }
+}
