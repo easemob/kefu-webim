@@ -436,7 +436,7 @@ button, textarea, input {
 .easemobWidget-status-prompt.transfer:after {
     z-index: 1;
     padding: 5px 10px;
-    background-color: #ccc;
+    background: rgba(0,0,0,.3);
     position: absolute;
     bottom: 0;
     left: 5px;
