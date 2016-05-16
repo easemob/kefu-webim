@@ -301,6 +301,9 @@
             , handleChatContainer: function ( userName ) {
                 var curChatContainer = utils.$Dom(userName);
 
+				this.setAgentProfile({
+					userNickname: config.defaultAgentName
+				});
                 this.setAgentProfile( {userNickname: config.title} );
                 if ( curChatContainer ) {
                     utils.removeClass(curChatContainer, 'em-hide');
