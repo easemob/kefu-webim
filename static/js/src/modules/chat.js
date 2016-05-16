@@ -6,6 +6,9 @@
     easemobim.chat = function ( config ) {
 		var utils = easemobim.utils;
 
+		//msg list, prevent showing duplicately
+		var msgSite = new easemobim.site();
+
 		//DOM init
 		easemobim.im = utils.$Dom('EasemobKefuWebim'),
 		easemobim.imBtn = utils.$Dom('easemobWidgetPopBar'),
@@ -643,6 +646,12 @@
                     , onCmdMessage: function ( message ) {
                         me.receiveMsg(message, 'cmd');
                     }
+					, onOnline: function () {alert('on');
+						me.open();
+					}
+					, onOffline: function () {alert('off');
+						me.conn.close();
+					}
                     , onError: function ( e ) {
                         if ( e.reconnect ) {
                             me.open();
@@ -1274,6 +1283,11 @@
                 if ( config.offDuty ) {
                     return;
                 }
+				if ( msgSite.get(msg.abcId) ) {
+                    return;
+                } else {
+					msg.abcId && msgSite.set(msg.abcId, 1);
+				}
 
 				//绑定访客的情况有可能会收到多关联的消息，不是自己的不收
 				if ( !isHistory && msg.from != config.toUser && !msg.noprompt ) {

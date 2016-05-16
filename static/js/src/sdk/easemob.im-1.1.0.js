@@ -1030,6 +1030,42 @@
      */
     var Connection = (function () {
 
+		var _networkSt;
+		var _listenNetwork = function ( onlineCallback, offlineCallback ) {
+
+			if ( window.addEventListener ) {
+				window.addEventListener('online', onlineCallback);
+				window.addEventListener('offline', offlineCallback);
+
+			} else if ( window.attachEvent ) {
+				if ( document.body ) {
+					document.body.attachEvent('onoffline', offlineCallback);
+					document.body.attachEvent('onoffline', offlineCallback);
+				} else {
+					window.attachEvent('load', function () {
+						document.body.attachEvent('onoffline', offlineCallback);
+						document.body.attachEvent('onoffline', offlineCallback);
+					});
+				}
+			} else {
+				/*var onlineTmp = window.ononline;
+				var offlineTmp = window.onoffline;
+
+				window.attachEvent('ononline', function () {
+					try {
+						typeof onlineTmp === 'function' && onlineTmp();
+					} catch ( e ) {}
+					onlineCallback();
+				});
+				window.attachEvent('onoffline', function () {
+					try {
+						typeof offlineTmp === 'function' && offlineTmp();
+					} catch ( e ) {}
+					offlineCallback();
+				});*/
+			}
+		};
+
         var _parseRoomFn = function ( result ) {
             var rooms = [];
             var items = result.getElementsByTagName("item");
@@ -1286,8 +1322,10 @@
                     , canSend: supportSedMessage
                     , accessToken: conn.context.accessToken
                 });
+                conn.heartBeat(conn);
             } else if ( status == Strophe.Status.DISCONNECTING ) {
                 if ( conn.isOpened() ) {// 不是主动关闭
+                    conn.stopHeartBeat(conn);
                     conn.context.status = STATUS_CLOSING;
                     conn.onError({
                         type: EASEMOB_IM_CONNCTION_SERVER_CLOSE_ERROR
@@ -1368,7 +1406,7 @@
                 return false;
             }
             
-            var jid = appKey + "_" + user + "@" + conn.domain,
+            var jid = appKey + "_" + user.toLowerCase() + "@" + conn.domain,
 				resource = options.resource || 'webim';
 
 			if ( conn.multiResources ) {
@@ -1450,6 +1488,10 @@
             this.onError = options.onError || EMPTYFN;
             this.onReceivedMessage = options.onReceivedMessage || EMPTYFN;
             this.onInviteMessage = options.onInviteMessage || EMPTYFN;
+            this.onOffline = options.onOffline || EMPTYFN;
+            this.onOnline = options.onOnline || EMPTYFN;
+
+			_listenNetwork(this.onOnline, this.onOffline);
         }
 
         connection.prototype.heartBeat = function ( conn ) {
@@ -1625,6 +1667,7 @@
             if ( this.isClosed() || this.isClosing() ) {
                 return;
             }
+            this.stopHeartBeat(this);
             this.context.status = STATUS_CLOSING;
             this.context.stropheConn.disconnect();
         };
