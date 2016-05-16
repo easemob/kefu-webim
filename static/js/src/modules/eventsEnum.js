@@ -35,5 +35,8 @@ easemobim.EVENTS = {
 	},
 	TEXTMSG: {
 		event: 'textmsg'
+	},
+	ONREADY: {
+		event: 'onready'
 	}
 };

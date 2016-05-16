@@ -119,6 +119,9 @@
 			if ( msg.iframeId && msg.iframeId !== me.iframe.id ) { return; }
 
 			switch ( msg.event ) {
+				case easemobim.EVENTS.ONREADY.event://onready
+					me.config.onready instanceof Function && me.config.onready();
+					break;
 				case easemobim.EVENTS.SHOW.event://show Chat window
 					me.open(msg.data.trigger);
 					break;
@@ -169,7 +172,6 @@
 
 		
 		me.ready instanceof Function && me.ready();
-		me.config.onready instanceof Function && me.config.onready();
 	};
 
 	var Iframe = function ( config, signleton ) {

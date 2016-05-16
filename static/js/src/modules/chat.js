@@ -621,6 +621,10 @@
                             utils.removeClass(easemobim.sendBtn, 'disabled');
                         }
                         utils.html(easemobim.sendBtn, '发送');
+
+						try {
+							utils.root || transfer.send(easemobim.EVENTS.ONREADY);
+						} catch ( e ) {}
                     }
                     , onTextMessage: function ( message ) {
                         me.receiveMsg(message, 'txt');
