@@ -323,7 +323,7 @@
 			var isKefuAvatar = url.indexOf('img-cn') > 0 ? true : false;
 			var ossImg = url.indexOf('ossimages') > 0 ? true : false;
 
-			return isKefuAvatar && !ossImg ? '//' + url : domain + '/' + url;
+			return isKefuAvatar && !ossImg ? domain + '/ossimages/' + url : '//' + url;
 		}
 		, encode: function ( str, history ) {
 			if ( !str || str.length === 0 ) return "";
