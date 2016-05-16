@@ -130,7 +130,8 @@
 						return;
 					}
 					config.relevanceList = msg.data;
-					config.defaultAvatar = utils.getAvatarsFullPath(msg.data[0].tenantAvatar, config.domain) || config.staticPath + '/img/default_avatar.png';
+					config.defaultAvatar = utils.getAvatarsFullPath(msg.data[0].tenantAvatar, config.domain) 
+					|| (config.staticPath ? config.staticPath + '/img/default_avatar.png' : 'static' + '/img/default_avatar.png');
 					config.defaultAgentName = msg.data[0].tenantName;
 					config.logo = config.logo || msg.data[0].tenantLogo;
 					config.toUser = config.toUser || msg.data[0].imServiceNumber;
