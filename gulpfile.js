@@ -68,7 +68,6 @@ gulp.task('uglify', function() {
         'static/js/src/modules/const.js',
         'static/js/src/modules/eventsEnum.js',
         'static/js/src/modules/autogrow.js',
-        'static/js/src/modules/init.js',
         'static/js/src/modules/message.js',
         'static/js/src/modules/paste.js',
         'static/js/src/modules/leaveMessage.js',
@@ -97,8 +96,8 @@ gulp.task('uglify', function() {
     ejs.pipe(gulp.dest('.'));
 
     var open = gulp.src([
-        'static/js/src/strophe.js',
-        'static/js/src/easemob.im-1.0.8.js',
+        'static/js/src/sdk/strophe.js',
+        'static/js/src/sdk/easemob.im-1.0.8.js',
         'static/js/swfupload/swfupload.min.js',
         'static/js/src/modules/transfer.js',
     ])

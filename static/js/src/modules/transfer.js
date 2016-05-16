@@ -1,6 +1,7 @@
 window.easemobim = window.easemobim || {};
+window.easemobIM = window.easemobIM || {};
 
-easemobim.Transfer = (function () {
+easemobIM.Transfer = easemobim.Transfer = (function () {
 	'use strict'
    
     var handleMsg = function ( e, callback ) {
