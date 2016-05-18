@@ -1087,7 +1087,7 @@
 					utils.removeClass(wrap, 'em-hide');
 					this.handleMobileHeader();
 				} else if ( action === 'sending' ) {
-					if ( config.offDuty || this.session ) { return; }
+					if ( config.offDuty || this.session || config.agentName ) { return; }
 
                     if ( !config.agentList[config.toUser].firstMsg && !this.chatWrapper.getAttribute('data-session') ) {
                         config.agentList[config.toUser].firstMsg = true;
