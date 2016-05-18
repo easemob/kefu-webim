@@ -112,6 +112,7 @@
 		me.config.iframeId = me.iframe.id;
 
 		me.config.receive = typeof me.config.onmessage === 'function';
+		me.onsessionclosedSt = 0;
 
 		me.message
 		.send(me.config)
@@ -141,7 +142,12 @@
 					typeof me.config.onmessage === 'function' && me.config.onmessage(msg.data);
 					break;
 				case easemobim.EVENTS.ONSESSIONCLOSED.event://onservicesessionclosed callback
-					typeof me.config.onsessionclosed === 'function' && me.config.onsessionclosed();
+					if ( typeof me.config.onsessionclosed === 'function' ) {
+						clearTimeout(me.onsessionclosedSt);
+						me.onsessionclosedSt = setTimeout(function () {
+							me.config.onsessionclosed();
+						}, 500);
+					}
 					break;
 				case easemobim.EVENTS.CACHEUSER.event://cache username
 					if ( !msg.data.username ) { break; }
