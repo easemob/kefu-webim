@@ -68,9 +68,16 @@
                     excludeData: true
                 }));
                 break;
+            case 'getExSession':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data-ex?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
+                    msg: msg,
+                    excludeData: true
+                }));
+                break;
             case 'getPassword':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/visitors/password',
+                    url: '/v1/webimplugin/visitors/password?tenantId=' + msg.data.tenantId,
                     msg: msg
                 }));
                 break;
