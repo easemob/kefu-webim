@@ -263,7 +263,7 @@
 					me.sessionSent = true;
 					me.agent = me.agent || {};
 
-					easemobim.api('getSession', {
+					easemobim.api('getExSession', {
 						id: config.user.username
 						, orgName: config.orgName
 						, appName: config.appName
@@ -272,7 +272,9 @@
 					}, function ( msg ) {
 						if ( msg && msg.data ) {
 							var ref = config.referrer ? decodeURIComponent(config.referrer) : document.referrer;
-							me.agentCount = msg.data.onlineAgentCount;
+							me.onlineHumanAgentCount = msg.data.onlineHumanAgentCount;
+							me.onlineRobotAgentCount = msg.data.onlineRobotAgentCount;
+							me.agentCount = me.onlineHumanAgentCount/1 + me.onlineRobotAgentCount/1;
 						} else {
 							me.session = null;
 							me.getGreeting();
@@ -1075,12 +1077,14 @@
                     me.appendMsg(config.user.username, file.to, msg, true);
                 }
             }
-            , handleTransfer: function ( action, info ) {
+            , handleTransfer: function ( action, info, robertToHubman ) {
                 var wrap = utils.$Dom(config.toUser + '-transfer');
 
                 config.agentList = config.agentList || {};
                 config.agentList[config.toUser] = config.agentList[config.toUser] || {};
-				if ( !this.session && this.agentCount < 1 ) {
+
+                var res = robertToHubman ? this.onlineHumanAgentCount < 1 : (!this.session && this.agentCount < 1);
+				if ( res ) {
 					utils.addClass(wrap, 'none');
 					utils.removeClass(wrap, 'transfer');
 					utils.removeClass(wrap, 'link');
@@ -1203,6 +1207,7 @@
                     }
                 });
                 me.conn.send(msg.body);
+                me.handleTransfer('sending', null, true);
             }
 			//send satisfaction evaluation message function
             , sendSatisfaction: function ( level, content, session, invite ) {

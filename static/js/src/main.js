@@ -152,6 +152,7 @@
 						if ( config.user.username ) {
 							api('getPassword', {
 								userId: config.user.username
+                                , tenantId: config.tenantId
 							}, function ( msg ) {
 								if ( !msg.data ) {
 									api('createVisitor', {
