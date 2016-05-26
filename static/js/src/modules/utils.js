@@ -23,7 +23,11 @@
 		
 
 	easemobim.utils = {
-		ssl: _ssl
+        window: {
+            width: document.body.clientWidth,
+            height: document.body.clientHeight,
+        }
+		, ssl: _ssl
 		, root: window.top == window
 		, protocol: _protocol
 		, nodeListType: {
