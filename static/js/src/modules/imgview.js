@@ -9,12 +9,11 @@ easemobim.imgView = (function () {
 
 	img.style.cssText = '\
 	position: absolute;\
-    max-width: 90%;\
-    max-height: 90%;\
     top: 0;\
     left: 0;\
     right: 0;\
     bottom: 0;\
+    transition: all .3s;\
     margin: auto;';
 	imgViewWrap.appendChild(img);
 
@@ -29,10 +28,24 @@ easemobim.imgView = (function () {
     background: rgba(0,0,0,.3);';
 	document.body.appendChild(imgViewWrap);
 
-	utils.on(imgViewWrap, 'click', function () {
-		imgViewWrap.style.display = 'none';
-	}, false);
+    var reset = function () {
+        imgViewWrap.style.display = 'none';
+        imgViewWrap.style.overflow = 'hidden';
+    };
 
+    var expand = function () {
+        imgViewWrap.style.overflow = 'auto';
+    };
+
+    img.onload = function () {
+        if ( this.width > easemobim.utils.window.width * .9 || this.height > easemobim.utils.window.height * .9 ) {
+            expand();
+        } else {
+            reset();
+        }
+    };
+
+    utils.on(imgViewWrap, 'click', reset, false);
 
 	return {
 		show: function ( url ) {
