@@ -13,7 +13,6 @@ easemobim.imgView = (function () {
     left: 0;\
     right: 0;\
     bottom: 0;\
-    transition: all .3s;\
     margin: auto;';
 	imgViewWrap.appendChild(img);
 
@@ -33,13 +32,9 @@ easemobim.imgView = (function () {
         imgViewWrap.style.overflow = 'hidden';
     };
 
-    var expand = function () {
-        imgViewWrap.style.overflow = 'auto';
-    };
-
     img.onload = function () {
         if ( this.width > easemobim.utils.window.width * .9 || this.height > easemobim.utils.window.height * .9 ) {
-            expand();
+
         } else {
             reset();
         }
@@ -51,6 +46,7 @@ easemobim.imgView = (function () {
 		show: function ( url ) {
 			img.setAttribute('src', url);
 			imgViewWrap.style.display = 'block';
+            imgViewWrap.style.overflow = 'auto';
 		}
 	};
 }());
