@@ -1166,7 +1166,7 @@
                     success: function ( id ) {
                         utils.$Remove(utils.$Dom(id + '_loading'));
                         utils.$Remove(utils.$Dom(id + '_failed'));
-                        me.handleTransfer('sending');
+                        me.handleTransfer('sending', null, !isHistory && (msg.value === '转人工' || msg.value === '转人工客服'));
                     },
                     fail: function ( id ) {
                         utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
