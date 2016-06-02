@@ -368,6 +368,7 @@
                                     me.receiveMsg(msgBody, '', true);
                                 } else {
                                     me.receiveMsg({
+                                        msgId: msg.msgId,
                                         data: msg.msg,
                                         url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
                                         from: msgBody.from,
@@ -646,10 +647,10 @@
                     , onCmdMessage: function ( message ) {
                         me.receiveMsg(message, 'cmd');
                     }
-					, onOnline: function () {alert('on');
+					, onOnline: function () {
 						me.open();
 					}
-					, onOffline: function () {alert('off');
+					, onOffline: function () {
 						me.conn.close();
 					}
                     , onError: function ( e ) {
@@ -1283,14 +1284,14 @@
                 if ( config.offDuty ) {
                     return;
                 }
-				if ( msgSite.get(msg.abcId) ) {
+				if ( msgSite.get(msg.msgId) ) {
                     return;
                 } else {
-					msg.abcId && msgSite.set(msg.abcId, 1);
+					msg.msgId && msgSite.set(msg.msgId, 1);
 				}
 
 				//绑定访客的情况有可能会收到多关联的消息，不是自己的不收
-				if ( !isHistory && msg.from != config.toUser && !msg.noprompt ) {
+				if ( !isHistory && msg.from && msg.from.toLowerCase() != config.toUser.toLowerCase() && !msg.noprompt ) {
 					return;
 				}
 

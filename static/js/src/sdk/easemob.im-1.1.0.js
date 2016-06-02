@@ -1501,7 +1501,7 @@
             };
             conn.heartBeatID = setInterval(function () {
                 conn.sendHeartBeatMessage(options);
-            }, 60000);
+            }, 10000);
         };
 
         connection.prototype.sendHeartBeatMessage = function ( options ) {
