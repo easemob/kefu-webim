@@ -6,6 +6,9 @@
     easemobim.chat = function ( config ) {
 		var utils = easemobim.utils;
 
+		//msg list, prevent showing duplicately
+		var msgSite = new easemobim.site();
+
 		//DOM init
 		easemobim.im = utils.$Dom('EasemobKefuWebim'),
 		easemobim.imBtn = utils.$Dom('easemobWidgetPopBar'),
@@ -365,6 +368,7 @@
                                     me.receiveMsg(msgBody, '', true);
                                 } else {
                                     me.receiveMsg({
+                                        msgId: v.msgId,
                                         data: msg.msg,
                                         url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
                                         from: msgBody.from,
@@ -372,7 +376,9 @@
                                     }, msg.type, true);
                                 }
                             }
-							if ( msg.type === 'cmd' || msg.type === 'txt' && !msg.msg ) {
+							if ( msg.type === 'cmd'//1.cmd消息 
+                            || (msg.type === 'txt' && !msg.msg)//2.空文本消息
+                            || msgSite.get(v.msgId) ) {//3.重复消息
 								
 							} else {
 								me.appendDate(v.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
@@ -380,6 +386,15 @@
                         }
                     });
                 }
+            }
+            , getMsgid: function ( msg ) {
+                if ( msg ) {
+                    if ( msg.ext && msg.ext.weichat ) {
+                        return msg.ext.weichat.msgId;
+                    }
+                    return msg.msgId
+                }
+                return null;
             }
 			, setKeyboard: function ( direction ) {
 				var me = this;
@@ -625,7 +640,15 @@
                         utils.html(easemobim.sendBtn, '发送');
 
 						try {
-							utils.root || transfer.send(easemobim.EVENTS.ONREADY);
+                            if ( utils.root ) {
+                                try {
+                                    var ext = localStorage.getItem(config.tenantId + config.emgroup);
+                                    ext && me.sendTextMsg('', false, {ext: Easemob.im.Utils.parseJSON(ext)});
+                                    localStorage.removeItem(config.tenantId + config.emgroup);
+                                } catch ( e ) {}
+                            } else {
+                                transfer.send(easemobim.EVENTS.ONREADY);
+                            }
 						} catch ( e ) {}
                     }
                     , onTextMessage: function ( message ) {
@@ -643,6 +666,12 @@
                     , onCmdMessage: function ( message ) {
                         me.receiveMsg(message, 'cmd');
                     }
+					, onOnline: function () {
+						me.open();
+					}
+					, onOffline: function () {
+						me.conn.close();
+					}
                     , onError: function ( e ) {
                         if ( e.reconnect ) {
                             me.open();
@@ -1275,13 +1304,21 @@
                     return;
                 }
 
+                var me = this,
+                    msgid = me.getMsgid(msg);
+
+				if ( msgSite.get(msgid) ) {
+                    return;
+                } else {
+					msgid && msgSite.set(msgid, 1);
+				}
+
 				//绑定访客的情况有可能会收到多关联的消息，不是自己的不收
-				if ( !isHistory && msg.from != config.toUser && !msg.noprompt ) {
+				if ( !isHistory && msg.from && msg.from.toLowerCase() != config.toUser.toLowerCase() && !msg.noprompt ) {
 					return;
 				}
 
-                var me = this,
-                    message = null;
+                var message = null;
 
                 if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType && msg.ext.weichat.ctrlType == 'inviteEnquiry' ) {
 					//满意度评价

@@ -4,6 +4,8 @@
 
 ;(function ( window, undefined ) {
     'use strict';
+    window.easemobim = window.easemobim || {};
+    easemobim.version = '43.3';
 
 	var CONF = {
 		tenantId: '',
@@ -81,6 +83,15 @@
 		iframe.set(_config, easemobim.utils.isMobile ? null : iframe.open);
 
 		if ( easemobim.utils.isMobile ) {
+
+            //store ext
+            if ( _config.extMsg ) {
+                try {
+                    localStorage.setItem(_config.tenantId + _config.emgroup, JSON.stringify(_config.extMsg));
+                } catch ( e ) {}
+            }
+
+
 			var a = window.event.srcElement || window.event.target,
 				counter = 5;
 

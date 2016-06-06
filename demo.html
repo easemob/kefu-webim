@@ -56,7 +56,7 @@
 		window.easemobim = window.easemobim || {};
 
 		easemobim.config = {
-			tenantId: '',										//租户id
+			tenantId: '5334',										//租户id
 			to: '',												//指定关联对应的im号
 			appKey: '',											//关联的appkey,				appKey: 'orgName#appName'
 			domain: '',											//环信移动客服域,			domain: '//kefu.easemob.com', 
@@ -66,10 +66,24 @@
 			restServer: '',										//环信REST服务器,			restServer: 'a1.easemob.com'
 			visitor: '',										//访客信息
 			agentName: '',										//指定坐席
-
+            
+            extMsg: {                                           //移动端点击联系客服按钮自动发送订单消息demo
+                "imageName": "mallImage3.png",
+                "type": "custom",
+                "msgtype": {
+                    "order": {
+                        "img_url": "h\n.pn",
+                        "title": "mmm",
+                        "desc": "mmm端午节粽子四",
+                        "order_title":"mmm订单号：123456789012345678901234567890",
+                        "price": "",
+                        "item_url": "http://www.baidu.com?s=order_sn/123123"
+                    }
+                }
+            },
 			autoConnect: false,									//自动连接
 			buttonText: '联系客服',								//设置小按钮的文案
-			hide: true,											//是否隐藏小的悬浮按钮
+			hide: false,											//是否隐藏小的悬浮按钮
 			resources: false,									//是否启用收消息同步
 			dragenable: true,									//是否允许拖拽, H5不支持
 			hideKeyboard: false,								//是否隐藏H5右上角的键盘图标
@@ -80,7 +94,23 @@
 			soundReminder: true,								//是否启用声音提醒(低版本浏览器和H5不支持)
 			dialogPosition: { x: '10px', y: '10px' },			//聊天窗口初始位置，坐标以视口右边距和下边距为基准, H5不支持
 			onmessage: function ( message ) { },				//收消息回调, 只对当前打开的聊天窗口有效
-			onready: function () { },							//聊天窗口加载成功回调
+			onready: function () { 
+                //PC端点击联系客服按钮自动发送订单消息demo
+                easemobim.sendExt({ext: {
+                    "imageName": "mallImage3.png",
+                    "type": "custom",
+                    "msgtype": {
+                        "order": {
+                            "img_url": "h\n.pn",
+                            "title": "pc",
+                            "desc": "pc端午节粽子四",
+                            "order_title":"pc订单号：123456789012345678901234567890",
+                            "price": "",
+                            "item_url": "http://www.baidu.com?s=order_sn/123123"
+                        }
+                    }
+                }});
+            },							//聊天窗口加载成功回调
 			onsessionclosed: function () { },					//会话结束回调
 
 			/*
