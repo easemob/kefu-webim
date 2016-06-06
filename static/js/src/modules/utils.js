@@ -282,7 +282,7 @@
 			return s;
 		}
 		, query: function ( key ) {
-			var r = location.href.match(new RegExp('[?&]?'+key+'=[0-9a-zA-Z%._-]*[^&]', 'g'));
+			var r = location.href.match(new RegExp('[?&]?'+key+'=[0-9a-zA-Z@%._-]*[^&]', 'g'));
 			r = r && r[0] ? (r[0][0]=='?' || r[0][0]=='&' ? r[0].slice(1) : r[0]) : '';
 			return r.slice(key.length+1);
 		}
@@ -300,6 +300,29 @@
 				return false;
 			}
 		}
+        , setStore: function ( key, value ) {
+            if ( typeof value === 'undefined' ) {
+                return;
+            }
+            try {
+                localStorage.setItem(key, value);
+            } catch ( e ) {}
+        }
+        , getStore: function ( key ) {
+            try {
+                return localStorage.getItem(key);
+            } catch ( e ) {}
+        }
+        , clearStore: function ( key ) {
+            try {
+                localStorage.removeItem(key);
+            } catch ( e ) {}
+        }
+        , clearAllStore: function () {
+            try {
+                localStorage.clear();
+            } catch ( e ) {}
+        }
 		, set: function ( key, value, local ) {
 			if ( local && 'localStorage' in window ) {
 				localStorage.setItem(encodeURIComponent(key), encodeURIComponent(value));

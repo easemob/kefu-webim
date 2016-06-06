@@ -53,6 +53,21 @@
 				//bind events on dom
                 this.bindEvents();
             }
+            , handleReady: function () {
+                if ( utils.root ) {
+                    //get visitor
+                    var visInfo = utils.getStore(config.tenantId + config.emgroup + 'visitor');
+                    try { config.visitor = Easemob.im.Utils.parseJSON(visInfo); } catch ( e ) {}
+                    utils.clearStore(config.tenantId + config.emgroup + 'visitor');
+
+                    //get ext
+                    var ext = utils.getStore(config.tenantId + config.emgroup + 'ext');
+                    try { ext && me.sendTextMsg('', false, {ext: Easemob.im.Utils.parseJSON(ext)}); } catch ( e ) {}
+                    utils.clearStore(config.tenantId + config.emgroup + 'ext');
+                } else {
+                    transfer.send(easemobim.EVENTS.ONREADY);
+                } 
+            }
 			, setExt: function ( msg ) {
 				msg.body.ext = msg.body.ext || {};
 				msg.body.ext.weichat = msg.body.ext.weichat || {};
@@ -62,7 +77,7 @@
 					msg.body.ext.weichat.queueName = decodeURIComponent(config.emgroup);
 				}
 				//bind visitor
-				var visitor = config.visitor || easemobim.visitor;
+				var visitor = config.visitor;
 				if ( visitor ) {
 					msg.body.ext.weichat.visitor = visitor;
 				}
@@ -639,17 +654,7 @@
                         }
                         utils.html(easemobim.sendBtn, '发送');
 
-						try {
-                            if ( utils.root ) {
-                                try {
-                                    var ext = localStorage.getItem(config.tenantId + config.emgroup);
-                                    ext && me.sendTextMsg('', false, {ext: Easemob.im.Utils.parseJSON(ext)});
-                                    localStorage.removeItem(config.tenantId + config.emgroup);
-                                } catch ( e ) {}
-                            } else {
-                                transfer.send(easemobim.EVENTS.ONREADY);
-                            }
-						} catch ( e ) {}
+                        me.handleReady();
                     }
                     , onTextMessage: function ( message ) {
                         me.receiveMsg(message, 'txt');

@@ -56,7 +56,7 @@
 		window.easemobim = window.easemobim || {};
 
 		easemobim.config = {
-			tenantId: '5334',										//租户id
+			tenantId: '',										//租户id
 			to: '',												//指定关联对应的im号
 			appKey: '',											//关联的appkey,				appKey: 'orgName#appName'
 			domain: '',											//环信移动客服域,			domain: '//kefu.easemob.com', 
@@ -67,7 +67,7 @@
 			visitor: '',										//访客信息
 			agentName: '',										//指定坐席
             
-            extMsg: {                                           //移动端点击联系客服按钮自动发送订单消息demo
+            /*extMsg: {                                           //移动端点击联系客服按钮自动发送订单消息demo
                 "imageName": "mallImage3.png",
                 "type": "custom",
                 "msgtype": {
@@ -80,7 +80,7 @@
                         "item_url": "http://www.baidu.com?s=order_sn/123123"
                     }
                 }
-            },
+            },*/
 			autoConnect: false,									//自动连接
 			buttonText: '联系客服',								//设置小按钮的文案
 			hide: false,											//是否隐藏小的悬浮按钮
@@ -96,7 +96,7 @@
 			onmessage: function ( message ) { },				//收消息回调, 只对当前打开的聊天窗口有效
 			onready: function () { 
                 //PC端点击联系客服按钮自动发送订单消息demo
-                easemobim.sendExt({ext: {
+                /*easemobim.sendExt({ext: {
                     "imageName": "mallImage3.png",
                     "type": "custom",
                     "msgtype": {
@@ -109,7 +109,7 @@
                             "item_url": "http://www.baidu.com?s=order_sn/123123"
                         }
                     }
-                }});
+                }});*/
             },							//聊天窗口加载成功回调
 			onsessionclosed: function () { },					//会话结束回调
 

@@ -53,6 +53,11 @@
 		config.satisfaction = utils.convertFalse(config.satisfaction);
 		config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
 		config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
+        config.to = utils.convertFalse(utils.query('to'));
+        config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
+        config.xmppServer = utils.convertFalse(utils.query('xmppServer'));
+        config.restServer = utils.convertFalse(utils.query('restServer'));
+        config.agentName = utils.convertFalse(utils.query('agentName'));
 		
 
 		//render Tpl
