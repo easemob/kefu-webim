@@ -80,15 +80,20 @@
 
 		if ( !_config.tenantId ) { return; }
 
+        _config.emgroup = _config.emgroup || '';
+
 		iframe.set(_config, easemobim.utils.isMobile ? null : iframe.open);
 
 		if ( easemobim.utils.isMobile ) {
 
             //store ext
             if ( _config.extMsg ) {
-                try {
-                    localStorage.setItem(_config.tenantId + _config.emgroup, JSON.stringify(_config.extMsg));
-                } catch ( e ) {}
+                easemobim.utils.setStore(_config.tenantId + _config.emgroup + 'ext', JSON.stringify(_config.extMsg));
+            }
+
+            //store visitor info 
+            if ( _config.visitor ) {
+                easemobim.utils.setStore(_config.tenantId + _config.emgroup + 'visitor', JSON.stringify(_config.visitor));
             }
 
 

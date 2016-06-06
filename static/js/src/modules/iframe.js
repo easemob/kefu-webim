@@ -226,16 +226,28 @@
 	Iframe.prototype.set = function ( config, callback ) {
 
 		this.config = easemobim.utils.copy(config || this.config);
-		this.url = easemobim.utils.updateAttribute(this.url, {
+
+        var destUrl = {
 			tenantId: this.config.tenantId,
 			hide: this.config.hide,
 			sat: this.config.visitorSatisfactionEvaluate,
 			wechatAuth: this.config.wechatAuth,
 			hideKeyboard: this.config.hideKeyboard,
-			resources: this.config.resources,
-			emgroup: this.config.emgroup || '',
-			user: this.config.user && this.config.user.username ? this.config.user.username : ''
-		}, config.path);
+			resources: this.config.resources
+        };
+		this.config.emgroup && (destUrl.emgroup = this.config.emgroup);
+
+		var user = this.config.user && this.config.user.username ? this.config.user.username : '';
+		user && (destUrl.user = user);
+
+		this.config.to && (destUrl.to = this.config.to);
+		this.config.appKey && (destUrl.appKey = encodeURIComponent(this.config.appKey || ''));
+		this.config.xmppServer && (destUrl.xmppServer = this.config.xmppServer);
+		this.config.restServer && (destUrl.restServer = this.config.restServer);
+		this.config.agentName && (destUrl.agentName = this.config.agentName);
+
+
+		this.url = easemobim.utils.updateAttribute(this.url, destUrl, config.path);
 
 
 		if ( !this.config.user.username ) {
