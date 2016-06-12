@@ -5,7 +5,7 @@
 ;(function ( window, undefined ) {
     'use strict';
     window.easemobim = window.easemobim || {};
-    easemobim.version = '43.3';
+    easemobim.version = '<%= v %>';
 
 	var CONF = {
 		tenantId: '',

@@ -3,6 +3,7 @@
 */
 
 var debug = false;
+var version = '43.3';
 
 var gulp = require('gulp'),
     minifycss = require('gulp-minify-css'),
@@ -10,8 +11,8 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     concat = require('gulp-concat'),
     server = require('gulp-webserver'),
-    clean = require('gulp-clean');
-
+    clean = require('gulp-clean'),
+    template = require('gulp-template'); 
 
 
 //clean
@@ -19,12 +20,21 @@ gulp.task('clean', function() {
     return gulp.src([
             'static/css/im.css',
             'static/js/main.js',
+            'im.html',
             'easemob.js'
         ], {
             read: false
         }
     )
     .pipe(clean({force: true}));
+});
+
+
+//replace js & css version
+gulp.task('version', function () {
+    gulp.src('static/tpl/im.html')
+    .pipe(template({ v: version }))
+    .pipe(gulp.dest('.'));
 });
 
 
@@ -95,6 +105,7 @@ gulp.task('uglify', function() {
     .pipe(concat('easemob.js'));
     debug || ejs.pipe(uglify());
     ejs.pipe(gulp.dest('.'));
+    ejs.pipe(template({ v: version }));
 
     var open = gulp.src([
         'static/js/src/sdk/strophe.js',
@@ -119,5 +130,5 @@ gulp.task('uglify', function() {
 
 //build default
 gulp.task('build', ['clean'],  function() {
-    gulp.start('cssmin', 'uglify');
+    gulp.start('cssmin', 'uglify', 'version');
 });
