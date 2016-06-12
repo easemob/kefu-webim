@@ -112,7 +112,7 @@
 		me.config.iframeId = me.iframe.id;
 
 		me.config.receive = typeof me.config.onmessage === 'function';
-		me.onsessionclosedSt = 0;
+		me.onsessionclosedSt = 0, me.onreadySt = 0;
 
 		me.message
 		.send(me.config)
@@ -121,6 +121,13 @@
 
 			switch ( msg.event ) {
 				case easemobim.EVENTS.ONREADY.event://onready
+                    if ( typeof me.config.onready === 'function' ) {
+						clearTimeout(me.onreadySt);
+						me.onreadySt = setTimeout(function () {
+							me.config.onready();
+						}, 500);
+					}
+					break;
 					me.config.onready instanceof Function && me.config.onready();
 					break;
 				case easemobim.EVENTS.SHOW.event://show Chat window
@@ -202,8 +209,10 @@
 		this.shadow = document.createElement('div');
 		this.config = easemobim.utils.copy(config);
 
-		document.body.appendChild(this.shadow);
-		document.body.appendChild(this.iframe);
+		if ( !easemobim.utils.isMobile ) {
+            document.body.appendChild(this.shadow);
+            document.body.appendChild(this.iframe);
+        }
 
 		var me = this;
 		if ( me.iframe.readyState ) {

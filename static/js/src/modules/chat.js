@@ -54,6 +54,14 @@
                 this.bindEvents();
             }
             , handleReady: function () {
+                var me = this;
+
+                if ( me.readyHandled ) {
+                    return false;
+                }
+
+                me.readyHandled = true;
+
                 if ( utils.root ) {
                     //get visitor
                     var visInfo = utils.getStore(config.tenantId + config.emgroup + 'visitor');
