@@ -58,8 +58,7 @@ button, textarea, input {
 }
 .easemobWidget-pop-bar i:after,
 .easemobWidgetHeader-min:after,
-.easemobWidgetHeader-keyboard-down:after,
-.easemobWidgetHeader-keyboard-up:after,
+.easemobWidgetHeader-keyboard:after,
 .easemobWidgetHeader-audio:after,
 .easemobWidgetHeader-silence:after,
 .easemobWidget-word-close:after,
@@ -72,6 +71,7 @@ button, textarea, input {
 .easemobWidget-satisfaction-dialog li,
 .easemobWidget-unimage,
 .easemobWidget-success-prompt i,
+.easemobWidget-notem:after,
 .easemobWidget-note:after,
 .easemobWidget-file:after {
     font-family: 'easemobim' !important;
@@ -220,31 +220,6 @@ button, textarea, input {
     top: -4px;
     text-align: center;
     color: #fff;
-}
-.easemobWidgetHeader-keyboard,
-.easemobWidgetHeader-keyboard {
-    position: absolute;
-    right: 44px;
-    top: 11px;
-    width: 21px;
-    height: 21px;
-    border-radius: 4px;
-    text-decoration: none;
-}
-.easemobWidgetHeader-keyboard-up:after,
-.easemobWidgetHeader-keyboard-down:after {
-    content: 'N';
-    position: absolute;
-    left: -5px;
-    top: -4px;
-    text-align: center;
-    color: #fff;
-}
-.easemobWidgetHeader-keyboard-up:after {
-    content: 'O';
-}
-.easemobWidgetHeader-keyboard-down:after {
-    content: 'N';
 }
 .easemobWidgetHeader-wrapper .easemobWidgetHeader-audio {
     position: absolute;
@@ -885,9 +860,6 @@ object {
     max-width: 400px;
     margin: auto;
 }
-.easemobWidget-offline .easemobWidget-success-prompt {
-    top: 43px;
-}
 .easemobWidget-offline h3,
 .easemobWidget-offline p,
 .easemobWidget-offline input,
@@ -1194,12 +1166,45 @@ object {
     top: auto;
     bottom: 8px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-note {
-    z-index: 1;
-    right: 82px;
-    left: auto;
-    top: auto;
-    bottom: 8px;
+.easemobWidgetWrapper-mobile .easemobWidgetHeader-keyboard {
+    position: absolute;
+    right: 9px;
+    top: 11px;
+    width: 21px;
+    height: 21px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+.easemobWidgetWrapper-mobile .easemobWidgetHeader-keyboard:after {
+    content: 'N';
+    position: absolute;
+    left: -5px;
+    top: -4px;
+    text-align: center;
+    color: #fff;
+}
+.easemobWidgetWrapper-mobile .easemobWidgetHeader-keyboard-up:after {
+    content: 'O';
+}
+.easemobWidgetWrapper-mobile .easemobWidgetHeader-keyboard-down:after {
+    content: 'N';
+}
+.easemobWidgetWrapper-mobile .easemobWidget-notem {
+    position: absolute;
+    right: 44px;
+    top: 10px;
+    width: 21px;
+    height: 21px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+.easemobWidgetWrapper-mobile .easemobWidget-notem:after {
+    content: '1';
+    position: absolute;
+    left: -5px;
+    top: -4px;
+    text-align: center;
+    color: #fff;
 }
 .easemobWidgetWrapper-mobile .easemobWidget-send-wrapper {
     position: absolute;

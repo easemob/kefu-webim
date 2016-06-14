@@ -21,6 +21,7 @@
 		easemobim.realFile = utils.$Dom('easemobWidgetFileInput'),
 		easemobim.sendFileBtn = utils.$Dom('easemobWidgetFile'),
 		easemobim.noteBtn = utils.$Dom('easemobWidgetNote'),
+		easemobim.mobileNoteBtn = utils.$Dom('easemobWidgetNotem'),
 		easemobim.dragHeader = utils.$Dom('easemobWidgetDrag'),
 		easemobim.dragBar = easemobim.dragHeader.getElementsByTagName('p')[0],
 		easemobim.chatFaceWrapper = utils.$Dom('EasemobKefuWebimFaceWrapper'),
@@ -63,7 +64,7 @@
 
                 me.readyHandled = true;
 
-                easemobim.leaveMessage.auth(me.token);
+                easemobim.leaveMessage && easemobim.leaveMessage.auth(me.token, config);
 
                 if ( utils.root ) {
                     //get visitor
@@ -109,9 +110,11 @@
 				//mobile need set drag disable
 				config.dragenable = false;
 
+                utils.addClass(easemobim.noteBtn, 'em-hide');
+                utils.removeClass(easemobim.mobileNoteBtn, 'em-hide');
+
 				if ( !config.hideKeyboard ) {
 					var i = document.createElement('i');
-					i.style.right = '9px';
 					utils.addClass(i, 'easemobWidgetHeader-keyboard easemobWidgetHeader-keyboard-down');
 					easemobim.dragHeader.appendChild(i);
 				}
@@ -986,6 +989,9 @@
 
                 //显示留言界面
                 utils.on(easemobim.noteBtn, 'click', function () {
+                    easemobim.leaveMessage.show();
+                });
+                utils.on(easemobim.mobileNoteBtn, 'click', function () {
                     easemobim.leaveMessage.show();
                 });
 

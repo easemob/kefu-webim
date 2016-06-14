@@ -45,7 +45,7 @@
 
         //create ticket
 		utils.on(leaveMessageBtn, utils.click, function () {
-			if ( !project ) {
+			if ( !project || !targetUser ) {
 				chat.errorPrompt('留言失败，Err01');
 			} else if ( !contact.value ) {
 				chat.errorPrompt('姓名不能为空');
@@ -58,7 +58,10 @@
 			} else {
                 easemobim.api('createTicket', {
                     tenantId: tenantId,
-                    headers: { Authorization: 'Bearer ' + actoken },
+                    'easemob-target-username': targetUser,
+                    'easemob-appkey': appkey,
+                    'easemob-username': username,
+                    headers: { Authorization: 'Easemob IM ' + actoken },
                     projectId: project,
                     subject: '',
                     content: msg.value,
@@ -75,33 +78,45 @@
                         description: ''
                     },
                     attachments:null
-                }, function ( msg ) {
-                    if ( msg.data && msg.data.entities && msg.data.entities.length > 0 ) {
-                        project = msg.data.entities[0].id;
+                }, function ( msge ) {
+                    if ( msge && msge.data && msge.data.id ) {
+                        utils.removeClass(success, 'em-hide');
+
+                        setTimeout(function(){
+                            utils.addClass(success, 'em-hide');
+                        }, 1500);
+
+                        contact.value = '';
+                        phone.value = '';
+                        mail.value = '';
+                        msg.value = '';
+                    } else {
+                        chat.errorPrompt('留言失败，请稍后重试');
                     }
                 });
-				utils.removeClass(success, 'em-hide');
-				setTimeout(function(){
-					utils.addClass(success, 'em-hide');
-				}, 1500);
-				contact.value = '';
-				phone.value = '';
-				mail.value = '';
-				msg.value = '';
+				
 			}
 		});
 
-        var project = null,
-            actoken = null;
+        var project = null,//projectid
+            targetUser = null,//target-username
+            actoken = null,//accessToke
+            appkey = null,
+            username = null;
 
         return {
-            auth: function ( token ) {
+            auth: function ( token, config ) {
                 actoken = token;
+                targetUser = config.toUser;
+                username = config.user.username;
+                appkey = config.appKey.replace('#', '%23');
+
                 if ( !project ) {
                     easemobim.api('getProject', {
                         tenantId: tenantId,
-                        'easemob-appkey': 'sksk%23sk',
-                        'easemob-username': 'webim-visitor-ER2YXMHY3VVJGXHVRMJH',
+                        'easemob-target-username': targetUser,
+                        'easemob-appkey': appkey,
+                        'easemob-username': username,
                         headers: { Authorization: 'Easemob IM ' + actoken }
                     }, function ( msg ) {
                         if ( msg.data && msg.data.entities && msg.data.entities.length > 0 ) {

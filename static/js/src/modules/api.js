@@ -141,7 +141,7 @@
                 break;
             case 'createTicket':
                 easemobim.emajax(createObject({
-                    url: '/tenants/' + msg.data.tenantId + '/projects/' + msg.data.projectId + '/tickets?tenantId=' + msg.data.tenantId + '&token=' + msg.data.token,
+                    url: '/tenants/' + msg.data.tenantId + '/projects/' + msg.data.projectId + '/tickets?tenantId=' + msg.data.tenantId + '&easemob-target-username=' + msg.data['easemob-target-username'] + '&easemob-appkey=' + msg.data['easemob-appkey'] + '&easemob-username=' + msg.data['easemob-username'],
                     msg: msg,
                     type: 'POST'
                 }));

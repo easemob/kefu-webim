@@ -72,6 +72,7 @@
 						" + (utils.isMobile || utils.root ? "" : "<p></p>") + "\
 						<img class='easemobWidgetHeader-portrait border-color'/>\
 						<span class='easemobWidgetHeader-nickname'></span>\
+                        <i id='easemobWidgetNotem' class='easemobWidget-notem em-hide'></i>\
 					</div>\
 				</div>\
 				<div id='easemobWidgetBody' class='easemobWidgetBody-wrapper'></div>\
