@@ -3,7 +3,7 @@
 */
 
 var debug = false;
-var version = '43.3';
+var version = '43.4';
 
 var gulp = require('gulp'),
     minifycss = require('gulp-minify-css'),
@@ -12,6 +12,7 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     server = require('gulp-webserver'),
     clean = require('gulp-clean'),
+    minifyHtml = require("gulp-minify-html"),
     template = require('gulp-template'); 
 
 
@@ -30,9 +31,10 @@ gulp.task('clean', function() {
 });
 
 
-//replace js & css version
-gulp.task('version', function () {
+//minifyHtml
+gulp.task('minifyHtml', function () {
     gulp.src('static/tpl/im.html')
+    .pipe(minifyHtml())
     .pipe(template({ v: version }))
     .pipe(gulp.dest('.'));
 });
@@ -42,6 +44,7 @@ gulp.task('version', function () {
 gulp.task('cssmin', function() {
     return gulp.src('static/css/src/im.css')
     .pipe(minifycss({compatibility: 'ie8'}))
+    .pipe(template({ v: version }))
     .pipe(gulp.dest('static/css/'));
 });
 
@@ -130,5 +133,5 @@ gulp.task('uglify', function() {
 
 //build default
 gulp.task('build', ['clean'],  function() {
-    gulp.start('cssmin', 'uglify', 'version');
+    gulp.start('cssmin', 'uglify', 'minifyHtml');
 });
