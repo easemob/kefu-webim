@@ -20,6 +20,8 @@
 		easemobim.faceBtn = easemobim.send.getElementsByTagName('i')[0],
 		easemobim.realFile = utils.$Dom('easemobWidgetFileInput'),
 		easemobim.sendFileBtn = utils.$Dom('easemobWidgetFile'),
+		easemobim.noteBtn = utils.$Dom('easemobWidgetNote'),
+		easemobim.mobileNoteBtn = utils.$Dom('easemobWidgetNotem'),
 		easemobim.dragHeader = utils.$Dom('easemobWidgetDrag'),
 		easemobim.dragBar = easemobim.dragHeader.getElementsByTagName('p')[0],
 		easemobim.chatFaceWrapper = utils.$Dom('EasemobKefuWebimFaceWrapper'),
@@ -61,6 +63,8 @@
                 }
 
                 me.readyHandled = true;
+
+                easemobim.leaveMessage && easemobim.leaveMessage.auth(me.token, config);
 
                 if ( utils.root ) {
                     //get visitor
@@ -106,9 +110,11 @@
 				//mobile need set drag disable
 				config.dragenable = false;
 
+                utils.addClass(easemobim.noteBtn, 'em-hide');
+                utils.removeClass(easemobim.mobileNoteBtn, 'em-hide');
+
 				if ( !config.hideKeyboard ) {
 					var i = document.createElement('i');
-					i.style.right = '9px';
 					utils.addClass(i, 'easemobWidgetHeader-keyboard easemobWidgetHeader-keyboard-down');
 					easemobim.dragHeader.appendChild(i);
 				}
@@ -612,13 +618,14 @@
                     utils.addClass(me.ePrompt, 'em-hide');
                 }, 2000);
             }
-            , setOffline: function () {
-                if ( typeof easemobim.leaveMessage === 'function' ) {
+            , setOffline: function ( isOffDuty ) {
+                if ( easemobim.leaveMessage ) {
 					this.slogan && utils.addClass(this.slogan, 'em-hide');
 					utils.addClass(easemobim.imBtn.getElementsByTagName('a')[0], 'easemobWidget-offline-bg');
 					utils.removeClass(easemobim.leaveMessage.dom, 'em-hide');
 					utils.addClass(easemobim.imChatBody, 'em-hide');
 					utils.addClass(easemobim.send, 'em-hide');
+                    easemobim.leaveMessage.show(isOffDuty);
 				}
             }
 			//close chat window
@@ -653,7 +660,8 @@
                 var me = this;
                 
                 me.conn.listen({
-                    onOpened: function () {
+                    onOpened: function ( info ) {
+                        me.token = info.accessToken;
                         me.conn.setPresence();
                         me.conn.heartBeat(me.conn);
 
@@ -826,6 +834,12 @@
                 utils.on(easemobim.sendFileBtn, 'mouseleave', function () {
                     me.clearThemeColor(this);
                 });
+                utils.on(easemobim.noteBtn, 'mouseenter', function () {
+                    me.setThemeColor(this);
+                });
+                utils.on(easemobim.noteBtn, 'mouseleave', function () {
+                    me.clearThemeColor(this);
+                });
 
 				if ( config.dragenable ) {//drag
 					
@@ -971,6 +985,14 @@
                         return false;    
                     }
                     easemobim.realFile.click();
+                });
+
+                //显示留言界面
+                utils.on(easemobim.noteBtn, 'click', function () {
+                    easemobim.leaveMessage.show();
+                });
+                utils.on(easemobim.mobileNoteBtn, 'click', function () {
+                    easemobim.leaveMessage.show();
                 });
 
                 //hot key

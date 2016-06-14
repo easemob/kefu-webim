@@ -76,7 +76,18 @@
             data = JSON.stringify(data);
         }
         xhr.open(type, options.url);
-        xhr.setRequestHeader('Content-Type', 'application/json');
+        if ( xhr.setRequestHeader ) {
+
+            var headers = options.headers || {};
+
+            headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+
+            for ( var key in headers ) {
+                if ( headers.hasOwnProperty(key) ) {
+                    xhr.setRequestHeader(key, headers[key]);
+                }
+            }
+        }
         xhr.send(data);
         return xhr;
     };

@@ -72,6 +72,7 @@
 						" + (utils.isMobile || utils.root ? "" : "<p></p>") + "\
 						<img class='easemobWidgetHeader-portrait border-color'/>\
 						<span class='easemobWidgetHeader-nickname'></span>\
+                        <i id='easemobWidgetNotem' class='easemobWidget-notem em-hide'></i>\
 					</div>\
 				</div>\
 				<div id='easemobWidgetBody' class='easemobWidgetBody-wrapper'></div>\
@@ -81,6 +82,7 @@
 				<div id='easemobWidgetSend' class='easemobWidget-send-wrapper'>\
 					<i class='easemobWidget-face e-face' tile='表情'></i>\
 					<i class='easemobWidget-file' id='easemobWidgetFile' tile='图片'></i>\
+					<i class='easemobWidget-note' id='easemobWidgetNote' tile='留言'></i>\
 					<input id='easemobWidgetFileInput' type='file' accept='image/*'/>\
 					<textarea class='easemobWidget-textarea' spellcheck='false'></textarea>" +
 					(utils.isMobile || !config.satisfaction ? "" : "<span id='EasemobKefuWebimSatisfy' class='easemobWidget-satisfaction'>请对服务做出评价</span>") + "\
@@ -120,7 +122,7 @@
 					config.offDuty = msg.data;
 
 					if ( msg.data ) {
-						chat.setOffline();//根据状态展示上下班不同view
+						chat.setOffline(true);//根据状态展示上下班不同view
 					}
 				});
 
@@ -228,7 +230,7 @@
 
 
 		//load modules
-		typeof easemobim.leaveMessage === 'function' && easemobim.leaveMessage(chat);
+		typeof easemobim.leaveMessage === 'function' && (easemobim.leaveMessage = easemobim.leaveMessage(chat, tenantId));
 		typeof easemobim.paste === 'function' && (easemobim.paste = easemobim.paste(chat));
 		typeof easemobim.satisfaction === 'function' && easemobim.satisfaction(chat);
 	};

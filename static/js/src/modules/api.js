@@ -2,8 +2,16 @@
     var getData = new easemobim.Transfer();
 
     var createObject = function ( options ) {
+        var headers = null;
+
+        if ( options.msg.data && options.msg.data.headers ) {
+            headers = options.msg.data.headers;
+            delete options.msg.data.headers;
+        }
+
         return {
             url: options.url
+            , headers: headers
             , data: options.excludeData ? null : options.msg.data
             , type: options.type || 'GET'
             , success: function ( info ) {
@@ -121,6 +129,19 @@
 			case 'sendVisitorInfo':
                 easemobim.emajax(createObject({
                     url: '/v1/webimplugin/tenants/' + msg.data.tenantId + '/visitors/' + msg.data.visitorId + '/attributes?tenantId=' + msg.data.tenantId,
+                    msg: msg,
+                    type: 'POST'
+                }));
+                break;
+            case 'getProject':
+                easemobim.emajax(createObject({
+                    url: '/tenants/' + msg.data.tenantId + '/projects',
+                    msg: msg
+                }));
+                break;
+            case 'createTicket':
+                easemobim.emajax(createObject({
+                    url: '/tenants/' + msg.data.tenantId + '/projects/' + msg.data.projectId + '/tickets?tenantId=' + msg.data.tenantId + '&easemob-target-username=' + msg.data['easemob-target-username'] + '&easemob-appkey=' + msg.data['easemob-appkey'] + '&easemob-username=' + msg.data['easemob-username'],
                     msg: msg,
                     type: 'POST'
                 }));
