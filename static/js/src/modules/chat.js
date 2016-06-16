@@ -687,10 +687,10 @@
                         me.receiveMsg(message, 'cmd');
                     }
 					, onOnline: function () {
-						me.open();
+						utils.isMobile && me.open();
 					}
 					, onOffline: function () {
-						me.conn.close();
+						utils.isMobile && me.conn.close();
 					}
                     , onError: function ( e ) {
                         if ( e.reconnect ) {

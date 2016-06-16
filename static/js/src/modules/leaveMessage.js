@@ -47,14 +47,14 @@
 		utils.on(leaveMessageBtn, utils.click, function () {
 			if ( !project || !targetUser ) {
 				chat.errorPrompt('留言失败，Err01');
-			} else if ( !contact.value ) {
-				chat.errorPrompt('姓名不能为空');
-			} else if ( !phone.value ) {
-				chat.errorPrompt('电话不能为空');
-			} else if ( !mail.value ) {
-				chat.errorPrompt('邮箱不能为空');
-			} else if ( !msg.value ) {
-				chat.errorPrompt('留言内容不能为空');
+			} else if ( !contact.value || contact.value.length > 140 ) {
+				chat.errorPrompt('姓名输入不正确');
+			} else if ( !phone.value || phone.value.length > 24 ) {
+				chat.errorPrompt('电话输入不正确');
+			} else if ( !mail.value || mail.value.length > 127 ) {
+				chat.errorPrompt('邮箱输入不正确');
+			} else if ( !msg.value || msg.value.length > 2000 ) {
+				chat.errorPrompt('留言内容不能为空，长度小于2000字');
 			} else {
                 easemobim.api('createTicket', {
                     tenantId: tenantId,
