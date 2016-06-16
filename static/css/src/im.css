@@ -1189,6 +1189,9 @@ object {
 .easemobWidgetWrapper-mobile .easemobWidgetHeader-keyboard-down:after {
     content: 'N';
 }
+.easemobWidgetWrapper-mobile .easemobWidget-note {
+    display: none;
+}
 .easemobWidgetWrapper-mobile .easemobWidget-notem {
     position: absolute;
     right: 44px;
