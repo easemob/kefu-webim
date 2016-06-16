@@ -961,7 +961,7 @@
 
                 //选中文件并发送
                 utils.on(easemobim.realFile, 'change', function () {
-                    me.sendImgMsg();
+                    easemobim.realFile.value && me.sendImgMsg();
                 });
 
                 //hide face wrapper
