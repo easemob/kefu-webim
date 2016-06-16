@@ -680,10 +680,10 @@
                         me.receiveMsg(message, 'cmd');
                     }
 					, onOnline: function () {
-						me.open();
+						utils.isMobile && me.open();
 					}
 					, onOffline: function () {
-						me.conn.close();
+						utils.isMobile && me.conn.close();
 					}
                     , onError: function ( e ) {
                         if ( e.reconnect ) {
@@ -948,7 +948,7 @@
 
                 //选中文件并发送
                 utils.on(easemobim.realFile, 'change', function () {
-                    me.sendImgMsg();
+                    easemobim.realFile.value && me.sendImgMsg();
                 });
 
                 //hide face wrapper

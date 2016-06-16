@@ -802,8 +802,7 @@ object {
     z-index: 3;
     font-size: 13px;
     position: absolute;
-    min-width: 145px;
-    max-width: 220px;
+    width: 220px;
     height: 13px;
     line-height: 13px;
     padding: 20px 0;
