@@ -1322,10 +1322,10 @@
                     , canSend: supportSedMessage
                     , accessToken: conn.context.accessToken
                 });
-                conn.heartBeat(conn);
+                conn.heartBeat();
             } else if ( status == Strophe.Status.DISCONNECTING ) {
                 if ( conn.isOpened() ) {// 不是主动关闭
-                    conn.stopHeartBeat(conn);
+                    conn.stopHeartBeat();
                     conn.context.status = STATUS_CLOSING;
                     conn.onError({
                         type: EASEMOB_IM_CONNCTION_SERVER_CLOSE_ERROR
@@ -1465,6 +1465,7 @@
             this.route = options.route || null;
             this.domain = options.domain || "easemob.com";
             this.inactivity = options.inactivity || 30;
+            this.heartBeatWait = options.heartBeatWait || 60000;
             this.maxRetries = options.maxRetries || 5;
             this.pollingTime = options.pollingTime || 800;
             this.stropheConn = false;
@@ -1494,14 +1495,20 @@
 			_listenNetwork(this.onOnline, this.onOffline);
         }
 
-        connection.prototype.heartBeat = function ( conn ) {
+        connection.prototype.heartBeat = function () {
+            var me = this;
+
+            if ( me.heartBeatID ) {
+                return;
+            }
+
             var options = {
-                to : conn.domain,
+                to : me.domain,
                 type : "normal"
             };
-            conn.heartBeatID = setInterval(function () {
-                conn.sendHeartBeatMessage(options);
-            }, 30000);
+            me.heartBeatID = setInterval(function () {
+                me.sendHeartBeatMessage(options);
+            }, me.heartBeatWait);
         };
 
         connection.prototype.sendHeartBeatMessage = function ( options ) {
@@ -1517,8 +1524,8 @@
             this.sendCommand(dom.tree());
         };
 
-        connection.prototype.stopHeartBeat = function ( conn ) {
-            clearInterval(conn.heartBeatID);
+        connection.prototype.stopHeartBeat = function () {
+            this.heartBeatID = clearInterval(this.heartBeatID);
         };
 
 
@@ -1667,7 +1674,7 @@
             if ( this.isClosed() || this.isClosing() ) {
                 return;
             }
-            this.stopHeartBeat(this);
+            this.stopHeartBeat();
             this.context.status = STATUS_CLOSING;
             this.context.stropheConn.disconnect();
         };
@@ -1711,6 +1718,11 @@
             if ( this.isClosed() ) {
                 return;
             }
+            //TODO: maybe we need add precense ack?
+            //var id = msginfo.getAttribute('id') || '';
+            //this.sendReceiptsMessage({
+            //    id: id
+            //});
 
             var from = msginfo.getAttribute('from') || '';
             var to = msginfo.getAttribute('to') || '';
@@ -1984,7 +1996,8 @@
             this.onReceivedMessage(message);
 
             var rcv = message.getElementsByTagName('received'),
-                id = undefined;
+                id,
+                mid;
 
             if ( rcv.length > 0 ) {
                 if ( rcv[0].childNodes && rcv[0].childNodes.length > 0 ) {
@@ -1992,10 +2005,11 @@
                 } else {
                     id = rcv[0].innerHTML || rcv[0].innerText;
                 }
+                mid = rcv[0].getAttribute('mid');
             }
             
             if ( _msgHash[id] ) {
-                _msgHash[id].msg.success instanceof Function && _msgHash[id].msg.success(id);
+                _msgHash[id].msg.success instanceof Function && _msgHash[id].msg.success(id, mid);
                 delete _msgHash[id];
             }
         };
@@ -2003,6 +2017,10 @@
         connection.prototype.handleInviteMessage = function ( message ) {
             var form = null;
             var invitemsg = message.getElementsByTagName('invite');
+            var id = message.getAttribute('id') || '';
+            this.sendReceiptsMessage({
+                id: id
+            });
 
             if ( invitemsg && invitemsg.length > 0 ) {
                 var fromJid = invitemsg[0].getAttribute('from');

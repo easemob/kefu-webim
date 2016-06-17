@@ -154,7 +154,8 @@
                 this.conn = new Easemob.im.Connection({ 
 					url: config.xmppServer,
 					retry: true,
-					multiResources: config.resources
+					multiResources: config.resources,
+                    heartBeatWait: 30000
 				});
             }
             , handleChatWrapperByHistory: function ( chatHistory, chatWrapper ) {
@@ -655,7 +656,6 @@
                 me.conn.listen({
                     onOpened: function () {
                         me.conn.setPresence();
-                        me.conn.heartBeat(me.conn);
 
                         if ( easemobim.textarea.value ) {
                             utils.removeClass(easemobim.sendBtn, 'disabled');
