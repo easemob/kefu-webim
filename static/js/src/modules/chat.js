@@ -336,9 +336,9 @@
                 var curChatContainer = utils.$Dom(userName);
 
 				this.setAgentProfile({
-					userNickname: config.defaultAgentName
+					userNickname: config.defaultAgentName,
+                    avatar: config.tenantAvatar
 				});
-                this.setAgentProfile( {userNickname: config.title} );
                 if ( curChatContainer ) {
                     utils.removeClass(curChatContainer, 'em-hide');
                     utils.addClass(utils.siblings(curChatContainer, 'easemobWidget-chat'), 'em-hide');
@@ -1178,7 +1178,7 @@
                 } else if ( action === 'reply' ) {
                     utils.addClass(wrap, 'em-hide');
 
-                    if ( info && info.userNickname && info.avatar ) {
+                    if ( info && info.userNickname ) {
                         this.setAgentProfile({
                             userNickname: info.userNickname,
                             avatar: info.avatar
