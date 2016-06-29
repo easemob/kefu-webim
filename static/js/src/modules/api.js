@@ -40,13 +40,6 @@
 
     getData.listen(function ( msg ) {
 
-		if ( msg && msg.user && msg.tenantId ) {
-			try {
-				easemobim.isMobile && easemobim.utils.set('emconfig' + msg.tenantId + msg.ukey, JSON.stringify(msg));
-			} catch ( e ) {}
-			return;
-		}
-
         getData.targetOrigin = msg.origin;
 
         switch ( msg.api ) {

@@ -661,6 +661,7 @@
                 
                 me.conn.listen({
                     onOpened: function ( info ) {
+                        me.reOpen && clearTimeout(me.reOpen);
                         me.token = info.accessToken;
                         me.conn.setPresence();
 
@@ -695,6 +696,10 @@
                     , onError: function ( e ) {
                         if ( e.reconnect ) {
                             me.open();
+                        } else if ( e.type === 2 ) {
+                            me.reOpen || (me.reOpen = setTimeout(function () {
+                                me.open();
+                            }, 2000));
                         } else {
                             me.conn.stopHeartBeat(me.conn);
                             typeof config.onerror === 'function' && config.onerror(e);
@@ -1172,8 +1177,9 @@
 					this.handleMobileHeader();
                 } else if ( action === 'reply' ) {
                     utils.addClass(wrap, 'em-hide');
-                    if ( info ) {
-                        info && this.setAgentProfile({
+
+                    if ( info && info.userNickname && info.avatar ) {
+                        this.setAgentProfile({
                             userNickname: info.userNickname,
                             avatar: info.avatar
                         });
@@ -1443,7 +1449,7 @@
                     if ( msg.ext && msg.ext.weichat ) {
 						if ( msg.ext.weichat.event 
 						&& (msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' 
-						|| msg.ext.weichat.event.eventName === 'ServiceSessionTransferedForAgentQueueEvent') ) {
+						|| msg.ext.weichat.event.eventName === 'ServiceSessionTransferedToAgentQueueEvent') ) {
 							//transfer msg, show transfer tip
 							this.handleTransfer('transfer');
 						} else if (  msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionClosedEvent' ) {
@@ -1462,6 +1468,8 @@
 							this.agentCount < 1 && (this.agentCount = 1);
 							//hide tip
 							this.handleTransfer('reply');
+						} else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionCreatedEvent' ) {
+
 						} else {
 							if ( !msg.ext.weichat.agent ) {
 								//switch off
