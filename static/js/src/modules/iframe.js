@@ -61,6 +61,10 @@
 		var me = this;
 
         easemobim.utils.on(window, 'resize', function () {
+            if ( !me.rect || !me.rect.width ) {
+                return;
+            }
+
             var _width = document.documentElement.clientWidth,
                 _height = document.documentElement.clientHeight,
                 _right = Number(me.iframe.style.right.slice(0, -2)),
@@ -159,7 +163,7 @@
 				case easemobim.EVENTS.CACHEUSER.event://cache username
 					if ( !msg.data.username ) { break; }
 
-					var groupKey = me.config.emgroup ? me.config.emgroup + me.config.tenantId : me.config.tenantId;
+					var groupKey = me.config.emgroup ? me.config.tenantId + me.config.emgroup : me.config.tenantId;
 					if ( me.config.to ) {
 						easemobim.utils.set(me.config.to + groupKey, msg.data.username);
 					} else {
@@ -260,7 +264,7 @@
 
 
 		if ( !this.config.user.username ) {
-			var groupKey = this.config.emgroup ? this.config.emgroup + this.config.tenantId : this.config.tenantId;
+			var groupKey = this.config.emgroup ? this.config.tenantId + this.config.emgroup : this.config.tenantId;
 
 			if ( this.config.to ) {
 				this.config.user.username = easemobim.utils.get(this.config.to + groupKey);
@@ -315,7 +319,7 @@
 			this.iframe.style.width = '100%';
 			this.iframe.style.right = '0';
 
-			easemobim.utils.set('emconfig' + this.config.tenantId, JSON.stringify(this.config));
+			this.config.user && easemobim.utils.setStore('emconfig' + this.config.tenantId, easemobim.utils.code.encode(JSON.stringify(this.config.user)));
 		}
 
 		this.iframe.src = this.url;

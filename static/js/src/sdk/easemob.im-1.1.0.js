@@ -1506,6 +1506,7 @@
                 to : me.domain,
                 type : "normal"
             };
+
             me.heartBeatID = setInterval(function () {
                 me.sendHeartBeatMessage(options);
             }, me.heartBeatWait);

@@ -17,47 +17,45 @@
 		var tenantId = utils.query('tenantId');
 
 		//get config from referrer's config
-		if ( !config ) {
-			try {
-				config = JSON.parse(utils.get('emconfig' + tenantId));
-			} catch ( e ) {}
-		}
+        config = config || {};
 
 
 		if ( utils.root ) {
-			if ( !config ) {
-				config = {};
-				config.domain = '//' + location.host;
-				config.tenantId = tenantId;
-				config.appKey = '';
-				config.emgroup = utils.query('emgroup');
-				config.user = {
-					username: utils.get('root' + config.emgroup + config.tenantId),
-					password: '',
-					token: ''
-				};
-				config.satisfaction = utils.convertFalse(utils.query('sat'));
-				config.resources = utils.convertFalse(utils.query('resources'));
-			} else if ( !config.user || !config.user.username || config.user.username != utils.query('user') ) {
-				config.user = {
-					username: utils.get('root' + config.emgroup + config.tenantId),
-					password: '',
-					token: ''
-				};
+            config.tenantId = tenantId;
+            config.to = utils.convertFalse(utils.query('to'));
+            config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
+            config.domain = '//' + location.host;
+            config.xmppServer = utils.convertFalse(utils.query('xmppServer'));
+            config.restServer = utils.convertFalse(utils.query('restServer'));
+            config.agentName = utils.convertFalse(utils.query('agentName'));
+            config.satisfaction = utils.convertFalse(utils.query('sat'));
+            config.resources = utils.convertFalse(utils.query('resources'));
+            config.emgroup = utils.query('emgroup');
+            config.hide = utils.convertFalse(config.hide);
+            config.resources = utils.convertFalse(config.resources);
+            config.satisfaction = utils.convertFalse(config.satisfaction);
+            config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
+            config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
+
+            try {
+				config.user = JSON.parse(utils.code.decode(utils.getStore('emconfig' + tenantId)));
+			} catch ( e ) {}
+
+            //没绑定user直接取cookie
+            if ( !utils.query('user') ) {
+                config.user = {
+                    username: utils.get('root' + config.tenantId + config.emgroup),
+                    password: '',
+                    token: ''
+                };
+            } else if ( !config.user || (config.user.username && config.user.username !== utils.query('user')) ) {
+                config.user = {
+                    username: '',
+                    password: '',
+                    token: ''
+                };
 			}
 		}
-
-		//reset
-		config.hide = utils.convertFalse(config.hide);
-		config.resources = utils.convertFalse(config.resources);
-		config.satisfaction = utils.convertFalse(config.satisfaction);
-		config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
-		config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
-        config.to = utils.convertFalse(utils.query('to'));
-        config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
-        config.xmppServer = utils.convertFalse(utils.query('xmppServer'));
-        config.restServer = utils.convertFalse(utils.query('restServer'));
-        config.agentName = utils.convertFalse(utils.query('agentName'));
 		
 
 		//render Tpl
@@ -88,7 +86,7 @@
 					(utils.isMobile || !config.satisfaction ? "" : "<span id='EasemobKefuWebimSatisfy' class='easemobWidget-satisfaction'>请对服务做出评价</span>") + "\
 					<a href='javascript:;' class='easemobWidget-send bg-color disabled' id='easemobWidgetSendBtn'>连接中</a>\
 				</div>\
-				<iframe id='EasemobKefuWebimIframe' class='em-hide' src='" + (config.domain || '\/\/' + location.host) + "/webim/transfer.html?v='" + new Date().getTime() + ">\
+				<iframe id='EasemobKefuWebimIframe' class='em-hide' src='" + (config.domain || '\/\/' + location.host) + "/webim/transfer.html?v=<%= v %>'>\
 			</div>";
 
 
@@ -156,6 +154,11 @@
 						chat.ready();
 					} else {
 						
+                        //检测微信网页授权
+                        /*if (  ) {
+
+                        }*/
+
 						if ( config.user.username ) {
 							api('getPassword', {
 								userId: config.user.username
@@ -176,7 +179,7 @@
 											group: config.user.emgroup
 										};
 										utils.root
-										? utils.set('root' + config.emgroup + config.tenantId, config.user.username)
+										? utils.set('root' + config.tenantId + config.emgroup, config.user.username)
 										: transfer.send(easemobim.EVENTS.CACHEUSER);
 										chat.ready();
 									});
@@ -200,7 +203,7 @@
 									group: config.user.emgroup
 								};
 								utils.root
-								? utils.set('root' + config.emgroup + config.tenantId, config.user.username)
+								? utils.set('root' + config.tenantId + config.emgroup, config.user.username)
 								: transfer.send(easemobim.EVENTS.CACHEUSER);
 								chat.ready();
 							});

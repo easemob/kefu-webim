@@ -3,7 +3,7 @@
 */
 
 var debug = false;
-var version = '43.4';
+var version = '43.5';
 
 var gulp = require('gulp'),
     minifycss = require('gulp-minify-css'),
@@ -94,7 +94,8 @@ gulp.task('uglify', function() {
     ])
     .pipe(concat('main.js'));
     debug || main.pipe(uglify());
-    main.pipe(gulp.dest('static/js/'));
+    main.pipe(template({ v: version }))
+    .pipe(gulp.dest('static/js/'));
 
     var ejs = gulp.src([
 		'static/js/src/modules/utils.js',
@@ -107,8 +108,8 @@ gulp.task('uglify', function() {
     ])
     .pipe(concat('easemob.js'));
     debug || ejs.pipe(uglify());
-    ejs.pipe(gulp.dest('.'));
-    ejs.pipe(template({ v: version }));
+    ejs.pipe(template({ v: version }))
+    .pipe(gulp.dest('.'));
 
     var open = gulp.src([
         'static/js/src/sdk/strophe.js',
