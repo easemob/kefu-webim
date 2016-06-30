@@ -455,7 +455,7 @@
 
                 utils.html(nickName, info && info.userNickname ? info.userNickname : info && info.agentUserNiceName || config.defaultAgentName);
 
-				this.currentAvatar = info && info.avatar ? utils.getAvatarsFullPath(info.avatar, config.domain) : config.defaultAvatar;
+				this.currentAvatar = info && info.avatar ? utils.getAvatarsFullPath(info.avatar, config.domain) : config.tenantAvatar || config.defaultAvatar;
                 if ( avatar.getAttribute('src') !== this.currentAvatar ) {
                     var cur = this.currentAvatar;
 
