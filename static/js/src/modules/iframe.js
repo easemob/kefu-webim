@@ -319,7 +319,12 @@
 			this.iframe.style.width = '100%';
 			this.iframe.style.right = '0';
 
-			this.config.user && easemobim.utils.setStore('emconfig' + this.config.tenantId, easemobim.utils.code.encode(JSON.stringify(this.config.user)));
+            var emconfig = {};
+            emconfig.domain = this.config.domain;
+            emconfig.path = this.config.path;
+            emconfig.staticPath = this.config.staticPath;
+			this.config.user && (emconfig.user = this.config.user);
+			easemobim.utils.setStore('emconfig' + this.config.tenantId, easemobim.utils.code.encode(JSON.stringify(emconfig)));
 		}
 
 		this.iframe.src = this.url;
