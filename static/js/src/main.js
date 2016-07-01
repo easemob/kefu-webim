@@ -14,17 +14,21 @@
 	//main entry
 	var main = function ( config ) {
 
-		var tenantId = utils.query('tenantId');
-
-		//get config from referrer's config
-        config = config || {};
+		var tenantId = utils.query('tenantId'),
+            config = config || {};
 
 
 		if ( utils.root ) {
+
+            //get config from referrer's config
+            try {
+                config = JSON.parse(utils.code.decode(utils.getStore('emconfig' + tenantId)));
+            } catch ( e ) {}
+
             config.tenantId = tenantId;
             config.to = utils.convertFalse(utils.query('to'));
             config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
-            config.domain = '//' + location.host;
+            config.domain = config.domain || '//' + location.host;
             config.xmppServer = utils.convertFalse(utils.query('xmppServer'));
             config.restServer = utils.convertFalse(utils.query('restServer'));
             config.agentName = utils.convertFalse(utils.query('agentName'));
@@ -37,9 +41,6 @@
             config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
             config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
 
-            try {
-				config.user = JSON.parse(utils.code.decode(utils.getStore('emconfig' + tenantId)));
-			} catch ( e ) {}
 
             //没绑定user直接取cookie
             if ( !utils.query('user') ) {
