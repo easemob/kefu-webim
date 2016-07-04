@@ -40,6 +40,7 @@
             config.satisfaction = utils.convertFalse(config.satisfaction);
             config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
             config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
+            config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket'));//true default
 
 
             //没绑定user直接取cookie
@@ -81,7 +82,7 @@
 				<div id='easemobWidgetSend' class='easemobWidget-send-wrapper'>\
 					<i class='easemobWidget-face e-face' tile='表情'></i>\
 					<i class='easemobWidget-file' id='easemobWidgetFile' tile='图片'></i>\
-					<i class='easemobWidget-note' id='easemobWidgetNote' tile='留言'></i>\
+					<i class='" + (config.ticket ? "easemobWidget-note" : "easemobWidget-note em-hide") + "' id='easemobWidgetNote' tile='留言'></i>\
 					<input id='easemobWidgetFileInput' type='file' accept='image/*'/>\
 					<textarea class='easemobWidget-textarea' spellcheck='false'></textarea>" +
 					(utils.isMobile || !config.satisfaction ? "" : "<span id='EasemobKefuWebimSatisfy' class='easemobWidget-satisfaction'>请对服务做出评价</span>") + "\

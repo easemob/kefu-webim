@@ -110,7 +110,7 @@
 				//mobile need set drag disable
 				config.dragenable = false;
 
-                utils.removeClass(easemobim.mobileNoteBtn, 'em-hide');
+                config.ticket && utils.removeClass(easemobim.mobileNoteBtn, 'em-hide');
 
 				if ( !config.hideKeyboard ) {
 					var i = document.createElement('i');
