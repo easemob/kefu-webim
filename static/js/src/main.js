@@ -34,13 +34,13 @@
             config.agentName = utils.convertFalse(utils.query('agentName'));
             config.satisfaction = utils.convertFalse(utils.query('sat'));
             config.resources = utils.convertFalse(utils.query('resources'));
-            config.emgroup = utils.query('emgroup');
             config.hide = utils.convertFalse(config.hide);
             config.resources = utils.convertFalse(config.resources);
             config.satisfaction = utils.convertFalse(config.satisfaction);
             config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
             config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
             config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket'));//true default
+            try { config.emgroup = decodeURIComponent(utils.query('emgroup')); } catch ( e ) { config.emgroup = utils.query('emgroup') };
 
 
             //没绑定user直接取cookie
