@@ -426,11 +426,11 @@
 			var url = link || _protocol + path + '/im.html?tenantId=';
 
 			for ( var o in attr ) {
-				if ( attr.hasOwnProperty(o) ) {
+				if ( attr.hasOwnProperty(o) && typeof attr[o] !== 'undefined' ) {
 					if ( url.indexOf(o + '=') < 0 ) {
-						url += '&' + o + '=' + (attr[o] || '');
+						url += '&' + o + '=' + (attr[o] !== '' ? attr[o] : '');
 					} else {
-						url = url.replace(new RegExp(o + '=[^&#?]*', 'gim'), o + '=' + (attr[o] || ''));
+						url = url.replace(new RegExp(o + '=[^&#?]*', 'gim'), o + '=' + (attr[o] !== '' ? attr[o] : ''));
 					}
 				}
 			}
