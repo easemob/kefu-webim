@@ -257,7 +257,7 @@
 		this.config.appKey && (destUrl.appKey = encodeURIComponent(this.config.appKey || ''));
 		this.config.xmppServer && (destUrl.xmppServer = this.config.xmppServer);
 		this.config.restServer && (destUrl.restServer = this.config.restServer);
-		this.config.ticket && (destUrl.ticket = this.config.ticket);
+		this.config.ticket !== '' && (destUrl.ticket = this.config.ticket);
 		this.config.agentName && (destUrl.agentName = this.config.agentName);
 
 
