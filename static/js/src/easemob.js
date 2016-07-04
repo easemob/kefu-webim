@@ -14,6 +14,7 @@
 		appKey: '',
 		domain: '',
 		path: '',
+        ticket: true,
 		staticPath: '',
 		buttonText: '联系客服',
 		dialogWidth: '400px',
