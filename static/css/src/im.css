@@ -473,7 +473,7 @@ button, textarea, input {
     word-wrap: break-word;
     vertical-align: middle;
 }
-.easemobWidget-msg-container p {
+.easemobWidget-msg-container pre {
     word-break: break-all;
 }
 .easemobWidget-unimage {

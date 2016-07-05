@@ -16,7 +16,7 @@ Easemob.im.EmMessage.txt.prototype.get = function ( isReceive ) {
 				this.id ? "<div id='" + this.id + "_failed' class='easemobWidget-msg-status hide'><span>发送失败</span><i></i></div>" : "",
 				this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
 				"<div class='easemobWidget-msg-container'>",
-					"<p>" + Easemob.im.Utils.parseLink(this.emotion ? this.value : Easemob.im.Utils.parseEmotions(easemobim.utils.encode(this.value))) + "</p>",
+					"<pre>" + Easemob.im.Utils.parseLink(this.emotion ? this.value : Easemob.im.Utils.parseEmotions(easemobim.utils.encode(this.value))) + "</pre>",
 				"</div>",
 			"</div>",
 		"</div>"
