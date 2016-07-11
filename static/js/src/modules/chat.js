@@ -590,14 +590,13 @@
                 utils.live('img.em-emotion', utils.click, function ( e ) {
                     !utils.isMobile && easemobim.textarea.focus();
                     easemobim.textarea.value = easemobim.textarea.value + this.getAttribute('data-value');
-                    utils.removeClass(easemobim.sendBtn, 'disabled');
                     if ( utils.isMobile ) {
                         me.autoGrowOptions.update();//update autogrow
                         setTimeout(function () {
                             easemobim.textarea.scrollTop = 10000;
                         }, 100);
                     }
-                    utils.removeClass(easemobim.sendBtn, 'disabled');
+                    me.readyHandled && utils.removeClass(easemobim.sendBtn, 'disabled');
                 }, easemobim.chatFaceWrapper);
             }
             , errorPrompt: function ( msg, isAlive ) {//暂时所有的提示都用这个方法
@@ -853,7 +852,7 @@
 						var e = window.event || ev;
 						easemobim.textarea.blur();//ie a  ie...
 						easemobim.EVENTS.DRAGREADY.data = { x: e.clientX, y: e.clientY };
-						utils.root || transfer.send(easemobim.EVENTS.DRAGREADY);
+                        utils.root || transfer.send(easemobim.EVENTS.DRAGREADY);
 						return false;
 					}, false);
 				}
@@ -937,7 +936,11 @@
                 });
                 
                 var handleSendBtn = function () {
-                    easemobim.textarea.value && utils.html(easemobim.sendBtn) !== '连接中' ? utils.removeClass(easemobim.sendBtn, 'disabled') : utils.addClass(easemobim.sendBtn, 'disabled');
+                    if ( !me.readyHandled ) {
+                        utils.hasClass(easemobim.sendBtn, 'disabled') || utils.addClass(easemobim.sendBtn, 'disabled');
+                        return false;
+                    }
+                    easemobim.textarea.value ? utils.removeClass(easemobim.sendBtn, 'disabled') : utils.addClass(easemobim.sendBtn, 'disabled');
                 };
 
                 utils.on(easemobim.textarea, 'keyup', handleSendBtn);
@@ -984,6 +987,10 @@
                 });
                 //弹出文件选择框
                 utils.on(easemobim.sendFileBtn, 'click', function () {
+                    if ( !me.readyHandled ) {
+                        me.errorPrompt('正在连接中...');
+                        return false;
+                    }
                     if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
                         me.errorPrompt('当前浏览器需要安装flash发送图片');
                         return false;    
