@@ -68,9 +68,12 @@
 
                 if ( utils.root ) {
                     //get visitor
-                    var visInfo = utils.getStore(config.tenantId + config.emgroup + 'visitor');
-                    try { config.visitor = Easemob.im.Utils.parseJSON(visInfo); } catch ( e ) {}
-                    utils.clearStore(config.tenantId + config.emgroup + 'visitor');
+                    var visInfo = config.visitor;
+                    if ( !visInfo ) {
+                        visInfo = utils.getStore(config.tenantId + config.emgroup + 'visitor');
+                        try { config.visitor = Easemob.im.Utils.parseJSON(visInfo); } catch ( e ) {}
+                        utils.clearStore(config.tenantId + config.emgroup + 'visitor');
+                    }
 
                     //get ext
                     var ext = utils.getStore(config.tenantId + config.emgroup + 'ext');
@@ -96,6 +99,18 @@
 				//bind agent
 				if ( config.agentName ) {
 					msg.body.ext.weichat.agentUsername = config.agentName;
+				}
+
+                //set growingio id
+                var gr_user_id = utils.getStore(config.tenantId + 'gr_user_id');
+                if ( gr_user_id ) {
+					msg.body.ext.weichat.gr_user_id = gr_user_id;
+                    utils.clearStore(config.tenantId + 'gr_user_id');
+                }
+
+                //set originType
+				if ( config.originType ) {
+					msg.body.ext.weichat.originType = config.originType;
 				}
 			}
 			, setRoot: function () {
@@ -620,7 +635,7 @@
             , setOffline: function ( isOffDuty ) {
                 if ( easemobim.leaveMessage ) {
 					this.slogan && utils.addClass(this.slogan, 'em-hide');
-					utils.addClass(easemobim.imBtn.getElementsByTagName('a')[0], 'easemobWidget-offline-bg');
+					//utils.addClass(easemobim.imBtn.getElementsByTagName('a')[0], 'easemobWidget-offline-bg');
 					utils.removeClass(easemobim.leaveMessage.dom, 'em-hide');
 					utils.addClass(easemobim.imChatBody, 'em-hide');
 					utils.addClass(easemobim.send, 'em-hide');
@@ -736,7 +751,7 @@
 					, appKey: config.appKey
 					, apiUrl: (utils.ssl ? 'https://' : 'http://') + config.restServer
 				};
-				
+
 				if ( config.user.password ) {
 					op.pwd = config.user.password;
 				} else {
@@ -1153,6 +1168,7 @@
                 }
             }
             , handleTransfer: function ( action, info, robertToHubman ) {
+                if ( !config.showStatus ) { return; }
                 var wrap = utils.$Dom(config.toUser + '-transfer');
 
                 config.agentList = config.agentList || {};

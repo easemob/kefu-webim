@@ -55,6 +55,13 @@
                     msg: msg
                 }));
                 break;
+            case 'getWechatVisitor':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/visitors/wechat/' + msg.data.openid + '?tenantId=' + msg.data.tenantId,
+                    msg: msg,
+                    type: 'POST'
+                }));
+                break;
             case 'createVisitor':
                 easemobim.emajax(createObject({
                     url: '/v1/webimplugin/visitors?tenantId=' + msg.data.tenantId,

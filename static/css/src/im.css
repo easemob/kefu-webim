@@ -412,6 +412,7 @@ button, textarea, input {
 .easemobWidget-status-prompt.transfer:after {
     z-index: 1;
     padding: 5px 10px;
+    background: #ccc;
     background: rgba(0,0,0,.3);
     position: absolute;
     bottom: 0;
@@ -475,6 +476,7 @@ button, textarea, input {
 }
 .easemobWidget-msg-container pre {
     word-break: break-all;
+    white-space: inherit;
 }
 .easemobWidget-unimage {
     color: #999;
