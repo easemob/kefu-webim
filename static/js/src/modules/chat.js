@@ -104,7 +104,8 @@
                 //set growingio id
                 var gr_user_id = utils.getStore(config.tenantId + 'gr_user_id');
                 if ( gr_user_id ) {
-					msg.body.ext.weichat.gr_user_id = gr_user_id;
+					msg.body.ext.weichat.visitor = msg.body.ext.weichat.visitor || {};
+					msg.body.ext.weichat.visitor.gr_user_id = gr_user_id;
                     utils.clearStore(config.tenantId + 'gr_user_id');
                 }
 
