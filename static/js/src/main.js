@@ -173,10 +173,10 @@
                                 } else {
                                     config.visitor = config.visitor || {};
                                     config.visitor.userNickname = data.nickname;
+                                    var oid = config.tenantId + '_' + config.orgName + '_' + config.appName + '_' + config.toUser + '_' + data.openid;
                                     easemobim.emajax({
-                                        url: '/v1/webimplugin/visitors/wechat/' + data.openid + '?tenantId=' + config.tenantId
+                                        url: '/v1/webimplugin/visitors/wechat/' + oid + '?tenantId=' + config.tenantId
                                         , data: {
-                                            tenantId: config.tenantId,
                                             orgName: config.orgName,
                                             appName: config.appName,
                                             imServiceNumber: config.toUser
