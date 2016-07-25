@@ -176,6 +176,7 @@
                                     easemobim.emajax({
                                         url: '/v1/webimplugin/visitors/wechat/' + data.openid + '?tenantId=' + config.tenantId
                                         , data: {
+                                            tenantId: config.tenantId,
                                             orgName: config.orgName,
                                             appName: config.appName,
                                             imServiceNumber: config.toUser

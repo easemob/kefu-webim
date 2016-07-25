@@ -35,7 +35,12 @@
                     callback(info);
                 }
                 , error: function ( e ) {
-                    callback();
+                    var url = location.href.replace(/&code=[^&]+/, '');
+
+                    if ( url.indexOf('appid') !== url.lastIndexOf('appid') ) {
+                        url = url.replace(/&appid=wx[^&]+/, '');
+                    }
+                    location.href = url;
                 }
             });
         };
