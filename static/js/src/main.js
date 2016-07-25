@@ -31,10 +31,12 @@
             config.domain = config.domain || '//' + location.host;
             config.xmppServer = utils.convertFalse(utils.query('xmppServer'));
             config.restServer = utils.convertFalse(utils.query('restServer'));
+            config.originType = utils.convertFalse(utils.query('originType'));
             config.agentName = utils.convertFalse(utils.query('agentName'));
             config.satisfaction = utils.convertFalse(utils.query('sat'));
             config.resources = utils.convertFalse(utils.query('resources'));
             config.hide = utils.convertFalse(config.hide);
+            config.showStatus = utils.convertFalse(config.showStatus);
             config.resources = utils.convertFalse(config.resources);
             config.satisfaction = utils.convertFalse(config.satisfaction);
             config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
@@ -62,7 +64,7 @@
 
 		//render Tpl
 		webim.innerHTML = "\
-			<div id='easemobWidgetPopBar'" + (utils.root || !config.minimum || config.hide ? " class='em-hide'" : "") + "'>\
+			<div id='easemobWidgetPopBar'" + (utils.root || !config.minimum || config.hide ? " class='em-hide'" : "") + ">\
 				<a class='easemobWidget-pop-bar bg-color' href='" + (utils.isMobile ? location.href + "' target='_blank'" : "javascript:;'") + "><i></i>" + config.buttonText + "</a>\
 				<span class='easemobWidget-msgcount em-hide'></span>\
 			</div>\
@@ -115,6 +117,8 @@
 		 */
 		entry = {
 			init: function () {
+                var me = this;
+
 				config.toUser = config.toUser || config.to;
 				api('getDutyStatus', {
 					tenantId: config.tenantId
@@ -157,9 +161,50 @@
 					} else {
 						
                         //检测微信网页授权
-                        /*if (  ) {
-
-                        }*/
+                        if ( config.wechatAuth && easemobim.wechat ) {
+                            easemobim.wechat(function ( data ) {
+                                try {
+                                    data = JSON.parse(data);
+                                } catch ( e ) {
+                                    data = null;
+                                }
+                                if ( !data ) {//失败自动降级，随机创建访客
+                                    me.go();
+                                } else {
+                                    config.visitor = config.visitor || {};
+                                    config.visitor.userNickname = data.nickname;
+                                    easemobim.emajax({
+                                        url: '/v1/webimplugin/visitors/wechat/' + data.openid + '?tenantId=' + config.tenantId
+                                        , data: {
+                                            orgName: config.orgName,
+                                            appName: config.appName,
+                                            imServiceNumber: config.toUser
+                                        }
+                                        , type: 'POST'
+                                        , success: function ( info ) {
+                                            try {
+                                                info = JSON.parse(info);
+                                            } catch ( e ) {
+                                                info = null;
+                                            }
+                                            if ( info && info.status === 'OK' ) {
+                                                config.user.username = info.entity.userId;
+                                                config.user.password = info.entity.userPassword;
+                                                chat.ready();
+                                            } else {
+                                                me.go();
+                                            }
+                                            
+                                        }
+                                        , error: function ( e ) {
+                                            //失败自动降级，随机创建访客
+									        me.go();
+                                        }
+                                    });
+                                }
+                            });
+                            return this;
+                        }
 
 						if ( config.user.username ) {
 							api('getPassword', {
@@ -167,53 +212,39 @@
                                 , tenantId: config.tenantId
 							}, function ( msg ) {
 								if ( !msg.data ) {
-									api('createVisitor', {
-										orgName: config.orgName
-										, appName: config.appName
-										, imServiceNumber: config.toUser
-										, tenantId: config.tenantId
-									}, function ( msg ) {
-										config.newuser = true;
-										config.user.username = msg.data.userId;
-										config.user.password = msg.data.userPassword;
-										easemobim.EVENTS.CACHEUSER.data = {
-											username: config.user.username,
-											group: config.user.emgroup
-										};
-										utils.root
-										? utils.set('root' + config.tenantId + config.emgroup, config.user.username)
-										: transfer.send(easemobim.EVENTS.CACHEUSER);
-										chat.ready();
-									});
+									me.go();
 								} else {
 									config.user.password = msg.data;
 									chat.ready();
 								}
 							});
 						} else {
-							api('createVisitor', {
-								orgName: config.orgName
-								, appName: config.appName
-								, imServiceNumber: config.toUser
-								, tenantId: config.tenantId
-							}, function ( msg ) {
-								config.newuser = true;
-								config.user.username = msg.data.userId;
-								config.user.password = msg.data.userPassword;
-								easemobim.EVENTS.CACHEUSER.data = {
-									username: config.user.username,
-									group: config.user.emgroup
-								};
-								utils.root
-								? utils.set('root' + config.tenantId + config.emgroup, config.user.username)
-								: transfer.send(easemobim.EVENTS.CACHEUSER);
-								chat.ready();
-							});
+							me.go();
 						}
 					}
 				});
 				return this;
 			}
+            , go: function () {
+                api('createVisitor', {
+                    orgName: config.orgName
+                    , appName: config.appName
+                    , imServiceNumber: config.toUser
+                    , tenantId: config.tenantId
+                }, function ( msg ) {
+                    config.newuser = true;
+                    config.user.username = msg.data.userId;
+                    config.user.password = msg.data.userPassword;
+                    easemobim.EVENTS.CACHEUSER.data = {
+                        username: config.user.username,
+                        group: config.user.emgroup
+                    };
+                    utils.root
+                    ? utils.set('root' + config.tenantId + config.emgroup, config.user.username)
+                    : transfer.send(easemobim.EVENTS.CACHEUSER);
+                    chat.ready();
+                });
+            }
 			, beforeOpen: function () {}
 			, open: function ( outerTrigger ) {
 				config.toUser = config.to;

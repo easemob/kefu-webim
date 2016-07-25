@@ -257,7 +257,10 @@
 		this.config.appKey && (destUrl.appKey = encodeURIComponent(this.config.appKey || ''));
 		this.config.xmppServer && (destUrl.xmppServer = this.config.xmppServer);
 		this.config.restServer && (destUrl.restServer = this.config.restServer);
-		this.config.ticket !== '' && (destUrl.ticket = this.config.ticket);
+		typeof this.config.showStatus !== 'undefined' && this.config.showStatus !== '' && (destUrl.showStatus = this.config.showStatus);
+		typeof this.config.ticket !== 'undefined' && this.config.ticket !== '' && (destUrl.ticket = this.config.ticket);
+		typeof this.config.appid !== 'undefined' && this.config.appid !== '' && (destUrl.appid = this.config.appid);
+		typeof this.config.originType !== 'undefined' && this.config.originType !== '' && (destUrl.originType = this.config.originType);
 		this.config.agentName && (destUrl.agentName = this.config.agentName);
 
 

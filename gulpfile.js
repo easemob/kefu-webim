@@ -3,7 +3,7 @@
 */
 
 var debug = false;
-var version = '43.5';
+var version = '43.6';
 
 var gulp = require('gulp'),
     minifycss = require('gulp-minify-css'),
@@ -72,7 +72,7 @@ gulp.task('lint', function() {
 gulp.task('uglify', function() {
     var main = gulp.src([
         'static/js/src/sdk/strophe.js',
-        'static/js/src/sdk/easemob.im-1.1.0.js',
+        'static/js/src/sdk/easemob.im-1.1.1.js',
         'static/js/src/modules/utils.js',
         'static/js/src/modules/ajax.js',
         'static/js/src/modules/common.js',

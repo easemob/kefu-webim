@@ -1,6 +1,6 @@
 /**************************************************************************
 ***                             Easemob WebIm Js SDK                    ***
-***                             v1.1.0                                  ***
+***                             v1.1.1                                  ***
 **************************************************************************/
 /**
  * Module1: Utility
@@ -17,7 +17,7 @@
 
     var Easemob = Easemob || {};
     Easemob.im = Easemob.im || {};
-    Easemob.im.version = "1.1.0";
+    Easemob.im.version = "1.1.1";
 
     var https = location.protocol === 'https:';
 
@@ -382,10 +382,6 @@
                 } else {
                     var emotion = Easemob.im.EMOTIONS,
                         reg = null;
-
-                    msg = msg.replace(/&amp;/g, '&');
-                    msg = msg.replace(/&#39;/g, '\'');
-                    msg = msg.replace(/&lt;/g, '<');
 
                     for ( var face in emotion.map ) {
                         if ( emotion.map.hasOwnProperty(face) ) {
@@ -1506,7 +1502,6 @@
                 to : me.domain,
                 type : "normal"
             };
-
             me.heartBeatID = setInterval(function () {
                 me.sendHeartBeatMessage(options);
             }, me.heartBeatWait);
@@ -1728,6 +1723,7 @@
             var from = msginfo.getAttribute('from') || '';
             var to = msginfo.getAttribute('to') || '';
             var type = msginfo.getAttribute('type') || '';
+            var presence_type = msginfo.getAttribute('presence_type') || '';
             var fromUser = _parseNameFromJidFn(from);
             var toUser = _parseNameFromJidFn(to);
             var info = {
@@ -1782,7 +1778,7 @@
 				if ( reflectUser === this.context.userId ) {
 					if ( info.type === '' && !info.code ) {
 						info.type = 'joinChatRoomSuccess';
-					} else if ( info.type === 'unavailable' ) {
+					} else if ( presence_type === 'unavailable' || info.type === 'unavailable' ) {
 						if ( !info.status ) {//web正常退出
 							info.type = 'leaveChatRoom';
 						} else if ( info.code == 110 ) {//app先退或被管理员踢
@@ -1792,10 +1788,10 @@
 						}
 					}
 				}
-			} else if ( type === 'unavailable' ) {//聊天室被删除没有roomtype, 需要区分群组被踢和解散
+			} else if ( presence_type === 'unavailable' || type === 'unavailable' ) {//聊天室被删除没有roomtype, 需要区分群组被踢和解散
 				if ( info.destroy ) {//群组和聊天室被删除
 					info.type = 'deleteGroupChat';
-				} else if ( info.code == 307 ) {//群组被踢
+				} else if ( info.code == 307 || info.code == 321 ) {//群组被踢
 					info.type = 'leaveGroup';
 				}
 			}
@@ -1826,9 +1822,9 @@
             var curJid = this.context.jid;
             var curUser = this.context.userId;
 
-            if ( from !== "" && from !== curJid && curUser !== name ) {
+            /*if ( !from || from === curJid ) {
                 return true;
-			}
+			}*/
 
             var iqresult = $iq({ type: 'result', id: id, from: curJid });
             this.sendCommand(iqresult.tree());
@@ -1853,6 +1849,7 @@
             });
             var parseMsgData = _parseResponseMessage(msginfo);
             if ( parseMsgData.errorMsg ) {
+                this.handlePresence(msginfo);
                 return;
             }
             var msgDatas = parseMsgData.data;
@@ -1891,6 +1888,7 @@
                             , type: chattype
                             , from: from
                             , to: too
+                            , delay: parseMsgData.delayTimeStamp
                             , data: emotionsbody.body
                             , ext: extmsg
                         });
@@ -1900,6 +1898,7 @@
                             , type: chattype
                             , from: from
                             , to: too
+                            , delay: parseMsgData.delayTimeStamp
                             , data: receiveMsg
                             , ext: extmsg
                         });
@@ -1927,6 +1926,7 @@
                         , filetype: msgBody.filetype || ''
                         , accessToken: this.context.accessToken || ''
                         , ext: extmsg
+                        , delay: parseMsgData.delayTimeStamp
                     };
                     this.onPictureMessage(msg);
                 } else if ( "audio" === type ) {
@@ -1943,6 +1943,7 @@
                         , filetype: msgBody.filetype || ''
                         , accessToken: this.context.accessToken || ''
                         , ext: extmsg
+                        , delay: parseMsgData.delayTimeStamp
                     });
                 } else if ( "file" === type ) {
                     this.onFileMessage({
@@ -1956,6 +1957,7 @@
                         , file_length: msgBody.file_length
                         , accessToken: this.context.accessToken || ''
                         , ext: extmsg
+                        , delay: parseMsgData.delayTimeStamp
                     });
                 } else if ( "loc" === type ) {
                     this.onLocationMessage({
@@ -1967,6 +1969,7 @@
                         , lat: msgBody.lat
                         , lng: msgBody.lng
                         , ext: extmsg
+                        , delay: parseMsgData.delayTimeStamp
                     });
                 } else if ( "video" === type ) {
                     this.onVideoMessage({
@@ -1980,6 +1983,7 @@
                         , file_length: msgBody.file_length
                         , accessToken: this.context.accessToken || ''
                         , ext: extmsg
+                        , delay: parseMsgData.delayTimeStamp
                     });
                 } else if ( "cmd" === type ) {
                     this.onCmdMessage({
@@ -1988,6 +1992,7 @@
                         , to: too
                         , action: msgBody.action
                         , ext: extmsg
+                        , delay: parseMsgData.delayTimeStamp
                     });
                 }
             }

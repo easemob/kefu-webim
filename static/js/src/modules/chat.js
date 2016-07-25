@@ -68,9 +68,12 @@
 
                 if ( utils.root ) {
                     //get visitor
-                    var visInfo = utils.getStore(config.tenantId + config.emgroup + 'visitor');
-                    try { config.visitor = Easemob.im.Utils.parseJSON(visInfo); } catch ( e ) {}
-                    utils.clearStore(config.tenantId + config.emgroup + 'visitor');
+                    var visInfo = config.visitor;
+                    if ( !visInfo ) {
+                        visInfo = utils.getStore(config.tenantId + config.emgroup + 'visitor');
+                        try { config.visitor = Easemob.im.Utils.parseJSON(visInfo); } catch ( e ) {}
+                        utils.clearStore(config.tenantId + config.emgroup + 'visitor');
+                    }
 
                     //get ext
                     var ext = utils.getStore(config.tenantId + config.emgroup + 'ext');
@@ -96,6 +99,18 @@
 				//bind agent
 				if ( config.agentName ) {
 					msg.body.ext.weichat.agentUsername = config.agentName;
+				}
+
+                //set growingio id
+                var gr_user_id = utils.getStore(config.tenantId + 'gr_user_id');
+                if ( gr_user_id ) {
+					msg.body.ext.weichat.gr_user_id = gr_user_id;
+                    utils.clearStore(config.tenantId + 'gr_user_id');
+                }
+
+                //set originType
+				if ( config.originType ) {
+					msg.body.ext.weichat.originType = config.originType;
 				}
 			}
 			, setRoot: function () {
@@ -590,14 +605,13 @@
                 utils.live('img.em-emotion', utils.click, function ( e ) {
                     !utils.isMobile && easemobim.textarea.focus();
                     easemobim.textarea.value = easemobim.textarea.value + this.getAttribute('data-value');
-                    utils.removeClass(easemobim.sendBtn, 'disabled');
                     if ( utils.isMobile ) {
                         me.autoGrowOptions.update();//update autogrow
                         setTimeout(function () {
                             easemobim.textarea.scrollTop = 10000;
                         }, 100);
                     }
-                    utils.removeClass(easemobim.sendBtn, 'disabled');
+                    me.readyHandled && utils.removeClass(easemobim.sendBtn, 'disabled');
                 }, easemobim.chatFaceWrapper);
             }
             , errorPrompt: function ( msg, isAlive ) {//暂时所有的提示都用这个方法
@@ -621,7 +635,7 @@
             , setOffline: function ( isOffDuty ) {
                 if ( easemobim.leaveMessage ) {
 					this.slogan && utils.addClass(this.slogan, 'em-hide');
-					utils.addClass(easemobim.imBtn.getElementsByTagName('a')[0], 'easemobWidget-offline-bg');
+					//utils.addClass(easemobim.imBtn.getElementsByTagName('a')[0], 'easemobWidget-offline-bg');
 					utils.removeClass(easemobim.leaveMessage.dom, 'em-hide');
 					utils.addClass(easemobim.imChatBody, 'em-hide');
 					utils.addClass(easemobim.send, 'em-hide');
@@ -737,7 +751,7 @@
 					, appKey: config.appKey
 					, apiUrl: (utils.ssl ? 'https://' : 'http://') + config.restServer
 				};
-				
+
 				if ( config.user.password ) {
 					op.pwd = config.user.password;
 				} else {
@@ -853,7 +867,7 @@
 						var e = window.event || ev;
 						easemobim.textarea.blur();//ie a  ie...
 						easemobim.EVENTS.DRAGREADY.data = { x: e.clientX, y: e.clientY };
-						utils.root || transfer.send(easemobim.EVENTS.DRAGREADY);
+                        utils.root || transfer.send(easemobim.EVENTS.DRAGREADY);
 						return false;
 					}, false);
 				}
@@ -937,7 +951,11 @@
                 });
                 
                 var handleSendBtn = function () {
-                    easemobim.textarea.value && utils.html(easemobim.sendBtn) !== '连接中' ? utils.removeClass(easemobim.sendBtn, 'disabled') : utils.addClass(easemobim.sendBtn, 'disabled');
+                    if ( !me.readyHandled ) {
+                        utils.hasClass(easemobim.sendBtn, 'disabled') || utils.addClass(easemobim.sendBtn, 'disabled');
+                        return false;
+                    }
+                    easemobim.textarea.value ? utils.removeClass(easemobim.sendBtn, 'disabled') : utils.addClass(easemobim.sendBtn, 'disabled');
                 };
 
                 utils.on(easemobim.textarea, 'keyup', handleSendBtn);
@@ -984,6 +1002,10 @@
                 });
                 //弹出文件选择框
                 utils.on(easemobim.sendFileBtn, 'click', function () {
+                    if ( !me.readyHandled ) {
+                        me.errorPrompt('正在连接中...');
+                        return false;
+                    }
                     if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
                         me.errorPrompt('当前浏览器需要安装flash发送图片');
                         return false;    
@@ -1146,6 +1168,7 @@
                 }
             }
             , handleTransfer: function ( action, info, robertToHubman ) {
+                if ( !config.showStatus ) { return; }
                 var wrap = utils.$Dom(config.toUser + '-transfer');
 
                 config.agentList = config.agentList || {};

@@ -85,6 +85,12 @@
 
 		iframe.set(_config, easemobim.utils.isMobile ? null : iframe.open);
 
+        //growingio
+        var gr_user_id = easemobim.utils.get('gr_user_id');
+        if ( gr_user_id ) {
+            easemobim.utils.setStore(_config.tenantId + 'gr_user_id', gr_user_id);
+        }
+
 		if ( easemobim.utils.isMobile ) {
 
             //store ext

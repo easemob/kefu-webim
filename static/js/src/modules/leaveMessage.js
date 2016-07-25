@@ -45,8 +45,12 @@
 
         //create ticket
 		utils.on(leaveMessageBtn, utils.click, function () {
+            if ( sending ) {
+				chat.errorPrompt('留言提交中...');
+                return false;
+            }
 			if ( !project || !targetUser ) {
-				chat.errorPrompt('留言失败，Err01');
+				chat.errorPrompt('留言失败，token无效');
 			} else if ( !contact.value || contact.value.length > 140 ) {
 				chat.errorPrompt('姓名输入不正确');
 			} else if ( !phone.value || phone.value.length > 24 ) {
@@ -56,6 +60,8 @@
 			} else if ( !msg.value || msg.value.length > 2000 ) {
 				chat.errorPrompt('留言内容不能为空，长度小于2000字');
 			} else {
+                sending = true;
+                setTimeout(function () { sending = false; }, 10000);
                 easemobim.api('createTicket', {
                     tenantId: tenantId,
                     'easemob-target-username': targetUser,
@@ -79,6 +85,7 @@
                     },
                     attachments:null
                 }, function ( msge ) {
+                    sending = false;
                     if ( msge && msge.data && msge.data.id ) {
                         utils.removeClass(success, 'em-hide');
 
@@ -102,6 +109,7 @@
             targetUser = null,//target-username
             actoken = null,//accessToke
             appkey = null,
+            sending = false,
             username = null;
 
         return {
