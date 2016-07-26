@@ -36,7 +36,7 @@
             config.satisfaction = utils.convertFalse(utils.query('sat'));
             config.resources = utils.convertFalse(utils.query('resources'));
             config.hide = utils.convertFalse(config.hide);
-            config.showStatus = utils.convertFalse(config.showStatus);
+            config.hideStatus = utils.convertFalse(config.hideStatus);
             config.resources = utils.convertFalse(config.resources);
             config.satisfaction = utils.convertFalse(config.satisfaction);
             config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
