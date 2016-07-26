@@ -1169,7 +1169,7 @@
                 }
             }
             , handleTransfer: function ( action, info, robertToHubman ) {
-                if ( !config.showStatus ) { return; }
+                if ( config.hideStatus ) { return; }
                 var wrap = utils.$Dom(config.toUser + '-transfer');
 
                 config.agentList = config.agentList || {};
