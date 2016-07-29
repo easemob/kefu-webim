@@ -26,6 +26,7 @@
             } catch ( e ) {}
 
             config.tenantId = tenantId;
+            config.hide = true;
             config.to = utils.convertFalse(utils.query('to'));
             config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
             config.domain = config.domain || '//' + location.host;
@@ -35,10 +36,8 @@
             config.agentName = utils.convertFalse(utils.query('agentName'));
             config.satisfaction = utils.convertFalse(utils.query('sat'));
             config.resources = utils.convertFalse(utils.query('resources'));
-            config.hide = utils.convertFalse(config.hide);
-            config.hideStatus = utils.convertFalse(config.hideStatus);
-            config.resources = utils.convertFalse(config.resources);
-            config.satisfaction = utils.convertFalse(config.satisfaction);
+            config.hideStatus = utils.convertFalse(utils.query('hideStatus'));
+            config.satisfaction = utils.convertFalse(utils.query('sat'));
             config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
             config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
             config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket'));//true default
