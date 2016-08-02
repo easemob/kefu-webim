@@ -3,9 +3,10 @@
 */
 
 var debug = false;
-var version = '43.6';
+var version = '43.7';
 
 var gulp = require('gulp'),
+    mocha = require('gulp-mocha'); 
     minifycss = require('gulp-minify-css'),
     jshint = require('gulp-jshint'),
     uglify = require('gulp-uglify'),
@@ -131,6 +132,19 @@ gulp.task('uglify', function() {
     transfer.pipe(gulp.dest('static/js/'));
 });
 
+
+//test
+gulp.task('test', function() {
+
+    return gulp.src('demo/javascript/src/test.js')
+        .pipe(mocha())
+        .once('error', function () {
+            process.exit(1);
+        })
+        .once('end', function () {
+            process.exit();
+        });
+});
 
 //build default
 gulp.task('build', ['clean'],  function() {

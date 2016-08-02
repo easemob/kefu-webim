@@ -1,5 +1,5 @@
 ;(function () {
-    var getData = new easemobim.Transfer();
+    var getData = new easemobim.Transfer(null, 'api');
 
     var createObject = function ( options ) {
         var headers = null;
@@ -149,5 +149,5 @@
             default:
                 break;
         }
-    });
+    }, ['data']);
 }());

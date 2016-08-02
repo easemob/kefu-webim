@@ -80,7 +80,7 @@
                     try { ext && me.sendTextMsg('', false, {ext: Easemob.im.Utils.parseJSON(ext)}); } catch ( e ) {}
                     utils.clearStore(config.tenantId + config.emgroup + 'ext');
                 } else {
-                    transfer.send(easemobim.EVENTS.ONREADY);
+                    transfer.send(easemobim.EVENTS.ONREADY, window.transfer.to);
                 } 
             }
 			, setExt: function ( msg ) {
@@ -494,7 +494,7 @@
                 utils.addClass(min, 'easemobWidgetHeader-min bg-color border-color');
                 easemobim.dragHeader.appendChild(min);
                 utils.on(min, 'mousedown touchstart', function () {
-					me.close();
+                    utils.root || transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
 					return false;
 				});
                 utils.on(min, 'mouseenter', function () {
@@ -644,25 +644,20 @@
 				}
             }
 			//close chat window
-            , close: function ( outerTrigger ) {
+            , close: function () {
                 this.opened = false;
+
 				if ( !config.hide ) {
 					utils.addClass(easemobim.imChat, 'em-hide');
 					setTimeout(function () {
 						utils.removeClass(easemobim.imBtn, 'em-hide');
 					}, 60);
 				}
-				easemobim.EVENTS.CLOSE.data = { trigger: true };
-				utils.root || transfer.send(easemobim.EVENTS.CLOSE);
             }
 			//show chat window
-            , show: function ( outerTrigger ) {
+            , show: function () {
 				var me = this;
 
-				if ( !outerTrigger ) {
-					easemobim.EVENTS.SHOW.data = { trigger: true };
-					utils.root || transfer.send(easemobim.EVENTS.SHOW);
-				}
                 me.opened = true;
                 me.fillFace();
                 me.scrollBottom(50);
@@ -828,15 +823,15 @@
 					}
 				});
 				
-				!utils.isMobile && utils.on(easemobim.imBtn, utils.click, function () {
-					me.show();
+				!utils.isMobile && !utils.root && utils.on(easemobim.imBtn, utils.click, function () {
+				    transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
 				});
 				utils.on(easemobim.imChatBody, utils.click, function () {
 					easemobim.textarea.blur();
 					return false;
 				});
                 utils.on(document, 'mouseover', function () {
-					utils.root || transfer.send(easemobim.EVENTS.RECOVERY);
+					utils.root || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
                 });
 				utils.live('img.easemobWidget-imgview', 'click', function () {
 					easemobim.imgView.show(this.getAttribute('src'));
@@ -868,7 +863,7 @@
 						var e = window.event || ev;
 						easemobim.textarea.blur();//ie a  ie...
 						easemobim.EVENTS.DRAGREADY.data = { x: e.clientX, y: e.clientY };
-                        utils.root || transfer.send(easemobim.EVENTS.DRAGREADY);
+                        utils.root || transfer.send(easemobim.EVENTS.DRAGREADY, window.transfer.to);
 						return false;
 					}, false);
 				}
@@ -1353,14 +1348,14 @@
 						title: '新消息',
 						brief: message.brief
 					};
-					utils.root || transfer.send(easemobim.EVENTS.SLIDE);
-					utils.root || transfer.send(easemobim.EVENTS.NOTIFY);
+					utils.root || transfer.send(easemobim.EVENTS.SLIDE, window.transfer.to);
+					utils.root || transfer.send(easemobim.EVENTS.NOTIFY, window.transfer.to);
 				}
             }
 			, resetPrompt: function () {
 				this.msgCount = 0;
 				utils.addClass(utils.html(easemobim.messageCount, ''), 'em-hide');
-				utils.root || transfer.send(easemobim.EVENTS.RECOVERY);
+				utils.root || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
 			}
 			//receive message function
             , receiveMsg: function ( msg, type, isHistory ) {
@@ -1485,7 +1480,7 @@
 							this.session = null;
 							this.sessionSent = false;
 							this.handleTransfer('reply');
-							utils.root || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED);
+							utils.root || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
 						} else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionOpenedEvent' ) {
 							//service session opened event
 							//fake
@@ -1527,7 +1522,7 @@
 							message: message
 						};
 						try {
-							utils.root || transfer.send(easemobim.EVENTS.ONMESSAGE);
+							utils.root || transfer.send(easemobim.EVENTS.ONMESSAGE, window.transfer.to);
 						} catch ( e ) {}
 					}
                 } else {
@@ -1569,6 +1564,6 @@
 					callback(msg);
 				}
 			}
-		});
+		}, ['api']);
 	};
 }());

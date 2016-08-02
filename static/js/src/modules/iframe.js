@@ -110,18 +110,20 @@
 		}
 
 		var me = this;
-		me.message = new easemobim.Transfer(me.iframe.id);
+		me.message = new easemobim.Transfer(me.iframe.id, 'easemob');
 
 		me.iframe.style.display = 'block';
 		me.config.iframeId = me.iframe.id;
 
 		me.config.receive = typeof me.config.onmessage === 'function';
 		me.onsessionclosedSt = 0, me.onreadySt = 0;
+        me.config.parentId = me.iframe.id;
 
 		me.message
 		.send(me.config)
 		.listen(function ( msg ) {
-			if ( msg.iframeId && msg.iframeId !== me.iframe.id ) { return; }
+
+            if ( msg.to !== me.iframe.id ) { return; }
 
 			switch ( msg.event ) {
 				case easemobim.EVENTS.ONREADY.event://onready
@@ -135,10 +137,10 @@
 					me.config.onready instanceof Function && me.config.onready();
 					break;
 				case easemobim.EVENTS.SHOW.event://show Chat window
-					me.open(msg.data.trigger);
+					me.open();
 					break;
-				case easemobim.EVENTS.CLOSE.event://show Chat window
-					me.close(msg.data ? msg.data.trigger : false);
+				case easemobim.EVENTS.CLOSE.event://close Chat window
+					me.close();
 					break;
 				case easemobim.EVENTS.NOTIFY.event://notify
 					easemobim.notify(msg.data.avatar, msg.data.title, msg.data.brief);;
@@ -185,11 +187,18 @@
 					break;
 				default: break;
 			};
-		});
+		}, ['main']);
 
 		
 		me.ready instanceof Function && me.ready();
 	};
+
+
+
+
+
+
+
 
 	var Iframe = function ( config, signleton ) {
 
@@ -212,6 +221,8 @@
 		this.iframe.style.cssText = 'width: 0;height: 0;border: none; position: fixed;';
 		this.shadow = document.createElement('div');
 		this.config = easemobim.utils.copy(config);
+
+        this.show = false;
 
 		if ( !easemobim.utils.isMobile ) {
             document.body.appendChild(this.shadow);
@@ -337,9 +348,12 @@
 		return this;
 	};
 
-	Iframe.prototype.open = function ( trigger ) {
+	Iframe.prototype.open = function () {
 		var iframe = this.iframe;
 
+        if ( this.show ) { return; }
+
+        this.show = true;
 		if ( easemobim.utils.isMobile ) {
 			iframe.style.width = '100%';
 			iframe.style.height = '100%';
@@ -356,14 +370,18 @@
 			iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;border: 1px solid #ccc\\9;';
 		}
 		iframe.style.visibility = 'visible';
-		this.message && !trigger && this.message.send(easemobim.EVENTS.SHOW);
+		this.message && this.message.send(easemobim.EVENTS.SHOW);
 
 		return this;
 	};
 
-	Iframe.prototype.close = function ( trigger ) {
+	Iframe.prototype.close = function () {
 
 		var iframe = this.iframe;
+
+        if ( this.show === false ) { return; }
+
+        this.show = false;
 
         clearTimeout(_st);
 		iframe.style.boxShadow = 'none';
@@ -382,22 +400,16 @@
 			iframe.style.height = '1px';
 		}
 
-		this.message && !trigger && this.message.send(easemobim.EVENTS.CLOSE);
+		this.message && this.message.send(easemobim.EVENTS.CLOSE);
 		return this;
 	};
 
 	Iframe.prototype.send = function ( ext ) {
-		if ( this.message ) {
-			this.message = new easemobim.Transfer(this.iframe.id);
-		}
 		easemobim.EVENTS.EXT.data = ext;	
 		this.message.send(easemobim.EVENTS.EXT);
 	};
 
 	Iframe.prototype.sendText = function ( msg ) {
-		if ( this.message ) {
-			this.message = new easemobim.Transfer(this.iframe.id);
-		}
 		easemobim.EVENTS.TEXTMSG.data = msg;	
 		this.message.send(easemobim.EVENTS.TEXTMSG);
 	};
