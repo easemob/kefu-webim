@@ -90,6 +90,7 @@ gulp.task('uglify', function() {
 		'static/js/src/modules/uploadShim.js',
 		'static/js/src/modules/wechat.js',
 		'static/js/src/modules/site.js',
+        'static/js/src/modules/channel.js',
         'static/js/src/modules/chat.js',
         'static/js/src/main.js'
     ])

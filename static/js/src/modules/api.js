@@ -85,7 +85,7 @@
                 break;
             case 'getPassword':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/visitors/password?tenantId=' + msg.data.tenantId,
+                    url: '/v1/webimplugin/visitors/password',
                     msg: msg
                 }));
                 break;
@@ -142,6 +142,19 @@
             case 'createTicket':
                 easemobim.emajax(createObject({
                     url: '/tenants/' + msg.data.tenantId + '/projects/' + msg.data.projectId + '/tickets?tenantId=' + msg.data.tenantId + '&easemob-target-username=' + msg.data['easemob-target-username'] + '&easemob-appkey=' + msg.data['easemob-appkey'] + '&easemob-username=' + msg.data['easemob-username'],
+                    msg: msg,
+                    type: 'POST'
+                }));
+                break;
+            case 'receiveMsgChannel':
+                easemobim.emajax(createObject({
+                    url: '/tenants/getMsg',
+                    msg: msg
+                }));
+                break;
+            case 'sendMsgChannel':
+                easemobim.emajax(createObject({
+                    url: '/tenants/sendMsg',
                     msg: msg,
                     type: 'POST'
                 }));
