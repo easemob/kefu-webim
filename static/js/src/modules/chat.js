@@ -200,7 +200,7 @@
                     }, function ( msg ) {
                         me.handleChatWrapperByHistory(msg.data, chatWrapper);
                         if ( msg.data && msg.data.length > 0 ) {
-                            this.channel.handleHistory.call(this, msg.data);
+                            me.channel.handleHistory.call(me, msg.data);
                             notScroll || me.scrollBottom();
                         }
                     });
@@ -222,7 +222,7 @@
                             }, function ( msg ) {
                                 me.handleChatWrapperByHistory(msg.data, chatWrapper);
                                 if ( msg && msg.data && msg.data.length > 0 ) {
-                                    this.channel.handleHistory.call(this, msg.data);
+                                    me.channel.handleHistory.call(me, msg.data);
                                     notScroll || me.scrollBottom();
                                 }
                             });
@@ -1123,7 +1123,7 @@
 			}
 			//receive message function
             , receiveMsg: function ( msg, type, isHistory ) {
-                easemobim.handleReceive.call(this, msg, type, isHistory);
+                this.channel.handleReceive.call(this, msg, type, isHistory);
             }
         };
     };
@@ -1133,12 +1133,15 @@
 	/**
 	 * 调用指定接口获取数据
 	*/
-	easemobim.api = function ( apiName, data, callback ) {
+	easemobim.api = function ( apiName, data, success, error ) {
 		//cache
 		easemobim.api[apiName] = easemobim.api[apiName] || {};
 
 		var ts = new Date().getTime();
-		easemobim.api[apiName][ts] = callback;
+		easemobim.api[apiName][ts] = {
+            success: success,
+            error: error
+        };
 		easemobim.getData
 		.send({
 			api: apiName
@@ -1146,16 +1149,16 @@
 			, timespan: ts
 		})
 		.listen(function ( msg ) {
-			if ( easemobim.api[msg.call] && typeof easemobim.api[msg.call][msg.timespan] === 'function' ) {
+			if ( easemobim.api[msg.call] && easemobim.api[msg.call][msg.timespan] ) {
 
 				var callback = easemobim.api[msg.call][msg.timespan];
 				delete easemobim.api[msg.call][msg.timespan];
 
-				if ( msg.status !== 0 ) {
-					typeof config.onerror === 'function' && config.onerror(msg);
-				} else {
-					callback(msg);
-				}
+                if ( msg.status !== 0 ) {
+                    typeof callback.error === 'function' && callback.error(msg);
+                } else {
+                    typeof callback.success === 'function' && callback.success(msg);
+                }
 			}
 		}, ['api']);
 	};

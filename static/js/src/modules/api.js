@@ -31,6 +31,7 @@
                 } catch ( e ) {}
                 getData.send({
                     call: options.msg.api
+                    , timespan: options.msg.timespan
                     , status: 1
                     , data: info
                 });

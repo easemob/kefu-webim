@@ -6,7 +6,7 @@ easemobim.channel = function ( config ) {
         //监听ack的timer, 每条消息启动一个
     var ackTS = new easemobim.site(),
 
-        //初始监听xmpp的timer, 如果30s后xmpp没有连接成功则走api
+        //初始监听xmpp的timer, 如果30s后xmpp没有连接成功则处理按钮变为发送，走api发送消息
         firstTS,
 
         //发消息队列
@@ -57,7 +57,7 @@ easemobim.channel = function ( config ) {
                 case 'txt':
                     //不是历史记录开启倒计时, 当前只有文本消息支持降级
                     if ( !arguments[2] ) {
-                        _detectSendMsgByApi(id);
+                        _detectSendMsgByApi.call(this, id);
                     }
 
 
@@ -220,25 +220,21 @@ easemobim.channel = function ( config ) {
             }
 
 
+            var me = this;
+
             //如果是ack消息，清除ack对应的site item，返回
             if ( msg && msg.ext && msg.ext.weichat && msg.ext.weichat.ack_for_msg_id ) {
 
                 var id = msg.ext.weichat.ack_for_msg_id;
 
-                utils.$Remove(utils.$Dom(id + '_loading'));
-                utils.$Remove(utils.$Dom(id + '_failed'));
-                me.handleTransfer('sending', null, !isHistory && (sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服'));
-
-
-                sendMsgSite.remove(id);
+                _clearTS.call(me, id);
 
                 return;
             }
 
 
 
-            var me = this,
-                msgid = me.getMsgid(msg);
+            var msgid = me.getMsgid(msg);
 
             if ( receiveMsgSite.get(msgid) ) {
                 return;
@@ -412,7 +408,7 @@ easemobim.channel = function ( config ) {
                 
             me.conn.listen({
                 onOpened: function ( info ) {
-                    //_clearFirstTS();
+                    _clearFirstTS();
 
                     me.reOpen && clearTimeout(me.reOpen);
                     me.token = info.accessToken;
@@ -486,7 +482,7 @@ easemobim.channel = function ( config ) {
                                     me.sendFileMsg(msg, true);
                                     break;
                                 case 'txt':
-                                    me.sendTextMsg(msg.msg, msgBody.to);
+                                    me.sendTextMsg(msg.msg, true);
                                     break;
                             }
                         } else {
@@ -534,11 +530,13 @@ easemobim.channel = function ( config ) {
             }, function ( msg ) {
                 //处理收消息
             });           
-        }, 60000);
+        }, 600000);
     };
 
     //发消息通道
     var _sendMsgChannle = function ( msg, id ) {
+        var me = this;
+
         api('sendMsgChannel', {
             orgName: config.orgName
             , appName: config.appName
@@ -546,30 +544,41 @@ easemobim.channel = function ( config ) {
             , tenantId: config.tenantId
         }, function () {
             //发送成功清除
-            sendMsgSite.remove(id);
+            _clearTS.call(me, id);
+        }, function () {
+            //失败继续重试
         });
     };
 
-
+    //消息发送成功，清除timer
     var _clearTS = function ( id ) {
-        setInterval(ackTS.get(id));
+        clearInterval(ackTS.get(id));
         ackTS.remove(id);
+
+        utils.$Remove(utils.$Dom(id + '_loading'));
+        utils.$Remove(utils.$Dom(id + '_failed'));
+        this.handleTransfer('sending', null, !isHistory && (sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服'));
+
+
+        sendMsgSite.remove(id);
     };
 
+    //30s内连上xmpp后清除timer，暂不开启api通道发送消息
     var _clearFirstTS = function () {
         clearTimeout(firstTS);
     }
 
     //监听ack，超时则开启api通道, 发消息时调用
     var _detectSendMsgByApi = function ( id ) {
+        var me = this;
 
         ackTS.set(
             id,
             setInterval(function () {
                 //30s没收到ack使用api发送
-                _sendMsgChannle(sendMsgSite.get(id), id);
-            }, 30000)
-        ); 
+                _sendMsgChannle.call(me, sendMsgSite.get(id), id);
+            }, 20000)
+        );
     };
 
 
@@ -581,7 +590,7 @@ easemobim.channel = function ( config ) {
         utils.html(easemobim.sendBtn, '发送');
 
         chat.handleReady();
-    }, 10000);
+    }, 30000);
     
     //收消息轮训通道常驻
     _receiveMsgChannle();
