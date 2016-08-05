@@ -1,4 +1,8 @@
 easemobim.channel = function ( config ) {
+    var CONSTS = 30000;
+
+
+    var me = this;
 
     var utils = easemobim.utils;
 
@@ -44,7 +48,7 @@ easemobim.channel = function ( config ) {
                 url: config.xmppServer,
                 retry: true,
                 multiResources: config.resources,
-                heartBeatWait: 30000
+                heartBeatWait: CONSTS
             });
         },
 
@@ -57,27 +61,58 @@ easemobim.channel = function ( config ) {
                 case 'txt':
                     //不是历史记录开启倒计时, 当前只有文本消息支持降级
                     if ( !arguments[2] ) {
-                        _detectSendMsgByApi.call(this, id);
+                        _detectSendMsgByApi(id);
                     }
 
 
-                    _obj.sendText.call(this, arguments[1], arguments[2], arguments[3], id);
+                    _obj.sendText(arguments[1], arguments[2], arguments[3], id);
                     break;
 
                 case 'img':
-                    _obj.sendImg.call(this, arguments[1], arguments[2], id);
+                    _obj.sendImg(arguments[1], arguments[2], id);
                     break;
 
                 case 'file':
-                    _obj.sendFile.call(this, arguments[1], arguments[2], id);
+                    _obj.sendFile(arguments[1], arguments[2], id);
                     break;
+
+                case 'satisfaction':
+                    //不是历史记录开启倒计时, 当前只有文本消息支持降级
+                    _detectSendMsgByApi(id);
+                    _obj.sendSatisfaction(arguments[1], arguments[2], arguments[3], arguments[4], id);
+                    break;
+                    
             };
+        },
+
+        appendAck: function ( msg, id ) {
+            msg.body.ext.weichat.msg_id_for_ack = id;
+        },
+
+        sendSatisfaction: function ( level, content, session, invite, id ) {
+
+            var msg = new Easemob.im.EmMessage('txt', id);
+            msg.set({value: '', to: config.toUser});
+            utils.extend(msg.body, {
+                ext: {
+                    weichat: {
+                        ctrlType: 'enquiry'
+                        , ctrlArgs: {
+                            inviteId: invite || ''
+                            , serviceSessionId: session || ''
+                            , detail: content
+                            , summary: level
+                        }
+                    }
+                }
+            });
+            _obj.appendAck(msg, id);
+            me.conn.send(msg.body);
+            sendMsgSite.set(id, msg);
         },
 
         sendText: function ( message, isHistory, ext, id ) {
 
-            var me = this;
-                
             var msg = new Easemob.im.EmMessage('txt', isHistory ? null : id);
             msg.set({
                 value: message || easemobim.textarea.value,
@@ -100,6 +135,7 @@ easemobim.channel = function ( config ) {
             utils.addClass(easemobim.sendBtn, 'disabled');
             if ( !isHistory ) {
                 me.setExt(msg);
+                _obj.appendAck(msg, id);
                 me.conn.send(msg.body);
                 sendMsgSite.set(id, msg);
                 easemobim.textarea.value = '';
@@ -113,8 +149,7 @@ easemobim.channel = function ( config ) {
 
         sendImg: function ( file, isHistory, id ) {
 
-            var me = this,
-                msg = new Easemob.im.EmMessage('img', isHistory ? null : id);
+            var msg = new Easemob.im.EmMessage('img', isHistory ? null : id);
 
             msg.set({
                 apiUrl: (utils.ssl ? 'https://' : 'http://') + config.restServer,
@@ -161,8 +196,7 @@ easemobim.channel = function ( config ) {
 
         sendFile: function ( file, isHistory, id ) {
 
-            var me = this,
-                msg = new Easemob.im.EmMessage('file', isHistory ? null : id),
+            var msg = new Easemob.im.EmMessage('file', isHistory ? null : id),
                 file = file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id'));
 
             if ( !file || !file.filetype || !config.FILETYPE[file.filetype.toLowerCase()] ) {
@@ -220,8 +254,6 @@ easemobim.channel = function ( config ) {
             }
 
 
-            var me = this;
-
             //如果是ack消息，清除ack对应的site item，返回
             if ( msg && msg.ext && msg.ext.weichat && msg.ext.weichat.ack_for_msg_id ) {
 
@@ -264,7 +296,13 @@ easemobim.channel = function ( config ) {
                 //text message
                 case 'txt':
                     message = new Easemob.im.EmMessage('txt');
-                    message.set({value: msg.data});
+                    if ( msg.data ) {
+                        message.set({value: msg.data});
+                    } else {
+                        try {
+                            message.set({value: msg.bodies[0].msg});
+                        } catch ( e ) {}
+                    }
                     break;
                 //emotion message
                 case 'face':
@@ -280,12 +318,25 @@ easemobim.channel = function ( config ) {
                 //image message
                 case 'img':
                     message = new Easemob.im.EmMessage('img');
-                    message.set({file: {url: msg.url}});
+
+                    if ( msg.url ) {
+                        message.set({file: {url: msg.url}});
+                    } else {
+                        try {
+                            message.set({file: {url: msg.bodies[0].url}});
+                        } catch ( e ) {}
+                    }
                     break;
                 //file message
                 case 'file':
                     message = new Easemob.im.EmMessage('file');
-                    message.set({file: {url: msg.url, filename: msg.filename}});
+                    if ( msg.url ) {
+                        message.set({file: {url: msg.url, filename: msg.filename}});
+                    } else {
+                        try {
+                            message.set({file: {url: msg.bodies[0].url, filename: msg.bodies[0].filename}});
+                        } catch ( e ) {}
+                    }
                     break;
                 //satisfaction evaluation message
                 case 'satisfactionEvaluation':
@@ -333,40 +384,40 @@ easemobim.channel = function ( config ) {
             if ( !isHistory ) {
                 
                 //get serssion when receive msg
-                msg.noprompt || this.getSession();
+                msg.noprompt || me.getSession();
 
                 if ( msg.ext && msg.ext.weichat ) {
                     if ( msg.ext.weichat.event 
                     && (msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' 
                     || msg.ext.weichat.event.eventName === 'ServiceSessionTransferedToAgentQueueEvent') ) {
                         //transfer msg, show transfer tip
-                        this.handleTransfer('transfer');
+                        me.handleTransfer('transfer');
                     } else if (  msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionClosedEvent' ) {
                         //service session closed event
                         //hide tip
                         if ( config.agentList && config.agentList[config.toUser] && config.agentList[config.toUser].firstMsg ) {
                             config.agentList[config.toUser].firstMsg = false;
                         }
-                        this.session = null;
-                        this.sessionSent = false;
-                        this.handleTransfer('reply');
+                        me.session = null;
+                        me.sessionSent = false;
+                        me.handleTransfer('reply');
                         utils.root || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
                     } else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionOpenedEvent' ) {
                         //service session opened event
                         //fake
-                        this.agentCount < 1 && (this.agentCount = 1);
+                        me.agentCount < 1 && (me.agentCount = 1);
                         //hide tip
-                        this.handleTransfer('reply');
+                        me.handleTransfer('reply');
                     } else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionCreatedEvent' ) {
 
                     } else {
                         if ( !msg.ext.weichat.agent ) {
                             //switch off
-                            this.handleTransfer('reply');
+                            me.handleTransfer('reply');
                         } else {
                             //switch on
                             msg.ext.weichat.agent && msg.ext.weichat.agent.userNickname !== '调度员' 
-                            && this.handleTransfer('reply', msg.ext.weichat.agent);
+                            && me.handleTransfer('reply', msg.ext.weichat.agent);
                         }
                     }
                 }
@@ -404,7 +455,6 @@ easemobim.channel = function ( config ) {
         },
 
         listen: function () {
-            var me = this;
                 
             me.conn.listen({
                 onOpened: function ( info ) {
@@ -458,7 +508,6 @@ easemobim.channel = function ( config ) {
         },
 
         handleHistory: function ( chatHistory ) {
-            var me = this;
 
             if ( chatHistory.length > 0 ) {
                 utils.each(chatHistory, function ( k, v ) {
@@ -523,25 +572,35 @@ easemobim.channel = function ( config ) {
     var _receiveMsgChannle = function () {
         setInterval(function () {
             api('receiveMsgChannel', {
-                orgName: config.orgName
-                , appName: config.appName
-                , imServiceNumber: config.toUser
-                , tenantId: config.tenantId
+                orgName: config.orgName,
+                appName: config.appName,
+                easemobId: config.toUser,
+                visitorName: config.user.username
             }, function ( msg ) {
+
                 //处理收消息
+                if ( msg && msg.data.status === 'OK' ) {
+                    for ( var i = 0, l = msg.data.entities.length; i < l; i++ ) {
+                        try {
+                            _obj.handleReceive(msg.data.entities[i], msg.data.entities[i].bodies[0].type, false);
+                        } catch ( e ) {}
+                    }
+                }
             });           
-        }, 600000);
+        }, CONSTS);
     };
 
     //发消息通道
     var _sendMsgChannle = function ( msg, id ) {
-        var me = this;
 
         api('sendMsgChannel', {
-            orgName: config.orgName
-            , appName: config.appName
-            , imServiceNumber: config.toUser
-            , tenantId: config.tenantId
+            from: config.user.username,
+            to: config.toUser,
+            bodies: [{
+                type: 'txt',
+                msg: msg.value,
+            }],
+            ext: msg.body ? msg.body.ext : null
         }, function () {
             //发送成功清除
             _clearTS.call(me, id);
@@ -557,7 +616,10 @@ easemobim.channel = function ( config ) {
 
         utils.$Remove(utils.$Dom(id + '_loading'));
         utils.$Remove(utils.$Dom(id + '_failed'));
-        this.handleTransfer('sending', null, !isHistory && (sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服'));
+
+        if ( sendMsgSite.get(id) ) {
+            me.handleTransfer('sending', null, sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服');
+        }
 
 
         sendMsgSite.remove(id);
@@ -570,14 +632,13 @@ easemobim.channel = function ( config ) {
 
     //监听ack，超时则开启api通道, 发消息时调用
     var _detectSendMsgByApi = function ( id ) {
-        var me = this;
 
         ackTS.set(
             id,
             setInterval(function () {
                 //30s没收到ack使用api发送
                 _sendMsgChannle.call(me, sendMsgSite.get(id), id);
-            }, 20000)
+            }, CONSTS)
         );
     };
 
@@ -590,7 +651,7 @@ easemobim.channel = function ( config ) {
         utils.html(easemobim.sendBtn, '发送');
 
         chat.handleReady();
-    }, 30000);
+    }, CONSTS);
     
     //收消息轮训通道常驻
     _receiveMsgChannle();

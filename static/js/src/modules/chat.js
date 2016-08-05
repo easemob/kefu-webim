@@ -30,7 +30,7 @@
         return {
             init: function () {
                 
-                this.channel = easemobim.channel(config);
+                this.channel = easemobim.channel.call(this, config);
 
 				//create & init connection
                 this.setConnection();
@@ -200,7 +200,7 @@
                     }, function ( msg ) {
                         me.handleChatWrapperByHistory(msg.data, chatWrapper);
                         if ( msg.data && msg.data.length > 0 ) {
-                            me.channel.handleHistory.call(me, msg.data);
+                            me.channel.handleHistory(msg.data);
                             notScroll || me.scrollBottom();
                         }
                     });
@@ -222,7 +222,7 @@
                             }, function ( msg ) {
                                 me.handleChatWrapperByHistory(msg.data, chatWrapper);
                                 if ( msg && msg.data && msg.data.length > 0 ) {
-                                    me.channel.handleHistory.call(me, msg.data);
+                                    me.channel.handleHistory(msg.data);
                                     notScroll || me.scrollBottom();
                                 }
                             });
@@ -603,7 +603,7 @@
 				me.resetPrompt();
             }
             , sdkInit: function () {
-                this.channel.listen.call(this);
+                this.channel.listen();
             }
             , appendDate: function ( date, to, isHistory ) {
                 var chatWrapper = utils.$Dom(to || config.toUser),
@@ -952,11 +952,11 @@
             }
 			//send image message function
             , sendImgMsg: function ( file, isHistory ) {
-                this.channel.send.call(this, 'img', file, isHistory);
+                this.channel.send('img', file, isHistory);
             }
 			//send file message function
 			, sendFileMsg: function ( file, isHistory ) {
-                this.channel.send.call(this, 'file', file, isHistory);
+                this.channel.send('file', file, isHistory);
             }
             , handleTransfer: function ( action, info, robertToHubman ) {
                 if ( config.hideStatus ) { return; }
@@ -1040,7 +1040,7 @@
             }
 			//send text message function
             , sendTextMsg: function ( message, isHistory, ext ) {
-                this.channel.send.call(this, 'txt', message, isHistory, ext);
+                this.channel.send('txt', message, isHistory, ext);
             }
 			, transferToKf: function ( id, sessionId ) {
                 var me = this;
@@ -1063,24 +1063,7 @@
             }
 			//send satisfaction evaluation message function
             , sendSatisfaction: function ( level, content, session, invite ) {
-                var me = this;
-
-                var msg = new Easemob.im.EmMessage('txt', me.conn.getUniqueId());
-                msg.set({value: '', to: config.toUser});
-                utils.extend(msg.body, {
-                    ext: {
-                        weichat: {
-                            ctrlType: 'enquiry'
-                            , ctrlArgs: {
-                                inviteId: invite || ''
-                                , serviceSessionId: session || ''
-                                , detail: content
-                                , summary: level
-                            }
-                        }
-                    }
-                });
-                me.conn.send(msg.body);
+                this.channel.send('satisfaction', level, content, session, invite);
             }
 			//未读消息提醒
             , messagePrompt: function ( message ) {
@@ -1123,7 +1106,7 @@
 			}
 			//receive message function
             , receiveMsg: function ( msg, type, isHistory ) {
-                this.channel.handleReceive.call(this, msg, type, isHistory);
+                this.channel.handleReceive(msg, type, isHistory);
             }
         };
     };

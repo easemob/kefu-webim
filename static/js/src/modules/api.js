@@ -149,13 +149,13 @@
                 break;
             case 'receiveMsgChannel':
                 easemobim.emajax(createObject({
-                    url: '/tenants/getMsg',
+                    url: '/v1/imgateway/messages',
                     msg: msg
                 }));
                 break;
             case 'sendMsgChannel':
                 easemobim.emajax(createObject({
-                    url: '/tenants/sendMsg',
+                    url: '/v1/imgateway/messages?tenantId=' + msg.data.tenantId,
                     msg: msg,
                     type: 'POST'
                 }));

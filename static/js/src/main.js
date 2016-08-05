@@ -147,6 +147,7 @@
 					config.toUser = config.toUser || msg.data[0].imServiceNumber;
 					config.orgName = config.orgName || msg.data[0].orgName;
 					config.appName = config.appName || msg.data[0].appName;
+					config.channelid = config.channelid || msg.data[0].channelId;
 					config.appKey = config.appKey || config.orgName + '#' + config.appName;
 					config.restServer = config.restServer || msg.data[0].restDomain;
 
