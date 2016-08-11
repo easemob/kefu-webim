@@ -1,5 +1,5 @@
 ;(function () {
-    var getData = new easemobim.Transfer();
+    var getData = new easemobim.Transfer(null, 'api');
 
     var createObject = function ( options ) {
         var headers = null;
@@ -31,6 +31,7 @@
                 } catch ( e ) {}
                 getData.send({
                     call: options.msg.api
+                    , timespan: options.msg.timespan
                     , status: 1
                     , data: info
                 });
@@ -85,7 +86,7 @@
                 break;
             case 'getPassword':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/visitors/password?tenantId=' + msg.data.tenantId,
+                    url: '/v1/webimplugin/visitors/password',
                     msg: msg
                 }));
                 break;
@@ -146,8 +147,21 @@
                     type: 'POST'
                 }));
                 break;
+            case 'receiveMsgChannel':
+                easemobim.emajax(createObject({
+                    url: '/v1/imgateway/messages',
+                    msg: msg
+                }));
+                break;
+            case 'sendMsgChannel':
+                easemobim.emajax(createObject({
+                    url: '/v1/imgateway/messages',
+                    msg: msg,
+                    type: 'POST'
+                }));
+                break;
             default:
                 break;
         }
-    });
+    }, ['data']);
 }());

@@ -147,6 +147,7 @@
 					config.toUser = config.toUser || msg.data[0].imServiceNumber;
 					config.orgName = config.orgName || msg.data[0].orgName;
 					config.appName = config.appName || msg.data[0].appName;
+					config.channelid = config.channelid || msg.data[0].channelId;
 					config.appKey = config.appKey || config.orgName + '#' + config.appName;
 					config.restServer = config.restServer || msg.data[0].restDomain;
 
@@ -241,18 +242,18 @@
                     };
                     utils.root
                     ? utils.set('root' + config.tenantId + config.emgroup, config.user.username)
-                    : transfer.send(easemobim.EVENTS.CACHEUSER);
+                    : transfer.send(easemobim.EVENTS.CACHEUSER, window.transfer.to);
                     chat.ready();
                 });
             }
 			, beforeOpen: function () {}
 			, open: function ( outerTrigger ) {
-				config.toUser = config.to;
+				config.toUser = config.toUser || config.to;
 				this.beforeOpen();
 				chat.show(outerTrigger);
 			}
-			, close: function ( outerTrigger ) {
-				chat.close(outerTrigger);
+			, close: function () {
+				chat.close();
 				this.afterClose();
 			}
 			, afterClose: function () {}
@@ -260,7 +261,7 @@
 
 
 		utils.on(utils.$Dom('EasemobKefuWebimIframe'), 'load', function () {
-			easemobim.getData = new easemobim.Transfer('EasemobKefuWebimIframe');
+			easemobim.getData = new easemobim.Transfer('EasemobKefuWebimIframe', 'data');
 			entry.init();
 		});
 
@@ -275,17 +276,20 @@
 
 	//Controller
 	if ( !utils.root ) {
-		window.transfer = new easemobim.Transfer().listen(function ( msg ) {
+		window.transfer = new easemobim.Transfer(null, 'main').listen(function ( msg ) {
 
 			if ( msg && msg.tenantId ) {
+                if ( msg.parentId ) {
+                    window.transfer.to = msg.parentId;
+                }
 				main(msg);
 			} else if ( msg.event ) {
 				switch ( msg.event ) {
 					case easemobim.EVENTS.SHOW.event:
-						entry.open(true);
+						entry.open();
 						break;
 					case easemobim.EVENTS.CLOSE.event:
-						entry.close(true);
+						entry.close();
 						break;
 					case easemobim.EVENTS.EXT.event:
 						chat.sendTextMsg('', false, msg.data.ext);
@@ -295,7 +299,7 @@
 						break;
 				}
 			}
-		});
+		}, ['easemob']);
 	} else {
 		main();
 	}

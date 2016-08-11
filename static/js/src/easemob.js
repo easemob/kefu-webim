@@ -6,6 +6,7 @@
     'use strict';
     window.easemobim = window.easemobim || {};
     easemobim.version = '<%= v %>';
+    easemobim.tenants = {};
 
 	var CONF = {
 		tenantId: '',
@@ -56,7 +57,6 @@
 	};
 
 	reset();
-	var iframe = easemobim.Iframe(_config, true);
 
 
 	/*
@@ -70,20 +70,37 @@
 		easemobim.bind({ tenantId: tenantId, emgroup: group });
 	};
 
+    var iframe;
 
 	/*
 	 * @param: {Object} config
 	 */
 	easemobim.bind = function ( config ) {
 
-		reset();
-		easemobim.utils.extend(_config, config);
+        config.emgroup = config.emgroup || '';
 
-		if ( !_config.tenantId ) { return; }
+        for ( var i in easemobim.tenants ) {
+            if ( easemobim.tenants.hasOwnProperty(i) ) {
+                easemobim.tenants[i].close();
+            }
+        }
 
-        _config.emgroup = _config.emgroup || '';
+        iframe = easemobim.tenants[config.tenantId + config.emgroup];
 
-		iframe.set(_config, easemobim.utils.isMobile ? null : iframe.open);
+
+        if ( iframe ) {
+            iframe.open();
+        } else {
+            reset();
+            easemobim.utils.extend(_config, config);
+
+            if ( !_config.tenantId ) { return; }
+
+            iframe = easemobim.Iframe(_config);
+            easemobim.tenants[config.tenantId + config.emgroup] = iframe;
+            iframe.set(_config, easemobim.utils.isMobile ? null : iframe.open);
+        }
+
 
         //growingio
         var gr_user_id = easemobim.utils.get('gr_user_id');
@@ -144,11 +161,14 @@
 	 * }
 	 */
 	easemobim.sendText = function ( msg ) {
-		iframe.sendText(msg);
+		iframe && iframe.sendText(msg);
 	};
 
 	//auto load
 	if ( (!_config.hide || _config.autoConnect) && _config.tenantId ) {
+        if ( !iframe ) {
+            iframe = easemobim.Iframe(_config);
+        }
 		iframe.set(_config, iframe.close);
 	}
 

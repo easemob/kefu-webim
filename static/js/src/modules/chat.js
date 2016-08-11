@@ -6,9 +6,6 @@
     easemobim.chat = function ( config ) {
 		var utils = easemobim.utils;
 
-		//msg list, prevent showing duplicately
-		var msgSite = new easemobim.site();
-
 		//DOM init
 		easemobim.im = utils.$Dom('EasemobKefuWebim'),
 		easemobim.imBtn = utils.$Dom('easemobWidgetPopBar'),
@@ -32,6 +29,9 @@
 		//chat window object
         return {
             init: function () {
+                
+                this.channel = easemobim.channel.call(this, config);
+
 				//create & init connection
                 this.setConnection();
 				//sroll bottom timeout stamp
@@ -55,7 +55,7 @@
 				//bind events on dom
                 this.bindEvents();
             }
-            , handleReady: function () {
+            , handleReady: function ( info ) {
                 var me = this;
 
                 if ( me.readyHandled ) {
@@ -63,6 +63,10 @@
                 }
 
                 me.readyHandled = true;
+
+                if ( info && config.user ) {
+                    config.user.token = config.user.token || info.accessToken;
+                }
 
                 easemobim.leaveMessage && easemobim.leaveMessage.auth(me.token, config);
 
@@ -80,7 +84,7 @@
                     try { ext && me.sendTextMsg('', false, {ext: Easemob.im.Utils.parseJSON(ext)}); } catch ( e ) {}
                     utils.clearStore(config.tenantId + config.emgroup + 'ext');
                 } else {
-                    transfer.send(easemobim.EVENTS.ONREADY);
+                    transfer.send(easemobim.EVENTS.ONREADY, window.transfer.to);
                 } 
             }
 			, setExt: function ( msg ) {
@@ -172,12 +176,7 @@
                 }
 			}
             , setConnection: function() {
-                this.conn = new Easemob.im.Connection({ 
-					url: config.xmppServer,
-					retry: true,
-					multiResources: config.resources,
-                    heartBeatWait: 30000
-				});
+                this.conn = this.channel.getConnection();
             }
             , handleChatWrapperByHistory: function ( chatHistory, chatWrapper ) {
                 if ( chatHistory.length === easemobim.LISTSPAN ) {
@@ -205,7 +204,7 @@
                     }, function ( msg ) {
                         me.handleChatWrapperByHistory(msg.data, chatWrapper);
                         if ( msg.data && msg.data.length > 0 ) {
-                            me.handleHistory(msg.data);
+                            me.channel.handleHistory(msg.data);
                             notScroll || me.scrollBottom();
                         }
                     });
@@ -227,7 +226,7 @@
                             }, function ( msg ) {
                                 me.handleChatWrapperByHistory(msg.data, chatWrapper);
                                 if ( msg && msg.data && msg.data.length > 0 ) {
-                                    me.handleHistory(msg.data);
+                                    me.channel.handleHistory(msg.data);
                                     notScroll || me.scrollBottom();
                                 }
                             });
@@ -373,65 +372,6 @@
                     this.handleChatContainer(userName);     
                 }
             }
-            , handleHistory: function ( chatHistory ) {
-                var me = this;
-
-                if ( chatHistory.length > 0 ) {
-                    utils.each(chatHistory, function ( k, v ) {
-                        var msgBody = v.body,
-                            msg,
-                            isSelf = msgBody.from === config.user.username;
-
-                        if ( msgBody && msgBody.bodies.length > 0 ) {
-                            msg = msgBody.bodies[0];
-                            if ( msgBody.from === config.user.username ) {
-								//visitors' msg
-                                switch ( msg.type ) {
-                                    case 'img':
-                                        msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
-                                        msg.to = msgBody.to;
-                                        me.sendImgMsg(msg, true);
-                                        break;
-									case 'file':
-                                        msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
-                                        msg.to = msgBody.to;
-                                        me.sendFileMsg(msg, true);
-                                        break;
-                                    case 'txt':
-                                        me.sendTextMsg(msg.msg, msgBody.to);
-                                        break;
-                                }
-                            } else {
-								//agents' msg
-
-								//判断是否为满意度调查的消息
-                                if ( msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType && msgBody.ext.weichat.ctrlType == 'inviteEnquiry'
-								//机器人自定义菜单
-                                || msgBody.ext && msgBody.ext.msgtype && msgBody.ext.msgtype.choice
-								//机器人转人工
-                                || msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType === 'TransferToKfHint' ) {
-                                    me.receiveMsg(msgBody, '', true);
-                                } else {
-                                    me.receiveMsg({
-                                        msgId: v.msgId,
-                                        data: msg.msg,
-                                        url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
-                                        from: msgBody.from,
-                                        to: msgBody.to
-                                    }, msg.type, true);
-                                }
-                            }
-							if ( msg.type === 'cmd'//1.cmd消息 
-                            || (msg.type === 'txt' && !msg.msg)//2.空文本消息
-                            || msgSite.get(v.msgId) ) {//3.重复消息
-								
-							} else {
-								me.appendDate(v.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
-							}
-                        }
-                    });
-                }
-            }
             , getMsgid: function ( msg ) {
                 if ( msg ) {
                     if ( msg.ext && msg.ext.weichat ) {
@@ -494,7 +434,7 @@
                 utils.addClass(min, 'easemobWidgetHeader-min bg-color border-color');
                 easemobim.dragHeader.appendChild(min);
                 utils.on(min, 'mousedown touchstart', function () {
-					me.close();
+                    utils.root || transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
 					return false;
 				});
                 utils.on(min, 'mouseenter', function () {
@@ -644,25 +584,20 @@
 				}
             }
 			//close chat window
-            , close: function ( outerTrigger ) {
+            , close: function () {
                 this.opened = false;
+
 				if ( !config.hide ) {
 					utils.addClass(easemobim.imChat, 'em-hide');
 					setTimeout(function () {
 						utils.removeClass(easemobim.imBtn, 'em-hide');
 					}, 60);
 				}
-				easemobim.EVENTS.CLOSE.data = { trigger: true };
-				utils.root || transfer.send(easemobim.EVENTS.CLOSE);
             }
 			//show chat window
-            , show: function ( outerTrigger ) {
+            , show: function () {
 				var me = this;
 
-				if ( !outerTrigger ) {
-					easemobim.EVENTS.SHOW.data = { trigger: true };
-					utils.root || transfer.send(easemobim.EVENTS.SHOW);
-				}
                 me.opened = true;
                 me.fillFace();
                 me.scrollBottom(50);
@@ -672,55 +607,7 @@
 				me.resetPrompt();
             }
             , sdkInit: function () {
-                var me = this;
-                
-                me.conn.listen({
-                    onOpened: function ( info ) {
-                        me.reOpen && clearTimeout(me.reOpen);
-                        me.token = info.accessToken;
-                        me.conn.setPresence();
-
-                        if ( easemobim.textarea.value ) {
-                            utils.removeClass(easemobim.sendBtn, 'disabled');
-                        }
-                        utils.html(easemobim.sendBtn, '发送');
-
-                        me.handleReady();
-                    }
-                    , onTextMessage: function ( message ) {
-                        me.receiveMsg(message, 'txt');
-                    }
-					, onEmotionMessage: function ( message ) {
-                        me.receiveMsg(message, 'face');
-                    }
-                    , onPictureMessage: function ( message ) {
-                        me.receiveMsg(message, 'img');
-                    }
-					, onFileMessage: function ( message ) {
-                        me.receiveMsg(message, 'file');
-                    }
-                    , onCmdMessage: function ( message ) {
-                        me.receiveMsg(message, 'cmd');
-                    }
-					, onOnline: function () {
-						utils.isMobile && me.open();
-					}
-					, onOffline: function () {
-						utils.isMobile && me.conn.close();
-					}
-                    , onError: function ( e ) {
-                        if ( e.reconnect ) {
-                            me.open();
-                        } else if ( e.type === 2 ) {
-                            me.reOpen || (me.reOpen = setTimeout(function () {
-                                me.open();
-                            }, 2000));
-                        } else {
-                            me.conn.stopHeartBeat(me.conn);
-                            typeof config.onerror === 'function' && config.onerror(e);
-                        }
-                    }
-                });
+                this.channel.listen();
             }
             , appendDate: function ( date, to, isHistory ) {
                 var chatWrapper = utils.$Dom(to || config.toUser),
@@ -753,10 +640,10 @@
 					, apiUrl: (utils.ssl ? 'https://' : 'http://') + config.restServer
 				};
 
-				if ( config.user.password ) {
-					op.pwd = config.user.password;
-				} else {
+				if ( config.user.token ) {
 					op.accessToken = config.user.token;
+				} else {
+					op.pwd = config.user.password;
 				}
 
 				me.conn.open(op);
@@ -828,15 +715,15 @@
 					}
 				});
 				
-				!utils.isMobile && utils.on(easemobim.imBtn, utils.click, function () {
-					me.show();
+				!utils.isMobile && !utils.root && utils.on(easemobim.imBtn, utils.click, function () {
+				    transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
 				});
 				utils.on(easemobim.imChatBody, utils.click, function () {
 					easemobim.textarea.blur();
 					return false;
 				});
                 utils.on(document, 'mouseover', function () {
-					utils.root || transfer.send(easemobim.EVENTS.RECOVERY);
+					utils.root || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
                 });
 				utils.live('img.easemobWidget-imgview', 'click', function () {
 					easemobim.imgView.show(this.getAttribute('src'));
@@ -868,7 +755,7 @@
 						var e = window.event || ev;
 						easemobim.textarea.blur();//ie a  ie...
 						easemobim.EVENTS.DRAGREADY.data = { x: e.clientX, y: e.clientY };
-                        utils.root || transfer.send(easemobim.EVENTS.DRAGREADY);
+                        utils.root || transfer.send(easemobim.EVENTS.DRAGREADY, window.transfer.to);
 						return false;
 					}, false);
 				}
@@ -1069,104 +956,11 @@
             }
 			//send image message function
             , sendImgMsg: function ( file, isHistory ) {
-                var me = this,
-                    msg = new Easemob.im.EmMessage('img', isHistory ? null : me.conn.getUniqueId());
-
-                msg.set({
-					apiUrl: (utils.ssl ? 'https://' : 'http://') + config.restServer,
-                    file: file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id')),
-                    to: config.toUser,
-                    uploadError: function ( error ) {
-                        //显示图裂，无法重新发送
-                        if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
-                            easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
-                        } else {
-                            var id = error.id,
-                                wrap = utils.$Dom(id);
-    
-                            utils.html(utils.$Class('a.easemobWidget-noline')[0], '<i class="easemobWidget-unimage">I</i>');
-                            utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-                            me.scrollBottom();
-                        }
-                    },
-                    uploadComplete: function ( data ) {
-                        me.handleTransfer('sending');
-                    },
-                    success: function ( id ) {
-                        utils.$Remove(utils.$Dom(id + '_loading'));
-                        utils.$Remove(utils.$Dom(id + '_failed'));
-                    },
-                    fail: function ( id ) {
-                        utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-                        utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
-                    },
-                    flashUpload: easemobim.flashUpload
-                });
-                if ( !isHistory ) {
-					me.setExt(msg);
-                    me.conn.send(msg.body);
-                    easemobim.realFile.value = '';
-                    if ( Easemob.im.Utils.isCanUploadFileAsync ) {
-                        me.appendDate(new Date().getTime(), config.toUser);
-                        me.appendMsg(config.user.username, config.toUser, msg);
-                    }
-                } else {
-                    me.appendMsg(config.user.username, file.to, msg, true);
-                }
+                this.channel.send('img', file, isHistory);
             }
 			//send file message function
 			, sendFileMsg: function ( file, isHistory ) {
-                var me = this,
-                    msg = new Easemob.im.EmMessage('file', isHistory ? null : me.conn.getUniqueId()),
-					file = file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id'));
-
-				if ( !file || !file.filetype || !config.FILETYPE[file.filetype.toLowerCase()] ) {
-                    chat.errorPrompt('不支持此文件');
-					easemobim.realFile.value = null;
-					return false;
-				}
-
-                msg.set({
-					apiUrl: (utils.ssl ? 'https://' : 'http://') + config.restServer,
-                    file: file,
-                    to: config.toUser,
-                    uploadError: function ( error ) {
-                        //显示图裂，无法重新发送
-                        if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
-                            easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
-                        } else {
-                            var id = error.id,
-                                wrap = utils.$Dom(id);
-    
-                            utils.html(utils.$Class('a.easemobWidget-noline')[0], '<i class="easemobWidget-unimage">I</i>');
-                            utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-                            me.scrollBottom();
-                        }
-                    },
-                    uploadComplete: function ( data ) {
-                        me.handleTransfer('sending');
-                    },
-                    success: function ( id ) {
-                        utils.$Remove(utils.$Dom(id + '_loading'));
-                        utils.$Remove(utils.$Dom(id + '_failed'));
-                    },
-                    fail: function ( id ) {
-                        utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-                        utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
-                    },
-                    flashUpload: easemobim.flashUpload
-                });
-                if ( !isHistory ) {
-					me.setExt(msg);
-                    me.conn.send(msg.body);
-                    easemobim.realFile.value = '';
-                    if ( Easemob.im.Utils.isCanUploadFileAsync ) {
-                        me.appendDate(new Date().getTime(), config.toUser);
-                        me.appendMsg(config.user.username, config.toUser, msg);
-                    }
-                } else {
-                    me.appendMsg(config.user.username, file.to, msg, true);
-                }
+                this.channel.send('file', file, isHistory);
             }
             , handleTransfer: function ( action, info, robertToHubman ) {
                 if ( config.hideStatus ) { return; }
@@ -1250,38 +1044,7 @@
             }
 			//send text message function
             , sendTextMsg: function ( message, isHistory, ext ) {
-                var me = this;
-                
-                var msg = new Easemob.im.EmMessage('txt', isHistory ? null : me.conn.getUniqueId());
-                msg.set({
-                    value: message || easemobim.textarea.value,
-                    to: config.toUser,
-                    success: function ( id ) {
-                        utils.$Remove(utils.$Dom(id + '_loading'));
-                        utils.$Remove(utils.$Dom(id + '_failed'));
-                        me.handleTransfer('sending', null, !isHistory && (msg.value === '转人工' || msg.value === '转人工客服'));
-                    },
-                    fail: function ( id ) {
-                        utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-                        utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
-                    }
-                });
-
-                if ( ext ) {
-                    utils.extend(msg.body, ext);
-                }
-
-				utils.addClass(easemobim.sendBtn, 'disabled');
-                if ( !isHistory ) {
-					me.setExt(msg);
-                    me.conn.send(msg.body);
-					easemobim.textarea.value = '';
-					if ( msg.body.ext && msg.body.ext.type === 'custom' ) { return; }
-					me.appendDate(new Date().getTime(), config.toUser);
-					me.appendMsg(config.user.username, config.toUser, msg);
-                } else {
-                    me.appendMsg(config.user.username, isHistory, msg, true);
-                }
+                this.channel.send('txt', message, isHistory, ext);
             }
 			, transferToKf: function ( id, sessionId ) {
                 var me = this;
@@ -1304,24 +1067,7 @@
             }
 			//send satisfaction evaluation message function
             , sendSatisfaction: function ( level, content, session, invite ) {
-                var me = this;
-
-                var msg = new Easemob.im.EmMessage('txt', me.conn.getUniqueId());
-                msg.set({value: '', to: config.toUser});
-                utils.extend(msg.body, {
-                    ext: {
-                        weichat: {
-                            ctrlType: 'enquiry'
-                            , ctrlArgs: {
-                                inviteId: invite || ''
-                                , serviceSessionId: session || ''
-                                , detail: content
-                                , summary: level
-                            }
-                        }
-                    }
-                });
-                me.conn.send(msg.body);
+                this.channel.send('satisfaction', level, content, session, invite);
             }
 			//未读消息提醒
             , messagePrompt: function ( message ) {
@@ -1353,189 +1099,18 @@
 						title: '新消息',
 						brief: message.brief
 					};
-					utils.root || transfer.send(easemobim.EVENTS.SLIDE);
-					utils.root || transfer.send(easemobim.EVENTS.NOTIFY);
+					utils.root || transfer.send(easemobim.EVENTS.SLIDE, window.transfer.to);
+					utils.root || transfer.send(easemobim.EVENTS.NOTIFY, window.transfer.to);
 				}
             }
 			, resetPrompt: function () {
 				this.msgCount = 0;
 				utils.addClass(utils.html(easemobim.messageCount, ''), 'em-hide');
-				utils.root || transfer.send(easemobim.EVENTS.RECOVERY);
+				utils.root || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
 			}
 			//receive message function
             , receiveMsg: function ( msg, type, isHistory ) {
-                if ( config.offDuty ) {
-                    return;
-                }
-
-                var me = this,
-                    msgid = me.getMsgid(msg);
-
-				if ( msgSite.get(msgid) ) {
-                    return;
-                } else {
-					msgid && msgSite.set(msgid, 1);
-				}
-
-				//绑定访客的情况有可能会收到多关联的消息，不是自己的不收
-				if ( !isHistory && msg.from && msg.from.toLowerCase() != config.toUser.toLowerCase() && !msg.noprompt ) {
-					return;
-				}
-
-                var message = null;
-
-                if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType && msg.ext.weichat.ctrlType == 'inviteEnquiry' ) {
-					//满意度评价
-                    type = 'satisfactionEvaluation';  
-                } else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {
-					//机器人自定义菜单
-                    type = 'robertList';  
-                } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {
-					//机器人转人工
-                    type = 'robertTransfer';  
-				}
-
-                switch ( type ) {
-					//text message
-					case 'txt':
-                        message = new Easemob.im.EmMessage('txt');
-                        message.set({value: msg.data});
-                        break;
-					//emotion message
-					case 'face':
-						message = new Easemob.im.EmMessage('txt');
-						var msgStr = '', brief = '';
-
-						for ( var i = 0, l = msg.data.length; i < l; i++ ) {
-							brief += msg.data[i].type === 'emotion' ? "[表情]" : msg.data[i].data;
-							msgStr += msg.data[i].type === 'emotion' ? "\<img class=\'em-emotion\' src=\'" + msg.data[i].data + "\' alt=\'表情\'\/\>" : msg.data[i].data;
-						}
-						message.set({value: msgStr, emotion: true, brief: brief});
-						break;
-					//image message
-                    case 'img':
-                        message = new Easemob.im.EmMessage('img');
-                        message.set({file: {url: msg.url}});
-                        break;
-					//file message
-					case 'file':
-                        message = new Easemob.im.EmMessage('file');
-                        message.set({file: {url: msg.url, filename: msg.filename}});
-                        break;
-					//satisfaction evaluation message
-                    case 'satisfactionEvaluation':
-                        message = new Easemob.im.EmMessage('list');
-                        message.set({value: '请对我的服务做出评价', list: ['\
-                            <div class="easemobWidget-list-btns">\
-                                <button class="easemobWidget-list-btn js_satisfybtn" data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '"\
-								 data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
-                            </div>']});
-                        break;
-					//robert list message
-                    case 'robertList':
-                        message = new Easemob.im.EmMessage('list');
-                        var str = '',
-                            robertV = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
-
-                        if ( robertV.length > 0 ) {
-                            str = '<div class="easemobWidget-list-btns">';
-                            for ( var i = 0, l = robertV.length; i < l; i++ ) {
-                                str += '<button class="easemobWidget-list-btn js_robertbtn" data-id="' + robertV[i].id + '">' + (robertV[i].name || robertV[i]) + '</button>';
-                            }
-                            str += '</div>';
-                        }
-                        message.set({value: msg.ext.msgtype.choice.title, list: str});
-                        break;
-					//transfer from robert to agent
-					case 'robertTransfer':
-						message = new Easemob.im.EmMessage('list');
-                        var str = '',
-                            robertV = [msg.ext.weichat.ctrlArgs];
-
-                        if ( robertV.length > 0 ) {
-                            str = '<div class="easemobWidget-list-btns">';
-                            for ( var i = 0, l = robertV.length; i < l; i++ ) {
-                                str += '<button class="easemobWidget-list-btn js_robertTransferBtn"\
-								 data-sessionid="' + robertV[i].serviceSessionId + '" data-id="' + robertV[i].id + '">' + robertV[i].label + '</button>';
-                            }
-                            str += '</div>';
-                        }
-                        message.set({ value: msg.data || msg.ext.weichat.ctrlArgs.label, list: str });
-                        break;
-                    default: break;
-                }
-                
-                if ( !isHistory ) {
-					
-					//get serssion when receive msg
-					msg.noprompt || this.getSession();
-
-                    if ( msg.ext && msg.ext.weichat ) {
-						if ( msg.ext.weichat.event 
-						&& (msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' 
-						|| msg.ext.weichat.event.eventName === 'ServiceSessionTransferedToAgentQueueEvent') ) {
-							//transfer msg, show transfer tip
-							this.handleTransfer('transfer');
-						} else if (  msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionClosedEvent' ) {
-							//service session closed event
-							//hide tip
-							if ( config.agentList && config.agentList[config.toUser] && config.agentList[config.toUser].firstMsg ) {
-								config.agentList[config.toUser].firstMsg = false;
-							}
-							this.session = null;
-							this.sessionSent = false;
-							this.handleTransfer('reply');
-							utils.root || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED);
-						} else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionOpenedEvent' ) {
-							//service session opened event
-							//fake
-							this.agentCount < 1 && (this.agentCount = 1);
-							//hide tip
-							this.handleTransfer('reply');
-						} else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionCreatedEvent' ) {
-
-						} else {
-							if ( !msg.ext.weichat.agent ) {
-								//switch off
-								this.handleTransfer('reply');
-							} else {
-								//switch on
-								msg.ext.weichat.agent && msg.ext.weichat.agent.userNickname !== '调度员' 
-								&& this.handleTransfer('reply', msg.ext.weichat.agent);
-							}
-						}
-					}
-
-
-					//空消息不显示
-                    if ( !message || !message.value ) {
-                        return;
-                    }
-
-                    if ( !msg.noprompt ) {
-						me.messagePrompt(message);
-					}
-					me.appendDate(new Date().getTime(), msg.from);
-                    me.resetSpan();
-                    me.appendMsg(msg.from, msg.to, message);
-                    me.scrollBottom(50);
-
-					if ( config.receive ) {
-						easemobim.EVENTS.ONMESSAGE.data = {
-							from: msg.from,
-							to: msg.to,
-							message: message
-						};
-						try {
-							utils.root || transfer.send(easemobim.EVENTS.ONMESSAGE);
-						} catch ( e ) {}
-					}
-                } else {
-                    if ( !message || !message.value ) {
-                        return;
-                    }
-                    me.appendMsg(msg.from, msg.to, message, true);
-                }
+                this.channel.handleReceive(msg, type, isHistory);
             }
         };
     };
@@ -1545,12 +1120,15 @@
 	/**
 	 * 调用指定接口获取数据
 	*/
-	easemobim.api = function ( apiName, data, callback ) {
+	easemobim.api = function ( apiName, data, success, error ) {
 		//cache
 		easemobim.api[apiName] = easemobim.api[apiName] || {};
 
 		var ts = new Date().getTime();
-		easemobim.api[apiName][ts] = callback;
+		easemobim.api[apiName][ts] = {
+            success: success,
+            error: error
+        };
 		easemobim.getData
 		.send({
 			api: apiName
@@ -1558,17 +1136,17 @@
 			, timespan: ts
 		})
 		.listen(function ( msg ) {
-			if ( easemobim.api[msg.call] && typeof easemobim.api[msg.call][msg.timespan] === 'function' ) {
+			if ( easemobim.api[msg.call] && easemobim.api[msg.call][msg.timespan] ) {
 
 				var callback = easemobim.api[msg.call][msg.timespan];
 				delete easemobim.api[msg.call][msg.timespan];
 
-				if ( msg.status !== 0 ) {
-					typeof config.onerror === 'function' && config.onerror(msg);
-				} else {
-					callback(msg);
-				}
+                if ( msg.status !== 0 ) {
+                    typeof callback.error === 'function' && callback.error(msg);
+                } else {
+                    typeof callback.success === 'function' && callback.success(msg);
+                }
 			}
-		});
+		}, ['api']);
 	};
 }());

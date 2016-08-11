@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "gulp": "",
+    "gulp-mocha": "*",
     "gulp-minify-css": "",
     "gulp-clean": "",
     "gulp-watch": "",
