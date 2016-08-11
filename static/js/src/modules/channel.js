@@ -573,6 +573,11 @@ easemobim.channel = function ( config ) {
 
     //收消息轮训通道
     var _receiveMsgChannle = function () {
+
+        if ( config.offDuty ) {
+            return;
+        }
+
         setInterval(function () {
             api('receiveMsgChannel', {
                 orgName: config.orgName,

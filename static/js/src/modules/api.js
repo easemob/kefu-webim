@@ -123,7 +123,7 @@
                 break;
 			case 'getRobertGreeting':
                 easemobim.emajax(createObject({
-                    url: '/v1/Tenants/' + msg.data.tenantId + '/robots/visitor/greetings',
+                    url: '/v1/Tenants/' + msg.data.tenantId + '/robots/visitor/greetings/' + msg.data.originType,
                     msg: msg
                 }));
                 break;

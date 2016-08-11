@@ -30,6 +30,8 @@
             config.to = utils.convertFalse(utils.query('to'));
             config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
             config.domain = config.domain || '//' + location.host;
+            config.offDutyWord = decodeURIComponent(utils.query('offDutyWord')) || '现在是下班时间，请留言。';
+            config.offDutyType = utils.query('offDutyType');
             config.xmppServer = utils.convertFalse(utils.query('xmppServer'));
             config.restServer = utils.convertFalse(utils.query('restServer'));
             config.originType = utils.convertFalse(utils.query('originType'));
@@ -122,7 +124,7 @@
 				api('getDutyStatus', {
 					tenantId: config.tenantId
 				}, function ( msg ) {
-					config.offDuty = msg.data;
+					config.offDuty = msg.data && (config.offDutyType === 'note' || config.offDutyType === 'none');
 
 					if ( msg.data ) {
 						chat.setOffline(true);//根据状态展示上下班不同view
