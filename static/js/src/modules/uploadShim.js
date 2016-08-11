@@ -55,14 +55,18 @@ easemobim.uploadShim = function ( config, chat ) {
                 if ( code != SWFUpload.UPLOAD_ERROR.FILE_CANCELLED
                 && code != SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED 
                 && code != SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED ) {
-                    var msg = new Easemob.im.EmMessage('img', this.fileMsgId);
+                    var msg = new Easemob.im.EmMessage('img');
                     msg.set({file: null});
-                    me.appendMsg(config.user.username, config.toUser, msg);
-                    me.appendDate(new Date().getTime(), config.toUser);
+                    chat.appendMsg(config.user.username, config.toUser, msg);
+                    chat.appendDate(new Date().getTime(), config.toUser);
                 }
             }
             , upload_success_handler: function ( file, response ) {
                 if ( !file || !response ) {
+                    var msg = new Easemob.im.EmMessage('img');
+                    msg.set({file: null});
+                    chat.appendMsg(config.user.username, config.toUser, msg);
+                    chat.appendDate(new Date().getTime(), config.toUser);
                     return;
                 }
                 try {

@@ -156,17 +156,19 @@ easemobim.channel = function ( config ) {
                 file: file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id')),
                 to: config.toUser,
                 uploadError: function ( error ) {
-                    //显示图裂，无法重新发送
-                    if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
-                        easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
-                    } else {
-                        var id = error.id,
-                            wrap = utils.$Dom(id);
+                    setTimeout(function () {
+                        //显示图裂，无法重新发送
+                        if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
+                            easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
+                        } else {
+                            var id = error.id,
+                                wrap = utils.$Dom(id);
 
-                        utils.html(utils.$Class('a.easemobWidget-noline')[0], '<i class="easemobWidget-unimage">I</i>');
-                        utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-                        me.scrollBottom();
-                    }
+                            utils.html(utils.$Class('a.easemobWidget-noline', wrap)[0], '<i class="easemobWidget-unimage">I</i>');
+                            utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+                            me.scrollBottom();
+                        }
+                    }, 50);
                 },
                 uploadComplete: function ( data ) {
                     me.handleTransfer('sending');
@@ -458,6 +460,7 @@ easemobim.channel = function ( config ) {
                 
             me.conn.listen({
                 onOpened: function ( info ) {
+                    
                     _clearFirstTS();
 
                     me.reOpen && clearTimeout(me.reOpen);
@@ -469,7 +472,7 @@ easemobim.channel = function ( config ) {
                     }
                     utils.html(easemobim.sendBtn, '发送');
 
-                    me.handleReady();
+                    me.handleReady(info);
                 }
                 , onTextMessage: function ( message ) {
                     me.receiveMsg(message, 'txt');
@@ -575,7 +578,7 @@ easemobim.channel = function ( config ) {
                 orgName: config.orgName,
                 appName: config.appName,
                 easemobId: config.toUser,
-                visitorName: config.user.username
+                visitorEasemobId: config.user.username
             }, function ( msg ) {
 
                 //处理收消息
@@ -600,7 +603,10 @@ easemobim.channel = function ( config ) {
                 type: 'txt',
                 msg: msg.value,
             }],
-            ext: msg.body ? msg.body.ext : null
+            ext: msg.body ? msg.body.ext : null,
+            orgName: config.orgName,
+            appName: config.appName,
+            originType: config.originType || 'webim'
         }, function () {
             //发送成功清除
             _clearTS.call(me, id);

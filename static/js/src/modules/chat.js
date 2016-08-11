@@ -55,7 +55,7 @@
 				//bind events on dom
                 this.bindEvents();
             }
-            , handleReady: function () {
+            , handleReady: function ( info ) {
                 var me = this;
 
                 if ( me.readyHandled ) {
@@ -63,6 +63,10 @@
                 }
 
                 me.readyHandled = true;
+
+                if ( info && config.user ) {
+                    config.user.token = config.user.token || info.accessToken;
+                }
 
                 easemobim.leaveMessage && easemobim.leaveMessage.auth(me.token, config);
 
@@ -636,10 +640,10 @@
 					, apiUrl: (utils.ssl ? 'https://' : 'http://') + config.restServer
 				};
 
-				if ( config.user.password ) {
-					op.pwd = config.user.password;
-				} else {
+				if ( config.user.token ) {
 					op.accessToken = config.user.token;
+				} else {
+					op.pwd = config.user.password;
 				}
 
 				me.conn.open(op);

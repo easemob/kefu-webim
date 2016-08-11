@@ -155,7 +155,7 @@
                 break;
             case 'sendMsgChannel':
                 easemobim.emajax(createObject({
-                    url: '/v1/imgateway/messages?tenantId=' + msg.data.tenantId,
+                    url: '/v1/imgateway/messages',
                     msg: msg,
                     type: 'POST'
                 }));
