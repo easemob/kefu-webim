@@ -95,15 +95,22 @@
 				if ( config.emgroup ) {
 					msg.body.ext.weichat.queueName = decodeURIComponent(config.emgroup);
 				}
+
 				//bind visitor
 				var visitor = config.visitor;
 				if ( visitor ) {
 					msg.body.ext.weichat.visitor = visitor;
 				}
+
 				//bind agent
 				if ( config.agentName ) {
 					msg.body.ext.weichat.agentUsername = config.agentName;
 				}
+
+                //set language
+                if ( config.language ) {
+					msg.body.ext.weichat.language = config.language;
+                }
 
                 //set growingio id
                 var gr_user_id = utils.getStore(config.tenantId + 'gr_user_id');
@@ -260,7 +267,8 @@
 
 					//robert greeting
 					easemobim.api('getRobertGreeting', {
-						tenantId: config.tenantId
+						tenantId: config.tenantId,
+						originType: config.originType || 'webim'
 					}, function ( msg ) {
 						if ( msg && msg.data ) {
 							var rGreeting = msg.data;
@@ -574,14 +582,37 @@
                 }, 2000);
             }
             , setOffline: function ( isOffDuty ) {
-                if ( easemobim.leaveMessage ) {
-					this.slogan && utils.addClass(this.slogan, 'em-hide');
-					//utils.addClass(easemobim.imBtn.getElementsByTagName('a')[0], 'easemobWidget-offline-bg');
-					utils.removeClass(easemobim.leaveMessage.dom, 'em-hide');
-					utils.addClass(easemobim.imChatBody, 'em-hide');
-					utils.addClass(easemobim.send, 'em-hide');
-                    easemobim.leaveMessage.show(isOffDuty);
-				}
+                var me = this;
+
+                switch ( config.offDutyType ) {
+                    case 'note':// show note
+                        if ( easemobim.leaveMessage ) {
+                            this.slogan && utils.addClass(this.slogan, 'em-hide');
+                            //utils.addClass(easemobim.imBtn.getElementsByTagName('a')[0], 'easemobWidget-offline-bg');
+                            utils.removeClass(easemobim.leaveMessage.dom, 'em-hide');
+                            utils.addClass(easemobim.imChatBody, 'em-hide');
+                            utils.addClass(easemobim.send, 'em-hide');
+                            easemobim.leaveMessage.show(isOffDuty);
+                        }            
+                        break;
+                    case 'none':// disable note & msg
+                        
+                        utils.addClass(easemobim.mobileNoteBtn, 'em-hide');
+					    utils.addClass(utils.$Class('i.easemobWidgetHeader-keyboard'), 'em-hide');
+                        easemobim.textarea.blur();
+
+                        var msg = new Easemob.im.EmMessage('txt');
+                        msg.set({ value: config.offDutyWord });
+                        setTimeout(function () {
+                            me.appendMsg(config.toUser, config.user.username, msg);
+                        }, 1000);
+                        utils.addClass(easemobim.send, 'easemobWidget-send-disable');
+                        break;
+                    default:break;
+                }
+
+
+                
             }
 			//close chat window
             , close: function () {
@@ -1110,6 +1141,10 @@
 			}
 			//receive message function
             , receiveMsg: function ( msg, type, isHistory ) {
+                if ( config.offDuty ) {
+                    return;
+                }
+
                 this.channel.handleReceive(msg, type, isHistory);
             }
         };
