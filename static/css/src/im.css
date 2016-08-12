@@ -716,7 +716,9 @@ img.easemobWidget-msg-fileicon {
     bottom: 0;
     left: 0;
     height: 140px;
-    background: rgba(255,255,255,.6);
+    opacity: .7;
+    background: #fff;
+    background: rgba(255,255,255,.7);
 }
 #easemobWidgetSendBtn.disabled {
     background-color: #ccc;
