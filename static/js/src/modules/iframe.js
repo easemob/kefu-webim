@@ -270,6 +270,7 @@
 		this.config.restServer && (destUrl.restServer = this.config.restServer);
 		this.config.offDutyWord && (destUrl.offDutyWord = this.config.offDutyWord);
 		this.config.offDutyType && (destUrl.offDutyType = this.config.offDutyType);
+		this.config.language && (destUrl.language = this.config.language);
 		typeof this.config.hideStatus !== 'undefined' && this.config.hideStatus !== '' && (destUrl.hideStatus = this.config.hideStatus);
 		typeof this.config.ticket !== 'undefined' && this.config.ticket !== '' && (destUrl.ticket = this.config.ticket);
 		typeof this.config.appid !== 'undefined' && this.config.appid !== '' && (destUrl.appid = this.config.appid);

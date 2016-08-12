@@ -95,15 +95,22 @@
 				if ( config.emgroup ) {
 					msg.body.ext.weichat.queueName = decodeURIComponent(config.emgroup);
 				}
+
 				//bind visitor
 				var visitor = config.visitor;
 				if ( visitor ) {
 					msg.body.ext.weichat.visitor = visitor;
 				}
+
 				//bind agent
 				if ( config.agentName ) {
 					msg.body.ext.weichat.agentUsername = config.agentName;
 				}
+
+                //set language
+                if ( config.language ) {
+					msg.body.ext.weichat.language = config.language;
+                }
 
                 //set growingio id
                 var gr_user_id = utils.getStore(config.tenantId + 'gr_user_id');
