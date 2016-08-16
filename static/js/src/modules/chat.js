@@ -585,15 +585,8 @@
                 var me = this;
 
                 switch ( config.offDutyType ) {
-                    case 'note':// show note
-                        if ( easemobim.leaveMessage ) {
-                            this.slogan && utils.addClass(this.slogan, 'em-hide');
-                            //utils.addClass(easemobim.imBtn.getElementsByTagName('a')[0], 'easemobWidget-offline-bg');
-                            utils.removeClass(easemobim.leaveMessage.dom, 'em-hide');
-                            utils.addClass(easemobim.imChatBody, 'em-hide');
-                            utils.addClass(easemobim.send, 'em-hide');
-                            easemobim.leaveMessage.show(isOffDuty);
-                        }            
+                    case 'chat':
+                                    
                         break;
                     case 'none':// disable note & msg
                         
@@ -608,7 +601,16 @@
                         }, 1000);
                         utils.addClass(easemobim.send, 'easemobWidget-send-disable');
                         break;
-                    default:break;
+                    default:// show note
+                        if ( easemobim.leaveMessage ) {
+                            this.slogan && utils.addClass(this.slogan, 'em-hide');
+                            //utils.addClass(easemobim.imBtn.getElementsByTagName('a')[0], 'easemobWidget-offline-bg');
+                            utils.removeClass(easemobim.leaveMessage.dom, 'em-hide');
+                            utils.addClass(easemobim.imChatBody, 'em-hide');
+                            utils.addClass(easemobim.send, 'em-hide');
+                            easemobim.leaveMessage.show(isOffDuty);
+                        }
+                        break;
                 }
 
 
