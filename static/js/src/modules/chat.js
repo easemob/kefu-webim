@@ -636,7 +636,9 @@
                 me.scrollBottom(50);
                 utils.addClass(easemobim.imBtn, 'em-hide');
                 utils.removeClass(easemobim.imChat, 'em-hide');
-                try { easemobim.textarea.focus(); } catch ( e ) {}
+                if ( !config.offDuty || config.offDutyType !== 'none' ) {
+                    try { easemobim.textarea.focus(); } catch ( e ) {}
+                }
 				me.resetPrompt();
             }
             , sdkInit: function () {
