@@ -127,9 +127,7 @@
 				}, function ( msg ) {
 					config.offDuty = msg.data ? msg.data && config.offDutyType !== 'chat' : false;
 
-					if ( config.offDuty ) {
-						chat.setOffline(true);//根据状态展示上下班不同view
-					}
+                    chat.setOffline(config.offDuty);//根据状态展示上下班不同view
 				});
 
 				config.orgName = config.appKey.split('#')[0];

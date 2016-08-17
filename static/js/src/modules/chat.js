@@ -48,8 +48,6 @@
                 this.setMinmum();
 				//init sound reminder
                 this.soundReminder();
-				//mobile adjust
-				this.mobile();
 				//root adjust
 				this.setRoot();
 				//bind events on dom
@@ -137,9 +135,9 @@
 				//mobile need set drag disable
 				config.dragenable = false;
 
-                config.ticket && utils.removeClass(easemobim.mobileNoteBtn, 'em-hide');
+                config.ticket && !config.offDuty && utils.removeClass(easemobim.mobileNoteBtn, 'em-hide');
 
-				if ( !config.hideKeyboard ) {
+				if ( !config.hideKeyboard && !config.offDuty ) {
 					var i = document.createElement('i');
 					utils.addClass(i, 'easemobWidgetHeader-keyboard easemobWidgetHeader-keyboard-down');
 					easemobim.dragHeader.appendChild(i);
@@ -576,29 +574,35 @@
                 
                 utils.html(me.ePromptContent, msg);
                 utils.removeClass(me.ePrompt, 'em-hide');
-                isAlive || setTimeout(function(){
+                isAlive || setTimeout(function () {
                     utils.html(me.ePromptContent, '');
                     utils.addClass(me.ePrompt, 'em-hide');
                 }, 2000);
             }
             , setOffline: function ( isOffDuty ) {
-                var me = this;
+
+				this.mobile();
+
+                if ( !isOffDuty ) { return; }
 
                 switch ( config.offDutyType ) {
                     case 'chat':
                                     
                         break;
                     case 'none':// disable note & msg
-                        
-                        utils.addClass(easemobim.mobileNoteBtn, 'em-hide');
-					    utils.addClass(utils.$Class('i.easemobWidgetHeader-keyboard'), 'em-hide');
-                        easemobim.textarea.blur();
+
+                        var word = config.offDutyWord;
+
+                        try {
+                            word = decodeURIComponent(config.offDutyWord);
+                        } catch ( e ) {}
 
                         var msg = new Easemob.im.EmMessage('txt');
-                        msg.set({ value: config.offDutyWord });
-                        setTimeout(function () {
-                            me.appendMsg(config.toUser, config.user.username, msg);
-                        }, 1000);
+                        msg.set({ value: word });
+                        if ( !this.chatWrapper ) {
+                            this.handleGroup();
+                        }
+                        this.appendMsg(config.toUser, config.user.username, msg);
                         utils.addClass(easemobim.send, 'easemobWidget-send-disable');
                         break;
                     default:// show note
@@ -612,9 +616,6 @@
                         }
                         break;
                 }
-
-
-                
             }
 			//close chat window
             , close: function () {
@@ -1051,8 +1052,10 @@
 			}
 			//消息上屏
             , appendMsg: function ( from, to, msg, isHistory ) {
+
+                var me = this;
+
                 var isSelf = from == config.user.username && (from || config.user.username),
-					me = this,
                     curWrapper = me.chatWrapper;
 
                 var div = document.createElement('div');
