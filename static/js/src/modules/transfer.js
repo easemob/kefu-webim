@@ -9,14 +9,26 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
             var msg = e.data;
             msg = JSON.parse(msg);
 
+
+            var flag = false;//兼容旧版的标志
             if ( accept && accept.length ) {
                 for ( var i = 0, l = accept.length; i < l; i++ ) {
                     if ( msg.key === accept[i] ) {
+                        flag = true;
                         typeof callback === 'function' && callback(msg);
                     }
                 }
             } else {
                 typeof callback === 'function' && callback(msg);
+            }
+
+            if ( !flag ) {
+                for ( var i = 0, l = accept.length; i < l; i++ ) {
+                    if ( accept[i] === 'data' ) {
+                        typeof callback === 'function' && callback(msg);
+                        break;
+                    }
+                }
             }
         }
     };
