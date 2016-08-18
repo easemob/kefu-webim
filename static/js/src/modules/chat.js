@@ -999,7 +999,16 @@
                 this.channel.send('file', file, isHistory);
             }
             , handleTransfer: function ( action, info, robertToHubman ) {
-                if ( config.hideStatus ) { return; }
+                if ( config.hideStatus ) {
+                    if ( action === 'reply' && info && info.userNickname ) {
+                        this.setAgentProfile({
+                            userNickname: info.userNickname,
+                            avatar: info.avatar
+                        });
+                    }
+                    return;
+                }
+
                 var wrap = utils.$Dom(config.toUser + '-transfer');
 
                 config.agentList = config.agentList || {};
