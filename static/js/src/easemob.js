@@ -172,4 +172,12 @@
 		iframe.set(_config, iframe.close);
 	}
 
+    //support cmd & amd
+    if ( typeof module === 'object' && typeof module.exports === 'object' ) {
+         module.exports = easemobim;
+     } else if ( typeof define === 'function' && (define.amd || define.cmd) ) {
+         define([], function () {
+             return easemobim;
+         });
+     }
 }(window, undefined));
