@@ -9,6 +9,9 @@ Easemob.im.EmMessage.txt.prototype.get = function ( isReceive ) {
 	if ( !this.value ) {
 		return '';
 	}
+
+    this.value = this.emotion ? this.value : easemobim.utils.decode(this.value);
+    
 	return [
 		!isReceive ? "<div id='" + this.id + "' class='easemobWidget-right'>" : "<div class='easemobWidget-left'>",
 			"<div class='easemobWidget-msg-wrapper'>",
