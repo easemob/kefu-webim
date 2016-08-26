@@ -279,6 +279,8 @@
 			}
 			var s = '';
 			s = str.replace(/&amp;/g, "&");
+			s = s.replace(/&#39;/g, "'");
+			s = s.replace(/&lt;o\)/g, "<o)");
 			return s;
 		}
 		, query: function ( key ) {
@@ -352,32 +354,9 @@
 
 			return isKefuAvatar && !ossImg ? domain + '/ossimages/' + url : '//' + url;
 		}
-		, encode: function ( str, history ) {
-			if ( !str || str.length === 0 ) return "";
-			var s = '';
-			s = str.replace(/&amp;/g, "&");
-			s = s.replace(/<(?=[^o][^)])/g, "&lt;");
-			s = s.replace(/>/g, "&gt;");
-			//s = s.replace(/\'/g, "&#39;");
-			s = s.replace(/\"/g, "&quot;");
-			s = s.replace(/\n/g, "<br>");
-			return s;
-		}
-		, decode: function ( str ) {
-			if ( !str || str.length === 0 ) return "";
-			var s = '';
-			s = str.replace(/&amp;/g, "&");
-			return s;
-		}
 		, convertFalse: function ( obj ) {
 			obj = typeof obj === 'undefined' ? '' : obj;
 			return obj === 'false' ? false : obj;
-		}
-		, queryString: function ( url, key ) {//queryString
-			var r = url.match(new RegExp('[?&]?'+key+'=[0-9a-zA-Z%@._-]*[^&]', 'g'));
-			r = r && r[0] ? (r[0][0]=='?' || r[0][0]=='&' ? r[0].slice(1) : r[0]) : '';
-
-			return r.slice(key.length+1);
 		}
 		, getConfig: function ( key, searchScript ) {//get config from current script
 			var that;

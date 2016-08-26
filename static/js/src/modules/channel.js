@@ -312,6 +312,17 @@ easemobim.channel = function ( config ) {
                     var msgStr = '', brief = '';
 
                     for ( var i = 0, l = msg.data.length; i < l; i++ ) {
+
+                        if ( msg.data[i].type === 'txt' ) {
+                            var emoji = Easemob.im.Utils.parseEmotions(easemobim.utils.decode(msg.data[i].data));
+                            if ( emoji.indexOf('<img') > -1 ) {
+                                msg.data[i] = {
+                                    data: emoji,
+                                    emotion: true
+                                };
+                            }
+                        }
+
                         brief += msg.data[i].type === 'emotion' ? "[表情]" : msg.data[i].data;
                         msgStr += msg.data[i].type === 'emotion' ? "\<img class=\'em-emotion\' src=\'" + msg.data[i].data + "\' alt=\'表情\'\/\>" : msg.data[i].data;
                     }
