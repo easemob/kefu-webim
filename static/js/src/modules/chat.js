@@ -350,32 +350,27 @@
 				}
             }
             , handleGroup: function () {
-                this.handleChatContainer(config.toUser);
-                this.chatWrapper = utils.$Dom(config.toUser);
+                this.chatWrapper = this.handleChatContainer();
             }
-            , handleChatContainer: function ( userName ) {
-                var curChatContainer = utils.$Dom(userName);
+            , handleChatContainer: function () {
+                var curChatContainer = utils.$Class('div.easemobWidget-chat', easemobim.imChatBody);
 
 				this.setAgentProfile({
 					userNickname: config.defaultAgentName,
                     avatar: config.tenantAvatar
 				});
-                if ( curChatContainer ) {
-                    utils.removeClass(curChatContainer, 'em-hide');
-                    utils.addClass(utils.siblings(curChatContainer, 'easemobWidget-chat'), 'em-hide');
-                    utils.removeClass(utils.$Dom(config.toUser + '-transfer'), 'em-hide');
+                if ( curChatContainer && curChatContainer.length > 0 ) {
+                    return curChatContainer[0];
                 } else {
                     curChatContainer = document.createElement('div');
-                    curChatContainer.id = userName;
                     utils.addClass(curChatContainer, 'easemobWidget-chat');
                     utils.insertBefore(easemobim.imChatBody, curChatContainer, easemobim.imChatBody.childNodes[this.hasLogo ? 1 : 0]);
 
-                    curChatContainer = document.createElement('div');
-                    curChatContainer.id = config.toUser + '-transfer';
-					utils.addClass(curChatContainer, 'easemobWidget-status-prompt');
-                    easemobim.imChat.appendChild(curChatContainer);
-                    curChatContainer = null;
-                    this.handleChatContainer(userName);     
+                    var transfer = document.createElement('div');
+                    transfer.id = 'transfer';
+					utils.addClass(transfer, 'easemobWidget-status-prompt');
+                    easemobim.imChat.appendChild(transfer);
+                    return curChatContainer;
                 }
             }
             , getMsgid: function ( msg ) {
@@ -421,6 +416,7 @@
                 if ( avatar.getAttribute('src') !== this.currentAvatar ) {
                     var cur = this.currentAvatar;
 
+                    if ( !cur ) { return; }
                     avatar.onload = function () {
                         avatar.style.opacity = '1';
                     };
@@ -646,7 +642,7 @@
                 this.channel.listen();
             }
             , appendDate: function ( date, to, isHistory ) {
-                var chatWrapper = utils.$Dom(to || config.toUser),
+                var chatWrapper = this.chatWrapper,
                     dom = document.createElement('div'),
                     fmt = 'M月d日 hh:mm';
 
@@ -1009,7 +1005,7 @@
                     return;
                 }
 
-                var wrap = utils.$Dom(config.toUser + '-transfer');
+                var wrap = utils.$Dom('transfer');
 
                 config.agentList = config.agentList || {};
                 config.agentList[config.toUser] = config.agentList[config.toUser] || {};
