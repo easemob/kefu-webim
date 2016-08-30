@@ -587,10 +587,10 @@
                         break;
                     case 'none':// disable note & msg
 
-                        var word = config.offDutyWord;
+                        var word = config.offDutyWord || '现在是下班时间。';
 
                         try {
-                            word = decodeURIComponent(config.offDutyWord);
+                            word = decodeURIComponent(word);
                         } catch ( e ) {}
 
                         var msg = new Easemob.im.EmMessage('txt');
@@ -633,7 +633,7 @@
                 me.scrollBottom(50);
                 utils.addClass(easemobim.imBtn, 'em-hide');
                 utils.removeClass(easemobim.imChat, 'em-hide');
-                if ( !config.offDuty || config.offDutyType !== 'none' ) {
+                if ( (!config.offDuty && typeof config.offDuty !== 'undefined') || config.offDutyType !== 'none' ) {
                     try { easemobim.textarea.focus(); } catch ( e ) {}
                 }
 				me.resetPrompt();

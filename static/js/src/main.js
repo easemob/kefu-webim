@@ -30,7 +30,7 @@
             config.to = utils.convertFalse(utils.query('to'));
             config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
             config.domain = config.domain || '//' + location.host;
-            config.offDutyWord = decodeURIComponent(utils.query('offDutyWord')) || '现在是下班时间，请留言。';
+            config.offDutyWord = decodeURIComponent(utils.query('offDutyWord'));
             config.offDutyType = utils.query('offDutyType');
             config.language = utils.query('language') || 'zh_CN';
             config.xmppServer = utils.convertFalse(utils.query('xmppServer'));
