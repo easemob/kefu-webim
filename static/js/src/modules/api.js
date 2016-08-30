@@ -46,104 +46,104 @@
         switch ( msg.api ) {
             case 'getRelevanceList':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/targetChannels', 
+                    url: '/v1/webimplugin/targetChannels', //done
                     msg: msg
                 }));
                 break;
             case 'getDutyStatus':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/showMessage',
+                    url: '/v1/webimplugin/showMessage',//done
                     msg: msg
                 }));
                 break;
             case 'getWechatVisitor':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/visitors/wechat/' + msg.data.openid + '?tenantId=' + msg.data.tenantId,
+                    url: '/v1/webimplugin/visitors/wechat/' + msg.data.openid + '?tenantId=' + msg.data.tenantId,//done
                     msg: msg,
                     type: 'POST'
                 }));
                 break;
             case 'createVisitor':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/visitors?tenantId=' + msg.data.tenantId,
+                    url: '/v1/webimplugin/visitors?tenantId=' + msg.data.tenantId,//done
                     msg: msg,
                     type: 'POST'
                 }));
                 break;
             case 'getSession':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
+                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
                     msg: msg,
                     excludeData: true
                 }));
                 break;
             case 'getExSession':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data-ex?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
+                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data-ex?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
                     msg: msg,
                     excludeData: true
                 }));
                 break;
             case 'getPassword':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/visitors/password',
+                    url: '/v1/webimplugin/visitors/password',//done
                     msg: msg
                 }));
                 break;
             case 'getGroup':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
+                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
                     msg: msg,
                     excludeData: true
                 }));
                 break;
             case 'getHistory':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/visitors/msgHistory',
+                    url: '/v1/webimplugin/visitors/msgHistory',//done
                     msg: msg
                 }));
                 break;
             case 'getSlogan':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/notice/options',
+                    url: '/v1/webimplugin/notice/options',//done
                     msg: msg
                 }));
                 break;
 			case 'getTheme':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/theme/options',
+                    url: '/v1/webimplugin/theme/options',//done
                     msg: msg
                 }));
                 break;
 			case 'getSystemGreeting':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/welcome',
+                    url: '/v1/webimplugin/welcome',//done
                     msg: msg
                 }));
                 break;
 			case 'getRobertGreeting':
                 easemobim.emajax(createObject({
-                    url: '/v1/Tenants/' + msg.data.tenantId + '/robots/visitor/greetings/' + msg.data.originType,
+                    url: '/v1/Tenants/' + msg.data.tenantId + '/robots/visitor/greetings/' + msg.data.originType + '?tenantId=' + msg.data.tenantId,//done
                     msg: msg,
                     excludeData: true
                 }));
                 break;
 			case 'sendVisitorInfo':
                 easemobim.emajax(createObject({
-                    url: '/v1/webimplugin/tenants/' + msg.data.tenantId + '/visitors/' + msg.data.visitorId + '/attributes?tenantId=' + msg.data.tenantId,
+                    url: '/v1/webimplugin/tenants/' + msg.data.tenantId + '/visitors/' + msg.data.visitorId + '/attributes?tenantId=' + msg.data.tenantId,//done
                     msg: msg,
                     type: 'POST'
                 }));
                 break;
             case 'getProject':
                 easemobim.emajax(createObject({
-                    url: '/tenants/' + msg.data.tenantId + '/projects',
+                    url: '/tenants/' + msg.data.tenantId + '/projects',//done
                     msg: msg
                 }));
                 break;
             case 'createTicket':
                 easemobim.emajax(createObject({
-                    url: '/tenants/' + msg.data.tenantId + '/projects/' + msg.data.projectId + '/tickets?tenantId=' + msg.data.tenantId + '&easemob-target-username=' + msg.data['easemob-target-username'] + '&easemob-appkey=' + msg.data['easemob-appkey'] + '&easemob-username=' + msg.data['easemob-username'],
+                    url: '/tenants/' + msg.data.tenantId + '/projects/' + msg.data.projectId + '/tickets?tenantId=' + msg.data.tenantId + '&easemob-target-username=' + msg.data['easemob-target-username'] + '&easemob-appkey=' + msg.data['easemob-appkey'] + '&easemob-username=' + msg.data['easemob-username'],//done
                     msg: msg,
                     type: 'POST'
                 }));
@@ -156,7 +156,7 @@
                 break;
             case 'sendMsgChannel':
                 easemobim.emajax(createObject({
-                    url: '/v1/imgateway/messages',
+                    url: '/v1/imgateway/messages?tenantId=' + msg.data.tenantId,
                     msg: msg,
                     type: 'POST'
                 }));
