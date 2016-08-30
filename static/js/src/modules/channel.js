@@ -594,6 +594,7 @@ easemobim.channel = function ( config ) {
                 orgName: config.orgName,
                 appName: config.appName,
                 easemobId: config.toUser,
+                tenantId: config.tenantId,
                 visitorEasemobId: config.user.username
             }, function ( msg ) {
 
@@ -615,6 +616,7 @@ easemobim.channel = function ( config ) {
         api('sendMsgChannel', {
             from: config.user.username,
             to: config.toUser,
+            tenantId: config.tenantId,
             bodies: [{
                 type: 'txt',
                 msg: msg.value,
