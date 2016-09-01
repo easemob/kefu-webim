@@ -46,7 +46,7 @@ easemobim.channel = function ( config ) {
 
             return new Easemob.im.Connection({ 
                 url: config.xmppServer,
-                retry: true,
+                retry: false,
                 multiResources: config.resources,
                 heartBeatWait: CONSTS
             });
