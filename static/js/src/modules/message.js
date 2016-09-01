@@ -16,7 +16,7 @@ Easemob.im.EmMessage.txt.prototype.get = function ( isReceive ) {
 		!isReceive ? "<div id='" + this.id + "' class='easemobWidget-right'>" : "<div class='easemobWidget-left'>",
 			"<div class='easemobWidget-msg-wrapper'>",
 				"<i class='easemobWidget-corner'></i>",
-				this.id ? "<div id='" + this.id + "_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
+				this.id ? "<div id='" + this.id + "_failed' data-type='txt' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
 				this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
 				"<div class='easemobWidget-msg-container'>",
 					"<pre>" + Easemob.im.Utils.parseLink(this.emotion ? this.value : Easemob.im.Utils.parseEmotions(easemobim.utils.encode(this.value))) + "</pre>",
@@ -89,6 +89,7 @@ Easemob.im.EmMessage.img.prototype.set = function ( opt ) {
 		id: this.id 
 		, file: this.value 
 		, apiUrl: opt.apiUrl
+        , accessToken: opt.accessToken
 		, to: opt.to
 		, type : this.type
 		, onFileUploadError : opt.uploadError

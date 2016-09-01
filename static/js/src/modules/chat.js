@@ -848,12 +848,19 @@
 
                     utils.addClass(this, 'em-hide');
                     utils.removeClass(utils.$Dom(id + '_loading'), 'em-hide');
-                    me.conn.send(id);
+                    if ( this.getAttribute('data-type') === 'txt' ) {
+                        me.channel.reSend('txt', id);
+                    } else {
+                        me.conn.send(id);
+                    }
                 });
 
 				utils.live('button.js_robertTransferBtn', utils.click,  function () {
                     var that = this;
 
+                    if ( that.clicked ) { return false; }
+
+                    that.clicked = true;
                     me.transferToKf(that.getAttribute('data-id'), that.getAttribute('data-sessionid'));
                     return false;
                 });
@@ -1090,23 +1097,7 @@
                 this.channel.send('txt', message, isHistory, ext);
             }
 			, transferToKf: function ( id, sessionId ) {
-                var me = this;
-
-				var msg = new Easemob.im.EmMessage('cmd');
-				msg.set({
-                    to: config.toUser
-					, action: 'TransferToKf'
-                    , ext: {
-                        weichat: {
-                            ctrlArgs: {
-                                id: id,
-								serviceSessionId: sessionId,
-                            }
-                        }
-                    }
-                });
-                me.conn.send(msg.body);
-                me.handleTransfer('sending', null, true);
+                this.channel.send('transferToKf', id, sessionId);
             }
 			//send satisfaction evaluation message function
             , sendSatisfaction: function ( level, content, session, invite ) {
