@@ -1,5 +1,6 @@
 easemobim.channel = function ( config ) {
-    var CONSTS = 30000;
+    var INITCONSTS = 30000;
+    var CONSTS = 60000;
     var MAXRETRY = 1;
 
 
@@ -722,7 +723,7 @@ easemobim.channel = function ( config ) {
         utils.html(easemobim.sendBtn, '发送');
 
         chat.handleReady();
-    }, CONSTS);
+    }, INITCONSTS);
     
     //收消息轮训通道常驻
     _receiveMsgChannle();
