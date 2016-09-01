@@ -1,5 +1,6 @@
 easemobim.channel = function ( config ) {
     var CONSTS = 30000;
+    var MAXRETRY = 1;
 
 
     var me = this;
@@ -46,10 +47,23 @@ easemobim.channel = function ( config ) {
 
             return new Easemob.im.Connection({ 
                 url: config.xmppServer,
-                retry: false,
+                retry: true,
                 multiResources: config.resources,
                 heartBeatWait: CONSTS
             });
+        },
+
+        reSend: function ( type, id ) {
+            if ( id ) {
+                var msg = sendMsgSite.get(id);
+
+                switch ( type ) {
+
+                    case 'txt':
+                        _sendMsgChannle(msg, 0);//重试只发一次
+                        break;
+                }
+            }
         },
 
         send: function ( type ) {
@@ -59,13 +73,19 @@ easemobim.channel = function ( config ) {
             switch ( type ) {
 
                 case 'txt':
-                    //不是历史记录开启倒计时, 当前只有文本消息支持降级
+                    //不是历史记录开启倒计时
                     if ( !arguments[2] ) {
                         _detectSendMsgByApi(id);
                     }
 
 
                     _obj.sendText(arguments[1], arguments[2], arguments[3], id);
+                    break;
+
+                case 'transferToKf':
+                    _detectSendMsgByApi(id);
+
+                    _obj.transferToKf(arguments[1], arguments[2], id);
                     break;
 
                 case 'img':
@@ -81,7 +101,6 @@ easemobim.channel = function ( config ) {
                     _detectSendMsgByApi(id);
                     _obj.sendSatisfaction(arguments[1], arguments[2], arguments[3], arguments[4], id);
                     break;
-                    
             };
         },
 
@@ -118,13 +137,10 @@ easemobim.channel = function ( config ) {
                 value: message || easemobim.textarea.value,
                 to: config.toUser,
                 success: function ( id ) {
-                    /*utils.$Remove(utils.$Dom(id + '_loading'));
-                    utils.$Remove(utils.$Dom(id + '_failed'));
-                    me.handleTransfer('sending', null, !isHistory && (msg.value === '转人工' || msg.value === '转人工客服'));*/
+                    // 此回调用于确认im server收到消息, 有别于kefu ack
                 },
                 fail: function ( id ) {
-                    /*utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-                    utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');*/
+                    
                 }
             });
 
@@ -147,6 +163,29 @@ easemobim.channel = function ( config ) {
             }
         },
 
+
+        transferToKf: function ( tid, sessionId, id ) {
+            var msg = new Easemob.im.EmMessage('cmd', id);
+            msg.set({
+                to: config.toUser
+                , action: 'TransferToKf'
+                , ext: {
+                    weichat: {
+                        ctrlArgs: {
+                            id: tid,
+                            serviceSessionId: sessionId,
+                        }
+                    }
+                }
+            });
+
+            _obj.appendAck(msg, id);
+            me.conn.send(msg.body);
+            sendMsgSite.set(id, msg);
+
+            me.handleTransfer('sending', null, true);
+        },
+
         sendImg: function ( file, isHistory, id ) {
 
             var msg = new Easemob.im.EmMessage('img', isHistory ? null : id);
@@ -154,6 +193,7 @@ easemobim.channel = function ( config ) {
             msg.set({
                 apiUrl: (utils.ssl ? 'https://' : 'http://') + config.restServer,
                 file: file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id')),
+                accessToken: me.token,
                 to: config.toUser,
                 uploadError: function ( error ) {
                     setTimeout(function () {
@@ -260,8 +300,7 @@ easemobim.channel = function ( config ) {
             if ( msg && msg.ext && msg.ext.weichat && msg.ext.weichat.ack_for_msg_id ) {
 
                 var id = msg.ext.weichat.ack_for_msg_id;
-
-                _clearTS.call(me, id);
+                _clearTS(id);
 
                 return;
             }
@@ -514,7 +553,7 @@ easemobim.channel = function ( config ) {
                             me.open();
                         }, 2000));
                     } else {
-                        me.conn.stopHeartBeat(me.conn);
+                        //me.conn.stopHeartBeat(me.conn);
                         typeof config.onerror === 'function' && config.onerror(e);
                     }
                 }
@@ -611,7 +650,9 @@ easemobim.channel = function ( config ) {
     };
 
     //发消息通道
-    var _sendMsgChannle = function ( msg, id ) {
+    var _sendMsgChannle = function ( msg, count ) {
+        var count = count === 0 ? 0 : (count || MAXRETRY);
+        var id = msg.id;
 
         api('sendMsgChannel', {
             from: config.user.username,
@@ -627,24 +668,30 @@ easemobim.channel = function ( config ) {
             originType: config.originType || 'webim'
         }, function () {
             //发送成功清除
-            _clearTS.call(me, id);
+            _clearTS(id);
         }, function () {
             //失败继续重试
+            if ( count > 0 ) {
+                _sendMsgChannle(msg, --count);
+            } else {
+                utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+                utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
+            }
         });
     };
 
     //消息发送成功，清除timer
     var _clearTS = function ( id ) {
-        clearInterval(ackTS.get(id));
+
+        clearTimeout(ackTS.get(id));
         ackTS.remove(id);
 
         utils.$Remove(utils.$Dom(id + '_loading'));
         utils.$Remove(utils.$Dom(id + '_failed'));
-
+        
         if ( sendMsgSite.get(id) ) {
             me.handleTransfer('sending', null, sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服');
         }
-
 
         sendMsgSite.remove(id);
     };
@@ -659,9 +706,9 @@ easemobim.channel = function ( config ) {
 
         ackTS.set(
             id,
-            setInterval(function () {
+            setTimeout(function () {
                 //30s没收到ack使用api发送
-                _sendMsgChannle.call(me, sendMsgSite.get(id), id);
+                _sendMsgChannle(sendMsgSite.get(id));
             }, CONSTS)
         );
     };
