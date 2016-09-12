@@ -135,7 +135,7 @@ easemobim.channel = function ( config ) {
 
             var msg = new Easemob.im.EmMessage('txt', isHistory ? null : id);
             msg.set({
-                value: message || easemobim.textarea.value,
+                value: message || easemobim.utils.encode(easemobim.textarea.value),
                 to: config.toUser,
                 success: function ( id ) {
                     // 此回调用于确认im server收到消息, 有别于kefu ack
@@ -337,17 +337,13 @@ easemobim.channel = function ( config ) {
             switch ( type ) {
                 //text message
                 case 'txt':
+                case 'face':
                     message = new Easemob.im.EmMessage('txt');
-                    if ( msg.data ) {
-                        message.set({value: msg.data});
-                    } else {
-                        try {
-                            message.set({value: msg.bodies[0].msg});
-                        } catch ( e ) {}
-                    }
+
+                    message.set({value: isHistory ? msg.data : me.getSafeTextValue(msg)});
                     break;
                 //emotion message
-                case 'face':
+                /*case 'face':
                     message = new Easemob.im.EmMessage('txt');
                     var msgStr = '', brief = '';
 
@@ -367,7 +363,7 @@ easemobim.channel = function ( config ) {
                         msgStr += msg.data[i].type === 'emotion' ? "\<img class=\'em-emotion\' src=\'" + msg.data[i].data + "\' alt=\'表情\'\/\>" : msg.data[i].data;
                     }
                     message.set({value: msgStr, emotion: true, brief: brief});
-                    break;
+                    break;*/
                 //image message
                 case 'img':
                     message = new Easemob.im.EmMessage('img');
@@ -599,15 +595,21 @@ easemobim.channel = function ( config ) {
                             || msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType === 'TransferToKfHint' ) {
                                 me.receiveMsg(msgBody, '', true);
                             } else {
+                                var data = msg.msg;
+
+                                msg.type === 'txt' && (data = me.getSafeTextValue(msgBody));
+
                                 me.receiveMsg({
                                     msgId: v.msgId,
-                                    data: msg.msg,
+                                    data: data,
+                                    filename: msg.filename,
                                     url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
                                     from: msgBody.from,
                                     to: msgBody.to
                                 }, msg.type, true);
                             }
                         }
+
                         if ( msg.type === 'cmd'//1.cmd消息 
                         || (msg.type === 'txt' && !msg.msg)//2.空文本消息
                         || receiveMsgSite.get(v.msgId) ) {//3.重复消息
