@@ -575,6 +575,16 @@
                     utils.addClass(me.ePrompt, 'em-hide');
                 }, 2000);
             }
+            , getSafeTextValue: function ( msg ) {
+                if ( msg && msg.ext && msg.ext.weichat && msg.ext.weichat.html_safe_body ) {
+                    return msg.ext.weichat.html_safe_body.msg;
+                } else {
+                    try {
+                        return msg.bodies[0].msg;
+                    } catch ( e ) {}
+                }
+                return '';
+            }
             , setOffline: function ( isOffDuty ) {
 
 				this.mobile();
