@@ -22,7 +22,7 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
                 typeof callback === 'function' && callback(msg);
             }
 
-            if ( !flag ) {
+            if ( !flag && accept ) {
                 for ( var i = 0, l = accept.length; i < l; i++ ) {
                     if ( accept[i] === 'data' ) {
                         typeof callback === 'function' && callback(msg);

@@ -3,7 +3,7 @@
 */
 
 var debug = false;
-var version = '43.7';
+var version = '43.8';
 
 var gulp = require('gulp'),
     mocha = require('gulp-mocha'); 
