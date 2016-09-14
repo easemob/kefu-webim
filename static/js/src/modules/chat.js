@@ -257,6 +257,13 @@
 					if ( msg && msg.data ) {
 						msg = {
 							data: msg.data,
+                            ext: {
+                                weichat: {
+                                    html_safe_body: {
+                                        msg: msg.data
+                                    }
+                                }
+                            },
 							type: 'txt',
 							noprompt: true
 						};
@@ -276,6 +283,13 @@
 									//robert text greeting
 									msg = {
 										data: rGreeting.greetingText,
+                                        ext: {
+                                            weichat: {
+                                                html_safe_body: {
+                                                    msg: rGreeting.greetingText
+                                                }
+                                            }
+                                        },
 										type: 'txt',
 										noprompt: true
 									};
