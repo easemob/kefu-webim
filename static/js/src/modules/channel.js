@@ -82,7 +82,7 @@ easemobim.channel = function ( config ) {
 
                     _obj.sendText(arguments[1], arguments[2], arguments[3], id);
                     break;
-
+                //转人工
                 case 'transferToKf':
                     _detectSendMsgByApi(id);
 
@@ -96,7 +96,7 @@ easemobim.channel = function ( config ) {
                 case 'file':
                     _obj.sendFile(arguments[1], arguments[2], id);
                     break;
-
+                //满意度评价
                 case 'satisfaction':
                     //不是历史记录开启倒计时, 当前只有文本消息支持降级
                     _detectSendMsgByApi(id);
@@ -184,7 +184,7 @@ easemobim.channel = function ( config ) {
             me.conn.send(msg.body);
             sendMsgSite.set(id, msg);
 
-            me.handleTransfer('sending', null, true);
+            me.handleTransfer(null, null, true);
         },
 
         sendImg: function ( file, isHistory, id ) {
@@ -211,8 +211,8 @@ easemobim.channel = function ( config ) {
                         }
                     }, 50);
                 },
-                uploadComplete: function ( data ) {
-                    me.handleTransfer('sending');
+                uploadComplete: function () {
+                    me.handleTransfer();
                 },
                 success: function ( id ) {
                     utils.$Remove(utils.$Dom(id + '_loading'));
@@ -265,8 +265,8 @@ easemobim.channel = function ( config ) {
                         me.scrollBottom();
                     }
                 },
-                uploadComplete: function ( data ) {
-                    me.handleTransfer('sending');
+                uploadComplete: function () {
+                    me.handleTransfer();
                 },
                 success: function ( id ) {
                     utils.$Remove(utils.$Dom(id + '_loading'));
@@ -443,22 +443,20 @@ easemobim.channel = function ( config ) {
                         me.handleTransfer('transfer');
                     } else if (  msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionClosedEvent' ) {
                         //service session closed event
-                        //hide tip
-                        if ( config.agentList && config.agentList[config.toUser] && config.agentList[config.toUser].firstMsg ) {
-                            config.agentList[config.toUser].firstMsg = false;
-                        }
                         me.session = null;
                         me.sessionSent = false;
-                        me.handleTransfer('reply');
+                        me.handleTransfer('close');
                         utils.root || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
                     } else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionOpenedEvent' ) {
                         //service session opened event
                         //fake
                         me.agentCount < 1 && (me.agentCount = 1);
-                        //hide tip
-                        me.handleTransfer('reply');
+                        me.handleTransfer('linked');
                     } else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionCreatedEvent' ) {
-
+                        me.handleTransfer('create');
+                    } else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'AgentUserStateChangedEvent' ) {
+                        //客服状态改变通知
+                        me.updateAgentStatusUI(msg.ext.weichat.event.eventObj.state);
                     } else {
                         if ( !msg.ext.weichat.agent ) {
                             //switch off
@@ -693,7 +691,7 @@ easemobim.channel = function ( config ) {
         utils.$Remove(utils.$Dom(id + '_failed'));
         
         if ( sendMsgSite.get(id) ) {
-            me.handleTransfer('sending', null, sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服');
+            me.handleTransfer(null, null, sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服');
         }
 
         sendMsgSite.remove(id);

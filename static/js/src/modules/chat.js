@@ -184,7 +184,7 @@
                 this.conn = this.channel.getConnection();
             }
             , handleChatWrapperByHistory: function ( chatHistory, chatWrapper ) {
-                if ( chatHistory.length === easemobim.LISTSPAN ) {
+                if ( chatHistory.length === easemobim.LISTSPAN ) {//认为可以继续获取下一页历史记录
                     chatWrapper.setAttribute('data-start', Number(chatHistory[easemobim.LISTSPAN - 1].chatGroupSeqId) - 1);
                     chatWrapper.setAttribute('data-history', 0);
                 } else {
@@ -214,7 +214,7 @@
                         }
                     });
                 } else {
-                    Number(chatWrapper.getAttribute('data-history')) || easemobim.api('getGroup', {
+                    Number(chatWrapper.getAttribute('data-history')) || easemobim.api('getGroupNew', {
                         id: config.user.username
                         , orgName: config.orgName
                         , appName: config.appName
@@ -321,6 +321,21 @@
 					});
 				});
 			}
+            , getNickNameOption: function () {
+				if ( config.offDuty ) { return; }
+
+                easemobim.api('getNickNameOption', {
+                    tenantId: config.tenantId
+                }, function ( msg ) {
+                    if ( msg && msg.data ) {
+                        config.nickNameOption = msg.data.nickNameOption;
+                    } else {
+                        config.nickNameOption = null;
+                    }
+                }, function () {
+                    config.nickNameOption = null;
+                });
+            }
             , getSession: function () {
 				if ( config.offDuty ) { return; }
 
@@ -339,8 +354,8 @@
 					}, function ( msg ) {
 						if ( msg && msg.data ) {
 							var ref = config.referrer ? decodeURIComponent(config.referrer) : document.referrer;
-							me.onlineHumanAgentCount = msg.data.onlineHumanAgentCount;
-							me.onlineRobotAgentCount = msg.data.onlineRobotAgentCount;
+							me.onlineHumanAgentCount = msg.data.onlineHumanAgentCount;//人工坐席数
+							me.onlineRobotAgentCount = msg.data.onlineRobotAgentCount;//机器人坐席数
 							me.agentCount = me.onlineHumanAgentCount/1 + me.onlineRobotAgentCount/1;
 						} else {
 							me.session = null;
@@ -360,6 +375,13 @@
 								referer:  ref
 							});//ref info
 						}
+
+
+                        if ( !me.nicknameGetted ) {
+                            me.nicknameGetted = true;
+                            //get the switcher of agent nickname
+                            me.getNickNameOption();
+                        }
 					});
 				}
             }
@@ -371,7 +393,8 @@
 
 				this.setAgentProfile({
 					userNickname: config.defaultAgentName,
-                    avatar: config.tenantAvatar
+                    avatar: config.tenantAvatar,
+                    noUpdateAgentStatus: true
 				});
                 if ( curChatContainer && curChatContainer.length > 0 ) {
                     return curChatContainer[0];
@@ -420,6 +443,29 @@
 						break;
 				}
 			}
+            , updateAgentStatus: function () {
+                var me = this;
+
+                easemobim.api('getAgentStatus', {
+					tenantId: config.tenantId,
+                    orgName: config.orgName,
+                    appName: config.appName,
+                    userName: config.user.username,
+                    token: config.user.token,
+                    imServiceNumber: config.toUser
+				}, function ( msg ) {
+
+                    if ( msg && msg.data && msg.data.state ) {
+                        me.updateAgentStatusUI(msg.data.state);
+                    }
+				});
+
+            }
+            , updateAgentStatusUI: function ( state ) {
+                var agentStatus = utils.$Dom('easemobWidgetAgentStatus');
+                utils.removeClass(agentStatus, 'em-hide');
+                utils.addClass(agentStatus, easemobim.agentStatusEnum[state]);
+            }
             , setAgentProfile: function ( info ) {
                 var nickName = utils.$Class('span.easemobWidgetHeader-nickname')[0],
                     avatar = utils.$Class('img.easemobWidgetHeader-portrait')[0];
@@ -436,6 +482,9 @@
                     };
 					avatar.style.opacity = '0';
 					avatar.setAttribute('src', cur);
+
+                    // 只有更新了头像才显示状态
+                    info.noUpdateAgentStatus || this.updateAgentStatus();
                 }
             }
             , setMinmum: function () {
@@ -675,11 +724,16 @@
                 }
                 utils.html(dom, new Date(date).format(fmt));
                 utils.addClass(dom, 'easemobWidget-date');
+
                 if ( !isHistory ) {
-                    if ( !this.msgTimeSpan[to] || (date - this.msgTimeSpan[to] > 60000) ) {//间隔大于1min  show
+                    if ( to ) {
+                        if ( !this.msgTimeSpan[to] || (date - this.msgTimeSpan[to] > 60000) ) {//间隔大于1min  show
+                            chatWrapper.appendChild(dom); 
+                        }
+                        this.resetSpan(to);
+                    } else {
                         chatWrapper.appendChild(dom); 
                     }
-                    this.resetSpan(to);
                 } else {
                     utils.insertBefore(chatWrapper, dom, chatWrapper.getElementsByTagName('div')[this.hasLogo ? 1 : 0]);
                 }
@@ -1026,66 +1080,46 @@
                 this.channel.send('file', file, isHistory);
             }
             , handleTransfer: function ( action, info, robertToHubman ) {
-                if ( config.hideStatus ) {
-                    if ( action === 'reply' && info && info.userNickname ) {
-                        this.setAgentProfile({
-                            userNickname: info.userNickname,
-                            avatar: info.avatar
-                        });
-                    }
+
+                //如果设置了不显示转接中排队中等提示
+                if ( !config.hideStatus && action === 'reply' && info && info.userNickname ) {
+                    this.setAgentProfile({
+                        userNickname: info.userNickname,
+                        avatar: info.avatar
+                    });
                     return;
                 }
 
-                var wrap = utils.$Dom('transfer');
-
-                config.agentList = config.agentList || {};
-                config.agentList[config.toUser] = config.agentList[config.toUser] || {};
-
                 var res = robertToHubman ? this.onlineHumanAgentCount < 1 : (!this.session && this.agentCount < 1);
-				if ( res ) {
-					utils.addClass(wrap, 'none');
-					utils.removeClass(wrap, 'transfer');
-					utils.removeClass(wrap, 'link');
-					utils.removeClass(wrap, 'em-hide');
-					this.handleMobileHeader();
-				} else if ( action === 'sending' ) {
-					if ( config.offDuty || this.session || config.agentName ) { return; }
-
-                    if ( !config.agentList[config.toUser].firstMsg && !this.chatWrapper.getAttribute('data-session') ) {
-                        config.agentList[config.toUser].firstMsg = true;
-						utils.addClass(wrap, 'link');
-						utils.removeClass(wrap, 'transfer');
-						utils.removeClass(wrap, 'none');
-                        utils.removeClass(wrap, 'em-hide');
+				if ( res || action === 'note' ) {//显示无坐席在线
+                    
+                    //只显示一次
+                    if ( this.noteShow ) {
+                        return;
                     }
-					this.handleMobileHeader();
-                } else if ( action === 'transfer' ) {
-                    utils.addClass(wrap, 'transfer');
-                    utils.removeClass(wrap, 'link');
-                    utils.removeClass(wrap, 'none');
-                    utils.removeClass(wrap, 'em-hide');
-					this.handleMobileHeader();
-                } else if ( action === 'reply' ) {
-                    utils.addClass(wrap, 'em-hide');
-
-                    if ( info && info.userNickname ) {
-                        this.setAgentProfile({
-                            userNickname: info.userNickname,
-                            avatar: info.avatar
-                        });
-                    }
-					if ( utils.isMobile ) {
-						utils.removeClass(easemobim.dragHeader.getElementsByTagName('img')[0], 'em-hide');
-						utils.removeClass(easemobim.dragHeader.getElementsByTagName('span')[0], 'em-hide');
-					}
+                    this.noteShow = true;
+                    this.appendEventMsg(easemobim.eventEnum.NOTE);
+				} else if ( action === 'create' ) {//显示会话创建
+                    this.appendEventMsg(easemobim.eventEnum.CREATE);
+                } else if ( action === 'close' ) {//显示会话关闭
+                    this.appendEventMsg(easemobim.eventEnum.CLOSE);
+                } else if ( action === 'transfer' ) {//显示转接中
+                    this.appendEventMsg(easemobim.eventEnum.TRANSFER);
+                } else if ( action === 'linked' ) {//接入成功
+                    this.appendEventMsg(easemobim.eventEnum.LINKED);
                 }
             }
-			, handleMobileHeader: function () {
-				if ( utils.isMobile ) {
-					utils.addClass(easemobim.dragHeader.getElementsByTagName('img')[0], 'em-hide');
-					utils.addClass(easemobim.dragHeader.getElementsByTagName('span')[0], 'em-hide');
-				}
-			}
+            , appendEventMsg: function ( msg, custom ) {//转接中排队中等提示上屏
+                var me = this,
+                    curWrapper = me.chatWrapper,
+                    dom = easemobim.EventEnumDom.get(msg, custom);
+
+                if ( dom ) {
+                    me.appendDate(new Date().getTime());
+                    curWrapper.appendChild(dom);
+                    me.scrollBottom(utils.isMobile ? 800 : null);
+                }
+            }
 			//消息上屏
             , appendMsg: function ( from, to, msg, isHistory ) {
 
@@ -1095,8 +1129,6 @@
                     curWrapper = me.chatWrapper;
 
                 var div = document.createElement('div');
-                div.className = 'emim-clear emim-mt20 emim-tl emim-msg-wrapper ';
-                div.className += isSelf ? 'emim-fr' : 'emim-fl';
                 utils.html(div, msg.get(!isSelf));
 
                 if ( isHistory ) {

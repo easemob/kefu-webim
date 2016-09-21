@@ -1,5 +1,26 @@
 window.easemobim = window.easemobim || {};
 
+//坐席状态
+easemobim.agentStatusEnum = {
+    Idle: 'online',
+    Online: 'online',
+    Busy: 'busy',
+    Leave: 'leave',
+    Hidden: 'hidden',
+    Offline: 'offline',
+    Logout: 'offline',
+    Other: 'offline'
+};
+
+//状态提示
+easemobim.eventEnum = {
+    TRANSFER: '会话已被转接至其他客服',
+    LINKED: '会话已被客服接起',
+    CLOSED: '会话已结束',
+    NOTE: '当前暂无客服在线，请您留下联系方式，稍后我们将主动联系您',
+    CREATE: '会话创建成功'
+};
+
 //每页历史记录条数
 easemobim.LISTSPAN = 10;
 
