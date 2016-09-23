@@ -114,12 +114,12 @@ Easemob.im.EmMessage.list.prototype.get = function ( isReceive ) {
 		"<div class='easemobWidget-left'>",
 			"<div class='easemobWidget-msg-wrapper'>",
 				"<i class='easemobWidget-corner'></i>",
-				"<div class='easemobWidget-msg-container'>",
+				"<div class='easemobWidget-msg-container easemobWidget-msg-menu'>",
 					"<p>" + Easemob.im.Utils.parseLink(Easemob.im.Utils.parseEmotions(easemobim.utils.encode(this.value))) + "</p>",
+			        this.listDom,
 				"</div>",
 				"<div id='" + this.id + "_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>",
 			"</div>",
-			this.listDom,
 		"</div>"
 	].join('');
 };

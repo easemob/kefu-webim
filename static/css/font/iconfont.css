@@ -1,10 +1,10 @@
 
 @font-face {font-family: "easemobim";
-  src: url('iconfont.eot?t=1465807701'); /* IE9*/
-  src: url('iconfont.eot?t=1465807701#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('iconfont.woff?t=1465807701') format('woff'), /* chrome, firefox */
-  url('iconfont.ttf?t=1465807701') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
-  url('iconfont.svg?t=1465807701#easemobim') format('svg'); /* iOS 4.1- */
+  src: url('iconfont.eot?t=1474355618'); /* IE9*/
+  src: url('iconfont.eot?t=1474355618#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('iconfont.woff?t=1474355618') format('woff'), /* chrome, firefox */
+  url('iconfont.ttf?t=1474355618') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('iconfont.svg?t=1474355618#easemobim') format('svg'); /* iOS 4.1- */
 }
 
 .easemobim {
@@ -33,3 +33,11 @@
 .easemobim-O:before { content: "\4f"; }
 .easemobim-N:before { content: "\4e"; }
 .easemobim-1:before { content: "\31"; }
+.easemobim-qianbao:before { content: "\e600"; }
+.easemobim-1010101:before { content: "\e601"; }
+.easemobim-10103:before { content: "\e602"; }
+.easemobim-10104:before { content: "\e603"; }
+.easemobim-10105:before { content: "\e604"; }
+.easemobim-r:before { content: "\72"; }
+.easemobim-q:before { content: "\71"; }
+.easemobim-p:before { content: "\70"; }

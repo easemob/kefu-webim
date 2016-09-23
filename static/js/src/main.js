@@ -77,6 +77,7 @@
 						<img class='easemobWidgetHeader-portrait border-color'/>\
 						<span class='easemobWidgetHeader-nickname'></span>\
                         <i id='easemobWidgetNotem' class='easemobWidget-notem em-hide'></i>\
+                        <i id='easemobWidgetAgentStatus' class='easemobWidget-agent-status em-hide'></i>\
 					</div>\
 				</div>\
 				<div id='easemobWidgetBody' class='easemobWidgetBody-wrapper'></div>\
@@ -102,6 +103,7 @@
 		config.base = utils.protocol + config.domain;
 		config.sslImgBase = config.domain + '/ossimages/';
 
+        //不支持异步上传则加载swfupload
 		if ( !Easemob.im.Utils.isCanUploadFileAsync && Easemob.im.Utils.isCanUploadFile ) {
 			var script = document.createElement('script');
 			script.onload = script.onreadystatechange = function () {
@@ -122,6 +124,7 @@
                 var me = this;
 
 				config.toUser = config.toUser || config.to;
+                //上下班状态
 				api('getDutyStatus', {
 					tenantId: config.tenantId
 				}, function ( msg ) {
@@ -133,6 +136,7 @@
 				config.orgName = config.appKey.split('#')[0];
 				config.appName = config.appKey.split('#')[1];
 
+                //获取关联信息
 				api('getRelevanceList', {
 					tenantId: config.tenantId
 				}, function ( msg ) {

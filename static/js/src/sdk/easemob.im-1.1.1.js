@@ -396,19 +396,19 @@
 
             , parseLink: function ( msg ) {
                 var reg = /(https?\:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(\:[0-9]{2,4})?\/?((\.[:_0-9a-zA-Z-]+)|[:_0-9a-zA-Z-]*\/?)*\??[:_#@*&%0-9a-zA-Z-/=]*/gm;
-                var res = msg.match(reg);
-                var src = res && res[0] ? res[0] : ''; 
-                if ( res && res.length ) {
-                    var prefix = /^https?:\/\//.test(src);
-                    msg = msg.replace(reg
-                        , "<a href='" 
-                            + (prefix 
-                                ? src 
-                                : '\/\/' + src) 
-                            + "' target='_blank'>" 
-                            + src 
-                            + "</a>");
-                }
+
+                msg = msg.replace(reg, function ( v ) {
+
+                    var prefix = /^https?/gm.test(v);
+
+                    return "<a href='" 
+                        + (prefix ? v : '//' + v)
+                        + "' target='_blank'>" 
+                        + v
+                        + "</a>";
+
+                });
+
                 return msg;
             }
 

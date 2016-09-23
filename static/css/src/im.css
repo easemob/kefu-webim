@@ -56,6 +56,9 @@ button, textarea, input {
     text-decoration: none;
     cursor: zoom-in;
 }
+.easemobWidget-agent-status.leave:after,
+.easemobWidget-agent-status.busy:after,
+.easemobWidget-agent-status.hidden:after,
 .easemobWidget-pop-bar i:after,
 .easemobWidgetHeader-min:after,
 .easemobWidgetHeader-keyboard:after,
@@ -310,6 +313,49 @@ button, textarea, input {
 	width: 100%;
 	height: 100%;
 }
+.easemobWidget-agent-status {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    top: 26px;
+    left: 26px;
+}
+.easemobWidget-agent-status.leave:after,
+.easemobWidget-agent-status.busy:after,
+.easemobWidget-agent-status.hidden:after {
+    z-index: 1;
+    position: absolute;
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    font-size: 10px;
+    line-height: 12px;
+    text-align: center;
+    top: 0;
+    left: 0;
+}
+.easemobWidget-agent-status.leave:after {
+    content: 'r';
+    background-color: #1BA8ED;
+    color: #fff;
+}
+.easemobWidget-agent-status.busy:after {
+    content: 'q';
+    background-color: #FF3000;
+    color: #fff;
+}
+.easemobWidget-agent-status.hidden:after {
+    content: 'p';
+    background-color: #FFC715;
+    color: #fff;
+}
+.easemobWidget-agent-status.online {
+    background-color: #5AE825;
+}
+.easemobWidget-agent-status.offline {
+    background-color: #B2B8BA;
+}
 .easemobWidget-Prompt {
     cursor: default;
     margin: 0 2px;
@@ -402,51 +448,6 @@ button, textarea, input {
     padding-bottom: 20px;
     overflow: hidden;
 }
-.easemobWidget-status-prompt {
-    position: fixed;
-    bottom: 145px;
-    left: 0;
-}
-.easemobWidget-status-prompt.link:after,
-.easemobWidget-status-prompt.none:after,
-.easemobWidget-status-prompt.transfer:after {
-    z-index: 1;
-    padding: 5px 10px;
-    background: #ccc;
-    background: rgba(0,0,0,.3);
-    position: absolute;
-    bottom: 0;
-    left: 5px;
-    border-radius: 5px;
-    color: #fff;
-}
-.easemobWidget-status-prompt.none:after {
-    content: '当前暂无客服在线，请您留下联系方式，稍后我们将主动联系您';
-    width: 253px;
-}
-.easemobWidget-status-prompt.transfer:after {
-    content: '转接中…';
-    width: 53px;
-}
-.easemobWidget-status-prompt.link:after {
-    content: '正在排队，请您耐心等待…';
-    width: 169px;
-}
-.easemobWidget-transferring {
-    z-index: 1;
-    text-align: center;
-    font-size: 12px;
-    background-color: #ccc;
-    position: absolute;
-    bottom: 145px;
-    left: 5px;
-    border-radius: 5px;
-    color: #fff;
-}
-.easemobWidget-transferring span {
-    display: inline-block;
-    padding: 5px 10px;
-}
 .easemobWidget-chat:after {
     content: '';
     display: block;
@@ -476,7 +477,7 @@ button, textarea, input {
 }
 .easemobWidget-msg-container pre {
     word-break: break-all;
-    white-space: inherit;
+    white-space: pre-wrap;
 }
 .easemobWidget-unimage {
     color: #999;
@@ -509,7 +510,6 @@ button, textarea, input {
     display: inline-block;
     border-radius: 6px;
     max-width: 190px;
-    /*box-shadow: 0 1px 1px rgba(0,0,0,.1), 0 -1px 1px rgba(0,0,0,.2) inset;*/
     padding: 10px;
     min-width: 20px;
     min-height: 20px;
@@ -517,6 +517,11 @@ button, textarea, input {
     text-align: left;
     font-size: 13px;
     border: 1px solid #e5e5e5;
+}
+.easemobWidget-msg-menu > p {
+    padding: 10px;
+    background-color: #fff;
+    border-bottom: 1px solid rgb(229, 229, 229);
 }
 .easemobWidget-msg-file .easemobWidget-msg-container {
 	padding: 0;
@@ -552,6 +557,11 @@ img.easemobWidget-msg-fileicon {
 }
 .easemobWidget-left .easemobWidget-msg-container {
     background-color: #fff;
+}
+.easemobWidget-left .easemobWidget-msg-menu {
+    overflow: hidden;
+    padding: 0;
+    background-color: rgb(251, 251, 251);
 }
 .easemobWidget-right .easemobWidget-msg-container {
     background-color: #e3ecfc;
@@ -922,12 +932,8 @@ object {
 .easemobWidget-list-btns {
     position: relative;
     border-radius: 6px;
-    background-color: #e4e9f2;
-    margin: 0 0 20px 12px;
-    padding: 1px 5px 5px;
-    float: left;
-    top: 10px;
-    text-align: center;
+    margin: 4px 0;
+    text-align: left;
     clear: both;
 }
 .easemobWidget-list-btns:after {
@@ -937,17 +943,18 @@ object {
 .easemobWidget-list-btn {
     font-size: 13px;
     display: block;
-    border: none;
-    padding: 0 5px;
-    min-width: 100px;
-    height: 30px;
-    line-height: 30px;
+    width: 95%;
+    padding: 5px;
+    min-height: 30px;
+    text-align: left;
     color: #000;
-    background-color: #fafafa;
-    border-radius: 5px;
-    box-shadow: inset 0 -1px 2px rgba(0,0,0,.2);
+    background-color: #fff;
+    border-radius: 2px;
+    border: 1px solid #e5e5e5;
     cursor: pointer;
-    margin: 4px auto 0;
+    margin: 4px auto;
+    word-break: break-all;
+    white-space: pre-wrap;
 }
 .easemobWidget-list-btn:hover {
     color: #fff;
@@ -963,12 +970,16 @@ object {
 .easemobWidget-satisfaction {
     cursor: pointer;
 }
-.easemobWidget-date {
+.easemobWidget-date,
+.easemobWidget-event {
     text-align: center;
     clear: both;
     padding: 20px 0 0 0;
     color: #ADAEAF;
     font-size: 12px;
+}
+.easemobWidget-event {
+    padding-top: 0;
 }
 /*
     pop dialog
@@ -1090,30 +1101,6 @@ object {
 }
 .easemobWidgetWrapper-mobile .easemobWidgetHeader-wrapper > div {
     text-align: center;
-}
-.easemobWidgetWrapper-mobile .easemobWidget-status-prompt {
-    top: 0;
-    bottom: auto;
-    width: 80%;
-}
-.easemobWidgetWrapper-mobile .easemobWidget-status-prompt.none:after,
-.easemobWidgetWrapper-mobile .easemobWidget-status-prompt.link:after,
-.easemobWidgetWrapper-mobile .easemobWidget-status-prompt.transfer:after {
-    bottom: auto;
-    top: 0;
-    left: 0;
-    border-radius: 0;
-    width: 100%;
-    height: 43px;
-    line-height: 32px;
-    box-sizing: border-box;
-    background: transparent;
-}
-.easemobWidgetWrapper-mobile .easemobWidget-status-prompt.none:after {
-	content: '当前暂无客服在线，请您留下联系方式，\A稍后我们将主动联系您';
-    width: 253px;
-	white-space: pre;
-	line-height: normal;
 }
 .easemobWidgetWrapper-mobile .easemobWidgetHeader-portrait {
     position: absolute;

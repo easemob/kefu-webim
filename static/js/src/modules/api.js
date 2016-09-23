@@ -97,6 +97,13 @@
                     excludeData: true
                 }));
                 break;
+            case 'getGroupNew':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/tenant/' + msg.data.tenantId + '/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
+                    msg: msg,
+                    excludeData: true
+                }));
+                break;
             case 'getHistory':
                 easemobim.emajax(createObject({
                     url: '/v1/webimplugin/visitors/msgHistory',//done
@@ -159,6 +166,19 @@
                     url: '/v1/imgateway/messages?tenantId=' + msg.data.tenantId,
                     msg: msg,
                     type: 'POST'
+                }));
+                break;
+            case 'getAgentStatus':
+                easemobim.emajax(createObject({
+                    url: '/v1/tenants/' + msg.data.tenantId + '/current/agentstate',
+                    msg: msg
+                }));
+                break;
+            case 'getNickNameOption':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/agentnicename/options?tenantId=' + msg.data.tenantId,
+                    msg: msg,
+                    excludeData: true
                 }));
                 break;
             default:

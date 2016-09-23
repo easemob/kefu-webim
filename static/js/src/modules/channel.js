@@ -82,7 +82,7 @@ easemobim.channel = function ( config ) {
 
                     _obj.sendText(arguments[1], arguments[2], arguments[3], id);
                     break;
-
+                //转人工
                 case 'transferToKf':
                     _detectSendMsgByApi(id);
 
@@ -96,7 +96,7 @@ easemobim.channel = function ( config ) {
                 case 'file':
                     _obj.sendFile(arguments[1], arguments[2], id);
                     break;
-
+                //满意度评价
                 case 'satisfaction':
                     //不是历史记录开启倒计时, 当前只有文本消息支持降级
                     _detectSendMsgByApi(id);
@@ -184,7 +184,7 @@ easemobim.channel = function ( config ) {
             me.conn.send(msg.body);
             sendMsgSite.set(id, msg);
 
-            me.handleTransfer('sending', null, true);
+            me.handleEventStatus(null, null, true);
         },
 
         sendImg: function ( file, isHistory, id ) {
@@ -211,8 +211,8 @@ easemobim.channel = function ( config ) {
                         }
                     }, 50);
                 },
-                uploadComplete: function ( data ) {
-                    me.handleTransfer('sending');
+                uploadComplete: function () {
+                    me.handleEventStatus();
                 },
                 success: function ( id ) {
                     utils.$Remove(utils.$Dom(id + '_loading'));
@@ -265,8 +265,8 @@ easemobim.channel = function ( config ) {
                         me.scrollBottom();
                     }
                 },
-                uploadComplete: function ( data ) {
-                    me.handleTransfer('sending');
+                uploadComplete: function () {
+                    me.handleEventStatus();
                 },
                 success: function ( id ) {
                     utils.$Remove(utils.$Dom(id + '_loading'));
@@ -389,12 +389,16 @@ easemobim.channel = function ( config ) {
                     break;
                 //satisfaction evaluation message
                 case 'satisfactionEvaluation':
-                    message = new Easemob.im.EmMessage('list');
-                    message.set({value: '请对我的服务做出评价', list: ['\
-                        <div class="easemobWidget-list-btns">\
-                            <button class="easemobWidget-list-btn js_satisfybtn" data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '"\
-                             data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
-                        </div>']});
+                    if(!isHistory){
+                        // 创建隐藏的立即评价按钮，并触发click事件
+                        var el = document.createElement('BUTTON');
+                        el.className = 'js_satisfybtn';
+                        el.style.display = 'none';
+                        el.setAttribute('data-inviteid', msg.ext.weichat.ctrlArgs.inviteId);
+                        el.setAttribute('data-servicesessionid', msg.ext.weichat.ctrlArgs.serviceSessionId);
+                        document.body.appendChild(el);
+                        utils.trigger(el, 'click');
+                    }
                     break;
                 //robert list message
                 case 'robertList':
@@ -431,42 +435,43 @@ easemobim.channel = function ( config ) {
             }
             
             if ( !isHistory ) {
-                
-                //get serssion when receive msg
-                msg.noprompt || me.getSession();
 
                 if ( msg.ext && msg.ext.weichat ) {
                     if ( msg.ext.weichat.event 
                     && (msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' 
                     || msg.ext.weichat.event.eventName === 'ServiceSessionTransferedToAgentQueueEvent') ) {
                         //transfer msg, show transfer tip
-                        me.handleTransfer('transfer');
+                        me.handleEventStatus('transfer', msg.ext.weichat.event.eventObj);
+                        me.updateAgentStatus();
                     } else if (  msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionClosedEvent' ) {
                         //service session closed event
-                        //hide tip
-                        if ( config.agentList && config.agentList[config.toUser] && config.agentList[config.toUser].firstMsg ) {
-                            config.agentList[config.toUser].firstMsg = false;
-                        }
                         me.session = null;
                         me.sessionSent = false;
-                        me.handleTransfer('reply');
+                        me.handleEventStatus('close');
                         utils.root || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
                     } else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionOpenedEvent' ) {
                         //service session opened event
                         //fake
+                        me.needUpdateAgentStatus = true;
                         me.agentCount < 1 && (me.agentCount = 1);
-                        //hide tip
-                        me.handleTransfer('reply');
+                        me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
                     } else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionCreatedEvent' ) {
+                        me.handleEventStatus('create');
+                    } else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'AgentStateChangedEvent' ) {
+                        //客服状态改变通知
+                        me.needUpdateAgentStatus = true;
 
+                        //状态改变重新获取在线客服数量
+                        me.getSession();
+                        me.canUpdateAgentStatusDirectly && me.updateAgentStatusUI(msg.ext.weichat.event.eventObj.state);
                     } else {
                         if ( !msg.ext.weichat.agent ) {
                             //switch off
-                            me.handleTransfer('reply');
+                            me.handleEventStatus('reply');
                         } else {
                             //switch on
                             msg.ext.weichat.agent && msg.ext.weichat.agent.userNickname !== '调度员' 
-                            && me.handleTransfer('reply', msg.ext.weichat.agent);
+                            && me.handleEventStatus('reply', msg.ext.weichat.agent);
                         }
                     }
                 }
@@ -693,7 +698,7 @@ easemobim.channel = function ( config ) {
         utils.$Remove(utils.$Dom(id + '_failed'));
         
         if ( sendMsgSite.get(id) ) {
-            me.handleTransfer('sending', null, sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服');
+            me.handleEventStatus(null, null, sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服');
         }
 
         sendMsgSite.remove(id);
