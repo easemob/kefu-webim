@@ -389,12 +389,16 @@ easemobim.channel = function ( config ) {
                     break;
                 //satisfaction evaluation message
                 case 'satisfactionEvaluation':
-                    message = new Easemob.im.EmMessage('list');
-                    message.set({value: '请对我的服务做出评价', list: ['\
-                        <div class="easemobWidget-list-btns">\
-                            <button class="easemobWidget-list-btn js_satisfybtn" data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '"\
-                             data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
-                        </div>']});
+                    if(!isHistory){
+                        // 创建隐藏的立即评价按钮，并触发click事件
+                        var el = document.createElement('BUTTON');
+                        el.className = 'js_satisfybtn';
+                        el.style.display = 'none';
+                        el.setAttribute('data-inviteid', msg.ext.weichat.ctrlArgs.inviteId);
+                        el.setAttribute('data-servicesessionid', msg.ext.weichat.ctrlArgs.serviceSessionId);
+                        document.body.appendChild(el);
+                        utils.trigger(el, 'click');
+                    }
                     break;
                 //robert list message
                 case 'robertList':
