@@ -1095,7 +1095,7 @@
             , handleEventStatus: function ( action, info, robertToHubman ) {
 
                 //如果设置了hideStatus, 不显示转接中排队中等提示
-                if ( !config.hideStatus && action === 'reply' ) {
+                if ( !config.hideStatus && action === 'reply' && info ) {
                     this.needUpdateAgentStatus && this.setAgentProfile({
                         userNickname: info.userNickname,
                         avatar: info.avatar
