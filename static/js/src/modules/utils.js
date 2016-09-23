@@ -160,6 +160,16 @@
 				};
 			me.on(target, ev, tfn, isCapture);  
 		}
+        // 触发事件，对于ie8只支持原生事件，不支持自定义事件
+        , trigger: function(element, eventName){
+            if (document.createEvent) {
+                var ev = document.createEvent('HTMLEvents');
+                ev.initEvent(eventName, true, false);
+                element.dispatchEvent(ev);
+            } else {
+                element.fireEvent('on' + eventName);
+            }
+        }
 		, extend: function ( object, extend ) {
 			var tmp;
 			for ( var o in extend ) {

@@ -56,6 +56,9 @@ button, textarea, input {
     text-decoration: none;
     cursor: zoom-in;
 }
+.easemobWidget-agent-status.leave:after,
+.easemobWidget-agent-status.busy:after,
+.easemobWidget-agent-status.hidden:after,
 .easemobWidget-pop-bar i:after,
 .easemobWidgetHeader-min:after,
 .easemobWidgetHeader-keyboard:after,
@@ -314,24 +317,44 @@ button, textarea, input {
     position: absolute;
     width: 10px;
     height: 10px;
-    border-radus: 50%;
+    border-radius: 50%;
     top: 26px;
     left: 26px;
 }
-.easemobWidget-agent-status.leave {
-    background-color: red;
+.easemobWidget-agent-status.leave:after,
+.easemobWidget-agent-status.busy:after,
+.easemobWidget-agent-status.hidden:after {
+    z-index: 1;
+    position: absolute;
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    font-size: 10px;
+    line-height: 12px;
+    text-align: center;
+    top: 0;
+    left: 0;
 }
-.easemobWidget-agent-status.busy {
-    background-color: red;
+.easemobWidget-agent-status.leave:after {
+    content: 'r';
+    background-color: #1BA8ED;
+    color: #fff;
 }
-.easemobWidget-agent-status.hidden {
-    background-color: red;
+.easemobWidget-agent-status.busy:after {
+    content: 'q';
+    background-color: #FF3000;
+    color: #fff;
+}
+.easemobWidget-agent-status.hidden:after {
+    content: 'p';
+    background-color: #FFC715;
+    color: #fff;
 }
 .easemobWidget-agent-status.online {
-    background-color: red;
+    background-color: #5AE825;
 }
 .easemobWidget-agent-status.offline {
-    background-color: red;
+    background-color: #B2B8BA;
 }
 .easemobWidget-Prompt {
     cursor: default;

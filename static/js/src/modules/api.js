@@ -170,9 +170,8 @@
                 break;
             case 'getAgentStatus':
                 easemobim.emajax(createObject({
-                    url: '/v1/tenants/tenantId/agents/' + msg.data.userName + '/agentstate?tenantId=' + msg.data.tenantId,
-                    msg: msg,
-                    excludeData: true
+                    url: '/v1/tenants/' + msg.data.tenantId + '/current/agentstate',
+                    msg: msg
                 }));
                 break;
             case 'getNickNameOption':
