@@ -1,6 +1,13 @@
 easemobim.channel = function ( config ) {
-    var INITCONSTS = 30000;
-    var CONSTS = 60000;
+    // 如果im连不上，则INITTIMER ms后变为可发送
+    var INITTIMER = 20000;
+    // IM心跳间隔HEARTBEATTIMER ms
+    var HEARTBEATTIMER = 60000;
+    // 收消息轮训间隔RECEIVETIMER ms
+    var RECEIVETIMER = 60000;
+    // SENDTIMER ms后没收到ack则开启第二通道
+    var SENDTIMER = 30000;
+    // 发送消息第二通道失败后，最多再试1次
     var MAXRETRY = 1;
 
 
@@ -50,7 +57,7 @@ easemobim.channel = function ( config ) {
                 url: config.xmppServer,
                 retry: true,
                 multiResources: config.resources,
-                heartBeatWait: CONSTS
+                heartBeatWait: HEARTBEATTIMER
             });
         },
 
@@ -440,39 +447,32 @@ easemobim.channel = function ( config ) {
                     if ( msg.ext.weichat.event 
                     && (msg.ext.weichat.event.eventName === 'ServiceSessionTransferedEvent' 
                     || msg.ext.weichat.event.eventName === 'ServiceSessionTransferedToAgentQueueEvent') ) {
-                        //transfer msg, show transfer tip
+                        //service session has been transferred successfully
                         me.handleEventStatus('transfer', msg.ext.weichat.event.eventObj);
-                        me.updateAgentStatus();
                     } else if (  msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionClosedEvent' ) {
                         //service session closed event
                         me.session = null;
                         me.sessionSent = false;
+                        config.agentUserId = null;
+                        me.stopGettingAgentStatus();
+                        // 还原企业头像和企业名称
+                        me.setAgentProfile({
+                            tenantName: config.defaultAgentName,
+                            avatar: config.tenantAvatar
+                        });
+                        // 去掉坐席状态
+                        me.clearAgentStatus();
                         me.handleEventStatus('close');
                         utils.root || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
                     } else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionOpenedEvent' ) {
                         //service session opened event
                         //fake
-                        me.needUpdateAgentStatus = true;
                         me.agentCount < 1 && (me.agentCount = 1);
                         me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
                     } else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'ServiceSessionCreatedEvent' ) {
                         me.handleEventStatus('create');
-                    } else if ( msg.ext.weichat.event && msg.ext.weichat.event.eventName === 'AgentStateChangedEvent' ) {
-                        //客服状态改变通知
-                        me.needUpdateAgentStatus = true;
-
-                        //状态改变重新获取在线客服数量
-                        me.getSession();
-                        me.canUpdateAgentStatusDirectly && me.updateAgentStatusUI(msg.ext.weichat.event.eventObj.state);
                     } else {
-                        if ( !msg.ext.weichat.agent ) {
-                            //switch off
-                            me.handleEventStatus('reply');
-                        } else {
-                            //switch on
-                            msg.ext.weichat.agent && msg.ext.weichat.agent.userNickname !== '调度员' 
-                            && me.handleEventStatus('reply', msg.ext.weichat.agent);
-                        }
+                        me.handleEventStatus('reply', msg.ext.weichat.agent);
                     }
                 }
 
@@ -654,7 +654,7 @@ easemobim.channel = function ( config ) {
                     }
                 }
             });           
-        }, CONSTS);
+        }, RECEIVETIMER);
     };
 
     //发消息通道
@@ -717,7 +717,7 @@ easemobim.channel = function ( config ) {
             setTimeout(function () {
                 //30s没收到ack使用api发送
                 _sendMsgChannle(sendMsgSite.get(id));
-            }, CONSTS)
+            }, SENDTIMER)
         );
     };
 
@@ -730,7 +730,7 @@ easemobim.channel = function ( config ) {
         utils.html(easemobim.sendBtn, '发送');
 
         chat.handleReady();
-    }, INITCONSTS);
+    }, INITTIMER);
     
     //收消息轮训通道常驻
     _receiveMsgChannle();

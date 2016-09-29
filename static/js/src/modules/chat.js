@@ -7,31 +7,36 @@
 		var utils = easemobim.utils;
 
 		//DOM init
-		easemobim.im = utils.$Dom('EasemobKefuWebim'),
-		easemobim.imBtn = utils.$Dom('easemobWidgetPopBar'),
-		easemobim.imChat = utils.$Dom('EasemobKefuWebimChat'),
-		easemobim.imChatBody = utils.$Dom('easemobWidgetBody'),
-		easemobim.send = utils.$Dom('easemobWidgetSend'),
-		easemobim.textarea = easemobim.send.getElementsByTagName('textarea')[0],
-		easemobim.sendBtn = utils.$Dom('easemobWidgetSendBtn'),
-		easemobim.faceBtn = easemobim.send.getElementsByTagName('i')[0],
-		easemobim.realFile = utils.$Dom('easemobWidgetFileInput'),
-		easemobim.sendFileBtn = utils.$Dom('easemobWidgetFile'),
-		easemobim.noteBtn = utils.$Dom('easemobWidgetNote'),
-		easemobim.mobileNoteBtn = utils.$Dom('easemobWidgetNotem'),
-		easemobim.dragHeader = utils.$Dom('easemobWidgetDrag'),
-		easemobim.dragBar = easemobim.dragHeader.getElementsByTagName('p')[0],
-		easemobim.chatFaceWrapper = utils.$Dom('EasemobKefuWebimFaceWrapper'),
+		easemobim.im = utils.$Dom('EasemobKefuWebim');
+		easemobim.imBtn = utils.$Dom('easemobWidgetPopBar');
+		easemobim.imChat = utils.$Dom('EasemobKefuWebimChat');
+		easemobim.imChatBody = utils.$Dom('easemobWidgetBody');
+		easemobim.send = utils.$Dom('easemobWidgetSend');
+		easemobim.textarea = easemobim.send.getElementsByTagName('textarea')[0];
+		easemobim.sendBtn = utils.$Dom('easemobWidgetSendBtn');
+		easemobim.faceBtn = easemobim.send.getElementsByTagName('i')[0];
+		easemobim.realFile = utils.$Dom('easemobWidgetFileInput');
+		easemobim.sendFileBtn = utils.$Dom('easemobWidgetFile');
+		easemobim.noteBtn = utils.$Dom('easemobWidgetNote');
+		easemobim.mobileNoteBtn = utils.$Dom('easemobWidgetNotem');
+		easemobim.dragHeader = utils.$Dom('easemobWidgetDrag');
+		easemobim.dragBar = easemobim.dragHeader.getElementsByTagName('p')[0];
+		easemobim.chatFaceWrapper = utils.$Dom('EasemobKefuWebimFaceWrapper');
 		easemobim.messageCount = easemobim.imBtn.getElementsByTagName('span')[0];
+        easemobim.nickName = utils.$Class('span.easemobWidgetHeader-nickname')[0];
+        easemobim.avatar = utils.$Class('img.easemobWidgetHeader-portrait')[0];
+        easemobim.agentStatus = utils.$Dom('easemobWidgetAgentStatus');
 		easemobim.swfupload = null;//flash 上传
 
+
+        //cache current agent
+        config.agentUserId = null;
 
 		//chat window object
         return {
             init: function () {
                 
                 this.channel = easemobim.channel.call(this, config);
-                this.needUpdateAgentStatus = true;
 
 				//create & init connection
                 this.setConnection();
@@ -356,6 +361,7 @@
                         me.onlineHumanAgentCount = msg.data.onlineHumanAgentCount;//人工坐席数
                         me.onlineRobotAgentCount = msg.data.onlineRobotAgentCount;//机器人坐席数
                         me.agentCount = me.onlineHumanAgentCount/1 + me.onlineRobotAgentCount/1;
+                        config.agentUserId = msg.data.serviceSession ? msg.data.serviceSession.agentUserId : null;//get agentuserid
 
                         if ( me.agentCount === 0 ) {
                             me.noteShow = false;
@@ -394,8 +400,7 @@
 
 				this.setAgentProfile({
 					tenantName: config.defaultAgentName,
-                    avatar: config.tenantAvatar,
-                    noUpdateAgentStatus: true
+                    avatar: config.tenantAvatar
 				});
                 if ( curChatContainer && curChatContainer.length > 0 ) {
                     return curChatContainer[0];
@@ -444,40 +449,63 @@
 						break;
 				}
 			}
+            , clearAgentStatus: function () {
+                utils.addClass(easemobim.agentStatus, 'em-hide');
+            }
+            , startToGetAgentStatus: function () {
+                var me = this;
+
+                if ( config.agentStatusTimer ) {
+                    return;
+                }
+
+                //poll
+                config.agentStatusTimer = setInterval(function() {
+                    me.updateAgentStatus();
+                }, 5000);
+            }
+            , stopGettingAgentStatus: function () {
+                config.agentStatusTimer = clearInterval(config.agentStatusTimer);
+            }
             , updateAgentStatus: function () {
                 var me = this;
 
+                if ( !config.agentUserId || !config.nickNameOption ) {
+                    me.stopGettingAgentStatus();
+                    return;
+                }
+
                 easemobim.api('getAgentStatus', {
-					tenantId: config.tenantId,
+                    tenantId: config.tenantId,
                     orgName: config.orgName,
                     appName: config.appName,
+                    agentUserId: config.agentUserId,
                     userName: config.user.username,
                     token: config.user.token,
                     imServiceNumber: config.toUser
-				}, function ( msg ) {
+                }, function ( msg ) {
+
+                    //状态改变重新获取在线客服数量
+                    //me.getSession();
 
                     if ( msg && msg.data && msg.data.state ) {
                         me.updateAgentStatusUI(msg.data.state);
                     }
-				});
+                });
 
             }
             , updateAgentStatusUI: function ( state ) {
-                var agentStatus = utils.$Dom('easemobWidgetAgentStatus');
-                utils.removeClass(agentStatus, 'em-hide');
-                agentStatus.className = 'easemobWidget-agent-status ' + easemobim.agentStatusEnum[state];
+                utils.removeClass(easemobim.agentStatus, 'em-hide');
+                easemobim.agentStatus.className = 'easemobWidget-agent-status ' + easemobim.agentStatusEnum[state];
             }
             , setAgentProfile: function ( info ) {
-
-                var nickName = utils.$Class('span.easemobWidgetHeader-nickname')[0],
-                    avatar = utils.$Class('img.easemobWidgetHeader-portrait')[0];
 
                 var avatarImg = info && info.avatar ? utils.getAvatarsFullPath(info.avatar, config.domain) : config.tenantAvatar || config.defaultAvatar;
 
                 //更新企业头像和名称
                 if ( info.tenantName ) {
-                    utils.html(nickName, info.tenantName);
-                    avatar.setAttribute('src', avatarImg);
+                    utils.html(easemobim.nickName, info.tenantName);
+                    easemobim.avatar.setAttribute('src', avatarImg);
                 }
 
                 //昵称开关关闭
@@ -485,20 +513,18 @@
                     return;
                 }
 
-                //只有头像和昵称更新成客服的了才允许事件更新坐席状态
-                this.canUpdateAgentStatusDirectly = true;
-
                 //更新坐席昵称
-                utils.html(nickName, info.userNickname);
+                utils.html(easemobim.nickName, info.userNickname);
 
 				this.currentAvatar = avatarImg;
-                var src = avatar.getAttribute('src');
+                var src = easemobim.avatar.getAttribute('src');
 
                 if ( !this.currentAvatar ) { return; }
-                avatar.setAttribute('src', this.currentAvatar);
+                easemobim.avatar.setAttribute('src', this.currentAvatar);
 
-                // 更新头像显示状态
-                !info.noUpdateAgentStatus && this.updateAgentStatus();
+                //更新头像显示状态
+                //只有头像和昵称更新成客服的了才开启轮训
+                //this.updateAgentStatus();
             }
             , setMinmum: function () {
                 if ( !config.minimum || utils.root ) {
@@ -1094,47 +1120,62 @@
             }
             , handleEventStatus: function ( action, info, robertToHubman ) {
 
-                //如果设置了hideStatus, 不显示转接中排队中等提示
-                if ( !config.hideStatus && action === 'reply' && info ) {
-                    this.needUpdateAgentStatus && this.setAgentProfile({
-                        userNickname: info.userNickname,
-                        avatar: info.avatar
-                    });
-                    this.needUpdateAgentStatus = false;
-                    return;
-                }
-
                 var res = robertToHubman ? this.onlineHumanAgentCount < 1 : this.agentCount < 1;
 				if ( res ) {//显示无坐席在线
                     
                     //每次激活只显示一次
-                    if ( this.noteShow ) {
-                        return;
+                    if ( !this.noteShow ) {
+                        this.noteShow = true;
+                        this.appendEventMsg(easemobim.eventEnum.NOTE);
                     }
-                    this.noteShow = true;
-                    this.appendEventMsg(easemobim.eventEnum.NOTE);
-				} else if ( action === 'create' ) {//显示会话创建
+                    
+				}
+
+                if ( action === 'reply' && info ) {
+
+                    if ( config.agentUserId ) {
+                        this.startToGetAgentStatus();
+                    }
+
+                    this.setAgentProfile({
+                        userNickname: info.userNickname,
+                        avatar: info.avatar
+                    });
+                } else if ( action === 'create' ) {//显示会话创建
                     this.appendEventMsg(easemobim.eventEnum.CREATE);
                 } else if ( action === 'close' ) {//显示会话关闭
-                    this.appendEventMsg(easemobim.eventEnum.CLOSE);
+                    this.appendEventMsg(easemobim.eventEnum.CLOSED);
                 } else if ( action === 'transfer' ) {//显示转接中
                     this.appendEventMsg(easemobim.eventEnum.TRANSFER);
-                    //更新头像和昵称
-                    this.setAgentProfile({
-                        userNickname: info.agentUserNiceName,
-                        avatar: info.avatar
-                    });
+                   
+                    //坐席发生改变
+                    this.handleAgentStatusChanged(info);
+ 
                 } else if ( action === 'linked' ) {//接入成功
                     this.appendEventMsg(easemobim.eventEnum.LINKED);
-                    //更新头像和昵称
-                    this.setAgentProfile({
-                        userNickname: info.agentUserNiceName,
-                        avatar: info.avatar
-                    });
+
+                    //坐席发生改变
+                    this.handleAgentStatusChanged(info);
                 }
+            }
+            //坐席改变更新坐席头像和昵称并且开启获取坐席状态的轮训
+            , handleAgentStatusChanged: function ( info ) {
+                config.agentUserId = info.userId;
+
+                this.updateAgentStatus();
+                this.startToGetAgentStatus();
+
+                //更新头像和昵称
+                this.setAgentProfile({
+                    userNickname: info.agentUserNiceName,
+                    avatar: info.avatar
+                });
             }
             //转接中排队中等提示上屏
             , appendEventMsg: function ( msg, custom ) {
+                //如果设置了hideStatus, 不显示转接中排队中等提示
+                if ( config.hideStatus ) { return; }
+
                 var me = this,
                     curWrapper = me.chatWrapper,
                     dom = easemobim.EventEnumDom.get(msg, custom);
