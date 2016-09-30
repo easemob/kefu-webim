@@ -191,8 +191,14 @@
             }
             , handleChatWrapperByHistory: function ( chatHistory, chatWrapper ) {
                 if ( chatHistory.length === easemobim.LISTSPAN ) {//认为可以继续获取下一页历史记录
-                    chatWrapper.setAttribute('data-start', Number(chatHistory[easemobim.LISTSPAN - 1].chatGroupSeqId) - 1);
-                    chatWrapper.setAttribute('data-history', 0);
+                    var startSeqId = Number(chatHistory[easemobim.LISTSPAN - 1].chatGroupSeqId) - 1;
+
+                    if ( startSeqId > 0 ) {
+                        chatWrapper.setAttribute('data-start', startSeqId);
+                        chatWrapper.setAttribute('data-history', 0);
+                    } else {
+                        chatWrapper.setAttribute('data-history', 1);
+                    }
                 } else {
                     chatWrapper.setAttribute('data-history', 1);
                 }
