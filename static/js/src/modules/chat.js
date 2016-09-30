@@ -1160,6 +1160,8 @@
             }
             //坐席改变更新坐席头像和昵称并且开启获取坐席状态的轮训
             , handleAgentStatusChanged: function ( info ) {
+                if ( !info ) { return; }
+
                 config.agentUserId = info.userId;
 
                 this.updateAgentStatus();
