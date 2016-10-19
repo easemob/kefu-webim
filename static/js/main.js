@@ -1,6 +1,12429 @@
-!function(e){return function(e,t){e.Base64=t()}(this,function(){var e="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",t={encode:function(t){var n,s,i,a,o,r,d,c="",l=0;do n=t.charCodeAt(l++),s=t.charCodeAt(l++),i=t.charCodeAt(l++),a=n>>2,o=(3&n)<<4|s>>4,r=(15&s)<<2|i>>6,d=63&i,isNaN(s)?(o=(3&n)<<4,r=d=64):isNaN(i)&&(d=64),c=c+e.charAt(a)+e.charAt(o)+e.charAt(r)+e.charAt(d);while(l<t.length);return c},decode:function(t){var n,s,i,a,o,r,d,c="",l=0;t=t.replace(/[^A-Za-z0-9\+\/\=]/g,"");do a=e.indexOf(t.charAt(l++)),o=e.indexOf(t.charAt(l++)),r=e.indexOf(t.charAt(l++)),d=e.indexOf(t.charAt(l++)),n=a<<2|o>>4,s=(15&o)<<4|r>>2,i=(3&r)<<6|d,c+=String.fromCharCode(n),64!=r&&(c+=String.fromCharCode(s)),64!=d&&(c+=String.fromCharCode(i));while(l<t.length);return c}};return t}),function(e,t){e.SHA1=t()}(this,function(){function e(e,s){e[s>>5]|=128<<24-s%32,e[(s+64>>9<<4)+15]=s;var o,r,d,c,l,m,u,h,p=new Array(80),g=1732584193,f=-271733879,b=-1732584194,_=271733878,v=-1009589776;for(o=0;o<e.length;o+=16){for(c=g,l=f,m=b,u=_,h=v,r=0;80>r;r++)16>r?p[r]=e[o+r]:p[r]=a(p[r-3]^p[r-8]^p[r-14]^p[r-16],1),d=i(i(a(g,5),t(r,f,b,_)),i(i(v,p[r]),n(r))),v=_,_=b,b=a(f,30),f=g,g=d;g=i(g,c),f=i(f,l),b=i(b,m),_=i(_,u),v=i(v,h)}return[g,f,b,_,v]}function t(e,t,n,s){return 20>e?t&n|~t&s:40>e?t^n^s:60>e?t&n|t&s|n&s:t^n^s}function n(e){return 20>e?1518500249:40>e?1859775393:60>e?-1894007588:-899497514}function s(t,n){var s=o(t);s.length>16&&(s=e(s,8*t.length));for(var i=new Array(16),a=new Array(16),r=0;16>r;r++)i[r]=909522486^s[r],a[r]=1549556828^s[r];var d=e(i.concat(o(n)),512+8*n.length);return e(a.concat(d),672)}function i(e,t){var n=(65535&e)+(65535&t),s=(e>>16)+(t>>16)+(n>>16);return s<<16|65535&n}function a(e,t){return e<<t|e>>>32-t}function o(e){for(var t=[],n=255,s=0;s<8*e.length;s+=8)t[s>>5]|=(e.charCodeAt(s/8)&n)<<24-s%32;return t}function r(e){for(var t="",n=255,s=0;s<32*e.length;s+=8)t+=String.fromCharCode(e[s>>5]>>>24-s%32&n);return t}function d(e){for(var t,n,s="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",i="",a=0;a<4*e.length;a+=3)for(t=(e[a>>2]>>8*(3-a%4)&255)<<16|(e[a+1>>2]>>8*(3-(a+1)%4)&255)<<8|e[a+2>>2]>>8*(3-(a+2)%4)&255,n=0;4>n;n++)i+=8*a+6*n>32*e.length?"=":s.charAt(t>>6*(3-n)&63);return i}return{b64_hmac_sha1:function(e,t){return d(s(e,t))},b64_sha1:function(t){return d(e(o(t),8*t.length))},binb2str:r,core_hmac_sha1:s,str_hmac_sha1:function(e,t){return r(s(e,t))},str_sha1:function(t){return r(e(o(t),8*t.length))}}}),function(e,t){e.MD5=t()}(this,function(e){var t=function(e,t){var n=(65535&e)+(65535&t),s=(e>>16)+(t>>16)+(n>>16);return s<<16|65535&n},n=function(e,t){return e<<t|e>>>32-t},s=function(e){for(var t=[],n=0;n<8*e.length;n+=8)t[n>>5]|=(255&e.charCodeAt(n/8))<<n%32;return t},i=function(e){for(var t="",n=0;n<32*e.length;n+=8)t+=String.fromCharCode(e[n>>5]>>>n%32&255);return t},a=function(e){for(var t="0123456789abcdef",n="",s=0;s<4*e.length;s++)n+=t.charAt(e[s>>2]>>s%4*8+4&15)+t.charAt(e[s>>2]>>s%4*8&15);return n},o=function(e,s,i,a,o,r){return t(n(t(t(s,e),t(a,r)),o),i)},r=function(e,t,n,s,i,a,r){return o(t&n|~t&s,e,t,i,a,r)},d=function(e,t,n,s,i,a,r){return o(t&s|n&~s,e,t,i,a,r)},c=function(e,t,n,s,i,a,r){return o(t^n^s,e,t,i,a,r)},l=function(e,t,n,s,i,a,r){return o(n^(t|~s),e,t,i,a,r)},m=function(e,n){e[n>>5]|=128<<n%32,e[(n+64>>>9<<4)+14]=n;for(var s,i,a,o,m=1732584193,u=-271733879,h=-1732584194,p=271733878,g=0;g<e.length;g+=16)s=m,i=u,a=h,o=p,m=r(m,u,h,p,e[g+0],7,-680876936),p=r(p,m,u,h,e[g+1],12,-389564586),h=r(h,p,m,u,e[g+2],17,606105819),u=r(u,h,p,m,e[g+3],22,-1044525330),m=r(m,u,h,p,e[g+4],7,-176418897),p=r(p,m,u,h,e[g+5],12,1200080426),h=r(h,p,m,u,e[g+6],17,-1473231341),u=r(u,h,p,m,e[g+7],22,-45705983),m=r(m,u,h,p,e[g+8],7,1770035416),p=r(p,m,u,h,e[g+9],12,-1958414417),h=r(h,p,m,u,e[g+10],17,-42063),u=r(u,h,p,m,e[g+11],22,-1990404162),m=r(m,u,h,p,e[g+12],7,1804603682),p=r(p,m,u,h,e[g+13],12,-40341101),h=r(h,p,m,u,e[g+14],17,-1502002290),u=r(u,h,p,m,e[g+15],22,1236535329),m=d(m,u,h,p,e[g+1],5,-165796510),p=d(p,m,u,h,e[g+6],9,-1069501632),h=d(h,p,m,u,e[g+11],14,643717713),u=d(u,h,p,m,e[g+0],20,-373897302),m=d(m,u,h,p,e[g+5],5,-701558691),p=d(p,m,u,h,e[g+10],9,38016083),h=d(h,p,m,u,e[g+15],14,-660478335),u=d(u,h,p,m,e[g+4],20,-405537848),m=d(m,u,h,p,e[g+9],5,568446438),p=d(p,m,u,h,e[g+14],9,-1019803690),h=d(h,p,m,u,e[g+3],14,-187363961),u=d(u,h,p,m,e[g+8],20,1163531501),m=d(m,u,h,p,e[g+13],5,-1444681467),p=d(p,m,u,h,e[g+2],9,-51403784),h=d(h,p,m,u,e[g+7],14,1735328473),u=d(u,h,p,m,e[g+12],20,-1926607734),m=c(m,u,h,p,e[g+5],4,-378558),p=c(p,m,u,h,e[g+8],11,-2022574463),h=c(h,p,m,u,e[g+11],16,1839030562),u=c(u,h,p,m,e[g+14],23,-35309556),m=c(m,u,h,p,e[g+1],4,-1530992060),p=c(p,m,u,h,e[g+4],11,1272893353),h=c(h,p,m,u,e[g+7],16,-155497632),u=c(u,h,p,m,e[g+10],23,-1094730640),m=c(m,u,h,p,e[g+13],4,681279174),p=c(p,m,u,h,e[g+0],11,-358537222),h=c(h,p,m,u,e[g+3],16,-722521979),u=c(u,h,p,m,e[g+6],23,76029189),m=c(m,u,h,p,e[g+9],4,-640364487),p=c(p,m,u,h,e[g+12],11,-421815835),h=c(h,p,m,u,e[g+15],16,530742520),u=c(u,h,p,m,e[g+2],23,-995338651),m=l(m,u,h,p,e[g+0],6,-198630844),p=l(p,m,u,h,e[g+7],10,1126891415),h=l(h,p,m,u,e[g+14],15,-1416354905),u=l(u,h,p,m,e[g+5],21,-57434055),m=l(m,u,h,p,e[g+12],6,1700485571),p=l(p,m,u,h,e[g+3],10,-1894986606),h=l(h,p,m,u,e[g+10],15,-1051523),u=l(u,h,p,m,e[g+1],21,-2054922799),m=l(m,u,h,p,e[g+8],6,1873313359),p=l(p,m,u,h,e[g+15],10,-30611744),h=l(h,p,m,u,e[g+6],15,-1560198380),u=l(u,h,p,m,e[g+13],21,1309151649),m=l(m,u,h,p,e[g+4],6,-145523070),p=l(p,m,u,h,e[g+11],10,-1120210379),h=l(h,p,m,u,e[g+2],15,718787259),u=l(u,h,p,m,e[g+9],21,-343485551),m=t(m,s),u=t(u,i),h=t(h,a),p=t(p,o);return[m,u,h,p]},u={hexdigest:function(e){return a(m(s(e),8*e.length))},hash:function(e){return i(m(s(e),8*e.length))}};return u}),Function.prototype.stropheBind||(Function.prototype.stropheBind=function(e){var t=this,n=Array.prototype.slice,s=Array.prototype.concat,i=n.call(arguments,1);return function(){return t.apply(e?e:this,s.call(i,n.call(arguments,0)))}}),Array.isArray||(Array.isArray=function(e){return"[object Array]"===Object.prototype.toString.call(e)}),Array.prototype.indexOf||(Array.prototype.indexOf=function(e){var t=this.length,n=Number(arguments[1])||0;for(n=0>n?Math.ceil(n):Math.floor(n),0>n&&(n+=t);t>n;n++)if(n in this&&this[n]===e)return n;return-1}),function(e,t){var n=t(e.SHA1,e.Base64,e.MD5);window.Strophe=n.Strophe,window.$build=n.$build,window.$iq=n.$iq,window.$msg=n.$msg,window.$pres=n.$pres,window.SHA1=n.SHA1,window.Base64=n.Base64,window.MD5=n.MD5,window.b64_hmac_sha1=n.SHA1.b64_hmac_sha1,window.b64_sha1=n.SHA1.b64_sha1,window.str_hmac_sha1=n.SHA1.str_hmac_sha1,window.str_sha1=n.SHA1.str_sha1}(this,function(e,t,n){function s(e,t){return new r.Builder(e,t)}function i(e){return new r.Builder("message",e)}function a(e){return new r.Builder("iq",e)}function o(e){return new r.Builder("presence",e)}var r;return r={VERSION:"1.2.2",NS:{HTTPBIND:"http://jabber.org/protocol/httpbind",BOSH:"urn:xmpp:xbosh",CLIENT:"jabber:client",AUTH:"jabber:iq:auth",ROSTER:"jabber:iq:roster",PROFILE:"jabber:iq:profile",DISCO_INFO:"http://jabber.org/protocol/disco#info",DISCO_ITEMS:"http://jabber.org/protocol/disco#items",MUC:"http://jabber.org/protocol/muc",SASL:"urn:ietf:params:xml:ns:xmpp-sasl",STREAM:"http://etherx.jabber.org/streams",FRAMING:"urn:ietf:params:xml:ns:xmpp-framing",BIND:"urn:ietf:params:xml:ns:xmpp-bind",SESSION:"urn:ietf:params:xml:ns:xmpp-session",VERSION:"jabber:iq:version",STANZAS:"urn:ietf:params:xml:ns:xmpp-stanzas",XHTML_IM:"http://jabber.org/protocol/xhtml-im",XHTML:"http://www.w3.org/1999/xhtml"},XHTML:{tags:["a","blockquote","br","cite","em","img","li","ol","p","span","strong","ul","body"],attributes:{a:["href"],blockquote:["style"],br:[],cite:["style"],em:[],img:["src","alt","style","height","width"],li:["style"],ol:["style"],p:["style"],span:["style"],strong:[],ul:["style"],body:[]},css:["background-color","color","font-family","font-size","font-style","font-weight","margin-left","margin-right","text-align","text-decoration"],validTag:function(e){for(var t=0;t<r.XHTML.tags.length;t++)if(e==r.XHTML.tags[t])return!0;return!1},validAttribute:function(e,t){if("undefined"!=typeof r.XHTML.attributes[e]&&r.XHTML.attributes[e].length>0)for(var n=0;n<r.XHTML.attributes[e].length;n++)if(t==r.XHTML.attributes[e][n])return!0;return!1},validCSS:function(e){for(var t=0;t<r.XHTML.css.length;t++)if(e==r.XHTML.css[t])return!0;return!1}},Status:{ERROR:0,CONNECTING:1,CONNFAIL:2,AUTHENTICATING:3,AUTHFAIL:4,CONNECTED:5,DISCONNECTED:6,DISCONNECTING:7,ATTACHED:8,REDIRECT:9},LogLevel:{DEBUG:0,INFO:1,WARN:2,ERROR:3,FATAL:4},ElementType:{NORMAL:1,TEXT:3,CDATA:4,FRAGMENT:11},TIMEOUT:1.1,SECONDARY_TIMEOUT:.1,addNamespace:function(e,t){r.NS[e]=t},forEachChild:function(e,t,n){var s,i;for(s=0;s<e.childNodes.length;s++)i=e.childNodes[s],i.nodeType!=r.ElementType.NORMAL||t&&!this.isTagEqual(i,t)||n(i)},isTagEqual:function(e,t){return e.tagName==t},_xmlGenerator:null,_makeGenerator:function(){var e;return void 0===document.implementation.createDocument||document.implementation.createDocument&&document.documentMode&&document.documentMode<10?(e=this._getIEXmlDom(),e.appendChild(e.createElement("strophe"))):e=document.implementation.createDocument("jabber:client","strophe",null),e},xmlGenerator:function(){return r._xmlGenerator||(r._xmlGenerator=r._makeGenerator()),r._xmlGenerator},_getIEXmlDom:function(){for(var e=null,t=["Msxml2.DOMDocument.6.0","Msxml2.DOMDocument.5.0","Msxml2.DOMDocument.4.0","MSXML2.DOMDocument.3.0","MSXML2.DOMDocument","MSXML.DOMDocument","Microsoft.XMLDOM"],n=0;n<t.length&&null===e;n++)try{e=new ActiveXObject(t[n])}catch(s){e=null}return e},xmlElement:function(e){if(!e)return null;var t,n,s,i=r.xmlGenerator().createElement(e);for(t=1;t<arguments.length;t++){var a=arguments[t];if(a)if("string"==typeof a||"number"==typeof a)i.appendChild(r.xmlTextNode(a));else if("object"==typeof a&&"function"==typeof a.sort)for(n=0;n<a.length;n++){var o=a[n];"object"==typeof o&&"function"==typeof o.sort&&void 0!==o[1]&&i.setAttribute(o[0],o[1])}else if("object"==typeof a)for(s in a)a.hasOwnProperty(s)&&void 0!==a[s]&&i.setAttribute(s,a[s])}return i},xmlescape:function(e){return e=e.replace(/\&/g,"&amp;"),e=e.replace(/</g,"&lt;"),e=e.replace(/>/g,"&gt;"),e=e.replace(/'/g,"&apos;"),e=e.replace(/"/g,"&quot;")},xmlunescape:function(e){return e=e.replace(/\&amp;/g,"&"),e=e.replace(/&lt;/g,"<"),e=e.replace(/&gt;/g,">"),e=e.replace(/&apos;/g,"'"),e=e.replace(/&quot;/g,'"')},xmlTextNode:function(e){return r.xmlGenerator().createTextNode(e)},xmlHtmlNode:function(e){var t;if(window.DOMParser){var n=new DOMParser;t=n.parseFromString(e,"text/xml")}else t=new ActiveXObject("Microsoft.XMLDOM"),t.async="false",t.loadXML(e);return t},getText:function(e){if(!e)return null;var t="";0===e.childNodes.length&&e.nodeType==r.ElementType.TEXT&&(t+=e.nodeValue);for(var n=0;n<e.childNodes.length;n++)e.childNodes[n].nodeType==r.ElementType.TEXT&&(t+=e.childNodes[n].nodeValue);return r.xmlescape(t)},copyElement:function(e){var t,n;if(e.nodeType==r.ElementType.NORMAL){for(n=r.xmlElement(e.tagName),t=0;t<e.attributes.length;t++)n.setAttribute(e.attributes[t].nodeName,e.attributes[t].value);for(t=0;t<e.childNodes.length;t++)n.appendChild(r.copyElement(e.childNodes[t]))}else e.nodeType==r.ElementType.TEXT&&(n=r.xmlGenerator().createTextNode(e.nodeValue));return n},createHtml:function(e){var t,n,s,i,a,o,d,c,l,m,u;if(e.nodeType==r.ElementType.NORMAL)if(i=e.nodeName.toLowerCase(),r.XHTML.validTag(i))try{for(n=r.xmlElement(i),t=0;t<r.XHTML.attributes[i].length;t++)if(a=r.XHTML.attributes[i][t],o=e.getAttribute(a),"undefined"!=typeof o&&null!==o&&""!==o&&o!==!1&&0!==o)if("style"==a&&"object"==typeof o&&"undefined"!=typeof o.cssText&&(o=o.cssText),"style"==a){for(d=[],c=o.split(";"),s=0;s<c.length;s++)l=c[s].split(":"),m=l[0].replace(/^\s*/,"").replace(/\s*$/,"").toLowerCase(),r.XHTML.validCSS(m)&&(u=l[1].replace(/^\s*/,"").replace(/\s*$/,""),d.push(m+": "+u));d.length>0&&(o=d.join("; "),n.setAttribute(a,o))}else n.setAttribute(a,o);for(t=0;t<e.childNodes.length;t++)n.appendChild(r.createHtml(e.childNodes[t]))}catch(h){n=r.xmlTextNode("")}else for(n=r.xmlGenerator().createDocumentFragment(),t=0;t<e.childNodes.length;t++)n.appendChild(r.createHtml(e.childNodes[t]));else if(e.nodeType==r.ElementType.FRAGMENT)for(n=r.xmlGenerator().createDocumentFragment(),t=0;t<e.childNodes.length;t++)n.appendChild(r.createHtml(e.childNodes[t]));else e.nodeType==r.ElementType.TEXT&&(n=r.xmlTextNode(e.nodeValue));return n},escapeNode:function(e){return"string"!=typeof e?e:e.replace(/^\s+|\s+$/g,"").replace(/\\/g,"\\5c").replace(/ /g,"\\20").replace(/\"/g,"\\22").replace(/\&/g,"\\26").replace(/\'/g,"\\27").replace(/\//g,"\\2f").replace(/:/g,"\\3a").replace(/</g,"\\3c").replace(/>/g,"\\3e").replace(/@/g,"\\40")},unescapeNode:function(e){return"string"!=typeof e?e:e.replace(/\\20/g," ").replace(/\\22/g,'"').replace(/\\26/g,"&").replace(/\\27/g,"'").replace(/\\2f/g,"/").replace(/\\3a/g,":").replace(/\\3c/g,"<").replace(/\\3e/g,">").replace(/\\40/g,"@").replace(/\\5c/g,"\\")},getNodeFromJid:function(e){return e.indexOf("@")<0?null:e.split("@")[0]},getDomainFromJid:function(e){var t=r.getBareJidFromJid(e);if(t.indexOf("@")<0)return t;var n=t.split("@");return n.splice(0,1),n.join("@")},getResourceFromJid:function(e){var t=e.split("/");return t.length<2?null:(t.splice(0,1),t.join("/"))},getBareJidFromJid:function(e){return e?e.split("/")[0]:null},log:function(e,t){},debug:function(e){this.log(this.LogLevel.DEBUG,e)},info:function(e){this.log(this.LogLevel.INFO,e)},warn:function(e){this.log(this.LogLevel.WARN,e)},error:function(e){this.log(this.LogLevel.ERROR,e)},fatal:function(e){this.log(this.LogLevel.FATAL,e)},serialize:function(e){var t;if(!e)return null;"function"==typeof e.tree&&(e=e.tree());var n,s,i=e.nodeName;for(e.getAttribute("_realname")&&(i=e.getAttribute("_realname")),t="<"+i,n=0;n<e.attributes.length;n++)"_realname"!=e.attributes[n].nodeName&&(t+=" "+e.attributes[n].nodeName+"='"+e.attributes[n].value.replace(/&/g,"&amp;").replace(/\'/g,"&apos;").replace(/>/g,"&gt;").replace(/</g,"&lt;")+"'");if(e.childNodes.length>0){for(t+=">",n=0;n<e.childNodes.length;n++)switch(s=e.childNodes[n],s.nodeType){case r.ElementType.NORMAL:t+=r.serialize(s);break;case r.ElementType.TEXT:t+=r.xmlescape(s.nodeValue);break;case r.ElementType.CDATA:t+="<![CDATA["+s.nodeValue+"]]>"}t+="</"+i+">"}else t+="/>";return t},_requestId:0,_connectionPlugins:{},addConnectionPlugin:function(e,t){r._connectionPlugins[e]=t}},r.Builder=function(e,t){("presence"==e||"message"==e||"iq"==e)&&(t&&!t.xmlns?t.xmlns=r.NS.CLIENT:t||(t={xmlns:r.NS.CLIENT})),this.nodeTree=r.xmlElement(e,t),this.node=this.nodeTree},r.Builder.prototype={tree:function(){return this.nodeTree},toString:function(){return r.serialize(this.nodeTree)},up:function(){return this.node=this.node.parentNode,this},attrs:function(e){for(var t in e)e.hasOwnProperty(t)&&(void 0===e[t]?this.node.removeAttribute(t):this.node.setAttribute(t,e[t]));return this},c:function(e,t,n){var s=r.xmlElement(e,t,n);return this.node.appendChild(s),"string"!=typeof n&&(this.node=s),this},cnode:function(e){var t,n=r.xmlGenerator();try{t=void 0!==n.importNode}catch(s){t=!1}var i=t?n.importNode(e,!0):r.copyElement(e);return this.node.appendChild(i),this.node=i,this},t:function(e){var t=r.xmlTextNode(e);return this.node.appendChild(t),this},h:function(e){var t=document.createElement("body");t.innerHTML=e;for(var n=r.createHtml(t);n.childNodes.length>0;)this.node.appendChild(n.childNodes[0]);return this}},r.Handler=function(e,t,n,s,i,a,o){this.handler=e,this.ns=t,this.name=n,this.type=s,this.id=i,this.options=o||{matchBare:!1},this.options.matchBare||(this.options.matchBare=!1),this.options.matchBare?this.from=a?r.getBareJidFromJid(a):null:this.from=a,this.user=!0},r.Handler.prototype={isMatch:function(e){var t,n=null;if(n=this.options.matchBare?r.getBareJidFromJid(e.getAttribute("from")):e.getAttribute("from"),t=!1,this.ns){var s=this;r.forEachChild(e,null,function(e){e.getAttribute("xmlns")==s.ns&&(t=!0)}),t=t||e.getAttribute("xmlns")==this.ns}else t=!0;var i=e.getAttribute("type");return!t||this.name&&!r.isTagEqual(e,this.name)||this.type&&(Array.isArray(this.type)?-1==this.type.indexOf(i):i!=this.type)||this.id&&e.getAttribute("id")!=this.id||this.from&&n!=this.from?!1:!0},run:function(e){var t=null;try{t=this.handler(e)}catch(n){throw n.sourceURL?r.fatal("error: "+this.handler+" "+n.sourceURL+":"+n.line+" - "+n.name+": "+n.message):n.fileName?("undefined"!=typeof console&&(console.trace(),console.error(this.handler," - error - ",n,n.message)),r.fatal("error: "+this.handler+" "+n.fileName+":"+n.lineNumber+" - "+n.name+": "+n.message)):r.fatal("error: "+n.message+"\n"+n.stack),n}return t},toString:function(){return"{Handler: "+this.handler+"("+this.name+","+this.id+","+this.ns+")}"}},r.TimedHandler=function(e,t){this.period=e,this.handler=t,this.lastCalled=(new Date).getTime(),this.user=!0},r.TimedHandler.prototype={run:function(){return this.lastCalled=(new Date).getTime(),this.handler()},reset:function(){this.lastCalled=(new Date).getTime()},toString:function(){return"{TimedHandler: "+this.handler+"("+this.period+")}"}},r.Connection=function(e,t){this.service=e,this.options=t||{};var n=this.options.protocol||"";0===e.indexOf("ws:")||0===e.indexOf("wss:")||0===n.indexOf("ws")?this._proto=new r.Websocket(this):this._proto=new r.Bosh(this),this.jid="",this.domain=null,this.features=null,this._sasl_data={},this.do_session=!1,this.do_bind=!1,this.timedHandlers=[],this.handlers=[],this.removeTimeds=[],this.removeHandlers=[],this.addTimeds=[],this.addHandlers=[],this._authentication={},this._idleTimeout=null,this._disconnectTimeout=null,this.authenticated=!1,this.connected=!1,this.disconnecting=!1,this.do_authentication=!0,this.paused=!1,this.restored=!1,this._data=[],this._uniqueId=0,this._sasl_success_handler=null,this._sasl_failure_handler=null,this._sasl_challenge_handler=null,this.maxRetries=5,this._idleTimeout=setTimeout(this._onIdle.stropheBind(this),100);for(var s in r._connectionPlugins)if(r._connectionPlugins.hasOwnProperty(s)){var i=r._connectionPlugins[s],a=function(){};a.prototype=i,this[s]=new a,this[s].init(this)}},r.Connection.prototype={reset:function(){this._proto._reset(),this.do_session=!1,this.do_bind=!1,this.timedHandlers=[],this.handlers=[],this.removeTimeds=[],this.removeHandlers=[],this.addTimeds=[],this.addHandlers=[],this._authentication={},this.authenticated=!1,this.connected=!1,this.disconnecting=!1,this.restored=!1,this._data=[],this._requests=[],this._uniqueId=0},pause:function(){this.paused=!0},resume:function(){this.paused=!1},getUniqueId:function(e){return"string"==typeof e||"number"==typeof e?++this._uniqueId+":"+e:++this._uniqueId+""},connect:function(e,t,n,s,i,a,o){this.jid=e,this.authzid=r.getBareJidFromJid(this.jid),this.authcid=o||r.getNodeFromJid(this.jid),this.pass=t,this.servtype="xmpp",this.connect_callback=n,this.disconnecting=!1,this.connected=!1,this.authenticated=!1,this.restored=!1,this.domain=r.getDomainFromJid(this.jid),this._changeConnectStatus(r.Status.CONNECTING,null),this._proto._connect(s,i,a)},attach:function(e,t,n,s,i,a,o){if(!(this._proto instanceof r.Bosh))throw{name:"StropheSessionError",message:'The "attach" method can only be used with a BOSH connection.'};this._proto._attach(e,t,n,s,i,a,o)},restore:function(e,t,n,s,i){if(!this._sessionCachingSupported())throw{name:"StropheSessionError",message:'The "restore" method can only be used with a BOSH connection.'};this._proto._restore(e,t,n,s,i)},_sessionCachingSupported:function(){if(this._proto instanceof r.Bosh){if(!JSON)return!1;try{window.sessionStorage.setItem("_strophe_","_strophe_"),window.sessionStorage.removeItem("_strophe_")}catch(e){return!1}return!0}return!1},xmlInput:function(e){},xmlOutput:function(e){},rawInput:function(e){},rawOutput:function(e){},send:function(e){if(null!==e){if("function"==typeof e.sort)for(var t=0;t<e.length;t++)this._queueData(e[t]);else"function"==typeof e.tree?this._queueData(e.tree()):this._queueData(e);this._proto._send()}},flush:function(){clearTimeout(this._idleTimeout),this._onIdle()},sendIQ:function(e,t,n,s){var i=null,a=this;"function"==typeof e.tree&&(e=e.tree());var o=e.getAttribute("id");o||(o=this.getUniqueId("sendIQ"),e.setAttribute("id",o));var d=e.getAttribute("to"),c=this.jid,l=this.addHandler(function(e){i&&a.deleteTimedHandler(i);var s=!1,o=e.getAttribute("from");if((o===d||null===d&&(o===r.getBareJidFromJid(c)||o===r.getDomainFromJid(c)||o===c))&&(s=!0),!s)throw{name:"StropheError",message:"Got answer to IQ from wrong jid:"+o+"\nExpected jid: "+d};var l=e.getAttribute("type");if("result"==l)t&&t(e);else{if("error"!=l)throw{name:"StropheError",message:"Got bad IQ type of "+l};n&&n(e)}},null,"iq",["error","result"],o);return s&&(i=this.addTimedHandler(s,function(){return a.deleteHandler(l),n&&n(null),!1})),this.send(e),o},_queueData:function(e){if(null===e||!e.tagName||!e.childNodes)throw{name:"StropheError",message:"Cannot queue non-DOMElement."};this._data.push(e)},_sendRestart:function(){this._data.push("restart"),this._proto._sendRestart(),this._idleTimeout=setTimeout(this._onIdle.stropheBind(this),100)},addTimedHandler:function(e,t){var n=new r.TimedHandler(e,t);return this.addTimeds.push(n),n},deleteTimedHandler:function(e){this.removeTimeds.push(e)},addHandler:function(e,t,n,s,i,a,o){var d=new r.Handler(e,t,n,s,i,a,o);return this.addHandlers.push(d),d},deleteHandler:function(e){this.removeHandlers.push(e);var t=this.addHandlers.indexOf(e);t>=0&&this.addHandlers.splice(t,1)},disconnect:function(e){if(this._changeConnectStatus(r.Status.DISCONNECTING,e),r.info("Disconnect was called because: "+e),this.connected){var t=!1;this.disconnecting=!0,this.authenticated&&(t=o({xmlns:r.NS.CLIENT,type:"unavailable"})),this._disconnectTimeout=this._addSysTimedHandler(3e3,this._onDisconnectTimeout.stropheBind(this)),this._proto._disconnect(t)}else r.info("Disconnect was called before Strophe connected to the server"),this._proto._abortAllRequests()},_changeConnectStatus:function(e,t){for(var n in r._connectionPlugins)if(r._connectionPlugins.hasOwnProperty(n)){var s=this[n];if(s.statusChanged)try{s.statusChanged(e,t)}catch(i){r.error(""+n+" plugin caused an exception changing status: "+i)}}if(this.connect_callback)try{this.connect_callback(e,t)}catch(a){r.error("User connection callback caused an exception: "+a)}},_doDisconnect:function(e){"number"==typeof this._idleTimeout&&clearTimeout(this._idleTimeout),null!==this._disconnectTimeout&&(this.deleteTimedHandler(this._disconnectTimeout),this._disconnectTimeout=null),r.info("_doDisconnect was called"),this._proto._doDisconnect(),this.authenticated=!1,this.disconnecting=!1,this.restored=!1,this.handlers=[],this.timedHandlers=[],this.removeTimeds=[],this.removeHandlers=[],this.addTimeds=[],this.addHandlers=[],this._changeConnectStatus(r.Status.DISCONNECTED,e),this.connected=!1},_dataRecv:function(e,t){r.info("_dataRecv called");var n=this._proto._reqToData(e);if(null!==n){this.xmlInput!==r.Connection.prototype.xmlInput&&(n.nodeName===this._proto.strip&&n.childNodes.length?this.xmlInput(n.childNodes[0]):this.xmlInput(n)),this.rawInput!==r.Connection.prototype.rawInput&&(t?this.rawInput(t):this.rawInput(r.serialize(n)));for(var s,i;this.removeHandlers.length>0;)i=this.removeHandlers.pop(),s=this.handlers.indexOf(i),s>=0&&this.handlers.splice(s,1);for(;this.addHandlers.length>0;)this.handlers.push(this.addHandlers.pop());if(this.disconnecting&&this._proto._emptyQueue())return void this._doDisconnect();var a,o,d=n.getAttribute("type");if(null!==d&&"terminate"==d){if(this.disconnecting)return;return a=n.getAttribute("condition"),o=n.getElementsByTagName("conflict"),null!==a?("remote-stream-error"==a&&o.length>0&&(a="conflict"),this._changeConnectStatus(r.Status.CONNFAIL,a)):this._changeConnectStatus(r.Status.CONNFAIL,"unknown"),void this._doDisconnect(a)}var c=this;r.forEachChild(n,null,function(e){var t,n;for(n=c.handlers,c.handlers=[],t=0;t<n.length;t++){var s=n[t];try{!s.isMatch(e)||!c.authenticated&&s.user?c.handlers.push(s):s.run(e)&&c.handlers.push(s)}catch(i){r.warn("Removing Strophe handlers due to uncaught exception: "+i.message)}}})}},mechanisms:{},_connect_cb:function(e,t,n){r.info("_connect_cb was called"),this.connected=!0;var s=this._proto._reqToData(e);if(s){this.xmlInput!==r.Connection.prototype.xmlInput&&(s.nodeName===this._proto.strip&&s.childNodes.length?this.xmlInput(s.childNodes[0]):this.xmlInput(s)),this.rawInput!==r.Connection.prototype.rawInput&&(n?this.rawInput(n):this.rawInput(r.serialize(s)));var i=this._proto._connect_cb(s);if(i!==r.Status.CONNFAIL){this._authentication.sasl_scram_sha1=!1,this._authentication.sasl_plain=!1,this._authentication.sasl_digest_md5=!1,this._authentication.sasl_anonymous=!1,this._authentication.legacy_auth=!1;var a;a=s.getElementsByTagNameNS?s.getElementsByTagNameNS(r.NS.STREAM,"features").length>0:s.getElementsByTagName("stream:features").length>0||s.getElementsByTagName("features").length>0;var o,d,c=s.getElementsByTagName("mechanism"),l=[],m=!1;if(!a)return void this._proto._no_auth_received(t);if(c.length>0)for(o=0;o<c.length;o++)d=r.getText(c[o]),this.mechanisms[d]&&l.push(this.mechanisms[d]);return this._authentication.legacy_auth=s.getElementsByTagName("auth").length>0,(m=this._authentication.legacy_auth||l.length>0)?void(this.do_authentication!==!1&&this.authenticate(l)):void this._proto._no_auth_received(t)}}},authenticate:function(e){var n;for(n=0;n<e.length-1;++n){for(var i=n,o=n+1;o<e.length;++o)e[o].prototype.priority>e[i].prototype.priority&&(i=o);if(i!=n){var d=e[n];e[n]=e[i],e[i]=d}}var c=!1;for(n=0;n<e.length;++n)if(e[n].test(this)){this._sasl_success_handler=this._addSysHandler(this._sasl_success_cb.stropheBind(this),null,"success",null,null),this._sasl_failure_handler=this._addSysHandler(this._sasl_failure_cb.stropheBind(this),null,"failure",null,null),this._sasl_challenge_handler=this._addSysHandler(this._sasl_challenge_cb.stropheBind(this),null,"challenge",null,null),this._sasl_mechanism=new e[n],this._sasl_mechanism.onStart(this);var l=s("auth",{xmlns:r.NS.SASL,mechanism:this._sasl_mechanism.name});if(this._sasl_mechanism.isClientFirst){var m=this._sasl_mechanism.onChallenge(this,null);l.t(t.encode(m))}this.send(l.tree()),c=!0;break}c||(null===r.getNodeFromJid(this.jid)?(this._changeConnectStatus(r.Status.CONNFAIL,"x-strophe-bad-non-anon-jid"),this.disconnect("x-strophe-bad-non-anon-jid")):(this._changeConnectStatus(r.Status.AUTHENTICATING,null),this._addSysHandler(this._auth1_cb.stropheBind(this),null,null,null,"_auth_1"),this.send(a({type:"get",to:this.domain,id:"_auth_1"}).c("query",{xmlns:r.NS.AUTH}).c("username",{}).t(r.getNodeFromJid(this.jid)).tree())))},_sasl_challenge_cb:function(e){var n=t.decode(r.getText(e)),i=this._sasl_mechanism.onChallenge(this,n),a=s("response",{xmlns:r.NS.SASL});return""!==i&&a.t(t.encode(i)),this.send(a.tree()),!0},_auth1_cb:function(e){var t=a({type:"set",id:"_auth_2"}).c("query",{xmlns:r.NS.AUTH}).c("username",{}).t(r.getNodeFromJid(this.jid)).up().c("password").t(this.pass);return r.getResourceFromJid(this.jid)||(this.jid=r.getBareJidFromJid(this.jid)+"/strophe"),t.up().c("resource",{}).t(r.getResourceFromJid(this.jid)),this._addSysHandler(this._auth2_cb.stropheBind(this),null,null,null,"_auth_2"),this.send(t.tree()),!1},_sasl_success_cb:function(e){if(this._sasl_data["server-signature"]){var n,s=t.decode(r.getText(e)),i=/([a-z]+)=([^,]+)(,|$)/,a=s.match(i);if("v"==a[1]&&(n=a[2]),n!=this._sasl_data["server-signature"])return this.deleteHandler(this._sasl_failure_handler),this._sasl_failure_handler=null,this._sasl_challenge_handler&&(this.deleteHandler(this._sasl_challenge_handler),this._sasl_challenge_handler=null),this._sasl_data={},this._sasl_failure_cb(null)}r.info("SASL authentication succeeded."),this._sasl_mechanism&&this._sasl_mechanism.onSuccess(),this.deleteHandler(this._sasl_failure_handler),this._sasl_failure_handler=null,this._sasl_challenge_handler&&(this.deleteHandler(this._sasl_challenge_handler),this._sasl_challenge_handler=null);var o=[],d=function(e,t){for(;e.length;)this.deleteHandler(e.pop());return this._sasl_auth1_cb.stropheBind(this)(t),!1};return o.push(this._addSysHandler(function(e){d.stropheBind(this)(o,e)}.stropheBind(this),null,"stream:features",null,null)),o.push(this._addSysHandler(function(e){d.stropheBind(this)(o,e)}.stropheBind(this),r.NS.STREAM,"features",null,null)),this._sendRestart(),!1},_sasl_auth1_cb:function(e){this.features=e;var t,n;for(t=0;t<e.childNodes.length;t++)n=e.childNodes[t],"bind"==n.nodeName&&(this.do_bind=!0),"session"==n.nodeName&&(this.do_session=!0);if(!this.do_bind)return this._changeConnectStatus(r.Status.AUTHFAIL,null),!1;this._addSysHandler(this._sasl_bind_cb.stropheBind(this),null,null,null,"_bind_auth_2");var s=r.getResourceFromJid(this.jid);return s?this.send(a({type:"set",id:"_bind_auth_2"}).c("bind",{xmlns:r.NS.BIND}).c("resource",{}).t(s).tree()):this.send(a({type:"set",id:"_bind_auth_2"}).c("bind",{xmlns:r.NS.BIND}).tree()),!1},_sasl_bind_cb:function(e){if("error"==e.getAttribute("type")){r.info("SASL binding failed.");var t,n=e.getElementsByTagName("conflict");return n.length>0&&(t="conflict"),this._changeConnectStatus(r.Status.AUTHFAIL,t),!1}var s,i=e.getElementsByTagName("bind");return i.length>0?(s=i[0].getElementsByTagName("jid"),void(s.length>0&&(this.jid=r.getText(s[0]),this.do_session?(this._addSysHandler(this._sasl_session_cb.stropheBind(this),null,null,null,"_session_auth_2"),this.send(a({type:"set",id:"_session_auth_2"}).c("session",{xmlns:r.NS.SESSION}).tree())):(this.authenticated=!0,this._changeConnectStatus(r.Status.CONNECTED,null))))):(r.info("SASL binding failed."),this._changeConnectStatus(r.Status.AUTHFAIL,null),!1)},_sasl_session_cb:function(e){if("result"==e.getAttribute("type"))this.authenticated=!0,this._changeConnectStatus(r.Status.CONNECTED,null);else if("error"==e.getAttribute("type"))return r.info("Session creation failed."),this._changeConnectStatus(r.Status.AUTHFAIL,null),!1;return!1},_sasl_failure_cb:function(e){return this._sasl_success_handler&&(this.deleteHandler(this._sasl_success_handler),this._sasl_success_handler=null),this._sasl_challenge_handler&&(this.deleteHandler(this._sasl_challenge_handler),this._sasl_challenge_handler=null),this._sasl_mechanism&&this._sasl_mechanism.onFailure(),this._changeConnectStatus(r.Status.AUTHFAIL,null),!1},_auth2_cb:function(e){return"result"==e.getAttribute("type")?(this.authenticated=!0,this._changeConnectStatus(r.Status.CONNECTED,null)):"error"==e.getAttribute("type")&&(this._changeConnectStatus(r.Status.AUTHFAIL,null),this.disconnect("authentication failed")),!1},_addSysTimedHandler:function(e,t){var n=new r.TimedHandler(e,t);return n.user=!1,this.addTimeds.push(n),n},_addSysHandler:function(e,t,n,s,i){var a=new r.Handler(e,t,n,s,i);return a.user=!1,this.addHandlers.push(a),a},_onDisconnectTimeout:function(){return r.info("_onDisconnectTimeout was called"),this._proto._onDisconnectTimeout(),this._doDisconnect(),!1},_onIdle:function(){for(var e,t,n,s;this.addTimeds.length>0;)this.timedHandlers.push(this.addTimeds.pop());for(;this.removeTimeds.length>0;)t=this.removeTimeds.pop(),e=this.timedHandlers.indexOf(t),e>=0&&this.timedHandlers.splice(e,1);var i=(new Date).getTime();for(s=[],e=0;e<this.timedHandlers.length;e++)t=this.timedHandlers[e],(this.authenticated||!t.user)&&(n=t.lastCalled+t.period,0>=n-i?t.run()&&s.push(t):s.push(t));this.timedHandlers=s,clearTimeout(this._idleTimeout),this._proto._onIdle(),this.connected&&(this._idleTimeout=setTimeout(this._onIdle.stropheBind(this),100))}},r.SASLMechanism=function(e,t,n){this.name=e,this.isClientFirst=t,this.priority=n},r.SASLMechanism.prototype={test:function(e){return!0},onStart:function(e){this._connection=e},onChallenge:function(e,t){throw new Error("You should implement challenge handling!")},
-onFailure:function(){this._connection=null},onSuccess:function(){this._connection=null}},r.SASLAnonymous=function(){},r.SASLAnonymous.prototype=new r.SASLMechanism("ANONYMOUS",!1,10),r.SASLAnonymous.test=function(e){return null===e.authcid},r.Connection.prototype.mechanisms[r.SASLAnonymous.prototype.name]=r.SASLAnonymous,r.SASLPlain=function(){},r.SASLPlain.prototype=new r.SASLMechanism("PLAIN",!0,20),r.SASLPlain.test=function(e){return null!==e.authcid},r.SASLPlain.prototype.onChallenge=function(e){var t=e.authzid;return t+="\x00",t+=e.authcid,t+="\x00",t+=e.pass},r.Connection.prototype.mechanisms[r.SASLPlain.prototype.name]=r.SASLPlain,r.SASLSHA1=function(){},r.SASLSHA1.prototype=new r.SASLMechanism("SCRAM-SHA-1",!0,40),r.SASLSHA1.test=function(e){return null!==e.authcid},r.SASLSHA1.prototype.onChallenge=function(s,i,a){var o=a||n.hexdigest(1234567890*Math.random()),r="n="+s.authcid;return r+=",r=",r+=o,s._sasl_data.cnonce=o,s._sasl_data["client-first-message-bare"]=r,r="n,,"+r,this.onChallenge=function(n,s){for(var i,a,o,r,d,c,l,m,u,h,p,g="c=biws,",f=n._sasl_data["client-first-message-bare"]+","+s+",",b=n._sasl_data.cnonce,_=/([a-z]+)=([^,]+)(,|$)/;s.match(_);){var v=s.match(_);switch(s=s.replace(v[0],""),v[1]){case"r":i=v[2];break;case"s":a=v[2];break;case"i":o=v[2]}}if(i.substr(0,b.length)!==b)return n._sasl_data={},n._sasl_failure_cb();for(g+="r="+i,f+=g,a=t.decode(a),a+="\x00\x00\x00",r=c=e.core_hmac_sha1(n.pass,a),l=1;o>l;l++){for(d=e.core_hmac_sha1(n.pass,e.binb2str(c)),m=0;5>m;m++)r[m]^=d[m];c=d}for(r=e.binb2str(r),u=e.core_hmac_sha1(r,"Client Key"),h=e.str_hmac_sha1(r,"Server Key"),p=e.core_hmac_sha1(e.str_sha1(e.binb2str(u)),f),n._sasl_data["server-signature"]=e.b64_hmac_sha1(h,f),m=0;5>m;m++)u[m]^=p[m];return g+=",p="+t.encode(e.binb2str(u))}.stropheBind(this),r},r.Connection.prototype.mechanisms[r.SASLSHA1.prototype.name]=r.SASLSHA1,r.SASLMD5=function(){},r.SASLMD5.prototype=new r.SASLMechanism("DIGEST-MD5",!1,30),r.SASLMD5.test=function(e){return null!==e.authcid},r.SASLMD5.prototype._quote=function(e){return'"'+e.replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'"'},r.SASLMD5.prototype.onChallenge=function(e,t,s){for(var i,a=/([a-z]+)=("[^"]+"|[^,"]+)(?:,|$)/,o=s||n.hexdigest(""+1234567890*Math.random()),r="",d=null,c="",l="";t.match(a);)switch(i=t.match(a),t=t.replace(i[0],""),i[2]=i[2].replace(/^"(.+)"$/,"$1"),i[1]){case"realm":r=i[2];break;case"nonce":c=i[2];break;case"qop":l=i[2];break;case"host":d=i[2]}var m=e.servtype+"/"+e.domain;null!==d&&(m=m+"/"+d);var u=n.hash(e.authcid+":"+r+":"+this._connection.pass)+":"+c+":"+o,h="AUTHENTICATE:"+m,p="";return p+="charset=utf-8,",p+="username="+this._quote(e.authcid)+",",p+="realm="+this._quote(r)+",",p+="nonce="+this._quote(c)+",",p+="nc=00000001,",p+="cnonce="+this._quote(o)+",",p+="digest-uri="+this._quote(m)+",",p+="response="+n.hexdigest(n.hexdigest(u)+":"+c+":00000001:"+o+":auth:"+n.hexdigest(h))+",",p+="qop=auth",this.onChallenge=function(){return""}.stropheBind(this),p},r.Connection.prototype.mechanisms[r.SASLMD5.prototype.name]=r.SASLMD5,{Strophe:r,$build:s,$msg:i,$iq:a,$pres:o,SHA1:e,Base64:t,MD5:n}}),function(e,t){return t(Strophe,$build)}(this,function(e,t){return e.Request=function(t,n,s,i){this.id=++e._requestId,this.xmlData=t,this.data=e.serialize(t),this.origFunc=n,this.func=n,this.rid=s,this.date=NaN,this.sends=i||0,this.abort=!1,this.dead=null,this.age=function(){if(!this.date)return 0;var e=new Date;return(e-this.date)/1e3},this.timeDead=function(){if(!this.dead)return 0;var e=new Date;return(e-this.dead)/1e3},this.xhr=this._newXHR()},e.Request.prototype={getResponse:function(){var t=null;if(this.xhr.responseXML&&this.xhr.responseXML.documentElement){if(t=this.xhr.responseXML.documentElement,"parsererror"==t.tagName)throw e.error("invalid response received"),e.error("responseText: "+this.xhr.responseText),e.error("responseXML: "+e.serialize(this.xhr.responseXML)),"parsererror"}else this.xhr.responseText&&(e.error("invalid response received"),e.error("responseText: "+this.xhr.responseText),e.error("responseXML: "+e.serialize(this.xhr.responseXML)));return t},_newXHR:function(){var e=null;return window.XMLHttpRequest?(e=new XMLHttpRequest,e.overrideMimeType&&e.overrideMimeType("text/xml; charset=utf-8")):window.ActiveXObject&&(e=new ActiveXObject("Microsoft.XMLHTTP")),e.onreadystatechange=this.func.stropheBind(null,this),e}},e.Bosh=function(e){this._conn=e,this.rid=Math.floor(4294967295*Math.random()),this.sid=null,this.hold=1,this.wait=60,this.window=5,this.errors=0,this._requests=[]},e.Bosh.prototype={strip:null,_buildBody:function(){var n=t("body",{rid:this.rid++,xmlns:e.NS.HTTPBIND});return null!==this.sid&&n.attrs({sid:this.sid}),this._conn.options.keepalive&&this._cacheSession(),n},_reset:function(){this.rid=Math.floor(4294967295*Math.random()),this.sid=null,this.errors=0,window.sessionStorage.removeItem("strophe-bosh-session")},_connect:function(t,n,s){this.wait=t||this.wait,this.hold=n||this.hold,this.errors=0;var i=this._buildBody().attrs({to:this._conn.domain,"xml:lang":"en",wait:this.wait,hold:this.hold,content:"text/xml; charset=utf-8",ver:"1.6","xmpp:version":"1.0","xmlns:xmpp":e.NS.BOSH});s&&i.attrs({route:s});var a=this._conn._connect_cb;this._requests.push(new e.Request(i.tree(),this._onRequestStateChange.stropheBind(this,a.stropheBind(this._conn)),i.tree().getAttribute("rid"))),this._throttledRequestHandler()},_attach:function(t,n,s,i,a,o,r){this._conn.jid=t,this.sid=n,this.rid=s,this._conn.connect_callback=i,this._conn.domain=e.getDomainFromJid(this._conn.jid),this._conn.authenticated=!0,this._conn.connected=!0,this.wait=a||this.wait,this.hold=o||this.hold,this.window=r||this.window,this._conn._changeConnectStatus(e.Status.ATTACHED,null)},_restore:function(t,n,s,i,a){var o=JSON.parse(window.sessionStorage.getItem("strophe-bosh-session"));if(!("undefined"!=typeof o&&null!==o&&o.rid&&o.sid&&o.jid)||"undefined"!=typeof t&&e.getBareJidFromJid(o.jid)!=e.getBareJidFromJid(t))throw{name:"StropheSessionError",message:"_restore: no restoreable session."};this._conn.restored=!0,this._attach(o.jid,o.sid,o.rid,n,s,i,a)},_cacheSession:function(){this._conn.authenticated?this._conn.jid&&this.rid&&this.sid&&window.sessionStorage.setItem("strophe-bosh-session",JSON.stringify({jid:this._conn.jid,rid:this.rid,sid:this.sid})):window.sessionStorage.removeItem("strophe-bosh-session")},_connect_cb:function(t){var n,s,i=t.getAttribute("type");if(null!==i&&"terminate"==i)return n=t.getAttribute("condition"),e.error("BOSH-Connection failed: "+n),s=t.getElementsByTagName("conflict"),null!==n?("remote-stream-error"==n&&s.length>0&&(n="conflict"),this._conn._changeConnectStatus(e.Status.CONNFAIL,n)):this._conn._changeConnectStatus(e.Status.CONNFAIL,"unknown"),this._conn._doDisconnect(n),e.Status.CONNFAIL;this.sid||(this.sid=t.getAttribute("sid"));var a=t.getAttribute("requests");a&&(this.window=parseInt(a,10));var o=t.getAttribute("hold");o&&(this.hold=parseInt(o,10));var r=t.getAttribute("wait");r&&(this.wait=parseInt(r,10))},_disconnect:function(e){this._sendTerminate(e)},_doDisconnect:function(){this.sid=null,this.rid=Math.floor(4294967295*Math.random()),window.sessionStorage.removeItem("strophe-bosh-session")},_emptyQueue:function(){return 0===this._requests.length},_hitError:function(t){this.errors++,e.warn("request errored, status: "+t+", number of errors: "+this.errors),this.errors>4&&this._conn._onDisconnectTimeout()},_no_auth_received:function(t){t=t?t.stropheBind(this._conn):this._conn._connect_cb.stropheBind(this._conn);var n=this._buildBody();this._requests.push(new e.Request(n.tree(),this._onRequestStateChange.stropheBind(this,t.stropheBind(this._conn)),n.tree().getAttribute("rid"))),this._throttledRequestHandler()},_onDisconnectTimeout:function(){this._abortAllRequests()},_abortAllRequests:function(){for(var e;this._requests.length>0;)e=this._requests.pop(),e.abort=!0,e.xhr.abort(),e.xhr.onreadystatechange=function(){}},_onIdle:function(){var t=this._conn._data;if(this._conn.authenticated&&0===this._requests.length&&0===t.length&&!this._conn.disconnecting&&(e.info("no requests during idle cycle, sending blank request"),t.push(null)),!this._conn.paused){if(this._requests.length<2&&t.length>0){for(var n=this._buildBody(),s=0;s<t.length;s++)null!==t[s]&&("restart"===t[s]?n.attrs({to:this._conn.domain,"xml:lang":"en","xmpp:restart":"true","xmlns:xmpp":e.NS.BOSH}):n.cnode(t[s]).up());delete this._conn._data,this._conn._data=[],this._requests.push(new e.Request(n.tree(),this._onRequestStateChange.stropheBind(this,this._conn._dataRecv.stropheBind(this._conn)),n.tree().getAttribute("rid"))),this._throttledRequestHandler()}if(this._requests.length>0){var i=this._requests[0].age();null!==this._requests[0].dead&&this._requests[0].timeDead()>Math.floor(e.SECONDARY_TIMEOUT*this.wait)&&this._throttledRequestHandler(),i>Math.floor(e.TIMEOUT*this.wait)&&(e.warn("Request "+this._requests[0].id+" timed out, over "+Math.floor(e.TIMEOUT*this.wait)+" seconds since last activity"),this._throttledRequestHandler())}}},_onRequestStateChange:function(t,n){if(e.debug("request id "+n.id+"."+n.sends+" state changed to "+n.xhr.readyState),n.abort)return void(n.abort=!1);var s;if(4==n.xhr.readyState){s=0;try{s=n.xhr.status}catch(i){}if("undefined"==typeof s&&(s=0),this.disconnecting&&s>=400)return void this._hitError(s);var a=this._requests[0]==n,o=this._requests[1]==n;(s>0&&500>s||n.sends>5)&&(this._removeRequest(n),e.debug("request id "+n.id+" should now be removed")),200==s?((o||a&&this._requests.length>0&&this._requests[0].age()>Math.floor(e.SECONDARY_TIMEOUT*this.wait))&&this._restartRequest(0),e.debug("request id "+n.id+"."+n.sends+" got 200"),t(n),this.errors=0):(e.error("request id "+n.id+"."+n.sends+" error "+s+" happened"),(0===s||s>=400&&600>s||s>=12e3)&&(this._hitError(s),s>=400&&500>s&&(this._conn._changeConnectStatus(e.Status.DISCONNECTING,null),this._conn._doDisconnect()))),s>0&&500>s||n.sends>5||this._throttledRequestHandler()}},_processRequest:function(t){var n=this,s=this._requests[t],i=-1;try{4==s.xhr.readyState&&(i=s.xhr.status)}catch(a){e.error("caught an error in _requests["+t+"], reqStatus: "+i)}if("undefined"==typeof i&&(i=-1),s.sends>this._conn.maxRetries)return void this._conn._onDisconnectTimeout();var o=s.age(),r=!isNaN(o)&&o>Math.floor(e.TIMEOUT*this.wait),d=null!==s.dead&&s.timeDead()>Math.floor(e.SECONDARY_TIMEOUT*this.wait),c=4==s.xhr.readyState&&(1>i||i>=500);if((r||d||c)&&(d&&e.error("Request "+this._requests[t].id+" timed out (secondary), restarting"),s.abort=!0,s.xhr.abort(),s.xhr.onreadystatechange=function(){},this._requests[t]=new e.Request(s.xmlData,s.origFunc,s.rid,s.sends),s=this._requests[t]),0===s.xhr.readyState){e.debug("request id "+s.id+"."+s.sends+" posting");try{s.xhr.open("POST",this._conn.service,this._conn.options.sync?!1:!0),s.xhr.setRequestHeader&&s.xhr.setRequestHeader("Content-Type","text/xml; charset=utf-8")}catch(l){return e.error("XHR open failed."),this._conn.connected||this._conn._changeConnectStatus(e.Status.CONNFAIL,"bad-service"),void this._conn.disconnect()}var m=function(){if(s.date=new Date,n._conn.options.customHeaders){var e=n._conn.options.customHeaders;for(var t in e)e.hasOwnProperty(t)&&s.xhr.setRequestHeader(t,e[t])}s.xhr.send(s.data)};if(s.sends>1){var u=1e3*Math.min(Math.floor(e.TIMEOUT*this.wait),Math.pow(s.sends,3));setTimeout(m,u)}else m();s.sends++,this._conn.xmlOutput!==e.Connection.prototype.xmlOutput&&(s.xmlData.nodeName===this.strip&&s.xmlData.childNodes.length?this._conn.xmlOutput(s.xmlData.childNodes[0]):this._conn.xmlOutput(s.xmlData)),this._conn.rawOutput!==e.Connection.prototype.rawOutput&&this._conn.rawOutput(s.data)}else e.debug("_processRequest: "+(0===t?"first":"second")+" request has readyState of "+s.xhr.readyState)},_removeRequest:function(t){e.debug("removing request");var n;for(n=this._requests.length-1;n>=0;n--)t==this._requests[n]&&this._requests.splice(n,1);t.xhr.onreadystatechange=function(){},this._throttledRequestHandler()},_restartRequest:function(e){var t=this._requests[e];null===t.dead&&(t.dead=new Date),this._processRequest(e)},_reqToData:function(e){try{return e.getResponse()}catch(t){if("parsererror"!=t)throw t;this._conn.disconnect("strophe-parsererror")}},_sendTerminate:function(t){e.info("_sendTerminate was called");var n=this._buildBody().attrs({type:"terminate"});t&&n.cnode(t.tree());var s=new e.Request(n.tree(),this._onRequestStateChange.stropheBind(this,this._conn._dataRecv.stropheBind(this._conn)),n.tree().getAttribute("rid"));this._requests.push(s),this._throttledRequestHandler()},_send:function(){clearTimeout(this._conn._idleTimeout),this._throttledRequestHandler(),this._conn._idleTimeout=setTimeout(this._conn._onIdle.stropheBind(this._conn),100)},_sendRestart:function(){this._throttledRequestHandler(),clearTimeout(this._conn._idleTimeout)},_throttledRequestHandler:function(){this._requests?e.debug("_throttledRequestHandler called with "+this._requests.length+" requests"):e.debug("_throttledRequestHandler called with undefined requests"),this._requests&&0!==this._requests.length&&(this._requests.length>0&&this._processRequest(0),this._requests.length>1&&Math.abs(this._requests[0].rid-this._requests[1].rid)<this.window&&this._processRequest(1))}},e}),function(e,t){return t(Strophe,$build)}(this,function(e,t){return e.Websocket=function(e){this._conn=e,this.strip="wrapper";var t=e.service;if(0!==t.indexOf("ws:")&&0!==t.indexOf("wss:")){var n="";n+="ws"===e.options.protocol&&"https:"!==window.location.protocol?"ws":"wss",n+="://"+window.location.host,n+=0!==t.indexOf("/")?window.location.pathname+t:t,e.service=n}},e.Websocket.prototype={_buildStream:function(){return t("open",{xmlns:e.NS.FRAMING,to:this._conn.domain,version:"1.0"})},_check_streamerror:function(t,n){var s;if(s=t.getElementsByTagNameNS?t.getElementsByTagNameNS(e.NS.STREAM,"error"):t.getElementsByTagName("stream:error"),0===s.length)return!1;for(var i=s[0],a="",o="",r="urn:ietf:params:xml:ns:xmpp-streams",d=0;d<i.childNodes.length;d++){var c=i.childNodes[d];if(c.getAttribute("xmlns")!==r)break;"text"===c.nodeName?o=c.textContent:a=c.nodeName}var l="WebSocket stream error: ";return l+=a?a:"unknown",o&&(l+=" - "+a),e.error(l),this._conn._changeConnectStatus(n,a),this._conn._doDisconnect(),!0},_reset:function(){},_connect:function(){this._closeSocket(),this.socket=new WebSocket(this._conn.service,"xmpp"),this.socket.onopen=this._onOpen.stropheBind(this),this.socket.onerror=this._onError.stropheBind(this),this.socket.onclose=this._onClose.stropheBind(this),this.socket.onmessage=this._connect_cb_wrapper.stropheBind(this)},_connect_cb:function(t){var n=this._check_streamerror(t,e.Status.CONNFAIL);return n?e.Status.CONNFAIL:void 0},_handleStreamStart:function(t){var n=!1,s=t.getAttribute("xmlns");"string"!=typeof s?n="Missing xmlns in <open />":s!==e.NS.FRAMING&&(n="Wrong xmlns in <open />: "+s);var i=t.getAttribute("version");return"string"!=typeof i?n="Missing version in <open />":"1.0"!==i&&(n="Wrong version in <open />: "+i),n?(this._conn._changeConnectStatus(e.Status.CONNFAIL,n),this._conn._doDisconnect(),!1):!0},_connect_cb_wrapper:function(t){if(0===t.data.indexOf("<open ")||0===t.data.indexOf("<?xml")){var n=t.data.replace(/^(<\?.*?\?>\s*)*/,"");if(""===n)return;var s=(new DOMParser).parseFromString(n,"text/xml").documentElement;this._conn.xmlInput(s),this._conn.rawInput(t.data),this._handleStreamStart(s)&&this._connect_cb(s)}else if(0===t.data.indexOf("<close ")){this._conn.rawInput(t.data),this._conn.xmlInput(t);var i=t.getAttribute("see-other-uri");i?(this._conn._changeConnectStatus(e.Status.REDIRECT,"Received see-other-uri, resetting connection"),this._conn.reset(),this._conn.service=i,this._connect()):(this._conn._changeConnectStatus(e.Status.CONNFAIL,"Received closing stream"),this._conn._doDisconnect())}else{var a=this._streamWrap(t.data),o=(new DOMParser).parseFromString(a,"text/xml").documentElement;this.socket.onmessage=this._onMessage.stropheBind(this),this._conn._connect_cb(o,null,t.data)}},_disconnect:function(n){if(this.socket&&this.socket.readyState!==WebSocket.CLOSED){n&&this._conn.send(n);var s=t("close",{xmlns:e.NS.FRAMING});this._conn.xmlOutput(s);var i=e.serialize(s);this._conn.rawOutput(i);try{this.socket.send(i)}catch(a){e.info("Couldn't send <close /> tag.")}}this._conn._doDisconnect()},_doDisconnect:function(){e.info("WebSockets _doDisconnect was called"),this._closeSocket()},_streamWrap:function(e){return"<wrapper>"+e+"</wrapper>"},_closeSocket:function(){if(this.socket)try{this.socket.close()}catch(e){}this.socket=null},_emptyQueue:function(){return!0},_onClose:function(){this._conn.connected&&!this._conn.disconnecting?(e.error("Websocket closed unexcectedly"),this._conn._doDisconnect()):e.info("Websocket closed")},_no_auth_received:function(t){e.error("Server did not send any auth methods"),this._conn._changeConnectStatus(e.Status.CONNFAIL,"Server did not send any auth methods"),t&&(t=t.stropheBind(this._conn))(),this._conn._doDisconnect()},_onDisconnectTimeout:function(){},_abortAllRequests:function(){},_onError:function(t){e.error("Websocket error "+t),this._conn._changeConnectStatus(e.Status.CONNFAIL,"The WebSocket connection could not be established was disconnected."),this._disconnect()},_onIdle:function(){var t=this._conn._data;if(t.length>0&&!this._conn.paused){for(var n=0;n<t.length;n++)if(null!==t[n]){var s,i;s="restart"===t[n]?this._buildStream().tree():t[n],i=e.serialize(s),this._conn.xmlOutput(s),this._conn.rawOutput(i),this.socket.send(i)}this._conn._data=[]}},_onMessage:function(t){var n,s,i='<close xmlns="urn:ietf:params:xml:ns:xmpp-framing" />';if(t.data===i)return this._conn.rawInput(i),this._conn.xmlInput(t),void(this._conn.disconnecting||this._conn._doDisconnect());if(0===t.data.search("<open ")){if(n=(new DOMParser).parseFromString(t.data,"text/xml").documentElement,!this._handleStreamStart(n))return}else s=this._streamWrap(t.data),n=(new DOMParser).parseFromString(s,"text/xml").documentElement;return this._check_streamerror(n,e.Status.ERROR)?void 0:this._conn.disconnecting&&"presence"===n.firstChild.nodeName&&"unavailable"===n.firstChild.getAttribute("type")?(this._conn.xmlInput(n),void this._conn.rawInput(e.serialize(n))):void this._conn._dataRecv(n,t.data)},_onOpen:function(){e.info("Websocket open");var t=this._buildStream();this._conn.xmlOutput(t.tree());var n=e.serialize(t);this._conn.rawOutput(n),this.socket.send(n)},_reqToData:function(e){return e},_send:function(){this._conn.flush()},_sendRestart:function(){clearTimeout(this._conn._idleTimeout),this._conn._onIdle.stropheBind(this._conn)()}},e}),e?e(Strophe,$build,$msg,$iq,$pres):void 0}(function(e,t,n,s,i){window.Strophe=e,window.$build=t,window.$msg=n,window.$iq=s,window.$pres=i}),function(window,undefined){if("undefined"==typeof Strophe)throw"need Strophe";var Easemob=Easemob||{};Easemob.im=Easemob.im||{},Easemob.im.version="1.1.1";var https="https:"===location.protocol;window.URL=window.URL||window.webkitURL||window.mozURL||window.msURL,Strophe.Websocket.prototype._closeSocket=function(){var e=this;e.socket?setTimeout(function(){try{e.socket.close()}catch(t){}},0):e.socket=null};var Utils=function(){var e=function(){try{return new window.XMLHttpRequest}catch(e){return!1}},t=function(){try{return new window.ActiveXObject("Microsoft.XMLHTTP")}catch(e){return!1}};window.XDomainRequest&&(XDomainRequest.prototype.oldsend=XDomainRequest.prototype.send,XDomainRequest.prototype.send=function(){XDomainRequest.prototype.oldsend.apply(this,arguments),this.readyState=2}),Strophe.Request.prototype._newXHR=function(){var e=Utils.xmlrequest(!0);return e.overrideMimeType&&e.overrideMimeType("text/xml"),e.onreadystatechange=this.func.stropheBind(null,this),e};var n=function(n){n=n||!0;var s=e()||t();if("withCredentials"in s)return s;if(!n)return s;if("undefined"==typeof window.XDomainRequest)return s;var i=new XDomainRequest;return i.readyState=0,i.status=100,i.onreadystatechange=EMPTYFN,i.onload=function(){i.readyState=4,i.status=200;var e=new ActiveXObject("Microsoft.XMLDOM");e.async="false",e.loadXML(i.responseText),i.responseXML=e,i.response=i.responseText,i.onreadystatechange()},i.ontimeout=i.onerror=function(){i.readyState=4,i.status=500,i.onreadystatechange()},i},s=function(){if("ActiveXObject"in window)try{return new ActiveXObject("ShockwaveFlash.ShockwaveFlash")}catch(e){return 0}else if(navigator.plugins&&navigator.plugins.length>0)return navigator.plugins["Shockwave Flash"];return 0}(),i=n(),a="undefined"!=typeof FormData,o="undefined"!=typeof Blob,r=i.setRequestHeader||!1,d=i.overrideMimeType||!1,c=r&&a,l=c||s,m=r&&(o||d);return{hasFormData:a,hasBlob:o,isCanSetRequestHeader:r,hasOverrideMimeType:d,isCanUploadFileAsync:c,isCanUploadFile:l,isCanDownLoadFile:m,isSupportWss:function(){var e=[/MQQBrowser[\/]5([.]\d+)?\sTBS/];if(!window.WebSocket)return!1;for(var t=window.navigator.userAgent,n=0,s=e.length;s>n;n++)if(e[n].test(t))return!1;return!0}(),stringify:function(e){if("undefined"!=typeof JSON&&JSON.stringify)return JSON.stringify(e);var t="",n=[],s=function(e){var i=!1;"[object Array]"===Object.prototype.toString.call(e)?(n.push("]","["),i=!0):"[object Object]"===Object.prototype.toString.call(e)&&n.push("}","{");for(var a in e)"[object Null]"===Object.prototype.toString.call(e[a])?e[a]="null":"[object Undefined]"===Object.prototype.toString.call(e[a])&&(e[a]="undefined"),t+=e[a]&&"object"==typeof e[a]?","+(i?"":'"'+a+'":'+(i?'"':""))+s(e[a]):',"'+(i?"":a+'":"')+e[a]+'"';return""!=t&&(t=t.slice(1)),n.pop()+t+n.pop()};return s(e)},registerUser:function(e){var t=e.orgName||"",n=e.appName||"",s=e.appKey||"";if(!t&&!n&&s){var i=s.split("#");2===i.length&&(t=i[0],n=i[1])}if(!t&&!n)return void e.error({type:EASEMOB_IM_RESISTERUSER_ERROR,msg:"没有指定开发者信息"});var a=e.https||a,o=e.apiUrl||(a?"https":"http")+"://a1.easemob.com",r=o+"/"+t+"/"+n+"/users",d={username:e.username,password:e.password,nickname:e.nickname||""},c=Utils.stringify(d),e={url:r,dataType:"json",data:c,success:e.success||EMPTYFN,error:e.error||EMPTYFN};return Utils.ajax(e)},login2UserGrid:function(e){e=e||{};var t=e.appKey||"",n=t.split("#");if(2!==n.length)return r({type:EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR,msg:"请指定正确的开发者信息(appKey)"}),!1;var s=n[0],i=n[1];if(!s)return r({type:EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR,msg:"请指定正确的开发者信息(appKey)"}),!1;if(!i)return r({type:EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR,msg:"请指定正确的开发者信息(appKey)"}),!1;var a=a||e.https,o=e.success||EMPTYFN,r=e.error||EMPTYFN,d=e.user||"",c=e.pwd||"",l=e.apiUrl||(a?"https":"http")+"://a1.easemob.com",m={grant_type:"password",username:d,password:c},u=Utils.stringify(m),e={url:l+"/"+s+"/"+i+"/token",dataType:"json",data:u,success:o||EMPTYFN,error:r||EMPTYFN};return Utils.ajax(e)},getFileUrl:function(e){var t={url:"",filename:"",filetype:"",data:""},n=document.getElementById(e);if(!Utils.isCanUploadFileAsync||!n)return t;if(window.URL.createObjectURL){var s=n.files;if(s.length>0){var i=s.item(0);t.data=i,t.url=window.URL.createObjectURL(i),t.filename=i.name||""}}else{var i=document.getElementById(e).value;t.url=i;var a=i.lastIndexOf("/"),o=i.lastIndexOf("\\"),r=Math.max(a,o);0>r?t.filename=i:t.filename=i.substring(r+1)}var d=t.filename.lastIndexOf(".");return-1!=d&&(t.filetype=t.filename.substring(d+1).toLowerCase()),t},getFileSizeFn:function(e){var t=document.getElementById(e),n=0;if(t)if(t.files)t.files.length>0&&(n=t.files[0].size);else if(t.select&&"ActiveXObject"in window){t.select();var s=new ActiveXObject("Scripting.FileSystemObject"),t=s.GetFile(t.value);n=t.Size}return n},hasFlash:s,trim:function(e){return e="string"==typeof e?e:"",e.trim?e.trim():e.replace(/^\s|\s$/g,"")},parseEmotions:function(e){if("undefined"==typeof Easemob.im.EMOTIONS||"undefined"==typeof Easemob.im.EMOTIONS.map)return e;var t=Easemob.im.EMOTIONS;for(var n in t.map)if(t.map.hasOwnProperty(n))for(;e.indexOf(n)>-1;)e=e.replace(n,'<img class="em-emotion" src="'+t.path+t.map[n]+'" alt="表情">');return e},parseLink:function(e){var t=/(https?\:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(\:[0-9]{2,4})?\/?((\.[:_0-9a-zA-Z-]+)|[:_0-9a-zA-Z-]*\/?)*\??[:_#@*&%0-9a-zA-Z-\/=]*/gm;return e=e.replace(t,function(e){var t=/^https?/gm.test(e);return"<a href='"+(t?e:"//"+e)+"' target='_blank'>"+e+"</a>"})},parseJSON:function(e){if(window.JSON&&window.JSON.parse)return window.JSON.parse(e+"");var t,n=null,s=Utils.trim(e+"");return s&&!Utils.trim(s.replace(/(,)|(\[|{)|(}|])|"(?:[^"\\\r\n]|\\["\\\/bfnrt]|\\u[\da-fA-F]{4})*"\s*:?|true|false|null|-?(?!0\d)\d+(?:\.\d+|)(?:[eE][+-]?\d+|)/g,function(e,s,i,a){return t&&s&&(n=0),0===n?e:(t=i||s,n+=!a-!i,"")}))?Function("return "+s)():Function("Invalid JSON: "+e)()},parseUploadResponse:function(e){return e.indexOf("callback")>-1?e.slice(9,-1):e},parseDownloadResponse:function(e){return e&&e.type&&"application/json"===e.type||0>Object.prototype.toString.call(e).indexOf("Blob")?this.url+"?token=":window.URL.createObjectURL(e)},uploadFile:function(e){e=e||{},e.onFileUploadProgress=e.onFileUploadProgress||EMPTYFN,e.onFileUploadComplete=e.onFileUploadComplete||EMPTYFN,e.onFileUploadError=e.onFileUploadError||EMPTYFN,e.onFileUploadCanceled=e.onFileUploadCanceled||EMPTYFN;var t=e.accessToken||this.context.accessToken;if(!t)return void e.onFileUploadError({type:EASEMOB_IM_UPLOADFILE_NO_LOGIN,msg:"用户未登录到usergrid服务器,无法使用文件上传功能",id:e.id});if(orgName=e.orgName||this.context.orgName||"",appName=e.appName||this.context.appName||"",appKey=e.appKey||this.context.appKey||"",!orgName&&!appName&&appKey){var n=appKey.split("#");2==n.length&&(orgName=n[0],appName=n[1])}if(!orgName&&!appName)return void e.onFileUploadError({type:EASEMOB_IM_UPLOADFILE_ERROR,msg:"没有指定开发者信息",id:e.id});var s=e.apiUrl||"http://a1.easemob.com",i=s+"/"+orgName+"/"+appName+"/chatfiles";if(!Utils.isCanUploadFileAsync)return void(Utils.hasFlash&&"function"==typeof e.flashUpload?e.flashUpload&&e.flashUpload(i,e):this.onError({type:EASEMOB_IM_UPLOADFILE_BROWSER_ERROR,msg:"当前浏览器不支持异步上传！"}));var a=e.file.data?e.file.data.size:undefined;if(a>EASEMOB_IM_FILESIZE_LIMIT)return void e.onFileUploadError({type:EASEMOB_IM_UPLOADFILE_ERROR,msg:"上传文件超过服务器大小限制（10M）",id:e.id});if(0>=a)return void e.onFileUploadError({type:EASEMOB_IM_UPLOADFILE_ERROR,msg:"上传文件大小为0",id:e.id});var o=Utils.xmlrequest(),r=function(t){e.onFileUploadError({type:EASEMOB_IM_UPLOADFILE_ERROR,msg:"上传文件失败",id:e.id,xhr:o})};o.upload&&o.upload.addEventListener("progress",e.onFileUploadProgress,!1),o.addEventListener?(o.addEventListener("abort",e.onFileUploadCanceled,!1),o.addEventListener("load",function(t){try{var n=Utils.parseJSON(o.responseText);e.onFileUploadComplete(n)}catch(t){e.onFileUploadError({type:EASEMOB_IM_UPLOADFILE_ERROR,msg:"上传文件失败,服务端返回值值不正确",data:o.responseText,id:e.id,xhr:o})}},!1),o.addEventListener("error",r,!1)):o.onreadystatechange&&(o.onreadystatechange=function(){if(4===o.readyState)if(200===ajax.status)try{var t=Utils.parseJSON(o.responseText);e.onFileUploadComplete(t)}catch(n){e.onFileUploadError({type:EASEMOB_IM_UPLOADFILE_ERROR,msg:"上传文件失败,服务端返回值不正确",data:o.responseText,id:e.id,xhr:o})}else e.onFileUploadError({type:EASEMOB_IM_UPLOADFILE_ERROR,msg:"上传文件失败,服务端返回异常",data:o.responseText,id:e.id,xhr:o});else o.abort(),e.onFileUploadCanceled()}),o.open("POST",i),o.setRequestHeader("restrict-access","true"),o.setRequestHeader("Accept","*/*"),o.setRequestHeader("Authorization","Bearer "+t);var d=new FormData;d.append("file",e.file.data),o.send(d)},downloadFn:function(e){e.onFileDownloadComplete=e.onFileDownloadComplete||EMPTYFN,e.onFileDownloadError=e.onFileDownloadError||EMPTYFN;var t=e.accessToken||"";if(!t)return void e.onFileDownloadError({type:EASEMOB_IM_DOWNLOADFILE_NO_LOGIN,msg:"用户未登录到usergrid服务器,无法使用文件下载功能",id:e.id});var n=function(t){e.onFileDownloadError({type:EASEMOB_IM_DOWNLOADFILE_ERROR,msg:"下载文件失败",id:e.id,xhr:s})};if(!Utils.isCanDownLoadFile)return void e.onFileDownloadComplete();var s=Utils.xmlrequest();"addEventListener"in s?(s.addEventListener("load",function(t){e.onFileDownloadComplete(s.response,s)},!1),s.addEventListener("error",n,!1)):"onreadystatechange"in s&&(s.onreadystatechange=function(){4===s.readyState?200===ajax.status?e.onFileDownloadComplete(s.response,s):e.onFileDownloadError({type:EASEMOB_IM_DOWNLOADFILE_ERROR,msg:"下载文件失败,服务端返回异常",id:e.id,xhr:s}):(s.abort(),e.onFileDownloadError({type:EASEMOB_IM_DOWNLOADFILE_ERROR,msg:"错误的下载状态,退出下载",id:e.id,xhr:s}))});var i=e.method||"GET",a=e.responseType||"blob",o=e.mimeType||"text/plain; charset=x-user-defined";s.open(i,e.url),"undefined"!=typeof Blob?s.responseType=a:s.overrideMimeType(o);var r={"X-Requested-With":"XMLHttpRequest",Accept:"application/octet-stream","share-secret":e.secret,Authorization:"Bearer "+t},d=e.headers||{};for(var c in d)r[c]=d[c];for(var c in r)r[c]&&s.setRequestHeader(c,r[c]);s.send(null)},parseTextMessage:function(e,t){if("string"!=typeof e)return void conn.onError({type:EASEMOB_IM_MESSAGE_REC_TEXT_ERROR,msg:"不合法的消息内容格式，请检查发送消息内容！"});if("[object Object]"!==Object.prototype.toString.call(t))return{isemotion:!1,body:[{type:"txt",data:e}]};var n=e,s=[],i=/\[[^[\]]{2,3}\]/gm,a=n.match(i);if(!a||a.length<1)return{isemotion:!1,body:[{type:"txt",data:e}]};for(var o=!1,r=0;r<a.length;r++){var d=n.substring(0,n.indexOf(a[r])),c=Easemob.im.EMOTIONS.map[a[r]];if(d&&s.push({type:"txt",data:d}),c){var l=Easemob.im.EMOTIONS.map?Easemob.im.EMOTIONS.path+c:null;l?(o=!0,s.push({type:"emotion",data:l})):s.push({type:"txt",data:a[r]});var m=n.indexOf(a[r])+a[r].length;n=n.substring(m)}else s.push({type:"txt",data:a[r]})}return n&&s.push({type:"txt",data:n}),o?{isemotion:o,body:s}:{isemotion:!1,body:[{type:"txt",data:e}]}},xmlrequest:n,ajax:function(e){var t=e.dataType||"text",n=e.success||EMPTYFN,s=e.error||EMPTYFN,i=Utils.xmlrequest();if(i.onreadystatechange=function(){if(4===i.readyState){var e=i.status||0;if(200===e){if("text"===t)return void n(i.responseText,i);if("json"===t){try{var a=Utils.parseJSON(i.responseText);n(a,i)}catch(o){s(i.responseText,i,"错误的数据,无法转换为json")}return}return"xml"===t?void(i.responseXML&&i.responseXML.documentElement?n(i.responseXML.documentElement,i):s(i.responseText,i,"浏览器不支持ajax返回xml对象")):void n(i.response||i.responseText,i)}if("json"===t){try{var a=Utils.parseJSON(i.responseText);s(a,i,"服务器返回错误信息")}catch(o){s(i.responseText,i,"服务器返回错误信息")}return}return"xml"===t?void(i.responseXML&&i.responseXML.documentElement?s(i.responseXML.documentElement,i,"服务器返回错误信息"):s(i.responseText,i,"服务器返回错误信息")):void s(i.responseText,i,"服务器返回错误信息")}0===i.readyState&&s(i.responseText,i,"服务器异常")},e.responseType){if(!i.responseType)return s("",i,"当前浏览器不支持设置响应类型"),null;i.responseType=e.responseType}if(e.mimeType){if(!Utils.hasOverrideMimeType)return s("",i,"当前浏览器不支持设置mimeType"),null;i.overrideMimeType(e.mimeType)}var a=e.type||"POST",o=e.data||null,r="";if("get"===a.toLowerCase()&&o){for(var d in o)o.hasOwnProperty(d)&&(r+=d+"="+o[d]+"&");r=r?r.slice(0,-1):r,e.url+=(e.url.indexOf("?")>0?"&":"?")+(r?r+"&":r)+"_v="+(new Date).getTime(),o=null,r=null}if(i.open(a,e.url),Utils.isCanSetRequestHeader){var c=e.headers||{};for(var l in c)c.hasOwnProperty(l)&&i.setRequestHeader(l,c[l])}return i.send(o),i}}}(),EmMessage=function(e,t){return!this instanceof EmMessage?new EmMessage(e):(this._msg={},"function"==typeof EmMessage[e]&&(EmMessage[e].prototype.setGroup=this.setGroup,this._msg=new EmMessage[e](t)),this._msg)};EmMessage.prototype.setGroup=function(e){this.body.group=e};var _msgHash={},Message=function(e){return!this instanceof Message?new Message(e,conn):void(this.msg=e)};Message.prototype.send=function(e){var t=this,n=function(t){t.ext=t.ext||{},t.ext.weichat=t.ext.weichat||{},t.ext.weichat.originType=t.ext.weichat.originType||"webim";var n={from:e.context.userId||"",to:t.to,bodies:[t.body],ext:t.ext||{}},s=Utils.stringify(n),i=$msg({type:t.group||"chat",to:t.toJid,id:t.id,xmlns:"jabber:client"}).c("body").t(s);t.roomType&&i.up().c("roomtype",{xmlns:"easemob:x:roomtype",type:"chatroom"}),setTimeout(function(){_msgHash[t.id]&&_msgHash[t.id].msg.fail instanceof Function&&_msgHash[t.id].msg.fail(t.id);
-},6e4),e.sendCommand(i.tree(),t.id)};if(t.msg.file){if(t.msg.body&&t.msg.body.url)return void n(t.msg);var s=t.msg.onFileUploadComplete,i=function(e){if(e.entities[0]["file-metadata"]){var i=e.entities[0]["file-metadata"]["content-length"];t.msg.file_length=i,t.msg.filetype=e.entities[0]["file-metadata"]["content-type"],i>204800&&(t.msg.thumbnail=!0)}t.msg.body={type:t.msg.type||"file",url:e.uri+"/"+e.entities[0].uuid,secret:e.entities[0]["share-secret"],filename:t.msg.file.filename||t.msg.filename,size:{width:t.msg.width||0,height:t.msg.height||0},length:t.msg.file_length||0,file_length:t.msg.file_length||0,filetype:t.msg.filetype},n(t.msg),s instanceof Function&&s(e,t.msg.id)};t.msg.onFileUploadComplete=i,Utils.uploadFile.call(e,t.msg)}else t.msg.body={type:"chat"===t.msg.type?"txt":t.msg.type,msg:t.msg.msg},"cmd"===t.msg.type?t.msg.body.action=t.msg.action:"loc"===t.msg.type&&(t.msg.body.addr=t.msg.addr,t.msg.body.lat=t.msg.lat,t.msg.body.lng=t.msg.lng),n(t.msg)};var Connection=function(){var _networkSt,_listenNetwork=function(e,t){window.addEventListener?(window.addEventListener("online",e),window.addEventListener("offline",t)):window.attachEvent&&(document.body?(document.body.attachEvent("onoffline",t),document.body.attachEvent("onoffline",t)):window.attachEvent("load",function(){document.body.attachEvent("onoffline",t),document.body.attachEvent("onoffline",t)}))},_parseRoomFn=function(e){var t=[],n=e.getElementsByTagName("item");if(n)for(var s=0;s<n.length;s++){var i=n[s],a=i.getAttribute("jid"),o=a.split("@")[0],r={jid:a,name:i.getAttribute("name"),roomId:o.split("_")[1]};t.push(r)}return t},_parseRoomOccupantsFn=function(e){var t=[],n=e.getElementsByTagName("item");if(n)for(var s=0;s<n.length;s++){var i=n[s],a={jid:i.getAttribute("jid"),name:i.getAttribute("name")};t.push(a)}return t},_parseResponseMessage=function(msginfo){var parseMsgData={errorMsg:!0,data:[]},msgBodies=msginfo.getElementsByTagName("body");if(msgBodies){for(var i=0;i<msgBodies.length;i++){var msgBody=msgBodies[i],childNodes=msgBody.childNodes;if(childNodes&&childNodes.length>0){var childNode=msgBody.childNodes[0];if(childNode.nodeType==Strophe.ElementType.TEXT){var jsondata=childNode.wholeText||childNode.nodeValue;jsondata=jsondata.replace("\n","<br>");try{var data=eval("("+jsondata+")");parseMsgData.errorMsg=!1,parseMsgData.data=[data]}catch(e){}}}}var delayTags=msginfo.getElementsByTagName("delay");if(delayTags&&delayTags.length>0){var delayTag=delayTags[0],delayMsgTime=delayTag.getAttribute("stamp");delayMsgTime&&(parseMsgData.delayTimeStamp=delayMsgTime)}}else{var childrens=msginfo.childNodes;if(childrens&&childrens.length>0){var child=msginfo.childNodes[0];if(child.nodeType==Strophe.ElementType.TEXT)try{var data=eval("("+child.nodeValue+")");parseMsgData.errorMsg=!1,parseMsgData.data=[data]}catch(e){}}}return parseMsgData},_parseNameFromJidFn=function(e,t){t=t||"";var n=e,s=n.indexOf("_");-1!==s&&(n=n.substring(s+1));var i=n.indexOf("@"+t);return-1!==i&&(n=n.substring(0,i)),n},_parseFriendFn=function(e){var t=[],n=e.getElementsByTagName("item");if(n)for(var s=0;s<n.length;s++){var i=n[s],a=i.getAttribute("jid");if(a){var o=i.getAttribute("subscription"),r={subscription:o,jid:a},d=i.getAttribute("ask");d&&(r.ask=d);var c=i.getAttribute("name");if(c)r.name=c;else{var l=_parseNameFromJidFn(a);r.name=l}var m=[];Strophe.forEachChild(i,"group",function(e){m.push(Strophe.getText(e))}),r.groups=m,t.push(r)}}return t},_dologin2IM=function(e,t){var n=e.access_token||"";if(""==n){var s=Utils.stringify(e);return void t.onError({type:EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR,msg:"登录失败,"+s,data:e,xhr:xhr})}t.context.accessToken=e.access_token,t.context.accessTokenExpires=e.expires_in;var i=null;if(t.isOpening()&&t.context.stropheConn)i=t.context.stropheConn;else{if(t.isOpened()&&t.context.stropheConn)return;i=new Strophe.Connection(t.url,{inactivity:t.inactivity,maxRetries:t.maxRetries,pollingTime:t.pollingTime})}var a=function(e,n){_login2ImCallback(e,n,t)};t.context.stropheConn=i,t.route?i.connect(t.context.jid,"$t$"+n,a,t.wait,t.hold,t.route):i.connect(t.context.jid,"$t$"+n,a,t.wait,t.hold)},_parseMessageType=function(e){var t="normal",n=e.getElementsByTagName("received");if(n&&n.length>0&&"urn:xmpp:receipts"===n[0].namespaceURI)t="received";else{var s=e.getElementsByTagName("invite");s&&s.length>0&&(t="invite")}return t},_handleQueueMessage=function(e){for(var t in _msgHash)_msgHash.hasOwnProperty(t)&&_msgHash[t].send(e)},_login2ImCallback=function(e,t,n){if(e==Strophe.Status.CONNFAIL)n.onError({type:EASEMOB_IM_CONNCTION_SERVER_CLOSE_ERROR,msg:t,reconnect:!0});else if(e==Strophe.Status.ATTACHED||e==Strophe.Status.CONNECTED){var s=function(e){var t=_parseMessageType(e);return"received"===t?(n.handleReceivedMessage(e),!0):"invite"===t?(n.handleInviteMessage(e),!0):(n.handleMessage(e),!0)},i=function(e){return n.handlePresence(e),!0},a=function(e){return n.handlePing(e),!0},o=function(e){return n.handleIq(e),!0};n.addHandler(s,null,"message",null,null,null),n.addHandler(i,null,"presence",null,null,null),n.addHandler(a,"urn:xmpp:ping","iq","get",null,null),n.addHandler(o,"jabber:iq:roster","iq","set",null,null),n.context.status=STATUS_OPENED;var r=[EASEMOB_IM_MESSAGE_REC_TEXT,EASEMOB_IM_MESSAGE_REC_EMOTION];Utils.isCanDownLoadFile&&(r.push(EASEMOB_IM_MESSAGE_REC_PHOTO),r.push(EASEMOB_IM_MESSAGE_REC_AUDIO_FILE));var d=[EASEMOB_IM_MESSAGE_SED_TEXT];Utils.isCanUploadFile&&(d.push(EASEMOB_IM_MESSAGE_REC_PHOTO),d.push(EASEMOB_IM_MESSAGE_REC_AUDIO_FILE)),n.notifyVersion(),n.retry&&_handleQueueMessage(n),n.onOpened({canReceive:r,canSend:d,accessToken:n.context.accessToken}),n.heartBeat()}else e==Strophe.Status.DISCONNECTING?n.isOpened()&&(n.stopHeartBeat(),n.context.status=STATUS_CLOSING,n.onError({type:EASEMOB_IM_CONNCTION_SERVER_CLOSE_ERROR,msg:t,reconnect:!0})):e==Strophe.Status.DISCONNECTED?(n.context.status=STATUS_CLOSED,n.clear(),n.onClosed()):e==Strophe.Status.AUTHFAIL?(n.onError({type:EASEMOB_IM_CONNCTION_AUTH_ERROR,msg:"登录失败,请输入正确的用户名和密码"}),n.clear()):e==Strophe.Status.ERROR&&n.onError({type:EASEMOB_IM_CONNCTION_SERVER_ERROR,msg:t||"服务器异常"})},_getJid=function(e,t){var n=e.toJid||"";if(""===n){var s=t.context.appKey||"",i=s+"_"+e.to+"@"+t.domain;e.resource&&(i=i+"/"+e.resource),n=i}return n},_innerCheck=function(e,t){if(e=e||{},""==e.user)return t.onError({type:EASEMOB_IM_CONNCTION_USER_NOT_ASSIGN_ERROR,msg:"未指定用户"}),!1;var n=e.user||"",s=e.appKey||"",i=s.split("#");if(2!==i.length)return t.onError({type:EASEMOB_IM_CONNCTION_OPEN_ERROR,msg:"请指定正确的开发者信息(appKey)"}),!1;var a=i[0],o=i[1];if(!a)return t.onError({type:EASEMOB_IM_CONNCTION_OPEN_ERROR,msg:"请指定正确的开发者信息(appKey)"}),!1;if(!o)return t.onError({type:EASEMOB_IM_CONNCTION_OPEN_ERROR,msg:"请指定正确的开发者信息(appKey)"}),!1;var r=s+"_"+n.toLowerCase()+"@"+t.domain,d=e.resource||"webim";return t.multiResources&&(d+=n+(new Date).getTime()+Math.floor(1e6*Math.random().toFixed(6))),t.context.jid=r+"/"+d,t.context.userId=n,t.context.appKey=s,t.context.appName=o,t.context.orgName=a,!0},_getXmppUrl=function(e,t){if(/^(ws|http)s?:\/\/?/.test(e))return e;var n={prefix:"http",base:"://"+(e||"im-api.easemob.com"),suffix:"/http-bind/"};return t&&Utils.isSupportWss?(n.prefix="wss",n.suffix="/ws/"):t?n.prefix="https":window.WebSocket&&(n.prefix="ws",n.suffix="/ws/"),n.prefix+n.base+n.suffix},connection=function(e){if(!this instanceof Connection)return new Connection(e);var e=e||{};this.multiResources=e.multiResources||!1,this.wait=e.wait||30,this.retry=e.retry||!1,this.https=e.https||https,this.url=_getXmppUrl(e.url,this.https),this.hold=e.hold||1,this.route=e.route||null,this.domain=e.domain||"easemob.com",this.inactivity=e.inactivity||30,this.heartBeatWait=e.heartBeatWait||6e4,this.maxRetries=e.maxRetries||5,this.pollingTime=e.pollingTime||800,this.stropheConn=!1,this.context={status:STATUS_INIT}};return connection.prototype.listen=function(e){e.url&&(this.url=_getXmppUrl(e.url,this.https)),this.onOpened=e.onOpened||EMPTYFN,this.onClosed=e.onClosed||EMPTYFN,this.onTextMessage=e.onTextMessage||EMPTYFN,this.onEmotionMessage=e.onEmotionMessage||EMPTYFN,this.onPictureMessage=e.onPictureMessage||EMPTYFN,this.onAudioMessage=e.onAudioMessage||EMPTYFN,this.onVideoMessage=e.onVideoMessage||EMPTYFN,this.onFileMessage=e.onFileMessage||EMPTYFN,this.onLocationMessage=e.onLocationMessage||EMPTYFN,this.onCmdMessage=e.onCmdMessage||EMPTYFN,this.onPresence=e.onPresence||EMPTYFN,this.onRoster=e.onRoster||EMPTYFN,this.onError=e.onError||EMPTYFN,this.onReceivedMessage=e.onReceivedMessage||EMPTYFN,this.onInviteMessage=e.onInviteMessage||EMPTYFN,this.onOffline=e.onOffline||EMPTYFN,this.onOnline=e.onOnline||EMPTYFN,_listenNetwork(this.onOnline,this.onOffline)},connection.prototype.heartBeat=function(){var e=this;if(!e.heartBeatID){var t={to:e.domain,type:"normal"};e.heartBeatID=setInterval(function(){e.sendHeartBeatMessage(t)},e.heartBeatWait)}},connection.prototype.sendHeartBeatMessage=function(e){var t={},n=Utils.stringify(t),s=$msg({to:e.to,type:e.type,id:this.getUniqueId(),xmlns:"jabber:client"}).c("body").t(n);this.sendCommand(s.tree())},connection.prototype.stopHeartBeat=function(){this.heartBeatID=clearInterval(this.heartBeatID)},connection.prototype.sendReceiptsMessage=function(e){var t=$msg({from:this.context.jid||"",to:"easemob.com",id:e.id||""}).c("received",{xmlns:"urn:xmpp:receipts",id:e.id||""});this.sendCommand(t.tree())},connection.prototype.open=function(e){var t=_innerCheck(e,this);if(t){var n=this;if(!n.isOpening()&&!n.isOpened())if(e.accessToken)e.access_token=e.accessToken,_dologin2IM(e,n);else{var s=e.apiUrl||(this.https?"https":"http")+"://a1.easemob.com",i=this.context.userId,a=e.pwd||"",o=this.context.appName,r=this.context.orgName,d=function(e,t){n.context.status=STATUS_DOLOGIN_IM,_dologin2IM(e,n)},c=function(e,t,s){n.clear(),e.error&&e.error_description?n.onError({type:EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR,msg:"登录失败,"+e.error_description,data:e,xhr:t}):n.onError({type:EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR,msg:"登录失败",data:e,xhr:t})};this.context.status=STATUS_DOLOGIN_USERGRID;var l={grant_type:"password",username:i,password:a},m=Utils.stringify(l),e={url:s+"/"+r+"/"+o+"/token",dataType:"json",data:m,success:d||EMPTYFN,error:c||EMPTYFN};Utils.ajax(e)}}},connection.prototype.attach=function(e){var t=_innerCheck(e,this);if(t){e=e||{};var n=e.accessToken||"";if(""==n)return void this.onError({type:EASEMOB_IM_CONNCTION_ATTACH_USERGRID_ERROR,msg:"未指定用户的accessToken"});var s=e.sid||"";if(""===s)return void this.onError({type:EASEMOB_IM_CONNCTION_ATTACH_ERROR,msg:"未指定用户的会话信息"});var i=e.rid||"";if(""===i)return void this.onError({type:EASEMOB_IM_CONNCTION_ATTACH_ERROR,msg:"未指定用户的消息id"});var a=new Strophe.Connection(this.url,{inactivity:this.inactivity,maxRetries:this.maxRetries,pollingTime:this.pollingTime});this.context.accessToken=n,this.context.stropheConn=a,this.context.status=STATUS_DOLOGIN_IM;var o=this,r=function(e,t){_login2ImCallback(e,t,o)},d=this.context.jid,c=this.wait,l=this.hold,m=this.wind||5;a.attach(d,s,i,r,c,l,m)}},connection.prototype.close=function(){var e=this.context.status;e!=STATUS_INIT&&(this.isClosed()||this.isClosing()||(this.stopHeartBeat(),this.context.status=STATUS_CLOSING,this.context.stropheConn.disconnect()))},connection.prototype.addHandler=function(e,t,n,s,i,a,o){this.context.stropheConn.addHandler(e,t,n,s,i,a,o)},connection.prototype.notifyVersion=function(e,t){var n=(_getJid({},this),$iq({from:this.context.jid||"",to:this.domain,type:"result"}).c("query",{xmlns:"jabber:iq:version"}).c("name").t("easemob").up().c("version").t(Easemob.im.version).up().c("os").t("webim"));e=e||EMPTYFN,error=t||this.onError;var s=function(e){error({type:EASEMOB_IM_CONNCTION_NOTIFYVERSION_ERROR,msg:"发送版本信息给服务器时失败",data:e})};this.context.stropheConn.sendIQ(n.tree(),e,s)},connection.prototype.handlePresence=function(e){if(!this.isClosed()){var t=e.getAttribute("from")||"",n=e.getAttribute("to")||"",s=e.getAttribute("type")||"",i=e.getAttribute("presence_type")||"",a=_parseNameFromJidFn(t),o=_parseNameFromJidFn(n),r={from:a,to:o,fromJid:t,toJid:n,type:s,chatroom:e.getElementsByTagName("roomtype").length?!0:!1},d=e.getElementsByTagName("show");if(d&&d.length>0){var c=d[0];r.show=Strophe.getText(c)}var l=e.getElementsByTagName("status");if(l&&l.length>0){var m=l[0];r.status=Strophe.getText(m),r.code=m.getAttribute("code")}var u=e.getElementsByTagName("priority");if(u&&u.length>0){var h=u[0];r.priority=Strophe.getText(h)}var p=e.getElementsByTagName("error");if(p&&p.length>0){var p=p[0];r.error={code:p.getAttribute("code")}}var g=e.getElementsByTagName("destroy");if(g&&g.length>0){var g=g[0];r.destroy=!0;var f=g.getElementsByTagName("reason");f&&f.length>0&&(r.reason=Strophe.getText(f[0]))}if(r.chatroom){var b=t.slice(t.lastIndexOf("/")+1);b===this.context.userId&&(""!==r.type||r.code?("unavailable"===i||"unavailable"===r.type)&&(r.status?110==r.code?r.type="leaveChatRoom":r.error&&406==r.error.code&&(r.type="joinChatRoomFailed"):r.type="leaveChatRoom"):r.type="joinChatRoomSuccess")}else("unavailable"===i||"unavailable"===s)&&(r.destroy?r.type="deleteGroupChat":(307==r.code||321==r.code)&&(r.type="leaveGroup"));this.onPresence(r,e)}},connection.prototype.handlePing=function(e){if(!this.isClosed()){var t=e.getAttribute("id"),n=e.getAttribute("from"),s=e.getAttribute("to"),i=$iq({from:s,to:n,id:t,type:"result"});this.sendCommand(i.tree())}},connection.prototype.handleIq=function(e){var t=e.getAttribute("id"),n=e.getAttribute("from")||"",s=(_parseNameFromJidFn(n),this.context.jid),i=(this.context.userId,$iq({type:"result",id:t,from:s}));this.sendCommand(i.tree());var a=e.getElementsByTagName("query");if(a&&a.length>0){var o=a[0],r=_parseFriendFn(o);this.onRoster(r)}return!0},connection.prototype.handleMessage=function(e){if(!this.isClosed()){var t=e.getAttribute("id")||"";this.sendReceiptsMessage({id:t});var n=_parseResponseMessage(e);if(n.errorMsg)return void this.handlePresence(e);var s=n.data;for(var i in s)if(s.hasOwnProperty(i)){var a=s[i];if(a.from&&a.to){var o=a.from.toLowerCase(),r=a.to.toLowerCase(),d=a.ext||{},c="",l=e.getElementsByTagName("roomtype");c=l.length?l[0].getAttribute("type")||"chat":e.getAttribute("type")||"chat";var m=a.bodies;if(m&&0!=m.length){var u=a.bodies[0],h=u.type;if("txt"===h){var p=u.msg,g=Utils.parseTextMessage(p,Easemob.im.EMOTIONS);g.isemotion?this.onEmotionMessage({id:t,type:c,from:o,to:r,delay:n.delayTimeStamp,data:g.body,ext:d}):this.onTextMessage({id:t,type:c,from:o,to:r,delay:n.delayTimeStamp,data:p,ext:d})}else if("img"===h){var f=0,b=0;u.size&&(f=u.size.width,b=u.size.height);var a={id:t,type:c,from:o,to:r,url:u.url,secret:u.secret,filename:u.filename,thumb:u.thumb,thumb_secret:u.thumb_secret,file_length:u.file_length||"",width:f,height:b,filetype:u.filetype||"",accessToken:this.context.accessToken||"",ext:d,delay:n.delayTimeStamp};this.onPictureMessage(a)}else"audio"===h?this.onAudioMessage({id:t,type:c,from:o,to:r,url:u.url,secret:u.secret,filename:u.filename,length:u.length||"",file_length:u.file_length||"",filetype:u.filetype||"",accessToken:this.context.accessToken||"",ext:d,delay:n.delayTimeStamp}):"file"===h?this.onFileMessage({id:t,type:c,from:o,to:r,url:u.url,secret:u.secret,filename:u.filename,file_length:u.file_length,accessToken:this.context.accessToken||"",ext:d,delay:n.delayTimeStamp}):"loc"===h?this.onLocationMessage({id:t,type:c,from:o,to:r,addr:u.addr,lat:u.lat,lng:u.lng,ext:d,delay:n.delayTimeStamp}):"video"===h?this.onVideoMessage({id:t,type:c,from:o,to:r,url:u.url,secret:u.secret,filename:u.filename,file_length:u.file_length,accessToken:this.context.accessToken||"",ext:d,delay:n.delayTimeStamp}):"cmd"===h&&this.onCmdMessage({id:t,from:o,to:r,action:u.action,ext:d,delay:n.delayTimeStamp})}}}}},connection.prototype.handleReceivedMessage=function(e){this.onReceivedMessage(e);var t,n,s=e.getElementsByTagName("received");s.length>0&&(t=s[0].childNodes&&s[0].childNodes.length>0?s[0].childNodes[0].nodeValue:s[0].innerHTML||s[0].innerText,n=s[0].getAttribute("mid")),_msgHash[t]&&(_msgHash[t].msg.success instanceof Function&&_msgHash[t].msg.success(t,n),delete _msgHash[t])},connection.prototype.handleInviteMessage=function(e){var t=null,n=e.getElementsByTagName("invite"),s=e.getAttribute("id")||"";if(this.sendReceiptsMessage({id:s}),n&&n.length>0){var i=n[0].getAttribute("from");t=_parseNameFromJidFn(i)}var a=e.getElementsByTagName("x"),o=null;if(a&&a.length>0)for(var r=0;r<a.length;r++)if("jabber:x:conference"===a[r].namespaceURI){var d=a[r].getAttribute("jid");o=_parseNameFromJidFn(d)}this.onInviteMessage({type:"invite",from:t,roomid:o})},connection.prototype.sendCommand=function(e,t){this.isOpened()?this.context.stropheConn.send(e):this.onError({type:EASEMOB_IM_CONNCTION_OPEN_ERROR,msg:"连接还未建立,请先登录或等待登录处理完毕",reconnect:!0})},connection.prototype.getUniqueId=function(e){var t=new Date,n=new Date(2010,1,1),s=t.getTime()-n.getTime(),i=parseInt(s).toString(16);return"string"==typeof e||"number"==typeof e?e+"_"+i:"WEBIM_"+i},connection.prototype.send=function(e){if("[object Object]"===Object.prototype.toString.call(e)){var t=this.context.appKey||"",n=t+"_"+e.to+"@"+this.domain;e.group&&(n=t+"_"+e.to+"@conference."+this.domain),e.resource&&(n=n+"/"+e.resource),e.toJid=n,e.id=e.id||this.getUniqueId(),_msgHash[e.id]=new Message(e),_msgHash[e.id].send(this)}else"string"==typeof e&&_msgHash[e]&&_msgHash[e].send(this)},connection.prototype.addRoster=function(e){var t=_getJid(e,this),n=e.name||"",s=e.groups||"",i=$iq({type:"set"});if(i.c("query",{xmlns:"jabber:iq:roster"}),i.c("item",{jid:t,name:n}),s)for(var a=0;a<s.length;a++)i.c("group").t(s[a]).up();var o=e.success||EMPTYFN,r=e.error||EMPTYFN;this.context.stropheConn.sendIQ(i.tree(),o,r)},connection.prototype.removeRoster=function(e){var t=_getJid(e,this),n=$iq({type:"set"}).c("query",{xmlns:"jabber:iq:roster"}).c("item",{jid:t,subscription:"remove"}),s=e.success||EMPTYFN,i=e.error||EMPTYFN;this.context.stropheConn.sendIQ(n,s,i)},connection.prototype.getRoster=function(e){var t=$iq({type:"get"}).c("query",{xmlns:"jabber:iq:roster"});e=e||{},suc=e.success||this.onRoster;var n=function(e){var t=[],n=e.getElementsByTagName("query");if(n&&n.length>0){var s=n[0];t=_parseFriendFn(s)}suc(t,e)};error=e.error||this.onError;var s=function(e){error({type:EASEMOB_IM_CONNCTION_GETROSTER_ERROR,msg:"获取联系人信息失败",data:e})};this.isOpened()?this.context.stropheConn.sendIQ(t.tree(),n,s):error({type:EASEMOB_IM_CONNCTION_OPEN_ERROR,msg:"连接还未建立,请先登录或等待登录处理完毕"})},connection.prototype.subscribe=function(e){var t=_getJid(e,this),n=$pres({to:t,type:"subscribe"});e.message&&n.c("status").t(e.message).up(),e.nick&&n.c("nick",{xmlns:"http://jabber.org/protocol/nick"}).t(e.nick),this.sendCommand(n.tree())},connection.prototype.subscribed=function(e){var t=_getJid(e,this),n=$pres({to:t,type:"subscribed"});e.message&&n.c("status").t(e.message).up(),this.sendCommand(n.tree())},connection.prototype.unsubscribe=function(e){var t=_getJid(e,this),n=$pres({to:t,type:"unsubscribe"});e.message&&n.c("status").t(e.message),this.sendCommand(n.tree())},connection.prototype.unsubscribed=function(e){var t=_getJid(e,this),n=$pres({to:t,type:"unsubscribed"});e.message&&n.c("status").t(e.message).up(),this.sendCommand(n.tree())},connection.prototype.createRoom=function(e){var t,n=e.success||EMPTYFN,s=e.error||EMPTYFN;return t=$iq({to:e.rooomName,type:"set"}).c("query",{xmlns:Strophe.NS.MUC_OWNER}).c("x",{xmlns:"jabber:x:data",type:"submit"}),this.context.stropheConn.sendIQ(t.tree(),n,s)},connection.prototype.join=function(e){var t=this.context.appKey+"_"+e.roomId+"@conference."+this.domain,n=t+"/"+this.context.userId,s=e.success||EMPTYFN,i=e.error||EMPTYFN,a=function(e){i({type:EASEMOB_IM_CONNCTION_JOINROOM_ERROR,msg:"加入房间失败",data:e})},o=$pres({from:this.context.jid,to:n}).c("x",{xmlns:Strophe.NS.MUC});this.context.stropheConn.sendIQ(o.tree(),s,a)},connection.prototype.listRooms=function(e){var t=$iq({to:e.server||"conference."+this.domain,from:this.context.jid,type:"get"}).c("query",{xmlns:Strophe.NS.DISCO_ITEMS}),n=e.success||EMPTYFN,s=function(e){var t=[];t=_parseRoomFn(e),n(t)},i=e.error||EMPTYFN,a=function(e){i({type:EASEMOB_IM_CONNCTION_GETROOM_ERROR,msg:"获取群组列表失败",data:e})};this.context.stropheConn.sendIQ(t.tree(),s,a)},connection.prototype.queryRoomMember=function(e){var t=(this.domain,[]),n=$iq({to:this.context.appKey+"_"+e.roomId+"@conference."+this.domain,type:"get"}).c("query",{xmlns:Strophe.NS.MUC+"#admin"}).c("item",{affiliation:"member"}),s=e.success||EMPTYFN,i=function(e){var n=e.getElementsByTagName("item");if(n)for(var i=0;i<n.length;i++){var a=n[i],o={jid:a.getAttribute("jid"),affiliation:"member"};t.push(o)}s(t)},a=e.error||EMPTYFN,o=function(e){a({type:EASEMOB_IM_CONNCTION_GETROOMMEMBER_ERROR,msg:"获取群组成员列表失败",data:e})};this.context.stropheConn.sendIQ(n.tree(),i,o)},connection.prototype.queryRoomInfo=function(e){var t=this.domain,n=$iq({to:this.context.appKey+"_"+e.roomId+"@conference."+t,type:"get"}).c("query",{xmlns:Strophe.NS.DISCO_INFO}),s=e.success||EMPTYFN,i=[],a=function(e){var n=e.getElementsByTagName("field");if(n)for(var a=0;a<n.length;a++){var o=n[a];if("owner"===o.getAttribute("label")){var r={jid:(o.textContent||o.text)+"@"+t,affiliation:"owner"};i.push(r)}}s(i)},o=e.error||EMPTYFN,r=function(e){o({type:EASEMOB_IM_CONNCTION_GETROOMINFO_ERROR,msg:"获取群组信息失败",data:e})};this.context.stropheConn.sendIQ(n.tree(),a,r)},connection.prototype.queryRoomOccupants=function(e){var t=e.success||EMPTYFN,n=function(e){var n=[];n=_parseRoomOccupantsFn(e),t(n)},s=e.error||EMPTYFN,i=function(e){s({type:EASEMOB_IM_CONNCTION_GETROOMOCCUPANTS_ERROR,msg:"获取群组出席者列表失败",data:e})},a={xmlns:Strophe.NS.DISCO_ITEMS},o=$iq({from:this.context.jid,to:this.context.appKey+"_"+e.roomId+"@conference."+this.domain,type:"get"}).c("query",a);this.context.stropheConn.sendIQ(o.tree(),n,i)},connection.prototype.setUserSig=function(e){var t=$pres({xmlns:"jabber:client"});e=e||"",t.c("status").t(e),this.sendCommand(t.tree())},connection.prototype.setPresence=function(e,t){var n=$pres({xmlns:"jabber:client"});e&&(t?(n.c("show").t(e),n.up().c("status").t(t)):n.c("show").t(e)),this.sendCommand(n.tree())},connection.prototype.getPresence=function(){var e=$pres({xmlns:"jabber:client"});this.sendCommand(e.tree())},connection.prototype.ping=function(e){e=e||{};var t=_getJid(e,this),n=$iq({from:this.context.jid||"",to:t,type:"get"}).c("ping",{xmlns:"urn:xmpp:ping"});suc=e.success||EMPTYFN,error=e.error||this.onError;var s=function(e){error({type:EASEMOB_IM_CONNCTION_PING_ERROR,msg:"ping失败",data:e})};this.isOpened()?this.context.stropheConn.sendIQ(n.tree(),suc,s):error({type:EASEMOB_IM_CONNCTION_OPEN_ERROR,msg:"连接还未建立,请先登录或等待登录处理完毕"})},connection.prototype.isOpened=function(){return this.context.status==STATUS_OPENED},connection.prototype.isOpening=function(){var e=this.context.status;return e==STATUS_DOLOGIN_USERGRID||e==STATUS_DOLOGIN_IM},connection.prototype.isClosing=function(){return this.context.status==STATUS_CLOSING},connection.prototype.isClosed=function(){return this.context.status==STATUS_CLOSED},connection.prototype.clear=function(){var e=this.context.appKey;this.context={status:STATUS_INIT,appKey:e}},connection.prototype.getChatRooms=function(e){if(!Utils.isCanSetRequestHeader)return void t.onError({type:EASEMOB_IM_CONNCTION_AUTH_ERROR,msg:"当前浏览器不支持聊天室功能"});var t=this,n=e.accessToken||this.context.accessToken;if(n){var s=e.apiUrl||(this.https?"https":"http")+"://a1.easemob.com",i=this.context.appName,a=this.context.orgName;if(!i||!a)return void t.onError({type:EASEMOB_IM_CONNCTION_AUTH_ERROR,msg:"token无效",data:null});var o=function(t,n){"function"==typeof e.success&&e.success(t)},r=function(e,n,s){e.error&&e.error_description&&t.onError({type:EASEMOB_IM_LOAD_CHATROOM_ERROR,msg:"获取聊天室失败,"+e.error_description,data:e,xhr:n})},d={url:s+"/"+a+"/"+i+"/chatrooms",dataType:"json",type:"get",headers:{Authorization:"Bearer "+n},success:o||EMPTYFN,error:r||EMPTYFN};Utils.ajax(d)}else t.onError({type:EASEMOB_IM_CONNCTION_AUTH_ERROR,msg:"token无效",data:null})},connection.prototype.joinChatRoom=function(e){var t=this.context.appKey+"_"+e.roomId+"@conference."+this.domain,n=t+"/"+this.context.userId,s=e.success||EMPTYFN,i=e.error||EMPTYFN,a=function(e){i({type:EASEMOB_IM_CONNCTION_JOINROOM_ERROR,msg:"加入聊天室失败",data:e})},o=$pres({from:this.context.jid,to:n}).c("x",{xmlns:Strophe.NS.MUC+"#user"}).c("item",{affiliation:"member",role:"participant"}).up().up().c("roomtype",{xmlns:"easemob:x:roomtype",type:"chatroom"});this.context.stropheConn.sendIQ(o.tree(),s,a)},connection.prototype.quitChatRoom=function(e){var t=this.context.appKey+"_"+e.roomId+"@conference."+this.domain,n=t+"/"+this.context.userId,s=e.success||EMPTYFN,i=e.error||EMPTYFN,a=function(e){i({type:EASEMOB_IM_CONNCTION_JOINROOM_ERROR,msg:"退出房间失败",data:e})},o=$pres({from:this.context.jid,to:n,type:"unavailable"}).c("x",{xmlns:Strophe.NS.MUC+"#user"}).c("item",{affiliation:"none",role:"none"}).up().up().c("roomtype",{xmlns:"easemob:x:roomtype",type:"chatroom"});this.context.stropheConn.sendIQ(o.tree(),s,a)},connection}(),EMPTYFN=function(){};tempIndex=0,EASEMOB_IM_CONNCTION_USER_NOT_ASSIGN_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_OPEN_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_AUTH_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_ATTACH_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_ATTACH_USERGRID_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_REOPEN_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_SERVER_CLOSE_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_SERVER_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_IQ_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_PING_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_NOTIFYVERSION_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_GETROSTER_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_CROSSDOMAIN_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_LISTENING_OUTOF_MAXRETRIES=tempIndex++,EASEMOB_IM_CONNCTION_RECEIVEMSG_CONTENTERROR=tempIndex++,EASEMOB_IM_CONNCTION_JOINROOM_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_GETROOM_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_GETROOMINFO_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_GETROOMMEMBER_ERROR=tempIndex++,EASEMOB_IM_CONNCTION_GETROOMOCCUPANTS_ERROR=tempIndex++,EASEMOB_IM_UPLOADFILE_BROWSER_ERROR=tempIndex++,EASEMOB_IM_UPLOADFILE_ERROR=tempIndex++,EASEMOB_IM_UPLOADFILE_NO_LOGIN=tempIndex++,EASEMOB_IM_UPLOADFILE_NO_FILE=tempIndex++,EASEMOB_IM_DOWNLOADFILE_ERROR=tempIndex++,EASEMOB_IM_DOWNLOADFILE_NO_LOGIN=tempIndex++,EASEMOB_IM_DOWNLOADFILE_BROWSER_ERROR=tempIndex++,EASEMOB_IM_RESISTERUSER_ERROR=tempIndex++,EASEMOB_IM_LOAD_CHATROOM_ERROR=tempIndex++,EASEMOB_IM_JOIN_CHATROOM_ERROR=tempIndex++,EASEMOB_IM_QUIT_CHATROOM_ERROR=tempIndex++,tempIndex=0,EASEMOB_IM_MESSAGE_REC_TEXT=tempIndex++,EASEMOB_IM_MESSAGE_REC_TEXT_ERROR=tempIndex++,EASEMOB_IM_MESSAGE_REC_EMOTION=tempIndex++,EASEMOB_IM_MESSAGE_REC_PHOTO=tempIndex++,EASEMOB_IM_MESSAGE_REC_AUDIO=tempIndex++,EASEMOB_IM_MESSAGE_REC_AUDIO_FILE=tempIndex++,EASEMOB_IM_MESSAGE_REC_VEDIO=tempIndex++,EASEMOB_IM_MESSAGE_REC_VEDIO_FILE=tempIndex++,EASEMOB_IM_MESSAGE_REC_FILE=tempIndex++,EASEMOB_IM_MESSAGE_SED_TEXT=tempIndex++,EASEMOB_IM_MESSAGE_SED_EMOTION=tempIndex++,EASEMOB_IM_MESSAGE_SED_PHOTO=tempIndex++,EASEMOB_IM_MESSAGE_SED_AUDIO=tempIndex++,EASEMOB_IM_MESSAGE_SED_AUDIO_FILE=tempIndex++,EASEMOB_IM_MESSAGE_SED_VEDIO=tempIndex++,EASEMOB_IM_MESSAGE_SED_VEDIO_FILE=tempIndex++,EASEMOB_IM_MESSAGE_SED_FILE=tempIndex++,EASEMOB_IM_FILESIZE_LIMIT=10485760,tempIndex=0;var STATUS_INIT=tempIndex++,STATUS_DOLOGIN_USERGRID=tempIndex++,STATUS_DOLOGIN_IM=tempIndex++,STATUS_OPENED=tempIndex++,STATUS_CLOSING=tempIndex++,STATUS_CLOSED=tempIndex++;delete tempIndex,Easemob.im.Connection=Connection,Easemob.im.EmMessage=EmMessage,Easemob.im.Helper=Easemob.im.Utils=Utils,window.Easemob=Easemob}(window,void 0),function(){window.easemobim=window.easemobim||{};var e=/android/i.test(navigator.useragent),t="https:"===location.protocol,n=t?"https:":"http:",s=/mobile/i.test(navigator.userAgent),i=function(){var e,t=navigator.userAgent,n={4:8,5:9,6:10,7:11};return e=t.match(/MSIE (\d+)/i),e&&e[1]?+e[1]:(e=t.match(/Trident\/(\d+)/i),e&&e[1]?n[e[1]]||null:1e4)}();easemobim.utils={window:{width:document.body.clientWidth,height:document.body.clientHeight},ssl:t,root:window.top==window,protocol:n,nodeListType:{"[object Object]":1,"[object NodeList]":1,"[object HTMLCollection]":1,"[object Array]":1},convertFalse:function(e){return e="undefined"==typeof e?"":e,"false"===e?!1:e},$Dom:function(e){return document.getElementById(e)},each:function(e,t){for(var n in e)e.hasOwnProperty(n)&&"function"==typeof t&&t(n,e[n])},$Remove:function(e){if(e)if(e.remove)e.remove();else{var t=e.parentNode;t&&t.removeChild(e)}},siblings:function(e,t){if(!e||!e.parentNode)return null;for(var n=e.parentNode.childNodes,s=[],i=0,a=n.length;a>i;i++)1===n[i].nodeType&&n[i]!=e&&(t&&this.hasClass(n[i],t)?s.push(n[i]):s.push(n[i]));return s},insertBefore:function(e,t,n){e&&t&&(0===e.childNodes.length?e.appendChild(t):e.insertBefore(t,n||null))},getIEVersion:i,live:function(e,t,n,s){var i=this,a=s||document;i.on(a,t,function(t){var s=t||window.event,o=s.target||s.srcElement,r=e.split(".").length<2?a.getElementsByTagName(e):i.$Class(e);if(r.length)for(var d=r.length,c=0;d>c;c++)(r[c]==o||r[c]==o.parentNode)&&n.apply(r[c]==o?o:o.parentNode,arguments);else r==e&&n.apply(e,arguments)})},on:function(){var e=function(e,t,n,s){if(!t)return!1;for(var i=t.split(" "),a=0,o=i.length;o>a;a++)e.addEventListener?e.addEventListener(i[a],n,s):e.attachEvent?(e["_"+i[a]]=function(){n.apply(e,arguments)},e.attachEvent("on"+i[a],e["_"+i[a]])):e["on"+i[a]]=n};return function(t,n,s,i){if(Object.prototype.toString.call(t)in this.nodeListType&&t.length)for(var a=0,o=t.length;o>a;a++)1===t[a].nodeType&&e(t[a],n,s,i);else e(t,n,s,i)}}(),remove:function(e,t,n){e&&(e.removeEventListener?e.removeEventListener(t,n):e.detachEvent?e.detachEvent("on"+t,e["_"+t]):e["on"+t]=null)},one:function(e,t,n,s){var i=this,a=function(){n.apply(this,arguments),i.remove(e,t,a)};i.on(e,t,a,s)},trigger:function(e,t){if(document.createEvent){var n=document.createEvent("HTMLEvents");n.initEvent(t,!0,!1),e.dispatchEvent(n)}else e.fireEvent("on"+t)},extend:function(e,t){for(var n in t)if(t.hasOwnProperty(n)){var s=Object.prototype.toString.call(t[n]);"[object Array]"===s?(e[n]=[],this.extend(e[n],t[n])):"[object Object]"===s?(e[n]={},this.extend(e[n],t[n])):e[n]=t[n]}return e},addClass:function(e,t){if(e){if(Object.prototype.toString.call(e)in this.nodeListType&&e.length)for(var n=0,s=e.length;s>n;n++)this.hasClass(e[n],t)||"undefined"!=typeof e[n].className&&(e[n].className+=" "+t);else this.hasClass(e,t)||(e.className+=" "+t);return e}},removeClass:function(e,t){if(e){if(Object.prototype.toString.call(e)in this.nodeListType&&e.length)for(var n=0,s=e.length;s>n;n++)for(;"undefined"!=typeof e[n].className&&e[n].className.indexOf(t)>=0;)e[n].className=e[n].className.replace(t,"");else for(;e.className.indexOf(t)>=0;)e.className=e.className.replace(t,"");return e}},hasClass:function(e,t){if(!e||!e.className)return!1;for(var n=e.className.split(" "),s=0,i=n.length;i>s;s++)if(n[s].indexOf(t)>-1)return!0;return!1},$Class:function(e,t){var n=e.split("."),s=n[0],i=n[1],a=t||document;if(a.getElementsByClassName)return a.getElementsByClassName(i);for(var o=a.getElementsByTagName(s),r=[],d=0,c=o.length;c>d;d++)this.hasClass(o[d],i)&&r.push(o[d]);return o=null,r},html:function(e,t){if(e){if(i&&9>i&&"STYLE"===e.nodeName)e.styleSheet.cssText=t||"";else{if("undefined"==typeof t)return e.innerHTML;e.innerHTML=t}return e}},encode:function(e){if(!e||0===e.length)return"";var t="";return t=e.replace(/&amp;/g,"&"),t=t.replace(/<(?=[^o][^)])/g,"&lt;"),t=t.replace(/>/g,"&gt;"),t=t.replace(/\"/g,"&quot;")},decode:function(e){if(!e||0===e.length)return"";var t="";return t=e.replace(/&amp;/g,"&"),t=t.replace(/&#39;/g,"'"),t=t.replace(/&lt;o\)/g,"<o)")},query:function(e){var t=location.href.match(new RegExp("[?&]?"+e+"=[0-9a-zA-Z@%._-]*[^&]","g"));return t=t&&t[0]?"?"==t[0][0]||"&"==t[0][0]?t[0].slice(1):t[0]:"",
-t.slice(e.length+1)},isAndroid:e,isMobile:s,click:s&&"ontouchstart"in window?"touchstart":"click",isQQBrowserInAndroid:e&&/MQQBrowser/.test(navigator.userAgent),isQQBrowserInAndroid:function(){return this.isAndroid&&/MQQBrowser/.test(navigator.userAgent)},isMin:function(){return document.visibilityState&&"hidden"===document.visibilityState||document.hidden?!0:!1},setStore:function(e,t){if("undefined"!=typeof t)try{localStorage.setItem(e,t)}catch(n){}},getStore:function(e){try{return localStorage.getItem(e)}catch(t){}},clearStore:function(e){try{localStorage.removeItem(e)}catch(t){}},clearAllStore:function(){try{localStorage.clear()}catch(e){}},set:function(e,t,n){if(n&&"localStorage"in window)localStorage.setItem(encodeURIComponent(e),encodeURIComponent(t));else{var s=new Date;s.setTime(s.getTime()+2592e6),document.cookie=encodeURIComponent(e)+"="+encodeURIComponent(t)+";path=/;expires="+s.toGMTString()}},get:function(e,t){if(t&&"localStorage"in window){var n=localStorage.getItem(encodeURIComponent(e));return n?n:""}var s=document.cookie.match("(^|;) ?"+encodeURIComponent(e)+"=([^;]*)(;|$)");return s?decodeURIComponent(s[2]):""},getAvatarsFullPath:function(e,t){var n=null;if(!e)return n;e=e.replace(/^(https?:)?\/\/?/,"");var s=e.indexOf("img-cn")>0?!0:!1,i=e.indexOf("ossimages")>0?!0:!1;return s&&!i?t+"/ossimages/"+e:"//"+e},convertFalse:function(e){return e="undefined"==typeof e?"":e,"false"===e?!1:e},getConfig:function(e,t){var n;if(e&&t){for(var s=document.scripts,i=0,a=s.length;a>i;i++)if(s[i].src&&0<s[i].src.indexOf(e)){n=s[i].src;break}}else n=e?e:location.href;var o={};if(!n)return{str:"",json:o,domain:""};var r,d=n.indexOf("?"),c=n.indexOf("//")>-1?n.indexOf("//"):0,l=n.slice(c,n.indexOf("/",c+2)),m=n.slice(d+1).split("&");o.src=n.slice(0,d);for(var u=0,h=m.length;h>u;u++)r=m[u].split("="),o[r[0]]=r.length>1?decodeURIComponent(r[1]):"";return{str:n,json:o,domain:l}},updateAttribute:function(e,t,s){var i=e||n+s+"/im.html?tenantId=";for(var a in t)t.hasOwnProperty(a)&&"undefined"!=typeof t[a]&&(i.indexOf(a+"=")<0?i+="&"+a+"="+(""!==t[a]?t[a]:""):i=i.replace(new RegExp(a+"=[^&#?]*","gim"),a+"="+(""!==t[a]?t[a]:"")));return i},copy:function(e){return this.extend({},e)},code:function(){var e="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",t={encode:function(t){var n,s,i,a,o,r,d,c="",l=0;do n=t.charCodeAt(l++),s=t.charCodeAt(l++),i=t.charCodeAt(l++),a=n>>2,o=(3&n)<<4|s>>4,r=(15&s)<<2|i>>6,d=63&i,isNaN(s)?r=d=64:isNaN(i)&&(d=64),c=c+e.charAt(a)+e.charAt(o)+e.charAt(r)+e.charAt(d);while(l<t.length);return c},byteEncode:function(t){var n,s,i,a,o,r,d,c="",l=0;do n=t[l++],s=t[l++],i=t[l++],a=n>>2,o=(3&n)<<4|s>>4,r=(15&s)<<2|i>>6,d=63&i,isNaN(s)?r=d=64:isNaN(i)&&(d=64),c=c+e.charAt(a)+e.charAt(o)+e.charAt(r)+e.charAt(d);while(l<t.length);return c},decode:function(t){var n,s,i,a,o,r,d,c="",l=0;t=t.replace(/[^A-Za-z0-9\+\/\=]/g,"");do a=e.indexOf(t.charAt(l++)),o=e.indexOf(t.charAt(l++)),r=e.indexOf(t.charAt(l++)),d=e.indexOf(t.charAt(l++)),n=a<<2|o>>4,s=(15&o)<<4|r>>2,i=(3&r)<<6|d,c+=String.fromCharCode(n),64!=r&&(c+=String.fromCharCode(s)),64!=d&&(c+=String.fromCharCode(i));while(l<t.length);return c}};return t}()}}(),function(){var e=function(){},t=function(){try{return new window.XMLHttpRequest}catch(e){return!1}},n=function(){try{return new window.ActiveXObject("Microsoft.XMLHTTP")}catch(e){return!1}},s=function(s){var i=s.dataType||"text",a=s.success||e,o=s.error||e,r=t()||n();r.onreadystatechange=function(){if(4===r.readyState){var e=r.status||0;if(200===e){if("text"===i)return void a(r.responseText,r);if("json"===i){try{var t=JSON.parse(r.responseText);a(t,r)}catch(n){}return}return void a(r.response||r.responseText,r)}if("json"==i){try{var t=Utils.parseJSON(r.responseText);o(t,r,"服务器返回错误信息")}catch(n){o(r.responseText,r,"服务器返回错误信息")}return}return void o(r.responseText,r,"服务器返回错误信息")}0===r.readyState&&o(r.responseText,r,"服务器异常")};var d=s.type||"GET",c=s.data||{},l="";if("get"===d.toLowerCase()){for(var m in c)c.hasOwnProperty(m)&&(l+=m+"="+c[m]+"&");l=l?l.slice(0,-1):l,s.url+=(s.url.indexOf("?")>0?"&":"?")+(l?l+"&":l)+"_v="+(new Date).getTime(),c=null}else c._v=(new Date).getTime(),c=JSON.stringify(c);if(r.open(d,s.url),r.setRequestHeader){var u=s.headers||{};u["Content-Type"]=u["Content-Type"]||"application/json";for(var h in u)u.hasOwnProperty(h)&&r.setRequestHeader(h,u[h])}return r.send(c),r};window.easemobim=window.easemobim||{},window.easemobim.emajax=s}(),window.URL=window.URL||window.webkitURL||window.mozURL||window.msURL,Date.prototype.format=function(e){var t={"M+":this.getMonth()+1,"d+":this.getDate(),"h+":this.getHours(),"m+":this.getMinutes(),"s+":this.getSeconds()};/(y+)/.test(e)&&(e=e.replace(RegExp.$1,(this.getFullYear()+"").substr(4-RegExp.$1.length)));for(var n in t)new RegExp("("+n+")").test(e)&&(e=e.replace(RegExp.$1,1===RegExp.$1.length?t[n]:("00"+t[n]).substr((""+t[n]).length)));return e},window.easemobim=window.easemobim||{},window.easemobIM=window.easemobIM||{},easemobIM.Transfer=easemobim.Transfer=function(){"use strict";var e=function(e,t,n){if(JSON&&JSON.parse){var s=e.data;s=JSON.parse(s);var i=!1;if(n&&n.length)for(var a=0,o=n.length;o>a;a++)s.key===n[a]&&(i=!0,"function"==typeof t&&t(s));else"function"==typeof t&&t(s);if(!i&&n)for(var a=0,o=n.length;o>a;a++)if("data"===n[a]){"function"==typeof t&&t(s);break}}},t=function(e,n){return this instanceof t?(this.key=n,this.iframe=document.getElementById(e),void(this.origin=location.protocol+"//"+location.host)):new t(e)};return t.prototype.send=function(e,t){return e.origin=this.origin,e.key=this.key,t&&(e.to=t),e=JSON.stringify(e),this.iframe?this.iframe.contentWindow.postMessage(e,"*"):window.parent.postMessage(e,"*"),this},t.prototype.listen=function(t,n){var s=this;return window.addEventListener?window.addEventListener("message",function(i){e.call(s,i,t,n)},!1):window.attachEvent&&window.attachEvent("onmessage",function(i){e.call(s,i,t,n)}),this},t}(),function(){var e=new easemobim.Transfer(null,"api"),t=function(t){var n=null;return t.msg.data&&t.msg.data.headers&&(n=t.msg.data.headers,delete t.msg.data.headers),{url:t.url,headers:n,data:t.excludeData?null:t.msg.data,type:t.type||"GET",success:function(n){try{n=JSON.parse(n)}catch(s){}e.send({call:t.msg.api,timespan:t.msg.timespan,status:0,data:n})},error:function(n){try{n=JSON.parse(n)}catch(s){}e.send({call:t.msg.api,timespan:t.msg.timespan,status:1,data:n})}}};e.listen(function(n){switch(e.targetOrigin=n.origin,n.api){case"getRelevanceList":easemobim.emajax(t({url:"/v1/webimplugin/targetChannels",msg:n}));break;case"getDutyStatus":easemobim.emajax(t({url:"/v1/webimplugin/showMessage",msg:n}));break;case"getWechatVisitor":easemobim.emajax(t({url:"/v1/webimplugin/visitors/wechat/"+n.data.openid+"?tenantId="+n.data.tenantId,msg:n,type:"POST"}));break;case"createVisitor":easemobim.emajax(t({url:"/v1/webimplugin/visitors?tenantId="+n.data.tenantId,msg:n,type:"POST"}));break;case"getSession":easemobim.emajax(t({url:"/v1/webimplugin/visitors/"+n.data.id+"/schedule-data?techChannelInfo="+n.data.orgName+"%23"+n.data.appName+"%23"+n.data.imServiceNumber+"&tenantId="+n.data.tenantId,msg:n,excludeData:!0}));break;case"getExSession":easemobim.emajax(t({url:"/v1/webimplugin/visitors/"+n.data.id+"/schedule-data-ex?techChannelInfo="+n.data.orgName+"%23"+n.data.appName+"%23"+n.data.imServiceNumber+"&tenantId="+n.data.tenantId,msg:n,excludeData:!0}));break;case"getPassword":easemobim.emajax(t({url:"/v1/webimplugin/visitors/password",msg:n}));break;case"getGroup":easemobim.emajax(t({url:"/v1/webimplugin/visitors/"+n.data.id+"/ChatGroupId?techChannelInfo="+n.data.orgName+"%23"+n.data.appName+"%23"+n.data.imServiceNumber+"&tenantId="+n.data.tenantId,msg:n,excludeData:!0}));break;case"getGroupNew":easemobim.emajax(t({url:"/v1/webimplugin/tenant/"+n.data.tenantId+"/visitors/"+n.data.id+"/ChatGroupId?techChannelInfo="+n.data.orgName+"%23"+n.data.appName+"%23"+n.data.imServiceNumber+"&tenantId="+n.data.tenantId,msg:n,excludeData:!0}));break;case"getHistory":easemobim.emajax(t({url:"/v1/webimplugin/visitors/msgHistory",msg:n}));break;case"getSlogan":easemobim.emajax(t({url:"/v1/webimplugin/notice/options",msg:n}));break;case"getTheme":easemobim.emajax(t({url:"/v1/webimplugin/theme/options",msg:n}));break;case"getSystemGreeting":easemobim.emajax(t({url:"/v1/webimplugin/welcome",msg:n}));break;case"getRobertGreeting":easemobim.emajax(t({url:"/v1/Tenants/"+n.data.tenantId+"/robots/visitor/greetings/"+n.data.originType+"?tenantId="+n.data.tenantId,msg:n,excludeData:!0}));break;case"sendVisitorInfo":easemobim.emajax(t({url:"/v1/webimplugin/tenants/"+n.data.tenantId+"/visitors/"+n.data.visitorId+"/attributes?tenantId="+n.data.tenantId,msg:n,type:"POST"}));break;case"getProject":easemobim.emajax(t({url:"/tenants/"+n.data.tenantId+"/projects",msg:n}));break;case"createTicket":easemobim.emajax(t({url:"/tenants/"+n.data.tenantId+"/projects/"+n.data.projectId+"/tickets?tenantId="+n.data.tenantId+"&easemob-target-username="+n.data["easemob-target-username"]+"&easemob-appkey="+n.data["easemob-appkey"]+"&easemob-username="+n.data["easemob-username"],msg:n,type:"POST"}));break;case"receiveMsgChannel":easemobim.emajax(t({url:"/v1/imgateway/messages",msg:n}));break;case"sendMsgChannel":easemobim.emajax(t({url:"/v1/imgateway/messages?tenantId="+n.data.tenantId,msg:n,type:"POST"}));break;case"getAgentStatus":easemobim.emajax(t({url:"/v1/tenants/"+n.data.tenantId+"/agents/"+n.data.agentUserId+"/agentstate",msg:n}));break;case"getNickNameOption":easemobim.emajax(t({url:"/v1/webimplugin/agentnicename/options?tenantId="+n.data.tenantId,msg:n,excludeData:!0}))}},["data"])}(),window.easemobim=window.easemobim||{},easemobim.agentStatusEnum={Idle:"online",Online:"online",Busy:"busy",Leave:"leave",Hidden:"hidden",Offline:"offline",Logout:"offline",Other:"offline"},easemobim.eventEnum={TRANSFER:"会话已被转接至其他客服",LINKED:"会话已被客服接起",CLOSED:"会话已结束",NOTE:"当前暂无客服在线，请您留下联系方式，稍后我们将主动联系您",CREATE:"会话创建成功"},easemobim.LISTSPAN=10,easemobim.PICTYPE={jpg:!0,gif:!0,png:!0,bmp:!0},easemobim.FILETYPE={zip:!0,doc:!0,docx:!0,txt:!0,gif:!0},easemobim.LOADING=easemobim.utils.isQQBrowserInAndroid||easemobim.utils.getIEVersion&&9===easemobim.utils.getIEVersion?"<img src='//kefu.easemob.com/webim/static/img/loading.gif' width='20' style='margin-top:10px;'/>":["<div class='easemobWidget-loading'><svg version='1.1' id='图层_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px'"," viewBox='0 0 70 70' enable-background='new 0 0 70 70' xml:space='preserve'>","<circle opacity='0.3' fill='none' stroke='#000000' stroke-width='4' stroke-miterlimit='10' cx='35' cy='35' r='11'/>","<path fill='none' stroke='#E5E5E5' stroke-width='4' stroke-linecap='round' stroke-miterlimit='10' d='M24,35c0-6.1,4.9-11,11-11","c2.8,0,5.3,1,7.3,2.8'/><image src='//kefu.easemob.com/webim/static/img/loading.gif' width='20' style='margin-top:10px;' /></svg></div>"].join(""),easemobim.THEME={"天空之城":{css:"body .theme-color{color:#42b8f4;}body .bg-color{background-color:#42b8f4}.border-color{border:1px solid #00a0e7}.hover-color{background-color:#7dcdf7}"},"丛林物语":{css:"body .theme-color{color:#00b45f;}body .bg-color{background-color:#00b45f}.border-color{border:1px solid #009a51}.hover-color{background-color:#16cd77}"},"红瓦洋房":{css:"body .theme-color{color:#b50e03;}body .bg-color{background-color:#b50e03}.border-color{border:1px solid #811916}.hover-color{background-color:#e92b25}"},"鲜美橙汁":{css:"body .theme-color{color:#ffa000;}body .bg-color{background-color:#ffa000}.border-color{border:1px solid #f69000}.hover-color{background-color:#ffb63b}"},"青草田间":{css:"body .theme-color{color:#9ec100;}body .bg-color{background-color:#9ec100}.border-color{border:1px solid #809a00}.hover-color{background-color:#bad921}"},"湖光山色":{css:"body .theme-color{color:#00cccd;}body .bg-color{background-color:#00cccd}.border-color{border:1px solid #12b3b4}.hover-color{background-color:#38e6e7}"},"冷峻山峰":{css:"body .theme-color{color:#5b799a;}body .bg-color{background-color:#5b799a}.border-color{border:1px solid #48627b}.hover-color{background-color:#6a8eb5}"},"月色池塘":{css:"body .theme-color{color:#3977cf;}body .bg-color{background-color:#3977cf}.border-color{border:1px solid #2b599b}.hover-color{background-color:#548bdc}"}},Easemob.im.EMOTIONS={path:"static/img/faces/",map:{"[):]":"ee_1.png","[:D]":"ee_2.png","[;)]":"ee_3.png","[:-o]":"ee_4.png","[:p]":"ee_5.png","[(H)]":"ee_6.png","[:@]":"ee_7.png","[:s]":"ee_8.png","[:$]":"ee_9.png","[:(]":"ee_10.png","[:'(]":"ee_11.png","[:|]":"ee_12.png","[(a)]":"ee_13.png","[8o|]":"ee_14.png","[8-|]":"ee_15.png","[+o(]":"ee_16.png","[<o)]":"ee_17.png","[|-)]":"ee_18.png","[*-)]":"ee_19.png","[:-#]":"ee_20.png","[:-*]":"ee_21.png","[^o)]":"ee_22.png","[8-)]":"ee_23.png","[(|)]":"ee_24.png","[(u)]":"ee_25.png","[(S)]":"ee_26.png","[(*)]":"ee_27.png","[(#)]":"ee_28.png","[(R)]":"ee_29.png","[({)]":"ee_30.png","[(})]":"ee_31.png","[(k)]":"ee_32.png","[(F)]":"ee_33.png","[(W)]":"ee_34.png","[(D)]":"ee_35.png"}},easemobim.EVENTS={NOTIFY:{event:"notify"},RECOVERY:{event:"recoveryTitle"},SHOW:{event:"showChat"},CLOSE:{event:"closeChat"},CACHEUSER:{event:"setUser"},DRAGREADY:{event:"dragReady"},DRAGEND:{event:"dragEnd"},SLIDE:{event:"titleSlide"},ONMESSAGE:{event:"onMessage"},ONSESSIONCLOSED:{event:"onSessionClosed"},EXT:{event:"ext"},TEXTMSG:{event:"textmsg"},ONREADY:{event:"onready"}},easemobim.autogrow=function(){return function(e){var t=easemobim.utils,n=e.dom,s=n.getBoundingClientRect().height,i=(n.style.lineHeight,document.createElement("div"));i.style.cssText=["position:absolute;","top:-10000px;","left:-10000px;","width:"+(n.getBoundingClientRect().width-45)+"px;","font-size:"+(n.style.fontSize||17)+"px;","line-height:"+(n.style.lineHeight||17)+"px;","resize:none;","word-wrap:break-word;"].join(""),document.body.appendChild(i);var a=function(){var n=function(e,t){for(var n=0,s="";t>n;n++)s+=e;return s},a=this.value.replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/&/g,"&amp;").replace(/\n$/,"<br/>&nbsp;").replace(/\n/g,"<br/>").replace(/ {2,}/g,function(e){return n("&nbsp;",e.length-1)+" "});t.html(i,a),a&&(this.style.height=Math.max(i.getBoundingClientRect().height+17,s)+"px"),"function"==typeof e.callback&&e.callback()};t.on(n,"change",a),t.on(n,"keyup",a),t.on(n,"keydown",a),e.update=function(){a.apply(n)},a.apply(n)}}(),Easemob.im.EmMessage.txt=function(e){this.id=e,this.type="txt",this.brief="",this.body={}},Easemob.im.EmMessage.txt.prototype.get=function(e){return this.value?(this.value=this.emotion?this.value:easemobim.utils.decode(this.value),[e?"<div class='easemobWidget-left'>":"<div id='"+this.id+"' class='easemobWidget-right'>","<div class='easemobWidget-msg-wrapper'>","<i class='easemobWidget-corner'></i>",this.id?"<div id='"+this.id+"_failed' data-type='txt' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>":"",this.id?"<div id='"+this.id+"_loading' class='easemobWidget-msg-loading'>"+easemobim.LOADING+"</div>":"","<div class='easemobWidget-msg-container'>","<pre>"+Easemob.im.Utils.parseLink(this.emotion?this.value:Easemob.im.Utils.parseEmotions(this.value))+"</pre>","</div>","</div>","</div>"].join("")):""},Easemob.im.EmMessage.txt.prototype.set=function(e){this.value=e.value,this.emotion=e.emotion,this.value&&(this.brief=(e.brief||this.value).replace(/\n/gm,""),this.brief=this.brief.length>15?this.brief.slice(0,15)+"...":this.brief),this.body={id:this.id,to:e.to,msg:this.value,type:this.type,ext:e.ext||{},success:e.success,fail:e.fail}},Easemob.im.EmMessage.cmd=function(e){this.id=e,this.type="cmd",this.body={}},Easemob.im.EmMessage.cmd.prototype.set=function(e){this.value="",this.body={to:e.to,action:e.action,msg:this.value,type:this.type,ext:e.ext||{}}},Easemob.im.EmMessage.img=function(e){this.id=e,this.type="img",this.brief="图片",this.body={}},Easemob.im.EmMessage.img.prototype.get=function(e){return[e?"<div class='easemobWidget-left'>":"<div id='"+this.id+"' class='easemobWidget-right'>","<div class='easemobWidget-msg-wrapper'>","<i class='easemobWidget-corner'></i>",this.id?"<div id='"+this.id+"_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>":"",this.id?"<div id='"+this.id+"_loading' class='easemobWidget-msg-loading'>"+easemobim.LOADING+"</div>":"","<div class='easemobWidget-msg-container'>",null===this.value?"<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>":"<a class='easemobWidget-noline' href='javascript:;'><img class='easemobWidget-imgview' src='"+this.value.url+"'/></a>",,"</div>","</div>","</div>"].join("")},Easemob.im.EmMessage.img.prototype.set=function(e){this.value=e.file,this.body={id:this.id,file:this.value,apiUrl:e.apiUrl,accessToken:e.accessToken,to:e.to,type:this.type,onFileUploadError:e.uploadError,onFileUploadComplete:e.uploadComplete,success:e.success,fail:e.fail,flashUpload:e.flashUpload}},Easemob.im.EmMessage.list=function(e){this.id=e,this.type="list",this.brief="",this.body={}},Easemob.im.EmMessage.list.prototype.get=function(e){return this.value?["<div class='easemobWidget-left'>","<div class='easemobWidget-msg-wrapper'>","<i class='easemobWidget-corner'></i>","<div class='easemobWidget-msg-container easemobWidget-msg-menu'>","<p>"+Easemob.im.Utils.parseLink(Easemob.im.Utils.parseEmotions(easemobim.utils.encode(this.value)))+"</p>",this.listDom,"</div>","<div id='"+this.id+"_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>","</div>","</div>"].join(""):""},Easemob.im.EmMessage.list.prototype.set=function(e){this.value=e.value,this.value&&(this.brief=this.value.replace(/\n/gm,""),this.brief=this.brief.length>15?this.brief.slice(0,15)+"...":this.brief),this.listDom=e.list},Easemob.im.EmMessage.file=function(e){this.id=e,this.type="file",this.brief="文件",this.body={}},Easemob.im.EmMessage.file.prototype.get=function(e){return[e?"<div class='easemobWidget-left'>":"<div id='"+this.id+"' class='easemobWidget-right'>","<div class='easemobWidget-msg-wrapper easemobWidget-msg-file'>","<i class='easemobWidget-corner'></i>",this.id?"<div id='"+this.id+"_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>":"",this.id?"<div id='"+this.id+"_loading' class='easemobWidget-msg-loading'>"+config.LOADING+"</div>":"","<div class='easemobWidget-msg-container'>",null===this.value?"<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>":"<a target='_blank' href='"+this.value.url+"' class='easemobWidget-fileMsg' title='"+this.filename+"'><img class='easemobWidget-msg-fileicon' src='static/img/file_download.png'/><span>"+(this.filename.length>19?this.filename.slice(0,19)+"...":this.filename)+"</span></a>","</div>","</div>","</div>"].join("")},Easemob.im.EmMessage.file.prototype.set=function(e){this.value=e.file,this.filename=e.filename||this.value.filename||"文件",this.body={id:this.id,file:this.value,filename:this.filename,apiUrl:e.apiUrl,to:e.to,type:this.type,onFileUploadError:e.uploadError,onFileUploadComplete:e.uploadComplete,success:e.success,fail:e.fail,flashUpload:e.flashUpload}},easemobim.paste=function(e){var t,n=document.createElement("div"),s=easemobim.utils;s.addClass(n,"easemobWidget-dialog easemobWidget-paste-wrapper em-hide"),s.html(n,"		<div class='easemobWidget-paste-image'></div>		<div>			<button class='easemobWidget-cancel'>取消</button>			<button class='bg-color'>发送</button>		</div>	"),easemobim.imChat.appendChild(n);var i=n.getElementsByTagName("button"),a=i[0],o=i[1],r=n.getElementsByTagName("div")[0];return s.on(a,"click",function(){easemobim.paste.hide()}),s.on(o,"click",function(){e.sendImgMsg({data:t,url:n.getElementsByTagName("img")[0].getAttribute("src")}),easemobim.paste.hide()}),{show:function(e){var i=new Image;"string"==typeof e?i.src=e:i.src=window.URL.createObjectURL(e),t=e,r.appendChild(i),s.removeClass(n,"em-hide"),i=null},hide:function(){s.html(r,""),s.addClass(n,"em-hide")},bind:function(){var e=this;return s.on(easemobim.textarea,"paste",function(t){var n=t||window.event;try{if(n.clipboardData&&n.clipboardData.types)n.clipboardData.items.length>0&&/^image\/\w+$/.test(n.clipboardData.items[0].type)&&e.show(n.clipboardData.items[0].getAsFile());else if(window.clipboardData){var s=window.clipboardData.getData("URL");e.show(s)}}catch(i){}}),this}}.bind()},function(){easemobim.leaveMessage=function(e,t){var n=this.leaveMessage,s=this.utils,i=easemobim.imChat;if(n.dom)return!1;n.domBg=document.createElement("div"),n.dom=document.createElement("div"),n.domBg.id="easemobWidgetOffline",s.addClass(n.domBg,"easemobWidget-offline-bg em-hide"),s.addClass(n.dom,"easemobWidget-offline"),s.html(n.dom,"			<h3>请填写以下内容以方便我们及时联系您</h3>			<input type='text' placeholder='姓名'/>			<input type='text' placeholder='电话'/>			<input type='text' placeholder='邮箱'/>			<textarea spellcheck='false' placeholder='请输入留言'></textarea>			<button class='easemobWidget-offline-cancel'>取消</button>			<button class='easemobWidget-offline-ok bg-color'>留言</button>			<div class='easemobWidget-success-prompt em-hide'><i>A</i><p>留言发送成功</p></div>		"),n.domBg.appendChild(n.dom),i.appendChild(n.domBg);var a=n.dom.getElementsByTagName("textarea")[0],o=n.dom.getElementsByTagName("input")[0],r=n.dom.getElementsByTagName("input")[1],d=n.dom.getElementsByTagName("input")[2],c=n.dom.getElementsByTagName("button")[1],l=n.dom.getElementsByTagName("button")[0],m=n.dom.getElementsByTagName("div")[0];s.on(l,s.click,function(){s.addClass(n.domBg,"em-hide")}),s.on(c,s.click,function(){return f?(e.errorPrompt("留言提交中..."),!1):void(u&&h?!o.value||o.value.length>140?e.errorPrompt("姓名输入不正确"):!r.value||r.value.length>24?e.errorPrompt("电话输入不正确"):!d.value||d.value.length>127?e.errorPrompt("邮箱输入不正确"):!a.value||a.value.length>2e3?e.errorPrompt("留言内容不能为空，长度小于2000字"):(f=!0,setTimeout(function(){f=!1},1e4),easemobim.api("createTicket",{tenantId:t,"easemob-target-username":h,"easemob-appkey":g,"easemob-username":b,headers:{Authorization:"Easemob IM "+p},projectId:u,subject:"",content:a.value,status_id:"",priority_id:"",category_id:"",creator:{name:o.value,avatar:"",email:d.value,phone:r.value,qq:"",company:"",description:""},attachments:null},function(t){f=!1,t&&t.data&&t.data.id?(s.removeClass(m,"em-hide"),setTimeout(function(){s.addClass(m,"em-hide")},1500),o.value="",r.value="",d.value="",a.value=""):e.errorPrompt("留言失败，请稍后重试")})):e.errorPrompt("留言失败，token无效"))});var u=null,h=null,p=null,g=null,f=!1,b=null;return{auth:function(e,n){p=e,h=n.toUser,b=n.user.username,g=n.appKey.replace("#","%23"),u||easemobim.api("getProject",{tenantId:t,"easemob-target-username":h,"easemob-appkey":g,"easemob-username":b,headers:{Authorization:"Easemob IM "+p}},function(e){e.data&&e.data.entities&&e.data.entities.length>0&&(u=e.data.entities[0].id)})},show:function(e){e&&s.addClass(l,"em-hide"),s.removeClass(n.domBg,"em-hide")}}}}(),easemobim.satisfaction=function(e){var t=document.createElement("div"),n=easemobim.utils;n.addClass(t,"easemobWidget-dialog easemobWidget-satisfaction-dialog em-hide"),n.html(t,"		<h3>请对我的服务做出评价</h3>		<ul><li idx='1'>H</li><li idx='2'>H</li><li idx='3'>H</li><li idx='4'>H</li><li idx='5'>H</li></ul>		<textarea spellcheck='false' placeholder='请输入留言'></textarea>		<div>			<button class='easemobWidget-cancel'>取消</button>			<button class='bg-color'>提交</button>		</div>		<div class='easemobWidget-success-prompt em-hide'><i>A</i><p>提交成功</p></div>	"),easemobim.imChat.appendChild(t);var s,i,a=n.$Dom("EasemobKefuWebimSatisfy"),o=t.getElementsByTagName("ul")[0],r=o.getElementsByTagName("li"),d=t.getElementsByTagName("textarea")[0],c=t.getElementsByTagName("button"),l=c[0],m=c[1],u=t.getElementsByTagName("div")[1],h=function(){for(var e=0,t=r.length;t>0;t--)n.hasClass(r[t-1],"sel")&&(e+=1);return e},p=function(){for(var e=r.length;e>0;e--)n.removeClass(r[e-1],"sel")};a&&n.on(a,n.click,function(){s=null,i=null,n.removeClass(t,"em-hide"),clearInterval(e.focusText)}),n.live("button.js_satisfybtn","click",function(){s=this.getAttribute("data-servicesessionid"),i=this.getAttribute("data-inviteid"),n.removeClass(t,"em-hide"),clearInterval(e.focusText)}),n.on(l,"click",function(){n.addClass(t,"em-hide")}),n.on(m,"click",function(){var a=h();return 0===a?(e.errorPrompt("请先选择星级"),!1):(e.sendSatisfaction(a,d.value,s,i),d.blur(),n.removeClass(u,"em-hide"),void setTimeout(function(){d.value="",p(),n.addClass(u,"em-hide"),n.addClass(t,"em-hide")},1500))}),n.on(o,"click",function(e){var t=e||window.event,s=t.target||t.srcElement,i=s.getAttribute("idx");if(!i)return!1;for(var a=0;a<r.length;a++)a<Number(i)?n.addClass(r[a],"sel"):n.removeClass(r[a],"sel")})},easemobim.imgView=function(){var e=document.createElement("div"),t=easemobim.utils,n=document.createElement("img");n.style.cssText="	position: absolute;    top: 0;    left: 0;    right: 0;    bottom: 0;    margin: auto;",e.appendChild(n),e.style.cssText="	display: none;	z-index: 100000;    position: fixed;    width: 100%;    height: 100%;    left: 0;    top: 0;    background: rgba(0,0,0,.3);",document.body.appendChild(e);var s=function(){e.style.display="none",e.style.overflow="hidden"};return n.onload=function(){this.width>.9*easemobim.utils.window.width||this.height>.9*easemobim.utils.window.height||s()},t.on(e,"click",s,!1),{show:function(t){n.setAttribute("src",t),e.style.display="block",e.style.overflow="auto"}}}(),easemobim.uploadShim=function(e,t){var n=this,s=easemobim.utils;n.flashUpload=function(e,t){n.swfupload.setUploadURL(e),n.swfupload.startUpload(),n.swfupload.uploadOptions=t},n.uploadShim=function(n){if(Easemob.im.Utils.isCanUploadFile){var i=(document.title,s.$Dom(n));if(!("undefined"==typeof SWFUpload||i.length<1))return new SWFUpload({file_post_name:"file",flash_url:s.protocol+e.staticPath+"/js/swfupload/swfupload.swf",button_placeholder_id:n,button_width:120,button_height:30,button_cursor:SWFUpload.CURSOR.HAND,button_window_mode:SWFUpload.WINDOW_MODE.TRANSPARENT,file_size_limit:10485760,file_upload_limit:0,file_queued_error_handler:function(){},file_dialog_start_handler:function(){},file_dialog_complete_handler:function(){},file_queued_handler:function(e){this.getStats().files_queued>1&&this.cancelUpload(),10485760<e.size?(t.errorPrompt("请上传大小不超过10M的文件"),this.cancelUpload()):easemobim.PICTYPE[e.type.slice(1).toLowerCase()]?t.sendImgMsg({name:e.name,data:e}):easemobim.FILETYPE[e.type.slice(1).toLowerCase()]?t.sendFileMsg({name:e.name,data:e}):(t.errorPrompt("不支持此类型"+e.type),this.cancelUpload())},upload_error_handler:function(n,s,i){if(s!=SWFUpload.UPLOAD_ERROR.FILE_CANCELLED&&s!=SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED&&s!=SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED){var i=new Easemob.im.EmMessage("img");i.set({file:null}),t.appendMsg(e.user.username,e.toUser,i),t.appendDate((new Date).getTime(),e.toUser)}},upload_success_handler:function(n,s){if(!n||!s){var i=new Easemob.im.EmMessage("img");return i.set({file:null}),t.appendMsg(e.user.username,e.toUser,i),void t.appendDate((new Date).getTime(),e.toUser)}try{var a=Easemob.im.Utils.parseUploadResponse(s);a=JSON.parse(a),n&&!n.url&&a.entities&&a.entities.length>0&&(n.url=a.uri+"/"+a.entities[0].uuid);var i=new Easemob.im.EmMessage("img");i.set({file:n}),t.appendDate((new Date).getTime(),e.toUser),t.appendMsg(e.user.username,e.toUser,i),t.scrollBottom(1e3),this.uploadOptions.onFileUploadComplete(a)}catch(o){t.errorPrompt("上传图片发生错误")}}})}},!Easemob.im.Utils.isCanUploadFileAsync&&Easemob.im.Utils.isCanUploadFile&&(n.swfupload=n.uploadShim("easemobWidgetFileInput"))},function(){var e=/MicroMessenger/.test(navigator.userAgent),t=easemobim.utils.query("wechatAuth"),n=easemobim.utils.query("appid"),s=easemobim.utils.query("code"),i=easemobim.utils.query("tenantId");return e&&t&&i&&n?void(easemobim.wechat=function(e){var t=function(e){easemobim.emajax({url:"/v1/weixin/admin/appid",success:function(t){e(t)},error:function(t){e()}})},a=function(e,t){easemobim.emajax({url:"/v1/weixin/sns/userinfo/"+n+"/"+e,data:{tenantId:i},type:"GET",success:function(e){t(e)},error:function(e){var t=location.href.replace(/&code=[^&]+/,"");t.indexOf("appid")!==t.lastIndexOf("appid")&&(t=t.replace(/&appid=wx[^&]+/,"")),location.href=t}})};s?a(s,function(t){return t?void e(t):void e()}):t(function(t){if(!t)return void e();var s=encodeURIComponent(location.href),i="https://open.weixin.qq.com/connect/oauth2/authorize?appid="+n+"&redirect_uri="+s+"&response_type=code&scope=snsapi_userinfo&state=STATE&component_appid="+t+"#wechat_redirect";location.href=i})}):!1}(),function(){var e=function(){this.list={}};e.prototype.set=function(e,t){return"undefined"==typeof this.list[e]&&(this.list[e]=t),this},e.prototype.get=function(e){return this.list.hasOwnProperty(e)?this.list[e]:null},e.prototype.remove=function(e){"undefined"!=typeof this.list[e]&&delete this.list[e]},easemobim.site=e}(),easemobim.EventEnumDom=function(){return{get:function(e,t){var n=e||"",s=null;return(e!==easemobim.eventEnum.LINK||"hide"!==t)&&(s=document.createElement("div"),easemobim.utils.html(s,t||n),easemobim.utils.addClass(s,"easemobWidget-event")),s}}}(),easemobim.channel=function(e){var t,n=2e4,s=6e4,i=6e4,a=3e4,o=1,r=this,d=easemobim.utils,c=new easemobim.site,l=new easemobim.site,m=new easemobim.site,u=easemobim.api,h=function(){for(var e=[],t="0123456789abcdef",n=0;36>n;n++)e[n]=t.substr(Math.floor(16*Math.random()),1);return e[14]="4",e[19]=t.substr(3&e[19]|8,1),e[8]=e[13]=e[18]=e[23]="-",e.join("")},p={getConnection:function(){return new Easemob.im.Connection({url:e.xmppServer,retry:!0,multiResources:e.resources,heartBeatWait:s})},reSend:function(e,t){if(t){var n=l.get(t);switch(e){case"txt":f(n,0)}}},send:function(e){var t=h();switch(e){case"txt":arguments[2]||v(t),p.sendText(arguments[1],arguments[2],arguments[3],t);break;case"transferToKf":v(t),p.transferToKf(arguments[1],arguments[2],t);break;case"img":p.sendImg(arguments[1],arguments[2],t);break;case"file":p.sendFile(arguments[1],arguments[2],t);break;case"satisfaction":v(t),p.sendSatisfaction(arguments[1],arguments[2],arguments[3],arguments[4],t)}},appendAck:function(e,t){e.body.ext.weichat.msg_id_for_ack=t},sendSatisfaction:function(t,n,s,i,a){var o=new Easemob.im.EmMessage("txt",a);o.set({value:"",to:e.toUser}),d.extend(o.body,{ext:{weichat:{ctrlType:"enquiry",ctrlArgs:{inviteId:i||"",serviceSessionId:s||"",detail:n,summary:t}}}}),p.appendAck(o,a),r.conn.send(o.body),l.set(a,o)},sendText:function(t,n,s,i){var a=new Easemob.im.EmMessage("txt",n?null:i);if(a.set({value:t||easemobim.utils.encode(easemobim.textarea.value),to:e.toUser,success:function(e){},fail:function(e){}}),s&&d.extend(a.body,s),d.addClass(easemobim.sendBtn,"disabled"),n)r.appendMsg(e.user.username,n,a,!0);else{if(r.setExt(a),p.appendAck(a,i),r.conn.send(a.body),l.set(i,a),easemobim.textarea.value="",a.body.ext&&"custom"===a.body.ext.type)return;r.appendDate((new Date).getTime(),e.toUser),r.appendMsg(e.user.username,e.toUser,a)}},transferToKf:function(t,n,s){var i=new Easemob.im.EmMessage("cmd",s);i.set({to:e.toUser,action:"TransferToKf",ext:{weichat:{ctrlArgs:{id:t,serviceSessionId:n}}}}),p.appendAck(i,s),r.conn.send(i.body),l.set(s,i),r.handleEventStatus(null,null,!0)},sendImg:function(t,n,s){var i=new Easemob.im.EmMessage("img",n?null:s);i.set({apiUrl:(d.ssl?"https://":"http://")+e.restServer,file:t||Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute("id")),accessToken:r.token,to:e.toUser,uploadError:function(e){setTimeout(function(){if(Easemob.im.Utils.isCanUploadFileAsync){var t=e.id,n=d.$Dom(t);d.html(d.$Class("a.easemobWidget-noline",n)[0],'<i class="easemobWidget-unimage">I</i>'),d.addClass(d.$Dom(t+"_loading"),"em-hide"),r.scrollBottom()}else easemobim.swfupload&&easemobim.swfupload.settings.upload_error_handler()},50)},uploadComplete:function(){r.handleEventStatus()},success:function(e){d.$Remove(d.$Dom(e+"_loading")),d.$Remove(d.$Dom(e+"_failed"))},fail:function(e){d.addClass(d.$Dom(e+"_loading"),"em-hide"),d.removeClass(d.$Dom(e+"_failed"),"em-hide");
-},flashUpload:easemobim.flashUpload}),n?r.appendMsg(e.user.username,t.to,i,!0):(r.setExt(i),r.conn.send(i.body),easemobim.realFile.value="",Easemob.im.Utils.isCanUploadFileAsync&&(r.appendDate((new Date).getTime(),e.toUser),r.appendMsg(e.user.username,e.toUser,i)))},sendFile:function(t,n,s){var i=new Easemob.im.EmMessage("file",n?null:s),t=t||Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute("id"));return t&&t.filetype&&e.FILETYPE[t.filetype.toLowerCase()]?(i.set({apiUrl:(d.ssl?"https://":"http://")+e.restServer,file:t,to:e.toUser,uploadError:function(e){if(Easemob.im.Utils.isCanUploadFileAsync){var t=e.id;d.$Dom(t);d.html(d.$Class("a.easemobWidget-noline")[0],'<i class="easemobWidget-unimage">I</i>'),d.addClass(d.$Dom(t+"_loading"),"em-hide"),r.scrollBottom()}else easemobim.swfupload&&easemobim.swfupload.settings.upload_error_handler()},uploadComplete:function(){r.handleEventStatus()},success:function(e){d.$Remove(d.$Dom(e+"_loading")),d.$Remove(d.$Dom(e+"_failed"))},fail:function(e){d.addClass(d.$Dom(e+"_loading"),"em-hide"),d.removeClass(d.$Dom(e+"_failed"),"em-hide")},flashUpload:easemobim.flashUpload}),void(n?r.appendMsg(e.user.username,t.to,i,!0):(r.setExt(i),r.conn.send(i.body),easemobim.realFile.value="",Easemob.im.Utils.isCanUploadFileAsync&&(r.appendDate((new Date).getTime(),e.toUser),r.appendMsg(e.user.username,e.toUser,i))))):(chat.errorPrompt("不支持此文件"),easemobim.realFile.value=null,!1)},handleReceive:function(t,n,s){if(!e.offDuty){if(t&&t.ext&&t.ext.weichat&&t.ext.weichat.ack_for_msg_id){var i=t.ext.weichat.ack_for_msg_id;return void b(i)}var a=r.getMsgid(t);if(!m.get(a)&&(a&&m.set(a,1),s||!t.from||t.from.toLowerCase()==e.toUser.toLowerCase()||t.noprompt)){var o=null;switch(t.ext&&t.ext.weichat&&t.ext.weichat.ctrlType&&"inviteEnquiry"==t.ext.weichat.ctrlType?n="satisfactionEvaluation":t.ext&&t.ext.msgtype&&t.ext.msgtype.choice?n="robertList":t.ext&&t.ext.weichat&&"TransferToKfHint"===t.ext.weichat.ctrlType&&(n="robertTransfer"),n){case"txt":case"face":o=new Easemob.im.EmMessage("txt"),o.set({value:s?t.data:r.getSafeTextValue(t)});break;case"img":if(o=new Easemob.im.EmMessage("img"),t.url)o.set({file:{url:t.url}});else try{o.set({file:{url:t.bodies[0].url}})}catch(c){}break;case"file":if(o=new Easemob.im.EmMessage("file"),t.url)o.set({file:{url:t.url,filename:t.filename}});else try{o.set({file:{url:t.bodies[0].url,filename:t.bodies[0].filename}})}catch(c){}break;case"satisfactionEvaluation":if(!s){var l=document.createElement("BUTTON");l.className="js_satisfybtn",l.style.display="none",l.setAttribute("data-inviteid",t.ext.weichat.ctrlArgs.inviteId),l.setAttribute("data-servicesessionid",t.ext.weichat.ctrlArgs.serviceSessionId),document.body.appendChild(l),d.trigger(l,"click")}break;case"robertList":o=new Easemob.im.EmMessage("list");var u="",h=t.ext.msgtype.choice.items||t.ext.msgtype.choice.list;if(h.length>0){u='<div class="easemobWidget-list-btns">';for(var p=0,g=h.length;g>p;p++)u+='<button class="easemobWidget-list-btn js_robertbtn" data-id="'+h[p].id+'">'+(h[p].name||h[p])+"</button>";u+="</div>"}o.set({value:t.ext.msgtype.choice.title,list:u});break;case"robertTransfer":o=new Easemob.im.EmMessage("list");var u="",h=[t.ext.weichat.ctrlArgs];if(h.length>0){u='<div class="easemobWidget-list-btns">';for(var p=0,g=h.length;g>p;p++)u+='<button class="easemobWidget-list-btn js_robertTransferBtn"                             data-sessionid="'+h[p].serviceSessionId+'" data-id="'+h[p].id+'">'+h[p].label+"</button>";u+="</div>"}o.set({value:t.data||t.ext.weichat.ctrlArgs.label,list:u})}if(s){if(!o||!o.value)return;r.appendMsg(t.from,t.to,o,!0)}else{if(t.ext&&t.ext.weichat&&(!t.ext.weichat.event||"ServiceSessionTransferedEvent"!==t.ext.weichat.event.eventName&&"ServiceSessionTransferedToAgentQueueEvent"!==t.ext.weichat.event.eventName?t.ext.weichat.event&&"ServiceSessionClosedEvent"===t.ext.weichat.event.eventName?(r.session=null,r.sessionSent=!1,e.agentUserId=null,r.stopGettingAgentStatus(),r.setAgentProfile({tenantName:e.defaultAgentName,avatar:e.tenantAvatar}),r.clearAgentStatus(),r.handleEventStatus("close"),d.root||transfer.send(easemobim.EVENTS.ONSESSIONCLOSED,window.transfer.to)):t.ext.weichat.event&&"ServiceSessionOpenedEvent"===t.ext.weichat.event.eventName?(r.agentCount<1&&(r.agentCount=1),r.handleEventStatus("linked",t.ext.weichat.event.eventObj)):t.ext.weichat.event&&"ServiceSessionCreatedEvent"===t.ext.weichat.event.eventName?r.handleEventStatus("create"):r.handleEventStatus("reply",t.ext.weichat.agent):r.handleEventStatus("transfer",t.ext.weichat.event.eventObj)),!o||!o.value)return;if(t.noprompt||r.messagePrompt(o),r.appendDate((new Date).getTime(),t.from),r.resetSpan(),r.appendMsg(t.from,t.to,o),r.scrollBottom(50),e.receive){easemobim.EVENTS.ONMESSAGE.data={from:t.from,to:t.to,message:o};try{d.root||transfer.send(easemobim.EVENTS.ONMESSAGE,window.transfer.to)}catch(c){}}}}}},listen:function(){r.conn.listen({onOpened:function(e){_(),r.reOpen&&clearTimeout(r.reOpen),r.token=e.accessToken,r.conn.setPresence(),easemobim.textarea.value&&d.removeClass(easemobim.sendBtn,"disabled"),d.html(easemobim.sendBtn,"发送"),r.handleReady(e)},onTextMessage:function(e){r.receiveMsg(e,"txt")},onEmotionMessage:function(e){r.receiveMsg(e,"face")},onPictureMessage:function(e){r.receiveMsg(e,"img")},onFileMessage:function(e){r.receiveMsg(e,"file")},onCmdMessage:function(e){r.receiveMsg(e,"cmd")},onOnline:function(){d.isMobile&&r.open()},onOffline:function(){d.isMobile&&r.conn.close()},onError:function(t){t.reconnect?r.open():2===t.type?r.reOpen||(r.reOpen=setTimeout(function(){r.open()},2e3)):"function"==typeof e.onerror&&e.onerror(t)}})},handleHistory:function(t){t.length>0&&d.each(t,function(t,n){var s,i=n.body,a=i.from===e.user.username;if(i&&i.bodies.length>0){if(s=i.bodies[0],i.from===e.user.username)switch(s.type){case"img":s.url=/^http/.test(s.url)?s.url:e.base+s.url,s.to=i.to,r.sendImgMsg(s,!0);break;case"file":s.url=/^http/.test(s.url)?s.url:e.base+s.url,s.to=i.to,r.sendFileMsg(s,!0);break;case"txt":r.sendTextMsg(s.msg,!0)}else if(i.ext&&i.ext.weichat&&i.ext.weichat.ctrlType&&"inviteEnquiry"==i.ext.weichat.ctrlType||i.ext&&i.ext.msgtype&&i.ext.msgtype.choice||i.ext&&i.ext.weichat&&"TransferToKfHint"===i.ext.weichat.ctrlType)r.receiveMsg(i,"",!0);else{var o=s.msg;"txt"===s.type&&(o=r.getSafeTextValue(i)),r.receiveMsg({msgId:n.msgId,data:o,filename:s.filename,url:/^http/.test(s.url)?s.url:e.base+s.url,from:i.from,to:i.to},s.type,!0)}"cmd"===s.type||"txt"===s.type&&!s.msg||m.get(n.msgId)||r.appendDate(n.timestamp||i.timestamp,a?i.to:i.from,!0)}})}},g=function(){e.offDuty||setInterval(function(){u("receiveMsgChannel",{orgName:e.orgName,appName:e.appName,easemobId:e.toUser,tenantId:e.tenantId,visitorEasemobId:e.user.username},function(e){if(e&&"OK"===e.data.status)for(var t=0,n=e.data.entities.length;n>t;t++)try{p.handleReceive(e.data.entities[t],e.data.entities[t].bodies[0].type,!1)}catch(s){}})},i)},f=function(t,n){var n=0===n?0:n||o,s=t.id;u("sendMsgChannel",{from:e.user.username,to:e.toUser,tenantId:e.tenantId,bodies:[{type:"txt",msg:t.value}],ext:t.body?t.body.ext:null,orgName:e.orgName,appName:e.appName,originType:e.originType||"webim"},function(){b(s)},function(){n>0?f(t,--n):(d.addClass(d.$Dom(s+"_loading"),"em-hide"),d.removeClass(d.$Dom(s+"_failed"),"em-hide"))})},b=function(e){clearTimeout(c.get(e)),c.remove(e),d.$Remove(d.$Dom(e+"_loading")),d.$Remove(d.$Dom(e+"_failed")),l.get(e)&&r.handleEventStatus(null,null,"转人工"===l.get(e).value||"转人工客服"===l.get(e).value),l.remove(e)},_=function(){clearTimeout(t)},v=function(e){c.set(e,setTimeout(function(){f(l.get(e))},a))};return t=setTimeout(function(){easemobim.textarea.value&&d.removeClass(easemobim.sendBtn,"disabled"),d.html(easemobim.sendBtn,"发送"),chat.handleReady()},n),g(),p},function(){easemobim.chat=function(e){var t=easemobim.utils;return easemobim.im=t.$Dom("EasemobKefuWebim"),easemobim.imBtn=t.$Dom("easemobWidgetPopBar"),easemobim.imChat=t.$Dom("EasemobKefuWebimChat"),easemobim.imChatBody=t.$Dom("easemobWidgetBody"),easemobim.send=t.$Dom("easemobWidgetSend"),easemobim.textarea=easemobim.send.getElementsByTagName("textarea")[0],easemobim.sendBtn=t.$Dom("easemobWidgetSendBtn"),easemobim.faceBtn=easemobim.send.getElementsByTagName("i")[0],easemobim.realFile=t.$Dom("easemobWidgetFileInput"),easemobim.sendFileBtn=t.$Dom("easemobWidgetFile"),easemobim.noteBtn=t.$Dom("easemobWidgetNote"),easemobim.mobileNoteBtn=t.$Dom("easemobWidgetNotem"),easemobim.dragHeader=t.$Dom("easemobWidgetDrag"),easemobim.dragBar=easemobim.dragHeader.getElementsByTagName("p")[0],easemobim.chatFaceWrapper=t.$Dom("EasemobKefuWebimFaceWrapper"),easemobim.messageCount=easemobim.imBtn.getElementsByTagName("span")[0],easemobim.nickName=t.$Class("span.easemobWidgetHeader-nickname")[0],easemobim.avatar=t.$Class("img.easemobWidgetHeader-portrait")[0],easemobim.agentStatus=t.$Dom("easemobWidgetAgentStatus"),easemobim.swfupload=null,e.agentUserId=null,{init:function(){this.channel=easemobim.channel.call(this,e),this.setConnection(),this.scbT=0,this.msgCount=0,this.msgTimeSpan={},this.opened=!0,this.setTheme(),this.setMinmum(),this.soundReminder(),this.setRoot(),this.bindEvents()},handleReady:function(n){var s=this;if(s.readyHandled)return!1;if(s.readyHandled=!0,n&&e.user&&(e.user.token=e.user.token||n.accessToken),easemobim.leaveMessage&&easemobim.leaveMessage.auth(s.token,e),t.root){var i=e.visitor;if(!i){i=t.getStore(e.tenantId+e.emgroup+"visitor");try{e.visitor=Easemob.im.Utils.parseJSON(i)}catch(a){}t.clearStore(e.tenantId+e.emgroup+"visitor")}var o=t.getStore(e.tenantId+e.emgroup+"ext");try{o&&s.sendTextMsg("",!1,{ext:Easemob.im.Utils.parseJSON(o)})}catch(a){}t.clearStore(e.tenantId+e.emgroup+"ext")}else transfer.send(easemobim.EVENTS.ONREADY,window.transfer.to)},setExt:function(n){n.body.ext=n.body.ext||{},n.body.ext.weichat=n.body.ext.weichat||{},e.emgroup&&(n.body.ext.weichat.queueName=decodeURIComponent(e.emgroup));var s=e.visitor;s&&(n.body.ext.weichat.visitor=s),e.agentName&&(n.body.ext.weichat.agentUsername=e.agentName),e.language&&(n.body.ext.weichat.language=e.language);var i=t.getStore(e.tenantId+"gr_user_id");i&&(n.body.ext.weichat.visitor=n.body.ext.weichat.visitor||{},n.body.ext.weichat.visitor.gr_user_id=i,t.clearStore(e.tenantId+"gr_user_id")),e.originType&&(n.body.ext.weichat.originType=e.originType)},setRoot:function(){return t.root?(e.dragenable=!1,void this.fillFace()):!1},mobile:function(){if(!t.isMobile)return!1;if(e.dragenable=!1,e.ticket&&!e.offDuty&&t.removeClass(easemobim.mobileNoteBtn,"em-hide"),!e.hideKeyboard&&!e.offDuty){var n=document.createElement("i");t.addClass(n,"easemobWidgetHeader-keyboard easemobWidgetHeader-keyboard-down"),easemobim.dragHeader.appendChild(n)}},ready:function(){this.setNotice(),this.sdkInit(),this.open(),this.handleGroup(),this.getSession(),this.setLogo(),this.initAutoGrow(),this.chatWrapper.getAttribute("data-getted")||e.newuser||this.getHistory()},initAutoGrow:function(){var e=this;e.autoGrowOptions||(e.autoGrowOptions={},e.autoGrowOptions.callback=function(){var t=easemobim.send.getBoundingClientRect().height;"up"===e.direction?easemobim.chatFaceWrapper.style.top=43+easemobim.send.getBoundingClientRect().height+"px":(easemobim.imChatBody.style.bottom=t+"px",easemobim.chatFaceWrapper.style.bottom=easemobim.send.getBoundingClientRect().height+"px")},e.autoGrowOptions.dom=easemobim.textarea,setTimeout(function(){t.isMobile&&easemobim.autogrow(e.autoGrowOptions)},1e3))},setConnection:function(){this.conn=this.channel.getConnection()},handleChatWrapperByHistory:function(e,t){if(e.length===easemobim.LISTSPAN){var n=Number(e[easemobim.LISTSPAN-1].chatGroupSeqId)-1;n>0?(t.setAttribute("data-start",n),t.setAttribute("data-history",0)):t.setAttribute("data-history",1)}else t.setAttribute("data-history",1)},getHistory:function(t){if(!e.offDuty&&!e.newuser){var n=this,s=n.chatWrapper,i=s.getAttribute("data-groupid");i?Number(s.getAttribute("data-history"))||easemobim.api("getHistory",{fromSeqId:s.getAttribute("data-start")||0,size:easemobim.LISTSPAN,chatGroupId:i,tenantId:e.tenantId},function(e){n.handleChatWrapperByHistory(e.data,s),e.data&&e.data.length>0&&(n.channel.handleHistory(e.data),t||n.scrollBottom())}):Number(s.getAttribute("data-history"))||easemobim.api("getGroupNew",{id:e.user.username,orgName:e.orgName,appName:e.appName,imServiceNumber:e.toUser,tenantId:e.tenantId},function(i){i&&i.data&&(s.setAttribute("data-groupid",i.data),easemobim.api("getHistory",{fromSeqId:s.getAttribute("data-start")||0,size:easemobim.LISTSPAN,chatGroupId:i.data,tenantId:e.tenantId},function(e){n.handleChatWrapperByHistory(e.data,s),e&&e.data&&e.data.length>0&&(n.channel.handleHistory(e.data),t||n.scrollBottom())}))}),s.setAttribute("data-getted",1)}},getGreeting:function(){var t=this;t.greetingGetted||(t.greetingGetted=!0,easemobim.api("getSystemGreeting",{tenantId:e.tenantId},function(n){n&&n.data&&(n={data:n.data,ext:{weichat:{html_safe_body:{msg:n.data}}},type:"txt",noprompt:!0},t.receiveMsg(n,"txt")),easemobim.api("getRobertGreeting",{tenantId:e.tenantId,originType:e.originType||"webim"},function(e){if(e&&e.data){var n=e.data;switch(n.greetingTextType){case 0:e={data:n.greetingText,ext:{weichat:{html_safe_body:{msg:n.greetingText}}},type:"txt",noprompt:!0},t.receiveMsg(e,"txt");break;case 1:try{var s=Easemob.im.Utils.parseJSON(n.greetingText.replace(/&quot;/g,'"'));"{}"===n.greetingText?(e={data:"该菜单不存在",type:"txt",noprompt:!0},t.receiveMsg(e,"txt")):(e={ext:s.ext,noprompt:!0},t.receiveMsg(e))}catch(i){}}}})}))},getNickNameOption:function(){e.offDuty||easemobim.api("getNickNameOption",{tenantId:e.tenantId},function(t){t&&t.data&&t.data.length>0?e.nickNameOption="true"===t.data[0].optionValue?!0:!1:e.nickNameOption=null},function(){e.nickNameOption=null})},getSession:function(){if(!e.offDuty){var t=this;t.agent=t.agent||{},easemobim.api("getExSession",{id:e.user.username,orgName:e.orgName,appName:e.appName,imServiceNumber:e.toUser,tenantId:e.tenantId},function(n){if(n&&n.data){var s=e.referrer?decodeURIComponent(e.referrer):document.referrer;t.onlineHumanAgentCount=n.data.onlineHumanAgentCount,t.onlineRobotAgentCount=n.data.onlineRobotAgentCount,t.agentCount=t.onlineHumanAgentCount/1+t.onlineRobotAgentCount/1,e.agentUserId=n.data.serviceSession?n.data.serviceSession.agentUserId:null,0===t.agentCount&&(t.noteShow=!1)}else t.getGreeting();n.data.serviceSession?(t.session=n.data.serviceSession,n.data.serviceSession.visitorUser&&n.data.serviceSession.visitorUser.userId&&easemobim.api("sendVisitorInfo",{tenantId:e.tenantId,visitorId:n.data.serviceSession.visitorUser.userId,referer:s})):t.getGreeting(),t.nicknameGetted||(t.nicknameGetted=!0,t.getNickNameOption())})}},handleGroup:function(){this.chatWrapper=this.handleChatContainer()},handleChatContainer:function(){var n=t.$Class("div.easemobWidget-chat",easemobim.imChatBody);if(this.setAgentProfile({tenantName:e.defaultAgentName,avatar:e.tenantAvatar}),n&&n.length>0)return n[0];n=document.createElement("div"),t.addClass(n,"easemobWidget-chat"),t.insertBefore(easemobim.imChatBody,n,easemobim.imChatBody.childNodes[this.hasLogo?1:0]);var s=document.createElement("div");return s.id="transfer",t.addClass(s,"easemobWidget-status-prompt"),easemobim.imChat.appendChild(s),n},getMsgid:function(e){return e?e.ext&&e.ext.weichat?e.ext.weichat.msgId:e.msgId:null},setKeyboard:function(e){var t=this;switch(t.direction=e,e){case"up":easemobim.send.style.bottom="auto",easemobim.send.style.zIndex="3",easemobim.send.style.top="43px",easemobim.imChatBody.style.bottom="0",easemobim.chatFaceWrapper.style.bottom="auto",easemobim.chatFaceWrapper.style.top=43+easemobim.send.getBoundingClientRect().height+"px";break;case"down":easemobim.send.style.bottom="0",easemobim.send.style.zIndex="3",easemobim.send.style.top="auto",easemobim.imChatBody.style.bottom=easemobim.send.getBoundingClientRect().height+"px",easemobim.chatFaceWrapper.style.bottom=easemobim.send.getBoundingClientRect().height+"px",easemobim.chatFaceWrapper.style.top="auto",t.scrollBottom(50)}},clearAgentStatus:function(){t.addClass(easemobim.agentStatus,"em-hide")},startToGetAgentStatus:function(){var t=this;e.agentStatusTimer||(e.agentStatusTimer=setInterval(function(){t.updateAgentStatus()},5e3))},stopGettingAgentStatus:function(){e.agentStatusTimer=clearInterval(e.agentStatusTimer)},updateAgentStatus:function(){var t=this;return e.agentUserId&&e.nickNameOption?void easemobim.api("getAgentStatus",{tenantId:e.tenantId,orgName:e.orgName,appName:e.appName,agentUserId:e.agentUserId,userName:e.user.username,token:e.user.token,imServiceNumber:e.toUser},function(e){e&&e.data&&e.data.state&&t.updateAgentStatusUI(e.data.state)}):void t.stopGettingAgentStatus()},updateAgentStatusUI:function(e){t.removeClass(easemobim.agentStatus,"em-hide"),easemobim.agentStatus.className="easemobWidget-agent-status "+easemobim.agentStatusEnum[e]},setAgentProfile:function(n){var s=n&&n.avatar?t.getAvatarsFullPath(n.avatar,e.domain):e.tenantAvatar||e.defaultAvatar;if(n.tenantName&&(t.html(easemobim.nickName,n.tenantName),easemobim.avatar.setAttribute("src",s)),e.nickNameOption){t.html(easemobim.nickName,n.userNickname),this.currentAvatar=s;easemobim.avatar.getAttribute("src");this.currentAvatar&&easemobim.avatar.setAttribute("src",this.currentAvatar)}},setMinmum:function(){if(e.minimum&&!t.root){var n=document.createElement("a");n.setAttribute("href","javascript:;"),n.setAttribute("title","关闭"),t.addClass(n,"easemobWidgetHeader-min bg-color border-color"),easemobim.dragHeader.appendChild(n),t.on(n,"mousedown touchstart",function(){return t.root||transfer.send(easemobim.EVENTS.CLOSE,window.transfer.to),!1}),t.on(n,"mouseenter",function(){t.addClass(this,"hover-color")}),t.on(n,"mouseleave",function(){t.removeClass(this,"hover-color")}),n=null}},setTheme:function(){easemobim.api("getTheme",{tenantId:e.tenantId},function(n){e.theme=n.data&&n.data.length&&n.data[0].optionValue?n.data[0].optionValue:"天空之城",easemobim.THEME[e.theme]||(e.theme="天空之城");var s=document.createElement("style");s.setAttribute("type","text/css"),t.html(s,easemobim.THEME[e.theme].css);var i=document.head||document.getElementsByTagName("head")[0];i.appendChild(s)})},setLogo:function(){!t.$Class("div.easemobWidget-tenant-logo").length&&e.logo&&(t.html(this.chatWrapper,'<div class="easemobWidget-tenant-logo"><img src="'+e.logo+'"></div>'+t.html(this.chatWrapper)),this.hasLogo=!0)},setNotice:function(){var n=this;n.slogan||e.offDuty||easemobim.api("getSlogan",{tenantId:e.tenantId},function(e){if(e.data&&e.data.length>0&&e.data[0].optionValue){easemobim.imChatBody.style.top="90px",n.slogan=document.createElement("div"),t.addClass(n.slogan,"easemobWidget-word");var s=Easemob.im.Utils.parseLink(e.data[0].optionValue);t.html(n.slogan,"<span>"+s+"</span><a class='easemobWidget-word-close' href='javascript:;'></a>"),easemobim.imChat.appendChild(n.slogan),t.on(t.$Class("a.easemobWidget-word-close"),t.click,function(){t.addClass(n.slogan,"em-hide"),easemobim.imChatBody.style.top="43px"})}})},fillFace:function(){if(!t.html(easemobim.chatFaceWrapper.getElementsByTagName("ul")[0])){var e="",n=0,s=this;t.on(easemobim.faceBtn,"mouseenter",function(){t.isMobile||t.addClass(this,"theme-color")}),t.on(easemobim.faceBtn,"mouseleave",function(){t.isMobile||t.removeClass(this,"theme-color")}),t.on(easemobim.faceBtn,t.click,function(){return easemobim.textarea.blur(),t.hasClass(easemobim.chatFaceWrapper,"em-hide")?t.removeClass(easemobim.chatFaceWrapper,"em-hide"):t.addClass(easemobim.chatFaceWrapper,"em-hide"),e?!1:(e='<li class="e-face">',t.each(Easemob.im.EMOTIONS.map,function(t,s){n+=1,e+=["<div class='easemobWidget-face-bg e-face'>","<img class='easemobWidget-face-img e-face em-emotion' ","src='"+Easemob.im.EMOTIONS.path+s+"' ","data-value="+t+" />","</div>"].join(""),n%7===0&&(e+='</li><li class="e-face">')}),n%7===0?e=e.slice(0,-'<li class="e-face">'.length):e+="</li>",void t.html(easemobim.chatFaceWrapper.getElementsByTagName("ul")[0],e))}),t.live("img.em-emotion",t.click,function(e){!t.isMobile&&easemobim.textarea.focus(),easemobim.textarea.value=easemobim.textarea.value+this.getAttribute("data-value"),t.isMobile&&(s.autoGrowOptions.update(),setTimeout(function(){easemobim.textarea.scrollTop=1e4},100)),s.readyHandled&&t.removeClass(easemobim.sendBtn,"disabled")},easemobim.chatFaceWrapper)}},errorPrompt:function(e,n){var s=this;s.ePrompt||(s.ePrompt=document.createElement("p"),s.ePrompt.className="easemobWidget-error-prompt em-hide",t.html(s.ePrompt,"<span></span>"),easemobim.imChat.appendChild(s.ePrompt),s.ePromptContent=s.ePrompt.getElementsByTagName("span")[0]),t.html(s.ePromptContent,e),t.removeClass(s.ePrompt,"em-hide"),n||setTimeout(function(){t.html(s.ePromptContent,""),t.addClass(s.ePrompt,"em-hide")},2e3)},getSafeTextValue:function(e){if(e&&e.ext&&e.ext.weichat&&e.ext.weichat.html_safe_body)return e.ext.weichat.html_safe_body.msg;try{return e.bodies[0].msg}catch(t){}return""},setOffline:function(n){if(this.mobile(),n)switch(e.offDutyType){case"chat":break;case"none":var s=e.offDutyWord||"现在是下班时间。";try{s=decodeURIComponent(s)}catch(i){}var a=new Easemob.im.EmMessage("txt");a.set({value:s}),this.chatWrapper||this.handleGroup(),this.appendMsg(e.toUser,e.user.username,a),t.addClass(easemobim.send,"easemobWidget-send-disable");break;default:easemobim.leaveMessage&&(this.slogan&&t.addClass(this.slogan,"em-hide"),t.removeClass(easemobim.leaveMessage.dom,"em-hide"),t.addClass(easemobim.imChatBody,"em-hide"),t.addClass(easemobim.send,"em-hide"),easemobim.leaveMessage.show(n))}},close:function(){this.opened=!1,e.hide||(t.addClass(easemobim.imChat,"em-hide"),setTimeout(function(){t.removeClass(easemobim.imBtn,"em-hide")},60))},show:function(){var n=this;if(n.opened=!0,n.fillFace(),n.scrollBottom(50),t.addClass(easemobim.imBtn,"em-hide"),t.removeClass(easemobim.imChat,"em-hide"),!e.offDuty&&"undefined"!=typeof e.offDuty||"none"!==e.offDutyType)try{easemobim.textarea.focus()}catch(s){}n.resetPrompt()},sdkInit:function(){this.channel.listen()},appendDate:function(e,n,s){var i=this.chatWrapper,a=document.createElement("div"),o="M月d日 hh:mm";i&&(t.html(a,new Date(e).format(o)),t.addClass(a,"easemobWidget-date"),s?t.insertBefore(i,a,i.getElementsByTagName("div")[this.hasLogo?1:0]):n?((!this.msgTimeSpan[n]||e-this.msgTimeSpan[n]>6e4)&&i.appendChild(a),this.resetSpan(n)):i.appendChild(a))},resetSpan:function(e){this.msgTimeSpan[e]=(new Date).getTime()},open:function(){var n=this,s={user:e.user.username,appKey:e.appKey,apiUrl:(t.ssl?"https://":"http://")+e.restServer};e.user.token?s.accessToken=e.user.token:s.pwd=e.user.password,n.conn.open(s)},soundReminder:function(){var n=this;if(t.getIEVersion&&t.getIEVersion<9||t.isMobile||!e.soundReminder)return void(n.soundReminder=function(){});if(n.reminder=document.createElement("a"),n.reminder.setAttribute("href","javascript:;"),t.addClass(n.reminder,"easemobWidgetHeader-audio theme-color"),easemobim.dragHeader.appendChild(n.reminder),t.on(n.reminder,"mousedown touchstart",function(){return n.silence=n.silence?!1:!0,t.hasClass(n.reminder,"easemobWidgetHeader-silence")?t.removeClass(n.reminder,"easemobWidgetHeader-silence"):t.addClass(n.reminder,"easemobWidgetHeader-silence"),!1}),window.HTMLAudioElement){var s=0;n.audio=document.createElement("audio"),n.audio.src=e.staticPath+"/mp3/msg.m4a",n.soundReminder=function(){(t.isMin()?!1:n.opened)||0!==s||n.silence||(s=setTimeout(function(){s=0},3e3),n.audio.play())}}},setThemeBackground:function(e){t.isMobile||t.addClass(e,"bg-color")},clearThemeBackground:function(e){t.isMobile||t.removeClass(e,"bg-color")},setThemeColor:function(e){t.isMobile||t.addClass(e,"theme-color")},clearThemeColor:function(e){t.isMobile||t.removeClass(e,"theme-color")},bindEvents:function(){var n=this;t.live("i.easemobWidgetHeader-keyboard",t.click,function(){t.hasClass(this,"easemobWidgetHeader-keyboard-up")?(t.addClass(this,"easemobWidgetHeader-keyboard-down"),t.removeClass(this,"easemobWidgetHeader-keyboard-up"),n.setKeyboard("down")):(t.addClass(this,"easemobWidgetHeader-keyboard-up"),t.removeClass(this,"easemobWidgetHeader-keyboard-down"),n.setKeyboard("up"))}),!t.isMobile&&!t.root&&t.on(easemobim.imBtn,t.click,function(){transfer.send(easemobim.EVENTS.SHOW,window.transfer.to)}),t.on(easemobim.imChatBody,t.click,function(){return easemobim.textarea.blur(),!1}),t.on(document,"mouseover",function(){t.root||transfer.send(easemobim.EVENTS.RECOVERY,window.transfer.to)}),t.live("img.easemobWidget-imgview","click",function(){easemobim.imgView.show(this.getAttribute("src"))}),t.live("button.easemobWidget-list-btn","mouseover",function(){n.setThemeBackground(this)}),t.live("button.easemobWidget-list-btn","mouseout",function(){n.clearThemeBackground(this)}),t.on(easemobim.sendFileBtn,"mouseenter",function(){n.setThemeColor(this)}),t.on(easemobim.sendFileBtn,"mouseleave",function(){n.clearThemeColor(this)}),t.on(easemobim.noteBtn,"mouseenter",function(){n.setThemeColor(this)}),t.on(easemobim.noteBtn,"mouseleave",function(){n.clearThemeColor(this)}),e.dragenable&&(easemobim.dragBar.style.cursor="move",t.isMobile||t.on(easemobim.dragBar,"mousedown",function(e){var n=window.event||e;return easemobim.textarea.blur(),easemobim.EVENTS.DRAGREADY.data={x:n.clientX,y:n.clientY},t.root||transfer.send(easemobim.EVENTS.DRAGREADY,window.transfer.to),!1},!1)),function(){var e,s,i;t.live("div.easemobWidget-date","touchstart",function(e){var t=e||window.event,n=t.touches;t.touches&&t.touches.length>0&&(s=n[0].pageY)}),t.live("div.easemobWidget-date","touchmove",function(t){var a=t||window.event,o=a.touches;a.touches&&a.touches.length>0&&(i=o[0].pageY,i-s>8&&this.getBoundingClientRect().top>=0&&(clearTimeout(e),e=setTimeout(function(){n.getHistory(!0)},100)))});var a=function(t){var s=t||window.event,i=(s.touches,this);(s.wheelDelta/120>0||s.detail<0)&&(clearTimeout(e),e=setTimeout(function(){i.getBoundingClientRect().top>=0&&n.getHistory(!0)},400))};t.live("div.easemobWidget-chat","mousewheel",a),t.live("div.easemobWidget-chat","DOMMouseScroll",a)}(),t.live("div.easemobWidget-msg-status",t.click,function(){var e=this.getAttribute("id").slice(0,-7);t.addClass(this,"em-hide"),t.removeClass(t.$Dom(e+"_loading"),"em-hide"),"txt"===this.getAttribute("data-type")?n.channel.reSend("txt",e):n.conn.send(e)}),t.live("button.js_robertTransferBtn",t.click,function(){var e=this;return e.clicked?!1:(e.clicked=!0,n.transferToKf(e.getAttribute("data-id"),e.getAttribute("data-sessionid")),!1)}),t.live("button.js_robertbtn",t.click,function(){var e=this;return n.sendTextMsg(t.html(e),null,{msgtype:{choice:{menuid:e.getAttribute("data-id")}}}),!1});var s=function(){return n.readyHandled?void(easemobim.textarea.value?t.removeClass(easemobim.sendBtn,"disabled"):t.addClass(easemobim.sendBtn,"disabled")):(t.hasClass(easemobim.sendBtn,"disabled")||t.addClass(easemobim.sendBtn,"disabled"),!1)};if(t.on(easemobim.textarea,"keyup",s),t.on(easemobim.textarea,"change",s),t.on(easemobim.textarea,"input",s),t.isMobile){var i=function(){easemobim.textarea.style.overflowY="auto",n.scrollBottom(800),clearInterval(n.focusText),n.focusText=setInterval(function(){document.body.scrollTop=1e4},100)};t.on(easemobim.textarea,"input",function(){n.autoGrowOptions.update(),n.scrollBottom(800)}),t.on(easemobim.textarea,"focus",i),t.one(easemobim.textarea,"touchstart",i),t.on(easemobim.textarea,"blur",function(){clearInterval(n.focusText)})}t.on(easemobim.realFile,"change",function(){easemobim.realFile.value&&n.sendImgMsg()}),t.on(document,t.click,function(e){var n=window.event||e,s=n.srcElement||n.target;t.hasClass(s,"e-face")||t.addClass(easemobim.chatFaceWrapper,"em-hide")}),t.on(easemobim.sendFileBtn,"touchend",function(){easemobim.textarea.blur()}),t.on(easemobim.sendFileBtn,"click",function(){return n.readyHandled?Easemob.im.Utils.isCanUploadFileAsync?void easemobim.realFile.click():(n.errorPrompt("当前浏览器需要安装flash发送图片"),!1):(n.errorPrompt("正在连接中..."),!1)}),t.on(easemobim.noteBtn,"click",function(){easemobim.leaveMessage.show()}),t.on(easemobim.mobileNoteBtn,"click",function(){easemobim.leaveMessage.show()}),t.on(easemobim.textarea,"keydown",function(e){var s=this;if(t.isMobile&&13===e.keyCode||e.ctrlKey&&13===e.keyCode||e.shiftKey&&13===e.keyCode)return s.value=s.value+"\n",!1;if(13===e.keyCode){if(t.addClass(easemobim.chatFaceWrapper,"em-hide"),t.hasClass(easemobim.sendBtn,"disabled"))return!1;n.sendTextMsg(),setTimeout(function(){s.value=""},0)}}),t.on(easemobim.sendBtn,"click",function(){return t.hasClass(this,"disabled")?!1:(t.addClass(easemobim.chatFaceWrapper,"em-hide"),n.sendTextMsg(),t.isMobile&&(easemobim.textarea.style.height="34px",easemobim.textarea.style.overflowY="hidden","up"===n.direction||(easemobim.imChatBody.style.bottom="43px"),easemobim.textarea.focus()),!1)})},scrollBottom:function(e){var t=easemobim.imChatBody;e?(clearTimeout(this.scbT),this.scbT=setTimeout(function(){t.scrollTop=t.scrollHeight-t.offsetHeight+1e4},e)):t.scrollTop=t.scrollHeight-t.offsetHeight+1e4},sendImgMsg:function(e,t){this.channel.send("img",e,t)},sendFileMsg:function(e,t){this.channel.send("file",e,t)},handleEventStatus:function(t,n,s){var i=s?this.onlineHumanAgentCount<1:this.agentCount<1;i&&(this.noteShow||(this.noteShow=!0,this.appendEventMsg(easemobim.eventEnum.NOTE))),"reply"===t&&n?(e.agentUserId&&this.startToGetAgentStatus(),this.setAgentProfile({userNickname:n.userNickname,avatar:n.avatar})):"create"===t?this.appendEventMsg(easemobim.eventEnum.CREATE):"close"===t?this.appendEventMsg(easemobim.eventEnum.CLOSED):"transfer"===t?(this.appendEventMsg(easemobim.eventEnum.TRANSFER),this.handleAgentStatusChanged(n)):"linked"===t&&(this.appendEventMsg(easemobim.eventEnum.LINKED),this.handleAgentStatusChanged(n))},handleAgentStatusChanged:function(t){t&&(e.agentUserId=t.userId,this.updateAgentStatus(),this.startToGetAgentStatus(),this.setAgentProfile({userNickname:t.agentUserNiceName,avatar:t.avatar}))},appendEventMsg:function(n,s){if(!e.hideStatus){var i=this,a=i.chatWrapper,o=easemobim.EventEnumDom.get(n,s);o&&(i.appendDate((new Date).getTime()),a.appendChild(o),i.scrollBottom(t.isMobile?800:null))}},appendMsg:function(n,s,i,a){var o=this,r=n==e.user.username&&(n||e.user.username),d=o.chatWrapper,c=document.createElement("div");t.html(c,i.get(!r)),a?t.insertBefore(d,c,d.childNodes[o.hasLogo?1:0]):(d.appendChild(c),o.scrollBottom(t.isMobile?800:null));var l=t.$Class("img.easemobWidget-imgview",c),m=l.length>0?l[0]:null;m&&t.on(m,"load",function(){o.scrollBottom(),m=null}),c=null},sendTextMsg:function(e,t,n){this.channel.send("txt",e,t,n)},transferToKf:function(e,t){this.channel.send("transferToKf",e,t)},sendSatisfaction:function(e,t,n,s){this.channel.send("satisfaction",e,t,n,s)},messagePrompt:function(e){if(!t.isMobile){var n=this;n.opened?n.resetPrompt():(t.removeClass(t.html(easemobim.messageCount,""),"em-hide"),n.msgCount+=1,n.msgCount>9?t.html(t.addClass(easemobim.messageCount,"mutiCount"),"…"):t.html(t.removeClass(easemobim.messageCount,"mutiCount"),n.msgCount)),(t.isMin()||!n.opened)&&(n.soundReminder(),easemobim.EVENTS.NOTIFY.data={avatar:this.currentAvatar,title:"新消息",brief:e.brief},t.root||transfer.send(easemobim.EVENTS.SLIDE,window.transfer.to),t.root||transfer.send(easemobim.EVENTS.NOTIFY,window.transfer.to))}},resetPrompt:function(){this.msgCount=0,t.addClass(t.html(easemobim.messageCount,""),"em-hide"),t.root||transfer.send(easemobim.EVENTS.RECOVERY,window.transfer.to)},receiveMsg:function(t,n,s){e.offDuty||this.channel.handleReceive(t,n,s)}}},easemobim.api=function(e,t,n,s){easemobim.api[e]=easemobim.api[e]||{};var i=(new Date).getTime();easemobim.api[e][i]={success:n,error:s},easemobim.getData.send({api:e,data:t,timespan:i}).listen(function(e){if(easemobim.api[e.call]&&easemobim.api[e.call][e.timespan]){var t=easemobim.api[e.call][e.timespan];delete easemobim.api[e.call][e.timespan],0!==e.status?"function"==typeof t.error&&t.error(e):"function"==typeof t.success&&t.success(e)}},["api"])}}(),function(e,t){
-"use strict";if("function"==typeof easemobim)return!1;var n,s=document.getElementById("EasemobKefuWebim"),i=easemobim.utils,a=function(t){var a=i.query("tenantId"),t=t||{};if(i.root){try{t=JSON.parse(i.code.decode(i.getStore("emconfig"+a)))}catch(o){}t.tenantId=a,t.hide=!0,t.to=i.convertFalse(i.query("to")),t.appKey=i.convertFalse(decodeURIComponent(i.query("appKey"))),t.domain=t.domain||"//"+location.host,t.offDutyWord=decodeURIComponent(i.query("offDutyWord")),t.offDutyType=i.query("offDutyType"),t.language=i.query("language")||"zh_CN",t.xmppServer=i.convertFalse(i.query("xmppServer")),t.restServer=i.convertFalse(i.query("restServer")),t.originType=i.convertFalse(i.query("originType")),t.agentName=i.convertFalse(i.query("agentName")),t.satisfaction=i.convertFalse(i.query("sat")),t.resources=i.convertFalse(i.query("resources")),t.hideStatus=i.convertFalse(i.query("hideStatus")),t.satisfaction=i.convertFalse(i.query("sat")),t.wechatAuth=i.convertFalse(i.query("wechatAuth")),t.hideKeyboard=i.convertFalse(i.query("hideKeyboard")),t.ticket=""===i.query("ticket")?!0:i.convertFalse(i.query("ticket"));try{t.emgroup=decodeURIComponent(i.query("emgroup"))}catch(o){t.emgroup=i.query("emgroup")}i.query("user")?(!t.user||t.user.username&&t.user.username!==i.query("user"))&&(t.user={username:"",password:"",token:""}):t.user={username:i.get("root"+t.tenantId+t.emgroup),password:"",token:""}}s.innerHTML="			<div id='easemobWidgetPopBar'"+(i.root||!t.minimum||t.hide?" class='em-hide'":"")+">				<a class='easemobWidget-pop-bar bg-color' href='"+(i.isMobile?location.href+"' target='_blank'":"javascript:;'")+"><i></i>"+t.buttonText+"</a>				<span class='easemobWidget-msgcount em-hide'></span>			</div>			<div id='EasemobKefuWebimChat' class='easemobWidgetWrapper"+(i.root||!t.minimum?"":" em-hide")+(i.isMobile?" easemobWidgetWrapper-mobile":"")+"'>				<div id='easemobWidgetHeader' class='easemobWidgetHeader-wrapper bg-color border-color'>					<div id='easemobWidgetDrag'>						"+(i.isMobile||i.root?"":"<p></p>")+"						<img class='easemobWidgetHeader-portrait border-color'/>						<span class='easemobWidgetHeader-nickname'></span>                        <i id='easemobWidgetNotem' class='easemobWidget-notem em-hide'></i>                        <i id='easemobWidgetAgentStatus' class='easemobWidget-agent-status em-hide'></i>					</div>				</div>				<div id='easemobWidgetBody' class='easemobWidgetBody-wrapper'></div>				<div id='EasemobKefuWebimFaceWrapper' class='easemobWidget-face-wrapper e-face em-hide'>					<ul class='easemobWidget-face-container'></ul>				</div>				<div id='easemobWidgetSend' class='easemobWidget-send-wrapper'>					<i class='easemobWidget-face e-face' tile='表情'></i>					<i class='easemobWidget-file' id='easemobWidgetFile' tile='图片'></i>					<i class='"+(t.ticket?"easemobWidget-note":"easemobWidget-note em-hide")+"' id='easemobWidgetNote' tile='留言'></i>					<input id='easemobWidgetFileInput' type='file' accept='image/*'/>					<textarea class='easemobWidget-textarea' spellcheck='false'></textarea>"+(i.isMobile||!t.satisfaction?"":"<span id='EasemobKefuWebimSatisfy' class='easemobWidget-satisfaction'>请对服务做出评价</span>")+"					<a href='javascript:;' class='easemobWidget-send bg-color disabled' id='easemobWidgetSendBtn'>连接中</a>				</div>				<iframe id='EasemobKefuWebimIframe' class='em-hide' src='"+(t.domain||"//"+location.host)+"/webim/transfer.html?v=43.9'>			</div>",e.chat=easemobim.chat(t);var r=easemobim.api;if(t.base=i.protocol+t.domain,t.sslImgBase=t.domain+"/ossimages/",!Easemob.im.Utils.isCanUploadFileAsync&&Easemob.im.Utils.isCanUploadFile){var d=document.createElement("script");d.onload=d.onreadystatechange=function(){this.readyState&&"loaded"!==this.readyState&&"complete"!==this.readyState||easemobim.uploadShim(t,chat)},d.src=i.protocol+t.staticPath+"/js/swfupload/swfupload.min.js",s.appendChild(d)}n={init:function(){var e=this;return t.toUser=t.toUser||t.to,r("getDutyStatus",{tenantId:t.tenantId},function(e){t.offDuty=e.data?e.data&&"chat"!==t.offDutyType:!1,chat.setOffline(t.offDuty)}),t.orgName=t.appKey.split("#")[0],t.appName=t.appKey.split("#")[1],r("getRelevanceList",{tenantId:t.tenantId},function(n){if(0===n.data.length)return void chat.errorPrompt("未创建关联",!0);t.relevanceList=n.data,t.tenantAvatar=i.getAvatarsFullPath(n.data[0].tenantAvatar,t.domain),t.defaultAvatar=t.staticPath?t.staticPath+"/img/default_avatar.png":"static/img/default_avatar.png",t.defaultAgentName=n.data[0].tenantName,t.logo=t.logo||n.data[0].tenantLogo,t.toUser=t.toUser||n.data[0].imServiceNumber,t.orgName=t.orgName||n.data[0].orgName,t.appName=t.appName||n.data[0].appName,t.channelid=t.channelid||n.data[0].channelId,t.appKey=t.appKey||t.orgName+"#"+t.appName,t.restServer=t.restServer||n.data[0].restDomain;var s=t.restServer?t.restServer.match(/vip\d/):"";if(s=s&&s.length?"-"+s[0]:"",t.xmppServer=t.xmppServer||"im-api"+s+".easemob.com",chat.init(),t.user.username&&(t.user.password||t.user.token))chat.ready();else{if(t.wechatAuth&&easemobim.wechat)return easemobim.wechat(function(n){try{n=JSON.parse(n)}catch(s){n=null}if(n){t.visitor=t.visitor||{},t.visitor.userNickname=n.nickname;var i=t.tenantId+"_"+t.orgName+"_"+t.appName+"_"+t.toUser+"_"+n.openid;easemobim.emajax({url:"/v1/webimplugin/visitors/wechat/"+i+"?tenantId="+t.tenantId,data:{orgName:t.orgName,appName:t.appName,imServiceNumber:t.toUser},type:"POST",success:function(n){try{n=JSON.parse(n)}catch(s){n=null}n&&"OK"===n.status?(t.user.username=n.entity.userId,t.user.password=n.entity.userPassword,chat.ready()):e.go()},error:function(t){e.go()}})}else e.go()}),this;t.user.username?r("getPassword",{userId:t.user.username,tenantId:t.tenantId},function(n){n.data?(t.user.password=n.data,chat.ready()):e.go()}):e.go()}}),this},go:function(){r("createVisitor",{orgName:t.orgName,appName:t.appName,imServiceNumber:t.toUser,tenantId:t.tenantId},function(n){t.newuser=!0,t.user.username=n.data.userId,t.user.password=n.data.userPassword,easemobim.EVENTS.CACHEUSER.data={username:t.user.username,group:t.user.emgroup},i.root?i.set("root"+t.tenantId+t.emgroup,t.user.username):transfer.send(easemobim.EVENTS.CACHEUSER,e.transfer.to),chat.ready()})},beforeOpen:function(){},open:function(e){t.toUser=t.toUser||t.to,this.beforeOpen(),chat.show(e)},close:function(){chat.close(),this.afterClose()},afterClose:function(){}},i.on(i.$Dom("EasemobKefuWebimIframe"),"load",function(){easemobim.getData=new easemobim.Transfer("EasemobKefuWebimIframe","data"),n.init()}),"function"==typeof easemobim.leaveMessage&&(easemobim.leaveMessage=easemobim.leaveMessage(chat,a)),"function"==typeof easemobim.paste&&(easemobim.paste=easemobim.paste(chat)),"function"==typeof easemobim.satisfaction&&easemobim.satisfaction(chat)};i.root?a():e.transfer=new easemobim.Transfer(null,"main").listen(function(t){if(t&&t.tenantId)t.parentId&&(e.transfer.to=t.parentId),a(t);else if(t.event)switch(t.event){case easemobim.EVENTS.SHOW.event:n.open();break;case easemobim.EVENTS.CLOSE.event:n.close();break;case easemobim.EVENTS.EXT.event:chat.sendTextMsg("",!1,t.data.ext);break;case easemobim.EVENTS.TEXTMSG.event:chat.sendTextMsg(t.data.data,!1,t.data.ext)}},["easemob"])}(window,void 0);
+/** File: strophe.js
+ *  A JavaScript library for XMPP BOSH/XMPP over Websocket.
+ *
+ *  This is the JavaScript version of the Strophe library.  Since JavaScript
+ *  had no facilities for persistent TCP connections, this library uses
+ *  Bidirectional-streams Over Synchronous HTTP (BOSH) to emulate
+ *  a persistent, stateful, two-way connection to an XMPP server.  More
+ *  information on BOSH can be found in XEP 124.
+ *
+ *  This version of Strophe also works with WebSockets.
+ *  For more information on XMPP-over WebSocket see this RFC:
+ *  http://tools.ietf.org/html/rfc7395
+ */
+
+/* All of the Strophe globals are defined in this special function below so
+ * that references to the globals become closures.  This will ensure that
+ * on page reload, these references will still be available to callbacks
+ * that are still executing.
+ */
+
+/* jshint ignore:start */
+(function (callback) {
+/* jshint ignore:end */
+
+// This code was written by Tyler Akins and has been placed in the
+// public domain.  It would be nice if you left this header intact.
+// Base64 code from Tyler Akins -- http://rumkin.com
+
+(function (root, factory) {
+    //if (typeof define === 'function' && define.amd) {
+    if (false) {
+        define('strophe-base64', function () {
+            return factory();
+        });
+    } else {
+        // Browser globals
+        root.Base64 = factory();
+    }
+}(this, function () {
+    var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+
+    var obj = {
+        /**
+         * Encodes a string in base64
+         * @param {String} input The string to encode in base64.
+         */
+        encode: function (input) {
+            var output = "";
+            var chr1, chr2, chr3;
+            var enc1, enc2, enc3, enc4;
+            var i = 0;
+
+            do {
+                chr1 = input.charCodeAt(i++);
+                chr2 = input.charCodeAt(i++);
+                chr3 = input.charCodeAt(i++);
+
+                enc1 = chr1 >> 2;
+                enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+                enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+                enc4 = chr3 & 63;
+
+                if (isNaN(chr2)) {
+                    enc2 = ((chr1 & 3) << 4);
+                    enc3 = enc4 = 64;
+                } else if (isNaN(chr3)) {
+                    enc4 = 64;
+                }
+
+                output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2) +
+                    keyStr.charAt(enc3) + keyStr.charAt(enc4);
+            } while (i < input.length);
+
+            return output;
+        },
+
+        /**
+         * Decodes a base64 string.
+         * @param {String} input The string to decode.
+         */
+        decode: function (input) {
+            var output = "";
+            var chr1, chr2, chr3;
+            var enc1, enc2, enc3, enc4;
+            var i = 0;
+
+            // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
+            input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+
+            do {
+                enc1 = keyStr.indexOf(input.charAt(i++));
+                enc2 = keyStr.indexOf(input.charAt(i++));
+                enc3 = keyStr.indexOf(input.charAt(i++));
+                enc4 = keyStr.indexOf(input.charAt(i++));
+
+                chr1 = (enc1 << 2) | (enc2 >> 4);
+                chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+                chr3 = ((enc3 & 3) << 6) | enc4;
+
+                output = output + String.fromCharCode(chr1);
+
+                if (enc3 != 64) {
+                    output = output + String.fromCharCode(chr2);
+                }
+                if (enc4 != 64) {
+                    output = output + String.fromCharCode(chr3);
+                }
+            } while (i < input.length);
+
+            return output;
+        }
+    };
+    return obj;
+}));
+
+/*
+ * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
+ * in FIPS PUB 180-1
+ * Version 2.1a Copyright Paul Johnston 2000 - 2002.
+ * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+ * Distributed under the BSD License
+ * See http://pajhome.org.uk/crypt/md5 for details.
+ */
+
+/* jshint undef: true, unused: true:, noarg: true, latedef: true */
+/* global define */
+
+/* Some functions and variables have been stripped for use with Strophe */
+
+(function (root, factory) {
+    //if (typeof define === 'function' && define.amd) {
+    if (false) {
+        define('strophe-sha1', function () {
+            return factory();
+        });
+    } else {
+        // Browser globals
+        root.SHA1 = factory();
+    }
+}(this, function () {
+
+/*
+ * Calculate the SHA-1 of an array of big-endian words, and a bit length
+ */
+function core_sha1(x, len)
+{
+  /* append padding */
+  x[len >> 5] |= 0x80 << (24 - len % 32);
+  x[((len + 64 >> 9) << 4) + 15] = len;
+
+  var w = new Array(80);
+  var a =  1732584193;
+  var b = -271733879;
+  var c = -1732584194;
+  var d =  271733878;
+  var e = -1009589776;
+
+  var i, j, t, olda, oldb, oldc, oldd, olde;
+  for (i = 0; i < x.length; i += 16)
+  {
+    olda = a;
+    oldb = b;
+    oldc = c;
+    oldd = d;
+    olde = e;
+
+    for (j = 0; j < 80; j++)
+    {
+      if (j < 16) { w[j] = x[i + j]; }
+      else { w[j] = rol(w[j-3] ^ w[j-8] ^ w[j-14] ^ w[j-16], 1); }
+      t = safe_add(safe_add(rol(a, 5), sha1_ft(j, b, c, d)),
+                       safe_add(safe_add(e, w[j]), sha1_kt(j)));
+      e = d;
+      d = c;
+      c = rol(b, 30);
+      b = a;
+      a = t;
+    }
+
+    a = safe_add(a, olda);
+    b = safe_add(b, oldb);
+    c = safe_add(c, oldc);
+    d = safe_add(d, oldd);
+    e = safe_add(e, olde);
+  }
+  return [a, b, c, d, e];
+}
+
+/*
+ * Perform the appropriate triplet combination function for the current
+ * iteration
+ */
+function sha1_ft(t, b, c, d)
+{
+  if (t < 20) { return (b & c) | ((~b) & d); }
+  if (t < 40) { return b ^ c ^ d; }
+  if (t < 60) { return (b & c) | (b & d) | (c & d); }
+  return b ^ c ^ d;
+}
+
+/*
+ * Determine the appropriate additive constant for the current iteration
+ */
+function sha1_kt(t)
+{
+  return (t < 20) ?  1518500249 : (t < 40) ?  1859775393 :
+         (t < 60) ? -1894007588 : -899497514;
+}
+
+/*
+ * Calculate the HMAC-SHA1 of a key and some data
+ */
+function core_hmac_sha1(key, data)
+{
+  var bkey = str2binb(key);
+  if (bkey.length > 16) { bkey = core_sha1(bkey, key.length * 8); }
+
+  var ipad = new Array(16), opad = new Array(16);
+  for (var i = 0; i < 16; i++)
+  {
+    ipad[i] = bkey[i] ^ 0x36363636;
+    opad[i] = bkey[i] ^ 0x5C5C5C5C;
+  }
+
+  var hash = core_sha1(ipad.concat(str2binb(data)), 512 + data.length * 8);
+  return core_sha1(opad.concat(hash), 512 + 160);
+}
+
+/*
+ * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+ * to work around bugs in some JS interpreters.
+ */
+function safe_add(x, y)
+{
+  var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+  var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+  return (msw << 16) | (lsw & 0xFFFF);
+}
+
+/*
+ * Bitwise rotate a 32-bit number to the left.
+ */
+function rol(num, cnt)
+{
+  return (num << cnt) | (num >>> (32 - cnt));
+}
+
+/*
+ * Convert an 8-bit or 16-bit string to an array of big-endian words
+ * In 8-bit function, characters >255 have their hi-byte silently ignored.
+ */
+function str2binb(str)
+{
+  var bin = [];
+  var mask = 255;
+  for (var i = 0; i < str.length * 8; i += 8)
+  {
+    bin[i>>5] |= (str.charCodeAt(i / 8) & mask) << (24 - i%32);
+  }
+  return bin;
+}
+
+/*
+ * Convert an array of big-endian words to a string
+ */
+function binb2str(bin)
+{
+  var str = "";
+  var mask = 255;
+  for (var i = 0; i < bin.length * 32; i += 8)
+  {
+    str += String.fromCharCode((bin[i>>5] >>> (24 - i%32)) & mask);
+  }
+  return str;
+}
+
+/*
+ * Convert an array of big-endian words to a base-64 string
+ */
+function binb2b64(binarray)
+{
+  var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  var str = "";
+  var triplet, j;
+  for (var i = 0; i < binarray.length * 4; i += 3)
+  {
+    triplet = (((binarray[i   >> 2] >> 8 * (3 -  i   %4)) & 0xFF) << 16) |
+              (((binarray[i+1 >> 2] >> 8 * (3 - (i+1)%4)) & 0xFF) << 8 ) |
+               ((binarray[i+2 >> 2] >> 8 * (3 - (i+2)%4)) & 0xFF);
+    for (j = 0; j < 4; j++)
+    {
+      if (i * 8 + j * 6 > binarray.length * 32) { str += "="; }
+      else { str += tab.charAt((triplet >> 6*(3-j)) & 0x3F); }
+    }
+  }
+  return str;
+}
+
+/*
+ * These are the functions you'll usually want to call
+ * They take string arguments and return either hex or base-64 encoded strings
+ */
+return {
+    b64_hmac_sha1:  function (key, data){ return binb2b64(core_hmac_sha1(key, data)); },
+    b64_sha1:       function (s) { return binb2b64(core_sha1(str2binb(s),s.length * 8)); },
+    binb2str:       binb2str,
+    core_hmac_sha1: core_hmac_sha1,
+    str_hmac_sha1:  function (key, data){ return binb2str(core_hmac_sha1(key, data)); },
+    str_sha1:       function (s) { return binb2str(core_sha1(str2binb(s),s.length * 8)); }
+};
+}));
+
+/*
+ * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
+ * Digest Algorithm, as defined in RFC 1321.
+ * Version 2.1 Copyright (C) Paul Johnston 1999 - 2002.
+ * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+ * Distributed under the BSD License
+ * See http://pajhome.org.uk/crypt/md5 for more info.
+ */
+
+/*
+ * Everything that isn't used by Strophe has been stripped here!
+ */
+
+(function (root, factory) {
+    //if (typeof define === 'function' && define.amd) {
+    if (false) {
+        define('strophe-md5', function () {
+            return factory();
+        });
+    } else {
+        // Browser globals
+        root.MD5 = factory();
+    }
+}(this, function (b) {
+    /*
+     * Add integers, wrapping at 2^32. This uses 16-bit operations internally
+     * to work around bugs in some JS interpreters.
+     */
+    var safe_add = function (x, y) {
+        var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+        var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+        return (msw << 16) | (lsw & 0xFFFF);
+    };
+
+    /*
+     * Bitwise rotate a 32-bit number to the left.
+     */
+    var bit_rol = function (num, cnt) {
+        return (num << cnt) | (num >>> (32 - cnt));
+    };
+
+    /*
+     * Convert a string to an array of little-endian words
+     */
+    var str2binl = function (str) {
+        var bin = [];
+        for(var i = 0; i < str.length * 8; i += 8)
+        {
+            bin[i>>5] |= (str.charCodeAt(i / 8) & 255) << (i%32);
+        }
+        return bin;
+    };
+
+    /*
+     * Convert an array of little-endian words to a string
+     */
+    var binl2str = function (bin) {
+        var str = "";
+        for(var i = 0; i < bin.length * 32; i += 8)
+        {
+            str += String.fromCharCode((bin[i>>5] >>> (i % 32)) & 255);
+        }
+        return str;
+    };
+
+    /*
+     * Convert an array of little-endian words to a hex string.
+     */
+    var binl2hex = function (binarray) {
+        var hex_tab = "0123456789abcdef";
+        var str = "";
+        for(var i = 0; i < binarray.length * 4; i++)
+        {
+            str += hex_tab.charAt((binarray[i>>2] >> ((i%4)*8+4)) & 0xF) +
+                hex_tab.charAt((binarray[i>>2] >> ((i%4)*8  )) & 0xF);
+        }
+        return str;
+    };
+
+    /*
+     * These functions implement the four basic operations the algorithm uses.
+     */
+    var md5_cmn = function (q, a, b, x, s, t) {
+        return safe_add(bit_rol(safe_add(safe_add(a, q),safe_add(x, t)), s),b);
+    };
+
+    var md5_ff = function (a, b, c, d, x, s, t) {
+        return md5_cmn((b & c) | ((~b) & d), a, b, x, s, t);
+    };
+
+    var md5_gg = function (a, b, c, d, x, s, t) {
+        return md5_cmn((b & d) | (c & (~d)), a, b, x, s, t);
+    };
+
+    var md5_hh = function (a, b, c, d, x, s, t) {
+        return md5_cmn(b ^ c ^ d, a, b, x, s, t);
+    };
+
+    var md5_ii = function (a, b, c, d, x, s, t) {
+        return md5_cmn(c ^ (b | (~d)), a, b, x, s, t);
+    };
+
+    /*
+     * Calculate the MD5 of an array of little-endian words, and a bit length
+     */
+    var core_md5 = function (x, len) {
+        /* append padding */
+        x[len >> 5] |= 0x80 << ((len) % 32);
+        x[(((len + 64) >>> 9) << 4) + 14] = len;
+
+        var a =  1732584193;
+        var b = -271733879;
+        var c = -1732584194;
+        var d =  271733878;
+
+        var olda, oldb, oldc, oldd;
+        for (var i = 0; i < x.length; i += 16)
+        {
+            olda = a;
+            oldb = b;
+            oldc = c;
+            oldd = d;
+
+            a = md5_ff(a, b, c, d, x[i+ 0], 7 , -680876936);
+            d = md5_ff(d, a, b, c, x[i+ 1], 12, -389564586);
+            c = md5_ff(c, d, a, b, x[i+ 2], 17,  606105819);
+            b = md5_ff(b, c, d, a, x[i+ 3], 22, -1044525330);
+            a = md5_ff(a, b, c, d, x[i+ 4], 7 , -176418897);
+            d = md5_ff(d, a, b, c, x[i+ 5], 12,  1200080426);
+            c = md5_ff(c, d, a, b, x[i+ 6], 17, -1473231341);
+            b = md5_ff(b, c, d, a, x[i+ 7], 22, -45705983);
+            a = md5_ff(a, b, c, d, x[i+ 8], 7 ,  1770035416);
+            d = md5_ff(d, a, b, c, x[i+ 9], 12, -1958414417);
+            c = md5_ff(c, d, a, b, x[i+10], 17, -42063);
+            b = md5_ff(b, c, d, a, x[i+11], 22, -1990404162);
+            a = md5_ff(a, b, c, d, x[i+12], 7 ,  1804603682);
+            d = md5_ff(d, a, b, c, x[i+13], 12, -40341101);
+            c = md5_ff(c, d, a, b, x[i+14], 17, -1502002290);
+            b = md5_ff(b, c, d, a, x[i+15], 22,  1236535329);
+
+            a = md5_gg(a, b, c, d, x[i+ 1], 5 , -165796510);
+            d = md5_gg(d, a, b, c, x[i+ 6], 9 , -1069501632);
+            c = md5_gg(c, d, a, b, x[i+11], 14,  643717713);
+            b = md5_gg(b, c, d, a, x[i+ 0], 20, -373897302);
+            a = md5_gg(a, b, c, d, x[i+ 5], 5 , -701558691);
+            d = md5_gg(d, a, b, c, x[i+10], 9 ,  38016083);
+            c = md5_gg(c, d, a, b, x[i+15], 14, -660478335);
+            b = md5_gg(b, c, d, a, x[i+ 4], 20, -405537848);
+            a = md5_gg(a, b, c, d, x[i+ 9], 5 ,  568446438);
+            d = md5_gg(d, a, b, c, x[i+14], 9 , -1019803690);
+            c = md5_gg(c, d, a, b, x[i+ 3], 14, -187363961);
+            b = md5_gg(b, c, d, a, x[i+ 8], 20,  1163531501);
+            a = md5_gg(a, b, c, d, x[i+13], 5 , -1444681467);
+            d = md5_gg(d, a, b, c, x[i+ 2], 9 , -51403784);
+            c = md5_gg(c, d, a, b, x[i+ 7], 14,  1735328473);
+            b = md5_gg(b, c, d, a, x[i+12], 20, -1926607734);
+
+            a = md5_hh(a, b, c, d, x[i+ 5], 4 , -378558);
+            d = md5_hh(d, a, b, c, x[i+ 8], 11, -2022574463);
+            c = md5_hh(c, d, a, b, x[i+11], 16,  1839030562);
+            b = md5_hh(b, c, d, a, x[i+14], 23, -35309556);
+            a = md5_hh(a, b, c, d, x[i+ 1], 4 , -1530992060);
+            d = md5_hh(d, a, b, c, x[i+ 4], 11,  1272893353);
+            c = md5_hh(c, d, a, b, x[i+ 7], 16, -155497632);
+            b = md5_hh(b, c, d, a, x[i+10], 23, -1094730640);
+            a = md5_hh(a, b, c, d, x[i+13], 4 ,  681279174);
+            d = md5_hh(d, a, b, c, x[i+ 0], 11, -358537222);
+            c = md5_hh(c, d, a, b, x[i+ 3], 16, -722521979);
+            b = md5_hh(b, c, d, a, x[i+ 6], 23,  76029189);
+            a = md5_hh(a, b, c, d, x[i+ 9], 4 , -640364487);
+            d = md5_hh(d, a, b, c, x[i+12], 11, -421815835);
+            c = md5_hh(c, d, a, b, x[i+15], 16,  530742520);
+            b = md5_hh(b, c, d, a, x[i+ 2], 23, -995338651);
+
+            a = md5_ii(a, b, c, d, x[i+ 0], 6 , -198630844);
+            d = md5_ii(d, a, b, c, x[i+ 7], 10,  1126891415);
+            c = md5_ii(c, d, a, b, x[i+14], 15, -1416354905);
+            b = md5_ii(b, c, d, a, x[i+ 5], 21, -57434055);
+            a = md5_ii(a, b, c, d, x[i+12], 6 ,  1700485571);
+            d = md5_ii(d, a, b, c, x[i+ 3], 10, -1894986606);
+            c = md5_ii(c, d, a, b, x[i+10], 15, -1051523);
+            b = md5_ii(b, c, d, a, x[i+ 1], 21, -2054922799);
+            a = md5_ii(a, b, c, d, x[i+ 8], 6 ,  1873313359);
+            d = md5_ii(d, a, b, c, x[i+15], 10, -30611744);
+            c = md5_ii(c, d, a, b, x[i+ 6], 15, -1560198380);
+            b = md5_ii(b, c, d, a, x[i+13], 21,  1309151649);
+            a = md5_ii(a, b, c, d, x[i+ 4], 6 , -145523070);
+            d = md5_ii(d, a, b, c, x[i+11], 10, -1120210379);
+            c = md5_ii(c, d, a, b, x[i+ 2], 15,  718787259);
+            b = md5_ii(b, c, d, a, x[i+ 9], 21, -343485551);
+
+            a = safe_add(a, olda);
+            b = safe_add(b, oldb);
+            c = safe_add(c, oldc);
+            d = safe_add(d, oldd);
+        }
+        return [a, b, c, d];
+    };
+
+    var obj = {
+        /*
+         * These are the functions you'll usually want to call.
+         * They take string arguments and return either hex or base-64 encoded
+         * strings.
+         */
+        hexdigest: function (s) {
+            return binl2hex(core_md5(str2binl(s), s.length * 8));
+        },
+
+        hash: function (s) {
+            return binl2str(core_md5(str2binl(s), s.length * 8));
+        }
+    };
+    return obj;
+}));
+
+/*
+    This program is distributed under the terms of the MIT license.
+    Please see the LICENSE file for details.
+
+    Copyright 2006-2008, OGG, LLC
+*/
+
+/* jshint undef: true, unused: true:, noarg: true, latedef: true */
+
+/** PrivateFunction: Function.prototype.bind
+ *  Bind a function to an instance.
+ *
+ *  This Function object extension method creates a bound method similar
+ *  to those in Python.  This means that the 'this' object will point
+ *  to the instance you want.  See
+ *  <a href='https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function/bind'>MDC's bind() documentation</a> and
+ *  <a href='http://benjamin.smedbergs.us/blog/2007-01-03/bound-functions-and-function-imports-in-javascript/'>Bound Functions and Function Imports in JavaScript</a>
+ *  for a complete explanation.
+ *
+ *  This extension already exists in some browsers (namely, Firefox 3), but
+ *  we provide it to support those that don't.
+ *
+ *  Parameters:
+ *    (Object) obj - The object that will become 'this' in the bound function.
+ *    (Object) argN - An option argument that will be prepended to the
+ *      arguments given for the function call
+ *
+ *  Returns:
+ *    The bound function.
+ */
+if (!Function.prototype.stropheBind) {
+    Function.prototype.stropheBind = function (obj /*, arg1, arg2, ... */)
+    {
+        var func = this;
+        var _slice = Array.prototype.slice;
+        var _concat = Array.prototype.concat;
+        var _args = _slice.call(arguments, 1);
+
+        return function () {
+            return func.apply(obj ? obj : this,
+                              _concat.call(_args,
+                                           _slice.call(arguments, 0)));
+        };
+    };
+}
+
+/** PrivateFunction: Array.isArray
+ *  This is a polyfill for the ES5 Array.isArray method.
+ */
+if (!Array.isArray) {
+    Array.isArray = function(arg) {
+        return Object.prototype.toString.call(arg) === '[object Array]';
+    };
+}
+
+/** PrivateFunction: Array.prototype.indexOf
+ *  Return the index of an object in an array.
+ *
+ *  This function is not supplied by some JavaScript implementations, so
+ *  we provide it if it is missing.  This code is from:
+ *  http://developer.mozilla.org/En/Core_JavaScript_1.5_Reference:Objects:Array:indexOf
+ *
+ *  Parameters:
+ *    (Object) elt - The object to look for.
+ *    (Integer) from - The index from which to start looking. (optional).
+ *
+ *  Returns:
+ *    The index of elt in the array or -1 if not found.
+ */
+if (!Array.prototype.indexOf)
+    {
+        Array.prototype.indexOf = function(elt /*, from*/)
+        {
+            var len = this.length;
+
+            var from = Number(arguments[1]) || 0;
+            from = (from < 0) ? Math.ceil(from) : Math.floor(from);
+            if (from < 0) {
+                from += len;
+            }
+
+            for (; from < len; from++) {
+                if (from in this && this[from] === elt) {
+                    return from;
+                }
+            }
+
+            return -1;
+        };
+    }
+
+/*
+    This program is distributed under the terms of the MIT license.
+    Please see the LICENSE file for details.
+
+    Copyright 2006-2008, OGG, LLC
+*/
+
+/* jshint undef: true, unused: true:, noarg: true, latedef: true */
+/*global define, document, window, setTimeout, clearTimeout, console, ActiveXObject, DOMParser */
+
+(function (root, factory) {
+    //if (typeof define === 'function' && define.amd) {
+    if (false) {
+        define('strophe-core', [
+            'strophe-sha1',
+            'strophe-base64',
+            'strophe-md5',
+            "strophe-polyfill"
+        ], function () {
+            return factory.apply(this, arguments);
+        });
+    } else {
+        // Browser globals
+        var o = factory(root.SHA1, root.Base64, root.MD5);
+        window.Strophe =        o.Strophe;
+        window.$build =         o.$build;
+        window.$iq =            o.$iq;
+        window.$msg =           o.$msg;
+        window.$pres =          o.$pres;
+        window.SHA1 =           o.SHA1;
+        window.Base64 =         o.Base64;
+        window.MD5 =            o.MD5;
+        window.b64_hmac_sha1 =  o.SHA1.b64_hmac_sha1;
+        window.b64_sha1 =       o.SHA1.b64_sha1;
+        window.str_hmac_sha1 =  o.SHA1.str_hmac_sha1;
+        window.str_sha1 =       o.SHA1.str_sha1;
+    }
+}(this, function (SHA1, Base64, MD5) {
+
+var Strophe;
+
+/** Function: $build
+ *  Create a Strophe.Builder.
+ *  This is an alias for 'new Strophe.Builder(name, attrs)'.
+ *
+ *  Parameters:
+ *    (String) name - The root element name.
+ *    (Object) attrs - The attributes for the root element in object notation.
+ *
+ *  Returns:
+ *    A new Strophe.Builder object.
+ */
+function $build(name, attrs) { return new Strophe.Builder(name, attrs); }
+
+/** Function: $msg
+ *  Create a Strophe.Builder with a <message/> element as the root.
+ *
+ *  Parmaeters:
+ *    (Object) attrs - The <message/> element attributes in object notation.
+ *
+ *  Returns:
+ *    A new Strophe.Builder object.
+ */
+function $msg(attrs) { return new Strophe.Builder("message", attrs); }
+
+/** Function: $iq
+ *  Create a Strophe.Builder with an <iq/> element as the root.
+ *
+ *  Parameters:
+ *    (Object) attrs - The <iq/> element attributes in object notation.
+ *
+ *  Returns:
+ *    A new Strophe.Builder object.
+ */
+function $iq(attrs) { return new Strophe.Builder("iq", attrs); }
+
+/** Function: $pres
+ *  Create a Strophe.Builder with a <presence/> element as the root.
+ *
+ *  Parameters:
+ *    (Object) attrs - The <presence/> element attributes in object notation.
+ *
+ *  Returns:
+ *    A new Strophe.Builder object.
+ */
+function $pres(attrs) { return new Strophe.Builder("presence", attrs); }
+
+/** Class: Strophe
+ *  An object container for all Strophe library functions.
+ *
+ *  This class is just a container for all the objects and constants
+ *  used in the library.  It is not meant to be instantiated, but to
+ *  provide a namespace for library objects, constants, and functions.
+ */
+Strophe = {
+    /** Constant: VERSION
+     *  The version of the Strophe library. Unreleased builds will have
+     *  a version of head-HASH where HASH is a partial revision.
+     */
+    VERSION: "1.2.2",
+
+    /** Constants: XMPP Namespace Constants
+     *  Common namespace constants from the XMPP RFCs and XEPs.
+     *
+     *  NS.HTTPBIND - HTTP BIND namespace from XEP 124.
+     *  NS.BOSH - BOSH namespace from XEP 206.
+     *  NS.CLIENT - Main XMPP client namespace.
+     *  NS.AUTH - Legacy authentication namespace.
+     *  NS.ROSTER - Roster operations namespace.
+     *  NS.PROFILE - Profile namespace.
+     *  NS.DISCO_INFO - Service discovery info namespace from XEP 30.
+     *  NS.DISCO_ITEMS - Service discovery items namespace from XEP 30.
+     *  NS.MUC - Multi-User Chat namespace from XEP 45.
+     *  NS.SASL - XMPP SASL namespace from RFC 3920.
+     *  NS.STREAM - XMPP Streams namespace from RFC 3920.
+     *  NS.BIND - XMPP Binding namespace from RFC 3920.
+     *  NS.SESSION - XMPP Session namespace from RFC 3920.
+     *  NS.XHTML_IM - XHTML-IM namespace from XEP 71.
+     *  NS.XHTML - XHTML body namespace from XEP 71.
+     */
+    NS: {
+        HTTPBIND: "http://jabber.org/protocol/httpbind",
+        BOSH: "urn:xmpp:xbosh",
+        CLIENT: "jabber:client",
+        AUTH: "jabber:iq:auth",
+        ROSTER: "jabber:iq:roster",
+        PROFILE: "jabber:iq:profile",
+        DISCO_INFO: "http://jabber.org/protocol/disco#info",
+        DISCO_ITEMS: "http://jabber.org/protocol/disco#items",
+        MUC: "http://jabber.org/protocol/muc",
+        SASL: "urn:ietf:params:xml:ns:xmpp-sasl",
+        STREAM: "http://etherx.jabber.org/streams",
+        FRAMING: "urn:ietf:params:xml:ns:xmpp-framing",
+        BIND: "urn:ietf:params:xml:ns:xmpp-bind",
+        SESSION: "urn:ietf:params:xml:ns:xmpp-session",
+        VERSION: "jabber:iq:version",
+        STANZAS: "urn:ietf:params:xml:ns:xmpp-stanzas",
+        XHTML_IM: "http://jabber.org/protocol/xhtml-im",
+        XHTML: "http://www.w3.org/1999/xhtml"
+    },
+
+
+    /** Constants: XHTML_IM Namespace
+     *  contains allowed tags, tag attributes, and css properties.
+     *  Used in the createHtml function to filter incoming html into the allowed XHTML-IM subset.
+     *  See http://xmpp.org/extensions/xep-0071.html#profile-summary for the list of recommended
+     *  allowed tags and their attributes.
+     */
+    XHTML: {
+                tags: ['a','blockquote','br','cite','em','img','li','ol','p','span','strong','ul','body'],
+                attributes: {
+                        'a':          ['href'],
+                        'blockquote': ['style'],
+                        'br':         [],
+                        'cite':       ['style'],
+                        'em':         [],
+                        'img':        ['src', 'alt', 'style', 'height', 'width'],
+                        'li':         ['style'],
+                        'ol':         ['style'],
+                        'p':          ['style'],
+                        'span':       ['style'],
+                        'strong':     [],
+                        'ul':         ['style'],
+                        'body':       []
+                },
+                css: ['background-color','color','font-family','font-size','font-style','font-weight','margin-left','margin-right','text-align','text-decoration'],
+                /** Function: XHTML.validTag
+                 *
+                 * Utility method to determine whether a tag is allowed
+                 * in the XHTML_IM namespace.
+                 *
+                 * XHTML tag names are case sensitive and must be lower case.
+                 */
+                validTag: function(tag) {
+                        for (var i = 0; i < Strophe.XHTML.tags.length; i++) {
+                                if (tag == Strophe.XHTML.tags[i]) {
+                                        return true;
+                                }
+                        }
+                        return false;
+                },
+                /** Function: XHTML.validAttribute
+                 *
+                 * Utility method to determine whether an attribute is allowed
+                 * as recommended per XEP-0071
+                 *
+                 * XHTML attribute names are case sensitive and must be lower case.
+                 */
+                validAttribute: function(tag, attribute) {
+                        if(typeof Strophe.XHTML.attributes[tag] !== 'undefined' && Strophe.XHTML.attributes[tag].length > 0) {
+                                for(var i = 0; i < Strophe.XHTML.attributes[tag].length; i++) {
+                                        if(attribute == Strophe.XHTML.attributes[tag][i]) {
+                                                return true;
+                                        }
+                                }
+                        }
+                        return false;
+                },
+                validCSS: function(style)
+                {
+                        for(var i = 0; i < Strophe.XHTML.css.length; i++) {
+                                if(style == Strophe.XHTML.css[i]) {
+                                        return true;
+                                }
+                        }
+                        return false;
+                }
+    },
+
+    /** Constants: Connection Status Constants
+     *  Connection status constants for use by the connection handler
+     *  callback.
+     *
+     *  Status.ERROR - An error has occurred
+     *  Status.CONNECTING - The connection is currently being made
+     *  Status.CONNFAIL - The connection attempt failed
+     *  Status.AUTHENTICATING - The connection is authenticating
+     *  Status.AUTHFAIL - The authentication attempt failed
+     *  Status.CONNECTED - The connection has succeeded
+     *  Status.DISCONNECTED - The connection has been terminated
+     *  Status.DISCONNECTING - The connection is currently being terminated
+     *  Status.ATTACHED - The connection has been attached
+     */
+    Status: {
+        ERROR: 0,
+        CONNECTING: 1,
+        CONNFAIL: 2,
+        AUTHENTICATING: 3,
+        AUTHFAIL: 4,
+        CONNECTED: 5,
+        DISCONNECTED: 6,
+        DISCONNECTING: 7,
+        ATTACHED: 8,
+        REDIRECT: 9
+    },
+
+    /** Constants: Log Level Constants
+     *  Logging level indicators.
+     *
+     *  LogLevel.DEBUG - Debug output
+     *  LogLevel.INFO - Informational output
+     *  LogLevel.WARN - Warnings
+     *  LogLevel.ERROR - Errors
+     *  LogLevel.FATAL - Fatal errors
+     */
+    LogLevel: {
+        DEBUG: 0,
+        INFO: 1,
+        WARN: 2,
+        ERROR: 3,
+        FATAL: 4
+    },
+
+    /** PrivateConstants: DOM Element Type Constants
+     *  DOM element types.
+     *
+     *  ElementType.NORMAL - Normal element.
+     *  ElementType.TEXT - Text data element.
+     *  ElementType.FRAGMENT - XHTML fragment element.
+     */
+    ElementType: {
+        NORMAL: 1,
+        TEXT: 3,
+        CDATA: 4,
+        FRAGMENT: 11
+    },
+
+    /** PrivateConstants: Timeout Values
+     *  Timeout values for error states.  These values are in seconds.
+     *  These should not be changed unless you know exactly what you are
+     *  doing.
+     *
+     *  TIMEOUT - Timeout multiplier. A waiting request will be considered
+     *      failed after Math.floor(TIMEOUT * wait) seconds have elapsed.
+     *      This defaults to 1.1, and with default wait, 66 seconds.
+     *  SECONDARY_TIMEOUT - Secondary timeout multiplier. In cases where
+     *      Strophe can detect early failure, it will consider the request
+     *      failed if it doesn't return after
+     *      Math.floor(SECONDARY_TIMEOUT * wait) seconds have elapsed.
+     *      This defaults to 0.1, and with default wait, 6 seconds.
+     */
+    TIMEOUT: 1.1,
+    SECONDARY_TIMEOUT: 0.1,
+
+    /** Function: addNamespace
+     *  This function is used to extend the current namespaces in
+     *  Strophe.NS.  It takes a key and a value with the key being the
+     *  name of the new namespace, with its actual value.
+     *  For example:
+     *  Strophe.addNamespace('PUBSUB', "http://jabber.org/protocol/pubsub");
+     *
+     *  Parameters:
+     *    (String) name - The name under which the namespace will be
+     *      referenced under Strophe.NS
+     *    (String) value - The actual namespace.
+     */
+    addNamespace: function (name, value)
+    {
+      Strophe.NS[name] = value;
+    },
+
+    /** Function: forEachChild
+     *  Map a function over some or all child elements of a given element.
+     *
+     *  This is a small convenience function for mapping a function over
+     *  some or all of the children of an element.  If elemName is null, all
+     *  children will be passed to the function, otherwise only children
+     *  whose tag names match elemName will be passed.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - The element to operate on.
+     *    (String) elemName - The child element tag name filter.
+     *    (Function) func - The function to apply to each child.  This
+     *      function should take a single argument, a DOM element.
+     */
+    forEachChild: function (elem, elemName, func)
+    {
+        var i, childNode;
+
+        for (i = 0; i < elem.childNodes.length; i++) {
+            childNode = elem.childNodes[i];
+            if (childNode.nodeType == Strophe.ElementType.NORMAL &&
+                (!elemName || this.isTagEqual(childNode, elemName))) {
+                func(childNode);
+            }
+        }
+    },
+
+    /** Function: isTagEqual
+     *  Compare an element's tag name with a string.
+     *
+     *  This function is case sensitive.
+     *
+     *  Parameters:
+     *    (XMLElement) el - A DOM element.
+     *    (String) name - The element name.
+     *
+     *  Returns:
+     *    true if the element's tag name matches _el_, and false
+     *    otherwise.
+     */
+    isTagEqual: function (el, name)
+    {
+        return el.tagName == name;
+    },
+
+    /** PrivateVariable: _xmlGenerator
+     *  _Private_ variable that caches a DOM document to
+     *  generate elements.
+     */
+    _xmlGenerator: null,
+
+    /** PrivateFunction: _makeGenerator
+     *  _Private_ function that creates a dummy XML DOM document to serve as
+     *  an element and text node generator.
+     */
+    _makeGenerator: function () {
+        var doc;
+
+        // IE9 does implement createDocument(); however, using it will cause the browser to leak memory on page unload.
+        // Here, we test for presence of createDocument() plus IE's proprietary documentMode attribute, which would be
+                // less than 10 in the case of IE9 and below.
+        if (document.implementation.createDocument === undefined ||
+                        document.implementation.createDocument && document.documentMode && document.documentMode < 10) {
+            doc = this._getIEXmlDom();
+            doc.appendChild(doc.createElement('strophe'));
+        } else {
+            doc = document.implementation
+                .createDocument('jabber:client', 'strophe', null);
+        }
+
+        return doc;
+    },
+
+    /** Function: xmlGenerator
+     *  Get the DOM document to generate elements.
+     *
+     *  Returns:
+     *    The currently used DOM document.
+     */
+    xmlGenerator: function () {
+        if (!Strophe._xmlGenerator) {
+            Strophe._xmlGenerator = Strophe._makeGenerator();
+        }
+        return Strophe._xmlGenerator;
+    },
+
+    /** PrivateFunction: _getIEXmlDom
+     *  Gets IE xml doc object
+     *
+     *  Returns:
+     *    A Microsoft XML DOM Object
+     *  See Also:
+     *    http://msdn.microsoft.com/en-us/library/ms757837%28VS.85%29.aspx
+     */
+    _getIEXmlDom : function() {
+        var doc = null;
+        var docStrings = [
+            "Msxml2.DOMDocument.6.0",
+            "Msxml2.DOMDocument.5.0",
+            "Msxml2.DOMDocument.4.0",
+            "MSXML2.DOMDocument.3.0",
+            "MSXML2.DOMDocument",
+            "MSXML.DOMDocument",
+            "Microsoft.XMLDOM"
+        ];
+
+        for (var d = 0; d < docStrings.length; d++) {
+            if (doc === null) {
+                try {
+                    doc = new ActiveXObject(docStrings[d]);
+                } catch (e) {
+                    doc = null;
+                }
+            } else {
+                break;
+            }
+        }
+
+        return doc;
+    },
+
+    /** Function: xmlElement
+     *  Create an XML DOM element.
+     *
+     *  This function creates an XML DOM element correctly across all
+     *  implementations. Note that these are not HTML DOM elements, which
+     *  aren't appropriate for XMPP stanzas.
+     *
+     *  Parameters:
+     *    (String) name - The name for the element.
+     *    (Array|Object) attrs - An optional array or object containing
+     *      key/value pairs to use as element attributes. The object should
+     *      be in the format {'key': 'value'} or {key: 'value'}. The array
+     *      should have the format [['key1', 'value1'], ['key2', 'value2']].
+     *    (String) text - The text child data for the element.
+     *
+     *  Returns:
+     *    A new XML DOM element.
+     */
+    xmlElement: function (name)
+    {
+        if (!name) { return null; }
+
+        var node = Strophe.xmlGenerator().createElement(name);
+
+        // FIXME: this should throw errors if args are the wrong type or
+        // there are more than two optional args
+        var a, i, k;
+        for (a = 1; a < arguments.length; a++) {
+            var arg = arguments[a];
+            if (!arg) { continue; }
+            if (typeof(arg) == "string" ||
+                typeof(arg) == "number") {
+                node.appendChild(Strophe.xmlTextNode(arg));
+            } else if (typeof(arg) == "object" &&
+                       typeof(arg.sort) == "function") {
+                for (i = 0; i < arg.length; i++) {
+                    var attr = arg[i];
+                    if (typeof(attr) == "object" &&
+                        typeof(attr.sort) == "function" &&
+                        attr[1] !== undefined) {
+                        node.setAttribute(attr[0], attr[1]);
+                    }
+                }
+            } else if (typeof(arg) == "object") {
+                for (k in arg) {
+                    if (arg.hasOwnProperty(k)) {
+                        if (arg[k] !== undefined) {
+                            node.setAttribute(k, arg[k]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return node;
+    },
+
+    /*  Function: xmlescape
+     *  Excapes invalid xml characters.
+     *
+     *  Parameters:
+     *     (String) text - text to escape.
+     *
+     *  Returns:
+     *      Escaped text.
+     */
+    xmlescape: function(text)
+    {
+        text = text.replace(/\&/g, "&amp;");
+        text = text.replace(/</g,  "&lt;");
+        text = text.replace(/>/g,  "&gt;");
+        text = text.replace(/'/g,  "&apos;");
+        text = text.replace(/"/g,  "&quot;");
+        return text;
+    },
+
+    /*  Function: xmlunescape
+    *  Unexcapes invalid xml characters.
+    *
+    *  Parameters:
+    *     (String) text - text to unescape.
+    *
+    *  Returns:
+    *      Unescaped text.
+    */
+    xmlunescape: function(text)
+    {
+        text = text.replace(/\&amp;/g, "&");
+        text = text.replace(/&lt;/g,  "<");
+        text = text.replace(/&gt;/g,  ">");
+        text = text.replace(/&apos;/g,  "'");
+        text = text.replace(/&quot;/g,  "\"");
+        return text;
+    },
+
+    /** Function: xmlTextNode
+     *  Creates an XML DOM text node.
+     *
+     *  Provides a cross implementation version of document.createTextNode.
+     *
+     *  Parameters:
+     *    (String) text - The content of the text node.
+     *
+     *  Returns:
+     *    A new XML DOM text node.
+     */
+    xmlTextNode: function (text)
+    {
+        return Strophe.xmlGenerator().createTextNode(text);
+    },
+
+    /** Function: xmlHtmlNode
+     *  Creates an XML DOM html node.
+     *
+     *  Parameters:
+     *    (String) html - The content of the html node.
+     *
+     *  Returns:
+     *    A new XML DOM text node.
+     */
+    xmlHtmlNode: function (html)
+    {
+        var node;
+        //ensure text is escaped
+        if (window.DOMParser) {
+            var parser = new DOMParser();
+            node = parser.parseFromString(html, "text/xml");
+        } else {
+            node = new ActiveXObject("Microsoft.XMLDOM");
+            node.async="false";
+            node.loadXML(html);
+        }
+        return node;
+    },
+
+    /** Function: getText
+     *  Get the concatenation of all text children of an element.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - A DOM element.
+     *
+     *  Returns:
+     *    A String with the concatenated text of all text element children.
+     */
+    getText: function (elem)
+    {
+        if (!elem) { return null; }
+
+        var str = "";
+        if (elem.childNodes.length === 0 && elem.nodeType ==
+            Strophe.ElementType.TEXT) {
+            str += elem.nodeValue;
+        }
+
+        for (var i = 0; i < elem.childNodes.length; i++) {
+            if (elem.childNodes[i].nodeType == Strophe.ElementType.TEXT) {
+                str += elem.childNodes[i].nodeValue;
+            }
+        }
+
+        return Strophe.xmlescape(str);
+    },
+
+    /** Function: copyElement
+     *  Copy an XML DOM element.
+     *
+     *  This function copies a DOM element and all its descendants and returns
+     *  the new copy.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - A DOM element.
+     *
+     *  Returns:
+     *    A new, copied DOM element tree.
+     */
+    copyElement: function (elem)
+    {
+        var i, el;
+        if (elem.nodeType == Strophe.ElementType.NORMAL) {
+            el = Strophe.xmlElement(elem.tagName);
+
+            for (i = 0; i < elem.attributes.length; i++) {
+                el.setAttribute(elem.attributes[i].nodeName,
+                                elem.attributes[i].value);
+            }
+
+            for (i = 0; i < elem.childNodes.length; i++) {
+                el.appendChild(Strophe.copyElement(elem.childNodes[i]));
+            }
+        } else if (elem.nodeType == Strophe.ElementType.TEXT) {
+            el = Strophe.xmlGenerator().createTextNode(elem.nodeValue);
+        }
+
+        return el;
+    },
+
+
+    /** Function: createHtml
+     *  Copy an HTML DOM element into an XML DOM.
+     *
+     *  This function copies a DOM element and all its descendants and returns
+     *  the new copy.
+     *
+     *  Parameters:
+     *    (HTMLElement) elem - A DOM element.
+     *
+     *  Returns:
+     *    A new, copied DOM element tree.
+     */
+    createHtml: function (elem)
+    {
+        var i, el, j, tag, attribute, value, css, cssAttrs, attr, cssName, cssValue;
+        if (elem.nodeType == Strophe.ElementType.NORMAL) {
+            tag = elem.nodeName.toLowerCase(); // XHTML tags must be lower case.
+            if(Strophe.XHTML.validTag(tag)) {
+                try {
+                    el = Strophe.xmlElement(tag);
+                    for(i = 0; i < Strophe.XHTML.attributes[tag].length; i++) {
+                        attribute = Strophe.XHTML.attributes[tag][i];
+                        value = elem.getAttribute(attribute);
+                        if(typeof value == 'undefined' || value === null || value === '' || value === false || value === 0) {
+                            continue;
+                        }
+                        if(attribute == 'style' && typeof value == 'object') {
+                            if(typeof value.cssText != 'undefined') {
+                                value = value.cssText; // we're dealing with IE, need to get CSS out
+                            }
+                        }
+                        // filter out invalid css styles
+                        if(attribute == 'style') {
+                            css = [];
+                            cssAttrs = value.split(';');
+                            for(j = 0; j < cssAttrs.length; j++) {
+                                attr = cssAttrs[j].split(':');
+                                cssName = attr[0].replace(/^\s*/, "").replace(/\s*$/, "").toLowerCase();
+                                if(Strophe.XHTML.validCSS(cssName)) {
+                                    cssValue = attr[1].replace(/^\s*/, "").replace(/\s*$/, "");
+                                    css.push(cssName + ': ' + cssValue);
+                                }
+                            }
+                            if(css.length > 0) {
+                                value = css.join('; ');
+                                el.setAttribute(attribute, value);
+                            }
+                        } else {
+                            el.setAttribute(attribute, value);
+                        }
+                    }
+
+                    for (i = 0; i < elem.childNodes.length; i++) {
+                        el.appendChild(Strophe.createHtml(elem.childNodes[i]));
+                    }
+                } catch(e) { // invalid elements
+                  el = Strophe.xmlTextNode('');
+                }
+            } else {
+                el = Strophe.xmlGenerator().createDocumentFragment();
+                for (i = 0; i < elem.childNodes.length; i++) {
+                    el.appendChild(Strophe.createHtml(elem.childNodes[i]));
+                }
+            }
+        } else if (elem.nodeType == Strophe.ElementType.FRAGMENT) {
+            el = Strophe.xmlGenerator().createDocumentFragment();
+            for (i = 0; i < elem.childNodes.length; i++) {
+                el.appendChild(Strophe.createHtml(elem.childNodes[i]));
+            }
+        } else if (elem.nodeType == Strophe.ElementType.TEXT) {
+            el = Strophe.xmlTextNode(elem.nodeValue);
+        }
+
+        return el;
+    },
+
+    /** Function: escapeNode
+     *  Escape the node part (also called local part) of a JID.
+     *
+     *  Parameters:
+     *    (String) node - A node (or local part).
+     *
+     *  Returns:
+     *    An escaped node (or local part).
+     */
+    escapeNode: function (node)
+    {
+        if (typeof node !== "string") { return node; }
+        return node.replace(/^\s+|\s+$/g, '')
+            .replace(/\\/g,  "\\5c")
+            .replace(/ /g,   "\\20")
+            .replace(/\"/g,  "\\22")
+            .replace(/\&/g,  "\\26")
+            .replace(/\'/g,  "\\27")
+            .replace(/\//g,  "\\2f")
+            .replace(/:/g,   "\\3a")
+            .replace(/</g,   "\\3c")
+            .replace(/>/g,   "\\3e")
+            .replace(/@/g,   "\\40");
+    },
+
+    /** Function: unescapeNode
+     *  Unescape a node part (also called local part) of a JID.
+     *
+     *  Parameters:
+     *    (String) node - A node (or local part).
+     *
+     *  Returns:
+     *    An unescaped node (or local part).
+     */
+    unescapeNode: function (node)
+    {
+        if (typeof node !== "string") { return node; }
+        return node.replace(/\\20/g, " ")
+            .replace(/\\22/g, '"')
+            .replace(/\\26/g, "&")
+            .replace(/\\27/g, "'")
+            .replace(/\\2f/g, "/")
+            .replace(/\\3a/g, ":")
+            .replace(/\\3c/g, "<")
+            .replace(/\\3e/g, ">")
+            .replace(/\\40/g, "@")
+            .replace(/\\5c/g, "\\");
+    },
+
+    /** Function: getNodeFromJid
+     *  Get the node portion of a JID String.
+     *
+     *  Parameters:
+     *    (String) jid - A JID.
+     *
+     *  Returns:
+     *    A String containing the node.
+     */
+    getNodeFromJid: function (jid)
+    {
+        if (jid.indexOf("@") < 0) { return null; }
+        return jid.split("@")[0];
+    },
+
+    /** Function: getDomainFromJid
+     *  Get the domain portion of a JID String.
+     *
+     *  Parameters:
+     *    (String) jid - A JID.
+     *
+     *  Returns:
+     *    A String containing the domain.
+     */
+    getDomainFromJid: function (jid)
+    {
+        var bare = Strophe.getBareJidFromJid(jid);
+        if (bare.indexOf("@") < 0) {
+            return bare;
+        } else {
+            var parts = bare.split("@");
+            parts.splice(0, 1);
+            return parts.join('@');
+        }
+    },
+
+    /** Function: getResourceFromJid
+     *  Get the resource portion of a JID String.
+     *
+     *  Parameters:
+     *    (String) jid - A JID.
+     *
+     *  Returns:
+     *    A String containing the resource.
+     */
+    getResourceFromJid: function (jid)
+    {
+        var s = jid.split("/");
+        if (s.length < 2) { return null; }
+        s.splice(0, 1);
+        return s.join('/');
+    },
+
+    /** Function: getBareJidFromJid
+     *  Get the bare JID from a JID String.
+     *
+     *  Parameters:
+     *    (String) jid - A JID.
+     *
+     *  Returns:
+     *    A String containing the bare JID.
+     */
+    getBareJidFromJid: function (jid)
+    {
+        return jid ? jid.split("/")[0] : null;
+    },
+
+    /** Function: log
+     *  User overrideable logging function.
+     *
+     *  This function is called whenever the Strophe library calls any
+     *  of the logging functions.  The default implementation of this
+     *  function does nothing.  If client code wishes to handle the logging
+     *  messages, it should override this with
+     *  > Strophe.log = function (level, msg) {
+     *  >   (user code here)
+     *  > };
+     *
+     *  Please note that data sent and received over the wire is logged
+     *  via Strophe.Connection.rawInput() and Strophe.Connection.rawOutput().
+     *
+     *  The different levels and their meanings are
+     *
+     *    DEBUG - Messages useful for debugging purposes.
+     *    INFO - Informational messages.  This is mostly information like
+     *      'disconnect was called' or 'SASL auth succeeded'.
+     *    WARN - Warnings about potential problems.  This is mostly used
+     *      to report transient connection errors like request timeouts.
+     *    ERROR - Some error occurred.
+     *    FATAL - A non-recoverable fatal error occurred.
+     *
+     *  Parameters:
+     *    (Integer) level - The log level of the log message.  This will
+     *      be one of the values in Strophe.LogLevel.
+     *    (String) msg - The log message.
+     */
+    /* jshint ignore:start */
+    log: function (level, msg)
+    {
+        return;
+    },
+    /* jshint ignore:end */
+
+    /** Function: debug
+     *  Log a message at the Strophe.LogLevel.DEBUG level.
+     *
+     *  Parameters:
+     *    (String) msg - The log message.
+     */
+    debug: function(msg)
+    {
+        this.log(this.LogLevel.DEBUG, msg);
+    },
+
+    /** Function: info
+     *  Log a message at the Strophe.LogLevel.INFO level.
+     *
+     *  Parameters:
+     *    (String) msg - The log message.
+     */
+    info: function (msg)
+    {
+        this.log(this.LogLevel.INFO, msg);
+    },
+
+    /** Function: warn
+     *  Log a message at the Strophe.LogLevel.WARN level.
+     *
+     *  Parameters:
+     *    (String) msg - The log message.
+     */
+    warn: function (msg)
+    {
+        this.log(this.LogLevel.WARN, msg);
+    },
+
+    /** Function: error
+     *  Log a message at the Strophe.LogLevel.ERROR level.
+     *
+     *  Parameters:
+     *    (String) msg - The log message.
+     */
+    error: function (msg)
+    {
+        this.log(this.LogLevel.ERROR, msg);
+    },
+
+    /** Function: fatal
+     *  Log a message at the Strophe.LogLevel.FATAL level.
+     *
+     *  Parameters:
+     *    (String) msg - The log message.
+     */
+    fatal: function (msg)
+    {
+        this.log(this.LogLevel.FATAL, msg);
+    },
+
+    /** Function: serialize
+     *  Render a DOM element and all descendants to a String.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - A DOM element.
+     *
+     *  Returns:
+     *    The serialized element tree as a String.
+     */
+    serialize: function (elem)
+    {
+        var result;
+
+        if (!elem) { return null; }
+
+        if (typeof(elem.tree) === "function") {
+            elem = elem.tree();
+        }
+
+        var nodeName = elem.nodeName;
+        var i, child;
+
+        if (elem.getAttribute("_realname")) {
+            nodeName = elem.getAttribute("_realname");
+        }
+
+        result = "<" + nodeName;
+        for (i = 0; i < elem.attributes.length; i++) {
+               if(elem.attributes[i].nodeName != "_realname") {
+                 result += " " + elem.attributes[i].nodeName +
+                "='" + elem.attributes[i].value
+                    .replace(/&/g, "&amp;")
+                       .replace(/\'/g, "&apos;")
+                       .replace(/>/g, "&gt;")
+                       .replace(/</g, "&lt;") + "'";
+               }
+        }
+
+        if (elem.childNodes.length > 0) {
+            result += ">";
+            for (i = 0; i < elem.childNodes.length; i++) {
+                child = elem.childNodes[i];
+                switch( child.nodeType ){
+                  case Strophe.ElementType.NORMAL:
+                    // normal element, so recurse
+                    result += Strophe.serialize(child);
+                    break;
+                  case Strophe.ElementType.TEXT:
+                    // text element to escape values
+                    result += Strophe.xmlescape(child.nodeValue);
+                    break;
+                  case Strophe.ElementType.CDATA:
+                    // cdata section so don't escape values
+                    result += "<![CDATA["+child.nodeValue+"]]>";
+                }
+            }
+            result += "</" + nodeName + ">";
+        } else {
+            result += "/>";
+        }
+
+        return result;
+    },
+
+    /** PrivateVariable: _requestId
+     *  _Private_ variable that keeps track of the request ids for
+     *  connections.
+     */
+    _requestId: 0,
+
+    /** PrivateVariable: Strophe.connectionPlugins
+     *  _Private_ variable Used to store plugin names that need
+     *  initialization on Strophe.Connection construction.
+     */
+    _connectionPlugins: {},
+
+    /** Function: addConnectionPlugin
+     *  Extends the Strophe.Connection object with the given plugin.
+     *
+     *  Parameters:
+     *    (String) name - The name of the extension.
+     *    (Object) ptype - The plugin's prototype.
+     */
+    addConnectionPlugin: function (name, ptype)
+    {
+        Strophe._connectionPlugins[name] = ptype;
+    }
+};
+
+/** Class: Strophe.Builder
+ *  XML DOM builder.
+ *
+ *  This object provides an interface similar to JQuery but for building
+ *  DOM element easily and rapidly.  All the functions except for toString()
+ *  and tree() return the object, so calls can be chained.  Here's an
+ *  example using the $iq() builder helper.
+ *  > $iq({to: 'you', from: 'me', type: 'get', id: '1'})
+ *  >     .c('query', {xmlns: 'strophe:example'})
+ *  >     .c('example')
+ *  >     .toString()
+ *  The above generates this XML fragment
+ *  > <iq to='you' from='me' type='get' id='1'>
+ *  >   <query xmlns='strophe:example'>
+ *  >     <example/>
+ *  >   </query>
+ *  > </iq>
+ *  The corresponding DOM manipulations to get a similar fragment would be
+ *  a lot more tedious and probably involve several helper variables.
+ *
+ *  Since adding children makes new operations operate on the child, up()
+ *  is provided to traverse up the tree.  To add two children, do
+ *  > builder.c('child1', ...).up().c('child2', ...)
+ *  The next operation on the Builder will be relative to the second child.
+ */
+
+/** Constructor: Strophe.Builder
+ *  Create a Strophe.Builder object.
+ *
+ *  The attributes should be passed in object notation.  For example
+ *  > var b = new Builder('message', {to: 'you', from: 'me'});
+ *  or
+ *  > var b = new Builder('messsage', {'xml:lang': 'en'});
+ *
+ *  Parameters:
+ *    (String) name - The name of the root element.
+ *    (Object) attrs - The attributes for the root element in object notation.
+ *
+ *  Returns:
+ *    A new Strophe.Builder.
+ */
+Strophe.Builder = function (name, attrs)
+{
+    // Set correct namespace for jabber:client elements
+    if (name == "presence" || name == "message" || name == "iq") {
+        if (attrs && !attrs.xmlns) {
+            attrs.xmlns = Strophe.NS.CLIENT;
+        } else if (!attrs) {
+            attrs = {xmlns: Strophe.NS.CLIENT};
+        }
+    }
+
+    // Holds the tree being built.
+    this.nodeTree = Strophe.xmlElement(name, attrs);
+
+    // Points to the current operation node.
+    this.node = this.nodeTree;
+};
+
+Strophe.Builder.prototype = {
+    /** Function: tree
+     *  Return the DOM tree.
+     *
+     *  This function returns the current DOM tree as an element object.  This
+     *  is suitable for passing to functions like Strophe.Connection.send().
+     *
+     *  Returns:
+     *    The DOM tree as a element object.
+     */
+    tree: function ()
+    {
+        return this.nodeTree;
+    },
+
+    /** Function: toString
+     *  Serialize the DOM tree to a String.
+     *
+     *  This function returns a string serialization of the current DOM
+     *  tree.  It is often used internally to pass data to a
+     *  Strophe.Request object.
+     *
+     *  Returns:
+     *    The serialized DOM tree in a String.
+     */
+    toString: function ()
+    {
+        return Strophe.serialize(this.nodeTree);
+    },
+
+    /** Function: up
+     *  Make the current parent element the new current element.
+     *
+     *  This function is often used after c() to traverse back up the tree.
+     *  For example, to add two children to the same element
+     *  > builder.c('child1', {}).up().c('child2', {});
+     *
+     *  Returns:
+     *    The Stophe.Builder object.
+     */
+    up: function ()
+    {
+        this.node = this.node.parentNode;
+        return this;
+    },
+
+    /** Function: attrs
+     *  Add or modify attributes of the current element.
+     *
+     *  The attributes should be passed in object notation.  This function
+     *  does not move the current element pointer.
+     *
+     *  Parameters:
+     *    (Object) moreattrs - The attributes to add/modify in object notation.
+     *
+     *  Returns:
+     *    The Strophe.Builder object.
+     */
+    attrs: function (moreattrs)
+    {
+        for (var k in moreattrs) {
+            if (moreattrs.hasOwnProperty(k)) {
+                if (moreattrs[k] === undefined) {
+                    this.node.removeAttribute(k);
+                } else {
+                    this.node.setAttribute(k, moreattrs[k]);
+                }
+            }
+        }
+        return this;
+    },
+
+    /** Function: c
+     *  Add a child to the current element and make it the new current
+     *  element.
+     *
+     *  This function moves the current element pointer to the child,
+     *  unless text is provided.  If you need to add another child, it
+     *  is necessary to use up() to go back to the parent in the tree.
+     *
+     *  Parameters:
+     *    (String) name - The name of the child.
+     *    (Object) attrs - The attributes of the child in object notation.
+     *    (String) text - The text to add to the child.
+     *
+     *  Returns:
+     *    The Strophe.Builder object.
+     */
+    c: function (name, attrs, text)
+    {
+        var child = Strophe.xmlElement(name, attrs, text);
+        this.node.appendChild(child);
+        if (typeof text !== "string") {
+            this.node = child;
+        }
+        return this;
+    },
+
+    /** Function: cnode
+     *  Add a child to the current element and make it the new current
+     *  element.
+     *
+     *  This function is the same as c() except that instead of using a
+     *  name and an attributes object to create the child it uses an
+     *  existing DOM element object.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - A DOM element.
+     *
+     *  Returns:
+     *    The Strophe.Builder object.
+     */
+    cnode: function (elem)
+    {
+        var impNode;
+        var xmlGen = Strophe.xmlGenerator();
+        try {
+            impNode = (xmlGen.importNode !== undefined);
+        }
+        catch (e) {
+            impNode = false;
+        }
+        var newElem = impNode ?
+                      xmlGen.importNode(elem, true) :
+                      Strophe.copyElement(elem);
+        this.node.appendChild(newElem);
+        this.node = newElem;
+        return this;
+    },
+
+    /** Function: t
+     *  Add a child text element.
+     *
+     *  This *does not* make the child the new current element since there
+     *  are no children of text elements.
+     *
+     *  Parameters:
+     *    (String) text - The text data to append to the current element.
+     *
+     *  Returns:
+     *    The Strophe.Builder object.
+     */
+    t: function (text)
+    {
+        var child = Strophe.xmlTextNode(text);
+        this.node.appendChild(child);
+        return this;
+    },
+
+    /** Function: h
+     *  Replace current element contents with the HTML passed in.
+     *
+     *  This *does not* make the child the new current element
+     *
+     *  Parameters:
+     *    (String) html - The html to insert as contents of current element.
+     *
+     *  Returns:
+     *    The Strophe.Builder object.
+     */
+    h: function (html)
+    {
+        var fragment = document.createElement('body');
+
+        // force the browser to try and fix any invalid HTML tags
+        fragment.innerHTML = html;
+
+        // copy cleaned html into an xml dom
+        var xhtml = Strophe.createHtml(fragment);
+
+        while(xhtml.childNodes.length > 0) {
+            this.node.appendChild(xhtml.childNodes[0]);
+        }
+        return this;
+    }
+};
+
+/** PrivateClass: Strophe.Handler
+ *  _Private_ helper class for managing stanza handlers.
+ *
+ *  A Strophe.Handler encapsulates a user provided callback function to be
+ *  executed when matching stanzas are received by the connection.
+ *  Handlers can be either one-off or persistant depending on their
+ *  return value. Returning true will cause a Handler to remain active, and
+ *  returning false will remove the Handler.
+ *
+ *  Users will not use Strophe.Handler objects directly, but instead they
+ *  will use Strophe.Connection.addHandler() and
+ *  Strophe.Connection.deleteHandler().
+ */
+
+/** PrivateConstructor: Strophe.Handler
+ *  Create and initialize a new Strophe.Handler.
+ *
+ *  Parameters:
+ *    (Function) handler - A function to be executed when the handler is run.
+ *    (String) ns - The namespace to match.
+ *    (String) name - The element name to match.
+ *    (String) type - The element type to match.
+ *    (String) id - The element id attribute to match.
+ *    (String) from - The element from attribute to match.
+ *    (Object) options - Handler options
+ *
+ *  Returns:
+ *    A new Strophe.Handler object.
+ */
+Strophe.Handler = function (handler, ns, name, type, id, from, options)
+{
+    this.handler = handler;
+    this.ns = ns;
+    this.name = name;
+    this.type = type;
+    this.id = id;
+    this.options = options || {matchBare: false};
+
+    // default matchBare to false if undefined
+    if (!this.options.matchBare) {
+        this.options.matchBare = false;
+    }
+
+    if (this.options.matchBare) {
+        this.from = from ? Strophe.getBareJidFromJid(from) : null;
+    } else {
+        this.from = from;
+    }
+
+    // whether the handler is a user handler or a system handler
+    this.user = true;
+};
+
+Strophe.Handler.prototype = {
+    /** PrivateFunction: isMatch
+     *  Tests if a stanza matches the Strophe.Handler.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - The XML element to test.
+     *
+     *  Returns:
+     *    true if the stanza matches and false otherwise.
+     */
+    isMatch: function (elem)
+    {
+        var nsMatch;
+        var from = null;
+
+        if (this.options.matchBare) {
+            from = Strophe.getBareJidFromJid(elem.getAttribute('from'));
+        } else {
+            from = elem.getAttribute('from');
+        }
+
+        nsMatch = false;
+        if (!this.ns) {
+            nsMatch = true;
+        } else {
+            var that = this;
+            Strophe.forEachChild(elem, null, function (elem) {
+                if (elem.getAttribute("xmlns") == that.ns) {
+                    nsMatch = true;
+                }
+            });
+
+            nsMatch = nsMatch || elem.getAttribute("xmlns") == this.ns;
+        }
+
+        var elem_type = elem.getAttribute("type");
+        if (nsMatch &&
+            (!this.name || Strophe.isTagEqual(elem, this.name)) &&
+            (!this.type || (Array.isArray(this.type) ? this.type.indexOf(elem_type) != -1 : elem_type == this.type)) &&
+            (!this.id || elem.getAttribute("id") == this.id) &&
+            (!this.from || from == this.from)) {
+                return true;
+        }
+
+        return false;
+    },
+
+    /** PrivateFunction: run
+     *  Run the callback on a matching stanza.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - The DOM element that triggered the
+     *      Strophe.Handler.
+     *
+     *  Returns:
+     *    A boolean indicating if the handler should remain active.
+     */
+    run: function (elem)
+    {
+        var result = null;
+        try {
+            result = this.handler(elem);
+        } catch (e) {
+            if (e.sourceURL) {
+                Strophe.fatal("error: " + this.handler +
+                              " " + e.sourceURL + ":" +
+                              e.line + " - " + e.name + ": " + e.message);
+            } else if (e.fileName) {
+                if (typeof(console) != "undefined") {
+                    console.trace();
+                    console.error(this.handler, " - error - ", e, e.message);
+                }
+                Strophe.fatal("error: " + this.handler + " " +
+                              e.fileName + ":" + e.lineNumber + " - " +
+                              e.name + ": " + e.message);
+            } else {
+                Strophe.fatal("error: " + e.message + "\n" + e.stack);
+            }
+
+            throw e;
+        }
+
+        return result;
+    },
+
+    /** PrivateFunction: toString
+     *  Get a String representation of the Strophe.Handler object.
+     *
+     *  Returns:
+     *    A String.
+     */
+    toString: function ()
+    {
+        return "{Handler: " + this.handler + "(" + this.name + "," +
+            this.id + "," + this.ns + ")}";
+    }
+};
+
+/** PrivateClass: Strophe.TimedHandler
+ *  _Private_ helper class for managing timed handlers.
+ *
+ *  A Strophe.TimedHandler encapsulates a user provided callback that
+ *  should be called after a certain period of time or at regular
+ *  intervals.  The return value of the callback determines whether the
+ *  Strophe.TimedHandler will continue to fire.
+ *
+ *  Users will not use Strophe.TimedHandler objects directly, but instead
+ *  they will use Strophe.Connection.addTimedHandler() and
+ *  Strophe.Connection.deleteTimedHandler().
+ */
+
+/** PrivateConstructor: Strophe.TimedHandler
+ *  Create and initialize a new Strophe.TimedHandler object.
+ *
+ *  Parameters:
+ *    (Integer) period - The number of milliseconds to wait before the
+ *      handler is called.
+ *    (Function) handler - The callback to run when the handler fires.  This
+ *      function should take no arguments.
+ *
+ *  Returns:
+ *    A new Strophe.TimedHandler object.
+ */
+Strophe.TimedHandler = function (period, handler)
+{
+    this.period = period;
+    this.handler = handler;
+
+    this.lastCalled = new Date().getTime();
+    this.user = true;
+};
+
+Strophe.TimedHandler.prototype = {
+    /** PrivateFunction: run
+     *  Run the callback for the Strophe.TimedHandler.
+     *
+     *  Returns:
+     *    true if the Strophe.TimedHandler should be called again, and false
+     *      otherwise.
+     */
+    run: function ()
+    {
+        this.lastCalled = new Date().getTime();
+        return this.handler();
+    },
+
+    /** PrivateFunction: reset
+     *  Reset the last called time for the Strophe.TimedHandler.
+     */
+    reset: function ()
+    {
+        this.lastCalled = new Date().getTime();
+    },
+
+    /** PrivateFunction: toString
+     *  Get a string representation of the Strophe.TimedHandler object.
+     *
+     *  Returns:
+     *    The string representation.
+     */
+    toString: function ()
+    {
+        return "{TimedHandler: " + this.handler + "(" + this.period +")}";
+    }
+};
+
+/** Class: Strophe.Connection
+ *  XMPP Connection manager.
+ *
+ *  This class is the main part of Strophe.  It manages a BOSH or websocket
+ *  connection to an XMPP server and dispatches events to the user callbacks
+ *  as data arrives. It supports SASL PLAIN, SASL DIGEST-MD5, SASL SCRAM-SHA1
+ *  and legacy authentication.
+ *
+ *  After creating a Strophe.Connection object, the user will typically
+ *  call connect() with a user supplied callback to handle connection level
+ *  events like authentication failure, disconnection, or connection
+ *  complete.
+ *
+ *  The user will also have several event handlers defined by using
+ *  addHandler() and addTimedHandler().  These will allow the user code to
+ *  respond to interesting stanzas or do something periodically with the
+ *  connection. These handlers will be active once authentication is
+ *  finished.
+ *
+ *  To send data to the connection, use send().
+ */
+
+/** Constructor: Strophe.Connection
+ *  Create and initialize a Strophe.Connection object.
+ *
+ *  The transport-protocol for this connection will be chosen automatically
+ *  based on the given service parameter. URLs starting with "ws://" or
+ *  "wss://" will use WebSockets, URLs starting with "http://", "https://"
+ *  or without a protocol will use BOSH.
+ *
+ *  To make Strophe connect to the current host you can leave out the protocol
+ *  and host part and just pass the path, e.g.
+ *
+ *  > var conn = new Strophe.Connection("/http-bind/");
+ *
+ *  WebSocket options:
+ *
+ *  If you want to connect to the current host with a WebSocket connection you
+ *  can tell Strophe to use WebSockets through a "protocol" attribute in the
+ *  optional options parameter. Valid values are "ws" for WebSocket and "wss"
+ *  for Secure WebSocket.
+ *  So to connect to "wss://CURRENT_HOSTNAME/xmpp-websocket" you would call
+ *
+ *  > var conn = new Strophe.Connection("/xmpp-websocket/", {protocol: "wss"});
+ *
+ *  Note that relative URLs _NOT_ starting with a "/" will also include the path
+ *  of the current site.
+ *
+ *  Also because downgrading security is not permitted by browsers, when using
+ *  relative URLs both BOSH and WebSocket connections will use their secure
+ *  variants if the current connection to the site is also secure (https).
+ *
+ *  BOSH options:
+ *
+ *  By adding "sync" to the options, you can control if requests will
+ *  be made synchronously or not. The default behaviour is asynchronous.
+ *  If you want to make requests synchronous, make "sync" evaluate to true:
+ *  > var conn = new Strophe.Connection("/http-bind/", {sync: true});
+ *
+ *  You can also toggle this on an already established connection:
+ *  > conn.options.sync = true;
+ *
+ *  The "customHeaders" option can be used to provide custom HTTP headers to be
+ *  included in the XMLHttpRequests made.
+ *
+ *  The "keepalive" option can be used to instruct Strophe to maintain the
+ *  current BOSH session across interruptions such as webpage reloads.
+ *
+ *  It will do this by caching the sessions tokens in sessionStorage, and when
+ *  "restore" is called it will check whether there are cached tokens with
+ *  which it can resume an existing session.
+ *
+ *  Parameters:
+ *    (String) service - The BOSH or WebSocket service URL.
+ *    (Object) options - A hash of configuration options
+ *
+ *  Returns:
+ *    A new Strophe.Connection object.
+ */
+Strophe.Connection = function (service, options)
+{
+    // The service URL
+    this.service = service;
+
+    // Configuration options
+    this.options = options || {};
+    var proto = this.options.protocol || "";
+
+    // Select protocal based on service or options
+    if (service.indexOf("ws:") === 0 || service.indexOf("wss:") === 0 ||
+            proto.indexOf("ws") === 0) {
+        this._proto = new Strophe.Websocket(this);
+    } else {
+        this._proto = new Strophe.Bosh(this);
+    }
+
+    /* The connected JID. */
+    this.jid = "";
+    /* the JIDs domain */
+    this.domain = null;
+    /* stream:features */
+    this.features = null;
+
+    // SASL
+    this._sasl_data = {};
+    this.do_session = false;
+    this.do_bind = false;
+
+    // handler lists
+    this.timedHandlers = [];
+    this.handlers = [];
+    this.removeTimeds = [];
+    this.removeHandlers = [];
+    this.addTimeds = [];
+    this.addHandlers = [];
+
+    this._authentication = {};
+    this._idleTimeout = null;
+    this._disconnectTimeout = null;
+
+    this.authenticated = false;
+    this.connected = false;
+    this.disconnecting = false;
+    this.do_authentication = true;
+    this.paused = false;
+    this.restored = false;
+
+    this._data = [];
+    this._uniqueId = 0;
+
+    this._sasl_success_handler = null;
+    this._sasl_failure_handler = null;
+    this._sasl_challenge_handler = null;
+
+    // Max retries before disconnecting
+    this.maxRetries = 5;
+
+    // setup onIdle callback every 1/10th of a second
+    this._idleTimeout = setTimeout(this._onIdle.stropheBind(this), 100);
+
+    // initialize plugins
+    for (var k in Strophe._connectionPlugins) {
+        if (Strophe._connectionPlugins.hasOwnProperty(k)) {
+            var ptype = Strophe._connectionPlugins[k];
+            // jslint complaints about the below line, but this is fine
+            var F = function () {}; // jshint ignore:line
+            F.prototype = ptype;
+            this[k] = new F();
+            this[k].init(this);
+        }
+    }
+};
+
+Strophe.Connection.prototype = {
+    /** Function: reset
+     *  Reset the connection.
+     *
+     *  This function should be called after a connection is disconnected
+     *  before that connection is reused.
+     */
+    reset: function ()
+    {
+        this._proto._reset();
+
+        // SASL
+        this.do_session = false;
+        this.do_bind = false;
+
+        // handler lists
+        this.timedHandlers = [];
+        this.handlers = [];
+        this.removeTimeds = [];
+        this.removeHandlers = [];
+        this.addTimeds = [];
+        this.addHandlers = [];
+        this._authentication = {};
+
+        this.authenticated = false;
+        this.connected = false;
+        this.disconnecting = false;
+        this.restored = false;
+
+        this._data = [];
+        this._requests = [];
+        this._uniqueId = 0;
+    },
+
+    /** Function: pause
+     *  Pause the request manager.
+     *
+     *  This will prevent Strophe from sending any more requests to the
+     *  server.  This is very useful for temporarily pausing
+     *  BOSH-Connections while a lot of send() calls are happening quickly.
+     *  This causes Strophe to send the data in a single request, saving
+     *  many request trips.
+     */
+    pause: function ()
+    {
+        this.paused = true;
+    },
+
+    /** Function: resume
+     *  Resume the request manager.
+     *
+     *  This resumes after pause() has been called.
+     */
+    resume: function ()
+    {
+        this.paused = false;
+    },
+
+    /** Function: getUniqueId
+     *  Generate a unique ID for use in <iq/> elements.
+     *
+     *  All <iq/> stanzas are required to have unique id attributes.  This
+     *  function makes creating these easy.  Each connection instance has
+     *  a counter which starts from zero, and the value of this counter
+     *  plus a colon followed by the suffix becomes the unique id. If no
+     *  suffix is supplied, the counter is used as the unique id.
+     *
+     *  Suffixes are used to make debugging easier when reading the stream
+     *  data, and their use is recommended.  The counter resets to 0 for
+     *  every new connection for the same reason.  For connections to the
+     *  same server that authenticate the same way, all the ids should be
+     *  the same, which makes it easy to see changes.  This is useful for
+     *  automated testing as well.
+     *
+     *  Parameters:
+     *    (String) suffix - A optional suffix to append to the id.
+     *
+     *  Returns:
+     *    A unique string to be used for the id attribute.
+     */
+    getUniqueId: function (suffix)
+    {
+        if (typeof(suffix) == "string" || typeof(suffix) == "number") {
+            return ++this._uniqueId + ":" + suffix;
+        } else {
+            return ++this._uniqueId + "";
+        }
+    },
+
+    /** Function: connect
+     *  Starts the connection process.
+     *
+     *  As the connection process proceeds, the user supplied callback will
+     *  be triggered multiple times with status updates.  The callback
+     *  should take two arguments - the status code and the error condition.
+     *
+     *  The status code will be one of the values in the Strophe.Status
+     *  constants.  The error condition will be one of the conditions
+     *  defined in RFC 3920 or the condition 'strophe-parsererror'.
+     *
+     *  The Parameters _wait_, _hold_ and _route_ are optional and only relevant
+     *  for BOSH connections. Please see XEP 124 for a more detailed explanation
+     *  of the optional parameters.
+     *
+     *  Parameters:
+     *    (String) jid - The user's JID.  This may be a bare JID,
+     *      or a full JID.  If a node is not supplied, SASL ANONYMOUS
+     *      authentication will be attempted.
+     *    (String) pass - The user's password.
+     *    (Function) callback - The connect callback function.
+     *    (Integer) wait - The optional HTTPBIND wait value.  This is the
+     *      time the server will wait before returning an empty result for
+     *      a request.  The default setting of 60 seconds is recommended.
+     *    (Integer) hold - The optional HTTPBIND hold value.  This is the
+     *      number of connections the server will hold at one time.  This
+     *      should almost always be set to 1 (the default).
+     *    (String) route - The optional route value.
+     *    (String) authcid - The optional alternative authentication identity
+     *      (username) if intending to impersonate another user.
+     */
+    connect: function (jid, pass, callback, wait, hold, route, authcid)
+    {
+        this.jid = jid;
+        /** Variable: authzid
+         *  Authorization identity.
+         */
+        this.authzid = Strophe.getBareJidFromJid(this.jid);
+        /** Variable: authcid
+         *  Authentication identity (User name).
+         */
+        this.authcid = authcid || Strophe.getNodeFromJid(this.jid);
+        /** Variable: pass
+         *  Authentication identity (User password).
+         */
+        this.pass = pass;
+        /** Variable: servtype
+         *  Digest MD5 compatibility.
+         */
+        this.servtype = "xmpp";
+        this.connect_callback = callback;
+        this.disconnecting = false;
+        this.connected = false;
+        this.authenticated = false;
+        this.restored = false;
+
+        // parse jid for domain
+        this.domain = Strophe.getDomainFromJid(this.jid);
+
+        this._changeConnectStatus(Strophe.Status.CONNECTING, null);
+
+        this._proto._connect(wait, hold, route);
+    },
+
+    /** Function: attach
+     *  Attach to an already created and authenticated BOSH session.
+     *
+     *  This function is provided to allow Strophe to attach to BOSH
+     *  sessions which have been created externally, perhaps by a Web
+     *  application.  This is often used to support auto-login type features
+     *  without putting user credentials into the page.
+     *
+     *  Parameters:
+     *    (String) jid - The full JID that is bound by the session.
+     *    (String) sid - The SID of the BOSH session.
+     *    (String) rid - The current RID of the BOSH session.  This RID
+     *      will be used by the next request.
+     *    (Function) callback The connect callback function.
+     *    (Integer) wait - The optional HTTPBIND wait value.  This is the
+     *      time the server will wait before returning an empty result for
+     *      a request.  The default setting of 60 seconds is recommended.
+     *      Other settings will require tweaks to the Strophe.TIMEOUT value.
+     *    (Integer) hold - The optional HTTPBIND hold value.  This is the
+     *      number of connections the server will hold at one time.  This
+     *      should almost always be set to 1 (the default).
+     *    (Integer) wind - The optional HTTBIND window value.  This is the
+     *      allowed range of request ids that are valid.  The default is 5.
+     */
+    attach: function (jid, sid, rid, callback, wait, hold, wind)
+    {
+        if (this._proto instanceof Strophe.Bosh) {
+            this._proto._attach(jid, sid, rid, callback, wait, hold, wind);
+        } else {
+            throw {
+                name: 'StropheSessionError',
+                message: 'The "attach" method can only be used with a BOSH connection.'
+            };
+        }
+    },
+
+    /** Function: restore
+     *  Attempt to restore a cached BOSH session.
+     *
+     *  This function is only useful in conjunction with providing the
+     *  "keepalive":true option when instantiating a new Strophe.Connection.
+     *
+     *  When "keepalive" is set to true, Strophe will cache the BOSH tokens
+     *  RID (Request ID) and SID (Session ID) and then when this function is
+     *  called, it will attempt to restore the session from those cached
+     *  tokens.
+     *
+     *  This function must therefore be called instead of connect or attach.
+     *
+     *  For an example on how to use it, please see examples/restore.js
+     *
+     *  Parameters:
+     *    (String) jid - The user's JID.  This may be a bare JID or a full JID.
+     *    (Function) callback - The connect callback function.
+     *    (Integer) wait - The optional HTTPBIND wait value.  This is the
+     *      time the server will wait before returning an empty result for
+     *      a request.  The default setting of 60 seconds is recommended.
+     *    (Integer) hold - The optional HTTPBIND hold value.  This is the
+     *      number of connections the server will hold at one time.  This
+     *      should almost always be set to 1 (the default).
+     *    (Integer) wind - The optional HTTBIND window value.  This is the
+     *      allowed range of request ids that are valid.  The default is 5.
+     */
+    restore: function (jid, callback, wait, hold, wind)
+    {
+        if (this._sessionCachingSupported()) {
+            this._proto._restore(jid, callback, wait, hold, wind);
+        } else {
+            throw {
+                name: 'StropheSessionError',
+                message: 'The "restore" method can only be used with a BOSH connection.'
+            };
+        }
+    },
+
+    /** PrivateFunction: _sessionCachingSupported
+     * Checks whether sessionStorage and JSON are supported and whether we're
+     * using BOSH.
+     */
+    _sessionCachingSupported: function ()
+    {
+        if (this._proto instanceof Strophe.Bosh) {
+            if (!JSON) { return false; }
+            try {
+                window.sessionStorage.setItem('_strophe_', '_strophe_');
+                window.sessionStorage.removeItem('_strophe_');
+            } catch (e) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    },
+
+    /** Function: xmlInput
+     *  User overrideable function that receives XML data coming into the
+     *  connection.
+     *
+     *  The default function does nothing.  User code can override this with
+     *  > Strophe.Connection.xmlInput = function (elem) {
+     *  >   (user code)
+     *  > };
+     *
+     *  Due to limitations of current Browsers' XML-Parsers the opening and closing
+     *  <stream> tag for WebSocket-Connoctions will be passed as selfclosing here.
+     *
+     *  BOSH-Connections will have all stanzas wrapped in a <body> tag. See
+     *  <Strophe.Bosh.strip> if you want to strip this tag.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - The XML data received by the connection.
+     */
+    /* jshint unused:false */
+    xmlInput: function (elem)
+    {
+        return;
+    },
+    /* jshint unused:true */
+
+    /** Function: xmlOutput
+     *  User overrideable function that receives XML data sent to the
+     *  connection.
+     *
+     *  The default function does nothing.  User code can override this with
+     *  > Strophe.Connection.xmlOutput = function (elem) {
+     *  >   (user code)
+     *  > };
+     *
+     *  Due to limitations of current Browsers' XML-Parsers the opening and closing
+     *  <stream> tag for WebSocket-Connoctions will be passed as selfclosing here.
+     *
+     *  BOSH-Connections will have all stanzas wrapped in a <body> tag. See
+     *  <Strophe.Bosh.strip> if you want to strip this tag.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - The XMLdata sent by the connection.
+     */
+    /* jshint unused:false */
+    xmlOutput: function (elem)
+    {
+        return;
+    },
+    /* jshint unused:true */
+
+    /** Function: rawInput
+     *  User overrideable function that receives raw data coming into the
+     *  connection.
+     *
+     *  The default function does nothing.  User code can override this with
+     *  > Strophe.Connection.rawInput = function (data) {
+     *  >   (user code)
+     *  > };
+     *
+     *  Parameters:
+     *    (String) data - The data received by the connection.
+     */
+    /* jshint unused:false */
+    rawInput: function (data)
+    {
+        return;
+    },
+    /* jshint unused:true */
+
+    /** Function: rawOutput
+     *  User overrideable function that receives raw data sent to the
+     *  connection.
+     *
+     *  The default function does nothing.  User code can override this with
+     *  > Strophe.Connection.rawOutput = function (data) {
+     *  >   (user code)
+     *  > };
+     *
+     *  Parameters:
+     *    (String) data - The data sent by the connection.
+     */
+    /* jshint unused:false */
+    rawOutput: function (data)
+    {
+        return;
+    },
+    /* jshint unused:true */
+
+    /** Function: send
+     *  Send a stanza.
+     *
+     *  This function is called to push data onto the send queue to
+     *  go out over the wire.  Whenever a request is sent to the BOSH
+     *  server, all pending data is sent and the queue is flushed.
+     *
+     *  Parameters:
+     *    (XMLElement |
+     *     [XMLElement] |
+     *     Strophe.Builder) elem - The stanza to send.
+     */
+    send: function (elem)
+    {
+        if (elem === null) { return ; }
+        if (typeof(elem.sort) === "function") {
+            for (var i = 0; i < elem.length; i++) {
+                this._queueData(elem[i]);
+            }
+        } else if (typeof(elem.tree) === "function") {
+            this._queueData(elem.tree());
+        } else {
+            this._queueData(elem);
+        }
+
+        this._proto._send();
+    },
+
+    /** Function: flush
+     *  Immediately send any pending outgoing data.
+     *
+     *  Normally send() queues outgoing data until the next idle period
+     *  (100ms), which optimizes network use in the common cases when
+     *  several send()s are called in succession. flush() can be used to
+     *  immediately send all pending data.
+     */
+    flush: function ()
+    {
+        // cancel the pending idle period and run the idle function
+        // immediately
+        clearTimeout(this._idleTimeout);
+        this._onIdle();
+    },
+
+    /** Function: sendIQ
+     *  Helper function to send IQ stanzas.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - The stanza to send.
+     *    (Function) callback - The callback function for a successful request.
+     *    (Function) errback - The callback function for a failed or timed
+     *      out request.  On timeout, the stanza will be null.
+     *    (Integer) timeout - The time specified in milliseconds for a
+     *      timeout to occur.
+     *
+     *  Returns:
+     *    The id used to send the IQ.
+    */
+    sendIQ: function(elem, callback, errback, timeout) {
+        var timeoutHandler = null;
+        var that = this;
+
+        if (typeof(elem.tree) === "function") {
+            elem = elem.tree();
+        }
+        var id = elem.getAttribute('id');
+
+        // inject id if not found
+        if (!id) {
+            id = this.getUniqueId("sendIQ");
+            elem.setAttribute("id", id);
+        }
+
+        var expectedFrom = elem.getAttribute("to");
+        var fulljid = this.jid;
+
+        var handler = this.addHandler(function (stanza) {
+            // remove timeout handler if there is one
+            if (timeoutHandler) {
+                that.deleteTimedHandler(timeoutHandler);
+            }
+
+            var acceptable = false;
+            var from = stanza.getAttribute("from");
+            if (from === expectedFrom ||
+               (expectedFrom === null &&
+                   (from === Strophe.getBareJidFromJid(fulljid) ||
+                    from === Strophe.getDomainFromJid(fulljid) ||
+                    from === fulljid))) {
+                acceptable = true;
+            }
+
+            if (!acceptable) {
+                throw {
+                    name: "StropheError",
+                    message: "Got answer to IQ from wrong jid:" + from +
+                             "\nExpected jid: " + expectedFrom
+                };
+            }
+
+            var iqtype = stanza.getAttribute('type');
+            if (iqtype == 'result') {
+                if (callback) {
+                    callback(stanza);
+                }
+            } else if (iqtype == 'error') {
+                if (errback) {
+                    errback(stanza);
+                }
+            } else {
+                throw {
+                    name: "StropheError",
+                    message: "Got bad IQ type of " + iqtype
+                };
+            }
+        }, null, 'iq', ['error', 'result'], id);
+
+        // if timeout specified, setup timeout handler.
+        if (timeout) {
+            timeoutHandler = this.addTimedHandler(timeout, function () {
+                // get rid of normal handler
+                that.deleteHandler(handler);
+                // call errback on timeout with null stanza
+                if (errback) {
+                    errback(null);
+                }
+                return false;
+            });
+        }
+        this.send(elem);
+        return id;
+    },
+
+    /** PrivateFunction: _queueData
+     *  Queue outgoing data for later sending.  Also ensures that the data
+     *  is a DOMElement.
+     */
+    _queueData: function (element) {
+        if (element === null ||
+            !element.tagName ||
+            !element.childNodes) {
+            throw {
+                name: "StropheError",
+                message: "Cannot queue non-DOMElement."
+            };
+        }
+
+        this._data.push(element);
+    },
+
+    /** PrivateFunction: _sendRestart
+     *  Send an xmpp:restart stanza.
+     */
+    _sendRestart: function ()
+    {
+        this._data.push("restart");
+
+        this._proto._sendRestart();
+
+        this._idleTimeout = setTimeout(this._onIdle.stropheBind(this), 100);
+    },
+
+    /** Function: addTimedHandler
+     *  Add a timed handler to the connection.
+     *
+     *  This function adds a timed handler.  The provided handler will
+     *  be called every period milliseconds until it returns false,
+     *  the connection is terminated, or the handler is removed.  Handlers
+     *  that wish to continue being invoked should return true.
+     *
+     *  Because of method binding it is necessary to save the result of
+     *  this function if you wish to remove a handler with
+     *  deleteTimedHandler().
+     *
+     *  Note that user handlers are not active until authentication is
+     *  successful.
+     *
+     *  Parameters:
+     *    (Integer) period - The period of the handler.
+     *    (Function) handler - The callback function.
+     *
+     *  Returns:
+     *    A reference to the handler that can be used to remove it.
+     */
+    addTimedHandler: function (period, handler)
+    {
+        var thand = new Strophe.TimedHandler(period, handler);
+        this.addTimeds.push(thand);
+        return thand;
+    },
+
+    /** Function: deleteTimedHandler
+     *  Delete a timed handler for a connection.
+     *
+     *  This function removes a timed handler from the connection.  The
+     *  handRef parameter is *not* the function passed to addTimedHandler(),
+     *  but is the reference returned from addTimedHandler().
+     *
+     *  Parameters:
+     *    (Strophe.TimedHandler) handRef - The handler reference.
+     */
+    deleteTimedHandler: function (handRef)
+    {
+        // this must be done in the Idle loop so that we don't change
+        // the handlers during iteration
+        this.removeTimeds.push(handRef);
+    },
+
+    /** Function: addHandler
+     *  Add a stanza handler for the connection.
+     *
+     *  This function adds a stanza handler to the connection.  The
+     *  handler callback will be called for any stanza that matches
+     *  the parameters.  Note that if multiple parameters are supplied,
+     *  they must all match for the handler to be invoked.
+     *
+     *  The handler will receive the stanza that triggered it as its argument.
+     *  *The handler should return true if it is to be invoked again;
+     *  returning false will remove the handler after it returns.*
+     *
+     *  As a convenience, the ns parameters applies to the top level element
+     *  and also any of its immediate children.  This is primarily to make
+     *  matching /iq/query elements easy.
+     *
+     *  The options argument contains handler matching flags that affect how
+     *  matches are determined. Currently the only flag is matchBare (a
+     *  boolean). When matchBare is true, the from parameter and the from
+     *  attribute on the stanza will be matched as bare JIDs instead of
+     *  full JIDs. To use this, pass {matchBare: true} as the value of
+     *  options. The default value for matchBare is false.
+     *
+     *  The return value should be saved if you wish to remove the handler
+     *  with deleteHandler().
+     *
+     *  Parameters:
+     *    (Function) handler - The user callback.
+     *    (String) ns - The namespace to match.
+     *    (String) name - The stanza name to match.
+     *    (String) type - The stanza type attribute to match.
+     *    (String) id - The stanza id attribute to match.
+     *    (String) from - The stanza from attribute to match.
+     *    (String) options - The handler options
+     *
+     *  Returns:
+     *    A reference to the handler that can be used to remove it.
+     */
+    addHandler: function (handler, ns, name, type, id, from, options)
+    {
+        var hand = new Strophe.Handler(handler, ns, name, type, id, from, options);
+        this.addHandlers.push(hand);
+        return hand;
+    },
+
+    /** Function: deleteHandler
+     *  Delete a stanza handler for a connection.
+     *
+     *  This function removes a stanza handler from the connection.  The
+     *  handRef parameter is *not* the function passed to addHandler(),
+     *  but is the reference returned from addHandler().
+     *
+     *  Parameters:
+     *    (Strophe.Handler) handRef - The handler reference.
+     */
+    deleteHandler: function (handRef)
+    {
+        // this must be done in the Idle loop so that we don't change
+        // the handlers during iteration
+        this.removeHandlers.push(handRef);
+        // If a handler is being deleted while it is being added,
+        // prevent it from getting added
+        var i = this.addHandlers.indexOf(handRef);
+        if (i >= 0) {
+            this.addHandlers.splice(i, 1);
+        }
+    },
+
+    /** Function: disconnect
+     *  Start the graceful disconnection process.
+     *
+     *  This function starts the disconnection process.  This process starts
+     *  by sending unavailable presence and sending BOSH body of type
+     *  terminate.  A timeout handler makes sure that disconnection happens
+     *  even if the BOSH server does not respond.
+     *  If the Connection object isn't connected, at least tries to abort all pending requests
+     *  so the connection object won't generate successful requests (which were already opened).
+     *
+     *  The user supplied connection callback will be notified of the
+     *  progress as this process happens.
+     *
+     *  Parameters:
+     *    (String) reason - The reason the disconnect is occuring.
+     */
+    disconnect: function (reason)
+    {
+        this._changeConnectStatus(Strophe.Status.DISCONNECTING, reason);
+
+        Strophe.info("Disconnect was called because: " + reason);
+        if (this.connected) {
+            var pres = false;
+            this.disconnecting = true;
+            if (this.authenticated) {
+                pres = $pres({
+                    xmlns: Strophe.NS.CLIENT,
+                    type: 'unavailable'
+                });
+            }
+            // setup timeout handler
+            this._disconnectTimeout = this._addSysTimedHandler(
+                3000, this._onDisconnectTimeout.stropheBind(this));
+            this._proto._disconnect(pres);
+        } else {
+            Strophe.info("Disconnect was called before Strophe connected to the server");
+            this._proto._abortAllRequests();
+        }
+    },
+
+    /** PrivateFunction: _changeConnectStatus
+     *  _Private_ helper function that makes sure plugins and the user's
+     *  callback are notified of connection status changes.
+     *
+     *  Parameters:
+     *    (Integer) status - the new connection status, one of the values
+     *      in Strophe.Status
+     *    (String) condition - the error condition or null
+     */
+    _changeConnectStatus: function (status, condition)
+    {
+        // notify all plugins listening for status changes
+        for (var k in Strophe._connectionPlugins) {
+            if (Strophe._connectionPlugins.hasOwnProperty(k)) {
+                var plugin = this[k];
+                if (plugin.statusChanged) {
+                    try {
+                        plugin.statusChanged(status, condition);
+                    } catch (err) {
+                        Strophe.error("" + k + " plugin caused an exception " +
+                                      "changing status: " + err);
+                    }
+                }
+            }
+        }
+
+        // notify the user's callback
+        if (this.connect_callback) {
+            try {
+                this.connect_callback(status, condition);
+            } catch (e) {
+                Strophe.error("User connection callback caused an " +
+                              "exception: " + e);
+            }
+        }
+    },
+
+    /** PrivateFunction: _doDisconnect
+     *  _Private_ function to disconnect.
+     *
+     *  This is the last piece of the disconnection logic.  This resets the
+     *  connection and alerts the user's connection callback.
+     */
+    _doDisconnect: function (condition)
+    {
+        if (typeof this._idleTimeout == "number") {
+            clearTimeout(this._idleTimeout);
+        }
+
+        // Cancel Disconnect Timeout
+        if (this._disconnectTimeout !== null) {
+            this.deleteTimedHandler(this._disconnectTimeout);
+            this._disconnectTimeout = null;
+        }
+
+        Strophe.info("_doDisconnect was called");
+        this._proto._doDisconnect();
+
+        this.authenticated = false;
+        this.disconnecting = false;
+        this.restored = false;
+
+        // delete handlers
+        this.handlers = [];
+        this.timedHandlers = [];
+        this.removeTimeds = [];
+        this.removeHandlers = [];
+        this.addTimeds = [];
+        this.addHandlers = [];
+
+        // tell the parent we disconnected
+        this._changeConnectStatus(Strophe.Status.DISCONNECTED, condition);
+        this.connected = false;
+    },
+
+    /** PrivateFunction: _dataRecv
+     *  _Private_ handler to processes incoming data from the the connection.
+     *
+     *  Except for _connect_cb handling the initial connection request,
+     *  this function handles the incoming data for all requests.  This
+     *  function also fires stanza handlers that match each incoming
+     *  stanza.
+     *
+     *  Parameters:
+     *    (Strophe.Request) req - The request that has data ready.
+     *    (string) req - The stanza a raw string (optiona).
+     */
+    _dataRecv: function (req, raw)
+    {
+        Strophe.info("_dataRecv called");
+        var elem = this._proto._reqToData(req);
+        if (elem === null) { return; }
+
+        if (this.xmlInput !== Strophe.Connection.prototype.xmlInput) {
+            if (elem.nodeName === this._proto.strip && elem.childNodes.length) {
+                this.xmlInput(elem.childNodes[0]);
+            } else {
+                this.xmlInput(elem);
+            }
+        }
+        if (this.rawInput !== Strophe.Connection.prototype.rawInput) {
+            if (raw) {
+                this.rawInput(raw);
+            } else {
+                this.rawInput(Strophe.serialize(elem));
+            }
+        }
+
+        // remove handlers scheduled for deletion
+        var i, hand;
+        while (this.removeHandlers.length > 0) {
+            hand = this.removeHandlers.pop();
+            i = this.handlers.indexOf(hand);
+            if (i >= 0) {
+                this.handlers.splice(i, 1);
+            }
+        }
+
+        // add handlers scheduled for addition
+        while (this.addHandlers.length > 0) {
+            this.handlers.push(this.addHandlers.pop());
+        }
+
+        // handle graceful disconnect
+        if (this.disconnecting && this._proto._emptyQueue()) {
+            this._doDisconnect();
+            return;
+        }
+
+        var type = elem.getAttribute("type");
+        var cond, conflict;
+        if (type !== null && type == "terminate") {
+            // Don't process stanzas that come in after disconnect
+            if (this.disconnecting) {
+                return;
+            }
+
+            // an error occurred
+            cond = elem.getAttribute("condition");
+            conflict = elem.getElementsByTagName("conflict");
+            if (cond !== null) {
+                if (cond == "remote-stream-error" && conflict.length > 0) {
+                    cond = "conflict";
+                }
+                this._changeConnectStatus(Strophe.Status.CONNFAIL, cond);
+            } else {
+                this._changeConnectStatus(Strophe.Status.CONNFAIL, "unknown");
+            }
+            this._doDisconnect(cond);
+            return;
+        }
+
+        // send each incoming stanza through the handler chain
+        var that = this;
+        Strophe.forEachChild(elem, null, function (child) {
+            var i, newList;
+            // process handlers
+            newList = that.handlers;
+            that.handlers = [];
+            for (i = 0; i < newList.length; i++) {
+                var hand = newList[i];
+                // encapsulate 'handler.run' not to lose the whole handler list if
+                // one of the handlers throws an exception
+                try {
+                    if (hand.isMatch(child) &&
+                        (that.authenticated || !hand.user)) {
+                        if (hand.run(child)) {
+                            that.handlers.push(hand);
+                        }
+                    } else {
+                        that.handlers.push(hand);
+                    }
+                } catch(e) {
+                    // if the handler throws an exception, we consider it as false
+                    Strophe.warn('Removing Strophe handlers due to uncaught exception: ' + e.message);
+                }
+            }
+        });
+    },
+
+
+    /** Attribute: mechanisms
+     *  SASL Mechanisms available for Conncection.
+     */
+    mechanisms: {},
+
+    /** PrivateFunction: _connect_cb
+     *  _Private_ handler for initial connection request.
+     *
+     *  This handler is used to process the initial connection request
+     *  response from the BOSH server. It is used to set up authentication
+     *  handlers and start the authentication process.
+     *
+     *  SASL authentication will be attempted if available, otherwise
+     *  the code will fall back to legacy authentication.
+     *
+     *  Parameters:
+     *    (Strophe.Request) req - The current request.
+     *    (Function) _callback - low level (xmpp) connect callback function.
+     *      Useful for plugins with their own xmpp connect callback (when their)
+     *      want to do something special).
+     */
+    _connect_cb: function (req, _callback, raw)
+    {
+        Strophe.info("_connect_cb was called");
+
+        this.connected = true;
+
+        var bodyWrap = this._proto._reqToData(req);
+        if (!bodyWrap) { return; }
+
+        if (this.xmlInput !== Strophe.Connection.prototype.xmlInput) {
+            if (bodyWrap.nodeName === this._proto.strip && bodyWrap.childNodes.length) {
+                this.xmlInput(bodyWrap.childNodes[0]);
+            } else {
+                this.xmlInput(bodyWrap);
+            }
+        }
+        if (this.rawInput !== Strophe.Connection.prototype.rawInput) {
+            if (raw) {
+                this.rawInput(raw);
+            } else {
+                this.rawInput(Strophe.serialize(bodyWrap));
+            }
+        }
+
+        var conncheck = this._proto._connect_cb(bodyWrap);
+        if (conncheck === Strophe.Status.CONNFAIL) {
+            return;
+        }
+
+        this._authentication.sasl_scram_sha1 = false;
+        this._authentication.sasl_plain = false;
+        this._authentication.sasl_digest_md5 = false;
+        this._authentication.sasl_anonymous = false;
+
+        this._authentication.legacy_auth = false;
+
+        // Check for the stream:features tag
+        var hasFeatures;
+        if (bodyWrap.getElementsByTagNameNS) {
+            hasFeatures = bodyWrap.getElementsByTagNameNS(Strophe.NS.STREAM, "features").length > 0;
+        } else {
+            hasFeatures = bodyWrap.getElementsByTagName("stream:features").length > 0 || bodyWrap.getElementsByTagName("features").length > 0;
+        }
+        var mechanisms = bodyWrap.getElementsByTagName("mechanism");
+        var matched = [];
+        var i, mech, found_authentication = false;
+        if (!hasFeatures) {
+            this._proto._no_auth_received(_callback);
+            return;
+        }
+        if (mechanisms.length > 0) {
+            for (i = 0; i < mechanisms.length; i++) {
+                mech = Strophe.getText(mechanisms[i]);
+                if (this.mechanisms[mech]) matched.push(this.mechanisms[mech]);
+            }
+        }
+        this._authentication.legacy_auth =
+            bodyWrap.getElementsByTagName("auth").length > 0;
+        found_authentication = this._authentication.legacy_auth ||
+            matched.length > 0;
+        if (!found_authentication) {
+            this._proto._no_auth_received(_callback);
+            return;
+        }
+        if (this.do_authentication !== false)
+            this.authenticate(matched);
+    },
+
+    /** Function: authenticate
+     * Set up authentication
+     *
+     *  Contiunues the initial connection request by setting up authentication
+     *  handlers and start the authentication process.
+     *
+     *  SASL authentication will be attempted if available, otherwise
+     *  the code will fall back to legacy authentication.
+     *
+     */
+    authenticate: function (matched)
+    {
+      var i;
+      // Sorting matched mechanisms according to priority.
+      for (i = 0; i < matched.length - 1; ++i) {
+        var higher = i;
+        for (var j = i + 1; j < matched.length; ++j) {
+          if (matched[j].prototype.priority > matched[higher].prototype.priority) {
+            higher = j;
+          }
+        }
+        if (higher != i) {
+          var swap = matched[i];
+          matched[i] = matched[higher];
+          matched[higher] = swap;
+        }
+      }
+
+      // run each mechanism
+      var mechanism_found = false;
+      for (i = 0; i < matched.length; ++i) {
+        if (!matched[i].test(this)) continue;
+
+        this._sasl_success_handler = this._addSysHandler(
+          this._sasl_success_cb.stropheBind(this), null,
+          "success", null, null);
+        this._sasl_failure_handler = this._addSysHandler(
+          this._sasl_failure_cb.stropheBind(this), null,
+          "failure", null, null);
+        this._sasl_challenge_handler = this._addSysHandler(
+          this._sasl_challenge_cb.stropheBind(this), null,
+          "challenge", null, null);
+
+        this._sasl_mechanism = new matched[i]();
+        this._sasl_mechanism.onStart(this);
+
+        var request_auth_exchange = $build("auth", {
+          xmlns: Strophe.NS.SASL,
+          mechanism: this._sasl_mechanism.name
+        });
+
+        if (this._sasl_mechanism.isClientFirst) {
+          var response = this._sasl_mechanism.onChallenge(this, null);
+          request_auth_exchange.t(Base64.encode(response));
+        }
+
+        this.send(request_auth_exchange.tree());
+
+        mechanism_found = true;
+        break;
+      }
+
+      if (!mechanism_found) {
+        // if none of the mechanism worked
+        if (Strophe.getNodeFromJid(this.jid) === null) {
+            // we don't have a node, which is required for non-anonymous
+            // client connections
+            this._changeConnectStatus(Strophe.Status.CONNFAIL,
+                                      'x-strophe-bad-non-anon-jid');
+            this.disconnect('x-strophe-bad-non-anon-jid');
+        } else {
+          // fall back to legacy authentication
+          this._changeConnectStatus(Strophe.Status.AUTHENTICATING, null);
+          this._addSysHandler(this._auth1_cb.stropheBind(this), null, null,
+                              null, "_auth_1");
+
+          this.send($iq({
+            type: "get",
+            to: this.domain,
+            id: "_auth_1"
+          }).c("query", {
+            xmlns: Strophe.NS.AUTH
+          }).c("username", {}).t(Strophe.getNodeFromJid(this.jid)).tree());
+        }
+      }
+
+    },
+
+    _sasl_challenge_cb: function(elem) {
+      var challenge = Base64.decode(Strophe.getText(elem));
+      var response = this._sasl_mechanism.onChallenge(this, challenge);
+
+      var stanza = $build('response', {
+          xmlns: Strophe.NS.SASL
+      });
+      if (response !== "") {
+        stanza.t(Base64.encode(response));
+      }
+      this.send(stanza.tree());
+
+      return true;
+    },
+
+    /** PrivateFunction: _auth1_cb
+     *  _Private_ handler for legacy authentication.
+     *
+     *  This handler is called in response to the initial <iq type='get'/>
+     *  for legacy authentication.  It builds an authentication <iq/> and
+     *  sends it, creating a handler (calling back to _auth2_cb()) to
+     *  handle the result
+     *
+     *  Parameters:
+     *    (XMLElement) elem - The stanza that triggered the callback.
+     *
+     *  Returns:
+     *    false to remove the handler.
+     */
+    /* jshint unused:false */
+    _auth1_cb: function (elem)
+    {
+        // build plaintext auth iq
+        var iq = $iq({type: "set", id: "_auth_2"})
+            .c('query', {xmlns: Strophe.NS.AUTH})
+            .c('username', {}).t(Strophe.getNodeFromJid(this.jid))
+            .up()
+            .c('password').t(this.pass);
+
+        if (!Strophe.getResourceFromJid(this.jid)) {
+            // since the user has not supplied a resource, we pick
+            // a default one here.  unlike other auth methods, the server
+            // cannot do this for us.
+            this.jid = Strophe.getBareJidFromJid(this.jid) + '/strophe';
+        }
+        iq.up().c('resource', {}).t(Strophe.getResourceFromJid(this.jid));
+
+        this._addSysHandler(this._auth2_cb.stropheBind(this), null,
+                            null, null, "_auth_2");
+
+        this.send(iq.tree());
+
+        return false;
+    },
+    /* jshint unused:true */
+
+    /** PrivateFunction: _sasl_success_cb
+     *  _Private_ handler for succesful SASL authentication.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - The matching stanza.
+     *
+     *  Returns:
+     *    false to remove the handler.
+     */
+    _sasl_success_cb: function (elem)
+    {
+        if (this._sasl_data["server-signature"]) {
+            var serverSignature;
+            var success = Base64.decode(Strophe.getText(elem));
+            var attribMatch = /([a-z]+)=([^,]+)(,|$)/;
+            var matches = success.match(attribMatch);
+            if (matches[1] == "v") {
+                serverSignature = matches[2];
+            }
+
+            if (serverSignature != this._sasl_data["server-signature"]) {
+              // remove old handlers
+              this.deleteHandler(this._sasl_failure_handler);
+              this._sasl_failure_handler = null;
+              if (this._sasl_challenge_handler) {
+                this.deleteHandler(this._sasl_challenge_handler);
+                this._sasl_challenge_handler = null;
+              }
+
+              this._sasl_data = {};
+              return this._sasl_failure_cb(null);
+            }
+        }
+
+        Strophe.info("SASL authentication succeeded.");
+
+        if(this._sasl_mechanism)
+          this._sasl_mechanism.onSuccess();
+
+        // remove old handlers
+        this.deleteHandler(this._sasl_failure_handler);
+        this._sasl_failure_handler = null;
+        if (this._sasl_challenge_handler) {
+            this.deleteHandler(this._sasl_challenge_handler);
+            this._sasl_challenge_handler = null;
+        }
+
+        var streamfeature_handlers = [];
+        var wrapper = function(handlers, elem) {
+            while (handlers.length) {
+                this.deleteHandler(handlers.pop());
+            }
+            this._sasl_auth1_cb.stropheBind(this)(elem);
+            return false;
+        };
+        streamfeature_handlers.push(this._addSysHandler(function(elem) {
+            wrapper.stropheBind(this)(streamfeature_handlers, elem);
+        }.stropheBind(this), null, "stream:features", null, null));
+        streamfeature_handlers.push(this._addSysHandler(function(elem) {
+            wrapper.stropheBind(this)(streamfeature_handlers, elem);
+        }.stropheBind(this), Strophe.NS.STREAM, "features", null, null));
+
+        // we must send an xmpp:restart now
+        this._sendRestart();
+
+        return false;
+    },
+
+    /** PrivateFunction: _sasl_auth1_cb
+     *  _Private_ handler to start stream binding.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - The matching stanza.
+     *
+     *  Returns:
+     *    false to remove the handler.
+     */
+    _sasl_auth1_cb: function (elem)
+    {
+        // save stream:features for future usage
+        this.features = elem;
+
+        var i, child;
+
+        for (i = 0; i < elem.childNodes.length; i++) {
+            child = elem.childNodes[i];
+            if (child.nodeName == 'bind') {
+                this.do_bind = true;
+            }
+
+            if (child.nodeName == 'session') {
+                this.do_session = true;
+            }
+        }
+
+        if (!this.do_bind) {
+            this._changeConnectStatus(Strophe.Status.AUTHFAIL, null);
+            return false;
+        } else {
+            this._addSysHandler(this._sasl_bind_cb.stropheBind(this), null, null,
+                                null, "_bind_auth_2");
+
+            var resource = Strophe.getResourceFromJid(this.jid);
+            if (resource) {
+                this.send($iq({type: "set", id: "_bind_auth_2"})
+                          .c('bind', {xmlns: Strophe.NS.BIND})
+                          .c('resource', {}).t(resource).tree());
+            } else {
+                this.send($iq({type: "set", id: "_bind_auth_2"})
+                          .c('bind', {xmlns: Strophe.NS.BIND})
+                          .tree());
+            }
+        }
+
+        return false;
+    },
+
+    /** PrivateFunction: _sasl_bind_cb
+     *  _Private_ handler for binding result and session start.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - The matching stanza.
+     *
+     *  Returns:
+     *    false to remove the handler.
+     */
+    _sasl_bind_cb: function (elem)
+    {
+        if (elem.getAttribute("type") == "error") {
+            Strophe.info("SASL binding failed.");
+            var conflict = elem.getElementsByTagName("conflict"), condition;
+            if (conflict.length > 0) {
+                condition = 'conflict';
+            }
+            this._changeConnectStatus(Strophe.Status.AUTHFAIL, condition);
+            return false;
+        }
+
+        // TODO - need to grab errors
+        var bind = elem.getElementsByTagName("bind");
+        var jidNode;
+        if (bind.length > 0) {
+            // Grab jid
+            jidNode = bind[0].getElementsByTagName("jid");
+            if (jidNode.length > 0) {
+                this.jid = Strophe.getText(jidNode[0]);
+
+                if (this.do_session) {
+                    this._addSysHandler(this._sasl_session_cb.stropheBind(this),
+                                        null, null, null, "_session_auth_2");
+
+                    this.send($iq({type: "set", id: "_session_auth_2"})
+                                  .c('session', {xmlns: Strophe.NS.SESSION})
+                                  .tree());
+                } else {
+                    this.authenticated = true;
+                    this._changeConnectStatus(Strophe.Status.CONNECTED, null);
+                }
+            }
+        } else {
+            Strophe.info("SASL binding failed.");
+            this._changeConnectStatus(Strophe.Status.AUTHFAIL, null);
+            return false;
+        }
+    },
+
+    /** PrivateFunction: _sasl_session_cb
+     *  _Private_ handler to finish successful SASL connection.
+     *
+     *  This sets Connection.authenticated to true on success, which
+     *  starts the processing of user handlers.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - The matching stanza.
+     *
+     *  Returns:
+     *    false to remove the handler.
+     */
+    _sasl_session_cb: function (elem)
+    {
+        if (elem.getAttribute("type") == "result") {
+            this.authenticated = true;
+            this._changeConnectStatus(Strophe.Status.CONNECTED, null);
+        } else if (elem.getAttribute("type") == "error") {
+            Strophe.info("Session creation failed.");
+            this._changeConnectStatus(Strophe.Status.AUTHFAIL, null);
+            return false;
+        }
+
+        return false;
+    },
+
+    /** PrivateFunction: _sasl_failure_cb
+     *  _Private_ handler for SASL authentication failure.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - The matching stanza.
+     *
+     *  Returns:
+     *    false to remove the handler.
+     */
+    /* jshint unused:false */
+    _sasl_failure_cb: function (elem)
+    {
+        // delete unneeded handlers
+        if (this._sasl_success_handler) {
+            this.deleteHandler(this._sasl_success_handler);
+            this._sasl_success_handler = null;
+        }
+        if (this._sasl_challenge_handler) {
+            this.deleteHandler(this._sasl_challenge_handler);
+            this._sasl_challenge_handler = null;
+        }
+
+        if(this._sasl_mechanism)
+          this._sasl_mechanism.onFailure();
+        this._changeConnectStatus(Strophe.Status.AUTHFAIL, null);
+        return false;
+    },
+    /* jshint unused:true */
+
+    /** PrivateFunction: _auth2_cb
+     *  _Private_ handler to finish legacy authentication.
+     *
+     *  This handler is called when the result from the jabber:iq:auth
+     *  <iq/> stanza is returned.
+     *
+     *  Parameters:
+     *    (XMLElement) elem - The stanza that triggered the callback.
+     *
+     *  Returns:
+     *    false to remove the handler.
+     */
+    _auth2_cb: function (elem)
+    {
+        if (elem.getAttribute("type") == "result") {
+            this.authenticated = true;
+            this._changeConnectStatus(Strophe.Status.CONNECTED, null);
+        } else if (elem.getAttribute("type") == "error") {
+            this._changeConnectStatus(Strophe.Status.AUTHFAIL, null);
+            this.disconnect('authentication failed');
+        }
+
+        return false;
+    },
+
+    /** PrivateFunction: _addSysTimedHandler
+     *  _Private_ function to add a system level timed handler.
+     *
+     *  This function is used to add a Strophe.TimedHandler for the
+     *  library code.  System timed handlers are allowed to run before
+     *  authentication is complete.
+     *
+     *  Parameters:
+     *    (Integer) period - The period of the handler.
+     *    (Function) handler - The callback function.
+     */
+    _addSysTimedHandler: function (period, handler)
+    {
+        var thand = new Strophe.TimedHandler(period, handler);
+        thand.user = false;
+        this.addTimeds.push(thand);
+        return thand;
+    },
+
+    /** PrivateFunction: _addSysHandler
+     *  _Private_ function to add a system level stanza handler.
+     *
+     *  This function is used to add a Strophe.Handler for the
+     *  library code.  System stanza handlers are allowed to run before
+     *  authentication is complete.
+     *
+     *  Parameters:
+     *    (Function) handler - The callback function.
+     *    (String) ns - The namespace to match.
+     *    (String) name - The stanza name to match.
+     *    (String) type - The stanza type attribute to match.
+     *    (String) id - The stanza id attribute to match.
+     */
+    _addSysHandler: function (handler, ns, name, type, id)
+    {
+        var hand = new Strophe.Handler(handler, ns, name, type, id);
+        hand.user = false;
+        this.addHandlers.push(hand);
+        return hand;
+    },
+
+    /** PrivateFunction: _onDisconnectTimeout
+     *  _Private_ timeout handler for handling non-graceful disconnection.
+     *
+     *  If the graceful disconnect process does not complete within the
+     *  time allotted, this handler finishes the disconnect anyway.
+     *
+     *  Returns:
+     *    false to remove the handler.
+     */
+    _onDisconnectTimeout: function ()
+    {
+        Strophe.info("_onDisconnectTimeout was called");
+
+        this._proto._onDisconnectTimeout();
+
+        // actually disconnect
+        this._doDisconnect();
+
+        return false;
+    },
+
+    /** PrivateFunction: _onIdle
+     *  _Private_ handler to process events during idle cycle.
+     *
+     *  This handler is called every 100ms to fire timed handlers that
+     *  are ready and keep poll requests going.
+     */
+    _onIdle: function ()
+    {
+        var i, thand, since, newList;
+
+        // add timed handlers scheduled for addition
+        // NOTE: we add before remove in the case a timed handler is
+        // added and then deleted before the next _onIdle() call.
+        while (this.addTimeds.length > 0) {
+            this.timedHandlers.push(this.addTimeds.pop());
+        }
+
+        // remove timed handlers that have been scheduled for deletion
+        while (this.removeTimeds.length > 0) {
+            thand = this.removeTimeds.pop();
+            i = this.timedHandlers.indexOf(thand);
+            if (i >= 0) {
+                this.timedHandlers.splice(i, 1);
+            }
+        }
+
+        // call ready timed handlers
+        var now = new Date().getTime();
+        newList = [];
+        for (i = 0; i < this.timedHandlers.length; i++) {
+            thand = this.timedHandlers[i];
+            if (this.authenticated || !thand.user) {
+                since = thand.lastCalled + thand.period;
+                if (since - now <= 0) {
+                    if (thand.run()) {
+                        newList.push(thand);
+                    }
+                } else {
+                    newList.push(thand);
+                }
+            }
+        }
+        this.timedHandlers = newList;
+
+        clearTimeout(this._idleTimeout);
+
+        this._proto._onIdle();
+
+        // reactivate the timer only if connected
+        if (this.connected) {
+            this._idleTimeout = setTimeout(this._onIdle.stropheBind(this), 100);
+        }
+    }
+};
+
+/** Class: Strophe.SASLMechanism
+ *
+ *  encapsulates SASL authentication mechanisms.
+ *
+ *  User code may override the priority for each mechanism or disable it completely.
+ *  See <priority> for information about changing priority and <test> for informatian on
+ *  how to disable a mechanism.
+ *
+ *  By default, all mechanisms are enabled and the priorities are
+ *
+ *  SCRAM-SHA1 - 40
+ *  DIGEST-MD5 - 30
+ *  Plain - 20
+ */
+
+/**
+ * PrivateConstructor: Strophe.SASLMechanism
+ * SASL auth mechanism abstraction.
+ *
+ *  Parameters:
+ *    (String) name - SASL Mechanism name.
+ *    (Boolean) isClientFirst - If client should send response first without challenge.
+ *    (Number) priority - Priority.
+ *
+ *  Returns:
+ *    A new Strophe.SASLMechanism object.
+ */
+Strophe.SASLMechanism = function(name, isClientFirst, priority) {
+  /** PrivateVariable: name
+   *  Mechanism name.
+   */
+  this.name = name;
+  /** PrivateVariable: isClientFirst
+   *  If client sends response without initial server challenge.
+   */
+  this.isClientFirst = isClientFirst;
+  /** Variable: priority
+   *  Determines which <SASLMechanism> is chosen for authentication (Higher is better).
+   *  Users may override this to prioritize mechanisms differently.
+   *
+   *  In the default configuration the priorities are
+   *
+   *  SCRAM-SHA1 - 40
+   *  DIGEST-MD5 - 30
+   *  Plain - 20
+   *
+   *  Example: (This will cause Strophe to choose the mechanism that the server sent first)
+   *
+   *  > Strophe.SASLMD5.priority = Strophe.SASLSHA1.priority;
+   *
+   *  See <SASL mechanisms> for a list of available mechanisms.
+   *
+   */
+  this.priority = priority;
+};
+
+Strophe.SASLMechanism.prototype = {
+  /**
+   *  Function: test
+   *  Checks if mechanism able to run.
+   *  To disable a mechanism, make this return false;
+   *
+   *  To disable plain authentication run
+   *  > Strophe.SASLPlain.test = function() {
+   *  >   return false;
+   *  > }
+   *
+   *  See <SASL mechanisms> for a list of available mechanisms.
+   *
+   *  Parameters:
+   *    (Strophe.Connection) connection - Target Connection.
+   *
+   *  Returns:
+   *    (Boolean) If mechanism was able to run.
+   */
+  /* jshint unused:false */
+  test: function(connection) {
+    return true;
+  },
+  /* jshint unused:true */
+
+  /** PrivateFunction: onStart
+   *  Called before starting mechanism on some connection.
+   *
+   *  Parameters:
+   *    (Strophe.Connection) connection - Target Connection.
+   */
+  onStart: function(connection)
+  {
+    this._connection = connection;
+  },
+
+  /** PrivateFunction: onChallenge
+   *  Called by protocol implementation on incoming challenge. If client is
+   *  first (isClientFirst == true) challenge will be null on the first call.
+   *
+   *  Parameters:
+   *    (Strophe.Connection) connection - Target Connection.
+   *    (String) challenge - current challenge to handle.
+   *
+   *  Returns:
+   *    (String) Mechanism response.
+   */
+  /* jshint unused:false */
+  onChallenge: function(connection, challenge) {
+    throw new Error("You should implement challenge handling!");
+  },
+  /* jshint unused:true */
+
+  /** PrivateFunction: onFailure
+   *  Protocol informs mechanism implementation about SASL failure.
+   */
+  onFailure: function() {
+    this._connection = null;
+  },
+
+  /** PrivateFunction: onSuccess
+   *  Protocol informs mechanism implementation about SASL success.
+   */
+  onSuccess: function() {
+    this._connection = null;
+  }
+};
+
+  /** Constants: SASL mechanisms
+   *  Available authentication mechanisms
+   *
+   *  Strophe.SASLAnonymous - SASL Anonymous authentication.
+   *  Strophe.SASLPlain - SASL Plain authentication.
+   *  Strophe.SASLMD5 - SASL Digest-MD5 authentication
+   *  Strophe.SASLSHA1 - SASL SCRAM-SHA1 authentication
+   */
+
+// Building SASL callbacks
+
+/** PrivateConstructor: SASLAnonymous
+ *  SASL Anonymous authentication.
+ */
+Strophe.SASLAnonymous = function() {};
+
+Strophe.SASLAnonymous.prototype = new Strophe.SASLMechanism("ANONYMOUS", false, 10);
+
+Strophe.SASLAnonymous.test = function(connection) {
+  return connection.authcid === null;
+};
+
+Strophe.Connection.prototype.mechanisms[Strophe.SASLAnonymous.prototype.name] = Strophe.SASLAnonymous;
+
+/** PrivateConstructor: SASLPlain
+ *  SASL Plain authentication.
+ */
+Strophe.SASLPlain = function() {};
+
+Strophe.SASLPlain.prototype = new Strophe.SASLMechanism("PLAIN", true, 20);
+
+Strophe.SASLPlain.test = function(connection) {
+  return connection.authcid !== null;
+};
+
+Strophe.SASLPlain.prototype.onChallenge = function(connection) {
+  var auth_str = connection.authzid;
+  auth_str = auth_str + "\u0000";
+  auth_str = auth_str + connection.authcid;
+  auth_str = auth_str + "\u0000";
+  auth_str = auth_str + connection.pass;
+  return auth_str;
+};
+
+Strophe.Connection.prototype.mechanisms[Strophe.SASLPlain.prototype.name] = Strophe.SASLPlain;
+
+/** PrivateConstructor: SASLSHA1
+ *  SASL SCRAM SHA 1 authentication.
+ */
+Strophe.SASLSHA1 = function() {};
+
+/* TEST:
+ * This is a simple example of a SCRAM-SHA-1 authentication exchange
+ * when the client doesn't support channel bindings (username 'user' and
+ * password 'pencil' are used):
+ *
+ * C: n,,n=user,r=fyko+d2lbbFgONRv9qkxdawL
+ * S: r=fyko+d2lbbFgONRv9qkxdawL3rfcNHYJY1ZVvWVs7j,s=QSXCR+Q6sek8bf92,
+ * i=4096
+ * C: c=biws,r=fyko+d2lbbFgONRv9qkxdawL3rfcNHYJY1ZVvWVs7j,
+ * p=v0X8v3Bz2T0CJGbJQyF0X+HI4Ts=
+ * S: v=rmF9pqV8S7suAoZWja4dJRkFsKQ=
+ *
+ */
+
+Strophe.SASLSHA1.prototype = new Strophe.SASLMechanism("SCRAM-SHA-1", true, 40);
+
+Strophe.SASLSHA1.test = function(connection) {
+  return connection.authcid !== null;
+};
+
+Strophe.SASLSHA1.prototype.onChallenge = function(connection, challenge, test_cnonce) {
+  var cnonce = test_cnonce || MD5.hexdigest(Math.random() * 1234567890);
+
+  var auth_str = "n=" + connection.authcid;
+  auth_str += ",r=";
+  auth_str += cnonce;
+
+  connection._sasl_data.cnonce = cnonce;
+  connection._sasl_data["client-first-message-bare"] = auth_str;
+
+  auth_str = "n,," + auth_str;
+
+  this.onChallenge = function (connection, challenge)
+  {
+    var nonce, salt, iter, Hi, U, U_old, i, k;
+    var clientKey, serverKey, clientSignature;
+    var responseText = "c=biws,";
+    var authMessage = connection._sasl_data["client-first-message-bare"] + "," +
+      challenge + ",";
+    var cnonce = connection._sasl_data.cnonce;
+    var attribMatch = /([a-z]+)=([^,]+)(,|$)/;
+
+    while (challenge.match(attribMatch)) {
+      var matches = challenge.match(attribMatch);
+      challenge = challenge.replace(matches[0], "");
+      switch (matches[1]) {
+      case "r":
+        nonce = matches[2];
+        break;
+      case "s":
+        salt = matches[2];
+        break;
+      case "i":
+        iter = matches[2];
+        break;
+      }
+    }
+
+    if (nonce.substr(0, cnonce.length) !== cnonce) {
+      connection._sasl_data = {};
+      return connection._sasl_failure_cb();
+    }
+
+    responseText += "r=" + nonce;
+    authMessage += responseText;
+
+    salt = Base64.decode(salt);
+    salt += "\x00\x00\x00\x01";
+
+    Hi = U_old = SHA1.core_hmac_sha1(connection.pass, salt);
+    for (i = 1; i < iter; i++) {
+      U = SHA1.core_hmac_sha1(connection.pass, SHA1.binb2str(U_old));
+      for (k = 0; k < 5; k++) {
+        Hi[k] ^= U[k];
+      }
+      U_old = U;
+    }
+    Hi = SHA1.binb2str(Hi);
+
+    clientKey = SHA1.core_hmac_sha1(Hi, "Client Key");
+    serverKey = SHA1.str_hmac_sha1(Hi, "Server Key");
+    clientSignature = SHA1.core_hmac_sha1(SHA1.str_sha1(SHA1.binb2str(clientKey)), authMessage);
+    connection._sasl_data["server-signature"] = SHA1.b64_hmac_sha1(serverKey, authMessage);
+
+    for (k = 0; k < 5; k++) {
+      clientKey[k] ^= clientSignature[k];
+    }
+
+    responseText += ",p=" + Base64.encode(SHA1.binb2str(clientKey));
+
+    return responseText;
+  }.stropheBind(this);
+
+  return auth_str;
+};
+
+Strophe.Connection.prototype.mechanisms[Strophe.SASLSHA1.prototype.name] = Strophe.SASLSHA1;
+
+/** PrivateConstructor: SASLMD5
+ *  SASL DIGEST MD5 authentication.
+ */
+Strophe.SASLMD5 = function() {};
+
+Strophe.SASLMD5.prototype = new Strophe.SASLMechanism("DIGEST-MD5", false, 30);
+
+Strophe.SASLMD5.test = function(connection) {
+  return connection.authcid !== null;
+};
+
+/** PrivateFunction: _quote
+ *  _Private_ utility function to backslash escape and quote strings.
+ *
+ *  Parameters:
+ *    (String) str - The string to be quoted.
+ *
+ *  Returns:
+ *    quoted string
+ */
+Strophe.SASLMD5.prototype._quote = function (str)
+  {
+    return '"' + str.replace(/\\/g, "\\\\").replace(/"/g, '\\"') + '"';
+    //" end string workaround for emacs
+  };
+
+
+Strophe.SASLMD5.prototype.onChallenge = function(connection, challenge, test_cnonce) {
+  var attribMatch = /([a-z]+)=("[^"]+"|[^,"]+)(?:,|$)/;
+  var cnonce = test_cnonce || MD5.hexdigest("" + (Math.random() * 1234567890));
+  var realm = "";
+  var host = null;
+  var nonce = "";
+  var qop = "";
+  var matches;
+
+  while (challenge.match(attribMatch)) {
+    matches = challenge.match(attribMatch);
+    challenge = challenge.replace(matches[0], "");
+    matches[2] = matches[2].replace(/^"(.+)"$/, "$1");
+    switch (matches[1]) {
+    case "realm":
+      realm = matches[2];
+      break;
+    case "nonce":
+      nonce = matches[2];
+      break;
+    case "qop":
+      qop = matches[2];
+      break;
+    case "host":
+      host = matches[2];
+      break;
+    }
+  }
+
+  var digest_uri = connection.servtype + "/" + connection.domain;
+  if (host !== null) {
+    digest_uri = digest_uri + "/" + host;
+  }
+
+  var A1 = MD5.hash(connection.authcid +
+                    ":" + realm + ":" + this._connection.pass) +
+    ":" + nonce + ":" + cnonce;
+  var A2 = 'AUTHENTICATE:' + digest_uri;
+
+  var responseText = "";
+  responseText += 'charset=utf-8,';
+  responseText += 'username=' +
+    this._quote(connection.authcid) + ',';
+  responseText += 'realm=' + this._quote(realm) + ',';
+  responseText += 'nonce=' + this._quote(nonce) + ',';
+  responseText += 'nc=00000001,';
+  responseText += 'cnonce=' + this._quote(cnonce) + ',';
+  responseText += 'digest-uri=' + this._quote(digest_uri) + ',';
+  responseText += 'response=' + MD5.hexdigest(MD5.hexdigest(A1) + ":" +
+                                              nonce + ":00000001:" +
+                                              cnonce + ":auth:" +
+                                              MD5.hexdigest(A2)) + ",";
+  responseText += 'qop=auth';
+
+  this.onChallenge = function ()
+  {
+      return "";
+  }.stropheBind(this);
+
+  return responseText;
+};
+
+Strophe.Connection.prototype.mechanisms[Strophe.SASLMD5.prototype.name] = Strophe.SASLMD5;
+
+return {
+    Strophe:        Strophe,
+    $build:         $build,
+    $msg:           $msg,
+    $iq:            $iq,
+    $pres:          $pres,
+    SHA1:           SHA1,
+    Base64:         Base64,
+    MD5:            MD5
+};
+}));
+
+/*
+    This program is distributed under the terms of the MIT license.
+    Please see the LICENSE file for details.
+
+    Copyright 2006-2008, OGG, LLC
+*/
+
+/* jshint undef: true, unused: true:, noarg: true, latedef: true */
+/* global define, window, setTimeout, clearTimeout, XMLHttpRequest, ActiveXObject, Strophe, $build */
+
+(function (root, factory) {
+    //if (typeof define === 'function' && define.amd) {
+    if (false) {
+        define('strophe-bosh', ['strophe-core'], function (core) {
+            return factory(
+                core.Strophe,
+                core.$build
+            );
+        });
+    } else {
+        // Browser globals
+        return factory(Strophe, $build);
+    }
+}(this, function (Strophe, $build) {
+
+/** PrivateClass: Strophe.Request
+ *  _Private_ helper class that provides a cross implementation abstraction
+ *  for a BOSH related XMLHttpRequest.
+ *
+ *  The Strophe.Request class is used internally to encapsulate BOSH request
+ *  information.  It is not meant to be used from user's code.
+ */
+
+/** PrivateConstructor: Strophe.Request
+ *  Create and initialize a new Strophe.Request object.
+ *
+ *  Parameters:
+ *    (XMLElement) elem - The XML data to be sent in the request.
+ *    (Function) func - The function that will be called when the
+ *      XMLHttpRequest readyState changes.
+ *    (Integer) rid - The BOSH rid attribute associated with this request.
+ *    (Integer) sends - The number of times this same request has been
+ *      sent.
+ */
+Strophe.Request = function (elem, func, rid, sends)
+{
+    this.id = ++Strophe._requestId;
+    this.xmlData = elem;
+    this.data = Strophe.serialize(elem);
+    // save original function in case we need to make a new request
+    // from this one.
+    this.origFunc = func;
+    this.func = func;
+    this.rid = rid;
+    this.date = NaN;
+    this.sends = sends || 0;
+    this.abort = false;
+    this.dead = null;
+
+    this.age = function () {
+        if (!this.date) { return 0; }
+        var now = new Date();
+        return (now - this.date) / 1000;
+    };
+    this.timeDead = function () {
+        if (!this.dead) { return 0; }
+        var now = new Date();
+        return (now - this.dead) / 1000;
+    };
+    this.xhr = this._newXHR();
+};
+
+Strophe.Request.prototype = {
+    /** PrivateFunction: getResponse
+     *  Get a response from the underlying XMLHttpRequest.
+     *
+     *  This function attempts to get a response from the request and checks
+     *  for errors.
+     *
+     *  Throws:
+     *    "parsererror" - A parser error occured.
+     *
+     *  Returns:
+     *    The DOM element tree of the response.
+     */
+    getResponse: function ()
+    {
+        var node = null;
+        if (this.xhr.responseXML && this.xhr.responseXML.documentElement) {
+            node = this.xhr.responseXML.documentElement;
+            if (node.tagName == "parsererror") {
+                Strophe.error("invalid response received");
+                Strophe.error("responseText: " + this.xhr.responseText);
+                Strophe.error("responseXML: " +
+                              Strophe.serialize(this.xhr.responseXML));
+                throw "parsererror";
+            }
+        } else if (this.xhr.responseText) {
+            Strophe.error("invalid response received");
+            Strophe.error("responseText: " + this.xhr.responseText);
+            Strophe.error("responseXML: " +
+                          Strophe.serialize(this.xhr.responseXML));
+        }
+
+        return node;
+    },
+
+    /** PrivateFunction: _newXHR
+     *  _Private_ helper function to create XMLHttpRequests.
+     *
+     *  This function creates XMLHttpRequests across all implementations.
+     *
+     *  Returns:
+     *    A new XMLHttpRequest.
+     */
+    _newXHR: function ()
+    {
+        var xhr = null;
+        if (window.XMLHttpRequest) {
+            xhr = new XMLHttpRequest();
+            if (xhr.overrideMimeType) {
+                xhr.overrideMimeType("text/xml; charset=utf-8");
+            }
+        } else if (window.ActiveXObject) {
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+
+        // use Function.bind() to prepend ourselves as an argument
+        xhr.onreadystatechange = this.func.stropheBind(null, this);
+
+        return xhr;
+    }
+};
+
+/** Class: Strophe.Bosh
+ *  _Private_ helper class that handles BOSH Connections
+ *
+ *  The Strophe.Bosh class is used internally by Strophe.Connection
+ *  to encapsulate BOSH sessions. It is not meant to be used from user's code.
+ */
+
+/** File: bosh.js
+ *  A JavaScript library to enable BOSH in Strophejs.
+ *
+ *  this library uses Bidirectional-streams Over Synchronous HTTP (BOSH)
+ *  to emulate a persistent, stateful, two-way connection to an XMPP server.
+ *  More information on BOSH can be found in XEP 124.
+ */
+
+/** PrivateConstructor: Strophe.Bosh
+ *  Create and initialize a Strophe.Bosh object.
+ *
+ *  Parameters:
+ *    (Strophe.Connection) connection - The Strophe.Connection that will use BOSH.
+ *
+ *  Returns:
+ *    A new Strophe.Bosh object.
+ */
+Strophe.Bosh = function(connection) {
+    this._conn = connection;
+    /* request id for body tags */
+    this.rid = Math.floor(Math.random() * 4294967295);
+    /* The current session ID. */
+    this.sid = null;
+
+    // default BOSH values
+    this.hold = 1;
+    this.wait = 60;
+    this.window = 5;
+    this.errors = 0;
+
+    this._requests = [];
+};
+
+Strophe.Bosh.prototype = {
+    /** Variable: strip
+     *
+     *  BOSH-Connections will have all stanzas wrapped in a <body> tag when
+     *  passed to <Strophe.Connection.xmlInput> or <Strophe.Connection.xmlOutput>.
+     *  To strip this tag, User code can set <Strophe.Bosh.strip> to "body":
+     *
+     *  > Strophe.Bosh.prototype.strip = "body";
+     *
+     *  This will enable stripping of the body tag in both
+     *  <Strophe.Connection.xmlInput> and <Strophe.Connection.xmlOutput>.
+     */
+    strip: null,
+
+    /** PrivateFunction: _buildBody
+     *  _Private_ helper function to generate the <body/> wrapper for BOSH.
+     *
+     *  Returns:
+     *    A Strophe.Builder with a <body/> element.
+     */
+    _buildBody: function ()
+    {
+        var bodyWrap = $build('body', {
+            rid: this.rid++,
+            xmlns: Strophe.NS.HTTPBIND
+        });
+        if (this.sid !== null) {
+            bodyWrap.attrs({sid: this.sid});
+        }
+        if (this._conn.options.keepalive) {
+            this._cacheSession();
+        }
+        return bodyWrap;
+    },
+
+    /** PrivateFunction: _reset
+     *  Reset the connection.
+     *
+     *  This function is called by the reset function of the Strophe Connection
+     */
+    _reset: function ()
+    {
+        this.rid = Math.floor(Math.random() * 4294967295);
+        this.sid = null;
+        this.errors = 0;
+        window.sessionStorage.removeItem('strophe-bosh-session');
+    },
+
+    /** PrivateFunction: _connect
+     *  _Private_ function that initializes the BOSH connection.
+     *
+     *  Creates and sends the Request that initializes the BOSH connection.
+     */
+    _connect: function (wait, hold, route)
+    {
+        this.wait = wait || this.wait;
+        this.hold = hold || this.hold;
+        this.errors = 0;
+
+        // build the body tag
+        var body = this._buildBody().attrs({
+            to: this._conn.domain,
+            "xml:lang": "en",
+            wait: this.wait,
+            hold: this.hold,
+            content: "text/xml; charset=utf-8",
+            ver: "1.6",
+            "xmpp:version": "1.0",
+            "xmlns:xmpp": Strophe.NS.BOSH
+        });
+
+        if(route){
+            body.attrs({
+                route: route
+            });
+        }
+
+        var _connect_cb = this._conn._connect_cb;
+
+        this._requests.push(
+            new Strophe.Request(body.tree(),
+                                this._onRequestStateChange.stropheBind(
+                                    this, _connect_cb.stropheBind(this._conn)),
+                                body.tree().getAttribute("rid")));
+        this._throttledRequestHandler();
+    },
+
+    /** PrivateFunction: _attach
+     *  Attach to an already created and authenticated BOSH session.
+     *
+     *  This function is provided to allow Strophe to attach to BOSH
+     *  sessions which have been created externally, perhaps by a Web
+     *  application.  This is often used to support auto-login type features
+     *  without putting user credentials into the page.
+     *
+     *  Parameters:
+     *    (String) jid - The full JID that is bound by the session.
+     *    (String) sid - The SID of the BOSH session.
+     *    (String) rid - The current RID of the BOSH session.  This RID
+     *      will be used by the next request.
+     *    (Function) callback The connect callback function.
+     *    (Integer) wait - The optional HTTPBIND wait value.  This is the
+     *      time the server will wait before returning an empty result for
+     *      a request.  The default setting of 60 seconds is recommended.
+     *      Other settings will require tweaks to the Strophe.TIMEOUT value.
+     *    (Integer) hold - The optional HTTPBIND hold value.  This is the
+     *      number of connections the server will hold at one time.  This
+     *      should almost always be set to 1 (the default).
+     *    (Integer) wind - The optional HTTBIND window value.  This is the
+     *      allowed range of request ids that are valid.  The default is 5.
+     */
+    _attach: function (jid, sid, rid, callback, wait, hold, wind)
+    {
+        this._conn.jid = jid;
+        this.sid = sid;
+        this.rid = rid;
+
+        this._conn.connect_callback = callback;
+
+        this._conn.domain = Strophe.getDomainFromJid(this._conn.jid);
+
+        this._conn.authenticated = true;
+        this._conn.connected = true;
+
+        this.wait = wait || this.wait;
+        this.hold = hold || this.hold;
+        this.window = wind || this.window;
+
+        this._conn._changeConnectStatus(Strophe.Status.ATTACHED, null);
+    },
+
+    /** PrivateFunction: _restore
+     *  Attempt to restore a cached BOSH session
+     *
+     *  Parameters:
+     *    (String) jid - The full JID that is bound by the session.
+     *      This parameter is optional but recommended, specifically in cases
+     *      where prebinded BOSH sessions are used where it's important to know
+     *      that the right session is being restored.
+     *    (Function) callback The connect callback function.
+     *    (Integer) wait - The optional HTTPBIND wait value.  This is the
+     *      time the server will wait before returning an empty result for
+     *      a request.  The default setting of 60 seconds is recommended.
+     *      Other settings will require tweaks to the Strophe.TIMEOUT value.
+     *    (Integer) hold - The optional HTTPBIND hold value.  This is the
+     *      number of connections the server will hold at one time.  This
+     *      should almost always be set to 1 (the default).
+     *    (Integer) wind - The optional HTTBIND window value.  This is the
+     *      allowed range of request ids that are valid.  The default is 5.
+     */
+    _restore: function (jid, callback, wait, hold, wind)
+    {
+        var session = JSON.parse(window.sessionStorage.getItem('strophe-bosh-session'));
+        if (typeof session !== "undefined" &&
+                   session !== null &&
+                   session.rid &&
+                   session.sid &&
+                   session.jid &&
+                   (typeof jid === "undefined" || Strophe.getBareJidFromJid(session.jid) == Strophe.getBareJidFromJid(jid)))
+        {
+            this._conn.restored = true;
+            this._attach(session.jid, session.sid, session.rid, callback, wait, hold, wind);
+        } else {
+            throw { name: "StropheSessionError", message: "_restore: no restoreable session." };
+        }
+    },
+
+    /** PrivateFunction: _cacheSession
+     *  _Private_ handler for the beforeunload event.
+     *
+     *  This handler is used to process the Bosh-part of the initial request.
+     *  Parameters:
+     *    (Strophe.Request) bodyWrap - The received stanza.
+     */
+    _cacheSession: function ()
+    {
+        if (this._conn.authenticated) {
+            if (this._conn.jid && this.rid && this.sid) {
+                window.sessionStorage.setItem('strophe-bosh-session', JSON.stringify({
+                    'jid': this._conn.jid,
+                    'rid': this.rid,
+                    'sid': this.sid
+                }));
+            }
+        } else {
+            window.sessionStorage.removeItem('strophe-bosh-session');
+        }
+    },
+
+    /** PrivateFunction: _connect_cb
+     *  _Private_ handler for initial connection request.
+     *
+     *  This handler is used to process the Bosh-part of the initial request.
+     *  Parameters:
+     *    (Strophe.Request) bodyWrap - The received stanza.
+     */
+    _connect_cb: function (bodyWrap)
+    {
+        var typ = bodyWrap.getAttribute("type");
+        var cond, conflict;
+        if (typ !== null && typ == "terminate") {
+            // an error occurred
+            cond = bodyWrap.getAttribute("condition");
+            Strophe.error("BOSH-Connection failed: " + cond);
+            conflict = bodyWrap.getElementsByTagName("conflict");
+            if (cond !== null) {
+                if (cond == "remote-stream-error" && conflict.length > 0) {
+                    cond = "conflict";
+                }
+                this._conn._changeConnectStatus(Strophe.Status.CONNFAIL, cond);
+            } else {
+                this._conn._changeConnectStatus(Strophe.Status.CONNFAIL, "unknown");
+            }
+            this._conn._doDisconnect(cond);
+            return Strophe.Status.CONNFAIL;
+        }
+
+        // check to make sure we don't overwrite these if _connect_cb is
+        // called multiple times in the case of missing stream:features
+        if (!this.sid) {
+            this.sid = bodyWrap.getAttribute("sid");
+        }
+        var wind = bodyWrap.getAttribute('requests');
+        if (wind) { this.window = parseInt(wind, 10); }
+        var hold = bodyWrap.getAttribute('hold');
+        if (hold) { this.hold = parseInt(hold, 10); }
+        var wait = bodyWrap.getAttribute('wait');
+        if (wait) { this.wait = parseInt(wait, 10); }
+    },
+
+    /** PrivateFunction: _disconnect
+     *  _Private_ part of Connection.disconnect for Bosh
+     *
+     *  Parameters:
+     *    (Request) pres - This stanza will be sent before disconnecting.
+     */
+    _disconnect: function (pres)
+    {
+        this._sendTerminate(pres);
+    },
+
+    /** PrivateFunction: _doDisconnect
+     *  _Private_ function to disconnect.
+     *
+     *  Resets the SID and RID.
+     */
+    _doDisconnect: function ()
+    {
+        this.sid = null;
+        this.rid = Math.floor(Math.random() * 4294967295);
+        window.sessionStorage.removeItem('strophe-bosh-session');
+    },
+
+    /** PrivateFunction: _emptyQueue
+     * _Private_ function to check if the Request queue is empty.
+     *
+     *  Returns:
+     *    True, if there are no Requests queued, False otherwise.
+     */
+    _emptyQueue: function ()
+    {
+        return this._requests.length === 0;
+    },
+
+    /** PrivateFunction: _hitError
+     *  _Private_ function to handle the error count.
+     *
+     *  Requests are resent automatically until their error count reaches
+     *  5.  Each time an error is encountered, this function is called to
+     *  increment the count and disconnect if the count is too high.
+     *
+     *  Parameters:
+     *    (Integer) reqStatus - The request status.
+     */
+    _hitError: function (reqStatus)
+    {
+        this.errors++;
+        Strophe.warn("request errored, status: " + reqStatus +
+                     ", number of errors: " + this.errors);
+        if (this.errors > 4) {
+            this._conn._onDisconnectTimeout();
+        }
+    },
+
+    /** PrivateFunction: _no_auth_received
+     *
+     * Called on stream start/restart when no stream:features
+     * has been received and sends a blank poll request.
+     */
+    _no_auth_received: function (_callback)
+    {
+        if (_callback) {
+            _callback = _callback.stropheBind(this._conn);
+        } else {
+            _callback = this._conn._connect_cb.stropheBind(this._conn);
+        }
+        var body = this._buildBody();
+        this._requests.push(
+                new Strophe.Request(body.tree(),
+                    this._onRequestStateChange.stropheBind(
+                        this, _callback.stropheBind(this._conn)),
+                    body.tree().getAttribute("rid")));
+        this._throttledRequestHandler();
+    },
+
+    /** PrivateFunction: _onDisconnectTimeout
+     *  _Private_ timeout handler for handling non-graceful disconnection.
+     *
+     *  Cancels all remaining Requests and clears the queue.
+     */
+    _onDisconnectTimeout: function () {
+        this._abortAllRequests();
+    },
+
+    /** PrivateFunction: _abortAllRequests
+     *  _Private_ helper function that makes sure all pending requests are aborted.
+     */
+    _abortAllRequests: function _abortAllRequests() {
+        var req;
+        while (this._requests.length > 0) {
+            req = this._requests.pop();
+            req.abort = true;
+            req.xhr.abort();
+            // jslint complains, but this is fine. setting to empty func
+            // is necessary for IE6
+            req.xhr.onreadystatechange = function () {}; // jshint ignore:line
+        }
+    },
+
+    /** PrivateFunction: _onIdle
+     *  _Private_ handler called by Strophe.Connection._onIdle
+     *
+     *  Sends all queued Requests or polls with empty Request if there are none.
+     */
+    _onIdle: function () {
+        var data = this._conn._data;
+
+        // if no requests are in progress, poll
+        if (this._conn.authenticated && this._requests.length === 0 &&
+            data.length === 0 && !this._conn.disconnecting) {
+            Strophe.info("no requests during idle cycle, sending " +
+                         "blank request");
+            data.push(null);
+        }
+
+        if (this._conn.paused) {
+            return;
+        }
+
+        if (this._requests.length < 2 && data.length > 0) {
+            var body = this._buildBody();
+            for (var i = 0; i < data.length; i++) {
+                if (data[i] !== null) {
+                    if (data[i] === "restart") {
+                        body.attrs({
+                            to: this._conn.domain,
+                            "xml:lang": "en",
+                            "xmpp:restart": "true",
+                            "xmlns:xmpp": Strophe.NS.BOSH
+                        });
+                    } else {
+                        body.cnode(data[i]).up();
+                    }
+                }
+            }
+            delete this._conn._data;
+            this._conn._data = [];
+            this._requests.push(
+                new Strophe.Request(body.tree(),
+                                    this._onRequestStateChange.stropheBind( 
+                                        this, this._conn._dataRecv.stropheBind(this._conn)),
+                                    body.tree().getAttribute("rid")));
+            this._throttledRequestHandler();
+        }
+
+        if (this._requests.length > 0) {
+            var time_elapsed = this._requests[0].age();
+            if (this._requests[0].dead !== null) {
+                if (this._requests[0].timeDead() >
+                    Math.floor(Strophe.SECONDARY_TIMEOUT * this.wait)) {
+                    this._throttledRequestHandler();
+                }
+            }
+
+            if (time_elapsed > Math.floor(Strophe.TIMEOUT * this.wait)) {
+                Strophe.warn("Request " +
+                             this._requests[0].id +
+                             " timed out, over " + Math.floor(Strophe.TIMEOUT * this.wait) +
+                             " seconds since last activity");
+                this._throttledRequestHandler();
+            }
+        }
+    },
+
+    /** PrivateFunction: _onRequestStateChange
+     *  _Private_ handler for Strophe.Request state changes.
+     *
+     *  This function is called when the XMLHttpRequest readyState changes.
+     *  It contains a lot of error handling logic for the many ways that
+     *  requests can fail, and calls the request callback when requests
+     *  succeed.
+     *
+     *  Parameters:
+     *    (Function) func - The handler for the request.
+     *    (Strophe.Request) req - The request that is changing readyState.
+     */
+    _onRequestStateChange: function (func, req)
+    {
+        Strophe.debug("request id " + req.id +
+                      "." + req.sends + " state changed to " +
+                      req.xhr.readyState);
+
+        if (req.abort) {
+            req.abort = false;
+            return;
+        }
+
+        // request complete
+        var reqStatus;
+        if (req.xhr.readyState == 4) {
+            reqStatus = 0;
+            try {
+                reqStatus = req.xhr.status;
+            } catch (e) {
+                // ignore errors from undefined status attribute.  works
+                // around a browser bug
+            }
+
+            if (typeof(reqStatus) == "undefined") {
+                reqStatus = 0;
+            }
+
+            if (this.disconnecting) {
+                if (reqStatus >= 400) {
+                    this._hitError(reqStatus);
+                    return;
+                }
+            }
+
+            var reqIs0 = (this._requests[0] == req);
+            var reqIs1 = (this._requests[1] == req);
+
+            if ((reqStatus > 0 && reqStatus < 500) || req.sends > 5) {
+                // remove from internal queue
+                this._removeRequest(req);
+                Strophe.debug("request id " +
+                              req.id +
+                              " should now be removed");
+            }
+
+            // request succeeded
+            if (reqStatus == 200) {
+                // if request 1 finished, or request 0 finished and request
+                // 1 is over Strophe.SECONDARY_TIMEOUT seconds old, we need to
+                // restart the other - both will be in the first spot, as the
+                // completed request has been removed from the queue already
+                if (reqIs1 ||
+                    (reqIs0 && this._requests.length > 0 &&
+                     this._requests[0].age() > Math.floor(Strophe.SECONDARY_TIMEOUT * this.wait))) {
+                    this._restartRequest(0);
+                }
+                // call handler
+                Strophe.debug("request id " +
+                              req.id + "." +
+                              req.sends + " got 200");
+                func(req);
+                this.errors = 0;
+            } else {
+                Strophe.error("request id " +
+                              req.id + "." +
+                              req.sends + " error " + reqStatus +
+                              " happened");
+                if (reqStatus === 0 ||
+                    (reqStatus >= 400 && reqStatus < 600) ||
+                    reqStatus >= 12000) {
+                    this._hitError(reqStatus);
+                    if (reqStatus >= 400 && reqStatus < 500) {
+                        this._conn._changeConnectStatus(Strophe.Status.DISCONNECTING, null);
+                        this._conn._doDisconnect();
+                    }
+                }
+            }
+
+            if (!((reqStatus > 0 && reqStatus < 500) ||
+                  req.sends > 5)) {
+                this._throttledRequestHandler();
+            }
+        }
+    },
+
+    /** PrivateFunction: _processRequest
+     *  _Private_ function to process a request in the queue.
+     *
+     *  This function takes requests off the queue and sends them and
+     *  restarts dead requests.
+     *
+     *  Parameters:
+     *    (Integer) i - The index of the request in the queue.
+     */
+    _processRequest: function (i)
+    {
+        var self = this;
+        var req = this._requests[i];
+        var reqStatus = -1;
+
+        try {
+            if (req.xhr.readyState == 4) {
+                reqStatus = req.xhr.status;
+            }
+        } catch (e) {
+            Strophe.error("caught an error in _requests[" + i +
+                          "], reqStatus: " + reqStatus);
+        }
+
+        if (typeof(reqStatus) == "undefined") {
+            reqStatus = -1;
+        }
+
+        // make sure we limit the number of retries
+        if (req.sends > this._conn.maxRetries) {
+            this._conn._onDisconnectTimeout();
+            return;
+        }
+
+        var time_elapsed = req.age();
+        var primaryTimeout = (!isNaN(time_elapsed) &&
+                              time_elapsed > Math.floor(Strophe.TIMEOUT * this.wait));
+        var secondaryTimeout = (req.dead !== null &&
+                                req.timeDead() > Math.floor(Strophe.SECONDARY_TIMEOUT * this.wait));
+        var requestCompletedWithServerError = (req.xhr.readyState == 4 &&
+                                               (reqStatus < 1 ||
+                                                reqStatus >= 500));
+        if (primaryTimeout || secondaryTimeout ||
+            requestCompletedWithServerError) {
+            if (secondaryTimeout) {
+                Strophe.error("Request " +
+                              this._requests[i].id +
+                              " timed out (secondary), restarting");
+            }
+            req.abort = true;
+            req.xhr.abort();
+            // setting to null fails on IE6, so set to empty function
+            req.xhr.onreadystatechange = function () {};
+            this._requests[i] = new Strophe.Request(req.xmlData,
+                                                    req.origFunc,
+                                                    req.rid,
+                                                    req.sends);
+            req = this._requests[i];
+        }
+
+        if (req.xhr.readyState === 0) {
+            Strophe.debug("request id " + req.id +
+                          "." + req.sends + " posting");
+
+            try {
+                req.xhr.open("POST", this._conn.service, this._conn.options.sync ? false : true);
+                req.xhr.setRequestHeader && req.xhr.setRequestHeader("Content-Type", "text/xml; charset=utf-8");
+            } catch (e2) {
+                Strophe.error("XHR open failed.");
+                if (!this._conn.connected) {
+                    this._conn._changeConnectStatus(Strophe.Status.CONNFAIL,
+                                              "bad-service");
+                }
+                this._conn.disconnect();
+                return;
+            }
+
+            // Fires the XHR request -- may be invoked immediately
+            // or on a gradually expanding retry window for reconnects
+            var sendFunc = function () {
+                req.date = new Date();
+                if (self._conn.options.customHeaders){
+                    var headers = self._conn.options.customHeaders;
+                    for (var header in headers) {
+                        if (headers.hasOwnProperty(header)) {
+                            req.xhr.setRequestHeader(header, headers[header]);
+                        }
+                    }
+                }
+                req.xhr.send(req.data);
+            };
+
+            // Implement progressive backoff for reconnects --
+            // First retry (send == 1) should also be instantaneous
+            if (req.sends > 1) {
+                // Using a cube of the retry number creates a nicely
+                // expanding retry window
+                var backoff = Math.min(Math.floor(Strophe.TIMEOUT * this.wait),
+                                       Math.pow(req.sends, 3)) * 1000;
+                setTimeout(sendFunc, backoff);
+            } else {
+                sendFunc();
+            }
+
+            req.sends++;
+
+            if (this._conn.xmlOutput !== Strophe.Connection.prototype.xmlOutput) {
+                if (req.xmlData.nodeName === this.strip && req.xmlData.childNodes.length) {
+                    this._conn.xmlOutput(req.xmlData.childNodes[0]);
+                } else {
+                    this._conn.xmlOutput(req.xmlData);
+                }
+            }
+            if (this._conn.rawOutput !== Strophe.Connection.prototype.rawOutput) {
+                this._conn.rawOutput(req.data);
+            }
+        } else {
+            Strophe.debug("_processRequest: " +
+                          (i === 0 ? "first" : "second") +
+                          " request has readyState of " +
+                          req.xhr.readyState);
+        }
+    },
+
+    /** PrivateFunction: _removeRequest
+     *  _Private_ function to remove a request from the queue.
+     *
+     *  Parameters:
+     *    (Strophe.Request) req - The request to remove.
+     */
+    _removeRequest: function (req)
+    {
+        Strophe.debug("removing request");
+
+        var i;
+        for (i = this._requests.length - 1; i >= 0; i--) {
+            if (req == this._requests[i]) {
+                this._requests.splice(i, 1);
+            }
+        }
+
+        // IE6 fails on setting to null, so set to empty function
+        req.xhr.onreadystatechange = function () {};
+
+        this._throttledRequestHandler();
+    },
+
+    /** PrivateFunction: _restartRequest
+     *  _Private_ function to restart a request that is presumed dead.
+     *
+     *  Parameters:
+     *    (Integer) i - The index of the request in the queue.
+     */
+    _restartRequest: function (i)
+    {
+        var req = this._requests[i];
+        if (req.dead === null) {
+            req.dead = new Date();
+        }
+
+        this._processRequest(i);
+    },
+
+    /** PrivateFunction: _reqToData
+     * _Private_ function to get a stanza out of a request.
+     *
+     * Tries to extract a stanza out of a Request Object.
+     * When this fails the current connection will be disconnected.
+     *
+     *  Parameters:
+     *    (Object) req - The Request.
+     *
+     *  Returns:
+     *    The stanza that was passed.
+     */
+    _reqToData: function (req)
+    {
+        try {
+            return req.getResponse();
+        } catch (e) {
+            if (e != "parsererror") { throw e; }
+            this._conn.disconnect("strophe-parsererror");
+        }
+    },
+
+    /** PrivateFunction: _sendTerminate
+     *  _Private_ function to send initial disconnect sequence.
+     *
+     *  This is the first step in a graceful disconnect.  It sends
+     *  the BOSH server a terminate body and includes an unavailable
+     *  presence if authentication has completed.
+     */
+    _sendTerminate: function (pres)
+    {
+        Strophe.info("_sendTerminate was called");
+        var body = this._buildBody().attrs({type: "terminate"});
+
+        if (pres) {
+            body.cnode(pres.tree());
+        }
+
+        var req = new Strophe.Request(body.tree(),
+                                      this._onRequestStateChange.stropheBind(
+                                          this, this._conn._dataRecv.stropheBind(this._conn)),
+                                      body.tree().getAttribute("rid"));
+
+        this._requests.push(req);
+        this._throttledRequestHandler();
+    },
+
+    /** PrivateFunction: _send
+     *  _Private_ part of the Connection.send function for BOSH
+     *
+     * Just triggers the RequestHandler to send the messages that are in the queue
+     */
+    _send: function () {
+        clearTimeout(this._conn._idleTimeout);
+        this._throttledRequestHandler();
+        this._conn._idleTimeout = setTimeout(this._conn._onIdle.stropheBind(this._conn), 100);
+    },
+
+    /** PrivateFunction: _sendRestart
+     *
+     *  Send an xmpp:restart stanza.
+     */
+    _sendRestart: function ()
+    {
+        this._throttledRequestHandler();
+        clearTimeout(this._conn._idleTimeout);
+    },
+
+    /** PrivateFunction: _throttledRequestHandler
+     *  _Private_ function to throttle requests to the connection window.
+     *
+     *  This function makes sure we don't send requests so fast that the
+     *  request ids overflow the connection window in the case that one
+     *  request died.
+     */
+    _throttledRequestHandler: function ()
+    {
+        if (!this._requests) {
+            Strophe.debug("_throttledRequestHandler called with " +
+                          "undefined requests");
+        } else {
+            Strophe.debug("_throttledRequestHandler called with " +
+                          this._requests.length + " requests");
+        }
+
+        if (!this._requests || this._requests.length === 0) {
+            return;
+        }
+
+        if (this._requests.length > 0) {
+            this._processRequest(0);
+        }
+
+        if (this._requests.length > 1 &&
+            Math.abs(this._requests[0].rid -
+                     this._requests[1].rid) < this.window) {
+            this._processRequest(1);
+        }
+    }
+};
+return Strophe;
+}));
+
+/*
+    This program is distributed under the terms of the MIT license.
+    Please see the LICENSE file for details.
+
+    Copyright 2006-2008, OGG, LLC
+*/
+
+/* jshint undef: true, unused: true:, noarg: true, latedef: true */
+/* global define, window, clearTimeout, WebSocket, DOMParser, Strophe, $build */
+
+(function (root, factory) {
+    //if (typeof define === 'function' && define.amd) {
+    if (false) {
+        define('strophe-websocket', ['strophe-core'], function (core) {
+            return factory(
+                core.Strophe,
+                core.$build
+            );
+        });
+    } else {
+        // Browser globals
+        return factory(Strophe, $build);
+    }
+}(this, function (Strophe, $build) {
+
+/** Class: Strophe.WebSocket
+ *  _Private_ helper class that handles WebSocket Connections
+ *
+ *  The Strophe.WebSocket class is used internally by Strophe.Connection
+ *  to encapsulate WebSocket sessions. It is not meant to be used from user's code.
+ */
+
+/** File: websocket.js
+ *  A JavaScript library to enable XMPP over Websocket in Strophejs.
+ *
+ *  This file implements XMPP over WebSockets for Strophejs.
+ *  If a Connection is established with a Websocket url (ws://...)
+ *  Strophe will use WebSockets.
+ *  For more information on XMPP-over-WebSocket see RFC 7395:
+ *  http://tools.ietf.org/html/rfc7395
+ *
+ *  WebSocket support implemented by Andreas Guth (andreas.guth@rwth-aachen.de)
+ */
+
+/** PrivateConstructor: Strophe.Websocket
+ *  Create and initialize a Strophe.WebSocket object.
+ *  Currently only sets the connection Object.
+ *
+ *  Parameters:
+ *    (Strophe.Connection) connection - The Strophe.Connection that will use WebSockets.
+ *
+ *  Returns:
+ *    A new Strophe.WebSocket object.
+ */
+Strophe.Websocket = function(connection) {
+    this._conn = connection;
+    this.strip = "wrapper";
+
+    var service = connection.service;
+    if (service.indexOf("ws:") !== 0 && service.indexOf("wss:") !== 0) {
+        // If the service is not an absolute URL, assume it is a path and put the absolute
+        // URL together from options, current URL and the path.
+        var new_service = "";
+
+        if (connection.options.protocol === "ws" && window.location.protocol !== "https:") {
+            new_service += "ws";
+        } else {
+            new_service += "wss";
+        }
+
+        new_service += "://" + window.location.host;
+
+        if (service.indexOf("/") !== 0) {
+            new_service += window.location.pathname + service;
+        } else {
+            new_service += service;
+        }
+
+        connection.service = new_service;
+    }
+};
+
+Strophe.Websocket.prototype = {
+    /** PrivateFunction: _buildStream
+     *  _Private_ helper function to generate the <stream> start tag for WebSockets
+     *
+     *  Returns:
+     *    A Strophe.Builder with a <stream> element.
+     */
+    _buildStream: function ()
+    {
+        return $build("open", {
+            "xmlns": Strophe.NS.FRAMING,
+            "to": this._conn.domain,
+            "version": '1.0'
+        });
+    },
+
+    /** PrivateFunction: _check_streamerror
+     * _Private_ checks a message for stream:error
+     *
+     *  Parameters:
+     *    (Strophe.Request) bodyWrap - The received stanza.
+     *    connectstatus - The ConnectStatus that will be set on error.
+     *  Returns:
+     *     true if there was a streamerror, false otherwise.
+     */
+    _check_streamerror: function (bodyWrap, connectstatus) {
+        var errors;
+        if (bodyWrap.getElementsByTagNameNS) {
+            errors = bodyWrap.getElementsByTagNameNS(Strophe.NS.STREAM, "error");
+        } else {
+            errors = bodyWrap.getElementsByTagName("stream:error");
+        }
+        if (errors.length === 0) {
+            return false;
+        }
+        var error = errors[0];
+
+        var condition = "";
+        var text = "";
+
+        var ns = "urn:ietf:params:xml:ns:xmpp-streams";
+        for (var i = 0; i < error.childNodes.length; i++) {
+            var e = error.childNodes[i];
+            if (e.getAttribute("xmlns") !== ns) {
+                break;
+            } if (e.nodeName === "text") {
+                text = e.textContent;
+            } else {
+                condition = e.nodeName;
+            }
+        }
+
+        var errorString = "WebSocket stream error: ";
+
+        if (condition) {
+            errorString += condition;
+        } else {
+            errorString += "unknown";
+        }
+
+        if (text) {
+            errorString += " - " + condition;
+        }
+
+        Strophe.error(errorString);
+
+        // close the connection on stream_error
+        this._conn._changeConnectStatus(connectstatus, condition);
+        this._conn._doDisconnect();
+        return true;
+    },
+
+    /** PrivateFunction: _reset
+     *  Reset the connection.
+     *
+     *  This function is called by the reset function of the Strophe Connection.
+     *  Is not needed by WebSockets.
+     */
+    _reset: function ()
+    {
+        return;
+    },
+
+    /** PrivateFunction: _connect
+     *  _Private_ function called by Strophe.Connection.connect
+     *
+     *  Creates a WebSocket for a connection and assigns Callbacks to it.
+     *  Does nothing if there already is a WebSocket.
+     */
+    _connect: function () {
+        // Ensure that there is no open WebSocket from a previous Connection.
+        this._closeSocket();
+
+        // Create the new WobSocket
+        this.socket = new WebSocket(this._conn.service, "xmpp");
+        this.socket.onopen = this._onOpen.stropheBind(this);
+        this.socket.onerror = this._onError.stropheBind(this);
+        this.socket.onclose = this._onClose.stropheBind(this);
+        this.socket.onmessage = this._connect_cb_wrapper.stropheBind(this);
+    },
+
+    /** PrivateFunction: _connect_cb
+     *  _Private_ function called by Strophe.Connection._connect_cb
+     *
+     * checks for stream:error
+     *
+     *  Parameters:
+     *    (Strophe.Request) bodyWrap - The received stanza.
+     */
+    _connect_cb: function(bodyWrap) {
+        var error = this._check_streamerror(bodyWrap, Strophe.Status.CONNFAIL);
+        if (error) {
+            return Strophe.Status.CONNFAIL;
+        }
+    },
+
+    /** PrivateFunction: _handleStreamStart
+     * _Private_ function that checks the opening <open /> tag for errors.
+     *
+     * Disconnects if there is an error and returns false, true otherwise.
+     *
+     *  Parameters:
+     *    (Node) message - Stanza containing the <open /> tag.
+     */
+    _handleStreamStart: function(message) {
+        var error = false;
+
+        // Check for errors in the <open /> tag
+        var ns = message.getAttribute("xmlns");
+        if (typeof ns !== "string") {
+            error = "Missing xmlns in <open />";
+        } else if (ns !== Strophe.NS.FRAMING) {
+            error = "Wrong xmlns in <open />: " + ns;
+        }
+
+        var ver = message.getAttribute("version");
+        if (typeof ver !== "string") {
+            error = "Missing version in <open />";
+        } else if (ver !== "1.0") {
+            error = "Wrong version in <open />: " + ver;
+        }
+
+        if (error) {
+            this._conn._changeConnectStatus(Strophe.Status.CONNFAIL, error);
+            this._conn._doDisconnect();
+            return false;
+        }
+
+        return true;
+    },
+
+    /** PrivateFunction: _connect_cb_wrapper
+     * _Private_ function that handles the first connection messages.
+     *
+     * On receiving an opening stream tag this callback replaces itself with the real
+     * message handler. On receiving a stream error the connection is terminated.
+     */
+    _connect_cb_wrapper: function(message) {
+        if (message.data.indexOf("<open ") === 0 || message.data.indexOf("<?xml") === 0) {
+            // Strip the XML Declaration, if there is one
+            var data = message.data.replace(/^(<\?.*?\?>\s*)*/, "");
+            if (data === '') return;
+
+            var streamStart = new DOMParser().parseFromString(data, "text/xml").documentElement;
+            this._conn.xmlInput(streamStart);
+            this._conn.rawInput(message.data);
+
+            //_handleStreamSteart will check for XML errors and disconnect on error
+            if (this._handleStreamStart(streamStart)) {
+                //_connect_cb will check for stream:error and disconnect on error
+                this._connect_cb(streamStart);
+            }
+        } else if (message.data.indexOf("<close ") === 0) { //'<close xmlns="urn:ietf:params:xml:ns:xmpp-framing />') {
+            this._conn.rawInput(message.data);
+            this._conn.xmlInput(message);
+            var see_uri = message.getAttribute("see-other-uri");
+            if (see_uri) {
+                this._conn._changeConnectStatus(Strophe.Status.REDIRECT, "Received see-other-uri, resetting connection");
+                this._conn.reset();
+                this._conn.service = see_uri;
+                this._connect();
+            } else {
+                this._conn._changeConnectStatus(Strophe.Status.CONNFAIL, "Received closing stream");
+                this._conn._doDisconnect();
+            }
+        } else {
+            var string = this._streamWrap(message.data);
+            var elem = new DOMParser().parseFromString(string, "text/xml").documentElement;
+            this.socket.onmessage = this._onMessage.stropheBind(this);
+            this._conn._connect_cb(elem, null, message.data);
+        }
+    },
+
+    /** PrivateFunction: _disconnect
+     *  _Private_ function called by Strophe.Connection.disconnect
+     *
+     *  Disconnects and sends a last stanza if one is given
+     *
+     *  Parameters:
+     *    (Request) pres - This stanza will be sent before disconnecting.
+     */
+    _disconnect: function (pres)
+    {
+        if (this.socket && this.socket.readyState !== WebSocket.CLOSED) {
+            if (pres) {
+                this._conn.send(pres);
+            }
+            var close = $build("close", { "xmlns": Strophe.NS.FRAMING });
+            this._conn.xmlOutput(close);
+            var closeString = Strophe.serialize(close);
+            this._conn.rawOutput(closeString);
+            try {
+                this.socket.send(closeString);
+            } catch (e) {
+                Strophe.info("Couldn't send <close /> tag.");
+            }
+        }
+        this._conn._doDisconnect();
+    },
+
+    /** PrivateFunction: _doDisconnect
+     *  _Private_ function to disconnect.
+     *
+     *  Just closes the Socket for WebSockets
+     */
+    _doDisconnect: function ()
+    {
+        Strophe.info("WebSockets _doDisconnect was called");
+        this._closeSocket();
+    },
+
+    /** PrivateFunction _streamWrap
+     *  _Private_ helper function to wrap a stanza in a <stream> tag.
+     *  This is used so Strophe can process stanzas from WebSockets like BOSH
+     */
+    _streamWrap: function (stanza)
+    {
+        return "<wrapper>" + stanza + '</wrapper>';
+    },
+
+
+    /** PrivateFunction: _closeSocket
+     *  _Private_ function to close the WebSocket.
+     *
+     *  Closes the socket if it is still open and deletes it
+     */
+    _closeSocket: function ()
+    {
+        if (this.socket) { try {
+            this.socket.close();
+        } catch (e) {} }
+        this.socket = null;
+    },
+
+    /** PrivateFunction: _emptyQueue
+     * _Private_ function to check if the message queue is empty.
+     *
+     *  Returns:
+     *    True, because WebSocket messages are send immediately after queueing.
+     */
+    _emptyQueue: function ()
+    {
+        return true;
+    },
+
+    /** PrivateFunction: _onClose
+     * _Private_ function to handle websockets closing.
+     *
+     * Nothing to do here for WebSockets
+     */
+    _onClose: function() {
+        if(this._conn.connected && !this._conn.disconnecting) {
+            Strophe.error("Websocket closed unexcectedly");
+            this._conn._doDisconnect();
+        } else {
+            Strophe.info("Websocket closed");
+        }
+    },
+
+    /** PrivateFunction: _no_auth_received
+     *
+     * Called on stream start/restart when no stream:features
+     * has been received.
+     */
+    _no_auth_received: function (_callback)
+    {
+        Strophe.error("Server did not send any auth methods");
+        this._conn._changeConnectStatus(Strophe.Status.CONNFAIL, "Server did not send any auth methods");
+        if (_callback) {
+            _callback = _callback.stropheBind(this._conn);
+            _callback();
+        }
+        this._conn._doDisconnect();
+    },
+
+    /** PrivateFunction: _onDisconnectTimeout
+     *  _Private_ timeout handler for handling non-graceful disconnection.
+     *
+     *  This does nothing for WebSockets
+     */
+    _onDisconnectTimeout: function () {},
+
+    /** PrivateFunction: _abortAllRequests
+     *  _Private_ helper function that makes sure all pending requests are aborted.
+     */
+    _abortAllRequests: function () {},
+
+    /** PrivateFunction: _onError
+     * _Private_ function to handle websockets errors.
+     *
+     * Parameters:
+     * (Object) error - The websocket error.
+     */
+    _onError: function(error) {
+        Strophe.error("Websocket error " + error);
+        this._conn._changeConnectStatus(Strophe.Status.CONNFAIL, "The WebSocket connection could not be established was disconnected.");
+        this._disconnect();
+    },
+
+    /** PrivateFunction: _onIdle
+     *  _Private_ function called by Strophe.Connection._onIdle
+     *
+     *  sends all queued stanzas
+     */
+    _onIdle: function () {
+        var data = this._conn._data;
+        if (data.length > 0 && !this._conn.paused) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i] !== null) {
+                    var stanza, rawStanza;
+                    if (data[i] === "restart") {
+                        stanza = this._buildStream().tree();
+                    } else {
+                        stanza = data[i];
+                    }
+                    rawStanza = Strophe.serialize(stanza);
+                    this._conn.xmlOutput(stanza);
+                    this._conn.rawOutput(rawStanza);
+                    this.socket.send(rawStanza);
+                }
+            }
+            this._conn._data = [];
+        }
+    },
+
+    /** PrivateFunction: _onMessage
+     * _Private_ function to handle websockets messages.
+     *
+     * This function parses each of the messages as if they are full documents. [TODO : We may actually want to use a SAX Push parser].
+     *
+     * Since all XMPP traffic starts with "<stream:stream version='1.0' xml:lang='en' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' id='3697395463' from='SERVER'>"
+     * The first stanza will always fail to be parsed...
+     * Addtionnaly, the seconds stanza will always be a <stream:features> with the stream NS defined in the previous stanza... so we need to 'force' the inclusion of the NS in this stanza!
+     *
+     * Parameters:
+     * (string) message - The websocket message.
+     */
+    _onMessage: function(message) {
+        var elem, data;
+        // check for closing stream
+        var close = '<close xmlns="urn:ietf:params:xml:ns:xmpp-framing" />';
+        if (message.data === close) {
+            this._conn.rawInput(close);
+            this._conn.xmlInput(message);
+            if (!this._conn.disconnecting) {
+                this._conn._doDisconnect();
+            }
+            return;
+        } else if (message.data.search("<open ") === 0) {
+            // This handles stream restarts
+            elem = new DOMParser().parseFromString(message.data, "text/xml").documentElement;
+
+            if (!this._handleStreamStart(elem)) {
+                return;
+            }
+        } else {
+            data = this._streamWrap(message.data);
+            elem = new DOMParser().parseFromString(data, "text/xml").documentElement;
+        }
+
+        if (this._check_streamerror(elem, Strophe.Status.ERROR)) {
+            return;
+        }
+
+        //handle unavailable presence stanza before disconnecting
+        if (this._conn.disconnecting &&
+                elem.firstChild.nodeName === "presence" &&
+                elem.firstChild.getAttribute("type") === "unavailable") {
+            this._conn.xmlInput(elem);
+            this._conn.rawInput(Strophe.serialize(elem));
+            // if we are already disconnecting we will ignore the unavailable stanza and
+            // wait for the </stream:stream> tag before we close the connection
+            return;
+        }
+        this._conn._dataRecv(elem, message.data);
+    },
+
+    /** PrivateFunction: _onOpen
+     * _Private_ function to handle websockets connection setup.
+     *
+     * The opening stream tag is sent here.
+     */
+    _onOpen: function() {
+        Strophe.info("Websocket open");
+        var start = this._buildStream();
+        this._conn.xmlOutput(start.tree());
+
+        var startString = Strophe.serialize(start);
+        this._conn.rawOutput(startString);
+        this.socket.send(startString);
+    },
+
+    /** PrivateFunction: _reqToData
+     * _Private_ function to get a stanza out of a request.
+     *
+     * WebSockets don't use requests, so the passed argument is just returned.
+     *
+     *  Parameters:
+     *    (Object) stanza - The stanza.
+     *
+     *  Returns:
+     *    The stanza that was passed.
+     */
+    _reqToData: function (stanza)
+    {
+        return stanza;
+    },
+
+    /** PrivateFunction: _send
+     *  _Private_ part of the Connection.send function for WebSocket
+     *
+     * Just flushes the messages that are in the queue
+     */
+    _send: function () {
+        this._conn.flush();
+    },
+
+    /** PrivateFunction: _sendRestart
+     *
+     *  Send an xmpp:restart stanza.
+     */
+    _sendRestart: function ()
+    {
+        clearTimeout(this._conn._idleTimeout);
+        this._conn._onIdle.stropheBind(this._conn)();
+    }
+};
+return Strophe;
+}));
+
+/* jshint ignore:start */
+if (callback) {
+    return callback(Strophe, $build, $msg, $iq, $pres);
+}
+
+
+})(function (Strophe, build, msg, iq, pres) {
+    window.Strophe = Strophe;
+    window.$build = build;
+    window.$msg = msg;
+    window.$iq = iq;
+    window.$pres = pres;
+});
+/* jshint ignore:end */
+
+/**************************************************************************
+***                             Easemob WebIm Js SDK                    ***
+***                             v1.1.1                                  ***
+**************************************************************************/
+/**
+ * Module1: Utility
+ * Module2: EmMessage
+ * Module3: Message
+ * Module4: Connection
+ */
+
+;(function ( window, undefined ) {
+
+    if ( typeof Strophe === 'undefined' ) {
+        throw 'need Strophe';
+    }
+
+    var Easemob = Easemob || {};
+    Easemob.im = Easemob.im || {};
+    Easemob.im.version = "1.1.1";
+
+    var https = location.protocol === 'https:';
+
+    window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+
+	Strophe.Websocket.prototype._closeSocket = function () {
+		var me = this;
+        if ( me.socket ) {
+			setTimeout(function () {
+				try {
+					me.socket.close();
+				} catch ( e ) {}
+			}, 0);
+		} else {
+			me.socket = null;
+		}
+	}
+
+    /**
+     * Module1: Utility
+     */
+    var Utils = (function () {
+        
+        var _createStandardXHR = function () {
+            try {
+                return new window.XMLHttpRequest();
+            } catch ( e ) {
+                return false;
+            }
+        };
+        
+        var _createActiveXHR = function () {
+            try {
+                return new window.ActiveXObject( "Microsoft.XMLHTTP" );
+            } catch ( e ) {
+                return false;
+            }
+        };
+
+        if ( window.XDomainRequest ) {
+            XDomainRequest.prototype.oldsend = XDomainRequest.prototype.send;
+            XDomainRequest.prototype.send = function () {
+                XDomainRequest.prototype.oldsend.apply(this, arguments);
+                this.readyState = 2;
+            };
+        }
+
+        Strophe.Request.prototype._newXHR = function () {
+            var xhr =  Utils.xmlrequest(true);
+            if ( xhr.overrideMimeType ) {
+                xhr.overrideMimeType("text/xml");
+            }
+            xhr.onreadystatechange = this.func.stropheBind(null, this);
+            return xhr;
+        };
+
+		var _xmlrequest = function ( crossDomain ) {
+			crossDomain = crossDomain || true;
+			var temp = _createStandardXHR () || _createActiveXHR();
+
+			if ( "withCredentials" in temp ) {
+				return temp;
+			}
+			if ( !crossDomain ) {
+				return temp;
+			}
+			if ( typeof window.XDomainRequest === 'undefined' ) {
+				return temp;
+			}
+			var xhr = new XDomainRequest();
+			xhr.readyState = 0;
+			xhr.status = 100;
+			xhr.onreadystatechange = EMPTYFN;
+			xhr.onload = function () {
+				xhr.readyState = 4;
+				xhr.status = 200;
+
+				var xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+				xmlDoc.async = "false";
+				xmlDoc.loadXML(xhr.responseText);
+				xhr.responseXML = xmlDoc;
+				xhr.response = xhr.responseText;
+				xhr.onreadystatechange();
+			};
+			xhr.ontimeout = xhr.onerror = function () {
+				xhr.readyState = 4;
+				xhr.status = 500;
+				xhr.onreadystatechange();
+			};
+			return xhr;
+		};
+
+		var _hasFlash = (function () {
+			if ( 'ActiveXObject' in window ) {
+				try {
+					return new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+				} catch ( ex ) {
+					return 0;
+				}
+			} else {
+				if ( navigator.plugins && navigator.plugins.length > 0 ) {
+					return navigator.plugins["Shockwave Flash"];
+				}
+			}
+			return 0;
+		}());
+
+		var _tmpUtilXHR  = _xmlrequest(),
+			_hasFormData = typeof FormData !== 'undefined',
+            _hasBlob = typeof Blob !== 'undefined',
+			_isCanSetRequestHeader = _tmpUtilXHR.setRequestHeader || false,
+			_hasOverrideMimeType = _tmpUtilXHR.overrideMimeType || false,
+			_isCanUploadFileAsync = _isCanSetRequestHeader && _hasFormData,
+			_isCanUploadFile = _isCanUploadFileAsync || _hasFlash,
+            _isCanDownLoadFile = _isCanSetRequestHeader && (_hasBlob || _hasOverrideMimeType);
+
+        return {
+            hasFormData: _hasFormData
+
+            , hasBlob: _hasBlob
+
+            , isCanSetRequestHeader: _isCanSetRequestHeader
+
+            , hasOverrideMimeType: _hasOverrideMimeType
+
+            , isCanUploadFileAsync: _isCanUploadFileAsync
+
+            , isCanUploadFile: _isCanUploadFile
+
+            , isCanDownLoadFile: _isCanDownLoadFile
+
+			, isSupportWss: (function () {
+				var notSupportList = [
+					//1:qq broswser X5 core
+					/MQQBrowser[\/]5([.]\d+)?\sTBS/
+
+					//2:etc.
+					//...
+				];
+
+				if ( !window.WebSocket ) {
+					return false;
+				}
+
+				var ua = window.navigator.userAgent;
+				for ( var i = 0, l = notSupportList.length; i < l; i++ ) {
+					if ( notSupportList[i].test(ua) ) {
+						return false;
+					}
+				}
+				return true; 
+			}())
+
+            , stringify: function ( json ) {
+                if ( typeof JSON !== 'undefined' && JSON.stringify ) {
+                    return JSON.stringify(json);
+                } else {
+                    var s = '',
+                        arr = [];
+
+                    var iterate = function ( json ) {
+                        var isArr = false;
+
+                        if ( Object.prototype.toString.call(json) === '[object Array]' ) {
+                            arr.push(']', '[');
+                            isArr = true;
+                        } else if ( Object.prototype.toString.call(json) === '[object Object]' ) {
+                            arr.push('}', '{');
+                        }
+
+                        for ( var o in json ) {
+                            if ( Object.prototype.toString.call(json[o]) === '[object Null]' ) {
+                                json[o] = 'null';
+                            } else if ( Object.prototype.toString.call(json[o]) === '[object Undefined]' ) {
+                                json[o] = 'undefined';
+                            }
+
+                            if ( json[o] && typeof json[o] === 'object' ) {
+                                s += ',' + (isArr ? '' : '"' + o + '":' + (isArr ? '"' : '')) + iterate(json[o]) + '';
+                            } else {
+                                s += ',"' + (isArr ? '' : o + '":"') + json[o] + '"';
+                            }
+                        }
+                
+                        if ( s != '' ) {
+                            s = s.slice(1);
+                        }
+
+                        return arr.pop() + s + arr.pop();
+                    }
+                    return iterate(json);
+                }
+            }
+
+            , registerUser: function ( options ) {
+                var orgName = options.orgName || '';
+                var appName = options.appName || '';
+                var appKey = options.appKey || '';
+
+                if ( !orgName && !appName && appKey ) {
+                    var devInfos = appKey.split('#');
+                    if ( devInfos.length === 2 ) {
+                        orgName = devInfos[0];
+                        appName = devInfos[1];
+                    }
+                }
+                if ( !orgName && !appName ) {
+                    options.error({
+                        type: EASEMOB_IM_RESISTERUSER_ERROR
+                        , msg: '没有指定开发者信息'
+                    });
+                    return;
+                }
+
+				var https = options.https || https;
+                var apiUrl = options.apiUrl || (https ? 'https' : 'http') + '://a1.easemob.com';
+                var restUrl = apiUrl + '/' + orgName + '/' + appName + '/users';
+
+                var userjson = {
+                    username: options.username
+                    , password: options.password
+                    , nickname: options.nickname || ''
+                };
+
+                var userinfo = Utils.stringify(userjson);
+                var options = {
+                    url: restUrl
+                    , dataType: 'json'
+                    , data: userinfo
+                    , success: options.success || EMPTYFN
+                    , error: options.error || EMPTYFN
+                };
+                return Utils.ajax(options);
+            }
+
+            , login2UserGrid: function ( options ) {
+                options = options || {};
+
+                var appKey = options.appKey || '';
+                var devInfos = appKey.split('#');
+                if ( devInfos.length !== 2 ) {
+                    error({
+                        type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
+                        , msg: '请指定正确的开发者信息(appKey)'
+                    });
+                    return false;
+                }
+
+                var orgName = devInfos[0];
+                var appName = devInfos[1];
+                if ( !orgName ) {
+                    error({
+                        type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
+                        , msg: '请指定正确的开发者信息(appKey)'
+                    });
+                    return false;
+                }
+                if ( !appName ) {
+                    error({
+                        type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
+                        , msg: '请指定正确的开发者信息(appKey)'
+                    });
+                    return false;
+                }
+
+				var https = https || options.https;
+                var suc = options.success || EMPTYFN;
+                var error = options.error || EMPTYFN;
+                var user = options.user || '';
+                var pwd = options.pwd || '';
+
+                var apiUrl = options.apiUrl || (https ? 'https' : 'http') + '://a1.easemob.com';
+
+                var loginJson = {
+                    grant_type: 'password'
+                    , username: user
+                    , password: pwd
+                };
+                var loginfo = Utils.stringify(loginJson);
+
+                var options = {
+                    url: apiUrl + "/" + orgName + "/" + appName + "/token"
+                    , dataType: 'json'
+                    , data: loginfo
+                    , success: suc || EMPTYFN
+                    , error: error || EMPTYFN
+                };
+                return Utils.ajax(options);
+            }
+            , getFileUrl: function ( fileInputId ) {
+                var uri = {
+                    url: ''
+                    , filename: ''
+                    , filetype: ''
+                    , data: ''
+                };
+
+				var fileObj = document.getElementById(fileInputId);
+
+                if ( !Utils.isCanUploadFileAsync || !fileObj ) {
+                    return uri;
+                }
+
+                if ( window.URL.createObjectURL ) {
+                    var fileItems = fileObj.files;
+                    if (fileItems.length > 0) {
+                        var u = fileItems.item(0);
+                        uri.data = u;
+                        uri.url = window.URL.createObjectURL(u);
+                        uri.filename = u.name || '';
+                    }
+                } else { // IE
+                    var u = document.getElementById(fileInputId).value;
+                    uri.url = u;
+                    var pos1 = u.lastIndexOf('/');
+                    var pos2 = u.lastIndexOf('\\');
+                    var pos = Math.max(pos1, pos2)
+                    if (pos < 0)
+                        uri.filename = u;
+                    else
+                        uri.filename = u.substring(pos + 1);
+                }
+                var index = uri.filename.lastIndexOf(".");
+                if ( index != -1 ) {
+                    uri.filetype = uri.filename.substring(index+1).toLowerCase();
+                }
+                return uri;
+            }
+
+            , getFileSizeFn: function ( fileInputId ) {
+                var file = document.getElementById(fileInputId)
+                var fileSize = 0;
+                if ( file ) {
+                    if ( file.files ) {
+                        if ( file.files.length > 0 ) {
+                            fileSize = file.files[0].size;
+                        }
+                    } else if ( file.select && 'ActiveXObject' in window ) {
+                        file.select();
+                        var fileobject = new ActiveXObject ("Scripting.FileSystemObject");
+                        var file = fileobject.GetFile (file.value);
+                        fileSize = file.Size;
+                    }
+                }
+                return fileSize;
+            }
+
+            , hasFlash: _hasFlash
+
+            , trim: function ( str ) {
+
+                str = typeof str === 'string' ? str : '';
+
+                return str.trim
+                    ? str.trim()
+                    : str.replace(/^\s|\s$/g, '');
+            }
+
+            , parseEmotions: function ( msg ) {
+                if ( typeof Easemob.im.EMOTIONS === 'undefined' || typeof Easemob.im.EMOTIONS.map === 'undefined' ) {
+                    return msg;
+                } else {
+                    var emotion = Easemob.im.EMOTIONS,
+                        reg = null;
+
+                    for ( var face in emotion.map ) {
+                        if ( emotion.map.hasOwnProperty(face) ) {
+                            while ( msg.indexOf(face) > -1 ) {
+                                msg = msg.replace(face, '<img class="em-emotion" src="' + emotion.path + emotion.map[face] + '" alt="表情">');
+                            }
+                        }
+                    }
+                    return msg;
+                }
+            }
+
+            , parseLink: function ( msg ) {
+                var reg = /(https?\:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(\:[0-9]{2,4})?\/?((\.[:_0-9a-zA-Z-]+)|[:_0-9a-zA-Z-]*\/?)*\??[:_#@*&%0-9a-zA-Z-/=]*/gm;
+
+                msg = msg.replace(reg, function ( v ) {
+
+                    var prefix = /^https?/gm.test(v);
+
+                    return "<a href='" 
+                        + (prefix ? v : '//' + v)
+                        + "' target='_blank'>" 
+                        + v
+                        + "</a>";
+
+                });
+
+                return msg;
+            }
+
+            , parseJSON: function ( data ) {
+
+                if ( window.JSON && window.JSON.parse ) {
+                    return window.JSON.parse(data + "");
+                }
+
+                var requireNonComma,
+                    depth = null,
+                    str = Utils.trim(data + "");
+
+                return str && !Utils.trim(
+                    str.replace(/(,)|(\[|{)|(}|])|"(?:[^"\\\r\n]|\\["\\\/bfnrt]|\\u[\da-fA-F]{4})*"\s*:?|true|false|null|-?(?!0\d)\d+(?:\.\d+|)(?:[eE][+-]?\d+|)/g
+                    , function ( token, comma, open, close ) {
+
+                        if ( requireNonComma && comma ) {
+                            depth = 0;
+                        }
+
+                        if ( depth === 0 ) {
+                            return token;
+                        }
+
+                        requireNonComma = open || comma;
+                        depth += !close - !open;
+                        return "";
+                    })
+                )
+                ? (Function("return " + str))()
+                : (Function("Invalid JSON: " + data))();
+            }
+            
+            , parseUploadResponse: function ( response ) {
+                return response.indexOf('callback') > -1 ? //lte ie9
+                    response.slice(9, -1) : response;
+            }
+            
+            , parseDownloadResponse: function ( response ) {
+                return ((response && response.type && response.type === 'application/json') 
+                    || 0 > Object.prototype.toString.call(response).indexOf('Blob')) ? 
+                        this.url+'?token=' : window.URL.createObjectURL(response);
+            }
+            , uploadFile: function ( options ) {
+                options = options || {};
+                options.onFileUploadProgress = options.onFileUploadProgress || EMPTYFN;
+                options.onFileUploadComplete = options.onFileUploadComplete || EMPTYFN;
+                options.onFileUploadError = options.onFileUploadError || EMPTYFN;
+                options.onFileUploadCanceled = options.onFileUploadCanceled || EMPTYFN;
+                var acc = options.accessToken || this.context.accessToken;
+                if (!acc) {
+                    options.onFileUploadError({
+                        type: EASEMOB_IM_UPLOADFILE_NO_LOGIN
+                        , msg: '用户未登录到usergrid服务器,无法使用文件上传功能'
+                        , id: options.id
+                    });
+                    return;
+                }
+
+                orgName = options.orgName || this.context.orgName || '';
+                appName = options.appName || this.context.appName || '';
+                appKey = options.appKey || this.context.appKey || '';
+                if(!orgName && !appName && appKey){
+                    var devInfos = appKey.split('#');
+                    if(devInfos.length==2){
+                        orgName = devInfos[0];
+                        appName = devInfos[1];
+                    }
+                }
+                if ( !orgName && !appName ) {
+                    options.onFileUploadError({
+                        type: EASEMOB_IM_UPLOADFILE_ERROR
+                        , msg: '没有指定开发者信息'
+                        , id: options.id
+                    });
+                    return;
+                }
+
+                var apiUrl = options.apiUrl || 'http://a1.easemob.com';
+                var uploadUrl = apiUrl + '/' + orgName + '/' + appName + '/chatfiles';
+
+                if ( !Utils.isCanUploadFileAsync ) {
+                    if ( Utils.hasFlash && typeof options.flashUpload === 'function' ) {
+                        options.flashUpload && options.flashUpload(uploadUrl, options); 
+                    } else {
+                        this.onError({
+                            type : EASEMOB_IM_UPLOADFILE_BROWSER_ERROR
+                            , msg : '当前浏览器不支持异步上传！'
+                        });
+                    }
+                    return;
+                }
+
+                var fileSize = options.file.data ? options.file.data.size : undefined;
+                if ( fileSize > EASEMOB_IM_FILESIZE_LIMIT ) {
+                    options.onFileUploadError({
+                        type: EASEMOB_IM_UPLOADFILE_ERROR
+                        , msg: '上传文件超过服务器大小限制（10M）'
+                        , id: options.id
+                    });
+                    return ;
+                } else if ( fileSize <= 0 ) {
+                    options.onFileUploadError({
+                        type: EASEMOB_IM_UPLOADFILE_ERROR
+                        , msg: '上传文件大小为0'
+                        , id: options.id
+                    });
+                    return ;
+                }
+
+                var xhr = Utils.xmlrequest();
+                var onError = function ( e ) {
+                    options.onFileUploadError({
+                        type: EASEMOB_IM_UPLOADFILE_ERROR
+                        , msg: '上传文件失败'
+                        , id: options.id
+                        , xhr: xhr
+                    });
+                }
+                if ( xhr.upload ) {
+                    xhr.upload.addEventListener("progress",options.onFileUploadProgress, false);
+                }
+                if ( xhr.addEventListener ) {
+                    xhr.addEventListener("abort", options.onFileUploadCanceled, false);
+                    xhr.addEventListener("load", function ( e ) {
+                        try {
+                            var json = Utils.parseJSON(xhr.responseText);
+                            options.onFileUploadComplete(json);
+                        } catch ( e ) {
+                            options.onFileUploadError({
+                                type: EASEMOB_IM_UPLOADFILE_ERROR
+                                , msg: '上传文件失败,服务端返回值值不正确'
+                                , data: xhr.responseText
+                                , id: options.id
+                                , xhr: xhr
+                            });
+                        }
+                    }, false);
+                    xhr.addEventListener("error", onError, false);
+                } else if ( xhr.onreadystatechange ) {
+                    xhr.onreadystatechange = function () {
+                        if ( xhr.readyState === 4 ) {
+                            if ( ajax.status === 200 ) {
+                                try {
+                                    var json = Utils.parseJSON(xhr.responseText);
+                                    options.onFileUploadComplete(json);
+                                } catch ( e ) {
+                                    options.onFileUploadError({
+                                        type: EASEMOB_IM_UPLOADFILE_ERROR
+                                        , msg: '上传文件失败,服务端返回值不正确'
+                                        , data: xhr.responseText
+                                        , id: options.id
+                                        , xhr: xhr
+                                    });
+                                }
+                            } else {
+                                options.onFileUploadError({
+									type: EASEMOB_IM_UPLOADFILE_ERROR
+									, msg: '上传文件失败,服务端返回异常'
+									, data: xhr.responseText
+									, id: options.id
+									, xhr: xhr
+								});
+                            }
+                        } else {
+                            xhr.abort();
+                            options.onFileUploadCanceled();
+                        }
+                    }
+                }
+
+                xhr.open("POST", uploadUrl);
+
+                xhr.setRequestHeader('restrict-access', 'true');
+                xhr.setRequestHeader('Accept', '*/*');//android qq browser has some problem at this attr
+                xhr.setRequestHeader('Authorization', 'Bearer ' + acc);
+
+                var formData = new FormData();
+                formData.append("file", options.file.data);
+                xhr.send(formData);
+            }
+
+            , downloadFn: function ( options ) {
+                options.onFileDownloadComplete = options.onFileDownloadComplete || EMPTYFN;
+                options.onFileDownloadError = options.onFileDownloadError || EMPTYFN;
+                
+                var accessToken = options.accessToken || '';
+                if ( !accessToken ) {
+                    options.onFileDownloadError({
+                        type: EASEMOB_IM_DOWNLOADFILE_NO_LOGIN
+                        , msg: '用户未登录到usergrid服务器,无法使用文件下载功能'
+                        , id: options.id
+                    });
+                    return;
+                }
+
+                var onError = function ( e ) {
+                    options.onFileDownloadError({
+                        type: EASEMOB_IM_DOWNLOADFILE_ERROR
+                        , msg: '下载文件失败'
+                        , id: options.id
+                        , xhr: xhr
+                    });
+                }
+                if ( !Utils.isCanDownLoadFile ) {
+                    options.onFileDownloadComplete();
+                    return;
+                }
+                var xhr = Utils.xmlrequest();
+                if ( "addEventListener" in xhr ) {
+                    xhr.addEventListener("load", function ( e ) {
+                        options.onFileDownloadComplete(xhr.response,xhr);
+                    }, false);
+                    xhr.addEventListener("error", onError, false);
+                } else if ( "onreadystatechange" in xhr ) {
+                    xhr.onreadystatechange = function () {
+                        if ( xhr.readyState === 4 ) {
+                            if ( ajax.status === 200 ) {
+                                options.onFileDownloadComplete(xhr.response,xhr);
+                            } else {
+								options.onFileDownloadError({
+									type: EASEMOB_IM_DOWNLOADFILE_ERROR
+									, msg: '下载文件失败,服务端返回异常'
+									, id: options.id
+									, xhr: xhr
+								});
+                            }
+                        } else {
+                            xhr.abort();
+                            options.onFileDownloadError({
+                                type: EASEMOB_IM_DOWNLOADFILE_ERROR
+                                , msg: '错误的下载状态,退出下载'
+                                , id: options.id
+                                , xhr: xhr
+                            });
+                        }
+                    }
+                }
+
+                var method = options.method || 'GET';
+                var resType = options.responseType || 'blob';
+                var mimeType = options.mimeType || "text/plain; charset=x-user-defined";
+                xhr.open(method, options.url);
+                if ( typeof Blob !== 'undefined' ) {
+                    xhr.responseType = resType;
+                } else {
+                    xhr.overrideMimeType(mimeType);
+                }
+
+                var innerHeaer = {
+                    'X-Requested-With': 'XMLHttpRequest'
+                    , 'Accept': 'application/octet-stream'
+                    , 'share-secret': options.secret
+                    , 'Authorization': 'Bearer ' + accessToken
+                };
+                var headers = options.headers || {};
+                for ( var key in headers ) {
+                    innerHeaer[key] = headers[key];
+                }
+                for ( var key in innerHeaer ) {
+                    if ( innerHeaer[key] ) {
+                        xhr.setRequestHeader(key, innerHeaer[key]);
+                    }
+                }
+                xhr.send(null);
+            }
+
+            , parseTextMessage: function ( message, faces ) {
+                if ( typeof message !== 'string' ) {
+                    conn.onError({
+                        type: EASEMOB_IM_MESSAGE_REC_TEXT_ERROR
+                        , msg: '不合法的消息内容格式，请检查发送消息内容！'
+                    });
+                    return;
+                }
+                if ( Object.prototype.toString.call(faces) !== '[object Object]' ) {
+                    return {
+                        isemotion: false
+                        , body: [
+                            {
+                                type: "txt"
+                                , data: message
+                            }
+                        ]
+                    };
+                }
+
+                var receiveMsg = message;
+                var emessage = [];
+                var expr = /\[[^[\]]{2,3}\]/mg;
+                var emotions = receiveMsg.match(expr);
+
+                if ( !emotions || emotions.length < 1 ){
+                    return {
+                        isemotion: false
+                        , body: [
+                            {
+                                type: "txt"
+                                , data: message
+                            }
+                        ]
+                    };
+                }
+                var isemotion = false;
+                for ( var i = 0; i < emotions.length; i++ ) {
+                    var tmsg = receiveMsg.substring(0, receiveMsg.indexOf(emotions[i])),
+						existEmotion = Easemob.im.EMOTIONS.map[emotions[i]];
+
+                    if ( tmsg ) {
+                        emessage.push({
+                            type: "txt"
+                            , data: tmsg
+                        });
+                    }
+					if ( !existEmotion ) {
+                        emessage.push({
+                            type: "txt"
+                            , data: emotions[i]
+                        });
+						continue;
+                    }
+                    var emotion = Easemob.im.EMOTIONS.map ? Easemob.im.EMOTIONS.path + existEmotion : null;
+
+                    if ( emotion ) {
+                        isemotion = true;
+                        emessage.push({
+                            type: 'emotion'
+                            , data: emotion
+                        });
+                    } else {
+                        emessage.push({
+                            type: 'txt'
+                            , data: emotions[i]
+                        });
+                    }
+                    var restMsgIndex = receiveMsg.indexOf(emotions[i]) + emotions[i].length;
+                    receiveMsg = receiveMsg.substring(restMsgIndex);
+                }
+                if ( receiveMsg ) {
+                    emessage.push({
+                        type: 'txt'
+                        , data: receiveMsg
+                    });
+                }
+                if ( isemotion ) {
+                    return {
+                        isemotion: isemotion
+                        , body: emessage
+                    };
+                }
+                return {
+                    isemotion: false
+                    , body: [
+                        {
+                            type: "txt"
+                            , data: message
+                        }
+                    ]
+                };
+            }
+
+            , xmlrequest: _xmlrequest
+
+            , ajax: function ( options ) {
+                var dataType = options.dataType || 'text';
+                var suc = options.success || EMPTYFN;
+                var error = options.error || EMPTYFN;
+                var xhr = Utils.xmlrequest();
+
+                xhr.onreadystatechange = function () {
+                    if ( xhr.readyState === 4 ) {
+                        var status = xhr.status || 0;
+                        if ( status === 200 ) {
+                            if ( dataType === 'text' ) {
+                                suc(xhr.responseText,xhr);
+                                return;
+                            }
+                            if ( dataType === 'json' ) {
+                                try {
+                                    var json = Utils.parseJSON(xhr.responseText);
+                                    suc(json,xhr);
+                                } catch ( e ) {
+                                    error(xhr.responseText,xhr,"错误的数据,无法转换为json");
+                                }
+                                return;
+                            }
+                            if ( dataType === 'xml' ) {
+                                if ( xhr.responseXML && xhr.responseXML.documentElement ) {
+                                    suc(xhr.responseXML.documentElement,xhr);
+                                } else {
+                                    error(xhr.responseText,xhr,"浏览器不支持ajax返回xml对象");
+                                }
+                                return;
+                            }
+                            suc(xhr.response || xhr.responseText,xhr);
+                            return;
+                        } else {
+                            if ( dataType === 'json' ) {
+                                try {
+                                    var json = Utils.parseJSON(xhr.responseText);
+                                    error(json,xhr,"服务器返回错误信息");
+                                } catch ( e ) {
+                                    error(xhr.responseText,xhr,"服务器返回错误信息");
+                                }
+                                return;
+                            }
+                            if ( dataType === 'xml' ) {
+                                if ( xhr.responseXML && xhr.responseXML.documentElement ) {
+                                    error(xhr.responseXML.documentElement,xhr,"服务器返回错误信息");
+                                } else {
+                                    error(xhr.responseText,xhr,"服务器返回错误信息");
+                                }
+                                return;
+                            }
+                            error(xhr.responseText,xhr,"服务器返回错误信息");
+                            return;
+                        }
+                    }
+                    if ( xhr.readyState === 0 ) {
+                        error(xhr.responseText,xhr,"服务器异常");
+                    }
+                };
+
+                if ( options.responseType ) {
+                    if ( xhr.responseType ) {
+                        xhr.responseType = options.responseType;
+                    } else {
+                        error('', xhr, "当前浏览器不支持设置响应类型");
+                        return null;
+                    }
+                }
+                if ( options.mimeType ) {
+                    if ( Utils.hasOverrideMimeType ) {
+                        xhr.overrideMimeType(options.mimeType);
+                    } else {
+                        error('', xhr, "当前浏览器不支持设置mimeType");
+                        return null;
+                    }
+                }
+
+                var type = options.type || "POST",
+					data = options.data || null,
+					tempData = '';
+
+				if ( type.toLowerCase() === 'get' && data ) {
+					for ( var o in data ) {
+						if ( data.hasOwnProperty(o) ) {
+							tempData += o + '=' + data[o] + '&';
+						}
+					}
+					tempData = tempData ? tempData.slice(0, -1) : tempData;
+					options.url += (options.url.indexOf('?') > 0 ? '&' : '?') + (tempData ? tempData + '&' : tempData) + '_v=' + new Date().getTime();
+					data = null, tempData = null;
+				}
+                xhr.open(type, options.url);
+
+                if ( Utils.isCanSetRequestHeader ) {
+                    var headers = options.headers || {};
+                    for ( var key in headers ) {
+                        if ( headers.hasOwnProperty(key) ) {
+                            xhr.setRequestHeader(key, headers[key]);
+                        }
+                    }
+                }
+
+                xhr.send(data);
+                return xhr;
+            }
+        };
+    }());
+
+
+
+    /**
+     * Module2: EmMessage: Various types of messages
+     */
+    var EmMessage = function ( type, id ) {
+        if ( !this instanceof EmMessage ) {
+            return new EmMessage(type);
+        }
+
+        this._msg = {};
+
+        if ( typeof EmMessage[type] === 'function' ) {
+			EmMessage[type].prototype.setGroup = this.setGroup;
+            this._msg = new EmMessage[type](id);
+        }
+        return this._msg;
+    }
+    EmMessage.prototype.setGroup = function ( group ) {
+        this.body.group = group;
+    }
+
+
+
+    /**
+     *  Module3: Message
+     */
+    var _msgHash = {};
+    var Message = function ( message ) {
+
+        if( !this instanceof Message ) {
+            return new Message(message, conn);
+        }
+        
+        this.msg = message;
+    }
+
+    Message.prototype.send = function ( conn ) {
+        var me = this;
+
+        var _send = function ( message ) {
+
+            message.ext = message.ext || {};
+            message.ext.weichat = message.ext.weichat || {};
+            message.ext.weichat.originType = message.ext.weichat.originType || 'webim';
+
+            var json = {
+                from: conn.context.userId || ''
+                , to: message.to
+                , bodies: [message.body]
+                , ext: message.ext || {}
+            };
+
+            var jsonstr = Utils.stringify(json);
+            var dom = $msg({
+                type: message.group || 'chat'
+                , to: message.toJid
+                , id: message.id
+                , xmlns: "jabber:client"
+            }).c("body").t(jsonstr);
+
+			if ( message.roomType ) {
+				dom.up().c("roomtype", { xmlns: "easemob:x:roomtype", type: "chatroom" });
+			}
+
+            setTimeout(function () {
+                if ( _msgHash[message.id] ) {
+                    _msgHash[message.id].msg.fail instanceof Function 
+                    && _msgHash[message.id].msg.fail(message.id);
+                }
+            }, 60000);
+            conn.sendCommand(dom.tree(), message.id);
+        }
+
+
+        if ( me.msg.file ) {
+            if ( me.msg.body && me.msg.body.url ) {//only send msg
+                _send(me.msg);
+                return;
+            }
+            var _tmpComplete = me.msg.onFileUploadComplete;
+            var _complete = function ( data ) {
+
+                if ( data.entities[0]['file-metadata'] ) {
+                    var file_len = data.entities[0]['file-metadata']['content-length'];
+                    me.msg.file_length = file_len;
+                    me.msg.filetype = data.entities[0]['file-metadata']['content-type'];
+                    if ( file_len > 204800 ) {
+                        me.msg.thumbnail = true;
+                    }
+                }
+                
+                me.msg.body = {
+                    type: me.msg.type || 'file'
+                    , url: data.uri + '/' + data.entities[0]['uuid']
+                    , secret: data.entities[0]['share-secret']
+                    , filename: me.msg.file.filename || me.msg.filename
+                    , size: {
+                        width: me.msg.width || 0
+                        , height: me.msg.height || 0
+                    }
+					, length: me.msg.file_length || 0
+                    , file_length: me.msg.file_length || 0
+                    , filetype: me.msg.filetype
+                }
+
+                _send(me.msg);
+                _tmpComplete instanceof Function && _tmpComplete(data, me.msg.id);
+            };
+
+            me.msg.onFileUploadComplete = _complete;
+            Utils.uploadFile.call(conn, me.msg);
+        } else {
+            me.msg.body = {
+                type: me.msg.type === 'chat' ? 'txt' : me.msg.type
+                , msg: me.msg.msg 
+            };
+			if ( me.msg.type === 'cmd' ) {
+				me.msg.body.action = me.msg.action;
+			} else if ( me.msg.type === 'loc' ) {
+				me.msg.body.addr = me.msg.addr;
+                me.msg.body.lat = me.msg.lat;
+                me.msg.body.lng = me.msg.lng;
+			}
+
+            _send(me.msg);
+        }
+    }
+        
+    
+
+    /*
+     * Module4: Connection
+     */
+    var Connection = (function () {
+
+		var _networkSt;
+		var _listenNetwork = function ( onlineCallback, offlineCallback ) {
+
+			if ( window.addEventListener ) {
+				window.addEventListener('online', onlineCallback);
+				window.addEventListener('offline', offlineCallback);
+
+			} else if ( window.attachEvent ) {
+				if ( document.body ) {
+					document.body.attachEvent('onoffline', offlineCallback);
+					document.body.attachEvent('onoffline', offlineCallback);
+				} else {
+					window.attachEvent('load', function () {
+						document.body.attachEvent('onoffline', offlineCallback);
+						document.body.attachEvent('onoffline', offlineCallback);
+					});
+				}
+			} else {
+				/*var onlineTmp = window.ononline;
+				var offlineTmp = window.onoffline;
+
+				window.attachEvent('ononline', function () {
+					try {
+						typeof onlineTmp === 'function' && onlineTmp();
+					} catch ( e ) {}
+					onlineCallback();
+				});
+				window.attachEvent('onoffline', function () {
+					try {
+						typeof offlineTmp === 'function' && offlineTmp();
+					} catch ( e ) {}
+					offlineCallback();
+				});*/
+			}
+		};
+
+        var _parseRoomFn = function ( result ) {
+            var rooms = [];
+            var items = result.getElementsByTagName("item");
+            if ( items ) {
+                for ( var i = 0; i < items.length; i++ ) {
+                    var item = items[i];
+                    var roomJid = item.getAttribute('jid');
+                    var tmp = roomJid.split("@")[0];
+                    var room = {
+                        jid: roomJid
+                        , name: item.getAttribute('name')
+                        , roomId: tmp.split('_')[1]
+                    };
+                    rooms.push(room);
+                }
+            }
+            return rooms;
+        }
+            
+        var _parseRoomOccupantsFn = function ( result ) {
+            var occupants = [];
+            var items = result.getElementsByTagName("item");
+            if ( items ) {
+                for ( var i = 0; i < items.length; i++ ) {
+                    var item = items[i];
+                    var room = {
+                        jid: item.getAttribute('jid')
+                        , name: item.getAttribute('name')
+                    };
+                    occupants.push(room);
+                }
+            }
+            return occupants;
+        }
+
+        var _parseResponseMessage = function ( msginfo ) {
+            var parseMsgData = { errorMsg: true, data: [] };
+
+            var msgBodies = msginfo.getElementsByTagName("body");
+            if ( msgBodies ) {
+                for ( var i = 0; i < msgBodies.length; i++ ) {
+                    var msgBody = msgBodies[i];
+                    var childNodes = msgBody.childNodes;
+                    if ( childNodes && childNodes.length > 0 ) {
+                        var childNode = msgBody.childNodes[0];
+                        if ( childNode.nodeType == Strophe.ElementType.TEXT ) {
+                            var jsondata = childNode.wholeText ||childNode.nodeValue;
+                            jsondata = jsondata.replace('\n','<br>');
+                            try {
+                                var data = eval("(" + jsondata + ")");
+                                parseMsgData.errorMsg = false;
+                                parseMsgData.data = [data];
+                            } catch ( e ) {}
+                        }
+                    }
+                }
+
+                var delayTags = msginfo.getElementsByTagName("delay");
+                if ( delayTags && delayTags.length > 0 ) {
+                    var delayTag = delayTags[0];
+                    var delayMsgTime = delayTag.getAttribute("stamp");
+                    if ( delayMsgTime ) {
+                        parseMsgData.delayTimeStamp = delayMsgTime;
+                    }
+                }
+            } else {
+                var childrens = msginfo.childNodes;
+                if ( childrens && childrens.length>0 ) {
+                    var child = msginfo.childNodes[0];
+                    if ( child.nodeType == Strophe.ElementType.TEXT ) {
+                        try {
+                            var data = eval("("+child.nodeValue+")");
+                            parseMsgData.errorMsg = false;
+                            parseMsgData.data = [data];
+                        } catch ( e ) {}
+                    }
+                }
+            }
+            return parseMsgData;
+        }
+
+        var _parseNameFromJidFn = function ( jid, domain ) {
+            domain = domain || "";
+            var tempstr = jid;
+            var findex = tempstr.indexOf("_");
+
+            if ( findex !== -1 ) {
+                tempstr = tempstr.substring(findex+1);
+            }
+            var atindex = tempstr.indexOf("@" + domain);
+            if ( atindex !== -1 ) {
+                tempstr = tempstr.substring(0,atindex);
+            }
+            return tempstr;
+        }
+
+        var _parseFriendFn = function ( queryTag ) {
+            var rouster = [];
+            var items = queryTag.getElementsByTagName("item");
+            if ( items ) {
+                for( var i = 0; i < items.length; i++ ) {
+                    var item = items[i];
+                    var jid = item.getAttribute('jid');
+                    if ( !jid ) {
+                        continue;
+                    }
+                    var subscription = item.getAttribute('subscription');
+                    var friend = {
+                        subscription: subscription
+                        , jid: jid
+                    };
+                    var ask = item.getAttribute('ask');
+                    if ( ask ) {
+                        friend.ask = ask;
+                    }
+                    var name = item.getAttribute('name');
+                    if ( name ) {
+                        friend.name = name;
+                    } else {
+                        var n = _parseNameFromJidFn(jid);
+                        friend.name = n;
+                    }
+                    var groups = [];
+                    Strophe.forEachChild(item, 'group',function ( group ) {
+                        groups.push(Strophe.getText(group));
+                    });
+                    friend.groups = groups;
+                    rouster.push(friend);
+                }
+            }
+            return rouster;
+        }
+
+        var _dologin2IM = function ( options, conn ) {
+            var accessToken = options.access_token || '';
+            if ( accessToken == '' ) {
+                var loginfo = Utils.stringify(options);
+                conn.onError({
+                    type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
+                    , msg: "登录失败," + loginfo
+                    , data: options
+                    , xhr: xhr
+                });
+                return;
+            }
+            conn.context.accessToken = options.access_token;
+            conn.context.accessTokenExpires = options.expires_in;
+            var stropheConn = null;
+            if ( conn.isOpening() && conn.context.stropheConn ) {
+                stropheConn = conn.context.stropheConn;
+            } else if ( conn.isOpened() && conn.context.stropheConn ) {
+                return;
+            } else {
+                stropheConn = new Strophe.Connection(conn.url, {
+                    inactivity: conn.inactivity
+                    , maxRetries: conn.maxRetries
+                    , pollingTime: conn.pollingTime
+                });
+            }
+
+            var callback = function ( status, msg ) {
+                _login2ImCallback(status,msg,conn);
+            };
+
+            conn.context.stropheConn = stropheConn;
+            if ( conn.route ) {
+                stropheConn.connect(conn.context.jid,"$t$" + accessToken,callback,conn.wait,conn.hold,conn.route);
+            } else {
+                stropheConn.connect(conn.context.jid,"$t$" + accessToken,callback,conn.wait,conn.hold);
+            }
+        };
+
+        var _parseMessageType = function ( msginfo ) {
+            var msgtype = 'normal';
+            var receiveinfo = msginfo.getElementsByTagName("received");
+            if ( receiveinfo && receiveinfo.length > 0 && receiveinfo[0].namespaceURI === "urn:xmpp:receipts" ) {
+                msgtype = 'received';
+            } else {
+                var inviteinfo =  msginfo.getElementsByTagName("invite");
+                if ( inviteinfo && inviteinfo.length > 0 ) {
+                    msgtype = 'invite';
+                }
+            }
+            return msgtype;
+        };
+
+		var _handleQueueMessage = function ( conn ) {
+			for ( var i in _msgHash ) {
+				if ( _msgHash.hasOwnProperty(i) ) {
+					_msgHash[i].send(conn);
+				}
+			}
+		};
+
+        var _login2ImCallback = function ( status, msg, conn ) {
+            if ( status == Strophe.Status.CONNFAIL ) {
+                conn.onError({
+                    type: EASEMOB_IM_CONNCTION_SERVER_CLOSE_ERROR
+                    , msg: msg
+                    , reconnect: true
+                });
+            } else if ( status == Strophe.Status.ATTACHED || status == Strophe.Status.CONNECTED ) {
+                var handleMessage = function ( msginfo ) {
+                    var type = _parseMessageType(msginfo);
+
+                    if ( 'received' === type ) {
+                        conn.handleReceivedMessage(msginfo);
+                        return true;
+                    } else if ( 'invite' === type ) {
+                        conn.handleInviteMessage(msginfo);
+                        return true;
+                    } else {
+                        conn.handleMessage(msginfo);
+                        return true;
+                    }
+                };
+                var handlePresence = function ( msginfo ) {
+                    conn.handlePresence(msginfo);
+                    return true;
+                };
+                var handlePing = function ( msginfo ) {
+                    conn.handlePing(msginfo);
+                    return true;
+                };
+                var handleIq = function ( msginfo ) {
+                    conn.handleIq(msginfo);
+                    return true;
+                };
+
+                conn.addHandler(handleMessage, null, 'message', null, null,  null);
+                conn.addHandler(handlePresence, null, 'presence', null, null,  null);
+                conn.addHandler(handlePing, "urn:xmpp:ping", 'iq', "get", null,  null);
+                conn.addHandler(handleIq, "jabber:iq:roster", 'iq', "set", null,  null);
+
+                conn.context.status = STATUS_OPENED;
+
+                var supportRecMessage = [
+                   EASEMOB_IM_MESSAGE_REC_TEXT,
+                   EASEMOB_IM_MESSAGE_REC_EMOTION ];
+
+                if ( Utils.isCanDownLoadFile ) {
+                    supportRecMessage.push(EASEMOB_IM_MESSAGE_REC_PHOTO);
+                    supportRecMessage.push(EASEMOB_IM_MESSAGE_REC_AUDIO_FILE);
+                }
+                var supportSedMessage = [ EASEMOB_IM_MESSAGE_SED_TEXT ];
+                if ( Utils.isCanUploadFile ) {
+                    supportSedMessage.push(EASEMOB_IM_MESSAGE_REC_PHOTO);
+                    supportSedMessage.push(EASEMOB_IM_MESSAGE_REC_AUDIO_FILE);
+                }
+                conn.notifyVersion();
+				conn.retry && _handleQueueMessage(conn);
+                conn.onOpened({
+                    canReceive: supportRecMessage
+                    , canSend: supportSedMessage
+                    , accessToken: conn.context.accessToken
+                });
+                conn.heartBeat();
+            } else if ( status == Strophe.Status.DISCONNECTING ) {
+                if ( conn.isOpened() ) {// 不是主动关闭
+                    conn.stopHeartBeat();
+                    conn.context.status = STATUS_CLOSING;
+                    conn.onError({
+                        type: EASEMOB_IM_CONNCTION_SERVER_CLOSE_ERROR
+                        , msg: msg
+                        , reconnect: true
+                    });
+                }
+            } else if ( status == Strophe.Status.DISCONNECTED ) {
+                conn.context.status = STATUS_CLOSED;
+                conn.clear();
+                conn.onClosed();
+            } else if ( status == Strophe.Status.AUTHFAIL ) {
+                conn.onError({
+                    type: EASEMOB_IM_CONNCTION_AUTH_ERROR
+                    , msg: '登录失败,请输入正确的用户名和密码'
+                });
+                conn.clear();
+            } else if ( status == Strophe.Status.ERROR ) {
+                conn.onError({
+                    type: EASEMOB_IM_CONNCTION_SERVER_ERROR
+                    , msg: msg || '服务器异常'
+                });
+            }
+        };
+
+        var _getJid = function ( options, conn ) {
+            var jid = options.toJid || '';
+
+            if ( jid === '' ) {
+                var appKey = conn.context.appKey || '';
+                var toJid = appKey + "_" + options.to + "@" + conn.domain;
+
+                if ( options.resource ) {
+                    toJid = toJid + "/" + options.resource;
+                }
+                jid = toJid;
+            }
+            return jid;
+        };
+
+        var _innerCheck = function ( options, conn ) {
+            options = options || {};
+
+            if ( options.user == '' ) {
+                conn.onError({
+                    type: EASEMOB_IM_CONNCTION_USER_NOT_ASSIGN_ERROR
+                    , msg: '未指定用户'
+                });
+                return false;
+            }
+
+            var user = options.user || '';
+            var appKey = options.appKey || '';
+            var devInfos = appKey.split('#');
+
+            if ( devInfos.length !== 2 ) {
+                conn.onError({
+                    type: EASEMOB_IM_CONNCTION_OPEN_ERROR
+                    , msg: '请指定正确的开发者信息(appKey)'
+                });
+                return false;
+            }
+            var orgName = devInfos[0];
+            var appName = devInfos[1];
+
+            if ( !orgName ) {
+                conn.onError({
+                    type: EASEMOB_IM_CONNCTION_OPEN_ERROR
+                    , msg: '请指定正确的开发者信息(appKey)'
+                });
+                return false;
+            }
+            if ( !appName ) {
+                conn.onError({
+                    type: EASEMOB_IM_CONNCTION_OPEN_ERROR
+                    , msg: '请指定正确的开发者信息(appKey)'
+                });
+                return false;
+            }
+            
+            var jid = appKey + "_" + user.toLowerCase() + "@" + conn.domain,
+				resource = options.resource || 'webim';
+
+			if ( conn.multiResources ) {
+				resource += user + new Date().getTime() + Math.floor(Math.random().toFixed(6) * 1000000);
+			}
+
+            conn.context.jid = jid + '/' + resource;/*jid: {appkey}_{username}@domain/resource*/
+            conn.context.userId = user;
+            conn.context.appKey = appKey;
+            conn.context.appName = appName;
+            conn.context.orgName = orgName;
+            
+            return true;
+        }
+
+		var _getXmppUrl = function ( baseUrl, https ) {
+			if ( /^(ws|http)s?:\/\/?/.test(baseUrl) ) {
+				return baseUrl;
+			}
+
+			var url = {
+				prefix: 'http',
+				base: '://' + (baseUrl || 'im-api.easemob.com'),
+				suffix: '/http-bind/'
+			};
+
+			if ( https && Utils.isSupportWss ) {
+				url.prefix = 'wss';
+				url.suffix = '/ws/';
+            } else {
+                if ( https ) {
+					url.prefix = 'https';
+				} else if ( window.WebSocket ) {
+					url.prefix = 'ws';
+					url.suffix = '/ws/';
+				}   
+            }
+
+			return url.prefix + url.base + url.suffix;
+		};
+
+        //class
+        var connection = function ( options ) {
+            if ( !this instanceof Connection ) {
+                return new Connection(options);
+            }
+
+            var options = options || {};
+
+			this.multiResources = options.multiResources || false;
+            this.wait = options.wait || 30;
+            this.retry = options.retry || false;
+            this.https = options.https || https;
+			this.url = _getXmppUrl(options.url, this.https);
+            this.hold = options.hold || 1;
+            this.route = options.route || null;
+            this.domain = options.domain || "easemob.com";
+            this.inactivity = options.inactivity || 30;
+            this.heartBeatWait = options.heartBeatWait || 60000;
+            this.maxRetries = options.maxRetries || 5;
+            this.pollingTime = options.pollingTime || 800;
+            this.stropheConn = false;
+            this.context = { status: STATUS_INIT };
+        };
+
+        connection.prototype.listen = function ( options ) {
+			options.url && (this.url = _getXmppUrl(options.url, this.https));//just compatible
+            this.onOpened = options.onOpened || EMPTYFN;
+            this.onClosed = options.onClosed || EMPTYFN;
+            this.onTextMessage = options.onTextMessage || EMPTYFN;
+            this.onEmotionMessage = options.onEmotionMessage || EMPTYFN;
+            this.onPictureMessage = options.onPictureMessage || EMPTYFN;
+            this.onAudioMessage = options.onAudioMessage || EMPTYFN;
+            this.onVideoMessage = options.onVideoMessage || EMPTYFN;
+            this.onFileMessage = options.onFileMessage || EMPTYFN;
+            this.onLocationMessage = options.onLocationMessage || EMPTYFN;
+            this.onCmdMessage = options.onCmdMessage || EMPTYFN;
+            this.onPresence = options.onPresence || EMPTYFN;
+            this.onRoster = options.onRoster || EMPTYFN;
+            this.onError = options.onError || EMPTYFN;
+            this.onReceivedMessage = options.onReceivedMessage || EMPTYFN;
+            this.onInviteMessage = options.onInviteMessage || EMPTYFN;
+            this.onOffline = options.onOffline || EMPTYFN;
+            this.onOnline = options.onOnline || EMPTYFN;
+
+			_listenNetwork(this.onOnline, this.onOffline);
+        }
+
+        connection.prototype.heartBeat = function () {
+            var me = this;
+
+            if ( me.heartBeatID ) {
+                return;
+            }
+
+            var options = {
+                to : me.domain,
+                type : "normal"
+            };
+            me.heartBeatID = setInterval(function () {
+                me.sendHeartBeatMessage(options);
+            }, me.heartBeatWait);
+        };
+
+        connection.prototype.sendHeartBeatMessage = function ( options ) {
+            var json = {},
+                jsonstr = Utils.stringify(json),
+                dom = $msg({
+                    to : options.to,
+                    type : options.type,
+                    id : this.getUniqueId(),
+                    xmlns : "jabber:client"
+                }).c("body").t(jsonstr);
+
+            this.sendCommand(dom.tree());
+        };
+
+        connection.prototype.stopHeartBeat = function () {
+            this.heartBeatID = clearInterval(this.heartBeatID);
+        };
+
+
+        connection.prototype.sendReceiptsMessage = function ( options ) {
+            var dom = $msg({
+                from: this.context.jid || ''
+                , to: "easemob.com"
+                , id: options.id || ''
+            }).c("received",{
+                xmlns: "urn:xmpp:receipts"
+                , id: options.id || ''
+            });
+            this.sendCommand(dom.tree());
+        };
+
+        connection.prototype.open = function ( options ) {
+            var pass = _innerCheck(options,this);
+
+            if ( !pass ) {
+                return;
+            }
+            
+            var conn = this;
+
+            if ( conn.isOpening() || conn.isOpened() ) {
+                return;
+            }
+
+            if ( options.accessToken ) {
+                options.access_token = options.accessToken;
+                _dologin2IM(options,conn);
+            } else {
+                var apiUrl = options.apiUrl || (this.https ? 'https' : 'http') + '://a1.easemob.com';
+                var userId = this.context.userId;
+                var pwd = options.pwd || '';
+                var appName = this.context.appName;
+                var orgName = this.context.orgName;
+
+                var suc = function ( data, xhr ) {
+                    conn.context.status = STATUS_DOLOGIN_IM;
+                    _dologin2IM(data,conn);
+                };
+                var error = function ( res, xhr, msg ) {
+                    conn.clear();
+                    if ( res.error && res.error_description ) {
+                        conn.onError({
+                            type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
+                            , msg: "登录失败,"+res.error_description
+                            , data: res
+                            , xhr: xhr
+                        });
+                    } else {
+                        conn.onError({
+                            type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
+                            , msg: "登录失败"
+                            , data: res
+                            , xhr: xhr
+                        });
+                    }
+                };
+                this.context.status = STATUS_DOLOGIN_USERGRID;
+
+                var loginJson = {
+                    grant_type: 'password'
+                    , username: userId
+                    , password: pwd
+                };
+                var loginfo = Utils.stringify(loginJson);
+
+                var options = {
+                    url: apiUrl + "/" + orgName + "/" + appName + "/token"
+                    , dataType: 'json'
+                    , data: loginfo
+                    , success: suc || EMPTYFN
+                    , error: error || EMPTYFN
+                };
+                Utils.ajax(options);
+            }
+
+        };
+
+        connection.prototype.attach = function ( options ) {
+            var pass = _innerCheck(options, this);
+
+            if ( !pass ) {
+                return;
+            }
+
+            options = options || {};
+
+            var accessToken = options.accessToken || '';
+            if ( accessToken == '' ) {
+                this.onError({
+                    type: EASEMOB_IM_CONNCTION_ATTACH_USERGRID_ERROR
+                    , msg: '未指定用户的accessToken'
+                });
+                return;
+            }
+
+            var sid = options.sid || '';
+            if ( sid === '') {
+                this.onError({
+                    type: EASEMOB_IM_CONNCTION_ATTACH_ERROR
+                    , msg: '未指定用户的会话信息'
+                });
+                return;
+            }
+
+            var rid = options.rid || '';
+            if ( rid === '') {
+                this.onError({
+                    type: EASEMOB_IM_CONNCTION_ATTACH_ERROR
+                    , msg: '未指定用户的消息id'
+                });
+                return;
+            }
+
+            var stropheConn = new Strophe.Connection(this.url, {
+                inactivity: this.inactivity,
+                maxRetries: this.maxRetries,
+                pollingTime: this.pollingTime
+            });
+
+            this.context.accessToken = accessToken;
+            this.context.stropheConn = stropheConn;
+            this.context.status = STATUS_DOLOGIN_IM;
+
+            var conn = this;
+            var callback = function ( status, msg ) {
+                _login2ImCallback(status,msg,conn);
+            };
+
+            var jid = this.context.jid;
+            var wait = this.wait;
+            var hold = this.hold;
+            var wind = this.wind || 5;
+            stropheConn.attach(jid, sid, rid, callback, wait, hold, wind);
+        };
+
+        connection.prototype.close = function () {
+            var status = this.context.status;
+            if ( status == STATUS_INIT ) {
+                return;
+            }
+
+            if ( this.isClosed() || this.isClosing() ) {
+                return;
+            }
+            this.stopHeartBeat();
+            this.context.status = STATUS_CLOSING;
+            this.context.stropheConn.disconnect();
+        };
+
+        // see stropheConn.addHandler
+        connection.prototype.addHandler = function ( handler, ns, name, type, id, from, options ) {
+            this.context.stropheConn.addHandler(handler, ns, name, type, id, from, options);
+        };
+
+        connection.prototype.notifyVersion = function ( suc, fail ) {
+            var jid = _getJid({},this);
+            var dom = $iq({
+				from: this.context.jid || ''
+				, to: this.domain
+				, type: "result"
+            })
+			.c("query", { xmlns: "jabber:iq:version" })
+			.c("name")
+			.t("easemob")
+			.up()
+			.c("version")
+			.t(Easemob.im.version)
+			.up()
+			.c("os")
+			.t("webim");
+
+            suc = suc || EMPTYFN;
+            error = fail || this.onError;
+            var failFn = function ( ele ) {
+                error({
+                    type: EASEMOB_IM_CONNCTION_NOTIFYVERSION_ERROR
+                    , msg: '发送版本信息给服务器时失败'
+                    , data: ele
+                });
+            };
+            this.context.stropheConn.sendIQ(dom.tree(), suc, failFn);
+            return;
+        };
+
+        connection.prototype.handlePresence = function ( msginfo ) {
+            if ( this.isClosed() ) {
+                return;
+            }
+            //TODO: maybe we need add precense ack?
+            //var id = msginfo.getAttribute('id') || '';
+            //this.sendReceiptsMessage({
+            //    id: id
+            //});
+
+            var from = msginfo.getAttribute('from') || '';
+            var to = msginfo.getAttribute('to') || '';
+            var type = msginfo.getAttribute('type') || '';
+            var presence_type = msginfo.getAttribute('presence_type') || '';
+            var fromUser = _parseNameFromJidFn(from);
+            var toUser = _parseNameFromJidFn(to);
+            var info = {
+                from: fromUser
+                , to: toUser
+                , fromJid: from
+                , toJid: to
+                , type: type
+				, chatroom: msginfo.getElementsByTagName('roomtype').length ? true : false
+            };
+
+            var showTags = msginfo.getElementsByTagName("show");
+            if ( showTags && showTags.length > 0 ) {
+                var showTag = showTags[0];
+                info.show = Strophe.getText(showTag);
+            }
+            var statusTags = msginfo.getElementsByTagName("status");
+            if ( statusTags && statusTags.length > 0 ) {
+                var statusTag = statusTags[0];
+                info.status = Strophe.getText(statusTag);
+                info.code = statusTag.getAttribute('code');
+            }
+
+            var priorityTags = msginfo.getElementsByTagName("priority");
+            if ( priorityTags && priorityTags.length > 0 ) {
+                var priorityTag = priorityTags[0];
+                info.priority  = Strophe.getText(priorityTag);
+            }
+
+			var error = msginfo.getElementsByTagName("error");
+            if ( error && error.length > 0 ) {
+                var error = error[0];
+                info.error = {
+					code: error.getAttribute('code')
+				};
+            }
+
+			var destroy = msginfo.getElementsByTagName("destroy");
+            if ( destroy && destroy.length > 0 ) {
+                var destroy = destroy[0];
+                info.destroy = true;
+
+				var reason = destroy.getElementsByTagName("reason");
+				if ( reason && reason.length > 0 ) {
+					info.reason = Strophe.getText(reason[0]);
+				}
+            }
+
+			if ( info.chatroom ) {
+				var reflectUser = from.slice(from.lastIndexOf('/') + 1);
+
+				if ( reflectUser === this.context.userId ) {
+					if ( info.type === '' && !info.code ) {
+						info.type = 'joinChatRoomSuccess';
+					} else if ( presence_type === 'unavailable' || info.type === 'unavailable' ) {
+						if ( !info.status ) {//web正常退出
+							info.type = 'leaveChatRoom';
+						} else if ( info.code == 110 ) {//app先退或被管理员踢
+							info.type = 'leaveChatRoom';
+						} else if ( info.error && info.error.code == 406 ) {//聊天室人已满，无法加入
+							info.type = 'joinChatRoomFailed';
+						}
+					}
+				}
+			} else if ( presence_type === 'unavailable' || type === 'unavailable' ) {//聊天室被删除没有roomtype, 需要区分群组被踢和解散
+				if ( info.destroy ) {//群组和聊天室被删除
+					info.type = 'deleteGroupChat';
+				} else if ( info.code == 307 || info.code == 321 ) {//群组被踢
+					info.type = 'leaveGroup';
+				}
+			}
+			
+            this.onPresence(info,msginfo);
+        };
+
+        connection.prototype.handlePing = function ( e ) {
+            if ( this.isClosed() ) {
+                return;
+            }
+            var id = e.getAttribute('id');
+            var from = e.getAttribute('from');
+            var to = e.getAttribute('to');
+            var dom = $iq({
+                from: to
+                , to: from
+                , id: id
+                , type: 'result'
+            });
+            this.sendCommand(dom.tree());
+        };
+
+        connection.prototype.handleIq = function ( e ) {
+            var id = e.getAttribute('id');
+            var from = e.getAttribute('from') || '';
+            var name = _parseNameFromJidFn(from);
+            var curJid = this.context.jid;
+            var curUser = this.context.userId;
+
+            /*if ( !from || from === curJid ) {
+                return true;
+			}*/
+
+            var iqresult = $iq({ type: 'result', id: id, from: curJid });
+            this.sendCommand(iqresult.tree());
+
+            var msgBodies = e.getElementsByTagName("query");
+            if ( msgBodies&&msgBodies.length > 0 ) {
+                var queryTag = msgBodies[0];
+                var rouster = _parseFriendFn(queryTag);
+                this.onRoster(rouster);
+            }
+            return true;
+        };
+
+        connection.prototype.handleMessage = function ( msginfo ) {
+            if ( this.isClosed() ) {
+                return;
+            }
+
+            var id = msginfo.getAttribute('id') || '';
+            this.sendReceiptsMessage({
+                id: id
+            });
+            var parseMsgData = _parseResponseMessage(msginfo);
+            if ( parseMsgData.errorMsg ) {
+                this.handlePresence(msginfo);
+                return;
+            }
+            var msgDatas = parseMsgData.data;
+            for ( var i in msgDatas ) {
+				if ( !msgDatas.hasOwnProperty(i) ) {
+					continue;
+				}
+                var msg = msgDatas[i];
+				if ( !msg.from || !msg.to ) {
+					continue;
+				}
+
+                var from = msg.from.toLowerCase();
+                var too = msg.to.toLowerCase();
+                var extmsg = msg.ext || {};
+				var chattype = '';
+				var typeEl = msginfo.getElementsByTagName("roomtype");
+				if ( typeEl.length ) {
+					chattype = typeEl[0].getAttribute('type') || 'chat';
+				} else {
+					chattype = msginfo.getAttribute('type') || 'chat';
+				}
+                
+                var msgBodies = msg.bodies;
+                if ( !msgBodies || msgBodies.length == 0 ) {
+                    continue;
+                }
+                var msgBody = msg.bodies[0];
+                var type = msgBody.type;
+                if ( "txt" === type ) {
+                    var receiveMsg = msgBody.msg;
+                    var emotionsbody = Utils.parseTextMessage(receiveMsg, Easemob.im.EMOTIONS);
+                    if ( emotionsbody.isemotion ) {
+                        this.onEmotionMessage({
+                            id: id
+                            , type: chattype
+                            , from: from
+                            , to: too
+                            , delay: parseMsgData.delayTimeStamp
+                            , data: emotionsbody.body
+                            , ext: extmsg
+                        });
+                    } else {
+                        this.onTextMessage({
+                            id: id
+                            , type: chattype
+                            , from: from
+                            , to: too
+                            , delay: parseMsgData.delayTimeStamp
+                            , data: receiveMsg
+                            , ext: extmsg
+                        });
+                    }
+                } else if ( "img" === type ) {
+                    var rwidth = 0;
+                    var rheight = 0;
+                    if ( msgBody.size ) {
+                        rwidth = msgBody.size.width;
+                        rheight = msgBody.size.height;
+                    }
+                    var msg = {
+                        id: id
+                        , type: chattype
+                        , from: from
+                        , to: too
+                        , url: msgBody.url
+                        , secret: msgBody.secret
+                        , filename: msgBody.filename
+                        , thumb: msgBody.thumb
+                        , thumb_secret: msgBody.thumb_secret
+                        , file_length: msgBody.file_length || ''
+                        , width: rwidth
+                        , height: rheight
+                        , filetype: msgBody.filetype || ''
+                        , accessToken: this.context.accessToken || ''
+                        , ext: extmsg
+                        , delay: parseMsgData.delayTimeStamp
+                    };
+                    this.onPictureMessage(msg);
+                } else if ( "audio" === type ) {
+                    this.onAudioMessage({
+                        id: id
+                        , type: chattype
+                        , from: from
+                        , to: too
+                        , url: msgBody.url
+                        , secret: msgBody.secret
+                        , filename: msgBody.filename
+                        , length: msgBody.length || ''
+                        , file_length: msgBody.file_length || ''
+                        , filetype: msgBody.filetype || ''
+                        , accessToken: this.context.accessToken || ''
+                        , ext: extmsg
+                        , delay: parseMsgData.delayTimeStamp
+                    });
+                } else if ( "file" === type ) {
+                    this.onFileMessage({
+                        id: id
+                        , type: chattype
+                        , from: from
+                        , to: too
+                        , url: msgBody.url
+                        , secret: msgBody.secret
+                        , filename: msgBody.filename
+                        , file_length: msgBody.file_length
+                        , accessToken: this.context.accessToken || ''
+                        , ext: extmsg
+                        , delay: parseMsgData.delayTimeStamp
+                    });
+                } else if ( "loc" === type ) {
+                    this.onLocationMessage({
+                        id: id
+                        , type: chattype
+                        , from: from
+                        , to: too
+                        , addr: msgBody.addr
+                        , lat: msgBody.lat
+                        , lng: msgBody.lng
+                        , ext: extmsg
+                        , delay: parseMsgData.delayTimeStamp
+                    });
+                } else if ( "video" === type ) {
+                    this.onVideoMessage({
+                        id: id
+                        , type: chattype
+                        , from: from
+                        , to: too
+                        , url: msgBody.url
+                        , secret: msgBody.secret
+                        , filename: msgBody.filename
+                        , file_length: msgBody.file_length
+                        , accessToken: this.context.accessToken || ''
+                        , ext: extmsg
+                        , delay: parseMsgData.delayTimeStamp
+                    });
+                } else if ( "cmd" === type ) {
+                    this.onCmdMessage({
+                        id: id
+                        , from: from
+                        , to: too
+                        , action: msgBody.action
+                        , ext: extmsg
+                        , delay: parseMsgData.delayTimeStamp
+                    });
+                }
+            }
+        };
+
+        connection.prototype.handleReceivedMessage = function ( message ) {
+            this.onReceivedMessage(message);
+
+            var rcv = message.getElementsByTagName('received'),
+                id,
+                mid;
+
+            if ( rcv.length > 0 ) {
+                if ( rcv[0].childNodes && rcv[0].childNodes.length > 0 ) {
+                    id = rcv[0].childNodes[0].nodeValue;
+                } else {
+                    id = rcv[0].innerHTML || rcv[0].innerText;
+                }
+                mid = rcv[0].getAttribute('mid');
+            }
+            
+            if ( _msgHash[id] ) {
+                _msgHash[id].msg.success instanceof Function && _msgHash[id].msg.success(id, mid);
+                delete _msgHash[id];
+            }
+        };
+
+        connection.prototype.handleInviteMessage = function ( message ) {
+            var form = null;
+            var invitemsg = message.getElementsByTagName('invite');
+            var id = message.getAttribute('id') || '';
+            this.sendReceiptsMessage({
+                id: id
+            });
+
+            if ( invitemsg && invitemsg.length > 0 ) {
+                var fromJid = invitemsg[0].getAttribute('from');
+                form = _parseNameFromJidFn(fromJid);
+            }
+            var xmsg = message.getElementsByTagName('x');
+            var roomid = null;
+            if ( xmsg && xmsg.length > 0 ) {
+                for ( var i = 0; i < xmsg.length; i++ ) {
+                    if ( 'jabber:x:conference' === xmsg[i].namespaceURI ) {
+                        var roomjid = xmsg[i].getAttribute('jid');
+                        roomid = _parseNameFromJidFn(roomjid);
+                    }
+                }
+            }
+            this.onInviteMessage({
+                type: 'invite'
+                , from: form
+                , roomid: roomid
+            });
+        };
+
+        connection.prototype.sendCommand = function ( dom, id ) {
+            if ( this.isOpened() ) {
+                this.context.stropheConn.send(dom);
+            } else {
+                this.onError({
+                    type : EASEMOB_IM_CONNCTION_OPEN_ERROR,
+                    msg : '连接还未建立,请先登录或等待登录处理完毕'
+                    , reconnect: true
+                });
+            }
+        };
+
+        connection.prototype.getUniqueId = function ( prefix ) {
+            var cdate = new Date();
+            var offdate = new Date(2010,1,1);
+			var offset = cdate.getTime()-offdate.getTime();
+			var hexd = parseInt(offset).toString(16);
+
+            if ( typeof prefix === 'string' || typeof prefix === 'number' ) {
+                return prefix + '_' + hexd;
+            } else {
+                return 'WEBIM_' + hexd;
+            }
+        };
+        
+        connection.prototype.send = function ( message ) {
+            if ( Object.prototype.toString.call(message) === '[object Object]' ) {
+                var appKey = this.context.appKey || '';
+                var toJid = appKey + "_" + message.to + "@" + this.domain;
+
+                if ( message.group ) {
+                    toJid = appKey + "_" + message.to + '@conference.' + this.domain;
+                }
+                if ( message.resource ) {
+                    toJid = toJid + "/" + message.resource;
+                }
+
+                message.toJid = toJid;
+                message.id = message.id || this.getUniqueId();
+                _msgHash[message.id] = new Message(message);
+                _msgHash[message.id].send(this);
+            } else if ( typeof message === 'string' ) {
+                _msgHash[message] && _msgHash[message].send(this);
+            }
+        }
+
+        connection.prototype.addRoster = function ( options ) {
+            var jid = _getJid(options, this);
+            var name = options.name || '';
+            var groups = options.groups || '';
+
+            var iq = $iq({type: 'set'});
+            iq.c("query", {xmlns:'jabber:iq:roster'});
+            iq.c("item", {jid: jid, name: name});
+
+            if ( groups ) {
+                for ( var i = 0; i < groups.length; i++ ) {
+                    iq.c('group').t(groups[i]).up();
+                }
+            }
+            var suc = options.success || EMPTYFN;
+            var error = options.error || EMPTYFN;
+            this.context.stropheConn.sendIQ(iq.tree(),suc,error);
+        };
+
+        connection.prototype.removeRoster = function ( options ) {
+            var jid = _getJid(options,this);
+            var iq = $iq({ type: 'set' }).c('query', { xmlns: "jabber:iq:roster" }).c('item', { jid: jid, subscription: "remove" });
+
+            var suc = options.success || EMPTYFN;
+            var error = options.error || EMPTYFN;
+            this.context.stropheConn.sendIQ(iq,suc,error);
+        };
+
+        connection.prototype.getRoster = function ( options ) {
+            var conn = this;
+            var dom  = $iq({
+                type: 'get'
+            }).c('query', { xmlns: 'jabber:iq:roster' });
+
+            options = options || {};
+            suc = options.success || this.onRoster;
+            var completeFn = function ( ele ) {
+                var rouster = [];
+                var msgBodies = ele.getElementsByTagName("query");
+                if ( msgBodies&&msgBodies.length > 0 ) {
+                    var queryTag = msgBodies[0];
+                    rouster = _parseFriendFn(queryTag);
+                }
+                suc(rouster,ele);
+            };
+            error = options.error || this.onError;
+            var failFn = function ( ele ) {
+                error({
+                    type: EASEMOB_IM_CONNCTION_GETROSTER_ERROR
+                    , msg: '获取联系人信息失败'
+                    , data: ele
+                });
+            };
+            if ( this.isOpened() ) {
+                this.context.stropheConn.sendIQ(dom.tree(),completeFn,failFn);
+            } else {
+                error({
+                    type: EASEMOB_IM_CONNCTION_OPEN_ERROR
+                    , msg: '连接还未建立,请先登录或等待登录处理完毕'
+                });
+            }
+        };
+
+        connection.prototype.subscribe = function ( options ) {
+            var jid = _getJid(options, this);
+            var pres = $pres({ to: jid, type: "subscribe" });
+            if ( options.message ) {
+                pres.c("status").t(options.message).up();
+            }
+            if ( options.nick ) {
+                pres.c('nick', { 'xmlns': "http://jabber.org/protocol/nick" }).t(options.nick);
+            }
+            this.sendCommand(pres.tree());
+        };
+
+        connection.prototype.subscribed = function ( options ) {
+            var jid = _getJid(options,this);
+            var pres = $pres({to: jid, type: "subscribed"});
+
+            if ( options.message ) {
+                pres.c("status").t(options.message).up();
+            }
+            this.sendCommand(pres.tree());
+        };
+
+        connection.prototype.unsubscribe = function ( options ) {
+            var jid = _getJid(options,this);
+            var pres = $pres({to: jid, type: "unsubscribe"});
+
+            if ( options.message ) {
+                pres.c("status").t(options.message);
+            }
+            this.sendCommand(pres.tree());
+        };
+
+        connection.prototype.unsubscribed = function ( options ) {
+            var jid = _getJid(options,this);
+            var pres = $pres({ to: jid, type: "unsubscribed" });
+
+            if ( options.message ) {
+                pres.c("status").t(options.message).up();
+            }
+            this.sendCommand(pres.tree());
+         };
+
+        connection.prototype.createRoom = function ( options ) {
+            var suc =options.success || EMPTYFN;
+            var err =  options.error || EMPTYFN;
+            var roomiq;
+
+            roomiq = $iq({
+                to: options.rooomName,
+                type: "set"
+            })
+			.c("query", { xmlns: Strophe.NS.MUC_OWNER })
+			.c("x", { xmlns: "jabber:x:data", type: "submit" });
+
+            return this.context.stropheConn.sendIQ(roomiq.tree(), suc, err);
+        };
+
+        connection.prototype.join = function ( options ) {
+            var roomJid = this.context.appKey + "_" + options.roomId + '@conference.' + this.domain;
+            var room_nick = roomJid + "/" + this.context.userId;
+            var suc = options.success || EMPTYFN;
+            var err = options.error || EMPTYFN;
+            var errorFn = function ( ele ) {
+                err({
+                    type: EASEMOB_IM_CONNCTION_JOINROOM_ERROR
+                    , msg: '加入房间失败'
+                    , data: ele
+                });
+            };
+            var iq = $pres({
+                from: this.context.jid,
+                to: room_nick
+            })
+			.c("x", { xmlns: Strophe.NS.MUC });
+
+            this.context.stropheConn.sendIQ(iq.tree(), suc, errorFn);
+        };
+
+        connection.prototype.listRooms = function ( options ) {
+            var iq = $iq({
+              to: options.server||'conference.' + this.domain,
+              from: this.context.jid,
+              type: "get"
+            })
+			.c("query", { xmlns: Strophe.NS.DISCO_ITEMS });
+
+            var suc =options.success || EMPTYFN;
+            var completeFn = function ( result ) {
+                var rooms = [];
+                rooms = _parseRoomFn(result);
+                suc(rooms);
+            }
+            var err =  options.error || EMPTYFN;
+            var errorFn = function ( ele ) {
+                err({
+                    type: EASEMOB_IM_CONNCTION_GETROOM_ERROR
+                    , msg: '获取群组列表失败'
+                    , data: ele
+                });
+            }
+            this.context.stropheConn.sendIQ(iq.tree(), completeFn, errorFn);
+        };
+
+        connection.prototype.queryRoomMember = function ( options ) {
+            var domain = this.domain;
+            var members = [];
+            var iq= $iq({
+			  to: this.context.appKey + "_" + options.roomId + '@conference.' + this.domain
+			  , type: 'get'
+			})
+			.c('query', { xmlns: Strophe.NS.MUC+'#admin' })
+			.c('item', { affiliation: 'member' });
+
+            var suc =options.success || EMPTYFN;
+            var completeFn = function ( result ) {
+                var items = result.getElementsByTagName('item');
+
+                if ( items ) {
+                    for ( var i = 0; i < items.length; i++ ) {
+                        var item = items[i];
+                        var mem = {
+							jid: item.getAttribute('jid')
+							, affiliation: 'member'
+						};
+                        members.push(mem);
+                    }
+                }
+                suc(members);
+            };
+            var err =  options.error || EMPTYFN;
+            var errorFn = function ( ele ) {
+                err({
+                    type: EASEMOB_IM_CONNCTION_GETROOMMEMBER_ERROR
+                    , msg: '获取群组成员列表失败'
+                    , data: ele
+                });
+            };
+            this.context.stropheConn.sendIQ(iq.tree(), completeFn, errorFn);
+        };
+
+        connection.prototype.queryRoomInfo = function ( options ) {
+            var domain = this.domain;
+            var iq= $iq({
+			  to:  this.context.appKey+"_"+options.roomId+'@conference.' + domain,
+			  type: "get"
+			}).c("query", { xmlns: Strophe.NS.DISCO_INFO });
+
+            var suc =options.success || EMPTYFN;
+            var members = [];
+            var completeFn = function ( result ) {
+                var fields = result.getElementsByTagName('field');
+                if ( fields ) {
+                    for ( var i = 0; i < fields.length; i++ ) {
+                        var field = fields[i];
+                        if ( field.getAttribute('label') === 'owner' ) {
+                            var mem = {
+                                jid: (field.textContent || field.text) + "@" + domain
+                                , affiliation: 'owner'
+                            };
+                            members.push(mem);
+                        }
+                    }
+                }
+                suc(members);
+            };
+            var err =  options.error || EMPTYFN;
+            var errorFn = function ( ele ) {
+                err({
+                    type: EASEMOB_IM_CONNCTION_GETROOMINFO_ERROR
+                    , msg: '获取群组信息失败'
+                    , data: ele
+                });
+            };
+            this.context.stropheConn.sendIQ(iq.tree(), completeFn, errorFn);
+        };
+
+        connection.prototype.queryRoomOccupants = function ( options ) {
+            var suc =options.success || EMPTYFN;
+            var completeFn = function ( result ) {
+                var occupants = [];
+                occupants = _parseRoomOccupantsFn(result);
+                suc(occupants);
+            }
+            var err =  options.error || EMPTYFN;
+            var errorFn = function ( ele ) {
+                err({
+                    type: EASEMOB_IM_CONNCTION_GETROOMOCCUPANTS_ERROR
+                    , msg: '获取群组出席者列表失败'
+                    , data: ele
+                });
+            };
+            var attrs = {
+              xmlns: Strophe.NS.DISCO_ITEMS
+            };
+            var info = $iq({
+              from: this.context.jid
+              , to: this.context.appKey + "_" + options.roomId + '@conference.' + this.domain
+              , type: 'get'
+            }).c('query', attrs);
+            this.context.stropheConn.sendIQ(info.tree(), completeFn, errorFn);
+        };
+
+        connection.prototype.setUserSig = function ( desc ) {
+            var dom = $pres({ xmlns: 'jabber:client' });
+            desc = desc || "";
+            dom.c("status").t(desc);
+            this.sendCommand(dom.tree());
+        };
+
+        connection.prototype.setPresence = function ( type, status ) {
+            var dom = $pres({ xmlns: 'jabber:client' });
+            if ( type ) {
+                if ( status ) {
+                    dom.c("show").t(type);
+                    dom.up().c("status").t(status);
+                } else {
+                    dom.c("show").t(type);
+                }
+            }
+            this.sendCommand(dom.tree());
+        };
+
+        connection.prototype.getPresence = function () {
+            var dom = $pres({ xmlns: 'jabber:client' });
+            var conn = this;
+            this.sendCommand(dom.tree());
+        };
+
+        connection.prototype.ping = function ( options ) {
+            options = options || {};
+            var jid = _getJid(options,this);
+
+            var dom = $iq({
+                from: this.context.jid || ''
+                , to: jid
+                , type: "get"
+            }).c("ping", { xmlns: "urn:xmpp:ping" });
+
+            suc = options.success || EMPTYFN;
+            error = options.error || this.onError;
+            var failFn = function ( ele ) {
+                error({
+                    type: EASEMOB_IM_CONNCTION_PING_ERROR
+                    , msg: 'ping失败'
+                    , data: ele
+                });
+            };
+            if ( this.isOpened() ) {
+                this.context.stropheConn.sendIQ(dom.tree(),suc,failFn);
+            } else {
+                error({
+                    type: EASEMOB_IM_CONNCTION_OPEN_ERROR
+                    , msg: '连接还未建立,请先登录或等待登录处理完毕'
+                });
+            }
+            return;
+        };
+
+        connection.prototype.isOpened = function () {
+            return this.context.status == STATUS_OPENED;
+        };
+
+        connection.prototype.isOpening = function () {
+            var status = this.context.status;
+            return status == STATUS_DOLOGIN_USERGRID || status == STATUS_DOLOGIN_IM;
+        };
+
+        connection.prototype.isClosing = function () {
+            return this.context.status == STATUS_CLOSING;
+        };
+
+        connection.prototype.isClosed = function () {
+            return this.context.status == STATUS_CLOSED;
+        };
+
+        connection.prototype.clear = function () {
+            var key = this.context.appKey;
+            this.context = {
+                status: STATUS_INIT
+                , appKey: key
+            };
+        };
+
+		//rooms list
+		connection.prototype.getChatRooms = function ( options ) {
+
+			if ( !Utils.isCanSetRequestHeader ) {
+				conn.onError({
+					type: EASEMOB_IM_CONNCTION_AUTH_ERROR
+					, msg: "当前浏览器不支持聊天室功能"
+				});
+				return;
+			}
+
+            var conn = this,
+				token = options.accessToken || this.context.accessToken;
+
+            if ( token ) {
+                var apiUrl = options.apiUrl || (this.https ? 'https' : 'http') + '://a1.easemob.com';
+                var appName = this.context.appName;
+                var orgName = this.context.orgName;
+
+				if ( !appName || !orgName ) {
+					conn.onError({
+						type: EASEMOB_IM_CONNCTION_AUTH_ERROR
+						, msg: "token无效"
+						, data: null 
+					});
+					return;
+				}
+
+                var suc = function ( data, xhr ) {
+					typeof options.success === 'function' && options.success(data);
+                };
+
+                var error = function ( res, xhr, msg ) {
+                    if ( res.error && res.error_description ) {
+                        conn.onError({
+                            type: EASEMOB_IM_LOAD_CHATROOM_ERROR
+                            , msg: "获取聊天室失败," + res.error_description
+                            , data: res
+                            , xhr: xhr
+                        });
+                    }
+                };
+
+                var opts = {
+                    url: apiUrl + "/" + orgName + "/" + appName + "/chatrooms"
+                    , dataType: 'json'
+					, type: 'get'
+					, headers: {Authorization: 'Bearer ' + token}
+                    , success: suc || EMPTYFN
+                    , error: error || EMPTYFN
+                };
+                Utils.ajax(opts);
+            } else {
+				conn.onError({
+					type: EASEMOB_IM_CONNCTION_AUTH_ERROR
+					, msg: "token无效"
+					, data: null 
+				});               
+            }
+
+        };
+
+		connection.prototype.joinChatRoom = function ( options ) {
+            var roomJid = this.context.appKey + "_" + options.roomId + '@conference.' + this.domain;
+            var room_nick = roomJid + "/" + this.context.userId;
+            var suc = options.success || EMPTYFN;
+            var err = options.error || EMPTYFN;
+            var errorFn = function ( ele ) {
+                err({
+                    type: EASEMOB_IM_CONNCTION_JOINROOM_ERROR
+                    , msg: '加入聊天室失败'
+                    , data: ele
+                });
+            };
+
+			var iq = $pres({
+                from: this.context.jid,
+                to: room_nick
+            })
+			.c("x", { xmlns: Strophe.NS.MUC + '#user' })
+			.c('item', { affiliation: 'member', role: 'participant' })
+			.up().up()
+			.c("roomtype", { xmlns: "easemob:x:roomtype", type: "chatroom" });
+
+            this.context.stropheConn.sendIQ(iq.tree(), suc, errorFn);
+        };
+
+		connection.prototype.quitChatRoom = function ( options ) {
+			var roomJid = this.context.appKey + "_" + options.roomId + '@conference.' + this.domain;
+            var room_nick = roomJid + "/" + this.context.userId;
+            var suc = options.success || EMPTYFN;
+            var err = options.error || EMPTYFN;
+            var errorFn = function ( ele ) {
+                err({
+                    type: EASEMOB_IM_CONNCTION_JOINROOM_ERROR
+                    , msg: '退出房间失败'
+                    , data: ele
+                });
+            };
+            var iq = $pres({
+                from: this.context.jid,
+                to: room_nick,
+				type: 'unavailable'
+            })
+			.c("x", { xmlns: Strophe.NS.MUC + '#user' })
+			.c('item', { affiliation: 'none', role: 'none' })
+			.up().up()
+			.c("roomtype", { xmlns: "easemob:x:roomtype", type: "chatroom" });
+
+            this.context.stropheConn.sendIQ(iq.tree(), suc, errorFn);
+        };
+
+        return connection;
+    }());
+
+
+
+    /*
+     * CONST     
+    */
+    var EMPTYFN = function() {};
+
+    tempIndex = 0;
+    EASEMOB_IM_CONNCTION_USER_NOT_ASSIGN_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_OPEN_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_AUTH_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_ATTACH_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_ATTACH_USERGRID_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_REOPEN_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_SERVER_CLOSE_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_SERVER_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_IQ_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_PING_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_NOTIFYVERSION_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_GETROSTER_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_CROSSDOMAIN_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_LISTENING_OUTOF_MAXRETRIES = tempIndex++;
+    EASEMOB_IM_CONNCTION_RECEIVEMSG_CONTENTERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_JOINROOM_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_GETROOM_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_GETROOMINFO_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_GETROOMMEMBER_ERROR = tempIndex++;
+    EASEMOB_IM_CONNCTION_GETROOMOCCUPANTS_ERROR = tempIndex++;
+    
+    EASEMOB_IM_UPLOADFILE_BROWSER_ERROR = tempIndex++;
+    EASEMOB_IM_UPLOADFILE_ERROR = tempIndex++;
+    EASEMOB_IM_UPLOADFILE_NO_LOGIN = tempIndex++;
+    EASEMOB_IM_UPLOADFILE_NO_FILE = tempIndex++;
+    EASEMOB_IM_DOWNLOADFILE_ERROR = tempIndex++;
+    EASEMOB_IM_DOWNLOADFILE_NO_LOGIN = tempIndex++;
+    EASEMOB_IM_DOWNLOADFILE_BROWSER_ERROR = tempIndex++;
+
+    EASEMOB_IM_RESISTERUSER_ERROR = tempIndex++;
+
+	EASEMOB_IM_LOAD_CHATROOM_ERROR = tempIndex++;
+	EASEMOB_IM_JOIN_CHATROOM_ERROR = tempIndex++;
+	EASEMOB_IM_QUIT_CHATROOM_ERROR = tempIndex++;
+
+    tempIndex = 0;
+    EASEMOB_IM_MESSAGE_REC_TEXT = tempIndex++;
+    EASEMOB_IM_MESSAGE_REC_TEXT_ERROR = tempIndex++;
+    EASEMOB_IM_MESSAGE_REC_EMOTION = tempIndex++;
+    EASEMOB_IM_MESSAGE_REC_PHOTO = tempIndex++;
+    EASEMOB_IM_MESSAGE_REC_AUDIO = tempIndex++;
+    EASEMOB_IM_MESSAGE_REC_AUDIO_FILE = tempIndex++;
+    EASEMOB_IM_MESSAGE_REC_VEDIO = tempIndex++;
+    EASEMOB_IM_MESSAGE_REC_VEDIO_FILE = tempIndex++;
+    EASEMOB_IM_MESSAGE_REC_FILE = tempIndex++;
+
+    EASEMOB_IM_MESSAGE_SED_TEXT = tempIndex++;
+    EASEMOB_IM_MESSAGE_SED_EMOTION = tempIndex++;
+    EASEMOB_IM_MESSAGE_SED_PHOTO = tempIndex++;
+    EASEMOB_IM_MESSAGE_SED_AUDIO = tempIndex++;
+    EASEMOB_IM_MESSAGE_SED_AUDIO_FILE = tempIndex++;
+    EASEMOB_IM_MESSAGE_SED_VEDIO = tempIndex++;
+    EASEMOB_IM_MESSAGE_SED_VEDIO_FILE = tempIndex++;
+    EASEMOB_IM_MESSAGE_SED_FILE = tempIndex++;
+    EASEMOB_IM_FILESIZE_LIMIT = 10485760;
+
+
+    tempIndex = 0;
+    var STATUS_INIT = tempIndex++;
+    var STATUS_DOLOGIN_USERGRID = tempIndex++;
+    var STATUS_DOLOGIN_IM = tempIndex++;
+    var STATUS_OPENED = tempIndex++;
+    var STATUS_CLOSING = tempIndex++;
+    var STATUS_CLOSED = tempIndex++;
+
+    delete tempIndex;
+
+
+    Easemob.im.Connection = Connection;
+    Easemob.im.EmMessage = EmMessage;
+    Easemob.im.Helper = Easemob.im.Utils = Utils;
+    window.Easemob = Easemob;
+
+}(window, undefined));
+
+/**
+ * common
+ */
+window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
+
+Date.prototype.format = function ( fmt ) {
+	var o = {
+		'M+': this.getMonth() + 1,	//月份
+		'd+': this.getDate(),		//日
+		'h+': this.getHours(),		//小时
+		'm+': this.getMinutes(),	//分
+		's+': this.getSeconds()		//秒
+	};
+
+	if ( /(y+)/.test(fmt) ) {
+		fmt = fmt.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
+	}
+
+	for ( var k in o ) {
+		if ( new RegExp('(' + k + ')').test(fmt) ) {
+			fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? o[k] : (('00' + o[k]).substr(('' + o[k]).length)));
+		}
+	}
+	return fmt;   
+};
+
+/** PrivateFunction: Array.prototype.indexOf
+ *  Return the index of an object in an array.
+ *
+ *  This function is not supplied by some JavaScript implementations, so
+ *  we provide it if it is missing.  This code is from:
+ *  http://developer.mozilla.org/En/Core_JavaScript_1.5_Reference:Objects:Array:indexOf
+ *
+ *  Parameters:
+ *    (Object) elt - The object to look for.
+ *    (Integer) from - The index from which to start looking. (optional).
+ *
+ *  Returns:
+ *    The index of elt in the array or -1 if not found.
+ */
+if(!Array.prototype.indexOf){
+    Array.prototype.indexOf = function(elt /*, from*/){
+        var len = this.length;
+
+        var from = Number(arguments[1]) || 0;
+        from = (from < 0) ? Math.ceil(from) : Math.floor(from);
+        if (from < 0) {
+            from += len;
+        }
+
+        for (; from < len; from++) {
+            if (from in this && this[from] === elt) {
+                return from;
+            }
+        }
+
+        return -1;
+    };
+}
+
+/* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim */
+if (!String.prototype.trim) {
+  String.prototype.trim = function () {
+    return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+  };
+}
+/**
+ * utils
+ */
+;(function () {
+	window.easemobim = window.easemobim || {};
+
+	var _isAndroid = /android/i.test(navigator.useragent);
+	var _isMobile = /mobile/i.test(navigator.userAgent);
+	var _getIEVersion = (function () {
+			var result, matches;
+
+			matches = navigator.userAgent.match(/MSIE (\d+)/i);
+			if(matches && matches[1]) {
+				result = +matches[1];
+			}
+			else{
+				result = 9999;
+			}
+			return result;
+		}());
+
+	easemobim.utils = {
+        isTop: window.top === window.self
+		, nodeListType: {
+			'[object Object]': true,
+			'[object NodeList]': true,
+			'[object HTMLCollection]': true,
+			'[object Array]': true
+		}
+		, convertFalse: function ( obj ) {
+			obj = typeof obj === 'undefined' ? '' : obj;
+			return obj === 'false' ? false : obj;
+		}
+		, $Dom: function ( id ) {
+			return document.getElementById(id);
+		}
+		, each: function ( obj, fn ) {
+			for ( var i in obj ) {
+				if ( obj.hasOwnProperty(i) ) {
+					typeof fn === 'function' && fn(i, obj[i]);
+				}
+			}
+		}
+		, $Remove: function ( target ) {
+			if (!target) return;
+
+			if ( target.remove ) {
+				target.remove();
+			} else {
+				target.parentNode && parentNode.removeChild(target);
+			}
+		}
+		, siblings: function ( currentNode, classFilter ) {
+			if ( !currentNode || !currentNode.parentNode ) {
+				return null;
+			}
+			var nodes = currentNode.parentNode.childNodes,
+				result = [];
+
+			for ( var d = 0, len = nodes.length; d < len; d++ ) {
+				if ( nodes[d].nodeType === 1 && nodes[d] != currentNode ) {
+					if ( classFilter && this.hasClass(nodes[d], classFilter) ) {
+						result.push(nodes[d]);
+					}
+				}
+			}
+			return result;
+		}
+		, insertBefore: function ( parentNode, newDom, curDom ) {
+			if ( parentNode && newDom ) {
+				if ( parentNode.childNodes.length === 0 ) {
+					parentNode.appendChild(newDom);
+				} else {
+					parentNode.insertBefore(newDom, curDom || null);
+				}
+			}
+		}
+		, getIEVersion: _getIEVersion
+		, live: function ( target, ev, fn, wrapper ) {
+			var me = this,
+				el = wrapper || document;
+			me.on(el, ev, function ( e ) {
+				var ev = e || window.event,
+					tar = ev.target || ev.srcElement,
+					targetList = target.split('.').length < 2 ? el.getElementsByTagName(target) : me.$Class(target);
+
+				if ( targetList.length ) {
+					for ( var len = targetList.length, i = 0; i < len; i++ ) {
+						if ( targetList[i] == tar || targetList[i] == tar.parentNode ) {
+							fn.apply(targetList[i] == tar ? tar : tar.parentNode, arguments);
+						}   
+					}
+				} else {
+					if ( targetList == target ) {
+						fn.apply( target, arguments );
+					}
+				}
+			});
+		}
+		, on: (function () {
+			var bind = function ( target, ev, fn, isCapture ) {
+				if ( !ev ) { return false; }
+
+				var evArr = ev.split(' ');
+
+				for ( var i = 0, l = evArr.length; i < l; i++ ) {
+					if ( target.addEventListener ) {
+						target.addEventListener(evArr[i], fn, isCapture);
+					} else if ( target.attachEvent ) {
+						target['_' + evArr[i]] = function () {
+							fn.apply(target, arguments);
+						}
+						target.attachEvent('on' + evArr[i], target['_' + evArr[i]]);
+					} else {
+						target['on' + evArr[i]] = fn;
+					}
+				}
+			};
+			return function ( target, ev, fn, isCapture ) {
+				if ( Object.prototype.toString.call(target) in this.nodeListType && target.length ) {
+					for ( var i = 0, l = target.length; i < l; i++ ) {
+						target[i].nodeType === 1 && bind(target[i], ev, fn, isCapture);
+					}
+				} else {
+					bind(target, ev, fn, isCapture);
+				}
+			};
+		}())
+		, remove: function ( target, ev, fn ) {
+			if ( !target ) {
+				return;
+			}
+			if ( target.removeEventListener ) {
+				target.removeEventListener(ev, fn);
+			} else if ( target.detachEvent ) {
+				target.detachEvent('on' + ev, target['_' + ev]);
+			} else {
+				target['on' + ev] = null;
+			}
+		}
+		, one: function ( target, ev, fn, isCapture ) {
+			var me = this,
+				tfn = function () {
+					fn.apply(this, arguments);
+					me.remove(target, ev, tfn);
+				};
+			me.on(target, ev, tfn, isCapture);  
+		}
+        // 触发事件，对于ie8只支持原生事件，不支持自定义事件
+        , trigger: function(element, eventName){
+            if (document.createEvent) {
+                var ev = document.createEvent('HTMLEvents');
+                ev.initEvent(eventName, true, false);
+                element.dispatchEvent(ev);
+            } else {
+                element.fireEvent('on' + eventName);
+            }
+        }
+		, extend: function ( object, extend ) {
+			var tmp;
+			for ( var o in extend ) {
+				if ( extend.hasOwnProperty(o) ) {
+					var t = Object.prototype.toString.call(extend[o]);
+					if ( t === '[object Array]' ) {
+						object[o] = [];
+						this.extend(object[o], extend[o]);
+					} else if ( t === '[object Object]' ) {
+						object[o] = {};
+						this.extend(object[o], extend[o]);
+					} else {
+						object[o] = extend[o];
+					}
+				}
+			}
+			return object;
+		}
+		, addClass: function ( target, className ) {
+			var i, l;
+
+			if (!target) { return; }
+
+			if ( Object.prototype.toString.call(target) in this.nodeListType && target.length ) {
+				for ( i = 0, l = target.length; i < l; i++ ) {
+					if ( !this.hasClass(target[i], className) && typeof target[i].className !== 'undefined') {
+						target[i].className += ' ' + className;
+					}
+				}
+			} else {
+				if ( !this.hasClass(target, className) ) {
+					target.className += ' ' + className;
+				}
+			}
+			return target;
+		}
+		, removeClass: function ( target, className ) {
+			var i, l;
+
+			if (!target) { return; }
+
+			if (target.length && Object.prototype.toString.call(target) in this.nodeListType) {
+				for ( i = 0, l = target.length; i < l; i++ ) {
+					if ( typeof target[i].className !== 'undefined' && this.hasClass(target[i], className) ) {
+						target[i].className = (
+							(' ' + target[i].className + ' ')
+								.replace(new RegExp(' ' + className + ' ', 'g'), ' ')
+						).trim();
+					}
+				}
+			} else {
+				if ( typeof target.className !== 'undefined' && this.hasClass(target, className) ) {
+					target.className = (
+						(' ' + target.className + ' ')
+							.replace(new RegExp(' ' + className + ' ', 'g'), ' ')
+					).trim();
+				}
+			}
+			return target;
+		}
+		, hasClass: function ( target, className ) {
+			if (!target) { return false;}
+
+			return !!~(' ' + target.className + ' ').indexOf(' ' + className + ' ');
+		}
+		, toggleClass: function(target, className, stateValue) {
+			var ifNeedAddClass;
+
+			if(!target || ! className) return;
+
+			if(typeof stateValue !== 'undefined'){
+				ifNeedAddClass = stateValue;
+			}
+			else{
+				ifNeedAddClass = !this.hasClass(target, className);
+			}
+
+			if(ifNeedAddClass){
+				this.addClass(target, className);
+			}
+			else{
+				this.removeClass(target, className);
+			}
+		}
+		, $Class: function ( DomDotClass, parentNode ) {
+			var temp = DomDotClass.split('.'),
+				tag = temp[0],
+				className = temp[1];
+
+			var parent = parentNode || document;
+			if ( parent.getElementsByClassName ) {
+				return parent.getElementsByClassName(className);
+			} else {
+				var tags = parent.getElementsByTagName(tag),
+					arr = [];
+				for ( var i = 0, l = tags.length; i < l; i++ ) {
+					if ( this.hasClass(tags[i], className) ) {
+						arr.push(tags[i]);
+					}
+				}
+				tags = null;
+				return arr;
+			}
+		}
+		, html: function ( dom, html ) {
+			if ( !dom ) {
+				return;
+			}
+			if ( _getIEVersion && _getIEVersion < 9 && dom.nodeName === 'STYLE' ) {
+				dom.styleSheet.cssText = html || '';
+			} else {
+				if ( typeof html === 'undefined' ) {
+					return dom.innerHTML;
+				} else {
+					dom.innerHTML = html;
+				}
+			}
+			return dom;
+		}
+		, encode: function ( str ) {
+			if ( !str || str.length === 0 ) {
+				return '';
+			}
+			var s = '';
+			s = str.replace(/&amp;/g, "&");
+			s = s.replace(/<(?=[^o][^)])/g, "&lt;");
+			s = s.replace(/>/g, "&gt;");
+			//s = s.replace(/\'/g, "&#39;");
+			s = s.replace(/\"/g, "&quot;");
+			return s;
+		}
+		, decode: function ( str ) {
+			if ( !str || str.length === 0 ) {
+				return '';
+			}
+			var s = '';
+			s = str.replace(/&amp;/g, "&");
+			s = s.replace(/&#39;/g, "'");
+			s = s.replace(/&lt;o\)/g, "<o)");
+			return s;
+		}
+		, query: function ( key ) {
+			var reg = new RegExp('[?&]' + key + '=([^&]*)(?=&|$)');
+			var matches = reg.exec(location.search);
+			return matches ? matches[1] : '';
+		}
+		, isAndroid: _isAndroid
+		, isMobile: _isMobile
+		, click: _isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click'
+		, isQQBrowserInAndroid: _isAndroid && /MQQBrowser/.test(navigator.userAgent)
+		// detect if the browser is minimized
+		, isMin: function () {
+			return document.visibilityState && document.visibilityState === 'hidden' || document.hidden;
+		}
+        , setStore: function ( key, value ) {
+            if ( typeof value === 'undefined' ) {
+                return;
+            }
+            try {
+                localStorage.setItem(key, value);
+            } catch ( e ) {}
+        }
+        , getStore: function ( key ) {
+            try {
+                return localStorage.getItem(key);
+            } catch ( e ) {}
+        }
+        , clearStore: function ( key ) {
+            try {
+                localStorage.removeItem(key);
+            } catch ( e ) {}
+        }
+        , clearAllStore: function () {
+            try {
+                localStorage.clear();
+            } catch ( e ) {}
+        }
+		, set: function ( key, value, local ) {
+			if ( local && 'localStorage' in window ) {
+				localStorage.setItem(encodeURIComponent(key), encodeURIComponent(value));
+			} else {
+				var date = new Date();
+				date.setTime(date.getTime() + 30*24*3600*1000);
+				document.cookie = encodeURIComponent(key) + '=' + encodeURIComponent(value) + ';path=/;expires=' + date.toGMTString();
+			}
+		}
+		, get: function ( key, local ) {
+			if ( local && 'localStorage' in window ) {
+				var value = localStorage.getItem(encodeURIComponent(key));
+				return value ? value : ''; 
+			} else {
+				var results = document.cookie.match('(^|;) ?' + encodeURIComponent(key) + '=([^;]*)(;|$)'); 
+				return results ? decodeURIComponent(results[2]) : '';
+			}
+		}
+		, getAvatarsFullPath: function ( url, domain ) {
+			var returnValue = null;
+
+			if ( !url ) return returnValue;
+
+			url = url.replace(/^(https?:)?\/\/?/, '');
+			var isKefuAvatar = url.indexOf('img-cn') > 0 ? true : false;
+			var ossImg = url.indexOf('ossimages') > 0 ? true : false;
+
+			return isKefuAvatar && !ossImg ? domain + '/ossimages/' + url : '//' + url;
+		}
+		, getConfig: function ( key, searchScript ) {//get config from current script
+			var that;
+
+			if ( key && searchScript ) {
+				var scripts = document.scripts;
+				for ( var s = 0, l = scripts.length; s < l; s++ ) {
+					if ( scripts[s].src && 0 < scripts[s].src.indexOf(key) ) {
+						that = scripts[s].src;
+						break;
+					}
+				}
+			} else if ( key ) {
+				that = key;
+			} else {
+				that = location.href;
+			}
+
+			var obj = {};
+			if ( !that ) {
+				return {
+					str: ''
+					, json: obj
+					, domain: ''
+				};
+			}
+
+			var tmp,
+				idx = that.indexOf('?'),
+				sIdx = that.indexOf('//') > -1 ? that.indexOf('//') : 0,
+				domain = that.slice(sIdx, that.indexOf('/', sIdx + 2)),
+				arr = that.slice(idx+1).split('&');
+			
+			obj.src = that.slice(0, idx);
+			for ( var i = 0, len = arr.length; i < len; i++ ) {
+				tmp = arr[i].split('=');
+				obj[tmp[0]] = tmp.length > 1 ? decodeURIComponent(tmp[1]) : '';
+			}
+			return {
+				str: that
+				, json: obj
+				, domain: domain
+			};
+		}
+		, updateAttribute: function ( link, attr, path ) {
+			var url = link || location.protocol + path + '/im.html?tenantId=';
+
+			for ( var o in attr ) {
+				if ( attr.hasOwnProperty(o) && typeof attr[o] !== 'undefined' ) {
+					if ( url.indexOf(o + '=') < 0 ) {
+						url += '&' + o + '=' + (attr[o] !== '' ? attr[o] : '');
+					} else {
+						url = url.replace(new RegExp(o + '=[^&#?]*', 'gim'), o + '=' + (attr[o] !== '' ? attr[o] : ''));
+					}
+				}
+			}
+			return url;
+		},
+		copy: function ( obj ) {
+			return this.extend({}, obj);
+		},
+        code: (function () {
+            var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+
+            var obj = {
+                /**
+                 * Encodes a string in base64
+                 *
+                 * @param {String}
+                 *            input The string to encode in base64.
+                 */
+                encode : function ( input ) {
+                    var output = "";
+                    var chr1, chr2, chr3;
+                    var enc1, enc2, enc3, enc4;
+                    var i = 0;
+
+                    do {
+                        chr1 = input.charCodeAt(i++);
+                        chr2 = input.charCodeAt(i++);
+                        chr3 = input.charCodeAt(i++);
+
+                        enc1 = chr1 >> 2;
+                        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+                        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+                        enc4 = chr3 & 63;
+
+                        if ( isNaN(chr2) ) {
+                            enc3 = enc4 = 64;
+                        } else if ( isNaN(chr3) ) {
+                            enc4 = 64;
+                        }
+
+                        output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2)
+                                + keyStr.charAt(enc3) + keyStr.charAt(enc4);
+                    } while ( i < input.length );
+
+                    return output;
+                },
+
+                byteEncode : function ( bytes ) {
+                    var output = "";
+                    var chr1, chr2, chr3;
+                    var enc1, enc2, enc3, enc4;
+                    var i = 0;
+
+                    do {
+                        chr1 = bytes[i++];
+                        chr2 = bytes[i++];
+                        chr3 = bytes[i++];
+
+                        enc1 = chr1 >> 2;
+                        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+                        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+                        enc4 = chr3 & 63;
+
+                        if ( isNaN(chr2) ) {
+                            enc3 = enc4 = 64;
+                        } else if ( isNaN(chr3) ) {
+                            enc4 = 64;
+                        }
+
+                        output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2)
+                                + keyStr.charAt(enc3) + keyStr.charAt(enc4);
+                    } while ( i < bytes.length );
+
+                    return output;
+                },
+
+                /**
+                 * Decodes a base64 string.
+                 *
+                 * @param {String}
+                 *            input The string to decode.
+                 */
+                decode : function ( input ) {
+                    var output = "";
+                    var chr1, chr2, chr3;
+                    var enc1, enc2, enc3, enc4;
+                    var i = 0;
+
+                    // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
+                    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+
+                    do {
+                        enc1 = keyStr.indexOf(input.charAt(i++));
+                        enc2 = keyStr.indexOf(input.charAt(i++));
+                        enc3 = keyStr.indexOf(input.charAt(i++));
+                        enc4 = keyStr.indexOf(input.charAt(i++));
+
+                        chr1 = (enc1 << 2) | (enc2 >> 4);
+                        chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+                        chr3 = ((enc3 & 3) << 6) | enc4;
+
+                        output = output + String.fromCharCode(chr1);
+
+                        if ( enc3 != 64 ) {
+                            output = output + String.fromCharCode(chr2);
+                        }
+                        if ( enc4 != 64 ) {
+                            output = output + String.fromCharCode(chr3);
+                        }
+                    } while ( i < input.length );
+
+                    return output;
+                }
+            };
+
+            return obj;
+        })()
+	};
+}());
+
+
+
+(function(){
+	var _const = {
+		agentStatusText: {
+			Idle: '(离线)',
+			Online: '(空闲)',
+			Busy: '(忙碌)',
+			Leave: '(离开)',
+			Hidden: '(隐身)',
+			Offline: '(离线)',
+			Logout: '(离线)',
+			Other: ''
+		},
+		// 坐席状态，dom上的className值
+		agentStatusClassName: {
+			Idle: 'online',
+			Online: 'online',
+			Busy: 'busy',
+			Leave: 'leave',
+			Hidden: 'hidden',
+			Offline: 'offline',
+			Logout: 'offline',
+			Other: 'em-hide'
+		},
+		eventMessageText: {
+			TRANSFERING: '会话转接中，请稍候',
+			TRANSFER: '会话已被转接至其他客服',
+			LINKED: '会话已被客服接起',
+			CLOSED: '会话已结束',
+			NOTE: '当前暂无客服在线，请您留下联系方式，稍后我们将主动联系您',
+			CREATE: '会话创建成功'
+		}
+	};
+
+	window.easemobim = window.easemobim || {};
+	easemobim._const = _const;
+
+	//每页历史记录条数
+	easemobim.LISTSPAN = 10;
+
+	//支持的图片格式
+	easemobim.PICTYPE = {
+		jpg: true,
+		gif: true,
+		png: true,
+		bmp: true
+	};
+
+	//自定义支持的文件格式
+	easemobim.FILETYPE = {
+		zip: true,
+		doc: true,
+		docx: true,
+		txt: true,
+		gif: true
+	};
+
+	//loading element
+	easemobim.LOADING = !easemobim.utils.isQQBrowserInAndroid && easemobim.utils.getIEVersion > 9
+		? ["<div class='easemobWidget-loading'><svg version='1.1' id='图层_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px'",
+		" viewBox='0 0 70 70' enable-background='new 0 0 70 70' xml:space='preserve'>",
+		"<circle opacity='0.3' fill='none' stroke='#000000' stroke-width='4' stroke-miterlimit='10' cx='35' cy='35' r='11'/>",
+		"<path fill='none' stroke='#E5E5E5' stroke-width='4' stroke-linecap='round' stroke-miterlimit='10' d='M24,35c0-6.1,4.9-11,11-11",
+		"c2.8,0,5.3,1,7.3,2.8'/><image src='//kefu.easemob.com/webim/static/img/loading.gif' width='20' style='margin-top:10px;' /></svg></div>"].join('')
+		: "<img src='//kefu.easemob.com/webim/static/img/loading.gif' width='20' style='margin-top:10px;'/>";
+
+	//当前支持的所有主题
+	easemobim.THEME = {
+		'天空之城': {
+			css: 'body .theme-color{color:#42b8f4;}body .bg-color{background-color:#42b8f4}.border-color{border:1px solid #00a0e7}.hover-color{background-color:#7dcdf7}'
+		}
+		, '丛林物语': {
+			css: 'body .theme-color{color:#00b45f;}body .bg-color{background-color:#00b45f}.border-color{border:1px solid #009a51}.hover-color{background-color:#16cd77}'
+		}
+		, '红瓦洋房': {
+			css: 'body .theme-color{color:#b50e03;}body .bg-color{background-color:#b50e03}.border-color{border:1px solid #811916}.hover-color{background-color:#e92b25}'
+		}
+		, '鲜美橙汁': {
+			css: 'body .theme-color{color:#ffa000;}body .bg-color{background-color:#ffa000}.border-color{border:1px solid #f69000}.hover-color{background-color:#ffb63b}'
+		}
+		, '青草田间': {
+			css: 'body .theme-color{color:#9ec100;}body .bg-color{background-color:#9ec100}.border-color{border:1px solid #809a00}.hover-color{background-color:#bad921}'
+		}
+		, '湖光山色': {
+			css: 'body .theme-color{color:#00cccd;}body .bg-color{background-color:#00cccd}.border-color{border:1px solid #12b3b4}.hover-color{background-color:#38e6e7}'
+		}
+		, '冷峻山峰': {
+			css: 'body .theme-color{color:#5b799a;}body .bg-color{background-color:#5b799a}.border-color{border:1px solid #48627b}.hover-color{background-color:#6a8eb5}'
+		}
+		, '月色池塘': {
+			css: 'body .theme-color{color:#3977cf;}body .bg-color{background-color:#3977cf}.border-color{border:1px solid #2b599b}.hover-color{background-color:#548bdc}'
+		}
+	};
+
+	//表情包
+	Easemob.im.EMOTIONS = {
+		path: 'static/img/faces/'
+		, map: {
+			'[):]': 'ee_1.png',
+			'[:D]': 'ee_2.png',
+			'[;)]': 'ee_3.png',
+			'[:-o]': 'ee_4.png',
+			'[:p]': 'ee_5.png',
+			'[(H)]': 'ee_6.png',
+			'[:@]': 'ee_7.png',
+			'[:s]': 'ee_8.png',
+			'[:$]': 'ee_9.png',
+			'[:(]': 'ee_10.png',
+			'[:\'(]': 'ee_11.png',
+			'[:|]': 'ee_12.png',
+			'[(a)]': 'ee_13.png',
+			'[8o|]': 'ee_14.png',
+			'[8-|]': 'ee_15.png',
+			'[+o(]': 'ee_16.png',
+			'[<o)]': 'ee_17.png',
+			'[|-)]': 'ee_18.png',
+			'[*-)]': 'ee_19.png',
+			'[:-#]': 'ee_20.png',
+			'[:-*]': 'ee_21.png',
+			'[^o)]': 'ee_22.png',
+			'[8-)]': 'ee_23.png',
+			'[(|)]': 'ee_24.png',
+			'[(u)]': 'ee_25.png',
+			'[(S)]': 'ee_26.png',
+			'[(*)]': 'ee_27.png',
+			'[(#)]': 'ee_28.png',
+			'[(R)]': 'ee_29.png',
+			'[({)]': 'ee_30.png',
+			'[(})]': 'ee_31.png',
+			'[(k)]': 'ee_32.png',
+			'[(F)]': 'ee_33.png',
+			'[(W)]': 'ee_34.png',
+			'[(D)]': 'ee_35.png'
+		}
+	};
+}());
+;(function () {
+    var EMPTYFN = function () {};
+
+    var _createStandardXHR = function () {
+        try {
+            return new window.XMLHttpRequest();
+        } catch( e ) {
+            return false;
+        }
+    };
+    
+    var _createActiveXHR = function () {
+        try {
+            return new window.ActiveXObject( "Microsoft.XMLHTTP" );
+        } catch( e ) {
+            return false;
+        }
+    };
+
+    var emajax = function ( options ) {
+        var dataType = options.dataType || 'text';
+        var suc = options.success || EMPTYFN;
+        var error = options.error || EMPTYFN;
+        var xhr = _createStandardXHR () || _createActiveXHR();
+        xhr.onreadystatechange = function () {
+            if( xhr.readyState === 4 ){
+                var status = xhr.status || 0;
+                if ( status === 200 ) {
+                    if ( dataType === 'text' ) {
+                        suc(xhr.responseText, xhr);
+                        return;
+                    }
+                    if ( dataType === 'json' ) {
+                        try {
+                            var json = JSON.parse(xhr.responseText);
+                            suc(json,xhr);
+                        } catch ( e ) {}
+                        return;
+                    }
+                    suc(xhr.response || xhr.responseText,xhr);
+                    return;
+                } else {
+                    if ( dataType=='json'){
+                        try{
+                            var json = Utils.parseJSON(xhr.responseText);
+                            error(json, xhr, '服务器返回错误信息');
+                        } catch ( e ) {
+                            error(xhr.responseText,xhr, '服务器返回错误信息');
+                        }
+                        return;
+                    }
+                    error(xhr.responseText, xhr, '服务器返回错误信息');
+                    return;
+                }
+            }
+            if( xhr.readyState === 0 ) {
+                error(xhr.responseText, xhr, '服务器异常');
+            }
+        };
+
+        var type = options.type || 'GET',
+            data = options.data || {},
+            tempData = '';
+
+        if ( type.toLowerCase() === 'get' ) {
+            for ( var o in data ) {
+                if ( data.hasOwnProperty(o) ) {
+                    tempData += o + '=' + data[o] + '&';
+                }
+            }
+            tempData = tempData ? tempData.slice(0, -1) : tempData;
+            options.url += (options.url.indexOf('?') > 0 ? '&' : '?') + (tempData ? tempData + '&' : tempData) + '_v=' + new Date().getTime();
+            data = null;
+        } else {
+            data._v = new Date().getTime();
+            data = JSON.stringify(data);
+        }
+        xhr.open(type, options.url);
+        if ( xhr.setRequestHeader ) {
+
+            var headers = options.headers || {};
+
+            headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+
+            for ( var key in headers ) {
+                if ( headers.hasOwnProperty(key) ) {
+                    xhr.setRequestHeader(key, headers[key]);
+                }
+            }
+        }
+        xhr.send(data);
+        return xhr;
+    };
+    window.easemobim = window.easemobim || {};
+    window.easemobim.emajax = emajax;
+}());
+
+window.easemobim = window.easemobim || {};
+window.easemobIM = window.easemobIM || {};
+
+easemobIM.Transfer = easemobim.Transfer = (function () {
+	'use strict'
+   
+    var handleMsg = function ( e, callback, accept ) {
+        if ( JSON && JSON.parse ) {
+            var msg = e.data;
+            msg = JSON.parse(msg);
+
+
+            var flag = false;//兼容旧版的标志
+            if ( accept && accept.length ) {
+                for ( var i = 0, l = accept.length; i < l; i++ ) {
+                    if ( msg.key === accept[i] ) {
+                        flag = true;
+                        typeof callback === 'function' && callback(msg);
+                    }
+                }
+            } else {
+                typeof callback === 'function' && callback(msg);
+            }
+
+            if ( !flag && accept ) {
+                for ( var i = 0, l = accept.length; i < l; i++ ) {
+                    if ( accept[i] === 'data' ) {
+                        typeof callback === 'function' && callback(msg);
+                        break;
+                    }
+                }
+            }
+        }
+    };
+
+    var Message = function ( iframeId, key ) {
+        if ( !(this instanceof Message) ) {
+             return new Message(iframeId);
+        }
+        this.key = key;
+        this.iframe = document.getElementById(iframeId);
+        this.origin = location.protocol + '//' + location.host;
+    };
+
+    Message.prototype.send = function ( msg, to ) {
+
+        msg.origin = this.origin;
+
+        msg.key = this.key;
+
+        if ( to ) {
+            msg.to = to;
+        }
+
+        msg = JSON.stringify(msg);
+
+        if ( this.iframe ) {
+            this.iframe.contentWindow.postMessage(msg, '*');
+        } else {
+            window.parent.postMessage(msg, '*');
+        }
+        return this;
+    };
+
+    Message.prototype.listen = function ( callback, accept ) {
+		var me = this;
+
+        if ( window.addEventListener ) {
+            window.addEventListener('message', function ( e ) {
+                handleMsg.call(me, e, callback, accept);
+            }, false);
+        } else if ( window.attachEvent ) {
+            window.attachEvent('onmessage', function ( e ) {
+                handleMsg.call(me, e, callback, accept);
+            });
+        }
+        return this;
+    };
+
+    return Message;
+}());
+
+;(function () {
+    var getData = new easemobim.Transfer(null, 'api');
+
+    var createObject = function ( options ) {
+        var headers = null;
+
+        if ( options.msg.data && options.msg.data.headers ) {
+            headers = options.msg.data.headers;
+            delete options.msg.data.headers;
+        }
+
+        return {
+            url: options.url
+            , headers: headers
+            , data: options.excludeData ? null : options.msg.data
+            , type: options.type || 'GET'
+            , success: function ( info ) {
+                try {
+                    info = JSON.parse(info);
+                } catch ( e ) {}
+                getData.send({
+                    call: options.msg.api
+                    , timespan: options.msg.timespan
+                    , status: 0
+                    , data: info
+                });
+            }
+            , error: function ( info ) {
+                try {
+                    info = JSON.parse(info);
+                } catch ( e ) {}
+                getData.send({
+                    call: options.msg.api
+                    , timespan: options.msg.timespan
+                    , status: 1
+                    , data: info
+                });
+            }
+        };
+    };
+
+    getData.listen(function ( msg ) {
+
+        getData.targetOrigin = msg.origin;
+
+        switch ( msg.api ) {
+            case 'getRelevanceList':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/targetChannels', //done
+                    msg: msg
+                }));
+                break;
+            case 'getDutyStatus':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/showMessage',//done
+                    msg: msg
+                }));
+                break;
+            case 'getWechatVisitor':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/visitors/wechat/' + msg.data.openid + '?tenantId=' + msg.data.tenantId,//done
+                    msg: msg,
+                    type: 'POST'
+                }));
+                break;
+            case 'createVisitor':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/visitors?tenantId=' + msg.data.tenantId,//done
+                    msg: msg,
+                    type: 'POST'
+                }));
+                break;
+            case 'getSession':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
+                    msg: msg,
+                    excludeData: true
+                }));
+                break;
+            case 'getExSession':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data-ex?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
+                    msg: msg,
+                    excludeData: true
+                }));
+                break;
+            case 'getPassword':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/visitors/password',//done
+                    msg: msg
+                }));
+                break;
+            case 'getGroup':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
+                    msg: msg,
+                    excludeData: true
+                }));
+                break;
+            case 'getGroupNew':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/tenant/' + msg.data.tenantId + '/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
+                    msg: msg,
+                    excludeData: true
+                }));
+                break;
+            case 'getHistory':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/visitors/msgHistory',//done
+                    msg: msg
+                }));
+                break;
+            case 'getSlogan':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/notice/options',//done
+                    msg: msg
+                }));
+                break;
+			case 'getTheme':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/theme/options',//done
+                    msg: msg
+                }));
+                break;
+			case 'getSystemGreeting':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/welcome',//done
+                    msg: msg
+                }));
+                break;
+			case 'getRobertGreeting':
+                easemobim.emajax(createObject({
+                    url: '/v1/Tenants/' + msg.data.tenantId + '/robots/visitor/greetings/' + msg.data.originType + '?tenantId=' + msg.data.tenantId,//done
+                    msg: msg,
+                    excludeData: true
+                }));
+                break;
+			case 'sendVisitorInfo':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/tenants/' + msg.data.tenantId + '/visitors/' + msg.data.visitorId + '/attributes?tenantId=' + msg.data.tenantId,//done
+                    msg: msg,
+                    type: 'POST'
+                }));
+                break;
+            case 'getProject':
+                easemobim.emajax(createObject({
+                    url: '/tenants/' + msg.data.tenantId + '/projects',//done
+                    msg: msg
+                }));
+                break;
+            case 'createTicket':
+                easemobim.emajax(createObject({
+                    url: '/tenants/' + msg.data.tenantId + '/projects/' + msg.data.projectId + '/tickets?tenantId=' + msg.data.tenantId + '&easemob-target-username=' + msg.data['easemob-target-username'] + '&easemob-appkey=' + msg.data['easemob-appkey'] + '&easemob-username=' + msg.data['easemob-username'],//done
+                    msg: msg,
+                    type: 'POST'
+                }));
+                break;
+            case 'receiveMsgChannel':
+                easemobim.emajax(createObject({
+                    url: '/v1/imgateway/messages',
+                    msg: msg
+                }));
+                break;
+            case 'sendMsgChannel':
+                easemobim.emajax(createObject({
+                    url: '/v1/imgateway/messages?tenantId=' + msg.data.tenantId,
+                    msg: msg,
+                    type: 'POST'
+                }));
+                break;
+            case 'getAgentStatus':
+                easemobim.emajax(createObject({
+                    url: '/v1/tenants/' + msg.data.tenantId + '/agents/' + msg.data.agentUserId + '/agentstate',
+                    msg: msg
+                }));
+                break;
+            case 'getNickNameOption':
+                easemobim.emajax(createObject({
+                    url: '/v1/webimplugin/agentnicename/options?tenantId=' + msg.data.tenantId,
+                    msg: msg,
+                    excludeData: true
+                }));
+                break;
+            default:
+                break;
+        }
+    }, ['data']);
+}());
+
+//事件
+easemobim.EVENTS = {
+	NOTIFY: {
+		event: 'notify'
+	},
+	RECOVERY: {
+		event: 'recoveryTitle'
+	},
+	SHOW: {
+		event: 'showChat'
+	},
+    CLOSE: {
+		event: 'closeChat'
+	},
+    CACHEUSER: {
+		event: 'setUser'
+	},
+	DRAGREADY: {
+		event: 'dragReady'
+	},
+	DRAGEND: {
+		event: 'dragEnd'
+	},
+	SLIDE: {
+		event: 'titleSlide'
+	},
+	ONMESSAGE: {
+		event: 'onMessage'
+	},
+	ONSESSIONCLOSED: {
+		event: 'onSessionClosed'
+	},
+	EXT: {
+		event: 'ext'
+	},
+	TEXTMSG: {
+		event: 'textmsg'
+	},
+	ONREADY: {
+		event: 'onready'
+	}
+};
+
+/**
+ * autogrow
+ */
+easemobim.autogrow = (function () {
+	return function ( options ) {
+		var utils = easemobim.utils,
+			that = options.dom,
+			minHeight = that.getBoundingClientRect().height,
+			lineHeight = that.style.lineHeight;
+		
+		var shadow = document.createElement('div');
+		shadow.style.cssText = [
+			'position:absolute;',
+			'top:-10000px;',
+			'left:-10000px;',
+			'width:' + (that.getBoundingClientRect().width - 45) +'px;',
+			'font-size:' + (that.style.fontSize || 17) + 'px;',
+			'line-height:' + (that.style.lineHeight || 17) + 'px;',
+			'resize:none;',
+			'word-wrap:break-word;'].join('');
+		document.body.appendChild(shadow);
+
+		var update = function () {
+			var times = function ( string, number ) {
+				for ( var i = 0, r = ''; i < number; i++ ) {
+					r += string;
+				}
+				return r;
+			};
+			
+			var val = this.value
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/&/g, '&amp;')
+			.replace(/\n$/, '<br/>&nbsp;')
+			.replace(/\n/g, '<br/>')
+			.replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
+			
+			utils.html(shadow, val);
+			val && (this.style.height = Math.max(shadow.getBoundingClientRect().height + 17, minHeight) + 'px');
+			typeof options.callback == 'function' && options.callback();
+		};
+		
+		utils.on(that, 'change', update);
+		utils.on(that, 'keyup', update);
+		utils.on(that, 'keydown', update);
+		
+		options.update = function () {
+			update.apply(that);
+		}
+		update.apply(that);
+	};
+}());
+
+//文本消息
+Easemob.im.EmMessage.txt = function ( id ) {
+	this.id = id;
+	this.type = 'txt';
+	this.brief = '';
+	this.body = {};
+};
+Easemob.im.EmMessage.txt.prototype.get = function ( isReceive ) {
+	if ( !this.value ) {
+		return '';
+	}
+
+    this.value = this.emotion ? this.value : easemobim.utils.decode(this.value);
+    
+	return [
+		!isReceive ? "<div id='" + this.id + "' class='easemobWidget-right'>" : "<div class='easemobWidget-left'>",
+			"<div class='easemobWidget-msg-wrapper'>",
+				"<i class='easemobWidget-corner'></i>",
+				this.id ? "<div id='" + this.id + "_failed' data-type='txt' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
+				this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
+				"<div class='easemobWidget-msg-container'>",
+					"<pre>" + Easemob.im.Utils.parseLink(this.emotion ? this.value : Easemob.im.Utils.parseEmotions(this.value)) + "</pre>",
+				"</div>",
+			"</div>",
+		"</div>"
+	].join('');
+};
+Easemob.im.EmMessage.txt.prototype.set = function ( opt ) {
+	this.value = opt.value;
+	this.emotion = opt.emotion;
+	if ( this.value ) {
+		this.brief = (opt.brief || this.value).replace(/\n/mg, '');
+		this.brief = (this.brief.length > 15 ? this.brief.slice(0, 15) + '...' : this.brief);
+	}
+	this.body = {
+		id: this.id
+		, to: opt.to
+		, msg: this.value 
+		, type : this.type
+		, ext: opt.ext || {}
+		, success: opt.success
+		, fail: opt.fail
+	};
+};
+
+//cmd消息
+Easemob.im.EmMessage.cmd = function ( id ) {
+	this.id = id;
+	this.type = 'cmd';
+	this.body = {};
+};
+Easemob.im.EmMessage.cmd.prototype.set = function ( opt ) {
+	this.value = '';
+
+	this.body = {
+		to: opt.to
+		, action: opt.action
+		, msg: this.value 
+		, type : this.type 
+		, ext: opt.ext || {}
+	};
+};
+
+//图片消息
+Easemob.im.EmMessage.img = function ( id ) {
+	this.id = id;
+	this.type = 'img';
+	this.brief = '图片';
+	this.body = {};
+}
+Easemob.im.EmMessage.img.prototype.get = function ( isReceive ) {
+	return [
+		!isReceive ? "<div id='" + this.id + "' class='easemobWidget-right'>" : "<div class='easemobWidget-left'>",
+			"<div class='easemobWidget-msg-wrapper'>",
+				"<i class='easemobWidget-corner'></i>",
+				this.id ? "<div id='" + this.id + "_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
+				this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
+				"<div class='easemobWidget-msg-container'>",
+					this.value === null ? "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>" : "<a class='easemobWidget-noline' href='javascript:;'><img class='easemobWidget-imgview' src='" + this.value.url + "'/></a>",,
+				"</div>",
+			"</div>",
+		"</div>"
+	].join('');
+}
+Easemob.im.EmMessage.img.prototype.set = function ( opt ) {
+	this.value = opt.file;
+				
+	this.body = {
+		id: this.id 
+		, file: this.value 
+		, apiUrl: opt.apiUrl
+        , accessToken: opt.accessToken
+		, to: opt.to
+		, type : this.type
+		, onFileUploadError : opt.uploadError
+		, onFileUploadComplete: opt.uploadComplete
+		, success: opt.success
+		, fail: opt.fail
+		, flashUpload: opt.flashUpload
+	};
+}
+//按钮列表消息，机器人回复，满意度调查
+Easemob.im.EmMessage.list = function ( id ) {
+	this.id = id;
+	this.type = 'list';
+	this.brief = '';
+	this.body = {};
+};
+Easemob.im.EmMessage.list.prototype.get = function ( isReceive ) {
+	if ( !this.value ) {
+		return '';
+	}
+	return [
+		"<div class='easemobWidget-left'>",
+			"<div class='easemobWidget-msg-wrapper'>",
+				"<i class='easemobWidget-corner'></i>",
+				"<div class='easemobWidget-msg-container easemobWidget-msg-menu'>",
+					"<p>" + Easemob.im.Utils.parseLink(Easemob.im.Utils.parseEmotions(easemobim.utils.encode(this.value))) + "</p>",
+			        this.listDom,
+				"</div>",
+				"<div id='" + this.id + "_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>",
+			"</div>",
+		"</div>"
+	].join('');
+};
+Easemob.im.EmMessage.list.prototype.set = function ( opt ) {
+	this.value = opt.value;
+	if ( this.value ) {
+		this.brief = this.value.replace(/\n/mg, '');
+		this.brief = (this.brief.length > 15 ? this.brief.slice(0, 15) + '...' : this.brief);
+	}
+	this.listDom = opt.list;
+};
+//文件消息
+Easemob.im.EmMessage.file = function ( id ) {
+	this.id = id;
+	this.type = 'file';
+	this.brief = '文件';
+	this.body = {};
+}
+Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
+	return [
+		!isReceive ? "<div id='" + this.id + "' class='easemobWidget-right'>" : "<div class='easemobWidget-left'>",
+			"<div class='easemobWidget-msg-wrapper easemobWidget-msg-file'>",
+				"<i class='easemobWidget-corner'></i>",
+				this.id ? "<div id='" + this.id + "_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
+				this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + config.LOADING + "</div>" : "",
+				"<div class='easemobWidget-msg-container'>",
+					this.value === null ? "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>" : "<a target='_blank' href='" + this.value.url + "' class='easemobWidget-fileMsg' title='" + this.filename + "'><img class='easemobWidget-msg-fileicon' src='static/img/file_download.png'/><span>" + (this.filename.length > 19 ? this.filename.slice(0, 19) + '...': this.filename) + "</span></a>",
+				"</div>",
+			"</div>",
+		"</div>"
+	].join('');
+}
+Easemob.im.EmMessage.file.prototype.set = function ( opt ) {
+	this.value = opt.file;
+	this.filename = opt.filename || this.value.filename || '文件';
+
+	this.body = {
+		id: this.id 
+		, file: this.value
+		, filename: this.filename
+		, apiUrl: opt.apiUrl
+		, to: opt.to
+		, type: this.type
+		, onFileUploadError : opt.uploadError
+		, onFileUploadComplete: opt.uploadComplete
+		, success: opt.success
+		, fail: opt.fail
+		, flashUpload: opt.flashUpload
+	};
+}
+
+/**
+ * ctrl+v发送截图功能:当前仅支持chrome/firefox/ie11
+ */
+easemobim.paste = function ( chat ) {
+	var dom = document.createElement('div'),
+		utils = easemobim.utils,
+		data;
+
+	utils.addClass(dom, 'easemobWidget-dialog easemobWidget-paste-wrapper em-hide');
+	utils.html(dom, "\
+		<div class='easemobWidget-paste-image'></div>\
+		<div>\
+			<button class='easemobWidget-cancel'>取消</button>\
+			<button class='bg-color'>发送</button>\
+		</div>\
+	");
+	easemobim.imChat.appendChild(dom);
+
+	var buttons = dom.getElementsByTagName('button'),
+		cancelBtn = buttons[0],
+		sendImgBtn = buttons[1],
+		imgContainer = dom.getElementsByTagName('div')[0];
+
+	utils.on(cancelBtn, 'click', function () {
+		easemobim.paste.hide();
+	});
+	utils.on(sendImgBtn, 'click', function () {
+		chat.sendImgMsg({data: data, url: dom.getElementsByTagName('img')[0].getAttribute('src')});
+		easemobim.paste.hide();
+	});
+
+	return ({
+		show: function ( blob ) {
+			var img = new Image();
+			if ( typeof blob === 'string' ) {
+				img.src = blob;
+			} else {
+				img.src = window.URL.createObjectURL(blob);
+			}
+			data = blob;
+			imgContainer.appendChild(img);
+			utils.removeClass(dom, 'em-hide');
+			img = null;
+		}
+		, hide: function () {
+			utils.html(imgContainer, '');
+			utils.addClass(dom, 'em-hide');
+		}
+		, bind: function () {
+			var me = this;
+
+			utils.on(easemobim.textarea, 'paste', function ( e ) {
+				var ev = e || window.event;
+
+				try {
+					if ( ev.clipboardData && ev.clipboardData.types ) {
+						if ( ev.clipboardData.items.length > 0 ) {
+							if ( /^image\/\w+$/.test(ev.clipboardData.items[0].type) ) {
+								me.show(ev.clipboardData.items[0].getAsFile());
+							}
+						}
+					} else if ( window.clipboardData ) {
+						var url = window.clipboardData.getData('URL');
+						me.show(url);
+					}
+				} catch ( ex ) {}
+			});
+			return this;
+		}
+	}.bind());
+};
+
+/**
+ * 留言
+ */
+;(function () {
+	easemobim.leaveMessage = function ( chat, tenantId ) {
+
+		var leaveMessage = this.leaveMessage,
+			utils = this.utils,
+			imChat = easemobim.imChat;
+
+		if ( leaveMessage.dom ) {
+			return false;
+		}
+
+		leaveMessage.domBg = document.createElement('div');
+		leaveMessage.dom = document.createElement('div');
+		leaveMessage.domBg.id = 'easemobWidgetOffline';
+		utils.addClass(leaveMessage.domBg, 'easemobWidget-offline-bg em-hide');
+		utils.addClass(leaveMessage.dom, 'easemobWidget-offline');
+		utils.html(leaveMessage.dom, "\
+			<h3>请填写以下内容以方便我们及时联系您</h3>\
+			<input type='text' placeholder='姓名'/>\
+			<input type='text' placeholder='电话'/>\
+			<input type='text' placeholder='邮箱'/>\
+			<textarea spellcheck='false' placeholder='请输入留言'></textarea>\
+			<button class='easemobWidget-offline-cancel'>取消</button>\
+			<button class='easemobWidget-offline-ok bg-color'>留言</button>\
+			<div class='easemobWidget-success-prompt em-hide'><i>A</i><p>留言发送成功</p></div>\
+		");
+		leaveMessage.domBg.appendChild(leaveMessage.dom);
+		imChat.appendChild(leaveMessage.domBg);
+
+		var msg = leaveMessage.dom.getElementsByTagName('textarea')[0],
+			contact = leaveMessage.dom.getElementsByTagName('input')[0],
+			phone = leaveMessage.dom.getElementsByTagName('input')[1],
+			mail = leaveMessage.dom.getElementsByTagName('input')[2],
+			leaveMessageBtn = leaveMessage.dom.getElementsByTagName('button')[1],
+			cancelBtn = leaveMessage.dom.getElementsByTagName('button')[0],
+			success = leaveMessage.dom.getElementsByTagName('div')[0];
+
+        //close
+		utils.on(cancelBtn, utils.click, function () {
+            utils.addClass(leaveMessage.domBg, 'em-hide');               
+        });
+
+        //create ticket
+		utils.on(leaveMessageBtn, utils.click, function () {
+            if ( sending ) {
+				chat.errorPrompt('留言提交中...');
+                return false;
+            }
+			if ( !project || !targetUser ) {
+				chat.errorPrompt('留言失败，token无效');
+			} else if ( !contact.value || contact.value.length > 140 ) {
+				chat.errorPrompt('姓名输入不正确');
+			} else if ( !phone.value || phone.value.length > 24 ) {
+				chat.errorPrompt('电话输入不正确');
+			} else if ( !mail.value || mail.value.length > 127 ) {
+				chat.errorPrompt('邮箱输入不正确');
+			} else if ( !msg.value || msg.value.length > 2000 ) {
+				chat.errorPrompt('留言内容不能为空，长度小于2000字');
+			} else {
+                sending = true;
+                setTimeout(function () { sending = false; }, 10000);
+                easemobim.api('createTicket', {
+                    tenantId: tenantId,
+                    'easemob-target-username': targetUser,
+                    'easemob-appkey': appkey,
+                    'easemob-username': username,
+                    headers: { Authorization: 'Easemob IM ' + actoken },
+                    projectId: project,
+                    subject: '',
+                    content: msg.value,
+                    status_id: '',
+                    priority_id: '',
+                    category_id: '',
+                    creator: { 
+                        name: contact.value,
+                        avatar: '',
+                        email: mail.value,
+                        phone: phone.value,
+                        qq: '',
+                        company: '',
+                        description: ''
+                    },
+                    attachments:null
+                }, function ( msge ) {
+                    sending = false;
+                    if ( msge && msge.data && msge.data.id ) {
+                        utils.removeClass(success, 'em-hide');
+
+                        setTimeout(function(){
+                            utils.addClass(success, 'em-hide');
+                        }, 1500);
+
+                        contact.value = '';
+                        phone.value = '';
+                        mail.value = '';
+                        msg.value = '';
+                    } else {
+                        chat.errorPrompt('留言失败，请稍后重试');
+                    }
+                });
+				
+			}
+		});
+
+        var project = null,//projectid
+            targetUser = null,//target-username
+            actoken = null,//accessToke
+            appkey = null,
+            sending = false,
+            username = null;
+
+        return {
+            auth: function ( token, config ) {
+                actoken = token;
+                targetUser = config.toUser;
+                username = config.user.username;
+                appkey = config.appKey.replace('#', '%23');
+
+                if ( !project ) {
+                    easemobim.api('getProject', {
+                        tenantId: tenantId,
+                        'easemob-target-username': targetUser,
+                        'easemob-appkey': appkey,
+                        'easemob-username': username,
+                        headers: { Authorization: 'Easemob IM ' + actoken }
+                    }, function ( msg ) {
+                        if ( msg.data && msg.data.entities && msg.data.entities.length > 0 ) {
+                            project = msg.data.entities[0].id;
+                        }
+                    });
+                }
+            },
+            show: function ( offDuty ) {
+                offDuty && utils.addClass(cancelBtn, 'em-hide');               
+                utils.removeClass(leaveMessage.domBg, 'em-hide');               
+            }
+        };
+	};
+}());
+
+/**
+ * 满意度调查
+ */
+easemobim.satisfaction = function ( chat ) {
+
+	var dom = document.createElement('div'),
+		utils = easemobim.utils;
+
+	utils.addClass(dom, 'easemobWidget-dialog easemobWidget-satisfaction-dialog em-hide');
+	utils.html(dom, "\
+		<h3>请对我的服务做出评价</h3>\
+		<ul><li idx='1'>H</li><li idx='2'>H</li><li idx='3'>H</li><li idx='4'>H</li><li idx='5'>H</li></ul>\
+		<textarea spellcheck='false' placeholder='请输入留言'></textarea>\
+		<div>\
+			<button class='easemobWidget-cancel'>取消</button>\
+			<button class='bg-color'>提交</button>\
+		</div>\
+		<div class='easemobWidget-success-prompt em-hide'><i>A</i><p>提交成功</p></div>\
+	");
+	easemobim.imChat.appendChild(dom);
+
+	var satisfactionEntry = utils.$Dom('EasemobKefuWebimSatisfy'),
+		starsUl = dom.getElementsByTagName('ul')[0],
+		lis = starsUl.getElementsByTagName('li'),
+		msg = dom.getElementsByTagName('textarea')[0],
+		buttons = dom.getElementsByTagName('button'),
+		cancelBtn = buttons[0],
+		submitBtn = buttons[1],
+		success = dom.getElementsByTagName('div')[1],
+		session,
+		invite,
+		getStarLevel = function () {
+			var count = 0;
+
+			for ( var i = lis.length; i > 0; i-- ) {
+				if ( utils.hasClass(lis[i-1], 'sel') ) {
+					count += 1;
+				}
+			}
+			return count;
+		},
+		clearStars = function () {
+			for ( var i = lis.length; i > 0; i-- ) {
+				utils.removeClass(lis[i-1], 'sel');
+			}
+		};
+	
+	satisfactionEntry && utils.on(satisfactionEntry, utils.click, function () {
+		session = null;
+		invite = null;
+		utils.removeClass(dom, 'em-hide');
+		clearInterval(chat.focusText);
+	});
+	utils.live('button.js_satisfybtn', 'click', function () {
+		session = this.getAttribute('data-servicesessionid');
+		invite = this.getAttribute('data-inviteid');
+		utils.removeClass(dom, 'em-hide');
+		clearInterval(chat.focusText);
+	});
+	utils.on(cancelBtn, 'click', function () {
+		utils.addClass(dom, 'em-hide');
+	});
+	utils.on(submitBtn, 'click', function () {
+		var level = getStarLevel();
+
+		if ( level === 0 ) {
+			chat.errorPrompt('请先选择星级');
+			return false;
+		}
+		chat.sendSatisfaction(level, msg.value, session, invite);
+
+		msg.blur();
+		utils.removeClass(success, 'em-hide');
+
+		setTimeout(function(){
+			msg.value = '';
+			clearStars();
+			utils.addClass(success, 'em-hide');
+			utils.addClass(dom, 'em-hide');
+		}, 1500);
+	});
+	utils.on(starsUl, 'click', function ( e ) {
+		var ev = e || window.event,
+			that = ev.target || ev.srcElement,
+			cur = that.getAttribute('idx');
+
+		if ( !cur ) {
+			return false;
+		}
+		for ( var i = 0; i < lis.length; i++ ) {
+			if ( i < Number(cur) ) {
+				utils.addClass(lis[i], 'sel');
+			} else {
+				utils.removeClass(lis[i], 'sel');
+			}
+		}
+	});
+};
+
+/**
+ * img view
+ */
+easemobim.imgView = (function () {
+
+	var imgViewWrap = document.createElement('div'),
+		utils = easemobim.utils,
+		img = document.createElement('img');
+
+	img.style.cssText = '\
+	position: absolute;\
+    top: 0;\
+    left: 0;\
+    right: 0;\
+    bottom: 0;\
+    margin: auto;';
+	imgViewWrap.appendChild(img);
+
+	imgViewWrap.style.cssText = '\
+	display: none;\
+	z-index: 100000;\
+    position: fixed;\
+    width: 100%;\
+    height: 100%;\
+    left: 0;\
+    top: 0;\
+    overflow: auto;\
+    background: rgba(0,0,0,.3);';
+	document.body.appendChild(imgViewWrap);
+
+    var reset = function () {
+        imgViewWrap.style.display = 'none';
+    };
+
+    img.onload = function () {};
+
+    utils.on(imgViewWrap, 'click', reset, false);
+
+	return {
+		show: function ( url ) {
+			img.setAttribute('src', url);
+			imgViewWrap.style.display = 'block';
+		}
+	};
+}());
+
+/**
+ * 为不支持异步上传的浏览器提供上传接口
+*/
+easemobim.uploadShim = function ( config, chat ) {
+	var me = this,
+		utils = easemobim.utils;
+
+    me.flashUpload = function ( url, options ) {
+        me.swfupload.setUploadURL(url);
+        me.swfupload.startUpload();
+        me.swfupload.uploadOptions = options;
+    };
+
+    me.uploadShim = function ( fileInputId ) {
+        if ( !Easemob.im.Utils.isCanUploadFile ) {
+            return;
+        }
+
+        var pageTitle = document.title;
+        var uploadBtn = utils.$Dom(fileInputId);
+        if ( typeof SWFUpload === 'undefined' || uploadBtn.length < 1 ) {
+            return;
+        }
+
+        return new SWFUpload({ 
+            file_post_name: 'file'
+            , flash_url: location.protocol + config.staticPath + '/js/swfupload/swfupload.swf'
+            , button_placeholder_id: fileInputId
+            , button_width: 120
+            , button_height: 30
+            , button_cursor: SWFUpload.CURSOR.HAND
+            , button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT
+            , file_size_limit: 10485760
+            , file_upload_limit: 0
+            , file_queued_error_handler: function () {}
+			, file_dialog_start_handler: function () {}
+			, file_dialog_complete_handler: function () {}
+            , file_queued_handler: function ( file ) {
+                if ( this.getStats().files_queued > 1 ) {
+                    this.cancelUpload();
+                }
+				if ( 10485760 < file.size ) {
+                    chat.errorPrompt('请上传大小不超过10M的文件');
+                    this.cancelUpload();
+                } else if ( easemobim.PICTYPE[file.type.slice(1).toLowerCase()] ) {
+                    chat.sendImgMsg({name: file.name, data: file});
+                } else if ( easemobim.FILETYPE[file.type.slice(1).toLowerCase()] ) {
+                    chat.sendFileMsg({name: file.name, data: file});
+                } else {
+                    chat.errorPrompt('不支持此类型' + file.type);
+                    this.cancelUpload();
+                }
+            }
+            , upload_error_handler: function ( file, code, msg ) {
+                if ( code != SWFUpload.UPLOAD_ERROR.FILE_CANCELLED
+                && code != SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED 
+                && code != SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED ) {
+                    var msg = new Easemob.im.EmMessage('img');
+                    msg.set({file: null});
+                    chat.appendMsg(config.user.username, config.toUser, msg);
+                    chat.appendDate(new Date().getTime(), config.toUser);
+                }
+            }
+            , upload_success_handler: function ( file, response ) {
+                if ( !file || !response ) {
+                    var msg = new Easemob.im.EmMessage('img');
+                    msg.set({file: null});
+                    chat.appendMsg(config.user.username, config.toUser, msg);
+                    chat.appendDate(new Date().getTime(), config.toUser);
+                    return;
+                }
+                try {
+                    var res = Easemob.im.Utils.parseUploadResponse(response);
+                    res = JSON.parse(res);
+                    if (file && !file.url && res.entities && res.entities.length > 0 ) {
+                        file.url = res.uri + '/' + res.entities[0].uuid;
+                    }
+                    var msg = new Easemob.im.EmMessage('img');
+                    msg.set({file: file});
+                    chat.appendDate(new Date().getTime(), config.toUser);
+                    chat.appendMsg(config.user.username, config.toUser, msg);
+                    chat.scrollBottom(1000);
+                    this.uploadOptions.onFileUploadComplete(res);
+                } catch ( e ) {
+                    chat.errorPrompt('上传图片发生错误');
+                }
+            }
+        });
+    };
+
+    //不支持异步upload的浏览器使用flash插件搞定
+    if ( !Easemob.im.Utils.isCanUploadFileAsync && Easemob.im.Utils.isCanUploadFile ) {
+        me.swfupload = me.uploadShim('easemobWidgetFileInput');
+    }
+};
+
+;(function () {
+	var wechat = /MicroMessenger/.test(navigator.userAgent);
+	var wechatAuth = easemobim.utils.query('wechatAuth');
+	var appid = easemobim.utils.query('appid');
+    var code = easemobim.utils.query('code');
+    var tenantId = easemobim.utils.query('tenantId');
+
+
+	if ( !wechat || !wechatAuth || !tenantId || !appid ) {
+		return false;
+	}
+
+    easemobim.wechat = function ( callback ) {
+        //get profile
+        var getComponentId = function ( callback ) {
+            easemobim.emajax({
+                url: '/v1/weixin/admin/appid'
+                , success: function ( info ) {
+                    callback(info);
+                }
+                , error: function ( e ) {
+                    callback();
+                }
+            });
+        };
+
+
+        var getProfile = function ( code, callback ) {
+            //get profile
+            easemobim.emajax({
+                url: '/v1/weixin/sns/userinfo/' + appid + '/' + code
+                , data: { tenantId: tenantId }
+                , type: 'GET'
+                , success: function ( info ) {
+                    callback(info);
+                }
+                , error: function ( e ) {
+                    var url = location.href.replace(/&code=[^&]+/, '');
+
+                    if ( url.indexOf('appid') !== url.lastIndexOf('appid') ) {
+                        url = url.replace(/&appid=wx[^&]+/, '');
+                    }
+                    location.href = url;
+                }
+            });
+        };
+
+        if ( !code ) {
+            getComponentId(function ( id ) {
+                if ( !id ) {
+                    callback();
+                    return;
+                }
+
+                var url = encodeURIComponent(location.href);
+                var redirect = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + url + '&response_type=code&scope=snsapi_userinfo&state=STATE&component_appid=' + id + '#wechat_redirect';
+
+                location.href = redirect;
+            });
+
+        } else {
+            getProfile(code, function ( resp ) {
+                if ( !resp ) {
+                    callback();
+                    return;
+                }
+                callback(resp);
+            });
+        }
+    };
+}());
+
+;(function () {
+	var site = function () {
+		this.list = {};
+	};
+
+	site.prototype.set = function ( key, value ) {
+		if ( typeof this.list[key] === 'undefined' ) {
+			this.list[key] = value;
+		}
+		return this;
+	};
+
+	site.prototype.get = function ( key ) {
+		if ( this.list.hasOwnProperty(key) ) {
+			return this.list[key];	
+		} else {
+			return null;
+		}
+	};
+
+    site.prototype.remove = function ( key ) {
+        if ( typeof this.list[key] !== 'undefined' ) {
+			delete this.list[key];
+		}
+    };
+
+	easemobim.site = site;
+}());
+
+easemobim.channel = function ( config ) {
+    // 如果im连不上，则INITTIMER ms后变为可发送
+    var INITTIMER = 20000;
+    // IM心跳间隔HEARTBEATTIMER ms
+    var HEARTBEATTIMER = 60000;
+    // 收消息轮训间隔RECEIVETIMER ms
+    var RECEIVETIMER = 60000;
+    // SENDTIMER ms后没收到ack则开启第二通道
+    var SENDTIMER = 30000;
+    // 发送消息第二通道失败后，最多再试1次
+    var MAXRETRY = 1;
+
+
+    var me = this;
+
+    var utils = easemobim.utils;
+
+
+        //监听ack的timer, 每条消息启动一个
+    var ackTS = new easemobim.site(),
+
+        //初始监听xmpp的timer, 如果30s后xmpp没有连接成功则处理按钮变为发送，走api发送消息
+        firstTS,
+
+        //发消息队列
+        sendMsgSite = new easemobim.site(),
+
+        //收消息队列
+        receiveMsgSite = new easemobim.site();
+
+
+    var api = easemobim.api;
+
+
+
+    var _uuid = function () {
+        var s = [],
+            hexDigits = '0123456789abcdef';
+
+        for ( var i = 0; i < 36; i++ ) {
+            s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+        }
+
+        s[14] = '4';
+        s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);
+        s[8] = s[13] = s[18] = s[23] = '-';
+     
+        return s.join('');
+    };
+
+
+    var _obj = {
+
+        getConnection: function () {
+
+            return new Easemob.im.Connection({ 
+                url: config.xmppServer,
+                retry: true,
+                multiResources: config.resources,
+                heartBeatWait: HEARTBEATTIMER
+            });
+        },
+
+        reSend: function ( type, id ) {
+            if ( id ) {
+                var msg = sendMsgSite.get(id);
+
+                switch ( type ) {
+
+                    case 'txt':
+                        _sendMsgChannle(msg, 0);//重试只发一次
+                        break;
+                }
+            }
+        },
+
+        send: function ( type ) {
+
+            var id = _uuid();
+
+            switch ( type ) {
+
+                case 'txt':
+                    //不是历史记录开启倒计时
+                    if ( !arguments[2] ) {
+                        _detectSendMsgByApi(id);
+                    }
+
+
+                    _obj.sendText(arguments[1], arguments[2], arguments[3], id);
+                    break;
+                //转人工
+                case 'transferToKf':
+                    _detectSendMsgByApi(id);
+
+                    _obj.transferToKf(arguments[1], arguments[2], id);
+                    break;
+
+                case 'img':
+                    _obj.sendImg(arguments[1], arguments[2], id);
+                    break;
+
+                case 'file':
+                    _obj.sendFile(arguments[1], arguments[2], id);
+                    break;
+                //满意度评价
+                case 'satisfaction':
+                    //不是历史记录开启倒计时, 当前只有文本消息支持降级
+                    _detectSendMsgByApi(id);
+                    _obj.sendSatisfaction(arguments[1], arguments[2], arguments[3], arguments[4], id);
+                    break;
+            };
+        },
+
+        appendAck: function ( msg, id ) {
+            msg.body.ext.weichat.msg_id_for_ack = id;
+        },
+
+        sendSatisfaction: function ( level, content, session, invite, id ) {
+
+            var msg = new Easemob.im.EmMessage('txt', id);
+            msg.set({value: '', to: config.toUser});
+            utils.extend(msg.body, {
+                ext: {
+                    weichat: {
+                        ctrlType: 'enquiry'
+                        , ctrlArgs: {
+                            inviteId: invite || ''
+                            , serviceSessionId: session || ''
+                            , detail: content
+                            , summary: level
+                        }
+                    }
+                }
+            });
+            _obj.appendAck(msg, id);
+            me.conn.send(msg.body);
+            sendMsgSite.set(id, msg);
+        },
+
+        sendText: function ( message, isHistory, ext, id ) {
+
+            var msg = new Easemob.im.EmMessage('txt', isHistory ? null : id);
+            msg.set({
+                value: message || easemobim.utils.encode(easemobim.textarea.value),
+                to: config.toUser,
+                success: function ( id ) {
+                    // 此回调用于确认im server收到消息, 有别于kefu ack
+                },
+                fail: function ( id ) {
+                    
+                }
+            });
+
+            if ( ext ) {
+                utils.extend(msg.body, ext);
+            }
+
+            utils.addClass(easemobim.sendBtn, 'disabled');
+            if ( !isHistory ) {
+                me.setExt(msg);
+                _obj.appendAck(msg, id);
+                me.conn.send(msg.body);
+                sendMsgSite.set(id, msg);
+                easemobim.textarea.value = '';
+                if ( msg.body.ext && msg.body.ext.type === 'custom' ) { return; }
+                me.appendDate(new Date().getTime(), config.toUser);
+                me.appendMsg(config.user.username, config.toUser, msg);
+            } else {
+                me.appendMsg(config.user.username, isHistory, msg, true);
+            }
+        },
+
+
+        transferToKf: function ( tid, sessionId, id ) {
+            var msg = new Easemob.im.EmMessage('cmd', id);
+            msg.set({
+                to: config.toUser
+                , action: 'TransferToKf'
+                , ext: {
+                    weichat: {
+                        ctrlArgs: {
+                            id: tid,
+                            serviceSessionId: sessionId,
+                        }
+                    }
+                }
+            });
+
+            _obj.appendAck(msg, id);
+            me.conn.send(msg.body);
+            sendMsgSite.set(id, msg);
+
+            me.handleEventStatus(null, null, true);
+        },
+
+        sendImg: function ( file, isHistory, id ) {
+
+            var msg = new Easemob.im.EmMessage('img', isHistory ? null : id);
+
+            msg.set({
+                apiUrl: location.protocol + '//' + config.restServer,
+                file: file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id')),
+                accessToken: me.token,
+                to: config.toUser,
+                uploadError: function ( error ) {
+                    setTimeout(function () {
+                        //显示图裂，无法重新发送
+                        if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
+                            easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
+                        } else {
+                            var id = error.id,
+                                wrap = utils.$Dom(id);
+
+                            utils.html(utils.$Class('a.easemobWidget-noline', wrap)[0], '<i class="easemobWidget-unimage">I</i>');
+                            utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+                            me.scrollBottom();
+                        }
+                    }, 50);
+                },
+                uploadComplete: function () {
+                    me.handleEventStatus();
+                },
+                success: function ( id ) {
+                    utils.$Remove(utils.$Dom(id + '_loading'));
+                    utils.$Remove(utils.$Dom(id + '_failed'));
+                },
+                fail: function ( id ) {
+                    utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+                    utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
+                },
+                flashUpload: easemobim.flashUpload
+            });
+            if ( !isHistory ) {
+                me.setExt(msg);
+                me.conn.send(msg.body);
+                easemobim.realFile.value = '';
+                if ( Easemob.im.Utils.isCanUploadFileAsync ) {
+                    me.appendDate(new Date().getTime(), config.toUser);
+                    me.appendMsg(config.user.username, config.toUser, msg);
+                }
+            } else {
+                me.appendMsg(config.user.username, file.to, msg, true);
+            }
+        },
+
+        sendFile: function ( file, isHistory, id ) {
+
+            var msg = new Easemob.im.EmMessage('file', isHistory ? null : id),
+                file = file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id'));
+
+            if ( !file || !file.filetype || !config.FILETYPE[file.filetype.toLowerCase()] ) {
+                chat.errorPrompt('不支持此文件');
+                easemobim.realFile.value = null;
+                return false;
+            }
+
+            msg.set({
+                apiUrl: location.protocol + '//' + config.restServer,
+                file: file,
+                to: config.toUser,
+                uploadError: function ( error ) {
+                    //显示图裂，无法重新发送
+                    if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
+                        easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
+                    } else {
+                        var id = error.id,
+                            wrap = utils.$Dom(id);
+
+                        utils.html(utils.$Class('a.easemobWidget-noline')[0], '<i class="easemobWidget-unimage">I</i>');
+                        utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+                        me.scrollBottom();
+                    }
+                },
+                uploadComplete: function () {
+                    me.handleEventStatus();
+                },
+                success: function ( id ) {
+                    utils.$Remove(utils.$Dom(id + '_loading'));
+                    utils.$Remove(utils.$Dom(id + '_failed'));
+                },
+                fail: function ( id ) {
+                    utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+                    utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
+                },
+                flashUpload: easemobim.flashUpload
+            });
+            if ( !isHistory ) {
+                me.setExt(msg);
+                me.conn.send(msg.body);
+                easemobim.realFile.value = '';
+                if ( Easemob.im.Utils.isCanUploadFileAsync ) {
+                    me.appendDate(new Date().getTime(), config.toUser);
+                    me.appendMsg(config.user.username, config.toUser, msg);
+                }
+            } else {
+                me.appendMsg(config.user.username, file.to, msg, true);
+            }
+        },
+
+        handleReceive: function ( msg, type, isHistory ) {
+            if (config.offDuty) {return;}
+
+
+            //如果是ack消息，清除ack对应的site item，返回
+            if ( msg && msg.ext && msg.ext.weichat && msg.ext.weichat.ack_for_msg_id ) {
+                _clearTS(msg.ext.weichat.ack_for_msg_id);
+                return;
+            }
+
+
+            var msgid = me.getMsgid(msg);
+
+            if ( receiveMsgSite.get(msgid) ) {
+                return;
+            } else {
+                msgid && receiveMsgSite.set(msgid, 1);
+            }
+
+            //绑定访客的情况有可能会收到多关联的消息，不是自己的不收
+            if ( !isHistory && msg.from && msg.from.toLowerCase() != config.toUser.toLowerCase() && !msg.noprompt ) {
+                return;
+            }
+
+            var message = null;
+
+            if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType && msg.ext.weichat.ctrlType == 'inviteEnquiry' ) {
+                //满意度评价
+                type = 'satisfactionEvaluation';  
+            } else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {
+                //机器人自定义菜单
+                type = 'robotList';  
+            } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {
+                //机器人转人工
+                type = 'robotTransfer';  
+            }
+
+            switch ( type ) {
+                case 'txt':
+                case 'face':
+                    message = new Easemob.im.EmMessage('txt');
+
+                    message.set({value: isHistory ? msg.data : me.getSafeTextValue(msg)});
+                    break;
+                case 'img':
+                    message = new Easemob.im.EmMessage('img');
+
+                    if ( msg.url ) {
+                        message.set({file: {url: msg.url}});
+                    } else {
+                        try {
+                            message.set({file: {url: msg.bodies[0].url}});
+                        } catch ( e ) {}
+                    }
+                    break;
+                case 'file':
+                    message = new Easemob.im.EmMessage('file');
+                    if ( msg.url ) {
+                        message.set({file: {url: msg.url, filename: msg.filename}});
+                    } else {
+                        try {
+                            message.set({file: {url: msg.bodies[0].url, filename: msg.bodies[0].filename}});
+                        } catch ( e ) {}
+                    }
+                    break;
+                case 'satisfactionEvaluation':
+                    message = new Easemob.im.EmMessage('list');
+                    message.set({value: '请对我的服务做出评价', list: ['\
+                        <div class="easemobWidget-list-btns">\
+                            <button class="easemobWidget-list-btn js_satisfybtn" data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '"\
+                             data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
+                        </div>']});
+                    if(!isHistory){
+                        // 创建隐藏的立即评价按钮，并触发click事件
+                        var el = document.createElement('BUTTON');
+                        el.className = 'js_satisfybtn';
+                        el.style.display = 'none';
+                        el.setAttribute('data-inviteid', msg.ext.weichat.ctrlArgs.inviteId);
+                        el.setAttribute('data-servicesessionid', msg.ext.weichat.ctrlArgs.serviceSessionId);
+                        document.body.appendChild(el);
+                        utils.trigger(el, 'click');
+                        easemobim.textarea.blur();
+                    }
+                    break;
+                case 'robotList':
+                    message = new Easemob.im.EmMessage('list');
+                    var str = '',
+                        list = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
+
+                    if ( list.length > 0 ) {
+                        str = '<div class="easemobWidget-list-btns">';
+                        for ( var i = 0, l = list.length; i < l; i++ ) {
+                            str += '<button class="easemobWidget-list-btn js_robotbtn" data-id="' + list[i].id + '">' + (list[i].name || list[i]) + '</button>';
+                        }
+                        str += '</div>';
+                    }
+                    message.set({value: msg.ext.msgtype.choice.title, list: str});
+                    break;
+                case 'robotTransfer':
+                    message = new Easemob.im.EmMessage('list');
+                    var ctrlArgs = msg.ext.weichat.ctrlArgs;
+                    var title = msg.data
+                        || (msg.bodies && msg.bodies[0] && msg.bodies[0].msg)
+                        || msg.ext.weichat.ctrlArgs.label;
+/*
+    msg.data 用于处理即时消息
+    msg.bodies[0].msg 用于处理历史消息
+    msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
+    此处修改为了修复取出历史消息时，转人工评价标题改变的bug
+    还有待测试其他带有转人工的情况
+*/
+                    var str = [
+                        '<div class="easemobWidget-list-btns">',
+                            '<button class="easemobWidget-list-btn js_robotTransferBtn" ',
+                            'data-sessionid="' + ctrlArgs.serviceSessionId + '" ', 
+                            'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
+                        '</div>'
+                    ].join('');
+
+                    message.set({value: title, list: str});
+                    break;
+                default:
+                    break;
+            }
+            
+            if ( !isHistory ) {
+
+                if ( msg.ext && msg.ext.weichat ) {
+                    if (msg.ext.weichat.event){
+                        switch(msg.ext.weichat.event.eventName){
+                            case 'ServiceSessionTransferedEvent':
+                            // 转接到客服
+                                me.handleEventStatus('transferd', msg.ext.weichat.event.eventObj);
+                                break;
+                            case 'ServiceSessionTransferedToAgentQueueEvent':
+                            // 转人工或者转到技能组
+                                me.handleEventStatus('transfering', msg.ext.weichat.event.eventObj);
+                                break;
+                            case 'ServiceSessionClosedEvent':
+                                //service session closed event
+                                me.session = null;
+                                me.sessionSent = false;
+                                config.agentUserId = null;
+                                me.stopGettingAgentStatus();
+                                // 还原企业头像和企业名称
+                                me.setAgentProfile({
+                                    tenantName: config.defaultAgentName,
+                                    avatar: config.tenantAvatar
+                                });
+                                // 去掉坐席状态
+                                me.clearAgentStatus();
+                                me.handleEventStatus('close');
+                                utils.isTop || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
+                                break;
+                            case 'ServiceSessionOpenedEvent':
+                                //service session opened event
+                                //fake
+                                me.agentCount < 1 && (me.agentCount = 1);
+                                me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
+                                break;
+                            case 'ServiceSessionCreatedEvent':
+                                me.handleEventStatus('create');
+                                break;
+                            default:
+                                me.handleEventStatus('reply', msg.ext.weichat.agent);
+                                break;
+                        }
+                    }
+                    else{
+                        me.handleEventStatus('reply', msg.ext.weichat.agent);
+                    }
+                }
+
+
+                //空消息不显示
+                if ( !message || !message.value ) {
+                    return;
+                }
+
+                if ( !msg.noprompt ) {
+                    me.messagePrompt(message);
+                }
+                me.appendDate(new Date().getTime(), msg.from);
+                me.resetSpan();
+                me.appendMsg(msg.from, msg.to, message);
+                me.scrollBottom(50);
+
+                if ( config.receive ) {
+                    easemobim.EVENTS.ONMESSAGE.data = {
+                        from: msg.from,
+                        to: msg.to,
+                        message: message
+                    };
+                    try {
+                        utils.isTop || transfer.send(easemobim.EVENTS.ONMESSAGE, window.transfer.to);
+                    } catch ( e ) {}
+                }
+            } else {
+                if ( !message || !message.value ) {
+                    return;
+                }
+                me.appendMsg(msg.from, msg.to, message, true);
+            }
+        },
+
+        listen: function () {
+                
+            me.conn.listen({
+                onOpened: function ( info ) {
+                    
+                    _clearFirstTS();
+
+                    me.reOpen && clearTimeout(me.reOpen);
+                    me.token = info.accessToken;
+                    me.conn.setPresence();
+
+                    if ( easemobim.textarea.value ) {
+                        utils.removeClass(easemobim.sendBtn, 'disabled');
+                    }
+                    utils.html(easemobim.sendBtn, '发送');
+
+                    me.handleReady(info);
+                }
+                , onTextMessage: function ( message ) {
+                    me.receiveMsg(message, 'txt');
+                }
+                , onEmotionMessage: function ( message ) {
+                    me.receiveMsg(message, 'face');
+                }
+                , onPictureMessage: function ( message ) {
+                    me.receiveMsg(message, 'img');
+                }
+                , onFileMessage: function ( message ) {
+                    me.receiveMsg(message, 'file');
+                }
+                , onCmdMessage: function ( message ) {
+                    me.receiveMsg(message, 'cmd');
+                }
+                , onOnline: function () {
+                    utils.isMobile && me.open();
+                }
+                , onOffline: function () {
+                    utils.isMobile && me.conn.close();
+                }
+                , onError: function ( e ) {
+                    if ( e.reconnect ) {
+                        me.open();
+                    } else if ( e.type === 2 ) {
+                        me.reOpen || (me.reOpen = setTimeout(function () {
+                            me.open();
+                        }, 2000));
+                    } else {
+                        //me.conn.stopHeartBeat(me.conn);
+                        typeof config.onerror === 'function' && config.onerror(e);
+                    }
+                }
+            });
+        },
+
+        handleHistory: function ( chatHistory ) {
+
+            if ( chatHistory.length > 0 ) {
+                utils.each(chatHistory, function ( k, v ) {
+                    var msgBody = v.body,
+                        msg,
+                        isSelf = msgBody.from === config.user.username;
+
+                    if ( msgBody && msgBody.bodies.length > 0 ) {
+                        msg = msgBody.bodies[0];
+                        if ( msgBody.from === config.user.username ) {
+                            //visitors' msg
+                            switch ( msg.type ) {
+                                case 'img':
+                                    msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
+                                    msg.to = msgBody.to;
+                                    me.sendImgMsg(msg, true);
+                                    break;
+                                case 'file':
+                                    msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
+                                    msg.to = msgBody.to;
+                                    me.sendFileMsg(msg, true);
+                                    break;
+                                case 'txt':
+                                    me.sendTextMsg(msg.msg, true);
+                                    break;
+                            }
+                        } else {
+                            //agents' msg
+
+                            //判断是否为满意度调查的消息
+                            if ( msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType && msgBody.ext.weichat.ctrlType == 'inviteEnquiry'
+                            //机器人自定义菜单
+                            || msgBody.ext && msgBody.ext.msgtype && msgBody.ext.msgtype.choice
+                            //机器人转人工
+                            || msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType === 'TransferToKfHint' ) {
+                                me.receiveMsg(msgBody, '', true);
+                            } else {
+                                var data = msg.msg;
+
+                                msg.type === 'txt' && (data = me.getSafeTextValue(msgBody));
+
+                                me.receiveMsg({
+                                    msgId: v.msgId,
+                                    data: data,
+                                    filename: msg.filename,
+                                    url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
+                                    from: msgBody.from,
+                                    to: msgBody.to
+                                }, msg.type, true);
+                            }
+                        }
+
+                        if ( msg.type === 'cmd'//1.cmd消息 
+                        || (msg.type === 'txt' && !msg.msg)//2.空文本消息
+                        || receiveMsgSite.get(v.msgId) ) {//3.重复消息
+                            
+                        } else {
+                            me.appendDate(v.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
+                        }
+                    }
+                });
+            }
+        }
+    };
+
+
+    //收消息轮训通道
+    var _receiveMsgChannle = function () {
+
+        if ( config.offDuty ) {
+            return;
+        }
+
+        setInterval(function () {
+            api('receiveMsgChannel', {
+                orgName: config.orgName,
+                appName: config.appName,
+                easemobId: config.toUser,
+                tenantId: config.tenantId,
+                visitorEasemobId: config.user.username
+            }, function ( msg ) {
+
+                //处理收消息
+                if ( msg && msg.data.status === 'OK' ) {
+                    for ( var i = 0, l = msg.data.entities.length; i < l; i++ ) {
+                        try {
+                            _obj.handleReceive(msg.data.entities[i], msg.data.entities[i].bodies[0].type, false);
+                        } catch ( e ) {}
+                    }
+                }
+            });           
+        }, RECEIVETIMER);
+    };
+
+    //发消息通道
+    var _sendMsgChannle = function ( msg, count ) {
+        var count = count === 0 ? 0 : (count || MAXRETRY);
+        var id = msg.id;
+
+        api('sendMsgChannel', {
+            from: config.user.username,
+            to: config.toUser,
+            tenantId: config.tenantId,
+            bodies: [{
+                type: 'txt',
+                msg: msg.value,
+            }],
+            ext: msg.body ? msg.body.ext : null,
+            orgName: config.orgName,
+            appName: config.appName,
+            originType: config.originType || 'webim'
+        }, function () {
+            //发送成功清除
+            _clearTS(id);
+        }, function () {
+            //失败继续重试
+            if ( count > 0 ) {
+                _sendMsgChannle(msg, --count);
+            } else {
+                utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+                utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
+            }
+        });
+    };
+
+    //消息发送成功，清除timer
+    var _clearTS = function ( id ) {
+
+        clearTimeout(ackTS.get(id));
+        ackTS.remove(id);
+
+        utils.$Remove(utils.$Dom(id + '_loading'));
+        utils.$Remove(utils.$Dom(id + '_failed'));
+        
+        if ( sendMsgSite.get(id) ) {
+            me.handleEventStatus(null, null, sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服');
+        }
+
+        sendMsgSite.remove(id);
+    };
+
+    //30s内连上xmpp后清除timer，暂不开启api通道发送消息
+    var _clearFirstTS = function () {
+        clearTimeout(firstTS);
+    }
+
+    //监听ack，超时则开启api通道, 发消息时调用
+    var _detectSendMsgByApi = function ( id ) {
+
+        ackTS.set(
+            id,
+            setTimeout(function () {
+                //30s没收到ack使用api发送
+                _sendMsgChannle(sendMsgSite.get(id));
+            }, SENDTIMER)
+        );
+    };
+
+
+    firstTS = setTimeout(function () {
+
+        if ( easemobim.textarea.value ) {
+            utils.removeClass(easemobim.sendBtn, 'disabled');
+        }
+        utils.html(easemobim.sendBtn, '发送');
+
+        chat.handleReady();
+    }, INITTIMER);
+    
+    //收消息轮训通道常驻
+    _receiveMsgChannle();
+
+    return _obj;
+};
+
+/**
+ * webim交互相关
+ */
+;(function () {
+
+    easemobim.chat = function ( config ) {
+		var utils = easemobim.utils;
+        // todo: 把dom都移到里边
+        var doms = {
+            agentStatusText: utils.$Class('span.em-header-status-text')[0],
+            agentStatusSymbol: utils.$Dom('easemobWidgetAgentStatus')
+        };
+
+        easemobim.doms = doms;
+
+		//DOM init
+		easemobim.im = utils.$Dom('EasemobKefuWebim');
+		easemobim.imBtn = utils.$Dom('easemobWidgetPopBar');
+		easemobim.imChat = utils.$Dom('EasemobKefuWebimChat');
+		easemobim.imChatBody = utils.$Dom('easemobWidgetBody');
+		easemobim.send = utils.$Dom('easemobWidgetSend');
+		easemobim.textarea = easemobim.send.getElementsByTagName('textarea')[0];
+		easemobim.sendBtn = utils.$Dom('easemobWidgetSendBtn');
+		easemobim.faceBtn = easemobim.send.getElementsByTagName('i')[0];
+		easemobim.realFile = utils.$Dom('easemobWidgetFileInput');
+		easemobim.sendFileBtn = utils.$Dom('easemobWidgetFile');
+		easemobim.noteBtn = utils.$Dom('easemobWidgetNote');
+		easemobim.mobileNoteBtn = utils.$Dom('easemobWidgetNotem');
+		easemobim.dragHeader = utils.$Dom('easemobWidgetDrag');
+		easemobim.dragBar = easemobim.dragHeader.getElementsByTagName('p')[0];
+		easemobim.chatFaceWrapper = utils.$Dom('EasemobKefuWebimFaceWrapper');
+		easemobim.messageCount = easemobim.imBtn.getElementsByTagName('span')[0];
+        easemobim.nickName = utils.$Class('span.easemobWidgetHeader-nickname')[0];
+        easemobim.avatar = utils.$Class('img.easemobWidgetHeader-portrait')[0];
+		easemobim.swfupload = null;//flash 上传
+
+
+        //cache current agent
+        config.agentUserId = null;
+
+		//chat window object
+        return {
+            init: function () {
+                
+                this.channel = easemobim.channel.call(this, config);
+
+				//create & init connection
+                this.setConnection();
+				//sroll bottom timeout stamp
+                this.scbT = 0;
+				//unread message count
+				this.msgCount = 0;
+				//just show date label once in 1 min
+                this.msgTimeSpan = {};
+				//chat window status
+                this.opened = true;
+				//fill theme
+				this.setTheme();
+				//add min icon
+                this.setMinmum();
+				//init sound reminder
+                this.soundReminder();
+				//root adjust
+				this.setRoot();
+				//bind events on dom
+                this.bindEvents();
+            }
+            , handleReady: function ( info ) {
+                var me = this;
+
+                if ( me.readyHandled ) {
+                    return false;
+                }
+
+                me.readyHandled = true;
+
+                if ( info && config.user ) {
+                    config.user.token = config.user.token || info.accessToken;
+                }
+
+                easemobim.leaveMessage && easemobim.leaveMessage.auth(me.token, config);
+
+                if ( utils.isTop ) {
+                    //get visitor
+                    var visInfo = config.visitor;
+                    if ( !visInfo ) {
+                        visInfo = utils.getStore(config.tenantId + config.emgroup + 'visitor');
+                        try { config.visitor = Easemob.im.Utils.parseJSON(visInfo); } catch ( e ) {}
+                        utils.clearStore(config.tenantId + config.emgroup + 'visitor');
+                    }
+
+                    //get ext
+                    var ext = utils.getStore(config.tenantId + config.emgroup + 'ext');
+                    try { ext && me.sendTextMsg('', false, {ext: Easemob.im.Utils.parseJSON(ext)}); } catch ( e ) {}
+                    utils.clearStore(config.tenantId + config.emgroup + 'ext');
+                } else {
+                    transfer.send(easemobim.EVENTS.ONREADY, window.transfer.to);
+                } 
+            }
+			, setExt: function ( msg ) {
+				msg.body.ext = msg.body.ext || {};
+				msg.body.ext.weichat = msg.body.ext.weichat || {};
+
+				//bind skill group
+				if ( config.emgroup ) {
+					msg.body.ext.weichat.queueName = decodeURIComponent(config.emgroup);
+				}
+
+				//bind visitor
+				var visitor = config.visitor;
+				if ( visitor ) {
+					msg.body.ext.weichat.visitor = visitor;
+				}
+
+				//bind agent
+				if ( config.agentName ) {
+					msg.body.ext.weichat.agentUsername = config.agentName;
+				}
+
+                //set language
+                if ( config.language ) {
+					msg.body.ext.weichat.language = config.language;
+                }
+
+                //set growingio id
+                var gr_user_id = utils.getStore(config.tenantId + 'gr_user_id');
+                if ( gr_user_id ) {
+					msg.body.ext.weichat.visitor = msg.body.ext.weichat.visitor || {};
+					msg.body.ext.weichat.visitor.gr_user_id = gr_user_id;
+                    utils.clearStore(config.tenantId + 'gr_user_id');
+                }
+
+                //set originType
+				if ( config.originType ) {
+					msg.body.ext.weichat.originType = config.originType;
+				}
+			}
+			, setRoot: function () {
+				if ( !utils.isTop ) { return false; }
+
+				config.dragenable = false;
+				this.fillFace();
+			}
+			, mobile: function () {
+				if ( !utils.isMobile ) { return false; }
+
+				//mobile need set drag disable
+				config.dragenable = false;
+
+                config.ticket && !config.offDuty && utils.removeClass(easemobim.mobileNoteBtn, 'em-hide');
+
+				if ( !config.hideKeyboard && !config.offDuty ) {
+					var i = document.createElement('i');
+					utils.addClass(i, 'easemobWidgetHeader-keyboard easemobWidgetHeader-keyboard-down');
+					easemobim.dragHeader.appendChild(i);
+				}
+			}
+            , ready: function () {
+				//add tenant notice
+                this.setNotice();
+				//add msg callback
+                this.sdkInit();
+				//connect to xmpp server
+                this.open();
+				//create chat container
+                this.handleGroup();
+				//get service serssion info
+                this.getSession();
+				//set tenant logo
+				this.setLogo();
+				//mobile set textarea can growing with inputing
+				this.initAutoGrow();
+                this.chatWrapper.getAttribute('data-getted') || config.newuser || this.getHistory();
+            }
+			, initAutoGrow: function () {
+				var me = this;
+
+				if ( !me.autoGrowOptions ) {
+                    me.autoGrowOptions = {};
+                    me.autoGrowOptions.callback = function () {
+                        var height = easemobim.send.getBoundingClientRect().height;
+						if ( me.direction === 'up' ) {
+							easemobim.chatFaceWrapper.style.top = 43 + height + 'px';
+						} else {
+							easemobim.imChatBody.style.bottom = height + 'px';
+							easemobim.chatFaceWrapper.style.bottom = height + 'px';
+						}
+                    };
+                    me.autoGrowOptions.dom = easemobim.textarea;
+					setTimeout(function () {
+						utils.isMobile && easemobim.autogrow(me.autoGrowOptions);
+					}, 1000);
+                }
+			}
+            , setConnection: function() {
+                this.conn = this.channel.getConnection();
+            }
+            , handleChatWrapperByHistory: function ( chatHistory, chatWrapper ) {
+                if ( chatHistory.length === easemobim.LISTSPAN ) {//认为可以继续获取下一页历史记录
+                    var startSeqId = Number(chatHistory[easemobim.LISTSPAN - 1].chatGroupSeqId) - 1;
+
+                    if ( startSeqId > 0 ) {
+                        chatWrapper.setAttribute('data-start', startSeqId);
+                        chatWrapper.setAttribute('data-history', 0);
+                    } else {
+                        chatWrapper.setAttribute('data-history', 1);
+                    }
+                } else {
+                    chatWrapper.setAttribute('data-history', 1);
+                }
+            }
+            , getHistory: function ( notScroll ) {
+                if ( config.offDuty || config.newuser ) {
+                    return;
+                }
+
+                var me = this,
+                    chatWrapper = me.chatWrapper,
+                    groupid = chatWrapper.getAttribute('data-groupid');
+
+                if ( groupid ) {
+                    Number(chatWrapper.getAttribute('data-history')) || easemobim.api('getHistory', {
+                        fromSeqId: chatWrapper.getAttribute('data-start') || 0
+                        , size: easemobim.LISTSPAN
+                        , chatGroupId: groupid
+                        , tenantId: config.tenantId
+                    }, function ( msg ) {
+                        me.handleChatWrapperByHistory(msg.data, chatWrapper);
+                        if ( msg.data && msg.data.length > 0 ) {
+                            me.channel.handleHistory(msg.data);
+                            notScroll || me.scrollBottom();
+                        }
+                    });
+                } else {
+                    Number(chatWrapper.getAttribute('data-history')) || easemobim.api('getGroupNew', {
+                        id: config.user.username
+                        , orgName: config.orgName
+                        , appName: config.appName
+                        , imServiceNumber: config.toUser
+                        , tenantId: config.tenantId
+                    }, function ( msg ) {
+                        if ( msg && msg.data ) {
+                            chatWrapper.setAttribute('data-groupid', msg.data);
+                            easemobim.api('getHistory', {
+                                fromSeqId: chatWrapper.getAttribute('data-start') || 0
+                                , size: easemobim.LISTSPAN
+                                , chatGroupId: msg.data
+                                , tenantId: config.tenantId
+                            }, function ( msg ) {
+                                me.handleChatWrapperByHistory(msg.data, chatWrapper);
+                                if ( msg && msg.data && msg.data.length > 0 ) {
+                                    me.channel.handleHistory(msg.data);
+                                    notScroll || me.scrollBottom();
+                                }
+                            });
+                        }
+                    });
+                }
+                chatWrapper.setAttribute('data-getted', 1);
+            }
+			, getGreeting: function () {
+				var me = this,
+					msg = null;
+
+				if ( me.greetingGetted ) {
+					return;
+				}
+
+				me.greetingGetted = true;
+
+				//system greeting
+				easemobim.api('getSystemGreeting', {
+					tenantId: config.tenantId
+				}, function ( msg ) {
+					if ( msg && msg.data ) {
+						msg = {
+							data: msg.data,
+                            ext: {
+                                weichat: {
+                                    html_safe_body: {
+                                        msg: msg.data
+                                    }
+                                }
+                            },
+							type: 'txt',
+							noprompt: true
+						};
+						me.receiveMsg(msg, 'txt');
+					}
+
+					//robert greeting
+					easemobim.api('getRobertGreeting', {
+						tenantId: config.tenantId,
+						originType: config.originType || 'webim'
+					}, function ( msg ) {
+						if ( msg && msg.data ) {
+							var rGreeting = msg.data;
+
+							switch ( rGreeting.greetingTextType ) {
+								case 0:
+									//robert text greeting
+									msg = {
+										data: rGreeting.greetingText,
+                                        ext: {
+                                            weichat: {
+                                                html_safe_body: {
+                                                    msg: rGreeting.greetingText
+                                                }
+                                            }
+                                        },
+										type: 'txt',
+										noprompt: true
+									};
+									me.receiveMsg(msg, 'txt');
+									break;
+								case 1:
+									try {
+										var greetingObj = Easemob.im.Utils.parseJSON(rGreeting.greetingText.replace(/&quot;/g, '"'));
+										if ( rGreeting.greetingText === '{}' ) {
+											msg = {
+												data: '该菜单不存在',
+												type: 'txt',
+												noprompt: true
+											};
+											me.receiveMsg(msg, 'txt');
+										} else {
+											//robert list greeting
+											msg = { 
+												ext: greetingObj.ext,
+												noprompt: true
+											 };
+											me.receiveMsg(msg);	
+										}
+									} catch ( e ) {}
+									break;
+								default: break;
+							}
+						}
+					});
+				});
+			}
+            , getNickNameOption: function () {
+				if ( config.offDuty ) { return; }
+
+                easemobim.api('getNickNameOption', {
+                    tenantId: config.tenantId
+                }, function ( msg ) {
+                    if ( msg && msg.data && msg.data.length > 0 ) {
+                        config.nickNameOption = msg.data[0].optionValue === 'true' ? true : false;
+                    } else {
+                        config.nickNameOption = null;
+                    }
+                }, function () {
+                    config.nickNameOption = null;
+                });
+            }
+            , getSession: function () {
+				if ( config.offDuty ) { return; }
+
+                var me = this
+
+                me.agent = me.agent || {};
+
+                easemobim.api('getExSession', {
+                    id: config.user.username
+                    , orgName: config.orgName
+                    , appName: config.appName
+                    , imServiceNumber: config.toUser
+                    , tenantId: config.tenantId
+                }, function ( msg ) {
+                    if ( msg && msg.data ) {
+                        var ref = config.referrer ? decodeURIComponent(config.referrer) : document.referrer;
+                        me.onlineHumanAgentCount = msg.data.onlineHumanAgentCount;//人工坐席数
+                        me.onlineRobotAgentCount = msg.data.onlineRobotAgentCount;//机器人坐席数
+                        me.agentCount = me.onlineHumanAgentCount/1 + me.onlineRobotAgentCount/1;
+                        config.agentUserId = msg.data.serviceSession ? msg.data.serviceSession.agentUserId : null;//get agentuserid
+
+                        if ( me.agentCount === 0 ) {
+                            me.noteShow = false;
+                        }
+                    } else {
+                        me.getGreeting();
+                    }
+
+                    if ( !msg.data.serviceSession ) {
+                        //get greeting only when service session is not exist
+                        me.getGreeting();
+                    } else {
+                        me.session = msg.data.serviceSession;
+                        msg.data.serviceSession.visitorUser 
+                        && msg.data.serviceSession.visitorUser.userId 
+                        && easemobim.api('sendVisitorInfo', {
+                            tenantId: config.tenantId,
+                            visitorId: msg.data.serviceSession.visitorUser.userId,
+                            referer:  ref
+                        });//ref info
+                    }
+
+
+                    if ( !me.nicknameGetted ) {
+                        me.nicknameGetted = true;
+                        //get the switcher of agent nickname
+                        me.getNickNameOption();
+                    }
+                });
+            }
+            , handleGroup: function () {
+                this.chatWrapper = this.handleChatContainer();
+            }
+            , handleChatContainer: function () {
+                var curChatContainer = utils.$Class('div.easemobWidget-chat', easemobim.imChatBody);
+
+				this.setAgentProfile({
+					tenantName: config.defaultAgentName,
+                    avatar: config.tenantAvatar
+				});
+                if ( curChatContainer && curChatContainer.length > 0 ) {
+                    return curChatContainer[0];
+                } else {
+                    curChatContainer = document.createElement('div');
+                    utils.addClass(curChatContainer, 'easemobWidget-chat');
+                    utils.insertBefore(easemobim.imChatBody, curChatContainer, easemobim.imChatBody.childNodes[this.hasLogo ? 1 : 0]);
+
+                    var transfer = document.createElement('div');
+                    transfer.id = 'transfer';
+					utils.addClass(transfer, 'easemobWidget-status-prompt');
+                    easemobim.imChat.appendChild(transfer);
+                    return curChatContainer;
+                }
+            }
+            , getMsgid: function ( msg ) {
+                if ( msg ) {
+                    if ( msg.ext && msg.ext.weichat ) {
+                        return msg.ext.weichat.msgId;
+                    }
+                    return msg.msgId
+                }
+                return null;
+            }
+			, setKeyboard: function ( direction ) {
+				var me = this;
+
+				me.direction = direction;					
+				switch ( direction ) {
+					case 'up':
+						easemobim.send.style.bottom = 'auto';
+						easemobim.send.style.zIndex = '3';
+						easemobim.send.style.top = '43px';
+						easemobim.imChatBody.style.bottom = '0';
+						easemobim.chatFaceWrapper.style.bottom = 'auto';
+						easemobim.chatFaceWrapper.style.top = 43 + easemobim.send.getBoundingClientRect().height + 'px';
+						break;
+					case 'down':
+						easemobim.send.style.bottom = '0';
+						easemobim.send.style.zIndex = '3';
+						easemobim.send.style.top = 'auto';
+						easemobim.imChatBody.style.bottom = easemobim.send.getBoundingClientRect().height + 'px';
+						easemobim.chatFaceWrapper.style.bottom = easemobim.send.getBoundingClientRect().height + 'px';
+						easemobim.chatFaceWrapper.style.top = 'auto';
+						me.scrollBottom(50);
+						break;
+				}
+			}
+            , startToGetAgentStatus: function () {
+                var me = this;
+
+                if ( config.agentStatusTimer ) {
+                    return;
+                }
+
+                //poll
+                config.agentStatusTimer = setInterval(function() {
+                    me.updateAgentStatus();
+                }, 5000);
+            }
+            , stopGettingAgentStatus: function () {
+                config.agentStatusTimer = clearInterval(config.agentStatusTimer);
+            }
+            , clearAgentStatus: function () {
+                doms.agentStatusSymbol.className = 'em-hide';
+                doms.agentStatusText.innerText = '';
+            }
+            , updateAgentStatus: function () {
+                var me = this;
+
+                if ( !config.agentUserId || !config.nickNameOption ) {
+                    me.stopGettingAgentStatus();
+                    return;
+                }
+
+                easemobim.api('getAgentStatus', {
+                    tenantId: config.tenantId,
+                    orgName: config.orgName,
+                    appName: config.appName,
+                    agentUserId: config.agentUserId,
+                    userName: config.user.username,
+                    token: config.user.token,
+                    imServiceNumber: config.toUser
+                }, function ( msg ) {
+                    var state;
+
+                    if ( msg && msg.data && msg.data.state ) {
+                        state = msg.data.state;
+                        doms.agentStatusText.innerText = easemobim._const.agentStatusText[state];
+                        doms.agentStatusSymbol.className = 'easemobWidget-agent-status ' + easemobim._const.agentStatusClassName[state];
+                    }
+                });
+            }
+            , setAgentProfile: function ( info ) {
+
+                var avatarImg = info && info.avatar ? utils.getAvatarsFullPath(info.avatar, config.domain) : config.tenantAvatar || config.defaultAvatar;
+
+                //更新企业头像和名称
+                if ( info.tenantName ) {
+                    utils.html(easemobim.nickName, info.tenantName);
+                    easemobim.avatar.setAttribute('src', avatarImg);
+                }
+
+                //昵称开关关闭
+                if ( !config.nickNameOption ) {
+                    return;
+                }
+
+                //更新坐席昵称
+                utils.html(easemobim.nickName, info.userNickname);
+
+				this.currentAvatar = avatarImg;
+                var src = easemobim.avatar.getAttribute('src');
+
+                if ( !this.currentAvatar ) { return; }
+                easemobim.avatar.setAttribute('src', this.currentAvatar);
+
+                //更新头像显示状态
+                //只有头像和昵称更新成客服的了才开启轮训
+                //this.updateAgentStatus();
+            }
+            , setMinmum: function () {
+                if ( !config.minimum || utils.isTop ) {
+                    return;
+                }
+                var me = this,
+					min = document.createElement('a');
+
+                min.setAttribute('href', 'javascript:;');
+                min.setAttribute('title', '关闭');
+                utils.addClass(min, 'easemobWidgetHeader-min bg-color border-color');
+                easemobim.dragHeader.appendChild(min);
+                utils.on(min, 'mousedown touchstart', function () {
+                    utils.isTop || transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
+					return false;
+				});
+                utils.on(min, 'mouseenter', function () {
+                    utils.addClass(this, 'hover-color');
+                });
+                utils.on(min, 'mouseleave', function () {
+                    utils.removeClass(this, 'hover-color');
+                });
+                min = null;
+            }
+			, setTheme: function () {
+                var me = this;
+
+				easemobim.api('getTheme', {
+					tenantId: config.tenantId
+				}, function ( msg ) {
+					config.theme = msg.data && msg.data.length && msg.data[0].optionValue ? msg.data[0].optionValue : '天空之城';
+
+					if ( !easemobim.THEME[config.theme] ) {
+						config.theme = '天空之城';
+					}
+
+					var style = document.createElement('style');
+					style.setAttribute('type', 'text/css');
+					utils.html(style, easemobim.THEME[config.theme].css);
+					var head = document.head || document.getElementsByTagName('head')[0];
+					head.appendChild(style);
+				});
+
+            }
+			, setLogo: function () {
+				if ( !utils.$Class('div.easemobWidget-tenant-logo').length && config.logo ) {
+					utils.html(this.chatWrapper, '<div class="easemobWidget-tenant-logo"><img src="' + config.logo + '"></div>' + utils.html(this.chatWrapper));
+					this.hasLogo = true;
+				}
+			}
+            , setNotice: function () {
+                var me = this;
+
+                if ( me.slogan || config.offDuty ) {
+                    return;
+                }
+
+                easemobim.api('getSlogan', {
+                    tenantId: config.tenantId
+                }, function ( msg ) {
+                    if ( msg.data && msg.data.length > 0 && msg.data[0].optionValue ) {
+                        easemobim.imChatBody.style.top = '90px';
+                        me.slogan = document.createElement('div');
+                        utils.addClass(me.slogan, 'easemobWidget-word');
+
+                        var slogan = Easemob.im.Utils.parseLink(msg.data[0].optionValue);
+                        utils.html(me.slogan, "<span>" + slogan + "</span><a class='easemobWidget-word-close' href='javascript:;'></a>");
+                        easemobim.imChat.appendChild(me.slogan);
+
+                        //关闭广告语按钮
+                        utils.on(utils.$Class('a.easemobWidget-word-close'), utils.click, function () {
+                            utils.addClass(me.slogan, 'em-hide');
+                            easemobim.imChatBody.style.top = '43px';
+                        });
+                    }
+                });
+            }
+			//fill emotions async
+            , fillFace: function () {
+                if ( utils.html(easemobim.chatFaceWrapper.getElementsByTagName('ul')[0]) ) {
+                    return;
+                }
+
+				var faceStr = '',
+					count = 0,
+					me = this;
+
+                if(utils.isMobile){
+                    utils.on(easemobim.faceBtn, 'mouseenter', function () {
+                        utils.addClass(this, 'theme-color');
+                    })
+                    utils.on(easemobim.faceBtn, 'mouseleave', function () {
+                        utils.removeClass(this, 'theme-color');
+                    });
+                }
+                utils.on(easemobim.faceBtn, utils.click, function () {
+					easemobim.textarea.blur();
+                    utils.toggleClass(easemobim.chatFaceWrapper, 'em-hide');
+
+					if ( faceStr ) return false;
+					faceStr = '<li class="e-face">';
+					utils.each(Easemob.im.EMOTIONS.map, function ( k, v ) {
+						count += 1;
+						faceStr += ["<div class='easemobWidget-face-bg e-face'>",
+										"<img class='easemobWidget-face-img e-face em-emotion' ",
+											"src='" + Easemob.im.EMOTIONS.path + v + "' ",
+											"data-value=" + k + " />",
+									"</div>"].join('');
+						if ( count % 7 === 0 ) {
+							faceStr += '</li><li class="e-face">';
+						}
+					});
+					if ( count % 7 === 0 ) {
+						faceStr = faceStr.slice(0, -('<li class="e-face">').length);
+					} else {
+						faceStr += '</li>';
+					}
+
+					utils.html(easemobim.chatFaceWrapper.getElementsByTagName('ul')[0], faceStr);
+                });
+
+                //表情的选中
+                utils.live('img.em-emotion', utils.click, function ( e ) {
+                    !utils.isMobile && easemobim.textarea.focus();
+                    easemobim.textarea.value = easemobim.textarea.value + this.getAttribute('data-value');
+                    if ( utils.isMobile ) {
+                        me.autoGrowOptions.update();//update autogrow
+                        setTimeout(function () {
+                            easemobim.textarea.scrollTop = 10000;
+                        }, 100);
+                    }
+                    me.readyHandled && utils.removeClass(easemobim.sendBtn, 'disabled');
+                }, easemobim.chatFaceWrapper);
+            }
+            , errorPrompt: function ( msg, isAlive ) {//暂时所有的提示都用这个方法
+                var me = this;
+
+                if ( !me.ePrompt ) {
+                    me.ePrompt = document.createElement('p');
+                    me.ePrompt.className = 'easemobWidget-error-prompt em-hide';
+                    utils.html(me.ePrompt, '<span></span>');
+                    easemobim.imChat.appendChild(me.ePrompt);
+                    me.ePromptContent = me.ePrompt.getElementsByTagName('span')[0];
+                }
+                
+                utils.html(me.ePromptContent, msg);
+                utils.removeClass(me.ePrompt, 'em-hide');
+                isAlive || setTimeout(function () {
+                    utils.html(me.ePromptContent, '');
+                    utils.addClass(me.ePrompt, 'em-hide');
+                }, 2000);
+            }
+            , getSafeTextValue: function ( msg ) {
+                if ( msg && msg.ext && msg.ext.weichat && msg.ext.weichat.html_safe_body ) {
+                    return msg.ext.weichat.html_safe_body.msg;
+                } else {
+                    try {
+                        return msg.bodies[0].msg;
+                    } catch ( e ) {}
+                }
+                return '';
+            }
+            , setOffline: function ( isOffDuty ) {
+
+				this.mobile();
+
+                if ( !isOffDuty ) { return; }
+
+                switch ( config.offDutyType ) {
+                    case 'chat':
+                                    
+                        break;
+                    case 'none':// disable note & msg
+
+                        var word = config.offDutyWord || '现在是下班时间。';
+
+                        try {
+                            word = decodeURIComponent(word);
+                        } catch ( e ) {}
+
+                        var msg = new Easemob.im.EmMessage('txt');
+                        msg.set({ value: word });
+                        if ( !this.chatWrapper ) {
+                            this.handleGroup();
+                        }
+                        this.appendMsg(config.toUser, config.user.username, msg);
+                        utils.addClass(easemobim.send, 'easemobWidget-send-disable');
+                        break;
+                    default:// show note
+                        if ( easemobim.leaveMessage ) {
+                            this.slogan && utils.addClass(this.slogan, 'em-hide');
+                            //utils.addClass(easemobim.imBtn.getElementsByTagName('a')[0], 'easemobWidget-offline-bg');
+                            utils.removeClass(easemobim.leaveMessage.dom, 'em-hide');
+                            utils.addClass(easemobim.imChatBody, 'em-hide');
+                            utils.addClass(easemobim.send, 'em-hide');
+                            easemobim.leaveMessage.show(isOffDuty);
+                        }
+                        break;
+                }
+            }
+			//close chat window
+            , close: function () {
+                this.opened = false;
+
+				if ( !config.hide ) {
+					utils.addClass(easemobim.imChat, 'em-hide');
+					setTimeout(function () {
+						utils.removeClass(easemobim.imBtn, 'em-hide');
+					}, 60);
+				}
+            }
+			//show chat window
+            , show: function () {
+				var me = this;
+
+                me.opened = true;
+                me.fillFace();
+                me.scrollBottom(50);
+                utils.addClass(easemobim.imBtn, 'em-hide');
+                utils.removeClass(easemobim.imChat, 'em-hide');
+                if ( (!config.offDuty && typeof config.offDuty !== 'undefined') || config.offDutyType !== 'none' ) {
+                    try { easemobim.textarea.focus(); } catch ( e ) {}
+                }
+				me.resetPrompt();
+            }
+            , sdkInit: function () {
+                this.channel.listen();
+            }
+            , appendDate: function ( date, to, isHistory ) {
+                var chatWrapper = this.chatWrapper,
+                    dom = document.createElement('div'),
+                    fmt = 'M月d日 hh:mm';
+
+                if ( !chatWrapper ) {
+                    return;
+                }
+                utils.html(dom, new Date(date).format(fmt));
+                utils.addClass(dom, 'easemobWidget-date');
+
+                if ( !isHistory ) {
+                    if ( to ) {
+                        if ( !this.msgTimeSpan[to] || (date - this.msgTimeSpan[to] > 60000) ) {//间隔大于1min  show
+                            chatWrapper.appendChild(dom); 
+                        }
+                        this.resetSpan(to);
+                    } else {
+                        chatWrapper.appendChild(dom); 
+                    }
+                } else {
+                    utils.insertBefore(chatWrapper, dom, chatWrapper.getElementsByTagName('div')[this.hasLogo ? 1 : 0]);
+                }
+            }
+            , resetSpan: function ( id ) {
+                this.msgTimeSpan[id] = new Date().getTime();
+            }
+            , open: function () {
+				var me = this;
+
+				var op = {
+					user: config.user.username
+					, appKey: config.appKey
+					, apiUrl: location.protocol + '//' + config.restServer
+				};
+
+				if ( config.user.token ) {
+					op.accessToken = config.user.token;
+				} else {
+					op.pwd = config.user.password;
+				}
+
+				me.conn.open(op);
+            }
+            , soundReminder: function () {
+                var me = this;
+                var ast = 0;
+
+                if (!window.HTMLAudioElement || utils.isMobile || !config.soundReminder) {
+                    return;
+                }
+
+                me.reminder = document.createElement('a');
+                me.reminder.setAttribute('href', 'javascript:;');
+                utils.addClass(me.reminder, 'easemobWidgetHeader-audio theme-color');
+                easemobim.dragHeader.appendChild(me.reminder);
+
+                //音频按钮静音
+                utils.on(me.reminder, 'mousedown touchstart', function () {
+                    me.silence = !me.silence;
+                    utils.toggleClass(me.reminder, 'easemobWidgetHeader-silence', me.slience);
+
+                    return false;
+                });
+
+                me.audio = document.createElement('audio');
+                me.audio.src = config.staticPath + '/mp3/msg.m4a';
+                me.soundReminder = function () {
+                    if ( (utils.isMin() ? false : me.opened) || ast !== 0 || me.silence ) {
+                        return;
+                    }
+                    ast = setTimeout(function() {
+                        ast = 0;
+                    }, 3000);
+                    me.audio.play();
+                };
+            }
+            , setThemeBackground: function ( obj ) {
+                utils.isMobile || utils.addClass(obj, 'bg-color');
+            }
+            , clearThemeBackground: function ( obj ) {
+                utils.isMobile || utils.removeClass(obj, 'bg-color');
+            }
+            , setThemeColor: function ( obj ) {
+                utils.isMobile || utils.addClass(obj, 'theme-color');
+            }
+            , clearThemeColor: function ( obj ) {
+                utils.isMobile || utils.removeClass(obj, 'theme-color');
+            }
+            , bindEvents: function () {
+                var me = this;
+
+				utils.live('i.easemobWidgetHeader-keyboard', utils.click, function () {
+					if ( utils.hasClass(this, 'easemobWidgetHeader-keyboard-up') ) {
+						utils.addClass(this, 'easemobWidgetHeader-keyboard-down');
+						utils.removeClass(this, 'easemobWidgetHeader-keyboard-up');
+						me.setKeyboard('down');
+					} else {
+						utils.addClass(this, 'easemobWidgetHeader-keyboard-up');
+						utils.removeClass(this, 'easemobWidgetHeader-keyboard-down');
+						me.setKeyboard('up');
+					}
+				});
+				
+				!utils.isMobile && !utils.isTop && utils.on(easemobim.imBtn, utils.click, function () {
+				    transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
+				});
+				utils.on(easemobim.imChatBody, utils.click, function () {
+					easemobim.textarea.blur();
+					return false;
+				});
+                utils.on(document, 'mouseover', function () {
+					utils.isTop || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
+                });
+				utils.live('img.easemobWidget-imgview', 'click', function () {
+					easemobim.imgView.show(this.getAttribute('src'));
+                });
+                utils.live('button.easemobWidget-list-btn', 'mouseover', function () {
+                    me.setThemeBackground(this);
+                });
+                utils.live('button.easemobWidget-list-btn', 'mouseout', function () {
+                    me.clearThemeBackground(this);
+                });
+                utils.on(easemobim.sendFileBtn, 'mouseenter', function () {
+                    me.setThemeColor(this);
+                });
+                utils.on(easemobim.sendFileBtn, 'mouseleave', function () {
+                    me.clearThemeColor(this);
+                });
+                utils.on(easemobim.noteBtn, 'mouseenter', function () {
+                    me.setThemeColor(this);
+                });
+                utils.on(easemobim.noteBtn, 'mouseleave', function () {
+                    me.clearThemeColor(this);
+                });
+
+				if (config.dragenable && !utils.isMobile) {//drag
+					
+					easemobim.dragBar.style.cursor = 'move';
+
+					utils.on(easemobim.dragBar, 'mousedown', function ( ev ) {
+						var e = window.event || ev;
+						easemobim.textarea.blur();//ie a  ie...
+						easemobim.EVENTS.DRAGREADY.data = { x: e.clientX, y: e.clientY };
+                        utils.isTop || transfer.send(easemobim.EVENTS.DRAGREADY, window.transfer.to);
+						return false;
+					}, false);
+				}
+
+                //pc 和 wap 的上滑加载历史记录的方法
+                (function () {
+                    var st,
+                        _startY,
+                        _y,
+                        touch;
+
+                    //wap
+                    utils.live('div.easemobWidget-date', 'touchstart', function ( ev ) {
+                        var e = ev || window.event,
+                            touch = e.touches;
+
+                        if ( e.touches && e.touches.length > 0 ) {
+                            _startY = touch[0].pageY;
+                        }
+                    });
+                    utils.live('div.easemobWidget-date', 'touchmove', function ( ev ) {
+                        var e = ev || window.event,
+                            touch = e.touches;
+
+                        if ( e.touches && e.touches.length > 0 ) {
+                            _y = touch[0].pageY;
+                            if ( _y - _startY > 8 && this.getBoundingClientRect().top >= 0 ) {
+                                clearTimeout(st);
+                                st = setTimeout(function () {
+                                    me.getHistory(true);
+                                }, 100);
+                            }
+                        }
+                    });
+
+                    //pc
+                    var getHis = function ( ev ) {
+                        var e = ev || window.event,
+                            that = this;
+
+                        if ( e.wheelDelta / 120 > 0 || e.detail < 0 ) {
+                            clearTimeout(st);
+                            st = setTimeout(function () {
+                                if ( that.getBoundingClientRect().top >= 0 ) {
+                                    me.getHistory(true);
+                                }
+                            }, 400);
+                        }
+                    };
+                    utils.live('div.easemobWidget-chat', 'mousewheel', getHis);
+                    utils.live('div.easemobWidget-chat', 'DOMMouseScroll', getHis);
+                }());
+
+                //resend
+                utils.live('div.easemobWidget-msg-status', utils.click, function () {
+                    var id = this.getAttribute('id').slice(0, -7);
+
+                    utils.addClass(this, 'em-hide');
+                    utils.removeClass(utils.$Dom(id + '_loading'), 'em-hide');
+                    if ( this.getAttribute('data-type') === 'txt' ) {
+                        me.channel.reSend('txt', id);
+                    } else {
+                        me.conn.send(id);
+                    }
+                });
+
+				utils.live('button.js_robotTransferBtn', utils.click,  function () {
+                    var that = this;
+
+                    if ( that.clicked ) { return false; }
+
+                    that.clicked = true;
+                    me.transferToKf(that.getAttribute('data-id'), that.getAttribute('data-sessionid'));
+                    return false;
+                });
+
+                //机器人列表
+                utils.live('button.js_robotbtn', utils.click, function () {
+                    var that = this;
+
+                    me.sendTextMsg(utils.html(that), null, {
+                        msgtype: {
+                            choice: { menuid: that.getAttribute('data-id') }
+                        }
+                    });
+                    return false;
+                });
+                
+                var handleSendBtn = function () {
+                    if ( !me.readyHandled ) {
+                        utils.addClass(easemobim.sendBtn, 'disabled');
+                        return false;
+                    }
+                    utils.toggleClass(easemobim.sendBtn, 'disabled', !easemobim.textarea.value);
+                };
+
+                utils.on(easemobim.textarea, 'keyup', handleSendBtn);
+                utils.on(easemobim.textarea, 'change', handleSendBtn);
+                utils.on(easemobim.textarea, 'input', handleSendBtn);
+                
+                if ( utils.isMobile ) {
+                    var handleFocus = function () {
+						easemobim.textarea.style.overflowY = 'auto';
+						me.scrollBottom(800);
+						clearInterval(me.focusText);
+						me.focusText = setInterval(function () {
+							document.body.scrollTop = 10000;
+						}, 100);
+					};
+                    utils.on(easemobim.textarea, 'input', function () {
+                        me.autoGrowOptions.update();
+                        me.scrollBottom(800);
+                    });
+                    utils.on(easemobim.textarea, 'focus', handleFocus);
+                    utils.one(easemobim.textarea, 'touchstart', handleFocus);
+                    utils.on(easemobim.textarea, 'blur', function () {
+                        clearInterval(me.focusText);
+                    });
+                }
+
+                //选中文件并发送
+                utils.on(easemobim.realFile, 'change', function () {
+                    easemobim.realFile.value && me.sendImgMsg();
+                });
+
+                //hide face wrapper
+                utils.on(document, utils.click, function ( ev ) {
+                    var e = window.event || ev,
+                        t = e.srcElement || e.target;
+
+                    if ( !utils.hasClass(t, 'e-face') ) {
+                        utils.addClass(easemobim.chatFaceWrapper, 'em-hide');
+                    }
+                });
+
+				utils.on(easemobim.sendFileBtn, 'touchend', function () {
+                    easemobim.textarea.blur();
+                });
+                //弹出文件选择框
+                utils.on(easemobim.sendFileBtn, 'click', function () {
+                    if ( !me.readyHandled ) {
+                        me.errorPrompt('正在连接中...');
+                        return false;
+                    }
+                    if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
+                        me.errorPrompt('当前浏览器需要安装flash发送图片');
+                        return false;    
+                    }
+                    easemobim.realFile.click();
+                });
+
+                //显示留言界面
+                utils.on(easemobim.noteBtn, 'click', function () {
+                    easemobim.leaveMessage.show();
+                });
+                utils.on(easemobim.mobileNoteBtn, 'click', function () {
+                    easemobim.leaveMessage.show();
+                });
+
+                //hot key
+                utils.on(easemobim.textarea, 'keydown', function ( evt ) {
+                    if(evt.keyCode !== 13) return;
+
+                    if(utils.isMobile || evt.ctrlKey || evt.shiftKey){
+                        this.value += '\n';
+                        return false;
+                    }
+                    else{
+                        utils.addClass(easemobim.chatFaceWrapper, 'em-hide');
+                        if ( utils.hasClass(easemobim.sendBtn, 'disabled') ) {
+                            return false;
+                        }
+                        me.sendTextMsg();
+
+                        // 可能是事件绑定得太多了，导致换行清不掉，稍后解决
+                        setTimeout(function(){
+                            this.value = '';
+                        }.bind(this), 0);
+                    }
+                });
+
+                utils.on(easemobim.sendBtn, 'click', function () {
+                    if ( utils.hasClass(this, 'disabled') ) {
+                        return false;
+                    }
+                    utils.addClass(easemobim.chatFaceWrapper, 'em-hide');
+                    me.sendTextMsg();
+                    if ( utils.isMobile ) {
+                        easemobim.textarea.style.height = '34px';
+                        easemobim.textarea.style.overflowY = 'hidden';
+                        me.direction === 'up' || (easemobim.imChatBody.style.bottom = '43px');
+                        easemobim.textarea.focus();
+                    }
+                    return false;
+                });
+            }
+            , scrollBottom: function ( wait ) {
+                var ocw = easemobim.imChatBody;
+
+                wait 
+                ? (clearTimeout(this.scbT), this.scbT = setTimeout(function () {
+                    ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000;
+                }, wait))
+                : (ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000);
+            }
+			//send image message function
+            , sendImgMsg: function ( file, isHistory ) {
+                this.channel.send('img', file, isHistory);
+            }
+			//send file message function
+			, sendFileMsg: function ( file, isHistory ) {
+                this.channel.send('file', file, isHistory);
+            }
+            , handleEventStatus: function ( action, info, robertToHubman ) {
+
+                var res = robertToHubman ? this.onlineHumanAgentCount < 1 : this.agentCount < 1;
+				if ( res ) {//显示无坐席在线
+                    
+                    //每次激活只显示一次
+                    if ( !this.noteShow ) {
+                        this.noteShow = true;
+                        this.appendEventMsg(easemobim._const.eventMessageText.NOTE);
+                    }
+                    
+				}
+
+                if ( action === 'reply' && info ) {
+
+                    if ( config.agentUserId ) {
+                        this.startToGetAgentStatus();
+                    }
+
+                    this.setAgentProfile({
+                        userNickname: info.userNickname,
+                        avatar: info.avatar
+                    });
+                } else if ( action === 'create' ) {//显示会话创建
+                    this.appendEventMsg(easemobim._const.eventMessageText.CREATE);
+                } else if ( action === 'close' ) {//显示会话关闭
+                    this.appendEventMsg(easemobim._const.eventMessageText.CLOSED);
+                } else if ( action === 'transferd' ) {//显示转接到客服
+                    this.appendEventMsg(easemobim._const.eventMessageText.TRANSFER);
+                } else if ( action === 'transfering' ) {//显示转接中
+                    this.appendEventMsg(easemobim._const.eventMessageText.TRANSFERING);
+                 } else if ( action === 'linked' ) {//接入成功
+                    this.appendEventMsg(easemobim._const.eventMessageText.LINKED);
+                }
+
+                if(action === 'transferd' || action === 'linked'){
+                    //坐席发生改变
+                    this.handleAgentStatusChanged(info);
+                }
+            }
+            //坐席改变更新坐席头像和昵称并且开启获取坐席状态的轮训
+            , handleAgentStatusChanged: function ( info ) {
+                if ( !info ) { return; }
+
+                config.agentUserId = info.userId;
+
+                this.updateAgentStatus();
+                this.startToGetAgentStatus();
+
+                //更新头像和昵称
+                this.setAgentProfile({
+                    userNickname: info.agentUserNiceName,
+                    avatar: info.avatar
+                });
+            }
+            //转接中排队中等提示上屏
+            , appendEventMsg: function (msg) {
+                //如果设置了hideStatus, 不显示转接中排队中等提示
+                if (config.hideStatus) { return; }
+
+                var dom = document.createElement('div');
+
+                dom.innerText = msg;
+                dom.className = 'easemobWidget-event';
+
+                this.appendDate(new Date().getTime());
+                this.chatWrapper.appendChild(dom);
+                this.scrollBottom(utils.isMobile ? 800 : null);
+            }
+			//消息上屏
+            , appendMsg: function ( from, to, msg, isHistory ) {
+
+                var me = this;
+
+                var isSelf = from == config.user.username && (from || config.user.username),
+                    curWrapper = me.chatWrapper;
+
+                var div = document.createElement('div');
+                utils.html(div, msg.get(!isSelf));
+
+                if ( isHistory ) {
+                    utils.insertBefore(curWrapper, div, curWrapper.childNodes[me.hasLogo ? 1 : 0]);
+                } else {
+                    curWrapper.appendChild(div);
+					me.scrollBottom(utils.isMobile ? 800 : null);
+                }
+				var imgList = utils.$Class('img.easemobWidget-imgview', div),
+					img = imgList.length > 0 ? imgList[0] : null;
+					
+				if ( img ) {
+					utils.on(img, 'load', function () {
+						me.scrollBottom();
+						img = null;
+					});
+				}
+                div = null;
+            }
+			//send text message function
+            , sendTextMsg: function ( message, isHistory, ext ) {
+                this.channel.send('txt', message, isHistory, ext);
+            }
+			, transferToKf: function ( id, sessionId ) {
+                this.channel.send('transferToKf', id, sessionId);
+            }
+			//send satisfaction evaluation message function
+            , sendSatisfaction: function ( level, content, session, invite ) {
+                this.channel.send('satisfaction', level, content, session, invite);
+            }
+			//未读消息提醒
+            , messagePrompt: function ( message ) {
+
+				if ( utils.isMobile ) {
+					return;
+				}
+
+				var me = this;
+
+				if ( !me.opened ) {
+					utils.removeClass(utils.html(easemobim.messageCount, ''), 'em-hide');
+					me.msgCount += 1;
+
+					if ( me.msgCount > 9 ) {
+						utils.html(utils.addClass(easemobim.messageCount, 'mutiCount'), '\…');
+					} else {
+						utils.html(utils.removeClass(easemobim.messageCount, 'mutiCount'), me.msgCount);
+					}
+
+				} else {
+					me.resetPrompt();
+				}
+
+				if ( utils.isMin() || !me.opened ) {
+					me.soundReminder();
+					easemobim.EVENTS.NOTIFY.data = {
+						avatar: this.currentAvatar,
+						title: '新消息',
+						brief: message.brief
+					};
+					utils.isTop || transfer.send(easemobim.EVENTS.SLIDE, window.transfer.to);
+					utils.isTop || transfer.send(easemobim.EVENTS.NOTIFY, window.transfer.to);
+				}
+            }
+			, resetPrompt: function () {
+				this.msgCount = 0;
+				utils.addClass(utils.html(easemobim.messageCount, ''), 'em-hide');
+				utils.isTop || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
+			}
+			//receive message function
+            , receiveMsg: function ( msg, type, isHistory ) {
+                if ( config.offDuty ) {
+                    return;
+                }
+
+                this.channel.handleReceive(msg, type, isHistory);
+            }
+        };
+    };
+
+
+
+	/**
+	 * 调用指定接口获取数据
+	*/
+	easemobim.api = function ( apiName, data, success, error ) {
+		//cache
+		easemobim.api[apiName] = easemobim.api[apiName] || {};
+
+		var ts = new Date().getTime();
+		easemobim.api[apiName][ts] = {
+            success: success,
+            error: error
+        };
+		easemobim.getData
+		.send({
+			api: apiName
+			, data: data
+			, timespan: ts
+		})
+		.listen(function ( msg ) {
+			if ( easemobim.api[msg.call] && easemobim.api[msg.call][msg.timespan] ) {
+
+				var callback = easemobim.api[msg.call][msg.timespan];
+				delete easemobim.api[msg.call][msg.timespan];
+
+                if ( msg.status !== 0 ) {
+                    typeof callback.error === 'function' && callback.error(msg);
+                } else {
+                    typeof callback.success === 'function' && callback.success(msg);
+                }
+			}
+		}, ['api']);
+	};
+}());
+
+;(function ( window, undefined ) {
+    'use strict';
+
+	if ( typeof easemobim === 'function' ) {
+		return false;
+	}
+
+
+    var webim = document.getElementById('EasemobKefuWebim'),
+		utils = easemobim.utils,
+		entry;
+
+
+	//main entry
+	var main = function ( config ) {
+
+		var tenantId = utils.query('tenantId');
+
+        config = config || {};
+
+
+		if ( utils.isTop ) {
+
+            //get config from referrer's config
+            try {
+                config = JSON.parse(utils.code.decode(utils.getStore('emconfig' + tenantId)));
+            } catch ( e ) {}
+
+            config.tenantId = tenantId;
+            config.hide = true;
+            config.to = utils.convertFalse(utils.query('to'));
+            config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
+            config.domain = config.domain || '//' + location.host;
+            config.offDutyWord = decodeURIComponent(utils.query('offDutyWord'));
+            config.offDutyType = utils.query('offDutyType');
+            config.language = utils.query('language') || 'zh_CN';
+            config.xmppServer = utils.convertFalse(utils.query('xmppServer'));
+            config.restServer = utils.convertFalse(utils.query('restServer'));
+            config.originType = utils.convertFalse(utils.query('originType'));
+            config.agentName = utils.convertFalse(utils.query('agentName'));
+            config.satisfaction = utils.convertFalse(utils.query('sat'));
+            config.resources = utils.convertFalse(utils.query('resources'));
+            config.hideStatus = utils.convertFalse(utils.query('hideStatus'));
+            config.satisfaction = utils.convertFalse(utils.query('sat'));
+            config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
+            config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
+            config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket'));//true default
+            try { config.emgroup = decodeURIComponent(utils.query('emgroup')); } catch ( e ) { config.emgroup = utils.query('emgroup'); }
+
+
+            //没绑定user直接取cookie
+            if ( !utils.query('user') ) {
+                config.user = {
+                    username: utils.get('root' + config.tenantId + config.emgroup),
+                    password: '',
+                    token: ''
+                };
+            } else if ( !config.user || (config.user.username && config.user.username !== utils.query('user')) ) {
+                config.user = {
+                    username: '',
+                    password: '',
+                    token: ''
+                };
+			}
+		}
+		
+
+		//render Tpl
+		webim.innerHTML = "\
+			<div id='easemobWidgetPopBar'" + (utils.isTop || !config.minimum || config.hide ? " class='em-hide'" : "") + ">\
+				<a class='easemobWidget-pop-bar bg-color' href='" + (utils.isMobile ? location.href + "' target='_blank'" : "javascript:;'") + "><i></i>" + config.buttonText + "</a>\
+				<span class='easemobWidget-msgcount em-hide'></span>\
+			</div>\
+			<div id='EasemobKefuWebimChat' class='easemobWidgetWrapper" + (utils.isTop || !config.minimum ? "" : " em-hide")  + (utils.isMobile ? " easemobWidgetWrapper-mobile" : "") + "'>\
+				<div id='easemobWidgetHeader' class='easemobWidgetHeader-wrapper bg-color border-color'>\
+					<div id='easemobWidgetDrag'>\
+						" + (utils.isMobile || utils.isTop ? "" : "<p></p>") + "\
+						<img class='easemobWidgetHeader-portrait border-color'/>\
+						<span class='easemobWidgetHeader-nickname'></span>\
+						<span class='em-header-status-text'></span>\
+                        <i id='easemobWidgetNotem' class='easemobWidget-notem em-hide'></i>\
+                        <i id='easemobWidgetAgentStatus' class='easemobWidget-agent-status em-hide'></i>\
+					</div>\
+				</div>\
+				<div id='easemobWidgetBody' class='easemobWidgetBody-wrapper'></div>\
+				<div id='EasemobKefuWebimFaceWrapper' class='easemobWidget-face-wrapper e-face em-hide'>\
+					<ul class='easemobWidget-face-container'></ul>\
+				</div>\
+				<div id='easemobWidgetSend' class='easemobWidget-send-wrapper'>\
+					<i class='easemobWidget-face e-face' tile='表情'></i>\
+					<i class='easemobWidget-file' id='easemobWidgetFile' tile='图片'></i>\
+					<i class='" + (config.ticket ? "easemobWidget-note" : "easemobWidget-note em-hide") + "' id='easemobWidgetNote' tile='留言'></i>\
+					<input id='easemobWidgetFileInput' type='file' accept='image/*'/>\
+					<textarea class='easemobWidget-textarea' spellcheck='false'></textarea>" +
+					(utils.isMobile || !config.satisfaction ? "" : "<span id='EasemobKefuWebimSatisfy' class='easemobWidget-satisfaction'>请对服务做出评价</span>") + "\
+					<a href='javascript:;' class='easemobWidget-send bg-color disabled' id='easemobWidgetSendBtn'>连接中</a>\
+				</div>\
+				<iframe id='EasemobKefuWebimIframe' class='em-hide' src='" + (config.domain || '\/\/' + location.host) + "/webim/transfer.html?v=43.9'>\
+			</div>";
+
+
+		window.chat = easemobim.chat(config);
+		var api = easemobim.api;
+
+		config.base = location.protocol + config.domain;
+		config.sslImgBase = config.domain + '/ossimages/';
+
+        //不支持异步上传则加载swfupload
+		if ( !Easemob.im.Utils.isCanUploadFileAsync && Easemob.im.Utils.isCanUploadFile ) {
+			var script = document.createElement('script');
+			script.onload = script.onreadystatechange = function () {
+				if ( !this.readyState || this.readyState === 'loaded' || this.readyState === 'complete' ) {
+					easemobim.uploadShim(config, chat);
+				}
+			};
+			script.src = location.protocol + config.staticPath + '/js/swfupload/swfupload.min.js';
+			webim.appendChild(script);
+		}
+
+
+		/**
+		 * chat Entry
+		 */
+		entry = {
+			init: function () {
+                var me = this;
+
+				config.toUser = config.toUser || config.to;
+                //上下班状态
+				api('getDutyStatus', {
+					tenantId: config.tenantId
+				}, function ( msg ) {
+					config.offDuty = msg.data ? msg.data && config.offDutyType !== 'chat' : false;
+
+                    chat.setOffline(config.offDuty);//根据状态展示上下班不同view
+				});
+
+				config.orgName = config.appKey.split('#')[0];
+				config.appName = config.appKey.split('#')[1];
+
+                //获取关联信息
+				api('getRelevanceList', {
+					tenantId: config.tenantId
+				}, function ( msg ) {
+					if ( msg.data.length === 0 ) {
+						chat.errorPrompt('未创建关联', true);
+						return;
+					}
+					config.relevanceList = msg.data;
+					config.tenantAvatar = utils.getAvatarsFullPath(msg.data[0].tenantAvatar, config.domain);
+                    config.defaultAvatar = config.staticPath ? config.staticPath + '/img/default_avatar.png' : 'static' + '/img/default_avatar.png';
+					config.defaultAgentName = msg.data[0].tenantName;
+					config.logo = config.logo || msg.data[0].tenantLogo;
+					config.toUser = config.toUser || msg.data[0].imServiceNumber;
+					config.orgName = config.orgName || msg.data[0].orgName;
+					config.appName = config.appName || msg.data[0].appName;
+					config.channelid = config.channelid || msg.data[0].channelId;
+					config.appKey = config.appKey || config.orgName + '#' + config.appName;
+					config.restServer = config.restServer || msg.data[0].restDomain;
+
+					var cluster = config.restServer ? config.restServer.match(/vip\d/) : '';
+					cluster = cluster && cluster.length ? '-' + cluster[0] : '';
+					config.xmppServer = config.xmppServer || 'im-api' + cluster + '.easemob.com'; 
+					chat.init();
+
+					if ( config.user.username && (config.user.password || config.user.token) ) {
+						chat.ready();
+					} else {
+						
+                        //检测微信网页授权
+                        if ( config.wechatAuth && easemobim.wechat ) {
+                            easemobim.wechat(function ( data ) {
+                                try {
+                                    data = JSON.parse(data);
+                                } catch ( e ) {
+                                    data = null;
+                                }
+                                if ( !data ) {//失败自动降级，随机创建访客
+                                    me.go();
+                                } else {
+                                    config.visitor = config.visitor || {};
+                                    config.visitor.userNickname = data.nickname;
+                                    var oid = config.tenantId + '_' + config.orgName + '_' + config.appName + '_' + config.toUser + '_' + data.openid;
+                                    easemobim.emajax({
+                                        url: '/v1/webimplugin/visitors/wechat/' + oid + '?tenantId=' + config.tenantId
+                                        , data: {
+                                            orgName: config.orgName,
+                                            appName: config.appName,
+                                            imServiceNumber: config.toUser
+                                        }
+                                        , type: 'POST'
+                                        , success: function ( info ) {
+                                            try {
+                                                info = JSON.parse(info);
+                                            } catch ( e ) {
+                                                info = null;
+                                            }
+                                            if ( info && info.status === 'OK' ) {
+                                                config.user.username = info.entity.userId;
+                                                config.user.password = info.entity.userPassword;
+                                                chat.ready();
+                                            } else {
+                                                me.go();
+                                            }
+                                            
+                                        }
+                                        , error: function ( e ) {
+                                            //失败自动降级，随机创建访客
+									        me.go();
+                                        }
+                                    });
+                                }
+                            });
+                            return this;
+                        }
+
+						if ( config.user.username ) {
+							api('getPassword', {
+								userId: config.user.username
+                                , tenantId: config.tenantId
+							}, function ( msg ) {
+								if ( !msg.data ) {
+									me.go();
+								} else {
+									config.user.password = msg.data;
+									chat.ready();
+								}
+							});
+						} else {
+							me.go();
+						}
+					}
+				});
+				return this;
+			}
+            , go: function () {
+                api('createVisitor', {
+                    orgName: config.orgName
+                    , appName: config.appName
+                    , imServiceNumber: config.toUser
+                    , tenantId: config.tenantId
+                }, function ( msg ) {
+                    config.newuser = true;
+                    config.user.username = msg.data.userId;
+                    config.user.password = msg.data.userPassword;
+                    easemobim.EVENTS.CACHEUSER.data = {
+                        username: config.user.username,
+                        group: config.user.emgroup
+                    };
+                    utils.isTop
+                    ? utils.set('root' + config.tenantId + config.emgroup, config.user.username)
+                    : transfer.send(easemobim.EVENTS.CACHEUSER, window.transfer.to);
+                    chat.ready();
+                });
+            }
+			, beforeOpen: function () {}
+			, open: function () {
+				config.toUser = config.toUser || config.to;
+				this.beforeOpen();
+				chat.show();
+			}
+			, close: function () {
+				chat.close();
+				this.afterClose();
+			}
+			, afterClose: function () {}
+		};
+
+
+		utils.on(utils.$Dom('EasemobKefuWebimIframe'), 'load', function () {
+			easemobim.getData = new easemobim.Transfer('EasemobKefuWebimIframe', 'data');
+			entry.init();
+		});
+
+
+		//load modules
+		typeof easemobim.leaveMessage === 'function' && (easemobim.leaveMessage = easemobim.leaveMessage(chat, tenantId));
+		typeof easemobim.paste === 'function' && (easemobim.paste = easemobim.paste(chat));
+		typeof easemobim.satisfaction === 'function' && easemobim.satisfaction(chat);
+	};
+
+
+
+	//Controller
+	if ( !utils.isTop ) {
+		window.transfer = new easemobim.Transfer(null, 'main').listen(function ( msg ) {
+
+			if ( msg && msg.tenantId ) {
+                if ( msg.parentId ) {
+                    window.transfer.to = msg.parentId;
+                }
+				main(msg);
+			} else if ( msg.event ) {
+				switch ( msg.event ) {
+					case easemobim.EVENTS.SHOW.event:
+						entry.open();
+						break;
+					case easemobim.EVENTS.CLOSE.event:
+						entry.close();
+						break;
+					case easemobim.EVENTS.EXT.event:
+						chat.sendTextMsg('', false, msg.data.ext);
+						break;
+					case easemobim.EVENTS.TEXTMSG.event:
+						chat.sendTextMsg(msg.data.data, false, msg.data.ext);
+						break;
+				}
+			}
+		}, ['easemob']);
+	} else {
+		main();
+	}
+} ( window, undefined ));

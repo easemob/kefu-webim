@@ -24,7 +24,7 @@ easemobim.uploadShim = function ( config, chat ) {
 
         return new SWFUpload({ 
             file_post_name: 'file'
-            , flash_url: utils.protocol + config.staticPath + '/js/swfupload/swfupload.swf'
+            , flash_url: location.protocol + config.staticPath + '/js/swfupload/swfupload.swf'
             , button_placeholder_id: fileInputId
             , button_width: 120
             , button_height: 30
