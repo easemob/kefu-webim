@@ -50,5 +50,4 @@ easemobim.autogrow = (function () {
 		}
 		update.apply(that);
 	};
-	return that;
 }());

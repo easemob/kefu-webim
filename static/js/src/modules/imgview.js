@@ -24,21 +24,15 @@ easemobim.imgView = (function () {
     height: 100%;\
     left: 0;\
     top: 0;\
+    overflow: auto;\
     background: rgba(0,0,0,.3);';
 	document.body.appendChild(imgViewWrap);
 
     var reset = function () {
         imgViewWrap.style.display = 'none';
-        imgViewWrap.style.overflow = 'hidden';
     };
 
-    img.onload = function () {
-        if ( this.width > easemobim.utils.window.width * .9 || this.height > easemobim.utils.window.height * .9 ) {
-
-        } else {
-            reset();
-        }
-    };
+    img.onload = function () {};
 
     utils.on(imgViewWrap, 'click', reset, false);
 
@@ -46,7 +40,6 @@ easemobim.imgView = (function () {
 		show: function ( url ) {
 			img.setAttribute('src', url);
 			imgViewWrap.style.display = 'block';
-            imgViewWrap.style.overflow = 'auto';
 		}
 	};
 }());

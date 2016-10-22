@@ -74,12 +74,12 @@ gulp.task('uglify', function() {
     var main = gulp.src([
         'static/js/src/sdk/strophe.js',
         'static/js/src/sdk/easemob.im-1.1.1.js',
+        'static/js/src/modules/polyfill.js',
         'static/js/src/modules/utils.js',
+        'static/js/src/modules/const.js',
         'static/js/src/modules/ajax.js',
-        'static/js/src/modules/common.js',
         'static/js/src/modules/transfer.js',
         'static/js/src/modules/api.js',
-        'static/js/src/modules/const.js',
         'static/js/src/modules/eventsEnum.js',
         'static/js/src/modules/autogrow.js',
         'static/js/src/modules/message.js',
@@ -90,10 +90,9 @@ gulp.task('uglify', function() {
 		'static/js/src/modules/uploadShim.js',
 		'static/js/src/modules/wechat.js',
 		'static/js/src/modules/site.js',
-        'static/js/src/modules/eventEnumDom.js',
         'static/js/src/modules/channel.js',
         'static/js/src/modules/chat.js',
-        'static/js/src/main.js'
+        'static/js/src/init.js'
     ])
     .pipe(concat('main.js'));
     debug || main.pipe(uglify());

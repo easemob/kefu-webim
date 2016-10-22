@@ -76,7 +76,8 @@
 	 * @param: {Object} config
 	 */
 	easemobim.bind = function ( config ) {
-
+		// 防止空参数调用异常
+		config = config || {};
         config.emgroup = config.emgroup || '';
 
         for ( var i in easemobim.tenants ) {
