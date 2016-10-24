@@ -4,37 +4,41 @@
 ;(function () {
 	window.easemobim = window.easemobim || {};
 
-	var _isAndroid = /android/i.test(navigator.useragent),
-		_ssl = location.protocol === 'https:',
-		_protocol = _ssl ? 'https:' : 'http:',
-		_isMobile = /mobile/i.test(navigator.userAgent),
-		_getIEVersion = (function () {
-			var ua = navigator.userAgent,matches,tridentMap={'4':8,'5':9,'6':10,'7':11};
-			matches = ua.match(/MSIE (\d+)/i);
-			if(matches&&matches[1]) {
-				return +matches[1];
+	var _isAndroid = /android/i.test(navigator.useragent);
+	var _isMobile = /mobile/i.test(navigator.userAgent);
+	var _getIEVersion = (function () {
+			var result, matches;
+
+			matches = navigator.userAgent.match(/MSIE (\d+)/i);
+			if(matches && matches[1]) {
+				result = +matches[1];
 			}
-			matches = ua.match(/Trident\/(\d+)/i);
-			if(matches&&matches[1]) {
-				return tridentMap[matches[1]]||null;
+			else{
+				result = 9999;
 			}
-			return 10000;
+			return result;
 		}());
-		
 
 	easemobim.utils = {
-        window: {
-            width: document.body.clientWidth,
-            height: document.body.clientHeight,
-        }
-		, ssl: _ssl
-		, root: window.top == window
-		, protocol: _protocol
+        isTop: window.top === window.self
 		, nodeListType: {
-			'[object Object]': 1,
-			'[object NodeList]': 1,
-			'[object HTMLCollection]': 1,
-			'[object Array]': 1
+			'[object Object]': true,
+			'[object NodeList]': true,
+			'[object HTMLCollection]': true,
+			'[object Array]': true
+		}
+		, uuid: function () {
+			var s = [], hexDigits = '0123456789abcdef';
+
+			for ( var i = 0; i < 36; i++ ) {
+				s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+			}
+
+			s[14] = '4';
+			s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);
+			s[8] = s[13] = s[18] = s[23] = '-';
+
+			return s.join('');
 		}
 		, convertFalse: function ( obj ) {
 			obj = typeof obj === 'undefined' ? '' : obj;
@@ -51,16 +55,15 @@
 			}
 		}
 		, $Remove: function ( target ) {
-			if ( target ) {
-				if ( target.remove ) {
-					target.remove();
-				} else {
-					var parentNode = target.parentNode;
-					if ( parentNode ) {
-						parentNode.removeChild(target);
-					}
-				}
+			if (!target) return;
+
+			if(target.remove){
+				target.remove();
 			}
+			else if(target.parentNode){
+				target.parentNode.removeChild(target);
+			}
+			else{}
 		}
 		, siblings: function ( currentNode, classFilter ) {
 			if ( !currentNode || !currentNode.parentNode ) {
@@ -72,8 +75,6 @@
 			for ( var d = 0, len = nodes.length; d < len; d++ ) {
 				if ( nodes[d].nodeType === 1 && nodes[d] != currentNode ) {
 					if ( classFilter && this.hasClass(nodes[d], classFilter) ) {
-						result.push(nodes[d]);
-					} else {
 						result.push(nodes[d]);
 					}
 				}
@@ -189,13 +190,14 @@
 			return object;
 		}
 		, addClass: function ( target, className ) {
-			if ( !target ) {
-				return;
-			}
+			var i, l;
+
+			if (!target) { return; }
+
 			if ( Object.prototype.toString.call(target) in this.nodeListType && target.length ) {
-				for ( var i = 0, l = target.length; i < l; i++ ) {
-					if ( !this.hasClass(target[i], className) ) {
-						typeof target[i].className !== 'undefined' && (target[i].className += ' ' + className);
+				for ( i = 0, l = target.length; i < l; i++ ) {
+					if ( !this.hasClass(target[i], className) && typeof target[i].className !== 'undefined') {
+						target[i].className += ' ' + className;
 					}
 				}
 			} else {
@@ -206,34 +208,52 @@
 			return target;
 		}
 		, removeClass: function ( target, className ) {
-			if ( !target ) {
-				return;
-			}
-			if ( Object.prototype.toString.call(target) in this.nodeListType && target.length ) {
-				for ( var i = 0, l = target.length; i < l; i++ ) {
-					while ( typeof target[i].className !== 'undefined' && target[i].className.indexOf(className) >= 0 ) {
-						target[i].className = target[i].className.replace(className, '');
+			var i, l;
+
+			if (!target) { return; }
+
+			if (target.length && Object.prototype.toString.call(target) in this.nodeListType) {
+				for ( i = 0, l = target.length; i < l; i++ ) {
+					if ( typeof target[i].className !== 'undefined' && this.hasClass(target[i], className) ) {
+						target[i].className = (
+							(' ' + target[i].className + ' ')
+								.replace(new RegExp(' ' + className + ' ', 'g'), ' ')
+						).trim();
 					}
 				}
 			} else {
-				while ( target.className.indexOf(className) >= 0 ) {
-					target.className = target.className.replace(className, '');
+				if ( typeof target.className !== 'undefined' && this.hasClass(target, className) ) {
+					target.className = (
+						(' ' + target.className + ' ')
+							.replace(new RegExp(' ' + className + ' ', 'g'), ' ')
+					).trim();
 				}
 			}
 			return target;
 		}
 		, hasClass: function ( target, className ) {
-			if ( !target || !target.className ) {
-				return false;
+			if (!target) { return false;}
+
+			return !!~(' ' + target.className + ' ').indexOf(' ' + className + ' ');
+		}
+		, toggleClass: function(target, className, stateValue) {
+			var ifNeedAddClass;
+
+			if(!target || ! className) return;
+
+			if(typeof stateValue !== 'undefined'){
+				ifNeedAddClass = stateValue;
 			}
-			
-			var classArr = target.className.split(' ');
-			for ( var i = 0, l = classArr.length; i < l; i++ ) {
-				if ( classArr[i].indexOf(className) > -1 ) {
-					return true;
-				}
+			else{
+				ifNeedAddClass = !this.hasClass(target, className);
 			}
-			return false;
+
+			if(ifNeedAddClass){
+				this.addClass(target, className);
+			}
+			else{
+				this.removeClass(target, className);
+			}
 		}
 		, $Class: function ( DomDotClass, parentNode ) {
 			var temp = DomDotClass.split('.'),
@@ -293,23 +313,17 @@
 			return s;
 		}
 		, query: function ( key ) {
-			var r = location.href.match(new RegExp('[?&]?'+key+'=[0-9a-zA-Z@%._-]*[^&]', 'g'));
-			r = r && r[0] ? (r[0][0]=='?' || r[0][0]=='&' ? r[0].slice(1) : r[0]) : '';
-			return r.slice(key.length+1);
+			var reg = new RegExp('[?&]' + key + '=([^&]*)(?=&|$)');
+			var matches = reg.exec(location.search);
+			return matches ? matches[1] : '';
 		}
 		, isAndroid: _isAndroid
 		, isMobile: _isMobile
 		, click: _isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click'
 		, isQQBrowserInAndroid: _isAndroid && /MQQBrowser/.test(navigator.userAgent)
-		, isQQBrowserInAndroid: function () {
-			return this.isAndroid && /MQQBrowser/.test(navigator.userAgent);
-		}
-		, isMin: function () {//detect the browser if minimize
-			if ( document.visibilityState && document.visibilityState === 'hidden' || document.hidden ) {
-				return true;
-			} else {
-				return false;
-			}
+		// detect if the browser is minimized
+		, isMin: function () {
+			return document.visibilityState && document.visibilityState === 'hidden' || document.hidden;
 		}
         , setStore: function ( key, value ) {
             if ( typeof value === 'undefined' ) {
@@ -363,10 +377,6 @@
 
 			return isKefuAvatar && !ossImg ? domain + '/ossimages/' + url : '//' + url;
 		}
-		, convertFalse: function ( obj ) {
-			obj = typeof obj === 'undefined' ? '' : obj;
-			return obj === 'false' ? false : obj;
-		}
 		, getConfig: function ( key, searchScript ) {//get config from current script
 			var that;
 
@@ -410,15 +420,17 @@
 				, domain: domain
 			};
 		}
+		// 向url里边添加或更新query params
 		, updateAttribute: function ( link, attr, path ) {
-			var url = link || _protocol + path + '/im.html?tenantId=';
+			var url = link || location.protocol + path + '/im.html?tenantId=';
 
 			for ( var o in attr ) {
 				if ( attr.hasOwnProperty(o) && typeof attr[o] !== 'undefined' ) {
-					if ( url.indexOf(o + '=') < 0 ) {
-						url += '&' + o + '=' + (attr[o] !== '' ? attr[o] : '');
-					} else {
+					// 此处可能有坑
+					if (~url.indexOf(o + '=')) {
 						url = url.replace(new RegExp(o + '=[^&#?]*', 'gim'), o + '=' + (attr[o] !== '' ? attr[o] : ''));
+					} else {
+						url += '&' + o + '=' + (attr[o] !== '' ? attr[o] : '');
 					}
 				}
 			}

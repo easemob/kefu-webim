@@ -322,7 +322,7 @@
 			'box-shadow: 0 4px 8px rgba(0,0,0,.2);',
 			'border-radius: 4px;'].join('');
 
-		this.shadow.style.background = 'url(' + easemobim.utils.protocol + this.config.staticPath + '/img/drag.png) no-repeat';
+		this.shadow.style.background = 'url(' + location.protocol + this.config.staticPath + '/img/drag.png) no-repeat';
 		this.shadow.style.backgroundSize = '100% 100%';
 
 		if ( !this.config.hide ) {
