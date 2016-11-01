@@ -54,78 +54,67 @@
 	<script>
 		window.easemobim = window.easemobim || {};
 
-		easemobim.config = {
-			tenantId: '',										//租户id
-			to: '',												//指定关联对应的im号
-			appKey: '',											//关联的appkey,				appKey: 'orgName#appName'
-			domain: '',											//环信移动客服域,			domain: '//kefu.easemob.com', 
-			path: '',											//im.html的本机服务器路径,	path: '//XXX'
-			staticPath: '',										//访客插件static的路径,		staticPath: '//XXX/static'
-			xmppServer: '',										//环信IM服务器,				xmppServer: 'im-api.easemob.com'
-			restServer: '',										//环信REST服务器,			restServer: 'a1.easemob.com'
-			visitor: '',										//访客信息
-			agentName: '',										//指定坐席
-			ticket: true,										//是否展示留言入口
-			hideStatus: false,									//是否显示转接中，正在排队等提示
-            
-            /*extMsg: {                                           //移动端点击联系客服按钮自动发送订单消息demo
-                "imageName": "mallImage3.png",
-                "type": "custom",
-                "msgtype": {
-                    "order": {
-                        "img_url": "h\n.pn",
-                        "title": "mmm",
-                        "desc": "mmm端午节粽子四",
-                        "order_title":"mmm订单号：123456789012345678901234567890",
-                        "price": "",
-                        "item_url": "http://www.baidu.com?s=order_sn/123123"
-                    }
-                }
-            },*/
-			autoConnect: false,									//自动连接
-			buttonText: '联系客服',								//设置小按钮的文案
-			hide: false,										//是否隐藏小的悬浮按钮
-			resources: false,									//是否启用收消息同步
-			dragenable: true,									//是否允许拖拽, H5不支持
-			hideKeyboard: false,								//是否隐藏H5右上角的键盘图标
-			dialogWidth: '400px',								//聊天窗口宽度, H5不支持
-			dialogHeight: '500px',								//聊天窗口高度, H5不支持
-			minimum: true,										//是否允许窗口最小化, H5不支持
-			satisfaction: true,									//是否允许访客主动发起满意度评价
-			soundReminder: true,								//是否启用声音提醒(低版本浏览器和H5不支持)
-			dialogPosition: { x: '10px', y: '10px' },			//聊天窗口初始位置，坐标以视口右边距和下边距为基准, H5不支持
-			onmessage: function ( message ) { },				//收消息回调, 只对当前打开的聊天窗口有效
-			onready: function () { 
-                //PC端点击联系客服按钮自动发送订单消息demo
-                /*easemobim.sendExt({ext: {
-                    "imageName": "mallImage3.png",
-                    "type": "custom",
-                    "msgtype": {
-                        "order": {
-                            "img_url": "h\n.pn",
-                            "title": "pc",
-                            "desc": "pc端午节粽子四",
-                            "order_title":"pc订单号：123456789012345678901234567890",
-                            "price": "",
-                            "item_url": "http://www.baidu.com?s=order_sn/123123"
-                        }
-                    }
-                }});*/
-            },							//聊天窗口加载成功回调
-			onsessionclosed: function () { },					//会话结束回调
-
-			/*
-			 * 可集成自己的用户，如不集成，则使用上面配置的appkey创建随机访客
-			 * 如果上面没有配置appkey，那么将使用配置的tenantId获取体验关联，使用体验关联的相关信息
-			 * 验证的方式二选一，必填，另一项为空即可
-			 */
-			user: {
-				username: '',										//集成时必填
-				password: '',										//password验证方式
-				token: ''											//token验证方式
-			}
-		};
-	</script>
+easemobim.config = {
+	// tenantId: '5704',										//租户id
+	// to: '525test2',												//指定关联对应的im号
+	// appKey: 'talent-leoli123#talent',											//关联的appkey,				appKey: 'orgName#appName'
+	domain: '//sandbox.kefu.easemob.com',											//环信移动客服域,			domain: '//kefu.easemob.com
+	// path: '//172.17.3.37:81/kefu-webim-plugin43.9',											//im.html的本机服务器路径,	path: '//XXX/webim'
+	// staticPath: '//172.17.3.37:81/kefu-webim-plugin43.9/static',										//访客插件static的路径,		staticPath: '//XXX/webim/static'
+	//xmppServer: 'im-api-vip6.easemob.com',										//环信IM服务器,				xmppServer: 'im-api.easemob.com'
+	//restServer: 'a1-vip6.easemob.com',										//环信REST服务器,			restServer: 'a1.easemob.com'
+	autoConnect: true,									//自动连接
+	//buttonText: '联系客服123',								//设置小按钮的文案 
+	hide: false,											//是否隐藏小的悬浮按钮
+	resources: true,									//是否启用收消息同步
+	dragenable: true,									//是否允许拖拽
+	dialogWidth: '400px',								//聊天窗口宽度
+	dialogHeight: '500px',								//聊天窗口高度
+	minimum: true,										//是否允许窗口最小化
+	satisfaction: true,									//是否允许访客主动发起满意度评价
+	soundReminder: true,								//是否启用声音提醒(低版本浏览器不支持)
+	dialogPosition: { x: '110px', y: '110px' },			//聊天窗口初始位置，坐标以视口右边距和下边距为基准
+	//onmessage: function ( message ) {alert(JSON.stringify(message)) },				//收消息回调, 只对当前打开的聊天窗口有效
+	//onready: function () { alert("ready")},							//聊天窗口加载成功回调
+	//onsessionclosed: function ( message ) {alert("会话结束回调") },
+	hideKeyboard: false,	
+	ticket: true,	
+	hideStatus: false,
+	offDutyType: 'chat', //参数offDutyType:     1.none(只展示下班提示语。参数offDutyWord);     2.chat(下班强制进入会话)；   3.默认展示留言    
+	offDutyWord: encodeURIComponent("sorry,today is llejf lwlefjl . please lfejwkfje  ----  http://kefu.easemob.com"),  //下班时间，不让留言,请您联系电话：18612390240; 如果我们不在，请在后续联系我们。
+	language: 'Leoli_language',
+	/*onready: function(){
+	    easemobim.sendExt({ext: {
+			    "imageName": "mallImage3.png",
+			    "type": "custom",
+			    "msgtype": {
+			        "order": {
+			            "img_url": "h\n.pn",
+			            "title": "mmm",
+			            "desc": "mmm端午节粽子四",
+			            "order_title": "mmm订单号：123456789012345678901234567890",
+			            "price": "",
+			            "item_url": "http://www.baidu.com?s=order_sn/123123"
+			        }
+			    }
+	        }});
+	},*/
+	//agentName: '1225release_11@qq.com', 
+	/*user: {
+		username: 'regression_01_visitor',										//集成时必填,vip5:414vip5visitor_01   vip1:414test1visitor_01,02,03
+		password: '1',										//password验证方式
+		//token: 'YWMtl2twnEm0EeahzLvd5EXZoAAAAVceHgVoTXLfbOBQ-TzykmQIuhQUYaampMg'											//token验证方式
+	},
+	visitor: {
+				trueName: '414test1visitor_03用户',
+				qq: '115464',
+				phone: '18612390240',
+				companyName: '环信',
+				userNickname: '414test1visitor_03用户',
+				description: '付款了；减肥可怜我jfk了；就',
+				email: '123456@qq.com'
+			},	*/									//访客信息
+};	</script>
 
 	<script src='/webim/easemob.js'></script>
 </body>

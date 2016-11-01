@@ -5,6 +5,14 @@
 
     easemobim.chat = function ( config ) {
 		var utils = easemobim.utils;
+        // todo: 把dom都移到里边
+        var doms = {
+            agentStatusText: utils.$Class('span.em-header-status-text')[0],
+            agentStatusSymbol: utils.$Dom('easemobWidgetAgentStatus'),
+            nickName: utils.$Class('span.easemobWidgetHeader-nickname')[0]
+        };
+
+        easemobim.doms = doms;
 
 		//DOM init
 		easemobim.im = utils.$Dom('EasemobKefuWebim');
@@ -23,9 +31,7 @@
 		easemobim.dragBar = easemobim.dragHeader.getElementsByTagName('p')[0];
 		easemobim.chatFaceWrapper = utils.$Dom('EasemobKefuWebimFaceWrapper');
 		easemobim.messageCount = easemobim.imBtn.getElementsByTagName('span')[0];
-        easemobim.nickName = utils.$Class('span.easemobWidgetHeader-nickname')[0];
         easemobim.avatar = utils.$Class('img.easemobWidgetHeader-portrait')[0];
-        easemobim.agentStatus = utils.$Dom('easemobWidgetAgentStatus');
 		easemobim.swfupload = null;//flash 上传
 
 
@@ -74,7 +80,7 @@
 
                 easemobim.leaveMessage && easemobim.leaveMessage.auth(me.token, config);
 
-                if ( utils.root ) {
+                if ( utils.isTop ) {
                     //get visitor
                     var visInfo = config.visitor;
                     if ( !visInfo ) {
@@ -101,9 +107,8 @@
 				}
 
 				//bind visitor
-				var visitor = config.visitor;
-				if ( visitor ) {
-					msg.body.ext.weichat.visitor = visitor;
+				if ( config.visitor ) {
+					msg.body.ext.weichat.visitor = config.visitor;
 				}
 
 				//bind agent
@@ -130,7 +135,7 @@
 				}
 			}
 			, setRoot: function () {
-				if ( !utils.root ) { return false; }
+				if ( !utils.isTop ) { return false; }
 
 				config.dragenable = false;
 				this.fillFace();
@@ -174,10 +179,10 @@
                     me.autoGrowOptions.callback = function () {
                         var height = easemobim.send.getBoundingClientRect().height;
 						if ( me.direction === 'up' ) {
-							easemobim.chatFaceWrapper.style.top = 43 + easemobim.send.getBoundingClientRect().height + 'px';
+							easemobim.chatFaceWrapper.style.top = 43 + height + 'px';
 						} else {
 							easemobim.imChatBody.style.bottom = height + 'px';
-							easemobim.chatFaceWrapper.style.bottom = easemobim.send.getBoundingClientRect().height + 'px';
+							easemobim.chatFaceWrapper.style.bottom = height + 'px';
 						}
                     };
                     me.autoGrowOptions.dom = easemobim.textarea;
@@ -372,6 +377,11 @@
                         if ( me.agentCount === 0 ) {
                             me.noteShow = false;
                         }
+
+                        // 确保正在进行中的会话，刷新后还会继续轮询坐席状态
+                        if(config.agentUserId){
+                            me.startToGetAgentStatus();
+                        }
                     } else {
                         me.getGreeting();
                     }
@@ -455,23 +465,22 @@
 						break;
 				}
 			}
-            , clearAgentStatus: function () {
-                utils.addClass(easemobim.agentStatus, 'em-hide');
-            }
             , startToGetAgentStatus: function () {
                 var me = this;
 
-                if ( config.agentStatusTimer ) {
-                    return;
-                }
+                if ( config.agentStatusTimer ) return;
 
-                //poll
+                // start to poll
                 config.agentStatusTimer = setInterval(function() {
                     me.updateAgentStatus();
                 }, 5000);
             }
             , stopGettingAgentStatus: function () {
                 config.agentStatusTimer = clearInterval(config.agentStatusTimer);
+            }
+            , clearAgentStatus: function () {
+                doms.agentStatusSymbol.className = 'em-hide';
+                doms.agentStatusText.innerText = '';
             }
             , updateAgentStatus: function () {
                 var me = this;
@@ -490,19 +499,14 @@
                     token: config.user.token,
                     imServiceNumber: config.toUser
                 }, function ( msg ) {
-
-                    //状态改变重新获取在线客服数量
-                    //me.getSession();
+                    var state;
 
                     if ( msg && msg.data && msg.data.state ) {
-                        me.updateAgentStatusUI(msg.data.state);
+                        state = msg.data.state;
+                        doms.agentStatusText.innerText = easemobim._const.agentStatusText[state];
+                        doms.agentStatusSymbol.className = 'easemobWidget-agent-status ' + easemobim._const.agentStatusClassName[state];
                     }
                 });
-
-            }
-            , updateAgentStatusUI: function ( state ) {
-                utils.removeClass(easemobim.agentStatus, 'em-hide');
-                easemobim.agentStatus.className = 'easemobWidget-agent-status ' + easemobim.agentStatusEnum[state];
             }
             , setAgentProfile: function ( info ) {
 
@@ -510,17 +514,20 @@
 
                 //更新企业头像和名称
                 if ( info.tenantName ) {
-                    utils.html(easemobim.nickName, info.tenantName);
+                    doms.nickName.innerText = info.tenantName;
                     easemobim.avatar.setAttribute('src', avatarImg);
                 }
 
                 //昵称开关关闭
-                if ( !config.nickNameOption ) {
-                    return;
-                }
+                if (!config.nickNameOption) return;
+
+                // fake: 默认不显示调度员昵称
+                if('调度员' === info.userNickname) return;
+
+                if(!info.userNickname) return;
 
                 //更新坐席昵称
-                utils.html(easemobim.nickName, info.userNickname);
+                doms.nickName.innerText = info.userNickname;
 
 				this.currentAvatar = avatarImg;
                 var src = easemobim.avatar.getAttribute('src');
@@ -533,7 +540,7 @@
                 //this.updateAgentStatus();
             }
             , setMinmum: function () {
-                if ( !config.minimum || utils.root ) {
+                if ( !config.minimum || utils.isTop ) {
                     return;
                 }
                 var me = this,
@@ -544,7 +551,7 @@
                 utils.addClass(min, 'easemobWidgetHeader-min bg-color border-color');
                 easemobim.dragHeader.appendChild(min);
                 utils.on(min, 'mousedown touchstart', function () {
-                    utils.root || transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
+                    utils.isTop || transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
 					return false;
 				});
                 utils.on(min, 'mouseenter', function () {
@@ -618,17 +625,17 @@
 					count = 0,
 					me = this;
 
-                utils.on(easemobim.faceBtn, 'mouseenter', function () {
-                    utils.isMobile || utils.addClass(this, 'theme-color');
-                })
-                utils.on(easemobim.faceBtn, 'mouseleave', function () {
-                    utils.isMobile || utils.removeClass(this, 'theme-color');
-                });
+                if(utils.isMobile){
+                    utils.on(easemobim.faceBtn, 'mouseenter', function () {
+                        utils.addClass(this, 'theme-color');
+                    })
+                    utils.on(easemobim.faceBtn, 'mouseleave', function () {
+                        utils.removeClass(this, 'theme-color');
+                    });
+                }
                 utils.on(easemobim.faceBtn, utils.click, function () {
 					easemobim.textarea.blur();
-                    utils.hasClass(easemobim.chatFaceWrapper, 'em-hide')
-                    ? utils.removeClass(easemobim.chatFaceWrapper, 'em-hide')
-                    : utils.addClass(easemobim.chatFaceWrapper, 'em-hide')
+                    utils.toggleClass(easemobim.chatFaceWrapper, 'em-hide');
 
 					if ( faceStr ) return false;
 					faceStr = '<li class="e-face">';
@@ -751,7 +758,7 @@
                 me.scrollBottom(50);
                 utils.addClass(easemobim.imBtn, 'em-hide');
                 utils.removeClass(easemobim.imChat, 'em-hide');
-                if ( (!config.offDuty && typeof config.offDuty !== 'undefined') || config.offDutyType !== 'none' ) {
+                if (!config.offDuty || config.offDutyType !== 'none') {
                     try { easemobim.textarea.focus(); } catch ( e ) {}
                 }
 				me.resetPrompt();
@@ -792,7 +799,7 @@
 				var op = {
 					user: config.user.username
 					, appKey: config.appKey
-					, apiUrl: (utils.ssl ? 'https://' : 'http://') + config.restServer
+					, apiUrl: location.protocol + '//' + config.restServer
 				};
 
 				if ( config.user.token ) {
@@ -805,10 +812,9 @@
             }
             , soundReminder: function () {
                 var me = this;
+                var ast = 0;
 
-                //if lte ie 8 , return
-                if ( (utils.getIEVersion && utils.getIEVersion < 9) || utils.isMobile || !config.soundReminder ) {
-                    me.soundReminder = function () {};
+                if (!window.HTMLAudioElement || utils.isMobile || !config.soundReminder) {
                     return;
                 }
 
@@ -819,29 +825,23 @@
 
                 //音频按钮静音
                 utils.on(me.reminder, 'mousedown touchstart', function () {
-                    me.silence = me.silence ? false : true;
-                    utils.hasClass(me.reminder, 'easemobWidgetHeader-silence') 
-                    ? utils.removeClass(me.reminder, 'easemobWidgetHeader-silence') 
-                    : utils.addClass(me.reminder, 'easemobWidgetHeader-silence');
+                    me.silence = !me.silence;
+                    utils.toggleClass(me.reminder, 'easemobWidgetHeader-silence', me.slience);
 
                     return false;
                 });
 
-                if ( window.HTMLAudioElement ) {
-                    var ast = 0;
-                    
-                    me.audio = document.createElement('audio');
-                    me.audio.src = config.staticPath + '/mp3/msg.m4a';
-                    me.soundReminder = function () {
-                        if ( (utils.isMin() ? false : me.opened) || ast !== 0 || me.silence ) {
-                            return;
-                        }
-                        ast = setTimeout(function() {
-                            ast = 0;
-                        }, 3000);
-                        me.audio.play();
-                    };
-                }
+                me.audio = document.createElement('audio');
+                me.audio.src = config.staticPath + '/mp3/msg.m4a';
+                me.soundReminder = function () {
+                    if ( (utils.isMin() ? false : me.opened) || ast !== 0 || me.silence ) {
+                        return;
+                    }
+                    ast = setTimeout(function() {
+                        ast = 0;
+                    }, 3000);
+                    me.audio.play();
+                };
             }
             , setThemeBackground: function ( obj ) {
                 utils.isMobile || utils.addClass(obj, 'bg-color');
@@ -870,7 +870,7 @@
 					}
 				});
 				
-				!utils.isMobile && !utils.root && utils.on(easemobim.imBtn, utils.click, function () {
+				!utils.isMobile && !utils.isTop && utils.on(easemobim.imBtn, utils.click, function () {
 				    transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
 				});
 				utils.on(easemobim.imChatBody, utils.click, function () {
@@ -878,7 +878,7 @@
 					return false;
 				});
                 utils.on(document, 'mouseover', function () {
-					utils.root || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
+					utils.isTop || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
                 });
 				utils.live('img.easemobWidget-imgview', 'click', function () {
 					easemobim.imgView.show(this.getAttribute('src'));
@@ -902,15 +902,15 @@
                     me.clearThemeColor(this);
                 });
 
-				if ( config.dragenable ) {//drag
+				if (config.dragenable && !utils.isMobile) {//drag
 					
 					easemobim.dragBar.style.cursor = 'move';
 
-					utils.isMobile || utils.on(easemobim.dragBar, 'mousedown', function ( ev ) {
+					utils.on(easemobim.dragBar, 'mousedown', function ( ev ) {
 						var e = window.event || ev;
 						easemobim.textarea.blur();//ie a  ie...
 						easemobim.EVENTS.DRAGREADY.data = { x: e.clientX, y: e.clientY };
-                        utils.root || transfer.send(easemobim.EVENTS.DRAGREADY, window.transfer.to);
+                        utils.isTop || transfer.send(easemobim.EVENTS.DRAGREADY, window.transfer.to);
 						return false;
 					}, false);
 				}
@@ -949,7 +949,6 @@
                     //pc
                     var getHis = function ( ev ) {
                         var e = ev || window.event,
-                            touch = e.touches,
                             that = this;
 
                         if ( e.wheelDelta / 120 > 0 || e.detail < 0 ) {
@@ -978,7 +977,7 @@
                     }
                 });
 
-				utils.live('button.js_robertTransferBtn', utils.click,  function () {
+				utils.live('button.js_robotTransferBtn', utils.click,  function () {
                     var that = this;
 
                     if ( that.clicked ) { return false; }
@@ -989,7 +988,7 @@
                 });
 
                 //机器人列表
-                utils.live('button.js_robertbtn', utils.click, function () {
+                utils.live('button.js_robotbtn', utils.click, function () {
                     var that = this;
 
                     me.sendTextMsg(utils.html(that), null, {
@@ -1002,10 +1001,10 @@
                 
                 var handleSendBtn = function () {
                     if ( !me.readyHandled ) {
-                        utils.hasClass(easemobim.sendBtn, 'disabled') || utils.addClass(easemobim.sendBtn, 'disabled');
+                        utils.addClass(easemobim.sendBtn, 'disabled');
                         return false;
                     }
-                    easemobim.textarea.value ? utils.removeClass(easemobim.sendBtn, 'disabled') : utils.addClass(easemobim.sendBtn, 'disabled');
+                    utils.toggleClass(easemobim.sendBtn, 'disabled', !easemobim.textarea.value);
                 };
 
                 utils.on(easemobim.textarea, 'keyup', handleSendBtn);
@@ -1073,22 +1072,23 @@
 
                 //hot key
                 utils.on(easemobim.textarea, 'keydown', function ( evt ) {
-                    var that = this;
-                    if ( (utils.isMobile && evt.keyCode === 13) 
-                        || (evt.ctrlKey && evt.keyCode === 13) 
-                        || (evt.shiftKey && evt.keyCode === 13) ) {
+                    if(evt.keyCode !== 13) return;
 
-                        that.value = that.value + '\n';
+                    if(utils.isMobile || evt.ctrlKey || evt.shiftKey){
+                        this.value += '\n';
                         return false;
-                    } else if ( evt.keyCode === 13 ) {
+                    }
+                    else{
                         utils.addClass(easemobim.chatFaceWrapper, 'em-hide');
                         if ( utils.hasClass(easemobim.sendBtn, 'disabled') ) {
                             return false;
                         }
                         me.sendTextMsg();
+
+                        // 可能是事件绑定得太多了，导致换行清不掉，稍后解决
                         setTimeout(function(){
-                            that.value = '';
-                        }, 0);
+                            this.value = '';
+                        }.bind(this), 0);
                     }
                 });
 
@@ -1132,7 +1132,7 @@
                     //每次激活只显示一次
                     if ( !this.noteShow ) {
                         this.noteShow = true;
-                        this.appendEventMsg(easemobim.eventEnum.NOTE);
+                        this.appendEventMsg(easemobim._const.eventMessageText.NOTE);
                     }
                     
 				}
@@ -1148,18 +1148,18 @@
                         avatar: info.avatar
                     });
                 } else if ( action === 'create' ) {//显示会话创建
-                    this.appendEventMsg(easemobim.eventEnum.CREATE);
+                    this.appendEventMsg(easemobim._const.eventMessageText.CREATE);
                 } else if ( action === 'close' ) {//显示会话关闭
-                    this.appendEventMsg(easemobim.eventEnum.CLOSED);
-                } else if ( action === 'transfer' ) {//显示转接中
-                    this.appendEventMsg(easemobim.eventEnum.TRANSFER);
-                   
-                    //坐席发生改变
-                    this.handleAgentStatusChanged(info);
- 
-                } else if ( action === 'linked' ) {//接入成功
-                    this.appendEventMsg(easemobim.eventEnum.LINKED);
+                    this.appendEventMsg(easemobim._const.eventMessageText.CLOSED);
+                } else if ( action === 'transferd' ) {//显示转接到客服
+                    this.appendEventMsg(easemobim._const.eventMessageText.TRANSFER);
+                } else if ( action === 'transfering' ) {//显示转接中
+                    this.appendEventMsg(easemobim._const.eventMessageText.TRANSFERING);
+                 } else if ( action === 'linked' ) {//接入成功
+                    this.appendEventMsg(easemobim._const.eventMessageText.LINKED);
+                }
 
+                if(action === 'transferd' || action === 'linked'){
                     //坐席发生改变
                     this.handleAgentStatusChanged(info);
                 }
@@ -1180,19 +1180,18 @@
                 });
             }
             //转接中排队中等提示上屏
-            , appendEventMsg: function ( msg, custom ) {
+            , appendEventMsg: function (msg) {
                 //如果设置了hideStatus, 不显示转接中排队中等提示
-                if ( config.hideStatus ) { return; }
+                if (config.hideStatus) { return; }
 
-                var me = this,
-                    curWrapper = me.chatWrapper,
-                    dom = easemobim.EventEnumDom.get(msg, custom);
+                var dom = document.createElement('div');
 
-                if ( dom ) {
-                    me.appendDate(new Date().getTime());
-                    curWrapper.appendChild(dom);
-                    me.scrollBottom(utils.isMobile ? 800 : null);
-                }
+                dom.innerText = msg;
+                dom.className = 'easemobWidget-event';
+
+                this.appendDate(new Date().getTime());
+                this.chatWrapper.appendChild(dom);
+                this.scrollBottom(utils.isMobile ? 800 : null);
             }
 			//消息上屏
             , appendMsg: function ( from, to, msg, isHistory ) {
@@ -1263,14 +1262,14 @@
 						title: '新消息',
 						brief: message.brief
 					};
-					utils.root || transfer.send(easemobim.EVENTS.SLIDE, window.transfer.to);
-					utils.root || transfer.send(easemobim.EVENTS.NOTIFY, window.transfer.to);
+					utils.isTop || transfer.send(easemobim.EVENTS.SLIDE, window.transfer.to);
+					utils.isTop || transfer.send(easemobim.EVENTS.NOTIFY, window.transfer.to);
 				}
             }
 			, resetPrompt: function () {
 				this.msgCount = 0;
 				utils.addClass(utils.html(easemobim.messageCount, ''), 'em-hide');
-				utils.root || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
+				utils.isTop || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
 			}
 			//receive message function
             , receiveMsg: function ( msg, type, isHistory ) {

@@ -14,11 +14,12 @@
 	//main entry
 	var main = function ( config ) {
 
-		var tenantId = utils.query('tenantId'),
-            config = config || {};
+		var tenantId = utils.query('tenantId');
+
+        config = config || {};
 
 
-		if ( utils.root ) {
+		if ( utils.isTop ) {
 
             //get config from referrer's config
             try {
@@ -44,7 +45,7 @@
             config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
             config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
             config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket'));//true default
-            try { config.emgroup = decodeURIComponent(utils.query('emgroup')); } catch ( e ) { config.emgroup = utils.query('emgroup') };
+            try { config.emgroup = decodeURIComponent(utils.query('emgroup')); } catch ( e ) { config.emgroup = utils.query('emgroup'); }
 
 
             //没绑定user直接取cookie
@@ -66,16 +67,17 @@
 
 		//render Tpl
 		webim.innerHTML = "\
-			<div id='easemobWidgetPopBar'" + (utils.root || !config.minimum || config.hide ? " class='em-hide'" : "") + ">\
+			<div id='easemobWidgetPopBar'" + (utils.isTop || !config.minimum || config.hide ? " class='em-hide'" : "") + ">\
 				<a class='easemobWidget-pop-bar bg-color' href='" + (utils.isMobile ? location.href + "' target='_blank'" : "javascript:;'") + "><i></i>" + config.buttonText + "</a>\
 				<span class='easemobWidget-msgcount em-hide'></span>\
 			</div>\
-			<div id='EasemobKefuWebimChat' class='easemobWidgetWrapper" + (utils.root || !config.minimum ? "" : " em-hide")  + (utils.isMobile ? " easemobWidgetWrapper-mobile" : "") + "'>\
+			<div id='EasemobKefuWebimChat' class='easemobWidgetWrapper" + (utils.isTop || !config.minimum ? "" : " em-hide")  + (utils.isMobile ? " easemobWidgetWrapper-mobile" : "") + "'>\
 				<div id='easemobWidgetHeader' class='easemobWidgetHeader-wrapper bg-color border-color'>\
 					<div id='easemobWidgetDrag'>\
-						" + (utils.isMobile || utils.root ? "" : "<p></p>") + "\
+						" + (utils.isMobile || utils.isTop ? "" : "<p></p>") + "\
 						<img class='easemobWidgetHeader-portrait border-color'/>\
 						<span class='easemobWidgetHeader-nickname'></span>\
+						<span class='em-header-status-text'></span>\
                         <i id='easemobWidgetNotem' class='easemobWidget-notem em-hide'></i>\
                         <i id='easemobWidgetAgentStatus' class='easemobWidget-agent-status em-hide'></i>\
 					</div>\
@@ -100,7 +102,7 @@
 		window.chat = easemobim.chat(config);
 		var api = easemobim.api;
 
-		config.base = utils.protocol + config.domain;
+		config.base = location.protocol + config.domain;
 		config.sslImgBase = config.domain + '/ossimages/';
 
         //不支持异步上传则加载swfupload
@@ -111,7 +113,7 @@
 					easemobim.uploadShim(config, chat);
 				}
 			};
-			script.src = utils.protocol + config.staticPath + '/js/swfupload/swfupload.min.js';
+			script.src = location.protocol + config.staticPath + '/js/swfupload/swfupload.min.js';
 			webim.appendChild(script);
 		}
 
@@ -245,17 +247,17 @@
                         username: config.user.username,
                         group: config.user.emgroup
                     };
-                    utils.root
+                    utils.isTop
                     ? utils.set('root' + config.tenantId + config.emgroup, config.user.username)
                     : transfer.send(easemobim.EVENTS.CACHEUSER, window.transfer.to);
                     chat.ready();
                 });
             }
 			, beforeOpen: function () {}
-			, open: function ( outerTrigger ) {
+			, open: function () {
 				config.toUser = config.toUser || config.to;
 				this.beforeOpen();
-				chat.show(outerTrigger);
+				chat.show();
 			}
 			, close: function () {
 				chat.close();
@@ -280,7 +282,7 @@
 
 
 	//Controller
-	if ( !utils.root ) {
+	if ( !utils.isTop ) {
 		window.transfer = new easemobim.Transfer(null, 'main').listen(function ( msg ) {
 
 			if ( msg && msg.tenantId ) {

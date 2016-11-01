@@ -199,7 +199,11 @@ button, textarea, input {
 }
 .easemobWidgetHeader-nickname {
     margin-left: 10px;
-    color: #fff;
+    color: white;
+}
+.em-header-status-text {
+    color: white;
+    color: rgba(255, 255, 255, 0.5);
 }
 .easemobWidgetHeader-word-status {
     margin-left: 4px;
@@ -930,6 +934,7 @@ object {
     color: #fff;
 }
 .easemobWidget-list-btns {
+    min-width: 190px;
     position: relative;
     border-radius: 6px;
     margin: 4px 0;
@@ -1080,7 +1085,9 @@ object {
 .easemobWidgetWrapper-mobile {
     border-radius: 0;
 }
-.easemobWidgetWrapper-mobile .easemobWidgetHeader-nickname {
+.easemobWidgetWrapper-mobile .easemobWidgetHeader-nickname,
+.easemobWidgetWrapper-mobile ..em-header-status-text,
+ {
 	overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1126,8 +1133,7 @@ object {
     font-size: 17px;
 }
 .easemobWidgetWrapper-mobile .easemobWidget-list-btn {
-    height: 32px;
-    line-height: 32px;
+    line-height: 30px;
     box-shadow: none;
 }
 .easemobWidgetWrapper-mobile .easemobWidget-msg-container {
