@@ -651,7 +651,7 @@ easemobim.channel = function ( config ) {
             ext: msg.body ? msg.body.ext : null,
             orgName: config.orgName,
             appName: config.appName,
-            originType: config.originType || 'webim'
+            originType: 'webim'
         }, function () {
             //发送成功清除
             _clearTS(id);

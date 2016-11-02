@@ -5,6 +5,7 @@
 ;(function ( window, undefined ) {
     'use strict';
     window.easemobim = window.easemobim || {};
+    easemobim.config = easemobim.config || {};
     easemobim.version = '<%= v %>';
     easemobim.tenants = {};
 
@@ -35,6 +36,10 @@
 	//get parameters from easemob.js
     var baseConfig = easemobim.utils.getConfig('easemob.js', true),
 		_config = {};
+
+    // growing io user id
+    // 由于存在cookie跨域问题，所以从配置传过去
+    easemobim.config.grUserId = easemobim.utils.get('gr_user_id');
 
 
 	//init _config & concat config and global easemobim.config
@@ -88,7 +93,6 @@
 
         iframe = easemobim.tenants[config.tenantId + config.emgroup];
 
-
         if ( iframe ) {
             iframe.open();
         } else {
@@ -102,12 +106,6 @@
             iframe.set(_config, easemobim.utils.isMobile ? null : iframe.open);
         }
 
-
-        //growingio
-        var gr_user_id = easemobim.utils.get('gr_user_id');
-        if ( gr_user_id ) {
-            easemobim.utils.setStore(_config.tenantId + 'gr_user_id', gr_user_id);
-        }
 
 		if ( easemobim.utils.isMobile ) {
 

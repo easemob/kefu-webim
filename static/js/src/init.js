@@ -28,15 +28,12 @@
 
             config.tenantId = tenantId;
             config.hide = true;
-            config.to = utils.convertFalse(utils.query('to'));
-            config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
-            config.domain = config.domain || '//' + location.host;
-            config.offDutyWord = decodeURIComponent(utils.query('offDutyWord'));
             config.offDutyType = utils.query('offDutyType');
-            config.language = utils.query('language') || 'zh_CN';
+            config.grUserId = utils.query('grUserId');
+
+            config.to = utils.convertFalse(utils.query('to'));
             config.xmppServer = utils.convertFalse(utils.query('xmppServer'));
             config.restServer = utils.convertFalse(utils.query('restServer'));
-            config.originType = utils.convertFalse(utils.query('originType'));
             config.agentName = utils.convertFalse(utils.query('agentName'));
             config.satisfaction = utils.convertFalse(utils.query('sat'));
             config.resources = utils.convertFalse(utils.query('resources'));
@@ -44,6 +41,11 @@
             config.satisfaction = utils.convertFalse(utils.query('sat'));
             config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
             config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
+            
+            config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
+            config.domain = config.domain || '//' + location.host;
+            config.offDutyWord = decodeURIComponent(utils.query('offDutyWord'));
+            config.language = utils.query('language') || 'zh_CN';
             config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket'));//true default
             try { config.emgroup = decodeURIComponent(utils.query('emgroup')); } catch ( e ) { config.emgroup = utils.query('emgroup'); }
 

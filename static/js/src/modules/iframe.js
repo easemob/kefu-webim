@@ -251,6 +251,7 @@
 
 		this.config = easemobim.utils.copy(config || this.config);
 
+        // todo: 写成自动配置
         var destUrl = {
 			tenantId: this.config.tenantId,
 			hide: this.config.hide,
@@ -259,38 +260,36 @@
 			hideKeyboard: this.config.hideKeyboard,
 			resources: this.config.resources
         };
+
+        // todo: 写成自动配置
+		this.config.agentName && (destUrl.agentName = this.config.agentName);
 		this.config.emgroup && (destUrl.emgroup = this.config.emgroup);
-
-		var user = this.config.user && this.config.user.username ? this.config.user.username : '';
-		user && (destUrl.user = user);
-
 		this.config.to && (destUrl.to = this.config.to);
-		this.config.appKey && (destUrl.appKey = encodeURIComponent(this.config.appKey || ''));
 		this.config.xmppServer && (destUrl.xmppServer = this.config.xmppServer);
 		this.config.restServer && (destUrl.restServer = this.config.restServer);
 		this.config.offDutyWord && (destUrl.offDutyWord = this.config.offDutyWord);
 		this.config.offDutyType && (destUrl.offDutyType = this.config.offDutyType);
 		this.config.language && (destUrl.language = this.config.language);
+		this.config.appid && (destUrl.appid = this.config.appid);
+		this.config.grUserId && (destUrl.grUserId = this.config.grUserId);
+
+		// 需特殊处理
+		this.config.appKey && (destUrl.appKey = encodeURIComponent(this.config.appKey));
+		this.config.user && this.config.user.username && (destUrl.user = this.config.user.username);
+
+		// 此处参数有可能为 false
 		typeof this.config.hideStatus !== 'undefined' && this.config.hideStatus !== '' && (destUrl.hideStatus = this.config.hideStatus);
 		typeof this.config.ticket !== 'undefined' && this.config.ticket !== '' && (destUrl.ticket = this.config.ticket);
-		typeof this.config.appid !== 'undefined' && this.config.appid !== '' && (destUrl.appid = this.config.appid);
-		typeof this.config.originType !== 'undefined' && this.config.originType !== '' && (destUrl.originType = this.config.originType);
-		this.config.agentName && (destUrl.agentName = this.config.agentName);
 
 
 		this.url = easemobim.utils.updateAttribute(this.url, destUrl, config.path);
 
-
 		if ( !this.config.user.username ) {
-			var groupKey = this.config.emgroup ? this.config.tenantId + this.config.emgroup : this.config.tenantId;
-
-			if ( this.config.to ) {
-				this.config.user.username = easemobim.utils.get(this.config.to + groupKey);
-			} else {
-				this.config.user.username = easemobim.utils.get(groupKey);
-			}
+			// [to + ] tenantId [ + emgroup]
+			this.config.user.username = easemobim.utils.get(
+				(this.config.to || '') + this.config.tenantId + (this.config.emgroup || '')
+			);
 		}
-
 
 		this.position = { x: this.config.dialogPosition.x.slice(0, -2), y: this.config.dialogPosition.y.slice(0, -2) };
 		this.rect = { width: this.config.dialogWidth.slice(0, -2)/1, height: this.config.dialogHeight.slice(0, -2)/1 };

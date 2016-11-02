@@ -5,21 +5,18 @@
 var debug = false;
 var version = '43.9';
 
-var gulp = require('gulp'),
-    mocha = require('gulp-mocha'); 
-    minifycss = require('gulp-minify-css'),
-    jshint = require('gulp-jshint'),
-    uglify = require('gulp-uglify'),
-    concat = require('gulp-concat'),
-    server = require('gulp-webserver'),
-    clean = require('gulp-clean'),
-    minifyHtml = require("gulp-minify-html"),
-    template = require('gulp-template'); 
-
+var gulp = require('gulp');
+var minifycss = require('gulp-minify-css');
+var jshint = require('gulp-jshint');
+var uglify = require('gulp-uglify');
+var concat = require('gulp-concat');
+var clean = require('gulp-clean');
+var minifyHtml = require("gulp-minify-html");
+var template = require('gulp-template');
 
 //clean
 gulp.task('clean', function() {
-    return gulp.src([
+    gulp.src([
             'static/css/im.css',
             'static/js/main.js',
             'im.html',
@@ -43,7 +40,7 @@ gulp.task('minifyHtml', function () {
 
 //cssmin
 gulp.task('cssmin', function() {
-    return gulp.src('static/css/src/im.css')
+    gulp.src('static/css/src/im.css')
     .pipe(minifycss({compatibility: 'ie8'}))
     .pipe(template({ v: version }))
     .pipe(gulp.dest('static/css/'));
@@ -52,14 +49,15 @@ gulp.task('cssmin', function() {
 
 //watch
 gulp.task('watch', function() {
-	gulp.watch(['static/js/src/*.js', 'static/js/src/*/*.js'], ['uglify']);
-	gulp.watch(['static/css/src/*.js'], ['cssmin']);
+    debug = true;
+    gulp.watch(['static/js/src/*.js', 'static/js/src/*/*.js'], ['combineJs']);
+    gulp.watch(['static/css/src/im.css'], ['cssmin']);
 });
 
 
 //jshint
 gulp.task('lint', function() {
-    return gulp.src('static/js/src/*.js')
+    gulp.src('static/js/src/*.js')
     .pipe(jshint({
         "laxcomma" : true,
         "laxbreak" : true,
@@ -70,7 +68,7 @@ gulp.task('lint', function() {
 
 
 //compress
-gulp.task('uglify', function() {
+gulp.task('combineJs', function() {
     var main = gulp.src([
         'static/js/src/sdk/strophe.js',
         'static/js/src/sdk/easemob.im-1.1.1.js',
@@ -86,10 +84,10 @@ gulp.task('uglify', function() {
         'static/js/src/modules/paste.js',
         'static/js/src/modules/leaveMessage.js',
         'static/js/src/modules/satisfaction.js',
-		'static/js/src/modules/imgView.js',
-		'static/js/src/modules/uploadShim.js',
-		'static/js/src/modules/wechat.js',
-		'static/js/src/modules/site.js',
+        'static/js/src/modules/imgView.js',
+        'static/js/src/modules/uploadShim.js',
+        'static/js/src/modules/wechat.js',
+        'static/js/src/modules/site.js',
         'static/js/src/modules/channel.js',
         'static/js/src/modules/chat.js',
         'static/js/src/init.js'
@@ -100,12 +98,12 @@ gulp.task('uglify', function() {
     .pipe(gulp.dest('static/js/'));
 
     var ejs = gulp.src([
-		'static/js/src/modules/utils.js',
+        'static/js/src/modules/utils.js',
         'static/js/src/modules/transfer.js',
         'static/js/src/modules/eventsEnum.js',
         'static/js/src/modules/notify.js',
         'static/js/src/modules/titleSlide.js',
-		'static/js/src/modules/iframe.js',
+        'static/js/src/modules/iframe.js',
         'static/js/src/easemob.js',
     ])
     .pipe(concat('easemob.js'));
@@ -134,20 +132,12 @@ gulp.task('uglify', function() {
 });
 
 
-//test
-gulp.task('test', function() {
-
-    return gulp.src('demo/javascript/src/test.js')
-        .pipe(mocha())
-        .once('error', function () {
-            process.exit(1);
-        })
-        .once('end', function () {
-            process.exit();
-        });
-});
-
-//build default
+//build default debug = false
 gulp.task('build', ['clean'],  function() {
-    gulp.start('cssmin', 'uglify', 'minifyHtml');
+    gulp.start('cssmin', 'combineJs', 'minifyHtml');
 });
+
+gulp.task('debug', function(){
+    debug = true;
+    gulp.start('build');
+})
