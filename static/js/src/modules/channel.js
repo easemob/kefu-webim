@@ -313,6 +313,9 @@ easemobim.channel = function ( config ) {
             } else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {
                 //机器人自定义菜单
                 type = 'robotList';  
+            } else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.video ) {
+                // webRTC
+                type = 'video';  
             } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {
                 //机器人转人工
                 type = 'robotTransfer';  
@@ -402,6 +405,9 @@ easemobim.channel = function ( config ) {
 
                     message.set({value: title, list: str});
                     break;
+                case 'video':
+                    // todo
+                    break;
                 default:
                     break;
             }
@@ -419,8 +425,8 @@ easemobim.channel = function ( config ) {
                             // 转人工或者转到技能组
                                 me.handleEventStatus('transfering', msg.ext.weichat.event.eventObj);
                                 break;
+                            // 会话结束
                             case 'ServiceSessionClosedEvent':
-                                //service session closed event
                                 me.session = null;
                                 me.sessionSent = false;
                                 config.agentUserId = null;
@@ -436,7 +442,6 @@ easemobim.channel = function ( config ) {
                                 utils.isTop || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
                                 break;
                             case 'ServiceSessionOpenedEvent':
-                                //service session opened event
                                 //fake
                                 me.agentCount < 1 && (me.agentCount = 1);
                                 me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
@@ -468,15 +473,16 @@ easemobim.channel = function ( config ) {
                 me.appendMsg(msg.from, msg.to, message);
                 me.scrollBottom(50);
 
-                if ( config.receive ) {
+                // 收消息回调
+                if ( config.hasReceiveCallback && !utils.isTop) {
                     easemobim.EVENTS.ONMESSAGE.data = {
                         from: msg.from,
                         to: msg.to,
                         message: message
                     };
                     try {
-                        utils.isTop || transfer.send(easemobim.EVENTS.ONMESSAGE, window.transfer.to);
-                    } catch ( e ) {}
+                        transfer.send(easemobim.EVENTS.ONMESSAGE, window.transfer.to);
+                    } catch (e) {}
                 }
             } else {
                 if ( !message || !message.value ) {

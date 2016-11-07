@@ -26,3 +26,33 @@
 
 	easemobim.site = site;
 }());
+
+;(function () {
+	var Polling = function (fn, interval){
+		this.fn = fn;
+		this.isStarted = false;
+		this.timerHandler = null;
+		this.interval = interval;
+	};
+
+	Polling.prototype.start = function (){
+		if (!this.isStarted) {
+			this.isStarted = true;
+			this.timerHandler = setInterval(this.fn, this.interval);
+		}
+	};
+
+	Polling.prototype.stop = function () {
+		if (this.isStarted) {
+			this.isStarted = false;
+			clearInterval(this.timerHandler);
+		}
+	};
+
+	Polling.prototype.isStarted = function () {
+		return this.isStarted;
+	};
+
+	easemobim.Polling = Polling;
+}());
+

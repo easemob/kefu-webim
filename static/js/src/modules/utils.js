@@ -1,6 +1,3 @@
-/**
- * utils
- */
 ;(function () {
 	window.easemobim = window.easemobim || {};
 
@@ -377,48 +374,33 @@
 
 			return isKefuAvatar && !ossImg ? domain + '/ossimages/' + url : '//' + url;
 		}
-		, getConfig: function ( key, searchScript ) {//get config from current script
-			var that;
+		, getConfig: function ( key ) {//get config from current script
+			var src;
+			var obj = {};
+			var scripts = document.scripts;
 
-			if ( key && searchScript ) {
-				var scripts = document.scripts;
-				for ( var s = 0, l = scripts.length; s < l; s++ ) {
-					if ( scripts[s].src && 0 < scripts[s].src.indexOf(key) ) {
-						that = scripts[s].src;
-						break;
-					}
+			for ( var s = 0, l = scripts.length; s < l; s++ ) {
+				if (~scripts[s].src.indexOf('easemob.js')) {
+					src = scripts[s].src;
+					break;
 				}
-			} else if ( key ) {
-				that = key;
-			} else {
-				that = location.href;
 			}
 
-			var obj = {};
-			if ( !that ) {
-				return {
-					str: ''
-					, json: obj
-					, domain: ''
-				};
+			if ( !src ) {
+				return {json: obj, domain: ''};
 			}
 
 			var tmp,
-				idx = that.indexOf('?'),
-				sIdx = that.indexOf('//') > -1 ? that.indexOf('//') : 0,
-				domain = that.slice(sIdx, that.indexOf('/', sIdx + 2)),
-				arr = that.slice(idx+1).split('&');
+				idx = src.indexOf('?'),
+				sIdx = ~src.indexOf('//') ? src.indexOf('//') : 0,
+				domain = src.slice(sIdx, src.indexOf('/', sIdx + 2)),
+				arr = src.slice(idx+1).split('&');
 			
-			obj.src = that.slice(0, idx);
 			for ( var i = 0, len = arr.length; i < len; i++ ) {
 				tmp = arr[i].split('=');
 				obj[tmp[0]] = tmp.length > 1 ? decodeURIComponent(tmp[1]) : '';
 			}
-			return {
-				str: that
-				, json: obj
-				, domain: domain
-			};
+			return {json: obj, domain: domain};
 		}
 		// 向url里边添加或更新query params
 		, updateAttribute: function ( link, attr, path ) {

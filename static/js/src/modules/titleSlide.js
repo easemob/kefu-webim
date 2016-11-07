@@ -1,7 +1,7 @@
 /**
  * title滚动
  */
-easemobim.titleSlide = function ( config ) {
+easemobim.titleSlide = function () {
 	var newTitle = '新消息提醒',
 		titleST = 0,
 		originTitle = document.title,

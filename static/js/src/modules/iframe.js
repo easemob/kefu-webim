@@ -1,4 +1,4 @@
-;(function () {
+;(function (utils) {
 	'use strict'
 
 
@@ -44,7 +44,7 @@
     };
 
     var _moveend = function () {
-        easemobim.utils.remove(document, 'mousemove', this.moveEv);
+        utils.remove(document, 'mousemove', this.moveEv);
         this.iframe.style.left = 'auto';
         this.iframe.style.top = 'auto';
         this.iframe.style.right = this.position.x + 'px';
@@ -60,7 +60,7 @@
     var resize = function () {
 		var me = this;
 
-        easemobim.utils.on(window, 'resize', function () {
+        utils.on(window, 'resize', function () {
             if ( !me.rect || !me.rect.width ) {
                 return;
             }
@@ -104,18 +104,16 @@
 
 		if ( me.config.dragenable ) {
 			resize.call(me);
-			easemobim.utils.on(me.shadow, 'mouseup', function () {
+			utils.on(me.shadow, 'mouseup', function () {
 				_moveend.call(me);
 			});
 		}
 
-		var me = this;
 		me.message = new easemobim.Transfer(me.iframe.id, 'easemob');
 
 		me.iframe.style.display = 'block';
-		me.config.iframeId = me.iframe.id;
 
-		me.config.receive = typeof me.config.onmessage === 'function';
+		me.config.hasReceiveCallback = typeof me.config.onmessage === 'function';
 		me.onsessionclosedSt = 0, me.onreadySt = 0;
         me.config.parentId = me.iframe.id;
 
@@ -143,7 +141,7 @@
 					me.close();
 					break;
 				case easemobim.EVENTS.NOTIFY.event://notify
-					easemobim.notify(msg.data.avatar, msg.data.title, msg.data.brief);;
+					easemobim.notify(msg.data.avatar, msg.data.title, msg.data.brief);
 					break;
 				case easemobim.EVENTS.SLIDE.event://title slide
 					easemobim.titleSlide.start();
@@ -163,13 +161,11 @@
 					}
 					break;
 				case easemobim.EVENTS.CACHEUSER.event://cache username
-					if ( !msg.data.username ) { break; }
-
-					var groupKey = me.config.emgroup ? me.config.tenantId + me.config.emgroup : me.config.tenantId;
-					if ( me.config.to ) {
-						easemobim.utils.set(me.config.to + groupKey, msg.data.username);
-					} else {
-						easemobim.utils.set(groupKey, msg.data.username);
+					if(msg.data.username){
+						utils.set(
+							(me.config.to || '') + me.config.tenantId + (me.config.emgroup || ''),
+							msg.data.username
+						);
 					}
 					break;
 				case easemobim.EVENTS.DRAGREADY.event:
@@ -180,12 +176,16 @@
 					me.moveEv || (me.moveEv = function ( e ) {
 						_move.call(me, e);
 					});
-					easemobim.utils.on(document, 'mousemove', me.moveEv);
+					utils.on(document, 'mousemove', me.moveEv);
 					break;
 				case easemobim.EVENTS.DRAGEND.event:
 					_moveend.call(me);
 					break;
-				default: break;
+				case 'setItem':
+					utils.setStore(msg.data.key, msg.data.value);
+					break;
+				default:
+					break;
 			};
 		}, ['main']);
 
@@ -207,12 +207,13 @@
 			return new Iframe(config, signleton);
 		} else if ( signleton && Iframe.iframe ) {
 
-			Iframe.iframe.config = easemobim.utils.copy(config);
+			Iframe.iframe.config = utils.copy(config);
 
 			return Iframe.iframe;
 		}
 
 		this.url = '';
+		// IE6-	8 不支持修改iframe名称
 		this.iframe = (/MSIE (6|7|8)/).test(navigator.userAgent)
 			? document.createElement('<iframe name="' + new Date().getTime() + '">')
 			: document.createElement('iframe');
@@ -220,11 +221,11 @@
 		this.iframe.name = new Date().getTime();
 		this.iframe.style.cssText = 'width: 0;height: 0;border: none; position: fixed;';
 		this.shadow = document.createElement('div');
-		this.config = easemobim.utils.copy(config);
+		this.config = utils.copy(config);
 
         this.show = false;
 
-		if ( !easemobim.utils.isMobile ) {
+		if ( !utils.isMobile ) {
             document.body.appendChild(this.shadow);
             document.body.appendChild(this.iframe);
         }
@@ -249,7 +250,7 @@
 
 	Iframe.prototype.set = function ( config, callback ) {
 
-		this.config = easemobim.utils.copy(config || this.config);
+		this.config = utils.copy(config || this.config);
 
         // todo: 写成自动配置
         var destUrl = {
@@ -258,6 +259,7 @@
 			sat: this.config.visitorSatisfactionEvaluate,
 			wechatAuth: this.config.wechatAuth,
 			hideKeyboard: this.config.hideKeyboard,
+			eventCollector: this.config.eventCollector,
 			resources: this.config.resources
         };
 
@@ -282,17 +284,19 @@
 		typeof this.config.ticket !== 'undefined' && this.config.ticket !== '' && (destUrl.ticket = this.config.ticket);
 
 
-		this.url = easemobim.utils.updateAttribute(this.url, destUrl, config.path);
+		this.url = utils.updateAttribute(this.url, destUrl, config.path);
 
 		if ( !this.config.user.username ) {
 			// [to + ] tenantId [ + emgroup]
-			this.config.user.username = easemobim.utils.get(
+			this.config.user.username = utils.get(
 				(this.config.to || '') + this.config.tenantId + (this.config.emgroup || '')
 			);
 		}
 
+		this.config.guestId = utils.getStore('guestId');
+
 		this.position = { x: this.config.dialogPosition.x.slice(0, -2), y: this.config.dialogPosition.y.slice(0, -2) };
-		this.rect = { width: this.config.dialogWidth.slice(0, -2)/1, height: this.config.dialogHeight.slice(0, -2)/1 };
+		this.rect = { width: +this.config.dialogWidth.slice(0, -2), height: +this.config.dialogHeight.slice(0, -2) };
 		this.iframe.frameBorder = 0;
 		this.iframe.allowTransparency = 'true';
 
@@ -331,7 +335,7 @@
 			this.iframe.style.height = '0';
 			this.iframe.style.width = '0';
 		}
-		if ( easemobim.utils.isMobile ) {
+		if ( utils.isMobile ) {
 			this.iframe.style.cssText += 'left:0;bottom:0';
 			this.iframe.style.width = '100%';
 			this.iframe.style.right = '0';
@@ -341,7 +345,10 @@
             emconfig.path = this.config.path;
             emconfig.staticPath = this.config.staticPath;
 			this.config.user && (emconfig.user = this.config.user);
-			easemobim.utils.setStore('emconfig' + this.config.tenantId, easemobim.utils.code.encode(JSON.stringify(emconfig)));
+			utils.setStore(
+				'emconfig' + this.config.tenantId,
+				utils.code.encode(JSON.stringify(emconfig))
+			);
 		}
 
 		this.iframe.src = this.url;
@@ -356,7 +363,7 @@
         if ( this.show ) { return; }
 
         this.show = true;
-		if ( easemobim.utils.isMobile ) {
+		if ( utils.isMobile ) {
 			iframe.style.width = '100%';
 			iframe.style.height = '100%';
 			iframe.style.right = '0';
@@ -406,17 +413,19 @@
 		return this;
 	};
 
+	// 发ext消息
 	Iframe.prototype.send = function ( ext ) {
 		easemobim.EVENTS.EXT.data = ext;	
 		this.message.send(easemobim.EVENTS.EXT);
 	};
 
+	// 发文本消息
 	Iframe.prototype.sendText = function ( msg ) {
 		easemobim.EVENTS.TEXTMSG.data = msg;	
 		this.message.send(easemobim.EVENTS.TEXTMSG);
 	};
 
-	window.easemobim = window.easemobim || {};
 	easemobim.Iframe = Iframe;
-
-}());
+}(
+	easemobim.utils
+	));

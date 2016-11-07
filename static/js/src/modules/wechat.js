@@ -7,7 +7,7 @@
 
 
 	if ( !wechat || !wechatAuth || !tenantId || !appid ) {
-		return false;
+		return;
 	}
 
     easemobim.wechat = function ( callback ) {
@@ -19,7 +19,7 @@
                     callback(info);
                 }
                 , error: function ( e ) {
-                    callback();
+                    callback(null);
                 }
             });
         };

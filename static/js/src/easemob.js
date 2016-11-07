@@ -9,7 +9,7 @@
     easemobim.version = '<%= v %>';
     easemobim.tenants = {};
 
-	var CONF = {
+	var DEFAULT_CONFIG = {
 		tenantId: '',
 		to: '',
 		agentName: '',
@@ -30,12 +30,22 @@
 			password: '',
 			token: ''
 		}
-	}, config = easemobim.utils.copy(CONF);
+	};
+	var config = easemobim.utils.copy(DEFAULT_CONFIG);
 
 
 	//get parameters from easemob.js
-    var baseConfig = easemobim.utils.getConfig('easemob.js', true),
-		_config = {};
+    var baseConfig = easemobim.utils.getConfig();
+    var _config = {};
+
+    var iframe;
+
+	//init title slide function
+	easemobim.titleSlide();
+	//init browser notify function
+	easemobim.notify();
+
+	reset();
 
     // growing io user id
     // 由于存在cookie跨域问题，所以从配置传过去
@@ -43,8 +53,8 @@
 
 
 	//init _config & concat config and global easemobim.config
-	var reset = function () {
-		config = easemobim.utils.copy(CONF);
+	function reset() {
+		config = easemobim.utils.copy(DEFAULT_CONFIG);
 		easemobim.utils.extend(config, easemobim.config);
 		_config = easemobim.utils.copy(config);
 
@@ -61,9 +71,6 @@
 		_config.staticPath = _config.staticPath || (baseConfig.domain + '/webim/static');
 	};
 
-	reset();
-
-
 	/*
 	 * @param: {String} 技能组名称，选填
 	 * 为兼容老版，建议使用easemobim.bind方法
@@ -74,8 +81,6 @@
 	window.easemobIMS = function ( tenantId, group ) {
 		easemobim.bind({ tenantId: tenantId, emgroup: group });
 	};
-
-    var iframe;
 
 	/*
 	 * @param: {Object} config
@@ -137,13 +142,6 @@
 		}
 	};
 
-
-	//init title slide function
-	easemobim.titleSlide(_config);
-	//init browser notify function
-	easemobim.notify();
-
-
 	//open api1: send custom extend message
 	easemobim.sendExt = function ( ext ) {
 		iframe.send({
@@ -164,10 +162,13 @@
 	};
 
 	//auto load
-	if ( (!_config.hide || _config.autoConnect) && _config.tenantId ) {
-        if ( !iframe ) {
-            iframe = easemobim.Iframe(_config);
-        }
+	if(
+		(!_config.hide || _config.autoConnect || _config.eventCollector)
+		&& _config.tenantId
+	){
+        iframe = iframe || easemobim.Iframe(_config);
+    	// for debug
+        easemobim.tenants[config.tenantId + config.emgroup] = iframe;
 		iframe.set(_config, iframe.close);
 	}
 

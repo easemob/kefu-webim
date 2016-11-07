@@ -544,7 +544,7 @@
                 utils.addClass(min, 'easemobWidgetHeader-min bg-color border-color');
                 easemobim.dragHeader.appendChild(min);
                 utils.on(min, 'mousedown touchstart', function () {
-                    utils.isTop || transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
+                    transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
 					return false;
 				});
                 utils.on(min, 'mouseenter', function () {

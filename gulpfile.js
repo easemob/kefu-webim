@@ -47,13 +47,6 @@ gulp.task('cssmin', function() {
 });
 
 
-//watch
-gulp.task('watch', function() {
-    debug = true;
-    gulp.watch(['static/js/src/*.js', 'static/js/src/*/*.js'], ['combineJs']);
-    gulp.watch(['static/css/src/im.css'], ['cssmin']);
-});
-
 
 //jshint
 gulp.task('lint', function() {
@@ -84,12 +77,13 @@ gulp.task('combineJs', function() {
         'static/js/src/modules/paste.js',
         'static/js/src/modules/leaveMessage.js',
         'static/js/src/modules/satisfaction.js',
-        'static/js/src/modules/imgView.js',
-        'static/js/src/modules/uploadShim.js',
-        'static/js/src/modules/wechat.js',
-        'static/js/src/modules/site.js',
+		'static/js/src/modules/imgView.js',
+		'static/js/src/modules/uploadShim.js',
+		'static/js/src/modules/wechat.js',
+		'static/js/src/modules/site.js',
         'static/js/src/modules/channel.js',
         'static/js/src/modules/chat.js',
+        'static/js/src/modules/eventCollector.js',
         'static/js/src/init.js'
     ])
     .pipe(concat('main.js'));
@@ -98,12 +92,12 @@ gulp.task('combineJs', function() {
     .pipe(gulp.dest('static/js/'));
 
     var ejs = gulp.src([
-        'static/js/src/modules/utils.js',
+		'static/js/src/modules/utils.js',
         'static/js/src/modules/transfer.js',
         'static/js/src/modules/eventsEnum.js',
         'static/js/src/modules/notify.js',
         'static/js/src/modules/titleSlide.js',
-        'static/js/src/modules/iframe.js',
+		'static/js/src/modules/iframe.js',
         'static/js/src/easemob.js',
     ])
     .pipe(concat('easemob.js'));
@@ -111,15 +105,16 @@ gulp.task('combineJs', function() {
     ejs.pipe(template({ v: version }))
     .pipe(gulp.dest('.'));
 
-    var open = gulp.src([
-        'static/js/src/sdk/strophe.js',
-        'static/js/src/sdk/easemob.im-1.0.8.js',
-        'static/js/swfupload/swfupload.min.js',
-        'static/js/src/modules/transfer.js',
-    ])
-    .pipe(concat('em-open.js'));
-    debug || open.pipe(uglify());
-    open.pipe(gulp.dest('static/js/'));
+    // // 目前未使用此文件，不确定以前是否用到，暂不更新，确认后移除
+    // var open = gulp.src([
+    //     'static/js/src/sdk/strophe.js',
+    //     'static/js/src/sdk/easemob.im-1.0.8.js',
+    //     'static/js/swfupload/swfupload.min.js',
+    //     'static/js/src/modules/transfer.js',
+    // ])
+    // .pipe(concat('em-open.js'));
+    // debug || open.pipe(uglify());
+    // open.pipe(gulp.dest('static/js/'));
 
     var transfer = gulp.src([
         'static/js/src/modules/ajax.js',
@@ -137,7 +132,14 @@ gulp.task('build', ['clean'],  function() {
     gulp.start('cssmin', 'combineJs', 'minifyHtml');
 });
 
-gulp.task('debug', function(){
+gulp.task('dev', function(){
     debug = true;
     gulp.start('build');
 })
+
+gulp.task('watch', function() {
+    gulp.start('dev');
+    gulp.watch(['static/js/src/*.js', 'static/js/src/*/*.js'], ['dev']);
+    gulp.watch(['static/css/src/im.css'], ['cssmin']);
+});
+

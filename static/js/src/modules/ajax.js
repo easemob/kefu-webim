@@ -42,7 +42,7 @@
                 } else {
                     if ( dataType=='json'){
                         try{
-                            var json = Utils.parseJSON(xhr.responseText);
+                            var json = JSON.parse(xhr.responseText);
                             error(json, xhr, '服务器返回错误信息');
                         } catch ( e ) {
                             error(xhr.responseText,xhr, '服务器返回错误信息');

@@ -181,6 +181,22 @@
                     excludeData: true
                 }));
                 break;
+            // 此接口使用的是单独的微服务，无需限流
+            case 'reportEvent':
+                easemobim.emajax(createObject({
+                    url: '/v1/event_collector/events',
+                    msg: msg,
+                    type: 'POST'
+                }));
+                break;
+            case 'deleteEvent':
+                easemobim.emajax(createObject({
+                    url: '/v1/event_collector/events/' + encodeURIComponent(msg.data.userId),
+                    msg: msg,
+                    type: 'DELETE',
+                    excludeData: true
+                }));
+                break;
             default:
                 break;
         }

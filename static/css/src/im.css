@@ -110,7 +110,7 @@ button, textarea, input {
 }
 .easemobWidget-pop-bar {
     display: block;
-    color: #fff;
+    color: white;
     width: 90px;
     height: 30px;
     line-height: 30px;
@@ -133,7 +133,7 @@ button, textarea, input {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: #fff;
+    background-color: white;
     border-radius: 4px;
 }
 /*header*/
@@ -164,7 +164,7 @@ button, textarea, input {
     z-index: 1;
     right: -12px;
     top: -8px;
-    color: #fff;
+    color: white;
     font-size: 12px;
     position: absolute;
 }
@@ -226,7 +226,7 @@ button, textarea, input {
     left: -5px;
     top: -4px;
     text-align: center;
-    color: #fff;
+    color: white;
 }
 .easemobWidgetHeader-wrapper .easemobWidgetHeader-audio {
     position: absolute;
@@ -244,7 +244,7 @@ button, textarea, input {
     left: -5px;
     top: -5px;
     text-align: center;
-    color: #fff;
+    color: white;
 }
 .easemobWidgetHeader-audio:after {
     content: 'x';
@@ -342,17 +342,17 @@ button, textarea, input {
 .easemobWidget-agent-status.leave:after {
     content: 'r';
     background-color: #1BA8ED;
-    color: #fff;
+    color: white;
 }
 .easemobWidget-agent-status.busy:after {
     content: 'q';
     background-color: #FF3000;
-    color: #fff;
+    color: white;
 }
 .easemobWidget-agent-status.hidden:after {
     content: 'p';
     background-color: #FFC715;
-    color: #fff;
+    color: white;
 }
 .easemobWidget-agent-status.online {
     background-color: #5AE825;
@@ -369,7 +369,7 @@ button, textarea, input {
     z-index: 1;
     bottom: 144px;
     left: 5px;
-    background-color: #fff;
+    background-color: white;
     padding: 0 0 0 10px;
     border-radius: 4px;
     box-shadow: 0 4px 5px rgba(0,0,0,.1);
@@ -378,7 +378,7 @@ button, textarea, input {
 .easemobWidget-face-container {
     z-index: 2;
     position: relative;
-    background-color: #fff;
+    background-color: white;
     border-radius: 4px;
     padding-bottom: 10px;
 }
@@ -401,7 +401,7 @@ button, textarea, input {
     -moz-transform: rotate(-45deg);
     -ms-transform: rotate(-45deg);
     -o-transform: rotate(-45deg);
-    background-color: #fff;
+    background-color: white;
     display: none\9;
 }
 .easemobWidget-face-bg {
@@ -422,7 +422,7 @@ button, textarea, input {
 .easemobWidget-paste-wrapper {
     width: 300px;
     height: 300px;
-    background-color: #fff;
+    background-color: white;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -492,7 +492,7 @@ button, textarea, input {
     left: -17px;
     width: 30px;
     height: 30px;
-    color: #fff;
+    color: white;
     text-shadow: -1px 0 0 #e5e5e5;
 }
 .easemobWidget-left .easemobWidget-corner:after {
@@ -524,7 +524,7 @@ button, textarea, input {
 }
 .easemobWidget-msg-menu > p {
     padding: 10px;
-    background-color: #fff;
+    background-color: white;
     border-bottom: 1px solid rgb(229, 229, 229);
 }
 .easemobWidget-msg-file .easemobWidget-msg-container {
@@ -560,7 +560,7 @@ img.easemobWidget-msg-fileicon {
     overflow: hidden;
 }
 .easemobWidget-left .easemobWidget-msg-container {
-    background-color: #fff;
+    background-color: white;
 }
 .easemobWidget-left .easemobWidget-msg-menu {
     overflow: hidden;
@@ -703,7 +703,7 @@ img.easemobWidget-msg-fileicon {
     z-index: 1;
     position: absolute;
     content: 'B';
-    color: #fff;
+    color: white;
     left: 0;
     top: 0;
 }
@@ -719,7 +719,7 @@ img.easemobWidget-msg-fileicon {
     height: 140px;
     width: 100%;
     bottom: 0;
-    background-color: #fff;
+    background-color: white;
     -webkit-backface-visibility:hidden;
 }
 .easemobWidget-send-disable:after {
@@ -758,7 +758,7 @@ img.easemobWidget-msg-fileicon {
     text-align: center;
     text-decoration: none;
     line-height: 30px;
-    color: #fff;
+    color: white;
 }
 .easemobWidget-face {
     position: absolute;
@@ -823,7 +823,7 @@ object {
     margin: auto;
     left: 0;
     right: 0;
-    color: #fff;
+    color: white;
     background-color: #000;
     text-align: center;
     border-radius: 4px;
@@ -842,7 +842,7 @@ object {
     height: 100%;
     top: 0;
     left: 0;
-    background-color: #fff;
+    background-color: white;
 }
 .easemobWidget-success-prompt p {
     margin-top: -10px;
@@ -865,7 +865,7 @@ object {
     content: 'G';
     position: absolute;
     font-size: 60px;
-    color: #fff;
+    color: white;
     width: 60px;
     height: 60px;
     line-height: 60px;
@@ -925,13 +925,13 @@ object {
 }
 .easemobWidget-offline .easemobWidget-offline-cancel {
     float: left;
-    background-color: #fff;
+    background-color: white;
     border: 1px solid #D8D9DA;
     color: #999;
 }
 .easemobWidget-offline .easemobWidget-offline-ok {
     float: right;
-    color: #fff;
+    color: white;
 }
 .easemobWidget-list-btns {
     min-width: 190px;
@@ -953,7 +953,7 @@ object {
     min-height: 30px;
     text-align: left;
     color: #000;
-    background-color: #fff;
+    background-color: white;
     border-radius: 2px;
     border: 1px solid #e5e5e5;
     cursor: pointer;
@@ -962,7 +962,7 @@ object {
     white-space: pre-wrap;
 }
 .easemobWidget-list-btn:hover {
-    color: #fff;
+    color: white;
 }
 .easemobWidget-logo,
 .easemobWidget-satisfaction {
@@ -994,7 +994,7 @@ object {
     position: absolute;
     width: 320px;
     height: 380px;
-    background-color: #fff;
+    background-color: white;
     box-shadow: 0 10px 20px rgba(0,0,0,.3);
     top: 50%;
     left: 50%;
@@ -1015,14 +1015,14 @@ object {
     height: 30px;
     line-height: 30px;
     border-radius: 4px;
-    color: #fff;
+    color: white;
     border: none;
     font-size: 13px;
     cursor: pointer;
     float: right;
 }
 .easemobWidget-dialog .easemobWidget-cancel {
-    background-color: #fff;
+    background-color: white;
     color: #A6A6A6;
     border: 1px solid #E4E4E4;
     float: left;
@@ -1082,11 +1082,11 @@ object {
     font-size: 13px;
 }
 /*mobile*/
-.easemobWidgetWrapper-mobile {
+.em-mobile {
     border-radius: 0;
 }
-.easemobWidgetWrapper-mobile .easemobWidgetHeader-nickname,
-.easemobWidgetWrapper-mobile ..em-header-status-text,
+.em-mobile .easemobWidgetHeader-nickname,
+.em-mobile ..em-header-status-text,
  {
 	overflow: hidden;
     text-overflow: ellipsis;
@@ -1095,84 +1095,84 @@ object {
     display: inline-block;
     margin: 0;
 }
-.easemobWidgetWrapper-mobile .easemobWidgetBody-wrapper {
+.em-mobile .easemobWidgetBody-wrapper {
     bottom: 42px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-word span {
+.em-mobile .easemobWidget-word span {
     font-size: 14px;
 }
-.easemobWidgetWrapper-mobile .easemobWidgetHeader-wrapper {
+.em-mobile .easemobWidgetHeader-wrapper {
     font-size: 16px;
     border-radius: 0;
     box-shadow: none;
 }
-.easemobWidgetWrapper-mobile .easemobWidgetHeader-wrapper > div {
+.em-mobile .easemobWidgetHeader-wrapper > div {
     text-align: center;
 }
-.easemobWidgetWrapper-mobile .easemobWidgetHeader-portrait {
+.em-mobile .easemobWidgetHeader-portrait {
     position: absolute;
     top: 8px;
     left: 2px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-corner {
+.em-mobile .easemobWidget-corner {
     top: 4px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-chat {
+.em-mobile .easemobWidget-chat {
     /*padding-bottom: 50px;*/
 }
-.easemobWidgetWrapper-mobile .easemobWidgetHeader {
+.em-mobile .easemobWidgetHeader {
     font-size: 17px;
     border-radius: 0;
     box-shadow: none;
 }
-.easemobWidgetWrapper-mobile .easemobWidgetBody {
+.em-mobile .easemobWidgetBody {
     bottom: 42px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-list-btn,
-.easemobWidgetWrapper-mobile .easemobWidget-msg-container {
+.em-mobile .easemobWidget-list-btn,
+.em-mobile .easemobWidget-msg-container {
     font-size: 17px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-list-btn {
+.em-mobile .easemobWidget-list-btn {
     line-height: 30px;
     box-shadow: none;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-msg-container {
+.em-mobile .easemobWidget-msg-container {
     padding: 8px 10px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-msg-file .easemobWidget-msg-container {
+.em-mobile .easemobWidget-msg-file .easemobWidget-msg-container {
 	padding: 0;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-list-btn:hover {
+.em-mobile .easemobWidget-list-btn:hover {
     color: #000;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-face-wrapper {
+.em-mobile .easemobWidget-face-wrapper {
     width: 100%;
     left: 0;
     border-radius: 0;
     padding-left: 0;
     bottom: 44px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-face {
+.em-mobile .easemobWidget-face {
     z-index: 1;
     top: auto;
     bottom: 8px;
     left: 3px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-face-bg {
+.em-mobile .easemobWidget-face-bg {
     width: 14.2%;
     margin: 0;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-face-bg .easemobWidget-face-img {
+.em-mobile .easemobWidget-face-bg .easemobWidget-face-img {
     margin: 8px 0;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-file {
+.em-mobile .easemobWidget-file {
     z-index: 1;
     right: 82px;
     left: auto;
     top: auto;
     bottom: 8px;
 }
-.easemobWidgetWrapper-mobile .easemobWidgetHeader-keyboard {
+.em-mobile .easemobWidgetHeader-keyboard {
     position: absolute;
     right: 9px;
     top: 11px;
@@ -1181,24 +1181,24 @@ object {
     border-radius: 4px;
     text-decoration: none;
 }
-.easemobWidgetWrapper-mobile .easemobWidgetHeader-keyboard:after {
+.em-mobile .easemobWidgetHeader-keyboard:after {
     content: 'N';
     position: absolute;
     left: -5px;
     top: -4px;
     text-align: center;
-    color: #fff;
+    color: white;
 }
-.easemobWidgetWrapper-mobile .easemobWidgetHeader-keyboard-up:after {
+.em-mobile .easemobWidgetHeader-keyboard-up:after {
     content: 'O';
 }
-.easemobWidgetWrapper-mobile .easemobWidgetHeader-keyboard-down:after {
+.em-mobile .easemobWidgetHeader-keyboard-down:after {
     content: 'N';
 }
-.easemobWidgetWrapper-mobile .easemobWidget-note {
+.em-mobile .easemobWidget-note {
     display: none;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-notem {
+.em-mobile .easemobWidget-notem {
     position: absolute;
     right: 44px;
     top: 10px;
@@ -1207,26 +1207,26 @@ object {
     border-radius: 4px;
     text-decoration: none;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-notem:after {
+.em-mobile .easemobWidget-notem:after {
     content: '1';
     position: absolute;
     left: -5px;
     top: -4px;
     text-align: center;
-    color: #fff;
+    color: white;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-send-wrapper {
+.em-mobile .easemobWidget-send-wrapper {
     position: absolute;
     height: auto;
     padding: 3px 80px 3px 36px;
     box-sizing: border-box;
-    background-color: #fff;
+    background-color: white;
     box-shadow: 0 -1px 0 #e5e5e5;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-send-disable:after {
+.em-mobile .easemobWidget-send-disable:after {
     height: 48px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-textarea {
+.em-mobile .easemobWidget-textarea {
     height: 34px;
     max-height: 88px;
     bottom: 0;
@@ -1247,7 +1247,7 @@ object {
     color: #1a1a1a;
     box-shadow: 0 1px 3px rgba(0,0,0,.2) inset;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-send {
+.em-mobile .easemobWidget-send {
     width: 64px;
     right: 8px;
     top: auto;
@@ -1256,10 +1256,10 @@ object {
     line-height: 33px;
     font-size: 15px;
 }
-.easemobWidgetWrapper-mobile .easeWidget-face-rec {
+.em-mobile .easeWidget-face-rec {
     display: none;
 }
-.easemobWidgetWrapper-mobile .easemobWidgetSendBtn {
+.em-mobile .easemobWidgetSendBtn {
     width: 64px;
     right: 8px;
     top: auto;
@@ -1268,7 +1268,7 @@ object {
     line-height: 33px;
     font-size: 15px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-satisfaction-dialog {
+.em-mobile .easemobWidget-satisfaction-dialog {
 	z-index: 3;
     width: 100%;
     height: 100%;
@@ -1279,13 +1279,13 @@ object {
     border-radius: 0;
     font-size: 15px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-error-prompt,
-.easemobWidgetWrapper-mobile .easemobWidget-satisfaction-dialog h3,
-.easemobWidgetWrapper-mobile .easemobWidget-satisfaction-dialog button,
-.easemobWidgetWrapper-mobile .easemobWidget-satisfaction-dialog textarea {
+.em-mobile .easemobWidget-error-prompt,
+.em-mobile .easemobWidget-satisfaction-dialog h3,
+.em-mobile .easemobWidget-satisfaction-dialog button,
+.em-mobile .easemobWidget-satisfaction-dialog textarea {
     font-size: 15px;
 }
-.easemobWidgetWrapper-mobile .easemobWidget-satisfaction-dialog button {
+.em-mobile .easemobWidget-satisfaction-dialog button {
     height: 32px;
     line-height: 32px;
 }
