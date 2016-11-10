@@ -121,11 +121,10 @@
 					msg.body.ext.weichat.language = config.language;
                 }
 
-                //set growingio id (only once)
+                //set growingio id
                 if ( config.grUserId ) {
 					msg.body.ext.weichat.visitor = msg.body.ext.weichat.visitor || {};
 					msg.body.ext.weichat.visitor.gr_user_id = config.grUserId;
-                    config.grUserId = null;
                 }
 			}
 			, setRoot: function () {
