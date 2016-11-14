@@ -195,7 +195,7 @@ easemobim.channel = function ( config ) {
                             var id = error.id,
                                 wrap = utils.$Dom(id);
 
-                            utils.html(utils.$Class('a.easemobWidget-noline', wrap)[0], '<i class="easemobWidget-unimage">I</i>');
+                            utils.html(utils.$Class('a.em-widget-noline', wrap)[0], '<i class="em-widget-unimage">I</i>');
                             utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
                             me.scrollBottom();
                         }
@@ -250,7 +250,7 @@ easemobim.channel = function ( config ) {
                         var id = error.id,
                             wrap = utils.$Dom(id);
 
-                        utils.html(utils.$Class('a.easemobWidget-noline')[0], '<i class="easemobWidget-unimage">I</i>');
+                        utils.html(utils.$Class('a.em-widget-noline')[0], '<i class="em-widget-unimage">I</i>');
                         utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
                         me.scrollBottom();
                     }
@@ -356,8 +356,8 @@ easemobim.channel = function ( config ) {
                 case 'satisfactionEvaluation':
                     message = new Easemob.im.EmMessage('list');
                     message.set({value: '请对我的服务做出评价', list: ['\
-                        <div class="easemobWidget-list-btns">\
-                            <button class="easemobWidget-list-btn js_satisfybtn" data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '"\
+                        <div class="em-widget-list-btns">\
+                            <button class="em-widget-list-btn js_satisfybtn" data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '"\
                              data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
                         </div>']});
                     if(!isHistory){
@@ -378,9 +378,9 @@ easemobim.channel = function ( config ) {
                         list = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
 
                     if ( list.length > 0 ) {
-                        str = '<div class="easemobWidget-list-btns">';
+                        str = '<div class="em-widget-list-btns">';
                         for ( var i = 0, l = list.length; i < l; i++ ) {
-                            str += '<button class="easemobWidget-list-btn js_robotbtn" data-id="' + list[i].id + '">' + (list[i].name || list[i]) + '</button>';
+                            str += '<button class="em-widget-list-btn js_robotbtn" data-id="' + list[i].id + '">' + (list[i].name || list[i]) + '</button>';
                         }
                         str += '</div>';
                     }
@@ -400,8 +400,8 @@ easemobim.channel = function ( config ) {
     还有待测试其他带有转人工的情况
 */
                     var str = [
-                        '<div class="easemobWidget-list-btns">',
-                            '<button class="easemobWidget-list-btn js_robotTransferBtn" ',
+                        '<div class="em-widget-list-btns">',
+                            '<button class="em-widget-list-btn js_robotTransferBtn" ',
                             'data-sessionid="' + ctrlArgs.serviceSessionId + '" ', 
                             'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
                         '</div>'

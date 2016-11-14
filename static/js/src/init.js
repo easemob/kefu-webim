@@ -114,37 +114,37 @@
 	function initUI(config, callback) {
 		//render Tpl
 		webim.innerHTML = '\
-<div id="easemobWidgetPopBar" class="em-hide">\
-	<a class="easemobWidget-pop-bar bg-color" href="javascript:;"><i></i>联系客服</a>\
-	<span class="easemobWidget-msgcount em-hide"></span>\
+<div id="em-widgetPopBar" class="em-hide">\
+	<a class="em-widget-pop-bar bg-color" href="javascript:;"><i></i><span>联系客服</span></a>\
+	<span class="em-widget-msgcount em-hide"></span>\
 </div>\
-<div id="EasemobKefuWebimChat" class="easemobWidgetWrapper em-hide">\
-	<div id="easemobWidgetHeader" class="easemobWidgetHeader-wrapper bg-color border-color">\
-		<div id="easemobWidgetDrag">\
+<div id="em-kefu-webim-chat" class="em-widget-wrapper em-hide">\
+	<div id="em-widgetHeader" class="em-widgetHeader-wrapper bg-color border-color">\
+		<div id="em-widgetDrag">\
 			<p></p>\
-			<img class="easemobWidgetHeader-portrait border-color"/>\
-			<span class="easemobWidgetHeader-nickname"></span>\
+			<img class="em-widgetHeader-portrait border-color"/>\
+			<span class="em-widgetHeader-nickname"></span>\
 			<span class="em-header-status-text"></span>\
-			<i id="easemobWidgetNotem" class="easemobWidget-notem em-hide"></i>\
-			<i id="easemobWidgetAgentStatus" class="easemobWidget-agent-status em-hide"></i>\
+			<i id="em-widgetNotem" class="em-widget-notem em-hide"></i>\
+			<i id="em-widgetAgentStatus" class="em-widget-agent-status em-hide"></i>\
 		</div>\
 	</div>\
-	<!-- for debug only -->\
-	<div class="video" style="position: absolute; top: 43px; height: 160px; background-color: gray;"> <video class="main" style="width: 400px; height: 267px; "></video> <video class="sub" style="width: 100px; height: 80px; "></video></div>\
-	<div id="easemobWidgetBody" class="easemobWidgetBody-wrapper"></div>\
-	<div id="EasemobKefuWebimFaceWrapper" class="easemobWidget-face-wrapper e-face em-hide">\
-		<ul class="easemobWidget-face-container"></ul>\
+	<div class="em-widget-tip"><span class="em-widget-tip-text"></span><a class="em-widget-tip-close" href="javascript:;"></a></div>\
+	<div class="em-widget-video"><video class="main"></video><video class="sub"></video></div>\
+	<div id="em-widgetBody" class="em-widgetBody-wrapper"></div>\
+	<div id="EasemobKefuWebimFaceWrapper" class="em-widget-face-wrapper e-face em-hide">\
+		<ul class="em-widget-face-container"></ul>\
 	</div>\
-	<div id="easemobWidgetSend" class="easemobWidget-send-wrapper">\
-		<i class="easemobWidget-face e-face" title="表情"></i>\
-		<i class="easemobWidget-file" id="easemobWidgetFile" title="图片"></i>\
-		<i class="easemobWidget-note em-hide" id="easemobWidgetNote" title="留言"></i>\
+	<div id="em-widgetSend" class="em-widget-send-wrapper">\
+		<i class="em-widget-face e-face" title="表情"></i>\
+		<i class="em-widget-file" id="em-widgetFile" title="图片"></i>\
+		<i class="em-widget-note em-hide" id="em-widgetNote" title="留言"></i>\
 <!-- for debug only -->\
-		<i class="easemobWidget-note" id="em-video-invite" style="left: 97px;"></i>\
-		<input id="easemobWidgetFileInput" type="file" accept="image/*"/>\
-		<textarea class="easemobWidget-textarea" spellcheck="false"></textarea>\
-		<span id="EasemobKefuWebimSatisfy" class="easemobWidget-satisfaction em-hide">请对服务做出评价</span>\
-		<a href="javascript:;" class="easemobWidget-send bg-color disabled" id="easemobWidgetSendBtn">连接中</a>\
+		<i class="em-widget-note" id="em-video-invite" style="left: 97px;"></i>\
+		<input id="em-widgetFileInput" type="file" accept="image/*"/>\
+		<textarea class="em-widget-textarea" spellcheck="false"></textarea>\
+		<span id="EasemobKefuWebimSatisfy" class="em-widget-satisfaction em-hide">请对服务做出评价</span>\
+		<a href="javascript:;" class="em-widget-send bg-color disabled" id="em-widgetSendBtn">连接中</a>\
 	</div>\
 	<iframe id="EasemobKefuWebimIframe" class="em-hide" src="' + config.domain + '/webim/transfer.html?v=<%= v %>">\
 </div>';
@@ -154,24 +154,24 @@
 			callback(config);
 		});
 
-		// easemobWidgetPopBar
+		// em-widgetPopBar
 		utils.toggleClass(
-			utils.$Dom('easemobWidgetPopBar'),
+			utils.$Dom('em-widgetPopBar'),
 			'em-hide',
 			(utils.isTop || !config.minimum || config.hide)
 		);
 
-		// EasemobKefuWebimChat
+		// em-kefu-webim-chat
 		utils.toggleClass(
-			utils.$Dom('EasemobKefuWebimChat'),
+			utils.$Dom('em-kefu-webim-chat'),
 			'em-hide', !(utils.isTop || !config.minimum)
 		);
 
 		// 联系客服按钮
-		var $button = utils.$Class('a.easemobWidget-pop-bar', webim)[0];
+		var $button = utils.$Class('a.em-widget-pop-bar', webim)[0];
 
 		// 设置按钮文字
-		$button.childNodes[1].textContent = config.buttonText;
+		$button.getElementsByTagName('span')[0].innerText = config.buttonText;
 
 		// mobile
 		if (utils.isMobile) {
@@ -182,9 +182,9 @@
 			utils.addClass(document.body, 'em-mobile');
 		}
 
-		// easemobWidgetNote
+		// em-widgetNote
 		utils.toggleClass(
-			utils.$Dom('easemobWidgetNote'),
+			utils.$Dom('em-widgetNote'),
 			'em-hide', !config.ticket
 		);
 

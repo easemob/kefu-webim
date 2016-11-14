@@ -24,6 +24,11 @@
 			'[object HTMLCollection]': true,
 			'[object Array]': true
 		}
+		, isSupportWebRTC: !!(
+			window.webkitRTCPeerConnection
+			|| window.mozRTCPeerConnection
+			|| window.RTCPeerConnection
+		)
 		, uuid: function () {
 			var s = [], hexDigits = '0123456789abcdef';
 

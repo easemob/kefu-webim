@@ -1875,7 +1875,7 @@ var edgeShim = {
         newState = 'connecting';
       } else if (states.disconnected > 0) {
         newState = 'disconnected';
-      } else if (states.new > 0) {
+      } else if (states['new'] > 0) {        /* fix for ie8 */
         newState = 'new';
       } else if (states.connected > 0 || states.completed > 0) {
         newState = 'connected';
@@ -2188,7 +2188,7 @@ module.exports = function() {
   var origGetUserMedia = navigator.mediaDevices.getUserMedia.
       bind(navigator.mediaDevices);
   navigator.mediaDevices.getUserMedia = function(c) {
-    return origGetUserMedia(c).catch(function(e) {
+    return origGetUserMedia(c)['catch'](function(e) {        /* fix for ie8 */
       return Promise.reject(shimError_(e));
     });
   };

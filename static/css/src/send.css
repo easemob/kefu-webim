@@ -1,0 +1,78 @@
+.em-widget-send-wrapper {
+    position: fixed;
+    height: 140px;
+    width: 100%;
+    bottom: 0;
+    background-color: white;
+    -webkit-backface-visibility:hidden;
+}
+.em-widget-send-disable:after {
+    z-index: 1;
+    content: ' ';
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    height: 140px;
+    opacity: .7;
+    background: #fff;
+    background: rgba(255,255,255,.7);
+}
+#em-widgetSendBtn.disabled {
+    background-color: #ccc;
+    cursor: default;
+}
+.em-widget-send-wrapper .em-widget-textarea {
+    width: 100%;
+    height: 70px;
+    border: none;
+    padding: 10px;
+    box-sizing: border-box;
+    margin-top: 30px;
+    font-size: 13px;
+    resize: none;
+}
+.em-widget-send {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 100px;
+    border-radius: 4px;
+    height: 30px;
+    text-align: center;
+    text-decoration: none;
+    line-height: 30px;
+    color: white;
+}
+.em-widget-face {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    color: #4d4d4d;
+}
+.em-widget-face:after {
+    content: 'D';
+}
+.em-widget-note:hover,
+.em-widget-file:hover,
+.em-widget-face:hover {
+    cursor: pointer;
+}
+.em-widget-file {
+    position: absolute;
+    top: 5px;
+    left: 36px;
+    color: #4d4d4d;
+}
+.em-widget-file:after {
+    content: 'L';
+}
+.em-widget-note {
+    position: absolute;
+    top: 6px;
+    left: 67px;
+    color: #4d4d4d;
+}
+.em-widget-note:after {
+    content: '1';
+}

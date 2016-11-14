@@ -8,8 +8,8 @@
         // todo: 把dom都移到里边
         var doms = {
             agentStatusText: utils.$Class('span.em-header-status-text')[0],
-            agentStatusSymbol: utils.$Dom('easemobWidgetAgentStatus'),
-            nickName: utils.$Class('span.easemobWidgetHeader-nickname')[0],
+            agentStatusSymbol: utils.$Dom('em-widgetAgentStatus'),
+            nickName: utils.$Class('span.em-widgetHeader-nickname')[0],
             videoInviteBtn: utils.$Dom('em-video-invite'),
             localVideoWin: utils.$Class('video.sub')[0],
             remoteVideoWin: utils.$Class('video.main')[0]
@@ -19,22 +19,22 @@
 
 		//DOM init
 		easemobim.im = utils.$Dom('EasemobKefuWebim');
-		easemobim.imBtn = utils.$Dom('easemobWidgetPopBar');
-		easemobim.imChat = utils.$Dom('EasemobKefuWebimChat');
-		easemobim.imChatBody = utils.$Dom('easemobWidgetBody');
-		easemobim.send = utils.$Dom('easemobWidgetSend');
+		easemobim.imBtn = utils.$Dom('em-widgetPopBar');
+		easemobim.imChat = utils.$Dom('em-kefu-webim-chat');
+		easemobim.imChatBody = utils.$Dom('em-widgetBody');
+		easemobim.send = utils.$Dom('em-widgetSend');
 		easemobim.textarea = easemobim.send.getElementsByTagName('textarea')[0];
-		easemobim.sendBtn = utils.$Dom('easemobWidgetSendBtn');
+		easemobim.sendBtn = utils.$Dom('em-widgetSendBtn');
 		easemobim.faceBtn = easemobim.send.getElementsByTagName('i')[0];
-		easemobim.realFile = utils.$Dom('easemobWidgetFileInput');
-		easemobim.sendFileBtn = utils.$Dom('easemobWidgetFile');
-		easemobim.noteBtn = utils.$Dom('easemobWidgetNote');
-		easemobim.mobileNoteBtn = utils.$Dom('easemobWidgetNotem');
-		easemobim.dragHeader = utils.$Dom('easemobWidgetDrag');
+		easemobim.realFile = utils.$Dom('em-widgetFileInput');
+		easemobim.sendFileBtn = utils.$Dom('em-widgetFile');
+		easemobim.noteBtn = utils.$Dom('em-widgetNote');
+		easemobim.mobileNoteBtn = utils.$Dom('em-widgetNotem');
+		easemobim.dragHeader = utils.$Dom('em-widgetDrag');
 		easemobim.dragBar = easemobim.dragHeader.getElementsByTagName('p')[0];
 		easemobim.chatFaceWrapper = utils.$Dom('EasemobKefuWebimFaceWrapper');
 		easemobim.messageCount = easemobim.imBtn.getElementsByTagName('span')[0];
-        easemobim.avatar = utils.$Class('img.easemobWidgetHeader-portrait')[0];
+        easemobim.avatar = utils.$Class('img.em-widgetHeader-portrait')[0];
 		easemobim.swfupload = null;//flash 上传
 
 
@@ -146,7 +146,7 @@
 
 				if ( !config.hideKeyboard && !config.offDuty ) {
 					var i = document.createElement('i');
-					utils.addClass(i, 'easemobWidgetHeader-keyboard easemobWidgetHeader-keyboard-down');
+					utils.addClass(i, 'em-widgetHeader-keyboard em-widgetHeader-keyboard-down');
 					easemobim.dragHeader.appendChild(i);
 				}
 			}
@@ -364,10 +364,9 @@
                     , tenantId: config.tenantId
                 }, function ( msg ) {
                     if ( msg && msg.data ) {
-                        var ref = config.referrer ? decodeURIComponent(config.referrer) : document.referrer;
                         me.onlineHumanAgentCount = msg.data.onlineHumanAgentCount;//人工坐席数
                         me.onlineRobotAgentCount = msg.data.onlineRobotAgentCount;//机器人坐席数
-                        me.agentCount = me.onlineHumanAgentCount/1 + me.onlineRobotAgentCount/1;
+                        me.agentCount = +me.onlineHumanAgentCount + +me.onlineRobotAgentCount;
                         config.agentUserId = msg.data.serviceSession ? msg.data.serviceSession.agentUserId : null;//get agentuserid
 
                         if ( me.agentCount === 0 ) {
@@ -392,8 +391,8 @@
                         && easemobim.api('sendVisitorInfo', {
                             tenantId: config.tenantId,
                             visitorId: msg.data.serviceSession.visitorUser.userId,
-                            referer:  ref
-                        });//ref info
+                            referer:  document.referrer
+                        });
                     }
 
 
@@ -408,7 +407,7 @@
                 this.chatWrapper = this.handleChatContainer();
             }
             , handleChatContainer: function () {
-                var curChatContainer = utils.$Class('div.easemobWidget-chat', easemobim.imChatBody);
+                var curChatContainer = utils.$Class('div.em-widget-chat', easemobim.imChatBody);
 
 				this.setAgentProfile({
 					tenantName: config.defaultAgentName,
@@ -418,12 +417,12 @@
                     return curChatContainer[0];
                 } else {
                     curChatContainer = document.createElement('div');
-                    utils.addClass(curChatContainer, 'easemobWidget-chat');
+                    utils.addClass(curChatContainer, 'em-widget-chat');
                     utils.insertBefore(easemobim.imChatBody, curChatContainer, easemobim.imChatBody.childNodes[this.hasLogo ? 1 : 0]);
 
                     var transfer = document.createElement('div');
                     transfer.id = 'transfer';
-					utils.addClass(transfer, 'easemobWidget-status-prompt');
+					utils.addClass(transfer, 'em-widget-status-prompt');
                     easemobim.imChat.appendChild(transfer);
                     return curChatContainer;
                 }
@@ -500,7 +499,7 @@
                     if ( msg && msg.data && msg.data.state ) {
                         state = msg.data.state;
                         doms.agentStatusText.innerText = easemobim._const.agentStatusText[state];
-                        doms.agentStatusSymbol.className = 'easemobWidget-agent-status ' + easemobim._const.agentStatusClassName[state];
+                        doms.agentStatusSymbol.className = 'em-widget-agent-status ' + easemobim._const.agentStatusClassName[state];
                     }
                 });
             }
@@ -544,7 +543,7 @@
 
                 min.setAttribute('href', 'javascript:;');
                 min.setAttribute('title', '关闭');
-                utils.addClass(min, 'easemobWidgetHeader-min bg-color border-color');
+                utils.addClass(min, 'em-widgetHeader-min bg-color border-color');
                 easemobim.dragHeader.appendChild(min);
                 utils.on(min, 'mousedown touchstart', function () {
                     transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
@@ -579,35 +578,38 @@
 
             }
 			, setLogo: function () {
-				if ( !utils.$Class('div.easemobWidget-tenant-logo').length && config.logo ) {
-					utils.html(this.chatWrapper, '<div class="easemobWidget-tenant-logo"><img src="' + config.logo + '"></div>' + utils.html(this.chatWrapper));
+				if ( !utils.$Class('div.em-widget-tenant-logo').length && config.logo ) {
+					utils.html(this.chatWrapper, '<div class="em-widget-tenant-logo"><img src="' + config.logo + '"></div>' + utils.html(this.chatWrapper));
 					this.hasLogo = true;
 				}
 			}
             , setNotice: function () {
                 var me = this;
 
-                if ( me.slogan || config.offDuty ) {
+                if ( me.hasSetSlogan || config.offDuty ) {
                     return;
                 }
 
                 easemobim.api('getSlogan', {
                     tenantId: config.tenantId
-                }, function ( msg ) {
-                    if ( msg.data && msg.data.length > 0 && msg.data[0].optionValue ) {
-                        easemobim.imChatBody.style.top = '90px';
-                        me.slogan = document.createElement('div');
-                        utils.addClass(me.slogan, 'easemobWidget-word');
+                }, function (msg) {
+                    me.hasSetSlogan = true;
+                    var slogan = msg.data && msg.data.length && msg.data[0].optionValue;
+                    var sloganWidgetList = utils.$Class('div.em-widget-tip')[0].childNodes[0];
+                    if(slogan){
+                        // 设置信息栏内容
+                        utils.$Class('span.em-widget-tip-text')[0].innerHTML = Easemob.im.Utils.parseLink(slogan);
+                        // 显示信息栏
+                        utils.addClass(easemobim.imChat, 'has-tip');
 
-                        var slogan = Easemob.im.Utils.parseLink(msg.data[0].optionValue);
-                        utils.html(me.slogan, "<span>" + slogan + "</span><a class='easemobWidget-word-close' href='javascript:;'></a>");
-                        easemobim.imChat.appendChild(me.slogan);
-
-                        //关闭广告语按钮
-                        utils.on(utils.$Class('a.easemobWidget-word-close'), utils.click, function () {
-                            utils.addClass(me.slogan, 'em-hide');
-                            easemobim.imChatBody.style.top = '43px';
-                        });
+                        // 隐藏信息栏按钮
+                        utils.on(
+                            utils.$Class('a.em-widget-tip-close')[0],
+                            utils.click,
+                            function(){
+                                utils.removeClass(easemobim.imChat, 'has-tip');
+                            }
+                        );
                     }
                 });
             }
@@ -621,7 +623,7 @@
 					count = 0,
 					me = this;
 
-                if(utils.isMobile){
+                if(!utils.isMobile){
                     utils.on(easemobim.faceBtn, 'mouseenter', function () {
                         utils.addClass(this, 'theme-color');
                     })
@@ -637,8 +639,8 @@
 					faceStr = '<li class="e-face">';
 					utils.each(Easemob.im.EMOTIONS.map, function ( k, v ) {
 						count += 1;
-						faceStr += ["<div class='easemobWidget-face-bg e-face'>",
-										"<img class='easemobWidget-face-img e-face em-emotion' ",
+						faceStr += ["<div class='em-widget-face-bg e-face'>",
+										"<img class='em-widget-face-img e-face em-emotion' ",
 											"src='" + Easemob.im.EMOTIONS.path + v + "' ",
 											"data-value=" + k + " />",
 									"</div>"].join('');
@@ -673,7 +675,7 @@
 
                 if ( !me.ePrompt ) {
                     me.ePrompt = document.createElement('p');
-                    me.ePrompt.className = 'easemobWidget-error-prompt em-hide';
+                    me.ePrompt.className = 'em-widget-error-prompt em-hide';
                     utils.html(me.ePrompt, '<span></span>');
                     easemobim.imChat.appendChild(me.ePrompt);
                     me.ePromptContent = me.ePrompt.getElementsByTagName('span')[0];
@@ -720,12 +722,12 @@
                             this.handleGroup();
                         }
                         this.appendMsg(config.toUser, config.user.username, msg);
-                        utils.addClass(easemobim.send, 'easemobWidget-send-disable');
+                        utils.addClass(easemobim.send, 'em-widget-send-disable');
                         break;
                     default:// show note
                         if ( easemobim.leaveMessage ) {
                             this.slogan && utils.addClass(this.slogan, 'em-hide');
-                            //utils.addClass(easemobim.imBtn.getElementsByTagName('a')[0], 'easemobWidget-offline-bg');
+                            //utils.addClass(easemobim.imBtn.getElementsByTagName('a')[0], 'em-widget-offline-bg');
                             utils.removeClass(easemobim.leaveMessage.dom, 'em-hide');
                             utils.addClass(easemobim.imChatBody, 'em-hide');
                             utils.addClass(easemobim.send, 'em-hide');
@@ -771,7 +773,7 @@
                     return;
                 }
                 utils.html(dom, new Date(date).format(fmt));
-                utils.addClass(dom, 'easemobWidget-date');
+                utils.addClass(dom, 'em-widget-date');
 
                 if ( !isHistory ) {
                     if ( to ) {
@@ -807,56 +809,58 @@
 				me.conn.open(op);
 
                 // init webRTC
-                me.call = new WebIM.WebRTC.Call({
-                    connection: me.conn,
+                if(utils.isSupportWebRTC){
+                    me.call = new WebIM.WebRTC.Call({
+                        connection: me.conn,
 
-                    mediaStreamConstaints: {
-                        audio: true,
-                        video: true
-                    },
+                        mediaStreamConstaints: {
+                            audio: true,
+                            video: true
+                        },
 
-                    listener: {
-                        onAcceptCall: function (from, options) {
-                            console.log('onAcceptCall', from, options);
-                        },
-                        onGotRemoteStream: function (stream) {
-                            doms.remoteVideoWin.src = URL.createObjectURL(stream);
-                            me.remoteStream = stream;
-                            doms.remoteVideoWin.play();
-                            // for debug
-                            window.remoteS = stream;
-                            console.log('onGotRemoteStream', stream);
-                        },
-                        onGotLocalStream: function (stream) {
-                            doms.localVideoWin.src = URL.createObjectURL(stream);
-                            me.localStream = stream;
-                            doms.localVideoWin.play();
-                            // for debug
-                            window.localS = stream;
-                            console.log('onGotLocalStream', stream);
-                        },
-                        onRinging: function (caller) {
-                            me.call.acceptCall();
-                            console.log('onRinging', caller);
-                        },
-                        onTermCall: function () {
-                            me.localStream && me.localStream.getTracks().forEach(function(track){
-                                track.stop();
-                            })
-                            me.remoteStream && me.remoteStream.getTracks().forEach(function(track){
-                                track.stop();
-                            })
-                            doms.remoteVideoWin.src = '';
-                            doms.localVideoWin.src = '';
+                        listener: {
+                            onAcceptCall: function (from, options) {
+                                console.log('onAcceptCall', from, options);
+                            },
+                            onGotRemoteStream: function (stream) {
+                                doms.remoteVideoWin.src = URL.createObjectURL(stream);
+                                me.remoteStream = stream;
+                                doms.remoteVideoWin.play();
+                                // for debug
+                                window.remoteS = stream;
+                                console.log('onGotRemoteStream', stream);
+                            },
+                            onGotLocalStream: function (stream) {
+                                doms.localVideoWin.src = URL.createObjectURL(stream);
+                                me.localStream = stream;
+                                doms.localVideoWin.play();
+                                // for debug
+                                window.localS = stream;
+                                console.log('onGotLocalStream', stream);
+                            },
+                            onRinging: function (caller) {
+                                me.call.acceptCall();
+                                console.log('onRinging', caller);
+                            },
+                            onTermCall: function () {
+                                me.localStream && me.localStream.getTracks().forEach(function(track){
+                                    track.stop();
+                                })
+                                me.remoteStream && me.remoteStream.getTracks().forEach(function(track){
+                                    track.stop();
+                                })
+                                doms.remoteVideoWin.src = '';
+                                doms.localVideoWin.src = '';
 
-                            // for debug
-                            console.log('onTermCall');
-                        },
-                        onError: function (e) {
-                            console.log(e && e.message ? e.message : 'An error occured when calling webrtc');
+                                // for debug
+                                console.log('onTermCall');
+                            },
+                            onError: function (e) {
+                                console.log(e && e.message ? e.message : 'An error occured when calling webrtc');
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
             , soundReminder: function () {
                 var me = this;
@@ -868,13 +872,13 @@
 
                 me.reminder = document.createElement('a');
                 me.reminder.setAttribute('href', 'javascript:;');
-                utils.addClass(me.reminder, 'easemobWidgetHeader-audio theme-color');
+                utils.addClass(me.reminder, 'em-widgetHeader-audio theme-color');
                 easemobim.dragHeader.appendChild(me.reminder);
 
                 //音频按钮静音
                 utils.on(me.reminder, 'mousedown touchstart', function () {
                     me.silence = !me.silence;
-                    utils.toggleClass(me.reminder, 'easemobWidgetHeader-silence', me.slience);
+                    utils.toggleClass(me.reminder, 'em-widgetHeader-silence', me.slience);
 
                     return false;
                 });
@@ -906,14 +910,14 @@
             , bindEvents: function () {
                 var me = this;
 
-				utils.live('i.easemobWidgetHeader-keyboard', utils.click, function () {
-					if ( utils.hasClass(this, 'easemobWidgetHeader-keyboard-up') ) {
-						utils.addClass(this, 'easemobWidgetHeader-keyboard-down');
-						utils.removeClass(this, 'easemobWidgetHeader-keyboard-up');
+				utils.live('i.em-widgetHeader-keyboard', utils.click, function () {
+					if ( utils.hasClass(this, 'em-widgetHeader-keyboard-up') ) {
+						utils.addClass(this, 'em-widgetHeader-keyboard-down');
+						utils.removeClass(this, 'em-widgetHeader-keyboard-up');
 						me.setKeyboard('down');
 					} else {
-						utils.addClass(this, 'easemobWidgetHeader-keyboard-up');
-						utils.removeClass(this, 'easemobWidgetHeader-keyboard-down');
+						utils.addClass(this, 'em-widgetHeader-keyboard-up');
+						utils.removeClass(this, 'em-widgetHeader-keyboard-down');
 						me.setKeyboard('up');
 					}
 				});
@@ -928,13 +932,13 @@
                 utils.on(document, 'mouseover', function () {
 					utils.isTop || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
                 });
-				utils.live('img.easemobWidget-imgview', 'click', function () {
+				utils.live('img.em-widget-imgview', 'click', function () {
 					easemobim.imgView.show(this.getAttribute('src'));
                 });
-                utils.live('button.easemobWidget-list-btn', 'mouseover', function () {
+                utils.live('button.em-widget-list-btn', 'mouseover', function () {
                     me.setThemeBackground(this);
                 });
-                utils.live('button.easemobWidget-list-btn', 'mouseout', function () {
+                utils.live('button.em-widget-list-btn', 'mouseout', function () {
                     me.clearThemeBackground(this);
                 });
                 utils.on(easemobim.sendFileBtn, 'mouseenter', function () {
@@ -971,7 +975,7 @@
                         touch;
 
                     //wap
-                    utils.live('div.easemobWidget-date', 'touchstart', function ( ev ) {
+                    utils.live('div.em-widget-date', 'touchstart', function ( ev ) {
                         var e = ev || window.event,
                             touch = e.touches;
 
@@ -979,7 +983,7 @@
                             _startY = touch[0].pageY;
                         }
                     });
-                    utils.live('div.easemobWidget-date', 'touchmove', function ( ev ) {
+                    utils.live('div.em-widget-date', 'touchmove', function ( ev ) {
                         var e = ev || window.event,
                             touch = e.touches;
 
@@ -1008,12 +1012,12 @@
                             }, 400);
                         }
                     };
-                    utils.live('div.easemobWidget-chat', 'mousewheel', getHis);
-                    utils.live('div.easemobWidget-chat', 'DOMMouseScroll', getHis);
+                    utils.live('div.em-widget-chat', 'mousewheel', getHis);
+                    utils.live('div.em-widget-chat', 'DOMMouseScroll', getHis);
                 }());
 
                 //resend
-                utils.live('div.easemobWidget-msg-status', utils.click, function () {
+                utils.live('div.em-widget-msg-status', utils.click, function () {
                     var id = this.getAttribute('id').slice(0, -7);
 
                     utils.addClass(this, 'em-hide');
@@ -1254,7 +1258,7 @@
                 var dom = document.createElement('div');
 
                 dom.innerText = msg;
-                dom.className = 'easemobWidget-event';
+                dom.className = 'em-widget-event';
 
                 this.appendDate(new Date().getTime());
                 this.chatWrapper.appendChild(dom);
@@ -1277,7 +1281,7 @@
                     curWrapper.appendChild(div);
 					me.scrollBottom(utils.isMobile ? 800 : null);
                 }
-				var imgList = utils.$Class('img.easemobWidget-imgview', div),
+				var imgList = utils.$Class('img.em-widget-imgview', div),
 					img = imgList.length > 0 ? imgList[0] : null;
 					
 				if ( img ) {

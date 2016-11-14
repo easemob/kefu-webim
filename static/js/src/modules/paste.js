@@ -6,11 +6,11 @@ easemobim.paste = function ( chat ) {
 		utils = easemobim.utils,
 		data;
 
-	utils.addClass(dom, 'easemobWidget-dialog easemobWidget-paste-wrapper em-hide');
+	utils.addClass(dom, 'em-widget-dialog em-widget-paste-wrapper em-hide');
 	utils.html(dom, "\
-		<div class='easemobWidget-paste-image'></div>\
+		<div class='em-widget-paste-image'></div>\
 		<div>\
-			<button class='easemobWidget-cancel'>取消</button>\
+			<button class='em-widget-cancel'>取消</button>\
 			<button class='bg-color'>发送</button>\
 		</div>\
 	");

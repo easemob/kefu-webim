@@ -1,0 +1,265 @@
+.em-widget-chat {
+    padding-bottom: 20px;
+    overflow: hidden;
+}
+.em-widget-chat:after {
+    content: '';
+    display: block;
+    clear: both;
+    zoom: 1;
+    overflow: hidden;
+}
+.em-widget-left {
+    float: left;
+}
+.em-widget-right {
+    float: right;
+}
+.em-widget-left,
+.em-widget-right {
+    display: block;
+    text-decoration: none;
+    width: 98%;
+    text-align: left;
+    margin-top: 15px;
+}
+.em-widget-msg-container img {
+    border-radius: 2px;
+    max-width: 190px;
+    word-wrap: break-word;
+    vertical-align: middle;
+}
+.em-widget-msg-container pre {
+    word-break: break-all;
+    white-space: pre-wrap;
+}
+.em-widget-unimage {
+    color: #999;
+}
+.em-widget-left .em-widget-corner {
+    position: absolute;
+    top: 5px;
+    left: -17px;
+    width: 30px;
+    height: 30px;
+    color: white;
+    text-shadow: -1px 0 0 #e5e5e5;
+}
+.em-widget-left .em-widget-corner:after {
+    content: 'K';
+}
+.em-widget-right .em-widget-corner {
+    position: absolute;
+    top: 5px;
+    right: -17px;
+    width: 30px;
+    height: 30px;
+    color: #e3ecfc;
+    text-shadow: 1px 0 0 #c3cbd9;
+}
+.em-widget-right .em-widget-corner:after {
+    content: 'J';
+}
+.em-widget-msg-container {
+    display: inline-block;
+    border-radius: 6px;
+    max-width: 190px;
+    padding: 10px;
+    min-width: 20px;
+    min-height: 20px;
+    vertical-align: middle;
+    text-align: left;
+    font-size: 13px;
+    border: 1px solid #e5e5e5;
+}
+.em-widget-msg-menu > p {
+    padding: 10px;
+    background-color: white;
+    border-bottom: 1px solid rgb(229, 229, 229);
+}
+.em-widget-msg-file .em-widget-msg-container {
+	padding: 0;
+	min-width: 190px;
+	height: 80px;
+	overflow: hidden;
+}
+img.em-widget-msg-fileicon {
+	width: 80px;
+    height: 80px;
+    position: absolute;
+    right: 0;
+	border-radius: 0 4px 4px 0;
+}
+.em-widget-msg-file a {
+	display: block;
+    width: 100%;
+    height: 100%;
+	text-decoration: none;
+}
+.em-widget-msg-file span {
+	position: absolute;
+    right: 90px;
+    left: 10px;
+    top: 6px;
+    word-wrap: break-word;
+    margin: auto;
+    line-height: 24px;
+	text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 50%;
+    overflow: hidden;
+}
+.em-widget-left .em-widget-msg-container {
+    background-color: white;
+}
+.em-widget-left .em-widget-msg-menu {
+    overflow: hidden;
+    padding: 0;
+    background-color: rgb(251, 251, 251);
+}
+.em-widget-right .em-widget-msg-container {
+    background-color: #e3ecfc;
+    float: right;
+    border: 1px solid #c3cbd9;
+}
+.em-widget-left .em-widget-msg-wrapper {
+    float: left;
+    margin-left: 12px;
+}
+.em-widget-right .em-widget-msg-wrapper {
+    float: right;
+    margin-right: 12px;
+}
+.em-widget-msg-wrapper {
+    position: relative;
+}
+.em-widget-msg-status {
+    position: absolute;
+    width: 86px;
+    height: 30px;
+    line-height: 30px;
+    left: -88px;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    cursor: pointer;
+}
+.em-widget-loading {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    -webkit-animation: em-widget-loading-frame 1s linear infinite;
+    -moz-animation: em-widget-loading-frame 1s linear infinite;
+    -ms-animation: em-widget-loading-frame 1s linear infinite;
+    animation: em-widget-loading-frame 1s linear infinite;
+}
+.em-widget-msg-loading {
+    z-index: 1;
+    position: absolute;
+    left: -38px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+}
+@-moz-keyframes em-widget-loading-frame {
+    from {
+        -moz-transform: rotate(0);
+    }
+    to {
+        -moz-transform: rotate(360deg);
+    }
+}
+@-ms-keyframes em-widget-loading-frame {
+    from {
+        -ms-transform: rotate(0);
+    }
+    to {
+        -ms-transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes em-widget-loading-frame {
+    from {
+        -webkit-transform: rotate(0);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+@keyframes em-widget-loading-frame {
+    from {
+        transform: rotate(0)
+    }
+    to {
+        transform: rotate(360deg)
+    }
+}
+.em-widget-left .em-widget-msg-voice {
+    display: block;
+    background-position: -2px -234px;
+    width: 26px;
+    height: 22px;
+    vertical-align: middle;
+    border: none;
+    cursor: pointer;
+}
+.em-widget-left .em-widget-msg-voice.one {
+    background-position: -2px -174px;
+}
+.em-widget-left .em-widget-msg-voice.two {
+    background-position: -2px -204px;
+}
+.em-widget-msg-mapinfo {
+    display: inline-block;
+    width: 150px;
+    text-align: left;
+}
+.em-widget-msg-maplink {
+    color: #1a1a1a;
+}
+.em-widget-right .em-widget-msg-mapico {
+    float: left;
+    margin: -10px 10px -10px -10px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: 0 -1px 1px rgba(0,0,0,.2) inset;
+}
+.em-widget-left .em-widget-msg-mapico {
+    float: right;
+    margin: -10px -10px -10px 10px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+.em-widget-msg-status i {
+    width: 30px;
+    height: 30px;
+    position: relative;
+}
+.em-widget-msg-status i:before {
+    content: 'A';
+    position: absolute;
+    color: #FF0000;
+    left: 0;
+    top: 0;
+}
+.em-widget-msg-status i:after {
+    z-index: 1;
+    position: absolute;
+    content: 'B';
+    color: white;
+    left: 0;
+    top: 0;
+}
+.em-widget-msg-status span {
+    line-height: 30px;
+    vertical-align: top;
+    display: inline-block;
+    color: #999;
+}

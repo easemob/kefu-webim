@@ -13,12 +13,12 @@ Easemob.im.EmMessage.txt.prototype.get = function ( isReceive ) {
     this.value = this.emotion ? this.value : easemobim.utils.decode(this.value);
     
 	return [
-		!isReceive ? "<div id='" + this.id + "' class='easemobWidget-right'>" : "<div class='easemobWidget-left'>",
-			"<div class='easemobWidget-msg-wrapper'>",
-				"<i class='easemobWidget-corner'></i>",
-				this.id ? "<div id='" + this.id + "_failed' data-type='txt' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
-				this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
-				"<div class='easemobWidget-msg-container'>",
+		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
+			"<div class='em-widget-msg-wrapper'>",
+				"<i class='em-widget-corner'></i>",
+				this.id ? "<div id='" + this.id + "_failed' data-type='txt' class='em-widget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
+				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
+				"<div class='em-widget-msg-container'>",
 					"<pre>" + Easemob.im.Utils.parseLink(this.emotion ? this.value : Easemob.im.Utils.parseEmotions(this.value)) + "</pre>",
 				"</div>",
 			"</div>",
@@ -70,13 +70,13 @@ Easemob.im.EmMessage.img = function ( id ) {
 }
 Easemob.im.EmMessage.img.prototype.get = function ( isReceive ) {
 	return [
-		!isReceive ? "<div id='" + this.id + "' class='easemobWidget-right'>" : "<div class='easemobWidget-left'>",
-			"<div class='easemobWidget-msg-wrapper'>",
-				"<i class='easemobWidget-corner'></i>",
-				this.id ? "<div id='" + this.id + "_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
-				this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
-				"<div class='easemobWidget-msg-container'>",
-					this.value === null ? "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>" : "<a class='easemobWidget-noline' href='javascript:;'><img class='easemobWidget-imgview' src='" + this.value.url + "'/></a>",,
+		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
+			"<div class='em-widget-msg-wrapper'>",
+				"<i class='em-widget-corner'></i>",
+				this.id ? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
+				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
+				"<div class='em-widget-msg-container'>",
+					this.value === null ? "<a class='em-widget-noline' href='javascript:;'><i class='em-widget-unimage'>I</i></a>" : "<a class='em-widget-noline' href='javascript:;'><img class='em-widget-imgview' src='" + this.value.url + "'/></a>",,
 				"</div>",
 			"</div>",
 		"</div>"
@@ -111,14 +111,14 @@ Easemob.im.EmMessage.list.prototype.get = function ( isReceive ) {
 		return '';
 	}
 	return [
-		"<div class='easemobWidget-left'>",
-			"<div class='easemobWidget-msg-wrapper'>",
-				"<i class='easemobWidget-corner'></i>",
-				"<div class='easemobWidget-msg-container easemobWidget-msg-menu'>",
+		"<div class='em-widget-left'>",
+			"<div class='em-widget-msg-wrapper'>",
+				"<i class='em-widget-corner'></i>",
+				"<div class='em-widget-msg-container em-widget-msg-menu'>",
 					"<p>" + Easemob.im.Utils.parseLink(Easemob.im.Utils.parseEmotions(easemobim.utils.encode(this.value))) + "</p>",
 			        this.listDom,
 				"</div>",
-				"<div id='" + this.id + "_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>",
+				"<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i></i></div>",
 			"</div>",
 		"</div>"
 	].join('');
@@ -140,13 +140,13 @@ Easemob.im.EmMessage.file = function ( id ) {
 }
 Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 	return [
-		!isReceive ? "<div id='" + this.id + "' class='easemobWidget-right'>" : "<div class='easemobWidget-left'>",
-			"<div class='easemobWidget-msg-wrapper easemobWidget-msg-file'>",
-				"<i class='easemobWidget-corner'></i>",
-				this.id ? "<div id='" + this.id + "_failed' class='easemobWidget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
-				this.id ? "<div id='" + this.id + "_loading' class='easemobWidget-msg-loading'>" + config.LOADING + "</div>" : "",
-				"<div class='easemobWidget-msg-container'>",
-					this.value === null ? "<a class='easemobWidget-noline' href='javascript:;'><i class='easemobWidget-unimage'>I</i></a>" : "<a target='_blank' href='" + this.value.url + "' class='easemobWidget-fileMsg' title='" + this.filename + "'><img class='easemobWidget-msg-fileicon' src='static/img/file_download.png'/><span>" + (this.filename.length > 19 ? this.filename.slice(0, 19) + '...': this.filename) + "</span></a>",
+		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
+			"<div class='em-widget-msg-wrapper em-widget-msg-file'>",
+				"<i class='em-widget-corner'></i>",
+				this.id ? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
+				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + config.LOADING + "</div>" : "",
+				"<div class='em-widget-msg-container'>",
+					this.value === null ? "<a class='em-widget-noline' href='javascript:;'><i class='em-widget-unimage'>I</i></a>" : "<a target='_blank' href='" + this.value.url + "' class='em-widget-fileMsg' title='" + this.filename + "'><img class='em-widget-msg-fileicon' src='static/img/file_download.png'/><span>" + (this.filename.length > 19 ? this.filename.slice(0, 19) + '...': this.filename) + "</span></a>",
 				"</div>",
 			"</div>",
 		"</div>"

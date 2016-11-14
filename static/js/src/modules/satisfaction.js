@@ -6,16 +6,16 @@ easemobim.satisfaction = function ( chat ) {
 	var dom = document.createElement('div'),
 		utils = easemobim.utils;
 
-	utils.addClass(dom, 'easemobWidget-dialog easemobWidget-satisfaction-dialog em-hide');
+	utils.addClass(dom, 'em-widget-dialog em-widget-satisfaction-dialog em-hide');
 	utils.html(dom, "\
 		<h3>请对我的服务做出评价</h3>\
 		<ul><li idx='1'>H</li><li idx='2'>H</li><li idx='3'>H</li><li idx='4'>H</li><li idx='5'>H</li></ul>\
 		<textarea spellcheck='false' placeholder='请输入留言'></textarea>\
 		<div>\
-			<button class='easemobWidget-cancel'>取消</button>\
+			<button class='em-widget-cancel'>取消</button>\
 			<button class='bg-color'>提交</button>\
 		</div>\
-		<div class='easemobWidget-success-prompt em-hide'><i>A</i><p>提交成功</p></div>\
+		<div class='em-widget-success-prompt em-hide'><i>A</i><p>提交成功</p></div>\
 	");
 	easemobim.imChat.appendChild(dom);
 

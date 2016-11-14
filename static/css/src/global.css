@@ -1,0 +1,94 @@
+html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,i,span,em {
+	margin: 0;
+	padding: 0;
+    -webkit-text-size-adjust: none;
+	-moz-text-size-adjust:none; 
+	-ms-text-size-adjust: none;
+	-o-text-size-adjust: none;
+	text-size-adjust: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-ms-appearance: none;
+	-o-appearance: none;
+	appearance: none;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
+    -webkit-tap-highlight-color: transparent;
+}
+html, body {
+    width: 100%;
+    height: 100%;
+    font-size: 13px;
+    font-family: sans-serif, 'Microsoft YaHei', 'Arial';
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+a {
+    color: #009EEC;
+}
+ul, li {
+    list-style: none;
+}
+img {
+    border: none;
+}
+button, textarea, input {
+    outline: none;
+}
+@font-face {
+    font-family: 'easemobim';
+    src: url("font/iconfont.eot?v=<%= v %>") ;
+    src: url("font/iconfont.eot?#iefix") format('embedded-opentype'), /* IE8 */
+    url("font/iconfont.svg?v=<%= v %>")  format('svg'), /* old ios */
+    url("font/iconfont.woff?v=<%= v %>")  format('woff'),
+    url("font/iconfont.ttf?v=<%= v %>")  format('truetype');
+    src: url("font/iconfont.eot?v=<%= v %>") \9; /* IE9 */
+    font-weight: normal;
+    font-style: normal;
+}
+#EasemobKefuWebim {
+	position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+.em-widget-noline {
+    text-decoration: none;
+    cursor: zoom-in;
+}
+.em-widget-agent-status.leave:after,
+.em-widget-agent-status.busy:after,
+.em-widget-agent-status.hidden:after,
+.em-widget-pop-bar i:after,
+.em-widgetHeader-min:after,
+.em-widgetHeader-keyboard:after,
+.em-widgetHeader-audio:after,
+.em-widgetHeader-silence:after,
+.em-widget-tip-close:after,
+.em-widget-msgcount:after,
+.em-widget-msgcount.mutiCount:after,
+.em-widget-corner:after,
+.em-widget-left .em-widget-msg-voice,
+.em-widget-msg-status i,
+.em-widget-face:after,
+.em-widget-satisfaction-dialog li,
+.em-widget-unimage,
+.em-widget-success-prompt i,
+.em-widget-notem:after,
+.em-widget-note:after,
+.em-widget-file:after {
+    font-family: 'easemobim' !important;
+    font-size: 30px;
+    font-style: normal;
+    text-align: center;
+    line-height: 30px;
+    -webkit-text-stroke-width: 0.2px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.hide,
+.em-hide,
+#EasemobKefuWebim .em-hide,
+.em-widget-wrapper .hide {
+    display: none;
+}

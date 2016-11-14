@@ -20,7 +20,7 @@
 		staticPath: '',
 		buttonText: '联系客服',
 		dialogWidth: '400px',
-		dialogHeight: '500px',
+		dialogHeight: '550px',
 		dragenable: true,
 		minimum: true,
 		soundReminder: true,
