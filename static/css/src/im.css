@@ -259,7 +259,7 @@ button, textarea, input {
 /*body*/
 .easemobWidgetBody-wrapper {
     position: absolute;
-    top: 43px;
+    top: 310px;
     bottom: 140px;
     background-color: #F4F7FA;
     width: 100%;
@@ -273,7 +273,7 @@ button, textarea, input {
 .easemobWidget-word {
     z-index: 2;
     position: absolute;
-    top: 43px;
+    top: 310px;
     width: 100%;
     height: 48px;
     color: #535252;
@@ -1086,7 +1086,7 @@ object {
     border-radius: 0;
 }
 .em-mobile .easemobWidgetHeader-nickname,
-.em-mobile ..em-header-status-text,
+.em-mobile .em-header-status-text,
  {
 	overflow: hidden;
     text-overflow: ellipsis;

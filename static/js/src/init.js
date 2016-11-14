@@ -65,7 +65,7 @@
 		} else {
 			window.transfer = new easemobim.Transfer(null, 'main').listen(function(msg) {
 				if (msg.event) {
-					chat || initUI(msg, initAfterUI);
+					window.chat || initUI(msg, initAfterUI);
 					switch (msg.event) {
 						case easemobim.EVENTS.SHOW.event:
 							chatEntry.open();
@@ -113,37 +113,41 @@
 
 	function initUI(config, callback) {
 		//render Tpl
-		webim.innerHTML = "\
-			<div id='easemobWidgetPopBar' class='em-hide'>\
-				<a class='easemobWidget-pop-bar bg-color' href='javascript:;'><i></i>联系客服</a>\
-				<span class='easemobWidget-msgcount em-hide'></span>\
-			</div>\
-			<div id='EasemobKefuWebimChat' class='easemobWidgetWrapper em-hide'>\
-				<div id='easemobWidgetHeader' class='easemobWidgetHeader-wrapper bg-color border-color'>\
-					<div id='easemobWidgetDrag'>\
-						<p></p>\
-						<img class='easemobWidgetHeader-portrait border-color'/>\
-						<span class='easemobWidgetHeader-nickname'></span>\
-						<span class='em-header-status-text'></span>\
-			            <i id='easemobWidgetNotem' class='easemobWidget-notem em-hide'></i>\
-			            <i id='easemobWidgetAgentStatus' class='easemobWidget-agent-status em-hide'></i>\
-					</div>\
-				</div>\
-				<div id='easemobWidgetBody' class='easemobWidgetBody-wrapper'></div>\
-				<div id='EasemobKefuWebimFaceWrapper' class='easemobWidget-face-wrapper e-face em-hide'>\
-					<ul class='easemobWidget-face-container'></ul>\
-				</div>\
-				<div id='easemobWidgetSend' class='easemobWidget-send-wrapper'>\
-					<i class='easemobWidget-face e-face' title='表情'></i>\
-					<i class='easemobWidget-file' id='easemobWidgetFile' title='图片'></i>\
-					<i class='easemobWidget-note em-hide' id='easemobWidgetNote' title='留言'></i>\
-					<input id='easemobWidgetFileInput' type='file' accept='image/*'/>\
-					<textarea class='easemobWidget-textarea' spellcheck='false'></textarea>\
-					<span id='EasemobKefuWebimSatisfy' class='easemobWidget-satisfaction em-hide'>请对服务做出评价</span>\
-					<a href='javascript:;' class='easemobWidget-send bg-color disabled' id='easemobWidgetSendBtn'>连接中</a>\
-				</div>\
-				<iframe id='EasemobKefuWebimIframe' class='em-hide' src='" + config.domain + "/webim/transfer.html?v=<%= v %>'>\
-			</div>";
+		webim.innerHTML = '\
+<div id="easemobWidgetPopBar" class="em-hide">\
+	<a class="easemobWidget-pop-bar bg-color" href="javascript:;"><i></i>联系客服</a>\
+	<span class="easemobWidget-msgcount em-hide"></span>\
+</div>\
+<div id="EasemobKefuWebimChat" class="easemobWidgetWrapper em-hide">\
+	<div id="easemobWidgetHeader" class="easemobWidgetHeader-wrapper bg-color border-color">\
+		<div id="easemobWidgetDrag">\
+			<p></p>\
+			<img class="easemobWidgetHeader-portrait border-color"/>\
+			<span class="easemobWidgetHeader-nickname"></span>\
+			<span class="em-header-status-text"></span>\
+			<i id="easemobWidgetNotem" class="easemobWidget-notem em-hide"></i>\
+			<i id="easemobWidgetAgentStatus" class="easemobWidget-agent-status em-hide"></i>\
+		</div>\
+	</div>\
+	<!-- for debug only -->\
+	<div class="video" style="position: absolute; top: 43px; height: 160px; background-color: gray;"> <video class="main" style="width: 400px; height: 267px; "></video> <video class="sub" style="width: 100px; height: 80px; "></video></div>\
+	<div id="easemobWidgetBody" class="easemobWidgetBody-wrapper"></div>\
+	<div id="EasemobKefuWebimFaceWrapper" class="easemobWidget-face-wrapper e-face em-hide">\
+		<ul class="easemobWidget-face-container"></ul>\
+	</div>\
+	<div id="easemobWidgetSend" class="easemobWidget-send-wrapper">\
+		<i class="easemobWidget-face e-face" title="表情"></i>\
+		<i class="easemobWidget-file" id="easemobWidgetFile" title="图片"></i>\
+		<i class="easemobWidget-note em-hide" id="easemobWidgetNote" title="留言"></i>\
+<!-- for debug only -->\
+		<i class="easemobWidget-note" id="em-video-invite" style="left: 97px;"></i>\
+		<input id="easemobWidgetFileInput" type="file" accept="image/*"/>\
+		<textarea class="easemobWidget-textarea" spellcheck="false"></textarea>\
+		<span id="EasemobKefuWebimSatisfy" class="easemobWidget-satisfaction em-hide">请对服务做出评价</span>\
+		<a href="javascript:;" class="easemobWidget-send bg-color disabled" id="easemobWidgetSendBtn">连接中</a>\
+	</div>\
+	<iframe id="EasemobKefuWebimIframe" class="em-hide" src="' + config.domain + '/webim/transfer.html?v=<%= v %>">\
+</div>';
 
 		utils.on(utils.$Dom('EasemobKefuWebimIframe'), 'load', function() {
 			easemobim.getData = new easemobim.Transfer('EasemobKefuWebimIframe', 'data');
@@ -325,11 +329,11 @@
 						}
 					});
 				} else {
-					me.go();
+					me.go(config);
 				}
 			});
 		},
-		go: function() {
+		go: function(config) {
 			api('createVisitor', {
 				orgName: config.orgName,
 				appName: config.appName,

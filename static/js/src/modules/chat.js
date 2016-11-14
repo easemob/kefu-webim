@@ -9,7 +9,10 @@
         var doms = {
             agentStatusText: utils.$Class('span.em-header-status-text')[0],
             agentStatusSymbol: utils.$Dom('easemobWidgetAgentStatus'),
-            nickName: utils.$Class('span.easemobWidgetHeader-nickname')[0]
+            nickName: utils.$Class('span.easemobWidgetHeader-nickname')[0],
+            videoInviteBtn: utils.$Dom('em-video-invite'),
+            localVideoWin: utils.$Class('video.sub')[0],
+            remoteVideoWin: utils.$Class('video.main')[0]
         };
 
         easemobim.doms = doms;
@@ -802,6 +805,58 @@
 				}
 
 				me.conn.open(op);
+
+                // init webRTC
+                me.call = new WebIM.WebRTC.Call({
+                    connection: me.conn,
+
+                    mediaStreamConstaints: {
+                        audio: true,
+                        video: true
+                    },
+
+                    listener: {
+                        onAcceptCall: function (from, options) {
+                            console.log('onAcceptCall', from, options);
+                        },
+                        onGotRemoteStream: function (stream) {
+                            doms.remoteVideoWin.src = URL.createObjectURL(stream);
+                            me.remoteStream = stream;
+                            doms.remoteVideoWin.play();
+                            // for debug
+                            window.remoteS = stream;
+                            console.log('onGotRemoteStream', stream);
+                        },
+                        onGotLocalStream: function (stream) {
+                            doms.localVideoWin.src = URL.createObjectURL(stream);
+                            me.localStream = stream;
+                            doms.localVideoWin.play();
+                            // for debug
+                            window.localS = stream;
+                            console.log('onGotLocalStream', stream);
+                        },
+                        onRinging: function (caller) {
+                            me.call.acceptCall();
+                            console.log('onRinging', caller);
+                        },
+                        onTermCall: function () {
+                            me.localStream && me.localStream.getTracks().forEach(function(track){
+                                track.stop();
+                            })
+                            me.remoteStream && me.remoteStream.getTracks().forEach(function(track){
+                                track.stop();
+                            })
+                            doms.remoteVideoWin.src = '';
+                            doms.localVideoWin.src = '';
+
+                            // for debug
+                            console.log('onTermCall');
+                        },
+                        onError: function (e) {
+                            console.log(e && e.message ? e.message : 'An error occured when calling webrtc');
+                        }
+                    }
+                });
             }
             , soundReminder: function () {
                 var me = this;
@@ -1061,6 +1116,25 @@
                 });
                 utils.on(easemobim.mobileNoteBtn, 'click', function () {
                     easemobim.leaveMessage.show();
+                });
+
+                // 发送视频邀请
+                utils.on(doms.videoInviteBtn, 'click', function () {
+                    console.log('send video invite');
+                    me.channel.send('txt', '邀请客服进行实时视频', false, {
+                            ext: {
+                            type: 'rtcmedia/video',
+                            msgtype: {
+                                liveStreamInvitation: {
+                                    msg: '邀请客服进行实时视频',
+                                    orgName: config.orgName,
+                                    appName: config.appName,
+                                    userName: config.user.username,
+                                    resource: 'webim'
+                                }
+                            }
+                        }
+                    });
                 });
 
                 //hot key

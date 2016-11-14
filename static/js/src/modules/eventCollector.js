@@ -13,7 +13,7 @@
 			type: 'VISIT_URL',
 			// for debug
 			// url: 'http://172.17.3.146',
-			url: _origin,
+			url: _config.origin,
 			// 时间戳不传，以服务器时间为准
 			// timestamp: 0,
 			userId: {

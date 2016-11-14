@@ -307,19 +307,23 @@ easemobim.channel = function ( config ) {
 
             var message = null;
 
+            //满意度评价
             if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType && msg.ext.weichat.ctrlType == 'inviteEnquiry' ) {
-                //满意度评价
                 type = 'satisfactionEvaluation';  
-            } else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {
-                //机器人自定义菜单
+            }
+            //机器人自定义菜单
+            else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {
                 type = 'robotList';  
-            } else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.video ) {
-                // webRTC
-                type = 'video';  
-            } else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {
-                //机器人转人工
+            }
+            // webRTC
+            // else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.liveStreamInvitation ) {
+            //     type = 'liveStreamInvitation';  
+            // }
+            //机器人转人工
+            else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {
                 type = 'robotTransfer';  
             }
+            else {}
 
             switch ( type ) {
                 case 'txt':
@@ -405,9 +409,10 @@ easemobim.channel = function ( config ) {
 
                     message.set({value: title, list: str});
                     break;
-                case 'video':
-                    // todo
-                    break;
+                // case 'liveStreamInvitation':
+                //     message = new Easemob.im.EmMessage('txt');
+                //     message.set({value: msg.ext.msgtype.liveStreamInvitation.msg});
+                //     break;
                 default:
                     break;
             }

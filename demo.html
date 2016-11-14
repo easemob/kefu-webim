@@ -35,9 +35,6 @@
 	<a target='_blank' href='http://docs.easemob.com/cs/300visitoraccess/20webplugin'>集成文档</a>
 	<br><br><br><br><br><br><br>
 
-
-
-
 	<a href='javascript:;' onclick='easemobim.bind({
 		tenantId: 10954,
 		dialogWidth: "500px"
@@ -57,9 +54,9 @@
 	<br><br><br>
 	<script>
 		var v = document.getElementById('testvalue');
-		v.value = localStorage.getItem('easemobtest');
+		v.value = localStorage.getItem('easemobtest') || '';
 		document.getElementById('test').onclick = function () {
-			if ( v.value && /\d+/.test(v.value) ) {
+			if (/\d+/.test(v.value)) {
 				localStorage.setItem('easemobtest', v.value);
 				easemobim.bind({ tenantId: v.value.replace(/\s/g, '') })
 			}
@@ -68,66 +65,27 @@
 
 
 
-	<script>
-		window.easemobim = window.easemobim || {};
+<script>
+	window.easemobim = window.easemobim || {};
 
 easemobim.config = {
-	// domain: '//sandbox.kefu.easemob.com',
-	eventCollector: true,	// 访客自动上报
-	tenantId: 11885,
-	autoConnect: false,									//自动连接
-	buttonText: '联系客服123',								//设置小按钮的文案 
-	hide: false,											//是否隐藏小的悬浮按钮
-	resources: true,									//是否启用收消息同步
-	dragenable: true,									//是否允许拖拽
-	dialogWidth: '400px',								//聊天窗口宽度
-	dialogHeight: '500px',								//聊天窗口高度
-	minimum: true,										//是否允许窗口最小化
-	satisfaction: true,									//是否允许访客主动发起满意度评价
-	soundReminder: true,								//是否启用声音提醒(低版本浏览器不支持)
-	dialogPosition: { x: '110px', y: '110px' },			//聊天窗口初始位置，坐标以视口右边距和下边距为基准
-	//onmessage: function ( message ) {alert(JSON.stringify(message)) },				//收消息回调, 只对当前打开的聊天窗口有效
-	//onready: function () { alert("ready")},							//聊天窗口加载成功回调
-	//onsessionclosed: function ( message ) {alert("会话结束回调") },
-	hideKeyboard: false,	
-	ticket: true,	
-	hideStatus: false,
-	offDutyType: 'chat', //参数offDutyType:     1.none(只展示下班提示语。参数offDutyWord);     2.chat(下班强制进入会话)；   3.默认展示留言    
-	offDutyWord: encodeURIComponent("sorry,today is llejf lwlefjl . please lfejwkfje  ----  http://kefu.easemob.com"),  //下班时间，不让留言,请您联系电话：18612390240; 如果我们不在，请在后续联系我们。
-	language: 'Leoli_language',
-	/*onready: function(){
-	    easemobim.sendExt({ext: {
-			    "imageName": "mallImage3.png",
-			    "type": "custom",
-			    "msgtype": {
-			        "order": {
-			            "img_url": "h\n.pn",
-			            "title": "mmm",
-			            "desc": "mmm端午节粽子四",
-			            "order_title": "mmm订单号：123456789012345678901234567890",
-			            "price": "",
-			            "item_url": "http://www.baidu.com?s=order_sn/123123"
-			        }
-			    }
-	        }});
-	},*/
-	//agentName: '1225release_11@qq.com', 
-	/*user: {
-		username: 'regression_01_visitor',										//集成时必填,vip5:414vip5visitor_01   vip1:414test1visitor_01,02,03
-		password: '1',										//password验证方式
-		//token: 'YWMtl2twnEm0EeahzLvd5EXZoAAAAVceHgVoTXLfbOBQ-TzykmQIuhQUYaampMg'											//token验证方式
-	},
-	visitor: {
-				trueName: '414test1visitor_03用户',
-				qq: '115464',
-				phone: '18612390240',
-				companyName: '环信',
-				userNickname: '414test1visitor_03用户',
-				description: '付款了；减肥可怜我jfk了；就',
-				email: '123456@qq.com'
-			},	*/									//访客信息
-};	</script>
+	domain: '//sandbox.kefu.easemob.com',
+	//eventCollector: true,	// 访客自动上报
+	// tenantId: 11885,
+	tenantId: 11678,
+	// to: 'hx',
+	// appKey: 'easemob-demo#chatdemoui',
+	// restServer: 'a1.sdb.easemob.com',
+	// xmppServer: 'im-api.sandbox.easemob.com',
+	// user: {
+	// 	username: 'hx1',
+	// 	password: 'hx123123'
+	// },
+	autoConnect: true,									//自动连接
+	dialogHeight: '600px',								//聊天窗口高度
+};
+</script>
 
-	<script src='//sandbox.kefu.easemob.com/webim/easemob.js'></script>
+<script src='easemob.js'></script>
 </body>
 </html>

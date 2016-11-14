@@ -4,7 +4,7 @@
 
 ;(function ( window, undefined ) {
     'use strict';
-    window.easemobim = window.easemobim || {};
+    var utils = easemobim.utils;
     easemobim.config = easemobim.config || {};
     easemobim.version = '<%= v %>';
     easemobim.tenants = {};
@@ -31,11 +31,11 @@
 			token: ''
 		}
 	};
-	var config = easemobim.utils.copy(DEFAULT_CONFIG);
+	var config = utils.copy(DEFAULT_CONFIG);
 
 
 	//get parameters from easemob.js
-    var baseConfig = easemobim.utils.getConfig();
+    var baseConfig = utils.getConfig();
     var _config = {};
 
     var iframe;
@@ -49,23 +49,23 @@
 
     // growing io user id
     // 由于存在cookie跨域问题，所以从配置传过去
-    easemobim.config.grUserId = easemobim.utils.get('gr_user_id');
+    easemobim.config.grUserId = utils.get('gr_user_id');
 
 
 	//init _config & concat config and global easemobim.config
 	function reset() {
-		config = easemobim.utils.copy(DEFAULT_CONFIG);
-		easemobim.utils.extend(config, easemobim.config);
-		_config = easemobim.utils.copy(config);
+		config = utils.copy(DEFAULT_CONFIG);
+		utils.extend(config, easemobim.config);
+		_config = utils.copy(config);
 
-		var hide = easemobim.utils.convertFalse(_config.hide) !== '' ? _config.hide : baseConfig.json.hide,
-			resources = easemobim.utils.convertFalse(_config.resources) !== '' ? _config.resources :  baseConfig.json.resources,
-			sat = easemobim.utils.convertFalse(_config.satisfaction) !== '' ? _config.satisfaction :  baseConfig.json.sat;
+		var hide = utils.convertFalse(_config.hide) !== '' ? _config.hide : baseConfig.json.hide,
+			resources = utils.convertFalse(_config.resources) !== '' ? _config.resources :  baseConfig.json.resources,
+			sat = utils.convertFalse(_config.satisfaction) !== '' ? _config.satisfaction :  baseConfig.json.sat;
 
 		_config.tenantId = _config.tenantId || baseConfig.json.tenantId;
-		_config.hide = easemobim.utils.convertFalse(hide);
-		_config.resources = easemobim.utils.convertFalse(resources);
-		_config.satisfaction = easemobim.utils.convertFalse(sat);
+		_config.hide = utils.convertFalse(hide);
+		_config.resources = utils.convertFalse(resources);
+		_config.satisfaction = utils.convertFalse(sat);
 		_config.domain = _config.domain || baseConfig.domain;
 		_config.path = _config.path || (baseConfig.domain + '/webim');
 		_config.staticPath = _config.staticPath || (baseConfig.domain + '/webim/static');
@@ -88,6 +88,8 @@
 	easemobim.bind = function ( config ) {
 		// 防止空参数调用异常
 		config = config || {};
+
+		var cacheKeyName = config.tenantId + config.emgroup || '';
         config.emgroup = config.emgroup || '';
 
         for ( var i in easemobim.tenants ) {
@@ -102,26 +104,29 @@
             iframe.open();
         } else {
             reset();
-            easemobim.utils.extend(_config, config);
+            utils.extend(_config, config);
 
-            if ( !_config.tenantId ) { return; }
+            if (!_config.tenantId) {
+            	console.warn('未指定tenantId!');
+            	return;
+            }
 
             iframe = easemobim.Iframe(_config);
             easemobim.tenants[config.tenantId + config.emgroup] = iframe;
-            iframe.set(_config, easemobim.utils.isMobile ? null : iframe.open);
+            iframe.set(_config, utils.isMobile ? null : iframe.open);
         }
 
 
-		if ( easemobim.utils.isMobile ) {
+		if ( utils.isMobile ) {
 
             //store ext
             if ( _config.extMsg ) {
-                easemobim.utils.setStore(_config.tenantId + _config.emgroup + 'ext', JSON.stringify(_config.extMsg));
+                utils.setStore(_config.tenantId + _config.emgroup + 'ext', JSON.stringify(_config.extMsg));
             }
 
             //store visitor info 
             if ( _config.visitor ) {
-                easemobim.utils.setStore(_config.tenantId + _config.emgroup + 'visitor', JSON.stringify(_config.visitor));
+                utils.setStore(_config.tenantId + _config.emgroup + 'visitor', JSON.stringify(_config.visitor));
             }
 
 
@@ -157,6 +162,7 @@
 	 *		ext: {}
 	 * }
 	 */
+
 	easemobim.sendText = function ( msg ) {
 		iframe && iframe.sendText(msg);
 	};
@@ -167,8 +173,6 @@
 		&& _config.tenantId
 	){
         iframe = iframe || easemobim.Iframe(_config);
-    	// for debug
-        easemobim.tenants[config.tenantId + config.emgroup] = iframe;
 		iframe.set(_config, iframe.close);
 	}
 
