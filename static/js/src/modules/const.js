@@ -89,6 +89,12 @@
 		, '月色池塘': {
 			css: 'body .theme-color{color:#3977cf;}body .bg-color{background-color:#3977cf}.border-color{border:1px solid #2b599b}.hover-color{background-color:#548bdc}'
 		}
+		, '天籁湖光': {
+			css: 'body .theme-color{color:#06a89c;}body .bg-color{background-color:#06a89c}.border-color{border:1px solid #07b5a9}.hover-color{background-color:#08c2b5}'
+		}
+		, '商务风格': {
+			css: 'body .theme-color{color:#000000;}body .bg-color{background-color:#000000}.border-color{border:1px solid #1a1a1a}.hover-color{background-color:#333333}'
+		}
 	};
 
 	//表情包
