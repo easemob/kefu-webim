@@ -61,24 +61,24 @@
 .em-mobile .em-widget-list-btn:hover {
     color: #000;
 }
-.em-mobile .em-widget-face-wrapper {
+.em-mobile .em-bar-face-wrapper {
     width: 100%;
     left: 0;
     border-radius: 0;
     padding-left: 0;
     bottom: 44px;
 }
-.em-mobile .em-widget-face {
+.em-mobile .em-bar-face {
     z-index: 1;
     top: auto;
     bottom: 8px;
     left: 3px;
 }
-.em-mobile .em-widget-face-bg {
+.em-mobile .em-bar-face-bg {
     width: 14.2%;
     margin: 0;
 }
-.em-mobile .em-widget-face-bg .em-widget-face-img {
+.em-mobile .em-bar-face-bg .em-bar-face-img {
     margin: 8px 0;
 }
 .em-mobile .em-widget-file {

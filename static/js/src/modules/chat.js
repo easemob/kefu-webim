@@ -5,6 +5,8 @@
 
     easemobim.chat = function ( config ) {
 		var utils = easemobim.utils;
+        var _const = easemobim._const;
+
         // todo: 把dom都移到里边
         var doms = {
             agentStatusText: utils.$Class('span.em-header-status-text')[0],
@@ -498,8 +500,8 @@
 
                     if ( msg && msg.data && msg.data.state ) {
                         state = msg.data.state;
-                        doms.agentStatusText.innerText = easemobim._const.agentStatusText[state];
-                        doms.agentStatusSymbol.className = 'em-widget-agent-status ' + easemobim._const.agentStatusClassName[state];
+                        doms.agentStatusText.innerText = _const.agentStatusText[state];
+                        doms.agentStatusSymbol.className = 'em-widget-agent-status ' + _const.agentStatusClassName[state];
                     }
                 });
             }
@@ -543,18 +545,12 @@
 
                 min.setAttribute('href', 'javascript:;');
                 min.setAttribute('title', '关闭');
-                utils.addClass(min, 'em-widgetHeader-min bg-color border-color');
+                utils.addClass(min, 'em-widgetHeader-min bg-color border-color hover-color');
                 easemobim.dragHeader.appendChild(min);
-                utils.on(min, 'mousedown touchstart', function () {
+                utils.on(min, 'click', function () {
                     transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
 					return false;
 				});
-                utils.on(min, 'mouseenter', function () {
-                    utils.addClass(this, 'hover-color');
-                });
-                utils.on(min, 'mouseleave', function () {
-                    utils.removeClass(this, 'hover-color');
-                });
                 min = null;
             }
 			, setTheme: function () {
@@ -563,17 +559,10 @@
 				easemobim.api('getTheme', {
 					tenantId: config.tenantId
 				}, function ( msg ) {
-					config.theme = msg.data && msg.data.length && msg.data[0].optionValue ? msg.data[0].optionValue : '天空之城';
+                    var themeName = msg.data && msg.data.length && msg.data[0].optionValue;
+                    var className = _const.themeMap[themeName];
 
-					if ( !easemobim.THEME[config.theme] ) {
-						config.theme = '天空之城';
-					}
-
-					var style = document.createElement('style');
-					style.setAttribute('type', 'text/css');
-					utils.html(style, easemobim.THEME[config.theme].css);
-					var head = document.head || document.getElementsByTagName('head')[0];
-					head.appendChild(style);
+					className && utils.addClass(document.body, className);
 				});
 
             }
@@ -623,14 +612,6 @@
 					count = 0,
 					me = this;
 
-                if(!utils.isMobile){
-                    utils.on(easemobim.faceBtn, 'mouseenter', function () {
-                        utils.addClass(this, 'theme-color');
-                    })
-                    utils.on(easemobim.faceBtn, 'mouseleave', function () {
-                        utils.removeClass(this, 'theme-color');
-                    });
-                }
                 utils.on(easemobim.faceBtn, utils.click, function () {
 					easemobim.textarea.blur();
                     utils.toggleClass(easemobim.chatFaceWrapper, 'em-hide');
@@ -639,8 +620,8 @@
 					faceStr = '<li class="e-face">';
 					utils.each(Easemob.im.EMOTIONS.map, function ( k, v ) {
 						count += 1;
-						faceStr += ["<div class='em-widget-face-bg e-face'>",
-										"<img class='em-widget-face-img e-face em-emotion' ",
+						faceStr += ["<div class='em-bar-face-bg e-face'>",
+										"<img class='em-bar-face-img e-face em-emotion' ",
 											"src='" + Easemob.im.EMOTIONS.path + v + "' ",
 											"data-value=" + k + " />",
 									"</div>"].join('');
@@ -874,7 +855,7 @@
 
                 me.reminder = document.createElement('a');
                 me.reminder.setAttribute('href', 'javascript:;');
-                utils.addClass(me.reminder, 'em-widgetHeader-audio theme-color');
+                utils.addClass(me.reminder, 'em-widgetHeader-audio fg-color');
                 easemobim.dragHeader.appendChild(me.reminder);
 
                 //音频按钮静音
@@ -896,18 +877,6 @@
                     }, 3000);
                     me.audio.play();
                 };
-            }
-            , setThemeBackground: function ( obj ) {
-                utils.isMobile || utils.addClass(obj, 'bg-color');
-            }
-            , clearThemeBackground: function ( obj ) {
-                utils.isMobile || utils.removeClass(obj, 'bg-color');
-            }
-            , setThemeColor: function ( obj ) {
-                utils.isMobile || utils.addClass(obj, 'theme-color');
-            }
-            , clearThemeColor: function ( obj ) {
-                utils.isMobile || utils.removeClass(obj, 'theme-color');
             }
             , bindEvents: function () {
                 var me = this;
@@ -936,24 +905,6 @@
                 });
 				utils.live('img.em-widget-imgview', 'click', function () {
 					easemobim.imgView.show(this.getAttribute('src'));
-                });
-                utils.live('button.em-widget-list-btn', 'mouseover', function () {
-                    me.setThemeBackground(this);
-                });
-                utils.live('button.em-widget-list-btn', 'mouseout', function () {
-                    me.clearThemeBackground(this);
-                });
-                utils.on(easemobim.sendFileBtn, 'mouseenter', function () {
-                    me.setThemeColor(this);
-                });
-                utils.on(easemobim.sendFileBtn, 'mouseleave', function () {
-                    me.clearThemeColor(this);
-                });
-                utils.on(easemobim.noteBtn, 'mouseenter', function () {
-                    me.setThemeColor(this);
-                });
-                utils.on(easemobim.noteBtn, 'mouseleave', function () {
-                    me.clearThemeColor(this);
                 });
 
 				if (config.dragenable && !utils.isMobile) {//drag
@@ -1205,7 +1156,7 @@
                     //每次激活只显示一次
                     if ( !this.noteShow ) {
                         this.noteShow = true;
-                        this.appendEventMsg(easemobim._const.eventMessageText.NOTE);
+                        this.appendEventMsg(_const.eventMessageText.NOTE);
                     }
                     
 				}
@@ -1221,15 +1172,15 @@
                         avatar: info.avatar
                     });
                 } else if ( action === 'create' ) {//显示会话创建
-                    this.appendEventMsg(easemobim._const.eventMessageText.CREATE);
+                    this.appendEventMsg(_const.eventMessageText.CREATE);
                 } else if ( action === 'close' ) {//显示会话关闭
-                    this.appendEventMsg(easemobim._const.eventMessageText.CLOSED);
+                    this.appendEventMsg(_const.eventMessageText.CLOSED);
                 } else if ( action === 'transferd' ) {//显示转接到客服
-                    this.appendEventMsg(easemobim._const.eventMessageText.TRANSFER);
+                    this.appendEventMsg(_const.eventMessageText.TRANSFER);
                 } else if ( action === 'transfering' ) {//显示转接中
-                    this.appendEventMsg(easemobim._const.eventMessageText.TRANSFERING);
+                    this.appendEventMsg(_const.eventMessageText.TRANSFERING);
                  } else if ( action === 'linked' ) {//接入成功
-                    this.appendEventMsg(easemobim._const.eventMessageText.LINKED);
+                    this.appendEventMsg(_const.eventMessageText.LINKED);
                 }
 
                 if(action === 'transferd' || action === 'linked'){

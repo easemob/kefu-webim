@@ -34,17 +34,7 @@ img {
 button, textarea, input {
     outline: none;
 }
-@font-face {
-    font-family: 'easemobim';
-    src: url("font/iconfont.eot?v=<%= v %>") ;
-    src: url("font/iconfont.eot?#iefix") format('embedded-opentype'), /* IE8 */
-    url("font/iconfont.svg?v=<%= v %>")  format('svg'), /* old ios */
-    url("font/iconfont.woff?v=<%= v %>")  format('woff'),
-    url("font/iconfont.ttf?v=<%= v %>")  format('truetype');
-    src: url("font/iconfont.eot?v=<%= v %>") \9; /* IE9 */
-    font-weight: normal;
-    font-style: normal;
-}
+
 #EasemobKefuWebim {
 	position: absolute;
     left: 0;
@@ -56,36 +46,7 @@ button, textarea, input {
     text-decoration: none;
     cursor: zoom-in;
 }
-.em-widget-agent-status.leave:after,
-.em-widget-agent-status.busy:after,
-.em-widget-agent-status.hidden:after,
-.em-widget-pop-bar i:after,
-.em-widgetHeader-min:after,
-.em-widgetHeader-keyboard:after,
-.em-widgetHeader-audio:after,
-.em-widgetHeader-silence:after,
-.em-widget-tip-close:after,
-.em-widget-msgcount:after,
-.em-widget-msgcount.mutiCount:after,
-.em-widget-corner:after,
-.em-widget-left .em-widget-msg-voice,
-.em-widget-msg-status i,
-.em-widget-face:after,
-.em-widget-satisfaction-dialog li,
-.em-widget-unimage,
-.em-widget-success-prompt i,
-.em-widget-notem:after,
-.em-widget-note:after,
-.em-widget-file:after {
-    font-family: 'easemobim' !important;
-    font-size: 30px;
-    font-style: normal;
-    text-align: center;
-    line-height: 30px;
-    -webkit-text-stroke-width: 0.2px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
+/* todo 统一hide 类名 */
 .hide,
 .em-hide,
 #EasemobKefuWebim .em-hide,

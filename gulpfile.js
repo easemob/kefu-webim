@@ -38,10 +38,12 @@ gulp.task('minifyHtml', function () {
 gulp.task('cssmin', function() {
 	gulp.src([
 		'static/css/src/global.css',
+		'static/css/src/icon.css',
 		'static/css/src/header.css',
 		'static/css/src/body.css',
 		'static/css/src/chat.css',
 		'static/css/src/send.css',
+		'static/css/src/theme.css',
 		'static/css/src/ui.css',
 		'static/css/src/mobile.css',
 	])

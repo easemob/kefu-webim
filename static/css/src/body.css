@@ -153,7 +153,7 @@
     cursor: default;
     margin: 0 2px;
 }
-.em-widget-face-wrapper {
+.em-bar-face-wrapper {
     position: fixed;
     z-index: 1;
     bottom: 144px;
@@ -164,7 +164,7 @@
     box-shadow: 0 4px 5px rgba(0,0,0,.1);
     -webkit-transform: translate3d(0,0,0);
 }
-.em-widget-face-container {
+.em-bar-face-container {
     z-index: 2;
     position: relative;
     background-color: white;
@@ -193,16 +193,16 @@
     background-color: white;
     display: none\9;
 }
-.em-widget-face-bg {
+.em-bar-face-bg {
     display: inline-block;
     border-radius: 2px;
     text-align: center;
     margin: 10px 10px 0 0;
 }
-.em-widget-face-img:hover {
+.em-bar-face-img:hover {
     cursor: pointer;
 }
-.em-widget-face-img {
+.em-bar-face-img {
     display: inline-block;
     width: 24px;
     height: 24px;

@@ -132,15 +132,14 @@
 	<div class="em-widget-tip"><span class="em-widget-tip-text"></span><a class="em-widget-tip-close" href="javascript:;"></a></div>\
 	<div class="em-widget-video"><video class="main"></video><video class="sub"></video></div>\
 	<div id="em-widgetBody" class="em-widgetBody-wrapper"></div>\
-	<div id="EasemobKefuWebimFaceWrapper" class="em-widget-face-wrapper e-face em-hide">\
-		<ul class="em-widget-face-container"></ul>\
+	<div id="EasemobKefuWebimFaceWrapper" class="em-bar-face-wrapper e-face em-hide">\
+		<ul class="em-bar-face-container"></ul>\
 	</div>\
 	<div id="em-widgetSend" class="em-widget-send-wrapper">\
-		<i class="em-widget-face e-face" title="表情"></i>\
-		<i class="em-widget-file" id="em-widgetFile" title="图片"></i>\
-		<i class="em-widget-note em-hide" id="em-widgetNote" title="留言"></i>\
-<!-- for debug only -->\
-		<i class="em-widget-note" id="em-video-invite" style="left: 97px;"></i>\
+		<i class="em-bar-face e-face fg-hover-color" title="表情"></i>\
+		<i class="em-widget-file fg-hover-color" id="em-widgetFile" title="图片"></i>\
+		<i class="em-widget-note em-hide fg-hover-color" id="em-widgetNote" title="留言"></i>\
+		<i class="em-widget-note fg-hover-color" id="em-video-invite" style="left: 97px;"></i>\
 		<input id="em-widgetFileInput" type="file" accept="image/*"/>\
 		<textarea class="em-widget-textarea" spellcheck="false"></textarea>\
 		<span id="EasemobKefuWebimSatisfy" class="em-widget-satisfaction em-hide">请对服务做出评价</span>\

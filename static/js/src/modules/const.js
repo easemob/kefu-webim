@@ -28,6 +28,18 @@
 			CLOSED: '会话已结束',
 			NOTE: '当前暂无客服在线，请您留下联系方式，稍后我们将主动联系您',
 			CREATE: '会话创建成功'
+		},
+		themeMap: {
+			'天空之城': 'theme-1',
+			'丛林物语': 'theme-2',
+			'红瓦洋房': 'theme-3',
+			'鲜美橙汁': 'theme-4',
+			'青草田间': 'theme-5',
+			'湖光山色': 'theme-6',
+			'冷峻山峰': 'theme-7',
+			'月色池塘': 'theme-8',
+			'天籁湖光': 'theme-9',
+			'商务风格': 'theme-10'
 		}
 	};
 
@@ -62,40 +74,6 @@
 		"<path fill='none' stroke='#E5E5E5' stroke-width='4' stroke-linecap='round' stroke-miterlimit='10' d='M24,35c0-6.1,4.9-11,11-11",
 		"c2.8,0,5.3,1,7.3,2.8'/><image src='//kefu.easemob.com/webim/static/img/loading.gif' width='20' style='margin-top:10px;' /></svg></div>"].join('')
 		: "<img src='//kefu.easemob.com/webim/static/img/loading.gif' width='20' style='margin-top:10px;'/>";
-
-	//当前支持的所有主题
-	easemobim.THEME = {
-		'天空之城': {
-			css: 'body .theme-color{color:#42b8f4;}body .bg-color{background-color:#42b8f4}.border-color{border:1px solid #00a0e7}.hover-color{background-color:#7dcdf7}'
-		}
-		, '丛林物语': {
-			css: 'body .theme-color{color:#00b45f;}body .bg-color{background-color:#00b45f}.border-color{border:1px solid #009a51}.hover-color{background-color:#16cd77}'
-		}
-		, '红瓦洋房': {
-			css: 'body .theme-color{color:#b50e03;}body .bg-color{background-color:#b50e03}.border-color{border:1px solid #811916}.hover-color{background-color:#e92b25}'
-		}
-		, '鲜美橙汁': {
-			css: 'body .theme-color{color:#ffa000;}body .bg-color{background-color:#ffa000}.border-color{border:1px solid #f69000}.hover-color{background-color:#ffb63b}'
-		}
-		, '青草田间': {
-			css: 'body .theme-color{color:#9ec100;}body .bg-color{background-color:#9ec100}.border-color{border:1px solid #809a00}.hover-color{background-color:#bad921}'
-		}
-		, '湖光山色': {
-			css: 'body .theme-color{color:#00cccd;}body .bg-color{background-color:#00cccd}.border-color{border:1px solid #12b3b4}.hover-color{background-color:#38e6e7}'
-		}
-		, '冷峻山峰': {
-			css: 'body .theme-color{color:#5b799a;}body .bg-color{background-color:#5b799a}.border-color{border:1px solid #48627b}.hover-color{background-color:#6a8eb5}'
-		}
-		, '月色池塘': {
-			css: 'body .theme-color{color:#3977cf;}body .bg-color{background-color:#3977cf}.border-color{border:1px solid #2b599b}.hover-color{background-color:#548bdc}'
-		}
-		, '天籁湖光': {
-			css: 'body .theme-color{color:#06a89c;}body .bg-color{background-color:#06a89c}.border-color{border:1px solid #07b5a9}.hover-color{background-color:#08c2b5}'
-		}
-		, '商务风格': {
-			css: 'body .theme-color{color:#000000;}body .bg-color{background-color:#000000}.border-color{border:1px solid #1a1a1a}.hover-color{background-color:#333333}'
-		}
-	};
 
 	//表情包
 	Easemob.im.EMOTIONS = {

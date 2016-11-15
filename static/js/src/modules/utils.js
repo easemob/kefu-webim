@@ -278,17 +278,12 @@
 			}
 		}
 		, html: function ( dom, html ) {
-			if ( !dom ) {
-				return;
-			}
-			if ( _getIEVersion && _getIEVersion < 9 && dom.nodeName === 'STYLE' ) {
-				dom.styleSheet.cssText = html || '';
+			if (!dom) return;
+
+			if ( typeof html === 'undefined' ) {
+				return dom.innerHTML;
 			} else {
-				if ( typeof html === 'undefined' ) {
-					return dom.innerHTML;
-				} else {
-					dom.innerHTML = html;
-				}
+				dom.innerHTML = html;
 			}
 			return dom;
 		}

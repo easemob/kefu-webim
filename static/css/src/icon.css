@@ -1,0 +1,142 @@
+@font-face {
+	font-family: "easemobim";
+	src: url('font/iconfont.eot?v=<%= v %>'); /* IE9*/
+	src: url('font/iconfont.eot?v=<%= v %>#iefix') format('embedded-opentype'), /* IE6-IE8 */
+	url('font/iconfont.woff?v=<%= v %>') format('woff'), /* chrome, firefox */
+	url('font/iconfont.ttf?v=<%= v %>') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+	url('font/iconfont.svg?v=<%= v %>#easemobim') format('svg'); /* iOS 4.1- */
+}
+
+.icon-camera:before { content: "\63"; }
+
+.icon-change:before { content: "\64"; }
+
+.icon-minimize:before { content: "\65"; }
+
+.icon-maximize:before { content: "\66"; }
+
+.icon-A:before { content: "\41"; }
+
+.icon-B:before { content: "\42"; }
+
+.icon-C:before { content: "\43"; }
+
+.icon-face:before { content: "\44"; }
+
+.icon-E:before { content: "\45"; }
+
+.icon-F:before { content: "\46"; }
+
+.icon-G:before { content: "\47"; }
+
+.icon-H:before { content: "\48"; }
+
+.icon-I:before { content: "\49"; }
+
+.icon-K:before { content: "\4b"; }
+
+.icon-J:before { content: "\4a"; }
+
+.icon-L:before { content: "\4c"; }
+
+.icon-M:before { content: "\4d"; }
+
+.icon-x:before { content: "\78"; }
+
+.icon-X:before { content: "\58"; }
+
+.icon-sound:before { content: "\67"; }
+
+.icon-O:before { content: "\4f"; }
+
+.icon-N:before { content: "\4e"; }
+
+.icon-qianbao:before { content: "\e600"; }
+
+.icon-1010101:before { content: "\e601"; }
+
+.icon-10103:before { content: "\e602"; }
+
+.icon-10104:before { content: "\e603"; }
+
+.icon-10105:before { content: "\e604"; }
+
+.icon-r:before { content: "\72"; }
+
+.icon-q:before { content: "\71"; }
+
+.icon-p:before { content: "\70"; }
+
+.icon-answer:before { content: "\61"; }
+
+.icon-decline:before { content: "\62"; }
+
+.icon-Comment:before { content: "\31"; }
+
+.icon-video:before { content: "\74"; }
+
+.icon-camera:before,
+.icon-change:before,
+.icon-minimize:before,
+.icon-maximize:before,
+.icon-A:before,
+.icon-B:before,
+.icon-C:before,
+.icon-face:before,
+.icon-E:before,
+.icon-F:before,
+.icon-G:before,
+.icon-H:before,
+.icon-I:before,
+.icon-K:before,
+.icon-J:before,
+.icon-L:before,
+.icon-M:before,
+.icon-x:before,
+.icon-X:before,
+.icon-sound:before,
+.icon-O:before,
+.icon-N:before,
+.icon-qianbao:before,
+.icon-1010101:before,
+.icon-10103:before,
+.icon-10104:before,
+.icon-10105:before,
+.icon-r:before,
+.icon-q:before,
+.icon-p:before,
+.icon-answer:before,
+.icon-decline:before,
+.icon-Comment:before,
+.icon-video:before,
+
+.em-widget-agent-status.leave:after,
+.em-widget-agent-status.busy:after,
+.em-widget-agent-status.hidden:after,
+.em-widget-pop-bar i:after,
+.em-widgetHeader-min:after,
+.em-widgetHeader-keyboard:after,
+.em-widgetHeader-audio:after,
+.em-widgetHeader-silence:after,
+.em-widget-tip-close:after,
+.em-widget-msgcount:after,
+.em-widget-msgcount.mutiCount:after,
+.em-widget-corner:after,
+.em-widget-left .em-widget-msg-voice,
+.em-widget-msg-status i,
+.em-bar-face:after,
+.em-widget-satisfaction-dialog li,
+.em-widget-unimage,
+.em-widget-success-prompt i,
+.em-widget-notem:after,
+.em-widget-note:after,
+.em-widget-file:after {
+	font-family: 'easemobim' !important;
+	font-size: 30px;
+	font-style: normal;
+	text-align: center;
+	line-height: 30px;
+	-webkit-text-stroke-width: 0.2px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
