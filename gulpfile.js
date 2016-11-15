@@ -105,7 +105,7 @@ gulp.task('combineJs', function() {
 		'static/js/src/modules/notify.js',
 		'static/js/src/modules/titleSlide.js',
 		'static/js/src/modules/iframe.js',
-		'static/js/src/easemob.js',
+		'static/js/src/userAPI.js',
 	])
 	.pipe(concat('easemob.js'));
 	debug || ejs.pipe(uglify());

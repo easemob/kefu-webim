@@ -19,7 +19,7 @@
         ticket: true,
 		staticPath: '',
 		buttonText: '联系客服',
-		dialogWidth: '400px',
+		dialogWidth: '320px',
 		dialogHeight: '550px',
 		dragenable: true,
 		minimum: true,
@@ -88,9 +88,9 @@
 	easemobim.bind = function ( config ) {
 		// 防止空参数调用异常
 		config = config || {};
-
-		var cacheKeyName = config.tenantId + config.emgroup || '';
         config.emgroup = config.emgroup || '';
+
+		var cacheKeyName = config.tenantId + config.emgroup;
 
         for ( var i in easemobim.tenants ) {
             if ( easemobim.tenants.hasOwnProperty(i) ) {
@@ -98,7 +98,7 @@
             }
         }
 
-        iframe = easemobim.tenants[config.tenantId + config.emgroup];
+        iframe = easemobim.tenants[cacheKeyName];
 
         if ( iframe ) {
             iframe.open();
@@ -112,7 +112,7 @@
             }
 
             iframe = easemobim.Iframe(_config);
-            easemobim.tenants[config.tenantId + config.emgroup] = iframe;
+            easemobim.tenants[cacheKeyName] = iframe;
             iframe.set(_config, utils.isMobile ? null : iframe.open);
         }
 

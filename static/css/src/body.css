@@ -19,7 +19,7 @@
     position: absolute;
     top: 43px;
     width: 100%;
-    height: 267px;
+    height: 215px;
     background-color: black;
 }
 
@@ -86,10 +86,10 @@
 
 /* 有视频窗时，消息窗继续下移 */
 .em-widget-wrapper.has-video .em-widgetBody-wrapper {
-    margin-top: 267px;
+    margin-top: 215px;
 }
 /* 显示视频控件 */
-.em-widget-wrapper.has-tip .em-widget-video {
+.em-widget-wrapper.has-video .em-widget-video {
     display: block;
 }
 

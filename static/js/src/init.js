@@ -65,7 +65,7 @@
 		} else {
 			window.transfer = new easemobim.Transfer(null, 'main').listen(function(msg) {
 				if (msg.event) {
-					window.chat || initUI(msg, initAfterUI);
+					// window.chat || initUI(msg, initAfterUI);
 					switch (msg.event) {
 						case easemobim.EVENTS.SHOW.event:
 							chatEntry.open();

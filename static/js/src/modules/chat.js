@@ -840,6 +840,7 @@
                             },
                             onRinging: function (caller) {
                                 me.call.acceptCall();
+                                utils.addClass(easemobim.imChat, 'has-video');
                                 console.log('onRinging', caller);
                             },
                             onTermCall: function () {
@@ -854,6 +855,7 @@
 
                                 // for debug
                                 console.log('onTermCall');
+                                utils.removeClass(easemobim.imChat, 'has-video');
                             },
                             onError: function (e) {
                                 console.log(e && e.message ? e.message : 'An error occured when calling webrtc');
