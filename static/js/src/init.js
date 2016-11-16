@@ -136,10 +136,10 @@
 		<ul class="em-bar-face-container"></ul>\
 	</div>\
 	<div id="em-widgetSend" class="em-widget-send-wrapper">\
-		<i class="em-bar-face e-face fg-hover-color" title="表情"></i>\
-		<i class="em-widget-file fg-hover-color" id="em-widgetFile" title="图片"></i>\
-		<i class="em-widget-note em-hide fg-hover-color" id="em-widgetNote" title="留言"></i>\
-		<i class="em-widget-note fg-hover-color" id="em-video-invite" style="left: 97px;"></i>\
+		<i class="em-bar-face icon-face e-face fg-hover-color" title="表情"></i>\
+		<i class="em-widget-file icon-picture fg-hover-color" id="em-widgetFile" title="图片"></i>\
+		<i class="em-widget-note icon-note em-hide fg-hover-color" id="em-widgetNote" title="留言"></i>\
+		<i class="icon-video fg-hover-color" id="em-video-invite" title="视频通话"></i>\
 		<input id="em-widgetFileInput" type="file" accept="image/*"/>\
 		<textarea class="em-widget-textarea" spellcheck="false"></textarea>\
 		<span id="EasemobKefuWebimSatisfy" class="em-widget-satisfaction em-hide">请对服务做出评价</span>\

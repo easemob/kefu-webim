@@ -37,7 +37,7 @@
 
 .icon-J:before { content: "\4a"; }
 
-.icon-L:before { content: "\4c"; }
+.icon-picture:before { content: "\4c"; }
 
 .icon-M:before { content: "\4d"; }
 
@@ -71,7 +71,7 @@
 
 .icon-decline:before { content: "\62"; }
 
-.icon-Comment:before { content: "\31"; }
+.icon-note:before { content: "\31"; }
 
 .icon-video:before { content: "\74"; }
 
@@ -90,7 +90,7 @@
 .icon-I:before,
 .icon-K:before,
 .icon-J:before,
-.icon-L:before,
+.icon-picture:before,
 .icon-M:before,
 .icon-x:before,
 .icon-X:before,
@@ -107,7 +107,7 @@
 .icon-p:before,
 .icon-answer:before,
 .icon-decline:before,
-.icon-Comment:before,
+.icon-note:before,
 .icon-video:before,
 
 .em-widget-agent-status.leave:after,
@@ -124,13 +124,10 @@
 .em-widget-corner:after,
 .em-widget-left .em-widget-msg-voice,
 .em-widget-msg-status i,
-.em-bar-face:after,
 .em-widget-satisfaction-dialog li,
 .em-widget-unimage,
 .em-widget-success-prompt i,
-.em-widget-notem:after,
-.em-widget-note:after,
-.em-widget-file:after {
+.em-widget-notem:after {
 	font-family: 'easemobim' !important;
 	font-size: 30px;
 	font-style: normal;

@@ -6,6 +6,19 @@
     background-color: white;
     -webkit-backface-visibility:hidden;
 }
+
+/* 工具栏按钮 */
+.em-widget-send-wrapper i {
+    float: left;
+    top: 5px;
+    left: 5px;
+    position: relative;
+    color: #4d4d4d;
+}
+.em-widget-send-wrapper i:hover {
+    cursor: pointer;
+}
+
 .em-widget-send-disable:after {
     z-index: 1;
     content: ' ';
@@ -43,36 +56,4 @@
     text-decoration: none;
     line-height: 30px;
     color: white;
-}
-.em-bar-face {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    color: #4d4d4d;
-}
-.em-bar-face:after {
-    content: 'D';
-}
-.em-widget-note:hover,
-.em-widget-file:hover,
-.em-bar-face:hover {
-    cursor: pointer;
-}
-.em-widget-file {
-    position: absolute;
-    top: 5px;
-    left: 36px;
-    color: #4d4d4d;
-}
-.em-widget-file:after {
-    content: 'L';
-}
-.em-widget-note {
-    position: absolute;
-    top: 5px;
-    left: 67px;
-    color: #4d4d4d;
-}
-.em-widget-note:after {
-    content: '1';
 }
