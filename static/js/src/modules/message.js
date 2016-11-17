@@ -10,8 +10,8 @@ Easemob.im.EmMessage.txt.prototype.get = function ( isReceive ) {
 		return '';
 	}
 
-    this.value = this.emotion ? this.value : easemobim.utils.decode(this.value);
-    
+	this.value = this.emotion ? this.value : easemobim.utils.decode(this.value);
+	
 	return [
 		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper'>",
@@ -89,7 +89,7 @@ Easemob.im.EmMessage.img.prototype.set = function ( opt ) {
 		id: this.id 
 		, file: this.value 
 		, apiUrl: opt.apiUrl
-        , accessToken: opt.accessToken
+		, accessToken: opt.accessToken
 		, to: opt.to
 		, type : this.type
 		, onFileUploadError : opt.uploadError
@@ -116,7 +116,7 @@ Easemob.im.EmMessage.list.prototype.get = function ( isReceive ) {
 				"<i class='em-widget-corner'></i>",
 				"<div class='em-widget-msg-container em-widget-msg-menu'>",
 					"<p>" + Easemob.im.Utils.parseLink(Easemob.im.Utils.parseEmotions(easemobim.utils.encode(this.value))) + "</p>",
-			        this.listDom,
+					this.listDom,
 				"</div>",
 				"<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i></i></div>",
 			"</div>",

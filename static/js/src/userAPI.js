@@ -3,11 +3,11 @@
  */
 
 ;(function ( window, undefined ) {
-    'use strict';
-    var utils = easemobim.utils;
-    easemobim.config = easemobim.config || {};
-    easemobim.version = '<%= v %>';
-    easemobim.tenants = {};
+	'use strict';
+	var utils = easemobim.utils;
+	easemobim.config = easemobim.config || {};
+	easemobim.version = '<%= v %>';
+	easemobim.tenants = {};
 
 	var DEFAULT_CONFIG = {
 		tenantId: '',
@@ -16,7 +16,7 @@
 		appKey: '',
 		domain: '',
 		path: '',
-        ticket: true,
+		ticket: true,
 		staticPath: '',
 		buttonText: '联系客服',
 		dialogWidth: '320px',
@@ -35,10 +35,10 @@
 
 
 	//get parameters from easemob.js
-    var baseConfig = utils.getConfig();
-    var _config = {};
+	var baseConfig = utils.getConfig();
+	var _config = {};
 
-    var iframe;
+	var iframe;
 
 	//init title slide function
 	easemobim.titleSlide();
@@ -47,9 +47,9 @@
 
 	reset();
 
-    // growing io user id
-    // 由于存在cookie跨域问题，所以从配置传过去
-    easemobim.config.grUserId = utils.get('gr_user_id');
+	// growing io user id
+	// 由于存在cookie跨域问题，所以从配置传过去
+	easemobim.config.grUserId = utils.get('gr_user_id');
 
 
 	//init _config & concat config and global easemobim.config
@@ -88,46 +88,46 @@
 	easemobim.bind = function ( config ) {
 		// 防止空参数调用异常
 		config = config || {};
-        config.emgroup = config.emgroup || '';
+		config.emgroup = config.emgroup || '';
 
 		var cacheKeyName = config.tenantId + config.emgroup;
 
-        for ( var i in easemobim.tenants ) {
-            if ( easemobim.tenants.hasOwnProperty(i) ) {
-                easemobim.tenants[i].close();
-            }
-        }
+		for ( var i in easemobim.tenants ) {
+			if ( easemobim.tenants.hasOwnProperty(i) ) {
+				easemobim.tenants[i].close();
+			}
+		}
 
-        iframe = easemobim.tenants[cacheKeyName];
+		iframe = easemobim.tenants[cacheKeyName];
 
-        if ( iframe ) {
-            iframe.open();
-        } else {
-            reset();
-            utils.extend(_config, config);
+		if ( iframe ) {
+			iframe.open();
+		} else {
+			reset();
+			utils.extend(_config, config);
 
-            if (!_config.tenantId) {
-            	console.warn('未指定tenantId!');
-            	return;
-            }
+			if (!_config.tenantId) {
+				console.warn('未指定tenantId!');
+				return;
+			}
 
-            iframe = easemobim.Iframe(_config);
-            easemobim.tenants[cacheKeyName] = iframe;
-            iframe.set(_config, utils.isMobile ? null : iframe.open);
-        }
+			iframe = easemobim.Iframe(_config);
+			easemobim.tenants[cacheKeyName] = iframe;
+			iframe.set(_config, utils.isMobile ? null : iframe.open);
+		}
 
 
 		if ( utils.isMobile ) {
 
-            //store ext
-            if ( _config.extMsg ) {
-                utils.setStore(_config.tenantId + _config.emgroup + 'ext', JSON.stringify(_config.extMsg));
-            }
+			//store ext
+			if ( _config.extMsg ) {
+				utils.setStore(_config.tenantId + _config.emgroup + 'ext', JSON.stringify(_config.extMsg));
+			}
 
-            //store visitor info 
-            if ( _config.visitor ) {
-                utils.setStore(_config.tenantId + _config.emgroup + 'visitor', JSON.stringify(_config.visitor));
-            }
+			//store visitor info 
+			if ( _config.visitor ) {
+				utils.setStore(_config.tenantId + _config.emgroup + 'visitor', JSON.stringify(_config.visitor));
+			}
 
 
 			var a = window.event.srcElement || window.event.target,
@@ -172,16 +172,16 @@
 		(!_config.hide || _config.autoConnect || _config.eventCollector)
 		&& _config.tenantId
 	){
-        iframe = iframe || easemobim.Iframe(_config);
+		iframe = iframe || easemobim.Iframe(_config);
 		iframe.set(_config, iframe.close);
 	}
 
-    //support cmd & amd
-    if ( typeof module === 'object' && typeof module.exports === 'object' ) {
-         module.exports = easemobim;
-     } else if ( typeof define === 'function' && (define.amd || define.cmd) ) {
-         define([], function () {
-             return easemobim;
-         });
-     }
+	//support cmd & amd
+	if ( typeof module === 'object' && typeof module.exports === 'object' ) {
+		 module.exports = easemobim;
+	 } else if ( typeof define === 'function' && (define.amd || define.cmd) ) {
+		 define([], function () {
+			 return easemobim;
+		 });
+	 }
 }(window, undefined));

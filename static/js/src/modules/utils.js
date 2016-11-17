@@ -17,7 +17,7 @@
 		}());
 
 	easemobim.utils = {
-        isTop: window.top === window.self
+		isTop: window.top === window.self
 		, nodeListType: {
 			'[object Object]': true,
 			'[object NodeList]': true,
@@ -163,16 +163,16 @@
 				};
 			me.on(target, ev, tfn, isCapture);  
 		}
-        // 触发事件，对于ie8只支持原生事件，不支持自定义事件
-        , trigger: function(element, eventName){
-            if (document.createEvent) {
-                var ev = document.createEvent('HTMLEvents');
-                ev.initEvent(eventName, true, false);
-                element.dispatchEvent(ev);
-            } else {
-                element.fireEvent('on' + eventName);
-            }
-        }
+		// 触发事件，对于ie8只支持原生事件，不支持自定义事件
+		, trigger: function(element, eventName){
+			if (document.createEvent) {
+				var ev = document.createEvent('HTMLEvents');
+				ev.initEvent(eventName, true, false);
+				element.dispatchEvent(ev);
+			} else {
+				element.fireEvent('on' + eventName);
+			}
+		}
 		, extend: function ( object, extend ) {
 			var tmp;
 			for ( var o in extend ) {
@@ -322,29 +322,29 @@
 		, isMin: function () {
 			return document.visibilityState && document.visibilityState === 'hidden' || document.hidden;
 		}
-        , setStore: function ( key, value ) {
-            if ( typeof value === 'undefined' ) {
-                return;
-            }
-            try {
-                localStorage.setItem(key, value);
-            } catch ( e ) {}
-        }
-        , getStore: function ( key ) {
-            try {
-                return localStorage.getItem(key);
-            } catch ( e ) {}
-        }
-        , clearStore: function ( key ) {
-            try {
-                localStorage.removeItem(key);
-            } catch ( e ) {}
-        }
-        , clearAllStore: function () {
-            try {
-                localStorage.clear();
-            } catch ( e ) {}
-        }
+		, setStore: function ( key, value ) {
+			if ( typeof value === 'undefined' ) {
+				return;
+			}
+			try {
+				localStorage.setItem(key, value);
+			} catch ( e ) {}
+		}
+		, getStore: function ( key ) {
+			try {
+				return localStorage.getItem(key);
+			} catch ( e ) {}
+		}
+		, clearStore: function ( key ) {
+			try {
+				localStorage.removeItem(key);
+			} catch ( e ) {}
+		}
+		, clearAllStore: function () {
+			try {
+				localStorage.clear();
+			} catch ( e ) {}
+		}
 		, set: function ( key, value, local ) {
 			if ( local && 'localStorage' in window ) {
 				localStorage.setItem(encodeURIComponent(key), encodeURIComponent(value));
@@ -421,115 +421,115 @@
 		copy: function ( obj ) {
 			return this.extend({}, obj);
 		},
-        code: (function () {
-            var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+		code: (function () {
+			var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
-            var obj = {
-                /**
-                 * Encodes a string in base64
-                 *
-                 * @param {String}
-                 *            input The string to encode in base64.
-                 */
-                encode : function ( input ) {
-                    var output = "";
-                    var chr1, chr2, chr3;
-                    var enc1, enc2, enc3, enc4;
-                    var i = 0;
+			var obj = {
+				/**
+				 * Encodes a string in base64
+				 *
+				 * @param {String}
+				 *			input The string to encode in base64.
+				 */
+				encode : function ( input ) {
+					var output = "";
+					var chr1, chr2, chr3;
+					var enc1, enc2, enc3, enc4;
+					var i = 0;
 
-                    do {
-                        chr1 = input.charCodeAt(i++);
-                        chr2 = input.charCodeAt(i++);
-                        chr3 = input.charCodeAt(i++);
+					do {
+						chr1 = input.charCodeAt(i++);
+						chr2 = input.charCodeAt(i++);
+						chr3 = input.charCodeAt(i++);
 
-                        enc1 = chr1 >> 2;
-                        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-                        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-                        enc4 = chr3 & 63;
+						enc1 = chr1 >> 2;
+						enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+						enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+						enc4 = chr3 & 63;
 
-                        if ( isNaN(chr2) ) {
-                            enc3 = enc4 = 64;
-                        } else if ( isNaN(chr3) ) {
-                            enc4 = 64;
-                        }
+						if ( isNaN(chr2) ) {
+							enc3 = enc4 = 64;
+						} else if ( isNaN(chr3) ) {
+							enc4 = 64;
+						}
 
-                        output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2)
-                                + keyStr.charAt(enc3) + keyStr.charAt(enc4);
-                    } while ( i < input.length );
+						output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2)
+								+ keyStr.charAt(enc3) + keyStr.charAt(enc4);
+					} while ( i < input.length );
 
-                    return output;
-                },
+					return output;
+				},
 
-                byteEncode : function ( bytes ) {
-                    var output = "";
-                    var chr1, chr2, chr3;
-                    var enc1, enc2, enc3, enc4;
-                    var i = 0;
+				byteEncode : function ( bytes ) {
+					var output = "";
+					var chr1, chr2, chr3;
+					var enc1, enc2, enc3, enc4;
+					var i = 0;
 
-                    do {
-                        chr1 = bytes[i++];
-                        chr2 = bytes[i++];
-                        chr3 = bytes[i++];
+					do {
+						chr1 = bytes[i++];
+						chr2 = bytes[i++];
+						chr3 = bytes[i++];
 
-                        enc1 = chr1 >> 2;
-                        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-                        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-                        enc4 = chr3 & 63;
+						enc1 = chr1 >> 2;
+						enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+						enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+						enc4 = chr3 & 63;
 
-                        if ( isNaN(chr2) ) {
-                            enc3 = enc4 = 64;
-                        } else if ( isNaN(chr3) ) {
-                            enc4 = 64;
-                        }
+						if ( isNaN(chr2) ) {
+							enc3 = enc4 = 64;
+						} else if ( isNaN(chr3) ) {
+							enc4 = 64;
+						}
 
-                        output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2)
-                                + keyStr.charAt(enc3) + keyStr.charAt(enc4);
-                    } while ( i < bytes.length );
+						output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2)
+								+ keyStr.charAt(enc3) + keyStr.charAt(enc4);
+					} while ( i < bytes.length );
 
-                    return output;
-                },
+					return output;
+				},
 
-                /**
-                 * Decodes a base64 string.
-                 *
-                 * @param {String}
-                 *            input The string to decode.
-                 */
-                decode : function ( input ) {
-                    var output = "";
-                    var chr1, chr2, chr3;
-                    var enc1, enc2, enc3, enc4;
-                    var i = 0;
+				/**
+				 * Decodes a base64 string.
+				 *
+				 * @param {String}
+				 *			input The string to decode.
+				 */
+				decode : function ( input ) {
+					var output = "";
+					var chr1, chr2, chr3;
+					var enc1, enc2, enc3, enc4;
+					var i = 0;
 
-                    // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
-                    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+					// remove all characters that are not A-Z, a-z, 0-9, +, /, or =
+					input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
 
-                    do {
-                        enc1 = keyStr.indexOf(input.charAt(i++));
-                        enc2 = keyStr.indexOf(input.charAt(i++));
-                        enc3 = keyStr.indexOf(input.charAt(i++));
-                        enc4 = keyStr.indexOf(input.charAt(i++));
+					do {
+						enc1 = keyStr.indexOf(input.charAt(i++));
+						enc2 = keyStr.indexOf(input.charAt(i++));
+						enc3 = keyStr.indexOf(input.charAt(i++));
+						enc4 = keyStr.indexOf(input.charAt(i++));
 
-                        chr1 = (enc1 << 2) | (enc2 >> 4);
-                        chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-                        chr3 = ((enc3 & 3) << 6) | enc4;
+						chr1 = (enc1 << 2) | (enc2 >> 4);
+						chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+						chr3 = ((enc3 & 3) << 6) | enc4;
 
-                        output = output + String.fromCharCode(chr1);
+						output = output + String.fromCharCode(chr1);
 
-                        if ( enc3 != 64 ) {
-                            output = output + String.fromCharCode(chr2);
-                        }
-                        if ( enc4 != 64 ) {
-                            output = output + String.fromCharCode(chr3);
-                        }
-                    } while ( i < input.length );
+						if ( enc3 != 64 ) {
+							output = output + String.fromCharCode(chr2);
+						}
+						if ( enc4 != 64 ) {
+							output = output + String.fromCharCode(chr3);
+						}
+					} while ( i < input.length );
 
-                    return output;
-                }
-            };
+					return output;
+				}
+			};
 
-            return obj;
-        })()
+			return obj;
+		})()
 	};
 }());
 

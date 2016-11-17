@@ -9,10 +9,10 @@ easemobim.EVENTS = {
 	SHOW: {
 		event: 'showChat'
 	},
-    CLOSE: {
+	CLOSE: {
 		event: 'closeChat'
 	},
-    CACHEUSER: {
+	CACHEUSER: {
 		event: 'setUser'
 	},
 	DRAGREADY: {

@@ -32,35 +32,35 @@ Date.prototype.format = function ( fmt ) {
  *  http://developer.mozilla.org/En/Core_JavaScript_1.5_Reference:Objects:Array:indexOf
  *
  *  Parameters:
- *    (Object) elt - The object to look for.
- *    (Integer) from - The index from which to start looking. (optional).
+ *	(Object) elt - The object to look for.
+ *	(Integer) from - The index from which to start looking. (optional).
  *
  *  Returns:
- *    The index of elt in the array or -1 if not found.
+ *	The index of elt in the array or -1 if not found.
  */
 if(!Array.prototype.indexOf){
-    Array.prototype.indexOf = function(elt /*, from*/){
-        var len = this.length;
+	Array.prototype.indexOf = function(elt /*, from*/){
+		var len = this.length;
 
-        var from = Number(arguments[1]) || 0;
-        from = (from < 0) ? Math.ceil(from) : Math.floor(from);
-        if (from < 0) {
-            from += len;
-        }
+		var from = Number(arguments[1]) || 0;
+		from = (from < 0) ? Math.ceil(from) : Math.floor(from);
+		if (from < 0) {
+			from += len;
+		}
 
-        for (; from < len; from++) {
-            if (from in this && this[from] === elt) {
-                return from;
-            }
-        }
+		for (; from < len; from++) {
+			if (from in this && this[from] === elt) {
+				return from;
+			}
+		}
 
-        return -1;
-    };
+		return -1;
+	};
 }
 
 /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim */
 if (!String.prototype.trim) {
   String.prototype.trim = function () {
-    return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+	return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
   };
 }

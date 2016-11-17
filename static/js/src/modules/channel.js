@@ -1,728 +1,728 @@
 easemobim.channel = function ( config ) {
-    // 如果im连不上，则INITTIMER ms后变为可发送
-    var INITTIMER = 20000;
-    // IM心跳间隔HEARTBEATTIMER ms
-    var HEARTBEATTIMER = 60000;
-    // 收消息轮训间隔RECEIVETIMER ms
-    var RECEIVETIMER = 60000;
-    // SENDTIMER ms后没收到ack则开启第二通道
-    var SENDTIMER = 30000;
-    // 发送消息第二通道失败后，最多再试1次
-    var MAXRETRY = 1;
+	// 如果im连不上，则INITTIMER ms后变为可发送
+	var INITTIMER = 20000;
+	// IM心跳间隔HEARTBEATTIMER ms
+	var HEARTBEATTIMER = 60000;
+	// 收消息轮训间隔RECEIVETIMER ms
+	var RECEIVETIMER = 60000;
+	// SENDTIMER ms后没收到ack则开启第二通道
+	var SENDTIMER = 30000;
+	// 发送消息第二通道失败后，最多再试1次
+	var MAXRETRY = 1;
 
 
-    var me = this;
+	var me = this;
 
-    var utils = easemobim.utils;
-    var api = easemobim.api;
-
-
-        //监听ack的timer, 每条消息启动一个
-    var ackTS = new easemobim.site();
-
-        //初始监听xmpp的timer, 如果30s后xmpp没有连接成功则处理按钮变为发送，走api发送消息
-    var firstTS;
-
-        //发消息队列
-    var sendMsgSite = new easemobim.site();
-
-        //收消息队列
-    var receiveMsgSite = new easemobim.site();
+	var utils = easemobim.utils;
+	var api = easemobim.api;
 
 
+		//监听ack的timer, 每条消息启动一个
+	var ackTS = new easemobim.site();
+
+		//初始监听xmpp的timer, 如果30s后xmpp没有连接成功则处理按钮变为发送，走api发送消息
+	var firstTS;
+
+		//发消息队列
+	var sendMsgSite = new easemobim.site();
+
+		//收消息队列
+	var receiveMsgSite = new easemobim.site();
 
 
-    var _obj = {
-
-        getConnection: function () {
-
-            return new Easemob.im.Connection({ 
-                url: config.xmppServer,
-                retry: true,
-                multiResources: config.resources,
-                heartBeatWait: HEARTBEATTIMER
-            });
-        },
-
-        reSend: function ( type, id ) {
-            if ( id ) {
-                var msg = sendMsgSite.get(id);
-
-                switch ( type ) {
-
-                    case 'txt':
-                        _sendMsgChannle(msg, 0);//重试只发一次
-                        break;
-                }
-            }
-        },
-
-        send: function ( type ) {
-
-            var id = utils.uuid();
-
-            switch ( type ) {
-
-                case 'txt':
-                    //不是历史记录开启倒计时
-                    if ( !arguments[2] ) {
-                        _detectSendMsgByApi(id);
-                    }
 
 
-                    _obj.sendText(arguments[1], arguments[2], arguments[3], id);
-                    break;
-                //转人工
-                case 'transferToKf':
-                    _detectSendMsgByApi(id);
+	var _obj = {
 
-                    _obj.transferToKf(arguments[1], arguments[2], id);
-                    break;
+		getConnection: function () {
 
-                case 'img':
-                    _obj.sendImg(arguments[1], arguments[2], id);
-                    break;
+			return new Easemob.im.Connection({ 
+				url: config.xmppServer,
+				retry: true,
+				multiResources: config.resources,
+				heartBeatWait: HEARTBEATTIMER
+			});
+		},
 
-                case 'file':
-                    _obj.sendFile(arguments[1], arguments[2], id);
-                    break;
-                //满意度评价
-                case 'satisfaction':
-                    //不是历史记录开启倒计时, 当前只有文本消息支持降级
-                    _detectSendMsgByApi(id);
-                    _obj.sendSatisfaction(arguments[1], arguments[2], arguments[3], arguments[4], id);
-                    break;
-            };
-        },
+		reSend: function ( type, id ) {
+			if ( id ) {
+				var msg = sendMsgSite.get(id);
 
-        appendAck: function ( msg, id ) {
-            msg.body.ext.weichat.msg_id_for_ack = id;
-        },
+				switch ( type ) {
 
-        sendSatisfaction: function ( level, content, session, invite, id ) {
+					case 'txt':
+						_sendMsgChannle(msg, 0);//重试只发一次
+						break;
+				}
+			}
+		},
 
-            var msg = new Easemob.im.EmMessage('txt', id);
-            msg.set({value: '', to: config.toUser});
-            utils.extend(msg.body, {
-                ext: {
-                    weichat: {
-                        ctrlType: 'enquiry'
-                        , ctrlArgs: {
-                            inviteId: invite || ''
-                            , serviceSessionId: session || ''
-                            , detail: content
-                            , summary: level
-                        }
-                    }
-                }
-            });
-            _obj.appendAck(msg, id);
-            me.conn.send(msg.body);
-            sendMsgSite.set(id, msg);
-        },
+		send: function ( type ) {
 
-        sendText: function ( message, isHistory, ext, id ) {
+			var id = utils.uuid();
 
-            var msg = new Easemob.im.EmMessage('txt', isHistory ? null : id);
-            msg.set({
-                value: message || easemobim.utils.encode(easemobim.textarea.value),
-                to: config.toUser,
-                success: function ( id ) {
-                    // 此回调用于确认im server收到消息, 有别于kefu ack
-                },
-                fail: function ( id ) {
-                    
-                }
-            });
+			switch ( type ) {
 
-            if ( ext ) {
-                utils.extend(msg.body, ext);
-            }
-
-            utils.addClass(easemobim.sendBtn, 'disabled');
-            if ( !isHistory ) {
-                me.setExt(msg);
-                _obj.appendAck(msg, id);
-                me.conn.send(msg.body);
-                sendMsgSite.set(id, msg);
-                easemobim.textarea.value = '';
-                if ( msg.body.ext && msg.body.ext.type === 'custom' ) { return; }
-                me.appendDate(new Date().getTime(), config.toUser);
-                me.appendMsg(config.user.username, config.toUser, msg);
-            } else {
-                me.appendMsg(config.user.username, isHistory, msg, true);
-            }
-        },
+				case 'txt':
+					//不是历史记录开启倒计时
+					if ( !arguments[2] ) {
+						_detectSendMsgByApi(id);
+					}
 
 
-        transferToKf: function ( tid, sessionId, id ) {
-            var msg = new Easemob.im.EmMessage('cmd', id);
-            msg.set({
-                to: config.toUser
-                , action: 'TransferToKf'
-                , ext: {
-                    weichat: {
-                        ctrlArgs: {
-                            id: tid,
-                            serviceSessionId: sessionId,
-                        }
-                    }
-                }
-            });
+					_obj.sendText(arguments[1], arguments[2], arguments[3], id);
+					break;
+				//转人工
+				case 'transferToKf':
+					_detectSendMsgByApi(id);
 
-            _obj.appendAck(msg, id);
-            me.conn.send(msg.body);
-            sendMsgSite.set(id, msg);
+					_obj.transferToKf(arguments[1], arguments[2], id);
+					break;
 
-            me.handleEventStatus(null, null, true);
-        },
+				case 'img':
+					_obj.sendImg(arguments[1], arguments[2], id);
+					break;
 
-        sendImg: function ( file, isHistory, id ) {
+				case 'file':
+					_obj.sendFile(arguments[1], arguments[2], id);
+					break;
+				//满意度评价
+				case 'satisfaction':
+					//不是历史记录开启倒计时, 当前只有文本消息支持降级
+					_detectSendMsgByApi(id);
+					_obj.sendSatisfaction(arguments[1], arguments[2], arguments[3], arguments[4], id);
+					break;
+			};
+		},
 
-            var msg = new Easemob.im.EmMessage('img', isHistory ? null : id);
+		appendAck: function ( msg, id ) {
+			msg.body.ext.weichat.msg_id_for_ack = id;
+		},
 
-            msg.set({
-                apiUrl: location.protocol + '//' + config.restServer,
-                file: file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id')),
-                accessToken: me.token,
-                to: config.toUser,
-                uploadError: function ( error ) {
-                    setTimeout(function () {
-                        //显示图裂，无法重新发送
-                        if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
-                            easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
-                        } else {
-                            var id = error.id,
-                                wrap = utils.$Dom(id);
+		sendSatisfaction: function ( level, content, session, invite, id ) {
 
-                            utils.html(utils.$Class('a.em-widget-noline', wrap)[0], '<i class="em-widget-unimage">I</i>');
-                            utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-                            me.scrollBottom();
-                        }
-                    }, 50);
-                },
-                uploadComplete: function () {
-                    me.handleEventStatus();
-                },
-                success: function ( id ) {
-                    utils.$Remove(utils.$Dom(id + '_loading'));
-                    utils.$Remove(utils.$Dom(id + '_failed'));
-                },
-                fail: function ( id ) {
-                    utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-                    utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
-                },
-                flashUpload: easemobim.flashUpload
-            });
-            if ( !isHistory ) {
-                me.setExt(msg);
-                me.conn.send(msg.body);
-                easemobim.realFile.value = '';
-                if ( Easemob.im.Utils.isCanUploadFileAsync ) {
-                    me.appendDate(new Date().getTime(), config.toUser);
-                    me.appendMsg(config.user.username, config.toUser, msg);
-                }
-            } else {
-                me.appendMsg(config.user.username, file.to, msg, true);
-            }
-        },
+			var msg = new Easemob.im.EmMessage('txt', id);
+			msg.set({value: '', to: config.toUser});
+			utils.extend(msg.body, {
+				ext: {
+					weichat: {
+						ctrlType: 'enquiry'
+						, ctrlArgs: {
+							inviteId: invite || ''
+							, serviceSessionId: session || ''
+							, detail: content
+							, summary: level
+						}
+					}
+				}
+			});
+			_obj.appendAck(msg, id);
+			me.conn.send(msg.body);
+			sendMsgSite.set(id, msg);
+		},
 
-        sendFile: function ( file, isHistory, id ) {
+		sendText: function ( message, isHistory, ext, id ) {
 
-            var msg = new Easemob.im.EmMessage('file', isHistory ? null : id),
-                file = file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id'));
+			var msg = new Easemob.im.EmMessage('txt', isHistory ? null : id);
+			msg.set({
+				value: message || easemobim.utils.encode(easemobim.textarea.value),
+				to: config.toUser,
+				success: function ( id ) {
+					// 此回调用于确认im server收到消息, 有别于kefu ack
+				},
+				fail: function ( id ) {
+					
+				}
+			});
 
-            if ( !file || !file.filetype || !config.FILETYPE[file.filetype.toLowerCase()] ) {
-                chat.errorPrompt('不支持此文件');
-                easemobim.realFile.value = null;
-                return false;
-            }
+			if ( ext ) {
+				utils.extend(msg.body, ext);
+			}
 
-            msg.set({
-                apiUrl: location.protocol + '//' + config.restServer,
-                file: file,
-                to: config.toUser,
-                uploadError: function ( error ) {
-                    //显示图裂，无法重新发送
-                    if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
-                        easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
-                    } else {
-                        var id = error.id,
-                            wrap = utils.$Dom(id);
-
-                        utils.html(utils.$Class('a.em-widget-noline')[0], '<i class="em-widget-unimage">I</i>');
-                        utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-                        me.scrollBottom();
-                    }
-                },
-                uploadComplete: function () {
-                    me.handleEventStatus();
-                },
-                success: function ( id ) {
-                    utils.$Remove(utils.$Dom(id + '_loading'));
-                    utils.$Remove(utils.$Dom(id + '_failed'));
-                },
-                fail: function ( id ) {
-                    utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-                    utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
-                },
-                flashUpload: easemobim.flashUpload
-            });
-            if ( !isHistory ) {
-                me.setExt(msg);
-                me.conn.send(msg.body);
-                easemobim.realFile.value = '';
-                if ( Easemob.im.Utils.isCanUploadFileAsync ) {
-                    me.appendDate(new Date().getTime(), config.toUser);
-                    me.appendMsg(config.user.username, config.toUser, msg);
-                }
-            } else {
-                me.appendMsg(config.user.username, file.to, msg, true);
-            }
-        },
-
-        handleReceive: function ( msg, type, isHistory ) {
-            if (config.offDuty) {return;}
+			utils.addClass(easemobim.sendBtn, 'disabled');
+			if ( !isHistory ) {
+				me.setExt(msg);
+				_obj.appendAck(msg, id);
+				me.conn.send(msg.body);
+				sendMsgSite.set(id, msg);
+				easemobim.textarea.value = '';
+				if ( msg.body.ext && msg.body.ext.type === 'custom' ) { return; }
+				me.appendDate(new Date().getTime(), config.toUser);
+				me.appendMsg(config.user.username, config.toUser, msg);
+			} else {
+				me.appendMsg(config.user.username, isHistory, msg, true);
+			}
+		},
 
 
-            //如果是ack消息，清除ack对应的site item，返回
-            if ( msg && msg.ext && msg.ext.weichat && msg.ext.weichat.ack_for_msg_id ) {
-                _clearTS(msg.ext.weichat.ack_for_msg_id);
-                return;
-            }
+		transferToKf: function ( tid, sessionId, id ) {
+			var msg = new Easemob.im.EmMessage('cmd', id);
+			msg.set({
+				to: config.toUser
+				, action: 'TransferToKf'
+				, ext: {
+					weichat: {
+						ctrlArgs: {
+							id: tid,
+							serviceSessionId: sessionId,
+						}
+					}
+				}
+			});
+
+			_obj.appendAck(msg, id);
+			me.conn.send(msg.body);
+			sendMsgSite.set(id, msg);
+
+			me.handleEventStatus(null, null, true);
+		},
+
+		sendImg: function ( file, isHistory, id ) {
+
+			var msg = new Easemob.im.EmMessage('img', isHistory ? null : id);
+
+			msg.set({
+				apiUrl: location.protocol + '//' + config.restServer,
+				file: file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id')),
+				accessToken: me.token,
+				to: config.toUser,
+				uploadError: function ( error ) {
+					setTimeout(function () {
+						//显示图裂，无法重新发送
+						if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
+							easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
+						} else {
+							var id = error.id,
+								wrap = utils.$Dom(id);
+
+							utils.html(utils.$Class('a.em-widget-noline', wrap)[0], '<i class="em-widget-unimage">I</i>');
+							utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+							me.scrollBottom();
+						}
+					}, 50);
+				},
+				uploadComplete: function () {
+					me.handleEventStatus();
+				},
+				success: function ( id ) {
+					utils.$Remove(utils.$Dom(id + '_loading'));
+					utils.$Remove(utils.$Dom(id + '_failed'));
+				},
+				fail: function ( id ) {
+					utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+					utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
+				},
+				flashUpload: easemobim.flashUpload
+			});
+			if ( !isHistory ) {
+				me.setExt(msg);
+				me.conn.send(msg.body);
+				easemobim.realFile.value = '';
+				if ( Easemob.im.Utils.isCanUploadFileAsync ) {
+					me.appendDate(new Date().getTime(), config.toUser);
+					me.appendMsg(config.user.username, config.toUser, msg);
+				}
+			} else {
+				me.appendMsg(config.user.username, file.to, msg, true);
+			}
+		},
+
+		sendFile: function ( file, isHistory, id ) {
+
+			var msg = new Easemob.im.EmMessage('file', isHistory ? null : id),
+				file = file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id'));
+
+			if ( !file || !file.filetype || !config.FILETYPE[file.filetype.toLowerCase()] ) {
+				chat.errorPrompt('不支持此文件');
+				easemobim.realFile.value = null;
+				return false;
+			}
+
+			msg.set({
+				apiUrl: location.protocol + '//' + config.restServer,
+				file: file,
+				to: config.toUser,
+				uploadError: function ( error ) {
+					//显示图裂，无法重新发送
+					if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
+						easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
+					} else {
+						var id = error.id,
+							wrap = utils.$Dom(id);
+
+						utils.html(utils.$Class('a.em-widget-noline')[0], '<i class="em-widget-unimage">I</i>');
+						utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+						me.scrollBottom();
+					}
+				},
+				uploadComplete: function () {
+					me.handleEventStatus();
+				},
+				success: function ( id ) {
+					utils.$Remove(utils.$Dom(id + '_loading'));
+					utils.$Remove(utils.$Dom(id + '_failed'));
+				},
+				fail: function ( id ) {
+					utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+					utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
+				},
+				flashUpload: easemobim.flashUpload
+			});
+			if ( !isHistory ) {
+				me.setExt(msg);
+				me.conn.send(msg.body);
+				easemobim.realFile.value = '';
+				if ( Easemob.im.Utils.isCanUploadFileAsync ) {
+					me.appendDate(new Date().getTime(), config.toUser);
+					me.appendMsg(config.user.username, config.toUser, msg);
+				}
+			} else {
+				me.appendMsg(config.user.username, file.to, msg, true);
+			}
+		},
+
+		handleReceive: function ( msg, type, isHistory ) {
+			if (config.offDuty) {return;}
 
 
-            var msgid = me.getMsgid(msg);
+			//如果是ack消息，清除ack对应的site item，返回
+			if ( msg && msg.ext && msg.ext.weichat && msg.ext.weichat.ack_for_msg_id ) {
+				_clearTS(msg.ext.weichat.ack_for_msg_id);
+				return;
+			}
 
-            if ( receiveMsgSite.get(msgid) ) {
-                return;
-            } else {
-                msgid && receiveMsgSite.set(msgid, 1);
-            }
 
-            //绑定访客的情况有可能会收到多关联的消息，不是自己的不收
-            if ( !isHistory && msg.from && msg.from.toLowerCase() != config.toUser.toLowerCase() && !msg.noprompt ) {
-                return;
-            }
+			var msgid = me.getMsgid(msg);
 
-            var message = null;
+			if ( receiveMsgSite.get(msgid) ) {
+				return;
+			} else {
+				msgid && receiveMsgSite.set(msgid, 1);
+			}
 
-            //满意度评价
-            if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType && msg.ext.weichat.ctrlType == 'inviteEnquiry' ) {
-                type = 'satisfactionEvaluation';  
-            }
-            //机器人自定义菜单
-            else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {
-                type = 'robotList';  
-            }
-            // webRTC
-            // else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.liveStreamInvitation ) {
-            //     type = 'liveStreamInvitation';  
-            // }
-            //机器人转人工
-            else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {
-                type = 'robotTransfer';  
-            }
-            else {}
+			//绑定访客的情况有可能会收到多关联的消息，不是自己的不收
+			if ( !isHistory && msg.from && msg.from.toLowerCase() != config.toUser.toLowerCase() && !msg.noprompt ) {
+				return;
+			}
 
-            switch ( type ) {
-                case 'txt':
-                case 'face':
-                    message = new Easemob.im.EmMessage('txt');
+			var message = null;
 
-                    message.set({value: isHistory ? msg.data : me.getSafeTextValue(msg)});
-                    break;
-                case 'img':
-                    message = new Easemob.im.EmMessage('img');
+			//满意度评价
+			if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType && msg.ext.weichat.ctrlType == 'inviteEnquiry' ) {
+				type = 'satisfactionEvaluation';  
+			}
+			//机器人自定义菜单
+			else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {
+				type = 'robotList';  
+			}
+			// webRTC
+			// else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.liveStreamInvitation ) {
+			//	 type = 'liveStreamInvitation';  
+			// }
+			//机器人转人工
+			else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {
+				type = 'robotTransfer';  
+			}
+			else {}
 
-                    if ( msg.url ) {
-                        message.set({file: {url: msg.url}});
-                    } else {
-                        try {
-                            message.set({file: {url: msg.bodies[0].url}});
-                        } catch ( e ) {}
-                    }
-                    break;
-                case 'file':
-                    message = new Easemob.im.EmMessage('file');
-                    if ( msg.url ) {
-                        message.set({file: {url: msg.url, filename: msg.filename}});
-                    } else {
-                        try {
-                            message.set({file: {url: msg.bodies[0].url, filename: msg.bodies[0].filename}});
-                        } catch ( e ) {}
-                    }
-                    break;
-                case 'satisfactionEvaluation':
-                    message = new Easemob.im.EmMessage('list');
-                    message.set({value: '请对我的服务做出评价', list: ['\
-                        <div class="em-widget-list-btns">\
-                            <button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '"\
-                             data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
-                        </div>']});
-                    if(!isHistory){
-                        // 创建隐藏的立即评价按钮，并触发click事件
-                        var el = document.createElement('BUTTON');
-                        el.className = 'js_satisfybtn';
-                        el.style.display = 'none';
-                        el.setAttribute('data-inviteid', msg.ext.weichat.ctrlArgs.inviteId);
-                        el.setAttribute('data-servicesessionid', msg.ext.weichat.ctrlArgs.serviceSessionId);
-                        document.body.appendChild(el);
-                        utils.trigger(el, 'click');
-                        easemobim.textarea.blur();
-                    }
-                    break;
-                case 'robotList':
-                    message = new Easemob.im.EmMessage('list');
-                    var str = '',
-                        list = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
+			switch ( type ) {
+				case 'txt':
+				case 'face':
+					message = new Easemob.im.EmMessage('txt');
 
-                    if ( list.length > 0 ) {
-                        str = '<div class="em-widget-list-btns">';
-                        for ( var i = 0, l = list.length; i < l; i++ ) {
-                            str += '<button class="em-widget-list-btn bg-hover-color js_robotbtn" data-id="' + list[i].id + '">' + (list[i].name || list[i]) + '</button>';
-                        }
-                        str += '</div>';
-                    }
-                    message.set({value: msg.ext.msgtype.choice.title, list: str});
-                    break;
-                case 'robotTransfer':
-                    message = new Easemob.im.EmMessage('list');
-                    var ctrlArgs = msg.ext.weichat.ctrlArgs;
-                    var title = msg.data
-                        || (msg.bodies && msg.bodies[0] && msg.bodies[0].msg)
-                        || msg.ext.weichat.ctrlArgs.label;
+					message.set({value: isHistory ? msg.data : me.getSafeTextValue(msg)});
+					break;
+				case 'img':
+					message = new Easemob.im.EmMessage('img');
+
+					if ( msg.url ) {
+						message.set({file: {url: msg.url}});
+					} else {
+						try {
+							message.set({file: {url: msg.bodies[0].url}});
+						} catch ( e ) {}
+					}
+					break;
+				case 'file':
+					message = new Easemob.im.EmMessage('file');
+					if ( msg.url ) {
+						message.set({file: {url: msg.url, filename: msg.filename}});
+					} else {
+						try {
+							message.set({file: {url: msg.bodies[0].url, filename: msg.bodies[0].filename}});
+						} catch ( e ) {}
+					}
+					break;
+				case 'satisfactionEvaluation':
+					message = new Easemob.im.EmMessage('list');
+					message.set({value: '请对我的服务做出评价', list: ['\
+						<div class="em-widget-list-btns">\
+							<button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '"\
+							 data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
+						</div>']});
+					if(!isHistory){
+						// 创建隐藏的立即评价按钮，并触发click事件
+						var el = document.createElement('BUTTON');
+						el.className = 'js_satisfybtn';
+						el.style.display = 'none';
+						el.setAttribute('data-inviteid', msg.ext.weichat.ctrlArgs.inviteId);
+						el.setAttribute('data-servicesessionid', msg.ext.weichat.ctrlArgs.serviceSessionId);
+						document.body.appendChild(el);
+						utils.trigger(el, 'click');
+						easemobim.textarea.blur();
+					}
+					break;
+				case 'robotList':
+					message = new Easemob.im.EmMessage('list');
+					var str = '',
+						list = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
+
+					if ( list.length > 0 ) {
+						str = '<div class="em-widget-list-btns">';
+						for ( var i = 0, l = list.length; i < l; i++ ) {
+							str += '<button class="em-widget-list-btn bg-hover-color js_robotbtn" data-id="' + list[i].id + '">' + (list[i].name || list[i]) + '</button>';
+						}
+						str += '</div>';
+					}
+					message.set({value: msg.ext.msgtype.choice.title, list: str});
+					break;
+				case 'robotTransfer':
+					message = new Easemob.im.EmMessage('list');
+					var ctrlArgs = msg.ext.weichat.ctrlArgs;
+					var title = msg.data
+						|| (msg.bodies && msg.bodies[0] && msg.bodies[0].msg)
+						|| msg.ext.weichat.ctrlArgs.label;
 /*
-    msg.data 用于处理即时消息
-    msg.bodies[0].msg 用于处理历史消息
-    msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
-    此处修改为了修复取出历史消息时，转人工评价标题改变的bug
-    还有待测试其他带有转人工的情况
+	msg.data 用于处理即时消息
+	msg.bodies[0].msg 用于处理历史消息
+	msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
+	此处修改为了修复取出历史消息时，转人工评价标题改变的bug
+	还有待测试其他带有转人工的情况
 */
-                    var str = [
-                        '<div class="em-widget-list-btns">',
-                            '<button class="em-widget-list-btn bg-hover-color js_robotTransferBtn" ',
-                            'data-sessionid="' + ctrlArgs.serviceSessionId + '" ', 
-                            'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
-                        '</div>'
-                    ].join('');
+					var str = [
+						'<div class="em-widget-list-btns">',
+							'<button class="em-widget-list-btn bg-hover-color js_robotTransferBtn" ',
+							'data-sessionid="' + ctrlArgs.serviceSessionId + '" ', 
+							'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
+						'</div>'
+					].join('');
 
-                    message.set({value: title, list: str});
-                    break;
-                // case 'liveStreamInvitation':
-                //     message = new Easemob.im.EmMessage('txt');
-                //     message.set({value: msg.ext.msgtype.liveStreamInvitation.msg});
-                //     break;
-                default:
-                    break;
-            }
-            
-            if ( !isHistory ) {
+					message.set({value: title, list: str});
+					break;
+				// case 'liveStreamInvitation':
+				//	 message = new Easemob.im.EmMessage('txt');
+				//	 message.set({value: msg.ext.msgtype.liveStreamInvitation.msg});
+				//	 break;
+				default:
+					break;
+			}
+			
+			if ( !isHistory ) {
 
-                if ( msg.ext && msg.ext.weichat ) {
-                    if (msg.ext.weichat.event){
-                        switch(msg.ext.weichat.event.eventName){
-                            case 'ServiceSessionTransferedEvent':
-                            // 转接到客服
-                                me.handleEventStatus('transferd', msg.ext.weichat.event.eventObj);
-                                break;
-                            case 'ServiceSessionTransferedToAgentQueueEvent':
-                            // 转人工或者转到技能组
-                                me.handleEventStatus('transfering', msg.ext.weichat.event.eventObj);
-                                break;
-                            // 会话结束
-                            case 'ServiceSessionClosedEvent':
-                                me.session = null;
-                                me.sessionSent = false;
-                                config.agentUserId = null;
-                                me.stopGettingAgentStatus();
-                                // 还原企业头像和企业名称
-                                me.setAgentProfile({
-                                    tenantName: config.defaultAgentName,
-                                    avatar: config.tenantAvatar
-                                });
-                                // 去掉坐席状态
-                                me.clearAgentStatus();
-                                me.handleEventStatus('close');
-                                utils.isTop || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
-                                break;
-                            case 'ServiceSessionOpenedEvent':
-                                //fake
-                                me.agentCount < 1 && (me.agentCount = 1);
-                                me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
-                                break;
-                            case 'ServiceSessionCreatedEvent':
-                                me.handleEventStatus('create');
-                                break;
-                            default:
-                                me.handleEventStatus('reply', msg.ext.weichat.agent);
-                                break;
-                        }
-                    }
-                    else{
-                        me.handleEventStatus('reply', msg.ext.weichat.agent);
-                    }
-                }
-
-
-                //空消息不显示
-                if ( !message || !message.value ) {
-                    return;
-                }
-
-                if ( !msg.noprompt ) {
-                    me.messagePrompt(message);
-                }
-                me.appendDate(new Date().getTime(), msg.from);
-                me.resetSpan();
-                me.appendMsg(msg.from, msg.to, message);
-                me.scrollBottom(50);
-
-                // 收消息回调
-                if ( config.hasReceiveCallback && !utils.isTop) {
-                    easemobim.EVENTS.ONMESSAGE.data = {
-                        from: msg.from,
-                        to: msg.to,
-                        message: message
-                    };
-                    try {
-                        transfer.send(easemobim.EVENTS.ONMESSAGE, window.transfer.to);
-                    } catch (e) {}
-                }
-            } else {
-                if ( !message || !message.value ) {
-                    return;
-                }
-                me.appendMsg(msg.from, msg.to, message, true);
-            }
-        },
-
-        listen: function () {
-                
-            me.conn.listen({
-                onOpened: function ( info ) {
-                    
-                    _clearFirstTS();
-
-                    me.reOpen && clearTimeout(me.reOpen);
-                    me.token = info.accessToken;
-                    me.conn.setPresence();
-
-                    if ( easemobim.textarea.value ) {
-                        utils.removeClass(easemobim.sendBtn, 'disabled');
-                    }
-                    utils.html(easemobim.sendBtn, '发送');
-
-                    me.handleReady(info);
-                }
-                , onTextMessage: function ( message ) {
-                    me.receiveMsg(message, 'txt');
-                }
-                , onEmotionMessage: function ( message ) {
-                    me.receiveMsg(message, 'face');
-                }
-                , onPictureMessage: function ( message ) {
-                    me.receiveMsg(message, 'img');
-                }
-                , onFileMessage: function ( message ) {
-                    me.receiveMsg(message, 'file');
-                }
-                , onCmdMessage: function ( message ) {
-                    me.receiveMsg(message, 'cmd');
-                }
-                , onOnline: function () {
-                    utils.isMobile && me.open();
-                }
-                , onOffline: function () {
-                    utils.isMobile && me.conn.close();
-                }
-                , onError: function ( e ) {
-                    if ( e.reconnect ) {
-                        me.open();
-                    } else if ( e.type === 2 ) {
-                        me.reOpen || (me.reOpen = setTimeout(function () {
-                            me.open();
-                        }, 2000));
-                    } else {
-                        //me.conn.stopHeartBeat(me.conn);
-                        typeof config.onerror === 'function' && config.onerror(e);
-                    }
-                }
-            });
-        },
-
-        handleHistory: function ( chatHistory ) {
-
-            if ( chatHistory.length > 0 ) {
-                utils.each(chatHistory, function ( k, v ) {
-                    var msgBody = v.body,
-                        msg,
-                        isSelf = msgBody.from === config.user.username;
-
-                    if ( msgBody && msgBody.bodies.length > 0 ) {
-                        msg = msgBody.bodies[0];
-                        if ( msgBody.from === config.user.username ) {
-                            //visitors' msg
-                            switch ( msg.type ) {
-                                case 'img':
-                                    msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
-                                    msg.to = msgBody.to;
-                                    me.sendImgMsg(msg, true);
-                                    break;
-                                case 'file':
-                                    msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
-                                    msg.to = msgBody.to;
-                                    me.sendFileMsg(msg, true);
-                                    break;
-                                case 'txt':
-                                    me.sendTextMsg(msg.msg, true);
-                                    break;
-                            }
-                        } else {
-                            //agents' msg
-
-                            //判断是否为满意度调查的消息
-                            if ( msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType && msgBody.ext.weichat.ctrlType == 'inviteEnquiry'
-                            //机器人自定义菜单
-                            || msgBody.ext && msgBody.ext.msgtype && msgBody.ext.msgtype.choice
-                            //机器人转人工
-                            || msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType === 'TransferToKfHint' ) {
-                                me.receiveMsg(msgBody, '', true);
-                            } else {
-                                var data = msg.msg;
-
-                                msg.type === 'txt' && (data = me.getSafeTextValue(msgBody));
-
-                                me.receiveMsg({
-                                    msgId: v.msgId,
-                                    data: data,
-                                    filename: msg.filename,
-                                    url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
-                                    from: msgBody.from,
-                                    to: msgBody.to
-                                }, msg.type, true);
-                            }
-                        }
-
-                        if ( msg.type === 'cmd'//1.cmd消息 
-                        || (msg.type === 'txt' && !msg.msg)//2.空文本消息
-                        || receiveMsgSite.get(v.msgId) ) {//3.重复消息
-                            
-                        } else {
-                            me.appendDate(v.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
-                        }
-                    }
-                });
-            }
-        }
-    };
+				if ( msg.ext && msg.ext.weichat ) {
+					if (msg.ext.weichat.event){
+						switch(msg.ext.weichat.event.eventName){
+							case 'ServiceSessionTransferedEvent':
+							// 转接到客服
+								me.handleEventStatus('transferd', msg.ext.weichat.event.eventObj);
+								break;
+							case 'ServiceSessionTransferedToAgentQueueEvent':
+							// 转人工或者转到技能组
+								me.handleEventStatus('transfering', msg.ext.weichat.event.eventObj);
+								break;
+							// 会话结束
+							case 'ServiceSessionClosedEvent':
+								me.session = null;
+								me.sessionSent = false;
+								config.agentUserId = null;
+								me.stopGettingAgentStatus();
+								// 还原企业头像和企业名称
+								me.setAgentProfile({
+									tenantName: config.defaultAgentName,
+									avatar: config.tenantAvatar
+								});
+								// 去掉坐席状态
+								me.clearAgentStatus();
+								me.handleEventStatus('close');
+								utils.isTop || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
+								break;
+							case 'ServiceSessionOpenedEvent':
+								//fake
+								me.agentCount < 1 && (me.agentCount = 1);
+								me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
+								break;
+							case 'ServiceSessionCreatedEvent':
+								me.handleEventStatus('create');
+								break;
+							default:
+								me.handleEventStatus('reply', msg.ext.weichat.agent);
+								break;
+						}
+					}
+					else{
+						me.handleEventStatus('reply', msg.ext.weichat.agent);
+					}
+				}
 
 
-    //收消息轮训通道
-    var _receiveMsgChannle = function () {
+				//空消息不显示
+				if ( !message || !message.value ) {
+					return;
+				}
 
-        if ( config.offDuty ) {
-            return;
-        }
+				if ( !msg.noprompt ) {
+					me.messagePrompt(message);
+				}
+				me.appendDate(new Date().getTime(), msg.from);
+				me.resetSpan();
+				me.appendMsg(msg.from, msg.to, message);
+				me.scrollBottom(50);
 
-        setInterval(function () {
-            api('receiveMsgChannel', {
-                orgName: config.orgName,
-                appName: config.appName,
-                easemobId: config.toUser,
-                tenantId: config.tenantId,
-                visitorEasemobId: config.user.username
-            }, function ( msg ) {
+				// 收消息回调
+				if ( config.hasReceiveCallback && !utils.isTop) {
+					easemobim.EVENTS.ONMESSAGE.data = {
+						from: msg.from,
+						to: msg.to,
+						message: message
+					};
+					try {
+						transfer.send(easemobim.EVENTS.ONMESSAGE, window.transfer.to);
+					} catch (e) {}
+				}
+			} else {
+				if ( !message || !message.value ) {
+					return;
+				}
+				me.appendMsg(msg.from, msg.to, message, true);
+			}
+		},
 
-                //处理收消息
-                if ( msg && msg.data.status === 'OK' ) {
-                    for ( var i = 0, l = msg.data.entities.length; i < l; i++ ) {
-                        try {
-                            _obj.handleReceive(msg.data.entities[i], msg.data.entities[i].bodies[0].type, false);
-                        } catch ( e ) {}
-                    }
-                }
-            });           
-        }, RECEIVETIMER);
-    };
+		listen: function () {
+				
+			me.conn.listen({
+				onOpened: function ( info ) {
+					
+					_clearFirstTS();
 
-    //发消息通道
-    var _sendMsgChannle = function ( msg, count ) {
-        var count = count === 0 ? 0 : (count || MAXRETRY);
-        var id = msg.id;
+					me.reOpen && clearTimeout(me.reOpen);
+					me.token = info.accessToken;
+					me.conn.setPresence();
 
-        api('sendMsgChannel', {
-            from: config.user.username,
-            to: config.toUser,
-            tenantId: config.tenantId,
-            bodies: [{
-                type: 'txt',
-                msg: msg.value,
-            }],
-            ext: msg.body ? msg.body.ext : null,
-            orgName: config.orgName,
-            appName: config.appName,
-            originType: 'webim'
-        }, function () {
-            //发送成功清除
-            _clearTS(id);
-        }, function () {
-            //失败继续重试
-            if ( count > 0 ) {
-                _sendMsgChannle(msg, --count);
-            } else {
-                utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-                utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
-            }
-        });
-    };
+					if ( easemobim.textarea.value ) {
+						utils.removeClass(easemobim.sendBtn, 'disabled');
+					}
+					utils.html(easemobim.sendBtn, '发送');
 
-    //消息发送成功，清除timer
-    var _clearTS = function ( id ) {
+					me.handleReady(info);
+				}
+				, onTextMessage: function ( message ) {
+					me.receiveMsg(message, 'txt');
+				}
+				, onEmotionMessage: function ( message ) {
+					me.receiveMsg(message, 'face');
+				}
+				, onPictureMessage: function ( message ) {
+					me.receiveMsg(message, 'img');
+				}
+				, onFileMessage: function ( message ) {
+					me.receiveMsg(message, 'file');
+				}
+				, onCmdMessage: function ( message ) {
+					me.receiveMsg(message, 'cmd');
+				}
+				, onOnline: function () {
+					utils.isMobile && me.open();
+				}
+				, onOffline: function () {
+					utils.isMobile && me.conn.close();
+				}
+				, onError: function ( e ) {
+					if ( e.reconnect ) {
+						me.open();
+					} else if ( e.type === 2 ) {
+						me.reOpen || (me.reOpen = setTimeout(function () {
+							me.open();
+						}, 2000));
+					} else {
+						//me.conn.stopHeartBeat(me.conn);
+						typeof config.onerror === 'function' && config.onerror(e);
+					}
+				}
+			});
+		},
 
-        clearTimeout(ackTS.get(id));
-        ackTS.remove(id);
+		handleHistory: function ( chatHistory ) {
 
-        utils.$Remove(utils.$Dom(id + '_loading'));
-        utils.$Remove(utils.$Dom(id + '_failed'));
-        
-        if ( sendMsgSite.get(id) ) {
-            me.handleEventStatus(null, null, sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服');
-        }
+			if ( chatHistory.length > 0 ) {
+				utils.each(chatHistory, function ( k, v ) {
+					var msgBody = v.body,
+						msg,
+						isSelf = msgBody.from === config.user.username;
 
-        sendMsgSite.remove(id);
-    };
+					if ( msgBody && msgBody.bodies.length > 0 ) {
+						msg = msgBody.bodies[0];
+						if ( msgBody.from === config.user.username ) {
+							//visitors' msg
+							switch ( msg.type ) {
+								case 'img':
+									msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
+									msg.to = msgBody.to;
+									me.sendImgMsg(msg, true);
+									break;
+								case 'file':
+									msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
+									msg.to = msgBody.to;
+									me.sendFileMsg(msg, true);
+									break;
+								case 'txt':
+									me.sendTextMsg(msg.msg, true);
+									break;
+							}
+						} else {
+							//agents' msg
 
-    //30s内连上xmpp后清除timer，暂不开启api通道发送消息
-    var _clearFirstTS = function () {
-        clearTimeout(firstTS);
-    }
+							//判断是否为满意度调查的消息
+							if ( msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType && msgBody.ext.weichat.ctrlType == 'inviteEnquiry'
+							//机器人自定义菜单
+							|| msgBody.ext && msgBody.ext.msgtype && msgBody.ext.msgtype.choice
+							//机器人转人工
+							|| msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType === 'TransferToKfHint' ) {
+								me.receiveMsg(msgBody, '', true);
+							} else {
+								var data = msg.msg;
 
-    //监听ack，超时则开启api通道, 发消息时调用
-    var _detectSendMsgByApi = function ( id ) {
+								msg.type === 'txt' && (data = me.getSafeTextValue(msgBody));
 
-        ackTS.set(
-            id,
-            setTimeout(function () {
-                //30s没收到ack使用api发送
-                _sendMsgChannle(sendMsgSite.get(id));
-            }, SENDTIMER)
-        );
-    };
+								me.receiveMsg({
+									msgId: v.msgId,
+									data: data,
+									filename: msg.filename,
+									url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
+									from: msgBody.from,
+									to: msgBody.to
+								}, msg.type, true);
+							}
+						}
+
+						if ( msg.type === 'cmd'//1.cmd消息 
+						|| (msg.type === 'txt' && !msg.msg)//2.空文本消息
+						|| receiveMsgSite.get(v.msgId) ) {//3.重复消息
+							
+						} else {
+							me.appendDate(v.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
+						}
+					}
+				});
+			}
+		}
+	};
 
 
-    firstTS = setTimeout(function () {
+	//收消息轮训通道
+	var _receiveMsgChannle = function () {
 
-        if ( easemobim.textarea.value ) {
-            utils.removeClass(easemobim.sendBtn, 'disabled');
-        }
-        utils.html(easemobim.sendBtn, '发送');
+		if ( config.offDuty ) {
+			return;
+		}
 
-        chat.handleReady();
-    }, INITTIMER);
-    
-    //收消息轮训通道常驻
-    _receiveMsgChannle();
+		setInterval(function () {
+			api('receiveMsgChannel', {
+				orgName: config.orgName,
+				appName: config.appName,
+				easemobId: config.toUser,
+				tenantId: config.tenantId,
+				visitorEasemobId: config.user.username
+			}, function ( msg ) {
 
-    return _obj;
+				//处理收消息
+				if ( msg && msg.data.status === 'OK' ) {
+					for ( var i = 0, l = msg.data.entities.length; i < l; i++ ) {
+						try {
+							_obj.handleReceive(msg.data.entities[i], msg.data.entities[i].bodies[0].type, false);
+						} catch ( e ) {}
+					}
+				}
+			});		   
+		}, RECEIVETIMER);
+	};
+
+	//发消息通道
+	var _sendMsgChannle = function ( msg, count ) {
+		var count = count === 0 ? 0 : (count || MAXRETRY);
+		var id = msg.id;
+
+		api('sendMsgChannel', {
+			from: config.user.username,
+			to: config.toUser,
+			tenantId: config.tenantId,
+			bodies: [{
+				type: 'txt',
+				msg: msg.value,
+			}],
+			ext: msg.body ? msg.body.ext : null,
+			orgName: config.orgName,
+			appName: config.appName,
+			originType: 'webim'
+		}, function () {
+			//发送成功清除
+			_clearTS(id);
+		}, function () {
+			//失败继续重试
+			if ( count > 0 ) {
+				_sendMsgChannle(msg, --count);
+			} else {
+				utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+				utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
+			}
+		});
+	};
+
+	//消息发送成功，清除timer
+	var _clearTS = function ( id ) {
+
+		clearTimeout(ackTS.get(id));
+		ackTS.remove(id);
+
+		utils.$Remove(utils.$Dom(id + '_loading'));
+		utils.$Remove(utils.$Dom(id + '_failed'));
+		
+		if ( sendMsgSite.get(id) ) {
+			me.handleEventStatus(null, null, sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服');
+		}
+
+		sendMsgSite.remove(id);
+	};
+
+	//30s内连上xmpp后清除timer，暂不开启api通道发送消息
+	var _clearFirstTS = function () {
+		clearTimeout(firstTS);
+	}
+
+	//监听ack，超时则开启api通道, 发消息时调用
+	var _detectSendMsgByApi = function ( id ) {
+
+		ackTS.set(
+			id,
+			setTimeout(function () {
+				//30s没收到ack使用api发送
+				_sendMsgChannle(sendMsgSite.get(id));
+			}, SENDTIMER)
+		);
+	};
+
+
+	firstTS = setTimeout(function () {
+
+		if ( easemobim.textarea.value ) {
+			utils.removeClass(easemobim.sendBtn, 'disabled');
+		}
+		utils.html(easemobim.sendBtn, '发送');
+
+		chat.handleReady();
+	}, INITTIMER);
+	
+	//收消息轮训通道常驻
+	_receiveMsgChannle();
+
+	return _obj;
 };

@@ -6,98 +6,98 @@
 		_startPosition = {
 			x: 0,
 			y: 0
-        };
+		};
 
-    var _move = function ( ev ) {
+	var _move = function ( ev ) {
 
-        var me = this,
+		var me = this,
 			e = window.event || ev,
-            _width = document.documentElement.clientWidth,
-            _height = document.documentElement.clientHeight,
-            _x = _width - e.clientX - me.rect.width + _startPosition.x,
-            _y = _height - e.clientY - me.rect.height + _startPosition.y;
-        
-        if ( e.clientX - _startPosition.x <= 0 ) {//left
-            _x = _width - me.rect.width;
-        } else if ( e.clientX + me.rect.width - _startPosition.x >= _width ) {//right
-            _x = 0;
-        }
-        if ( e.clientY - _startPosition.y <= 0 ) {//top
-            _y = _height - me.rect.height;
-        } else if ( e.clientY + me.rect.height - _startPosition.y >= _height ) {//bottom
-            _y = 0;
-        }
-        me.shadow.style.left = 'auto';
-        me.shadow.style.top = 'auto';
-        me.shadow.style.right = _x + 'px';
-        me.shadow.style.bottom = _y + 'px';
+			_width = document.documentElement.clientWidth,
+			_height = document.documentElement.clientHeight,
+			_x = _width - e.clientX - me.rect.width + _startPosition.x,
+			_y = _height - e.clientY - me.rect.height + _startPosition.y;
+		
+		if ( e.clientX - _startPosition.x <= 0 ) {//left
+			_x = _width - me.rect.width;
+		} else if ( e.clientX + me.rect.width - _startPosition.x >= _width ) {//right
+			_x = 0;
+		}
+		if ( e.clientY - _startPosition.y <= 0 ) {//top
+			_y = _height - me.rect.height;
+		} else if ( e.clientY + me.rect.height - _startPosition.y >= _height ) {//bottom
+			_y = 0;
+		}
+		me.shadow.style.left = 'auto';
+		me.shadow.style.top = 'auto';
+		me.shadow.style.right = _x + 'px';
+		me.shadow.style.bottom = _y + 'px';
 
-        me.position = {
-            x: _x
-            , y: _y
-        };
-        
-        clearTimeout(_st);
-        _st = setTimeout(function () {
+		me.position = {
+			x: _x
+			, y: _y
+		};
+		
+		clearTimeout(_st);
+		_st = setTimeout(function () {
 			_moveend.call(me);
 		}, 500);
-    };
+	};
 
-    var _moveend = function () {
-        utils.remove(document, 'mousemove', this.moveEv);
-        this.iframe.style.left = 'auto';
-        this.iframe.style.top = 'auto';
-        this.iframe.style.right = this.position.x + 'px';
-        this.iframe.style.bottom = this.position.y + 'px';
-        this.shadow.style.left = 'auto';
-        this.shadow.style.top = 'auto';
-        this.shadow.style.right = this.position.x + 'px';
-        this.shadow.style.bottom = this.position.y + 'px';
-        this.shadow.style.display = 'none';
-        this.iframe.style.display = 'block';
-    };
-       
-    var resize = function () {
+	var _moveend = function () {
+		utils.remove(document, 'mousemove', this.moveEv);
+		this.iframe.style.left = 'auto';
+		this.iframe.style.top = 'auto';
+		this.iframe.style.right = this.position.x + 'px';
+		this.iframe.style.bottom = this.position.y + 'px';
+		this.shadow.style.left = 'auto';
+		this.shadow.style.top = 'auto';
+		this.shadow.style.right = this.position.x + 'px';
+		this.shadow.style.bottom = this.position.y + 'px';
+		this.shadow.style.display = 'none';
+		this.iframe.style.display = 'block';
+	};
+	   
+	var resize = function () {
 		var me = this;
 
-        utils.on(window, 'resize', function () {
-            if ( !me.rect || !me.rect.width ) {
-                return;
-            }
+		utils.on(window, 'resize', function () {
+			if ( !me.rect || !me.rect.width ) {
+				return;
+			}
 
-            var _width = document.documentElement.clientWidth,
-                _height = document.documentElement.clientHeight,
-                _right = Number(me.iframe.style.right.slice(0, -2)),
-                _bottom = Number(me.iframe.style.bottom.slice(0, -2));
-            
-            //width
-            if ( _width < me.rect.width ) {
-                me.iframe.style.left = 'auto';
-                me.iframe.style.right = 0;
-                me.shadow.style.left = 'auto';
-                me.shadow.style.right = 0;
-            } else if ( _width - _right < me.rect.width ) {
-                me.iframe.style.right = _width - me.rect.width + 'px';
-                me.iframe.style.left = 0;
-                me.shadow.style.right = _width - me.rect.width + 'px';
-                me.shadow.style.left = 0;
-            } else {
-                me.iframe.style.left = 'auto';
-                me.shadow.style.left = 'auto';
-            }
+			var _width = document.documentElement.clientWidth,
+				_height = document.documentElement.clientHeight,
+				_right = Number(me.iframe.style.right.slice(0, -2)),
+				_bottom = Number(me.iframe.style.bottom.slice(0, -2));
+			
+			//width
+			if ( _width < me.rect.width ) {
+				me.iframe.style.left = 'auto';
+				me.iframe.style.right = 0;
+				me.shadow.style.left = 'auto';
+				me.shadow.style.right = 0;
+			} else if ( _width - _right < me.rect.width ) {
+				me.iframe.style.right = _width - me.rect.width + 'px';
+				me.iframe.style.left = 0;
+				me.shadow.style.right = _width - me.rect.width + 'px';
+				me.shadow.style.left = 0;
+			} else {
+				me.iframe.style.left = 'auto';
+				me.shadow.style.left = 'auto';
+			}
 
-            //height
-            if ( _height < me.rect.height ) {
-                me.iframe.style.top = 'auto';
-                me.iframe.style.bottom = 0;
-            } else if ( _height - _bottom < me.rect.height ) {
-                me.iframe.style.bottom = _height - me.rect.height + 'px';
-                me.iframe.style.top = 0;
-            } else {
-                me.iframe.style.top = 'auto';
-            }
-        });
-    };
+			//height
+			if ( _height < me.rect.height ) {
+				me.iframe.style.top = 'auto';
+				me.iframe.style.bottom = 0;
+			} else if ( _height - _bottom < me.rect.height ) {
+				me.iframe.style.bottom = _height - me.rect.height + 'px';
+				me.iframe.style.top = 0;
+			} else {
+				me.iframe.style.top = 'auto';
+			}
+		});
+	};
 
 	var _ready = function () {
 		var me = this;
@@ -115,17 +115,17 @@
 
 		me.config.hasReceiveCallback = typeof me.config.onmessage === 'function';
 		me.onsessionclosedSt = 0, me.onreadySt = 0;
-        me.config.parentId = me.iframe.id;
+		me.config.parentId = me.iframe.id;
 
 		me.message
 		.send(me.config)
 		.listen(function ( msg ) {
 
-            if ( msg.to !== me.iframe.id ) { return; }
+			if ( msg.to !== me.iframe.id ) { return; }
 
 			switch ( msg.event ) {
 				case easemobim.EVENTS.ONREADY.event://onready
-                    if ( typeof me.config.onready === 'function' ) {
+					if ( typeof me.config.onready === 'function' ) {
 						clearTimeout(me.onreadySt);
 						me.onreadySt = setTimeout(function () {
 							me.config.onready();
@@ -223,12 +223,12 @@
 		this.shadow = document.createElement('div');
 		this.config = utils.copy(config);
 
-        this.show = false;
+		this.show = false;
 
 		if ( !utils.isMobile ) {
-            document.body.appendChild(this.shadow);
-            document.body.appendChild(this.iframe);
-        }
+			document.body.appendChild(this.shadow);
+			document.body.appendChild(this.iframe);
+		}
 
 		var me = this;
 		if ( me.iframe.readyState ) {
@@ -252,8 +252,8 @@
 
 		this.config = utils.copy(config || this.config);
 
-        // todo: 写成自动配置
-        var destUrl = {
+		// todo: 写成自动配置
+		var destUrl = {
 			tenantId: this.config.tenantId,
 			hide: this.config.hide,
 			sat: this.config.visitorSatisfactionEvaluate,
@@ -261,9 +261,9 @@
 			hideKeyboard: this.config.hideKeyboard,
 			eventCollector: this.config.eventCollector,
 			resources: this.config.resources
-        };
+		};
 
-        // todo: 写成自动配置
+		// todo: 写成自动配置
 		this.config.agentName && (destUrl.agentName = this.config.agentName);
 		this.config.emgroup && (destUrl.emgroup = this.config.emgroup);
 		this.config.to && (destUrl.to = this.config.to);
@@ -340,10 +340,10 @@
 			this.iframe.style.width = '100%';
 			this.iframe.style.right = '0';
 
-            var emconfig = {};
-            emconfig.domain = this.config.domain;
-            emconfig.path = this.config.path;
-            emconfig.staticPath = this.config.staticPath;
+			var emconfig = {};
+			emconfig.domain = this.config.domain;
+			emconfig.path = this.config.path;
+			emconfig.staticPath = this.config.staticPath;
 			this.config.user && (emconfig.user = this.config.user);
 			utils.setStore(
 				'emconfig' + this.config.tenantId,
@@ -360,9 +360,9 @@
 	Iframe.prototype.open = function () {
 		var iframe = this.iframe;
 
-        if ( this.show ) { return; }
+		if ( this.show ) { return; }
 
-        this.show = true;
+		this.show = true;
 		if ( utils.isMobile ) {
 			iframe.style.width = '100%';
 			iframe.style.height = '100%';
@@ -388,11 +388,11 @@
 
 		var iframe = this.iframe;
 
-        if ( this.show === false ) { return; }
+		if ( this.show === false ) { return; }
 
-        this.show = false;
+		this.show = false;
 
-        clearTimeout(_st);
+		clearTimeout(_st);
 		iframe.style.boxShadow = 'none';
 		iframe.style.borderRadius = '4px;';
 		iframe.style.left = 'auto';

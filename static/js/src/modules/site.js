@@ -18,11 +18,11 @@
 		}
 	};
 
-    site.prototype.remove = function ( key ) {
-        if ( typeof this.list[key] !== 'undefined' ) {
+	site.prototype.remove = function ( key ) {
+		if ( typeof this.list[key] !== 'undefined' ) {
 			delete this.list[key];
 		}
-    };
+	};
 
 	easemobim.site = site;
 }());
