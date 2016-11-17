@@ -1,14 +1,18 @@
 var debug = false;
-var version = '43.11';
+const version = '43.11';
 
-var gulp = require('gulp');
-var minifycss = require('gulp-minify-css');
-var jshint = require('gulp-jshint');
-var uglify = require('gulp-uglify');
-var concat = require('gulp-concat');
-var clean = require('gulp-clean');
-var minifyHtml = require("gulp-minify-html");
-var template = require('gulp-template');
+const gulp = require('gulp');
+const postcss = require('gulp-postcss');
+const sass = require('gulp-sass');
+const cssnano = require('cssnano');
+const autoprefixer = require('autoprefixer');
+const minifycss = require('gulp-minify-css');
+const jshint = require('gulp-jshint');
+const uglify = require('gulp-uglify');
+const concat = require('gulp-concat');
+const clean = require('gulp-clean');
+const minifyHtml = require("gulp-minify-html");
+const template = require('gulp-template');
 
 //clean
 gulp.task('clean', function() {
@@ -34,6 +38,7 @@ gulp.task('minifyHtml', function () {
 });
 
 
+/*
 //cssmin
 gulp.task('cssmin', function() {
 	gulp.src([
@@ -50,6 +55,39 @@ gulp.task('cssmin', function() {
 	.pipe(concat('im.css'))
 	.pipe(template({ v: version }))
 	.pipe(minifycss({compatibility: 'ie8'}))
+	.pipe(gulp.dest('static/css/'));
+});
+*/
+
+//postcss
+gulp.task('cssmin', function() {
+	gulp.src([
+		'static/css/src/global.css',
+		'static/css/src/icon.css',
+		'static/css/src/header.css',
+		'static/css/src/body.css',
+		'static/css/src/chat.css',
+		'static/css/src/send.css',
+		'static/css/src/theme.css',
+		'static/css/src/ui.css',
+		'static/css/src/mobile.css',
+	])
+	.pipe(concat('im.css'))
+	.pipe(template({ v: version }))
+	.pipe(sass())
+	.pipe(postcss([
+		autoprefixer({
+			browsers: ['ie >= 8', 'ff >= 10', 'Chrome >= 15', 'iOS >= 7', 'Android >= 4.4.4']
+		}),
+		cssnano({
+			discardComments: {
+				removeAll: true,
+			},
+			mergeRules: false,
+			zindex: false,
+			reduceIdents: false,
+		}),
+	]))
 	.pipe(gulp.dest('static/css/'));
 });
 
@@ -148,7 +186,29 @@ gulp.task('dev', function(){
 
 gulp.task('watch', function() {
 	gulp.start('dev');
-	gulp.watch(['static/js/src/*.js', 'static/js/src/*/*.js'], ['dev']);
+	gulp.watch(['static/js/src/*.js', 'static/js/src/*/*.js'], ['combineJs']);
 	gulp.watch(['static/css/src/*.css'], ['cssmin']);
 });
 
+// 测试postcss
+gulp.task('test', () => {
+	gulp.src(['./weixin.scss'])
+	.pipe(sass())
+	.pipe(
+		postcss([
+			autoprefixer({
+				browsers: ['ie >= 8', 'ff >= 10', 'Chrome >= 15', 'iOS >= 7', 'Android >= 4.4.4']
+			}),
+			cssnano({
+				discardComments: {
+					removeAll: true,
+				},
+				mergeRules: false,
+				zindex: false,
+				reduceIdents: false,
+			}),
+		])
+	)
+	.pipe(concat('out.css'))
+	.pipe(gulp.dest('.'));
+})

@@ -129,8 +129,25 @@
 			<i id="em-widgetAgentStatus" class="em-widget-agent-status em-hide"></i>\
 		</div>\
 	</div>\
-	<div class="em-widget-tip"><span class="em-widget-tip-text"></span><a class="em-widget-tip-close" href="javascript:;"></a></div>\
-	<div class="em-widget-video"><video class="main"></video><video class="sub"></video></div>\
+	<div class="em-widget-tip"><span class="em-widget-tip-text"></span><a class="icon-close em-widget-tip-close" href="javascript:;"></a></div>\
+	<div class="em-widget-video">\
+		<div class="prompt-wait">\
+			<span>等待坐席接入...</span>\
+		</div>\
+		<video class="main" autoplay></video>\
+		<div class="sub-win">\
+			<video class="sub" autoplay muted></video>\
+			<span class="btn-minimize icon-minimize"></span>\
+		</div>\
+		<div class="toolbar-dial">\
+			<i class="btn-accept-call hide icon-answer"></i>\
+			<i class="btn-end-call icon-decline"></i>\
+		</div>\
+		<div class="toolbar-control">\
+			<i class="btn-toggle icon-camera"></i>\
+		</div>\
+		<span class="btn-maximize icon-maximize"></span>\
+	</div>\
 	<div id="em-widgetBody" class="em-widgetBody-wrapper"></div>\
 	<div id="EasemobKefuWebimFaceWrapper" class="em-bar-face-wrapper e-face em-hide">\
 		<ul class="em-bar-face-container"></ul>\
@@ -139,7 +156,7 @@
 		<i class="em-bar-face icon-face e-face fg-hover-color" title="表情"></i>\
 		<i class="em-widget-file icon-picture fg-hover-color" id="em-widgetFile" title="图片"></i>\
 		<i class="em-widget-note icon-note em-hide fg-hover-color" id="em-widgetNote" title="留言"></i>\
-		<i class="icon-video fg-hover-color" id="em-video-invite" title="视频通话"></i>\
+		<i class="icon-video fg-hover-color em-video-invite" title="视频通话"></i>\
 		<input id="em-widgetFileInput" type="file" accept="image/*"/>\
 		<textarea class="em-widget-textarea" spellcheck="false"></textarea>\
 		<span id="EasemobKefuWebimSatisfy" class="em-widget-satisfaction em-hide">请对服务做出评价</span>\

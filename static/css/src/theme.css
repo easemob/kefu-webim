@@ -42,13 +42,17 @@ body.theme-3 .bg-hover-color:hover { background-color:#b50e03 }
 body.theme-3 .border-color { border-color: #811916 }
 body.theme-3 .hover-color:hover { background-color:#e92b25 }
 
-/* 鲜美橙汁 */
-body.theme-4 .fg-color,
-body.theme-4 .fg-hover-color:hover { color:#ffa000 }
-body.theme-4 .bg-color,
-body.theme-4 .bg-hover-color:hover { background-color:#ffa000 }
-body.theme-4 .border-color { border-color: #f69000 }
-body.theme-4 .hover-color:hover { background-color:#ffb63b }
+/* 鲜美橙汁 */ /* todo 把主题做成可以生成的 */
+body.theme-4 {
+	.fg-color,
+	.fg-hover-color:hover {
+		color:#ffa000
+	}
+	.bg-color,
+	.bg-hover-color:hover { background-color:#ffa000 }
+	.border-color { border-color: #f69000 }
+	.hover-color:hover { background-color:#ffb63b }
+}
 
 /* 青草田间 */
 body.theme-5 .fg-color,

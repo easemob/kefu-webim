@@ -19,7 +19,7 @@
 
 .icon-B:before { content: "\42"; }
 
-.icon-C:before { content: "\43"; }
+.icon-close:before { content: "\43"; }
 
 .icon-face:before { content: "\44"; }
 
@@ -81,7 +81,7 @@
 .icon-maximize:before,
 .icon-A:before,
 .icon-B:before,
-.icon-C:before,
+.icon-close:before,
 .icon-face:before,
 .icon-E:before,
 .icon-F:before,
@@ -118,7 +118,6 @@
 .em-widgetHeader-keyboard:after,
 .em-widgetHeader-audio:after,
 .em-widgetHeader-silence:after,
-.em-widget-tip-close:after,
 .em-widget-msgcount:after,
 .em-widget-msgcount.mutiCount:after,
 .em-widget-corner:after,
