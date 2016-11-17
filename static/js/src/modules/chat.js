@@ -191,9 +191,7 @@
 				}
 			}
 			, getHistory: function ( notScroll ) {
-				if ( config.offDuty || config.newuser ) {
-					return;
-				}
+				if (config.offDuty) return;
 
 				var me = this,
 					chatWrapper = me.chatWrapper,
@@ -677,14 +675,11 @@
 						utils.addClass(easemobim.send, 'em-widget-send-disable');
 						break;
 					default:// show note
-						if ( easemobim.leaveMessage ) {
-							this.slogan && utils.addClass(this.slogan, 'em-hide');
-							//utils.addClass(easemobim.imBtn.getElementsByTagName('a')[0], 'em-widget-offline-bg');
-							utils.removeClass(easemobim.leaveMessage.dom, 'em-hide');
-							utils.addClass(easemobim.imChatBody, 'em-hide');
-							utils.addClass(easemobim.send, 'em-hide');
-							easemobim.leaveMessage.show(isOffDuty);
-						}
+						this.slogan && utils.addClass(this.slogan, 'em-hide');
+						utils.removeClass(easemobim.leaveMessage.dom, 'em-hide');
+						utils.addClass(easemobim.imChatBody, 'em-hide');
+						utils.addClass(easemobim.send, 'em-hide');
+						easemobim.leaveMessage.show(isOffDuty);
 						break;
 				}
 			}

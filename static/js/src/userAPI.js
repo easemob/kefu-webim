@@ -6,7 +6,7 @@
 	'use strict';
 	var utils = easemobim.utils;
 	easemobim.config = easemobim.config || {};
-	easemobim.version = '<%= v %>';
+	easemobim.version = '<%=WEBIM_PLUGIN_VERSION%>';
 	easemobim.tenants = {};
 
 	var DEFAULT_CONFIG = {
@@ -88,7 +88,7 @@
 	easemobim.bind = function ( config ) {
 		// 防止空参数调用异常
 		config = config || {};
-		config.emgroup = config.emgroup || '';
+		config.emgroup = config.emgroup || easemobim.config.emgroup || '';
 
 		var cacheKeyName = config.tenantId + config.emgroup;
 
@@ -172,7 +172,10 @@
 		(!_config.hide || _config.autoConnect || _config.eventCollector)
 		&& _config.tenantId
 	){
-		iframe = iframe || easemobim.Iframe(_config);
+		var cacheKeyName = config.tenantId + (config.emgroup || '');
+
+		iframe = easemobim.tenants[cacheKeyName] || easemobim.Iframe(_config);
+		easemobim.tenants[cacheKeyName] = iframe;
 		iframe.set(_config, iframe.close);
 	}
 

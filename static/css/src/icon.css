@@ -1,10 +1,10 @@
 @font-face {
 	font-family: "easemobim";
-	src: url('font/iconfont.eot?v=<%= v %>'); /* IE9*/
-	src: url('font/iconfont.eot?v=<%= v %>#iefix') format('embedded-opentype'), /* IE6-IE8 */
-	url('font/iconfont.woff?v=<%= v %>') format('woff'), /* chrome, firefox */
-	url('font/iconfont.ttf?v=<%= v %>') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
-	url('font/iconfont.svg?v=<%= v %>#easemobim') format('svg'); /* iOS 4.1- */
+	src: url('font/iconfont.eot?v=<%=WEBIM_PLUGIN_VERSION%>'); /* IE9*/
+	src: url('font/iconfont.eot?v=<%=WEBIM_PLUGIN_VERSION%>#iefix') format('embedded-opentype'), /* IE6-IE8 */
+	url('font/iconfont.woff?v=<%=WEBIM_PLUGIN_VERSION%>') format('woff'), /* chrome, firefox */
+	url('font/iconfont.ttf?v=<%=WEBIM_PLUGIN_VERSION%>') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+	url('font/iconfont.svg?v=<%=WEBIM_PLUGIN_VERSION%>#easemobim') format('svg'); /* iOS 4.1- */
 }
 
 .icon-camera:before { content: "\63"; }
@@ -23,7 +23,7 @@
 
 .icon-face:before { content: "\44"; }
 
-.icon-E:before { content: "\45"; }
+.icon-easemob:before { content: "\45"; }
 
 .icon-F:before { content: "\46"; }
 
@@ -83,7 +83,7 @@
 .icon-B:before,
 .icon-close:before,
 .icon-face:before,
-.icon-E:before,
+.icon-easemob:before,
 .icon-F:before,
 .icon-G:before,
 .icon-H:before,
@@ -113,7 +113,6 @@
 .em-widget-agent-status.leave:after,
 .em-widget-agent-status.busy:after,
 .em-widget-agent-status.hidden:after,
-.em-widget-pop-bar i:after,
 .em-widgetHeader-min:after,
 .em-widgetHeader-keyboard:after,
 .em-widgetHeader-audio:after,
@@ -131,6 +130,7 @@
 	font-size: 30px;
 	font-style: normal;
 	text-align: center;
+	vertical-align: middle;
 	line-height: 30px;
 	-webkit-text-stroke-width: 0.2px;
 	-webkit-font-smoothing: antialiased;

@@ -1,5 +1,5 @@
 var debug = false;
-const version = '43.11';
+const VERSION = '43.11';
 
 const gulp = require('gulp');
 const postcss = require('gulp-postcss');
@@ -33,7 +33,7 @@ gulp.task('clean', function() {
 gulp.task('minifyHtml', function () {
 	gulp.src('static/tpl/im.html')
 	.pipe(minifyHtml())
-	.pipe(template({ v: version }))
+	.pipe(template({ WEBIM_PLUGIN_VERSION: VERSION }))
 	.pipe(gulp.dest('.'));
 });
 
@@ -53,7 +53,7 @@ gulp.task('cssmin', function() {
 		'static/css/src/mobile.css',
 	])
 	.pipe(concat('im.css'))
-	.pipe(template({ v: version }))
+	.pipe(template({ WEBIM_PLUGIN_VERSION: VERSION }))
 	.pipe(minifycss({compatibility: 'ie8'}))
 	.pipe(gulp.dest('static/css/'));
 });
@@ -73,7 +73,7 @@ gulp.task('cssmin', function() {
 		'static/css/src/mobile.css',
 	])
 	.pipe(concat('im.css'))
-	.pipe(template({ v: version }))
+	.pipe(template({ WEBIM_PLUGIN_VERSION: VERSION }))
 	.pipe(sass())
 	.pipe(postcss([
 		autoprefixer({
@@ -135,7 +135,7 @@ gulp.task('combineJs', function() {
 	])
 	.pipe(concat('main.js'));
 	debug || main.pipe(uglify());
-	main.pipe(template({ v: version }))
+	main.pipe(template({ WEBIM_PLUGIN_VERSION: VERSION }))
 	.pipe(gulp.dest('static/js/'));
 
 	var ejs = gulp.src([
@@ -149,7 +149,7 @@ gulp.task('combineJs', function() {
 	])
 	.pipe(concat('easemob.js'));
 	debug || ejs.pipe(uglify());
-	ejs.pipe(template({ v: version }))
+	ejs.pipe(template({ WEBIM_PLUGIN_VERSION: VERSION }))
 	.pipe(gulp.dest('.'));
 
 	// // 目前未使用此文件，不确定以前是否用到，暂不更新，确认后移除
@@ -188,6 +188,7 @@ gulp.task('watch', function() {
 	gulp.start('dev');
 	gulp.watch(['static/js/src/*.js', 'static/js/src/*/*.js'], ['combineJs']);
 	gulp.watch(['static/css/src/*.css'], ['cssmin']);
+	gulp.watch(['static/tpl/im.html'], ['minifyHtml']);
 });
 
 // 测试postcss

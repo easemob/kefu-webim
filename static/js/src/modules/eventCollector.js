@@ -54,7 +54,12 @@
 		_callback || (_callback = callback);
 		_config || (_config = config);
 
-
+		// 用户点击联系客服弹出的窗口，结束会话后调用的startToReport没有传入参数
+		if(!config){
+			console.log('not config yet.');
+			return;
+		}
+		// todo close的时候也传入user信息，待确认
 		if(_config.user.username){
 			_reportVisitor();
 		}
@@ -66,13 +71,10 @@
 	function _reportGuest(){
 		var guestId = localStorage.getItem('guestId') || utils.uuid();
 
-		transfer.send({
-			event: 'setItem',
-			data: {
-				key: 'guestId',
-				value: guestId
-			}
-		}, window.transfer.to);
+		transfer.send({event: 'setItem', data: {
+			key: 'guestId',
+			value: guestId
+		}}, window.transfer.to);
 		_polling = new Polling(function(){
 			_reportData('GUEST', guestId);
 		}, POLLING_INTERVAL);

@@ -5,7 +5,6 @@
 	var utils = easemobim.utils;
 	var api = easemobim.api;
 	var eventCollector = easemobim.eventCollector;
-	var webim = document.getElementById('EasemobKefuWebim');
 
 	getConfig();
 
@@ -64,7 +63,11 @@
 			initUI(config, initAfterUI);
 		} else {
 			window.transfer = new easemobim.Transfer(null, 'main').listen(function(msg) {
-				if (msg.event) {
+				if (msg.parentId) {
+					window.transfer.to = msg.parentId;
+					initUI(msg, initAfterUI);
+				}
+				else if (msg.event) {
 					// window.chat || initUI(msg, initAfterUI);
 					switch (msg.event) {
 						case easemobim.EVENTS.SHOW.event:
@@ -82,10 +85,7 @@
 						default:
 							break;
 					}
-				} else if (msg.parentId) {
-					window.transfer.to = msg.parentId;
-					initUI(msg, initAfterUI);
-				} else {}
+				}
 			}, ['easemob']);
 		}
 	}
@@ -105,67 +105,19 @@
 			eventCollector.startToReport(config, function(targetUserInfo) {
 				chatEntry.init(config, targetUserInfo);
 			});
-		} else {
+			config.hide = true;
+		}
+		else {
 			// 获取关联，创建访客，调用聊天窗口
 			chatEntry.init(config);
 		}
 	}
 
 	function initUI(config, callback) {
-		//render Tpl
-		webim.innerHTML = '\
-<div id="em-widgetPopBar" class="em-hide">\
-	<a class="em-widget-pop-bar bg-color" href="javascript:;"><i></i><span>联系客服</span></a>\
-	<span class="em-widget-msgcount em-hide"></span>\
-</div>\
-<div id="em-kefu-webim-chat" class="em-widget-wrapper em-hide">\
-	<div id="em-widgetHeader" class="em-widgetHeader-wrapper bg-color border-color">\
-		<div id="em-widgetDrag">\
-			<p></p>\
-			<img class="em-widgetHeader-portrait border-color"/>\
-			<span class="em-widgetHeader-nickname"></span>\
-			<span class="em-header-status-text"></span>\
-			<i id="em-widgetNotem" class="em-widget-notem em-hide"></i>\
-			<i id="em-widgetAgentStatus" class="em-widget-agent-status em-hide"></i>\
-		</div>\
-	</div>\
-	<div class="em-widget-tip"><span class="em-widget-tip-text"></span><a class="icon-close em-widget-tip-close" href="javascript:;"></a></div>\
-	<div class="em-widget-video">\
-		<div class="prompt-wait">\
-			<span>等待坐席接入...</span>\
-		</div>\
-		<video class="main" autoplay></video>\
-		<div class="sub-win">\
-			<video class="sub" autoplay muted></video>\
-			<span class="btn-minimize icon-minimize"></span>\
-		</div>\
-		<div class="toolbar-dial">\
-			<i class="btn-accept-call hide icon-answer"></i>\
-			<i class="btn-end-call icon-decline"></i>\
-		</div>\
-		<div class="toolbar-control">\
-			<i class="btn-toggle icon-camera"></i>\
-		</div>\
-		<span class="btn-maximize icon-maximize"></span>\
-	</div>\
-	<div id="em-widgetBody" class="em-widgetBody-wrapper"></div>\
-	<div id="EasemobKefuWebimFaceWrapper" class="em-bar-face-wrapper e-face em-hide">\
-		<ul class="em-bar-face-container"></ul>\
-	</div>\
-	<div id="em-widgetSend" class="em-widget-send-wrapper">\
-		<i class="em-bar-face icon-face e-face fg-hover-color" title="表情"></i>\
-		<i class="em-widget-file icon-picture fg-hover-color" id="em-widgetFile" title="图片"></i>\
-		<i class="em-widget-note icon-note em-hide fg-hover-color" id="em-widgetNote" title="留言"></i>\
-		<i class="icon-video fg-hover-color em-video-invite" title="视频通话"></i>\
-		<input id="em-widgetFileInput" type="file" accept="image/*"/>\
-		<textarea class="em-widget-textarea" spellcheck="false"></textarea>\
-		<span id="EasemobKefuWebimSatisfy" class="em-widget-satisfaction em-hide">请对服务做出评价</span>\
-		<a href="javascript:;" class="em-widget-send bg-color disabled" id="em-widgetSendBtn">连接中</a>\
-	</div>\
-	<iframe id="EasemobKefuWebimIframe" class="em-hide" src="' + config.domain + '/webim/transfer.html?v=<%= v %>">\
-</div>';
+		var iframe = document.getElementById('EasemobKefuWebimIframe');
 
-		utils.on(utils.$Dom('EasemobKefuWebimIframe'), 'load', function() {
+		iframe.src = config.domain + '/webim/transfer.html?v=<%=WEBIM_PLUGIN_VERSION%>';
+		utils.on(iframe, 'load', function() {
 			easemobim.getData = new easemobim.Transfer('EasemobKefuWebimIframe', 'data');
 			callback(config);
 		});
@@ -184,10 +136,10 @@
 		);
 
 		// 联系客服按钮
-		var $button = utils.$Class('a.em-widget-pop-bar', webim)[0];
+		var $button = utils.$Class('a.em-widget-pop-bar')[0];
 
 		// 设置按钮文字
-		$button.getElementsByTagName('span')[0].innerText = config.buttonText;
+		$button.innerText = config.buttonText;
 
 		// mobile
 		if (utils.isMobile) {
@@ -220,7 +172,7 @@
 				}
 			};
 			script.src = location.protocol + config.staticPath + '/js/swfupload/swfupload.min.js';
-			webim.appendChild(script);
+			document.body.appendChild(script);
 		}
 	}
 
@@ -269,7 +221,7 @@
 
 				if (targetUserInfo) {
 
-					config.toUser = targetUserInfo.agentName;
+					config.toUser = targetUserInfo.agentImName;
 					config.user = {
 						username: targetUserInfo.userName,
 						password: targetUserInfo.userPassword
@@ -278,14 +230,17 @@
 					chat.ready();
 					chat.show();
 					// 发送空的ext消息
-					chat.sendTextMsg('', false, {weichat: {agentUsername: '301@1.cn'}});
+					chat.sendTextMsg('', false, {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}});
 					transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
-					easemobim.EVENTS.CACHEUSER.data = {
-						username: targetUserInfo.userName,
-						group: config.user.emgroup
-					};
-					transfer.send(easemobim.EVENTS.CACHEUSER, window.transfer.to);
-				} else if (config.user.username && (config.user.password || config.user.token)) {
+					transfer.send({
+						event: 'setUser',
+						data: {
+							username: targetUserInfo.userName,
+							group: config.user.emgroup
+						}
+					}, window.transfer.to);
+				}
+				else if (config.user.username && (config.user.password || config.user.token)) {
 					chat.ready();
 				}
 				//检测微信网页授权
@@ -332,7 +287,8 @@
 							});
 						}
 					});
-				} else if (config.user.username) {
+				}
+				else if (config.user.username) {
 					api('getPassword', {
 						userId: config.user.username,
 						tenantId: config.tenantId
@@ -362,11 +318,12 @@
 				if (utils.isTop) {
 					utils.set('root' + config.tenantId + config.emgroup, config.user.username)
 				} else {
-					easemobim.EVENTS.CACHEUSER.data = {
-						username: config.user.username,
-						group: config.user.emgroup
-					};
-					transfer.send(easemobim.EVENTS.CACHEUSER, window.transfer.to);
+					transfer.send({
+						event: 'setUser', data: {
+							username: config.user.username,
+							group: config.user.emgroup
+						}
+					}, window.transfer.to);
 				}
 				chat.ready();
 			});
