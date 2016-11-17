@@ -32,7 +32,6 @@
 		easemobim.dragHeader = utils.$Dom('em-widgetDrag');
 		easemobim.dragBar = easemobim.dragHeader.getElementsByTagName('p')[0];
 		easemobim.chatFaceWrapper = utils.$Dom('EasemobKefuWebimFaceWrapper');
-		easemobim.messageCount = easemobim.imBtn.getElementsByTagName('span')[0];
         easemobim.avatar = utils.$Class('img.em-widgetHeader-portrait')[0];
 		easemobim.swfupload = null;//flash 上传
 
@@ -47,7 +46,7 @@
                 this.channel = easemobim.channel.call(this, config);
 
 				//create & init connection
-                this.setConnection();
+                this.conn = this.channel.getConnection();
 				//sroll bottom timeout stamp
                 this.scbT = 0;
 				//unread message count
@@ -62,8 +61,8 @@
                 this.setMinmum();
 				//init sound reminder
                 this.soundReminder();
-				//root adjust
-				this.setRoot();
+				//init face
+                this.fillFace();
 				//bind events on dom
                 this.bindEvents();
             }
@@ -129,17 +128,8 @@
 					msg.body.ext.weichat.visitor.gr_user_id = config.grUserId;
                 }
 			}
-			, setRoot: function () {
-				if ( !utils.isTop ) { return false; }
-
-				config.dragenable = false;
-				this.fillFace();
-			}
 			, mobile: function () {
 				if ( !utils.isMobile ) { return false; }
-
-				//mobile need set drag disable
-				config.dragenable = false;
 
                 config.ticket && !config.offDuty && utils.removeClass(easemobim.mobileNoteBtn, 'em-hide');
 
@@ -186,9 +176,6 @@
 					}, 1000);
                 }
 			}
-            , setConnection: function() {
-                this.conn = this.channel.getConnection();
-            }
             , handleChatWrapperByHistory: function ( chatHistory, chatWrapper ) {
                 if ( chatHistory.length === easemobim.LISTSPAN ) {//认为可以继续获取下一页历史记录
                     var startSeqId = Number(chatHistory[easemobim.LISTSPAN - 1].chatGroupSeqId) - 1;
@@ -253,12 +240,9 @@
                 chatWrapper.setAttribute('data-getted', 1);
             }
 			, getGreeting: function () {
-				var me = this,
-					msg = null;
+				var me = this;
 
-				if ( me.greetingGetted ) {
-					return;
-				}
+				if ( me.greetingGetted ) return;
 
 				me.greetingGetted = true;
 
@@ -266,69 +250,62 @@
 				easemobim.api('getSystemGreeting', {
 					tenantId: config.tenantId
 				}, function ( msg ) {
-					if ( msg && msg.data ) {
-						msg = {
-							data: msg.data,
-                            ext: {
-                                weichat: {
-                                    html_safe_body: {
-                                        msg: msg.data
-                                    }
+					msg && msg.data && me.receiveMsg({
+                        data: msg.data,
+                        ext: {
+                            weichat: {
+                                html_safe_body: {
+                                    msg: msg.data
                                 }
-                            },
-							type: 'txt',
-							noprompt: true
-						};
-						me.receiveMsg(msg, 'txt');
-					}
+                            }
+                        },
+                        type: 'txt',
+                        noprompt: true
+                    }, 'txt');
 
 					//robert greeting
 					easemobim.api('getRobertGreeting', {
 						tenantId: config.tenantId,
 						originType: 'webim'
 					}, function ( msg ) {
-						if ( msg && msg.data ) {
-							var rGreeting = msg.data;
-
-							switch ( rGreeting.greetingTextType ) {
-								case 0:
-									//robert text greeting
-									msg = {
-										data: rGreeting.greetingText,
-                                        ext: {
-                                            weichat: {
-                                                html_safe_body: {
-                                                    msg: rGreeting.greetingText
-                                                }
+						var rGreeting = msg && msg.data;
+                        if(!rGreeting) return;
+                        switch (rGreeting.greetingTextType) {
+							case 0:
+								//robert text greeting
+								me.receiveMsg({
+                                    data: rGreeting.greetingText,
+                                    ext: {
+                                        weichat: {
+                                            html_safe_body: {
+                                                msg: rGreeting.greetingText
                                             }
-                                        },
-										type: 'txt',
-										noprompt: true
-									};
-									me.receiveMsg(msg, 'txt');
-									break;
-								case 1:
-									try {
-										var greetingObj = Easemob.im.Utils.parseJSON(rGreeting.greetingText.replace(/&quot;/g, '"'));
-										if ( rGreeting.greetingText === '{}' ) {
-											msg = {
-												data: '该菜单不存在',
-												type: 'txt',
-												noprompt: true
-											};
-											me.receiveMsg(msg, 'txt');
-										} else {
-											//robert list greeting
-											msg = { 
-												ext: greetingObj.ext,
-												noprompt: true
-											 };
-											me.receiveMsg(msg);	
-										}
-									} catch ( e ) {}
-									break;
-								default: break;
-							}
+                                        }
+                                    },
+                                    type: 'txt',
+                                    noprompt: true
+                                }, 'txt');
+								break;
+							case 1:
+								try {
+									var greetingObj = Easemob.im.Utils.parseJSON(rGreeting.greetingText.replace(/&quot;/g, '"'));
+									if ( rGreeting.greetingText === '{}' ) {
+										me.receiveMsg({
+                                            data: '该菜单不存在',
+                                            type: 'txt',
+                                            noprompt: true
+                                        }, 'txt');
+									} else {
+										//robert list greeting
+										me.receiveMsg({ 
+                                            ext: greetingObj.ext,
+                                            noprompt: true
+                                         });	
+									}
+								} catch ( e ) {}
+								break;
+							default:
+                                break;
 						}
 					});
 				});
@@ -339,8 +316,8 @@
                 easemobim.api('getNickNameOption', {
                     tenantId: config.tenantId
                 }, function ( msg ) {
-                    if ( msg && msg.data && msg.data.length > 0 ) {
-                        config.nickNameOption = msg.data[0].optionValue === 'true' ? true : false;
+                    if (msg && msg.data && msg.data.length) {
+                        config.nickNameOption = msg.data[0].optionValue === 'true';
                     } else {
                         config.nickNameOption = null;
                     }
@@ -737,7 +714,7 @@
                 if (!config.offDuty || config.offDutyType !== 'none') {
                     try { easemobim.textarea.focus(); } catch ( e ) {}
                 }
-				me.resetPrompt();
+				!utils.isTop && transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
             }
             , sdkInit: function () {
                 this.channel.listen();
@@ -974,7 +951,7 @@
 					easemobim.imgView.show(this.getAttribute('src'));
                 });
 
-				if (config.dragenable && !utils.isMobile) {//drag
+				if (config.dragenable && !utils.isMobile && !utils.isTop) {//drag
 					
 					easemobim.dragBar.style.cursor = 'move';
 
@@ -982,7 +959,7 @@
 						var e = window.event || ev;
 						easemobim.textarea.blur();//ie a  ie...
 						easemobim.EVENTS.DRAGREADY.data = { x: e.clientX, y: e.clientY };
-                        utils.isTop || transfer.send(easemobim.EVENTS.DRAGREADY, window.transfer.to);
+                        transfer.send(easemobim.EVENTS.DRAGREADY, window.transfer.to);
 						return false;
 					}, false);
 				}
@@ -1313,36 +1290,23 @@
 
 				var me = this;
 
-				if ( !me.opened ) {
-					utils.removeClass(utils.html(easemobim.messageCount, ''), 'em-hide');
-					me.msgCount += 1;
-
-					if ( me.msgCount > 9 ) {
-						utils.html(utils.addClass(easemobim.messageCount, 'mutiCount'), '\…');
-					} else {
-						utils.html(utils.removeClass(easemobim.messageCount, 'mutiCount'), me.msgCount);
-					}
-
-				} else {
-					me.resetPrompt();
+				if ( me.opened && !utils.isTop) {
+					transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
 				}
 
 				if ( utils.isMin() || !me.opened ) {
 					me.soundReminder();
-					easemobim.EVENTS.NOTIFY.data = {
-						avatar: this.currentAvatar,
-						title: '新消息',
-						brief: message.brief
-					};
 					utils.isTop || transfer.send(easemobim.EVENTS.SLIDE, window.transfer.to);
-					utils.isTop || transfer.send(easemobim.EVENTS.NOTIFY, window.transfer.to);
+					utils.isTop || transfer.send({
+                        event: 'notify',
+                        data: {
+                            avatar: this.currentAvatar,
+                            title: '新消息',
+                            brief: message.brief
+                        }
+                    }, window.transfer.to);
 				}
             }
-			, resetPrompt: function () {
-				this.msgCount = 0;
-				utils.addClass(utils.html(easemobim.messageCount, ''), 'em-hide');
-				utils.isTop || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
-			}
 			//receive message function
             , receiveMsg: function ( msg, type, isHistory ) {
                 if ( config.offDuty ) {
