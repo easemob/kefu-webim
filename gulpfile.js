@@ -111,7 +111,7 @@ gulp.task('combineJs', function() {
 		'static/js/src/sdk/strophe.js',
 		'static/js/src/sdk/adapter.js',
 		'static/js/src/sdk/easemob.im-1.1.1.js',
-		'static/js/src/sdk/webrtc-1.0.0.js',
+		'static/js/src/sdk/webrtc-1.0.2.js',
 		'static/js/src/modules/polyfill.js',
 		'static/js/src/modules/utils.js',
 		'static/js/src/modules/const.js',

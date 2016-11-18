@@ -252,7 +252,7 @@
 							data = null;
 						}
 						if (!data) { //失败自动降级，随机创建访客
-							me.go();
+							me.go(config);
 						} else {
 							config.visitor = config.visitor || {};
 							config.visitor.userNickname = data.nickname;
@@ -276,13 +276,13 @@
 										config.user.password = info.entity.userPassword;
 										chat.ready();
 									} else {
-										me.go();
+										me.go(config);
 									}
 
 								},
 								error: function(e) {
 									//失败自动降级，随机创建访客
-									me.go();
+									me.go(config);
 								}
 							});
 						}
@@ -294,7 +294,7 @@
 						tenantId: config.tenantId
 					}, function(msg) {
 						if (!msg.data) {
-							me.go();
+							me.go(config);
 						} else {
 							config.user.password = msg.data;
 							chat.ready();
