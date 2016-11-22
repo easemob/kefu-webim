@@ -28,13 +28,9 @@ easemobim.imgView = (function () {
 	background: rgba(0,0,0,.3);';
 	document.body.appendChild(imgViewWrap);
 
-	var reset = function () {
+	utils.on(imgViewWrap, 'click', function () {
 		imgViewWrap.style.display = 'none';
-	};
-
-	img.onload = function () {};
-
-	utils.on(imgViewWrap, 'click', reset, false);
+	}, false);
 
 	return {
 		show: function ( url ) {

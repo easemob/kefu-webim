@@ -9,7 +9,7 @@
   "devDependencies": {
     "autoprefixer": "^6.5.3",
     "cssnano": "^3.8.0",
-    "gulp": "",
+    "gulp": "^3.9.1",
     "gulp-clean": "",
     "gulp-concat": "",
     "gulp-jshint": "~1.12.0",

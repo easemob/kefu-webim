@@ -153,28 +153,27 @@
 				//set tenant logo
 				this.setLogo();
 				//mobile set textarea can growing with inputing
-				this.initAutoGrow();
+				utils.isMobile && this.initAutoGrow();
 				this.chatWrapper.getAttribute('data-getted') || config.newuser || this.getHistory();
 			}
 			, initAutoGrow: function () {
 				var me = this;
 
-				if ( !me.autoGrowOptions ) {
-					me.autoGrowOptions = {};
-					me.autoGrowOptions.callback = function () {
-						var height = easemobim.send.getBoundingClientRect().height;
-						if ( me.direction === 'up' ) {
-							easemobim.chatFaceWrapper.style.top = 43 + height + 'px';
-						} else {
-							easemobim.imChatBody.style.bottom = height + 'px';
-							easemobim.chatFaceWrapper.style.bottom = height + 'px';
-						}
-					};
-					me.autoGrowOptions.dom = easemobim.textarea;
-					setTimeout(function () {
-						utils.isMobile && easemobim.autogrow(me.autoGrowOptions);
-					}, 1000);
-				}
+				if (me.autoGrowOptions) return;
+				me.autoGrowOptions = {};
+				me.autoGrowOptions.callback = function () {
+					var height = easemobim.send.getBoundingClientRect().height;
+					if ( me.direction === 'up' ) {
+						easemobim.chatFaceWrapper.style.top = 43 + height + 'px';
+					} else {
+						easemobim.imChatBody.style.bottom = height + 'px';
+						easemobim.chatFaceWrapper.style.bottom = height + 'px';
+					}
+				};
+				me.autoGrowOptions.dom = easemobim.textarea;
+				setTimeout(function () {
+					easemobim.autogrow(me.autoGrowOptions);
+				}, 1000);
 			}
 			, handleChatWrapperByHistory: function ( chatHistory, chatWrapper ) {
 				if ( chatHistory.length === easemobim.LISTSPAN ) {//认为可以继续获取下一页历史记录

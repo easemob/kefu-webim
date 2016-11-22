@@ -47,9 +47,10 @@ button, textarea, input {
 	cursor: zoom-in;
 }
 /* todo 统一hide 类名 */
+/* 增加id选择是为了提高优先级 */
 .hide,
 .em-hide,
 #EasemobKefuWebim .em-hide,
-.em-widget-wrapper .hide {
+#EasemobKefuWebim .hide {
 	display: none;
 }
