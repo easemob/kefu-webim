@@ -10865,7 +10865,7 @@ module.exports = {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {'use strict';
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 	var Util = __webpack_require__(226);
 	var Call = __webpack_require__(227);
@@ -10908,7 +10908,7 @@ module.exports = {
 
 	'use strict';
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 	/*
 	 * ! Math.uuid.js (v1.4) http://www.broofa.com mailto:robert@broofa.com
@@ -11824,7 +11824,7 @@ module.exports = {
 
 	'use strict';
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 	/**
 	 * API
@@ -12722,7 +12722,7 @@ module.exports = {
 	            onGotStream ? onGotStream(self, stream) : self.onGotStream(stream);
 	        }
 
-	        return navigator.mediaDevices.getUserMedia(constaints || self.mediaStreamConstaints).then(gotStream).then(self.onCreateMedia)['catch'](function (e) {
+	        return navigator.mediaDevices.getUserMedia(constaints || self.mediaStreamConstaints).then(gotStream).then(self.onCreateMedia).catch(function (e) {
 	            _logger.debug('[WebRTC-API] getUserMedia() error: ', e);
 	            self.onError(e);
 	        });
@@ -12737,10 +12737,21 @@ module.exports = {
 	        var self = this;
 
 	        if (iceServerConfig && iceServerConfig.iceServers) {} else {
-	            iceServerConfig = null;
+	            iceServerConfig = {};
 	        }
 
 	        _logger.debug('[WebRTC-API] begin create RtcPeerConnection ......');
+
+	        //reduce icecandidate number:add default value
+	        if (!iceServerConfig.iceServers) {
+	            iceServerConfig.iceServers = [];
+	        }
+	        if (!iceServerConfig.rtcpMuxPolicy) {
+	            iceServerConfig.rtcpMuxPolicy = "require";
+	        }
+	        if (!iceServerConfig.bundlePolicy) {
+	            iceServerConfig.bundlePolicy = "max-bundle";
+	        }
 
 	        self.startTime = window.performance.now();
 
@@ -12748,6 +12759,10 @@ module.exports = {
 	        _logger.debug('[WebRTC-API] Created local peer connection object', rtcPeerConnection);
 
 	        rtcPeerConnection.onicecandidate = function (event) {
+	            //reduce icecandidate number: don't deal with tcp, udp only
+	            if (event.type == "icecandidate" && (event.candidate == null || / tcp /.test(event.candidate.candidate))) {
+	                return;
+	            }
 	            self.onIceCandidate(event);
 	        };
 
@@ -13157,20 +13172,29 @@ module.exports = {
 	        options.sdp && self.webRtc.setRemoteDescription(options.sdp).then(function () {
 	            self._onHandShake(from, options);
 
-	            // self.webRtc.createPRAnswer(function (prAnswer) {
-	            //     self._onGotWebRtcPRAnswer(prAnswer);
-	            //
-	            //     setTimeout(function () {
-	            //         _logger.info("[WebRTC-API] onRinging : after pranswer. ", self.callee);
-	            //         self.onRinging(self.callee);
-	            //     }, 500);
-	            // });
+	            var chromeVersion = "54";
+	            /*
+	             * chrome 版本 大于 50时，可以使用pranswer。
+	             * 小于50 不支持pranswer，此时处理逻辑是，直接进入振铃状态
+	             *
+	             */
+	            if (chromeVersion >= "50") {
+	                self.webRtc.createPRAnswer(function (prAnswer) {
+	                    self._onGotWebRtcPRAnswer(prAnswer);
 
-	            setTimeout(function () {
-	                _logger.info("[WebRTC-API] onRinging : after pranswer. ", self.callee);
-	                self.onRinging(self.callee);
-	            }, 500);
-	            self._ping();
+	                    setTimeout(function () {
+	                        //由于 chrome 在 pranswer时，ice状态只是 checking，并不能像sdk那样 期待 connected 振铃；所以目前改为 发送完pranswer后，直接振铃
+	                        _logger.info("[WebRTC-API] onRinging : after pranswer. ", self.callee);
+	                        self.onRinging(self.callee);
+	                    }, 500);
+	                });
+	            } else {
+	                setTimeout(function () {
+	                    _logger.info("[WebRTC-API] onRinging : after pranswer. ", self.callee);
+	                    self.onRinging(self.callee);
+	                }, 500);
+	                self._ping();
+	            }
 	        });
 	    },
 
@@ -13259,6 +13283,8 @@ module.exports = {
 	        }
 
 	        if (self.webRtc.iceConnectionState() == 'connected') {
+	            //由于 chrome 在 pranswer时，ice状态只是 checking，并不能像sdk那样 期待 connected 振铃；所以目前改为 发送完pranswer后，直接振铃
+	            //所以去掉在此处的振铃
 	            // setTimeout(function () {
 	            //     self.onRinging(self.callee);
 	            // }, 500);
