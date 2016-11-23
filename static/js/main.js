@@ -12722,7 +12722,7 @@ module.exports = {
 	            onGotStream ? onGotStream(self, stream) : self.onGotStream(stream);
 	        }
 
-	        return navigator.mediaDevices.getUserMedia(constaints || self.mediaStreamConstaints).then(gotStream).then(self.onCreateMedia).catch(function (e) {
+	        return navigator.mediaDevices.getUserMedia(constaints || self.mediaStreamConstaints).then(gotStream).then(self.onCreateMedia)['catch'](function (e) {
 	            _logger.debug('[WebRTC-API] getUserMedia() error: ', e);
 	            self.onError(e);
 	        });
@@ -14759,7 +14759,7 @@ easemobim.paste = function ( chat ) {
 			img = null;
 		}
 		, hide: function () {
-			utils.html(imgContainer, '');
+			imgContainer.innerHTML = '';
 			utils.addClass(dom, 'em-hide');
 		}
 		, bind: function () {
@@ -15028,47 +15028,22 @@ easemobim.satisfaction = function ( chat ) {
 	});
 };
 
-/**
- * img view
- */
-easemobim.imgView = (function () {
+easemobim.imgView = (function (utils) {
 
-	var imgViewWrap = document.createElement('div'),
-		utils = easemobim.utils,
-		img = document.createElement('img');
+	var imgWrapper = document.querySelector('div.img-view');
+	var img = imgWrapper.querySelector('img');
 
-	img.style.cssText = '\
-	position: absolute;\
-	top: 0;\
-	left: 0;\
-	right: 0;\
-	bottom: 0;\
-	margin: auto;';
-	imgViewWrap.appendChild(img);
-
-	imgViewWrap.style.cssText = '\
-	display: none;\
-	z-index: 100000;\
-	position: fixed;\
-	width: 100%;\
-	height: 100%;\
-	left: 0;\
-	top: 0;\
-	overflow: auto;\
-	background: rgba(0,0,0,.3);';
-	document.body.appendChild(imgViewWrap);
-
-	utils.on(imgViewWrap, 'click', function () {
-		imgViewWrap.style.display = 'none';
+	utils.on(imgWrapper, 'click', function () {
+		utils.addClass(imgWrapper, 'hide');
 	}, false);
 
 	return {
 		show: function ( url ) {
 			img.setAttribute('src', url);
-			imgViewWrap.style.display = 'block';
+			utils.removeClass(imgWrapper, 'hide');
 		}
 	};
-}());
+}(easemobim.utils));
 
 /**
  * 为不支持异步上传的浏览器提供上传接口
@@ -16026,6 +16001,213 @@ easemobim.channel = function ( config ) {
 	return _obj;
 };
 
+// 视频邀请确认对话框
+easemobim.ui = {};
+easemobim.ui.videoConfirmDialog = (function(){
+	var dialog = document.querySelector('div.em-dialog-video-confirm');
+	var buttonPanel = dialog.querySelector('div.button-panel');
+	var btnConfirm = dialog.querySelector('button.btn-confirm');
+	var btnCancel = dialog.querySelector('button.btn-cancel');
+	var confirmCallback = null;
+	var cancelCallback = null;
+
+	buttonPanel.addEventListener('click', function(evt){
+		var className = evt.target.className;
+
+		if (~className.indexOf('btn-cancel')) {
+			'function' === typeof cancelCallback && cancelCallback();
+		}
+		else if (~className.indexOf('btn-confirm')) {
+			'function' === typeof confirmCallback && confirmCallback();
+		}
+		else {
+			return;
+		}
+		confirmCallback = null;
+		cancelCallback = null;
+		_hide();
+	}, false);
+
+	function _show(){
+		dialog.classList.remove('hide');
+	}
+	function _hide(){
+		dialog.classList.add('hide');
+	}
+	function _init(confirm, cancel){
+		confirmCallback = confirm;
+		cancelCallback = cancel;
+		_show();
+	}
+	return {
+		show: _show,
+		hide: _hide,
+		init: _init
+	}
+}());
+easemobim.videoChat = (function(dialog){
+	var imChat = document.getElementById('em-kefu-webim-chat');
+	var btnVideoInvite = document.querySelector('.em-video-invite');
+	var videoWidget = document.querySelector('.em-widget-video');
+	var dialBtn = videoWidget.querySelector('.btn-accept-call');
+	var waitingPrompt = videoWidget.querySelector('.waiting-prompt');
+	var timeEscape = videoWidget.querySelector('p.time-escape');
+	var remoteVideoWin = videoWidget.querySelector('video.main');
+	var localVideoWin = videoWidget.querySelector('video.sub');
+	var config = null;
+	var localStream = null;
+	var remoteStream = null;
+	var call = null;
+	var sendMessageAPI = null;
+	var emChat = null;
+	var counter = 0;
+	var timer = null;
+	var events = {
+		'btn-end-call': function(){
+			call.endCall();
+		},
+		'btn-accept-call': function(){
+			dialBtn.classList.add('hide');
+			stopTimer();
+			call.acceptCall();
+		},
+		'btn-toggle': function(){
+			localStream.getTracks().forEach(function(track){
+				track.enabled = !track.enabled;
+			});
+		},
+		'btn-change': function(){
+			var tmp;
+
+			tmp = localVideoWin.src;
+			localVideoWin.src = remoteVideoWin.src;
+			remoteVideoWin.src = tmp;
+
+			localVideoWin.muted = localVideoWin.muted;
+			remoteVideoWin.muted = remoteVideoWin.muted;
+		},
+		'btn-minimize': function(){
+			videoWidget.classList.add('minimized');
+		},
+		'btn-maximize': function(){
+			videoWidget.classList.remove('minimized');
+		}
+	};
+
+	// 发送视频邀请
+	btnVideoInvite.classList.remove('hide');
+	btnVideoInvite.addEventListener('click', function(){
+		dialog.init(sendVideoInvite);
+	}, false);
+
+	// 视频组件事件绑定
+	videoWidget.addEventListener('click', function(evt){
+		var className = evt.target.className;
+
+		Object.keys(events).forEach(function(key){
+			~className.indexOf(key) && events[key]();
+		})
+	}, false);
+
+
+	function startTimer(){
+		counter = 0;
+		timeEscape.innerHTML = '00:00';
+		timer = setInterval(function(){
+			timeEscape.innerHTML = format(counter++);
+		}, 1000)
+		waitingPrompt.classList.remove('hide');
+		function format(second){
+			var date = new Date(second * 1000);
+			return date.toISOString().slice(-'00:00.000Z'.length).slice(0, '00:00'.length);
+		}
+	}
+	function stopTimer(){
+		clearInterval(timer);
+		waitingPrompt.classList.add('hide');
+	}
+	function sendVideoInvite() {
+		console.log('send video invite');
+		sendMessageAPI('txt', '邀请客服进行实时视频', false, {
+				ext: {
+				type: 'rtcmedia/video',
+				msgtype: {
+					liveStreamInvitation: {
+						msg: '邀请客服进行实时视频',
+						orgName: config.orgName,
+						appName: config.appName,
+						userName: config.user.username,
+						resource: 'webim'
+					}
+				}
+			}
+		});
+	}
+
+	function init(conn, sendMessage, cfg){
+		sendMessageAPI = sendMessage;
+		config = cfg;
+
+		call = new WebIM.WebRTC.Call({
+			connection: conn,
+
+			mediaStreamConstaints: {
+				audio: true,
+				video: true
+			},
+
+			listener: {
+				onAcceptCall: function (from, options) {
+					stopTimer();
+					console.log('onAcceptCall', from, options);
+				},
+				onGotRemoteStream: function (stream) {
+					remoteVideoWin.src = URL.createObjectURL(stream);
+					remoteStream = stream;
+					remoteVideoWin.play();
+					// for debug
+					console.log('onGotRemoteStream', stream);
+				},
+				onGotLocalStream: function (stream) {
+					localVideoWin.src = URL.createObjectURL(stream);
+					localStream = stream;
+					localVideoWin.play();
+					// for debug
+					console.log('onGotLocalStream', stream);
+				},
+				onRinging: function (caller) {
+					imChat.classList.add('has-video');
+					startTimer();
+					dialBtn.classList.remove('hide');
+					console.log('onRinging', caller);
+				},
+				onTermCall: function () {
+					stopTimer();
+					localStream && localStream.getTracks().forEach(function(track){
+						track.stop();
+					})
+					remoteStream && remoteStream.getTracks().forEach(function(track){
+						track.stop();
+					})
+					remoteVideoWin.src = '';
+					localVideoWin.src = '';
+
+					// for debug
+					console.log('onTermCall');
+					imChat.classList.remove('has-video');
+				},
+				onError: function (e) {
+					console.log(e && e.message ? e.message : 'An error occured when calling webrtc');
+				}
+			}
+		});
+	}
+
+	return {
+		init: init
+	}
+}(easemobim.ui.videoConfirmDialog));
+
 /**
  * webim交互相关
  */
@@ -16761,127 +16943,6 @@ easemobim.channel = function ( config ) {
 			}
 			, resetSpan: function ( id ) {
 				this.msgTimeSpan[id] = new Date().getTime();
-			},
-			bindVideoEvent: function(){
-				var me = this;
-				var videoWidget = document.querySelector('.em-widget-video');
-				var dialBtn = videoWidget.querySelector('.btn-accept-call');
-				var waitPrompt = videoWidget.querySelector('.prompt-wait');
-
-				var events = {
-					'btn-end-call': function(){
-						me.call.endCall();
-					},
-					'btn-accept-call': function(){
-						dialBtn.classList.add('hide');
-						me.call.acceptCall();
-					},
-					'btn-toggle': function(){
-						me.localStream.getTracks().forEach(function(track){
-							track.enabled = !track.enabled;
-						});
-					},
-					'btn-minimize': function(){
-						videoWidget.classList.add('minimized');
-					},
-					'btn-maximize': function(){
-						videoWidget.classList.remove('minimized');
-					}
-				};
-
-			   // 发送视频邀请
-				document
-				.querySelector('.em-video-invite')
-				.addEventListener('click', function () {
-					waitPrompt.classList.add('hide');
-					console.log('send video invite');
-					easemobim.imChat.classList.add('has-video');
-					me.channel.send('txt', '邀请客服进行实时视频', false, {
-							ext: {
-							type: 'rtcmedia/video',
-							msgtype: {
-								liveStreamInvitation: {
-									msg: '邀请客服进行实时视频',
-									orgName: config.orgName,
-									appName: config.appName,
-									userName: config.user.username,
-									resource: 'webim'
-								}
-							}
-						}
-					});
-				}, false);
-
-				videoWidget.addEventListener('click', function(evt){
-					var className = evt.target.className;
-
-					Object.keys(events).forEach(function(key){
-						~className.indexOf(key) && events[key]();
-					})
-				}, false);
-
-			},
-			initWebRTC: function(){
-				var me = this;
-				var videoWidget = document.querySelector('.em-widget-video');
-				var waitPrompt = videoWidget.querySelector('.prompt-wait');
-				var dialBtn = videoWidget.querySelector('.btn-accept-call');
-				var remoteVideoWin = videoWidget.querySelector('video.main');
-				var localVideoWin = videoWidget.querySelector('video.sub');
-
-				me.call = new WebIM.WebRTC.Call({
-					connection: me.conn,
-
-					mediaStreamConstaints: {
-						audio: true,
-						video: true
-					},
-
-					listener: {
-						onAcceptCall: function (from, options) {
-							waitPrompt.classList.add('hide');
-							console.log('onAcceptCall', from, options);
-						},
-						onGotRemoteStream: function (stream) {
-							remoteVideoWin.src = URL.createObjectURL(stream);
-							me.remoteStream = stream;
-							remoteVideoWin.play();
-							// for debug
-							window.remoteS = stream;
-							console.log('onGotRemoteStream', stream);
-						},
-						onGotLocalStream: function (stream) {
-							localVideoWin.src = URL.createObjectURL(stream);
-							me.localStream = stream;
-							localVideoWin.play();
-							// for debug
-							window.localS = stream;
-							console.log('onGotLocalStream', stream);
-						},
-						onRinging: function (caller) {
-							waitPrompt.classList.add('hide');
-							dialBtn.classList.remove('hide');
-							console.log('onRinging', caller);
-						},
-						onTermCall: function () {
-							me.localStream && me.localStream.getTracks().forEach(function(track){
-								track.stop();
-							})
-							me.remoteStream && me.remoteStream.getTracks().forEach(function(track){
-								track.stop();
-							})
-							remoteVideoWin.src = '';
-							localVideoWin.src = '';
-
-							// for debug
-							console.log('onTermCall');
-							easemobim.imChat.classList.remove('has-video');
-						},
-						onError: function (e) {
-							console.log(e && e.message ? e.message : 'An error occured when calling webrtc');
-						}
-					}
-				});
 			}
 			, open: function () {
 				var me = this;
@@ -16900,10 +16961,10 @@ easemobim.channel = function ( config ) {
 
 				me.conn.open(op);
 
-				// 事件只绑定一次
-				me.call || me.bindVideoEvent();
 				// init webRTC
-				utils.isSupportWebRTC && me.initWebRTC();
+				if(utils.isSupportWebRTC){
+					easemobim.videoChat.init(me.conn, me.channel.send, config);
+				}
 			}
 			, soundReminder: function () {
 				var me = this;
