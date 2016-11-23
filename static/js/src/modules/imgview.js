@@ -1,41 +1,16 @@
-/**
- * img view
- */
-easemobim.imgView = (function () {
+easemobim.imgView = (function (utils) {
 
-	var imgViewWrap = document.createElement('div'),
-		utils = easemobim.utils,
-		img = document.createElement('img');
+	var imgWrapper = document.querySelector('div.img-view');
+	var img = imgWrapper.querySelector('img');
 
-	img.style.cssText = '\
-	position: absolute;\
-	top: 0;\
-	left: 0;\
-	right: 0;\
-	bottom: 0;\
-	margin: auto;';
-	imgViewWrap.appendChild(img);
-
-	imgViewWrap.style.cssText = '\
-	display: none;\
-	z-index: 100000;\
-	position: fixed;\
-	width: 100%;\
-	height: 100%;\
-	left: 0;\
-	top: 0;\
-	overflow: auto;\
-	background: rgba(0,0,0,.3);';
-	document.body.appendChild(imgViewWrap);
-
-	utils.on(imgViewWrap, 'click', function () {
-		imgViewWrap.style.display = 'none';
+	utils.on(imgWrapper, 'click', function () {
+		utils.addClass(imgWrapper, 'hide');
 	}, false);
 
 	return {
 		show: function ( url ) {
 			img.setAttribute('src', url);
-			imgViewWrap.style.display = 'block';
+			utils.removeClass(imgWrapper, 'hide');
 		}
 	};
-}());
+}(easemobim.utils));

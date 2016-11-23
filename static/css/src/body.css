@@ -23,15 +23,18 @@
 	background-color: black;
 
 	video {
+		position: absolute;
 		top: 0;
 		left: 0;
 		width: 100%;
 		height: 100%;
 	}
 
-	.prompt-wait {
-		span {
-			color: white;
+	.waiting-prompt {
+		position: absolute;
+		color: white;
+		p {
+			margin: 5px;
 		}
 	}
 	.sub-win {

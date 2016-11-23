@@ -43,7 +43,7 @@ easemobim.paste = function ( chat ) {
 			img = null;
 		}
 		, hide: function () {
-			utils.html(imgContainer, '');
+			imgContainer.innerHTML = '';
 			utils.addClass(dom, 'em-hide');
 		}
 		, bind: function () {

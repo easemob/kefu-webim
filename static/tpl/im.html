@@ -25,8 +25,9 @@
 			</div>
 			<div class="em-widget-tip"><span class="em-widget-tip-text"></span><a class="icon-close em-widget-tip-close" href="javascript:;"></a></div>
 			<div class="em-widget-video">
-				<div class="prompt-wait">
-					<span>等待坐席接入...</span>
+				<div class="waiting-prompt">
+					<p class="prompt">视频连接请求，等待你的确认</p>
+					<p class="time-escape">00:00</p>
 				</div>
 				<video class="main" autoplay></video>
 				<div class="sub-win">
@@ -51,18 +52,27 @@
 				<i class="em-bar-face icon-face e-face fg-hover-color" title="表情"></i>
 				<i class="em-widget-file icon-picture fg-hover-color" id="em-widgetFile" title="图片"></i>
 				<i class="em-widget-note icon-note em-hide fg-hover-color" id="em-widgetNote" title="留言"></i>
-				<i class="icon-video fg-hover-color em-video-invite" title="视频通话"></i>
+				<i class="icon-video fg-hover-color em-video-invite hide" title="视频通话"></i>
 				<input id="em-widgetFileInput" type="file" accept="image/*"/>
 				<textarea class="em-widget-textarea" spellcheck="false"></textarea>
 				<span id="EasemobKefuWebimSatisfy" class="em-widget-satisfaction em-hide">请对服务做出评价</span>
 				<a href="javascript:;" class="em-widget-send bg-color disabled" id="em-widgetSendBtn">连接中</a>
 			</div>
+			<div class="em-dialog-video-confirm hide">
+				<p class="prompt">
+					您要邀请客服为您进行实时视频服务么？点击确认发送邀请，等待客服接受后即可体验实时视频服务。
+				</p>
+				<div class="button-panel">
+					<button class="btn-cancel">取消</button>
+					<button class="btn-confirm">发送</button>
+				</div>
+			</div>
 		</div>
 	</div>
-	<div class="img-view">
+	<div class="img-view hide">
 		<img src="">
 	</div>
-	<iframe id="EasemobKefuWebimIframe" class="hide">
+	<iframe id="EasemobKefuWebimIframe" class="hide"></iframe>
 	<script src="static/js/main.js?v=<%=WEBIM_PLUGIN_VERSION%>"></script>
 </body>
 </html>

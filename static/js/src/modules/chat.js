@@ -733,127 +733,6 @@
 			}
 			, resetSpan: function ( id ) {
 				this.msgTimeSpan[id] = new Date().getTime();
-			},
-			bindVideoEvent: function(){
-				var me = this;
-				var videoWidget = document.querySelector('.em-widget-video');
-				var dialBtn = videoWidget.querySelector('.btn-accept-call');
-				var waitPrompt = videoWidget.querySelector('.prompt-wait');
-
-				var events = {
-					'btn-end-call': function(){
-						me.call.endCall();
-					},
-					'btn-accept-call': function(){
-						dialBtn.classList.add('hide');
-						me.call.acceptCall();
-					},
-					'btn-toggle': function(){
-						me.localStream.getTracks().forEach(function(track){
-							track.enabled = !track.enabled;
-						});
-					},
-					'btn-minimize': function(){
-						videoWidget.classList.add('minimized');
-					},
-					'btn-maximize': function(){
-						videoWidget.classList.remove('minimized');
-					}
-				};
-
-			   // 发送视频邀请
-				document
-				.querySelector('.em-video-invite')
-				.addEventListener('click', function () {
-					waitPrompt.classList.add('hide');
-					console.log('send video invite');
-					easemobim.imChat.classList.add('has-video');
-					me.channel.send('txt', '邀请客服进行实时视频', false, {
-							ext: {
-							type: 'rtcmedia/video',
-							msgtype: {
-								liveStreamInvitation: {
-									msg: '邀请客服进行实时视频',
-									orgName: config.orgName,
-									appName: config.appName,
-									userName: config.user.username,
-									resource: 'webim'
-								}
-							}
-						}
-					});
-				}, false);
-
-				videoWidget.addEventListener('click', function(evt){
-					var className = evt.target.className;
-
-					Object.keys(events).forEach(function(key){
-						~className.indexOf(key) && events[key]();
-					})
-				}, false);
-
-			},
-			initWebRTC: function(){
-				var me = this;
-				var videoWidget = document.querySelector('.em-widget-video');
-				var waitPrompt = videoWidget.querySelector('.prompt-wait');
-				var dialBtn = videoWidget.querySelector('.btn-accept-call');
-				var remoteVideoWin = videoWidget.querySelector('video.main');
-				var localVideoWin = videoWidget.querySelector('video.sub');
-
-				me.call = new WebIM.WebRTC.Call({
-					connection: me.conn,
-
-					mediaStreamConstaints: {
-						audio: true,
-						video: true
-					},
-
-					listener: {
-						onAcceptCall: function (from, options) {
-							waitPrompt.classList.add('hide');
-							console.log('onAcceptCall', from, options);
-						},
-						onGotRemoteStream: function (stream) {
-							remoteVideoWin.src = URL.createObjectURL(stream);
-							me.remoteStream = stream;
-							remoteVideoWin.play();
-							// for debug
-							window.remoteS = stream;
-							console.log('onGotRemoteStream', stream);
-						},
-						onGotLocalStream: function (stream) {
-							localVideoWin.src = URL.createObjectURL(stream);
-							me.localStream = stream;
-							localVideoWin.play();
-							// for debug
-							window.localS = stream;
-							console.log('onGotLocalStream', stream);
-						},
-						onRinging: function (caller) {
-							waitPrompt.classList.add('hide');
-							dialBtn.classList.remove('hide');
-							console.log('onRinging', caller);
-						},
-						onTermCall: function () {
-							me.localStream && me.localStream.getTracks().forEach(function(track){
-								track.stop();
-							})
-							me.remoteStream && me.remoteStream.getTracks().forEach(function(track){
-								track.stop();
-							})
-							remoteVideoWin.src = '';
-							localVideoWin.src = '';
-
-							// for debug
-							console.log('onTermCall');
-							easemobim.imChat.classList.remove('has-video');
-						},
-						onError: function (e) {
-							console.log(e && e.message ? e.message : 'An error occured when calling webrtc');
-						}
-					}
-				});
 			}
 			, open: function () {
 				var me = this;
@@ -872,10 +751,10 @@
 
 				me.conn.open(op);
 
-				// 事件只绑定一次
-				me.call || me.bindVideoEvent();
 				// init webRTC
-				utils.isSupportWebRTC && me.initWebRTC();
+				if(utils.isSupportWebRTC){
+					easemobim.videoChat.init(me.conn, me.channel.send, config);
+				}
 			}
 			, soundReminder: function () {
 				var me = this;

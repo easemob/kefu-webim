@@ -49,20 +49,20 @@ object {
 		height: 150px;
 		margin: 80px auto 0;
 		line-height: 150px;
-	}
-	i:after {
-		content: 'G';
-		position: absolute;
-		font-size: 60px;
-		color: white;
-		width: 60px;
-		height: 60px;
-		line-height: 60px;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		margin: auto;
+		&:after {
+			content: 'G';
+			position: absolute;
+			font-size: 60px;
+			color: white;
+			width: 60px;
+			height: 60px;
+			line-height: 60px;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			margin: auto;
+		}
 	}
 }
 .em-widget-offline-bg {
@@ -150,9 +150,9 @@ object {
 	margin: 4px auto;
 	word-break: break-all;
 	white-space: pre-wrap;
-}
-.em-widget-list-btn:hover {
-	color: white;
+	&:hover {
+		color: white;
+	}
 }
 .em-widget-logo,
 .em-widget-satisfaction {
@@ -237,26 +237,24 @@ object {
 		width: 96%;
 		margin: 0 auto;
 		text-align: center;
-	}
-	li {
-		display: inline-block;
-		position: relative;
-		width: 55px;
-		height: 55px;
-		line-height: 55px;
-		cursor: pointer;
+		li {
+			display: inline-block;
+			position: relative;
+			width: 55px;
+			height: 55px;
+			line-height: 55px;
+			cursor: pointer;
 
-		width: 80px\9;
-		height: 80px\9;
-		zoom: 50%\9;
-	}
-	li {
-		font-size: 60px;
-		left: -2.5px;
-		color: #ccc;
-	}
-	li.sel {
-		color: #ffb31a;
+			width: 80px\9;
+			height: 80px\9;
+			zoom: 50%\9;
+			font-size: 60px;
+			left: -2.5px;
+			color: #ccc;
+			&.sel {
+				color: #ffb31a;
+			}
+		}
 	}
 	textarea {
 		resize: none;
@@ -269,5 +267,56 @@ object {
 		border: 1px solid #E4E4E4;
 		border-radius: 6px;
 		font-size: 13px;
+	}
+}
+
+/* 图片展示控件 */
+.img-view {
+	z-index: 100000;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	overflow: auto;
+	background: rgba(0,0,0,.3);
+	img {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		margin: auto;
+	}
+}
+
+/* 视频邀请确认对话框 */
+.em-dialog-video-confirm {
+	position: fixed;
+	width: 220px;
+	height: 80px;
+	padding: 20px 10px;
+	margin: auto;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	color: white;
+	background-color: rgba(0,0,0,.8);
+	border-radius: 4px;
+	box-shadow: 5px 5px 5px rgba(0,0,0,.5);
+	.button-panel {
+		display: flex;
+		flex-flow: row nowrap;
+		width: 100%;
+		margin: 10px 0;
+		button {
+			flex-grow: 1;
+			margin: 0 5px;
+			&.btn-confirm {
+				color: white;
+				background: #1a9bfc;
+			}
+		}
 	}
 }

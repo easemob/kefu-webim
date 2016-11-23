@@ -129,6 +129,8 @@ gulp.task('combineJs', function() {
 		'static/js/src/modules/wechat.js',
 		'static/js/src/modules/site.js',
 		'static/js/src/modules/channel.js',
+		'static/js/src/modules/ui.js',
+		'static/js/src/modules/videoChat.js',
 		'static/js/src/modules/chat.js',
 		'static/js/src/modules/eventCollector.js',
 		'static/js/src/init.js'
