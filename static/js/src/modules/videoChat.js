@@ -25,7 +25,7 @@ easemobim.videoChat = (function(dialog){
 			call.acceptCall();
 		},
 		'btn-toggle': function(){
-			localStream.getTracks().forEach(function(track){
+			localStream.getVideoTracks().forEach(function(track){
 				track.enabled = !track.enabled;
 			});
 		},

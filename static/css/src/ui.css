@@ -310,12 +310,22 @@ object {
 		flex-flow: row nowrap;
 		width: 100%;
 		margin: 10px 0;
-		button {
+		span {
+			font-size: 14px;
+			border-radius: 5px;
+			height: 35px;
+			text-align: center;
 			flex-grow: 1;
+			line-height: 35px;
 			margin: 0 5px;
+			cursor: pointer;
+			&.btn-cancel {
+				color: black;
+				background: white;
+			}
 			&.btn-confirm {
 				color: white;
-				background: #1a9bfc;
+				background: #1ba8ed;
 			}
 		}
 	}
