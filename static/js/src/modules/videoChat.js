@@ -25,7 +25,7 @@ easemobim.videoChat = (function(dialog){
 			call.acceptCall();
 		},
 		'btn-toggle': function(){
-			localStream.getVideoTracks().forEach(function(track){
+			localStream && localStream.getVideoTracks().forEach(function(track){
 				track.enabled = !track.enabled;
 			});
 		},
@@ -36,8 +36,8 @@ easemobim.videoChat = (function(dialog){
 			localVideoWin.src = remoteVideoWin.src;
 			remoteVideoWin.src = tmp;
 
-			localVideoWin.muted = localVideoWin.muted;
-			remoteVideoWin.muted = remoteVideoWin.muted;
+			localVideoWin.muted = !localVideoWin.muted;
+			remoteVideoWin.muted = !remoteVideoWin.muted;
 		},
 		'btn-minimize': function(){
 			videoWidget.classList.add('minimized');

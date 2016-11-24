@@ -44,6 +44,20 @@
 			margin-top: 6px;
 		}
 	}
+	.full-screen-prompt {
+		color: white;
+		display: flex;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		background: black;
+		flex-flow: column wrap;
+		justify-content: center;
+		align-items: center;
+		p {
+			margin-top: 10px;
+		}
+	}
 	.sub-win {
 		position: absolute;
 		width: 140px;
