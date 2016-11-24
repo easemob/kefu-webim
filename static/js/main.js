@@ -16032,8 +16032,8 @@ easemobim.ui = {};
 easemobim.ui.videoConfirmDialog = (function(){
 	var dialog = document.querySelector('div.em-dialog-video-confirm');
 	var buttonPanel = dialog.querySelector('div.button-panel');
-	var btnConfirm = dialog.querySelector('button.btn-confirm');
-	var btnCancel = dialog.querySelector('button.btn-cancel');
+	var btnConfirm = dialog.querySelector('.btn-confirm');
+	var btnCancel = dialog.querySelector('.btn-cancel');
 	var confirmCallback = null;
 	var cancelCallback = null;
 
@@ -16098,7 +16098,7 @@ easemobim.videoChat = (function(dialog){
 			call.acceptCall();
 		},
 		'btn-toggle': function(){
-			localStream.getTracks().forEach(function(track){
+			localStream.getVideoTracks().forEach(function(track){
 				track.enabled = !track.enabled;
 			});
 		},
