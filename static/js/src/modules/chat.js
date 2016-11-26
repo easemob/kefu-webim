@@ -28,7 +28,6 @@
 		easemobim.realFile = utils.$Dom('em-widgetFileInput');
 		easemobim.sendFileBtn = utils.$Dom('em-widgetFile');
 		easemobim.noteBtn = utils.$Dom('em-widgetNote');
-		easemobim.mobileNoteBtn = utils.$Dom('em-widgetNotem');
 		easemobim.dragHeader = utils.$Dom('em-widgetDrag');
 		easemobim.dragBar = easemobim.dragHeader.getElementsByTagName('p')[0];
 		easemobim.chatFaceWrapper = utils.$Dom('EasemobKefuWebimFaceWrapper');
@@ -130,8 +129,6 @@
 			}
 			, mobile: function () {
 				if ( !utils.isMobile ) { return false; }
-
-				config.ticket && !config.offDuty && utils.removeClass(easemobim.mobileNoteBtn, 'em-hide');
 
 				if ( !config.hideKeyboard && !config.offDuty ) {
 					var i = document.createElement('i');
@@ -980,9 +977,6 @@
 
 				//显示留言界面
 				utils.on(easemobim.noteBtn, 'click', function () {
-					easemobim.leaveMessage.show();
-				});
-				utils.on(easemobim.mobileNoteBtn, 'click', function () {
 					easemobim.leaveMessage.show();
 				});
 

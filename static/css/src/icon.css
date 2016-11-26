@@ -124,8 +124,7 @@
 .em-widget-msg-status i,
 .em-widget-satisfaction-dialog li,
 .em-widget-unimage,
-.em-widget-success-prompt i,
-.em-widget-notem:after {
+.em-widget-success-prompt i {
 	font-family: 'easemobim' !important;
 	font-size: 30px;
 	font-style: normal;
