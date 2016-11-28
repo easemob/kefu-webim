@@ -3,25 +3,70 @@ easemobim.videoChat = (function(dialog){
 	var btnVideoInvite = document.querySelector('.em-video-invite');
 	var videoWidget = document.querySelector('.em-widget-video');
 	var dialBtn = videoWidget.querySelector('.btn-accept-call');
-	var waitingPrompt = videoWidget.querySelector('.waiting-prompt');
-	var timeEscape = videoWidget.querySelector('p.time-escape');
+	var ctrlPanel = videoWidget.querySelector('.toolbar-control');
+	var subWin = videoWidget.querySelector('.sub-win');
 	var remoteVideoWin = videoWidget.querySelector('video.main');
 	var localVideoWin = videoWidget.querySelector('video.sub');
+
 	var config = null;
 	var localStream = null;
 	var remoteStream = null;
 	var call = null;
 	var sendMessageAPI = null;
-	var emChat = null;
-	var counter = 0;
-	var timer = null;
+	var closingTimer = null;
+
+	var statusTimer = {
+		timer: null,
+		counter: 0,
+		prompt: videoWidget.querySelector('.status p.prompt'),
+		timeSpan: videoWidget.querySelector('.status p.time-escape'),
+		start: function(prompt){
+			var me = this;
+			me.counter = 0;
+			me.prompt.innerHTML = prompt;
+			me.timeSpan.innerHTML = '00:00';
+			me.timer = setInterval(function(){
+				me.timeSpan.innerHTML = format(++me.counter);
+			}, 1000)
+
+			function format(second){
+				return (new Date(second * 1000))
+					.toISOString()
+					.slice(-'00:00.000Z'.length)
+					.slice(0, '00:00'.length);
+			}
+		},
+		stop: function(){
+			var me = this;
+			clearInterval(me.timer);
+		}
+	};
+
+	var endCall = function(){
+		statusTimer.stop();
+		localStream && localStream.getTracks().forEach(function(track){
+			track.stop();
+		})
+		remoteStream && remoteStream.getTracks().forEach(function(track){
+			track.stop();
+		})
+		remoteVideoWin.src = '';
+		localVideoWin.src = '';
+
+		imChat.classList.remove('has-video');
+	};
+
 	var events = {
 		'btn-end-call': function(){
 			call.endCall();
+			endCall();
 		},
 		'btn-accept-call': function(){
 			dialBtn.classList.add('hide');
-			stopTimer();
+			ctrlPanel.classList.remove('hide');
+			subWin.classList.remove('hide');
+			statusTimer.stop();
+			statusTimer.start('视频通话中');
 			call.acceptCall();
 		},
 		'btn-toggle': function(){
@@ -47,7 +92,7 @@ easemobim.videoChat = (function(dialog){
 		}
 	};
 
-	// 发送视频邀请
+	// 按钮初始化
 	btnVideoInvite.classList.remove('hide');
 	btnVideoInvite.addEventListener('click', function(){
 		dialog.init(sendVideoInvite);
@@ -63,22 +108,6 @@ easemobim.videoChat = (function(dialog){
 	}, false);
 
 
-	function startTimer(){
-		counter = 0;
-		timeEscape.innerHTML = '00:00';
-		timer = setInterval(function(){
-			timeEscape.innerHTML = format(counter++);
-		}, 1000)
-		waitingPrompt.classList.remove('hide');
-		function format(second){
-			var date = new Date(second * 1000);
-			return date.toISOString().slice(-'00:00.000Z'.length).slice(0, '00:00'.length);
-		}
-	}
-	function stopTimer(){
-		clearInterval(timer);
-		waitingPrompt.classList.add('hide');
-	}
 	function sendVideoInvite() {
 		console.log('send video invite');
 		sendMessageAPI('txt', '邀请客服进行实时视频', false, {
@@ -111,7 +140,6 @@ easemobim.videoChat = (function(dialog){
 
 			listener: {
 				onAcceptCall: function (from, options) {
-					stopTimer();
 					console.log('onAcceptCall', from, options);
 				},
 				onGotRemoteStream: function (stream) {
@@ -129,25 +157,17 @@ easemobim.videoChat = (function(dialog){
 					console.log('onGotLocalStream', stream);
 				},
 				onRinging: function (caller) {
+					subWin.classList.add('hide');
+					ctrlPanel.classList.add('hide');
 					imChat.classList.add('has-video');
-					startTimer();
+					statusTimer.start('视频连接请求，等待你的确认');
 					dialBtn.classList.remove('hide');
 					console.log('onRinging', caller);
 				},
 				onTermCall: function () {
-					stopTimer();
-					localStream && localStream.getTracks().forEach(function(track){
-						track.stop();
-					})
-					remoteStream && remoteStream.getTracks().forEach(function(track){
-						track.stop();
-					})
-					remoteVideoWin.src = '';
-					localVideoWin.src = '';
-
+					endCall();
 					// for debug
 					console.log('onTermCall');
-					imChat.classList.remove('has-video');
 				},
 				onError: function (e) {
 					console.log(e && e.message ? e.message : 'An error occured when calling webrtc');

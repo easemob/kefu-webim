@@ -19,7 +19,7 @@
 		ticket: true,
 		staticPath: '',
 		buttonText: '联系客服',
-		dialogWidth: '320px',
+		dialogWidth: '360px',
 		dialogHeight: '550px',
 		dragenable: true,
 		minimum: true,
