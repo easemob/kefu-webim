@@ -4,9 +4,9 @@ easemobim.videoChat = (function(dialog){
 	var videoWidget = document.querySelector('.em-widget-video');
 	var dialBtn = videoWidget.querySelector('.btn-accept-call');
 	var ctrlPanel = videoWidget.querySelector('.toolbar-control');
-	var subWin = videoWidget.querySelector('.sub-win');
-	var remoteVideoWin = videoWidget.querySelector('video.main');
-	var localVideoWin = videoWidget.querySelector('video.sub');
+	var subVideoWrapper = videoWidget.querySelector('.sub-win');
+	var mainVideo = videoWidget.querySelector('video.main');
+	var subVideo = videoWidget.querySelector('video.sub');
 
 	var config = null;
 	var localStream = null;
@@ -50,21 +50,28 @@ easemobim.videoChat = (function(dialog){
 		remoteStream && remoteStream.getTracks().forEach(function(track){
 			track.stop();
 		})
-		remoteVideoWin.src = '';
-		localVideoWin.src = '';
+		mainVideo.src = '';
+		subVideo.src = '';
 
 		imChat.classList.remove('has-video');
 	};
 
 	var events = {
 		'btn-end-call': function(){
-			call.endCall();
-			endCall();
+			try {
+				call.endCall();
+			}
+			catch (e) {
+				console.error(e);
+			}
+			finally {
+				endCall();
+			}			
 		},
 		'btn-accept-call': function(){
 			dialBtn.classList.add('hide');
 			ctrlPanel.classList.remove('hide');
-			subWin.classList.remove('hide');
+			subVideoWrapper.classList.remove('hide');
 			statusTimer.stop();
 			statusTimer.start('视频通话中');
 			call.acceptCall();
@@ -77,12 +84,14 @@ easemobim.videoChat = (function(dialog){
 		'btn-change': function(){
 			var tmp;
 
-			tmp = localVideoWin.src;
-			localVideoWin.src = remoteVideoWin.src;
-			remoteVideoWin.src = tmp;
+			tmp = subVideo.src;
+			subVideo.src = mainVideo.src;
+			mainVideo.src = tmp;
+			subVideo.play();
+			mainVideo.play();
 
-			localVideoWin.muted = !localVideoWin.muted;
-			remoteVideoWin.muted = !remoteVideoWin.muted;
+			subVideo.muted = !subVideo.muted;
+			mainVideo.muted = !mainVideo.muted;
 		},
 		'btn-minimize': function(){
 			videoWidget.classList.add('minimized');
@@ -91,21 +100,6 @@ easemobim.videoChat = (function(dialog){
 			videoWidget.classList.remove('minimized');
 		}
 	};
-
-	// 按钮初始化
-	btnVideoInvite.classList.remove('hide');
-	btnVideoInvite.addEventListener('click', function(){
-		dialog.init(sendVideoInvite);
-	}, false);
-
-	// 视频组件事件绑定
-	videoWidget.addEventListener('click', function(evt){
-		var className = evt.target.className;
-
-		Object.keys(events).forEach(function(key){
-			~className.indexOf(key) && events[key]();
-		})
-	}, false);
 
 
 	function sendVideoInvite() {
@@ -130,6 +124,21 @@ easemobim.videoChat = (function(dialog){
 		sendMessageAPI = sendMessage;
 		config = cfg;
 
+		// 按钮初始化
+		btnVideoInvite.classList.remove('hide');
+		btnVideoInvite.addEventListener('click', function(){
+			dialog.init(sendVideoInvite);
+		}, false);
+
+		// 视频组件事件绑定
+		videoWidget.addEventListener('click', function(evt){
+			var className = evt.target.className;
+
+			Object.keys(events).forEach(function(key){
+				~className.indexOf(key) && events[key]();
+			})
+		}, false);
+
 		call = new WebIM.WebRTC.Call({
 			connection: conn,
 
@@ -143,21 +152,25 @@ easemobim.videoChat = (function(dialog){
 					console.log('onAcceptCall', from, options);
 				},
 				onGotRemoteStream: function (stream) {
-					remoteVideoWin.src = URL.createObjectURL(stream);
+					mainVideo.src = URL.createObjectURL(stream);
 					remoteStream = stream;
-					remoteVideoWin.play();
+					mainVideo.play();
 					// for debug
 					console.log('onGotRemoteStream', stream);
 				},
 				onGotLocalStream: function (stream) {
-					localVideoWin.src = URL.createObjectURL(stream);
+					subVideo.src = URL.createObjectURL(stream);
 					localStream = stream;
-					localVideoWin.play();
+					subVideo.play();
 					// for debug
 					console.log('onGotLocalStream', stream);
 				},
 				onRinging: function (caller) {
-					subWin.classList.add('hide');
+					// init
+					subVideo.muted = true;
+					mainVideo.muted = false;
+
+					subVideoWrapper.classList.add('hide');
 					ctrlPanel.classList.add('hide');
 					imChat.classList.add('has-video');
 					statusTimer.start('视频连接请求，等待你的确认');
@@ -165,9 +178,9 @@ easemobim.videoChat = (function(dialog){
 					console.log('onRinging', caller);
 				},
 				onTermCall: function () {
-					endCall();
 					// for debug
 					console.log('onTermCall');
+					endCall();
 				},
 				onError: function (e) {
 					console.log(e && e.message ? e.message : 'An error occured when calling webrtc');

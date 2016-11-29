@@ -154,7 +154,7 @@ gulp.task('combineJs', function() {
 	ejs.pipe(template({ WEBIM_PLUGIN_VERSION: VERSION }))
 	.pipe(gulp.dest('.'));
 
-	// // 目前未使用此文件，不确定以前是否用到，暂不更新，确认后移除
+	// // 目前未使用此文件，但是早期版本会用到，不能删除
 	// var open = gulp.src([
 	//	 'static/js/src/sdk/strophe.js',
 	//	 'static/js/src/sdk/easemob.im-1.0.8.js',

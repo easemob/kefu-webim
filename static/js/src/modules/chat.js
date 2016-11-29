@@ -695,7 +695,6 @@
 				var me = this;
 
 				me.opened = true;
-				me.fillFace();
 				me.scrollBottom(50);
 				utils.addClass(easemobim.imBtn, 'em-hide');
 				utils.removeClass(easemobim.imChat, 'em-hide');
