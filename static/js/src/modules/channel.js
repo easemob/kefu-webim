@@ -42,6 +42,12 @@ easemobim.channel = function ( config ) {
 				multiResources: config.resources,
 				heartBeatWait: HEARTBEATTIMER
 			});
+			 // return new WebIM.connection({
+    //             url: config.xmppServer,
+    //             retry: true,
+    //             isMultiLoginSessions: config.resources,
+    //             heartBeatWait: HEARTBEATTIMER
+    //         });
 		},
 
 		reSend: function ( type, id ) {
@@ -315,10 +321,6 @@ easemobim.channel = function ( config ) {
 			else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {
 				type = 'robotList';  
 			}
-			// webRTC
-			// else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.liveStreamInvitation ) {
-			//	 type = 'liveStreamInvitation';  
-			// }
 			//机器人转人工
 			else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {
 				type = 'robotTransfer';  
@@ -535,6 +537,7 @@ easemobim.channel = function ( config ) {
 				}
 				, onOffline: function () {
 					utils.isMobile && me.conn.close();
+					console.log('onOffline-channel');
 				}
 				, onError: function ( e ) {
 					if ( e.reconnect ) {

@@ -9,11 +9,10 @@ easemobim.videoChat = (function(dialog){
 	var subVideo = videoWidget.querySelector('video.sub');
 
 	var config = null;
-	var localStream = null;
-	var remoteStream = null;
 	var call = null;
 	var sendMessageAPI = null;
-	var closingTimer = null;
+	var localStream = null;
+	var remoteStream = null;
 
 	var statusTimer = {
 		timer: null,
@@ -42,8 +41,31 @@ easemobim.videoChat = (function(dialog){
 		}
 	};
 
+	var closingTimer = {
+		isConnected: false,
+		timer: null,
+		delay: 3000,
+		closingPrompt: videoWidget.querySelector('.full-screen-prompt'),
+		timeSpan: videoWidget.querySelector('.full-screen-prompt p.time-escape'),
+		show: function(){
+			var me = this;
+			if(me.isConnected){
+				me.timeSpan.innerHTML = statusTimer.timeSpan.innerHTML;
+			}
+			else{
+				me.timeSpan.innerHTML = '00:00';
+			}
+			me.closingPrompt.classList.remove('hide');
+			setTimeout(function(){
+				imChat.classList.remove('has-video');
+				me.closingPrompt.classList.add('hide');
+			}, me.delay);
+		}
+	}
+
 	var endCall = function(){
 		statusTimer.stop();
+		closingTimer.show();
 		localStream && localStream.getTracks().forEach(function(track){
 			track.stop();
 		})
@@ -52,8 +74,6 @@ easemobim.videoChat = (function(dialog){
 		})
 		mainVideo.src = '';
 		subVideo.src = '';
-
-		imChat.classList.remove('has-video');
 	};
 
 	var events = {
@@ -62,13 +82,14 @@ easemobim.videoChat = (function(dialog){
 				call.endCall();
 			}
 			catch (e) {
-				console.error(e);
+				console.error('end call:', e);
 			}
 			finally {
 				endCall();
 			}			
 		},
 		'btn-accept-call': function(){
+			closingTimer.isConnected = true;
 			dialBtn.classList.add('hide');
 			ctrlPanel.classList.remove('hide');
 			subVideoWrapper.classList.remove('hide');
@@ -169,6 +190,7 @@ easemobim.videoChat = (function(dialog){
 					// init
 					subVideo.muted = true;
 					mainVideo.muted = false;
+					closingTimer.isConnected = false;
 
 					subVideoWrapper.classList.add('hide');
 					ctrlPanel.classList.add('hide');
@@ -190,6 +212,11 @@ easemobim.videoChat = (function(dialog){
 	}
 
 	return {
-		init: init
+		init: init,
+		onOffline: function() {
+			// for debug
+			console.log('onOffline');
+			endCall();
+		}
 	}
 }(easemobim.ui.videoConfirmDialog));
