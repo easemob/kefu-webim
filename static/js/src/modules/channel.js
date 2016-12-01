@@ -36,18 +36,18 @@ easemobim.channel = function ( config ) {
 
 		getConnection: function () {
 
-			return new Easemob.im.Connection({ 
+			// return new Easemob.im.Connection({ 
+			// 	url: config.xmppServer,
+			// 	retry: true,
+			// 	multiResources: config.resources,
+			// 	heartBeatWait: HEARTBEATTIMER
+			// });
+			return new WebIM.connection({
 				url: config.xmppServer,
 				retry: true,
-				multiResources: config.resources,
+				isMultiLoginSessions: config.resources,
 				heartBeatWait: HEARTBEATTIMER
 			});
-			 // return new WebIM.connection({
-    //             url: config.xmppServer,
-    //             retry: true,
-    //             isMultiLoginSessions: config.resources,
-    //             heartBeatWait: HEARTBEATTIMER
-    //         });
 		},
 
 		reSend: function ( type, id ) {

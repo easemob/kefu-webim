@@ -345,23 +345,14 @@
 				localStorage.clear();
 			} catch ( e ) {}
 		}
-		, set: function ( key, value, local ) {
-			if ( local && 'localStorage' in window ) {
-				localStorage.setItem(encodeURIComponent(key), encodeURIComponent(value));
-			} else {
-				var date = new Date();
-				date.setTime(date.getTime() + 30*24*3600*1000);
-				document.cookie = encodeURIComponent(key) + '=' + encodeURIComponent(value) + ';path=/;expires=' + date.toGMTString();
-			}
+		, set: function ( key, value ) {
+			var date = new Date();
+			date.setTime(date.getTime() + 30*24*3600*1000);
+			document.cookie = encodeURIComponent(key) + '=' + encodeURIComponent(value) + ';path=/;expires=' + date.toGMTString();
 		}
-		, get: function ( key, local ) {
-			if ( local && 'localStorage' in window ) {
-				var value = localStorage.getItem(encodeURIComponent(key));
-				return value ? value : ''; 
-			} else {
-				var results = document.cookie.match('(^|;) ?' + encodeURIComponent(key) + '=([^;]*)(;|$)'); 
-				return results ? decodeURIComponent(results[2]) : '';
-			}
+		, get: function ( key ) {
+			var results = document.cookie.match('(^|;) ?' + encodeURIComponent(key) + '=([^;]*)(;|$)'); 
+			return results ? decodeURIComponent(results[2]) : '';
 		}
 		, getAvatarsFullPath: function ( url, domain ) {
 			var returnValue = null;
