@@ -239,7 +239,7 @@ easemobim.channel = function ( config ) {
 				file = file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id'));
 
 			if ( !file || !file.filetype || !config.FILETYPE[file.filetype.toLowerCase()] ) {
-				chat.errorPrompt('不支持此文件');
+				me.errorPrompt('不支持此文件');
 				easemobim.realFile.value = null;
 				return false;
 			}
@@ -717,13 +717,7 @@ easemobim.channel = function ( config ) {
 
 
 	firstTS = setTimeout(function () {
-
-		if ( easemobim.textarea.value ) {
-			utils.removeClass(easemobim.sendBtn, 'disabled');
-		}
-		utils.html(easemobim.sendBtn, '发送');
-
-		chat.handleReady();
+		me.handleReady();
 	}, INITTIMER);
 	
 	//收消息轮训通道常驻

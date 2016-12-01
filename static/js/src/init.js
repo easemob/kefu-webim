@@ -5,6 +5,8 @@
 	var utils = easemobim.utils;
 	var api = easemobim.api;
 	var eventCollector = easemobim.eventCollector;
+	var chat;
+	var afterChatReady;
 
 	getConfig();
 
@@ -64,6 +66,7 @@
 		} else {
 			window.transfer = new easemobim.Transfer(null, 'main').listen(function(msg) {
 				if (msg.parentId) {
+					chat = easemobim.chat(msg);
 					window.transfer.to = msg.parentId;
 					initUI(msg, initAfterUI);
 				}
@@ -90,7 +93,7 @@
 	}
 
 	function initAfterUI(config) {
-		window.chat = easemobim.chat(config);
+		// chat = easemobim.chat(config);
 
 		config.base = location.protocol + config.domain;
 
