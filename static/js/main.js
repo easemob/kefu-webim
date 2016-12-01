@@ -19864,7 +19864,7 @@ easemobim.channel = function ( config ) {
 				file = file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id'));
 
 			if ( !file || !file.filetype || !config.FILETYPE[file.filetype.toLowerCase()] ) {
-				chat.errorPrompt('不支持此文件');
+				me.errorPrompt('不支持此文件');
 				easemobim.realFile.value = null;
 				return false;
 			}
@@ -20135,11 +20135,6 @@ easemobim.channel = function ( config ) {
 					me.token = info.accessToken;
 					me.conn.setPresence();
 
-					if ( easemobim.textarea.value ) {
-						utils.removeClass(easemobim.sendBtn, 'disabled');
-					}
-					utils.html(easemobim.sendBtn, '发送');
-
 					me.handleReady(info);
 				}
 				, onTextMessage: function ( message ) {
@@ -20164,6 +20159,7 @@ easemobim.channel = function ( config ) {
 					utils.isMobile && me.conn.close();
 					// for debug
 					console.log('onOffline-channel');
+					// 断线关闭视频通话
 					if(utils.isSupportWebRTC){
 						easemobim.videoChat.onOffline();
 					}
@@ -20346,13 +20342,7 @@ easemobim.channel = function ( config ) {
 
 
 	firstTS = setTimeout(function () {
-
-		if ( easemobim.textarea.value ) {
-			utils.removeClass(easemobim.sendBtn, 'disabled');
-		}
-		utils.html(easemobim.sendBtn, '发送');
-
-		chat.handleReady();
+		me.handleReady();
 	}, INITTIMER);
 	
 	//收消息轮训通道常驻
@@ -20698,11 +20688,12 @@ easemobim.videoChat = (function(dialog){
 			}
 			, handleReady: function ( info ) {
 				var me = this;
-
-				if ( me.readyHandled ) {
-					return false;
+				if ( easemobim.textarea.value ) {
+					utils.removeClass(easemobim.sendBtn, 'disabled');
 				}
+				easemobim.sendBtn.innerHTML = '发送';
 
+				if (me.readyHandled) return;
 				me.readyHandled = true;
 
 				if ( info && config.user ) {
@@ -21980,6 +21971,8 @@ easemobim.videoChat = (function(dialog){
 	var utils = easemobim.utils;
 	var api = easemobim.api;
 	var eventCollector = easemobim.eventCollector;
+	var chat;
+	var afterChatReady;
 
 	getConfig();
 
@@ -22039,6 +22032,7 @@ easemobim.videoChat = (function(dialog){
 		} else {
 			window.transfer = new easemobim.Transfer(null, 'main').listen(function(msg) {
 				if (msg.parentId) {
+					chat = easemobim.chat(msg);
 					window.transfer.to = msg.parentId;
 					initUI(msg, initAfterUI);
 				}
@@ -22065,7 +22059,7 @@ easemobim.videoChat = (function(dialog){
 	}
 
 	function initAfterUI(config) {
-		window.chat = easemobim.chat(config);
+		// chat = easemobim.chat(config);
 
 		config.base = location.protocol + config.domain;
 
