@@ -173,20 +173,22 @@ easemobim.videoChat = (function(dialog){
 					console.log('onAcceptCall', from, options);
 				},
 				onGotRemoteStream: function (stream) {
+					// for debug
+					console.log('onGotRemoteStream', stream);
 					mainVideo.src = URL.createObjectURL(stream);
 					remoteStream = stream;
 					mainVideo.play();
-					// for debug
-					console.log('onGotRemoteStream', stream);
 				},
 				onGotLocalStream: function (stream) {
+					// for debug
+					console.log('onGotLocalStream', stream);
 					subVideo.src = URL.createObjectURL(stream);
 					localStream = stream;
 					subVideo.play();
-					// for debug
-					console.log('onGotLocalStream', stream);
 				},
 				onRinging: function (caller) {
+					// for debug
+					console.log('onRinging', caller);
 					// init
 					subVideo.muted = true;
 					mainVideo.muted = false;
@@ -197,7 +199,6 @@ easemobim.videoChat = (function(dialog){
 					imChat.classList.add('has-video');
 					statusTimer.start('视频连接请求，等待你的确认');
 					dialBtn.classList.remove('hide');
-					console.log('onRinging', caller);
 				},
 				onTermCall: function () {
 					// for debug

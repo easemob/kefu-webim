@@ -537,7 +537,13 @@ easemobim.channel = function ( config ) {
 				}
 				, onOffline: function () {
 					utils.isMobile && me.conn.close();
+					// for debug
 					console.log('onOffline-channel');
+					if(utils.isSupportWebRTC){
+						easemobim.videoChat.onOffline();
+					}
+				// todo 断线后停止轮询坐席状态
+				// me.stopGettingAgentStatus();
 				}
 				, onError: function ( e ) {
 					if ( e.reconnect ) {
