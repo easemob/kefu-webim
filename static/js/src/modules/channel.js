@@ -510,11 +510,6 @@ easemobim.channel = function ( config ) {
 					me.token = info.accessToken;
 					me.conn.setPresence();
 
-					if ( easemobim.textarea.value ) {
-						utils.removeClass(easemobim.sendBtn, 'disabled');
-					}
-					utils.html(easemobim.sendBtn, '发送');
-
 					me.handleReady(info);
 				}
 				, onTextMessage: function ( message ) {
@@ -539,6 +534,7 @@ easemobim.channel = function ( config ) {
 					utils.isMobile && me.conn.close();
 					// for debug
 					console.log('onOffline-channel');
+					// 断线关闭视频通话
 					if(utils.isSupportWebRTC){
 						easemobim.videoChat.onOffline();
 					}

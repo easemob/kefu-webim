@@ -73,7 +73,7 @@
 
 	/*
 	 * @param: {String} 技能组名称，选填
-	 * 为兼容老版，建议使用easemobim.bind方法
+	 * 兼容旧版接口，建议使用easemobim.bind方法
 	 */
 	window.easemobIM = function ( group ) {
 		easemobim.bind({ emgroup: group });

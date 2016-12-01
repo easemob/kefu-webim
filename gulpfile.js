@@ -1,3 +1,13 @@
+/*
+
+	以下文件老版本会引用到，不能删除
+
+	/static/js/em-open.js
+	/static/js/em-transfer.js
+	/transfer.html
+
+*/
+
 var debug = false;
 const VERSION = '43.11';
 
@@ -36,28 +46,6 @@ gulp.task('minifyHtml', function () {
 	.pipe(template({ WEBIM_PLUGIN_VERSION: VERSION }))
 	.pipe(gulp.dest('.'));
 });
-
-
-/*
-//cssmin
-gulp.task('cssmin', function() {
-	gulp.src([
-		'static/css/src/global.css',
-		'static/css/src/icon.css',
-		'static/css/src/header.css',
-		'static/css/src/body.css',
-		'static/css/src/chat.css',
-		'static/css/src/send.css',
-		'static/css/src/theme.css',
-		'static/css/src/ui.css',
-		'static/css/src/mobile.css',
-	])
-	.pipe(concat('im.css'))
-	.pipe(template({ WEBIM_PLUGIN_VERSION: VERSION }))
-	.pipe(minifycss({compatibility: 'ie8'}))
-	.pipe(gulp.dest('static/css/'));
-});
-*/
 
 //postcss
 gulp.task('cssmin', function() {
@@ -156,17 +144,6 @@ gulp.task('combineJs', function() {
 	ejs.pipe(template({ WEBIM_PLUGIN_VERSION: VERSION }))
 	.pipe(gulp.dest('.'));
 
-	// // 目前未使用此文件，但是早期版本会用到，不能删除
-	// var open = gulp.src([
-	//	 'static/js/src/sdk/strophe.js',
-	//	 'static/js/src/sdk/easemob.im-1.0.8.js',
-	//	 'static/js/swfupload/swfupload.min.js',
-	//	 'static/js/src/modules/transfer.js',
-	// ])
-	// .pipe(concat('em-open.js'));
-	// debug || open.pipe(uglify());
-	// open.pipe(gulp.dest('static/js/'));
-
 	var transfer = gulp.src([
 		'static/js/src/modules/ajax.js',
 		'static/js/src/modules/transfer.js',
@@ -194,26 +171,3 @@ gulp.task('watch', function() {
 	gulp.watch(['static/css/src/*.css'], ['cssmin']);
 	gulp.watch(['static/tpl/im.html'], ['minifyHtml']);
 });
-
-// 测试postcss
-gulp.task('test', () => {
-	gulp.src(['./weixin.scss'])
-	.pipe(sass())
-	.pipe(
-		postcss([
-			autoprefixer({
-				browsers: ['ie >= 8', 'ff >= 10', 'Chrome >= 15', 'iOS >= 7', 'Android >= 4.4.4']
-			}),
-			cssnano({
-				discardComments: {
-					removeAll: true,
-				},
-				mergeRules: false,
-				zindex: false,
-				reduceIdents: false,
-			}),
-		])
-	)
-	.pipe(concat('out.css'))
-	.pipe(gulp.dest('.'));
-})

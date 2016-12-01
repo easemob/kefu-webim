@@ -67,11 +67,12 @@
 			}
 			, handleReady: function ( info ) {
 				var me = this;
-
-				if ( me.readyHandled ) {
-					return false;
+				if ( easemobim.textarea.value ) {
+					utils.removeClass(easemobim.sendBtn, 'disabled');
 				}
+				easemobim.sendBtn.innerHTML = '发送';
 
+				if (me.readyHandled) return;
 				me.readyHandled = true;
 
 				if ( info && config.user ) {

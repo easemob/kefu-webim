@@ -68,7 +68,6 @@
 					initUI(msg, initAfterUI);
 				}
 				else if (msg.event) {
-					// window.chat || initUI(msg, initAfterUI);
 					switch (msg.event) {
 						case easemobim.EVENTS.SHOW.event:
 							chatEntry.open();

@@ -12,7 +12,7 @@
 	margin: 0;
 }
 .em-mobile .em-widgetBody-wrapper {
-	bottom: 42px;
+	bottom: 77px;
 }
 .em-mobile .em-widget-tip span {
 	font-size: 14px;
@@ -40,9 +40,6 @@
 	font-size: 17px;
 	border-radius: 0;
 	box-shadow: none;
-}
-.em-mobile .em-widgetBody {
-	bottom: 42px;
 }
 .em-mobile .em-widget-list-btn,
 .em-mobile .em-widget-msg-container {
