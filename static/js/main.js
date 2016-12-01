@@ -10863,12 +10863,20 @@ module.exports = {
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
+	module.exports = __webpack_require__(228);
+
+
+/***/ },
+
+/***/ 228:
+/***/ function(module, exports, __webpack_require__) {
+
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {'use strict';
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-	var Util = __webpack_require__(226);
-	var Call = __webpack_require__(227);
+	var Util = __webpack_require__(230);
+	var Call = __webpack_require__(231);
 
 	window.WebIM = typeof WebIM !== 'undefined' ? WebIM : {};
 	WebIM.WebRTC = WebIM.WebRTC || {};
@@ -10891,11 +10899,11 @@ module.exports = {
 	}
 
 	//WebIM.WebRTC.supportPRAnswer = false;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(225)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(229)(module)))
 
 /***/ },
 
-/***/ 225:
+/***/ 229:
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -10912,12 +10920,12 @@ module.exports = {
 
 /***/ },
 
-/***/ 226:
+/***/ 230:
 /***/ function(module, exports) {
 
 	'use strict';
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	/*
 	 * ! Math.uuid.js (v1.4) http://www.broofa.com mailto:robert@broofa.com
@@ -11327,16 +11335,16 @@ module.exports = {
 
 /***/ },
 
-/***/ 227:
+/***/ 231:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Util = __webpack_require__(226);
-	var RTCIQHandler = __webpack_require__(228);
-	var API = __webpack_require__(229);
-	var WebRTC = __webpack_require__(230);
-	var CommonPattern = __webpack_require__(231);
+	var Util = __webpack_require__(230);
+	var RTCIQHandler = __webpack_require__(232);
+	var API = __webpack_require__(233);
+	var WebRTC = __webpack_require__(234);
+	var CommonPattern = __webpack_require__(235);
 
 	var RouteTo = API.RouteTo;
 	var Api = API.Api;
@@ -11386,22 +11394,22 @@ module.exports = {
 	        };
 	    },
 
-	    makeVideoCall: function makeVideoCall(callee) {
+	    makeVideoCall: function makeVideoCall(callee, accessSid) {
 
 	        var mediaStreamConstaints = {};
 	        Util.extend(mediaStreamConstaints, this.mediaStreamConstaints);
 
-	        this.call(callee, mediaStreamConstaints);
+	        this.call(callee, mediaStreamConstaints, accessSid);
 	    },
 
-	    makeVoiceCall: function makeVoiceCall(callee) {
+	    makeVoiceCall: function makeVoiceCall(callee, accessSid) {
 	        var self = this;
 
 	        var mediaStreamConstaints = {};
 	        Util.extend(mediaStreamConstaints, self.mediaStreamConstaints);
 	        self.mediaStreamConstaints.video = false;
 
-	        self.call(callee, mediaStreamConstaints);
+	        self.call(callee, mediaStreamConstaints, accessSid);
 	    },
 
 	    acceptCall: function acceptCall() {
@@ -11415,12 +11423,13 @@ module.exports = {
 	        self.pattern.termCall();
 	    },
 
-	    call: function call(callee, mediaStreamConstaints) {
+	    call: function call(callee, mediaStreamConstaints, accessSid) {
 	        var self = this;
 	        this.callee = this.api.jid(callee);
 
 	        var rt = new RouteTo({
 	            rtKey: "",
+	            sid: accessSid,
 
 	            success: function success(result) {
 	                _logger.debug("iq to server success", result);
@@ -11437,7 +11446,7 @@ module.exports = {
 	                return;
 	            }
 	            self._onGotServerP2PConfig(from, rtcOptions);
-	            self.pattern.initC(self.mediaStreamConstaints);
+	            self.pattern.initC(self.mediaStreamConstaints, accessSid);
 	        });
 	    },
 
@@ -11518,7 +11527,7 @@ module.exports = {
 
 /***/ },
 
-/***/ 228:
+/***/ 232:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11527,9 +11536,9 @@ module.exports = {
 	 * IQ Message，IM -> CMServer --> IM
 	 */
 
-	var _util = __webpack_require__(226);
+	var _util = __webpack_require__(230);
 	var _logger = _util.logger;
-	var API = __webpack_require__(229);
+	var API = __webpack_require__(233);
 	var RouteTo = API.RouteTo;
 
 	var CONFERENCE_XMLNS = "urn:xmpp:media-conference";
@@ -11759,7 +11768,9 @@ module.exports = {
 	        var to = rt.to || _conn.domain;
 
 	        var sid = rt.sid || self._fromSessionID && self._fromSessionID[to];
-	        sid = sid || ((self._fromSessionID || (self._fromSessionID = {}))[to] = _conn.getUniqueId("CONFR_"));
+	        //sid = sid || ((self._fromSessionID || (self._fromSessionID = {}))[to] = _conn.getUniqueId("CONFR_"));
+	        sid = sid || _conn.getUniqueId("CONFR_");
+	        (self._fromSessionID || (self._fromSessionID = {}))[to] = sid;
 
 	        if (to.indexOf("@") >= 0) {
 	            if (self._connectedSid == '' && options.data.op == 102) {
@@ -11835,17 +11846,17 @@ module.exports = {
 
 /***/ },
 
-/***/ 229:
+/***/ 233:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	/**
 	 * API
 	 */
-	var _util = __webpack_require__(226);
+	var _util = __webpack_require__(230);
 	var _logger = _util.logger;
 
 	var _RouteTo = {
@@ -11934,9 +11945,12 @@ module.exports = {
 	    },
 
 	    jid: function jid(shortUserName) {
-	        if (shortUserName.indexOf(this.imConnection.context.appKey) >= 0) {
+	        if (/^.+#.+_.+@.+$/g.test(shortUserName)) {
 	            return shortUserName;
 	        }
+	        // if (shortUserName.indexOf(this.imConnection.context.appKey) >= 0) {
+	        //     return shortUserName;
+	        // }
 	        return this.imConnection.context.appKey + "_" + shortUserName + "@" + this.imConnection.domain;
 	    },
 
@@ -12466,7 +12480,7 @@ module.exports = {
 
 /***/ },
 
-/***/ 230:
+/***/ 234:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12509,7 +12523,7 @@ module.exports = {
 	 *                                                  |
 	 *
 	 */
-	var _util = __webpack_require__(226);
+	var _util = __webpack_require__(230);
 	var _logger = _util.logger;
 
 	var _SDPSection = {
@@ -13019,7 +13033,7 @@ module.exports = {
 
 /***/ },
 
-/***/ 231:
+/***/ 235:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13027,8 +13041,8 @@ module.exports = {
 	/**
 	 * P2P
 	 */
-	var _util = __webpack_require__(226);
-	var RouteTo = __webpack_require__(229).RouteTo;
+	var _util = __webpack_require__(230);
+	var RouteTo = __webpack_require__(233).RouteTo;
 	var _logger = _util.logger;
 
 	var P2PRouteTo = RouteTo({
@@ -13102,8 +13116,9 @@ module.exports = {
 	        _logger.debug('_onPing from', fromSid);
 	    },
 
-	    initC: function initC(mediaStreamConstaints) {
+	    initC: function initC(mediaStreamConstaints, accessSid) {
 	        var self = this;
+	        self.sid = accessSid;
 
 	        self.createLocalMedia(mediaStreamConstaints);
 	    },
@@ -13130,6 +13145,7 @@ module.exports = {
 	        var self = this;
 
 	        var rt = new P2PRouteTo({
+	            sid: self.sid,
 	            to: self.callee,
 	            rtKey: self._rtKey
 	        });
@@ -15362,6 +15378,12 @@ easemobim.channel = function ( config ) {
 				multiResources: config.resources,
 				heartBeatWait: HEARTBEATTIMER
 			});
+			 // return new WebIM.connection({
+    //             url: config.xmppServer,
+    //             retry: true,
+    //             isMultiLoginSessions: config.resources,
+    //             heartBeatWait: HEARTBEATTIMER
+    //         });
 		},
 
 		reSend: function ( type, id ) {
@@ -15635,10 +15657,6 @@ easemobim.channel = function ( config ) {
 			else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {
 				type = 'robotList';  
 			}
-			// webRTC
-			// else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.liveStreamInvitation ) {
-			//	 type = 'liveStreamInvitation';  
-			// }
 			//机器人转人工
 			else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {
 				type = 'robotTransfer';  
@@ -15855,6 +15873,7 @@ easemobim.channel = function ( config ) {
 				}
 				, onOffline: function () {
 					utils.isMobile && me.conn.close();
+					console.log('onOffline-channel');
 				}
 				, onError: function ( e ) {
 					if ( e.reconnect ) {
@@ -16102,11 +16121,10 @@ easemobim.videoChat = (function(dialog){
 	var subVideo = videoWidget.querySelector('video.sub');
 
 	var config = null;
-	var localStream = null;
-	var remoteStream = null;
 	var call = null;
 	var sendMessageAPI = null;
-	var closingTimer = null;
+	var localStream = null;
+	var remoteStream = null;
 
 	var statusTimer = {
 		timer: null,
@@ -16135,8 +16153,31 @@ easemobim.videoChat = (function(dialog){
 		}
 	};
 
+	var closingTimer = {
+		isConnected: false,
+		timer: null,
+		delay: 3000,
+		closingPrompt: videoWidget.querySelector('.full-screen-prompt'),
+		timeSpan: videoWidget.querySelector('.full-screen-prompt p.time-escape'),
+		show: function(){
+			var me = this;
+			if(me.isConnected){
+				me.timeSpan.innerHTML = statusTimer.timeSpan.innerHTML;
+			}
+			else{
+				me.timeSpan.innerHTML = '00:00';
+			}
+			me.closingPrompt.classList.remove('hide');
+			setTimeout(function(){
+				imChat.classList.remove('has-video');
+				me.closingPrompt.classList.add('hide');
+			}, me.delay);
+		}
+	}
+
 	var endCall = function(){
 		statusTimer.stop();
+		closingTimer.show();
 		localStream && localStream.getTracks().forEach(function(track){
 			track.stop();
 		})
@@ -16145,8 +16186,6 @@ easemobim.videoChat = (function(dialog){
 		})
 		mainVideo.src = '';
 		subVideo.src = '';
-
-		imChat.classList.remove('has-video');
 	};
 
 	var events = {
@@ -16155,13 +16194,14 @@ easemobim.videoChat = (function(dialog){
 				call.endCall();
 			}
 			catch (e) {
-				console.error(e);
+				console.error('end call:', e);
 			}
 			finally {
 				endCall();
 			}			
 		},
 		'btn-accept-call': function(){
+			closingTimer.isConnected = true;
 			dialBtn.classList.add('hide');
 			ctrlPanel.classList.remove('hide');
 			subVideoWrapper.classList.remove('hide');
@@ -16262,6 +16302,7 @@ easemobim.videoChat = (function(dialog){
 					// init
 					subVideo.muted = true;
 					mainVideo.muted = false;
+					closingTimer.isConnected = false;
 
 					subVideoWrapper.classList.add('hide');
 					ctrlPanel.classList.add('hide');
@@ -16283,7 +16324,12 @@ easemobim.videoChat = (function(dialog){
 	}
 
 	return {
-		init: init
+		init: init,
+		onOffline: function() {
+			// for debug
+			console.log('onOffline');
+			endCall();
+		}
 	}
 }(easemobim.ui.videoConfirmDialog));
 
