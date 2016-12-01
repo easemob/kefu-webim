@@ -62,6 +62,7 @@
 					token: ''
 				};
 			}
+			chat = easemobim.chat(config);
 			initUI(config, initAfterUI);
 		} else {
 			window.transfer = new easemobim.Transfer(null, 'main').listen(function(msg) {
