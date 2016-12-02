@@ -29,7 +29,8 @@
 		top: 8px;
 		left: 2px;
 	}
-	.em-widget-corner {
+	.icon-corner-left,
+	.icon-corner-right {
 		top: 4px;
 	}
 	.em-widgetHeader {
@@ -76,20 +77,13 @@
 		height: 21px;
 		border-radius: 4px;
 		text-decoration: none;
-	}
-	.em-widgetHeader-keyboard:after {
-		content: 'N';
-		position: absolute;
-		left: -5px;
-		top: -4px;
-		text-align: center;
-		color: white;
-	}
-	.em-widgetHeader-keyboard-up:after {
-		content: 'O';
-	}
-	.em-widgetHeader-keyboard-down:after {
-		content: 'N';
+		&:before {
+			position: absolute;
+			left: -5px;
+			top: -4px;
+			text-align: center;
+			color: white;
+		}
 	}
 	.em-widget-send-wrapper {
 		position: absolute;

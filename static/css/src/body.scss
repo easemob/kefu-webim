@@ -147,7 +147,7 @@
 	color: #535252;
 	background-color: #FFECD5;
 	line-height: 44px;
-	span {
+	.content {
 		width: 87%;
 		vertical-align: middle;
 		line-height: 18px;
@@ -159,12 +159,11 @@
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 	}
-	.em-widget-tip-close {
+	.tip-close {
 		position: absolute;
 		right: 10px;
 		height: 30px;
 		color: #EBCFB3;
-		text-decoration: none;
 	}
 }
 
@@ -261,7 +260,7 @@
 	padding: 0 0 0 10px;
 	border-radius: 4px;
 	box-shadow: 0 4px 5px rgba(0,0,0,.1);
-	-webkit-transform: translate3d(0,0,0);
+	transform: translate3d(0,0,0);
 }
 .em-bar-face-container {
 	z-index: 2;
@@ -285,10 +284,6 @@
 	border-radius: 2px;
 	box-shadow: -2px 2px 2px rgba(0,0,0,.1);
 	transform: rotate(-45deg);
-	-webkit-transform: rotate(-45deg);
-	-moz-transform: rotate(-45deg);
-	-ms-transform: rotate(-45deg);
-	-o-transform: rotate(-45deg);
 	background-color: white;
 	display: none\9;
 }

@@ -56,8 +56,6 @@
 				this.opened = true;
 				//fill theme
 				this.setTheme();
-				//add min icon
-				this.setMinmum();
 				//init sound reminder
 				this.soundReminder();
 				//init face
@@ -126,15 +124,6 @@
 				if ( config.grUserId ) {
 					msg.body.ext.weichat.visitor = msg.body.ext.weichat.visitor || {};
 					msg.body.ext.weichat.visitor.gr_user_id = config.grUserId;
-				}
-			}
-			, mobile: function () {
-				if ( !utils.isMobile ) { return false; }
-
-				if ( !config.hideKeyboard && !config.offDuty ) {
-					var i = document.createElement('i');
-					utils.addClass(i, 'em-widgetHeader-keyboard em-widgetHeader-keyboard-down');
-					easemobim.dragHeader.appendChild(i);
 				}
 			}
 			, ready: function () {
@@ -407,30 +396,6 @@
 				}
 				return null;
 			}
-			, setKeyboard: function ( direction ) {
-				var me = this;
-
-				me.direction = direction;					
-				switch ( direction ) {
-					case 'up':
-						easemobim.send.style.bottom = 'auto';
-						easemobim.send.style.zIndex = '3';
-						easemobim.send.style.top = '43px';
-						easemobim.imChatBody.style.bottom = '0';
-						easemobim.chatFaceWrapper.style.bottom = 'auto';
-						easemobim.chatFaceWrapper.style.top = 43 + easemobim.send.getBoundingClientRect().height + 'px';
-						break;
-					case 'down':
-						easemobim.send.style.bottom = '0';
-						easemobim.send.style.zIndex = '3';
-						easemobim.send.style.top = 'auto';
-						easemobim.imChatBody.style.bottom = easemobim.send.getBoundingClientRect().height + 'px';
-						easemobim.chatFaceWrapper.style.bottom = easemobim.send.getBoundingClientRect().height + 'px';
-						easemobim.chatFaceWrapper.style.top = 'auto';
-						me.scrollBottom(50);
-						break;
-				}
-			}
 			, startToGetAgentStatus: function () {
 				var me = this;
 
@@ -505,23 +470,6 @@
 				//只有头像和昵称更新成客服的了才开启轮训
 				//this.updateAgentStatus();
 			}
-			, setMinmum: function () {
-				if ( !config.minimum || utils.isTop ) {
-					return;
-				}
-				var me = this,
-					min = document.createElement('a');
-
-				min.setAttribute('href', 'javascript:;');
-				min.setAttribute('title', '关闭');
-				utils.addClass(min, 'em-widgetHeader-min bg-color border-color hover-color');
-				easemobim.dragHeader.appendChild(min);
-				utils.on(min, 'click', function () {
-					transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
-					return false;
-				});
-				min = null;
-			}
 			, setTheme: function () {
 				easemobim.api('getTheme', {
 					tenantId: config.tenantId
@@ -550,18 +498,18 @@
 				}, function (msg) {
 					me.hasSetSlogan = true;
 					var slogan = msg.data && msg.data.length && msg.data[0].optionValue;
-					var sloganWidgetList = utils.$Class('div.em-widget-tip')[0].childNodes[0];
 					if(slogan){
 						// 设置信息栏内容
-						utils.$Class('span.em-widget-tip-text')[0].innerHTML = Easemob.im.Utils.parseLink(slogan);
+						document.querySelector('.em-widget-tip .content').innerHTML = Easemob.im.Utils.parseLink(slogan);
 						// 显示信息栏
 						utils.addClass(easemobim.imChat, 'has-tip');
 
 						// 隐藏信息栏按钮
 						utils.on(
-							utils.$Class('a.em-widget-tip-close')[0],
+							document.querySelector('.em-widget-tip .tip-close'),
 							utils.click,
 							function(){
+								// 隐藏信息栏
 								utils.removeClass(easemobim.imChat, 'has-tip');
 							}
 						);
@@ -620,19 +568,13 @@
 			, errorPrompt: function ( msg, isAlive ) {//暂时所有的提示都用这个方法
 				var me = this;
 
-				if ( !me.ePrompt ) {
-					me.ePrompt = document.createElement('p');
-					me.ePrompt.className = 'em-widget-error-prompt em-hide';
-					utils.html(me.ePrompt, '<span></span>');
-					easemobim.imChat.appendChild(me.ePrompt);
-					me.ePromptContent = me.ePrompt.getElementsByTagName('span')[0];
-				}
+				me.ePrompt = me.ePrompt || document.querySelector('.em-widget-error-prompt');
+				me.ePromptContent = me.ePromptContent || me.ePrompt.querySelector('span');
 				
-				utils.html(me.ePromptContent, msg);
-				utils.removeClass(me.ePrompt, 'em-hide');
+				me.ePromptContent.innerHTML = msg;
+				utils.removeClass(me.ePrompt, 'hide');
 				isAlive || setTimeout(function () {
-					utils.html(me.ePromptContent, '');
-					utils.addClass(me.ePrompt, 'em-hide');
+					utils.addClass(me.ePrompt, 'hide');
 				}, 2000);
 			}
 			, getSafeTextValue: function ( msg ) {
@@ -646,9 +588,6 @@
 				return '';
 			}
 			, setOffline: function ( isOffDuty ) {
-
-				this.mobile();
-
 				if ( !isOffDuty ) { return; }
 
 				switch ( config.offDutyType ) {
@@ -705,14 +644,13 @@
 				!utils.isTop && transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
 			}
 			, appendDate: function ( date, to, isHistory ) {
-				var chatWrapper = this.chatWrapper,
-					dom = document.createElement('div'),
-					fmt = 'M月d日 hh:mm';
+				var chatWrapper = this.chatWrapper;
+				var dom = document.createElement('div');
+				var fmt = 'M月d日 hh:mm';
 
-				if ( !chatWrapper ) {
-					return;
-				}
-				utils.html(dom, new Date(date).format(fmt));
+				if (!chatWrapper) return;
+
+				dom.innerHTML = new Date(date).format(fmt);
 				utils.addClass(dom, 'em-widget-date');
 
 				if ( !isHistory ) {
@@ -761,15 +699,13 @@
 					return;
 				}
 
-				me.reminder = document.createElement('a');
-				me.reminder.setAttribute('href', 'javascript:;');
-				utils.addClass(me.reminder, 'em-widgetHeader-audio fg-color');
-				easemobim.dragHeader.appendChild(me.reminder);
+				me.reminder = document.querySelector('.em-widgetHeader-audio');
 
 				//音频按钮静音
 				utils.on(me.reminder, 'mousedown touchstart', function () {
-					me.silence = !me.silence;
-					utils.toggleClass(me.reminder, 'em-widgetHeader-silence', me.slience);
+					me.slience = !me.slience;
+					utils.toggleClass(me.reminder, 'icon-slience', me.slience);
+					utils.toggleClass(me.reminder, 'icon-bell', !me.slience);
 
 					return false;
 				});
@@ -777,7 +713,7 @@
 				me.audio = document.createElement('audio');
 				me.audio.src = config.staticPath + '/mp3/msg.m4a';
 				me.soundReminder = function () {
-					if ( (utils.isMin() ? false : me.opened) || ast !== 0 || me.silence ) {
+					if ( (utils.isMin() ? false : me.opened) || ast !== 0 || me.slience ) {
 						return;
 					}
 					ast = setTimeout(function() {
@@ -789,17 +725,37 @@
 			, bindEvents: function () {
 				var me = this;
 
-				utils.live('i.em-widgetHeader-keyboard', utils.click, function () {
-					if ( utils.hasClass(this, 'em-widgetHeader-keyboard-up') ) {
-						utils.addClass(this, 'em-widgetHeader-keyboard-down');
-						utils.removeClass(this, 'em-widgetHeader-keyboard-up');
-						me.setKeyboard('down');
-					} else {
-						utils.addClass(this, 'em-widgetHeader-keyboard-up');
-						utils.removeClass(this, 'em-widgetHeader-keyboard-down');
-						me.setKeyboard('up');
+				utils.on(
+					document.querySelector('.em-widgetHeader-keyboard'),
+					utils.click,
+					function(){
+						var status = utils.hasClass(this, 'icon-keyboard-down');
+						me.direction = status ? 'down' : 'up';
+
+						utils.toggleClass(this, 'icon-keyboard-up', status);
+						utils.toggleClass(this, 'icon-keyboard-down', !status);
+
+						switch (me.direction) {
+							case 'up':
+								easemobim.send.style.bottom = 'auto';
+								easemobim.send.style.zIndex = '3';
+								easemobim.send.style.top = '43px';
+								easemobim.imChatBody.style.bottom = '0';
+								easemobim.chatFaceWrapper.style.bottom = 'auto';
+								easemobim.chatFaceWrapper.style.top = 43 + easemobim.send.getBoundingClientRect().height + 'px';
+								break;
+							case 'down':
+								easemobim.send.style.bottom = '0';
+								easemobim.send.style.zIndex = '3';
+								easemobim.send.style.top = 'auto';
+								easemobim.imChatBody.style.bottom = easemobim.send.getBoundingClientRect().height + 'px';
+								easemobim.chatFaceWrapper.style.bottom = easemobim.send.getBoundingClientRect().height + 'px';
+								easemobim.chatFaceWrapper.style.top = 'auto';
+								me.scrollBottom(50);
+								break;
+						}
 					}
-				});
+				);
 				
 				!utils.isMobile && !utils.isTop && utils.on(easemobim.imBtn, utils.click, function () {
 					transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
@@ -879,7 +835,7 @@
 
 				//resend
 				utils.live('div.em-widget-msg-status', utils.click, function () {
-					var id = this.getAttribute('id').slice(0, -7);
+					var id = this.getAttribute('id').slice(0, -'_failed'.length);
 
 					utils.addClass(this, 'em-hide');
 					utils.removeClass(utils.$Dom(id + '_loading'), 'em-hide');
@@ -980,6 +936,12 @@
 					easemobim.leaveMessage.show();
 				});
 
+				// 最小化
+				utils.on(document.querySelector('.em-widgetHeader-min'), 'click', function () {
+					transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
+					return false;
+				});
+
 				//hot key
 				utils.on(easemobim.textarea, 'keydown', function ( evt ) {
 					if(evt.keyCode !== 13) return;
@@ -1076,7 +1038,7 @@
 			}
 			//坐席改变更新坐席头像和昵称并且开启获取坐席状态的轮训
 			, handleAgentStatusChanged: function ( info ) {
-				if ( !info ) { return; }
+				if (!info) return;
 
 				config.agentUserId = info.userId;
 
@@ -1092,7 +1054,7 @@
 			//转接中排队中等提示上屏
 			, appendEventMsg: function (msg) {
 				//如果设置了hideStatus, 不显示转接中排队中等提示
-				if (config.hideStatus) { return; }
+				if (config.hideStatus) return;
 
 				var dom = document.createElement('div');
 
@@ -1169,9 +1131,7 @@
 			}
 			//receive message function
 			, receiveMsg: function ( msg, type, isHistory ) {
-				if ( config.offDuty ) {
-					return;
-				}
+				if (config.offDuty) return;
 
 				this.channel.handleReceive(msg, type, isHistory);
 			}

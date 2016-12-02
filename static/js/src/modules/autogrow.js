@@ -36,7 +36,7 @@ easemobim.autogrow = (function () {
 			.replace(/\n/g, '<br/>')
 			.replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
 			
-			utils.html(shadow, val);
+			shadow.innerHTML = val;
 			val && (this.style.height = Math.max(shadow.getBoundingClientRect().height + 17, minHeight) + 'px');
 			typeof options.callback == 'function' && options.callback();
 		};

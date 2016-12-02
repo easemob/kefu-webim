@@ -25,8 +25,8 @@
 			<textarea spellcheck='false' placeholder='请输入留言'></textarea>\
 			<button class='em-widget-offline-cancel'>取消</button>\
 			<button class='em-widget-offline-ok bg-color'>留言</button>\
-			<div class='em-widget-success-prompt em-hide'><i>A</i><p>留言发送成功</p></div>\
-		");
+			<div class='em-widget-success-prompt em-hide'><i class='icon-circle'><i class='icon-good'></i></i><p>留言发送成功</p></div>\
+			");
 		leaveMessage.domBg.appendChild(leaveMessage.dom);
 		imChat.appendChild(leaveMessage.domBg);
 

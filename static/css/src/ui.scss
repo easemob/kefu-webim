@@ -40,28 +40,30 @@ object {
 		color: #59BE00;
 		text-align: center;
 	}
-	i {
+	> i {
 		display: block;
 		position: relative;
-		color: #59BE00;
-		font-size: 150px;
-		width: 150px;
-		height: 150px;
 		margin: 80px auto 0;
-		line-height: 150px;
-		&:after {
-			content: 'G';
+		text-align: center;
+		&:before {
+			font-size: 150px;
+			width: 150px;
+			height: 150px;
+			line-height: 150px;
+			color: #59BE00;
+		}
+		i {
 			position: absolute;
-			font-size: 60px;
-			color: white;
-			width: 60px;
-			height: 60px;
-			line-height: 60px;
+			width: 100%;
 			top: 0;
 			left: 0;
-			right: 0;
-			bottom: 0;
-			margin: auto;
+    		&:before {
+				font-size: 60px;
+				color: white;
+				width: 60px;
+				height: 150px;
+				line-height: 150px;
+			}
 		}
 	}
 }
@@ -228,18 +230,19 @@ object {
 		text-align: center;
 		li {
 			display: inline-block;
-			position: relative;
-			width: 55px;
-			height: 55px;
-			line-height: 55px;
-			cursor: pointer;
-
-			width: 80px\9;
-			height: 80px\9;
-			zoom: 50%\9;
-			font-size: 60px;
-			left: -2.5px;
 			color: #ccc;
+			&:before {
+				position: relative;
+				width: 55px;
+				height: 55px;
+				line-height: 55px;
+				cursor: pointer;
+
+				width: 80px\9;
+				height: 80px\9;
+				zoom: 50%\9;
+				font-size: 60px;
+			}
 			&.sel {
 				color: #ffb31a;
 			}

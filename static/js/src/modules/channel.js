@@ -201,7 +201,7 @@ easemobim.channel = function ( config ) {
 							var id = error.id,
 								wrap = utils.$Dom(id);
 
-							utils.html(utils.$Class('a.em-widget-noline', wrap)[0], '<i class="em-widget-unimage">I</i>');
+							utils.html(utils.$Class('a.em-widget-noline', wrap)[0], '<i class="em-widget-unimage icon-broken-pic"></i>');
 							utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
 							me.scrollBottom();
 						}
@@ -256,7 +256,7 @@ easemobim.channel = function ( config ) {
 						var id = error.id,
 							wrap = utils.$Dom(id);
 
-						utils.html(utils.$Class('a.em-widget-noline')[0], '<i class="em-widget-unimage">I</i>');
+						utils.html(utils.$Class('a.em-widget-noline', wrap)[0], '<i class="em-widget-unimage icon-broken-pic"></i>');
 						utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
 						me.scrollBottom();
 					}
@@ -411,10 +411,6 @@ easemobim.channel = function ( config ) {
 
 					message.set({value: title, list: str});
 					break;
-				// case 'liveStreamInvitation':
-				//	 message = new Easemob.im.EmMessage('txt');
-				//	 message.set({value: msg.ext.msgtype.liveStreamInvitation.msg});
-				//	 break;
 				default:
 					break;
 			}

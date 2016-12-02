@@ -21,19 +21,41 @@
 			<!-- 标题栏 -->
 			<div id="em-widgetHeader" class="em-widgetHeader-wrapper bg-color border-color">
 				<div id="em-widgetDrag">
+
+					<!-- 用于拖动的浮层 -->
 					<p></p>
+
+					<!-- 企业头像 -->
 					<img class="em-widgetHeader-portrait border-color"/>
+
+					<!-- 坐席昵称 -->
 					<span class="em-widgetHeader-nickname"></span>
+
+					<!-- 坐席状态 -->
 					<span class="em-header-status-text"></span>
+
+					<!-- 坐席状态标志 -->
 					<i id="em-widgetAgentStatus" class="em-widget-agent-status em-hide"></i>
+
+					<!-- 最小化按钮 -->
+					<i title="关闭" class="icon-min em-widgetHeader-min bg-color border-color hover-color"></i>
+
+					<!-- 静音开关 -->
+					<i class="icon-bell em-widgetHeader-audio fg-color"></i>
+
+					<!-- 输入框位置切换按钮 -->
+					<i class="em-widgetHeader-keyboard icon-keyboard-up hide"></i>
 				</div>
 			</div>
 
 			<!-- 信息栏 -->
-			<div class="em-widget-tip"><span class="em-widget-tip-text"></span><a class="icon-close em-widget-tip-close" href="javascript:;"></a></div>
+			<div class="em-widget-tip">
+				<span class="content"></span>
+				<i class="icon-close tip-close"></i>
+			</div>
 
 			<!-- 视频窗口 -->
-			<div class="em-widget-video">
+			<div class="em-widget-video hide">
 				<video class="main" autoplay></video>
 				<div class="status">
 					<p class="prompt"></p>
@@ -74,8 +96,8 @@
 				<i class="icon-video fg-hover-color em-video-invite hide" title="视频通话"></i>
 				<i class="icon-flower fg-hover-color em-widget-satisfaction hide" title="评价客服"></i>
 				<input id="em-widgetFileInput" type="file" accept="image/jpeg,image/png,image/gif"/>
-				<textarea class="em-widget-textarea" spellcheck="false"></textarea>
-				<a href="javascript:;" class="em-widget-send bg-color disabled" id="em-widgetSendBtn">连接中</a>
+				<textarea class="em-widget-textarea" spellcheck="false" placeholder="点击输入内容..."></textarea>
+				<span class="em-widget-send bg-color disabled" id="em-widgetSendBtn">连接中</span>
 			</div>
 
 			<!-- 视频确认对话框 -->
@@ -105,9 +127,16 @@
 					<button class="bg-color">提交</button>
 				</div>
 				<div class="em-widget-success-prompt hide">
-					<i>A</i>
+					<i class="icon-circle">
+						<i class="icon-good"></i>
+					</i>
 					<p>提交成功</p>
 				</div>
+			</div>
+
+			<!-- 信息提示框 -->
+			<div class="em-widget-error-prompt hide">
+				<span></span>
 			</div>
 		</div>
 	</div>

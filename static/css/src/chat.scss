@@ -36,7 +36,7 @@
 .em-widget-unimage {
 	color: #999;
 }
-.em-widget-left .em-widget-corner {
+.icon-corner-left {
 	position: absolute;
 	top: 5px;
 	left: -17px;
@@ -45,10 +45,7 @@
 	color: white;
 	text-shadow: -1px 0 0 #e5e5e5;
 }
-.em-widget-left .em-widget-corner:after {
-	content: 'K';
-}
-.em-widget-right .em-widget-corner {
+.icon-corner-right {
 	position: absolute;
 	top: 5px;
 	right: -17px;
@@ -56,9 +53,6 @@
 	height: 30px;
 	color: #e3ecfc;
 	text-shadow: 1px 0 0 #c3cbd9;
-}
-.em-widget-right .em-widget-corner:after {
-	content: 'J';
 }
 .em-widget-msg-container {
 	display: inline-block;
@@ -133,25 +127,11 @@ img.em-widget-msg-fileicon {
 .em-widget-msg-wrapper {
 	position: relative;
 }
-.em-widget-msg-status {
-	position: absolute;
-	width: 86px;
-	height: 30px;
-	line-height: 30px;
-	left: -88px;
-	margin: auto;
-	top: 0;
-	bottom: 0;
-	cursor: pointer;
-}
 .em-widget-loading {
 	position: relative;
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
-	-webkit-animation: em-widget-loading-frame 1s linear infinite;
-	-moz-animation: em-widget-loading-frame 1s linear infinite;
-	-ms-animation: em-widget-loading-frame 1s linear infinite;
 	animation: em-widget-loading-frame 1s linear infinite;
 }
 .em-widget-msg-loading {
@@ -165,30 +145,6 @@ img.em-widget-msg-fileicon {
 	height: 40px;
 	overflow: hidden;
 }
-@-moz-keyframes em-widget-loading-frame {
-	from {
-		-moz-transform: rotate(0);
-	}
-	to {
-		-moz-transform: rotate(360deg);
-	}
-}
-@-ms-keyframes em-widget-loading-frame {
-	from {
-		-ms-transform: rotate(0);
-	}
-	to {
-		-ms-transform: rotate(360deg);
-	}
-}
-@-webkit-keyframes em-widget-loading-frame {
-	from {
-		-webkit-transform: rotate(0);
-	}
-	to {
-		-webkit-transform: rotate(360deg);
-	}
-}
 @keyframes em-widget-loading-frame {
 	from {
 		transform: rotate(0)
@@ -198,29 +154,37 @@ img.em-widget-msg-fileicon {
 	}
 }
 
-.em-widget-msg-status i {
-	width: 30px;
+.em-widget-msg-status {
+	position: absolute;
+	width: 86px;
 	height: 30px;
-	position: relative;
-}
-.em-widget-msg-status i:before {
-	content: 'A';
-	position: absolute;
-	color: #FF0000;
-	left: 0;
-	top: 0;
-}
-.em-widget-msg-status i:after {
-	z-index: 1;
-	position: absolute;
-	content: 'B';
-	color: white;
-	left: 0;
-	top: 0;
-}
-.em-widget-msg-status span {
 	line-height: 30px;
-	vertical-align: top;
-	display: inline-block;
-	color: #999;
+	left: -88px;
+	margin: auto;
+	top: 0;
+	bottom: 0;
+	cursor: pointer;
+	> i {
+		display: inline-block;
+		width: 30px;
+		height: 30px;
+		position: relative;
+		&:before {
+			color: red;
+		}
+		i {
+			position: absolute;
+			top: 0;
+			right: 0;
+			&:before {
+				color: white;
+			}
+		}
+	}
+	span {
+		line-height: 30px;
+		vertical-align: top;
+		display: inline-block;
+		color: #999;
+	}
 }

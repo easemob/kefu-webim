@@ -8,71 +8,38 @@
 }
 
 .icon-camera:before { content: "\63"; }
-
 .icon-change:before { content: "\64"; }
-
 .icon-minimize:before { content: "\65"; }
-
 .icon-maximize:before { content: "\66"; }
-
-.icon-A:before { content: "\41"; }
-
-.icon-B:before { content: "\42"; }
-
+.icon-circle:before { content: "\41"; }
+.icon-exclamation:before { content: "\42"; }
 .icon-close:before { content: "\43"; }
-
 .icon-face:before { content: "\44"; }
-
 .icon-easemob:before { content: "\45"; }
-
-.icon-F:before { content: "\46"; }
-
-.icon-G:before { content: "\47"; }
-
+.icon-min:before { content: "\46"; }
+.icon-good:before { content: "\47"; }
 .icon-star:before { content: "\48"; }
-
-.icon-I:before { content: "\49"; }
-
-.icon-K:before { content: "\4b"; }
-
-.icon-J:before { content: "\4a"; }
-
+.icon-broken-pic:before { content: "\49"; }
+.icon-corner-left:before { content: "\4b"; }
+.icon-corner-right:before { content: "\4a"; }
 .icon-picture:before { content: "\4c"; }
-
 .icon-M:before { content: "\4d"; }
-
-.icon-x:before { content: "\78"; }
-
-.icon-X:before { content: "\58"; }
-
+.icon-bell:before { content: "\78"; }
+.icon-slience:before { content: "\58"; }
 .icon-sound:before { content: "\67"; }
-
-.icon-O:before { content: "\4f"; }
-
-.icon-N:before { content: "\4e"; }
-
+.icon-keyboard-down:before { content: "\4f"; }
+.icon-keyboard-up:before { content: "\4e"; }
 .icon-qianbao:before { content: "\e600"; }
-
 .icon-1010101:before { content: "\e601"; }
-
 .icon-10103:before { content: "\e602"; }
-
 .icon-10104:before { content: "\e603"; }
-
 .icon-10105:before { content: "\e604"; }
-
 .icon-r:before { content: "\72"; }
-
 .icon-q:before { content: "\71"; }
-
 .icon-p:before { content: "\70"; }
-
 .icon-answer:before { content: "\61"; }
-
 .icon-decline:before { content: "\62"; }
-
 .icon-note:before { content: "\31"; }
-
 .icon-video:before { content: "\74"; }
 .icon-flower:before { content: "\68"; }
 
@@ -80,24 +47,24 @@
 .icon-change:before,
 .icon-minimize:before,
 .icon-maximize:before,
-.icon-A:before,
-.icon-B:before,
+.icon-circle:before,
+.icon-exclamation:before,
 .icon-close:before,
 .icon-face:before,
 .icon-easemob:before,
-.icon-F:before,
-.icon-G:before,
+.icon-min:before,
+.icon-good:before,
 .icon-star:before,
-.icon-I:before,
-.icon-K:before,
-.icon-J:before,
+.icon-broken-pic:before,
+.icon-corner-left:before,
+.icon-corner-right:before,
 .icon-picture:before,
 .icon-M:before,
-.icon-x:before,
-.icon-X:before,
+.icon-bell:before,
+.icon-slience:before,
 .icon-sound:before,
-.icon-O:before,
-.icon-N:before,
+.icon-keyboard-down:before,
+.icon-keyboard-up:before,
 .icon-qianbao:before,
 .icon-1010101:before,
 .icon-10103:before,
@@ -115,15 +82,7 @@
 .em-widget-agent-status.leave:after,
 .em-widget-agent-status.busy:after,
 .em-widget-agent-status.hidden:after,
-.em-widgetHeader-min:after,
-.em-widgetHeader-keyboard:after,
-.em-widgetHeader-audio:after,
-.em-widgetHeader-silence:after,
-.em-widget-corner:after,
-.em-widget-msg-status i,
-.em-widget-satisfaction-dialog li,
-.em-widget-unimage,
-.em-widget-success-prompt i {
+.em-just-for-block-class-name {
 	font-family: 'easemobim' !important;
 	font-size: 30px;
 	font-style: normal;

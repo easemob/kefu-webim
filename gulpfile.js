@@ -50,15 +50,15 @@ gulp.task('minifyHtml', function () {
 //postcss
 gulp.task('cssmin', function() {
 	gulp.src([
-		'static/css/src/global.css',
-		'static/css/src/icon.css',
-		'static/css/src/header.css',
-		'static/css/src/body.css',
-		'static/css/src/chat.css',
-		'static/css/src/send.css',
-		'static/css/src/theme.css',
-		'static/css/src/ui.css',
-		'static/css/src/mobile.css',
+		'static/css/src/global.scss',
+		'static/css/src/icon.scss',
+		'static/css/src/header.scss',
+		'static/css/src/body.scss',
+		'static/css/src/chat.scss',
+		'static/css/src/send.scss',
+		'static/css/src/theme.scss',
+		'static/css/src/ui.scss',
+		'static/css/src/mobile.scss',
 	])
 	.pipe(concat('im.css'))
 	.pipe(template({ WEBIM_PLUGIN_VERSION: VERSION }))
@@ -168,6 +168,6 @@ gulp.task('dev', function(){
 gulp.task('watch', function() {
 	gulp.start('dev');
 	gulp.watch(['static/js/src/*.js', 'static/js/src/*/*.js'], ['combineJs']);
-	gulp.watch(['static/css/src/*.css'], ['cssmin']);
+	gulp.watch(['static/css/src/*.scss'], ['cssmin']);
 	gulp.watch(['static/tpl/im.html'], ['minifyHtml']);
 });

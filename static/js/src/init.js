@@ -152,10 +152,32 @@
 			utils.addClass(document.body, 'em-mobile');
 		}
 
-		// em-widgetNote
+		// 留言按钮
 		utils.toggleClass(
 			utils.$Dom('em-widgetNote'),
-			'em-hide', !config.ticket
+			'em-hide',
+			!config.ticket
+		);
+
+		// 最小化按钮
+		utils.toggleClass(
+			document.querySelector('.em-widgetHeader-min'),
+			'hide',
+			!config.minimum || utils.isTop
+		);
+
+		// 静音按钮
+		utils.toggleClass(
+			document.querySelector('.em-widgetHeader-audio'),
+			'hide',
+			!window.HTMLAudioElement || utils.isMobile || !config.soundReminder
+		);
+
+		// 输入框位置开关
+		utils.toggleClass(
+			document.querySelector('.em-widgetHeader-keyboard'),
+			'hide',
+			!utils.isMobile || config.offDuty || config.hideKeyboard
 		);
 
 		// 满意度评价按钮
