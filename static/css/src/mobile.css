@@ -1,173 +1,166 @@
 .em-mobile {
 	border-radius: 0;
-}
-.em-mobile .em-widgetHeader-nickname,
-.em-mobile .em-header-status-text,
- {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	max-width: 55%;
-	display: inline-block;
-	margin: 0;
-}
-.em-mobile .em-widgetBody-wrapper {
-	bottom: 77px;
-}
-.em-mobile .em-widget-tip span {
-	font-size: 14px;
-}
-.em-mobile .em-widgetHeader-wrapper {
-	font-size: 16px;
-	border-radius: 0;
-	box-shadow: none;
-}
-.em-mobile .em-widgetHeader-wrapper > div {
-	text-align: center;
-}
-.em-mobile .em-widgetHeader-portrait {
-	position: absolute;
-	top: 8px;
-	left: 2px;
-}
-.em-mobile .em-widget-corner {
-	top: 4px;
-}
-.em-mobile .em-widget-chat {
-	/*padding-bottom: 50px;*/
-}
-.em-mobile .em-widgetHeader {
-	font-size: 17px;
-	border-radius: 0;
-	box-shadow: none;
-}
-.em-mobile .em-widget-list-btn,
-.em-mobile .em-widget-msg-container {
-	font-size: 17px;
-}
-.em-mobile .em-widget-list-btn {
-	line-height: 30px;
-	box-shadow: none;
-}
-.em-mobile .em-widget-msg-container {
-	padding: 8px 10px;
-}
-.em-mobile .em-widget-msg-file .em-widget-msg-container {
-	padding: 0;
-}
-.em-mobile .em-widget-list-btn:hover {
-	color: #000;
-}
-.em-mobile .em-bar-face-wrapper {
-	width: 100%;
-	left: 0;
-	border-radius: 0;
-	padding-left: 0;
-	bottom: 44px;
-}
-.em-mobile .em-bar-face-bg {
-	width: 14.2%;
-	margin: 0;
-}
-.em-mobile .em-bar-face-bg .em-bar-face-img {
-	margin: 8px 0;
-}
-.em-mobile .em-widgetHeader-keyboard {
-	position: absolute;
-	right: 9px;
-	top: 11px;
-	width: 21px;
-	height: 21px;
-	border-radius: 4px;
-	text-decoration: none;
-}
-.em-mobile .em-widgetHeader-keyboard:after {
-	content: 'N';
-	position: absolute;
-	left: -5px;
-	top: -4px;
-	text-align: center;
-	color: white;
-}
-.em-mobile .em-widgetHeader-keyboard-up:after {
-	content: 'O';
-}
-.em-mobile .em-widgetHeader-keyboard-down:after {
-	content: 'N';
-}
-.em-mobile .em-widget-send-wrapper {
-	position: absolute;
-	height: auto;
-	padding: 3px 80px 3px 6px;
-	box-sizing: border-box;
-	background-color: white;
-	box-shadow: 0 -1px 0 #e5e5e5;
-}
-.em-mobile .em-widget-send-disable:after {
-	height: 48px;
-}
-.em-mobile .em-widget-textarea {
-	height: 34px;
-	max-height: 88px;
-	bottom: 0;
-	margin-top: 4px;
-	margin-bottom: 1px;
-	border-radius: 4px;
-	padding: 9px;
-	padding-right: 36px;
-	overflow-x: hidden;
-	overflow-y: hidden;
-	user-select: text!important;
-	-webkit-user-select: text!important;
-	-moz-user-select: text!important;
-	-ms-user-select: text!important;
-	-o-user-select: text!important;
-	line-height: 17px;
-	font-size: 17px;
-	color: #1a1a1a;
-	box-shadow: 0 1px 3px rgba(0,0,0,.2) inset;
-}
-.em-mobile .em-widget-send {
-	width: 64px;
-	right: 8px;
-	top: auto;
-	bottom: 8px;
-	height: 33px;
-	line-height: 33px;
-	font-size: 15px;
-}
-.em-mobile .easeWidget-face-rec {
-	display: none;
-}
-.em-mobile .em-widgetSendBtn {
-	width: 64px;
-	right: 8px;
-	top: auto;
-	bottom: 8px;
-	height: 33px;
-	line-height: 33px;
-	font-size: 15px;
-}
-.em-mobile .em-widget-satisfaction-dialog {
-	z-index: 3;
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	top: 0;
-	left: 0;
-	margin: 0;
-	border-radius: 0;
-	font-size: 15px;
-}
-.em-mobile .em-widget-error-prompt,
-.em-mobile .em-widget-satisfaction-dialog h3,
-.em-mobile .em-widget-satisfaction-dialog button,
-.em-mobile .em-widget-satisfaction-dialog textarea {
-	font-size: 15px;
-}
-.em-mobile .em-widget-satisfaction-dialog button {
-	height: 32px;
-	line-height: 32px;
+	.em-widgetHeader-nickname,
+	.em-header-status-text,
+	 {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 55%;
+		display: inline-block;
+		margin: 0;
+	}
+	.em-widgetBody-wrapper {
+		bottom: 77px;
+	}
+	.em-widget-tip span {
+		font-size: 14px;
+	}
+	.em-widgetHeader-wrapper {
+		font-size: 16px;
+		border-radius: 0;
+		box-shadow: none;
+	}
+	.em-widgetHeader-wrapper > div {
+		text-align: center;
+	}
+	.em-widgetHeader-portrait {
+		position: absolute;
+		top: 8px;
+		left: 2px;
+	}
+	.em-widget-corner {
+		top: 4px;
+	}
+	.em-widgetHeader {
+		font-size: 17px;
+		border-radius: 0;
+		box-shadow: none;
+	}
+	.em-widget-list-btn,
+	.em-widget-msg-container {
+		font-size: 17px;
+	}
+	.em-widget-list-btn {
+		line-height: 30px;
+		box-shadow: none;
+	}
+	.em-widget-msg-container {
+		padding: 8px 10px;
+	}
+	.em-widget-msg-file .em-widget-msg-container {
+		padding: 0;
+	}
+	.em-widget-list-btn:hover {
+		color: #000;
+	}
+	.em-bar-face-wrapper {
+		width: 100%;
+		left: 0;
+		border-radius: 0;
+		padding-left: 0;
+		bottom: 44px;
+	}
+	.em-bar-face-bg {
+		width: 14.2%;
+		margin: 0;
+	}
+	.em-bar-face-bg .em-bar-face-img {
+		margin: 8px 0;
+	}
+	.em-widgetHeader-keyboard {
+		position: absolute;
+		right: 9px;
+		top: 11px;
+		width: 21px;
+		height: 21px;
+		border-radius: 4px;
+		text-decoration: none;
+	}
+	.em-widgetHeader-keyboard:after {
+		content: 'N';
+		position: absolute;
+		left: -5px;
+		top: -4px;
+		text-align: center;
+		color: white;
+	}
+	.em-widgetHeader-keyboard-up:after {
+		content: 'O';
+	}
+	.em-widgetHeader-keyboard-down:after {
+		content: 'N';
+	}
+	.em-widget-send-wrapper {
+		position: absolute;
+		height: auto;
+		padding: 3px 80px 3px 6px;
+		box-sizing: border-box;
+		background-color: white;
+		box-shadow: 0 -1px 0 #e5e5e5;
+	}
+	.em-widget-send-disable:after {
+		height: 48px;
+	}
+	.em-widget-textarea {
+		height: 34px;
+		max-height: 88px;
+		bottom: 0;
+		margin-top: 4px;
+		margin-bottom: 1px;
+		border-radius: 4px;
+		padding: 9px;
+		padding-right: 36px;
+		overflow-x: hidden;
+		overflow-y: hidden;
+		user-select: text!important;
+		line-height: 17px;
+		font-size: 17px;
+		color: #1a1a1a;
+		box-shadow: 0 1px 3px rgba(0,0,0,.2) inset;
+	}
+	.em-widget-send {
+		width: 64px;
+		right: 8px;
+		top: auto;
+		bottom: 8px;
+		height: 33px;
+		line-height: 33px;
+		font-size: 15px;
+	}
+	.easeWidget-face-rec {
+		display: none;
+	}
+	.em-widgetSendBtn {
+		width: 64px;
+		right: 8px;
+		top: auto;
+		bottom: 8px;
+		height: 33px;
+		line-height: 33px;
+		font-size: 15px;
+	}
+	.em-widget-satisfaction-dialog {
+		z-index: 3;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		margin: 0;
+		border-radius: 0;
+		font-size: 15px;
+	}
+	.em-widget-error-prompt,
+	.em-widget-satisfaction-dialog h3,
+	.em-widget-satisfaction-dialog button,
+	.em-widget-satisfaction-dialog textarea {
+		font-size: 15px;
+	}
+	.em-widget-satisfaction-dialog button {
+		height: 32px;
+		line-height: 32px;
+	}
 }
 @media 
 (-webkit-min-device-pixel-ratio: 2) {}

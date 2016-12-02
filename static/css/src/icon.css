@@ -29,7 +29,7 @@
 
 .icon-G:before { content: "\47"; }
 
-.icon-H:before { content: "\48"; }
+.icon-star:before { content: "\48"; }
 
 .icon-I:before { content: "\49"; }
 
@@ -74,6 +74,7 @@
 .icon-note:before { content: "\31"; }
 
 .icon-video:before { content: "\74"; }
+.icon-flower:before { content: "\68"; }
 
 .icon-camera:before,
 .icon-change:before,
@@ -86,7 +87,7 @@
 .icon-easemob:before,
 .icon-F:before,
 .icon-G:before,
-.icon-H:before,
+.icon-star:before,
 .icon-I:before,
 .icon-K:before,
 .icon-J:before,
@@ -109,6 +110,7 @@
 .icon-decline:before,
 .icon-note:before,
 .icon-video:before,
+.icon-flower:before,
 
 .em-widget-agent-status.leave:after,
 .em-widget-agent-status.busy:after,
@@ -117,10 +119,7 @@
 .em-widgetHeader-keyboard:after,
 .em-widgetHeader-audio:after,
 .em-widgetHeader-silence:after,
-.em-widget-msgcount:after,
-.em-widget-msgcount.mutiCount:after,
 .em-widget-corner:after,
-.em-widget-left .em-widget-msg-voice,
 .em-widget-msg-status i,
 .em-widget-satisfaction-dialog li,
 .em-widget-unimage,

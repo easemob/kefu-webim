@@ -154,17 +154,6 @@ object {
 		color: white;
 	}
 }
-.em-widget-logo,
-.em-widget-satisfaction {
-	position: absolute;
-	color: #ccc;
-	font-size: 12px;
-	left: 10px;
-	bottom: 10px;
-}
-.em-widget-satisfaction {
-	cursor: pointer;
-}
 .em-widget-date,
 .em-widget-event {
 	text-align: center;

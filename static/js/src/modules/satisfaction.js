@@ -3,62 +3,33 @@
  */
 easemobim.satisfaction = function ( chat ) {
 
-	var dom = document.createElement('div'),
-		utils = easemobim.utils;
-
-	utils.addClass(dom, 'em-widget-dialog em-widget-satisfaction-dialog em-hide');
-	utils.html(dom, "\
-		<h3>请对我的服务做出评价</h3>\
-		<ul><li idx='1'>H</li><li idx='2'>H</li><li idx='3'>H</li><li idx='4'>H</li><li idx='5'>H</li></ul>\
-		<textarea spellcheck='false' placeholder='请输入留言'></textarea>\
-		<div>\
-			<button class='em-widget-cancel'>取消</button>\
-			<button class='bg-color'>提交</button>\
-		</div>\
-		<div class='em-widget-success-prompt em-hide'><i>A</i><p>提交成功</p></div>\
-	");
-	easemobim.imChat.appendChild(dom);
-
-	var satisfactionEntry = utils.$Dom('EasemobKefuWebimSatisfy'),
-		starsUl = dom.getElementsByTagName('ul')[0],
-		lis = starsUl.getElementsByTagName('li'),
-		msg = dom.getElementsByTagName('textarea')[0],
-		buttons = dom.getElementsByTagName('button'),
-		cancelBtn = buttons[0],
-		submitBtn = buttons[1],
-		success = dom.getElementsByTagName('div')[1],
-		session,
-		invite,
-		getStarLevel = function () {
-			var count = 0;
-
-			for ( var i = lis.length; i > 0; i-- ) {
-				if ( utils.hasClass(lis[i-1], 'sel') ) {
-					count += 1;
-				}
-			}
-			return count;
-		},
-		clearStars = function () {
-			for ( var i = lis.length; i > 0; i-- ) {
-				utils.removeClass(lis[i-1], 'sel');
-			}
-		};
+	var dom = document.querySelector('.em-widget-dialog.em-widget-satisfaction-dialog');
+	var utils = easemobim.utils;
+	var satisfactionEntry = document.querySelector('.em-widget-satisfaction');
+	var starsUl = dom.getElementsByTagName('ul')[0];
+	var lis = starsUl.getElementsByTagName('li');
+	var msg = dom.getElementsByTagName('textarea')[0];
+	var buttons = dom.getElementsByTagName('button');
+	var cancelBtn = buttons[0];
+	var submitBtn = buttons[1];
+	var success = dom.getElementsByTagName('div')[1];
+	var session;
+	var invite;
 	
-	satisfactionEntry && utils.on(satisfactionEntry, utils.click, function () {
+	utils.on(satisfactionEntry, utils.click, function () {
 		session = null;
 		invite = null;
-		utils.removeClass(dom, 'em-hide');
+		utils.removeClass(dom, 'hide');
 		clearInterval(chat.focusText);
 	});
 	utils.live('button.js_satisfybtn', 'click', function () {
 		session = this.getAttribute('data-servicesessionid');
 		invite = this.getAttribute('data-inviteid');
-		utils.removeClass(dom, 'em-hide');
+		utils.removeClass(dom, 'hide');
 		clearInterval(chat.focusText);
 	});
 	utils.on(cancelBtn, 'click', function () {
-		utils.addClass(dom, 'em-hide');
+		utils.addClass(dom, 'hide');
 	});
 	utils.on(submitBtn, 'click', function () {
 		var level = getStarLevel();
@@ -70,13 +41,13 @@ easemobim.satisfaction = function ( chat ) {
 		chat.sendSatisfaction(level, msg.value, session, invite);
 
 		msg.blur();
-		utils.removeClass(success, 'em-hide');
+		utils.removeClass(success, 'hide');
 
 		setTimeout(function(){
 			msg.value = '';
 			clearStars();
-			utils.addClass(success, 'em-hide');
-			utils.addClass(dom, 'em-hide');
+			utils.addClass(success, 'hide');
+			utils.addClass(dom, 'hide');
 		}, 1500);
 	});
 	utils.on(starsUl, 'click', function ( e ) {
@@ -95,4 +66,21 @@ easemobim.satisfaction = function ( chat ) {
 			}
 		}
 	});
+
+	function getStarLevel(){
+		var count = 0;
+
+		for ( var i = lis.length; i > 0; i-- ) {
+			if ( utils.hasClass(lis[i-1], 'sel') ) {
+				count += 1;
+			}
+		}
+		return count;
+	}
+	function clearStars(){
+		for ( var i = lis.length; i > 0; i-- ) {
+			utils.removeClass(lis[i-1], 'sel');
+		}
+	};
+
 };

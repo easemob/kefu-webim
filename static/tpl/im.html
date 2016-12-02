@@ -9,10 +9,16 @@
 </head>
 <body>
 	<div id='EasemobKefuWebim'>
+
+		<!-- 最小化时显示的按钮 -->
 		<div id="em-widgetPopBar" class="em-hide">
 			<a class="em-widget-pop-bar bg-color icon-easemob" href="javascript:;">联系客服</a>
 		</div>
+
+		<!-- UI -->
 		<div id="em-kefu-webim-chat" class="em-widget-wrapper em-hide">
+
+			<!-- 标题栏 -->
 			<div id="em-widgetHeader" class="em-widgetHeader-wrapper bg-color border-color">
 				<div id="em-widgetDrag">
 					<p></p>
@@ -22,7 +28,11 @@
 					<i id="em-widgetAgentStatus" class="em-widget-agent-status em-hide"></i>
 				</div>
 			</div>
+
+			<!-- 信息栏 -->
 			<div class="em-widget-tip"><span class="em-widget-tip-text"></span><a class="icon-close em-widget-tip-close" href="javascript:;"></a></div>
+
+			<!-- 视频窗口 -->
 			<div class="em-widget-video">
 				<video class="main" autoplay></video>
 				<div class="status">
@@ -47,20 +57,28 @@
 					<p class="time-escape">00:00</p>
 				</div>
 			</div>
+
+			<!-- 消息容器 -->
 			<div id="em-widgetBody" class="em-widgetBody-wrapper"></div>
+
+			<!-- 表情容器 -->
 			<div id="EasemobKefuWebimFaceWrapper" class="em-bar-face-wrapper e-face em-hide">
 				<ul class="em-bar-face-container"></ul>
 			</div>
+
+			<!-- 输入框 -->
 			<div id="em-widgetSend" class="em-widget-send-wrapper">
 				<i class="em-bar-face icon-face e-face fg-hover-color" title="表情"></i>
 				<i class="em-widget-file icon-picture fg-hover-color" id="em-widgetFile" title="图片"></i>
 				<i class="em-widget-note icon-note em-hide fg-hover-color" id="em-widgetNote" title="留言"></i>
 				<i class="icon-video fg-hover-color em-video-invite hide" title="视频通话"></i>
+				<i class="icon-flower fg-hover-color em-widget-satisfaction hide" title="评价客服"></i>
 				<input id="em-widgetFileInput" type="file" accept="image/jpeg,image/png,image/gif"/>
 				<textarea class="em-widget-textarea" spellcheck="false"></textarea>
-				<span id="EasemobKefuWebimSatisfy" class="em-widget-satisfaction em-hide">请对服务做出评价</span>
 				<a href="javascript:;" class="em-widget-send bg-color disabled" id="em-widgetSendBtn">连接中</a>
 			</div>
+
+			<!-- 视频确认对话框 -->
 			<div class="em-dialog-video-confirm hide">
 				<p class="prompt">
 					您要邀请客服为您进行实时视频服务么？点击确认发送邀请，等待客服接受后即可体验实时视频服务。
@@ -70,12 +88,39 @@
 					<span class="btn-confirm">发送</span>
 				</div>
 			</div>
+
+			<!-- 满意度评价对话框 -->
+			<div class="em-widget-dialog em-widget-satisfaction-dialog hide">
+				<h3>请对我的服务做出评价</h3>
+				<ul>
+					<li idx="1" class="icon-star"></li>
+					<li idx="2" class="icon-star"></li>
+					<li idx="3" class="icon-star"></li>
+					<li idx="4" class="icon-star"></li>
+					<li idx="5" class="icon-star"></li>
+				</ul>
+				<textarea spellcheck="false" placeholder="请输入留言"></textarea>
+				<div>
+					<button class="em-widget-cancel">取消</button>
+					<button class="bg-color">提交</button>
+				</div>
+				<div class="em-widget-success-prompt hide">
+					<i>A</i>
+					<p>提交成功</p>
+				</div>
+			</div>
 		</div>
 	</div>
+
+	<!-- 图片查看 -->
 	<div class="img-view hide">
 		<img src="">
 	</div>
+
+	<!-- 用于跨域请求的iframe -->
 	<iframe id="EasemobKefuWebimIframe" class="hide"></iframe>
+
+	<!-- javascript -->
 	<script src="static/js/main.js?v=<%=WEBIM_PLUGIN_VERSION%>"></script>
 </body>
 </html>

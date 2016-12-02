@@ -29,7 +29,6 @@
 			config.xmppServer = utils.convertFalse(utils.query('xmppServer'));
 			config.restServer = utils.convertFalse(utils.query('restServer'));
 			config.agentName = utils.convertFalse(utils.query('agentName'));
-			config.satisfaction = utils.convertFalse(utils.query('sat'));
 			config.resources = utils.convertFalse(utils.query('resources'));
 			config.hideStatus = utils.convertFalse(utils.query('hideStatus'));
 			config.satisfaction = utils.convertFalse(utils.query('sat'));
@@ -159,11 +158,11 @@
 			'em-hide', !config.ticket
 		);
 
-		// EasemobKefuWebimSatisfy
+		// 满意度评价按钮
 		utils.toggleClass(
-			utils.$Dom('EasemobKefuWebimSatisfy'),
-			'em-hide',
-			utils.isMobile || !config.satisfaction
+			document.querySelector('.em-widget-satisfaction'),
+			'hide',
+			!config.satisfaction
 		);
 
 		//不支持异步上传则加载swfupload

@@ -51,42 +51,6 @@
 	box-shadow: 0 1px 1px rgba(255,255,255,.3) inset;
 	cursor: default;
 }
-.em-widget-msgcount, .em-widget-msgcount:after {
-	width: 18px;
-	height: 18px;
-	line-height: 18px;
-	text-align: center;
-}
-.em-widget-msgcount:after {
-	content: 'A';
-	font-size: 26px;
-	z-index: -1;
-	color: #fc662b;
-	position: relative;
-	margin-left: -16px;
-	top: 2px;
-}
-.em-widget-msgcount {
-	z-index: 1;
-	right: -12px;
-	top: -8px;
-	color: white;
-	font-size: 12px;
-	position: absolute;
-}
-.em-widget-msgcount.mutiCount {
-	width: 22px;
-	height: 17px;
-	font-size: 14px;
-	margin-top: -12px;
-}
-.em-widget-msgcount.mutiCount:after {
-	content: 'M';
-	position: relative;
-	top: 6px;
-	left: -4px;
-	font-size: 24px;
-}
 .em-widgetHeader-portrait {
 	width: 30px;
 	height: 30px;

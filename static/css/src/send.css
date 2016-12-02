@@ -5,19 +5,29 @@
 	bottom: 0;
 	background-color: white;
 	-webkit-backface-visibility:hidden;
+	// 工具栏按钮
+	i {
+		float: left;
+		top: 5px;
+		left: 5px;
+		position: relative;
+		color: #4d4d4d;
+		&:hover {
+			cursor: pointer;
+		}
+	}
+	// 输入框
+	.em-widget-textarea {
+		width: 100%;
+		height: 70px;
+		border: none;
+		padding: 10px;
+		box-sizing: border-box;
+		font-size: 13px;
+		resize: none;
+	}
 }
 
-/* 工具栏按钮 */
-.em-widget-send-wrapper i {
-	float: left;
-	top: 5px;
-	left: 5px;
-	position: relative;
-	color: #4d4d4d;
-}
-.em-widget-send-wrapper i:hover {
-	cursor: pointer;
-}
 
 .em-widget-send-disable:after {
 	z-index: 1;
@@ -34,15 +44,6 @@
 #em-widgetSendBtn.disabled {
 	background-color: #ccc;
 	cursor: default;
-}
-.em-widget-send-wrapper .em-widget-textarea {
-	width: 100%;
-	height: 70px;
-	border: none;
-	padding: 10px;
-	box-sizing: border-box;
-	font-size: 13px;
-	resize: none;
 }
 .em-widget-send {
 	position: absolute;
