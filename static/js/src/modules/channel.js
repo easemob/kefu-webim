@@ -200,7 +200,7 @@ easemobim.channel = function ( config ) {
 						} else {
 							var id = error.id;
 							var loading = utils.$Dom(id + '_loading');
-							var msgWrap = document.querySelector('#' + id + '.em-widget-msg-container');
+							var msgWrap = document.getElementById(id).querySelector('.em-widget-msg-container');
 
 							msgWrap.innerHTML = '<i class="icon-broken-pic"></i>';
 							utils.addClass(loading, 'hide');
@@ -256,7 +256,7 @@ easemobim.channel = function ( config ) {
 					} else {
 						var id = error.id;
 						var loading = utils.$Dom(id + '_loading');
-						var msgWrap = document.querySelector('#' + id + '.em-widget-msg-container');
+						var msgWrap = document.getElementById(id).querySelector('.em-widget-msg-container');
 
 						msgWrap.innerHTML = '<i class="icon-broken-pic"></i>';
 						utils.addClass(loading, 'hide');
