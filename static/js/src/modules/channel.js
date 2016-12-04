@@ -198,11 +198,12 @@ easemobim.channel = function ( config ) {
 						if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
 							easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
 						} else {
-							var id = error.id,
-								wrap = utils.$Dom(id);
+							var id = error.id;
+							var loading = utils.$Dom(id + '_loading');
+							var msgWrap = document.querySelector('#' + id + '.em-widget-msg-container');
 
-							utils.html(utils.$Class('a.em-widget-noline', wrap)[0], '<i class="em-widget-unimage icon-broken-pic"></i>');
-							utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+							msgWrap.innerHTML = '<i class="icon-broken-pic"></i>';
+							utils.addClass(loading, 'hide');
 							me.scrollBottom();
 						}
 					}, 50);
@@ -215,7 +216,7 @@ easemobim.channel = function ( config ) {
 					utils.$Remove(utils.$Dom(id + '_failed'));
 				},
 				fail: function ( id ) {
-					utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+					utils.addClass(utils.$Dom(id + '_loading'), 'hide');
 					utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
 				},
 				flashUpload: easemobim.flashUpload
@@ -253,11 +254,12 @@ easemobim.channel = function ( config ) {
 					if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
 						easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
 					} else {
-						var id = error.id,
-							wrap = utils.$Dom(id);
+						var id = error.id;
+						var loading = utils.$Dom(id + '_loading');
+						var msgWrap = document.querySelector('#' + id + '.em-widget-msg-container');
 
-						utils.html(utils.$Class('a.em-widget-noline', wrap)[0], '<i class="em-widget-unimage icon-broken-pic"></i>');
-						utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+						msgWrap.innerHTML = '<i class="icon-broken-pic"></i>';
+						utils.addClass(loading, 'hide');
 						me.scrollBottom();
 					}
 				},
@@ -348,11 +350,23 @@ easemobim.channel = function ( config ) {
 				case 'file':
 					message = new Easemob.im.EmMessage('file');
 					if ( msg.url ) {
-						message.set({file: {url: msg.url, filename: msg.filename}});
+						message.set({file: {
+							url: msg.url,
+							filename: msg.filename,
+							filesize: msg.file_length
+						}});
 					} else {
+						// todo 问这块什么情况会出现
 						try {
-							message.set({file: {url: msg.bodies[0].url, filename: msg.bodies[0].filename}});
-						} catch ( e ) {}
+							message.set({file: {
+								url: msg.bodies[0].url,
+								filename: msg.bodies[0].filename
+							}});
+						}
+						catch (e) {
+							// todo IE console
+							// console.warn('channel.js @handleReceive case file', e);
+						}
 					}
 					break;
 				case 'satisfactionEvaluation':
@@ -598,6 +612,7 @@ easemobim.channel = function ( config ) {
 									msgId: v.msgId,
 									data: data,
 									filename: msg.filename,
+									file_length: msg.file_length,
 									url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
 									from: msgBody.from,
 									to: msgBody.to

@@ -76,7 +76,7 @@ Easemob.im.EmMessage.img.prototype.get = function ( isReceive ) {
 				this.id ? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>" : "",
 				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
 				"<div class='em-widget-msg-container'>",
-					this.value === null ? "<a class='em-widget-noline' href='javascript:;'><i class='em-widget-unimage icon-broken-pic'></i></a>" : "<a class='em-widget-noline' href='javascript:;'><img class='em-widget-imgview' src='" + this.value.url + "'/></a>",,
+					this.value === null ? "<i class='icon-broken-pic'></i>" : "<a href='javascript:;'><img class='em-widget-imgview' src='" + this.value.url + "'/></a>",,
 				"</div>",
 			"</div>",
 		"</div>"
@@ -139,14 +139,28 @@ Easemob.im.EmMessage.file = function ( id ) {
 	this.body = {};
 }
 Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
+	var filename = this.filename;
+	var filesize = easemobim.utils.filesizeFormat(this.value.filesize);
+	var url = this.value.url;
 	return [
 		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper em-widget-msg-file'>",
 				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",,
-				this.id ? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>" : "",
-				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + config.LOADING + "</div>" : "",
+				this.id
+				? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'>"
+				+ "<span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>"
+				+ "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + config.LOADING + "</div>"
+				: "",
 				"<div class='em-widget-msg-container'>",
-					this.value === null ? "<a class='em-widget-noline' href='javascript:;'><i class='em-widget-unimage icon-broken-pic'></i></a>" : "<a target='_blank' href='" + this.value.url + "' class='em-widget-fileMsg' title='" + this.filename + "'><img class='em-widget-msg-fileicon' src='static/img/file_download.png'/><span>" + (this.filename.length > 19 ? this.filename.slice(0, 19) + '...': this.filename) + "</span></a>",
+					this.value === null
+					? "<i class='icon-broken-pic'></i>"
+					: '<i class="icon-file"></i>'
+					+ '<span class="file-info">'
+						+ '<p class="filename">' + filename + '</p>'
+						+ '<p class="filesize">' + filesize + '</p>'
+					+ '</span>'
+					+ "<a target='_blank' href='" + url + "' class='icon-file-download' title='"
+					+ filename + "'></a>",
 				"</div>",
 			"</div>",
 		"</div>"

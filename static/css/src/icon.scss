@@ -32,7 +32,7 @@
 .icon-qianbao:before { content: "\e600"; }
 .icon-1010101:before { content: "\e601"; }
 .icon-10103:before { content: "\e602"; }
-.icon-10104:before { content: "\e603"; }
+.icon-file-download:before { content: "\e603"; }
 .icon-10105:before { content: "\e604"; }
 .icon-r:before { content: "\72"; }
 .icon-q:before { content: "\71"; }
@@ -42,6 +42,8 @@
 .icon-note:before { content: "\31"; }
 .icon-video:before { content: "\74"; }
 .icon-flower:before { content: "\68"; }
+// todo add this icon
+.icon-file:before { content: "\e601"}
 
 .icon-camera:before,
 .icon-change:before,
@@ -68,7 +70,7 @@
 .icon-qianbao:before,
 .icon-1010101:before,
 .icon-10103:before,
-.icon-10104:before,
+.icon-file-download:before,
 .icon-10105:before,
 .icon-r:before,
 .icon-q:before,
@@ -78,6 +80,7 @@
 .icon-note:before,
 .icon-video:before,
 .icon-flower:before,
+.icon-file:before,
 
 .em-widget-agent-status.leave:after,
 .em-widget-agent-status.busy:after,

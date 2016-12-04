@@ -5,11 +5,12 @@
 	/static/js/em-open.js
 	/static/js/em-transfer.js
 	/transfer.html
+	/static/img/file_download.png
 
 */
 
 var debug = false;
-const VERSION = '43.11';
+const VERSION = '43.11.1';
 
 const gulp = require('gulp');
 const postcss = require('gulp-postcss');
