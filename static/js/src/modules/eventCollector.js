@@ -61,7 +61,7 @@
 		}
 		// todo close的时候也传入user信息，待确认
 		if(_config.user.username){
-			_reportVisitor();
+			_reportVisitor(_config.user.username);
 		}
 		else{
 			_reportGuest();
@@ -82,7 +82,7 @@
 		_startToPoll();
 	}
 
-	function _reportVisitor(){
+	function _reportVisitor(username){
 		api('getRelevanceList', {
 			tenantId: _config.tenantId
 		}, function(msg) {
@@ -93,7 +93,7 @@
 			var orgName = relevanceList.orgName;
 			var appName = relevanceList.appName;
 			var imServiceNumber = relevanceList.imServiceNumber;
-			var gid = orgName + '#' + appName + '_' + imServiceNumber;
+			var gid = orgName + '#' + appName + '_' + username;
 
 			_polling = new Polling(function(){
 				_reportData('VISITOR', gid);

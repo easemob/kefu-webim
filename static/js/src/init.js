@@ -107,7 +107,7 @@
 			eventCollector.startToReport(config, function(targetUserInfo) {
 				chatEntry.init(config, targetUserInfo);
 			});
-			config.hide = true;
+			// config.hide = true;
 		}
 		else {
 			// 获取关联，创建访客，调用聊天窗口
@@ -246,23 +246,46 @@
 				if (targetUserInfo) {
 
 					config.toUser = targetUserInfo.agentImName;
-					config.user = {
-						username: targetUserInfo.userName,
-						password: targetUserInfo.userPassword
-					};
 
-					chat.ready();
-					chat.show();
-					// 发送空的ext消息
-					chat.sendTextMsg('', false, {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}});
-					transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
-					transfer.send({
-						event: 'setUser',
-						data: {
+					// 游客回呼
+					if(targetUserInfo.userName){
+						config.user = {
 							username: targetUserInfo.userName,
-							group: config.user.emgroup
-						}
-					}, window.transfer.to);
+							password: targetUserInfo.userPassword
+						};
+
+						chat.ready();
+						chat.show();
+						// 发送空的ext消息
+						chat.sendTextMsg('', false, {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}});
+						transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
+						transfer.send({
+							event: 'setUser',
+							data: {
+								username: targetUserInfo.userName,
+								group: config.user.emgroup
+							}
+						}, window.transfer.to);
+					}
+					// 访客回呼
+					else {
+						api('getPassword', {
+							userId: config.user.username,
+							tenantId: config.tenantId
+						}, function(msg) {
+							if (!msg.data) {
+								console.log('用户不存在！');
+							} else {
+								config.user.password = msg.data;
+
+								chat.ready();
+								chat.show();
+								// 发送空的ext消息
+								chat.sendTextMsg('', false, {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}});
+								transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
+							}
+						});
+					}
 				}
 				else if (config.user.username && (config.user.password || config.user.token)) {
 					chat.ready();
@@ -360,7 +383,7 @@
 		},
 		close: function() {
 			chat.close();
-			eventCollector.startToReport();
+			// eventCollector.startToReport();
 			// todo 重新上报访客开始
 		}
 	};
