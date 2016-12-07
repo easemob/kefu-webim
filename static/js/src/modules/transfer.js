@@ -5,6 +5,8 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 	'use strict'
    
 	var handleMsg = function ( e, callback, accept ) {
+		// 微信调试工具会传入对象，导致解析出错
+		if('string' !== typeof e.data) return;
 		var msg = JSON.parse(e.data);
 
 
