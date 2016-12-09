@@ -14,10 +14,19 @@
 4.  命令行进入webim文件夹 
 	>npm install and gulp dev
 
+        cd ../webim
+        npm install
+        gulp dev
+
 5.  在webim/server文件夹中 
 	>npm install and  node app
 
-6.  浏览器打开
+        cd ../webim/server  
+        npm install
+        node app
+
+
+6.  本地浏览器打开
 	>http://localhost:8080/webim/demo.html
 
 
