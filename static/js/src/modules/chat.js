@@ -968,6 +968,11 @@
 					if ( utils.hasClass(this, 'disabled') ) {
 						return false;
 					}
+					var textMsg = easemobim.textarea.value;
+					if(textMsg.length > 1500){
+						me.errorPrompt("输入字数过多");
+						return false;
+					}
 					utils.addClass(easemobim.chatFaceWrapper, 'em-hide');
 					me.sendTextMsg();
 					if ( utils.isMobile ) {
