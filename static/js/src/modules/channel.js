@@ -376,7 +376,11 @@ easemobim.channel = function ( config ) {
 							<button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '"\
 							 data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
 						</div>']});
-					if(!isHistory){
+
+					// fake 临时解决用户重复收到邀请评价的问题
+					// 由于消息走的第二通道，刷新后没有去重（此处待验证），导致重复收到
+					// 所以 === false 的 isHistory临时过滤掉
+					if('undefined' === typeof isHistory){
 						// 创建隐藏的立即评价按钮，并触发click事件
 						var el = document.createElement('BUTTON');
 						el.className = 'js_satisfybtn';
@@ -408,13 +412,13 @@ easemobim.channel = function ( config ) {
 					var title = msg.data
 						|| (msg.bodies && msg.bodies[0] && msg.bodies[0].msg)
 						|| msg.ext.weichat.ctrlArgs.label;
-/*
-	msg.data 用于处理即时消息
-	msg.bodies[0].msg 用于处理历史消息
-	msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
-	此处修改为了修复取出历史消息时，转人工评价标题改变的bug
-	还有待测试其他带有转人工的情况
-*/
+				/*
+					msg.data 用于处理即时消息
+					msg.bodies[0].msg 用于处理历史消息
+					msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
+					此处修改为了修复取出历史消息时，转人工评价标题改变的bug
+					还有待测试其他带有转人工的情况
+				*/
 					var str = [
 						'<div class="em-widget-list-btns">',
 							'<button class="em-widget-list-btn bg-hover-color js_robotTransferBtn" ',
