@@ -11,22 +11,20 @@
 3.  Clone or Download  
 	>https://github.com/easemob/web-im.git
 
-4.  命令行进入webim文件夹 
-	>npm install and gulp dev
+4. 	>npm install and gulp dev
 
         cd ../webim
         npm install
         gulp dev
 
-5.  在webim/server文件夹中 
-	>npm install and  node app
+5. 	>npm install and  node app
 
         cd ../webim/server  
         npm install
         node app
 
 
-6.  本地浏览器打开
+6.  Open
 	>http://localhost:8080/webim/demo.html
 
 ##帮助文档
