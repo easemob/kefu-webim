@@ -1,6 +1,6 @@
 // 视频邀请确认对话框
 easemobim.ui = {};
-easemobim.ui.videoConfirmDialog = (function(){
+easemobim.ui.videoConfirmDialog = easemobim.utils.isSupportWebRTC && (function(){
 	var dialog = document.querySelector('div.em-dialog-video-confirm');
 	var buttonPanel = dialog.querySelector('div.button-panel');
 	var btnConfirm = dialog.querySelector('.btn-confirm');

@@ -98,6 +98,7 @@ gulp.task('lint', function() {
 gulp.task('combineJs', function() {
 	var main = gulp.src([
 		'static/js/src/sdk/strophe.js',
+		// 'static/js/src/sdk/strophe-1.2.8.js',
 		'static/js/src/sdk/adapter.js',
 		'static/js/src/sdk/webim.config.js',
 		'static/js/src/sdk/websdk-1.4.3.js',

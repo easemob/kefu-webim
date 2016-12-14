@@ -1934,10 +1934,14 @@
 	            onGotStream ? onGotStream(self, stream) : self.onGotStream(stream);
 	        }
 
-	        return navigator.mediaDevices.getUserMedia(constaints || self.mediaStreamConstaints).then(gotStream).then(self.onCreateMedia).catch(function (e) {
-	            _logger.debug('[WebRTC-API] getUserMedia() error: ', e);
-	            self.onError(e);
-	        });
+	        return navigator.mediaDevices.getUserMedia(constaints
+	        	|| self.mediaStreamConstaints)
+	        		.then(gotStream)
+	        		.then(self.onCreateMedia)
+	        		['catch'](function (e) {
+			            _logger.debug('[WebRTC-API] getUserMedia() error: ', e);
+			            self.onError(e);
+			        });
 	    },
 
 	    setLocalVideoSrcObject: function setLocalVideoSrcObject(stream) {

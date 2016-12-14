@@ -56,14 +56,15 @@
 				return false;
 			}
 		};
-
-		if ( window.XDomainRequest ) {
-			XDomainRequest.prototype.oldsend = XDomainRequest.prototype.send;
-			XDomainRequest.prototype.send = function () {
-				XDomainRequest.prototype.oldsend.apply(this, arguments);
-				this.readyState = 2;
-			};
-		}
+// todo 尽早去除旧的sdk
+// 此处代码与新sdk共存时在IE8 会堆栈溢出
+		// if ( window.XDomainRequest ) {
+		// 	XDomainRequest.prototype.oldsend = XDomainRequest.prototype.send;
+		// 	XDomainRequest.prototype.send = function () {
+		// 		XDomainRequest.prototype.oldsend.apply(this, arguments);
+		// 		this.readyState = 2;
+		// 	};
+		// }
 
 		Strophe.Request.prototype._newXHR = function () {
 			var xhr =  Utils.xmlrequest(true);
