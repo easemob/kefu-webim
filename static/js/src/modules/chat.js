@@ -978,7 +978,7 @@
 					if ( utils.isMobile ) {
 						easemobim.textarea.style.height = '34px';
 						easemobim.textarea.style.overflowY = 'hidden';
-						me.direction === 'up' || (easemobim.imChatBody.style.bottom = '43px');
+						me.direction === 'up' || (easemobim.imChatBody.style.bottom = '77px');
 						easemobim.textarea.focus();
 					}
 					return false;
