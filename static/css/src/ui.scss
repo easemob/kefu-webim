@@ -156,6 +156,10 @@ object {
 		color: white;
 	}
 }
+.em-widget-list-btn-white {
+	@extend .em-widget-list-btn;
+	color: #fff;
+}
 .em-widget-date,
 .em-widget-event {
 	text-align: center;
