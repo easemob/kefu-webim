@@ -421,7 +421,7 @@ easemobim.channel = function ( config ) {
 				*/
 					var str = [
 						'<div class="em-widget-list-btns">',
-							'<button class="em-widget-list-btn bg-hover-color js_robotTransferBtn" ',
+							'<button class="em-widget-list-btn-white bg-color border-color hover-color-dark js_robotTransferBtn" ',
 							'data-sessionid="' + ctrlArgs.serviceSessionId + '" ', 
 							'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
 						'</div>'
