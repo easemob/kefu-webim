@@ -1,103 +1,44 @@
 /*
-	主题颜色说明
+	className			|	描述						|	颜色值
 
-	className		描述							颜色值
-	fg-color 		文字颜色						主题色
-	fg-hover-color 	hover时文字颜色					主题色
-	bg-color 		背景颜色						主题色
-	bg-color 		hover时背景颜色					主题色
-	boder-color 	边线颜色						比主题色稍暗
-	hover-color 	hover时背景颜色（稍亮一些）		比主题色稍亮
+	fg-color 				文字颜色						主题色
+	bg-color 				背景颜色						主题色
+	fg-hover-color 			hover时文字颜色				主题色
+	bg-color 				hover时背景颜色				主题色
+	boder-color 			边线颜色						比主题色稍暗
+	bg-hover-color-light 	hover时背景颜色（稍亮一些）		比主题色稍亮
+	bg-hover-color-dark 	hover时背景颜色（稍暗一些）		比主题色稍暗
 */
 
-/* 默认主题（天空之城） */
-body .fg-color,
-body .fg-hover-color:hover { color:#42b8f4 }
-body .bg-color,
-body .bg-hover-color:hover { background-color:#42b8f4 }
-body .border-color { border: 1px solid #00a0e7 }
-body .hover-color:hover { background-color:#7dcdf7 }
-
-/* 天空之城 */
-body.theme-1 .fg-color,
-body.theme-1 .fg-hover-color:hover { color:#42b8f4 }
-body.theme-1 .bg-color,
-body.theme-1 .bg-hover-color:hover { background-color:#42b8f4 }
-body.theme-1 .border-color { border-color: #00a0e7 }
-body.theme-1 .hover-color:hover { background-color:#7dcdf7 }
-
-/* 丛林物语 */
-body.theme-2 .fg-color,
-body.theme-2 .fg-hover-color:hover { color:#00b45f }
-body.theme-2 .bg-color,
-body.theme-2 .bg-hover-color:hover { background-color:#00b45f }
-body.theme-2 .border-color { border-color: #009a51 }
-body.theme-2 .hover-color:hover { background-color:#16cd77 }
-
-/* 红瓦洋房 */
-body.theme-3 .fg-color,
-body.theme-3 .fg-hover-color:hover { color:#b50e03 }
-body.theme-3 .bg-color,
-body.theme-3 .bg-hover-color:hover { background-color:#b50e03 }
-body.theme-3 .border-color { border-color: #811916 }
-body.theme-3 .hover-color:hover { background-color:#e92b25 }
-
-/* 鲜美橙汁 */ /* todo 把主题做成可以生成的 */
-body.theme-4 {
-	.fg-color,
-	.fg-hover-color:hover {
-		color:#ffa000
-	}
-	.bg-color,
-	.bg-hover-color:hover { background-color:#ffa000 }
-	.border-color { border-color: #f69000 }
-	.hover-color:hover { background-color:#ffb63b }
+@mixin theme($theme-color, $dark-color, $light-color) {
+	.fg-color, .fg-hover-color:hover { color: $theme-color; }
+	.bg-color, .bg-hover-color:hover { background-color: $theme-color; }
+	.border-color { border-color: $dark-color; }
+	.bg-hover-color-light:hover { background-color: $light-color; }
+	.bg-hover-color-dark:hover { background-color: $dark-color; }
 }
 
-/* 青草田间 */
-body.theme-5 .fg-color,
-body.theme-5 .fg-hover-color:hover { color:#9ec100 }
-body.theme-5 .bg-color,
-body.theme-5 .bg-hover-color:hover { background-color:#9ec100 }
-body.theme-5 .border-color { border-color: #809a00 }
-body.theme-5 .hover-color:hover { background-color:#bad921 }
-
-/* 湖光山色 */
-body.theme-6 .fg-color,
-body.theme-6 .fg-hover-color:hover { color:#00cccd }
-body.theme-6 .bg-color,
-body.theme-6 .bg-hover-color:hover { background-color:#00cccd }
-body.theme-6 .border-color { border-color: #12b3b4 }
-body.theme-6 .hover-color:hover { background-color:#38e6e7 }
-
-/* 冷峻山峰 */
-body.theme-7 .fg-color,
-body.theme-7 .fg-hover-color:hover { color:#5b799a }
-body.theme-7 .bg-color,
-body.theme-7 .bg-hover-color:hover { background-color:#5b799a }
-body.theme-7 .border-color { border-color: #48627b }
-body.theme-7 .hover-color:hover { background-color:#6a8eb5 }
-
-/* 月色池塘 */
-body.theme-8 .fg-color,
-body.theme-8 .fg-hover-color:hover { color:#3977cf }
-body.theme-8 .bg-color,
-body.theme-8 .bg-hover-color:hover { background-color:#3977cf }
-body.theme-8 .border-color { border-color: #2b599b }
-body.theme-8 .hover-color:hover { background-color:#548bdc }
-
-/* 天籁湖光 */
-body.theme-9 .fg-color,
-body.theme-9 .fg-hover-color:hover { color:#06a89c }
-body.theme-9 .bg-color,
-body.theme-9 .bg-hover-color:hover { background-color:#06a89c }
-body.theme-9 .border-color { border-color: #07b5a9 }
-body.theme-9 .hover-color:hover { background-color:#08c2b5 }
-
-/* 商务风格 */
-body.theme-10 .fg-color,
-body.theme-10 .fg-hover-color:hover { color:#000000 }
-body.theme-10 .bg-color,
-body.theme-10 .bg-hover-color:hover { background-color:#000000 }
-body.theme-10 .border-color { border-color: #1a1a1a }
-body.theme-10 .hover-color:hover { background-color:#333333 }
+body {
+	// 默认主题（天空之城）
+	@include theme(#42b8f4, #00a0e7, #7dcdf7)
+	// 天空之城
+	&.theme-1 { @include theme(#42b8f4, #00a0e7, #7dcdf7); }
+	// 丛林物语
+	&.theme-2 { @include theme(#00b45f, #009a51, #16cd77); }
+	// 红瓦洋房
+	&.theme-3 { @include theme(#b50e03, #811916, #e92b25); }
+	// 鲜美橙汁
+	&.theme-4 { @include theme(#ffa000, #f69000, #ffb63b); }
+	// 青草田间
+	&.theme-5 { @include theme(#9ec100, #809a00, #bad921); }
+	// 湖光山色
+	&.theme-6 { @include theme(#00cccd, #12b3b4, #38e6e7); }
+	// 冷峻山峰
+	&.theme-7 { @include theme(#5b799a, #48627b, #6a8eb5); }
+	// 月色池塘
+	&.theme-8 { @include theme(#3977cf, #2b599b, #548bdc); }
+	// 天籁湖光
+	&.theme-9 { @include theme(#06a89c, #07b5a9, #08c2b5); }
+	// 商务风格
+	&.theme-10 { @include theme(#000000, #1a1a1a, #333333); }
+}
