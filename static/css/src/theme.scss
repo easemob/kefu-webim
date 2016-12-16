@@ -1,13 +1,14 @@
 /*
 	主题颜色说明
 
-	className		描述							颜色值
-	fg-color 		文字颜色						主题色
-	fg-hover-color 	hover时文字颜色					主题色
-	bg-color 		背景颜色						主题色
-	bg-color 		hover时背景颜色					主题色
-	boder-color 	边线颜色						比主题色稍暗
-	hover-color 	hover时背景颜色（稍亮一些）		比主题色稍亮
+	className				描述							颜色值
+	fg-color 				文字颜色						主题色
+	fg-hover-color 			hover时文字颜色					主题色
+	bg-color 				背景颜色						主题色
+	bg-color 				hover时背景颜色					主题色
+	boder-color 			边线颜色						比主题色稍暗
+	bg-hover-color-light 	hover时背景颜色（稍亮一些）		比主题色稍亮
+	bg-hover-color-dark 	hover时背景颜色（稍暗一些）		比主题色稍暗
 */
 
 
@@ -19,12 +20,19 @@
 	}
 	.bg-color,
 	.bg-hover-color:hover { background-color:$themecolor }
-	.hover-color:hover { background-color:$lightcolor }
 	.border-color { border-color: $darkcolor }
-	.hover-color-dark:hover { background-color:$darkcolor }
+	
+	.bg-hover-color-light:hover { background-color:$lightcolor }
+	.bg-hover-color-dark:hover { background-color:$darkcolor }
 }
 
+
 /* 默认主题（天空之城） */
+body.theme {
+	@include theme(#42b8f4,#00a0e7,#7dcdf7)
+}
+
+/* 天空之城 */
 body.theme-1 {
 	@include theme(#42b8f4,#00a0e7,#7dcdf7)
 }

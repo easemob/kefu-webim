@@ -157,20 +157,8 @@ object {
 	}
 }
 .em-widget-list-btn-white {
-	font-size: 13px;
-	display: block;
-	width: 95%;
-	padding: 5px;
-	min-height: 30px;
-	text-align: left;
+	@extend .em-widget-list-btn;
 	color: #fff;
-	background-color: white;
-	border-radius: 2px;
-	border: 1px solid #e5e5e5;
-	cursor: pointer;
-	margin: 4px auto;
-	word-break: break-all;
-	white-space: pre-wrap;
 }
 .em-widget-date,
 .em-widget-event {
