@@ -337,17 +337,16 @@
 			return document.visibilityState && document.visibilityState === 'hidden' || document.hidden;
 		}
 		, setStore: function ( key, value ) {
-			if ( typeof value === 'undefined' ) {
-				return;
-			}
 			try {
 				localStorage.setItem(key, value);
-			} catch ( e ) {}
+			}
+			catch (e){}
 		}
 		, getStore: function ( key ) {
 			try {
 				return localStorage.getItem(key);
-			} catch ( e ) {}
+			}
+			catch (e){}
 		}
 		, clearStore: function ( key ) {
 			try {

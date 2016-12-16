@@ -38,6 +38,7 @@
 	Polling.prototype.start = function (){
 		if (!this.isStarted) {
 			this.isStarted = true;
+			setTimeout(this.fn, 0);
 			this.timerHandler = setInterval(this.fn, this.interval);
 		}
 	};

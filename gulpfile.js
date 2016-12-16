@@ -1,6 +1,6 @@
 /*
 
-	以下文件老版本会引用到，不能删除
+	以下文件老版本会引用到，不能在服务器上彻底删除，但如果需要的话可以在当前代码分支中删除
 
 	/static/js/em-open.js
 	/static/js/em-transfer.js
@@ -10,7 +10,7 @@
 */
 
 var debug = false;
-const VERSION = '43.11.1';
+const VERSION = '43.12.1';
 
 const gulp = require('gulp');
 const postcss = require('gulp-postcss');

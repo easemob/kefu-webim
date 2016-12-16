@@ -118,7 +118,7 @@
 		me.config.parentId = me.iframe.id;
 
 		me.message
-		.send(me.config)
+		.send({event: 'initConfig', data: me.config})
 		.listen(function ( msg ) {
 
 			if ( msg.to !== me.iframe.id ) { return; }
@@ -184,6 +184,9 @@
 				case 'setItem':
 					utils.setStore(msg.data.key, msg.data.value);
 					break;
+				case 'updateURL':
+					me.message.send({event: 'updateURL', data: location.href});
+					break;
 				default:
 					break;
 			};
@@ -213,7 +216,7 @@
 		}
 
 		this.url = '';
-		// IE6-	8 不支持修改iframe名称
+		// IE6-8 不支持修改iframe名称
 		this.iframe = (/MSIE (6|7|8)/).test(navigator.userAgent)
 			? document.createElement('<iframe name="' + new Date().getTime() + '">')
 			: document.createElement('iframe');
@@ -414,18 +417,16 @@
 	};
 
 	// 发ext消息
-	Iframe.prototype.send = function ( ext ) {
-		easemobim.EVENTS.EXT.data = ext;	
-		this.message.send(easemobim.EVENTS.EXT);
+	Iframe.prototype.send = function(extMsg) {
+		this.message.send({event: 'ext', data: extMsg});
 	};
 
 	// 发文本消息
-	Iframe.prototype.sendText = function ( msg ) {
-		easemobim.EVENTS.TEXTMSG.data = msg;	
-		this.message.send(easemobim.EVENTS.TEXTMSG);
+	Iframe.prototype.sendText = function(msg) {
+		this.message.send({event: 'textmsg', data: msg});
 	};
 
 	easemobim.Iframe = Iframe;
 }(
 	easemobim.utils
-	));
+));

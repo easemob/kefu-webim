@@ -65,28 +65,29 @@
 			initUI(config, initAfterUI);
 		} else {
 			window.transfer = new easemobim.Transfer(null, 'main').listen(function(msg) {
-				if (msg.parentId) {
-					chat = easemobim.chat(msg);
-					window.transfer.to = msg.parentId;
-					initUI(msg, initAfterUI);
-				}
-				else if (msg.event) {
-					switch (msg.event) {
-						case easemobim.EVENTS.SHOW.event:
-							chatEntry.open();
-							break;
-						case easemobim.EVENTS.CLOSE.event:
-							chatEntry.close();
-							break;
-						case easemobim.EVENTS.EXT.event:
-							chat.sendTextMsg('', false, msg.data.ext);
-							break;
-						case easemobim.EVENTS.TEXTMSG.event:
-							chat.sendTextMsg(msg.data.data, false, msg.data.ext);
-							break;
-						default:
-							break;
-					}
+				switch (msg.event) {
+					case easemobim.EVENTS.SHOW.event:
+						chatEntry.open();
+						break;
+					case easemobim.EVENTS.CLOSE.event:
+						chatEntry.close();
+						break;
+					case easemobim.EVENTS.EXT.event:
+						chat.sendTextMsg('', false, msg.data.ext);
+						break;
+					case easemobim.EVENTS.TEXTMSG.event:
+						chat.sendTextMsg(msg.data.data, false, msg.data.ext);
+						break;
+					case 'updateURL':
+						easemobim.eventCollector.updateURL(msg.data);
+						break;
+					case 'initConfig':
+						chat = easemobim.chat(msg.data);
+						window.transfer.to = msg.data.parentId;
+						initUI(msg.data, initAfterUI);
+						break;
+					default:
+						break;
 				}
 			}, ['easemob']);
 		}

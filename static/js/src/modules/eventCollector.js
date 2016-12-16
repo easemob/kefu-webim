@@ -4,16 +4,18 @@
 	var _polling;
 	var _callback;
 	var _config;
-	var _userId;
+	var _gid;
+	var _url;
 
 	function _reportData(userType, userId){
-		_userId = userId;
+		transfer.send({event: 'updateURL'}, window.transfer.to);
 
 		easemobim.api('reportEvent', {
 			type: 'VISIT_URL',
+			// 第一次轮询时URL还未传过来，所以使用origin
+			url: _url || transfer.origin,
 			// for debug
-			// url: 'http://172.17.3.146',
-			url: _config.origin,
+			url: 'http://172.17.3.86',
 			// 时间戳不传，以服务器时间为准
 			// timestamp: 0,
 			userId: {
@@ -30,15 +32,20 @@
 				// 有坐席呼叫
 				case 'INIT_CALL':
 					if(_isStarted()){
+						// 回呼游客，游客身份变为访客
+						if (data.userName){
+							_gid = data.orgName + '#' + data.appName + '_' + data.userName;
+							_polling.stop();
+							_polling = new Polling(function(){
+								_reportData('VISITOR', _gid);
+							});
+						}
 						_stopReporting();
 						_callback(data);
 					}
 					// 已停止轮询 （被呼叫的访客/游客 已经创建会话），不回呼
-					// todo: 发送删除事件
-					else{}
-					// todo:
+					else {}
 					break;
-				// error: unexcepted return value
 				default:
 					break;
 			}
@@ -46,8 +53,8 @@
 	}
 
 	function _deleteEvent(){
-		api('deleteEvent', {userId: _userId});
-		_userId = '';
+		_gid && api('deleteEvent', {userId: _gid});
+		_gid = '';
 	}
 
 	function _startToReoprt(config, callback){
@@ -55,12 +62,13 @@
 		_config || (_config = config);
 
 		// 用户点击联系客服弹出的窗口，结束会话后调用的startToReport没有传入参数
-		if(!config){
+		if(!_config){
 			console.log('not config yet.');
-			return;
 		}
-		// todo close的时候也传入user信息，待确认
-		if(_config.user.username){
+		else if(_polling){
+			_polling.start();
+		}
+		else if(_config.user.username){
 			_reportVisitor(_config.user.username);
 		}
 		else{
@@ -69,17 +77,19 @@
 	}
 
 	function _reportGuest(){
-		var guestId = localStorage.getItem('guestId') || utils.uuid();
+		var guestId = _config.guestId || utils.uuid();
 
+		// 缓存guestId
 		transfer.send({event: 'setItem', data: {
 			key: 'guestId',
 			value: guestId
 		}}, window.transfer.to);
+
 		_polling = new Polling(function(){
 			_reportData('GUEST', guestId);
 		}, POLLING_INTERVAL);
 
-		_startToPoll();
+		_polling.start();
 	}
 
 	function _reportVisitor(username){
@@ -93,23 +103,19 @@
 			var orgName = relevanceList.orgName;
 			var appName = relevanceList.appName;
 			var imServiceNumber = relevanceList.imServiceNumber;
-			var gid = orgName + '#' + appName + '_' + username;
+			_gid = orgName + '#' + appName + '_' + username;
 
 			_polling = new Polling(function(){
-				_reportData('VISITOR', gid);
+				_reportData('VISITOR', _gid);
 			}, POLLING_INTERVAL);
 
-			_startToPoll();
+			_polling.start();
 		});
 	}
 
 	function _stopReporting(){
 		_polling && _polling.stop();
-		_userId && _deleteEvent();
-	}
-
-	function _startToPoll(){
-		_polling && _polling.start();
+		_deleteEvent();
 	}
 
 	function _isStarted() {
@@ -119,7 +125,10 @@
 	easemobim.eventCollector = {
 		startToReport: _startToReoprt,
 		stopReporting: _stopReporting,
-		isStarted: _isStarted
+		isStarted: _isStarted,
+		updateURL: function(url){
+			_url = url;
+		}
 	};
 }(
 	easemobim.Polling,
