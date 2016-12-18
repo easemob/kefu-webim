@@ -102,6 +102,8 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 	'use strict'
    
 	var handleMsg = function ( e, callback, accept ) {
+		// 微信调试工具会传入对象，导致解析出错
+		if('string' !== typeof e.data) return;
 		var msg = JSON.parse(e.data);
 
 
@@ -222,111 +224,115 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 		switch ( msg.api ) {
 			case 'getRelevanceList':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/targetChannels', //done
+					url: '/v1/webimplugin/targetChannels',
 					msg: msg
 				}));
 				break;
 			case 'getDutyStatus':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/showMessage',//done
+					url: '/v1/webimplugin/showMessage',
 					msg: msg
 				}));
 				break;
 			case 'getWechatVisitor':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors/wechat/' + msg.data.openid + '?tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/visitors/wechat/' + msg.data.openid + '?tenantId=' + msg.data.tenantId,
 					msg: msg,
 					type: 'POST'
 				}));
 				break;
 			case 'createVisitor':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors?tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/visitors?tenantId=' + msg.data.tenantId,
 					msg: msg,
 					type: 'POST'
 				}));
 				break;
 			case 'getSession':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
 					msg: msg,
 					excludeData: true
 				}));
 				break;
 			case 'getExSession':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data-ex?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data-ex?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
 					msg: msg,
 					excludeData: true
 				}));
 				break;
 			case 'getPassword':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors/password',//done
+					url: '/v1/webimplugin/visitors/password',
 					msg: msg
 				}));
 				break;
 			case 'getGroup':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
 					msg: msg,
 					excludeData: true
 				}));
 				break;
 			case 'getGroupNew':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/tenant/' + msg.data.tenantId + '/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/tenant/' + msg.data.tenantId + '/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
 					msg: msg,
 					excludeData: true
 				}));
 				break;
 			case 'getHistory':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors/msgHistory',//done
+					url: '/v1/webimplugin/visitors/msgHistory',
 					msg: msg
 				}));
 				break;
 			case 'getSlogan':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/notice/options',//done
+					url: '/v1/webimplugin/notice/options',
 					msg: msg
 				}));
 				break;
 			case 'getTheme':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/theme/options',//done
+					url: '/v1/webimplugin/theme/options',
 					msg: msg
 				}));
 				break;
 			case 'getSystemGreeting':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/welcome',//done
+					url: '/v1/webimplugin/welcome',
 					msg: msg
 				}));
 				break;
 			case 'getRobertGreeting':
 				easemobim.emajax(createObject({
-					url: '/v1/Tenants/' + msg.data.tenantId + '/robots/visitor/greetings/' + msg.data.originType + '?tenantId=' + msg.data.tenantId,//done
+					url: '/v1/Tenants/'
+						+ msg.data.tenantId
+						+ '/robots/visitor/greetings/'
+						+ msg.data.originType
+						+ '?tenantId=' + msg.data.tenantId,
 					msg: msg,
 					excludeData: true
 				}));
 				break;
 			case 'sendVisitorInfo':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/tenants/' + msg.data.tenantId + '/visitors/' + msg.data.visitorId + '/attributes?tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/tenants/' + msg.data.tenantId + '/visitors/' + msg.data.visitorId + '/attributes?tenantId=' + msg.data.tenantId,
 					msg: msg,
 					type: 'POST'
 				}));
 				break;
 			case 'getProject':
 				easemobim.emajax(createObject({
-					url: '/tenants/' + msg.data.tenantId + '/projects',//done
+					url: '/tenants/' + msg.data.tenantId + '/projects',
 					msg: msg
 				}));
 				break;
 			case 'createTicket':
 				easemobim.emajax(createObject({
-					url: '/tenants/' + msg.data.tenantId + '/projects/' + msg.data.projectId + '/tickets?tenantId=' + msg.data.tenantId + '&easemob-target-username=' + msg.data['easemob-target-username'] + '&easemob-appkey=' + msg.data['easemob-appkey'] + '&easemob-username=' + msg.data['easemob-username'],//done
+					url: '/tenants/'+ msg.data.tenantId + '/projects/' + msg.data.projectId + '/tickets?tenantId=' + msg.data.tenantId + '&easemob-target-username=' + msg.data['easemob-target-username'] + '&easemob-appkey=' + msg.data['easemob-appkey'] + '&easemob-username=' + msg.data['easemob-username'],
 					msg: msg,
 					type: 'POST'
 				}));
@@ -367,7 +373,7 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 				break;
 			case 'deleteEvent':
 				easemobim.emajax(createObject({
-					url: '/v1/event_collector/events/' + encodeURIComponent(msg.data.userId),
+					url: '/v1/event_collector/event/' + encodeURIComponent(msg.data.userId),
 					msg: msg,
 					type: 'DELETE',
 					excludeData: true

@@ -29,6 +29,20 @@
 			|| window.mozRTCPeerConnection
 			|| window.RTCPeerConnection
 		)
+		, filesizeFormat: function(filesize){
+			var UNIT_ARRAY = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'];
+			var exponent;
+			var result;
+
+			if(filesize){
+				exponent = Math.floor(Math.log(filesize) / Math.log(1024));
+				result = (filesize / Math.pow(1024, exponent)).toFixed(2) + ' ' + UNIT_ARRAY[exponent];
+			}
+			else{
+				result = '0 B';
+			}
+			return result;
+		}
 		, uuid: function () {
 			var s = [], hexDigits = '0123456789abcdef';
 
@@ -323,17 +337,16 @@
 			return document.visibilityState && document.visibilityState === 'hidden' || document.hidden;
 		}
 		, setStore: function ( key, value ) {
-			if ( typeof value === 'undefined' ) {
-				return;
-			}
 			try {
 				localStorage.setItem(key, value);
-			} catch ( e ) {}
+			}
+			catch (e){}
 		}
 		, getStore: function ( key ) {
 			try {
 				return localStorage.getItem(key);
-			} catch ( e ) {}
+			}
+			catch (e){}
 		}
 		, clearStore: function ( key ) {
 			try {
@@ -345,14 +358,23 @@
 				localStorage.clear();
 			} catch ( e ) {}
 		}
-		, set: function ( key, value ) {
+		, set: function (key, value, expiration) {
 			var date = new Date();
-			date.setTime(date.getTime() + 30*24*3600*1000);
+			// 过期时间默认为30天
+			var expiresTime = date.getTime() + (expiration || 30) * 24 * 3600 * 1000;
+			date.setTime(expiresTime);
 			document.cookie = encodeURIComponent(key) + '=' + encodeURIComponent(value) + ';path=/;expires=' + date.toGMTString();
 		}
-		, get: function ( key ) {
-			var results = document.cookie.match('(^|;) ?' + encodeURIComponent(key) + '=([^;]*)(;|$)'); 
-			return results ? decodeURIComponent(results[2]) : '';
+		, get: function (key) {
+			var matches = document.cookie.match('(^|;) ?' + encodeURIComponent(key) + '=([^;]*)(;|$)');
+			var results;
+			if(matches){
+				results = decodeURIComponent(matches[2]);
+			}
+			else {
+				results = '';
+			}
+			return results;
 		}
 		, getAvatarsFullPath: function ( url, domain ) {
 			var returnValue = null;
@@ -533,6 +555,8 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 	'use strict'
    
 	var handleMsg = function ( e, callback, accept ) {
+		// 微信调试工具会传入对象，导致解析出错
+		if('string' !== typeof e.data) return;
 		var msg = JSON.parse(e.data);
 
 
@@ -840,7 +864,7 @@ easemobim.titleSlide = function () {
 		me.config.parentId = me.iframe.id;
 
 		me.message
-		.send(me.config)
+		.send({event: 'initConfig', data: me.config})
 		.listen(function ( msg ) {
 
 			if ( msg.to !== me.iframe.id ) { return; }
@@ -906,6 +930,9 @@ easemobim.titleSlide = function () {
 				case 'setItem':
 					utils.setStore(msg.data.key, msg.data.value);
 					break;
+				case 'updateURL':
+					me.message.send({event: 'updateURL', data: location.href});
+					break;
 				default:
 					break;
 			};
@@ -935,7 +962,7 @@ easemobim.titleSlide = function () {
 		}
 
 		this.url = '';
-		// IE6-	8 不支持修改iframe名称
+		// IE6-8 不支持修改iframe名称
 		this.iframe = (/MSIE (6|7|8)/).test(navigator.userAgent)
 			? document.createElement('<iframe name="' + new Date().getTime() + '">')
 			: document.createElement('iframe');
@@ -1136,21 +1163,19 @@ easemobim.titleSlide = function () {
 	};
 
 	// 发ext消息
-	Iframe.prototype.send = function ( ext ) {
-		easemobim.EVENTS.EXT.data = ext;	
-		this.message.send(easemobim.EVENTS.EXT);
+	Iframe.prototype.send = function(extMsg) {
+		this.message.send({event: 'ext', data: extMsg});
 	};
 
 	// 发文本消息
-	Iframe.prototype.sendText = function ( msg ) {
-		easemobim.EVENTS.TEXTMSG.data = msg;	
-		this.message.send(easemobim.EVENTS.TEXTMSG);
+	Iframe.prototype.sendText = function(msg) {
+		this.message.send({event: 'textmsg', data: msg});
 	};
 
 	easemobim.Iframe = Iframe;
 }(
 	easemobim.utils
-	));
+));
 
 /*
  * 环信移动客服WEB访客端插件接入js
@@ -1160,7 +1185,7 @@ easemobim.titleSlide = function () {
 	'use strict';
 	var utils = easemobim.utils;
 	easemobim.config = easemobim.config || {};
-	easemobim.version = '43.11';
+	easemobim.version = '43.12.1';
 	easemobim.tenants = {};
 
 	var DEFAULT_CONFIG = {

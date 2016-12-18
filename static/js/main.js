@@ -8302,23 +8302,23 @@ WebIM.config = {
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(224);
+	module.exports = __webpack_require__(230);
 
 
 /***/ },
 
-/***/ 217:
+/***/ 223:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	;
 	(function () {
 
 	    var EMPTYFN = function EMPTYFN() {};
-	    var _code = __webpack_require__(218).code;
+	    var _code = __webpack_require__(224).code;
 	    var WEBIM_FILESIZE_LIMIT = 10485760;
 
 	    var _createStandardXHR = function _createStandardXHR() {
@@ -8529,47 +8529,6 @@ WebIM.config = {
 	                return iterate(json);
 	            }
 	        },
-	        registerUser: function registerUser(options) {
-	            var orgName = options.orgName || '';
-	            var appName = options.appName || '';
-	            var appKey = options.appKey || '';
-	            var suc = options.success || EMPTYFN;
-	            var err = options.error || EMPTYFN;
-
-	            if (!orgName && !appName && appKey) {
-	                var devInfos = appKey.split('#');
-	                if (devInfos.length === 2) {
-	                    orgName = devInfos[0];
-	                    appName = devInfos[1];
-	                }
-	            }
-	            if (!orgName && !appName) {
-	                err({
-	                    type: _code.WEBIM_CONNCTION_APPKEY_NOT_ASSIGN_ERROR
-	                });
-	                return;
-	            }
-
-	            var https = options.https || https;
-	            var apiUrl = options.apiUrl;
-	            var restUrl = apiUrl + '/' + orgName + '/' + appName + '/users';
-
-	            var userjson = {
-	                username: options.username,
-	                password: options.password,
-	                nickname: options.nickname || ''
-	            };
-
-	            var userinfo = utils.stringify(userjson);
-	            var options = {
-	                url: restUrl,
-	                dataType: 'json',
-	                data: userinfo,
-	                success: suc,
-	                error: err
-	            };
-	            return utils.ajax(options);
-	        },
 	        login: function login(options) {
 	            var options = options || {};
 	            var suc = options.success || EMPTYFN;
@@ -8651,8 +8610,7 @@ WebIM.config = {
 	            }
 	        },
 
-	        getFileSize: function getFileSize(fileInputId) {
-	            var file = document.getElementById(fileInputId);
+	        getFileSize: function getFileSize(file) {
 	            var fileSize = 0;
 	            if (file) {
 	                if (file.files) {
@@ -8664,6 +8622,22 @@ WebIM.config = {
 	                    var fileobject = new ActiveXObject('Scripting.FileSystemObject');
 	                    var file = fileobject.GetFile(file.value);
 	                    fileSize = file.Size;
+	                }
+	            }
+	            console.log('fileSize: ', fileSize);
+	            if (fileSize > 10000000) {
+	                return false;
+	            }
+	            var kb = Math.round(fileSize / 1000);
+	            if (kb < 1000) {
+	                fileSize = kb + ' KB';
+	            } else if (kb >= 1000) {
+	                var mb = kb / 1000;
+	                if (mb < 1000) {
+	                    fileSize = mb.toFixed(1) + ' MB';
+	                } else {
+	                    var gb = mb / 1000;
+	                    fileSize = gb.toFixed(1) + ' GB';
 	                }
 	            }
 	            return fileSize;
@@ -9179,120 +9153,120 @@ WebIM.config = {
 
 /***/ },
 
-/***/ 218:
+/***/ 224:
 /***/ function(module, exports) {
 
 	"use strict";
 
 	;
 	(function () {
-	    var connIndex = 0,
-	        uploadIndex = 100,
-	        downloadIndex = 200,
-	        msgIndex = 300,
-	        statusIndex = 400;
 
 	    exports.code = {
-	        WEBIM_CONNCTION_USER_NOT_ASSIGN_ERROR: connIndex++,
-	        WEBIM_CONNCTION_OPEN_ERROR: connIndex++,
-	        WEBIM_CONNCTION_AUTH_ERROR: connIndex++,
-	        WEBIM_CONNCTION_OPEN_USERGRID_ERROR: connIndex++,
-	        WEBIM_CONNCTION_ATTACH_ERROR: connIndex++,
-	        WEBIM_CONNCTION_ATTACH_USERGRID_ERROR: connIndex++,
-	        WEBIM_CONNCTION_REOPEN_ERROR: connIndex++,
-	        WEBIM_CONNCTION_SERVER_CLOSE_ERROR: connIndex++, //7: client-side network offline (net::ERR_INTERNET_DISCONNECTED)
-	        WEBIM_CONNCTION_SERVER_ERROR: connIndex++, //8: offline by multi login
-	        WEBIM_CONNCTION_IQ_ERROR: connIndex++,
+	        WEBIM_CONNCTION_USER_NOT_ASSIGN_ERROR: 0,
+	        WEBIM_CONNCTION_OPEN_ERROR: 1,
+	        WEBIM_CONNCTION_AUTH_ERROR: 2,
+	        WEBIM_CONNCTION_OPEN_USERGRID_ERROR: 3,
+	        WEBIM_CONNCTION_ATTACH_ERROR: 4,
+	        WEBIM_CONNCTION_ATTACH_USERGRID_ERROR: 5,
+	        WEBIM_CONNCTION_REOPEN_ERROR: 6,
+	        WEBIM_CONNCTION_SERVER_CLOSE_ERROR: 7, //7: client-side network offline (net::ERR_INTERNET_DISCONNECTED)
+	        WEBIM_CONNCTION_SERVER_ERROR: 8, //8: offline by multi login
+	        WEBIM_CONNCTION_IQ_ERROR: 9,
 
-	        WEBIM_CONNCTION_PING_ERROR: connIndex++,
-	        WEBIM_CONNCTION_NOTIFYVERSION_ERROR: connIndex++,
-	        WEBIM_CONNCTION_GETROSTER_ERROR: connIndex++,
-	        WEBIM_CONNCTION_CROSSDOMAIN_ERROR: connIndex++,
-	        WEBIM_CONNCTION_LISTENING_OUTOF_MAXRETRIES: connIndex++,
-	        WEBIM_CONNCTION_RECEIVEMSG_CONTENTERROR: connIndex++,
-	        WEBIM_CONNCTION_DISCONNECTED: connIndex++, //16: server-side close the websocket connection
-	        WEBIM_CONNCTION_AJAX_ERROR: connIndex++,
-	        WEBIM_CONNCTION_JOINROOM_ERROR: connIndex++,
-	        WEBIM_CONNCTION_GETROOM_ERROR: connIndex++,
+	        WEBIM_CONNCTION_PING_ERROR: 10,
+	        WEBIM_CONNCTION_NOTIFYVERSION_ERROR: 11,
+	        WEBIM_CONNCTION_GETROSTER_ERROR: 12,
+	        WEBIM_CONNCTION_CROSSDOMAIN_ERROR: 13,
+	        WEBIM_CONNCTION_LISTENING_OUTOF_MAXRETRIES: 14,
+	        WEBIM_CONNCTION_RECEIVEMSG_CONTENTERROR: 15,
+	        WEBIM_CONNCTION_DISCONNECTED: 16, //16: server-side close the websocket connection
+	        WEBIM_CONNCTION_AJAX_ERROR: 17,
+	        WEBIM_CONNCTION_JOINROOM_ERROR: 18,
+	        WEBIM_CONNCTION_GETROOM_ERROR: 19,
 
-	        WEBIM_CONNCTION_GETROOMINFO_ERROR: connIndex++,
-	        WEBIM_CONNCTION_GETROOMMEMBER_ERROR: connIndex++,
-	        WEBIM_CONNCTION_GETROOMOCCUPANTS_ERROR: connIndex++,
-	        WEBIM_CONNCTION_LOAD_CHATROOM_ERROR: connIndex++,
-	        WEBIM_CONNCTION_NOT_SUPPORT_CHATROOM_ERROR: connIndex++,
-	        WEBIM_CONNCTION_JOINCHATROOM_ERROR: connIndex++,
-	        WEBIM_CONNCTION_QUITCHATROOM_ERROR: connIndex++,
-	        WEBIM_CONNCTION_APPKEY_NOT_ASSIGN_ERROR: connIndex++,
-	        WEBIM_CONNCTION_TOKEN_NOT_ASSIGN_ERROR: connIndex++,
-	        WEBIM_CONNCTION_SESSIONID_NOT_ASSIGN_ERROR: connIndex++,
+	        WEBIM_CONNCTION_GETROOMINFO_ERROR: 20,
+	        WEBIM_CONNCTION_GETROOMMEMBER_ERROR: 21,
+	        WEBIM_CONNCTION_GETROOMOCCUPANTS_ERROR: 22,
+	        WEBIM_CONNCTION_LOAD_CHATROOM_ERROR: 23,
+	        WEBIM_CONNCTION_NOT_SUPPORT_CHATROOM_ERROR: 24,
+	        WEBIM_CONNCTION_JOINCHATROOM_ERROR: 25,
+	        WEBIM_CONNCTION_QUITCHATROOM_ERROR: 26,
+	        WEBIM_CONNCTION_APPKEY_NOT_ASSIGN_ERROR: 27,
+	        WEBIM_CONNCTION_TOKEN_NOT_ASSIGN_ERROR: 28,
+	        WEBIM_CONNCTION_SESSIONID_NOT_ASSIGN_ERROR: 29,
 
-	        WEBIM_CONNCTION_RID_NOT_ASSIGN_ERROR: connIndex++,
-	        WEBIM_CONNCTION_CALLBACK_INNER_ERROR: connIndex++,
-	        WEBIM_CONNCTION_CLIENT_OFFLINE: connIndex++, //32: client offline
-	        WEBIM_CONNCTION_CLIENT_LOGOUT: connIndex++, //33: client logout
-	        WEBIM_CONNCTION_CLIENT_TOO_MUCH_ERROR: connIndex++, // Over amount of the tabs a user opened in the same browser
+	        WEBIM_CONNCTION_RID_NOT_ASSIGN_ERROR: 30,
+	        WEBIM_CONNCTION_CALLBACK_INNER_ERROR: 31,
+	        WEBIM_CONNCTION_CLIENT_OFFLINE: 32, //32: client offline
+	        WEBIM_CONNCTION_CLIENT_LOGOUT: 33, //33: client logout
+	        WEBIM_CONNCTION_CLIENT_TOO_MUCH_ERROR: 34, // Over amount of the tabs a user opened in the same browser
+	        WEBIM_CONNECTION_ACCEPT_INVITATION_FROM_GROUP: 35,
+	        WEBIM_CONNECTION_DECLINE_INVITATION_FROM_GROUP: 36,
+	        WEBIM_CONNECTION_ACCEPT_JOIN_GROUP: 37,
+	        WEBIM_CONNECTION_DECLINE_JOIN_GROUP: 38,
+	        WEBIM_CONNECTION_CLOSED: 39,
 
+	        WEBIM_UPLOADFILE_BROWSER_ERROR: 100,
+	        WEBIM_UPLOADFILE_ERROR: 101,
+	        WEBIM_UPLOADFILE_NO_LOGIN: 102,
+	        WEBIM_UPLOADFILE_NO_FILE: 103,
 
-	        WEBIM_UPLOADFILE_BROWSER_ERROR: uploadIndex++,
-	        WEBIM_UPLOADFILE_ERROR: uploadIndex++,
-	        WEBIM_UPLOADFILE_NO_LOGIN: uploadIndex++,
-	        WEBIM_UPLOADFILE_NO_FILE: uploadIndex++,
+	        WEBIM_DOWNLOADFILE_ERROR: 200,
+	        WEBIM_DOWNLOADFILE_NO_LOGIN: 201,
+	        WEBIM_DOWNLOADFILE_BROWSER_ERROR: 202,
 
-	        WEBIM_DOWNLOADFILE_ERROR: downloadIndex++,
-	        WEBIM_DOWNLOADFILE_NO_LOGIN: downloadIndex++,
-	        WEBIM_DOWNLOADFILE_BROWSER_ERROR: downloadIndex++,
+	        WEBIM_MESSAGE_REC_TEXT: 300,
+	        WEBIM_MESSAGE_REC_TEXT_ERROR: 301,
+	        WEBIM_MESSAGE_REC_EMOTION: 302,
+	        WEBIM_MESSAGE_REC_PHOTO: 303,
+	        WEBIM_MESSAGE_REC_AUDIO: 304,
+	        WEBIM_MESSAGE_REC_AUDIO_FILE: 305,
+	        WEBIM_MESSAGE_REC_VEDIO: 306,
+	        WEBIM_MESSAGE_REC_VEDIO_FILE: 307,
+	        WEBIM_MESSAGE_REC_FILE: 308,
+	        WEBIM_MESSAGE_SED_TEXT: 309,
+	        WEBIM_MESSAGE_SED_EMOTION: 310,
+	        WEBIM_MESSAGE_SED_PHOTO: 311,
+	        WEBIM_MESSAGE_SED_AUDIO: 312,
+	        WEBIM_MESSAGE_SED_AUDIO_FILE: 313,
+	        WEBIM_MESSAGE_SED_VEDIO: 314,
+	        WEBIM_MESSAGE_SED_VEDIO_FILE: 315,
+	        WEBIM_MESSAGE_SED_FILE: 316,
+	        WEBIM_MESSAGE_SED_ERROR: 317,
 
-	        WEBIM_MESSAGE_REC_TEXT: msgIndex++,
-	        WEBIM_MESSAGE_REC_TEXT_ERROR: msgIndex++,
-	        WEBIM_MESSAGE_REC_EMOTION: msgIndex++,
-	        WEBIM_MESSAGE_REC_PHOTO: msgIndex++,
-	        WEBIM_MESSAGE_REC_AUDIO: msgIndex++,
-	        WEBIM_MESSAGE_REC_AUDIO_FILE: msgIndex++,
-	        WEBIM_MESSAGE_REC_VEDIO: msgIndex++,
-	        WEBIM_MESSAGE_REC_VEDIO_FILE: msgIndex++,
-	        WEBIM_MESSAGE_REC_FILE: msgIndex++,
-	        WEBIM_MESSAGE_SED_TEXT: msgIndex++,
-	        WEBIM_MESSAGE_SED_EMOTION: msgIndex++,
-	        WEBIM_MESSAGE_SED_PHOTO: msgIndex++,
-	        WEBIM_MESSAGE_SED_AUDIO: msgIndex++,
-	        WEBIM_MESSAGE_SED_AUDIO_FILE: msgIndex++,
-	        WEBIM_MESSAGE_SED_VEDIO: msgIndex++,
-	        WEBIM_MESSAGE_SED_VEDIO_FILE: msgIndex++,
-	        WEBIM_MESSAGE_SED_FILE: msgIndex++,
-
-	        STATUS_INIT: statusIndex++,
-	        STATUS_DOLOGIN_USERGRID: statusIndex++,
-	        STATUS_DOLOGIN_IM: statusIndex++,
-	        STATUS_OPENED: statusIndex++,
-	        STATUS_CLOSING: statusIndex++,
-	        STATUS_CLOSED: statusIndex++,
-	        STATUS_ERROR: statusIndex++
+	        STATUS_INIT: 400,
+	        STATUS_DOLOGIN_USERGRID: 401,
+	        STATUS_DOLOGIN_IM: 402,
+	        STATUS_OPENED: 403,
+	        STATUS_CLOSING: 404,
+	        STATUS_CLOSED: 405,
+	        STATUS_ERROR: 406
 	    };
 	})();
 
 /***/ },
 
-/***/ 224:
+/***/ 230:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(225);
+	module.exports = __webpack_require__(231);
 
 /***/ },
 
-/***/ 225:
+/***/ 231:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _version = '1.4.2';
-	var _code = __webpack_require__(218).code;
-	var _utils = __webpack_require__(217).utils;
-	var _msg = __webpack_require__(226);
+	var _code = __webpack_require__(224).code;
+	var _utils = __webpack_require__(223).utils;
+	var _msg = __webpack_require__(232);
 	var _message = _msg._msg;
 	var _msgHash = {};
-	var Queue = __webpack_require__(227).Queue;
+	var Queue = __webpack_require__(233).Queue;
 
 	window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 
@@ -9647,6 +9621,7 @@ WebIM.config = {
 	        conn.onError(error);
 	    } else if (status == Strophe.Status.ATTACHED || status == Strophe.Status.CONNECTED) {
 	        // client should limit the speed of sending ack messages  up to 5/s
+	        conn.autoReconnectNumTotal = 0;
 	        conn.intervalId = setInterval(function () {
 	            conn.handelSendQueue();
 	        }, 200);
@@ -9730,8 +9705,8 @@ WebIM.config = {
 	        }
 	    } else if (status == Strophe.Status.DISCONNECTED) {
 	        if (conn.isOpened()) {
-	            if (Demo.conn.autoReconnectNumTotal < Demo.conn.autoReconnectNumMax) {
-	                Demo.conn.reconnect();
+	            if (conn.autoReconnectNumTotal < conn.autoReconnectNumMax) {
+	                conn.reconnect();
 	                return;
 	            } else {
 	                error = {
@@ -9871,6 +9846,7 @@ WebIM.config = {
 
 	    var options = options || {};
 
+	    this.isHttpDNS = options.isHttpDNS || false;
 	    this.isMultiLoginSessions = options.isMultiLoginSessions || false;
 	    this.wait = options.wait || 30;
 	    this.retry = options.retry || false;
@@ -9891,6 +9867,8 @@ WebIM.config = {
 	    this.context = { status: _code.STATUS_INIT };
 	    this.sendQueue = new Queue(); //instead of sending message immediately,cache them in this queue
 	    this.intervalId = null; //clearInterval return value
+	    this.apiUrl = options.apiUrl || '';
+	    this.isWindowSDK = options.isWindowSDK || false;
 
 	    this.dnsArr = ['https://rs.easemob.com', 'https://rsbak.easemob.com', 'http://182.92.174.78', 'http://112.126.66.111']; //http dns server hosts
 	    this.dnsIndex = 0; //the dns ip used in dnsArr currently
@@ -9901,6 +9879,15 @@ WebIM.config = {
 	    this.xmppHosts = null; //xmpp server ips
 	    this.xmppIndex = 0; //the xmpp ip used in xmppHosts currently
 	    this.xmppTotal = 0; //max number of creating xmpp server connection(ws/bosh) retries
+	};
+
+	connection.prototype.registerUser = function (options) {
+	    if (location.protocol != 'https:' && this.isHttpDNS) {
+	        this.dnsIndex = 0;
+	        this.getHttpDNS(options, 'signup');
+	    } else {
+	        this.signup(options);
+	    }
 	};
 
 	connection.prototype.handelSendQueue = function () {
@@ -9978,7 +9965,7 @@ WebIM.config = {
 	};
 
 	connection.prototype.getStrophe = function () {
-	    if (location.protocol == 'http:' && WebIM.config.isHttpDNS) {
+	    if (location.protocol != 'https:' && this.isHttpDNS) {
 	        //TODO: try this.xmppTotal times on fail
 	        var url = '';
 	        var host = this.xmppHosts[this.xmppIndex];
@@ -10020,8 +10007,8 @@ WebIM.config = {
 	    }
 	    return hosts[0].getElementsByTagName('host');
 	};
-	connection.prototype.openFromHttpDNS = function (options) {
-	    if (this.restIndex >= this.restTotal) {
+	connection.prototype.getRestFromHttpDNS = function (options, type) {
+	    if (this.restIndex > this.restTotal) {
 	        console.log('rest hosts all tried,quit');
 	        return;
 	    }
@@ -10031,19 +10018,28 @@ WebIM.config = {
 	    var ip = _utils.getXmlFirstChild(host, 'ip');
 	    if (ip) {
 	        var port = _utils.getXmlFirstChild(host, 'port');
-	        url = '//' + ip.textContent + ':' + port.textContent;
+	        url = (location.protocol === 'https:' ? 'https:' : 'http:') + '//' + ip.textContent + ':' + port.textContent;
 	    } else {
-	        url = '//' + domain.textContent;
+	        url = (location.protocol === 'https:' ? 'https:' : 'http:') + '//' + domain.textContent;
 	    }
 
 	    if (url != '') {
-	        WebIM.config.apiURL = url;
+	        this.apiUrl = url;
 	        options.apiUrl = url;
 	    }
-	    Demo.conn.open(options);
+
+	    if (type == 'login') {
+	        this.login(options);
+	    } else {
+	        this.signup(options);
+	    }
 	};
 
-	connection.prototype.getHttpDNS = function (options) {
+	connection.prototype.getHttpDNS = function (options, type) {
+	    if (this.restHosts) {
+	        this.getRestFromHttpDNS(options, type);
+	        return;
+	    }
 	    var self = this;
 	    var suc = function suc(data, xhr) {
 	        data = new DOMParser().parseFromString(data, "text/xml").documentElement;
@@ -10057,7 +10053,7 @@ WebIM.config = {
 	        self.restTotal = restHosts.length;
 
 	        //get xmpp ips
-	        var xmppHosts = self.getHostsByTag(data, 'webim');
+	        var xmppHosts = self.getHostsByTag(data, 'xmpp');
 	        if (!xmppHosts) {
 	            console.log('xmpp hosts error3');
 	            return;
@@ -10065,14 +10061,14 @@ WebIM.config = {
 	        self.xmppHosts = xmppHosts;
 	        self.xmppTotal = xmppHosts.length;
 
-	        self.openFromHttpDNS(options);
+	        self.getRestFromHttpDNS(options, type);
 	    };
 	    var error = function error(res, xhr, msg) {
 
 	        console.log('getHttpDNS error', res, msg);
 	        self.dnsIndex++;
 	        if (self.dnsIndex < self.dnsTotal) {
-	            self.getHttpDNS(options);
+	            self.getHttpDNS(options, type);
 	        }
 	    };
 	    var options2 = {
@@ -10082,15 +10078,77 @@ WebIM.config = {
 
 	        // url: 'http://www.easemob.com/easemob/server.xml',
 	        // dataType: 'xml',
-	        data: { app_key: encodeURIComponent("easemob-demo#sandboxdemo") },
-	        // data: {app_key: encodeURIComponent(options.appKey)},
+	        data: { app_key: encodeURIComponent(options.appKey) },
 	        success: suc || _utils.emptyfn,
 	        error: error || _utils.emptyfn
 	    };
 	    _utils.ajax(options2);
 	};
 
+	connection.prototype.signup = function (options) {
+	    var self = this;
+	    var orgName = options.orgName || '';
+	    var appName = options.appName || '';
+	    var appKey = options.appKey || '';
+	    var suc = options.success || EMPTYFN;
+	    var err = options.error || EMPTYFN;
+
+	    if (!orgName && !appName && appKey) {
+	        var devInfos = appKey.split('#');
+	        if (devInfos.length === 2) {
+	            orgName = devInfos[0];
+	            appName = devInfos[1];
+	        }
+	    }
+	    if (!orgName && !appName) {
+	        err({
+	            type: _code.WEBIM_CONNCTION_APPKEY_NOT_ASSIGN_ERROR
+	        });
+	        return;
+	    }
+
+	    var error = function error(res, xhr, msg) {
+	        if (location.protocol != 'https:' && self.isHttpDNS) {
+	            if (self.restIndex + 1 < self.restTotal) {
+	                self.restIndex++;
+	                self.getRestFromHttpDNS(options, 'signup');
+	                return;
+	            }
+	        }
+	        self.clear();
+	        err(res);
+	    };
+	    var https = options.https || https;
+	    var apiUrl = options.apiUrl;
+	    var restUrl = apiUrl + '/' + orgName + '/' + appName + '/users';
+
+	    var userjson = {
+	        username: options.username,
+	        password: options.password,
+	        nickname: options.nickname || ''
+	    };
+
+	    var userinfo = _utils.stringify(userjson);
+	    var options2 = {
+	        url: restUrl,
+	        dataType: 'json',
+	        data: userinfo,
+	        success: suc,
+	        error: error
+	    };
+	    _utils.ajax(options2);
+	};
+
 	connection.prototype.open = function (options) {
+	    if (location.protocol != 'https:' && this.isHttpDNS) {
+	        this.dnsIndex = 0;
+	        this.getHttpDNS(options, 'login');
+	    } else {
+	        this.login(options);
+	    }
+	};
+
+	connection.prototype.login = function (options) {
 	    var pass = _validCheck(options, this);
 
 	    if (!pass) {
@@ -10099,7 +10157,7 @@ WebIM.config = {
 
 	    var conn = this;
 
-	    if (conn.isOpening() || conn.isOpened()) {
+	    if (conn.isOpened()) {
 	        return;
 	    }
 
@@ -10119,10 +10177,10 @@ WebIM.config = {
 	            _login(data, conn);
 	        };
 	        var error = function error(res, xhr, msg) {
-	            if (location.protocol == 'http:' && WebIM.config.isHttpDNS) {
-	                conn.restIndex++;
-	                if (conn.restIndex < conn.restTotal) {
-	                    conn.openFromHttpDNS(options);
+	            if (location.protocol != 'https:' && conn.isHttpDNS) {
+	                if (conn.restIndex + 1 < conn.restTotal) {
+	                    conn.restIndex++;
+	                    conn.getRestFromHttpDNS(options, 'login');
 	                    return;
 	                }
 	            }
@@ -10454,6 +10512,7 @@ WebIM.config = {
 	};
 
 	connection.prototype.handleMessage = function (msginfo) {
+	    var self = this;
 	    if (this.isClosed()) {
 	        return;
 	    }
@@ -10559,7 +10618,8 @@ WebIM.config = {
 	                        type: chattype,
 	                        from: from,
 	                        to: too,
-	                        url: msgBody.url,
+
+	                        url: location.protocol != 'https:' && self.isHttpDNS ? self.apiUrl + msgBody.url.substr(msgBody.url.indexOf("/", 9)) : msgBody.url,
 	                        secret: msgBody.secret,
 	                        filename: msgBody.filename,
 	                        thumb: msgBody.thumb,
@@ -10584,7 +10644,8 @@ WebIM.config = {
 	                        type: chattype,
 	                        from: from,
 	                        to: too,
-	                        url: msgBody.url,
+
+	                        url: location.protocol != 'https:' && self.isHttpDNS ? self.apiUrl + msgBody.url.substr(msgBody.url.indexOf("/", 9)) : msgBody.url,
 	                        secret: msgBody.secret,
 	                        filename: msgBody.filename,
 	                        length: msgBody.length || '',
@@ -10606,7 +10667,8 @@ WebIM.config = {
 	                        type: chattype,
 	                        from: from,
 	                        to: too,
-	                        url: msgBody.url,
+
+	                        url: location.protocol != 'https:' && self.isHttpDNS ? self.apiUrl + msgBody.url.substr(msgBody.url.indexOf("/", 9)) : msgBody.url,
 	                        secret: msgBody.secret,
 	                        filename: msgBody.filename,
 	                        file_length: msgBody.file_length,
@@ -10644,7 +10706,8 @@ WebIM.config = {
 	                        type: chattype,
 	                        from: from,
 	                        to: too,
-	                        url: msgBody.url,
+
+	                        url: location.protocol != 'https:' && self.isHttpDNS ? self.apiUrl + msgBody.url.substr(msgBody.url.indexOf("/", 9)) : msgBody.url,
 	                        secret: msgBody.secret,
 	                        filename: msgBody.filename,
 	                        file_length: msgBody.file_length,
@@ -10777,9 +10840,16 @@ WebIM.config = {
 	};
 
 	connection.prototype.send = function (message) {
-	    if (WebIM.config.isWindowSDK) {
+	    var self = this;
+	    if (this.isWindowSDK) {
 	        WebIM.doQuery('{"type":"sendMessage","to":"' + message.to + '","message_type":"' + message.type + '","msg":"' + encodeURI(message.msg) + '","chatType":"' + message.chatType + '"}', function (response) {}, function (code, msg) {
-	            Demo.api.NotifyError('send:' + code + " - " + msg);
+	            var message = {
+	                data: {
+	                    data: "send"
+	                },
+	                type: _code.WEBIM_MESSAGE_SED_ERROR
+	            };
+	            self.onError(message);
 	        });
 	    } else {
 	        if (Object.prototype.toString.call(message) === '[object Object]') {
@@ -10907,19 +10977,6 @@ WebIM.config = {
 	        pres.c('status').t(options.message).up();
 	    }
 	    this.sendCommand(pres.tree());
-	};
-
-	connection.prototype.createRoom = function (options) {
-	    var suc = options.success || _utils.emptyfn;
-	    var err = options.error || _utils.emptyfn;
-	    var roomiq;
-
-	    roomiq = $iq({
-	        to: options.roomName,
-	        type: 'set'
-	    }).c('query', { xmlns: Strophe.NS.MUC_OWNER }).c('x', { xmlns: 'jabber:x:data', type: 'submit' });
-
-	    return this.context.stropheConn.sendIQ(roomiq.tree(), suc, err);
 	};
 
 	connection.prototype.joinPublicGroup = function (options) {
@@ -11183,7 +11240,7 @@ WebIM.config = {
 
 	connection.prototype.clear = function () {
 	    var key = this.context.appKey;
-	    if (this.errorType != WebIM.statusCode.WEBIM_CONNCTION_DISCONNECTED) {
+	    if (this.errorType != _code.WEBIM_CONNCTION_DISCONNECTED) {
 	        this.context = {
 	            status: _code.STATUS_INIT,
 	            appKey: key
@@ -11195,8 +11252,14 @@ WebIM.config = {
 	    this.restIndex = 0;
 	    this.xmppIndex = 0;
 
-	    if (this.errorType == WebIM.statusCode.WEBIM_CONNCTION_CLIENT_LOGOUT || this.errorType == -1) {
-	        Demo.api.init();
+	    if (this.errorType == _code.WEBIM_CONNCTION_CLIENT_LOGOUT || this.errorType == -1) {
+	        var message = {
+	            data: {
+	                data: "clear"
+	            },
+	            type: _code.WEBIM_CONNCTION_CLIENT_LOGOUT
+	        };
+	        this.onError(message);
 	    }
 	};
 
@@ -11303,17 +11366,30 @@ WebIM.config = {
 
 	connection.prototype._onReceiveInviteFromGroup = function (info) {
 	    info = eval('(' + info + ')');
+	    var self = this;
 	    var options = {
 	        title: "Group invitation",
 	        msg: info.user + " invites you to join into group:" + info.group_id,
 	        agree: function agree() {
 	            WebIM.doQuery('{"type":"acceptInvitationFromGroup","id":"' + info.group_id + '","user":"' + info.user + '"}', function (response) {}, function (code, msg) {
-	                Demo.api.NotifyError("acceptInvitationFromGroup error:" + msg);
+	                var message = {
+	                    data: {
+	                        data: "acceptInvitationFromGroup error:" + msg
+	                    },
+	                    type: _code.WEBIM_CONNECTION_ACCEPT_INVITATION_FROM_GROUP
+	                };
+	                self.onError(message);
 	            });
 	        },
 	        reject: function reject() {
 	            WebIM.doQuery('{"type":"declineInvitationFromGroup","id":"' + info.group_id + '","user":"' + info.user + '"}', function (response) {}, function (code, msg) {
-	                Demo.api.NotifyError("declineInvitationFromGroup error:" + msg);
+	                var message = {
+	                    data: {
+	                        data: "declineInvitationFromGroup error:" + msg
+	                    },
+	                    type: _code.WEBIM_CONNECTION_DECLINE_INVITATION_FROM_GROUP
+	                };
+	                self.onError(message);
 	            });
 	        }
 	    };
@@ -11358,17 +11434,30 @@ WebIM.config = {
 	};
 	connection.prototype._onReceiveJoinGroupApplication = function (info) {
 	    info = eval('(' + info + ')');
+	    var self = this;
 	    var options = {
 	        title: "Group join application",
 	        msg: info.user + " applys to join into group:" + info.group_id,
 	        agree: function agree() {
 	            WebIM.doQuery('{"type":"acceptJoinGroupApplication","id":"' + info.group_id + '","user":"' + info.user + '"}', function (response) {}, function (code, msg) {
-	                Demo.api.NotifyError("acceptJoinGroupApplication error:" + msg);
+	                var message = {
+	                    data: {
+	                        data: "acceptJoinGroupApplication error:" + msg
+	                    },
+	                    type: _code.WEBIM_CONNECTION_ACCEPT_JOIN_GROUP
+	                };
+	                self.onError(message);
 	            });
 	        },
 	        reject: function reject() {
 	            WebIM.doQuery('{"type":"declineJoinGroupApplication","id":"' + info.group_id + '","user":"' + info.user + '"}', function (response) {}, function (code, msg) {
-	                Demo.api.NotifyError("declineJoinGroupApplication error:" + msg);
+	                var message = {
+	                    data: {
+	                        data: "declineJoinGroupApplication error:" + msg
+	                    },
+	                    type: _code.WEBIM_CONNECTION_DECLINE_JOIN_GROUP
+	                };
+	                self.onError(message);
 	            });
 	        }
 	    };
@@ -11399,14 +11488,22 @@ WebIM.config = {
 	    this.onUpdateMyRoster(options);
 	};
 	connection.prototype.reconnect = function () {
+	    console.log('reconnect');
 	    var that = this;
 	    setTimeout(function () {
 	        _login(that.context.restTokenData, that);
 	    }, (this.autoReconnectNumTotal == 0 ? 0 : this.autoReconnectInterval) * 1000);
 	    this.autoReconnectNumTotal++;
 	};
+
 	connection.prototype.closed = function () {
-	    Demo.api.init();
+	    var message = {
+	        data: {
+	            data: "Closed error"
+	        },
+	        type: _code.WEBIM_CONNECTION_CLOSED
+	    };
+	    this.onError(message);
 	};
 
 	// used for blacklist
@@ -11623,7 +11720,7 @@ WebIM.config = {
 	    var to = this._getGroupJid(options.roomId);
 	    var iq = $iq({ type: 'set', to: to });
 
-	    iq.c('query', { xmlns: 'http://jabber.org/protocol/muc#' + affiliation }).c('x', { type: 'submit', xmlns: 'jabber:x:data' }).c('field', { var: 'FORM_TYPE' }).c('value').t('http://jabber.org/protocol/muc#roomconfig').up().up().c('field', { var: 'muc#roomconfig_roomname' }).c('value').t(options.subject).up().up().c('field', { var: 'muc#roomconfig_roomdesc' }).c('value').t(options.description);
+	    iq.c('query', { xmlns: 'http://jabber.org/protocol/muc#' + affiliation }).c('x', { type: 'submit', xmlns: 'jabber:x:data' }).c('field', { 'var': 'FORM_TYPE' }).c('value').t('http://jabber.org/protocol/muc#roomconfig').up().up().c('field', { 'var': 'muc#roomconfig_roomname' }).c('value').t(options.subject).up().up().c('field', { 'var': 'muc#roomconfig_roomdesc' }).c('value').t(options.description);
 
 	    this.context.stropheConn.sendIQ(iq.tree(), function (msginfo) {
 	        sucFn();
@@ -12004,7 +12101,7 @@ WebIM.config = {
 
 /***/ },
 
-/***/ 226:
+/***/ 232:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12012,7 +12109,7 @@ WebIM.config = {
 	;(function () {
 	    'use strict';
 
-	    var _utils = __webpack_require__(217).utils;
+	    var _utils = __webpack_require__(223).utils;
 	    var Message = function Message(type, id) {
 	        if (!this instanceof Message) {
 	            return new Message(type);
@@ -12272,7 +12369,8 @@ WebIM.config = {
 
 	                me.msg.body = {
 	                    type: me.msg.type || 'file',
-	                    url: data.uri + '/' + data.entities[0]['uuid'],
+
+	                    url: (location.protocol != 'https:' && conn.isHttpDNS ? conn.apiUrl + data.uri.substr(data.uri.indexOf("/", 9)) : data.uri) + '/' + data.entities[0]['uuid'],
 	                    secret: data.entities[0]['share-secret'],
 	                    filename: me.msg.file.filename || me.msg.filename,
 	                    size: {
@@ -12283,7 +12381,6 @@ WebIM.config = {
 	                    file_length: me.msg.file_length || 0,
 	                    filetype: me.msg.filetype
 	                };
-
 	                _send(me.msg);
 	                _tmpComplete instanceof Function && _tmpComplete(data, me.msg.id);
 	            };
@@ -12313,7 +12410,7 @@ WebIM.config = {
 
 /***/ },
 
-/***/ 227:
+/***/ 233:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -12533,14 +12630,15 @@ WebIM.config = {
 				return false;
 			}
 		};
-
-		if ( window.XDomainRequest ) {
-			XDomainRequest.prototype.oldsend = XDomainRequest.prototype.send;
-			XDomainRequest.prototype.send = function () {
-				XDomainRequest.prototype.oldsend.apply(this, arguments);
-				this.readyState = 2;
-			};
-		}
+// todo 尽早去除旧的sdk
+// 此处代码与新sdk共存时在IE8 会堆栈溢出
+		// if ( window.XDomainRequest ) {
+		// 	XDomainRequest.prototype.oldsend = XDomainRequest.prototype.send;
+		// 	XDomainRequest.prototype.send = function () {
+		// 		XDomainRequest.prototype.oldsend.apply(this, arguments);
+		// 		this.readyState = 2;
+		// 	};
+		// }
 
 		Strophe.Request.prototype._newXHR = function () {
 			var xhr =  Utils.xmlrequest(true);
@@ -17044,10 +17142,14 @@ WebIM.config = {
 	            onGotStream ? onGotStream(self, stream) : self.onGotStream(stream);
 	        }
 
-	        return navigator.mediaDevices.getUserMedia(constaints || self.mediaStreamConstaints).then(gotStream).then(self.onCreateMedia).catch(function (e) {
-	            _logger.debug('[WebRTC-API] getUserMedia() error: ', e);
-	            self.onError(e);
-	        });
+	        return navigator.mediaDevices.getUserMedia(constaints
+	        	|| self.mediaStreamConstaints)
+	        		.then(gotStream)
+	        		.then(self.onCreateMedia)
+	        		['catch'](function (e) {
+			            _logger.debug('[WebRTC-API] getUserMedia() error: ', e);
+			            self.onError(e);
+			        });
 	    },
 
 	    setLocalVideoSrcObject: function setLocalVideoSrcObject(stream) {
@@ -17798,6 +17900,20 @@ if (!String.prototype.trim) {
 			|| window.mozRTCPeerConnection
 			|| window.RTCPeerConnection
 		)
+		, filesizeFormat: function(filesize){
+			var UNIT_ARRAY = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'];
+			var exponent;
+			var result;
+
+			if(filesize){
+				exponent = Math.floor(Math.log(filesize) / Math.log(1024));
+				result = (filesize / Math.pow(1024, exponent)).toFixed(2) + ' ' + UNIT_ARRAY[exponent];
+			}
+			else{
+				result = '0 B';
+			}
+			return result;
+		}
 		, uuid: function () {
 			var s = [], hexDigits = '0123456789abcdef';
 
@@ -18092,17 +18208,16 @@ if (!String.prototype.trim) {
 			return document.visibilityState && document.visibilityState === 'hidden' || document.hidden;
 		}
 		, setStore: function ( key, value ) {
-			if ( typeof value === 'undefined' ) {
-				return;
-			}
 			try {
 				localStorage.setItem(key, value);
-			} catch ( e ) {}
+			}
+			catch (e){}
 		}
 		, getStore: function ( key ) {
 			try {
 				return localStorage.getItem(key);
-			} catch ( e ) {}
+			}
+			catch (e){}
 		}
 		, clearStore: function ( key ) {
 			try {
@@ -18114,14 +18229,23 @@ if (!String.prototype.trim) {
 				localStorage.clear();
 			} catch ( e ) {}
 		}
-		, set: function ( key, value ) {
+		, set: function (key, value, expiration) {
 			var date = new Date();
-			date.setTime(date.getTime() + 30*24*3600*1000);
+			// 过期时间默认为30天
+			var expiresTime = date.getTime() + (expiration || 30) * 24 * 3600 * 1000;
+			date.setTime(expiresTime);
 			document.cookie = encodeURIComponent(key) + '=' + encodeURIComponent(value) + ';path=/;expires=' + date.toGMTString();
 		}
-		, get: function ( key ) {
-			var results = document.cookie.match('(^|;) ?' + encodeURIComponent(key) + '=([^;]*)(;|$)'); 
-			return results ? decodeURIComponent(results[2]) : '';
+		, get: function (key) {
+			var matches = document.cookie.match('(^|;) ?' + encodeURIComponent(key) + '=([^;]*)(;|$)');
+			var results;
+			if(matches){
+				results = decodeURIComponent(matches[2]);
+			}
+			else {
+				results = '';
+			}
+			return results;
 		}
 		, getAvatarsFullPath: function ( url, domain ) {
 			var returnValue = null;
@@ -18518,6 +18642,8 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 	'use strict'
    
 	var handleMsg = function ( e, callback, accept ) {
+		// 微信调试工具会传入对象，导致解析出错
+		if('string' !== typeof e.data) return;
 		var msg = JSON.parse(e.data);
 
 
@@ -18638,111 +18764,115 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 		switch ( msg.api ) {
 			case 'getRelevanceList':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/targetChannels', //done
+					url: '/v1/webimplugin/targetChannels',
 					msg: msg
 				}));
 				break;
 			case 'getDutyStatus':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/showMessage',//done
+					url: '/v1/webimplugin/showMessage',
 					msg: msg
 				}));
 				break;
 			case 'getWechatVisitor':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors/wechat/' + msg.data.openid + '?tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/visitors/wechat/' + msg.data.openid + '?tenantId=' + msg.data.tenantId,
 					msg: msg,
 					type: 'POST'
 				}));
 				break;
 			case 'createVisitor':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors?tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/visitors?tenantId=' + msg.data.tenantId,
 					msg: msg,
 					type: 'POST'
 				}));
 				break;
 			case 'getSession':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
 					msg: msg,
 					excludeData: true
 				}));
 				break;
 			case 'getExSession':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data-ex?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data-ex?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
 					msg: msg,
 					excludeData: true
 				}));
 				break;
 			case 'getPassword':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors/password',//done
+					url: '/v1/webimplugin/visitors/password',
 					msg: msg
 				}));
 				break;
 			case 'getGroup':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
 					msg: msg,
 					excludeData: true
 				}));
 				break;
 			case 'getGroupNew':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/tenant/' + msg.data.tenantId + '/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/tenant/' + msg.data.tenantId + '/visitors/' + msg.data.id + '/ChatGroupId?techChannelInfo=' + msg.data.orgName + '%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
 					msg: msg,
 					excludeData: true
 				}));
 				break;
 			case 'getHistory':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/visitors/msgHistory',//done
+					url: '/v1/webimplugin/visitors/msgHistory',
 					msg: msg
 				}));
 				break;
 			case 'getSlogan':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/notice/options',//done
+					url: '/v1/webimplugin/notice/options',
 					msg: msg
 				}));
 				break;
 			case 'getTheme':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/theme/options',//done
+					url: '/v1/webimplugin/theme/options',
 					msg: msg
 				}));
 				break;
 			case 'getSystemGreeting':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/welcome',//done
+					url: '/v1/webimplugin/welcome',
 					msg: msg
 				}));
 				break;
 			case 'getRobertGreeting':
 				easemobim.emajax(createObject({
-					url: '/v1/Tenants/' + msg.data.tenantId + '/robots/visitor/greetings/' + msg.data.originType + '?tenantId=' + msg.data.tenantId,//done
+					url: '/v1/Tenants/'
+						+ msg.data.tenantId
+						+ '/robots/visitor/greetings/'
+						+ msg.data.originType
+						+ '?tenantId=' + msg.data.tenantId,
 					msg: msg,
 					excludeData: true
 				}));
 				break;
 			case 'sendVisitorInfo':
 				easemobim.emajax(createObject({
-					url: '/v1/webimplugin/tenants/' + msg.data.tenantId + '/visitors/' + msg.data.visitorId + '/attributes?tenantId=' + msg.data.tenantId,//done
+					url: '/v1/webimplugin/tenants/' + msg.data.tenantId + '/visitors/' + msg.data.visitorId + '/attributes?tenantId=' + msg.data.tenantId,
 					msg: msg,
 					type: 'POST'
 				}));
 				break;
 			case 'getProject':
 				easemobim.emajax(createObject({
-					url: '/tenants/' + msg.data.tenantId + '/projects',//done
+					url: '/tenants/' + msg.data.tenantId + '/projects',
 					msg: msg
 				}));
 				break;
 			case 'createTicket':
 				easemobim.emajax(createObject({
-					url: '/tenants/' + msg.data.tenantId + '/projects/' + msg.data.projectId + '/tickets?tenantId=' + msg.data.tenantId + '&easemob-target-username=' + msg.data['easemob-target-username'] + '&easemob-appkey=' + msg.data['easemob-appkey'] + '&easemob-username=' + msg.data['easemob-username'],//done
+					url: '/tenants/'+ msg.data.tenantId + '/projects/' + msg.data.projectId + '/tickets?tenantId=' + msg.data.tenantId + '&easemob-target-username=' + msg.data['easemob-target-username'] + '&easemob-appkey=' + msg.data['easemob-appkey'] + '&easemob-username=' + msg.data['easemob-username'],
 					msg: msg,
 					type: 'POST'
 				}));
@@ -18783,7 +18913,7 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 				break;
 			case 'deleteEvent':
 				easemobim.emajax(createObject({
-					url: '/v1/event_collector/events/' + encodeURIComponent(msg.data.userId),
+					url: '/v1/event_collector/event/' + encodeURIComponent(msg.data.userId),
 					msg: msg,
 					type: 'DELETE',
 					excludeData: true
@@ -18876,7 +19006,7 @@ easemobim.autogrow = (function () {
 			.replace(/\n/g, '<br/>')
 			.replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
 			
-			utils.html(shadow, val);
+			shadow.innerHTML = val;
 			val && (this.style.height = Math.max(shadow.getBoundingClientRect().height + 17, minHeight) + 'px');
 			typeof options.callback == 'function' && options.callback();
 		};
@@ -18909,8 +19039,8 @@ Easemob.im.EmMessage.txt.prototype.get = function ( isReceive ) {
 	return [
 		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper'>",
-				"<i class='em-widget-corner'></i>",
-				this.id ? "<div id='" + this.id + "_failed' data-type='txt' class='em-widget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
+				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
+				this.id ? "<div id='" + this.id + "_failed' data-type='txt' class='em-widget-msg-status em-hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>" : "",
 				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
 				"<div class='em-widget-msg-container'>",
 					"<pre>" + Easemob.im.Utils.parseLink(this.emotion ? this.value : Easemob.im.Utils.parseEmotions(this.value)) + "</pre>",
@@ -18966,11 +19096,11 @@ Easemob.im.EmMessage.img.prototype.get = function ( isReceive ) {
 	return [
 		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper'>",
-				"<i class='em-widget-corner'></i>",
-				this.id ? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
+				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",,
+				this.id ? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>" : "",
 				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
 				"<div class='em-widget-msg-container'>",
-					this.value === null ? "<a class='em-widget-noline' href='javascript:;'><i class='em-widget-unimage'>I</i></a>" : "<a class='em-widget-noline' href='javascript:;'><img class='em-widget-imgview' src='" + this.value.url + "'/></a>",,
+					this.value === null ? "<i class='icon-broken-pic'></i>" : "<a href='javascript:;'><img class='em-widget-imgview' src='" + this.value.url + "'/></a>",,
 				"</div>",
 			"</div>",
 		"</div>"
@@ -19007,12 +19137,12 @@ Easemob.im.EmMessage.list.prototype.get = function ( isReceive ) {
 	return [
 		"<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper'>",
-				"<i class='em-widget-corner'></i>",
+				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",,
 				"<div class='em-widget-msg-container em-widget-msg-menu'>",
 					"<p>" + Easemob.im.Utils.parseLink(Easemob.im.Utils.parseEmotions(easemobim.utils.encode(this.value))) + "</p>",
 					this.listDom,
 				"</div>",
-				"<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i></i></div>",
+				"<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>",
 			"</div>",
 		"</div>"
 	].join('');
@@ -19033,14 +19163,28 @@ Easemob.im.EmMessage.file = function ( id ) {
 	this.body = {};
 }
 Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
+	var filename = this.filename;
+	var filesize = easemobim.utils.filesizeFormat(this.value.filesize);
+	var url = this.value.url;
 	return [
 		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper em-widget-msg-file'>",
-				"<i class='em-widget-corner'></i>",
-				this.id ? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i></i></div>" : "",
-				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + config.LOADING + "</div>" : "",
+				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",,
+				this.id
+				? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'>"
+				+ "<span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>"
+				+ "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + config.LOADING + "</div>"
+				: "",
 				"<div class='em-widget-msg-container'>",
-					this.value === null ? "<a class='em-widget-noline' href='javascript:;'><i class='em-widget-unimage'>I</i></a>" : "<a target='_blank' href='" + this.value.url + "' class='em-widget-fileMsg' title='" + this.filename + "'><img class='em-widget-msg-fileicon' src='static/img/file_download.png'/><span>" + (this.filename.length > 19 ? this.filename.slice(0, 19) + '...': this.filename) + "</span></a>",
+					this.value === null
+					? "<i class='icon-broken-pic'></i>"
+					: '<i class="icon-file"></i>'
+					+ '<span class="file-info">'
+						+ '<p class="filename">' + filename + '</p>'
+						+ '<p class="filesize">' + filesize + '</p>'
+					+ '</span>'
+					+ "<a target='_blank' href='" + url + "' class='icon-file-download' title='"
+					+ filename + "'></a>",
 				"</div>",
 			"</div>",
 		"</div>"
@@ -19164,8 +19308,8 @@ easemobim.paste = function ( chat ) {
 			<textarea spellcheck='false' placeholder='请输入留言'></textarea>\
 			<button class='em-widget-offline-cancel'>取消</button>\
 			<button class='em-widget-offline-ok bg-color'>留言</button>\
-			<div class='em-widget-success-prompt em-hide'><i>A</i><p>留言发送成功</p></div>\
-		");
+			<div class='em-widget-success-prompt em-hide'><i class='icon-circle'><i class='icon-good'></i></i><p>留言发送成功</p></div>\
+			");
 		leaveMessage.domBg.appendChild(leaveMessage.dom);
 		imChat.appendChild(leaveMessage.domBg);
 
@@ -19285,62 +19429,33 @@ easemobim.paste = function ( chat ) {
  */
 easemobim.satisfaction = function ( chat ) {
 
-	var dom = document.createElement('div'),
-		utils = easemobim.utils;
-
-	utils.addClass(dom, 'em-widget-dialog em-widget-satisfaction-dialog em-hide');
-	utils.html(dom, "\
-		<h3>请对我的服务做出评价</h3>\
-		<ul><li idx='1'>H</li><li idx='2'>H</li><li idx='3'>H</li><li idx='4'>H</li><li idx='5'>H</li></ul>\
-		<textarea spellcheck='false' placeholder='请输入留言'></textarea>\
-		<div>\
-			<button class='em-widget-cancel'>取消</button>\
-			<button class='bg-color'>提交</button>\
-		</div>\
-		<div class='em-widget-success-prompt em-hide'><i>A</i><p>提交成功</p></div>\
-	");
-	easemobim.imChat.appendChild(dom);
-
-	var satisfactionEntry = utils.$Dom('EasemobKefuWebimSatisfy'),
-		starsUl = dom.getElementsByTagName('ul')[0],
-		lis = starsUl.getElementsByTagName('li'),
-		msg = dom.getElementsByTagName('textarea')[0],
-		buttons = dom.getElementsByTagName('button'),
-		cancelBtn = buttons[0],
-		submitBtn = buttons[1],
-		success = dom.getElementsByTagName('div')[1],
-		session,
-		invite,
-		getStarLevel = function () {
-			var count = 0;
-
-			for ( var i = lis.length; i > 0; i-- ) {
-				if ( utils.hasClass(lis[i-1], 'sel') ) {
-					count += 1;
-				}
-			}
-			return count;
-		},
-		clearStars = function () {
-			for ( var i = lis.length; i > 0; i-- ) {
-				utils.removeClass(lis[i-1], 'sel');
-			}
-		};
+	var dom = document.querySelector('.em-widget-dialog.em-widget-satisfaction-dialog');
+	var utils = easemobim.utils;
+	var satisfactionEntry = document.querySelector('.em-widget-satisfaction');
+	var starsUl = dom.getElementsByTagName('ul')[0];
+	var lis = starsUl.getElementsByTagName('li');
+	var msg = dom.getElementsByTagName('textarea')[0];
+	var buttons = dom.getElementsByTagName('button');
+	var cancelBtn = buttons[0];
+	var submitBtn = buttons[1];
+	var success = dom.getElementsByTagName('div')[1];
+	var session;
+	var invite;
 	
-	satisfactionEntry && utils.on(satisfactionEntry, utils.click, function () {
+	utils.on(satisfactionEntry, utils.click, function () {
 		session = null;
 		invite = null;
-		utils.removeClass(dom, 'em-hide');
+		utils.removeClass(dom, 'hide');
 		clearInterval(chat.focusText);
 	});
 	utils.live('button.js_satisfybtn', 'click', function () {
 		session = this.getAttribute('data-servicesessionid');
 		invite = this.getAttribute('data-inviteid');
-		utils.removeClass(dom, 'em-hide');
+		utils.removeClass(dom, 'hide');
 		clearInterval(chat.focusText);
 	});
 	utils.on(cancelBtn, 'click', function () {
-		utils.addClass(dom, 'em-hide');
+		utils.addClass(dom, 'hide');
 	});
 	utils.on(submitBtn, 'click', function () {
 		var level = getStarLevel();
@@ -19352,13 +19467,13 @@ easemobim.satisfaction = function ( chat ) {
 		chat.sendSatisfaction(level, msg.value, session, invite);
 
 		msg.blur();
-		utils.removeClass(success, 'em-hide');
+		utils.removeClass(success, 'hide');
 
 		setTimeout(function(){
 			msg.value = '';
 			clearStars();
-			utils.addClass(success, 'em-hide');
-			utils.addClass(dom, 'em-hide');
+			utils.addClass(success, 'hide');
+			utils.addClass(dom, 'hide');
 		}, 1500);
 	});
 	utils.on(starsUl, 'click', function ( e ) {
@@ -19377,6 +19492,23 @@ easemobim.satisfaction = function ( chat ) {
 			}
 		}
 	});
+
+	function getStarLevel(){
+		var count = 0;
+
+		for ( var i = lis.length; i > 0; i-- ) {
+			if ( utils.hasClass(lis[i-1], 'sel') ) {
+				count += 1;
+			}
+		}
+		return count;
+	}
+	function clearStars(){
+		for ( var i = lis.length; i > 0; i-- ) {
+			utils.removeClass(lis[i-1], 'sel');
+		}
+	};
+
 };
 
 easemobim.imgView = (function (utils) {
@@ -19604,6 +19736,7 @@ easemobim.uploadShim = function ( config, chat ) {
 	Polling.prototype.start = function (){
 		if (!this.isStarted) {
 			this.isStarted = true;
+			setTimeout(this.fn, 0);
 			this.timerHandler = setInterval(this.fn, this.interval);
 		}
 	};
@@ -19823,11 +19956,12 @@ easemobim.channel = function ( config ) {
 						if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
 							easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
 						} else {
-							var id = error.id,
-								wrap = utils.$Dom(id);
+							var id = error.id;
+							var loading = utils.$Dom(id + '_loading');
+							var msgWrap = document.getElementById(id).querySelector('.em-widget-msg-container');
 
-							utils.html(utils.$Class('a.em-widget-noline', wrap)[0], '<i class="em-widget-unimage">I</i>');
-							utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+							msgWrap.innerHTML = '<i class="icon-broken-pic"></i>';
+							utils.addClass(loading, 'hide');
 							me.scrollBottom();
 						}
 					}, 50);
@@ -19840,7 +19974,7 @@ easemobim.channel = function ( config ) {
 					utils.$Remove(utils.$Dom(id + '_failed'));
 				},
 				fail: function ( id ) {
-					utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+					utils.addClass(utils.$Dom(id + '_loading'), 'hide');
 					utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
 				},
 				flashUpload: easemobim.flashUpload
@@ -19878,11 +20012,12 @@ easemobim.channel = function ( config ) {
 					if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
 						easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
 					} else {
-						var id = error.id,
-							wrap = utils.$Dom(id);
+						var id = error.id;
+						var loading = utils.$Dom(id + '_loading');
+						var msgWrap = document.getElementById(id).querySelector('.em-widget-msg-container');
 
-						utils.html(utils.$Class('a.em-widget-noline')[0], '<i class="em-widget-unimage">I</i>');
-						utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
+						msgWrap.innerHTML = '<i class="icon-broken-pic"></i>';
+						utils.addClass(loading, 'hide');
 						me.scrollBottom();
 					}
 				},
@@ -19973,11 +20108,23 @@ easemobim.channel = function ( config ) {
 				case 'file':
 					message = new Easemob.im.EmMessage('file');
 					if ( msg.url ) {
-						message.set({file: {url: msg.url, filename: msg.filename}});
+						message.set({file: {
+							url: msg.url,
+							filename: msg.filename,
+							filesize: msg.file_length
+						}});
 					} else {
+						// todo 问这块什么情况会出现
 						try {
-							message.set({file: {url: msg.bodies[0].url, filename: msg.bodies[0].filename}});
-						} catch ( e ) {}
+							message.set({file: {
+								url: msg.bodies[0].url,
+								filename: msg.bodies[0].filename
+							}});
+						}
+						catch (e) {
+							// todo IE console
+							// console.warn('channel.js @handleReceive case file', e);
+						}
 					}
 					break;
 				case 'satisfactionEvaluation':
@@ -19987,7 +20134,11 @@ easemobim.channel = function ( config ) {
 							<button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '"\
 							 data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
 						</div>']});
-					if(!isHistory){
+
+					// fake 临时解决用户重复收到邀请评价的问题
+					// 由于消息走的第二通道，刷新后没有去重（此处待验证），导致重复收到
+					// 所以 === false 的 isHistory临时过滤掉
+					if('undefined' === typeof isHistory){
 						// 创建隐藏的立即评价按钮，并触发click事件
 						var el = document.createElement('BUTTON');
 						el.className = 'js_satisfybtn';
@@ -20019,16 +20170,16 @@ easemobim.channel = function ( config ) {
 					var title = msg.data
 						|| (msg.bodies && msg.bodies[0] && msg.bodies[0].msg)
 						|| msg.ext.weichat.ctrlArgs.label;
-/*
-	msg.data 用于处理即时消息
-	msg.bodies[0].msg 用于处理历史消息
-	msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
-	此处修改为了修复取出历史消息时，转人工评价标题改变的bug
-	还有待测试其他带有转人工的情况
-*/
+				/*
+					msg.data 用于处理即时消息
+					msg.bodies[0].msg 用于处理历史消息
+					msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
+					此处修改为了修复取出历史消息时，转人工评价标题改变的bug
+					还有待测试其他带有转人工的情况
+				*/
 					var str = [
 						'<div class="em-widget-list-btns">',
-							'<button class="em-widget-list-btn bg-hover-color js_robotTransferBtn" ',
+							'<button class="em-widget-list-btn-white bg-color border-color bg-hover-color-dark js_robotTransferBtn" ',
 							'data-sessionid="' + ctrlArgs.serviceSessionId + '" ', 
 							'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
 						'</div>'
@@ -20036,10 +20187,6 @@ easemobim.channel = function ( config ) {
 
 					message.set({value: title, list: str});
 					break;
-				// case 'liveStreamInvitation':
-				//	 message = new Easemob.im.EmMessage('txt');
-				//	 message.set({value: msg.ext.msgtype.liveStreamInvitation.msg});
-				//	 break;
 				default:
 					break;
 			}
@@ -20227,6 +20374,7 @@ easemobim.channel = function ( config ) {
 									msgId: v.msgId,
 									data: data,
 									filename: msg.filename,
+									file_length: msg.file_length,
 									url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
 									from: msgBody.from,
 									to: msgBody.to
@@ -20353,7 +20501,7 @@ easemobim.channel = function ( config ) {
 
 // 视频邀请确认对话框
 easemobim.ui = {};
-easemobim.ui.videoConfirmDialog = (function(){
+easemobim.ui.videoConfirmDialog = easemobim.utils.isSupportWebRTC && (function(){
 	var dialog = document.querySelector('div.em-dialog-video-confirm');
 	var buttonPanel = dialog.querySelector('div.button-panel');
 	var btnConfirm = dialog.querySelector('.btn-confirm');
@@ -20542,6 +20690,7 @@ easemobim.videoChat = (function(dialog){
 		sendMessageAPI = sendMessage;
 		config = cfg;
 
+		videoWidget.classList.remove('hide');
 		// 按钮初始化
 		btnVideoInvite.classList.remove('hide');
 		btnVideoInvite.addEventListener('click', function(){
@@ -20677,8 +20826,6 @@ easemobim.videoChat = (function(dialog){
 				this.opened = true;
 				//fill theme
 				this.setTheme();
-				//add min icon
-				this.setMinmum();
 				//init sound reminder
 				this.soundReminder();
 				//init face
@@ -20747,15 +20894,6 @@ easemobim.videoChat = (function(dialog){
 				if ( config.grUserId ) {
 					msg.body.ext.weichat.visitor = msg.body.ext.weichat.visitor || {};
 					msg.body.ext.weichat.visitor.gr_user_id = config.grUserId;
-				}
-			}
-			, mobile: function () {
-				if ( !utils.isMobile ) { return false; }
-
-				if ( !config.hideKeyboard && !config.offDuty ) {
-					var i = document.createElement('i');
-					utils.addClass(i, 'em-widgetHeader-keyboard em-widgetHeader-keyboard-down');
-					easemobim.dragHeader.appendChild(i);
 				}
 			}
 			, ready: function () {
@@ -21028,30 +21166,6 @@ easemobim.videoChat = (function(dialog){
 				}
 				return null;
 			}
-			, setKeyboard: function ( direction ) {
-				var me = this;
-
-				me.direction = direction;					
-				switch ( direction ) {
-					case 'up':
-						easemobim.send.style.bottom = 'auto';
-						easemobim.send.style.zIndex = '3';
-						easemobim.send.style.top = '43px';
-						easemobim.imChatBody.style.bottom = '0';
-						easemobim.chatFaceWrapper.style.bottom = 'auto';
-						easemobim.chatFaceWrapper.style.top = 43 + easemobim.send.getBoundingClientRect().height + 'px';
-						break;
-					case 'down':
-						easemobim.send.style.bottom = '0';
-						easemobim.send.style.zIndex = '3';
-						easemobim.send.style.top = 'auto';
-						easemobim.imChatBody.style.bottom = easemobim.send.getBoundingClientRect().height + 'px';
-						easemobim.chatFaceWrapper.style.bottom = easemobim.send.getBoundingClientRect().height + 'px';
-						easemobim.chatFaceWrapper.style.top = 'auto';
-						me.scrollBottom(50);
-						break;
-				}
-			}
 			, startToGetAgentStatus: function () {
 				var me = this;
 
@@ -21126,23 +21240,6 @@ easemobim.videoChat = (function(dialog){
 				//只有头像和昵称更新成客服的了才开启轮训
 				//this.updateAgentStatus();
 			}
-			, setMinmum: function () {
-				if ( !config.minimum || utils.isTop ) {
-					return;
-				}
-				var me = this,
-					min = document.createElement('a');
-
-				min.setAttribute('href', 'javascript:;');
-				min.setAttribute('title', '关闭');
-				utils.addClass(min, 'em-widgetHeader-min bg-color border-color hover-color');
-				easemobim.dragHeader.appendChild(min);
-				utils.on(min, 'click', function () {
-					transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
-					return false;
-				});
-				min = null;
-			}
 			, setTheme: function () {
 				easemobim.api('getTheme', {
 					tenantId: config.tenantId
@@ -21171,18 +21268,18 @@ easemobim.videoChat = (function(dialog){
 				}, function (msg) {
 					me.hasSetSlogan = true;
 					var slogan = msg.data && msg.data.length && msg.data[0].optionValue;
-					var sloganWidgetList = utils.$Class('div.em-widget-tip')[0].childNodes[0];
 					if(slogan){
 						// 设置信息栏内容
-						utils.$Class('span.em-widget-tip-text')[0].innerHTML = Easemob.im.Utils.parseLink(slogan);
+						document.querySelector('.em-widget-tip .content').innerHTML = Easemob.im.Utils.parseLink(slogan);
 						// 显示信息栏
 						utils.addClass(easemobim.imChat, 'has-tip');
 
 						// 隐藏信息栏按钮
 						utils.on(
-							utils.$Class('a.em-widget-tip-close')[0],
+							document.querySelector('.em-widget-tip .tip-close'),
 							utils.click,
 							function(){
+								// 隐藏信息栏
 								utils.removeClass(easemobim.imChat, 'has-tip');
 							}
 						);
@@ -21241,19 +21338,13 @@ easemobim.videoChat = (function(dialog){
 			, errorPrompt: function ( msg, isAlive ) {//暂时所有的提示都用这个方法
 				var me = this;
 
-				if ( !me.ePrompt ) {
-					me.ePrompt = document.createElement('p');
-					me.ePrompt.className = 'em-widget-error-prompt em-hide';
-					utils.html(me.ePrompt, '<span></span>');
-					easemobim.imChat.appendChild(me.ePrompt);
-					me.ePromptContent = me.ePrompt.getElementsByTagName('span')[0];
-				}
+				me.ePrompt = me.ePrompt || document.querySelector('.em-widget-error-prompt');
+				me.ePromptContent = me.ePromptContent || me.ePrompt.querySelector('span');
 				
-				utils.html(me.ePromptContent, msg);
-				utils.removeClass(me.ePrompt, 'em-hide');
+				me.ePromptContent.innerHTML = msg;
+				utils.removeClass(me.ePrompt, 'hide');
 				isAlive || setTimeout(function () {
-					utils.html(me.ePromptContent, '');
-					utils.addClass(me.ePrompt, 'em-hide');
+					utils.addClass(me.ePrompt, 'hide');
 				}, 2000);
 			}
 			, getSafeTextValue: function ( msg ) {
@@ -21267,9 +21358,6 @@ easemobim.videoChat = (function(dialog){
 				return '';
 			}
 			, setOffline: function ( isOffDuty ) {
-
-				this.mobile();
-
 				if ( !isOffDuty ) { return; }
 
 				switch ( config.offDutyType ) {
@@ -21326,14 +21414,13 @@ easemobim.videoChat = (function(dialog){
 				!utils.isTop && transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
 			}
 			, appendDate: function ( date, to, isHistory ) {
-				var chatWrapper = this.chatWrapper,
-					dom = document.createElement('div'),
-					fmt = 'M月d日 hh:mm';
+				var chatWrapper = this.chatWrapper;
+				var dom = document.createElement('div');
+				var fmt = 'M月d日 hh:mm';
 
-				if ( !chatWrapper ) {
-					return;
-				}
-				utils.html(dom, new Date(date).format(fmt));
+				if (!chatWrapper) return;
+
+				dom.innerHTML = new Date(date).format(fmt);
 				utils.addClass(dom, 'em-widget-date');
 
 				if ( !isHistory ) {
@@ -21382,15 +21469,13 @@ easemobim.videoChat = (function(dialog){
 					return;
 				}
 
-				me.reminder = document.createElement('a');
-				me.reminder.setAttribute('href', 'javascript:;');
-				utils.addClass(me.reminder, 'em-widgetHeader-audio fg-color');
-				easemobim.dragHeader.appendChild(me.reminder);
+				me.reminder = document.querySelector('.em-widgetHeader-audio');
 
 				//音频按钮静音
 				utils.on(me.reminder, 'mousedown touchstart', function () {
-					me.silence = !me.silence;
-					utils.toggleClass(me.reminder, 'em-widgetHeader-silence', me.slience);
+					me.slience = !me.slience;
+					utils.toggleClass(me.reminder, 'icon-slience', me.slience);
+					utils.toggleClass(me.reminder, 'icon-bell', !me.slience);
 
 					return false;
 				});
@@ -21398,7 +21483,7 @@ easemobim.videoChat = (function(dialog){
 				me.audio = document.createElement('audio');
 				me.audio.src = config.staticPath + '/mp3/msg.m4a';
 				me.soundReminder = function () {
-					if ( (utils.isMin() ? false : me.opened) || ast !== 0 || me.silence ) {
+					if ( (utils.isMin() ? false : me.opened) || ast !== 0 || me.slience ) {
 						return;
 					}
 					ast = setTimeout(function() {
@@ -21410,17 +21495,37 @@ easemobim.videoChat = (function(dialog){
 			, bindEvents: function () {
 				var me = this;
 
-				utils.live('i.em-widgetHeader-keyboard', utils.click, function () {
-					if ( utils.hasClass(this, 'em-widgetHeader-keyboard-up') ) {
-						utils.addClass(this, 'em-widgetHeader-keyboard-down');
-						utils.removeClass(this, 'em-widgetHeader-keyboard-up');
-						me.setKeyboard('down');
-					} else {
-						utils.addClass(this, 'em-widgetHeader-keyboard-up');
-						utils.removeClass(this, 'em-widgetHeader-keyboard-down');
-						me.setKeyboard('up');
+				utils.on(
+					document.querySelector('.em-widgetHeader-keyboard'),
+					utils.click,
+					function(){
+						var status = utils.hasClass(this, 'icon-keyboard-down');
+						me.direction = status ? 'down' : 'up';
+
+						utils.toggleClass(this, 'icon-keyboard-up', status);
+						utils.toggleClass(this, 'icon-keyboard-down', !status);
+
+						switch (me.direction) {
+							case 'up':
+								easemobim.send.style.bottom = 'auto';
+								easemobim.send.style.zIndex = '3';
+								easemobim.send.style.top = '43px';
+								easemobim.imChatBody.style.bottom = '0';
+								easemobim.chatFaceWrapper.style.bottom = 'auto';
+								easemobim.chatFaceWrapper.style.top = 43 + easemobim.send.getBoundingClientRect().height + 'px';
+								break;
+							case 'down':
+								easemobim.send.style.bottom = '0';
+								easemobim.send.style.zIndex = '3';
+								easemobim.send.style.top = 'auto';
+								easemobim.imChatBody.style.bottom = easemobim.send.getBoundingClientRect().height + 'px';
+								easemobim.chatFaceWrapper.style.bottom = easemobim.send.getBoundingClientRect().height + 'px';
+								easemobim.chatFaceWrapper.style.top = 'auto';
+								me.scrollBottom(50);
+								break;
+						}
 					}
-				});
+				);
 				
 				!utils.isMobile && !utils.isTop && utils.on(easemobim.imBtn, utils.click, function () {
 					transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
@@ -21500,7 +21605,7 @@ easemobim.videoChat = (function(dialog){
 
 				//resend
 				utils.live('div.em-widget-msg-status', utils.click, function () {
-					var id = this.getAttribute('id').slice(0, -7);
+					var id = this.getAttribute('id').slice(0, -'_failed'.length);
 
 					utils.addClass(this, 'em-hide');
 					utils.removeClass(utils.$Dom(id + '_loading'), 'em-hide');
@@ -21601,6 +21706,12 @@ easemobim.videoChat = (function(dialog){
 					easemobim.leaveMessage.show();
 				});
 
+				// 最小化
+				utils.on(document.querySelector('.em-widgetHeader-min'), 'click', function () {
+					transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
+					return false;
+				});
+
 				//hot key
 				utils.on(easemobim.textarea, 'keydown', function ( evt ) {
 					if(evt.keyCode !== 13) return;
@@ -21627,12 +21738,17 @@ easemobim.videoChat = (function(dialog){
 					if ( utils.hasClass(this, 'disabled') ) {
 						return false;
 					}
+					var textMsg = easemobim.textarea.value;
+					if(textMsg.length > 1500){
+						me.errorPrompt("输入字数过多");
+						return false;
+					}
 					utils.addClass(easemobim.chatFaceWrapper, 'em-hide');
 					me.sendTextMsg();
 					if ( utils.isMobile ) {
 						easemobim.textarea.style.height = '34px';
 						easemobim.textarea.style.overflowY = 'hidden';
-						me.direction === 'up' || (easemobim.imChatBody.style.bottom = '43px');
+						me.direction === 'up' || (easemobim.imChatBody.style.bottom = '77px');
 						easemobim.textarea.focus();
 					}
 					return false;
@@ -21697,7 +21813,7 @@ easemobim.videoChat = (function(dialog){
 			}
 			//坐席改变更新坐席头像和昵称并且开启获取坐席状态的轮训
 			, handleAgentStatusChanged: function ( info ) {
-				if ( !info ) { return; }
+				if (!info) return;
 
 				config.agentUserId = info.userId;
 
@@ -21713,7 +21829,7 @@ easemobim.videoChat = (function(dialog){
 			//转接中排队中等提示上屏
 			, appendEventMsg: function (msg) {
 				//如果设置了hideStatus, 不显示转接中排队中等提示
-				if (config.hideStatus) { return; }
+				if (config.hideStatus) return;
 
 				var dom = document.createElement('div');
 
@@ -21790,9 +21906,7 @@ easemobim.videoChat = (function(dialog){
 			}
 			//receive message function
 			, receiveMsg: function ( msg, type, isHistory ) {
-				if ( config.offDuty ) {
-					return;
-				}
+				if (config.offDuty) return;
 
 				this.channel.handleReceive(msg, type, isHistory);
 			}
@@ -21841,16 +21955,18 @@ easemobim.videoChat = (function(dialog){
 	var _polling;
 	var _callback;
 	var _config;
-	var _userId;
+	var _gid;
+	var _url;
 
 	function _reportData(userType, userId){
-		_userId = userId;
+		transfer.send({event: 'updateURL'}, window.transfer.to);
 
 		easemobim.api('reportEvent', {
 			type: 'VISIT_URL',
+			// 第一次轮询时URL还未传过来，所以使用origin
+			url: _url || transfer.origin,
 			// for debug
-			// url: 'http://172.17.3.146',
-			url: _config.origin,
+			url: 'http://172.17.3.86',
 			// 时间戳不传，以服务器时间为准
 			// timestamp: 0,
 			userId: {
@@ -21867,15 +21983,20 @@ easemobim.videoChat = (function(dialog){
 				// 有坐席呼叫
 				case 'INIT_CALL':
 					if(_isStarted()){
+						// 回呼游客，游客身份变为访客
+						if (data.userName){
+							_gid = data.orgName + '#' + data.appName + '_' + data.userName;
+							_polling.stop();
+							_polling = new Polling(function(){
+								_reportData('VISITOR', _gid);
+							});
+						}
 						_stopReporting();
 						_callback(data);
 					}
 					// 已停止轮询 （被呼叫的访客/游客 已经创建会话），不回呼
-					// todo: 发送删除事件
-					else{}
-					// todo:
+					else {}
 					break;
-				// error: unexcepted return value
 				default:
 					break;
 			}
@@ -21883,8 +22004,8 @@ easemobim.videoChat = (function(dialog){
 	}
 
 	function _deleteEvent(){
-		api('deleteEvent', {userId: _userId});
-		_userId = '';
+		_gid && api('deleteEvent', {userId: _gid});
+		_gid = '';
 	}
 
 	function _startToReoprt(config, callback){
@@ -21892,13 +22013,14 @@ easemobim.videoChat = (function(dialog){
 		_config || (_config = config);
 
 		// 用户点击联系客服弹出的窗口，结束会话后调用的startToReport没有传入参数
-		if(!config){
+		if(!_config){
 			console.log('not config yet.');
-			return;
 		}
-		// todo close的时候也传入user信息，待确认
-		if(_config.user.username){
-			_reportVisitor();
+		else if(_polling){
+			_polling.start();
+		}
+		else if(_config.user.username){
+			_reportVisitor(_config.user.username);
 		}
 		else{
 			_reportGuest();
@@ -21906,20 +22028,22 @@ easemobim.videoChat = (function(dialog){
 	}
 
 	function _reportGuest(){
-		var guestId = localStorage.getItem('guestId') || utils.uuid();
+		var guestId = _config.guestId || utils.uuid();
 
+		// 缓存guestId
 		transfer.send({event: 'setItem', data: {
 			key: 'guestId',
 			value: guestId
 		}}, window.transfer.to);
+
 		_polling = new Polling(function(){
 			_reportData('GUEST', guestId);
 		}, POLLING_INTERVAL);
 
-		_startToPoll();
+		_polling.start();
 	}
 
-	function _reportVisitor(){
+	function _reportVisitor(username){
 		api('getRelevanceList', {
 			tenantId: _config.tenantId
 		}, function(msg) {
@@ -21930,23 +22054,19 @@ easemobim.videoChat = (function(dialog){
 			var orgName = relevanceList.orgName;
 			var appName = relevanceList.appName;
 			var imServiceNumber = relevanceList.imServiceNumber;
-			var gid = orgName + '#' + appName + '_' + imServiceNumber;
+			_gid = orgName + '#' + appName + '_' + username;
 
 			_polling = new Polling(function(){
-				_reportData('VISITOR', gid);
+				_reportData('VISITOR', _gid);
 			}, POLLING_INTERVAL);
 
-			_startToPoll();
+			_polling.start();
 		});
 	}
 
 	function _stopReporting(){
 		_polling && _polling.stop();
-		_userId && _deleteEvent();
-	}
-
-	function _startToPoll(){
-		_polling && _polling.start();
+		_deleteEvent();
 	}
 
 	function _isStarted() {
@@ -21956,7 +22076,10 @@ easemobim.videoChat = (function(dialog){
 	easemobim.eventCollector = {
 		startToReport: _startToReoprt,
 		stopReporting: _stopReporting,
-		isStarted: _isStarted
+		isStarted: _isStarted,
+		updateURL: function(url){
+			_url = url;
+		}
 	};
 }(
 	easemobim.Polling,
@@ -21995,7 +22118,6 @@ easemobim.videoChat = (function(dialog){
 			config.xmppServer = utils.convertFalse(utils.query('xmppServer'));
 			config.restServer = utils.convertFalse(utils.query('restServer'));
 			config.agentName = utils.convertFalse(utils.query('agentName'));
-			config.satisfaction = utils.convertFalse(utils.query('sat'));
 			config.resources = utils.convertFalse(utils.query('resources'));
 			config.hideStatus = utils.convertFalse(utils.query('hideStatus'));
 			config.satisfaction = utils.convertFalse(utils.query('sat'));
@@ -22028,31 +22150,33 @@ easemobim.videoChat = (function(dialog){
 					token: ''
 				};
 			}
+			chat = easemobim.chat(config);
 			initUI(config, initAfterUI);
 		} else {
 			window.transfer = new easemobim.Transfer(null, 'main').listen(function(msg) {
-				if (msg.parentId) {
-					chat = easemobim.chat(msg);
-					window.transfer.to = msg.parentId;
-					initUI(msg, initAfterUI);
-				}
-				else if (msg.event) {
-					switch (msg.event) {
-						case easemobim.EVENTS.SHOW.event:
-							chatEntry.open();
-							break;
-						case easemobim.EVENTS.CLOSE.event:
-							chatEntry.close();
-							break;
-						case easemobim.EVENTS.EXT.event:
-							chat.sendTextMsg('', false, msg.data.ext);
-							break;
-						case easemobim.EVENTS.TEXTMSG.event:
-							chat.sendTextMsg(msg.data.data, false, msg.data.ext);
-							break;
-						default:
-							break;
-					}
+				switch (msg.event) {
+					case easemobim.EVENTS.SHOW.event:
+						chatEntry.open();
+						break;
+					case easemobim.EVENTS.CLOSE.event:
+						chatEntry.close();
+						break;
+					case easemobim.EVENTS.EXT.event:
+						chat.sendTextMsg('', false, msg.data.ext);
+						break;
+					case easemobim.EVENTS.TEXTMSG.event:
+						chat.sendTextMsg(msg.data.data, false, msg.data.ext);
+						break;
+					case 'updateURL':
+						easemobim.eventCollector.updateURL(msg.data);
+						break;
+					case 'initConfig':
+						chat = easemobim.chat(msg.data);
+						window.transfer.to = msg.data.parentId;
+						initUI(msg.data, initAfterUI);
+						break;
+					default:
+						break;
 				}
 			}, ['easemob']);
 		}
@@ -22073,7 +22197,7 @@ easemobim.videoChat = (function(dialog){
 			eventCollector.startToReport(config, function(targetUserInfo) {
 				chatEntry.init(config, targetUserInfo);
 			});
-			config.hide = true;
+			// config.hide = true;
 		}
 		else {
 			// 获取关联，创建访客，调用聊天窗口
@@ -22084,7 +22208,7 @@ easemobim.videoChat = (function(dialog){
 	function initUI(config, callback) {
 		var iframe = document.getElementById('EasemobKefuWebimIframe');
 
-		iframe.src = config.domain + '/webim/transfer.html?v=43.11';
+		iframe.src = config.domain + '/webim/transfer.html?v=43.12.1';
 		utils.on(iframe, 'load', function() {
 			easemobim.getData = new easemobim.Transfer('EasemobKefuWebimIframe', 'data');
 			callback(config);
@@ -22118,17 +22242,39 @@ easemobim.videoChat = (function(dialog){
 			utils.addClass(document.body, 'em-mobile');
 		}
 
-		// em-widgetNote
+		// 留言按钮
 		utils.toggleClass(
 			utils.$Dom('em-widgetNote'),
-			'em-hide', !config.ticket
+			'em-hide',
+			!config.ticket
 		);
 
-		// EasemobKefuWebimSatisfy
+		// 最小化按钮
 		utils.toggleClass(
-			utils.$Dom('EasemobKefuWebimSatisfy'),
-			'em-hide',
-			utils.isMobile || !config.satisfaction
+			document.querySelector('.em-widgetHeader-min'),
+			'hide',
+			!config.minimum || utils.isTop
+		);
+
+		// 静音按钮
+		utils.toggleClass(
+			document.querySelector('.em-widgetHeader-audio'),
+			'hide',
+			!window.HTMLAudioElement || utils.isMobile || !config.soundReminder
+		);
+
+		// 输入框位置开关
+		utils.toggleClass(
+			document.querySelector('.em-widgetHeader-keyboard'),
+			'hide',
+			!utils.isMobile || config.offDuty || config.hideKeyboard
+		);
+
+		// 满意度评价按钮
+		utils.toggleClass(
+			document.querySelector('.em-widget-satisfaction'),
+			'hide',
+			!config.satisfaction
 		);
 
 		//不支持异步上传则加载swfupload
@@ -22190,23 +22336,46 @@ easemobim.videoChat = (function(dialog){
 				if (targetUserInfo) {
 
 					config.toUser = targetUserInfo.agentImName;
-					config.user = {
-						username: targetUserInfo.userName,
-						password: targetUserInfo.userPassword
-					};
 
-					chat.ready();
-					chat.show();
-					// 发送空的ext消息
-					chat.sendTextMsg('', false, {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}});
-					transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
-					transfer.send({
-						event: 'setUser',
-						data: {
+					// 游客回呼
+					if(targetUserInfo.userName){
+						config.user = {
 							username: targetUserInfo.userName,
-							group: config.user.emgroup
-						}
-					}, window.transfer.to);
+							password: targetUserInfo.userPassword
+						};
+
+						chat.ready();
+						chat.show();
+						// 发送空的ext消息
+						chat.sendTextMsg('', false, {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}});
+						transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
+						transfer.send({
+							event: 'setUser',
+							data: {
+								username: targetUserInfo.userName,
+								group: config.user.emgroup
+							}
+						}, window.transfer.to);
+					}
+					// 访客回呼
+					else {
+						api('getPassword', {
+							userId: config.user.username,
+							tenantId: config.tenantId
+						}, function(msg) {
+							if (!msg.data) {
+								console.log('用户不存在！');
+							} else {
+								config.user.password = msg.data;
+
+								chat.ready();
+								chat.show();
+								// 发送空的ext消息
+								chat.sendTextMsg('', false, {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}});
+								transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
+							}
+						});
+					}
 				}
 				else if (config.user.username && (config.user.password || config.user.token)) {
 					chat.ready();
@@ -22304,7 +22473,7 @@ easemobim.videoChat = (function(dialog){
 		},
 		close: function() {
 			chat.close();
-			eventCollector.startToReport();
+			// eventCollector.startToReport();
 			// todo 重新上报访客开始
 		}
 	};
