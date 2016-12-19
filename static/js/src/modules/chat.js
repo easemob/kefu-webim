@@ -11,7 +11,7 @@
 		var doms = {
 			agentStatusText: utils.$Class('span.em-header-status-text')[0],
 			agentStatusSymbol: utils.$Dom('em-widgetAgentStatus'),
-			nickName: utils.$Class('span.em-widgetHeader-nickname')[0],
+			nickname: document.querySelector('.em-widgetHeader-nickname')
 		};
 
 		easemobim.doms = doms;
@@ -364,28 +364,12 @@
 				});
 			}
 			, handleGroup: function () {
-				this.chatWrapper = this.handleChatContainer();
-			}
-			, handleChatContainer: function () {
-				var curChatContainer = utils.$Class('div.em-widget-chat', easemobim.imChatBody);
+				this.chatWrapper = easemobim.imChatBody.querySelector('.em-widget-chat');
 
 				this.setAgentProfile({
 					tenantName: config.defaultAgentName,
 					avatar: config.tenantAvatar
 				});
-				if ( curChatContainer && curChatContainer.length > 0 ) {
-					return curChatContainer[0];
-				} else {
-					curChatContainer = document.createElement('div');
-					utils.addClass(curChatContainer, 'em-widget-chat');
-					utils.insertBefore(easemobim.imChatBody, curChatContainer, easemobim.imChatBody.childNodes[this.hasLogo ? 1 : 0]);
-
-					var transfer = document.createElement('div');
-					transfer.id = 'transfer';
-					utils.addClass(transfer, 'em-widget-status-prompt');
-					easemobim.imChat.appendChild(transfer);
-					return curChatContainer;
-				}
 			}
 			, getMsgid: function ( msg ) {
 				if ( msg ) {
@@ -445,7 +429,7 @@
 
 				//更新企业头像和名称
 				if ( info.tenantName ) {
-					doms.nickName.innerText = info.tenantName;
+					doms.nickname.innerText = info.tenantName;
 					easemobim.avatar.setAttribute('src', avatarImg);
 				}
 
@@ -458,7 +442,7 @@
 				if(!info.userNickname) return;
 
 				//更新坐席昵称
-				doms.nickName.innerText = info.userNickname;
+				doms.nickname.innerText = info.userNickname;
 
 				this.currentAvatar = avatarImg;
 				var src = easemobim.avatar.getAttribute('src');
@@ -481,9 +465,10 @@
 				});
 			}
 			, setLogo: function () {
-				if ( !utils.$Class('div.em-widget-tenant-logo').length && config.logo ) {
-					utils.html(this.chatWrapper, '<div class="em-widget-tenant-logo"><img src="' + config.logo + '"></div>' + utils.html(this.chatWrapper));
-					this.hasLogo = true;
+				// 为了保证消息插入位置正确
+				if (config.logo) {
+					utils.removeClass(document.querySelector('.em-widget-tenant-logo'), 'hide');
+					document.querySelector('.em-widget-tenant-logo img').src = config.logo;
 				}
 			}
 			, setNotice: function () {
@@ -663,7 +648,7 @@
 						chatWrapper.appendChild(dom); 
 					}
 				} else {
-					utils.insertBefore(chatWrapper, dom, chatWrapper.getElementsByTagName('div')[this.hasLogo ? 1 : 0]);
+					utils.insertBefore(chatWrapper, dom, chatWrapper.getElementsByTagName('div')[0]);
 				}
 			}
 			, resetSpan: function ( id ) {
@@ -1082,7 +1067,7 @@
 				utils.html(div, msg.get(!isSelf));
 
 				if ( isHistory ) {
-					utils.insertBefore(curWrapper, div, curWrapper.childNodes[me.hasLogo ? 1 : 0]);
+					utils.insertBefore(curWrapper, div, curWrapper.childNodes[0]);
 				} else {
 					curWrapper.appendChild(div);
 					me.scrollBottom(utils.isMobile ? 800 : null);
