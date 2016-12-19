@@ -401,7 +401,7 @@ easemobim.channel = function ( config ) {
 					if ( list.length > 0 ) {
 						str = '<div class="em-widget-list-btns">';
 						for ( var i = 0, l = list.length; i < l; i++ ) {
-							if(list[i].name == "转人工客服"){
+							if(list[i].id == "TransferToKf"){
 								str += '<button class="em-widget-list-btn-white bg-color border-color bg-hover-color-dark js_robotbtn" data-id="' + list[i].id + '">' + (list[i].name || list[i]) + '</button>';
 							}else{
 								str += '<button class="em-widget-list-btn bg-hover-color js_robotbtn" data-id="' + list[i].id + '">' + (list[i].name || list[i]) + '</button>';
