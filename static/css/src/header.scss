@@ -73,6 +73,10 @@
 	color: white;
 	color: rgba(255, 255, 255, 0.5);
 }
+.em-header-status-text-right{
+	@extend .em-header-status-text;
+	margin-left: 10px;
+}
 .em-widgetHeader-word-status {
 	margin-left: 4px;
 	color: #efefef;
