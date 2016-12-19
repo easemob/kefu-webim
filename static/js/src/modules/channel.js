@@ -395,12 +395,17 @@ easemobim.channel = function ( config ) {
 				case 'robotList':
 					message = new Easemob.im.EmMessage('list');
 					var str = '',
+
 						list = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
 
 					if ( list.length > 0 ) {
 						str = '<div class="em-widget-list-btns">';
 						for ( var i = 0, l = list.length; i < l; i++ ) {
-							str += '<button class="em-widget-list-btn bg-hover-color js_robotbtn" data-id="' + list[i].id + '">' + (list[i].name || list[i]) + '</button>';
+							if(list[i].name == "转人工客服"){
+								str += '<button class="em-widget-list-btn-white bg-color border-color bg-hover-color-dark js_robotbtn" data-id="' + list[i].id + '">' + (list[i].name || list[i]) + '</button>';
+							}else{
+								str += '<button class="em-widget-list-btn bg-hover-color js_robotbtn" data-id="' + list[i].id + '">' + (list[i].name || list[i]) + '</button>';
+							}
 						}
 						str += '</div>';
 					}
