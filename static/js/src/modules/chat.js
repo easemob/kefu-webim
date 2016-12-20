@@ -22,16 +22,16 @@
 		easemobim.imChat = utils.$Dom('em-kefu-webim-chat');
 		easemobim.imChatBody = utils.$Dom('em-widgetBody');
 		easemobim.send = utils.$Dom('em-widgetSend');
-		easemobim.textarea = easemobim.send.getElementsByTagName('textarea')[0];
+		easemobim.textarea = easemobim.send.querySelector('.em-widget-textarea');
 		easemobim.sendBtn = utils.$Dom('em-widgetSendBtn');
-		easemobim.faceBtn = easemobim.send.getElementsByTagName('i')[0];
+		easemobim.faceBtn = easemobim.send.querySelector('.em-bar-face');
 		easemobim.realFile = utils.$Dom('em-widgetFileInput');
 		easemobim.sendFileBtn = utils.$Dom('em-widgetFile');
 		easemobim.noteBtn = utils.$Dom('em-widgetNote');
 		easemobim.dragHeader = utils.$Dom('em-widgetDrag');
-		easemobim.dragBar = easemobim.dragHeader.getElementsByTagName('p')[0];
+		easemobim.dragBar = easemobim.dragHeader.querySelector('.drag-bar');
 		easemobim.chatFaceWrapper = utils.$Dom('EasemobKefuWebimFaceWrapper');
-		easemobim.avatar = utils.$Class('img.em-widgetHeader-portrait')[0];
+		easemobim.avatar = document.querySelector('.em-widgetHeader-portrait');
 		easemobim.swfupload = null;//flash 上传
 
 
