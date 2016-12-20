@@ -377,15 +377,12 @@
 			});
 		},
 		open: function() {
-			// config.toUser = config.toUser || config.to;
 			// 停止上报访客
 			eventCollector.stopReporting();
 			chat.show();
 		},
 		close: function() {
 			chat.close();
-			// eventCollector.startToReport();
-			// todo 重新上报访客开始
 		}
 	};
 

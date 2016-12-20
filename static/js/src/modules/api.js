@@ -201,6 +201,17 @@
 					excludeData: true
 				}));
 				break;
+			case 'mediaStreamUpdateStatus':
+				// patch
+				var streamId = msg.data.streamId;
+				delete msg.data.streamId;
+
+				easemobim.emajax(createObject({
+					url: '/v1/rtcmedia/media_streams/' + streamId,
+					msg: msg,
+					type: 'PUT',
+				}));
+				break;
 			default:
 				break;
 		}
