@@ -54,7 +54,7 @@
 
 	function _deleteEvent(){
 		_gid && api('deleteEvent', {userId: _gid});
-		_gid = '';
+		// _gid = '';
 	}
 
 	function _startToReoprt(config, callback){

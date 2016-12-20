@@ -79,6 +79,11 @@
 
 				easemobim.leaveMessage && easemobim.leaveMessage.auth(me.token, config);
 
+				// 发送用于回呼访客的命令消息
+				if(!config.cachedCommandMessage){
+					me.sendTextMsg('', false, config.cachedCommandMessage);
+					config.cachedCommandMessage = null;
+				}
 				if ( utils.isTop ) {
 					//get visitor
 					var visInfo = config.visitor;
@@ -94,7 +99,7 @@
 					utils.clearStore(config.tenantId + config.emgroup + 'ext');
 				} else {
 					transfer.send(easemobim.EVENTS.ONREADY, window.transfer.to);
-				} 
+				}
 			}
 			, setExt: function ( msg ) {
 				msg.body.ext = msg.body.ext || {};
@@ -673,7 +678,26 @@
 
 				// init webRTC
 				if(utils.isSupportWebRTC){
-					easemobim.videoChat.init(me.conn, me.channel.send, config);
+					// 视频功能灰度
+					// easemobim.api('getKefuOptions/audioVideo', {tenantId: config.tenantId}, function (msg) {
+					// 	if (
+					// 		msg.data
+					// 		&& msg.data.data
+					// 		&& msg.data.data[0]
+					// 		&& msg.data.data[0].optionValue === 'true'
+					// 	){
+					// 		easemobim.videoChat.init(me.conn, me.channel.send, config);
+					// 	}
+					// });
+					easemobim.api('graylist', {}, function (msg) {
+						if (
+							msg.data
+							&& msg.data.audioVideo
+							&& msg.data.audioVideo.indexOf(+config.tenantId)
+						){
+							easemobim.videoChat.init(me.conn, me.channel.send, config);
+						}
+					});
 				}
 			}
 			, soundReminder: function () {
@@ -932,7 +956,6 @@
 					if(evt.keyCode !== 13) return;
 
 					if(utils.isMobile || evt.ctrlKey || evt.shiftKey){
-						this.value += '\n';
 						return false;
 					}
 					else{
@@ -944,8 +967,8 @@
 
 						// 可能是事件绑定得太多了，导致换行清不掉，稍后解决
 						setTimeout(function(){
-							this.value = '';
-						}.bind(this), 0);
+							easemobim.textarea.value = '';
+						}, 0);
 					}
 				});
 

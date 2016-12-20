@@ -1,5 +1,4 @@
-;
-(function(window, undefined) {
+;(function(window, undefined) {
 	'use strict';
 
 	var utils = easemobim.utils;
@@ -257,8 +256,8 @@
 
 						chat.ready();
 						chat.show();
-						// 发送空的ext消息
-						chat.sendTextMsg('', false, {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}});
+						// 发送空的ext消息，延迟发送
+						config.cachedCommandMessage = {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}};
 						transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
 						transfer.send({
 							event: 'setUser',

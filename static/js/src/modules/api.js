@@ -209,7 +209,21 @@
 				easemobim.emajax(createObject({
 					url: '/v1/rtcmedia/media_streams/' + streamId,
 					msg: msg,
-					type: 'PUT',
+					type: 'PUT'
+				}));
+				break;
+			case 'getKefuOptions/audioVideo':
+				easemobim.emajax(createObject({
+					url: '/tenants/' + msg.data.tenantId + '/options/audioVideo',
+					msg: msg,
+					excludeData: true
+				}));
+				break;
+			case 'graylist':
+				easemobim.emajax(createObject({
+					url: '/management/graylist',
+					msg: msg,
+					excludeData: true
 				}));
 				break;
 			default:
