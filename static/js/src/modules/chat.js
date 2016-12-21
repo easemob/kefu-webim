@@ -906,8 +906,8 @@
 				//选中文件并发送
 				utils.on(doms.fileInput, 'change', function () {
 
-					var fileElement = doms.fileInput,
-						fileData ={};
+					var fileElement = doms.fileInput;
+					var fileData;
 					
 					if(!fileElement.value){
 						return;
@@ -925,11 +925,12 @@
 				//选中图片并发送
 				utils.on(doms.imgInput, 'change', function () {
 
-					var fileElement = doms.imgInput,
-						postfix = fileElement.value.toLowerCase().split('.'),
-						fileData = {},
-						imgType = _const.UPLOAD_IMG_TYPE,
-						fileType = postfix[postfix.length-1];
+					var fileElement = doms.imgInput;
+					var	postfix = fileElement.value.toLowerCase().split('.');
+					var	fileData;
+					var	imgType = _const.UPLOAD_IMG_TYPE;
+					var	fileType = postfix[postfix.length-1];
+
 
 						if(!fileElement.value){
 							return;
@@ -937,12 +938,7 @@
 
 						fileData = Easemob.im.Utils.getFileUrl(fileElement.getAttribute('id'))
 
-						if( fileType === imgType[0]||
-							fileType === imgType[1]||
-							fileType === imgType[2]||
-							fileType === imgType[3]||
-							fileType === imgType[4]
-							) {
+						if(!imgType.indexOf(fileType)) {
 							if(fileElement && fileElement.files[0].size > _const.UPLOAD_FILESIZE_LIMIT){
 								me.errorPrompt("文件太大");
 							}else{
