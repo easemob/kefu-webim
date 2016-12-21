@@ -69,7 +69,7 @@
 		_config.domain = _config.domain || baseConfig.domain;
 		_config.path = _config.path || (baseConfig.domain + '/webim');
 		_config.staticPath = _config.staticPath || (baseConfig.domain + '/webim/static');
-	};
+	}
 
 	/*
 	 * @param: {String} 技能组名称，选填

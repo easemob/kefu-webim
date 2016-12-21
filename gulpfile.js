@@ -84,7 +84,10 @@ gulp.task('cssmin', function() {
 
 //jshint
 gulp.task('lint', function() {
-	gulp.src('static/js/src/*.js')
+	gulp.src([
+		'static/js/src/*.js',
+		'static/js/src/modules/*.js',
+	])
 	.pipe(jshint({
 		"laxcomma" : true,
 		"laxbreak" : true,
