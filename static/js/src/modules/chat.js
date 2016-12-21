@@ -25,7 +25,8 @@
 		easemobim.textarea = easemobim.send.getElementsByTagName('textarea')[0];
 		easemobim.sendBtn = utils.$Dom('em-widgetSendBtn');
 		easemobim.faceBtn = easemobim.send.getElementsByTagName('i')[0];
-		easemobim.realFile = utils.$Dom('em-widgetFileInput');
+		easemobim.realFile = document.querySelector('.upload-file-container');
+		easemobim.realImg =	document.querySelector('.upload-img-container');
 		easemobim.sendImgBtn = utils.$Dom('em-widgetImg');
 		easemobim.sendFileBtn = utils.$Dom('em-widgetFile');
 		easemobim.noteBtn = utils.$Dom('em-widgetNote');
@@ -904,35 +905,36 @@
 				//选中文件并发送
 				utils.on(easemobim.realFile, 'change', function () {
 
-					var fileData = easemobim.realFile,
-						postfix = fileData.value.toLowerCase().split('.'),
-						fileType = postfix[postfix.length-1];
-						
-					//处理取消发送文件
+					var fileData = easemobim.realFile;
+					
 					if(typeof(fileData.files[0])=='undefined'){
 						return
 					}
 
-					if(fileData && fileData.files[0].size>1024*1024*10){
+					if(fileData && fileData.files[0].size > easemobim.UPLOAD_FILESIZE_LIMIT){
 						me.errorPrompt("文件太大");
 					}else{
-						if(fileType === 'gif'||fileType === 'jpg'||fileType === 'bmp'
-||fileType ==='png'||fileType ==='jpeg'){
-							if(me.uploadType === 'img'){
-								me.sendImgMsg();
-							}else{
-								me.sendFileMsg();
-							}
-						}else{
-							if(me.uploadType === 'files'){
-								me.sendFileMsg();
-							}else{
-								me.errorPrompt('请选择图片')
-							}
-						}
+						me.sendFileMsg();
 					}	
 				});
 
+				//选中图片并发送
+				utils.on(easemobim.realImg, 'change', function () {
+					var fileData = easemobim.realImg,
+						postfix = fileData.value.toLowerCase().split('.'),
+						fileType = postfix[postfix.length-1];
+
+						if(fileType === 'gif'||fileType === 'jpg'||fileType === 'bmp'
+||fileType ==='png'||fileType ==='jpeg'){
+							if(fileData && fileData.files[0].size > easemobim.UPLOAD_FILESIZE_LIMIT){
+								me.errorPrompt("文件太大");
+							}else{
+								me.sendImgMsg();
+							}
+						}else{
+							me.errorPrompt('请选择图片')
+						}
+				});
 				//hide face wrapper
 				utils.on(document, utils.click, function ( ev ) {
 					var e = window.event || ev,
@@ -956,7 +958,6 @@
 						me.errorPrompt('当前浏览器需要安装flash发送wenj');
 						return false;	
 					}
-					me.uploadType = 'files';
 					easemobim.realFile.click();
 				});
 				utils.on(easemobim.sendImgBtn, 'touchend', function () {
@@ -972,8 +973,7 @@
 						me.errorPrompt('当前浏览器需要安装flash发送图片');
 						return false;	
 					}
-					me.uploadType = 'img';
-					easemobim.realFile.click();
+					easemobim.realImg.click();
 				});
 
 				//显示留言界面

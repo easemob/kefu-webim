@@ -142,8 +142,7 @@ Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 	var filename = this.filename;
 	var filesize;
 	//历史会话不返回文件length,暂时先隐藏处理
-	//this.value.filesize === 0? filesize = '': filesize = easemobim.utils.filesizeFormat(this.value.filesize);
-	if(this.value.filesize && this.value.filesize != 0){
+	if(this.value.filesize && this.value.filesize >= 0){
 		filesize = easemobim.utils.filesizeFormat(this.value.filesize);
 	}else{
 		filesize = '';

@@ -49,6 +49,9 @@
 	//每页历史记录条数
 	easemobim.LISTSPAN = 10;
 
+	//上传文件大小限制
+	easemobim.UPLOAD_FILESIZE_LIMIT = 1024 * 1024 * 10;
+
 	//支持的图片格式
 	easemobim.PICTYPE = {
 		jpg: true,
