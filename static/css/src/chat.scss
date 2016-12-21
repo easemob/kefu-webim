@@ -102,50 +102,68 @@
 	.em-widget-msg-container {
 		position: relative;
 		padding: 0;
-		width: 250px;
 		max-width: initial;
-		height: 50px;
+		width: 200px;
+		height: 60px;
 		overflow: hidden;
 	}
-	.icon-file {
-		color: #009eec;
+	.container-icon-attachment {
 		display: inline-block;
-		width: 50px;
-		height: 50px;
-		font-size: 50px;
+		width: 52px;
+		height:52px;
 		text-align: center;
-		position: absolute;
+		float: left;
+		background-color:rgb(58, 164, 221);
 		left: 0;
+		border-radius: 2px;
 		top: 0;
+		margin: 4px;
+		color:#fff;
+	}
+	.container-icon-attachment:before{
+		font-size: 50px;
+		line-height: 50px;
 	}
 	.file-info {
 		display: inline-block;
-		margin-left: 50px;
-		width: 130px;
 		overflow: hidden;
+		float: left;
+		width: 60px;
+		margin: 10px 0 0 10px;
+		font-family:Arial, Helvetica, sans-serif;
 		p {
-			line-height: 25px;
 			vertical-align: middle;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			width: 100%;
 			overflow: hidden;
 		}
+		.filename{
+			color: rgb(0, 0, 0);
+			font-size:14px;
+		}
+		.filesize{
+			line-height: 20px;
+			color:rgb(165, 165, 165);
+			font-size:12px;
+		}
 	}
-	.icon-file-download {
-		color: white;
-		background-color: #009eec;
+	.container-icon-download {
+		color: rgb(165, 165, 165);
 		display: inline-block;
-		width: 50px;
-		height: 50px;
 		position: absolute;
-		font-size: 50px;
 		text-decoration: none;
+		float: right;
 		right: 0;
 		top: 0;
 		text-align: center;
 		cursor: pointer;
-		border-radius: 0 4px 4px 0;
+		line-height:20px;
+		margin-top:15px;
+		margin-right:10px; 
+	}
+	.container-icon-download:before{
+		font-size: 20px;	
 	}
 }
 .em-widget-msg-wrapper {

@@ -105,6 +105,10 @@
 		color: white;
 	}
 }
+.em-widgetHeader-min:hover,
+.em-widgetHeader-audio:hover{
+	 cursor:pointer;
+}
 #em-widgetFileInput {
 	position: absolute;
 	right: -10000px;

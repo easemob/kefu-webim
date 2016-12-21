@@ -239,12 +239,6 @@ easemobim.channel = function ( config ) {
 			var msg = new Easemob.im.EmMessage('file', isHistory ? null : id),
 				file = file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id'));
 
-			if ( !file || !file.filetype || !config.FILETYPE[file.filetype.toLowerCase()] ) {
-				me.errorPrompt('不支持此文件');
-				easemobim.realFile.value = null;
-				return false;
-			}
-
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
 				file: file,
@@ -591,6 +585,7 @@ easemobim.channel = function ( config ) {
 								case 'file':
 									msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
 									msg.to = msgBody.to;
+									msg.filesize = msg.file_length;
 									me.sendFileMsg(msg, true);
 									break;
 								case 'txt':

@@ -45,6 +45,12 @@
 // todo add this icon
 .icon-file:before { content: "\e601"}
 
+.icon-attachment:before { content: "\76"}
+
+
+.icon-download:before { content: "\75"}
+
+
 .icon-camera:before,
 .icon-change:before,
 .icon-minimize:before,
@@ -81,6 +87,8 @@
 .icon-video:before,
 .icon-flower:before,
 .icon-file:before,
+.icon-attachment:before,
+.icon-download:before,
 
 .em-widget-agent-status.leave:after,
 .em-widget-agent-status.busy:after,
