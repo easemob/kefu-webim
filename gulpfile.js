@@ -10,7 +10,7 @@
 */
 
 var debug = false;
-const VERSION = '43.12.005';
+const VERSION = '43.12.006';
 
 const gulp = require('gulp');
 const postcss = require('gulp-postcss');

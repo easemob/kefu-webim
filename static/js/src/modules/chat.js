@@ -678,29 +678,16 @@
 
 				me.conn.open(op);
 
-				// init webRTC
-				if(utils.isSupportWebRTC){
-					// 视频功能灰度
-					// easemobim.api('getKefuOptions/audioVideo', {tenantId: config.tenantId}, function (msg) {
-					// 	if (
-					// 		msg.data
-					// 		&& msg.data.data
-					// 		&& msg.data.data[0]
-					// 		&& msg.data.data[0].optionValue === 'true'
-					// 	){
-					// 		easemobim.videoChat.init(me.conn, me.channel.send, config);
-					// 	}
-					// });
-					easemobim.api('graylist', {}, function (msg) {
-						if (
-							msg.data
-							&& msg.data.audioVideo
-							&& msg.data.audioVideo.indexOf(+config.tenantId)
-						){
-							easemobim.videoChat.init(me.conn, me.channel.send, config);
-						}
-					});
-				}
+				// init webRTC && 视频功能灰度
+				utils.isSupportWebRTC && easemobim.api('graylist', {}, function (msg) {
+					if (
+						msg.data
+						&& msg.data.audioVideo
+						&& ~msg.data.audioVideo.indexOf(+config.tenantId)
+					){
+						easemobim.videoChat.init(me.conn, me.channel.send, config);
+					}
+				});
 			}
 			, soundReminder: function () {
 				var me = this;
@@ -768,21 +755,29 @@
 					}
 				);
 				
-				!utils.isMobile && !utils.isTop && utils.on(easemobim.imBtn, utils.click, function () {
-					transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
-				});
+				if(!utils.isTop){
+					// 最小化
+					utils.on(document.querySelector('.em-widgetHeader-min'), 'click', function () {
+						transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
+					});
+
+					utils.on(easemobim.imBtn, utils.click, function () {
+						transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
+					});
+
+					utils.on(document, 'mouseover', function () {
+						transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
+					});
+				}
 				utils.on(easemobim.imChatBody, utils.click, function () {
 					easemobim.textarea.blur();
 					return false;
-				});
-				utils.on(document, 'mouseover', function () {
-					utils.isTop || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
 				});
 				utils.live('img.em-widget-imgview', 'click', function () {
 					easemobim.imgView.show(this.getAttribute('src'));
 				});
 
-				if (config.dragenable && !utils.isMobile && !utils.isTop) {//drag
+				if (config.dragenable && !utils.isTop) {
 					
 					easemobim.dragBar.style.cursor = 'move';
 
@@ -858,33 +853,29 @@
 				});
 
 				utils.live('button.js_robotTransferBtn', utils.click,  function () {
-					var that = this;
-
-					if ( that.clicked ) { return false; }
+					if ( this.clicked ) { return false; }
 
 					that.clicked = true;
-					me.transferToKf(that.getAttribute('data-id'), that.getAttribute('data-sessionid'));
+					me.transferToKf(this.getAttribute('data-id'), this.getAttribute('data-sessionid'));
 					return false;
 				});
 
 				//机器人列表
 				utils.live('button.js_robotbtn', utils.click, function () {
-					var that = this;
-
-					me.sendTextMsg(utils.html(that), null, {
+					me.sendTextMsg(utils.html(this), null, {
 						msgtype: {
-							choice: { menuid: that.getAttribute('data-id') }
+							choice: { menuid: this.getAttribute('data-id') }
 						}
 					});
 					return false;
 				});
 				
-				var handleSendBtn = function () {
-					if ( !me.readyHandled ) {
-						utils.addClass(easemobim.sendBtn, 'disabled');
-						return false;
-					}
-					utils.toggleClass(easemobim.sendBtn, 'disabled', !easemobim.textarea.value);
+				function handleSendBtn(){
+					utils.toggleClass(
+						easemobim.sendBtn,
+						'disabled',
+						!me.readyHandled || !easemobim.textarea.value
+					);
 				};
 
 				utils.on(easemobim.textarea, 'keyup', handleSendBtn);
@@ -997,12 +988,6 @@
 				//显示留言界面
 				utils.on(easemobim.noteBtn, 'click', function () {
 					easemobim.leaveMessage.show();
-				});
-
-				// 最小化
-				utils.on(document.querySelector('.em-widgetHeader-min'), 'click', function () {
-					transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
-					return false;
 				});
 
 				//hot key
