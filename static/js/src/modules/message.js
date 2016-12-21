@@ -141,8 +141,10 @@ Easemob.im.EmMessage.file = function ( id ) {
 Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 	var filename = this.filename;
 	var filesize;
-	//历史会话不返回文件length,暂时先隐藏处理
-	if(this.value.filesize && this.value.filesize >= 0){
+	// 历史会话中 filesize = 0
+	// 访客端发文件消息 filesize = undefined
+	// 需要过滤这两种情况，暂时只显示坐席发过来的文件大小
+	if(this.value.filesize > 0){
 		filesize = easemobim.utils.filesizeFormat(this.value.filesize);
 	}else{
 		filesize = '';

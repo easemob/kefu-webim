@@ -236,8 +236,7 @@ easemobim.channel = function ( config ) {
 
 		sendFile: function ( file, isHistory, id ) {
 
-			var msg = new Easemob.im.EmMessage('file', isHistory ? null : id),
-				file = file;
+			var msg = new Easemob.im.EmMessage('file', isHistory ? null : id);
 
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,

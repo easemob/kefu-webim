@@ -1,5 +1,6 @@
 #em-widgetDrag {
 	position: relative;
+
 	.drag-bar {
 		position: absolute;
 		z-index: 0;
@@ -23,6 +24,7 @@
 	border-radius: 4px;
 	text-decoration: none;
 	font-size: 13px;
+
 	i {
 		width: 30px;
 		display: inline-block;
@@ -37,13 +39,14 @@
 	background-color: white;
 	border-radius: 4px;
 }
+
 /*header*/
 .em-widgetHeader-wrapper {
 	height: 41px;
 	line-height: 41px;
 	border-top-left-radius: 4px;
 	border-top-right-radius: 4px;
-	box-shadow: 0 1px 1px rgba(255,255,255,.3) inset;
+	box-shadow: 0 1px 1px rgba(255, 255, 255, .3) inset;
 	cursor: default;
 }
 .em-widgetHeader-portrait {
@@ -73,7 +76,7 @@
 .em-widgetHeader-word-status {
 	margin-left: 4px;
 	color: #efefef;
-	color: rgba(255,255,255,.7);
+	color: rgba(255, 255, 255, .7);
 }
 .em-widgetHeader-min {
 	position: absolute;
@@ -82,7 +85,8 @@
 	width: 21px;
 	height: 21px;
 	border-radius: 4px;
-	box-shadow: 0 1px 1px rgba(255,255,255,.3) inset;
+	box-shadow: 0 1px 1px rgba(255, 255, 255, .3) inset;
+
 	&:before {
 		position: absolute;
 		left: -5px;
@@ -90,8 +94,8 @@
 		text-align: center;
 		color: white;
 	}
-	&:hover{
-	 cursor:pointer;
+	&:hover {
+		cursor: pointer;
 	}
 }
 .em-widgetHeader-wrapper .em-widgetHeader-audio {
@@ -100,6 +104,7 @@
 	top: 12px;
 	width: 21px;
 	height: 21px;
+
 	&:before {
 		position: absolute;
 		left: -5px;
@@ -107,11 +112,7 @@
 		text-align: center;
 		color: white;
 	}
-	&:hover{
-	 cursor:pointer;
+	&:hover {
+		cursor: pointer;
 	}
-}
-#em-widgetFileInput {
-	position: absolute;
-	right: -10000px;
 }

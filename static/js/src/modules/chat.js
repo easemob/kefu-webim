@@ -9,11 +9,11 @@
 
 		// todo: 把dom都移到里边
 		var doms = {
-			agentStatusText: utils.$Class('span.em-header-status-text')[0],
+			agentStatusText: document.querySelector('.em-header-status-text'),
 			agentStatusSymbol: utils.$Dom('em-widgetAgentStatus'),
-			nickName: utils.$Class('span.em-widgetHeader-nickname')[0],
-			nickname: document.querySelector('.em-widgetHeader-nickname')
+			nickname: document.querySelector('.em-widgetHeader-nickname'),
 			imgInput: document.querySelector('.upload-img-container'),
+			fileInput: document.querySelector('.upload-file-container')
 		};
 
 		easemobim.doms = doms;
@@ -911,51 +911,48 @@
 					});
 				}
 
-				//选中文件并发送
+				// 发送文件
 				utils.on(doms.fileInput, 'change', function () {
-
-					var fileElement = doms.fileInput;
-					var fileData;
+					var fileInput = doms.fileInput;
+					var file = fileInput.files && fileInput.files[0];
 					
-					if(!fileElement.value){
+					// 未选择文件
+					if(!fileInput.value){
 						return;
 					}
 
-					fileData = Easemob.im.Utils.getFileUrl(fileElement.getAttribute('id'));
-					
-					if(fileElement && fileElement.files[0].size > _const.UPLOAD_FILESIZE_LIMIT){
-						me.errorPrompt("文件太大");
-					}else{
-						me.sendFileMsg(fileData);
+					if(file.size < _const.UPLOAD_FILESIZE_LIMIT){
+						me.sendFileMsg(Easemob.im.Utils.getFileUrl('em-widget-file-input'));
+					}
+					else{
+						me.errorPrompt('文件大小不能超过10MB')
 					}	
 				});
 
-				//选中图片并发送
+				// 发送图片
 				utils.on(doms.imgInput, 'change', function () {
+					var fileInput = doms.imgInput;
+					var file = fileInput.files && fileInput.files[0];
+					var	fileType = file.name.split('.').pop().toLowerCase();
 
-					var fileElement = doms.imgInput;
-					var	postfix = fileElement.value.toLowerCase().split('.');
-					var	fileData;
-					var	imgType = _const.UPLOAD_IMG_TYPE;
-					var	fileType = postfix[postfix.length-1];
+					// 未选择文件
+					if(!fileInput.value){
+						return;
+					}
 
+					if(!~_const.UPLOAD_IMG_TYPE.indexOf(fileType)){
+						me.errorPrompt('不支持的图片格式');
+						return;
+					}
 
-						if(!fileElement.value){
-							return;
-						}
-
-						fileData = Easemob.im.Utils.getFileUrl(fileElement.getAttribute('id'))
-
-						if(!imgType.indexOf(fileType)) {
-							if(fileElement && fileElement.files[0].size > _const.UPLOAD_FILESIZE_LIMIT){
-								me.errorPrompt("文件太大");
-							}else{
-								me.sendImgMsg(fileData);
-							}
-						}else{
-							me.errorPrompt('请选择图片')
-						}
+					if(file.size < _const.UPLOAD_FILESIZE_LIMIT){
+						me.sendImgMsg(Easemob.im.Utils.getFileUrl('em-widget-img-input'));
+					}
+					else{
+						me.errorPrompt('文件大小不能超过10MB');
+					}
 				});
+
 				//hide face wrapper
 				utils.on(document, utils.click, function ( ev ) {
 					var e = window.event || ev,

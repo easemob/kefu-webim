@@ -363,7 +363,7 @@
 				config.user.username = msg.data.userId;
 				config.user.password = msg.data.userPassword;
 				if (utils.isTop) {
-					utils.set('root' + config.tenantId + config.emgroup, config.user.username)
+					utils.set('root' + config.tenantId + config.emgroup, config.user.username);
 				} else {
 					transfer.send({
 						event: 'setUser', data: {

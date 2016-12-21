@@ -90,6 +90,6 @@ easemobim.uploadShim = function ( config, chat ) {
 
 	//不支持异步upload的浏览器使用flash插件搞定
 	if ( !Easemob.im.Utils.isCanUploadFileAsync && Easemob.im.Utils.isCanUploadFile ) {
-		me.swfupload = me.uploadShim('em-widgetFileInput');
+		me.swfupload = me.uploadShim('em-widget-file-input');
 	}
 };

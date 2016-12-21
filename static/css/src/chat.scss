@@ -1,6 +1,7 @@
 .em-widget-chat {
 	padding-bottom: 20px;
 	overflow: hidden;
+
 	.icon-broken-pic {
 		color: #999;
 	}
@@ -19,6 +20,7 @@
 	width: 98%;
 	text-align: left;
 	margin-top: 15px;
+
 	.em-widget-msg-container {
 		background-color: white;
 	}
@@ -39,6 +41,7 @@
 	width: 98%;
 	text-align: left;
 	margin-top: 15px;
+
 	.em-widget-msg-container {
 		background-color: #e3ecfc;
 		float: right;
@@ -96,7 +99,6 @@
 	background-color: white;
 	border-bottom: 1px solid rgb(229, 229, 229);
 }
-
 // 文件消息
 .em-widget-msg-file {
 	.em-widget-msg-container {
@@ -110,17 +112,15 @@
 	.container-icon-attachment {
 		display: inline-block;
 		width: 52px;
-		height:52px;
+		height: 52px;
 		text-align: center;
 		float: left;
-		background-color:rgb(58, 164, 221);
-		left: 0;
+		background-color: rgb(58, 164, 221);
 		border-radius: 2px;
-		top: 0;
 		margin: 4px;
-		color:#fff;
+		color: #fff;
 	}
-	.container-icon-attachment:before{
+	.container-icon-attachment:before {
 		font-size: 50px;
 		line-height: 50px;
 	}
@@ -128,9 +128,10 @@
 		display: inline-block;
 		overflow: hidden;
 		float: left;
-		width: 60px;
-		margin: 10px 0 0 10px;
-		font-family:Arial, Helvetica, sans-serif;
+		width: 80px;
+		margin: 10px;
+		font-family: Arial, Helvetica, sans-serif;
+
 		p {
 			vertical-align: middle;
 			text-overflow: ellipsis;
@@ -138,32 +139,29 @@
 			width: 100%;
 			overflow: hidden;
 		}
-		.filename{
+		.filename {
 			color: rgb(0, 0, 0);
-			font-size:14px;
+			font-size: 14px;
 		}
-		.filesize{
+		.filesize {
 			line-height: 20px;
-			color:rgb(165, 165, 165);
-			font-size:12px;
+			color: rgb(165, 165, 165);
+			font-size: 12px;
 		}
 	}
 	.container-icon-download {
 		color: rgb(165, 165, 165);
 		display: inline-block;
-		position: absolute;
 		text-decoration: none;
 		float: right;
-		right: 0;
-		top: 0;
 		text-align: center;
 		cursor: pointer;
-		line-height:20px;
-		margin-top:15px;
-		margin-right:10px; 
+		line-height: 20px;
+		margin-top: 15px;
+		margin-right: 10px;
 	}
-	.container-icon-download:before{
-		font-size: 20px;	
+	.container-icon-download:before {
+		font-size: 20px;
 	}
 }
 .em-widget-msg-wrapper {
@@ -195,7 +193,6 @@
 		transform: rotate(360deg)
 	}
 }
-
 // 消息发送失败标志
 .em-widget-msg-status {
 	position: absolute;
@@ -207,11 +204,13 @@
 	top: 0;
 	bottom: 0;
 	cursor: pointer;
+
 	> i {
 		display: inline-block;
 		width: 30px;
 		height: 30px;
 		position: relative;
+
 		&:before {
 			color: red;
 		}
@@ -219,6 +218,7 @@
 			position: absolute;
 			top: 0;
 			right: 0;
+
 			&:before {
 				color: white;
 			}
