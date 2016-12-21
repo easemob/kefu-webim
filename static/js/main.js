@@ -18431,6 +18431,10 @@ if (!String.prototype.trim) {
 			Logout: '(离线)',
 			Other: ''
 		},
+
+		//上传文件大小限制
+		UPLOAD_FILESIZE_LIMIT : 1024 * 1024 * 10,
+		UPLOAD_IMG_TYPE :['gif','jpg','jpeg','png','bmp'],
 		// 坐席状态，dom上的className值
 		agentStatusClassName: {
 			Idle: 'online',
@@ -18440,7 +18444,7 @@ if (!String.prototype.trim) {
 			Hidden: 'hidden',
 			Offline: 'offline',
 			Logout: 'offline',
-			Other: 'em-hide'
+			Other: 'hide'
 		},
 		eventMessageText: {
 			TRANSFERING: '会话转接中，请稍候',
@@ -18469,6 +18473,7 @@ if (!String.prototype.trim) {
 
 	//每页历史记录条数
 	easemobim.LISTSPAN = 10;
+
 
 	//支持的图片格式
 	easemobim.PICTYPE = {
@@ -18930,13 +18935,6 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 					type: 'PUT'
 				}));
 				break;
-			case 'getKefuOptions/audioVideo':
-				easemobim.emajax(createObject({
-					url: '/tenants/' + msg.data.tenantId + '/options/audioVideo',
-					msg: msg,
-					excludeData: true
-				}));
-				break;
 			case 'graylist':
 				easemobim.emajax(createObject({
 					url: '/management/graylist',
@@ -19189,7 +19187,15 @@ Easemob.im.EmMessage.file = function ( id ) {
 }
 Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 	var filename = this.filename;
-	var filesize = easemobim.utils.filesizeFormat(this.value.filesize);
+	var filesize;
+	// 历史会话中 filesize = 0
+	// 访客端发文件消息 filesize = undefined
+	// 需要过滤这两种情况，暂时只显示坐席发过来的文件大小
+	if(this.value.filesize > 0){
+		filesize = easemobim.utils.filesizeFormat(this.value.filesize);
+	}else{
+		filesize = '';
+	}
 	var url = this.value.url;
 	return [
 		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
@@ -19198,17 +19204,17 @@ Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 				this.id
 				? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'>"
 				+ "<span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>"
-				+ "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + config.LOADING + "</div>"
+				+ "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + easemobim.LOADING + "</div>"
 				: "",
 				"<div class='em-widget-msg-container'>",
 					this.value === null
 					? "<i class='icon-broken-pic'></i>"
-					: '<i class="icon-file"></i>'
+					: '<i class="icon-attachment container-icon-attachment"></i>'
 					+ '<span class="file-info">'
-						+ '<p class="filename">' + filename + '</p>'
+						+ '<p class="filename ">' + filename + '</p>'
 						+ '<p class="filesize">' + filesize + '</p>'
 					+ '</span>'
-					+ "<a target='_blank' href='" + url + "' class='icon-file-download' title='"
+					+ "<a target='_blank' href='" + url + "' class='icon-download container-icon-download' title='"
 					+ filename + "'></a>",
 				"</div>",
 			"</div>",
@@ -19645,7 +19651,7 @@ easemobim.uploadShim = function ( config, chat ) {
 
 	//不支持异步upload的浏览器使用flash插件搞定
 	if ( !Easemob.im.Utils.isCanUploadFileAsync && Easemob.im.Utils.isCanUploadFile ) {
-		me.swfupload = me.uploadShim('em-widgetFileInput');
+		me.swfupload = me.uploadShim('em-widget-file-input');
 	}
 };
 
@@ -19972,7 +19978,7 @@ easemobim.channel = function ( config ) {
 
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
-				file: file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id')),
+				file: file,
 				accessToken: me.token,
 				to: config.toUser,
 				uploadError: function ( error ) {
@@ -20007,7 +20013,7 @@ easemobim.channel = function ( config ) {
 			if ( !isHistory ) {
 				me.setExt(msg);
 				me.conn.send(msg.body);
-				easemobim.realFile.value = '';
+
 				if ( Easemob.im.Utils.isCanUploadFileAsync ) {
 					me.appendDate(new Date().getTime(), config.toUser);
 					me.appendMsg(config.user.username, config.toUser, msg);
@@ -20019,14 +20025,7 @@ easemobim.channel = function ( config ) {
 
 		sendFile: function ( file, isHistory, id ) {
 
-			var msg = new Easemob.im.EmMessage('file', isHistory ? null : id),
-				file = file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id'));
-
-			if ( !file || !file.filetype || !config.FILETYPE[file.filetype.toLowerCase()] ) {
-				me.errorPrompt('不支持此文件');
-				easemobim.realFile.value = null;
-				return false;
-			}
+			var msg = new Easemob.im.EmMessage('file', isHistory ? null : id);
 
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
@@ -20062,7 +20061,6 @@ easemobim.channel = function ( config ) {
 			if ( !isHistory ) {
 				me.setExt(msg);
 				me.conn.send(msg.body);
-				easemobim.realFile.value = '';
 				if ( Easemob.im.Utils.isCanUploadFileAsync ) {
 					me.appendDate(new Date().getTime(), config.toUser);
 					me.appendMsg(config.user.username, config.toUser, msg);
@@ -20379,6 +20377,7 @@ easemobim.channel = function ( config ) {
 								case 'file':
 									msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
 									msg.to = msgBody.to;
+									msg.filesize = msg.file_length;
 									me.sendFileMsg(msg, true);
 									break;
 								case 'txt':
@@ -20809,9 +20808,11 @@ easemobim.videoChat = (function(dialog){
 
 		// todo: 把dom都移到里边
 		var doms = {
-			agentStatusText: utils.$Class('span.em-header-status-text')[0],
+			agentStatusText: document.querySelector('.em-header-status-text'),
 			agentStatusSymbol: utils.$Dom('em-widgetAgentStatus'),
-			nickname: document.querySelector('.em-widgetHeader-nickname')
+			nickname: document.querySelector('.em-widgetHeader-nickname'),
+			imgInput: document.querySelector('.upload-img-container'),
+			fileInput: document.querySelector('.upload-file-container')
 		};
 
 		easemobim.doms = doms;
@@ -20825,7 +20826,7 @@ easemobim.videoChat = (function(dialog){
 		easemobim.textarea = easemobim.send.querySelector('.em-widget-textarea');
 		easemobim.sendBtn = utils.$Dom('em-widgetSendBtn');
 		easemobim.faceBtn = easemobim.send.querySelector('.em-bar-face');
-		easemobim.realFile = utils.$Dom('em-widgetFileInput');
+		easemobim.sendImgBtn = utils.$Dom('em-widgetImg');
 		easemobim.sendFileBtn = utils.$Dom('em-widgetFile');
 		easemobim.noteBtn = utils.$Dom('em-widgetNote');
 		easemobim.dragHeader = utils.$Dom('em-widgetDrag');
@@ -21476,29 +21477,16 @@ easemobim.videoChat = (function(dialog){
 
 				me.conn.open(op);
 
-				// init webRTC
-				if(utils.isSupportWebRTC){
-					// 视频功能灰度
-					// easemobim.api('getKefuOptions/audioVideo', {tenantId: config.tenantId}, function (msg) {
-					// 	if (
-					// 		msg.data
-					// 		&& msg.data.data
-					// 		&& msg.data.data[0]
-					// 		&& msg.data.data[0].optionValue === 'true'
-					// 	){
-					// 		easemobim.videoChat.init(me.conn, me.channel.send, config);
-					// 	}
-					// });
-					easemobim.api('graylist', {}, function (msg) {
-						if (
-							msg.data
-							&& msg.data.audioVideo
-							&& msg.data.audioVideo.indexOf(+config.tenantId)
-						){
-							easemobim.videoChat.init(me.conn, me.channel.send, config);
-						}
-					});
-				}
+				// init webRTC && 视频功能灰度
+				utils.isSupportWebRTC && easemobim.api('graylist', {}, function (msg) {
+					if (
+						msg.data
+						&& msg.data.audioVideo
+						&& ~msg.data.audioVideo.indexOf(+config.tenantId)
+					){
+						easemobim.videoChat.init(me.conn, me.channel.send, config);
+					}
+				});
 			}
 			, soundReminder: function () {
 				var me = this;
@@ -21566,21 +21554,29 @@ easemobim.videoChat = (function(dialog){
 					}
 				);
 				
-				!utils.isMobile && !utils.isTop && utils.on(easemobim.imBtn, utils.click, function () {
-					transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
-				});
+				if(!utils.isTop){
+					// 最小化
+					utils.on(document.querySelector('.em-widgetHeader-min'), 'click', function () {
+						transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
+					});
+
+					utils.on(easemobim.imBtn, utils.click, function () {
+						transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
+					});
+
+					utils.on(document, 'mouseover', function () {
+						transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
+					});
+				}
 				utils.on(easemobim.imChatBody, utils.click, function () {
 					easemobim.textarea.blur();
 					return false;
-				});
-				utils.on(document, 'mouseover', function () {
-					utils.isTop || transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
 				});
 				utils.live('img.em-widget-imgview', 'click', function () {
 					easemobim.imgView.show(this.getAttribute('src'));
 				});
 
-				if (config.dragenable && !utils.isMobile && !utils.isTop) {//drag
+				if (config.dragenable && !utils.isTop) {
 					
 					easemobim.dragBar.style.cursor = 'move';
 
@@ -21656,33 +21652,29 @@ easemobim.videoChat = (function(dialog){
 				});
 
 				utils.live('button.js_robotTransferBtn', utils.click,  function () {
-					var that = this;
-
-					if ( that.clicked ) { return false; }
+					if ( this.clicked ) { return false; }
 
 					that.clicked = true;
-					me.transferToKf(that.getAttribute('data-id'), that.getAttribute('data-sessionid'));
+					me.transferToKf(this.getAttribute('data-id'), this.getAttribute('data-sessionid'));
 					return false;
 				});
 
 				//机器人列表
 				utils.live('button.js_robotbtn', utils.click, function () {
-					var that = this;
-
-					me.sendTextMsg(utils.html(that), null, {
+					me.sendTextMsg(utils.html(this), null, {
 						msgtype: {
-							choice: { menuid: that.getAttribute('data-id') }
+							choice: { menuid: this.getAttribute('data-id') }
 						}
 					});
 					return false;
 				});
 				
-				var handleSendBtn = function () {
-					if ( !me.readyHandled ) {
-						utils.addClass(easemobim.sendBtn, 'disabled');
-						return false;
-					}
-					utils.toggleClass(easemobim.sendBtn, 'disabled', !easemobim.textarea.value);
+				function handleSendBtn(){
+					utils.toggleClass(
+						easemobim.sendBtn,
+						'disabled',
+						!me.readyHandled || !easemobim.textarea.value
+					);
 				};
 
 				utils.on(easemobim.textarea, 'keyup', handleSendBtn);
@@ -21709,9 +21701,46 @@ easemobim.videoChat = (function(dialog){
 					});
 				}
 
-				//选中文件并发送
-				utils.on(easemobim.realFile, 'change', function () {
-					easemobim.realFile.value && me.sendImgMsg();
+				// 发送文件
+				utils.on(doms.fileInput, 'change', function () {
+					var fileInput = doms.fileInput;
+					var file = fileInput.files && fileInput.files[0];
+					
+					// 未选择文件
+					if(!fileInput.value){
+						return;
+					}
+
+					if(file.size < _const.UPLOAD_FILESIZE_LIMIT){
+						me.sendFileMsg(Easemob.im.Utils.getFileUrl('em-widget-file-input'));
+					}
+					else{
+						me.errorPrompt('文件大小不能超过10MB')
+					}	
+				});
+
+				// 发送图片
+				utils.on(doms.imgInput, 'change', function () {
+					var fileInput = doms.imgInput;
+					var file = fileInput.files && fileInput.files[0];
+					var	fileType = file.name.split('.').pop().toLowerCase();
+
+					// 未选择文件
+					if(!fileInput.value){
+						return;
+					}
+
+					if(!~_const.UPLOAD_IMG_TYPE.indexOf(fileType)){
+						me.errorPrompt('不支持的图片格式');
+						return;
+					}
+
+					if(file.size < _const.UPLOAD_FILESIZE_LIMIT){
+						me.sendImgMsg(Easemob.im.Utils.getFileUrl('em-widget-img-input'));
+					}
+					else{
+						me.errorPrompt('文件大小不能超过10MB');
+					}
 				});
 
 				//hide face wrapper
@@ -21734,21 +21763,30 @@ easemobim.videoChat = (function(dialog){
 						return false;
 					}
 					if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
+						me.errorPrompt('当前浏览器需要安装flash发送wenj');
+						return false;	
+					}
+					doms.fileInput.click();
+				});
+				utils.on(easemobim.sendImgBtn, 'touchend', function () {
+					easemobim.textarea.blur();
+				});
+				
+				utils.on(easemobim.sendImgBtn, 'click', function () {
+					if ( !me.readyHandled ) {
+						me.errorPrompt('正在连接中...');
+						return false;
+					}
+					if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
 						me.errorPrompt('当前浏览器需要安装flash发送图片');
 						return false;	
 					}
-					easemobim.realFile.click();
+					doms.imgInput.click();
 				});
 
 				//显示留言界面
 				utils.on(easemobim.noteBtn, 'click', function () {
 					easemobim.leaveMessage.show();
-				});
-
-				// 最小化
-				utils.on(document.querySelector('.em-widgetHeader-min'), 'click', function () {
-					transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
-					return false;
 				});
 
 				//hot key
@@ -22245,7 +22283,7 @@ easemobim.videoChat = (function(dialog){
 	function initUI(config, callback) {
 		var iframe = document.getElementById('EasemobKefuWebimIframe');
 
-		iframe.src = config.domain + '/webim/transfer.html?v=43.12.005';
+		iframe.src = config.domain + '/webim/transfer.html?v=43.12.006';
 		utils.on(iframe, 'load', function() {
 			easemobim.getData = new easemobim.Transfer('EasemobKefuWebimIframe', 'data');
 			callback(config);
@@ -22490,7 +22528,7 @@ easemobim.videoChat = (function(dialog){
 				config.user.username = msg.data.userId;
 				config.user.password = msg.data.userPassword;
 				if (utils.isTop) {
-					utils.set('root' + config.tenantId + config.emgroup, config.user.username)
+					utils.set('root' + config.tenantId + config.emgroup, config.user.username);
 				} else {
 					transfer.send({
 						event: 'setUser', data: {

@@ -1185,7 +1185,7 @@ easemobim.titleSlide = function () {
 	'use strict';
 	var utils = easemobim.utils;
 	easemobim.config = easemobim.config || {};
-	easemobim.version = '43.12.005';
+	easemobim.version = '43.12.006';
 	easemobim.tenants = {};
 
 	var DEFAULT_CONFIG = {
@@ -1248,7 +1248,7 @@ easemobim.titleSlide = function () {
 		_config.domain = _config.domain || baseConfig.domain;
 		_config.path = _config.path || (baseConfig.domain + '/webim');
 		_config.staticPath = _config.staticPath || (baseConfig.domain + '/webim/static');
-	};
+	}
 
 	/*
 	 * @param: {String} 技能组名称，选填
