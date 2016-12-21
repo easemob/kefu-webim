@@ -140,7 +140,13 @@ Easemob.im.EmMessage.file = function ( id ) {
 }
 Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 	var filename = this.filename;
-	var filesize = easemobim.utils.filesizeFormat(this.value.filesize);
+	var filesize;
+	//历史会话不返回文件length,暂时先隐藏处理
+	if(this.value.filesize && this.value.filesize >= 0){
+		filesize = easemobim.utils.filesizeFormat(this.value.filesize);
+	}else{
+		filesize = '';
+	}
 	var url = this.value.url;
 	return [
 		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
@@ -149,17 +155,17 @@ Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 				this.id
 				? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'>"
 				+ "<span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>"
-				+ "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + config.LOADING + "</div>"
+				+ "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + easemobim.LOADING + "</div>"
 				: "",
 				"<div class='em-widget-msg-container'>",
 					this.value === null
 					? "<i class='icon-broken-pic'></i>"
-					: '<i class="icon-file"></i>'
+					: '<i class="icon-attachment container-icon-attachment"></i>'
 					+ '<span class="file-info">'
-						+ '<p class="filename">' + filename + '</p>'
+						+ '<p class="filename ">' + filename + '</p>'
 						+ '<p class="filesize">' + filesize + '</p>'
 					+ '</span>'
-					+ "<a target='_blank' href='" + url + "' class='icon-file-download' title='"
+					+ "<a target='_blank' href='" + url + "' class='icon-download container-icon-download' title='"
 					+ filename + "'></a>",
 				"</div>",
 			"</div>",

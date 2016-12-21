@@ -90,6 +90,9 @@
 		text-align: center;
 		color: white;
 	}
+	&:hover{
+	 cursor:pointer;
+	}
 }
 .em-widgetHeader-wrapper .em-widgetHeader-audio {
 	position: absolute;
@@ -103,6 +106,9 @@
 		top: -5px;
 		text-align: center;
 		color: white;
+	}
+	&:hover{
+	 cursor:pointer;
 	}
 }
 #em-widgetFileInput {

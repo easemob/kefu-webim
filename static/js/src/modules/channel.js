@@ -189,7 +189,7 @@ easemobim.channel = function ( config ) {
 
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
-				file: file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id')),
+				file: file,
 				accessToken: me.token,
 				to: config.toUser,
 				uploadError: function ( error ) {
@@ -224,7 +224,7 @@ easemobim.channel = function ( config ) {
 			if ( !isHistory ) {
 				me.setExt(msg);
 				me.conn.send(msg.body);
-				easemobim.realFile.value = '';
+
 				if ( Easemob.im.Utils.isCanUploadFileAsync ) {
 					me.appendDate(new Date().getTime(), config.toUser);
 					me.appendMsg(config.user.username, config.toUser, msg);
@@ -237,13 +237,7 @@ easemobim.channel = function ( config ) {
 		sendFile: function ( file, isHistory, id ) {
 
 			var msg = new Easemob.im.EmMessage('file', isHistory ? null : id),
-				file = file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id'));
-
-			if ( !file || !file.filetype || !config.FILETYPE[file.filetype.toLowerCase()] ) {
-				me.errorPrompt('不支持此文件');
-				easemobim.realFile.value = null;
-				return false;
-			}
+				file = file;
 
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
@@ -279,7 +273,6 @@ easemobim.channel = function ( config ) {
 			if ( !isHistory ) {
 				me.setExt(msg);
 				me.conn.send(msg.body);
-				easemobim.realFile.value = '';
 				if ( Easemob.im.Utils.isCanUploadFileAsync ) {
 					me.appendDate(new Date().getTime(), config.toUser);
 					me.appendMsg(config.user.username, config.toUser, msg);
@@ -596,6 +589,7 @@ easemobim.channel = function ( config ) {
 								case 'file':
 									msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
 									msg.to = msgBody.to;
+									msg.filesize = msg.file_length;
 									me.sendFileMsg(msg, true);
 									break;
 								case 'txt':
