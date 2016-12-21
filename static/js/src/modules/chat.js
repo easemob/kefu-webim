@@ -26,6 +26,7 @@
 		easemobim.sendBtn = utils.$Dom('em-widgetSendBtn');
 		easemobim.faceBtn = easemobim.send.querySelector('.em-bar-face');
 		easemobim.realFile = utils.$Dom('em-widgetFileInput');
+		easemobim.sendImgBtn = utils.$Dom('em-widgetImg');
 		easemobim.sendFileBtn = utils.$Dom('em-widgetFile');
 		easemobim.noteBtn = utils.$Dom('em-widgetNote');
 		easemobim.dragHeader = utils.$Dom('em-widgetDrag');
@@ -911,7 +912,34 @@
 
 				//选中文件并发送
 				utils.on(easemobim.realFile, 'change', function () {
-					easemobim.realFile.value && me.sendImgMsg();
+
+					var fileData = easemobim.realFile,
+						postfix = fileData.value.toLowerCase().split('.'),
+						fileType = postfix[postfix.length-1];
+						
+					//处理取消发送文件
+					if(typeof(fileData.files[0])=='undefined'){
+						return
+					}
+
+					if(fileData && fileData.files[0].size>1024*1024*10){
+						me.errorPrompt("文件太大");
+					}else{
+						if(fileType === 'gif'||fileType === 'jpg'||fileType === 'bmp'
+||fileType ==='png'||fileType ==='jpeg'){
+							if(me.uploadType === 'img'){
+								me.sendImgMsg();
+							}else{
+								me.sendFileMsg();
+							}
+						}else{
+							if(me.uploadType === 'files'){
+								me.sendFileMsg();
+							}else{
+								me.errorPrompt('请选择图片')
+							}
+						}
+					}	
 				});
 
 				//hide face wrapper
@@ -934,9 +962,26 @@
 						return false;
 					}
 					if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
+						me.errorPrompt('当前浏览器需要安装flash发送wenj');
+						return false;	
+					}
+					me.uploadType = 'files';
+					easemobim.realFile.click();
+				});
+				utils.on(easemobim.sendImgBtn, 'touchend', function () {
+					easemobim.textarea.blur();
+				});
+				
+				utils.on(easemobim.sendImgBtn, 'click', function () {
+					if ( !me.readyHandled ) {
+						me.errorPrompt('正在连接中...');
+						return false;
+					}
+					if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
 						me.errorPrompt('当前浏览器需要安装flash发送图片');
 						return false;	
 					}
+					me.uploadType = 'img';
 					easemobim.realFile.click();
 				});
 
