@@ -12,6 +12,8 @@
 			agentStatusText: utils.$Class('span.em-header-status-text')[0],
 			agentStatusSymbol: utils.$Dom('em-widgetAgentStatus'),
 			nickName: utils.$Class('span.em-widgetHeader-nickname')[0],
+			fileInput: document.querySelector('.upload-file-container'),
+			imgInput: document.querySelector('.upload-img-container'),
 		};
 
 		easemobim.doms = doms;
@@ -25,8 +27,7 @@
 		easemobim.textarea = easemobim.send.getElementsByTagName('textarea')[0];
 		easemobim.sendBtn = utils.$Dom('em-widgetSendBtn');
 		easemobim.faceBtn = easemobim.send.getElementsByTagName('i')[0];
-		easemobim.realFile = document.querySelector('.upload-file-container');
-		easemobim.realImg =	document.querySelector('.upload-img-container');
+
 		easemobim.sendImgBtn = utils.$Dom('em-widgetImg');
 		easemobim.sendFileBtn = utils.$Dom('em-widgetFile');
 		easemobim.noteBtn = utils.$Dom('em-widgetNote');
@@ -903,33 +904,49 @@
 				}
 
 				//选中文件并发送
-				utils.on(easemobim.realFile, 'change', function () {
+				utils.on(doms.fileInput, 'change', function () {
 
-					var fileData = easemobim.realFile;
+					var fileElement = doms.fileInput,
+						fileData ={};
 					
-					if(typeof(fileData.files[0])=='undefined'){
-						return
+					if(!fileElement.value){
+						return;
 					}
 
-					if(fileData && fileData.files[0].size > easemobim.UPLOAD_FILESIZE_LIMIT){
+					fileData = Easemob.im.Utils.getFileUrl(fileElement.getAttribute('id'));
+					
+					if(fileElement && fileElement.files[0].size > _const.UPLOAD_FILESIZE_LIMIT){
 						me.errorPrompt("文件太大");
 					}else{
-						me.sendFileMsg();
+						me.sendFileMsg(fileData);
 					}	
 				});
 
 				//选中图片并发送
-				utils.on(easemobim.realImg, 'change', function () {
-					var fileData = easemobim.realImg,
-						postfix = fileData.value.toLowerCase().split('.'),
+				utils.on(doms.imgInput, 'change', function () {
+
+					var fileElement = doms.imgInput,
+						postfix = fileElement.value.toLowerCase().split('.'),
+						fileData = {},
+						imgType = _const.UPLOAD_IMG_TYPE,
 						fileType = postfix[postfix.length-1];
 
-						if(fileType === 'gif'||fileType === 'jpg'||fileType === 'bmp'
-||fileType ==='png'||fileType ==='jpeg'){
-							if(fileData && fileData.files[0].size > easemobim.UPLOAD_FILESIZE_LIMIT){
+						if(!fileElement.value){
+							return;
+						}
+
+						fileData = Easemob.im.Utils.getFileUrl(fileElement.getAttribute('id'))
+
+						if( fileType === imgType[0]||
+							fileType === imgType[1]||
+							fileType === imgType[2]||
+							fileType === imgType[3]||
+							fileType === imgType[4]
+							) {
+							if(fileElement && fileElement.files[0].size > _const.UPLOAD_FILESIZE_LIMIT){
 								me.errorPrompt("文件太大");
 							}else{
-								me.sendImgMsg();
+								me.sendImgMsg(fileData);
 							}
 						}else{
 							me.errorPrompt('请选择图片')
@@ -958,7 +975,7 @@
 						me.errorPrompt('当前浏览器需要安装flash发送wenj');
 						return false;	
 					}
-					easemobim.realFile.click();
+					doms.fileInput.click();
 				});
 				utils.on(easemobim.sendImgBtn, 'touchend', function () {
 					easemobim.textarea.blur();
@@ -973,7 +990,7 @@
 						me.errorPrompt('当前浏览器需要安装flash发送图片');
 						return false;	
 					}
-					easemobim.realImg.click();
+					doms.imgInput.click();
 				});
 
 				//显示留言界面

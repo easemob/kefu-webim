@@ -10,6 +10,10 @@
 			Logout: '(离线)',
 			Other: ''
 		},
+
+		//上传文件大小限制
+		UPLOAD_FILESIZE_LIMIT : 1024 * 1024 * 10,
+		UPLOAD_IMG_TYPE :['gif','jpg','jpeg','png','bmp'],
 		// 坐席状态，dom上的className值
 		agentStatusClassName: {
 			Idle: 'online',
@@ -49,8 +53,6 @@
 	//每页历史记录条数
 	easemobim.LISTSPAN = 10;
 
-	//上传文件大小限制
-	easemobim.UPLOAD_FILESIZE_LIMIT = 1024 * 1024 * 10;
 
 	//支持的图片格式
 	easemobim.PICTYPE = {

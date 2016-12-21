@@ -189,7 +189,7 @@ easemobim.channel = function ( config ) {
 
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
-				file: file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id')),
+				file: file,
 				accessToken: me.token,
 				to: config.toUser,
 				uploadError: function ( error ) {
@@ -224,7 +224,7 @@ easemobim.channel = function ( config ) {
 			if ( !isHistory ) {
 				me.setExt(msg);
 				me.conn.send(msg.body);
-				easemobim.realFile.value = '';
+
 				if ( Easemob.im.Utils.isCanUploadFileAsync ) {
 					me.appendDate(new Date().getTime(), config.toUser);
 					me.appendMsg(config.user.username, config.toUser, msg);
@@ -237,7 +237,7 @@ easemobim.channel = function ( config ) {
 		sendFile: function ( file, isHistory, id ) {
 
 			var msg = new Easemob.im.EmMessage('file', isHistory ? null : id),
-				file = file || Easemob.im.Utils.getFileUrl(easemobim.realFile.getAttribute('id'));
+				file = file;
 
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
@@ -273,7 +273,6 @@ easemobim.channel = function ( config ) {
 			if ( !isHistory ) {
 				me.setExt(msg);
 				me.conn.send(msg.body);
-				easemobim.realFile.value = '';
 				if ( Easemob.im.Utils.isCanUploadFileAsync ) {
 					me.appendDate(new Date().getTime(), config.toUser);
 					me.appendMsg(config.user.username, config.toUser, msg);
