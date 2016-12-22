@@ -3,7 +3,7 @@
  */
 easemobim.satisfaction = function ( chat ) {
 
-	var dom = document.querySelector('.em-widget-dialog.em-widget-satisfaction-dialog');
+	var dom = document.querySelector('.em-widget-satisfaction-dialog');
 	var utils = easemobim.utils;
 	var satisfactionEntry = document.querySelector('.em-widget-satisfaction');
 	var starsUl = dom.getElementsByTagName('ul')[0];
@@ -58,8 +58,9 @@ easemobim.satisfaction = function ( chat ) {
 		if ( !cur ) {
 			return false;
 		}
-		for ( var i = 0; i < lis.length; i++ ) {
-			if ( i < Number(cur) ) {
+		for ( var i = 0, l = lis.length; i < l; i++) {
+			console.log(i);
+			if (i < +cur) {
 				utils.addClass(lis[i], 'sel');
 			} else {
 				utils.removeClass(lis[i], 'sel');

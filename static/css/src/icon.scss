@@ -18,6 +18,7 @@
 .icon-easemob:before { content: "\45"; }
 .icon-min:before { content: "\46"; }
 .icon-good:before { content: "\47"; }
+// fake: IE8 满意度评价会有兼容问题，需替换字符
 .icon-star:before { content: "\48"; }
 .icon-broken-pic:before { content: "\49"; }
 .icon-corner-left:before { content: "\4b"; }

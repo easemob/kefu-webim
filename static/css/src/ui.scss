@@ -233,20 +233,21 @@ object {
 		margin: 0 auto;
 		text-align: center;
 		li {
+			// fake: IE8 满意度评价会有兼容问题，修改图标需替换字符
+			font-family: 'easemobim' !important;
 			display: inline-block;
 			color: #ccc;
-			&:before {
-				position: relative;
-				width: 55px;
-				height: 55px;
-				line-height: 55px;
-				cursor: pointer;
+			position: relative;
+			width: 55px;
+			height: 55px;
+			line-height: 55px;
+			cursor: pointer;
+			font-size: 60px;
 
-				width: 80px\9;
-				height: 80px\9;
-				zoom: 50%\9;
-				font-size: 60px;
-			}
+			width: 80px\9;
+			height: 80px\9;
+			zoom: 50%\9;
+
 			&.sel {
 				color: #ffb31a;
 			}

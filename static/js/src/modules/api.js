@@ -219,6 +219,22 @@
 					excludeData: true
 				}));
 				break;
+			case 'getCurrentServiceSession':
+				easemobim.emajax(createObject({
+					url: '/v1/webimplugin/tenant/'
+						+ msg.data.tenantId
+						+ '/visitors/'
+						+ msg.data.id
+						+ '/CurrentServiceSession?techChannelInfo='
+						+ msg.data.orgName + '%23'
+						+ msg.data.appName + '%23'
+						+ msg.data.imServiceNumber
+						+ '&tenantId='
+						+ msg.data.tenantId,
+					msg: msg,
+					excludeData: true
+				}));
+				break;
 			default:
 				break;
 		}

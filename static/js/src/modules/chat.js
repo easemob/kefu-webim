@@ -75,6 +75,11 @@
 				if (me.readyHandled) return;
 				me.readyHandled = true;
 
+				// bug fix:
+				// minimum = fales 时, 或者 访客回呼模式 调用easemobim.bind时显示问题
+				if(config.minimum === false || config.eventCollector === true){
+					transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
+				}
 				if ( info && config.user ) {
 					config.user.token = config.user.token || info.accessToken;
 				}
@@ -82,9 +87,9 @@
 				easemobim.leaveMessage && easemobim.leaveMessage.auth(me.token, config);
 
 				// 发送用于回呼访客的命令消息
-				if(!config.cachedCommandMessage){
-					me.sendTextMsg('', false, config.cachedCommandMessage);
-					config.cachedCommandMessage = null;
+				if(this.cachedCommandMessage){
+					me.sendTextMsg('', false, this.cachedCommandMessage);
+					this.cachedCommandMessage = null;
 				}
 				if ( utils.isTop ) {
 					//get visitor
@@ -855,7 +860,7 @@
 				utils.live('button.js_robotTransferBtn', utils.click,  function () {
 					if ( this.clicked ) { return false; }
 
-					that.clicked = true;
+					this.clicked = true;
 					me.transferToKf(this.getAttribute('data-id'), this.getAttribute('data-sessionid'));
 					return false;
 				});

@@ -93,23 +93,47 @@
 	}
 
 	function _reportVisitor(username){
+		// 获取关联信息
 		api('getRelevanceList', {
 			tenantId: _config.tenantId
 		}, function(msg) {
 			if (!msg.data.length) {
 				throw '未创建关联';
 			}
+			var splited = _config.appKey.split('#');
 			var relevanceList = msg.data[0];
-			var orgName = relevanceList.orgName;
-			var appName = relevanceList.appName;
+			var orgName = splited[0] || relevanceList.orgName;
+			var appName = splited[1] || relevanceList.appName;
 			var imServiceNumber = relevanceList.imServiceNumber;
+
+			_config.restServer = _config.restServer || relevanceList.restDomain;
+			var cluster = _config.restServer ? _config.restServer.match(/vip\d/) : '';
+			cluster = cluster && cluster.length ? '-' + cluster[0] : '';
+			_config.xmppServer = _config.xmppServer || 'im-api' + cluster + '.easemob.com';
+
 			_gid = orgName + '#' + appName + '_' + username;
 
 			_polling = new Polling(function(){
 				_reportData('VISITOR', _gid);
 			}, POLLING_INTERVAL);
 
-			_polling.start();
+			// 获取当前会话信息
+			api('getCurrentServiceSession', {
+				tenantId: _config.tenantId,
+				orgName: orgName,
+				appName: appName,
+				imServiceNumber: imServiceNumber,
+				id: username
+			}, function(msg){
+				// 没有会话数据，则开始轮询
+				if(!msg.data){
+					_polling.start();
+				}
+				// 机器人接待的会话，也需要轮询
+				else if(msg.data && msg.data.robotId){
+					_polling.start();
+				}
+			});
 		});
 	}
 
