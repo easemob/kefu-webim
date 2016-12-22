@@ -18942,6 +18942,22 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 					excludeData: true
 				}));
 				break;
+			case 'getCurrentServiceSession':
+				easemobim.emajax(createObject({
+					url: '/v1/webimplugin/tenant/'
+						+ msg.data.tenantId
+						+ '/visitors/'
+						+ msg.data.id
+						+ '/CurrentServiceSession?techChannelInfo='
+						+ msg.data.orgName + '%23'
+						+ msg.data.appName + '%23'
+						+ msg.data.imServiceNumber
+						+ '&tenantId='
+						+ msg.data.tenantId,
+					msg: msg,
+					excludeData: true
+				}));
+				break;
 			default:
 				break;
 		}
@@ -19460,7 +19476,7 @@ easemobim.paste = function ( chat ) {
  */
 easemobim.satisfaction = function ( chat ) {
 
-	var dom = document.querySelector('.em-widget-dialog.em-widget-satisfaction-dialog');
+	var dom = document.querySelector('.em-widget-satisfaction-dialog');
 	var utils = easemobim.utils;
 	var satisfactionEntry = document.querySelector('.em-widget-satisfaction');
 	var starsUl = dom.getElementsByTagName('ul')[0];
@@ -19515,8 +19531,9 @@ easemobim.satisfaction = function ( chat ) {
 		if ( !cur ) {
 			return false;
 		}
-		for ( var i = 0; i < lis.length; i++ ) {
-			if ( i < Number(cur) ) {
+		for ( var i = 0, l = lis.length; i < l; i++) {
+			console.log(i);
+			if (i < +cur) {
 				utils.addClass(lis[i], 'sel');
 			} else {
 				utils.removeClass(lis[i], 'sel');
@@ -20874,6 +20891,11 @@ easemobim.videoChat = (function(dialog){
 				if (me.readyHandled) return;
 				me.readyHandled = true;
 
+				// bug fix:
+				// minimum = fales 时, 或者 访客回呼模式 调用easemobim.bind时显示问题
+				if(config.minimum === false || config.eventCollector === true){
+					transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
+				}
 				if ( info && config.user ) {
 					config.user.token = config.user.token || info.accessToken;
 				}
@@ -20881,9 +20903,9 @@ easemobim.videoChat = (function(dialog){
 				easemobim.leaveMessage && easemobim.leaveMessage.auth(me.token, config);
 
 				// 发送用于回呼访客的命令消息
-				if(!config.cachedCommandMessage){
-					me.sendTextMsg('', false, config.cachedCommandMessage);
-					config.cachedCommandMessage = null;
+				if(this.cachedCommandMessage){
+					me.sendTextMsg('', false, this.cachedCommandMessage);
+					this.cachedCommandMessage = null;
 				}
 				if ( utils.isTop ) {
 					//get visitor
@@ -21654,7 +21676,7 @@ easemobim.videoChat = (function(dialog){
 				utils.live('button.js_robotTransferBtn', utils.click,  function () {
 					if ( this.clicked ) { return false; }
 
-					that.clicked = true;
+					this.clicked = true;
 					me.transferToKf(this.getAttribute('data-id'), this.getAttribute('data-sessionid'));
 					return false;
 				});
@@ -22120,23 +22142,47 @@ easemobim.videoChat = (function(dialog){
 	}
 
 	function _reportVisitor(username){
+		// 获取关联信息
 		api('getRelevanceList', {
 			tenantId: _config.tenantId
 		}, function(msg) {
 			if (!msg.data.length) {
 				throw '未创建关联';
 			}
+			var splited = _config.appKey.split('#');
 			var relevanceList = msg.data[0];
-			var orgName = relevanceList.orgName;
-			var appName = relevanceList.appName;
+			var orgName = splited[0] || relevanceList.orgName;
+			var appName = splited[1] || relevanceList.appName;
 			var imServiceNumber = relevanceList.imServiceNumber;
+
+			_config.restServer = _config.restServer || relevanceList.restDomain;
+			var cluster = _config.restServer ? _config.restServer.match(/vip\d/) : '';
+			cluster = cluster && cluster.length ? '-' + cluster[0] : '';
+			_config.xmppServer = _config.xmppServer || 'im-api' + cluster + '.easemob.com';
+
 			_gid = orgName + '#' + appName + '_' + username;
 
 			_polling = new Polling(function(){
 				_reportData('VISITOR', _gid);
 			}, POLLING_INTERVAL);
 
-			_polling.start();
+			// 获取当前会话信息
+			api('getCurrentServiceSession', {
+				tenantId: _config.tenantId,
+				orgName: orgName,
+				appName: appName,
+				imServiceNumber: imServiceNumber,
+				id: username
+			}, function(msg){
+				// 没有会话数据，则开始轮询
+				if(!msg.data){
+					_polling.start();
+				}
+				// 机器人接待的会话，也需要轮询
+				else if(msg.data && msg.data.robotId){
+					_polling.start();
+				}
+			});
 		});
 	}
 
@@ -22171,13 +22217,14 @@ easemobim.videoChat = (function(dialog){
 	var eventCollector = easemobim.eventCollector;
 	var chat;
 	var afterChatReady;
+	var config;
 
 	getConfig();
 
 	function getConfig() {
 		if (utils.isTop) {
 			var tenantId = utils.query('tenantId');
-			var config = {};
+			config = {};
 			//get config from referrer's config
 			try {
 				config = JSON.parse(utils.code.decode(utils.getStore('emconfig' + tenantId)));
@@ -22231,7 +22278,15 @@ easemobim.videoChat = (function(dialog){
 			window.transfer = new easemobim.Transfer(null, 'main').listen(function(msg) {
 				switch (msg.event) {
 					case easemobim.EVENTS.SHOW.event:
-						chatEntry.open();
+						if(eventCollector.isStarted()){
+							// 停止上报访客
+							eventCollector.stopReporting();
+							chatEntry.init(config);
+							chatEntry.open();
+						}
+						else{
+							chatEntry.open();
+						}
 						break;
 					case easemobim.EVENTS.CLOSE.event:
 						chatEntry.close();
@@ -22249,6 +22304,8 @@ easemobim.videoChat = (function(dialog){
 						chat = easemobim.chat(msg.data);
 						window.transfer.to = msg.data.parentId;
 						initUI(msg.data, initAfterUI);
+						// cache config
+						config = msg.data;
 						break;
 					default:
 						break;
@@ -22272,7 +22329,11 @@ easemobim.videoChat = (function(dialog){
 			eventCollector.startToReport(config, function(targetUserInfo) {
 				chatEntry.init(config, targetUserInfo);
 			});
-			// config.hide = true;
+			// 增加访客主动联系客服逻辑
+			utils.one(easemobim.imBtn, 'click', function(){
+				chatEntry.init(config);
+				chatEntry.open();
+			});
 		}
 		else {
 			// 获取关联，创建访客，调用聊天窗口
@@ -22283,7 +22344,7 @@ easemobim.videoChat = (function(dialog){
 	function initUI(config, callback) {
 		var iframe = document.getElementById('EasemobKefuWebimIframe');
 
-		iframe.src = config.domain + '/webim/transfer.html?v=43.12.006';
+		iframe.src = config.domain + '/webim/transfer.html?v=43.12.007';
 		utils.on(iframe, 'load', function() {
 			easemobim.getData = new easemobim.Transfer('EasemobKefuWebimIframe', 'data');
 			callback(config);
@@ -22402,7 +22463,6 @@ easemobim.videoChat = (function(dialog){
 				config.channelid = config.channelid || msg.data[0].channelId;
 				config.appKey = config.appKey || config.orgName + '#' + config.appName;
 				config.restServer = config.restServer || msg.data[0].restDomain;
-
 				var cluster = config.restServer ? config.restServer.match(/vip\d/) : '';
 				cluster = cluster && cluster.length ? '-' + cluster[0] : '';
 				config.xmppServer = config.xmppServer || 'im-api' + cluster + '.easemob.com';
@@ -22419,10 +22479,10 @@ easemobim.videoChat = (function(dialog){
 							password: targetUserInfo.userPassword
 						};
 
+						// 发送空的ext消息，延迟发送
+						chat.cachedCommandMessage = {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}};
 						chat.ready();
 						chat.show();
-						// 发送空的ext消息，延迟发送
-						config.cachedCommandMessage = {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}};
 						transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
 						transfer.send({
 							event: 'setUser',
@@ -22443,10 +22503,10 @@ easemobim.videoChat = (function(dialog){
 							} else {
 								config.user.password = msg.data;
 
+								// 发送空的ext消息，延迟发送
+								chat.cachedCommandMessage = {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}};
 								chat.ready();
 								chat.show();
-								// 发送空的ext消息
-								chat.sendTextMsg('', false, {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}});
 								transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
 							}
 						});
@@ -22541,8 +22601,6 @@ easemobim.videoChat = (function(dialog){
 			});
 		},
 		open: function() {
-			// 停止上报访客
-			eventCollector.stopReporting();
 			chat.show();
 		},
 		close: function() {

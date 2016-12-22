@@ -1185,7 +1185,7 @@ easemobim.titleSlide = function () {
 	'use strict';
 	var utils = easemobim.utils;
 	easemobim.config = easemobim.config || {};
-	easemobim.version = '43.12.006';
+	easemobim.version = '43.12.007';
 	easemobim.tenants = {};
 
 	var DEFAULT_CONFIG = {
