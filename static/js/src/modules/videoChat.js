@@ -145,7 +145,9 @@ easemobim.videoChat = (function(dialog){
 		sendMessageAPI = sendMessage;
 		config = cfg;
 
-		videoWidget.classList.remove('hide');
+		// 视频组件初始化
+		// 直接操作style是为了避免video标签在加载时一闪而过，影响体验
+		videoWidget.style.display = '';
 		// 按钮初始化
 		btnVideoInvite.classList.remove('hide');
 		btnVideoInvite.addEventListener('click', function(){
