@@ -177,6 +177,8 @@
 		iframe = easemobim.tenants[cacheKeyName] || easemobim.Iframe(_config);
 		easemobim.tenants[cacheKeyName] = iframe;
 		iframe.set(_config, iframe.close);
+		// 访客上报用后失效
+		easemobim.config.eventCollector = false;
 	}
 
 	//support cmd & amd
