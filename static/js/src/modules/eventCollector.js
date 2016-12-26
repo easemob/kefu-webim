@@ -61,6 +61,9 @@
 		_callback || (_callback = callback);
 		_config || (_config = config);
 
+		// h5 方式屏蔽访客回呼功能
+		if(utils.isTop) return;
+
 		// 要求外部页面更新URL
 		transfer.send({event: 'updateURL'}, window.transfer.to);
 

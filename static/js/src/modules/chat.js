@@ -867,9 +867,13 @@
 
 				//机器人列表
 				utils.live('button.js_robotbtn', utils.click, function () {
-					me.sendTextMsg(utils.html(this), null, {
-						msgtype: {
-							choice: { menuid: this.getAttribute('data-id') }
+					me.sendTextMsg(utils.html(this), null, {ext:
+						{
+							msgtype: {
+								choice: {
+									menuid: this.getAttribute('data-id')
+								}
+							}
 						}
 					});
 					return false;
