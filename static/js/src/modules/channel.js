@@ -444,7 +444,6 @@ easemobim.channel = function ( config ) {
 								break;
 							// 会话结束
 							case 'ServiceSessionClosedEvent':
-								easemobim.eventCollector.startToReport();
 								me.session = null;
 								me.sessionSent = false;
 								config.agentUserId = null;

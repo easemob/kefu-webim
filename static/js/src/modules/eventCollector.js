@@ -38,7 +38,7 @@
 							_polling.stop();
 							_polling = new Polling(function(){
 								_reportData('VISITOR', _gid);
-							});
+							}, POLLING_INTERVAL);
 						}
 						_stopReporting();
 						_callback(data);
