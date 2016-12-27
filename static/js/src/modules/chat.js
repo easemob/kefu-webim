@@ -10,6 +10,9 @@
 		// todo: 把dom都移到里边
 		var doms = {
 			agentStatusText: document.querySelector('.em-header-status-text'),
+			agentWaitNumber: document.querySelector('.em-header-status-text-queue-number'),
+			//待接入排队人数显示
+
 			agentStatusSymbol: utils.$Dom('em-widgetAgentStatus'),
 			nickname: document.querySelector('.em-widgetHeader-nickname'),
 			imgInput: document.querySelector('.upload-img-container'),
@@ -408,6 +411,15 @@
 			, clearAgentStatus: function () {
 				doms.agentStatusSymbol.className = 'em-hide';
 				doms.agentStatusText.innerText = '';
+			}
+			//待接入排队人数显示
+			,updateQueuenNumber: function(num){
+				if(num){
+					utils.removeClass(doms.agentWaitNumber, 'hide');
+					doms.agentWaitNumber.querySelector('label').innerHTML = num;
+				}else{
+					utils.addClass(doms.agentWaitNumber, 'hide');
+				}
 			}
 			, updateAgentStatus: function () {
 				var me = this;

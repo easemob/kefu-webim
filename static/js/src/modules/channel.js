@@ -425,6 +425,15 @@ easemobim.channel = function ( config ) {
 
 					message.set({value: title, list: str});
 					break;
+				case 'cmd':
+					if(msg.action){
+						//待接入等待人数显示
+						if(msg.action === 'visitorPreWaitPeopleNumber'){
+							var num = msg.ext.weichat.queueId+1
+							me.updateQueuenNumber(num);
+						}
+					}
+					break;
 				default:
 					break;
 			}
@@ -462,6 +471,8 @@ easemobim.channel = function ( config ) {
 								//fake
 								me.agentCount < 1 && (me.agentCount = 1);
 								me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
+								//接入会话时隐藏待接入显示
+								me.updateQueuenNumber(0);
 								break;
 							case 'ServiceSessionCreatedEvent':
 								me.handleEventStatus('create');
