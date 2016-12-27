@@ -429,8 +429,8 @@ easemobim.channel = function ( config ) {
 					if(msg.action){
 						//待接入等待人数显示
 						if(msg.action === 'visitorPreWaitPeopleNumber'){
-							me.WaitNumber(2);
-							me.WaitNumber(msg.ext.weichat.queueName);
+							var num = msg.ext.weichat.queueId+1
+							me.WaitNumber(num);
 						}
 						//接入会话时隐藏待接入显示
 						if(msg.action === "ServiceSessionOpenedEvent"){
