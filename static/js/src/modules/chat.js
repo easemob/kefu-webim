@@ -10,7 +10,7 @@
 		// todo: 把dom都移到里边
 		var doms = {
 			agentStatusText: document.querySelector('.em-header-status-text'),
-			agentWaitNumber: document.querySelector('.em-header-status-text-queuen-number'),
+			agentWaitNumber: document.querySelector('.em-header-status-text-queue-number'),
 			//待接入排队人数显示
 
 			agentStatusSymbol: utils.$Dom('em-widgetAgentStatus'),

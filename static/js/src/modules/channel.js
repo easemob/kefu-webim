@@ -432,10 +432,6 @@ easemobim.channel = function ( config ) {
 							var num = msg.ext.weichat.queueId+1
 							me.updateQueuenNumber(num);
 						}
-						//接入会话时隐藏待接入显示
-						if(msg.action === "ServiceSessionOpenedEvent"){
-							me.updateQueuenNumber(0);
-						}
 					}
 					break;
 				default:
@@ -475,6 +471,8 @@ easemobim.channel = function ( config ) {
 								//fake
 								me.agentCount < 1 && (me.agentCount = 1);
 								me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
+								//接入会话时隐藏待接入显示
+								me.updateQueuenNumber(0);
 								break;
 							case 'ServiceSessionCreatedEvent':
 								me.handleEventStatus('create');
