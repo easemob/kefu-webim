@@ -10,7 +10,7 @@
 		// todo: 把dom都移到里边
 		var doms = {
 			agentStatusText: document.querySelector('.em-header-status-text'),
-			agentStatusText: document.querySelector('.em-header-status-text'),
+			agentWaitNumber: document.querySelector('.em-header-status-text-queuenNumber'),
 			//待接入排队人数显示
 
 			agentStatusSymbol: utils.$Dom('em-widgetAgentStatus'),
@@ -415,10 +415,10 @@
 			//待接入排队人数显示
 			,WaitNumber: function(num){
 				if(num){
-					doms.agentWaitNumber.className = 'em-header-status-text-right';
+					doms.agentWaitNumber.className = 'em-header-status-text-queuenNumber';
 					doms.agentWaitNumber.querySelector('label').innerHTML = num;
 				}else{
-					doms.agentWaitNumber.className = 'em-header-status-text-right hide';
+					doms.agentWaitNumber.className = 'em-header-status-text-queuenNumber hide';
 				}
 			}
 			, updateAgentStatus: function () {
