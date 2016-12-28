@@ -94,14 +94,16 @@
 				if ( utils.isTop ) {
 					//get visitor
 					var visInfo = config.visitor;
+					var prefix = (config.tenantId || '') + (config.emgroup || '');
+
 					if ( !visInfo ) {
-						visInfo = utils.getStore(config.tenantId + config.emgroup + 'visitor');
+						visInfo = utils.getStore(prefix + 'visitor');
 						try { config.visitor = Easemob.im.Utils.parseJSON(visInfo); } catch ( e ) {}
 						utils.clearStore(config.tenantId + config.emgroup + 'visitor');
 					}
 
 					//get ext
-					var ext = utils.getStore(config.tenantId + config.emgroup + 'ext');
+					var ext = utils.getStore(prefix + 'ext');
 					try { ext && me.sendTextMsg('', false, {ext: Easemob.im.Utils.parseJSON(ext)}); } catch ( e ) {}
 					utils.clearStore(config.tenantId + config.emgroup + 'ext');
 				} else {
