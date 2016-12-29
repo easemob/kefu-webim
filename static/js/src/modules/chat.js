@@ -361,14 +361,10 @@
 						//get greeting only when service session is not exist
 						me.getGreeting();
 					} else {
-						me.session = msg.data.serviceSession;
-						msg.data.serviceSession.visitorUser 
-						&& msg.data.serviceSession.visitorUser.userId 
-						&& easemobim.api('sendVisitorInfo', {
-							tenantId: config.tenantId,
-							visitorId: msg.data.serviceSession.visitorUser.userId,
-							referer:  document.referrer
-						});
+						if (_const.SEND_ATTRIBUT_MESSAGE) {
+							_const.SEND_ATTRIBUT_MESSAGE = false;
+							me.sendAttribute(msg,me);
+						}
 					}
 
 
@@ -377,6 +373,15 @@
 						//get the switcher of agent nickname
 						me.getNickNameOption();
 					}
+				});
+			},sendAttribute:function(msg,me){
+				me.session = msg.data.serviceSession;
+				msg.data.serviceSession.visitorUser 
+				&& msg.data.serviceSession.visitorUser.userId 
+				&& easemobim.api('sendVisitorInfo', {
+					tenantId: config.tenantId,
+					visitorId: msg.data.serviceSession.visitorUser.userId,
+					referer:  document.referrer
 				});
 			}
 			, handleGroup: function () {
