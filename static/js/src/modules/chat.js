@@ -361,14 +361,7 @@
 						//get greeting only when service session is not exist
 						me.getGreeting();
 					} else {
-						me.session = msg.data.serviceSession;
-						msg.data.serviceSession.visitorUser 
-						&& msg.data.serviceSession.visitorUser.userId 
-						&& easemobim.api('sendVisitorInfo', {
-							tenantId: config.tenantId,
-							visitorId: msg.data.serviceSession.visitorUser.userId,
-							referer:  document.referrer
-						});
+						me.sendAttribute(msg);
 					}
 
 
@@ -378,6 +371,22 @@
 						me.getNickNameOption();
 					}
 				});
+			},sendAttribute:function(msg){
+				if (!this.isSentAttribute) {
+					if(
+						msg.data
+						&& msg.data.serviceSession
+						&& msg.data.serviceSession.visitorUser
+						&& msg.data.serviceSession.visitorUser.userId
+					){
+							this.isSentAttribute = true;
+							easemobim.api('sendVisitorInfo', {
+								tenantId: config.tenantId,
+								visitorId: msg.data.serviceSession.visitorUser.userId,
+								referer:  document.referrer
+							});
+					}
+				}
 			}
 			, handleGroup: function () {
 				this.chatWrapper = easemobim.imChatBody.querySelector('.em-widget-chat');

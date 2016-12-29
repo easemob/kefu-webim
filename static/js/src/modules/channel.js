@@ -453,7 +453,6 @@ easemobim.channel = function ( config ) {
 								break;
 							// 会话结束
 							case 'ServiceSessionClosedEvent':
-								me.session = null;
 								me.sessionSent = false;
 								config.agentUserId = null;
 								me.stopGettingAgentStatus();
@@ -473,6 +472,18 @@ easemobim.channel = function ( config ) {
 								me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
 								//接入会话时隐藏待接入显示
 								me.updateQueuenNumber(0);
+								//会话接起时发送IP
+								if (!me.isSentAttribute) {
+									easemobim.api('getExSession', {
+										id: config.user.username
+										, orgName: config.orgName
+										, appName: config.appName
+										, imServiceNumber: config.toUser
+										, tenantId: config.tenantId
+									}, function ( msg ) {
+										me.sendAttribute(msg)
+									})
+								}	
 								break;
 							case 'ServiceSessionCreatedEvent':
 								me.handleEventStatus('create');
