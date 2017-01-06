@@ -259,7 +259,7 @@
 		var destUrl = {
 			tenantId: this.config.tenantId,
 			hide: this.config.hide,
-			sat: this.config.visitorSatisfactionEvaluate,
+			sat: this.config.satisfaction,
 			wechatAuth: this.config.wechatAuth,
 			hideKeyboard: this.config.hideKeyboard,
 			eventCollector: this.config.eventCollector,
