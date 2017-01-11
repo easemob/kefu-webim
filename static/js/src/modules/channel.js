@@ -15,6 +15,7 @@ easemobim.channel = function ( config ) {
 
 	var utils = easemobim.utils;
 	var api = easemobim.api;
+	var _const = easemobim._const;
 
 
 		//监听ack的timer, 每条消息启动一个
@@ -444,7 +445,6 @@ easemobim.channel = function ( config ) {
 								break;
 							// 会话结束
 							case 'ServiceSessionClosedEvent':
-								me.session = null;
 								me.sessionSent = false;
 								config.agentUserId = null;
 								me.stopGettingAgentStatus();
@@ -462,6 +462,17 @@ easemobim.channel = function ( config ) {
 								//fake
 								me.agentCount < 1 && (me.agentCount = 1);
 								me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
+								if (!me.hasSentAttribute) {
+									easemobim.api('getExSession', {
+										id: config.user.username
+										, orgName: config.orgName
+										, appName: config.appName
+										, imServiceNumber: config.toUser
+										, tenantId: config.tenantId
+									}, function ( msg ) {
+										me.sendAttribute(msg)
+									});
+								}	
 								break;
 							case 'ServiceSessionCreatedEvent':
 								me.handleEventStatus('create');
@@ -552,13 +563,19 @@ easemobim.channel = function ( config ) {
 				// me.stopGettingAgentStatus();
 				}
 				, onError: function ( e ) {
-					if ( e.reconnect ) {
+					if (e.reconnect){
 						me.open();
-					} else if ( e.type === 2 ) {
+					}
+					else if (e.type === _const.IM.WEBIM_CONNCTION_AUTH_ERROR){
 						me.reOpen || (me.reOpen = setTimeout(function () {
 							me.open();
 						}, 2000));
-					} else {
+					}
+					// im sdk 会捕获 receiveMsg 回调中的异常，需要把出错信息打出来
+					else if (e.type === _const.IM.WEBIM_CONNCTION_CALLBACK_INNER_ERROR){
+						console.error(e.data);
+					}
+					else {
 						//me.conn.stopHeartBeat(me.conn);
 						typeof config.onerror === 'function' && config.onerror(e);
 					}

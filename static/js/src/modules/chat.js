@@ -151,6 +151,8 @@
 				this.handleGroup();
 				//get service serssion info
 				this.getSession();
+				// 获取坐席昵称设置
+				this.getNickNameOption();
 				//set tenant logo
 				this.setLogo();
 				//mobile set textarea can growing with inputing
@@ -309,7 +311,9 @@
 				});
 			}
 			, getNickNameOption: function () {
-				if ( config.offDuty ) { return; }
+				if (config.offDuty) return;
+				if (this.nicknameGetted) return;
+				this.nicknameGetted = true;
 
 				easemobim.api('getNickNameOption', {
 					tenantId: config.tenantId
@@ -355,27 +359,29 @@
 						me.getGreeting();
 					}
 
-					if ( !msg.data.serviceSession ) {
+					if (!msg.data.serviceSession) {
 						//get greeting only when service session is not exist
 						me.getGreeting();
 					} else {
-						me.session = msg.data.serviceSession;
-						msg.data.serviceSession.visitorUser 
-						&& msg.data.serviceSession.visitorUser.userId 
-						&& easemobim.api('sendVisitorInfo', {
-							tenantId: config.tenantId,
-							visitorId: msg.data.serviceSession.visitorUser.userId,
-							referer:  document.referrer
-						});
-					}
-
-
-					if ( !me.nicknameGetted ) {
-						me.nicknameGetted = true;
-						//get the switcher of agent nickname
-						me.getNickNameOption();
+						me.sendAttribute(msg);
 					}
 				});
+			},
+			sendAttribute:function(msg){
+				if(
+					!this.hasSentAttribute
+					&& msg.data
+					&& msg.data.serviceSession
+					&& msg.data.serviceSession.visitorUser
+					&& msg.data.serviceSession.visitorUser.userId
+				){
+					this.hasSentAttribute = true;
+					easemobim.api('sendVisitorInfo', {
+						tenantId: config.tenantId,
+						visitorId: msg.data.serviceSession.visitorUser.userId,
+						referer:  document.referrer
+					});
+				}
 			}
 			, handleGroup: function () {
 				this.chatWrapper = easemobim.imChatBody.querySelector('.em-widget-chat');
@@ -479,7 +485,6 @@
 				});
 			}
 			, setLogo: function () {
-				// 为了保证消息插入位置正确
 				if (config.logo) {
 					utils.removeClass(document.querySelector('.em-widget-tenant-logo'), 'hide');
 					document.querySelector('.em-widget-tenant-logo img').src = config.logo;

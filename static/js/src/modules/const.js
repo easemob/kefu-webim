@@ -44,6 +44,10 @@
 			'月色池塘': 'theme-8',
 			'天籁湖光': 'theme-9',
 			'商务风格': 'theme-10'
+		},
+		IM: {
+			WEBIM_CONNCTION_AUTH_ERROR: 2,
+			WEBIM_CONNCTION_CALLBACK_INNER_ERROR: 31
 		}
 	};
 
