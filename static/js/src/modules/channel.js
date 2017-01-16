@@ -283,7 +283,7 @@ easemobim.channel = function ( config ) {
 		},
 
 		handleReceive: function ( msg, type, isHistory ) {
-			if (config.offDuty) {return;}
+			if (config.offDuty) return;
 
 
 			//如果是ack消息，清除ack对应的site item，返回
@@ -370,10 +370,7 @@ easemobim.channel = function ( config ) {
 							 data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
 						</div>']});
 
-					// fake 临时解决用户重复收到邀请评价的问题
-					// 由于消息走的第二通道，刷新后没有去重（此处待验证），导致重复收到
-					// 所以 === false 的 isHistory临时过滤掉
-					if('undefined' === typeof isHistory){
+					if(!isHistory){
 						// 创建隐藏的立即评价按钮，并触发click事件
 						var el = document.createElement('BUTTON');
 						el.className = 'js_satisfybtn';
@@ -445,7 +442,7 @@ easemobim.channel = function ( config ) {
 								break;
 							// 会话结束
 							case 'ServiceSessionClosedEvent':
-								me.sessionSent = false;
+								me.hasSentAttribute = false;
 								config.agentUserId = null;
 								me.stopGettingAgentStatus();
 								// 还原企业头像和企业名称
@@ -476,6 +473,17 @@ easemobim.channel = function ( config ) {
 								break;
 							case 'ServiceSessionCreatedEvent':
 								me.handleEventStatus('create');
+								if (!me.hasSentAttribute) {
+									easemobim.api('getExSession', {
+										id: config.user.username
+										, orgName: config.orgName
+										, appName: config.appName
+										, imServiceNumber: config.toUser
+										, tenantId: config.tenantId
+									}, function ( msg ) {
+										me.sendAttribute(msg)
+									});
+								}	
 								break;
 							default:
 								me.handleEventStatus('reply', msg.ext.weichat.agent);
@@ -584,70 +592,68 @@ easemobim.channel = function ( config ) {
 		},
 
 		handleHistory: function ( chatHistory ) {
+			utils.each(chatHistory, function(index, element){
+				var msgBody = element.body;
+				var msg = msgBody && msgBody.bodies && msgBody.bodies[0];
+				var isSelf = msgBody.from === config.user.username;
 
-			if ( chatHistory.length > 0 ) {
-				utils.each(chatHistory, function ( k, v ) {
-					var msgBody = v.body,
-						msg,
-						isSelf = msgBody.from === config.user.username;
-
-					if ( msgBody && msgBody.bodies.length > 0 ) {
-						msg = msgBody.bodies[0];
-						if ( msgBody.from === config.user.username ) {
-							//visitors' msg
-							switch ( msg.type ) {
-								case 'img':
-									msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
-									msg.to = msgBody.to;
-									me.sendImgMsg(msg, true);
-									break;
-								case 'file':
-									msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
-									msg.to = msgBody.to;
-									msg.filesize = msg.file_length;
-									me.sendFileMsg(msg, true);
-									break;
-								case 'txt':
-									me.sendTextMsg(msg.msg, true);
-									break;
-							}
-						} else {
-							//agents' msg
-
-							//判断是否为满意度调查的消息
-							if ( msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType && msgBody.ext.weichat.ctrlType == 'inviteEnquiry'
-							//机器人自定义菜单
-							|| msgBody.ext && msgBody.ext.msgtype && msgBody.ext.msgtype.choice
-							//机器人转人工
-							|| msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType === 'TransferToKfHint' ) {
-								me.receiveMsg(msgBody, '', true);
-							} else {
-								var data = msg.msg;
-
-								msg.type === 'txt' && (data = me.getSafeTextValue(msgBody));
-
-								me.receiveMsg({
-									msgId: v.msgId,
-									data: data,
-									filename: msg.filename,
-									file_length: msg.file_length,
-									url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
-									from: msgBody.from,
-									to: msgBody.to
-								}, msg.type, true);
-							}
-						}
-
-						if ( msg.type === 'cmd'//1.cmd消息 
-						|| (msg.type === 'txt' && !msg.msg)//2.空文本消息
-						|| receiveMsgSite.get(v.msgId) ) {//3.重复消息
-							
-						} else {
-							me.appendDate(v.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
-						}
+				if (!msg) return;
+				if (isSelf){
+				//visitors' msg
+					switch (msg.type){
+						case 'img':
+							msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
+							msg.to = msgBody.to;
+							me.sendImgMsg(msg, true);
+							break;
+						case 'file':
+							msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
+							msg.to = msgBody.to;
+							msg.filesize = msg.file_length;
+							me.sendFileMsg(msg, true);
+							break;
+						case 'txt':
+							me.sendTextMsg(msg.msg, true);
+							break;
 					}
-				});
-			}
+				}
+				//agents' msg
+				else if (
+					msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType && msgBody.ext.weichat.ctrlType == 'inviteEnquiry'
+				){
+					// 满意度调查的消息，第二通道会重发此消息，需要msgid去重
+					msgBody.msgId = element.msgId;
+					me.receiveMsg(msgBody, '', true);
+				}
+				else if(
+					msgBody.ext && msgBody.ext.msgtype && msgBody.ext.msgtype.choice
+					|| msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType === 'TransferToKfHint'
+				){
+					// 机器人自定义菜单，机器人转人工
+					me.receiveMsg(msgBody, '', true);
+				}
+				else {
+					me.receiveMsg({
+						msgId: element.msgId,
+						data: msg.type === 'txt' ? me.getSafeTextValue(msgBody) : msg.msg,
+						filename: msg.filename,
+						file_length: msg.file_length,
+						url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
+						from: msgBody.from,
+						to: msgBody.to
+					}, msg.type, true);
+				}
+
+				if (
+					// cmd消息, 空文本消息, 重复消息 不处理
+					msg.type === 'cmd'
+					|| (msg.type === 'txt' && !msg.msg)
+					|| receiveMsgSite.get(element.msgId)
+				){}
+				else {
+					me.appendDate(element.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
+				}
+			});
 		}
 	};
 

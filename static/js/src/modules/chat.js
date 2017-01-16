@@ -391,14 +391,25 @@
 					avatar: config.tenantAvatar
 				});
 			}
-			, getMsgid: function ( msg ) {
-				if ( msg ) {
-					if ( msg.ext && msg.ext.weichat ) {
-						return msg.ext.weichat.msgId;
-					}
-					return msg.msgId
+			, getMsgid: function(msg){
+				var msgId;
+
+				if (
+					msg
+					&& msg.ext
+					&& msg.ext.weichat
+					&& msg.ext.weichat.msgId
+				){
+					msgId = msg.ext.weichat.msgId;
 				}
-				return null;
+				else if (msg && msg.msgId){
+					msgId = msg.msgId;
+				}
+				else {
+					msgId = null;
+				}
+
+				return msgId;
 			}
 			, startToGetAgentStatus: function () {
 				var me = this;
