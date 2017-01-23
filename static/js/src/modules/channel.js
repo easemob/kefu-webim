@@ -110,7 +110,7 @@ easemobim.channel = function ( config ) {
 
 			var msg = new Easemob.im.EmMessage('txt', id);
 			msg.set({value: '', to: config.toUser});
-			utils.extend(msg.body, {
+			_.extend(msg.body, {
 				ext: {
 					weichat: {
 						ctrlType: 'enquiry'
@@ -142,8 +142,8 @@ easemobim.channel = function ( config ) {
 				}
 			});
 
-			if ( ext ) {
-				utils.extend(msg.body, ext);
+			if (ext) {
+				_.extend(msg.body, ext);
 			}
 
 			utils.addClass(easemobim.sendBtn, 'disabled');
@@ -429,81 +429,77 @@ easemobim.channel = function ( config ) {
 				default:
 					break;
 			}
-			
-			if ( !isHistory ) {
-
-				if ( msg.ext && msg.ext.weichat ) {
-					if (msg.ext.weichat.event){
-						switch(msg.ext.weichat.event.eventName){
-							case 'ServiceSessionTransferedEvent':
-							// 转接到客服
-								me.handleEventStatus('transferd', msg.ext.weichat.event.eventObj);
-								break;
-							case 'ServiceSessionTransferedToAgentQueueEvent':
-							// 转人工或者转到技能组
-								me.handleEventStatus('transfering', msg.ext.weichat.event.eventObj);
-								break;
-							// 会话结束
-							case 'ServiceSessionClosedEvent':
-								me.hasSentAttribute = false;
-								config.agentUserId = null;
-								me.stopGettingAgentStatus();
-								// 还原企业头像和企业名称
-								me.setAgentProfile({
-									tenantName: config.defaultAgentName,
-									avatar: config.tenantAvatar
-								});
-								// 去掉坐席状态
-								me.clearAgentStatus();
-								me.handleEventStatus('close');
-								utils.isTop || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
-								break;
-							case 'ServiceSessionOpenedEvent':
-								//fake
-								me.agentCount < 1 && (me.agentCount = 1);
-								me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
-								if (!me.hasSentAttribute) {
-									easemobim.api('getExSession', {
-										id: config.user.username
-										, orgName: config.orgName
-										, appName: config.appName
-										, imServiceNumber: config.toUser
-										, tenantId: config.tenantId
-									}, function ( msg ) {
-										me.sendAttribute(msg);
-									});
-								}	
-								break;
-							case 'ServiceSessionCreatedEvent':
-								me.handleEventStatus('create');
-								if (!me.hasSentAttribute) {
-									easemobim.api('getExSession', {
-										id: config.user.username
-										, orgName: config.orgName
-										, appName: config.appName
-										, imServiceNumber: config.toUser
-										, tenantId: config.tenantId
-									}, function ( msg ) {
-										me.sendAttribute(msg);
-									});
-								}	
-								break;
-							default:
-								me.handleEventStatus('reply', msg.ext.weichat.agent);
-								break;
-						}
-					}
-					else{
-						me.handleEventStatus('reply', msg.ext.weichat.agent);
-					}
+			if (!isHistory){
+				// 实时消息需要处理事件
+				switch(utils.getDataByPath(msg, 'ext.weichat.event.eventName')){
+					case 'ServiceSessionTransferedEvent':
+					// 转接到客服
+						me.handleEventStatus('transferd', msg.ext.weichat.event.eventObj);
+						break;
+					case 'ServiceSessionTransferedToAgentQueueEvent':
+					// 转人工或者转到技能组
+						me.handleEventStatus('transfering', msg.ext.weichat.event.eventObj);
+						break;
+					// 会话结束
+					case 'ServiceSessionClosedEvent':
+						me.hasSentAttribute = false;
+						config.agentUserId = null;
+						me.stopGettingAgentStatus();
+						// 还原企业头像和企业名称
+						me.setAgentProfile({
+							tenantName: config.defaultAgentName,
+							avatar: config.tenantAvatar
+						});
+						// 去掉坐席状态
+						me.clearAgentStatus();
+						me.handleEventStatus('close');
+						utils.isTop || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
+						break;
+					case 'ServiceSessionOpenedEvent':
+						//fake
+						me.agentCount < 1 && (me.agentCount = 1);
+						me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
+						if (!me.hasSentAttribute) {
+							easemobim.api('getExSession', {
+								id: config.user.username
+								, orgName: config.orgName
+								, appName: config.appName
+								, imServiceNumber: config.toUser
+								, tenantId: config.tenantId
+							}, function ( msg ) {
+								me.sendAttribute(msg);
+							});
+						}	
+						break;
+					case 'ServiceSessionCreatedEvent':
+						me.handleEventStatus('create');
+						if (!me.hasSentAttribute) {
+							easemobim.api('getExSession', {
+								id: config.user.username
+								, orgName: config.orgName
+								, appName: config.appName
+								, imServiceNumber: config.toUser
+								, tenantId: config.tenantId
+							}, function ( msg ) {
+								me.sendAttribute(msg);
+							});
+						}	
+						break;
+					default:
+						var agent = utils.getDataByPath(msg, 'ext.weichat.agent');
+						agent && me.handleEventStatus('reply', agent);
+						break;
 				}
-
-
-				//空消息不显示
-				if ( !message || !message.value ) {
-					return;
-				}
-
+			}
+			if (!message || !message.value){
+				// 空消息不显示
+				return;
+			}
+			else if (isHistory){
+				// 历史消息仅上屏
+				me.appendMsg(msg.from, msg.to, message, true);
+			}
+			else {
 				if ( !msg.noprompt ) {
 					me.messagePrompt(message);
 				}
@@ -513,21 +509,16 @@ easemobim.channel = function ( config ) {
 				me.scrollBottom(50);
 
 				// 收消息回调
-				if ( config.hasReceiveCallback && !utils.isTop) {
-					easemobim.EVENTS.ONMESSAGE.data = {
-						from: msg.from,
-						to: msg.to,
-						message: message
-					};
-					try {
-						transfer.send(easemobim.EVENTS.ONMESSAGE, window.transfer.to);
-					} catch (e) {}
+				if (config.hasReceiveCallback && !utils.isTop) {
+					transfer.send({
+						event: easemobim.EVENTS.ONMESSAGE.event,
+						data: {
+							from: msg.from,
+							to: msg.to,
+							message: message
+						}
+					}, window.transfer.to);
 				}
-			} else {
-				if ( !message || !message.value ) {
-					return;
-				}
-				me.appendMsg(msg.from, msg.to, message, true);
 			}
 		},
 
@@ -567,7 +558,7 @@ easemobim.channel = function ( config ) {
 					// for debug
 					console.log('onOffline-channel');
 					// 断线关闭视频通话
-					if(utils.isSupportWebRTC){
+					if(Modernizr.peerconnection){
 						easemobim.videoChat.onOffline();
 					}
 				// todo 断线后停止轮询坐席状态
@@ -595,9 +586,9 @@ easemobim.channel = function ( config ) {
 		},
 
 		handleHistory: function ( chatHistory ) {
-			utils.each(chatHistory, function(index, element){
+			_.each(chatHistory, function(element, index){
 				var msgBody = element.body;
-				var msg = msgBody && msgBody.bodies && msgBody.bodies[0];
+				var msg = utils.getDataByPath(msgBody, 'bodies.0');
 				var isSelf = msgBody.from === config.user.username;
 
 				if (!msg) return;
@@ -629,8 +620,8 @@ easemobim.channel = function ( config ) {
 					me.receiveMsg(msgBody, '', true);
 				}
 				else if(
-					msgBody.ext && msgBody.ext.msgtype && msgBody.ext.msgtype.choice
-					|| msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType === 'TransferToKfHint'
+					utils.getDataByPath(msgBody, 'ext.msgtype.choice')
+					|| utils.getDataByPath(msgBody, 'ext.weichat.ctrlType') === 'TransferToKfHint'
 				){
 					// 机器人自定义菜单，机器人转人工
 					me.receiveMsg(msgBody, '', true);

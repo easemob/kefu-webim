@@ -540,7 +540,7 @@
 
 					if ( faceStr ) return false;
 					faceStr = '<li class="e-face">';
-					utils.each(Easemob.im.EMOTIONS.map, function ( k, v ) {
+					_.each(Easemob.im.EMOTIONS.map, function (v, k) {
 						count += 1;
 						faceStr += ["<div class='em-bar-face-bg e-face'>",
 										"<img class='em-bar-face-img e-face em-emotion' ",
@@ -689,8 +689,7 @@
 
 				me.conn.open(op);
 
-				// init webRTC && 视频功能灰度
-				utils.isSupportWebRTC 
+				Modernizr.peerconnection
 				&& config.grayList.audioVideo
 				&& easemobim.videoChat.init(me.conn, me.channel.send, config);
 			}

@@ -79,7 +79,7 @@
 	};
 
 	//loading element
-	easemobim.LOADING = !easemobim.utils.isQQBrowserInAndroid && easemobim.utils.getIEVersion > 9
+	easemobim.LOADING = Modernizr.inlinesvg
 		? ["<div class='em-widget-loading'><svg version='1.1' id='图层_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px'",
 		" viewBox='0 0 70 70' enable-background='new 0 0 70 70' xml:space='preserve'>",
 		"<circle opacity='0.3' fill='none' stroke='#000000' stroke-width='4' stroke-miterlimit='10' cx='35' cy='35' r='11'/>",

@@ -1,21 +1,7 @@
 ;(function () {
 	window.easemobim = window.easemobim || {};
 
-	var _isAndroid = /android/i.test(navigator.useragent);
 	var _isMobile = /mobile/i.test(navigator.userAgent);
-	var _getIEVersion = (function () {
-		// todo： 增加 trident 识别
-			var result, matches;
-
-			matches = navigator.userAgent.match(/MSIE (\d+)/i);
-			if(matches && matches[1]) {
-				result = +matches[1];
-			}
-			else{
-				result = 9999;
-			}
-			return result;
-		}());
 
 	easemobim.utils = {
 		isTop: window.top === window.self
@@ -25,12 +11,6 @@
 			'[object HTMLCollection]': true,
 			'[object Array]': true
 		}
-		// todo：使用modernizr 替代
-		, isSupportWebRTC: !!(
-			window.webkitRTCPeerConnection
-			|| window.mozRTCPeerConnection
-			|| window.RTCPeerConnection
-		)
 		, filesizeFormat: function(filesize){
 			var UNIT_ARRAY = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'];
 			var exponent;
@@ -62,16 +42,6 @@
 			obj = typeof obj === 'undefined' ? '' : obj;
 			return obj === 'false' ? false : obj;
 		}
-		, each: function ( obj, fn ) {
-			// key, value 遍历
-			// todo：去掉这个，用 _.each 替代
-			if (typeof fn !== 'function') return;
-			for ( var prop in obj ) {
-				if ( obj.hasOwnProperty(prop) ) {
-					fn(prop, obj[prop]);
-				}
-			}
-		}
 		, $Remove: function ( target ) {
 			if (!target) return;
 
@@ -92,7 +62,6 @@
 				}
 			}
 		}
-		, getIEVersion: _getIEVersion
 		, live: function ( selector, ev, fn, wrapper ) {
 			var me = this;
 			var el = wrapper || document;
@@ -309,13 +278,12 @@
 			var matches = reg.exec(location.search);
 			return matches ? matches[1] : '';
 		}
-		, isAndroid: _isAndroid
+		, isAndroid: /android/i.test(navigator.useragent)
 		, isMobile: _isMobile
 		, click: _isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click'
-		, isQQBrowserInAndroid: _isAndroid && /MQQBrowser/.test(navigator.userAgent)
 		// detect if the browser is minimized
 		, isMin: function () {
-			return document.visibilityState && document.visibilityState === 'hidden' || document.hidden;
+			return document.visibilityState === 'hidden' || document.hidden;
 		}
 		, setStore: function ( key, value ) {
 			try {
