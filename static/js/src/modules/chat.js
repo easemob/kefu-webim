@@ -1176,31 +1176,35 @@
 			}
 			//消息上屏
 			, appendMsg: function ( from, to, msg, isHistory ) {
-
 				var me = this;
-
-				var isSelf = from == config.user.username && (from || config.user.username),
-					curWrapper = me.chatWrapper;
-
+				var isReceived = !(
+					from
+					&& config.user.username
+					&& (from === config.user.username)
+				);
+				var curWrapper = me.chatWrapper;
 				var div = document.createElement('div');
-				utils.html(div, msg.get(!isSelf));
+				var img;
 
-				if ( isHistory ) {
+				div.innerHTML = msg.get(isReceived);
+				img = div.querySelector('.em-widget-imgview');
+
+				if (isHistory){
 					utils.insertBefore(curWrapper, div, curWrapper.childNodes[0]);
-				} else {
+				}
+				else if (img){
+					// 如果是图片，则需要等待图片加载后再滚动消息
+					curWrapper.appendChild(div);
+					me.scrollBottom(utils.isMobile ? 800 : null);
+					utils.one(img, 'load', function(){
+						me.scrollBottom();
+					});
+				}
+				else {
+					// 非图片消息直接滚到底
 					curWrapper.appendChild(div);
 					me.scrollBottom(utils.isMobile ? 800 : null);
 				}
-				var imgList = utils.$Class('img.em-widget-imgview', div),
-					img = imgList.length > 0 ? imgList[0] : null;
-					
-				if ( img ) {
-					utils.on(img, 'load', function () {
-						me.scrollBottom();
-						img = null;
-					});
-				}
-				div = null;
 			}
 			//send text message function
 			, sendTextMsg: function ( message, isHistory, ext ) {
