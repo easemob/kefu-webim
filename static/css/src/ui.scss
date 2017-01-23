@@ -150,7 +150,7 @@ object {
 	border: 1px solid #e5e5e5;
 	cursor: pointer;
 	margin: 4px auto;
-	word-break: break-all;
+	word-break: break-word;
 	white-space: pre-wrap;
 	&:hover {
 		color: white;

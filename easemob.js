@@ -1,20 +1,7 @@
 ;(function () {
 	window.easemobim = window.easemobim || {};
 
-	var _isAndroid = /android/i.test(navigator.useragent);
 	var _isMobile = /mobile/i.test(navigator.userAgent);
-	var _getIEVersion = (function () {
-			var result, matches;
-
-			matches = navigator.userAgent.match(/MSIE (\d+)/i);
-			if(matches && matches[1]) {
-				result = +matches[1];
-			}
-			else{
-				result = 9999;
-			}
-			return result;
-		}());
 
 	easemobim.utils = {
 		isTop: window.top === window.self
@@ -24,11 +11,6 @@
 			'[object HTMLCollection]': true,
 			'[object Array]': true
 		}
-		, isSupportWebRTC: !!(
-			window.webkitRTCPeerConnection
-			|| window.mozRTCPeerConnection
-			|| window.RTCPeerConnection
-		)
 		, filesizeFormat: function(filesize){
 			var UNIT_ARRAY = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'];
 			var exponent;
@@ -59,16 +41,6 @@
 		, convertFalse: function ( obj ) {
 			obj = typeof obj === 'undefined' ? '' : obj;
 			return obj === 'false' ? false : obj;
-		}
-		, $Dom: function ( id ) {
-			return document.getElementById(id);
-		}
-		, each: function ( obj, fn ) {
-			for ( var i in obj ) {
-				if ( obj.hasOwnProperty(i) ) {
-					typeof fn === 'function' && fn(i, obj[i]);
-				}
-			}
 		}
 		, $Remove: function ( target ) {
 			if (!target) return;
@@ -106,24 +78,19 @@
 				}
 			}
 		}
-		, getIEVersion: _getIEVersion
-		, live: function ( target, ev, fn, wrapper ) {
-			var me = this,
-				el = wrapper || document;
+		, live: function ( selector, ev, fn, wrapper ) {
+			var me = this;
+			var el = wrapper || document;
 			me.on(el, ev, function ( e ) {
-				var ev = e || window.event,
-					tar = ev.target || ev.srcElement,
-					targetList = target.split('.').length < 2 ? el.getElementsByTagName(target) : me.$Class(target);
+				var ev = e || window.event;
+				var tar = ev.target || ev.srcElement;
+				var targetList = el.querySelectorAll(selector);
 
 				if ( targetList.length ) {
 					for ( var len = targetList.length, i = 0; i < len; i++ ) {
 						if ( targetList[i] == tar || targetList[i] == tar.parentNode ) {
 							fn.apply(targetList[i] == tar ? tar : tar.parentNode, arguments);
 						}   
-					}
-				} else {
-					if ( targetList == target ) {
-						fn.apply( target, arguments );
 					}
 				}
 			});
@@ -140,7 +107,7 @@
 					} else if ( target.attachEvent ) {
 						target['_' + evArr[i]] = function () {
 							fn.apply(target, arguments);
-						}
+						};
 						target.attachEvent('on' + evArr[i], target['_' + evArr[i]]);
 					} else {
 						target['on' + evArr[i]] = fn;
@@ -161,21 +128,23 @@
 			if ( !target ) {
 				return;
 			}
-			if ( target.removeEventListener ) {
+			else if ( target.removeEventListener ) {
 				target.removeEventListener(ev, fn);
-			} else if ( target.detachEvent ) {
+			}
+			else if ( target.detachEvent ) {
 				target.detachEvent('on' + ev, target['_' + ev]);
-			} else {
+			}
+			else {
 				target['on' + ev] = null;
 			}
 		}
 		, one: function ( target, ev, fn, isCapture ) {
-			var me = this,
-				tfn = function () {
-					fn.apply(this, arguments);
-					me.remove(target, ev, tfn);
-				};
-			me.on(target, ev, tfn, isCapture);  
+			var me = this;
+			var tempFn = function () {
+				fn.apply(this, arguments);
+				me.remove(target, ev, tempFn);
+			};
+			me.on(target, ev, tempFn, isCapture);  
 		}
 		// 触发事件，对于ie8只支持原生事件，不支持自定义事件
 		, trigger: function(element, eventName){
@@ -187,8 +156,8 @@
 				element.fireEvent('on' + eventName);
 			}
 		}
+		// todo： 去掉 使用 _.extend 替代
 		, extend: function ( object, extend ) {
-			var tmp;
 			for ( var o in extend ) {
 				if ( extend.hasOwnProperty(o) ) {
 					var t = Object.prototype.toString.call(extend[o]);
@@ -248,8 +217,7 @@
 			return target;
 		}
 		, hasClass: function ( target, className ) {
-			if (!target) { return false;}
-
+			if (!target) return false;
 			return !!~(' ' + target.className + ' ').indexOf(' ' + className + ' ');
 		}
 		, toggleClass: function(target, className, stateValue) {
@@ -271,35 +239,33 @@
 				this.removeClass(target, className);
 			}
 		}
-		, $Class: function ( DomDotClass, parentNode ) {
-			var temp = DomDotClass.split('.'),
-				tag = temp[0],
-				className = temp[1];
+		, getDataByPath: function(obj, path){
+			var propArray = path.split('.');
+			var currentObj = obj;
 
-			var parent = parentNode || document;
-			if ( parent.getElementsByClassName ) {
-				return parent.getElementsByClassName(className);
-			} else {
-				var tags = parent.getElementsByTagName(tag),
-					arr = [];
-				for ( var i = 0, l = tags.length; i < l; i++ ) {
-					if ( this.hasClass(tags[i], className) ) {
-						arr.push(tags[i]);
-					}
+			return seek();
+
+			function seek(){
+				var prop = propArray.shift();
+
+				if (typeof prop !== 'string'){
+					// path 遍历完了，返回当前值
+					return currentObj;
 				}
-				tags = null;
-				return arr;
+				else if (
+					currentObj	// 过滤 null
+					&& typeof currentObj === "object"
+					&& currentObj.hasOwnProperty(prop)
+				){
+					// 正常遍历path，递归调用
+					currentObj = currentObj[prop];
+					return seek();
+				}
+				else {
+					// 没有找到path，返回undefined
+					return;
+				}
 			}
-		}
-		, html: function ( dom, html ) {
-			if (!dom) return;
-
-			if ( typeof html === 'undefined' ) {
-				return dom.innerHTML;
-			} else {
-				dom.innerHTML = html;
-			}
-			return dom;
 		}
 		, encode: function ( str ) {
 			if ( !str || str.length === 0 ) {
@@ -328,13 +294,12 @@
 			var matches = reg.exec(location.search);
 			return matches ? matches[1] : '';
 		}
-		, isAndroid: _isAndroid
+		, isAndroid: /android/i.test(navigator.useragent)
 		, isMobile: _isMobile
 		, click: _isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click'
-		, isQQBrowserInAndroid: _isAndroid && /MQQBrowser/.test(navigator.userAgent)
 		// detect if the browser is minimized
 		, isMin: function () {
-			return document.visibilityState && document.visibilityState === 'hidden' || document.hidden;
+			return document.visibilityState === 'hidden' || document.hidden;
 		}
 		, setStore: function ( key, value ) {
 			try {
@@ -432,6 +397,7 @@
 			return url;
 		},
 		copy: function ( obj ) {
+			// todo：移到，easemob.js 里边
 			return this.extend({}, obj);
 		},
 		code: (function () {
@@ -552,17 +518,19 @@ window.easemobim = window.easemobim || {};
 window.easemobIM = window.easemobIM || {};
 
 easemobIM.Transfer = easemobim.Transfer = (function () {
-	'use strict'
+	'use strict';
    
 	var handleMsg = function ( e, callback, accept ) {
 		// 微信调试工具会传入对象，导致解析出错
 		if('string' !== typeof e.data) return;
 		var msg = JSON.parse(e.data);
+		var i;
+		var l;
+		//兼容旧版的标志
+		var flag = false;
 
-
-		var flag = false;//兼容旧版的标志
 		if ( accept && accept.length ) {
-			for ( var i = 0, l = accept.length; i < l; i++ ) {
+			for ( i = 0, l = accept.length; i < l; i++ ) {
 				if ( msg.key === accept[i] ) {
 					flag = true;
 					typeof callback === 'function' && callback(msg);
@@ -573,7 +541,7 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 		}
 
 		if ( !flag && accept ) {
-			for ( var i = 0, l = accept.length; i < l; i++ ) {
+			for ( i = 0, l = accept.length; i < l; i++ ) {
 				if ( accept[i] === 'data' ) {
 					typeof callback === 'function' && callback(msg);
 					break;
@@ -745,7 +713,7 @@ easemobim.titleSlide = function () {
 };
 
 ;(function (utils) {
-	'use strict'
+	'use strict';
 
 
 	var _st = 0,
@@ -878,8 +846,6 @@ easemobim.titleSlide = function () {
 						}, 500);
 					}
 					break;
-					me.config.onready instanceof Function && me.config.onready();
-					break;
 				case easemobim.EVENTS.SHOW.event://show Chat window
 					me.open();
 					break;
@@ -935,7 +901,7 @@ easemobim.titleSlide = function () {
 					break;
 				default:
 					break;
-			};
+			}
 		}, ['main']);
 
 		
@@ -1005,7 +971,7 @@ easemobim.titleSlide = function () {
 		var destUrl = {
 			tenantId: this.config.tenantId,
 			hide: this.config.hide,
-			sat: this.config.visitorSatisfactionEvaluate,
+			sat: this.config.satisfaction,
 			wechatAuth: this.config.wechatAuth,
 			hideKeyboard: this.config.hideKeyboard,
 			eventCollector: this.config.eventCollector,
@@ -1185,7 +1151,7 @@ easemobim.titleSlide = function () {
 	'use strict';
 	var utils = easemobim.utils;
 	easemobim.config = easemobim.config || {};
-	easemobim.version = '43.12.008';
+	easemobim.version = '43.12.024';
 	easemobim.tenants = {};
 
 	var DEFAULT_CONFIG = {
@@ -1297,15 +1263,16 @@ easemobim.titleSlide = function () {
 
 
 		if ( utils.isMobile ) {
+			var prefix = (_config.tenantId || '') + (_config.emgroup || '');
 
 			//store ext
 			if ( _config.extMsg ) {
-				utils.setStore(_config.tenantId + _config.emgroup + 'ext', JSON.stringify(_config.extMsg));
+				utils.setStore(prefix + 'ext', JSON.stringify(_config.extMsg));
 			}
 
 			//store visitor info 
 			if ( _config.visitor ) {
-				utils.setStore(_config.tenantId + _config.emgroup + 'visitor', JSON.stringify(_config.visitor));
+				utils.setStore(prefix + 'visitor', JSON.stringify(_config.visitor));
 			}
 
 

@@ -1,3 +1,1083 @@
+/*!
+ * modernizr v3.3.1
+ * Build https://modernizr.com/download?-inlinesvg-oninput-peerconnection-dontmin
+ *
+ * Copyright (c)
+ *  Faruk Ates
+ *  Paul Irish
+ *  Alex Sexton
+ *  Ryan Seddon
+ *  Patrick Kettner
+ *  Stu Cox
+ *  Richard Herrera
+
+ * MIT License
+ */
+
+/*
+ * Modernizr tests which native CSS3 and HTML5 features are available in the
+ * current UA and makes the results available to you in two ways: as properties on
+ * a global `Modernizr` object, and as classes on the `<html>` element. This
+ * information allows you to progressively enhance your pages with a granular level
+ * of control over the experience.
+*/
+
+;(function(window, document, undefined){
+  /**
+   * docElement is a convenience wrapper to grab the root element of the document
+   *
+   * @access private
+   * @returns {HTMLElement|SVGElement} The root element of the document
+   */
+
+  var docElement = document.documentElement;
+  
+
+  var tests = [];
+  
+
+  /**
+   *
+   * ModernizrProto is the constructor for Modernizr
+   *
+   * @class
+   * @access public
+   */
+
+  var ModernizrProto = {
+    // The current version, dummy
+    _version: '3.3.1',
+
+    // Any settings that don't work as separate modules
+    // can go in here as configuration.
+    _config: {
+      'classPrefix': '',
+      'enableClasses': true,
+      'enableJSClass': true,
+      'usePrefixes': true
+    },
+
+    // Queue of tests
+    _q: [],
+
+    // Stub these for people who are listening
+    on: function(test, cb) {
+      // I don't really think people should do this, but we can
+      // safe guard it a bit.
+      // -- NOTE:: this gets WAY overridden in src/addTest for actual async tests.
+      // This is in case people listen to synchronous tests. I would leave it out,
+      // but the code to *disallow* sync tests in the real version of this
+      // function is actually larger than this.
+      var self = this;
+      setTimeout(function() {
+        cb(self[test]);
+      }, 0);
+    },
+
+    addTest: function(name, fn, options) {
+      tests.push({name: name, fn: fn, options: options});
+    },
+
+    addAsyncTest: function(fn) {
+      tests.push({name: null, fn: fn});
+    }
+  };
+
+  
+
+  // Fake some of Object.create so we can force non test results to be non "own" properties.
+  var Modernizr = function() {};
+  Modernizr.prototype = ModernizrProto;
+
+  // Leak modernizr globally when you `require` it rather than force it here.
+  // Overwrite name so constructor name is nicer :D
+  Modernizr = new Modernizr();
+
+  
+
+  var classes = [];
+  
+
+  /**
+   * is returns a boolean if the typeof an obj is exactly type.
+   *
+   * @access private
+   * @function is
+   * @param {*} obj - A thing we want to check the type of
+   * @param {string} type - A string to compare the typeof against
+   * @returns {boolean}
+   */
+
+  function is(obj, type) {
+    return typeof obj === type;
+  }
+  ;
+
+  /**
+   * Run through all tests and detect their support in the current UA.
+   *
+   * @access private
+   */
+
+  function testRunner() {
+    var featureNames;
+    var feature;
+    var aliasIdx;
+    var result;
+    var nameIdx;
+    var featureName;
+    var featureNameSplit;
+
+    for (var featureIdx in tests) {
+      if (tests.hasOwnProperty(featureIdx)) {
+        featureNames = [];
+        feature = tests[featureIdx];
+        // run the test, throw the return value into the Modernizr,
+        // then based on that boolean, define an appropriate className
+        // and push it into an array of classes we'll join later.
+        //
+        // If there is no name, it's an 'async' test that is run,
+        // but not directly added to the object. That should
+        // be done with a post-run addTest call.
+        if (feature.name) {
+          featureNames.push(feature.name.toLowerCase());
+
+          if (feature.options && feature.options.aliases && feature.options.aliases.length) {
+            // Add all the aliases into the names list
+            for (aliasIdx = 0; aliasIdx < feature.options.aliases.length; aliasIdx++) {
+              featureNames.push(feature.options.aliases[aliasIdx].toLowerCase());
+            }
+          }
+        }
+
+        // Run the test, or use the raw value if it's not a function
+        result = is(feature.fn, 'function') ? feature.fn() : feature.fn;
+
+
+        // Set each of the names on the Modernizr object
+        for (nameIdx = 0; nameIdx < featureNames.length; nameIdx++) {
+          featureName = featureNames[nameIdx];
+          // Support dot properties as sub tests. We don't do checking to make sure
+          // that the implied parent tests have been added. You must call them in
+          // order (either in the test, or make the parent test a dependency).
+          //
+          // Cap it to TWO to make the logic simple and because who needs that kind of subtesting
+          // hashtag famous last words
+          featureNameSplit = featureName.split('.');
+
+          if (featureNameSplit.length === 1) {
+            Modernizr[featureNameSplit[0]] = result;
+          } else {
+            // cast to a Boolean, if not one already
+            /* jshint -W053 */
+            if (Modernizr[featureNameSplit[0]] && !(Modernizr[featureNameSplit[0]] instanceof Boolean)) {
+              Modernizr[featureNameSplit[0]] = new Boolean(Modernizr[featureNameSplit[0]]);
+            }
+
+            Modernizr[featureNameSplit[0]][featureNameSplit[1]] = result;
+          }
+
+          classes.push((result ? '' : 'no-') + featureNameSplit.join('-'));
+        }
+      }
+    }
+  }
+  ;
+
+  /**
+   * A convenience helper to check if the document we are running in is an SVG document
+   *
+   * @access private
+   * @returns {boolean}
+   */
+
+  var isSVG = docElement.nodeName.toLowerCase() === 'svg';
+  
+
+  /**
+   * createElement is a convenience wrapper around document.createElement. Since we
+   * use createElement all over the place, this allows for (slightly) smaller code
+   * as well as abstracting away issues with creating elements in contexts other than
+   * HTML documents (e.g. SVG documents).
+   *
+   * @access private
+   * @function createElement
+   * @returns {HTMLElement|SVGElement} An HTML or SVG element
+   */
+
+  function createElement() {
+    if (typeof document.createElement !== 'function') {
+      // This is the case in IE7, where the type of createElement is "object".
+      // For this reason, we cannot call apply() as Object is not a Function.
+      return document.createElement(arguments[0]);
+    } else if (isSVG) {
+      return document.createElementNS.call(document, 'http://www.w3.org/2000/svg', arguments[0]);
+    } else {
+      return document.createElement.apply(document, arguments);
+    }
+  }
+
+  ;
+/*!
+{
+  "name": "Inline SVG",
+  "property": "inlinesvg",
+  "caniuse": "svg-html5",
+  "tags": ["svg"],
+  "notes": [{
+    "name": "Test page",
+    "href": "https://paulirish.com/demo/inline-svg"
+  }, {
+    "name": "Test page and results",
+    "href": "https://codepen.io/eltonmesquita/full/GgXbvo/"
+  }],
+  "polyfills": ["inline-svg-polyfill"],
+  "knownBugs": ["False negative on some Chromia browsers."]
+}
+!*/
+/* DOC
+Detects support for inline SVG in HTML (not within XHTML).
+*/
+
+  Modernizr.addTest('inlinesvg', function() {
+    var div = createElement('div');
+    div.innerHTML = '<svg/>';
+    return (typeof SVGRect != 'undefined' && div.firstChild && div.firstChild.namespaceURI) == 'http://www.w3.org/2000/svg';
+  });
+
+
+  /**
+   * Modernizr.hasEvent() detects support for a given event
+   *
+   * @memberof Modernizr
+   * @name Modernizr.hasEvent
+   * @optionName Modernizr.hasEvent()
+   * @optionProp hasEvent
+   * @access public
+   * @function hasEvent
+   * @param  {string|*} eventName - the name of an event to test for (e.g. "resize")
+   * @param  {Element|string} [element=HTMLDivElement] - is the element|document|window|tagName to test on
+   * @returns {boolean}
+   * @example
+   *  `Modernizr.hasEvent` lets you determine if the browser supports a supplied event.
+   *  By default, it does this detection on a div element
+   *
+   * ```js
+   *  hasEvent('blur') // true;
+   * ```
+   *
+   * However, you are able to give an object as a second argument to hasEvent to
+   * detect an event on something other than a div.
+   *
+   * ```js
+   *  hasEvent('devicelight', window) // true;
+   * ```
+   *
+   */
+
+  var hasEvent = (function() {
+
+    // Detect whether event support can be detected via `in`. Test on a DOM element
+    // using the "blur" event b/c it should always exist. bit.ly/event-detection
+    var needsFallback = !('onblur' in document.documentElement);
+
+    function inner(eventName, element) {
+
+      var isSupported;
+      if (!eventName) { return false; }
+      if (!element || typeof element === 'string') {
+        element = createElement(element || 'div');
+      }
+
+      // Testing via the `in` operator is sufficient for modern browsers and IE.
+      // When using `setAttribute`, IE skips "unload", WebKit skips "unload" and
+      // "resize", whereas `in` "catches" those.
+      eventName = 'on' + eventName;
+      isSupported = eventName in element;
+
+      // Fallback technique for old Firefox - bit.ly/event-detection
+      if (!isSupported && needsFallback) {
+        if (!element.setAttribute) {
+          // Switch to generic element if it lacks `setAttribute`.
+          // It could be the `document`, `window`, or something else.
+          element = createElement('div');
+        }
+
+        element.setAttribute(eventName, '');
+        isSupported = typeof element[eventName] === 'function';
+
+        if (element[eventName] !== undefined) {
+          // If property was created, "remove it" by setting value to `undefined`.
+          element[eventName] = undefined;
+        }
+        element.removeAttribute(eventName);
+      }
+
+      return isSupported;
+    }
+    return inner;
+  })();
+
+
+  ModernizrProto.hasEvent = hasEvent;
+  
+
+  /**
+   * getBody returns the body of a document, or an element that can stand in for
+   * the body if a real body does not exist
+   *
+   * @access private
+   * @function getBody
+   * @returns {HTMLElement|SVGElement} Returns the real body of a document, or an
+   * artificially created element that stands in for the body
+   */
+
+  function getBody() {
+    // After page load injecting a fake body doesn't work so check if body exists
+    var body = document.body;
+
+    if (!body) {
+      // Can't use the real body create a fake one.
+      body = createElement(isSVG ? 'svg' : 'body');
+      body.fake = true;
+    }
+
+    return body;
+  }
+
+  ;
+
+  /**
+   * injectElementWithStyles injects an element with style element and some CSS rules
+   *
+   * @access private
+   * @function injectElementWithStyles
+   * @param {string} rule - String representing a css rule
+   * @param {function} callback - A function that is used to test the injected element
+   * @param {number} [nodes] - An integer representing the number of additional nodes you want injected
+   * @param {string[]} [testnames] - An array of strings that are used as ids for the additional nodes
+   * @returns {boolean}
+   */
+
+  function injectElementWithStyles(rule, callback, nodes, testnames) {
+    var mod = 'modernizr';
+    var style;
+    var ret;
+    var node;
+    var docOverflow;
+    var div = createElement('div');
+    var body = getBody();
+
+    if (parseInt(nodes, 10)) {
+      // In order not to give false positives we create a node for each test
+      // This also allows the method to scale for unspecified uses
+      while (nodes--) {
+        node = createElement('div');
+        node.id = testnames ? testnames[nodes] : mod + (nodes + 1);
+        div.appendChild(node);
+      }
+    }
+
+    style = createElement('style');
+    style.type = 'text/css';
+    style.id = 's' + mod;
+
+    // IE6 will false positive on some tests due to the style element inside the test div somehow interfering offsetHeight, so insert it into body or fakebody.
+    // Opera will act all quirky when injecting elements in documentElement when page is served as xml, needs fakebody too. #270
+    (!body.fake ? div : body).appendChild(style);
+    body.appendChild(div);
+
+    if (style.styleSheet) {
+      style.styleSheet.cssText = rule;
+    } else {
+      style.appendChild(document.createTextNode(rule));
+    }
+    div.id = mod;
+
+    if (body.fake) {
+      //avoid crashing IE8, if background image is used
+      body.style.background = '';
+      //Safari 5.13/5.1.4 OSX stops loading if ::-webkit-scrollbar is used and scrollbars are visible
+      body.style.overflow = 'hidden';
+      docOverflow = docElement.style.overflow;
+      docElement.style.overflow = 'hidden';
+      docElement.appendChild(body);
+    }
+
+    ret = callback(div, rule);
+    // If this is done after page load we don't want to remove the body so check if body exists
+    if (body.fake) {
+      body.parentNode.removeChild(body);
+      docElement.style.overflow = docOverflow;
+      // Trigger layout so kinetic scrolling isn't disabled in iOS6+
+      docElement.offsetHeight;
+    } else {
+      div.parentNode.removeChild(div);
+    }
+
+    return !!ret;
+
+  }
+
+  ;
+
+  /**
+   * testStyles injects an element with style element and some CSS rules
+   *
+   * @memberof Modernizr
+   * @name Modernizr.testStyles
+   * @optionName Modernizr.testStyles()
+   * @optionProp testStyles
+   * @access public
+   * @function testStyles
+   * @param {string} rule - String representing a css rule
+   * @param {function} callback - A function that is used to test the injected element
+   * @param {number} [nodes] - An integer representing the number of additional nodes you want injected
+   * @param {string[]} [testnames] - An array of strings that are used as ids for the additional nodes
+   * @returns {boolean}
+   * @example
+   *
+   * `Modernizr.testStyles` takes a CSS rule and injects it onto the current page
+   * along with (possibly multiple) DOM elements. This lets you check for features
+   * that can not be detected by simply checking the [IDL](https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Interface_development_guide/IDL_interface_rules).
+   *
+   * ```js
+   * Modernizr.testStyles('#modernizr { width: 9px; color: papayawhip; }', function(elem, rule) {
+   *   // elem is the first DOM node in the page (by default #modernizr)
+   *   // rule is the first argument you supplied - the CSS rule in string form
+   *
+   *   addTest('widthworks', elem.style.width === '9px')
+   * });
+   * ```
+   *
+   * If your test requires multiple nodes, you can include a third argument
+   * indicating how many additional div elements to include on the page. The
+   * additional nodes are injected as children of the `elem` that is returned as
+   * the first argument to the callback.
+   *
+   * ```js
+   * Modernizr.testStyles('#modernizr {width: 1px}; #modernizr2 {width: 2px}', function(elem) {
+   *   document.getElementById('modernizr').style.width === '1px'; // true
+   *   document.getElementById('modernizr2').style.width === '2px'; // true
+   *   elem.firstChild === document.getElementById('modernizr2'); // true
+   * }, 1);
+   * ```
+   *
+   * By default, all of the additional elements have an ID of `modernizr[n]`, where
+   * `n` is its index (e.g. the first additional, second overall is `#modernizr2`,
+   * the second additional is `#modernizr3`, etc.).
+   * If you want to have more meaningful IDs for your function, you can provide
+   * them as the fourth argument, as an array of strings
+   *
+   * ```js
+   * Modernizr.testStyles('#foo {width: 10px}; #bar {height: 20px}', function(elem) {
+   *   elem.firstChild === document.getElementById('foo'); // true
+   *   elem.lastChild === document.getElementById('bar'); // true
+   * }, 2, ['foo', 'bar']);
+   * ```
+   *
+   */
+
+  var testStyles = ModernizrProto.testStyles = injectElementWithStyles;
+  
+/*!
+{
+  "name": "onInput Event",
+  "property": "oninput",
+  "notes": [{
+    "name": "MDN article",
+    "href": "https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers.oninput"
+  },{
+    "name": "WHATWG spec",
+    "href": "https://html.spec.whatwg.org/multipage/forms.html#common-input-element-attributes"
+  },{
+    "name": "Detecting onInput support",
+    "href": "http://danielfriesen.name/blog/2010/02/16/html5-browser-maze-oninput-support"
+  }],
+  "authors": ["Patrick Kettner"],
+  "tags": ["event"]
+}
+!*/
+/* DOC
+`oninput` tests if the browser is able to detect the input event
+*/
+
+
+  Modernizr.addTest('oninput', function() {
+    var input = createElement('input');
+    var supportsOnInput;
+    input.setAttribute('oninput', 'return');
+
+    if (hasEvent('oninput', docElement) || typeof input.oninput == 'function') {
+      return true;
+    }
+
+    // IE doesn't support onInput, so we wrap up the non IE APIs
+    // (createEvent, addEventListener) in a try catch, rather than test for
+    // their trident equivalent.
+    try {
+      // Older Firefox didn't map oninput attribute to oninput property
+      var testEvent  = document.createEvent('KeyboardEvent');
+      supportsOnInput = false;
+      var handler = function(e) {
+        supportsOnInput = true;
+        e.preventDefault();
+        e.stopPropagation();
+      };
+
+      testEvent.initKeyEvent('keypress', true, true, window, false, false, false, false, 0, 'e'.charCodeAt(0));
+      docElement.appendChild(input);
+      input.addEventListener('input', handler, false);
+      input.focus();
+      input.dispatchEvent(testEvent);
+      input.removeEventListener('input', handler, false);
+      docElement.removeChild(input);
+    } catch (e) {
+      supportsOnInput = false;
+    }
+      return supportsOnInput;
+  });
+
+
+  /**
+   * cssToDOM takes a kebab-case string and converts it to camelCase
+   * e.g. box-sizing -> boxSizing
+   *
+   * @access private
+   * @function cssToDOM
+   * @param {string} name - String name of kebab-case prop we want to convert
+   * @returns {string} The camelCase version of the supplied name
+   */
+
+  function cssToDOM(name) {
+    return name.replace(/([a-z])-([a-z])/g, function(str, m1, m2) {
+      return m1 + m2.toUpperCase();
+    }).replace(/^-/, '');
+  }
+  ;
+
+  /**
+   * If the browsers follow the spec, then they would expose vendor-specific style as:
+   *   elem.style.WebkitBorderRadius
+   * instead of something like the following, which would be technically incorrect:
+   *   elem.style.webkitBorderRadius
+
+   * Webkit ghosts their properties in lowercase but Opera & Moz do not.
+   * Microsoft uses a lowercase `ms` instead of the correct `Ms` in IE8+
+   *   erik.eae.net/archives/2008/03/10/21.48.10/
+
+   * More here: github.com/Modernizr/Modernizr/issues/issue/21
+   *
+   * @access private
+   * @returns {string} The string representing the vendor-specific style properties
+   */
+
+  var omPrefixes = 'Moz O ms Webkit';
+  
+
+  var cssomPrefixes = (ModernizrProto._config.usePrefixes ? omPrefixes.split(' ') : []);
+  ModernizrProto._cssomPrefixes = cssomPrefixes;
+  
+
+  /**
+   * atRule returns a given CSS property at-rule (eg @keyframes), possibly in
+   * some prefixed form, or false, in the case of an unsupported rule
+   *
+   * @memberof Modernizr
+   * @name Modernizr.atRule
+   * @optionName Modernizr.atRule()
+   * @optionProp atRule
+   * @access public
+   * @function atRule
+   * @param {string} prop - String name of the @-rule to test for
+   * @returns {string|boolean} The string representing the (possibly prefixed)
+   * valid version of the @-rule, or `false` when it is unsupported.
+   * @example
+   * ```js
+   *  var keyframes = Modernizr.atRule('@keyframes');
+   *
+   *  if (keyframes) {
+   *    // keyframes are supported
+   *    // could be `@-webkit-keyframes` or `@keyframes`
+   *  } else {
+   *    // keyframes === `false`
+   *  }
+   * ```
+   *
+   */
+
+  var atRule = function(prop) {
+    var length = prefixes.length;
+    var cssrule = window.CSSRule;
+    var rule;
+
+    if (typeof cssrule === 'undefined') {
+      return undefined;
+    }
+
+    if (!prop) {
+      return false;
+    }
+
+    // remove literal @ from beginning of provided property
+    prop = prop.replace(/^@/, '');
+
+    // CSSRules use underscores instead of dashes
+    rule = prop.replace(/-/g, '_').toUpperCase() + '_RULE';
+
+    if (rule in cssrule) {
+      return '@' + prop;
+    }
+
+    for (var i = 0; i < length; i++) {
+      // prefixes gives us something like -o-, and we want O_
+      var prefix = prefixes[i];
+      var thisRule = prefix.toUpperCase() + '_' + rule;
+
+      if (thisRule in cssrule) {
+        return '@-' + prefix.toLowerCase() + '-' + prop;
+      }
+    }
+
+    return false;
+  };
+
+  ModernizrProto.atRule = atRule;
+
+  
+
+  /**
+   * List of JavaScript DOM values used for tests
+   *
+   * @memberof Modernizr
+   * @name Modernizr._domPrefixes
+   * @optionName Modernizr._domPrefixes
+   * @optionProp domPrefixes
+   * @access public
+   * @example
+   *
+   * Modernizr._domPrefixes is exactly the same as [_prefixes](#modernizr-_prefixes), but rather
+   * than kebab-case properties, all properties are their Capitalized variant
+   *
+   * ```js
+   * Modernizr._domPrefixes === [ "Moz", "O", "ms", "Webkit" ];
+   * ```
+   */
+
+  var domPrefixes = (ModernizrProto._config.usePrefixes ? omPrefixes.toLowerCase().split(' ') : []);
+  ModernizrProto._domPrefixes = domPrefixes;
+  
+
+
+  /**
+   * contains checks to see if a string contains another string
+   *
+   * @access private
+   * @function contains
+   * @param {string} str - The string we want to check for substrings
+   * @param {string} substr - The substring we want to search the first string for
+   * @returns {boolean}
+   */
+
+  function contains(str, substr) {
+    return !!~('' + str).indexOf(substr);
+  }
+
+  ;
+
+  /**
+   * fnBind is a super small [bind](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind) polyfill.
+   *
+   * @access private
+   * @function fnBind
+   * @param {function} fn - a function you want to change `this` reference to
+   * @param {object} that - the `this` you want to call the function with
+   * @returns {function} The wrapped version of the supplied function
+   */
+
+  function fnBind(fn, that) {
+    return function() {
+      return fn.apply(that, arguments);
+    };
+  }
+
+  ;
+
+  /**
+   * testDOMProps is a generic DOM property test; if a browser supports
+   *   a certain property, it won't return undefined for it.
+   *
+   * @access private
+   * @function testDOMProps
+   * @param {array.<string>} props - An array of properties to test for
+   * @param {object} obj - An object or Element you want to use to test the parameters again
+   * @param {boolean|object} elem - An Element to bind the property lookup again. Use `false` to prevent the check
+   */
+  function testDOMProps(props, obj, elem) {
+    var item;
+
+    for (var i in props) {
+      if (props[i] in obj) {
+
+        // return the property name as a string
+        if (elem === false) {
+          return props[i];
+        }
+
+        item = obj[props[i]];
+
+        // let's bind a function
+        if (is(item, 'function')) {
+          // bind to obj unless overriden
+          return fnBind(item, elem || obj);
+        }
+
+        // return the unbound function or obj or value
+        return item;
+      }
+    }
+    return false;
+  }
+
+  ;
+
+  /**
+   * Create our "modernizr" element that we do most feature tests on.
+   *
+   * @access private
+   */
+
+  var modElem = {
+    elem: createElement('modernizr')
+  };
+
+  // Clean up this element
+  Modernizr._q.push(function() {
+    delete modElem.elem;
+  });
+
+  
+
+  var mStyle = {
+    style: modElem.elem.style
+  };
+
+  // kill ref for gc, must happen before mod.elem is removed, so we unshift on to
+  // the front of the queue.
+  Modernizr._q.unshift(function() {
+    delete mStyle.style;
+  });
+
+  
+
+  /**
+   * domToCSS takes a camelCase string and converts it to kebab-case
+   * e.g. boxSizing -> box-sizing
+   *
+   * @access private
+   * @function domToCSS
+   * @param {string} name - String name of camelCase prop we want to convert
+   * @returns {string} The kebab-case version of the supplied name
+   */
+
+  function domToCSS(name) {
+    return name.replace(/([A-Z])/g, function(str, m1) {
+      return '-' + m1.toLowerCase();
+    }).replace(/^ms-/, '-ms-');
+  }
+  ;
+
+  /**
+   * nativeTestProps allows for us to use native feature detection functionality if available.
+   * some prefixed form, or false, in the case of an unsupported rule
+   *
+   * @access private
+   * @function nativeTestProps
+   * @param {array} props - An array of property names
+   * @param {string} value - A string representing the value we want to check via @supports
+   * @returns {boolean|undefined} A boolean when @supports exists, undefined otherwise
+   */
+
+  // Accepts a list of property names and a single value
+  // Returns `undefined` if native detection not available
+  function nativeTestProps(props, value) {
+    var i = props.length;
+    // Start with the JS API: http://www.w3.org/TR/css3-conditional/#the-css-interface
+    if ('CSS' in window && 'supports' in window.CSS) {
+      // Try every prefixed variant of the property
+      while (i--) {
+        if (window.CSS.supports(domToCSS(props[i]), value)) {
+          return true;
+        }
+      }
+      return false;
+    }
+    // Otherwise fall back to at-rule (for Opera 12.x)
+    else if ('CSSSupportsRule' in window) {
+      // Build a condition string for every prefixed variant
+      var conditionText = [];
+      while (i--) {
+        conditionText.push('(' + domToCSS(props[i]) + ':' + value + ')');
+      }
+      conditionText = conditionText.join(' or ');
+      return injectElementWithStyles('@supports (' + conditionText + ') { #modernizr { position: absolute; } }', function(node) {
+        return getComputedStyle(node, null).position == 'absolute';
+      });
+    }
+    return undefined;
+  }
+  ;
+
+  // testProps is a generic CSS / DOM property test.
+
+  // In testing support for a given CSS property, it's legit to test:
+  //    `elem.style[styleName] !== undefined`
+  // If the property is supported it will return an empty string,
+  // if unsupported it will return undefined.
+
+  // We'll take advantage of this quick test and skip setting a style
+  // on our modernizr element, but instead just testing undefined vs
+  // empty string.
+
+  // Property names can be provided in either camelCase or kebab-case.
+
+  function testProps(props, prefixed, value, skipValueTest) {
+    skipValueTest = is(skipValueTest, 'undefined') ? false : skipValueTest;
+
+    // Try native detect first
+    if (!is(value, 'undefined')) {
+      var result = nativeTestProps(props, value);
+      if (!is(result, 'undefined')) {
+        return result;
+      }
+    }
+
+    // Otherwise do it properly
+    var afterInit, i, propsLength, prop, before;
+
+    // If we don't have a style element, that means we're running async or after
+    // the core tests, so we'll need to create our own elements to use
+
+    // inside of an SVG element, in certain browsers, the `style` element is only
+    // defined for valid tags. Therefore, if `modernizr` does not have one, we
+    // fall back to a less used element and hope for the best.
+    // for strict XHTML browsers the hardly used samp element is used
+    var elems = ['modernizr', 'tspan', 'samp'];
+    while (!mStyle.style && elems.length) {
+      afterInit = true;
+      mStyle.modElem = createElement(elems.shift());
+      mStyle.style = mStyle.modElem.style;
+    }
+
+    // Delete the objects if we created them.
+    function cleanElems() {
+      if (afterInit) {
+        delete mStyle.style;
+        delete mStyle.modElem;
+      }
+    }
+
+    propsLength = props.length;
+    for (i = 0; i < propsLength; i++) {
+      prop = props[i];
+      before = mStyle.style[prop];
+
+      if (contains(prop, '-')) {
+        prop = cssToDOM(prop);
+      }
+
+      if (mStyle.style[prop] !== undefined) {
+
+        // If value to test has been passed in, do a set-and-check test.
+        // 0 (integer) is a valid property value, so check that `value` isn't
+        // undefined, rather than just checking it's truthy.
+        if (!skipValueTest && !is(value, 'undefined')) {
+
+          // Needs a try catch block because of old IE. This is slow, but will
+          // be avoided in most cases because `skipValueTest` will be used.
+          try {
+            mStyle.style[prop] = value;
+          } catch (e) {}
+
+          // If the property value has changed, we assume the value used is
+          // supported. If `value` is empty string, it'll fail here (because
+          // it hasn't changed), which matches how browsers have implemented
+          // CSS.supports()
+          if (mStyle.style[prop] != before) {
+            cleanElems();
+            return prefixed == 'pfx' ? prop : true;
+          }
+        }
+        // Otherwise just return true, or the property name if this is a
+        // `prefixed()` call
+        else {
+          cleanElems();
+          return prefixed == 'pfx' ? prop : true;
+        }
+      }
+    }
+    cleanElems();
+    return false;
+  }
+
+  ;
+
+  /**
+   * testPropsAll tests a list of DOM properties we want to check against.
+   * We specify literally ALL possible (known and/or likely) properties on
+   * the element including the non-vendor prefixed one, for forward-
+   * compatibility.
+   *
+   * @access private
+   * @function testPropsAll
+   * @param {string} prop - A string of the property to test for
+   * @param {string|object} [prefixed] - An object to check the prefixed properties on. Use a string to skip
+   * @param {HTMLElement|SVGElement} [elem] - An element used to test the property and value against
+   * @param {string} [value] - A string of a css value
+   * @param {boolean} [skipValueTest] - An boolean representing if you want to test if value sticks when set
+   */
+  function testPropsAll(prop, prefixed, elem, value, skipValueTest) {
+
+    var ucProp = prop.charAt(0).toUpperCase() + prop.slice(1),
+    props = (prop + ' ' + cssomPrefixes.join(ucProp + ' ') + ucProp).split(' ');
+
+    // did they call .prefixed('boxSizing') or are we just testing a prop?
+    if (is(prefixed, 'string') || is(prefixed, 'undefined')) {
+      return testProps(props, prefixed, value, skipValueTest);
+
+      // otherwise, they called .prefixed('requestAnimationFrame', window[, elem])
+    } else {
+      props = (prop + ' ' + (domPrefixes).join(ucProp + ' ') + ucProp).split(' ');
+      return testDOMProps(props, prefixed, elem);
+    }
+  }
+
+  // Modernizr.testAllProps() investigates whether a given style property,
+  // or any of its vendor-prefixed variants, is recognized
+  //
+  // Note that the property names must be provided in the camelCase variant.
+  // Modernizr.testAllProps('boxSizing')
+  ModernizrProto.testAllProps = testPropsAll;
+
+  
+
+  /**
+   * prefixed returns the prefixed or nonprefixed property name variant of your input
+   *
+   * @memberof Modernizr
+   * @name Modernizr.prefixed
+   * @optionName Modernizr.prefixed()
+   * @optionProp prefixed
+   * @access public
+   * @function prefixed
+   * @param {string} prop - String name of the property to test for
+   * @param {object} [obj] - An object to test for the prefixed properties on
+   * @param {HTMLElement} [elem] - An element used to test specific properties against
+   * @returns {string|false} The string representing the (possibly prefixed) valid
+   * version of the property, or `false` when it is unsupported.
+   * @example
+   *
+   * Modernizr.prefixed takes a string css value in the DOM style camelCase (as
+   * opposed to the css style kebab-case) form and returns the (possibly prefixed)
+   * version of that property that the browser actually supports.
+   *
+   * For example, in older Firefox...
+   * ```js
+   * prefixed('boxSizing')
+   * ```
+   * returns 'MozBoxSizing'
+   *
+   * In newer Firefox, as well as any other browser that support the unprefixed
+   * version would simply return `boxSizing`. Any browser that does not support
+   * the property at all, it will return `false`.
+   *
+   * By default, prefixed is checked against a DOM element. If you want to check
+   * for a property on another object, just pass it as a second argument
+   *
+   * ```js
+   * var rAF = prefixed('requestAnimationFrame', window);
+   *
+   * raf(function() {
+   *  renderFunction();
+   * })
+   * ```
+   *
+   * Note that this will return _the actual function_ - not the name of the function.
+   * If you need the actual name of the property, pass in `false` as a third argument
+   *
+   * ```js
+   * var rAFProp = prefixed('requestAnimationFrame', window, false);
+   *
+   * rafProp === 'WebkitRequestAnimationFrame' // in older webkit
+   * ```
+   *
+   * One common use case for prefixed is if you're trying to determine which transition
+   * end event to bind to, you might do something like...
+   * ```js
+   * var transEndEventNames = {
+   *     'WebkitTransition' : 'webkitTransitionEnd', * Saf 6, Android Browser
+   *     'MozTransition'    : 'transitionend',       * only for FF < 15
+   *     'transition'       : 'transitionend'        * IE10, Opera, Chrome, FF 15+, Saf 7+
+   * };
+   *
+   * var transEndEventName = transEndEventNames[ Modernizr.prefixed('transition') ];
+   * ```
+   *
+   * If you want a similar lookup, but in kebab-case, you can use [prefixedCSS](#modernizr-prefixedcss).
+   */
+
+  var prefixed = ModernizrProto.prefixed = function(prop, obj, elem) {
+    if (prop.indexOf('@') === 0) {
+      return atRule(prop);
+    }
+
+    if (prop.indexOf('-') != -1) {
+      // Convert kebab-case to camelCase
+      prop = cssToDOM(prop);
+    }
+    if (!obj) {
+      return testPropsAll(prop, 'pfx');
+    } else {
+      // Testing DOM property e.g. Modernizr.prefixed('requestAnimationFrame', window) // 'mozRequestAnimationFrame'
+      return testPropsAll(prop, obj, elem);
+    }
+  };
+
+  
+/*!
+{
+  "name": "RTC Peer Connection",
+  "property": "peerconnection",
+  "tags": ["webrtc"],
+  "authors": ["Ankur Oberoi"],
+  "notes": [{
+    "name": "W3C Web RTC spec",
+    "href": "https://www.w3.org/TR/webrtc/"
+  }]
+}
+!*/
+
+  Modernizr.addTest('peerconnection', !!prefixed('RTCPeerConnection', window));
+
+
+  // Run each test
+  testRunner();
+
+  delete ModernizrProto.addTest;
+  delete ModernizrProto.addAsyncTest;
+
+  // Run the things that are supposed to run after the tests
+  for (var i = 0; i < Modernizr._q.length; i++) {
+    Modernizr._q[i]();
+  }
+
+  // Leak Modernizr namespace
+  window.Modernizr = Modernizr;
+
+
+;
+
+})(window, document);
 /** File: strophe.js
  *  A JavaScript library for XMPP BOSH/XMPP over Websocket.
  *
@@ -12580,14 +13660,9 @@ WebIM.config = {
  * Module1: Utility
  * Module2: EmMessage
  * Module3: Message
- * Module4: Connection
  */
 
 ;(function ( window, undefined ) {
-
-	if ( typeof Strophe === 'undefined' ) {
-		throw 'need Strophe';
-	}
 
 	var Easemob = Easemob || {};
 	Easemob.im = Easemob.im || {};
@@ -12596,19 +13671,6 @@ WebIM.config = {
 	var https = location.protocol === 'https:';
 
 	window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
-
-	Strophe.Websocket.prototype._closeSocket = function () {
-		var me = this;
-		if ( me.socket ) {
-			setTimeout(function () {
-				try {
-					me.socket.close();
-				} catch ( e ) {}
-			}, 0);
-		} else {
-			me.socket = null;
-		}
-	}
 
 	/**
 	 * Module1: Utility
@@ -12629,24 +13691,6 @@ WebIM.config = {
 			} catch ( e ) {
 				return false;
 			}
-		};
-// todo 尽早去除旧的sdk
-// 此处代码与新sdk共存时在IE8 会堆栈溢出
-		// if ( window.XDomainRequest ) {
-		// 	XDomainRequest.prototype.oldsend = XDomainRequest.prototype.send;
-		// 	XDomainRequest.prototype.send = function () {
-		// 		XDomainRequest.prototype.oldsend.apply(this, arguments);
-		// 		this.readyState = 2;
-		// 	};
-		// }
-
-		Strophe.Request.prototype._newXHR = function () {
-			var xhr =  Utils.xmlrequest(true);
-			if ( xhr.overrideMimeType ) {
-				xhr.overrideMimeType("text/xml");
-			}
-			xhr.onreadystatechange = this.func.stropheBind(null, this);
-			return xhr;
 		};
 
 		var _xmlrequest = function ( crossDomain ) {
@@ -13584,1544 +14628,6 @@ WebIM.config = {
 			_send(me.msg);
 		}
 	}
-		
-	
-
-	/*
-	 * Module4: Connection
-	 */
-	var Connection = (function () {
-
-		var _networkSt;
-		var _listenNetwork = function ( onlineCallback, offlineCallback ) {
-
-			if ( window.addEventListener ) {
-				window.addEventListener('online', onlineCallback);
-				window.addEventListener('offline', offlineCallback);
-
-			} else if ( window.attachEvent ) {
-				if ( document.body ) {
-					document.body.attachEvent('onoffline', offlineCallback);
-					document.body.attachEvent('onoffline', offlineCallback);
-				} else {
-					window.attachEvent('load', function () {
-						document.body.attachEvent('onoffline', offlineCallback);
-						document.body.attachEvent('onoffline', offlineCallback);
-					});
-				}
-			} else {
-				/*var onlineTmp = window.ononline;
-				var offlineTmp = window.onoffline;
-
-				window.attachEvent('ononline', function () {
-					try {
-						typeof onlineTmp === 'function' && onlineTmp();
-					} catch ( e ) {}
-					onlineCallback();
-				});
-				window.attachEvent('onoffline', function () {
-					try {
-						typeof offlineTmp === 'function' && offlineTmp();
-					} catch ( e ) {}
-					offlineCallback();
-				});*/
-			}
-		};
-
-		var _parseRoomFn = function ( result ) {
-			var rooms = [];
-			var items = result.getElementsByTagName("item");
-			if ( items ) {
-				for ( var i = 0; i < items.length; i++ ) {
-					var item = items[i];
-					var roomJid = item.getAttribute('jid');
-					var tmp = roomJid.split("@")[0];
-					var room = {
-						jid: roomJid
-						, name: item.getAttribute('name')
-						, roomId: tmp.split('_')[1]
-					};
-					rooms.push(room);
-				}
-			}
-			return rooms;
-		}
-			
-		var _parseRoomOccupantsFn = function ( result ) {
-			var occupants = [];
-			var items = result.getElementsByTagName("item");
-			if ( items ) {
-				for ( var i = 0; i < items.length; i++ ) {
-					var item = items[i];
-					var room = {
-						jid: item.getAttribute('jid')
-						, name: item.getAttribute('name')
-					};
-					occupants.push(room);
-				}
-			}
-			return occupants;
-		}
-
-		var _parseResponseMessage = function ( msginfo ) {
-			var parseMsgData = { errorMsg: true, data: [] };
-
-			var msgBodies = msginfo.getElementsByTagName("body");
-			if ( msgBodies ) {
-				for ( var i = 0; i < msgBodies.length; i++ ) {
-					var msgBody = msgBodies[i];
-					var childNodes = msgBody.childNodes;
-					if ( childNodes && childNodes.length > 0 ) {
-						var childNode = msgBody.childNodes[0];
-						if ( childNode.nodeType == Strophe.ElementType.TEXT ) {
-							var jsondata = childNode.wholeText ||childNode.nodeValue;
-							jsondata = jsondata.replace('\n','<br>');
-							try {
-								var data = eval("(" + jsondata + ")");
-								parseMsgData.errorMsg = false;
-								parseMsgData.data = [data];
-							} catch ( e ) {}
-						}
-					}
-				}
-
-				var delayTags = msginfo.getElementsByTagName("delay");
-				if ( delayTags && delayTags.length > 0 ) {
-					var delayTag = delayTags[0];
-					var delayMsgTime = delayTag.getAttribute("stamp");
-					if ( delayMsgTime ) {
-						parseMsgData.delayTimeStamp = delayMsgTime;
-					}
-				}
-			} else {
-				var childrens = msginfo.childNodes;
-				if ( childrens && childrens.length>0 ) {
-					var child = msginfo.childNodes[0];
-					if ( child.nodeType == Strophe.ElementType.TEXT ) {
-						try {
-							var data = eval("("+child.nodeValue+")");
-							parseMsgData.errorMsg = false;
-							parseMsgData.data = [data];
-						} catch ( e ) {}
-					}
-				}
-			}
-			return parseMsgData;
-		}
-
-		var _parseNameFromJidFn = function ( jid, domain ) {
-			domain = domain || "";
-			var tempstr = jid;
-			var findex = tempstr.indexOf("_");
-
-			if ( findex !== -1 ) {
-				tempstr = tempstr.substring(findex+1);
-			}
-			var atindex = tempstr.indexOf("@" + domain);
-			if ( atindex !== -1 ) {
-				tempstr = tempstr.substring(0,atindex);
-			}
-			return tempstr;
-		}
-
-		var _parseFriendFn = function ( queryTag ) {
-			var rouster = [];
-			var items = queryTag.getElementsByTagName("item");
-			if ( items ) {
-				for( var i = 0; i < items.length; i++ ) {
-					var item = items[i];
-					var jid = item.getAttribute('jid');
-					if ( !jid ) {
-						continue;
-					}
-					var subscription = item.getAttribute('subscription');
-					var friend = {
-						subscription: subscription
-						, jid: jid
-					};
-					var ask = item.getAttribute('ask');
-					if ( ask ) {
-						friend.ask = ask;
-					}
-					var name = item.getAttribute('name');
-					if ( name ) {
-						friend.name = name;
-					} else {
-						var n = _parseNameFromJidFn(jid);
-						friend.name = n;
-					}
-					var groups = [];
-					Strophe.forEachChild(item, 'group',function ( group ) {
-						groups.push(Strophe.getText(group));
-					});
-					friend.groups = groups;
-					rouster.push(friend);
-				}
-			}
-			return rouster;
-		}
-
-		var _dologin2IM = function ( options, conn ) {
-			var accessToken = options.access_token || '';
-			if ( accessToken == '' ) {
-				var loginfo = Utils.stringify(options);
-				conn.onError({
-					type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
-					, msg: "登录失败," + loginfo
-					, data: options
-					, xhr: xhr
-				});
-				return;
-			}
-			conn.context.accessToken = options.access_token;
-			conn.context.accessTokenExpires = options.expires_in;
-			var stropheConn = null;
-			if ( conn.isOpening() && conn.context.stropheConn ) {
-				stropheConn = conn.context.stropheConn;
-			} else if ( conn.isOpened() && conn.context.stropheConn ) {
-				return;
-			} else {
-				stropheConn = new Strophe.Connection(conn.url, {
-					inactivity: conn.inactivity
-					, maxRetries: conn.maxRetries
-					, pollingTime: conn.pollingTime
-				});
-			}
-
-			var callback = function ( status, msg ) {
-				_login2ImCallback(status,msg,conn);
-			};
-
-			conn.context.stropheConn = stropheConn;
-			if ( conn.route ) {
-				stropheConn.connect(conn.context.jid,"$t$" + accessToken,callback,conn.wait,conn.hold,conn.route);
-			} else {
-				stropheConn.connect(conn.context.jid,"$t$" + accessToken,callback,conn.wait,conn.hold);
-			}
-		};
-
-		var _parseMessageType = function ( msginfo ) {
-			var msgtype = 'normal';
-			var receiveinfo = msginfo.getElementsByTagName("received");
-			if ( receiveinfo && receiveinfo.length > 0 && receiveinfo[0].namespaceURI === "urn:xmpp:receipts" ) {
-				msgtype = 'received';
-			} else {
-				var inviteinfo =  msginfo.getElementsByTagName("invite");
-				if ( inviteinfo && inviteinfo.length > 0 ) {
-					msgtype = 'invite';
-				}
-			}
-			return msgtype;
-		};
-
-		var _handleQueueMessage = function ( conn ) {
-			for ( var i in _msgHash ) {
-				if ( _msgHash.hasOwnProperty(i) ) {
-					_msgHash[i].send(conn);
-				}
-			}
-		};
-
-		var _login2ImCallback = function ( status, msg, conn ) {
-			if ( status == Strophe.Status.CONNFAIL ) {
-				conn.onError({
-					type: EASEMOB_IM_CONNCTION_SERVER_CLOSE_ERROR
-					, msg: msg
-					, reconnect: true
-				});
-			} else if ( status == Strophe.Status.ATTACHED || status == Strophe.Status.CONNECTED ) {
-				var handleMessage = function ( msginfo ) {
-					var type = _parseMessageType(msginfo);
-
-					if ( 'received' === type ) {
-						conn.handleReceivedMessage(msginfo);
-						return true;
-					} else if ( 'invite' === type ) {
-						conn.handleInviteMessage(msginfo);
-						return true;
-					} else {
-						conn.handleMessage(msginfo);
-						return true;
-					}
-				};
-				var handlePresence = function ( msginfo ) {
-					conn.handlePresence(msginfo);
-					return true;
-				};
-				var handlePing = function ( msginfo ) {
-					conn.handlePing(msginfo);
-					return true;
-				};
-				var handleIq = function ( msginfo ) {
-					conn.handleIq(msginfo);
-					return true;
-				};
-
-				conn.addHandler(handleMessage, null, 'message', null, null,  null);
-				conn.addHandler(handlePresence, null, 'presence', null, null,  null);
-				conn.addHandler(handlePing, "urn:xmpp:ping", 'iq', "get", null,  null);
-				conn.addHandler(handleIq, "jabber:iq:roster", 'iq', "set", null,  null);
-
-				conn.context.status = STATUS_OPENED;
-
-				var supportRecMessage = [
-				   EASEMOB_IM_MESSAGE_REC_TEXT,
-				   EASEMOB_IM_MESSAGE_REC_EMOTION ];
-
-				if ( Utils.isCanDownLoadFile ) {
-					supportRecMessage.push(EASEMOB_IM_MESSAGE_REC_PHOTO);
-					supportRecMessage.push(EASEMOB_IM_MESSAGE_REC_AUDIO_FILE);
-				}
-				var supportSedMessage = [ EASEMOB_IM_MESSAGE_SED_TEXT ];
-				if ( Utils.isCanUploadFile ) {
-					supportSedMessage.push(EASEMOB_IM_MESSAGE_REC_PHOTO);
-					supportSedMessage.push(EASEMOB_IM_MESSAGE_REC_AUDIO_FILE);
-				}
-				conn.notifyVersion();
-				conn.retry && _handleQueueMessage(conn);
-				conn.onOpened({
-					canReceive: supportRecMessage
-					, canSend: supportSedMessage
-					, accessToken: conn.context.accessToken
-				});
-				conn.heartBeat();
-			} else if ( status == Strophe.Status.DISCONNECTING ) {
-				if ( conn.isOpened() ) {// 不是主动关闭
-					conn.stopHeartBeat();
-					conn.context.status = STATUS_CLOSING;
-					conn.onError({
-						type: EASEMOB_IM_CONNCTION_SERVER_CLOSE_ERROR
-						, msg: msg
-						, reconnect: true
-					});
-				}
-			} else if ( status == Strophe.Status.DISCONNECTED ) {
-				conn.context.status = STATUS_CLOSED;
-				conn.clear();
-				conn.onClosed();
-			} else if ( status == Strophe.Status.AUTHFAIL ) {
-				conn.onError({
-					type: EASEMOB_IM_CONNCTION_AUTH_ERROR
-					, msg: '登录失败,请输入正确的用户名和密码'
-				});
-				conn.clear();
-			} else if ( status == Strophe.Status.ERROR ) {
-				conn.onError({
-					type: EASEMOB_IM_CONNCTION_SERVER_ERROR
-					, msg: msg || '服务器异常'
-				});
-			}
-		};
-
-		var _getJid = function ( options, conn ) {
-			var jid = options.toJid || '';
-
-			if ( jid === '' ) {
-				var appKey = conn.context.appKey || '';
-				var toJid = appKey + "_" + options.to + "@" + conn.domain;
-
-				if ( options.resource ) {
-					toJid = toJid + "/" + options.resource;
-				}
-				jid = toJid;
-			}
-			return jid;
-		};
-
-		var _innerCheck = function ( options, conn ) {
-			options = options || {};
-
-			if ( options.user == '' ) {
-				conn.onError({
-					type: EASEMOB_IM_CONNCTION_USER_NOT_ASSIGN_ERROR
-					, msg: '未指定用户'
-				});
-				return false;
-			}
-
-			var user = options.user || '';
-			var appKey = options.appKey || '';
-			var devInfos = appKey.split('#');
-
-			if ( devInfos.length !== 2 ) {
-				conn.onError({
-					type: EASEMOB_IM_CONNCTION_OPEN_ERROR
-					, msg: '请指定正确的开发者信息(appKey)'
-				});
-				return false;
-			}
-			var orgName = devInfos[0];
-			var appName = devInfos[1];
-
-			if ( !orgName ) {
-				conn.onError({
-					type: EASEMOB_IM_CONNCTION_OPEN_ERROR
-					, msg: '请指定正确的开发者信息(appKey)'
-				});
-				return false;
-			}
-			if ( !appName ) {
-				conn.onError({
-					type: EASEMOB_IM_CONNCTION_OPEN_ERROR
-					, msg: '请指定正确的开发者信息(appKey)'
-				});
-				return false;
-			}
-			
-			var jid = appKey + "_" + user.toLowerCase() + "@" + conn.domain,
-				resource = options.resource || 'webim';
-
-			if ( conn.multiResources ) {
-				resource += user + new Date().getTime() + Math.floor(Math.random().toFixed(6) * 1000000);
-			}
-
-			conn.context.jid = jid + '/' + resource;/*jid: {appkey}_{username}@domain/resource*/
-			conn.context.userId = user;
-			conn.context.appKey = appKey;
-			conn.context.appName = appName;
-			conn.context.orgName = orgName;
-			
-			return true;
-		}
-
-		var _getXmppUrl = function ( baseUrl, https ) {
-			if ( /^(ws|http)s?:\/\/?/.test(baseUrl) ) {
-				return baseUrl;
-			}
-
-			var url = {
-				prefix: 'http',
-				base: '://' + (baseUrl || 'im-api.easemob.com'),
-				suffix: '/http-bind/'
-			};
-
-			if ( https && Utils.isSupportWss ) {
-				url.prefix = 'wss';
-				url.suffix = '/ws/';
-			} else {
-				if ( https ) {
-					url.prefix = 'https';
-				} else if ( window.WebSocket ) {
-					url.prefix = 'ws';
-					url.suffix = '/ws/';
-				}   
-			}
-
-			return url.prefix + url.base + url.suffix;
-		};
-
-		//class
-		var connection = function ( options ) {
-			if ( !this instanceof Connection ) {
-				return new Connection(options);
-			}
-
-			var options = options || {};
-
-			this.multiResources = options.multiResources || false;
-			this.wait = options.wait || 30;
-			this.retry = options.retry || false;
-			this.https = options.https || https;
-			this.url = _getXmppUrl(options.url, this.https);
-			this.hold = options.hold || 1;
-			this.route = options.route || null;
-			this.domain = options.domain || "easemob.com";
-			this.inactivity = options.inactivity || 30;
-			this.heartBeatWait = options.heartBeatWait || 60000;
-			this.maxRetries = options.maxRetries || 5;
-			this.pollingTime = options.pollingTime || 800;
-			this.stropheConn = false;
-			this.context = { status: STATUS_INIT };
-		};
-
-		connection.prototype.listen = function ( options ) {
-			options.url && (this.url = _getXmppUrl(options.url, this.https));//just compatible
-			this.onOpened = options.onOpened || EMPTYFN;
-			this.onClosed = options.onClosed || EMPTYFN;
-			this.onTextMessage = options.onTextMessage || EMPTYFN;
-			this.onEmotionMessage = options.onEmotionMessage || EMPTYFN;
-			this.onPictureMessage = options.onPictureMessage || EMPTYFN;
-			this.onAudioMessage = options.onAudioMessage || EMPTYFN;
-			this.onVideoMessage = options.onVideoMessage || EMPTYFN;
-			this.onFileMessage = options.onFileMessage || EMPTYFN;
-			this.onLocationMessage = options.onLocationMessage || EMPTYFN;
-			this.onCmdMessage = options.onCmdMessage || EMPTYFN;
-			this.onPresence = options.onPresence || EMPTYFN;
-			this.onRoster = options.onRoster || EMPTYFN;
-			this.onError = options.onError || EMPTYFN;
-			this.onReceivedMessage = options.onReceivedMessage || EMPTYFN;
-			this.onInviteMessage = options.onInviteMessage || EMPTYFN;
-			this.onOffline = options.onOffline || EMPTYFN;
-			this.onOnline = options.onOnline || EMPTYFN;
-
-			_listenNetwork(this.onOnline, this.onOffline);
-		}
-
-		connection.prototype.heartBeat = function () {
-			var me = this;
-
-			if ( me.heartBeatID ) {
-				return;
-			}
-
-			var options = {
-				to : me.domain,
-				type : "normal"
-			};
-			me.heartBeatID = setInterval(function () {
-				me.sendHeartBeatMessage(options);
-			}, me.heartBeatWait);
-		};
-
-		connection.prototype.sendHeartBeatMessage = function ( options ) {
-			var json = {},
-				jsonstr = Utils.stringify(json),
-				dom = $msg({
-					to : options.to,
-					type : options.type,
-					id : this.getUniqueId(),
-					xmlns : "jabber:client"
-				}).c("body").t(jsonstr);
-
-			this.sendCommand(dom.tree());
-		};
-
-		connection.prototype.stopHeartBeat = function () {
-			this.heartBeatID = clearInterval(this.heartBeatID);
-		};
-
-
-		connection.prototype.sendReceiptsMessage = function ( options ) {
-			var dom = $msg({
-				from: this.context.jid || ''
-				, to: "easemob.com"
-				, id: options.id || ''
-			}).c("received",{
-				xmlns: "urn:xmpp:receipts"
-				, id: options.id || ''
-			});
-			this.sendCommand(dom.tree());
-		};
-
-		connection.prototype.open = function ( options ) {
-			var pass = _innerCheck(options,this);
-
-			if ( !pass ) {
-				return;
-			}
-			
-			var conn = this;
-
-			if ( conn.isOpening() || conn.isOpened() ) {
-				return;
-			}
-
-			if ( options.accessToken ) {
-				options.access_token = options.accessToken;
-				_dologin2IM(options,conn);
-			} else {
-				var apiUrl = options.apiUrl || (this.https ? 'https' : 'http') + '://a1.easemob.com';
-				var userId = this.context.userId;
-				var pwd = options.pwd || '';
-				var appName = this.context.appName;
-				var orgName = this.context.orgName;
-
-				var suc = function ( data, xhr ) {
-					conn.context.status = STATUS_DOLOGIN_IM;
-					_dologin2IM(data,conn);
-				};
-				var error = function ( res, xhr, msg ) {
-					conn.clear();
-					if ( res.error && res.error_description ) {
-						conn.onError({
-							type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
-							, msg: "登录失败,"+res.error_description
-							, data: res
-							, xhr: xhr
-						});
-					} else {
-						conn.onError({
-							type: EASEMOB_IM_CONNCTION_OPEN_USERGRID_ERROR
-							, msg: "登录失败"
-							, data: res
-							, xhr: xhr
-						});
-					}
-				};
-				this.context.status = STATUS_DOLOGIN_USERGRID;
-
-				var loginJson = {
-					grant_type: 'password'
-					, username: userId
-					, password: pwd
-				};
-				var loginfo = Utils.stringify(loginJson);
-
-				var options = {
-					url: apiUrl + "/" + orgName + "/" + appName + "/token"
-					, dataType: 'json'
-					, data: loginfo
-					, success: suc || EMPTYFN
-					, error: error || EMPTYFN
-				};
-				Utils.ajax(options);
-			}
-
-		};
-
-		connection.prototype.attach = function ( options ) {
-			var pass = _innerCheck(options, this);
-
-			if ( !pass ) {
-				return;
-			}
-
-			options = options || {};
-
-			var accessToken = options.accessToken || '';
-			if ( accessToken == '' ) {
-				this.onError({
-					type: EASEMOB_IM_CONNCTION_ATTACH_USERGRID_ERROR
-					, msg: '未指定用户的accessToken'
-				});
-				return;
-			}
-
-			var sid = options.sid || '';
-			if ( sid === '') {
-				this.onError({
-					type: EASEMOB_IM_CONNCTION_ATTACH_ERROR
-					, msg: '未指定用户的会话信息'
-				});
-				return;
-			}
-
-			var rid = options.rid || '';
-			if ( rid === '') {
-				this.onError({
-					type: EASEMOB_IM_CONNCTION_ATTACH_ERROR
-					, msg: '未指定用户的消息id'
-				});
-				return;
-			}
-
-			var stropheConn = new Strophe.Connection(this.url, {
-				inactivity: this.inactivity,
-				maxRetries: this.maxRetries,
-				pollingTime: this.pollingTime
-			});
-
-			this.context.accessToken = accessToken;
-			this.context.stropheConn = stropheConn;
-			this.context.status = STATUS_DOLOGIN_IM;
-
-			var conn = this;
-			var callback = function ( status, msg ) {
-				_login2ImCallback(status,msg,conn);
-			};
-
-			var jid = this.context.jid;
-			var wait = this.wait;
-			var hold = this.hold;
-			var wind = this.wind || 5;
-			stropheConn.attach(jid, sid, rid, callback, wait, hold, wind);
-		};
-
-		connection.prototype.close = function () {
-			var status = this.context.status;
-			if ( status == STATUS_INIT ) {
-				return;
-			}
-
-			if ( this.isClosed() || this.isClosing() ) {
-				return;
-			}
-			this.stopHeartBeat();
-			this.context.status = STATUS_CLOSING;
-			this.context.stropheConn.disconnect();
-		};
-
-		// see stropheConn.addHandler
-		connection.prototype.addHandler = function ( handler, ns, name, type, id, from, options ) {
-			this.context.stropheConn.addHandler(handler, ns, name, type, id, from, options);
-		};
-
-		connection.prototype.notifyVersion = function ( suc, fail ) {
-			var jid = _getJid({},this);
-			var dom = $iq({
-				from: this.context.jid || ''
-				, to: this.domain
-				, type: "result"
-			})
-			.c("query", { xmlns: "jabber:iq:version" })
-			.c("name")
-			.t("easemob")
-			.up()
-			.c("version")
-			.t(Easemob.im.version)
-			.up()
-			.c("os")
-			.t("webim");
-
-			suc = suc || EMPTYFN;
-			error = fail || this.onError;
-			var failFn = function ( ele ) {
-				error({
-					type: EASEMOB_IM_CONNCTION_NOTIFYVERSION_ERROR
-					, msg: '发送版本信息给服务器时失败'
-					, data: ele
-				});
-			};
-			this.context.stropheConn.sendIQ(dom.tree(), suc, failFn);
-			return;
-		};
-
-		connection.prototype.handlePresence = function ( msginfo ) {
-			if ( this.isClosed() ) {
-				return;
-			}
-			//TODO: maybe we need add precense ack?
-			//var id = msginfo.getAttribute('id') || '';
-			//this.sendReceiptsMessage({
-			//	id: id
-			//});
-
-			var from = msginfo.getAttribute('from') || '';
-			var to = msginfo.getAttribute('to') || '';
-			var type = msginfo.getAttribute('type') || '';
-			var presence_type = msginfo.getAttribute('presence_type') || '';
-			var fromUser = _parseNameFromJidFn(from);
-			var toUser = _parseNameFromJidFn(to);
-			var info = {
-				from: fromUser
-				, to: toUser
-				, fromJid: from
-				, toJid: to
-				, type: type
-				, chatroom: msginfo.getElementsByTagName('roomtype').length ? true : false
-			};
-
-			var showTags = msginfo.getElementsByTagName("show");
-			if ( showTags && showTags.length > 0 ) {
-				var showTag = showTags[0];
-				info.show = Strophe.getText(showTag);
-			}
-			var statusTags = msginfo.getElementsByTagName("status");
-			if ( statusTags && statusTags.length > 0 ) {
-				var statusTag = statusTags[0];
-				info.status = Strophe.getText(statusTag);
-				info.code = statusTag.getAttribute('code');
-			}
-
-			var priorityTags = msginfo.getElementsByTagName("priority");
-			if ( priorityTags && priorityTags.length > 0 ) {
-				var priorityTag = priorityTags[0];
-				info.priority  = Strophe.getText(priorityTag);
-			}
-
-			var error = msginfo.getElementsByTagName("error");
-			if ( error && error.length > 0 ) {
-				var error = error[0];
-				info.error = {
-					code: error.getAttribute('code')
-				};
-			}
-
-			var destroy = msginfo.getElementsByTagName("destroy");
-			if ( destroy && destroy.length > 0 ) {
-				var destroy = destroy[0];
-				info.destroy = true;
-
-				var reason = destroy.getElementsByTagName("reason");
-				if ( reason && reason.length > 0 ) {
-					info.reason = Strophe.getText(reason[0]);
-				}
-			}
-
-			if ( info.chatroom ) {
-				var reflectUser = from.slice(from.lastIndexOf('/') + 1);
-
-				if ( reflectUser === this.context.userId ) {
-					if ( info.type === '' && !info.code ) {
-						info.type = 'joinChatRoomSuccess';
-					} else if ( presence_type === 'unavailable' || info.type === 'unavailable' ) {
-						if ( !info.status ) {//web正常退出
-							info.type = 'leaveChatRoom';
-						} else if ( info.code == 110 ) {//app先退或被管理员踢
-							info.type = 'leaveChatRoom';
-						} else if ( info.error && info.error.code == 406 ) {//聊天室人已满，无法加入
-							info.type = 'joinChatRoomFailed';
-						}
-					}
-				}
-			} else if ( presence_type === 'unavailable' || type === 'unavailable' ) {//聊天室被删除没有roomtype, 需要区分群组被踢和解散
-				if ( info.destroy ) {//群组和聊天室被删除
-					info.type = 'deleteGroupChat';
-				} else if ( info.code == 307 || info.code == 321 ) {//群组被踢
-					info.type = 'leaveGroup';
-				}
-			}
-			
-			this.onPresence(info,msginfo);
-		};
-
-		connection.prototype.handlePing = function ( e ) {
-			if ( this.isClosed() ) {
-				return;
-			}
-			var id = e.getAttribute('id');
-			var from = e.getAttribute('from');
-			var to = e.getAttribute('to');
-			var dom = $iq({
-				from: to
-				, to: from
-				, id: id
-				, type: 'result'
-			});
-			this.sendCommand(dom.tree());
-		};
-
-		connection.prototype.handleIq = function ( e ) {
-			var id = e.getAttribute('id');
-			var from = e.getAttribute('from') || '';
-			var name = _parseNameFromJidFn(from);
-			var curJid = this.context.jid;
-			var curUser = this.context.userId;
-
-			/*if ( !from || from === curJid ) {
-				return true;
-			}*/
-
-			var iqresult = $iq({ type: 'result', id: id, from: curJid });
-			this.sendCommand(iqresult.tree());
-
-			var msgBodies = e.getElementsByTagName("query");
-			if ( msgBodies&&msgBodies.length > 0 ) {
-				var queryTag = msgBodies[0];
-				var rouster = _parseFriendFn(queryTag);
-				this.onRoster(rouster);
-			}
-			return true;
-		};
-
-		connection.prototype.handleMessage = function ( msginfo ) {
-			if ( this.isClosed() ) {
-				return;
-			}
-
-			var id = msginfo.getAttribute('id') || '';
-			this.sendReceiptsMessage({
-				id: id
-			});
-			var parseMsgData = _parseResponseMessage(msginfo);
-			if ( parseMsgData.errorMsg ) {
-				this.handlePresence(msginfo);
-				return;
-			}
-			var msgDatas = parseMsgData.data;
-			for ( var i in msgDatas ) {
-				if ( !msgDatas.hasOwnProperty(i) ) {
-					continue;
-				}
-				var msg = msgDatas[i];
-				if ( !msg.from || !msg.to ) {
-					continue;
-				}
-
-				var from = msg.from.toLowerCase();
-				var too = msg.to.toLowerCase();
-				var extmsg = msg.ext || {};
-				var chattype = '';
-				var typeEl = msginfo.getElementsByTagName("roomtype");
-				if ( typeEl.length ) {
-					chattype = typeEl[0].getAttribute('type') || 'chat';
-				} else {
-					chattype = msginfo.getAttribute('type') || 'chat';
-				}
-				
-				var msgBodies = msg.bodies;
-				if ( !msgBodies || msgBodies.length == 0 ) {
-					continue;
-				}
-				var msgBody = msg.bodies[0];
-				var type = msgBody.type;
-				if ( "txt" === type ) {
-					var receiveMsg = msgBody.msg;
-					var emotionsbody = Utils.parseTextMessage(receiveMsg, Easemob.im.EMOTIONS);
-					if ( emotionsbody.isemotion ) {
-						this.onEmotionMessage({
-							id: id
-							, type: chattype
-							, from: from
-							, to: too
-							, delay: parseMsgData.delayTimeStamp
-							, data: emotionsbody.body
-							, ext: extmsg
-						});
-					} else {
-						this.onTextMessage({
-							id: id
-							, type: chattype
-							, from: from
-							, to: too
-							, delay: parseMsgData.delayTimeStamp
-							, data: receiveMsg
-							, ext: extmsg
-						});
-					}
-				} else if ( "img" === type ) {
-					var rwidth = 0;
-					var rheight = 0;
-					if ( msgBody.size ) {
-						rwidth = msgBody.size.width;
-						rheight = msgBody.size.height;
-					}
-					var msg = {
-						id: id
-						, type: chattype
-						, from: from
-						, to: too
-						, url: msgBody.url
-						, secret: msgBody.secret
-						, filename: msgBody.filename
-						, thumb: msgBody.thumb
-						, thumb_secret: msgBody.thumb_secret
-						, file_length: msgBody.file_length || ''
-						, width: rwidth
-						, height: rheight
-						, filetype: msgBody.filetype || ''
-						, accessToken: this.context.accessToken || ''
-						, ext: extmsg
-						, delay: parseMsgData.delayTimeStamp
-					};
-					this.onPictureMessage(msg);
-				} else if ( "audio" === type ) {
-					this.onAudioMessage({
-						id: id
-						, type: chattype
-						, from: from
-						, to: too
-						, url: msgBody.url
-						, secret: msgBody.secret
-						, filename: msgBody.filename
-						, length: msgBody.length || ''
-						, file_length: msgBody.file_length || ''
-						, filetype: msgBody.filetype || ''
-						, accessToken: this.context.accessToken || ''
-						, ext: extmsg
-						, delay: parseMsgData.delayTimeStamp
-					});
-				} else if ( "file" === type ) {
-					this.onFileMessage({
-						id: id
-						, type: chattype
-						, from: from
-						, to: too
-						, url: msgBody.url
-						, secret: msgBody.secret
-						, filename: msgBody.filename
-						, file_length: msgBody.file_length
-						, accessToken: this.context.accessToken || ''
-						, ext: extmsg
-						, delay: parseMsgData.delayTimeStamp
-					});
-				} else if ( "loc" === type ) {
-					this.onLocationMessage({
-						id: id
-						, type: chattype
-						, from: from
-						, to: too
-						, addr: msgBody.addr
-						, lat: msgBody.lat
-						, lng: msgBody.lng
-						, ext: extmsg
-						, delay: parseMsgData.delayTimeStamp
-					});
-				} else if ( "video" === type ) {
-					this.onVideoMessage({
-						id: id
-						, type: chattype
-						, from: from
-						, to: too
-						, url: msgBody.url
-						, secret: msgBody.secret
-						, filename: msgBody.filename
-						, file_length: msgBody.file_length
-						, accessToken: this.context.accessToken || ''
-						, ext: extmsg
-						, delay: parseMsgData.delayTimeStamp
-					});
-				} else if ( "cmd" === type ) {
-					this.onCmdMessage({
-						id: id
-						, from: from
-						, to: too
-						, action: msgBody.action
-						, ext: extmsg
-						, delay: parseMsgData.delayTimeStamp
-					});
-				}
-			}
-		};
-
-		connection.prototype.handleReceivedMessage = function ( message ) {
-			this.onReceivedMessage(message);
-
-			var rcv = message.getElementsByTagName('received'),
-				id,
-				mid;
-
-			if ( rcv.length > 0 ) {
-				if ( rcv[0].childNodes && rcv[0].childNodes.length > 0 ) {
-					id = rcv[0].childNodes[0].nodeValue;
-				} else {
-					id = rcv[0].innerHTML || rcv[0].innerText;
-				}
-				mid = rcv[0].getAttribute('mid');
-			}
-			
-			if ( _msgHash[id] ) {
-				_msgHash[id].msg.success instanceof Function && _msgHash[id].msg.success(id, mid);
-				delete _msgHash[id];
-			}
-		};
-
-		connection.prototype.handleInviteMessage = function ( message ) {
-			var form = null;
-			var invitemsg = message.getElementsByTagName('invite');
-			var id = message.getAttribute('id') || '';
-			this.sendReceiptsMessage({
-				id: id
-			});
-
-			if ( invitemsg && invitemsg.length > 0 ) {
-				var fromJid = invitemsg[0].getAttribute('from');
-				form = _parseNameFromJidFn(fromJid);
-			}
-			var xmsg = message.getElementsByTagName('x');
-			var roomid = null;
-			if ( xmsg && xmsg.length > 0 ) {
-				for ( var i = 0; i < xmsg.length; i++ ) {
-					if ( 'jabber:x:conference' === xmsg[i].namespaceURI ) {
-						var roomjid = xmsg[i].getAttribute('jid');
-						roomid = _parseNameFromJidFn(roomjid);
-					}
-				}
-			}
-			this.onInviteMessage({
-				type: 'invite'
-				, from: form
-				, roomid: roomid
-			});
-		};
-
-		connection.prototype.sendCommand = function ( dom, id ) {
-			if ( this.isOpened() ) {
-				this.context.stropheConn.send(dom);
-			} else {
-				this.onError({
-					type : EASEMOB_IM_CONNCTION_OPEN_ERROR,
-					msg : '连接还未建立,请先登录或等待登录处理完毕'
-					, reconnect: true
-				});
-			}
-		};
-
-		connection.prototype.getUniqueId = function ( prefix ) {
-			var cdate = new Date();
-			var offdate = new Date(2010,1,1);
-			var offset = cdate.getTime()-offdate.getTime();
-			var hexd = parseInt(offset).toString(16);
-
-			if ( typeof prefix === 'string' || typeof prefix === 'number' ) {
-				return prefix + '_' + hexd;
-			} else {
-				return 'WEBIM_' + hexd;
-			}
-		};
-		
-		connection.prototype.send = function ( message ) {
-			if ( Object.prototype.toString.call(message) === '[object Object]' ) {
-				var appKey = this.context.appKey || '';
-				var toJid = appKey + "_" + message.to + "@" + this.domain;
-
-				if ( message.group ) {
-					toJid = appKey + "_" + message.to + '@conference.' + this.domain;
-				}
-				if ( message.resource ) {
-					toJid = toJid + "/" + message.resource;
-				}
-
-				message.toJid = toJid;
-				message.id = message.id || this.getUniqueId();
-				_msgHash[message.id] = new Message(message);
-				_msgHash[message.id].send(this);
-			} else if ( typeof message === 'string' ) {
-				_msgHash[message] && _msgHash[message].send(this);
-			}
-		}
-
-		connection.prototype.addRoster = function ( options ) {
-			var jid = _getJid(options, this);
-			var name = options.name || '';
-			var groups = options.groups || '';
-
-			var iq = $iq({type: 'set'});
-			iq.c("query", {xmlns:'jabber:iq:roster'});
-			iq.c("item", {jid: jid, name: name});
-
-			if ( groups ) {
-				for ( var i = 0; i < groups.length; i++ ) {
-					iq.c('group').t(groups[i]).up();
-				}
-			}
-			var suc = options.success || EMPTYFN;
-			var error = options.error || EMPTYFN;
-			this.context.stropheConn.sendIQ(iq.tree(),suc,error);
-		};
-
-		connection.prototype.removeRoster = function ( options ) {
-			var jid = _getJid(options,this);
-			var iq = $iq({ type: 'set' }).c('query', { xmlns: "jabber:iq:roster" }).c('item', { jid: jid, subscription: "remove" });
-
-			var suc = options.success || EMPTYFN;
-			var error = options.error || EMPTYFN;
-			this.context.stropheConn.sendIQ(iq,suc,error);
-		};
-
-		connection.prototype.getRoster = function ( options ) {
-			var conn = this;
-			var dom  = $iq({
-				type: 'get'
-			}).c('query', { xmlns: 'jabber:iq:roster' });
-
-			options = options || {};
-			suc = options.success || this.onRoster;
-			var completeFn = function ( ele ) {
-				var rouster = [];
-				var msgBodies = ele.getElementsByTagName("query");
-				if ( msgBodies&&msgBodies.length > 0 ) {
-					var queryTag = msgBodies[0];
-					rouster = _parseFriendFn(queryTag);
-				}
-				suc(rouster,ele);
-			};
-			error = options.error || this.onError;
-			var failFn = function ( ele ) {
-				error({
-					type: EASEMOB_IM_CONNCTION_GETROSTER_ERROR
-					, msg: '获取联系人信息失败'
-					, data: ele
-				});
-			};
-			if ( this.isOpened() ) {
-				this.context.stropheConn.sendIQ(dom.tree(),completeFn,failFn);
-			} else {
-				error({
-					type: EASEMOB_IM_CONNCTION_OPEN_ERROR
-					, msg: '连接还未建立,请先登录或等待登录处理完毕'
-				});
-			}
-		};
-
-		connection.prototype.subscribe = function ( options ) {
-			var jid = _getJid(options, this);
-			var pres = $pres({ to: jid, type: "subscribe" });
-			if ( options.message ) {
-				pres.c("status").t(options.message).up();
-			}
-			if ( options.nick ) {
-				pres.c('nick', { 'xmlns': "http://jabber.org/protocol/nick" }).t(options.nick);
-			}
-			this.sendCommand(pres.tree());
-		};
-
-		connection.prototype.subscribed = function ( options ) {
-			var jid = _getJid(options,this);
-			var pres = $pres({to: jid, type: "subscribed"});
-
-			if ( options.message ) {
-				pres.c("status").t(options.message).up();
-			}
-			this.sendCommand(pres.tree());
-		};
-
-		connection.prototype.unsubscribe = function ( options ) {
-			var jid = _getJid(options,this);
-			var pres = $pres({to: jid, type: "unsubscribe"});
-
-			if ( options.message ) {
-				pres.c("status").t(options.message);
-			}
-			this.sendCommand(pres.tree());
-		};
-
-		connection.prototype.unsubscribed = function ( options ) {
-			var jid = _getJid(options,this);
-			var pres = $pres({ to: jid, type: "unsubscribed" });
-
-			if ( options.message ) {
-				pres.c("status").t(options.message).up();
-			}
-			this.sendCommand(pres.tree());
-		 };
-
-		connection.prototype.createRoom = function ( options ) {
-			var suc =options.success || EMPTYFN;
-			var err =  options.error || EMPTYFN;
-			var roomiq;
-
-			roomiq = $iq({
-				to: options.rooomName,
-				type: "set"
-			})
-			.c("query", { xmlns: Strophe.NS.MUC_OWNER })
-			.c("x", { xmlns: "jabber:x:data", type: "submit" });
-
-			return this.context.stropheConn.sendIQ(roomiq.tree(), suc, err);
-		};
-
-		connection.prototype.join = function ( options ) {
-			var roomJid = this.context.appKey + "_" + options.roomId + '@conference.' + this.domain;
-			var room_nick = roomJid + "/" + this.context.userId;
-			var suc = options.success || EMPTYFN;
-			var err = options.error || EMPTYFN;
-			var errorFn = function ( ele ) {
-				err({
-					type: EASEMOB_IM_CONNCTION_JOINROOM_ERROR
-					, msg: '加入房间失败'
-					, data: ele
-				});
-			};
-			var iq = $pres({
-				from: this.context.jid,
-				to: room_nick
-			})
-			.c("x", { xmlns: Strophe.NS.MUC });
-
-			this.context.stropheConn.sendIQ(iq.tree(), suc, errorFn);
-		};
-
-		connection.prototype.listRooms = function ( options ) {
-			var iq = $iq({
-			  to: options.server||'conference.' + this.domain,
-			  from: this.context.jid,
-			  type: "get"
-			})
-			.c("query", { xmlns: Strophe.NS.DISCO_ITEMS });
-
-			var suc =options.success || EMPTYFN;
-			var completeFn = function ( result ) {
-				var rooms = [];
-				rooms = _parseRoomFn(result);
-				suc(rooms);
-			}
-			var err =  options.error || EMPTYFN;
-			var errorFn = function ( ele ) {
-				err({
-					type: EASEMOB_IM_CONNCTION_GETROOM_ERROR
-					, msg: '获取群组列表失败'
-					, data: ele
-				});
-			}
-			this.context.stropheConn.sendIQ(iq.tree(), completeFn, errorFn);
-		};
-
-		connection.prototype.queryRoomMember = function ( options ) {
-			var domain = this.domain;
-			var members = [];
-			var iq= $iq({
-			  to: this.context.appKey + "_" + options.roomId + '@conference.' + this.domain
-			  , type: 'get'
-			})
-			.c('query', { xmlns: Strophe.NS.MUC+'#admin' })
-			.c('item', { affiliation: 'member' });
-
-			var suc =options.success || EMPTYFN;
-			var completeFn = function ( result ) {
-				var items = result.getElementsByTagName('item');
-
-				if ( items ) {
-					for ( var i = 0; i < items.length; i++ ) {
-						var item = items[i];
-						var mem = {
-							jid: item.getAttribute('jid')
-							, affiliation: 'member'
-						};
-						members.push(mem);
-					}
-				}
-				suc(members);
-			};
-			var err =  options.error || EMPTYFN;
-			var errorFn = function ( ele ) {
-				err({
-					type: EASEMOB_IM_CONNCTION_GETROOMMEMBER_ERROR
-					, msg: '获取群组成员列表失败'
-					, data: ele
-				});
-			};
-			this.context.stropheConn.sendIQ(iq.tree(), completeFn, errorFn);
-		};
-
-		connection.prototype.queryRoomInfo = function ( options ) {
-			var domain = this.domain;
-			var iq= $iq({
-			  to:  this.context.appKey+"_"+options.roomId+'@conference.' + domain,
-			  type: "get"
-			}).c("query", { xmlns: Strophe.NS.DISCO_INFO });
-
-			var suc =options.success || EMPTYFN;
-			var members = [];
-			var completeFn = function ( result ) {
-				var fields = result.getElementsByTagName('field');
-				if ( fields ) {
-					for ( var i = 0; i < fields.length; i++ ) {
-						var field = fields[i];
-						if ( field.getAttribute('label') === 'owner' ) {
-							var mem = {
-								jid: (field.textContent || field.text) + "@" + domain
-								, affiliation: 'owner'
-							};
-							members.push(mem);
-						}
-					}
-				}
-				suc(members);
-			};
-			var err =  options.error || EMPTYFN;
-			var errorFn = function ( ele ) {
-				err({
-					type: EASEMOB_IM_CONNCTION_GETROOMINFO_ERROR
-					, msg: '获取群组信息失败'
-					, data: ele
-				});
-			};
-			this.context.stropheConn.sendIQ(iq.tree(), completeFn, errorFn);
-		};
-
-		connection.prototype.queryRoomOccupants = function ( options ) {
-			var suc =options.success || EMPTYFN;
-			var completeFn = function ( result ) {
-				var occupants = [];
-				occupants = _parseRoomOccupantsFn(result);
-				suc(occupants);
-			}
-			var err =  options.error || EMPTYFN;
-			var errorFn = function ( ele ) {
-				err({
-					type: EASEMOB_IM_CONNCTION_GETROOMOCCUPANTS_ERROR
-					, msg: '获取群组出席者列表失败'
-					, data: ele
-				});
-			};
-			var attrs = {
-			  xmlns: Strophe.NS.DISCO_ITEMS
-			};
-			var info = $iq({
-			  from: this.context.jid
-			  , to: this.context.appKey + "_" + options.roomId + '@conference.' + this.domain
-			  , type: 'get'
-			}).c('query', attrs);
-			this.context.stropheConn.sendIQ(info.tree(), completeFn, errorFn);
-		};
-
-		connection.prototype.setUserSig = function ( desc ) {
-			var dom = $pres({ xmlns: 'jabber:client' });
-			desc = desc || "";
-			dom.c("status").t(desc);
-			this.sendCommand(dom.tree());
-		};
-
-		connection.prototype.setPresence = function ( type, status ) {
-			var dom = $pres({ xmlns: 'jabber:client' });
-			if ( type ) {
-				if ( status ) {
-					dom.c("show").t(type);
-					dom.up().c("status").t(status);
-				} else {
-					dom.c("show").t(type);
-				}
-			}
-			this.sendCommand(dom.tree());
-		};
-
-		connection.prototype.getPresence = function () {
-			var dom = $pres({ xmlns: 'jabber:client' });
-			var conn = this;
-			this.sendCommand(dom.tree());
-		};
-
-		connection.prototype.ping = function ( options ) {
-			options = options || {};
-			var jid = _getJid(options,this);
-
-			var dom = $iq({
-				from: this.context.jid || ''
-				, to: jid
-				, type: "get"
-			}).c("ping", { xmlns: "urn:xmpp:ping" });
-
-			suc = options.success || EMPTYFN;
-			error = options.error || this.onError;
-			var failFn = function ( ele ) {
-				error({
-					type: EASEMOB_IM_CONNCTION_PING_ERROR
-					, msg: 'ping失败'
-					, data: ele
-				});
-			};
-			if ( this.isOpened() ) {
-				this.context.stropheConn.sendIQ(dom.tree(),suc,failFn);
-			} else {
-				error({
-					type: EASEMOB_IM_CONNCTION_OPEN_ERROR
-					, msg: '连接还未建立,请先登录或等待登录处理完毕'
-				});
-			}
-			return;
-		};
-
-		connection.prototype.isOpened = function () {
-			return this.context.status == STATUS_OPENED;
-		};
-
-		connection.prototype.isOpening = function () {
-			var status = this.context.status;
-			return status == STATUS_DOLOGIN_USERGRID || status == STATUS_DOLOGIN_IM;
-		};
-
-		connection.prototype.isClosing = function () {
-			return this.context.status == STATUS_CLOSING;
-		};
-
-		connection.prototype.isClosed = function () {
-			return this.context.status == STATUS_CLOSED;
-		};
-
-		connection.prototype.clear = function () {
-			var key = this.context.appKey;
-			this.context = {
-				status: STATUS_INIT
-				, appKey: key
-			};
-		};
-
-		//rooms list
-		connection.prototype.getChatRooms = function ( options ) {
-
-			if ( !Utils.isCanSetRequestHeader ) {
-				conn.onError({
-					type: EASEMOB_IM_CONNCTION_AUTH_ERROR
-					, msg: "当前浏览器不支持聊天室功能"
-				});
-				return;
-			}
-
-			var conn = this,
-				token = options.accessToken || this.context.accessToken;
-
-			if ( token ) {
-				var apiUrl = options.apiUrl || (this.https ? 'https' : 'http') + '://a1.easemob.com';
-				var appName = this.context.appName;
-				var orgName = this.context.orgName;
-
-				if ( !appName || !orgName ) {
-					conn.onError({
-						type: EASEMOB_IM_CONNCTION_AUTH_ERROR
-						, msg: "token无效"
-						, data: null 
-					});
-					return;
-				}
-
-				var suc = function ( data, xhr ) {
-					typeof options.success === 'function' && options.success(data);
-				};
-
-				var error = function ( res, xhr, msg ) {
-					if ( res.error && res.error_description ) {
-						conn.onError({
-							type: EASEMOB_IM_LOAD_CHATROOM_ERROR
-							, msg: "获取聊天室失败," + res.error_description
-							, data: res
-							, xhr: xhr
-						});
-					}
-				};
-
-				var opts = {
-					url: apiUrl + "/" + orgName + "/" + appName + "/chatrooms"
-					, dataType: 'json'
-					, type: 'get'
-					, headers: {Authorization: 'Bearer ' + token}
-					, success: suc || EMPTYFN
-					, error: error || EMPTYFN
-				};
-				Utils.ajax(opts);
-			} else {
-				conn.onError({
-					type: EASEMOB_IM_CONNCTION_AUTH_ERROR
-					, msg: "token无效"
-					, data: null 
-				});			   
-			}
-
-		};
-
-		connection.prototype.joinChatRoom = function ( options ) {
-			var roomJid = this.context.appKey + "_" + options.roomId + '@conference.' + this.domain;
-			var room_nick = roomJid + "/" + this.context.userId;
-			var suc = options.success || EMPTYFN;
-			var err = options.error || EMPTYFN;
-			var errorFn = function ( ele ) {
-				err({
-					type: EASEMOB_IM_CONNCTION_JOINROOM_ERROR
-					, msg: '加入聊天室失败'
-					, data: ele
-				});
-			};
-
-			var iq = $pres({
-				from: this.context.jid,
-				to: room_nick
-			})
-			.c("x", { xmlns: Strophe.NS.MUC + '#user' })
-			.c('item', { affiliation: 'member', role: 'participant' })
-			.up().up()
-			.c("roomtype", { xmlns: "easemob:x:roomtype", type: "chatroom" });
-
-			this.context.stropheConn.sendIQ(iq.tree(), suc, errorFn);
-		};
-
-		connection.prototype.quitChatRoom = function ( options ) {
-			var roomJid = this.context.appKey + "_" + options.roomId + '@conference.' + this.domain;
-			var room_nick = roomJid + "/" + this.context.userId;
-			var suc = options.success || EMPTYFN;
-			var err = options.error || EMPTYFN;
-			var errorFn = function ( ele ) {
-				err({
-					type: EASEMOB_IM_CONNCTION_JOINROOM_ERROR
-					, msg: '退出房间失败'
-					, data: ele
-				});
-			};
-			var iq = $pres({
-				from: this.context.jid,
-				to: room_nick,
-				type: 'unavailable'
-			})
-			.c("x", { xmlns: Strophe.NS.MUC + '#user' })
-			.c('item', { affiliation: 'none', role: 'none' })
-			.up().up()
-			.c("roomtype", { xmlns: "easemob:x:roomtype", type: "chatroom" });
-
-			this.context.stropheConn.sendIQ(iq.tree(), suc, errorFn);
-		};
-
-		return connection;
-	}());
-
 
 
 	/*
@@ -15199,7 +14705,7 @@ WebIM.config = {
 	delete tempIndex;
 
 
-	Easemob.im.Connection = Connection;
+
 	Easemob.im.EmMessage = EmMessage;
 	Easemob.im.Helper = Easemob.im.Utils = Utils;
 	window.Easemob = Easemob;
@@ -17872,20 +17378,7 @@ if (!String.prototype.trim) {
 ;(function () {
 	window.easemobim = window.easemobim || {};
 
-	var _isAndroid = /android/i.test(navigator.useragent);
 	var _isMobile = /mobile/i.test(navigator.userAgent);
-	var _getIEVersion = (function () {
-			var result, matches;
-
-			matches = navigator.userAgent.match(/MSIE (\d+)/i);
-			if(matches && matches[1]) {
-				result = +matches[1];
-			}
-			else{
-				result = 9999;
-			}
-			return result;
-		}());
 
 	easemobim.utils = {
 		isTop: window.top === window.self
@@ -17895,11 +17388,6 @@ if (!String.prototype.trim) {
 			'[object HTMLCollection]': true,
 			'[object Array]': true
 		}
-		, isSupportWebRTC: !!(
-			window.webkitRTCPeerConnection
-			|| window.mozRTCPeerConnection
-			|| window.RTCPeerConnection
-		)
 		, filesizeFormat: function(filesize){
 			var UNIT_ARRAY = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'];
 			var exponent;
@@ -17930,16 +17418,6 @@ if (!String.prototype.trim) {
 		, convertFalse: function ( obj ) {
 			obj = typeof obj === 'undefined' ? '' : obj;
 			return obj === 'false' ? false : obj;
-		}
-		, $Dom: function ( id ) {
-			return document.getElementById(id);
-		}
-		, each: function ( obj, fn ) {
-			for ( var i in obj ) {
-				if ( obj.hasOwnProperty(i) ) {
-					typeof fn === 'function' && fn(i, obj[i]);
-				}
-			}
 		}
 		, $Remove: function ( target ) {
 			if (!target) return;
@@ -17977,24 +17455,19 @@ if (!String.prototype.trim) {
 				}
 			}
 		}
-		, getIEVersion: _getIEVersion
-		, live: function ( target, ev, fn, wrapper ) {
-			var me = this,
-				el = wrapper || document;
+		, live: function ( selector, ev, fn, wrapper ) {
+			var me = this;
+			var el = wrapper || document;
 			me.on(el, ev, function ( e ) {
-				var ev = e || window.event,
-					tar = ev.target || ev.srcElement,
-					targetList = target.split('.').length < 2 ? el.getElementsByTagName(target) : me.$Class(target);
+				var ev = e || window.event;
+				var tar = ev.target || ev.srcElement;
+				var targetList = el.querySelectorAll(selector);
 
 				if ( targetList.length ) {
 					for ( var len = targetList.length, i = 0; i < len; i++ ) {
 						if ( targetList[i] == tar || targetList[i] == tar.parentNode ) {
 							fn.apply(targetList[i] == tar ? tar : tar.parentNode, arguments);
 						}   
-					}
-				} else {
-					if ( targetList == target ) {
-						fn.apply( target, arguments );
 					}
 				}
 			});
@@ -18011,7 +17484,7 @@ if (!String.prototype.trim) {
 					} else if ( target.attachEvent ) {
 						target['_' + evArr[i]] = function () {
 							fn.apply(target, arguments);
-						}
+						};
 						target.attachEvent('on' + evArr[i], target['_' + evArr[i]]);
 					} else {
 						target['on' + evArr[i]] = fn;
@@ -18032,21 +17505,23 @@ if (!String.prototype.trim) {
 			if ( !target ) {
 				return;
 			}
-			if ( target.removeEventListener ) {
+			else if ( target.removeEventListener ) {
 				target.removeEventListener(ev, fn);
-			} else if ( target.detachEvent ) {
+			}
+			else if ( target.detachEvent ) {
 				target.detachEvent('on' + ev, target['_' + ev]);
-			} else {
+			}
+			else {
 				target['on' + ev] = null;
 			}
 		}
 		, one: function ( target, ev, fn, isCapture ) {
-			var me = this,
-				tfn = function () {
-					fn.apply(this, arguments);
-					me.remove(target, ev, tfn);
-				};
-			me.on(target, ev, tfn, isCapture);  
+			var me = this;
+			var tempFn = function () {
+				fn.apply(this, arguments);
+				me.remove(target, ev, tempFn);
+			};
+			me.on(target, ev, tempFn, isCapture);  
 		}
 		// 触发事件，对于ie8只支持原生事件，不支持自定义事件
 		, trigger: function(element, eventName){
@@ -18058,8 +17533,8 @@ if (!String.prototype.trim) {
 				element.fireEvent('on' + eventName);
 			}
 		}
+		// todo： 去掉 使用 _.extend 替代
 		, extend: function ( object, extend ) {
-			var tmp;
 			for ( var o in extend ) {
 				if ( extend.hasOwnProperty(o) ) {
 					var t = Object.prototype.toString.call(extend[o]);
@@ -18119,8 +17594,7 @@ if (!String.prototype.trim) {
 			return target;
 		}
 		, hasClass: function ( target, className ) {
-			if (!target) { return false;}
-
+			if (!target) return false;
 			return !!~(' ' + target.className + ' ').indexOf(' ' + className + ' ');
 		}
 		, toggleClass: function(target, className, stateValue) {
@@ -18142,35 +17616,33 @@ if (!String.prototype.trim) {
 				this.removeClass(target, className);
 			}
 		}
-		, $Class: function ( DomDotClass, parentNode ) {
-			var temp = DomDotClass.split('.'),
-				tag = temp[0],
-				className = temp[1];
+		, getDataByPath: function(obj, path){
+			var propArray = path.split('.');
+			var currentObj = obj;
 
-			var parent = parentNode || document;
-			if ( parent.getElementsByClassName ) {
-				return parent.getElementsByClassName(className);
-			} else {
-				var tags = parent.getElementsByTagName(tag),
-					arr = [];
-				for ( var i = 0, l = tags.length; i < l; i++ ) {
-					if ( this.hasClass(tags[i], className) ) {
-						arr.push(tags[i]);
-					}
+			return seek();
+
+			function seek(){
+				var prop = propArray.shift();
+
+				if (typeof prop !== 'string'){
+					// path 遍历完了，返回当前值
+					return currentObj;
 				}
-				tags = null;
-				return arr;
+				else if (
+					currentObj	// 过滤 null
+					&& typeof currentObj === "object"
+					&& currentObj.hasOwnProperty(prop)
+				){
+					// 正常遍历path，递归调用
+					currentObj = currentObj[prop];
+					return seek();
+				}
+				else {
+					// 没有找到path，返回undefined
+					return;
+				}
 			}
-		}
-		, html: function ( dom, html ) {
-			if (!dom) return;
-
-			if ( typeof html === 'undefined' ) {
-				return dom.innerHTML;
-			} else {
-				dom.innerHTML = html;
-			}
-			return dom;
 		}
 		, encode: function ( str ) {
 			if ( !str || str.length === 0 ) {
@@ -18199,13 +17671,12 @@ if (!String.prototype.trim) {
 			var matches = reg.exec(location.search);
 			return matches ? matches[1] : '';
 		}
-		, isAndroid: _isAndroid
+		, isAndroid: /android/i.test(navigator.useragent)
 		, isMobile: _isMobile
 		, click: _isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click'
-		, isQQBrowserInAndroid: _isAndroid && /MQQBrowser/.test(navigator.userAgent)
 		// detect if the browser is minimized
 		, isMin: function () {
-			return document.visibilityState && document.visibilityState === 'hidden' || document.hidden;
+			return document.visibilityState === 'hidden' || document.hidden;
 		}
 		, setStore: function ( key, value ) {
 			try {
@@ -18303,6 +17774,7 @@ if (!String.prototype.trim) {
 			return url;
 		},
 		copy: function ( obj ) {
+			// todo：移到，easemob.js 里边
 			return this.extend({}, obj);
 		},
 		code: (function () {
@@ -18465,7 +17937,14 @@ if (!String.prototype.trim) {
 			'月色池塘': 'theme-8',
 			'天籁湖光': 'theme-9',
 			'商务风格': 'theme-10'
-		}
+		},
+		IM: {
+			WEBIM_CONNCTION_AUTH_ERROR: 2,
+			WEBIM_CONNCTION_CALLBACK_INNER_ERROR: 31
+		},
+		SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT: 1,
+		MESSAGE_PREDICT_MAX_LENGTH: 100,
+		for_block_only: null
 	};
 
 	window.easemobim = window.easemobim || {};
@@ -18493,7 +17972,7 @@ if (!String.prototype.trim) {
 	};
 
 	//loading element
-	easemobim.LOADING = !easemobim.utils.isQQBrowserInAndroid && easemobim.utils.getIEVersion > 9
+	easemobim.LOADING = Modernizr.inlinesvg
 		? ["<div class='em-widget-loading'><svg version='1.1' id='图层_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px'",
 		" viewBox='0 0 70 70' enable-background='new 0 0 70 70' xml:space='preserve'>",
 		"<circle opacity='0.3' fill='none' stroke='#000000' stroke-width='4' stroke-miterlimit='10' cx='35' cy='35' r='11'/>",
@@ -18644,17 +18123,19 @@ window.easemobim = window.easemobim || {};
 window.easemobIM = window.easemobIM || {};
 
 easemobIM.Transfer = easemobim.Transfer = (function () {
-	'use strict'
+	'use strict';
    
 	var handleMsg = function ( e, callback, accept ) {
 		// 微信调试工具会传入对象，导致解析出错
 		if('string' !== typeof e.data) return;
 		var msg = JSON.parse(e.data);
+		var i;
+		var l;
+		//兼容旧版的标志
+		var flag = false;
 
-
-		var flag = false;//兼容旧版的标志
 		if ( accept && accept.length ) {
-			for ( var i = 0, l = accept.length; i < l; i++ ) {
+			for ( i = 0, l = accept.length; i < l; i++ ) {
 				if ( msg.key === accept[i] ) {
 					flag = true;
 					typeof callback === 'function' && callback(msg);
@@ -18665,7 +18146,7 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 		}
 
 		if ( !flag && accept ) {
-			for ( var i = 0, l = accept.length; i < l; i++ ) {
+			for ( i = 0, l = accept.length; i < l; i++ ) {
 				if ( accept[i] === 'data' ) {
 					typeof callback === 'function' && callback(msg);
 					break;
@@ -18958,6 +18439,25 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 					excludeData: true
 				}));
 				break;
+			case 'messagePredict':
+				// fake: 避免多余的参数传递到 post body 中
+				// todo：改进ajax，避免post时多传参数
+				var tenantId = msg.data.tenantId;
+				var agentId = msg.data.agentId;
+
+				delete msg.data.tenantId;
+				delete msg.data.agentId;
+
+				easemobim.emajax(createObject({
+					url: '/v1/webimplugin/agents/'
+						+ agentId
+						+ '/messagePredict'
+						+ '?tenantId='
+						+ tenantId,
+					msg: msg,
+					type: 'POST'
+				}));
+				break;
 			default:
 				break;
 		}
@@ -19043,7 +18543,7 @@ easemobim.autogrow = (function () {
 			.replace(/&/g, '&amp;')
 			.replace(/\n$/, '<br/>&nbsp;')
 			.replace(/\n/g, '<br/>')
-			.replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
+			.replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ';});
 			
 			shadow.innerHTML = val;
 			val && (this.style.height = Math.max(shadow.getBoundingClientRect().height + 17, minHeight) + 'px');
@@ -19056,7 +18556,7 @@ easemobim.autogrow = (function () {
 		
 		options.update = function () {
 			update.apply(that);
-		}
+		};
 		update.apply(that);
 	};
 }());
@@ -19130,21 +18630,21 @@ Easemob.im.EmMessage.img = function ( id ) {
 	this.type = 'img';
 	this.brief = '图片';
 	this.body = {};
-}
+};
 Easemob.im.EmMessage.img.prototype.get = function ( isReceive ) {
 	return [
 		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper'>",
-				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",,
+				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
 				this.id ? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>" : "",
 				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
 				"<div class='em-widget-msg-container'>",
-					this.value === null ? "<i class='icon-broken-pic'></i>" : "<a href='javascript:;'><img class='em-widget-imgview' src='" + this.value.url + "'/></a>",,
+					this.value === null ? "<i class='icon-broken-pic'></i>" : "<a href='javascript:;'><img class='em-widget-imgview' src='" + this.value.url + "'/></a>",
 				"</div>",
 			"</div>",
 		"</div>"
 	].join('');
-}
+};
 Easemob.im.EmMessage.img.prototype.set = function ( opt ) {
 	this.value = opt.file;
 				
@@ -19161,7 +18661,7 @@ Easemob.im.EmMessage.img.prototype.set = function ( opt ) {
 		, fail: opt.fail
 		, flashUpload: opt.flashUpload
 	};
-}
+};
 //按钮列表消息，机器人回复，满意度调查
 Easemob.im.EmMessage.list = function ( id ) {
 	this.id = id;
@@ -19176,7 +18676,7 @@ Easemob.im.EmMessage.list.prototype.get = function ( isReceive ) {
 	return [
 		"<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper'>",
-				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",,
+				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
 				"<div class='em-widget-msg-container em-widget-msg-menu'>",
 					"<p>" + Easemob.im.Utils.parseLink(Easemob.im.Utils.parseEmotions(easemobim.utils.encode(this.value))) + "</p>",
 					this.listDom,
@@ -19200,7 +18700,7 @@ Easemob.im.EmMessage.file = function ( id ) {
 	this.type = 'file';
 	this.brief = '文件';
 	this.body = {};
-}
+};
 Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 	var filename = this.filename;
 	var filesize;
@@ -19216,7 +18716,7 @@ Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 	return [
 		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper em-widget-msg-file'>",
-				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",,
+				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
 				this.id
 				? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'>"
 				+ "<span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>"
@@ -19236,7 +18736,7 @@ Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 			"</div>",
 		"</div>"
 	].join('');
-}
+};
 Easemob.im.EmMessage.file.prototype.set = function ( opt ) {
 	this.value = opt.file;
 	this.filename = opt.filename || this.value.filename || '文件';
@@ -19254,24 +18754,20 @@ Easemob.im.EmMessage.file.prototype.set = function ( opt ) {
 		, fail: opt.fail
 		, flashUpload: opt.flashUpload
 	};
-}
+};
 
 /**
  * ctrl+v发送截图功能:当前仅支持chrome/firefox/ie11
  */
 easemobim.paste = function ( chat ) {
-	var dom = document.createElement('div'),
-		utils = easemobim.utils,
-		data;
+	var dom = document.createElement('div');
+	var utils = easemobim.utils;
+	var data;
 
 	utils.addClass(dom, 'em-widget-dialog em-widget-paste-wrapper em-hide');
-	utils.html(dom, "\
-		<div class='em-widget-paste-image'></div>\
-		<div>\
-			<button class='em-widget-cancel'>取消</button>\
-			<button class='bg-color'>发送</button>\
-		</div>\
-	");
+	dom.innerHTML = "<div class='em-widget-paste-image'></div>"
+		+ "<div><button class='em-widget-cancel'>取消</button>"
+		+ "<button class='bg-color'>发送</button></div>";
 	easemobim.imChat.appendChild(dom);
 
 	var buttons = dom.getElementsByTagName('button'),
@@ -19347,16 +18843,15 @@ easemobim.paste = function ( chat ) {
 		leaveMessage.domBg.id = 'em-widgetOffline';
 		utils.addClass(leaveMessage.domBg, 'em-widget-offline-bg em-hide');
 		utils.addClass(leaveMessage.dom, 'em-widget-offline');
-		utils.html(leaveMessage.dom, "\
-			<h3>请填写以下内容以方便我们及时联系您</h3>\
-			<input type='text' placeholder='姓名'/>\
-			<input type='text' placeholder='电话'/>\
-			<input type='text' placeholder='邮箱'/>\
-			<textarea spellcheck='false' placeholder='请输入留言'></textarea>\
-			<button class='em-widget-offline-cancel'>取消</button>\
-			<button class='em-widget-offline-ok bg-color'>留言</button>\
-			<div class='em-widget-success-prompt em-hide'><i class='icon-circle'><i class='icon-good'></i></i><p>留言发送成功</p></div>\
-			");
+		leaveMessage.dom.innerHTML = '<h3>请填写以下内容以方便我们及时联系您</h3>'
+			+ '<input type="text" placeholder="姓名"/>'
+			+ '<input type="text" placeholder="电话"/>'
+			+ '<input type="text" placeholder="邮箱"/>'
+			+ '<textarea spellcheck="false" placeholder="请输入留言"></textarea>'
+			+ '<button class="em-widget-offline-cancel">取消</button>'
+			+ '<button class="em-widget-offline-ok bg-color">留言</button>'
+			+ '<div class="em-widget-success-prompt em-hide">'
+			+ '<i class="icon-circle"><i class="icon-good"></i></i><p>留言发送成功</p></div>';
 		leaveMessage.domBg.appendChild(leaveMessage.dom);
 		imChat.appendChild(leaveMessage.domBg);
 
@@ -19555,7 +19050,7 @@ easemobim.satisfaction = function ( chat ) {
 		for ( var i = lis.length; i > 0; i-- ) {
 			utils.removeClass(lis[i-1], 'sel');
 		}
-	};
+	}
 
 };
 
@@ -19595,7 +19090,7 @@ easemobim.uploadShim = function ( config, chat ) {
 		}
 
 		var pageTitle = document.title;
-		var uploadBtn = utils.$Dom(fileInputId);
+		var uploadBtn = document.getElementById(fileInputId);
 		if ( typeof SWFUpload === 'undefined' || uploadBtn.length < 1 ) {
 			return;
 		}
@@ -19629,10 +19124,12 @@ easemobim.uploadShim = function ( config, chat ) {
 					this.cancelUpload();
 				}
 			}
-			, upload_error_handler: function ( file, code, msg ) {
-				if ( code != SWFUpload.UPLOAD_ERROR.FILE_CANCELLED
-				&& code != SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED 
-				&& code != SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED ) {
+			, upload_error_handler: function ( file, code ) {
+				if (
+					code != SWFUpload.UPLOAD_ERROR.FILE_CANCELLED
+					&& code != SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED 
+					&& code != SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED
+				){
 					var msg = new Easemob.im.EmMessage('img');
 					msg.set({file: null});
 					chat.appendMsg(config.user.username, config.toUser, msg);
@@ -19821,6 +19318,7 @@ easemobim.channel = function ( config ) {
 
 	var utils = easemobim.utils;
 	var api = easemobim.api;
+	var _const = easemobim._const;
 
 
 		//监听ack的timer, 每条消息启动一个
@@ -19904,7 +19402,7 @@ easemobim.channel = function ( config ) {
 					_detectSendMsgByApi(id);
 					_obj.sendSatisfaction(arguments[1], arguments[2], arguments[3], arguments[4], id);
 					break;
-			};
+			}
 		},
 
 		appendAck: function ( msg, id ) {
@@ -19915,7 +19413,7 @@ easemobim.channel = function ( config ) {
 
 			var msg = new Easemob.im.EmMessage('txt', id);
 			msg.set({value: '', to: config.toUser});
-			utils.extend(msg.body, {
+			_.extend(msg.body, {
 				ext: {
 					weichat: {
 						ctrlType: 'enquiry'
@@ -19947,8 +19445,8 @@ easemobim.channel = function ( config ) {
 				}
 			});
 
-			if ( ext ) {
-				utils.extend(msg.body, ext);
+			if (ext) {
+				_.extend(msg.body, ext);
 			}
 
 			utils.addClass(easemobim.sendBtn, 'disabled');
@@ -20005,7 +19503,7 @@ easemobim.channel = function ( config ) {
 							easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
 						} else {
 							var id = error.id;
-							var loading = utils.$Dom(id + '_loading');
+							var loading = document.getElementById(id + '_loading');
 							var msgWrap = document.getElementById(id).querySelector('.em-widget-msg-container');
 
 							msgWrap.innerHTML = '<i class="icon-broken-pic"></i>';
@@ -20018,12 +19516,12 @@ easemobim.channel = function ( config ) {
 					me.handleEventStatus();
 				},
 				success: function ( id ) {
-					utils.$Remove(utils.$Dom(id + '_loading'));
-					utils.$Remove(utils.$Dom(id + '_failed'));
+					utils.$Remove(document.getElementById(id + '_loading'));
+					utils.$Remove(document.getElementById(id + '_failed'));
 				},
 				fail: function ( id ) {
-					utils.addClass(utils.$Dom(id + '_loading'), 'hide');
-					utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
+					utils.addClass(document.getElementById(id + '_loading'), 'hide');
+					utils.removeClass(document.getElementById(id + '_failed'), 'em-hide');
 				},
 				flashUpload: easemobim.flashUpload
 			});
@@ -20054,7 +19552,7 @@ easemobim.channel = function ( config ) {
 						easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
 					} else {
 						var id = error.id;
-						var loading = utils.$Dom(id + '_loading');
+						var loading = document.getElementById(id + '_loading');
 						var msgWrap = document.getElementById(id).querySelector('.em-widget-msg-container');
 
 						msgWrap.innerHTML = '<i class="icon-broken-pic"></i>';
@@ -20066,12 +19564,12 @@ easemobim.channel = function ( config ) {
 					me.handleEventStatus();
 				},
 				success: function ( id ) {
-					utils.$Remove(utils.$Dom(id + '_loading'));
-					utils.$Remove(utils.$Dom(id + '_failed'));
+					utils.$Remove(document.getElementById(id + '_loading'));
+					utils.$Remove(document.getElementById(id + '_failed'));
 				},
 				fail: function ( id ) {
-					utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-					utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
+					utils.addClass(document.getElementById(id + '_loading'), 'em-hide');
+					utils.removeClass(document.getElementById(id + '_failed'), 'em-hide');
 				},
 				flashUpload: easemobim.flashUpload
 			});
@@ -20088,7 +19586,8 @@ easemobim.channel = function ( config ) {
 		},
 
 		handleReceive: function ( msg, type, isHistory ) {
-			if (config.offDuty) {return;}
+			var str;
+			if (config.offDuty) return;
 
 
 			//如果是ack消息，清除ack对应的site item，返回
@@ -20169,16 +19668,16 @@ easemobim.channel = function ( config ) {
 					break;
 				case 'satisfactionEvaluation':
 					message = new Easemob.im.EmMessage('list');
-					message.set({value: '请对我的服务做出评价', list: ['\
-						<div class="em-widget-list-btns">\
-							<button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '"\
-							 data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
-						</div>']});
+					message.set({value: '请对我的服务做出评价', list: [
+						'<div class="em-widget-list-btns">'
+							+ '<button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="'
+							+ msg.ext.weichat.ctrlArgs.inviteId
+							+ '" data-servicesessionid="'
+							+ msg.ext.weichat.ctrlArgs.serviceSessionId
+							+ '">立即评价</button></div>'
+					]});
 
-					// fake 临时解决用户重复收到邀请评价的问题
-					// 由于消息走的第二通道，刷新后没有去重（此处待验证），导致重复收到
-					// 所以 === false 的 isHistory临时过滤掉
-					if('undefined' === typeof isHistory){
+					if(!isHistory){
 						// 创建隐藏的立即评价按钮，并触发click事件
 						var el = document.createElement('BUTTON');
 						el.className = 'js_satisfybtn';
@@ -20192,7 +19691,6 @@ easemobim.channel = function ( config ) {
 					break;
 				case 'robotList':
 					message = new Easemob.im.EmMessage('list');
-					var str;
 					var list = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
 
 					if ( list.length > 0 ) {
@@ -20212,8 +19710,8 @@ easemobim.channel = function ( config ) {
 					message = new Easemob.im.EmMessage('list');
 					var ctrlArgs = msg.ext.weichat.ctrlArgs;
 					var title = msg.data
-						|| (msg.bodies && msg.bodies[0] && msg.bodies[0].msg)
-						|| msg.ext.weichat.ctrlArgs.label;
+						|| utils.getDataByPath(msg, 'bodies.0.msg')
+						|| utils.getDataByPath(msg, 'ext.weichat.ctrlArgs.label');
 				/*
 					msg.data 用于处理即时消息
 					msg.bodies[0].msg 用于处理历史消息
@@ -20221,7 +19719,7 @@ easemobim.channel = function ( config ) {
 					此处修改为了修复取出历史消息时，转人工评价标题改变的bug
 					还有待测试其他带有转人工的情况
 				*/
-					var str = [
+					str = [
 						'<div class="em-widget-list-btns">',
 							'<button class="em-widget-list-btn-white bg-color border-color bg-hover-color-dark js_robotTransferBtn" ',
 							'data-sessionid="' + ctrlArgs.serviceSessionId + '" ', 
@@ -20234,61 +19732,77 @@ easemobim.channel = function ( config ) {
 				default:
 					break;
 			}
-			
-			if ( !isHistory ) {
-
-				if ( msg.ext && msg.ext.weichat ) {
-					if (msg.ext.weichat.event){
-						switch(msg.ext.weichat.event.eventName){
-							case 'ServiceSessionTransferedEvent':
-							// 转接到客服
-								me.handleEventStatus('transferd', msg.ext.weichat.event.eventObj);
-								break;
-							case 'ServiceSessionTransferedToAgentQueueEvent':
-							// 转人工或者转到技能组
-								me.handleEventStatus('transfering', msg.ext.weichat.event.eventObj);
-								break;
-							// 会话结束
-							case 'ServiceSessionClosedEvent':
-								easemobim.eventCollector.startToReport();
-								me.session = null;
-								me.sessionSent = false;
-								config.agentUserId = null;
-								me.stopGettingAgentStatus();
-								// 还原企业头像和企业名称
-								me.setAgentProfile({
-									tenantName: config.defaultAgentName,
-									avatar: config.tenantAvatar
-								});
-								// 去掉坐席状态
-								me.clearAgentStatus();
-								me.handleEventStatus('close');
-								utils.isTop || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
-								break;
-							case 'ServiceSessionOpenedEvent':
-								//fake
-								me.agentCount < 1 && (me.agentCount = 1);
-								me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
-								break;
-							case 'ServiceSessionCreatedEvent':
-								me.handleEventStatus('create');
-								break;
-							default:
-								me.handleEventStatus('reply', msg.ext.weichat.agent);
-								break;
-						}
-					}
-					else{
-						me.handleEventStatus('reply', msg.ext.weichat.agent);
-					}
+			if (!isHistory){
+				// 实时消息需要处理事件
+				switch(utils.getDataByPath(msg, 'ext.weichat.event.eventName')){
+					case 'ServiceSessionTransferedEvent':
+					// 转接到客服
+						me.handleEventStatus('transferd', msg.ext.weichat.event.eventObj);
+						break;
+					case 'ServiceSessionTransferedToAgentQueueEvent':
+					// 转人工或者转到技能组
+						me.handleEventStatus('transfering', msg.ext.weichat.event.eventObj);
+						break;
+					// 会话结束
+					case 'ServiceSessionClosedEvent':
+						me.hasSentAttribute = false;
+						config.agentUserId = null;
+						me.stopGettingAgentStatus();
+						// 还原企业头像和企业名称
+						me.setAgentProfile({
+							tenantName: config.defaultAgentName,
+							avatar: config.tenantAvatar
+						});
+						// 去掉坐席状态
+						me.clearAgentStatus();
+						me.handleEventStatus('close');
+						utils.isTop || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
+						break;
+					case 'ServiceSessionOpenedEvent':
+						//fake
+						me.agentCount < 1 && (me.agentCount = 1);
+						me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
+						if (!me.hasSentAttribute) {
+							easemobim.api('getExSession', {
+								id: config.user.username
+								, orgName: config.orgName
+								, appName: config.appName
+								, imServiceNumber: config.toUser
+								, tenantId: config.tenantId
+							}, function ( msg ) {
+								me.sendAttribute(msg);
+							});
+						}	
+						break;
+					case 'ServiceSessionCreatedEvent':
+						me.handleEventStatus('create');
+						if (!me.hasSentAttribute) {
+							easemobim.api('getExSession', {
+								id: config.user.username
+								, orgName: config.orgName
+								, appName: config.appName
+								, imServiceNumber: config.toUser
+								, tenantId: config.tenantId
+							}, function ( msg ) {
+								me.sendAttribute(msg);
+							});
+						}	
+						break;
+					default:
+						var agent = utils.getDataByPath(msg, 'ext.weichat.agent');
+						agent && me.handleEventStatus('reply', agent);
+						break;
 				}
-
-
-				//空消息不显示
-				if ( !message || !message.value ) {
-					return;
-				}
-
+			}
+			if (!message || !message.value){
+				// 空消息不显示
+				return;
+			}
+			else if (isHistory){
+				// 历史消息仅上屏
+				me.appendMsg(msg.from, msg.to, message, true);
+			}
+			else {
 				if ( !msg.noprompt ) {
 					me.messagePrompt(message);
 				}
@@ -20298,21 +19812,16 @@ easemobim.channel = function ( config ) {
 				me.scrollBottom(50);
 
 				// 收消息回调
-				if ( config.hasReceiveCallback && !utils.isTop) {
-					easemobim.EVENTS.ONMESSAGE.data = {
-						from: msg.from,
-						to: msg.to,
-						message: message
-					};
-					try {
-						transfer.send(easemobim.EVENTS.ONMESSAGE, window.transfer.to);
-					} catch (e) {}
+				if (config.hasReceiveCallback && !utils.isTop) {
+					transfer.send({
+						event: easemobim.EVENTS.ONMESSAGE.event,
+						data: {
+							from: msg.from,
+							to: msg.to,
+							message: message
+						}
+					}, window.transfer.to);
 				}
-			} else {
-				if ( !message || !message.value ) {
-					return;
-				}
-				me.appendMsg(msg.from, msg.to, message, true);
 			}
 		},
 
@@ -20352,20 +19861,26 @@ easemobim.channel = function ( config ) {
 					// for debug
 					console.log('onOffline-channel');
 					// 断线关闭视频通话
-					if(utils.isSupportWebRTC){
+					if(Modernizr.peerconnection){
 						easemobim.videoChat.onOffline();
 					}
 				// todo 断线后停止轮询坐席状态
 				// me.stopGettingAgentStatus();
 				}
 				, onError: function ( e ) {
-					if ( e.reconnect ) {
+					if (e.reconnect){
 						me.open();
-					} else if ( e.type === 2 ) {
+					}
+					else if (e.type === _const.IM.WEBIM_CONNCTION_AUTH_ERROR){
 						me.reOpen || (me.reOpen = setTimeout(function () {
 							me.open();
 						}, 2000));
-					} else {
+					}
+					// im sdk 会捕获 receiveMsg 回调中的异常，需要把出错信息打出来
+					else if (e.type === _const.IM.WEBIM_CONNCTION_CALLBACK_INNER_ERROR){
+						console.error(e.data);
+					}
+					else {
 						//me.conn.stopHeartBeat(me.conn);
 						typeof config.onerror === 'function' && config.onerror(e);
 					}
@@ -20374,70 +19889,68 @@ easemobim.channel = function ( config ) {
 		},
 
 		handleHistory: function ( chatHistory ) {
+			_.each(chatHistory, function(element, index){
+				var msgBody = element.body;
+				var msg = utils.getDataByPath(msgBody, 'bodies.0');
+				var isSelf = msgBody.from === config.user.username;
 
-			if ( chatHistory.length > 0 ) {
-				utils.each(chatHistory, function ( k, v ) {
-					var msgBody = v.body,
-						msg,
-						isSelf = msgBody.from === config.user.username;
-
-					if ( msgBody && msgBody.bodies.length > 0 ) {
-						msg = msgBody.bodies[0];
-						if ( msgBody.from === config.user.username ) {
-							//visitors' msg
-							switch ( msg.type ) {
-								case 'img':
-									msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
-									msg.to = msgBody.to;
-									me.sendImgMsg(msg, true);
-									break;
-								case 'file':
-									msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
-									msg.to = msgBody.to;
-									msg.filesize = msg.file_length;
-									me.sendFileMsg(msg, true);
-									break;
-								case 'txt':
-									me.sendTextMsg(msg.msg, true);
-									break;
-							}
-						} else {
-							//agents' msg
-
-							//判断是否为满意度调查的消息
-							if ( msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType && msgBody.ext.weichat.ctrlType == 'inviteEnquiry'
-							//机器人自定义菜单
-							|| msgBody.ext && msgBody.ext.msgtype && msgBody.ext.msgtype.choice
-							//机器人转人工
-							|| msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType === 'TransferToKfHint' ) {
-								me.receiveMsg(msgBody, '', true);
-							} else {
-								var data = msg.msg;
-
-								msg.type === 'txt' && (data = me.getSafeTextValue(msgBody));
-
-								me.receiveMsg({
-									msgId: v.msgId,
-									data: data,
-									filename: msg.filename,
-									file_length: msg.file_length,
-									url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
-									from: msgBody.from,
-									to: msgBody.to
-								}, msg.type, true);
-							}
-						}
-
-						if ( msg.type === 'cmd'//1.cmd消息 
-						|| (msg.type === 'txt' && !msg.msg)//2.空文本消息
-						|| receiveMsgSite.get(v.msgId) ) {//3.重复消息
-							
-						} else {
-							me.appendDate(v.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
-						}
+				if (!msg) return;
+				if (isSelf){
+				//visitors' msg
+					switch (msg.type){
+						case 'img':
+							msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
+							msg.to = msgBody.to;
+							me.sendImgMsg(msg, true);
+							break;
+						case 'file':
+							msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
+							msg.to = msgBody.to;
+							msg.filesize = msg.file_length;
+							me.sendFileMsg(msg, true);
+							break;
+						case 'txt':
+							me.sendTextMsg(msg.msg, true);
+							break;
 					}
-				});
-			}
+				}
+				//agents' msg
+				else if (
+					msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType && msgBody.ext.weichat.ctrlType == 'inviteEnquiry'
+				){
+					// 满意度调查的消息，第二通道会重发此消息，需要msgid去重
+					msgBody.msgId = element.msgId;
+					me.receiveMsg(msgBody, '', true);
+				}
+				else if(
+					utils.getDataByPath(msgBody, 'ext.msgtype.choice')
+					|| utils.getDataByPath(msgBody, 'ext.weichat.ctrlType') === 'TransferToKfHint'
+				){
+					// 机器人自定义菜单，机器人转人工
+					me.receiveMsg(msgBody, '', true);
+				}
+				else {
+					me.receiveMsg({
+						msgId: element.msgId,
+						data: msg.type === 'txt' ? me.getSafeTextValue(msgBody) : msg.msg,
+						filename: msg.filename,
+						file_length: msg.file_length,
+						url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
+						from: msgBody.from,
+						to: msgBody.to
+					}, msg.type, true);
+				}
+
+				if (
+					// cmd消息, 空文本消息, 重复消息 不处理
+					msg.type === 'cmd'
+					|| (msg.type === 'txt' && !msg.msg)
+					|| receiveMsgSite.get(element.msgId)
+				){}
+				else {
+					me.appendDate(element.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
+				}
+			});
 		}
 	};
 
@@ -20471,10 +19984,16 @@ easemobim.channel = function ( config ) {
 	};
 
 	//发消息通道
-	var _sendMsgChannle = function ( msg, count ) {
-		var count = count === 0 ? 0 : (count || MAXRETRY);
+	var _sendMsgChannle = function ( msg, retryCount ) {
+		var count;
 		var id = msg.id;
 
+		if (typeof retryCount === 'number'){
+			count = retryCount;
+		}
+		else {
+			count = _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
+		}
 		api('sendMsgChannel', {
 			from: config.user.username,
 			to: config.toUser,
@@ -20494,9 +20013,10 @@ easemobim.channel = function ( config ) {
 			//失败继续重试
 			if ( count > 0 ) {
 				_sendMsgChannle(msg, --count);
-			} else {
-				utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-				utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
+			}
+			else {
+				utils.addClass(document.getElementById(id + '_loading'), 'em-hide');
+				utils.removeClass(document.getElementById(id + '_failed'), 'em-hide');
 			}
 		});
 	};
@@ -20507,8 +20027,8 @@ easemobim.channel = function ( config ) {
 		clearTimeout(ackTS.get(id));
 		ackTS.remove(id);
 
-		utils.$Remove(utils.$Dom(id + '_loading'));
-		utils.$Remove(utils.$Dom(id + '_failed'));
+		utils.$Remove(document.getElementById(id + '_loading'));
+		utils.$Remove(document.getElementById(id + '_failed'));
 		
 		if ( sendMsgSite.get(id) ) {
 			me.handleEventStatus(null, null, sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服');
@@ -20520,7 +20040,7 @@ easemobim.channel = function ( config ) {
 	//30s内连上xmpp后清除timer，暂不开启api通道发送消息
 	var _clearFirstTS = function () {
 		clearTimeout(firstTS);
-	}
+	};
 
 	//监听ack，超时则开启api通道, 发消息时调用
 	var _detectSendMsgByApi = function ( id ) {
@@ -20547,7 +20067,7 @@ easemobim.channel = function ( config ) {
 
 // 视频邀请确认对话框
 easemobim.ui = {};
-easemobim.ui.videoConfirmDialog = easemobim.utils.isSupportWebRTC && (function(){
+easemobim.ui.videoConfirmDialog = Modernizr.peerconnection && (function(){
 	var dialog = document.querySelector('div.em-dialog-video-confirm');
 	var buttonPanel = dialog.querySelector('div.button-panel');
 	var btnConfirm = dialog.querySelector('.btn-confirm');
@@ -20587,7 +20107,7 @@ easemobim.ui.videoConfirmDialog = easemobim.utils.isSupportWebRTC && (function()
 		show: _show,
 		hide: _hide,
 		init: _init
-	}
+	};
 }());
 easemobim.videoChat = (function(dialog){
 	var imChat = document.getElementById('em-kefu-webim-chat');
@@ -20617,7 +20137,7 @@ easemobim.videoChat = (function(dialog){
 			me.timeSpan.innerHTML = '00:00';
 			me.timer = setInterval(function(){
 				me.timeSpan.innerHTML = format(++me.counter);
-			}, 1000)
+			}, 1000);
 
 			function format(second){
 				return (new Date(second * 1000))
@@ -20652,17 +20172,17 @@ easemobim.videoChat = (function(dialog){
 				me.closingPrompt.classList.add('hide');
 			}, me.delay);
 		}
-	}
+	};
 
 	var endCall = function(){
 		statusTimer.stop();
 		closingTimer.show();
 		localStream && localStream.getTracks().forEach(function(track){
 			track.stop();
-		})
+		});
 		remoteStream && remoteStream.getTracks().forEach(function(track){
 			track.stop();
-		})
+		});
 		mainVideo.src = '';
 		subVideo.src = '';
 	};
@@ -20736,7 +20256,9 @@ easemobim.videoChat = (function(dialog){
 		sendMessageAPI = sendMessage;
 		config = cfg;
 
-		videoWidget.classList.remove('hide');
+		// 视频组件初始化
+		// 直接操作style是为了避免video标签在加载时一闪而过，影响体验
+		videoWidget.style.display = '';
 		// 按钮初始化
 		btnVideoInvite.classList.remove('hide');
 		btnVideoInvite.addEventListener('click', function(){
@@ -20749,7 +20271,7 @@ easemobim.videoChat = (function(dialog){
 
 			Object.keys(events).forEach(function(key){
 				~className.indexOf(key) && events[key]();
-			})
+			});
 		}, false);
 
 		call = new WebIM.WebRTC.Call({
@@ -20811,7 +20333,7 @@ easemobim.videoChat = (function(dialog){
 			console.log('onOffline');
 			endCall();
 		}
-	}
+	};
 }(easemobim.ui.videoConfirmDialog));
 
 /**
@@ -20826,29 +20348,31 @@ easemobim.videoChat = (function(dialog){
 		// todo: 把dom都移到里边
 		var doms = {
 			agentStatusText: document.querySelector('.em-header-status-text'),
-			agentStatusSymbol: utils.$Dom('em-widgetAgentStatus'),
+			agentStatusSymbol: document.getElementById('em-widgetAgentStatus'),
 			nickname: document.querySelector('.em-widgetHeader-nickname'),
 			imgInput: document.querySelector('.upload-img-container'),
-			fileInput: document.querySelector('.upload-file-container')
+			fileInput: document.querySelector('.upload-file-container'),
+			emojiContainer: document.querySelector('.em-bar-face-container'),
+			block: null
 		};
 
 		easemobim.doms = doms;
 
 		//DOM init
-		easemobim.im = utils.$Dom('EasemobKefuWebim');
-		easemobim.imBtn = utils.$Dom('em-widgetPopBar');
-		easemobim.imChat = utils.$Dom('em-kefu-webim-chat');
-		easemobim.imChatBody = utils.$Dom('em-widgetBody');
-		easemobim.send = utils.$Dom('em-widgetSend');
+		easemobim.im = document.getElementById('EasemobKefuWebim');
+		easemobim.imBtn = document.getElementById('em-widgetPopBar');
+		easemobim.imChat = document.getElementById('em-kefu-webim-chat');
+		easemobim.imChatBody = document.getElementById('em-widgetBody');
+		easemobim.send = document.getElementById('em-widgetSend');
 		easemobim.textarea = easemobim.send.querySelector('.em-widget-textarea');
-		easemobim.sendBtn = utils.$Dom('em-widgetSendBtn');
+		easemobim.sendBtn = document.getElementById('em-widgetSendBtn');
 		easemobim.faceBtn = easemobim.send.querySelector('.em-bar-face');
-		easemobim.sendImgBtn = utils.$Dom('em-widgetImg');
-		easemobim.sendFileBtn = utils.$Dom('em-widgetFile');
-		easemobim.noteBtn = utils.$Dom('em-widgetNote');
-		easemobim.dragHeader = utils.$Dom('em-widgetDrag');
+		easemobim.sendImgBtn = document.getElementById('em-widgetImg');
+		easemobim.sendFileBtn = document.getElementById('em-widgetFile');
+		easemobim.noteBtn = document.getElementById('em-widgetNote');
+		easemobim.dragHeader = document.getElementById('em-widgetDrag');
 		easemobim.dragBar = easemobim.dragHeader.querySelector('.drag-bar');
-		easemobim.chatFaceWrapper = utils.$Dom('EasemobKefuWebimFaceWrapper');
+		easemobim.chatFaceWrapper = document.getElementById('EasemobKefuWebimFaceWrapper');
 		easemobim.avatar = document.querySelector('.em-widgetHeader-portrait');
 		easemobim.swfupload = null;//flash 上传
 
@@ -20877,19 +20401,18 @@ easemobim.videoChat = (function(dialog){
 				//init sound reminder
 				this.soundReminder();
 				//init face
-				this.fillFace();
+				this.initEmoji();
 				//bind events on dom
 				this.bindEvents();
 			}
 			, handleReady: function ( info ) {
 				var me = this;
-				if ( easemobim.textarea.value ) {
-					utils.removeClass(easemobim.sendBtn, 'disabled');
-				}
-				easemobim.sendBtn.innerHTML = '发送';
 
 				if (me.readyHandled) return;
+
 				me.readyHandled = true;
+				easemobim.sendBtn.innerHTML = '发送';
+				utils.trigger(easemobim.sendBtn, 'change');
 
 				// bug fix:
 				// minimum = fales 时, 或者 访客回呼模式 调用easemobim.bind时显示问题
@@ -20910,14 +20433,16 @@ easemobim.videoChat = (function(dialog){
 				if ( utils.isTop ) {
 					//get visitor
 					var visInfo = config.visitor;
+					var prefix = (config.tenantId || '') + (config.emgroup || '');
+
 					if ( !visInfo ) {
-						visInfo = utils.getStore(config.tenantId + config.emgroup + 'visitor');
+						visInfo = utils.getStore(prefix + 'visitor');
 						try { config.visitor = Easemob.im.Utils.parseJSON(visInfo); } catch ( e ) {}
 						utils.clearStore(config.tenantId + config.emgroup + 'visitor');
 					}
 
 					//get ext
-					var ext = utils.getStore(config.tenantId + config.emgroup + 'ext');
+					var ext = utils.getStore(prefix + 'ext');
 					try { ext && me.sendTextMsg('', false, {ext: Easemob.im.Utils.parseJSON(ext)}); } catch ( e ) {}
 					utils.clearStore(config.tenantId + config.emgroup + 'ext');
 				} else {
@@ -20955,21 +20480,38 @@ easemobim.videoChat = (function(dialog){
 				}
 			}
 			, ready: function () {
-				//add tenant notice
-				this.setNotice();
-				//add msg callback
-				this.channel.listen();
-				//connect to xmpp server
-				this.open();
-				//create chat container
-				this.handleGroup();
-				//get service serssion info
-				this.getSession();
-				//set tenant logo
-				this.setLogo();
-				//mobile set textarea can growing with inputing
-				utils.isMobile && this.initAutoGrow();
-				this.chatWrapper.getAttribute('data-getted') || config.newuser || this.getHistory();
+				var me = this;
+
+				easemobim.api('graylist', {}, function (msg){
+					// init graylist
+					config.grayList = {};
+					var data = msg && msg.data;
+					data && _.each([
+						'audioVideo',
+						'msgPredictEnable'
+					], function(key){
+						config.grayList[key] = _.contains(data[key], +config.tenantId);
+					});
+
+					// init others
+					//add tenant notice
+					me.setNotice();
+					//add msg callback
+					me.channel.listen();
+					//connect to xmpp server
+					me.open();
+					//create chat container
+					me.handleGroup();
+					//get service serssion info
+					me.getSession();
+					// 获取坐席昵称设置
+					me.getNickNameOption();
+					//set tenant logo
+					me.setLogo();
+					//mobile set textarea can growing with inputing
+					utils.isMobile && me.initAutoGrow();
+					me.chatWrapper.getAttribute('data-getted') || config.newuser || me.getHistory();
+				});
 			}
 			, initAutoGrow: function () {
 				var me = this;
@@ -21123,7 +20665,9 @@ easemobim.videoChat = (function(dialog){
 				});
 			}
 			, getNickNameOption: function () {
-				if ( config.offDuty ) { return; }
+				if (config.offDuty) return;
+				if (this.nicknameGetted) return;
+				this.nicknameGetted = true;
 
 				easemobim.api('getNickNameOption', {
 					tenantId: config.tenantId
@@ -21140,7 +20684,7 @@ easemobim.videoChat = (function(dialog){
 			, getSession: function () {
 				if ( config.offDuty ) { return; }
 
-				var me = this
+				var me = this;
 
 				me.agent = me.agent || {};
 
@@ -21152,10 +20696,8 @@ easemobim.videoChat = (function(dialog){
 					, tenantId: config.tenantId
 				}, function ( msg ) {
 					if ( msg && msg.data ) {
-						me.onlineHumanAgentCount = msg.data.onlineHumanAgentCount;//人工坐席数
-						me.onlineRobotAgentCount = msg.data.onlineRobotAgentCount;//机器人坐席数
-						me.agentCount = +me.onlineHumanAgentCount + +me.onlineRobotAgentCount;
-						config.agentUserId = msg.data.serviceSession ? msg.data.serviceSession.agentUserId : null;//get agentuserid
+						me.agentCount = msg.data.onlineHumanAgentCount + msg.data.onlineRobotAgentCount;
+						config.agentUserId = utils.getDataByPath(msg, 'data.serviceSession.agentUserId');
 
 						if ( me.agentCount === 0 ) {
 							me.noteShow = false;
@@ -21169,27 +20711,26 @@ easemobim.videoChat = (function(dialog){
 						me.getGreeting();
 					}
 
-					if ( !msg.data.serviceSession ) {
+					if (!msg.data.serviceSession) {
 						//get greeting only when service session is not exist
 						me.getGreeting();
 					} else {
-						me.session = msg.data.serviceSession;
-						msg.data.serviceSession.visitorUser 
-						&& msg.data.serviceSession.visitorUser.userId 
-						&& easemobim.api('sendVisitorInfo', {
-							tenantId: config.tenantId,
-							visitorId: msg.data.serviceSession.visitorUser.userId,
-							referer:  document.referrer
-						});
-					}
-
-
-					if ( !me.nicknameGetted ) {
-						me.nicknameGetted = true;
-						//get the switcher of agent nickname
-						me.getNickNameOption();
+						me.sendAttribute(msg);
 					}
 				});
+			},
+			sendAttribute:function(msg){
+				var visitorUserId = utils.getDataByPath(msg, 'data.serviceSession.visitorUser.userId');
+				if(!this.hasSentAttribute && visitorUserId){
+					this.hasSentAttribute = true;
+					// 缓存 visitorUserId
+					config.visitorUserId = visitorUserId;
+					easemobim.api('sendVisitorInfo', {
+						tenantId: config.tenantId,
+						visitorId: visitorUserId,
+						referer:  document.referrer
+					});
+				}
 			}
 			, handleGroup: function () {
 				this.chatWrapper = easemobim.imChatBody.querySelector('.em-widget-chat');
@@ -21199,14 +20740,10 @@ easemobim.videoChat = (function(dialog){
 					avatar: config.tenantAvatar
 				});
 			}
-			, getMsgid: function ( msg ) {
-				if ( msg ) {
-					if ( msg.ext && msg.ext.weichat ) {
-						return msg.ext.weichat.msgId;
-					}
-					return msg.msgId
-				}
-				return null;
+			, getMsgid: function(msg){
+				return utils.getDataByPath(msg, 'ext.weichat.msgId')
+					|| utils.getDataByPath(msg, 'msgId')
+					|| null;
 			}
 			, startToGetAgentStatus: function () {
 				var me = this;
@@ -21242,10 +20779,9 @@ easemobim.videoChat = (function(dialog){
 					token: config.user.token,
 					imServiceNumber: config.toUser
 				}, function ( msg ) {
-					var state;
+					var state = utils.getDataByPath(msg, 'data.state');
 
-					if ( msg && msg.data && msg.data.state ) {
-						state = msg.data.state;
+					if (state) {
 						doms.agentStatusText.innerText = _const.agentStatusText[state];
 						doms.agentStatusSymbol.className = 'em-widget-agent-status ' + _const.agentStatusClassName[state];
 					}
@@ -21285,15 +20821,14 @@ easemobim.videoChat = (function(dialog){
 			, setTheme: function () {
 				easemobim.api('getTheme', {
 					tenantId: config.tenantId
-				}, function ( msg ) {
-					var themeName = msg.data && msg.data.length && msg.data[0].optionValue;
+				}, function (msg) {
+					var themeName = utils.getDataByPath(msg, 'data.0.optionValue');
 					var className = _const.themeMap[themeName];
 
 					className && utils.addClass(document.body, className);
 				});
 			}
 			, setLogo: function () {
-				// 为了保证消息插入位置正确
 				if (config.logo) {
 					utils.removeClass(document.querySelector('.em-widget-tenant-logo'), 'hide');
 					document.querySelector('.em-widget-tenant-logo img').src = config.logo;
@@ -21329,15 +20864,13 @@ easemobim.videoChat = (function(dialog){
 					}
 				});
 			}
-			//fill emotions async
-			, fillFace: function () {
-				if ( utils.html(easemobim.chatFaceWrapper.getElementsByTagName('ul')[0]) ) {
-					return;
-				}
+			, initEmoji: function () {
+				// lazy load
+				if (doms.emojiContainer.innerHTML) return;
 
-				var faceStr = '',
-					count = 0,
-					me = this;
+				var faceStr = '';
+				var count = 0;
+				var me = this;
 
 				utils.on(easemobim.faceBtn, utils.click, function () {
 					easemobim.textarea.blur();
@@ -21345,7 +20878,7 @@ easemobim.videoChat = (function(dialog){
 
 					if ( faceStr ) return false;
 					faceStr = '<li class="e-face">';
-					utils.each(Easemob.im.EMOTIONS.map, function ( k, v ) {
+					_.each(Easemob.im.EMOTIONS.map, function (v, k) {
 						count += 1;
 						faceStr += ["<div class='em-bar-face-bg e-face'>",
 										"<img class='em-bar-face-img e-face em-emotion' ",
@@ -21362,7 +20895,7 @@ easemobim.videoChat = (function(dialog){
 						faceStr += '</li>';
 					}
 
-					utils.html(easemobim.chatFaceWrapper.getElementsByTagName('ul')[0], faceStr);
+					doms.emojiContainer.innerHTML = faceStr;
 				});
 
 				//表情的选中
@@ -21375,7 +20908,7 @@ easemobim.videoChat = (function(dialog){
 							easemobim.textarea.scrollTop = 10000;
 						}, 100);
 					}
-					me.readyHandled && utils.removeClass(easemobim.sendBtn, 'disabled');
+					utils.trigger(easemobim.textarea, 'change');
 				}, easemobim.chatFaceWrapper);
 			}
 			, errorPrompt: function ( msg, isAlive ) {//暂时所有的提示都用这个方法
@@ -21391,14 +20924,9 @@ easemobim.videoChat = (function(dialog){
 				}, 2000);
 			}
 			, getSafeTextValue: function ( msg ) {
-				if ( msg && msg.ext && msg.ext.weichat && msg.ext.weichat.html_safe_body ) {
-					return msg.ext.weichat.html_safe_body.msg;
-				} else {
-					try {
-						return msg.bodies[0].msg;
-					} catch ( e ) {}
-				}
-				return '';
+				return utils.getDataByPath(msg, 'ext.weichat.html_safe_body.msg')
+					|| utils.getDataByPath(msg, 'bodies.0.msg')
+					|| '';
 			}
 			, setOffline: function ( isOffDuty ) {
 				if ( !isOffDuty ) { return; }
@@ -21452,7 +20980,7 @@ easemobim.videoChat = (function(dialog){
 				utils.addClass(easemobim.imBtn, 'em-hide');
 				utils.removeClass(easemobim.imChat, 'em-hide');
 				if (!config.offDuty || config.offDutyType !== 'none') {
-					try { easemobim.textarea.focus(); } catch ( e ) {}
+					easemobim.textarea.focus();
 				}
 				!utils.isTop && transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
 			}
@@ -21499,16 +21027,9 @@ easemobim.videoChat = (function(dialog){
 
 				me.conn.open(op);
 
-				// init webRTC && 视频功能灰度
-				utils.isSupportWebRTC && easemobim.api('graylist', {}, function (msg) {
-					if (
-						msg.data
-						&& msg.data.audioVideo
-						&& ~msg.data.audioVideo.indexOf(+config.tenantId)
-					){
-						easemobim.videoChat.init(me.conn, me.channel.send, config);
-					}
-				});
+				Modernizr.peerconnection
+				&& config.grayList.audioVideo
+				&& easemobim.videoChat.init(me.conn, me.channel.send, config);
 			}
 			, soundReminder: function () {
 				var me = this;
@@ -21665,7 +21186,7 @@ easemobim.videoChat = (function(dialog){
 					var id = this.getAttribute('id').slice(0, -'_failed'.length);
 
 					utils.addClass(this, 'em-hide');
-					utils.removeClass(utils.$Dom(id + '_loading'), 'em-hide');
+					utils.removeClass(document.getElementById(id + '_loading'), 'em-hide');
 					if ( this.getAttribute('data-type') === 'txt' ) {
 						me.channel.reSend('txt', id);
 					} else {
@@ -21683,26 +21204,50 @@ easemobim.videoChat = (function(dialog){
 
 				//机器人列表
 				utils.live('button.js_robotbtn', utils.click, function () {
-					me.sendTextMsg(utils.html(this), null, {
-						msgtype: {
-							choice: { menuid: this.getAttribute('data-id') }
+					me.sendTextMsg(this.innerHTML, null, {ext:
+						{
+							msgtype: {
+								choice: {
+									menuid: this.getAttribute('data-id')
+								}
+							}
 						}
 					});
 					return false;
 				});
-				
+
+				var messagePredict = _.throttle(function(msg){
+					config.agentUserId
+					&& config.visitorUserId
+					&& easemobim.api('messagePredict', {
+						tenantId: config.tenantId,
+						visitor_user_id: config.visitorUserId,
+						agentId: config.agentUserId,
+						content: msg.slice(0, _const.MESSAGE_PREDICT_MAX_LENGTH),
+						timestamp: _.now(),
+					});
+				}, 1000);
 				function handleSendBtn(){
+					var isEmpty = !easemobim.textarea.value.trim();
+
 					utils.toggleClass(
 						easemobim.sendBtn,
 						'disabled',
-						!me.readyHandled || !easemobim.textarea.value
+						!me.readyHandled || isEmpty
 					);
+					config.grayList.msgPredictEnable
+					&& !isEmpty
+					&& messagePredict(easemobim.textarea.value)
 				};
 
-				utils.on(easemobim.textarea, 'keyup', handleSendBtn);
+				if (Modernizr.oninput){
+					utils.on(easemobim.textarea, 'input', handleSendBtn);
+				}
+				else {
+					utils.on(easemobim.textarea, 'keyup', handleSendBtn);
+				}
 				utils.on(easemobim.textarea, 'change', handleSendBtn);
-				utils.on(easemobim.textarea, 'input', handleSendBtn);
-				
+
 				if ( utils.isMobile ) {
 					var handleFocus = function () {
 						easemobim.textarea.style.overflowY = 'auto';
@@ -21737,7 +21282,7 @@ easemobim.videoChat = (function(dialog){
 						me.sendFileMsg(Easemob.im.Utils.getFileUrl('em-widget-file-input'));
 					}
 					else{
-						me.errorPrompt('文件大小不能超过10MB')
+						me.errorPrompt('文件大小不能超过10MB');
 					}	
 				});
 
@@ -21940,31 +21485,35 @@ easemobim.videoChat = (function(dialog){
 			}
 			//消息上屏
 			, appendMsg: function ( from, to, msg, isHistory ) {
-
 				var me = this;
-
-				var isSelf = from == config.user.username && (from || config.user.username),
-					curWrapper = me.chatWrapper;
-
+				var isReceived = !(
+					from
+					&& config.user.username
+					&& (from === config.user.username)
+				);
+				var curWrapper = me.chatWrapper;
 				var div = document.createElement('div');
-				utils.html(div, msg.get(!isSelf));
+				var img;
 
-				if ( isHistory ) {
+				div.innerHTML = msg.get(isReceived);
+				img = div.querySelector('.em-widget-imgview');
+
+				if (isHistory){
 					utils.insertBefore(curWrapper, div, curWrapper.childNodes[0]);
-				} else {
+				}
+				else if (img){
+					// 如果是图片，则需要等待图片加载后再滚动消息
+					curWrapper.appendChild(div);
+					me.scrollBottom(utils.isMobile ? 800 : null);
+					utils.one(img, 'load', function(){
+						me.scrollBottom();
+					});
+				}
+				else {
+					// 非图片消息直接滚到底
 					curWrapper.appendChild(div);
 					me.scrollBottom(utils.isMobile ? 800 : null);
 				}
-				var imgList = utils.$Class('img.em-widget-imgview', div),
-					img = imgList.length > 0 ? imgList[0] : null;
-					
-				if ( img ) {
-					utils.on(img, 'load', function () {
-						me.scrollBottom();
-						img = null;
-					});
-				}
-				div = null;
 			}
 			//send text message function
 			, sendTextMsg: function ( message, isHistory, ext ) {
@@ -22059,10 +21608,10 @@ easemobim.videoChat = (function(dialog){
 	function _reportData(userType, userId){
 		transfer.send({event: 'updateURL'}, window.transfer.to);
 
-		easemobim.api('reportEvent', {
+		_url && easemobim.api('reportEvent', {
 			type: 'VISIT_URL',
 			// 第一次轮询时URL还未传过来，所以使用origin
-			url: _url || transfer.origin,
+			url: _url,
 			// for debug
 			// url: 'http://172.17.3.86',
 			// 时间戳不传，以服务器时间为准
@@ -22087,7 +21636,7 @@ easemobim.videoChat = (function(dialog){
 							_polling.stop();
 							_polling = new Polling(function(){
 								_reportData('VISITOR', _gid);
-							});
+							}, POLLING_INTERVAL);
 						}
 						_stopReporting();
 						_callback(data);
@@ -22109,6 +21658,12 @@ easemobim.videoChat = (function(dialog){
 	function _startToReoprt(config, callback){
 		_callback || (_callback = callback);
 		_config || (_config = config);
+
+		// h5 方式屏蔽访客回呼功能
+		if(utils.isTop) return;
+
+		// 要求外部页面更新URL
+		transfer.send({event: 'updateURL'}, window.transfer.to);
 
 		// 用户点击联系客服弹出的窗口，结束会话后调用的startToReport没有传入参数
 		if(!_config){
@@ -22176,10 +21731,6 @@ easemobim.videoChat = (function(dialog){
 			}, function(msg){
 				// 没有会话数据，则开始轮询
 				if(!msg.data){
-					_polling.start();
-				}
-				// 机器人接待的会话，也需要轮询
-				else if(msg.data && msg.data.robotId){
 					_polling.start();
 				}
 			});
@@ -22344,7 +21895,7 @@ easemobim.videoChat = (function(dialog){
 	function initUI(config, callback) {
 		var iframe = document.getElementById('EasemobKefuWebimIframe');
 
-		iframe.src = config.domain + '/webim/transfer.html?v=43.12.007';
+		iframe.src = config.domain + '/webim/transfer.html?v=43.12.024';
 		utils.on(iframe, 'load', function() {
 			easemobim.getData = new easemobim.Transfer('EasemobKefuWebimIframe', 'data');
 			callback(config);
@@ -22352,35 +21903,29 @@ easemobim.videoChat = (function(dialog){
 
 		// em-widgetPopBar
 		utils.toggleClass(
-			utils.$Dom('em-widgetPopBar'),
+			document.getElementById('em-widgetPopBar'),
 			'em-hide',
 			(utils.isTop || !config.minimum || config.hide)
 		);
 
 		// em-kefu-webim-chat
 		utils.toggleClass(
-			utils.$Dom('em-kefu-webim-chat'),
-			'em-hide', !(utils.isTop || !config.minimum)
+			document.getElementById('em-kefu-webim-chat'),
+			'em-hide',
+			!(utils.isTop || !config.minimum)
 		);
 
-		// 联系客服按钮
-		var $button = utils.$Class('a.em-widget-pop-bar')[0];
+		// 设置联系客服按钮文字
+		document.querySelector('.em-widget-pop-bar').innerText = config.buttonText;
 
-		// 设置按钮文字
-		$button.innerText = config.buttonText;
-
-		// mobile
+		// 添加移动端样式类
 		if (utils.isMobile) {
-			// 联系客服按钮改为弹窗
-			$button.href = location.href;
-			$button.target = '_blank';
-			// 添加移动端样式类
 			utils.addClass(document.body, 'em-mobile');
 		}
 
 		// 留言按钮
 		utils.toggleClass(
-			utils.$Dom('em-widgetNote'),
+			document.getElementById('em-widgetNote'),
 			'em-hide',
 			!config.ticket
 		);
