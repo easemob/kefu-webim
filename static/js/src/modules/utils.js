@@ -188,7 +188,6 @@
 			}
 		}
 		, extend: function ( object, extend ) {
-			var tmp;
 			for ( var o in extend ) {
 				if ( extend.hasOwnProperty(o) ) {
 					var t = Object.prototype.toString.call(extend[o]);

@@ -10,7 +10,7 @@
 */
 
 var debug = false;
-const VERSION = '43.12.018';
+const VERSION = '43.12.024';
 
 const gulp = require('gulp');
 const postcss = require('gulp-postcss');
@@ -100,6 +100,9 @@ gulp.task('lint', function() {
 //compress
 gulp.task('combineJs', function() {
 	var main = gulp.src([
+		// underscore 会导致压缩出错
+		// 'static/js/src/lib/underscore-min.js',
+		'static/js/src/lib/modernizr.js',
 		'static/js/src/sdk/strophe.js',
 		// 'static/js/src/sdk/strophe-1.2.8.js',
 		'static/js/src/sdk/adapter.js',

@@ -48,7 +48,9 @@
 		IM: {
 			WEBIM_CONNCTION_AUTH_ERROR: 2,
 			WEBIM_CONNCTION_CALLBACK_INNER_ERROR: 31
-		}
+		},
+		MESSAGE_PREDICT_MAX_LENGTH: 100,
+		for_block_only: null
 	};
 
 	window.easemobim = window.easemobim || {};

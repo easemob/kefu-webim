@@ -67,13 +67,12 @@
 			}
 			, handleReady: function ( info ) {
 				var me = this;
-				if ( easemobim.textarea.value ) {
-					utils.removeClass(easemobim.sendBtn, 'disabled');
-				}
-				easemobim.sendBtn.innerHTML = '发送';
 
 				if (me.readyHandled) return;
+
 				me.readyHandled = true;
+				easemobim.sendBtn.innerHTML = '发送';
+				utils.trigger(easemobim.sendBtn, 'change');
 
 				// bug fix:
 				// minimum = fales 时, 或者 访客回呼模式 调用easemobim.bind时显示问题
@@ -141,23 +140,38 @@
 				}
 			}
 			, ready: function () {
-				//add tenant notice
-				this.setNotice();
-				//add msg callback
-				this.channel.listen();
-				//connect to xmpp server
-				this.open();
-				//create chat container
-				this.handleGroup();
-				//get service serssion info
-				this.getSession();
-				// 获取坐席昵称设置
-				this.getNickNameOption();
-				//set tenant logo
-				this.setLogo();
-				//mobile set textarea can growing with inputing
-				utils.isMobile && this.initAutoGrow();
-				this.chatWrapper.getAttribute('data-getted') || config.newuser || this.getHistory();
+				var me = this;
+
+				easemobim.api('graylist', {}, function (msg){
+					// init graylist
+					config.grayList = {};
+					var data = msg && msg.data;
+					data && _.each([
+						'audioVideo',
+						'msgPredictEnable'
+					], function(key){
+						config.grayList[key] = _.contains(data[key], +config.tenantId);
+					});
+
+					// init others
+					//add tenant notice
+					me.setNotice();
+					//add msg callback
+					me.channel.listen();
+					//connect to xmpp server
+					me.open();
+					//create chat container
+					me.handleGroup();
+					//get service serssion info
+					me.getSession();
+					// 获取坐席昵称设置
+					me.getNickNameOption();
+					//set tenant logo
+					me.setLogo();
+					//mobile set textarea can growing with inputing
+					utils.isMobile && me.initAutoGrow();
+					me.chatWrapper.getAttribute('data-getted') || config.newuser || me.getHistory();
+				});
 			}
 			, initAutoGrow: function () {
 				var me = this;
@@ -376,6 +390,8 @@
 					&& msg.data.serviceSession.visitorUser.userId
 				){
 					this.hasSentAttribute = true;
+					// 缓存 visitorUserId
+					config.visitorUserId = msg.data.serviceSession.visitorUser.userId;
 					easemobim.api('sendVisitorInfo', {
 						tenantId: config.tenantId,
 						visitorId: msg.data.serviceSession.visitorUser.userId,
@@ -702,15 +718,9 @@
 				me.conn.open(op);
 
 				// init webRTC && 视频功能灰度
-				utils.isSupportWebRTC && easemobim.api('graylist', {}, function (msg) {
-					if (
-						msg.data
-						&& msg.data.audioVideo
-						&& ~msg.data.audioVideo.indexOf(+config.tenantId)
-					){
-						easemobim.videoChat.init(me.conn, me.channel.send, config);
-					}
-				});
+				utils.isSupportWebRTC 
+				&& config.grayList.audioVideo
+				&& easemobim.videoChat.init(me.conn, me.channel.send, config);
 			}
 			, soundReminder: function () {
 				var me = this;
@@ -896,19 +906,39 @@
 					});
 					return false;
 				});
-				
+
+				var messagePredict = _.throttle(function(msg){
+					config.agentUserId
+					&& config.visitorUserId
+					&& easemobim.api('messagePredict', {
+						tenantId: config.tenantId,
+						visitor_user_id: config.visitorUserId,
+						agentId: config.agentUserId,
+						content: msg.slice(0, _const.MESSAGE_PREDICT_MAX_LENGTH),
+						timestamp: _.now(),
+					})
+				}, 1000);
 				function handleSendBtn(){
+					var isEmpty = !easemobim.textarea.value.trim();
+
 					utils.toggleClass(
 						easemobim.sendBtn,
 						'disabled',
-						!me.readyHandled || !easemobim.textarea.value
+						!me.readyHandled || isEmpty
 					);
+					config.grayList.msgPredictEnable
+					&& !isEmpty
+					&& messagePredict(easemobim.textarea.value)
 				};
 
-				utils.on(easemobim.textarea, 'keyup', handleSendBtn);
+				if (Modernizr.oninput){
+					utils.on(easemobim.textarea, 'input', handleSendBtn);
+				}
+				else {
+					utils.on(easemobim.textarea, 'keyup', handleSendBtn);
+				}
 				utils.on(easemobim.textarea, 'change', handleSendBtn);
-				utils.on(easemobim.textarea, 'input', handleSendBtn);
-				
+
 				if ( utils.isMobile ) {
 					var handleFocus = function () {
 						easemobim.textarea.style.overflowY = 'auto';

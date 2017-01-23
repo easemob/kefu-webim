@@ -235,6 +235,25 @@
 					excludeData: true
 				}));
 				break;
+			case 'messagePredict':
+				// fake: 避免多余的参数传递到 post body 中
+				// todo：改进ajax，避免post时多传参数
+				var tenantId = msg.data.tenantId;
+				var agentId = msg.data.agentId;
+
+				delete msg.data.tenantId;
+				delete msg.data.agentId;
+
+				easemobim.emajax(createObject({
+					url: '/v1/webimplugin/agents/'
+						+ agentId
+						+ '/messagePredict'
+						+ '?tenantId='
+						+ tenantId,
+					msg: msg,
+					type: 'POST'
+				}));
+				break;
 			default:
 				break;
 		}
