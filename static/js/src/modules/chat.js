@@ -10,29 +10,31 @@
 		// todo: 把dom都移到里边
 		var doms = {
 			agentStatusText: document.querySelector('.em-header-status-text'),
-			agentStatusSymbol: utils.$Dom('em-widgetAgentStatus'),
+			agentStatusSymbol: document.getElementById('em-widgetAgentStatus'),
 			nickname: document.querySelector('.em-widgetHeader-nickname'),
 			imgInput: document.querySelector('.upload-img-container'),
-			fileInput: document.querySelector('.upload-file-container')
+			fileInput: document.querySelector('.upload-file-container'),
+			emojiContainer: document.querySelector('.em-bar-face-container'),
+			block: null
 		};
 
 		easemobim.doms = doms;
 
 		//DOM init
-		easemobim.im = utils.$Dom('EasemobKefuWebim');
-		easemobim.imBtn = utils.$Dom('em-widgetPopBar');
-		easemobim.imChat = utils.$Dom('em-kefu-webim-chat');
-		easemobim.imChatBody = utils.$Dom('em-widgetBody');
-		easemobim.send = utils.$Dom('em-widgetSend');
+		easemobim.im = document.getElementById('EasemobKefuWebim');
+		easemobim.imBtn = document.getElementById('em-widgetPopBar');
+		easemobim.imChat = document.getElementById('em-kefu-webim-chat');
+		easemobim.imChatBody = document.getElementById('em-widgetBody');
+		easemobim.send = document.getElementById('em-widgetSend');
 		easemobim.textarea = easemobim.send.querySelector('.em-widget-textarea');
-		easemobim.sendBtn = utils.$Dom('em-widgetSendBtn');
+		easemobim.sendBtn = document.getElementById('em-widgetSendBtn');
 		easemobim.faceBtn = easemobim.send.querySelector('.em-bar-face');
-		easemobim.sendImgBtn = utils.$Dom('em-widgetImg');
-		easemobim.sendFileBtn = utils.$Dom('em-widgetFile');
-		easemobim.noteBtn = utils.$Dom('em-widgetNote');
-		easemobim.dragHeader = utils.$Dom('em-widgetDrag');
+		easemobim.sendImgBtn = document.getElementById('em-widgetImg');
+		easemobim.sendFileBtn = document.getElementById('em-widgetFile');
+		easemobim.noteBtn = document.getElementById('em-widgetNote');
+		easemobim.dragHeader = document.getElementById('em-widgetDrag');
 		easemobim.dragBar = easemobim.dragHeader.querySelector('.drag-bar');
-		easemobim.chatFaceWrapper = utils.$Dom('EasemobKefuWebimFaceWrapper');
+		easemobim.chatFaceWrapper = document.getElementById('EasemobKefuWebimFaceWrapper');
 		easemobim.avatar = document.querySelector('.em-widgetHeader-portrait');
 		easemobim.swfupload = null;//flash 上传
 
@@ -61,7 +63,7 @@
 				//init sound reminder
 				this.soundReminder();
 				//init face
-				this.fillFace();
+				this.initEmoji();
 				//bind events on dom
 				this.bindEvents();
 			}
@@ -344,7 +346,7 @@
 			, getSession: function () {
 				if ( config.offDuty ) { return; }
 
-				var me = this
+				var me = this;
 
 				me.agent = me.agent || {};
 
@@ -356,10 +358,8 @@
 					, tenantId: config.tenantId
 				}, function ( msg ) {
 					if ( msg && msg.data ) {
-						me.onlineHumanAgentCount = msg.data.onlineHumanAgentCount;//人工坐席数
-						me.onlineRobotAgentCount = msg.data.onlineRobotAgentCount;//机器人坐席数
-						me.agentCount = +me.onlineHumanAgentCount + +me.onlineRobotAgentCount;
-						config.agentUserId = msg.data.serviceSession ? msg.data.serviceSession.agentUserId : null;//get agentuserid
+						me.agentCount = msg.data.onlineHumanAgentCount + msg.data.onlineRobotAgentCount;
+						config.agentUserId = utils.getDataByPath(msg, 'data.serviceSession.agentUserId');
 
 						if ( me.agentCount === 0 ) {
 							me.noteShow = false;
@@ -382,19 +382,14 @@
 				});
 			},
 			sendAttribute:function(msg){
-				if(
-					!this.hasSentAttribute
-					&& msg.data
-					&& msg.data.serviceSession
-					&& msg.data.serviceSession.visitorUser
-					&& msg.data.serviceSession.visitorUser.userId
-				){
+				var visitorUserId = utils.getDataByPath(msg, 'data.serviceSession.visitorUser.userId');
+				if(!this.hasSentAttribute && visitorUserId){
 					this.hasSentAttribute = true;
 					// 缓存 visitorUserId
-					config.visitorUserId = msg.data.serviceSession.visitorUser.userId;
+					config.visitorUserId = visitorUserId;
 					easemobim.api('sendVisitorInfo', {
 						tenantId: config.tenantId,
-						visitorId: msg.data.serviceSession.visitorUser.userId,
+						visitorId: visitorUserId,
 						referer:  document.referrer
 					});
 				}
@@ -408,24 +403,9 @@
 				});
 			}
 			, getMsgid: function(msg){
-				var msgId;
-
-				if (
-					msg
-					&& msg.ext
-					&& msg.ext.weichat
-					&& msg.ext.weichat.msgId
-				){
-					msgId = msg.ext.weichat.msgId;
-				}
-				else if (msg && msg.msgId){
-					msgId = msg.msgId;
-				}
-				else {
-					msgId = null;
-				}
-
-				return msgId;
+				return utils.getDataByPath(msg, 'ext.weichat.msgId')
+					|| utils.getDataByPath(msg, 'msgId')
+					|| null;
 			}
 			, startToGetAgentStatus: function () {
 				var me = this;
@@ -461,10 +441,9 @@
 					token: config.user.token,
 					imServiceNumber: config.toUser
 				}, function ( msg ) {
-					var state;
+					var state = utils.getDataByPath(msg, 'data.state');
 
-					if ( msg && msg.data && msg.data.state ) {
-						state = msg.data.state;
+					if (state) {
 						doms.agentStatusText.innerText = _const.agentStatusText[state];
 						doms.agentStatusSymbol.className = 'em-widget-agent-status ' + _const.agentStatusClassName[state];
 					}
@@ -504,8 +483,8 @@
 			, setTheme: function () {
 				easemobim.api('getTheme', {
 					tenantId: config.tenantId
-				}, function ( msg ) {
-					var themeName = msg.data && msg.data.length && msg.data[0].optionValue;
+				}, function (msg) {
+					var themeName = utils.getDataByPath(msg, 'data.0.optionValue');
 					var className = _const.themeMap[themeName];
 
 					className && utils.addClass(document.body, className);
@@ -547,15 +526,13 @@
 					}
 				});
 			}
-			//fill emotions async
-			, fillFace: function () {
-				if ( utils.html(easemobim.chatFaceWrapper.getElementsByTagName('ul')[0]) ) {
-					return;
-				}
+			, initEmoji: function () {
+				// lazy load
+				if (doms.emojiContainer.innerHTML) return;
 
-				var faceStr = '',
-					count = 0,
-					me = this;
+				var faceStr = '';
+				var count = 0;
+				var me = this;
 
 				utils.on(easemobim.faceBtn, utils.click, function () {
 					easemobim.textarea.blur();
@@ -580,7 +557,7 @@
 						faceStr += '</li>';
 					}
 
-					utils.html(easemobim.chatFaceWrapper.getElementsByTagName('ul')[0], faceStr);
+					doms.emojiContainer.innerHTML = faceStr;
 				});
 
 				//表情的选中
@@ -593,7 +570,7 @@
 							easemobim.textarea.scrollTop = 10000;
 						}, 100);
 					}
-					me.readyHandled && utils.removeClass(easemobim.sendBtn, 'disabled');
+					utils.trigger(easemobim.textarea, 'change');
 				}, easemobim.chatFaceWrapper);
 			}
 			, errorPrompt: function ( msg, isAlive ) {//暂时所有的提示都用这个方法
@@ -609,14 +586,9 @@
 				}, 2000);
 			}
 			, getSafeTextValue: function ( msg ) {
-				if ( msg && msg.ext && msg.ext.weichat && msg.ext.weichat.html_safe_body ) {
-					return msg.ext.weichat.html_safe_body.msg;
-				} else {
-					try {
-						return msg.bodies[0].msg;
-					} catch ( e ) {}
-				}
-				return '';
+				return utils.getDataByPath(msg, 'ext.weichat.html_safe_body.msg')
+					|| utils.getDataByPath(msg, 'bodies.0.msg')
+					|| '';
 			}
 			, setOffline: function ( isOffDuty ) {
 				if ( !isOffDuty ) { return; }
@@ -670,7 +642,7 @@
 				utils.addClass(easemobim.imBtn, 'em-hide');
 				utils.removeClass(easemobim.imChat, 'em-hide');
 				if (!config.offDuty || config.offDutyType !== 'none') {
-					try { easemobim.textarea.focus(); } catch ( e ) {}
+					easemobim.textarea.focus();
 				}
 				!utils.isTop && transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
 			}
@@ -877,7 +849,7 @@
 					var id = this.getAttribute('id').slice(0, -'_failed'.length);
 
 					utils.addClass(this, 'em-hide');
-					utils.removeClass(utils.$Dom(id + '_loading'), 'em-hide');
+					utils.removeClass(document.getElementById(id + '_loading'), 'em-hide');
 					if ( this.getAttribute('data-type') === 'txt' ) {
 						me.channel.reSend('txt', id);
 					} else {
@@ -895,7 +867,7 @@
 
 				//机器人列表
 				utils.live('button.js_robotbtn', utils.click, function () {
-					me.sendTextMsg(utils.html(this), null, {ext:
+					me.sendTextMsg(this.innerHTML, null, {ext:
 						{
 							msgtype: {
 								choice: {
@@ -916,7 +888,7 @@
 						agentId: config.agentUserId,
 						content: msg.slice(0, _const.MESSAGE_PREDICT_MAX_LENGTH),
 						timestamp: _.now(),
-					})
+					});
 				}, 1000);
 				function handleSendBtn(){
 					var isEmpty = !easemobim.textarea.value.trim();
@@ -973,7 +945,7 @@
 						me.sendFileMsg(Easemob.im.Utils.getFileUrl('em-widget-file-input'));
 					}
 					else{
-						me.errorPrompt('文件大小不能超过10MB')
+						me.errorPrompt('文件大小不能超过10MB');
 					}	
 				});
 

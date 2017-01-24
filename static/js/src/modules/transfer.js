@@ -2,17 +2,19 @@ window.easemobim = window.easemobim || {};
 window.easemobIM = window.easemobIM || {};
 
 easemobIM.Transfer = easemobim.Transfer = (function () {
-	'use strict'
+	'use strict';
    
 	var handleMsg = function ( e, callback, accept ) {
 		// 微信调试工具会传入对象，导致解析出错
 		if('string' !== typeof e.data) return;
 		var msg = JSON.parse(e.data);
+		var i;
+		var l;
+		//兼容旧版的标志
+		var flag = false;
 
-
-		var flag = false;//兼容旧版的标志
 		if ( accept && accept.length ) {
-			for ( var i = 0, l = accept.length; i < l; i++ ) {
+			for ( i = 0, l = accept.length; i < l; i++ ) {
 				if ( msg.key === accept[i] ) {
 					flag = true;
 					typeof callback === 'function' && callback(msg);
@@ -23,7 +25,7 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 		}
 
 		if ( !flag && accept ) {
-			for ( var i = 0, l = accept.length; i < l; i++ ) {
+			for ( i = 0, l = accept.length; i < l; i++ ) {
 				if ( accept[i] === 'data' ) {
 					typeof callback === 'function' && callback(msg);
 					break;

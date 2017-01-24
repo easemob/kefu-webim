@@ -17,16 +17,15 @@
 		leaveMessage.domBg.id = 'em-widgetOffline';
 		utils.addClass(leaveMessage.domBg, 'em-widget-offline-bg em-hide');
 		utils.addClass(leaveMessage.dom, 'em-widget-offline');
-		utils.html(leaveMessage.dom, "\
-			<h3>请填写以下内容以方便我们及时联系您</h3>\
-			<input type='text' placeholder='姓名'/>\
-			<input type='text' placeholder='电话'/>\
-			<input type='text' placeholder='邮箱'/>\
-			<textarea spellcheck='false' placeholder='请输入留言'></textarea>\
-			<button class='em-widget-offline-cancel'>取消</button>\
-			<button class='em-widget-offline-ok bg-color'>留言</button>\
-			<div class='em-widget-success-prompt em-hide'><i class='icon-circle'><i class='icon-good'></i></i><p>留言发送成功</p></div>\
-			");
+		leaveMessage.dom.innerHTML = '<h3>请填写以下内容以方便我们及时联系您</h3>'
+			+ '<input type="text" placeholder="姓名"/>'
+			+ '<input type="text" placeholder="电话"/>'
+			+ '<input type="text" placeholder="邮箱"/>'
+			+ '<textarea spellcheck="false" placeholder="请输入留言"></textarea>'
+			+ '<button class="em-widget-offline-cancel">取消</button>'
+			+ '<button class="em-widget-offline-ok bg-color">留言</button>'
+			+ '<div class="em-widget-success-prompt em-hide">'
+			+ '<i class="icon-circle"><i class="icon-good"></i></i><p>留言发送成功</p></div>';
 		leaveMessage.domBg.appendChild(leaveMessage.dom);
 		imChat.appendChild(leaveMessage.domBg);
 

@@ -40,5 +40,5 @@ easemobim.ui.videoConfirmDialog = easemobim.utils.isSupportWebRTC && (function()
 		show: _show,
 		hide: _hide,
 		init: _init
-	}
+	};
 }());

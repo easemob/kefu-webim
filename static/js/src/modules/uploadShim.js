@@ -17,7 +17,7 @@ easemobim.uploadShim = function ( config, chat ) {
 		}
 
 		var pageTitle = document.title;
-		var uploadBtn = utils.$Dom(fileInputId);
+		var uploadBtn = document.getElementById(fileInputId);
 		if ( typeof SWFUpload === 'undefined' || uploadBtn.length < 1 ) {
 			return;
 		}
@@ -51,10 +51,12 @@ easemobim.uploadShim = function ( config, chat ) {
 					this.cancelUpload();
 				}
 			}
-			, upload_error_handler: function ( file, code, msg ) {
-				if ( code != SWFUpload.UPLOAD_ERROR.FILE_CANCELLED
-				&& code != SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED 
-				&& code != SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED ) {
+			, upload_error_handler: function ( file, code ) {
+				if (
+					code != SWFUpload.UPLOAD_ERROR.FILE_CANCELLED
+					&& code != SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED 
+					&& code != SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED
+				){
 					var msg = new Easemob.im.EmMessage('img');
 					msg.set({file: null});
 					chat.appendMsg(config.user.username, config.toUser, msg);

@@ -26,7 +26,7 @@ easemobim.videoChat = (function(dialog){
 			me.timeSpan.innerHTML = '00:00';
 			me.timer = setInterval(function(){
 				me.timeSpan.innerHTML = format(++me.counter);
-			}, 1000)
+			}, 1000);
 
 			function format(second){
 				return (new Date(second * 1000))
@@ -61,17 +61,17 @@ easemobim.videoChat = (function(dialog){
 				me.closingPrompt.classList.add('hide');
 			}, me.delay);
 		}
-	}
+	};
 
 	var endCall = function(){
 		statusTimer.stop();
 		closingTimer.show();
 		localStream && localStream.getTracks().forEach(function(track){
 			track.stop();
-		})
+		});
 		remoteStream && remoteStream.getTracks().forEach(function(track){
 			track.stop();
-		})
+		});
 		mainVideo.src = '';
 		subVideo.src = '';
 	};
@@ -160,7 +160,7 @@ easemobim.videoChat = (function(dialog){
 
 			Object.keys(events).forEach(function(key){
 				~className.indexOf(key) && events[key]();
-			})
+			});
 		}, false);
 
 		call = new WebIM.WebRTC.Call({
@@ -222,5 +222,5 @@ easemobim.videoChat = (function(dialog){
 			console.log('onOffline');
 			endCall();
 		}
-	}
+	};
 }(easemobim.ui.videoConfirmDialog));

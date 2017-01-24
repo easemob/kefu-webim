@@ -99,7 +99,7 @@ easemobim.channel = function ( config ) {
 					_detectSendMsgByApi(id);
 					_obj.sendSatisfaction(arguments[1], arguments[2], arguments[3], arguments[4], id);
 					break;
-			};
+			}
 		},
 
 		appendAck: function ( msg, id ) {
@@ -200,7 +200,7 @@ easemobim.channel = function ( config ) {
 							easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
 						} else {
 							var id = error.id;
-							var loading = utils.$Dom(id + '_loading');
+							var loading = document.getElementById(id + '_loading');
 							var msgWrap = document.getElementById(id).querySelector('.em-widget-msg-container');
 
 							msgWrap.innerHTML = '<i class="icon-broken-pic"></i>';
@@ -213,12 +213,12 @@ easemobim.channel = function ( config ) {
 					me.handleEventStatus();
 				},
 				success: function ( id ) {
-					utils.$Remove(utils.$Dom(id + '_loading'));
-					utils.$Remove(utils.$Dom(id + '_failed'));
+					utils.$Remove(document.getElementById(id + '_loading'));
+					utils.$Remove(document.getElementById(id + '_failed'));
 				},
 				fail: function ( id ) {
-					utils.addClass(utils.$Dom(id + '_loading'), 'hide');
-					utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
+					utils.addClass(document.getElementById(id + '_loading'), 'hide');
+					utils.removeClass(document.getElementById(id + '_failed'), 'em-hide');
 				},
 				flashUpload: easemobim.flashUpload
 			});
@@ -249,7 +249,7 @@ easemobim.channel = function ( config ) {
 						easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
 					} else {
 						var id = error.id;
-						var loading = utils.$Dom(id + '_loading');
+						var loading = document.getElementById(id + '_loading');
 						var msgWrap = document.getElementById(id).querySelector('.em-widget-msg-container');
 
 						msgWrap.innerHTML = '<i class="icon-broken-pic"></i>';
@@ -261,12 +261,12 @@ easemobim.channel = function ( config ) {
 					me.handleEventStatus();
 				},
 				success: function ( id ) {
-					utils.$Remove(utils.$Dom(id + '_loading'));
-					utils.$Remove(utils.$Dom(id + '_failed'));
+					utils.$Remove(document.getElementById(id + '_loading'));
+					utils.$Remove(document.getElementById(id + '_failed'));
 				},
 				fail: function ( id ) {
-					utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-					utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
+					utils.addClass(document.getElementById(id + '_loading'), 'em-hide');
+					utils.removeClass(document.getElementById(id + '_failed'), 'em-hide');
 				},
 				flashUpload: easemobim.flashUpload
 			});
@@ -283,6 +283,7 @@ easemobim.channel = function ( config ) {
 		},
 
 		handleReceive: function ( msg, type, isHistory ) {
+			var str;
 			if (config.offDuty) return;
 
 
@@ -364,11 +365,14 @@ easemobim.channel = function ( config ) {
 					break;
 				case 'satisfactionEvaluation':
 					message = new Easemob.im.EmMessage('list');
-					message.set({value: '请对我的服务做出评价', list: ['\
-						<div class="em-widget-list-btns">\
-							<button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="' + msg.ext.weichat.ctrlArgs.inviteId + '"\
-							 data-servicesessionid="'+ msg.ext.weichat.ctrlArgs.serviceSessionId + '">立即评价</button>\
-						</div>']});
+					message.set({value: '请对我的服务做出评价', list: [
+						'<div class="em-widget-list-btns">'
+							+ '<button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="'
+							+ msg.ext.weichat.ctrlArgs.inviteId
+							+ '" data-servicesessionid="'
+							+ msg.ext.weichat.ctrlArgs.serviceSessionId
+							+ '">立即评价</button></div>'
+					]});
 
 					if(!isHistory){
 						// 创建隐藏的立即评价按钮，并触发click事件
@@ -384,7 +388,6 @@ easemobim.channel = function ( config ) {
 					break;
 				case 'robotList':
 					message = new Easemob.im.EmMessage('list');
-					var str;
 					var list = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
 
 					if ( list.length > 0 ) {
@@ -404,8 +407,8 @@ easemobim.channel = function ( config ) {
 					message = new Easemob.im.EmMessage('list');
 					var ctrlArgs = msg.ext.weichat.ctrlArgs;
 					var title = msg.data
-						|| (msg.bodies && msg.bodies[0] && msg.bodies[0].msg)
-						|| msg.ext.weichat.ctrlArgs.label;
+						|| utils.getDataByPath(msg, 'bodies.0.msg')
+						|| utils.getDataByPath(msg, 'ext.weichat.ctrlArgs.label');
 				/*
 					msg.data 用于处理即时消息
 					msg.bodies[0].msg 用于处理历史消息
@@ -413,7 +416,7 @@ easemobim.channel = function ( config ) {
 					此处修改为了修复取出历史消息时，转人工评价标题改变的bug
 					还有待测试其他带有转人工的情况
 				*/
-					var str = [
+					str = [
 						'<div class="em-widget-list-btns">',
 							'<button class="em-widget-list-btn-white bg-color border-color bg-hover-color-dark js_robotTransferBtn" ',
 							'data-sessionid="' + ctrlArgs.serviceSessionId + '" ', 
@@ -467,7 +470,7 @@ easemobim.channel = function ( config ) {
 										, imServiceNumber: config.toUser
 										, tenantId: config.tenantId
 									}, function ( msg ) {
-										me.sendAttribute(msg)
+										me.sendAttribute(msg);
 									});
 								}	
 								break;
@@ -481,7 +484,7 @@ easemobim.channel = function ( config ) {
 										, imServiceNumber: config.toUser
 										, tenantId: config.tenantId
 									}, function ( msg ) {
-										me.sendAttribute(msg)
+										me.sendAttribute(msg);
 									});
 								}	
 								break;
@@ -687,10 +690,16 @@ easemobim.channel = function ( config ) {
 	};
 
 	//发消息通道
-	var _sendMsgChannle = function ( msg, count ) {
-		var count = count === 0 ? 0 : (count || MAXRETRY);
+	var _sendMsgChannle = function ( msg, retryCount ) {
+		var count;
 		var id = msg.id;
 
+		if (typeof retryCount === 'number'){
+			count = retryCount;
+		}
+		else {
+			count = _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
+		}
 		api('sendMsgChannel', {
 			from: config.user.username,
 			to: config.toUser,
@@ -710,9 +719,10 @@ easemobim.channel = function ( config ) {
 			//失败继续重试
 			if ( count > 0 ) {
 				_sendMsgChannle(msg, --count);
-			} else {
-				utils.addClass(utils.$Dom(id + '_loading'), 'em-hide');
-				utils.removeClass(utils.$Dom(id + '_failed'), 'em-hide');
+			}
+			else {
+				utils.addClass(document.getElementById(id + '_loading'), 'em-hide');
+				utils.removeClass(document.getElementById(id + '_failed'), 'em-hide');
 			}
 		});
 	};
@@ -723,8 +733,8 @@ easemobim.channel = function ( config ) {
 		clearTimeout(ackTS.get(id));
 		ackTS.remove(id);
 
-		utils.$Remove(utils.$Dom(id + '_loading'));
-		utils.$Remove(utils.$Dom(id + '_failed'));
+		utils.$Remove(document.getElementById(id + '_loading'));
+		utils.$Remove(document.getElementById(id + '_failed'));
 		
 		if ( sendMsgSite.get(id) ) {
 			me.handleEventStatus(null, null, sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服');
@@ -736,7 +746,7 @@ easemobim.channel = function ( config ) {
 	//30s内连上xmpp后清除timer，暂不开启api通道发送消息
 	var _clearFirstTS = function () {
 		clearTimeout(firstTS);
-	}
+	};
 
 	//监听ack，超时则开启api通道, 发消息时调用
 	var _detectSendMsgByApi = function ( id ) {

@@ -103,8 +103,8 @@ gulp.task('combineJs', function() {
 		// underscore 会导致压缩出错
 		// 'static/js/src/lib/underscore-min.js',
 		'static/js/src/lib/modernizr.js',
-		'static/js/src/sdk/strophe.js',
 		// 'static/js/src/sdk/strophe-1.2.8.js',
+		'static/js/src/sdk/strophe.js',
 		'static/js/src/sdk/adapter.js',
 		'static/js/src/sdk/webim.config.js',
 		'static/js/src/sdk/websdk-1.4.6.js',

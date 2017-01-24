@@ -141,14 +141,14 @@
 
 		// em-widgetPopBar
 		utils.toggleClass(
-			utils.$Dom('em-widgetPopBar'),
+			document.getElementById('em-widgetPopBar'),
 			'em-hide',
 			(utils.isTop || !config.minimum || config.hide)
 		);
 
 		// em-kefu-webim-chat
 		utils.toggleClass(
-			utils.$Dom('em-kefu-webim-chat'),
+			document.getElementById('em-kefu-webim-chat'),
 			'em-hide',
 			!(utils.isTop || !config.minimum)
 		);
@@ -163,7 +163,7 @@
 
 		// 留言按钮
 		utils.toggleClass(
-			utils.$Dom('em-widgetNote'),
+			document.getElementById('em-widgetNote'),
 			'em-hide',
 			!config.ticket
 		);

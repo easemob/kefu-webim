@@ -1,5 +1,5 @@
 ;(function (utils) {
-	'use strict'
+	'use strict';
 
 
 	var _st = 0,
@@ -132,8 +132,6 @@
 						}, 500);
 					}
 					break;
-					me.config.onready instanceof Function && me.config.onready();
-					break;
 				case easemobim.EVENTS.SHOW.event://show Chat window
 					me.open();
 					break;
@@ -189,7 +187,7 @@
 					break;
 				default:
 					break;
-			};
+			}
 		}, ['main']);
 
 		

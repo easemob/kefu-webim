@@ -67,21 +67,21 @@ Easemob.im.EmMessage.img = function ( id ) {
 	this.type = 'img';
 	this.brief = '图片';
 	this.body = {};
-}
+};
 Easemob.im.EmMessage.img.prototype.get = function ( isReceive ) {
 	return [
 		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper'>",
-				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",,
+				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
 				this.id ? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>" : "",
 				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
 				"<div class='em-widget-msg-container'>",
-					this.value === null ? "<i class='icon-broken-pic'></i>" : "<a href='javascript:;'><img class='em-widget-imgview' src='" + this.value.url + "'/></a>",,
+					this.value === null ? "<i class='icon-broken-pic'></i>" : "<a href='javascript:;'><img class='em-widget-imgview' src='" + this.value.url + "'/></a>",
 				"</div>",
 			"</div>",
 		"</div>"
 	].join('');
-}
+};
 Easemob.im.EmMessage.img.prototype.set = function ( opt ) {
 	this.value = opt.file;
 				
@@ -98,7 +98,7 @@ Easemob.im.EmMessage.img.prototype.set = function ( opt ) {
 		, fail: opt.fail
 		, flashUpload: opt.flashUpload
 	};
-}
+};
 //按钮列表消息，机器人回复，满意度调查
 Easemob.im.EmMessage.list = function ( id ) {
 	this.id = id;
@@ -113,7 +113,7 @@ Easemob.im.EmMessage.list.prototype.get = function ( isReceive ) {
 	return [
 		"<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper'>",
-				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",,
+				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
 				"<div class='em-widget-msg-container em-widget-msg-menu'>",
 					"<p>" + Easemob.im.Utils.parseLink(Easemob.im.Utils.parseEmotions(easemobim.utils.encode(this.value))) + "</p>",
 					this.listDom,
@@ -137,7 +137,7 @@ Easemob.im.EmMessage.file = function ( id ) {
 	this.type = 'file';
 	this.brief = '文件';
 	this.body = {};
-}
+};
 Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 	var filename = this.filename;
 	var filesize;
@@ -153,7 +153,7 @@ Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 	return [
 		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper em-widget-msg-file'>",
-				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",,
+				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
 				this.id
 				? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'>"
 				+ "<span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>"
@@ -173,7 +173,7 @@ Easemob.im.EmMessage.file.prototype.get = function ( isReceive ) {
 			"</div>",
 		"</div>"
 	].join('');
-}
+};
 Easemob.im.EmMessage.file.prototype.set = function ( opt ) {
 	this.value = opt.file;
 	this.filename = opt.filename || this.value.filename || '文件';
@@ -191,4 +191,4 @@ Easemob.im.EmMessage.file.prototype.set = function ( opt ) {
 		, fail: opt.fail
 		, flashUpload: opt.flashUpload
 	};
-}
+};

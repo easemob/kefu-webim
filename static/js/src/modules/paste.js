@@ -2,18 +2,14 @@
  * ctrl+v发送截图功能:当前仅支持chrome/firefox/ie11
  */
 easemobim.paste = function ( chat ) {
-	var dom = document.createElement('div'),
-		utils = easemobim.utils,
-		data;
+	var dom = document.createElement('div');
+	var utils = easemobim.utils;
+	var data;
 
 	utils.addClass(dom, 'em-widget-dialog em-widget-paste-wrapper em-hide');
-	utils.html(dom, "\
-		<div class='em-widget-paste-image'></div>\
-		<div>\
-			<button class='em-widget-cancel'>取消</button>\
-			<button class='bg-color'>发送</button>\
-		</div>\
-	");
+	dom.innerHTML = "<div class='em-widget-paste-image'></div>"
+		+ "<div><button class='em-widget-cancel'>取消</button>"
+		+ "<button class='bg-color'>发送</button></div>";
 	easemobim.imChat.appendChild(dom);
 
 	var buttons = dom.getElementsByTagName('button'),

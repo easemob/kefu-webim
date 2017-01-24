@@ -82,6 +82,6 @@ easemobim.satisfaction = function ( chat ) {
 		for ( var i = lis.length; i > 0; i-- ) {
 			utils.removeClass(lis[i-1], 'sel');
 		}
-	};
+	}
 
 };

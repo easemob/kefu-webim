@@ -4,6 +4,7 @@
 	var _isAndroid = /android/i.test(navigator.useragent);
 	var _isMobile = /mobile/i.test(navigator.userAgent);
 	var _getIEVersion = (function () {
+		// todo： 增加 trident 识别
 			var result, matches;
 
 			matches = navigator.userAgent.match(/MSIE (\d+)/i);
@@ -24,6 +25,7 @@
 			'[object HTMLCollection]': true,
 			'[object Array]': true
 		}
+		// todo：使用modernizr 替代
 		, isSupportWebRTC: !!(
 			window.webkitRTCPeerConnection
 			|| window.mozRTCPeerConnection
@@ -60,13 +62,13 @@
 			obj = typeof obj === 'undefined' ? '' : obj;
 			return obj === 'false' ? false : obj;
 		}
-		, $Dom: function ( id ) {
-			return document.getElementById(id);
-		}
 		, each: function ( obj, fn ) {
-			for ( var i in obj ) {
-				if ( obj.hasOwnProperty(i) ) {
-					typeof fn === 'function' && fn(i, obj[i]);
+			// key, value 遍历
+			// todo：去掉这个，用 _.each 替代
+			if (typeof fn !== 'function') return;
+			for ( var prop in obj ) {
+				if ( obj.hasOwnProperty(prop) ) {
+					fn(prop, obj[prop]);
 				}
 			}
 		}
@@ -81,22 +83,6 @@
 			}
 			else{}
 		}
-		, siblings: function ( currentNode, classFilter ) {
-			if ( !currentNode || !currentNode.parentNode ) {
-				return null;
-			}
-			var nodes = currentNode.parentNode.childNodes,
-				result = [];
-
-			for ( var d = 0, len = nodes.length; d < len; d++ ) {
-				if ( nodes[d].nodeType === 1 && nodes[d] != currentNode ) {
-					if ( classFilter && this.hasClass(nodes[d], classFilter) ) {
-						result.push(nodes[d]);
-					}
-				}
-			}
-			return result;
-		}
 		, insertBefore: function ( parentNode, newDom, curDom ) {
 			if ( parentNode && newDom ) {
 				if ( parentNode.childNodes.length === 0 ) {
@@ -107,23 +93,19 @@
 			}
 		}
 		, getIEVersion: _getIEVersion
-		, live: function ( target, ev, fn, wrapper ) {
-			var me = this,
-				el = wrapper || document;
+		, live: function ( selector, ev, fn, wrapper ) {
+			var me = this;
+			var el = wrapper || document;
 			me.on(el, ev, function ( e ) {
-				var ev = e || window.event,
-					tar = ev.target || ev.srcElement,
-					targetList = target.split('.').length < 2 ? el.getElementsByTagName(target) : me.$Class(target);
+				var ev = e || window.event;
+				var tar = ev.target || ev.srcElement;
+				var targetList = el.querySelectorAll(selector);
 
 				if ( targetList.length ) {
 					for ( var len = targetList.length, i = 0; i < len; i++ ) {
 						if ( targetList[i] == tar || targetList[i] == tar.parentNode ) {
 							fn.apply(targetList[i] == tar ? tar : tar.parentNode, arguments);
 						}   
-					}
-				} else {
-					if ( targetList == target ) {
-						fn.apply( target, arguments );
 					}
 				}
 			});
@@ -140,7 +122,7 @@
 					} else if ( target.attachEvent ) {
 						target['_' + evArr[i]] = function () {
 							fn.apply(target, arguments);
-						}
+						};
 						target.attachEvent('on' + evArr[i], target['_' + evArr[i]]);
 					} else {
 						target['on' + evArr[i]] = fn;
@@ -161,21 +143,23 @@
 			if ( !target ) {
 				return;
 			}
-			if ( target.removeEventListener ) {
+			else if ( target.removeEventListener ) {
 				target.removeEventListener(ev, fn);
-			} else if ( target.detachEvent ) {
+			}
+			else if ( target.detachEvent ) {
 				target.detachEvent('on' + ev, target['_' + ev]);
-			} else {
+			}
+			else {
 				target['on' + ev] = null;
 			}
 		}
 		, one: function ( target, ev, fn, isCapture ) {
-			var me = this,
-				tfn = function () {
-					fn.apply(this, arguments);
-					me.remove(target, ev, tfn);
-				};
-			me.on(target, ev, tfn, isCapture);  
+			var me = this;
+			var tempFn = function () {
+				fn.apply(this, arguments);
+				me.remove(target, ev, tempFn);
+			};
+			me.on(target, ev, tempFn, isCapture);  
 		}
 		// 触发事件，对于ie8只支持原生事件，不支持自定义事件
 		, trigger: function(element, eventName){
@@ -187,6 +171,7 @@
 				element.fireEvent('on' + eventName);
 			}
 		}
+		// todo： 去掉 使用 _.extend 替代
 		, extend: function ( object, extend ) {
 			for ( var o in extend ) {
 				if ( extend.hasOwnProperty(o) ) {
@@ -247,14 +232,13 @@
 			return target;
 		}
 		, hasClass: function ( target, className ) {
-			if (!target) { return false;}
-
+			if (!target) return false;
 			return !!~(' ' + target.className + ' ').indexOf(' ' + className + ' ');
 		}
 		, toggleClass: function(target, className, stateValue) {
 			var ifNeedAddClass;
 
-			if(!target || ! className) return;
+			if(!target || !className) return;
 
 			if(typeof stateValue !== 'undefined'){
 				ifNeedAddClass = stateValue;
@@ -270,35 +254,33 @@
 				this.removeClass(target, className);
 			}
 		}
-		, $Class: function ( DomDotClass, parentNode ) {
-			var temp = DomDotClass.split('.'),
-				tag = temp[0],
-				className = temp[1];
+		, getDataByPath: function(obj, path){
+			var propArray = path.split('.');
+			var currentObj = obj;
 
-			var parent = parentNode || document;
-			if ( parent.getElementsByClassName ) {
-				return parent.getElementsByClassName(className);
-			} else {
-				var tags = parent.getElementsByTagName(tag),
-					arr = [];
-				for ( var i = 0, l = tags.length; i < l; i++ ) {
-					if ( this.hasClass(tags[i], className) ) {
-						arr.push(tags[i]);
-					}
+			return seek();
+
+			function seek(){
+				var prop = propArray.shift();
+
+				if (typeof prop !== 'string'){
+					// path 遍历完了，返回当前值
+					return currentObj;
 				}
-				tags = null;
-				return arr;
+				else if (
+					currentObj !== null
+					&& typeof currentObj === "object"
+					&& currentObj.hasOwnProperty(prop)
+				){
+					// 正常遍历path，递归调用
+					currentObj = currentObj[prop];
+					return seek();
+				}
+				else {
+					// 没有找到path，返回undefined
+					return;
+				}
 			}
-		}
-		, html: function ( dom, html ) {
-			if (!dom) return;
-
-			if ( typeof html === 'undefined' ) {
-				return dom.innerHTML;
-			} else {
-				dom.innerHTML = html;
-			}
-			return dom;
 		}
 		, encode: function ( str ) {
 			if ( !str || str.length === 0 ) {
@@ -381,8 +363,8 @@
 			if ( !url ) return returnValue;
 
 			url = url.replace(/^(https?:)?\/\/?/, '');
-			var isKefuAvatar = url.indexOf('img-cn') > 0 ? true : false;
-			var ossImg = url.indexOf('ossimages') > 0 ? true : false;
+			var isKefuAvatar = ~url.indexOf('img-cn');
+			var ossImg = ~url.indexOf('ossimages');
 
 			return isKefuAvatar && !ossImg ? domain + '/ossimages/' + url : '//' + url;
 		}
@@ -431,6 +413,7 @@
 			return url;
 		},
 		copy: function ( obj ) {
+			// todo：移到，easemob.js 里边
 			return this.extend({}, obj);
 		},
 		code: (function () {

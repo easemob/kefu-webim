@@ -34,7 +34,7 @@ easemobim.autogrow = (function () {
 			.replace(/&/g, '&amp;')
 			.replace(/\n$/, '<br/>&nbsp;')
 			.replace(/\n/g, '<br/>')
-			.replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ' });
+			.replace(/ {2,}/g, function(space) { return times('&nbsp;', space.length -1) + ' ';});
 			
 			shadow.innerHTML = val;
 			val && (this.style.height = Math.max(shadow.getBoundingClientRect().height + 17, minHeight) + 'px');
@@ -47,7 +47,7 @@ easemobim.autogrow = (function () {
 		
 		options.update = function () {
 			update.apply(that);
-		}
+		};
 		update.apply(that);
 	};
 }());
