@@ -563,11 +563,11 @@
 				//表情的选中
 				utils.live('img.em-emotion', utils.click, function ( e ) {
 					!utils.isMobile && easemobim.textarea.focus();
-					easemobim.textarea.value = easemobim.textarea.value + this.getAttribute('data-value');
+					easemobim.textarea.value += this.getAttribute('data-value');
 					if ( utils.isMobile ) {
 						me.autoGrowOptions.update();//update autogrow
 						setTimeout(function () {
-							easemobim.textarea.scrollTop = 10000;
+							easemobim.textarea.scrollTop = 9999;
 						}, 100);
 					}
 					utils.trigger(easemobim.textarea, 'change');
@@ -576,8 +576,8 @@
 			, errorPrompt: function ( msg, isAlive ) {//暂时所有的提示都用这个方法
 				var me = this;
 
-				me.ePrompt = me.ePrompt || document.querySelector('.em-widget-error-prompt');
-				me.ePromptContent = me.ePromptContent || me.ePrompt.querySelector('span');
+				if (!me.ePrompt) me.ePrompt = document.querySelector('.em-widget-error-prompt');
+				if (!me.ePromptContent) me.ePromptContent = me.ePrompt.querySelector('span');
 				
 				me.ePromptContent.innerHTML = msg;
 				utils.removeClass(me.ePrompt, 'hide');
@@ -704,7 +704,7 @@
 				me.reminder = document.querySelector('.em-widgetHeader-audio');
 
 				//音频按钮静音
-				utils.on(me.reminder, 'mousedown touchstart', function () {
+				utils.on(me.reminder, 'click', function () {
 					me.slience = !me.slience;
 					utils.toggleClass(me.reminder, 'icon-slience', me.slience);
 					utils.toggleClass(me.reminder, 'icon-bell', !me.slience);
@@ -866,7 +866,7 @@
 
 				//机器人列表
 				utils.live('button.js_robotbtn', utils.click, function () {
-					me.sendTextMsg(this.innerHTML, null, {ext:
+					me.sendTextMsg(this.innerText, null, {ext:
 						{
 							msgtype: {
 								choice: {
@@ -903,12 +903,11 @@
 				};
 
 				if (Modernizr.oninput){
-					utils.on(easemobim.textarea, 'input', handleSendBtn);
+					utils.on(easemobim.textarea, 'input change', handleSendBtn);
 				}
 				else {
-					utils.on(easemobim.textarea, 'keyup', handleSendBtn);
+					utils.on(easemobim.textarea, 'keyup change', handleSendBtn);
 				}
-				utils.on(easemobim.textarea, 'change', handleSendBtn);
 
 				if ( utils.isMobile ) {
 					var handleFocus = function () {
@@ -935,12 +934,10 @@
 					var fileInput = doms.fileInput;
 					var file = fileInput.files && fileInput.files[0];
 					
-					// 未选择文件
 					if(!fileInput.value){
-						return;
+						// 未选择文件
 					}
-
-					if(file.size < _const.UPLOAD_FILESIZE_LIMIT){
+					else if(file.size < _const.UPLOAD_FILESIZE_LIMIT){
 						me.sendFileMsg(Easemob.im.Utils.getFileUrl('em-widget-file-input'));
 					}
 					else{
@@ -954,17 +951,13 @@
 					var file = fileInput.files && fileInput.files[0];
 					var	fileType = file.name.split('.').pop().toLowerCase();
 
-					// 未选择文件
 					if(!fileInput.value){
-						return;
+						// 未选择文件
 					}
-
-					if(!~_const.UPLOAD_IMG_TYPE.indexOf(fileType)){
+					else if(!~_const.UPLOAD_IMG_TYPE.indexOf(fileType)){
 						me.errorPrompt('不支持的图片格式');
-						return;
 					}
-
-					if(file.size < _const.UPLOAD_FILESIZE_LIMIT){
+					else if(file.size < _const.UPLOAD_FILESIZE_LIMIT){
 						me.sendImgMsg(Easemob.im.Utils.getFileUrl('em-widget-img-input'));
 					}
 					else{
@@ -974,17 +967,14 @@
 
 				//hide face wrapper
 				utils.on(document, utils.click, function ( ev ) {
-					var e = window.event || ev,
-						t = e.srcElement || e.target;
+					var e = window.event || ev;
+					var t = e.srcElement || e.target;
 
 					if ( !utils.hasClass(t, 'e-face') ) {
 						utils.addClass(easemobim.chatFaceWrapper, 'em-hide');
 					}
 				});
 
-				utils.on(easemobim.sendFileBtn, 'touchend', function () {
-					easemobim.textarea.blur();
-				});
 				//弹出文件选择框
 				utils.on(easemobim.sendFileBtn, 'click', function () {
 					if ( !me.readyHandled ) {
@@ -992,13 +982,10 @@
 						return false;
 					}
 					if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
-						me.errorPrompt('当前浏览器需要安装flash发送wenj');
+						me.errorPrompt('当前浏览器需要安装flash发送文件');
 						return false;	
 					}
 					doms.fileInput.click();
-				});
-				utils.on(easemobim.sendImgBtn, 'touchend', function () {
-					easemobim.textarea.blur();
 				});
 				
 				utils.on(easemobim.sendImgBtn, 'click', function () {
@@ -1018,55 +1005,53 @@
 					easemobim.leaveMessage.show();
 				});
 
-				//hot key
+				// 回车发送消息
 				utils.on(easemobim.textarea, 'keydown', function ( evt ) {
-					if(evt.keyCode !== 13) return;
-
-					if(utils.isMobile || evt.ctrlKey || evt.shiftKey){
-						return false;
-					}
-					else{
-						utils.addClass(easemobim.chatFaceWrapper, 'em-hide');
-						if ( utils.hasClass(easemobim.sendBtn, 'disabled') ) {
-							return false;
-						}
-						me.sendTextMsg();
-
-						// 可能是事件绑定得太多了，导致换行清不掉，稍后解决
-						setTimeout(function(){
-							easemobim.textarea.value = '';
-						}, 0);
+					if (
+						evt.keyCode === 13
+						&& !utils.isMobile
+						&& !evt.ctrlKey
+						&& !evt.shiftKey
+					){
+						evt.preventDefault();
+						utils.trigger(easemobim.sendBtn, 'click');
 					}
 				});
 
 				utils.on(easemobim.sendBtn, 'click', function () {
-					if ( utils.hasClass(this, 'disabled') ) {
-						return false;
-					}
 					var textMsg = easemobim.textarea.value;
-					if(textMsg.length > 1500){
-						me.errorPrompt("输入字数过多");
-						return false;
+
+					if (utils.hasClass(this, 'disabled')) {
+						// 禁止发送
 					}
-					utils.addClass(easemobim.chatFaceWrapper, 'em-hide');
-					me.sendTextMsg();
-					if ( utils.isMobile ) {
-						easemobim.textarea.style.height = '34px';
-						easemobim.textarea.style.overflowY = 'hidden';
-						me.direction === 'up' || (easemobim.imChatBody.style.bottom = '77px');
-						easemobim.textarea.focus();
+					else if (textMsg.length > _const.MAX_TEXT_MESSAGE_LENGTH){
+						me.errorPrompt('输入字数过多');
 					}
-					return false;
+					else {
+						// todo: 去掉encode
+						me.sendTextMsg(utils.encode(textMsg));
+						easemobim.textarea.value = '';
+						if ( utils.isMobile ) {
+							easemobim.textarea.style.height = '34px';
+							easemobim.textarea.style.overflowY = 'hidden';
+							me.direction === 'up' || (easemobim.imChatBody.style.bottom = '77px');
+							easemobim.textarea.focus();
+						}
+					}
 				});
 			}
 			, scrollBottom: function ( wait ) {
 				var ocw = easemobim.imChatBody;
 
-				wait 
-				? (clearTimeout(this.scbT), this.scbT = setTimeout(function () {
-					ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000;
-				}, wait))
-				: (ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 10000);
+				if (wait){
+					clearTimeout(this.scbT);
+					this.scbT = setTimeout(function(){
+						ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 9999;
+					}, wait);
+				}
+				else {
+					ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 9999;
+				}
 			}
 			//send image message function
 			, sendImgMsg: function ( file, isHistory ) {
@@ -1189,21 +1174,18 @@
 				this.channel.send('satisfaction', level, content, session, invite);
 			}
 			, messagePrompt: function ( message ) {
-
-				if ( utils.isMobile ) {
-					return;
-				}
+				if (utils.isTop) return;
 
 				var me = this;
 
-				if ( me.opened && !utils.isTop) {
+				if (me.opened) {
 					transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
 				}
 
 				if ( utils.isMin() || !me.opened ) {
 					me.soundReminder();
-					utils.isTop || transfer.send(easemobim.EVENTS.SLIDE, window.transfer.to);
-					utils.isTop || transfer.send({
+					transfer.send(easemobim.EVENTS.SLIDE, window.transfer.to);
+					transfer.send({
 						event: 'notify',
 						data: {
 							avatar: this.currentAvatar,

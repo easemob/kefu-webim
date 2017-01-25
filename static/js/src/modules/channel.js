@@ -132,14 +132,11 @@ easemobim.channel = function ( config ) {
 
 			var msg = new Easemob.im.EmMessage('txt', isHistory ? null : id);
 			msg.set({
-				value: message || easemobim.utils.encode(easemobim.textarea.value),
+				value: message,
 				to: config.toUser,
-				success: function ( id ) {
-					// 此回调用于确认im server收到消息, 有别于kefu ack
-				},
-				fail: function ( id ) {
-					
-				}
+				// 此回调用于确认im server收到消息, 有别于kefu ack
+				success: function (id) {},
+				fail: function (id) {}
 			});
 
 			if (ext) {
@@ -152,7 +149,6 @@ easemobim.channel = function ( config ) {
 				_obj.appendAck(msg, id);
 				me.conn.send(msg.body);
 				sendMsgSite.set(id, msg);
-				easemobim.textarea.value = '';
 				if ( msg.body.ext && msg.body.ext.type === 'custom' ) { return; }
 				me.appendDate(new Date().getTime(), config.toUser);
 				me.appendMsg(config.user.username, config.toUser, msg);
