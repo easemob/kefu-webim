@@ -29,9 +29,9 @@
 		easemobim.textarea = easemobim.send.querySelector('.em-widget-textarea');
 		easemobim.sendBtn = document.getElementById('em-widgetSendBtn');
 		easemobim.faceBtn = easemobim.send.querySelector('.em-bar-face');
-		easemobim.sendImgBtn = document.getElementById('em-widgetImg');
-		easemobim.sendFileBtn = document.getElementById('em-widgetFile');
-		easemobim.noteBtn = document.getElementById('em-widgetNote');
+		easemobim.sendImgBtn = document.querySelector('.em-widget-img');
+		easemobim.sendFileBtn = document.querySelector('.em-widget-file');
+		easemobim.noteBtn = document.querySelector('.em-widget-note');
 		easemobim.dragHeader = document.getElementById('em-widgetDrag');
 		easemobim.dragBar = easemobim.dragHeader.querySelector('.drag-bar');
 		easemobim.chatFaceWrapper = document.getElementById('EasemobKefuWebimFaceWrapper');
@@ -74,7 +74,7 @@
 
 				me.readyHandled = true;
 				easemobim.sendBtn.innerHTML = '发送';
-				utils.trigger(easemobim.sendBtn, 'change');
+				utils.trigger(easemobim.textarea, 'change');
 
 				// bug fix:
 				// minimum = fales 时, 或者 访客回呼模式 调用easemobim.bind时显示问题
@@ -641,7 +641,11 @@
 				me.scrollBottom(50);
 				utils.addClass(easemobim.imBtn, 'em-hide');
 				utils.removeClass(easemobim.imChat, 'em-hide');
-				if (!config.offDuty || config.offDutyType !== 'none') {
+				if (
+					(!config.offDuty || config.offDutyType !== 'none')
+					// IE 8 will throw an error when focus an invisible element
+					&& easemobim.textarea.offsetHeight > 0
+				) {
 					easemobim.textarea.focus();
 				}
 				!utils.isTop && transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
@@ -694,34 +698,31 @@
 				&& easemobim.videoChat.init(me.conn, me.channel.send, config);
 			}
 			, soundReminder: function () {
-				var me = this;
-				var ast = 0;
-
 				if (!window.HTMLAudioElement || utils.isMobile || !config.soundReminder) {
 					return;
 				}
 
-				me.reminder = document.querySelector('.em-widgetHeader-audio');
+				var me = this;
+				var audioDom = document.createElement('audio');
+				var slienceSwitch = document.querySelector('.em-widgetHeader-audio');
+				var isSlienceEnable = false;
+				var play = _.throttle(function(){
+					audioDom.play();
+				}, 3000, {trailing: false});
+
+				audioDom.src = config.staticPath + '/mp3/msg.m4a';
 
 				//音频按钮静音
-				utils.on(me.reminder, 'click', function () {
-					me.slience = !me.slience;
-					utils.toggleClass(me.reminder, 'icon-slience', me.slience);
-					utils.toggleClass(me.reminder, 'icon-bell', !me.slience);
-
-					return false;
+				utils.on(slienceSwitch, 'click', function () {
+					isSlienceEnable = !isSlienceEnable;
+					utils.toggleClass(slienceSwitch, 'icon-slience', isSlienceEnable);
+					utils.toggleClass(slienceSwitch, 'icon-bell', !isSlienceEnable);
 				});
 
-				me.audio = document.createElement('audio');
-				me.audio.src = config.staticPath + '/mp3/msg.m4a';
 				me.soundReminder = function () {
-					if ( (utils.isMin() ? false : me.opened) || ast !== 0 || me.slience ) {
-						return;
+					if (!isSlienceEnable && (utils.isMin() || !me.opened)) {
+						play();
 					}
-					ast = setTimeout(function() {
-						ast = 0;
-					}, 3000);
-					me.audio.play();
 				};
 			}
 			, bindEvents: function () {
@@ -760,7 +761,7 @@
 				);
 				
 				if(!utils.isTop){
-					// 最小化
+					// 最小化按钮
 					utils.on(document.querySelector('.em-widgetHeader-min'), 'click', function () {
 						transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
 					});
@@ -773,7 +774,7 @@
 						transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
 					});
 				}
-				utils.on(easemobim.imChatBody, utils.click, function () {
+				utils.on(easemobim.imChatBody, 'click', function () {
 					easemobim.textarea.blur();
 					return false;
 				});
@@ -932,12 +933,12 @@
 				// 发送文件
 				utils.on(doms.fileInput, 'change', function () {
 					var fileInput = doms.fileInput;
-					var file = fileInput.files && fileInput.files[0];
+					var filesize = utils.getDataByPath(fileInput, 'files.0.size');
 					
 					if(!fileInput.value){
 						// 未选择文件
 					}
-					else if(file.size < _const.UPLOAD_FILESIZE_LIMIT){
+					else if(filesize < _const.UPLOAD_FILESIZE_LIMIT){
 						me.sendFileMsg(Easemob.im.Utils.getFileUrl('em-widget-file-input'));
 					}
 					else{
@@ -948,20 +949,23 @@
 				// 发送图片
 				utils.on(doms.imgInput, 'change', function () {
 					var fileInput = doms.imgInput;
-					var file = fileInput.files && fileInput.files[0];
-					var	fileType = file.name.split('.').pop().toLowerCase();
+					// ie8-9 do not support multifiles, so you can not get files
+					var filename = utils.getDataByPath(fileInput, 'files.0.name');
+					var filesize = utils.getDataByPath(fileInput, 'files.0.size');
 
 					if(!fileInput.value){
 						// 未选择文件
 					}
-					else if(!~_const.UPLOAD_IMG_TYPE.indexOf(fileType)){
+					// ie8-9 use value check file type
+					else if(!/\.(png|jpg|jpeg|gif)$/i.test(filename || fileInput.value)){
 						me.errorPrompt('不支持的图片格式');
 					}
-					else if(file.size < _const.UPLOAD_FILESIZE_LIMIT){
-						me.sendImgMsg(Easemob.im.Utils.getFileUrl('em-widget-img-input'));
+					// ie8-9 can not get size, ignore, use flash
+					else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
+						me.errorPrompt('文件大小不能超过10MB');
 					}
 					else{
-						me.errorPrompt('文件大小不能超过10MB');
+						me.sendImgMsg(Easemob.im.Utils.getFileUrl('em-widget-img-input'));
 					}
 				});
 
@@ -977,27 +981,25 @@
 
 				//弹出文件选择框
 				utils.on(easemobim.sendFileBtn, 'click', function () {
+					// 发送文件是后来加的功能，无需考虑IE兼容
 					if ( !me.readyHandled ) {
 						me.errorPrompt('正在连接中...');
-						return false;
 					}
-					if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
-						me.errorPrompt('当前浏览器需要安装flash发送文件');
-						return false;	
+					else {
+						doms.fileInput.click();
 					}
-					doms.fileInput.click();
 				});
 				
 				utils.on(easemobim.sendImgBtn, 'click', function () {
 					if ( !me.readyHandled ) {
 						me.errorPrompt('正在连接中...');
-						return false;
 					}
-					if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
-						me.errorPrompt('当前浏览器需要安装flash发送图片');
-						return false;	
+					else if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
+						me.errorPrompt('当前浏览器需要安装flash发送文件');
 					}
-					doms.imgInput.click();
+					else {
+						doms.imgInput.click();
+					}
 				});
 
 				//显示留言界面
@@ -1031,6 +1033,7 @@
 						// todo: 去掉encode
 						me.sendTextMsg(utils.encode(textMsg));
 						easemobim.textarea.value = '';
+						utils.trigger(easemobim.textarea, 'change');
 						if ( utils.isMobile ) {
 							easemobim.textarea.style.height = '34px';
 							easemobim.textarea.style.overflowY = 'hidden';

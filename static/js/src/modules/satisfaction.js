@@ -32,11 +32,11 @@ easemobim.satisfaction = function ( chat ) {
 		utils.addClass(dom, 'hide');
 	});
 	utils.on(submitBtn, 'click', function () {
-		var level = getStarLevel();
+		var level = starsUl.querySelectorAll('li.sel').length;
 
 		if ( level === 0 ) {
 			chat.errorPrompt('请先选择星级');
-			return false;
+			return;
 		}
 		chat.sendSatisfaction(level, msg.value, session, invite);
 
@@ -45,43 +45,21 @@ easemobim.satisfaction = function ( chat ) {
 
 		setTimeout(function(){
 			msg.value = '';
-			clearStars();
+			// clear stars
+			_.each(lis, function(elem){
+				utils.removeClass(elem, 'sel');
+			});
 			utils.addClass(success, 'hide');
 			utils.addClass(dom, 'hide');
 		}, 1500);
 	});
 	utils.on(starsUl, 'click', function ( e ) {
-		var ev = e || window.event,
-			that = ev.target || ev.srcElement,
-			cur = that.getAttribute('idx');
+		var ev = e || window.event;
+		var target = ev.target || ev.srcElement;
+		var selIndex = +target.getAttribute('idx') || 0;
 
-		if ( !cur ) {
-			return false;
-		}
-		for ( var i = 0, l = lis.length; i < l; i++) {
-			console.log(i);
-			if (i < +cur) {
-				utils.addClass(lis[i], 'sel');
-			} else {
-				utils.removeClass(lis[i], 'sel');
-			}
-		}
+		_.each(lis, function(elem, i){
+			utils.toggleClass(elem, 'sel', i < selIndex);
+		});
 	});
-
-	function getStarLevel(){
-		var count = 0;
-
-		for ( var i = lis.length; i > 0; i-- ) {
-			if ( utils.hasClass(lis[i-1], 'sel') ) {
-				count += 1;
-			}
-		}
-		return count;
-	}
-	function clearStars(){
-		for ( var i = lis.length; i > 0; i-- ) {
-			utils.removeClass(lis[i-1], 'sel');
-		}
-	}
-
 };

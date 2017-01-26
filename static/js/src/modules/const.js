@@ -13,7 +13,6 @@
 
 		//上传文件大小限制
 		UPLOAD_FILESIZE_LIMIT : 1024 * 1024 * 10,
-		UPLOAD_IMG_TYPE :['gif','jpg','jpeg','png','bmp'],
 		// 坐席状态，dom上的className值
 		agentStatusClassName: {
 			Idle: 'online',

@@ -163,8 +163,8 @@
 
 		// 留言按钮
 		utils.toggleClass(
-			document.getElementById('em-widgetNote'),
-			'em-hide',
+			document.querySelector('.em-widget-note'),
+			'hide',
 			!config.ticket
 		);
 
@@ -173,6 +173,13 @@
 			document.querySelector('.em-widgetHeader-min'),
 			'hide',
 			!config.minimum || utils.isTop
+		);
+
+		// 低版本浏览器不支持上传文件
+		utils.toggleClass(
+			document.querySelector('.em-widget-file'),
+			'hide',
+			!Easemob.im.Utils.isCanUploadFileAsync
 		);
 
 		// 静音按钮

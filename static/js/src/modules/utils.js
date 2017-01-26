@@ -236,11 +236,7 @@
 					// path 遍历完了，返回当前值
 					return currentObj;
 				}
-				else if (
-					currentObj !== null
-					&& typeof currentObj === "object"
-					&& currentObj.hasOwnProperty(prop)
-				){
+				else if (typeof currentObj === 'object' && currentObj !== null){
 					// 正常遍历path，递归调用
 					currentObj = currentObj[prop];
 					return seek();

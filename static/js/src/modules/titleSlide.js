@@ -2,11 +2,11 @@
  * title滚动
  */
 easemobim.titleSlide = function () {
-	var newTitle = '新消息提醒',
-		titleST = 0,
-		originTitle = document.title,
-		tempArr = (originTitle + newTitle).split(''),
-		word;
+	var newTitle = '新消息提醒';
+	var titleST = 0;
+	var originTitle = document.title;
+	var tempArr = (originTitle + newTitle).split('');
+	var word;
 
 	easemobim.titleSlide = {
 		stop: function () {

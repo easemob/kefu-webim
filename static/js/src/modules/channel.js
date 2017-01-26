@@ -143,7 +143,6 @@ easemobim.channel = function ( config ) {
 				_.extend(msg.body, ext);
 			}
 
-			utils.addClass(easemobim.sendBtn, 'disabled');
 			if ( !isHistory ) {
 				me.setExt(msg);
 				_obj.appendAck(msg, id);
@@ -197,9 +196,9 @@ easemobim.channel = function ( config ) {
 						} else {
 							var id = error.id;
 							var loading = document.getElementById(id + '_loading');
-							var msgWrap = document.getElementById(id).querySelector('.em-widget-msg-container');
+							var msgWrap = document.querySelector('#' + id + ' .em-widget-msg-container');
 
-							msgWrap.innerHTML = '<i class="icon-broken-pic"></i>';
+							msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
 							utils.addClass(loading, 'hide');
 							me.scrollBottom();
 						}
@@ -246,9 +245,9 @@ easemobim.channel = function ( config ) {
 					} else {
 						var id = error.id;
 						var loading = document.getElementById(id + '_loading');
-						var msgWrap = document.getElementById(id).querySelector('.em-widget-msg-container');
+						var msgWrap = document.querySelector('#' + id + ' .em-widget-msg-container');
 
-						msgWrap.innerHTML = '<i class="icon-broken-pic"></i>';
+						msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
 						utils.addClass(loading, 'hide');
 						me.scrollBottom();
 					}
@@ -279,13 +278,15 @@ easemobim.channel = function ( config ) {
 		},
 
 		handleReceive: function ( msg, type, isHistory ) {
-			var str;
 			if (config.offDuty) return;
+			var str;
+			var message;
+			var ackForMsgId = utils.getDataByPath(msg, 'ext.weichat.ack_for_msg_id');
 
 
 			//如果是ack消息，清除ack对应的site item，返回
-			if ( msg && msg.ext && msg.ext.weichat && msg.ext.weichat.ack_for_msg_id ) {
-				_clearTS(msg.ext.weichat.ack_for_msg_id);
+			if (ackForMsgId) {
+				_clearTS(ackForMsgId);
 				return;
 			}
 
@@ -303,18 +304,16 @@ easemobim.channel = function ( config ) {
 				return;
 			}
 
-			var message = null;
-
 			//满意度评价
-			if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType && msg.ext.weichat.ctrlType == 'inviteEnquiry' ) {
+			if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'inviteEnquiry') {
 				type = 'satisfactionEvaluation';  
 			}
 			//机器人自定义菜单
-			else if ( msg.ext && msg.ext.msgtype && msg.ext.msgtype.choice ) {
+			else if (utils.getDataByPath(msg, 'ext.msgtype.choice')) {
 				type = 'robotList';  
 			}
 			//机器人转人工
-			else if ( msg.ext && msg.ext.weichat && msg.ext.weichat.ctrlType === 'TransferToKfHint' ) {
+			else if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'TransferToKfHint' ) {
 				type = 'robotTransfer';  
 			}
 			else {}
@@ -323,41 +322,21 @@ easemobim.channel = function ( config ) {
 				case 'txt':
 				case 'face':
 					message = new Easemob.im.EmMessage('txt');
-
 					message.set({value: isHistory ? msg.data : me.getSafeTextValue(msg)});
 					break;
 				case 'img':
 					message = new Easemob.im.EmMessage('img');
-
-					if ( msg.url ) {
-						message.set({file: {url: msg.url}});
-					} else {
-						try {
-							message.set({file: {url: msg.bodies[0].url}});
-						} catch ( e ) {}
-					}
+					message.set({file: {
+						url: msg.url || utils.getDataByPath(msg, 'bodies.0.url')
+					}});
 					break;
 				case 'file':
 					message = new Easemob.im.EmMessage('file');
-					if ( msg.url ) {
-						message.set({file: {
-							url: msg.url,
-							filename: msg.filename,
-							filesize: msg.file_length
-						}});
-					} else {
-						// todo 问这块什么情况会出现
-						try {
-							message.set({file: {
-								url: msg.bodies[0].url,
-								filename: msg.bodies[0].filename
-							}});
-						}
-						catch (e) {
-							// todo IE console
-							// console.warn('channel.js @handleReceive case file', e);
-						}
-					}
+					message.set({file: {
+						url: msg.url || utils.getDataByPath(msg, 'bodies.0.url'),
+						filename: msg.filename || utils.getDataByPath(msg, 'bodies.0.filename'),
+						filesize: msg.file_length || utils.getDataByPath(msg, 'bodies.0.file_length')
+					}});
 					break;
 				case 'satisfactionEvaluation':
 					message = new Easemob.im.EmMessage('list');
@@ -489,7 +468,6 @@ easemobim.channel = function ( config ) {
 			}
 			if (!message || !message.value){
 				// 空消息不显示
-				return;
 			}
 			else if (isHistory){
 				// 历史消息仅上屏
@@ -589,7 +567,7 @@ easemobim.channel = function ( config ) {
 
 				if (!msg) return;
 				if (isSelf){
-				//visitors' msg
+					//visitors' msg
 					switch (msg.type){
 						case 'img':
 							msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
@@ -608,9 +586,7 @@ easemobim.channel = function ( config ) {
 					}
 				}
 				//agents' msg
-				else if (
-					msgBody.ext && msgBody.ext.weichat && msgBody.ext.weichat.ctrlType && msgBody.ext.weichat.ctrlType == 'inviteEnquiry'
-				){
+				else if (utils.getDataByPath(msgBody, 'ext.weichat.ctrlType') === 'inviteEnquiry'){
 					// 满意度调查的消息，第二通道会重发此消息，需要msgid去重
 					msgBody.msgId = element.msgId;
 					me.receiveMsg(msgBody, '', true);
