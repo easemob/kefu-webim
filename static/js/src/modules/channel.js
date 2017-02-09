@@ -1,53 +1,28 @@
 easemobim.channel = function ( config ) {
-	// 如果im连不上，则INITTIMER ms后变为可发送
-	var INITTIMER = 20000;
-	// IM心跳间隔HEARTBEATTIMER ms
-	var HEARTBEATTIMER = 60000;
-	// 收消息轮训间隔RECEIVETIMER ms
-	var RECEIVETIMER = 60000;
-	// SENDTIMER ms后没收到ack则开启第二通道
-	var SENDTIMER = 30000;
-	// 发送消息第二通道失败后，最多再试1次
-	var MAXRETRY = 1;
-
-
 	var me = this;
-
 	var utils = easemobim.utils;
 	var api = easemobim.api;
 	var _const = easemobim._const;
 
-
-		//监听ack的timer, 每条消息启动一个
+	//监听ack的timer, 每条消息启动一个
 	var ackTS = new easemobim.site();
 
-		//初始监听xmpp的timer, 如果30s后xmpp没有连接成功则处理按钮变为发送，走api发送消息
-	var firstTS;
-
-		//发消息队列
+	//发消息队列
 	var sendMsgSite = new easemobim.site();
 
-		//收消息队列
+	//收消息队列
 	var receiveMsgSite = new easemobim.site();
-
-
 
 
 	var _obj = {
 
 		getConnection: function () {
 
-			// return new Easemob.im.Connection({ 
-			// 	url: config.xmppServer,
-			// 	retry: true,
-			// 	multiResources: config.resources,
-			// 	heartBeatWait: HEARTBEATTIMER
-			// });
 			return new WebIM.connection({
 				url: config.xmppServer,
 				retry: true,
 				isMultiLoginSessions: config.resources,
-				heartBeatWait: HEARTBEATTIMER
+				heartBeatWait: _const.HEART_BEAT_INTERVAL
 			});
 		},
 
@@ -113,12 +88,12 @@ easemobim.channel = function ( config ) {
 			_.extend(msg.body, {
 				ext: {
 					weichat: {
-						ctrlType: 'enquiry'
-						, ctrlArgs: {
-							inviteId: invite || ''
-							, serviceSessionId: session || ''
-							, detail: content
-							, summary: level
+						ctrlType: 'enquiry',
+						ctrlArgs: {
+							inviteId: invite || '',
+							serviceSessionId: session || '',
+							detail: content,
+							summary: level
 						}
 					}
 				}
@@ -501,7 +476,8 @@ easemobim.channel = function ( config ) {
 			me.conn.listen({
 				onOpened: function ( info ) {
 					
-					_clearFirstTS();
+					// 连接未超时，清除timer，暂不开启api通道发送消息
+					clearTimeout(firstTS);
 
 					me.reOpen && clearTimeout(me.reOpen);
 					me.token = info.accessToken;
@@ -623,37 +599,8 @@ easemobim.channel = function ( config ) {
 		}
 	};
 
-
-	//收消息轮训通道
-	var _receiveMsgChannle = function () {
-
-		if ( config.offDuty ) {
-			return;
-		}
-
-		setInterval(function () {
-			api('receiveMsgChannel', {
-				orgName: config.orgName,
-				appName: config.appName,
-				easemobId: config.toUser,
-				tenantId: config.tenantId,
-				visitorEasemobId: config.user.username
-			}, function ( msg ) {
-
-				//处理收消息
-				if ( msg && msg.data.status === 'OK' ) {
-					for ( var i = 0, l = msg.data.entities.length; i < l; i++ ) {
-						try {
-							_obj.handleReceive(msg.data.entities[i], msg.data.entities[i].bodies[0].type, false);
-						} catch ( e ) {}
-					}
-				}
-			});		   
-		}, RECEIVETIMER);
-	};
-
-	//发消息通道
-	var _sendMsgChannle = function ( msg, retryCount ) {
+	// 第二通道发消息
+	function _sendMsgChannle( msg, retryCount ) {
 		var count;
 		var id = msg.id;
 
@@ -688,11 +635,10 @@ easemobim.channel = function ( config ) {
 				utils.removeClass(document.getElementById(id + '_failed'), 'em-hide');
 			}
 		});
-	};
+	}
 
 	//消息发送成功，清除timer
-	var _clearTS = function ( id ) {
-
+	function _clearTS( id ) {
 		clearTimeout(ackTS.get(id));
 		ackTS.remove(id);
 
@@ -704,32 +650,42 @@ easemobim.channel = function ( config ) {
 		}
 
 		sendMsgSite.remove(id);
-	};
-
-	//30s内连上xmpp后清除timer，暂不开启api通道发送消息
-	var _clearFirstTS = function () {
-		clearTimeout(firstTS);
-	};
+	}
 
 	//监听ack，超时则开启api通道, 发消息时调用
-	var _detectSendMsgByApi = function ( id ) {
-
+	function _detectSendMsgByApi ( id ) {
 		ackTS.set(
 			id,
 			setTimeout(function () {
 				//30s没收到ack使用api发送
 				_sendMsgChannle(sendMsgSite.get(id));
-			}, SENDTIMER)
+			}, _const.FIRST_CHANNEL_MESSAGE_TIMEOUT)
 		);
-	};
+	}
 
-
-	firstTS = setTimeout(function () {
+	// 初始监听xmpp的timer, xmpp连接超时则按钮变为发送
+	var firstTS = setTimeout(function () {
 		me.handleReady();
-	}, INITTIMER);
+	}, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
 	
-	//收消息轮训通道常驻
-	_receiveMsgChannle();
+	// 第二通道收消息轮询
+	!config.offDuty && setInterval(function(){
+		api('receiveMsgChannel', {
+			orgName: config.orgName,
+			appName: config.appName,
+			easemobId: config.toUser,
+			tenantId: config.tenantId,
+			visitorEasemobId: config.user.username
+		}, function (msg) {
+			//处理收消息
+			msg && msg.data.status === 'OK' && _.each(msg.data.entities, function(elem){
+				try {
+					_obj.handleReceive(elem, elem.bodies[0].type, false);
+				}
+				catch (e) {}
+			});
+		});		   
+	}, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
 
 	return _obj;
 };
