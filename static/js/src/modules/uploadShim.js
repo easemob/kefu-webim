@@ -12,7 +12,7 @@ easemobim.uploadShim = function ( config, chat ) {
 	};
 
 	me.uploadShim = function ( fileInputId ) {
-		if ( !Easemob.im.Utils.isCanUploadFile ) {
+		if ( !WebIM.utils.isCanUploadFile ) {
 			return;
 		}
 
@@ -57,27 +57,28 @@ easemobim.uploadShim = function ( config, chat ) {
 					&& code != SWFUpload.UPLOAD_ERROR.UPLOAD_LIMIT_EXCEEDED 
 					&& code != SWFUpload.UPLOAD_ERROR.FILE_VALIDATION_FAILED
 				){
-					var msg = new Easemob.im.EmMessage('img');
+					var msg = new WebIM.message('img');
 					msg.set({file: null});
 					chat.appendMsg(config.user.username, config.toUser, msg);
 					chat.appendDate(new Date().getTime(), config.toUser);
 				}
 			}
 			, upload_success_handler: function ( file, response ) {
+				var msg;
 				if ( !file || !response ) {
-					var msg = new Easemob.im.EmMessage('img');
+					msg = new WebIM.message('img');
 					msg.set({file: null});
 					chat.appendMsg(config.user.username, config.toUser, msg);
 					chat.appendDate(new Date().getTime(), config.toUser);
 					return;
 				}
 				try {
-					var res = Easemob.im.Utils.parseUploadResponse(response);
+					var res = WebIM.utils.parseUploadResponse(response);
 					res = JSON.parse(res);
 					if (file && !file.url && res.entities && res.entities.length > 0 ) {
 						file.url = res.uri + '/' + res.entities[0].uuid;
 					}
-					var msg = new Easemob.im.EmMessage('img');
+					msg = new WebIM.message('img');
 					msg.set({file: file});
 					chat.appendDate(new Date().getTime(), config.toUser);
 					chat.appendMsg(config.user.username, config.toUser, msg);
@@ -91,7 +92,7 @@ easemobim.uploadShim = function ( config, chat ) {
 	};
 
 	//不支持异步upload的浏览器使用flash插件搞定
-	if ( !Easemob.im.Utils.isCanUploadFileAsync && Easemob.im.Utils.isCanUploadFile ) {
+	if ( !WebIM.utils.isCanUploadFileAsync && WebIM.utils.hasFlash ) {
 		me.swfupload = me.uploadShim('em-widget-img-input');
 	}
 };

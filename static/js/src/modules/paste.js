@@ -6,22 +6,21 @@ easemobim.paste = function ( chat ) {
 	var utils = easemobim.utils;
 	var data;
 
-	utils.addClass(dom, 'em-widget-dialog em-widget-paste-wrapper em-hide');
+	utils.addClass(dom, 'em-widget-dialog em-widget-paste-wrapper hide');
 	dom.innerHTML = "<div class='em-widget-paste-image'></div>"
 		+ "<div><button class='em-widget-cancel'>取消</button>"
-		+ "<button class='bg-color'>发送</button></div>";
+		+ "<button class='em-widget-confirm bg-color'>发送</button></div>";
 	easemobim.imChat.appendChild(dom);
 
-	var buttons = dom.getElementsByTagName('button'),
-		cancelBtn = buttons[0],
-		sendImgBtn = buttons[1],
-		imgContainer = dom.getElementsByTagName('div')[0];
+	var cancelBtn = dom.querySelector('.em-widget-cancel');
+	var sendImgBtn = dom.querySelector('.em-widget-confirm');
+	var imgContainer = dom.querySelector('.em-widget-paste-image');
 
 	utils.on(cancelBtn, 'click', function () {
 		easemobim.paste.hide();
 	});
 	utils.on(sendImgBtn, 'click', function () {
-		chat.sendImgMsg({data: data, url: dom.getElementsByTagName('img')[0].getAttribute('src')});
+		chat.sendImgMsg({data: data, url: dom.querySelector('img').getAttribute('src')});
 		easemobim.paste.hide();
 	});
 
@@ -35,31 +34,28 @@ easemobim.paste = function ( chat ) {
 			}
 			data = blob;
 			imgContainer.appendChild(img);
-			utils.removeClass(dom, 'em-hide');
-			img = null;
+			utils.removeClass(dom, 'hide');
 		}
 		, hide: function () {
 			imgContainer.innerHTML = '';
-			utils.addClass(dom, 'em-hide');
+			utils.addClass(dom, 'hide');
 		}
 		, bind: function () {
 			var me = this;
 
-			utils.on(easemobim.textarea, 'paste', function ( e ) {
-				var ev = e || window.event;
-
-				try {
-					if ( ev.clipboardData && ev.clipboardData.types ) {
-						if ( ev.clipboardData.items.length > 0 ) {
-							if ( /^image\/\w+$/.test(ev.clipboardData.items[0].type) ) {
-								me.show(ev.clipboardData.items[0].getAsFile());
-							}
+			utils.on(easemobim.textarea, 'paste', function ( ev ) {
+				if ( ev.clipboardData && ev.clipboardData.types ) {
+					if ( ev.clipboardData.items.length > 0 ) {
+						if ( /^image\/\w+$/.test(ev.clipboardData.items[0].type) ) {
+							me.show(ev.clipboardData.items[0].getAsFile());
 						}
-					} else if ( window.clipboardData ) {
-						var url = window.clipboardData.getData('URL');
-						me.show(url);
 					}
-				} catch ( ex ) {}
+				}
+				else if ( window.clipboardData ) {
+					var url = window.clipboardData.getData('URL');
+					me.show(url);
+				}
+				else {}
 			});
 			return this;
 		}

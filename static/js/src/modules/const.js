@@ -97,7 +97,7 @@
 		: "<img src='//kefu.easemob.com/webim/static/img/loading.gif' width='20' style='margin-top:10px;'/>";
 
 	//表情包
-	Easemob.im.EMOTIONS = {
+	WebIM.Emoji = {
 		path: 'static/img/faces/'
 		, map: {
 			'[):]': 'ee_1.png',

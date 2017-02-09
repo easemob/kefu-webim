@@ -83,9 +83,10 @@ easemobim.channel = function ( config ) {
 
 		sendSatisfaction: function ( level, content, session, invite, id ) {
 
-			var msg = new Easemob.im.EmMessage('txt', id);
-			msg.set({value: '', to: config.toUser});
-			_.extend(msg.body, {
+			var msg = new WebIM.message('txt', id);
+			msg.set({
+				msg: '',
+				to: config.toUser,
 				ext: {
 					weichat: {
 						ctrlType: 'enquiry',
@@ -105,9 +106,9 @@ easemobim.channel = function ( config ) {
 
 		sendText: function ( message, isHistory, ext, id ) {
 
-			var msg = new Easemob.im.EmMessage('txt', isHistory ? null : id);
+			var msg = new WebIM.message('txt', isHistory ? null : id);
 			msg.set({
-				value: message,
+				msg: message,
 				to: config.toUser,
 				// 此回调用于确认im server收到消息, 有别于kefu ack
 				success: function (id) {},
@@ -133,7 +134,7 @@ easemobim.channel = function ( config ) {
 
 
 		transferToKf: function ( tid, sessionId, id ) {
-			var msg = new Easemob.im.EmMessage('cmd', id);
+			var msg = new WebIM.message('cmd', id);
 			msg.set({
 				to: config.toUser
 				, action: 'TransferToKf'
@@ -156,7 +157,7 @@ easemobim.channel = function ( config ) {
 
 		sendImg: function ( file, isHistory, id ) {
 
-			var msg = new Easemob.im.EmMessage('img', isHistory ? null : id);
+			var msg = new WebIM.message('img', isHistory ? null : id);
 
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
@@ -166,7 +167,7 @@ easemobim.channel = function ( config ) {
 				uploadError: function ( error ) {
 					setTimeout(function () {
 						//显示图裂，无法重新发送
-						if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
+						if ( !WebIM.utils.isCanUploadFileAsync ) {
 							easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
 						} else {
 							var id = error.id;
@@ -196,7 +197,7 @@ easemobim.channel = function ( config ) {
 				me.setExt(msg);
 				me.conn.send(msg.body);
 
-				if ( Easemob.im.Utils.isCanUploadFileAsync ) {
+				if ( WebIM.utils.isCanUploadFileAsync ) {
 					me.appendDate(new Date().getTime(), config.toUser);
 					me.appendMsg(config.user.username, config.toUser, msg);
 				}
@@ -207,7 +208,7 @@ easemobim.channel = function ( config ) {
 
 		sendFile: function ( file, isHistory, id ) {
 
-			var msg = new Easemob.im.EmMessage('file', isHistory ? null : id);
+			var msg = new WebIM.message('file', isHistory ? null : id);
 
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
@@ -215,7 +216,7 @@ easemobim.channel = function ( config ) {
 				to: config.toUser,
 				uploadError: function ( error ) {
 					//显示图裂，无法重新发送
-					if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
+					if ( !WebIM.utils.isCanUploadFileAsync ) {
 						easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
 					} else {
 						var id = error.id;
@@ -243,7 +244,7 @@ easemobim.channel = function ( config ) {
 			if ( !isHistory ) {
 				me.setExt(msg);
 				me.conn.send(msg.body);
-				if ( Easemob.im.Utils.isCanUploadFileAsync ) {
+				if ( WebIM.utils.isCanUploadFileAsync ) {
 					me.appendDate(new Date().getTime(), config.toUser);
 					me.appendMsg(config.user.username, config.toUser, msg);
 				}
@@ -296,17 +297,17 @@ easemobim.channel = function ( config ) {
 			switch ( type ) {
 				case 'txt':
 				case 'face':
-					message = new Easemob.im.EmMessage('txt');
-					message.set({value: isHistory ? msg.data : me.getSafeTextValue(msg)});
+					message = new WebIM.message('txt');
+					message.set({msg: isHistory ? msg.data : me.getSafeTextValue(msg)});
 					break;
 				case 'img':
-					message = new Easemob.im.EmMessage('img');
+					message = new WebIM.message('img');
 					message.set({file: {
 						url: msg.url || utils.getDataByPath(msg, 'bodies.0.url')
 					}});
 					break;
 				case 'file':
-					message = new Easemob.im.EmMessage('file');
+					message = new WebIM.message('file');
 					message.set({file: {
 						url: msg.url || utils.getDataByPath(msg, 'bodies.0.url'),
 						filename: msg.filename || utils.getDataByPath(msg, 'bodies.0.filename'),
@@ -314,8 +315,8 @@ easemobim.channel = function ( config ) {
 					}});
 					break;
 				case 'satisfactionEvaluation':
-					message = new Easemob.im.EmMessage('list');
-					message.set({value: '请对我的服务做出评价', list: [
+					message = new WebIM.message('list');
+					message.set({msg: '请对我的服务做出评价', list: [
 						'<div class="em-widget-list-btns">'
 							+ '<button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="'
 							+ msg.ext.weichat.ctrlArgs.inviteId
@@ -337,7 +338,7 @@ easemobim.channel = function ( config ) {
 					}
 					break;
 				case 'robotList':
-					message = new Easemob.im.EmMessage('list');
+					message = new WebIM.message('list');
 					var list = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
 
 					if ( list.length > 0 ) {
@@ -354,7 +355,7 @@ easemobim.channel = function ( config ) {
 					message.set({value: msg.ext.msgtype.choice.title, list: str});
 					break;
 				case 'robotTransfer':
-					message = new Easemob.im.EmMessage('list');
+					message = new WebIM.message('list');
 					var ctrlArgs = msg.ext.weichat.ctrlArgs;
 					var title = msg.data
 						|| utils.getDataByPath(msg, 'bodies.0.msg')
@@ -587,12 +588,11 @@ easemobim.channel = function ( config ) {
 				}
 
 				if (
-					// cmd消息, 空文本消息, 重复消息 不处理
-					msg.type === 'cmd'
-					|| (msg.type === 'txt' && !msg.msg)
-					|| receiveMsgSite.get(element.msgId)
-				){}
-				else {
+					// 非cmd消息, 非空文本消息, 非重复消息
+					msg.type !== 'cmd'
+					&& (msg.type !== 'txt' || msg.msg)
+					&& !receiveMsgSite.get(element.msgId)
+				){
 					me.appendDate(element.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
 				}
 			});

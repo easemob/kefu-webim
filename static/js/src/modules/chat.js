@@ -99,14 +99,23 @@
 
 					if ( !visInfo ) {
 						visInfo = utils.getStore(prefix + 'visitor');
-						try { config.visitor = Easemob.im.Utils.parseJSON(visInfo); } catch ( e ) {}
+						try {
+							config.visitor = JSON.parse(visInfo);
+						} catch ( e ) {}
 						utils.clearStore(config.tenantId + config.emgroup + 'visitor');
 					}
 
 					//get ext
 					var ext = utils.getStore(prefix + 'ext');
-					try { ext && me.sendTextMsg('', false, {ext: Easemob.im.Utils.parseJSON(ext)}); } catch ( e ) {}
-					utils.clearStore(config.tenantId + config.emgroup + 'ext');
+					var parsed;
+					try {
+						parsed = ext && JSON.parse(ext)
+					}
+					catch (e){}
+					if (parsed){
+						me.sendTextMsg('', false, {ext: JSON.parse(ext)});
+						utils.clearStore(config.tenantId + config.emgroup + 'ext');
+					}
 				} else {
 					transfer.send(easemobim.EVENTS.ONREADY, window.transfer.to);
 				}
@@ -304,7 +313,7 @@
 								break;
 							case 1:
 								try {
-									var greetingObj = Easemob.im.Utils.parseJSON(rGreeting.greetingText.replace(/&quot;/g, '"'));
+									var greetingObj = JSON.parse(rGreeting.greetingText.replace('&quot;', '"'));
 									if ( rGreeting.greetingText === '{}' ) {
 										me.receiveMsg({
 											data: '该菜单不存在',
@@ -316,7 +325,7 @@
 										me.receiveMsg({ 
 											ext: greetingObj.ext,
 											noprompt: true
-										 });	
+										});	
 									}
 								} catch ( e ) {}
 								break;
@@ -404,8 +413,7 @@
 			}
 			, getMsgid: function(msg){
 				return utils.getDataByPath(msg, 'ext.weichat.msgId')
-					|| utils.getDataByPath(msg, 'msgId')
-					|| null;
+					|| utils.getDataByPath(msg, 'msgId');
 			}
 			, startToGetAgentStatus: function () {
 				var me = this;
@@ -510,7 +518,7 @@
 					var slogan = msg.data && msg.data.length && msg.data[0].optionValue;
 					if(slogan){
 						// 设置信息栏内容
-						document.querySelector('.em-widget-tip .content').innerHTML = Easemob.im.Utils.parseLink(slogan);
+						document.querySelector('.em-widget-tip .content').innerHTML = WebIM.utils.parseLink(slogan);
 						// 显示信息栏
 						utils.addClass(easemobim.imChat, 'has-tip');
 
@@ -540,11 +548,11 @@
 
 					if ( faceStr ) return false;
 					faceStr = '<li class="e-face">';
-					_.each(Easemob.im.EMOTIONS.map, function (v, k) {
+					_.each(WebIM.Emoji.map, function (v, k) {
 						count += 1;
 						faceStr += ["<div class='em-bar-face-bg e-face'>",
-										"<img class='em-bar-face-img e-face em-emotion' ",
-											"src='" + Easemob.im.EMOTIONS.path + v + "' ",
+										"<img class='em-bar-face-img e-face emoji' ",
+											"src='" + WebIM.Emoji.path + v + "' ",
 											"data-value=" + k + " />",
 									"</div>"].join('');
 						if ( count % 7 === 0 ) {
@@ -561,7 +569,7 @@
 				});
 
 				//表情的选中
-				utils.live('img.em-emotion', utils.click, function ( e ) {
+				utils.live('img.emoji', utils.click, function ( e ) {
 					!utils.isMobile && easemobim.textarea.focus();
 					easemobim.textarea.value += this.getAttribute('data-value');
 					if ( utils.isMobile ) {
@@ -605,7 +613,7 @@
 							word = decodeURIComponent(word);
 						} catch ( e ) {}
 
-						var msg = new Easemob.im.EmMessage('txt');
+						var msg = new WebIM.message('txt');
 						msg.set({ value: word });
 						if ( !this.chatWrapper ) {
 							this.handleGroup();
@@ -900,8 +908,8 @@
 					);
 					config.grayList.msgPredictEnable
 					&& !isEmpty
-					&& messagePredict(easemobim.textarea.value)
-				};
+					&& messagePredict(easemobim.textarea.value);
+				}
 
 				if (Modernizr.oninput){
 					utils.on(easemobim.textarea, 'input change', handleSendBtn);
@@ -939,7 +947,7 @@
 						// 未选择文件
 					}
 					else if(filesize < _const.UPLOAD_FILESIZE_LIMIT){
-						me.sendFileMsg(Easemob.im.Utils.getFileUrl('em-widget-file-input'));
+						me.sendFileMsg(WebIM.utils.getFileUrl(fileInput));
 					}
 					else{
 						me.errorPrompt('文件大小不能超过10MB');
@@ -965,7 +973,7 @@
 						me.errorPrompt('文件大小不能超过10MB');
 					}
 					else{
-						me.sendImgMsg(Easemob.im.Utils.getFileUrl('em-widget-img-input'));
+						me.sendImgMsg(WebIM.utils.getFileUrl(fileInput));
 					}
 				});
 
@@ -994,7 +1002,7 @@
 					if ( !me.readyHandled ) {
 						me.errorPrompt('正在连接中...');
 					}
-					else if ( !Easemob.im.Utils.isCanUploadFileAsync ) {
+					else if ( !WebIM.utils.isCanUploadFileAsync ) {
 						me.errorPrompt('当前浏览器需要安装flash发送文件');
 					}
 					else {
@@ -1180,6 +1188,23 @@
 				if (utils.isTop) return;
 
 				var me = this;
+				var tmpVal;
+				var brief;
+				switch (message.type){
+					case 'txt':
+					case 'list':
+						tmpVal = message.value.replace(/\n/mg, '');
+						brief = tmpVal.length > 15 ? tmpVal.slice(0, 15) + '...' : tmpVal;
+						break;
+					case 'img':
+						brief = '[图片]';
+						break;
+					case 'file':
+						brief = '[文件]';
+						break;
+					default:
+						brief = '';
+				}
 
 				if (me.opened) {
 					transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
@@ -1193,7 +1218,7 @@
 						data: {
 							avatar: this.currentAvatar,
 							title: '新消息',
-							brief: message.brief
+							brief: brief
 						}
 					}, window.transfer.to);
 				}

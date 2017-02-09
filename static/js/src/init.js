@@ -179,7 +179,7 @@
 		utils.toggleClass(
 			document.querySelector('.em-widget-file'),
 			'hide',
-			!Easemob.im.Utils.isCanUploadFileAsync
+			!WebIM.utils.isCanUploadFileAsync
 		);
 
 		// 静音按钮
@@ -204,7 +204,7 @@
 		);
 
 		//不支持异步上传则加载swfupload
-		if (!Easemob.im.Utils.isCanUploadFileAsync && Easemob.im.Utils.isCanUploadFile) {
+		if (!WebIM.utils.isCanUploadFileAsync && WebIM.utils.hasFlash) {
 			var script = document.createElement('script');
 			script.onload = script.onreadystatechange = function() {
 				if (!this.readyState || this.readyState === 'loaded' || this.readyState === 'complete') {
