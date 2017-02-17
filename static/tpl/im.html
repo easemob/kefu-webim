@@ -11,12 +11,12 @@
 	<div id='EasemobKefuWebim'>
 
 		<!-- 最小化时显示的按钮 -->
-		<div id="em-widgetPopBar" class="em-hide">
+		<div id="em-widgetPopBar" class="hide">
 			<a class="em-widget-pop-bar bg-color icon-easemob" href="javascript:;">联系客服</a>
 		</div>
 
 		<!-- UI -->
-		<div id="em-kefu-webim-chat" class="em-widget-wrapper em-hide">
+		<div id="em-kefu-webim-chat" class="em-widget-wrapper hide">
 
 			<!-- 标题栏 -->
 			<div id="em-widgetHeader" class="em-widgetHeader-wrapper bg-color border-color">
@@ -35,7 +35,7 @@
 					<span class="em-header-status-text"></span>
 
 					<!-- 坐席状态标志 -->
-					<i id="em-widgetAgentStatus" class="em-widget-agent-status em-hide"></i>
+					<i id="em-widgetAgentStatus" class="em-widget-agent-status hide"></i>
 
 					<!-- 最小化按钮 -->
 					<i title="关闭" class="icon-min em-widgetHeader-min bg-color border-color bg-hover-color-light"></i>
@@ -89,7 +89,7 @@
 			</div>
 
 			<!-- 表情容器 -->
-			<div id="EasemobKefuWebimFaceWrapper" class="em-bar-face-wrapper e-face em-hide">
+			<div class="em-bar-face-wrapper e-face hide">
 				<ul class="em-bar-face-container"></ul>
 			</div>
 
@@ -110,7 +110,7 @@
 				<input id="em-widget-img-input" type="file" class="upload-img-container hide" accept="image/jpg,image/gif,image/jpeg,image/png">
 
 				<textarea class="em-widget-textarea" spellcheck="false" placeholder="点击输入内容..."></textarea>
-				<span class="em-widget-send bg-color disabled" id="em-widgetSendBtn">连接中</span>
+				<span class="em-widget-send bg-color disabled">连接中</span>
 			</div>
 
 			<!-- 视频确认对话框 -->
@@ -145,6 +145,32 @@
 						<i class="icon-good"></i>
 					</i>
 					<p>提交成功</p>
+				</div>
+			</div>
+
+			<!-- 留言页面 -->
+			<div class="em-widget-offline hide">
+				<div>
+					<h3>请填写以下内容以方便我们及时联系您</h3>
+					<input type="text" class="contact" placeholder="姓名">
+					<input type="text" class="phone" placeholder="电话">
+					<input type="text" class="mail" placeholder="邮箱">
+					<textarea spellcheck="false" placeholder="请输入留言"></textarea>
+					<button class="btn-cancel">取消</button>
+					<button class="btn-ok bg-color">留言</button>
+					<div class="em-widget-success-prompt hide">
+						<i class="icon-circle"><i class="icon-good"></i></i>
+						<p>留言发送成功</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- 粘贴上传对话框 -->
+			<div class="em-widget-dialog em-widget-paste-wrapper hide">
+				<img>
+				<div>
+					<button class="em-widget-cancel">取消</button>
+					<button class="em-widget-confirm bg-color">发送</button>
 				</div>
 			</div>
 

@@ -110,7 +110,7 @@
 
 		//load modules
 		easemobim.leaveMessage = easemobim.leaveMessage(chat, config.tenantId);
-		easemobim.paste = easemobim.paste(chat);
+		easemobim.paste(chat).init();
 		easemobim.satisfaction(chat);
 
 		// 访客回呼功能
@@ -142,14 +142,14 @@
 		// em-widgetPopBar
 		utils.toggleClass(
 			document.getElementById('em-widgetPopBar'),
-			'em-hide',
+			'hide',
 			(utils.isTop || !config.minimum || config.hide)
 		);
 
 		// em-kefu-webim-chat
 		utils.toggleClass(
 			document.getElementById('em-kefu-webim-chat'),
-			'em-hide',
+			'hide',
 			!(utils.isTop || !config.minimum)
 		);
 
@@ -193,7 +193,7 @@
 		utils.toggleClass(
 			document.querySelector('.em-widgetHeader-keyboard'),
 			'hide',
-			!utils.isMobile || config.offDuty || config.hideKeyboard
+			!utils.isMobile || config.hideKeyboard
 		);
 
 		// 满意度评价按钮
@@ -226,9 +226,10 @@
 			api('getDutyStatus', {
 				tenantId: config.tenantId
 			}, function(msg) {
-				config.offDuty = msg.data ? msg.data && config.offDutyType !== 'chat' : false;
+				config.isInOfficehours = !msg.data || config.offDutyType === 'chat';
 
-				chat.setOffline(config.offDuty); //根据状态展示上下班不同view
+				// 设置下班时间展示的页面
+				!config.isInOfficehours && chat.setOffline();
 			});
 
 			config.orgName = config.appKey.split('#')[0];
@@ -374,7 +375,7 @@
 				imServiceNumber: config.toUser,
 				tenantId: config.tenantId
 			}, function(msg) {
-				config.newuser = true;
+				config.isNewUser = true;
 				config.user.username = msg.data.userId;
 				config.user.password = msg.data.userPassword;
 				if (utils.isTop) {

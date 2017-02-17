@@ -10,7 +10,7 @@ WebIM.message.txt.prototype.get = function ( isReceive ) {
 		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper'>",
 				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
-				this.id ? "<div id='" + this.id + "_failed' data-type='txt' class='em-widget-msg-status em-hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>" : "",
+				this.id ? "<div id='" + this.id + "_failed' data-type='txt' class='em-widget-msg-status hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>" : "",
 				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
 				"<div class='em-widget-msg-container'>",
 					"<pre>" + WebIM.utils.parseLink(this.emotion ? this.value : WebIM.utils.parseEmoji(this.value)) + "</pre>",
@@ -26,7 +26,7 @@ WebIM.message.img.prototype.get = function ( isReceive ) {
 		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper'>",
 				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
-				this.id ? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>" : "",
+				this.id ? "<div id='" + this.id + "_failed' class='em-widget-msg-status hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>" : "",
 				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + easemobim.LOADING + "</div>" : "",
 				"<div class='em-widget-msg-container'>",
 					this.value === null ? "<i class='icon-broken-pic'></i>" : "<a href='javascript:;'><img class='em-widget-imgview' src='" + this.value.url + "'/></a>",
@@ -54,7 +54,7 @@ WebIM.message.list.prototype.get = function ( isReceive ) {
 					"<p>" + WebIM.utils.parseLink(WebIM.utils.parseEmoji(easemobim.utils.encode(this.value))) + "</p>",
 					this.listDom,
 				"</div>",
-				"<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>",
+				"<div id='" + this.id + "_failed' class='em-widget-msg-status hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>",
 			"</div>",
 		"</div>"
 	].join('');
@@ -82,7 +82,7 @@ WebIM.message.file.prototype.get = function ( isReceive ) {
 			"<div class='em-widget-msg-wrapper em-widget-msg-file'>",
 				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
 				this.id
-				? "<div id='" + this.id + "_failed' class='em-widget-msg-status em-hide'>"
+				? "<div id='" + this.id + "_failed' class='em-widget-msg-status hide'>"
 				+ "<span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>"
 				+ "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + easemobim.LOADING + "</div>"
 				: "",

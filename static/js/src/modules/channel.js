@@ -17,7 +17,6 @@ easemobim.channel = function ( config ) {
 	var _obj = {
 
 		getConnection: function () {
-
 			return new WebIM.connection({
 				url: config.xmppServer,
 				retry: true,
@@ -31,7 +30,6 @@ easemobim.channel = function ( config ) {
 				var msg = sendMsgSite.get(id);
 
 				switch ( type ) {
-
 					case 'txt':
 						_sendMsgChannle(msg, 0);//重试只发一次
 						break;
@@ -189,7 +187,7 @@ easemobim.channel = function ( config ) {
 				},
 				fail: function ( id ) {
 					utils.addClass(document.getElementById(id + '_loading'), 'hide');
-					utils.removeClass(document.getElementById(id + '_failed'), 'em-hide');
+					utils.removeClass(document.getElementById(id + '_failed'), 'hide');
 				},
 				flashUpload: easemobim.flashUpload
 			});
@@ -207,7 +205,6 @@ easemobim.channel = function ( config ) {
 		},
 
 		sendFile: function ( file, isHistory, id ) {
-
 			var msg = new WebIM.message('file', isHistory ? null : id);
 
 			msg.set({
@@ -215,18 +212,14 @@ easemobim.channel = function ( config ) {
 				file: file,
 				to: config.toUser,
 				uploadError: function ( error ) {
-					//显示图裂，无法重新发送
-					if ( !WebIM.utils.isCanUploadFileAsync ) {
-						easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
-					} else {
-						var id = error.id;
-						var loading = document.getElementById(id + '_loading');
-						var msgWrap = document.querySelector('#' + id + ' .em-widget-msg-container');
+					var id = error.id;
+					var loading = document.getElementById(id + '_loading');
+					var msgWrap = document.querySelector('#' + id + ' .em-widget-msg-container');
 
-						msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
-						utils.addClass(loading, 'hide');
-						me.scrollBottom();
-					}
+					//显示图裂，无法重新发送
+					msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
+					utils.addClass(loading, 'hide');
+					me.scrollBottom();
 				},
 				uploadComplete: function () {
 					me.handleEventStatus();
@@ -236,25 +229,21 @@ easemobim.channel = function ( config ) {
 					utils.$Remove(document.getElementById(id + '_failed'));
 				},
 				fail: function ( id ) {
-					utils.addClass(document.getElementById(id + '_loading'), 'em-hide');
-					utils.removeClass(document.getElementById(id + '_failed'), 'em-hide');
-				},
-				flashUpload: easemobim.flashUpload
+					utils.addClass(document.getElementById(id + '_loading'), 'hide');
+					utils.removeClass(document.getElementById(id + '_failed'), 'hide');
+				}
 			});
 			if ( !isHistory ) {
 				me.setExt(msg);
 				me.conn.send(msg.body);
-				if ( WebIM.utils.isCanUploadFileAsync ) {
-					me.appendDate(new Date().getTime(), config.toUser);
-					me.appendMsg(config.user.username, config.toUser, msg);
-				}
+				me.appendDate(new Date().getTime(), config.toUser);
+				me.appendMsg(config.user.username, config.toUser, msg);
 			} else {
 				me.appendMsg(config.user.username, file.to, msg, true);
 			}
 		},
 
 		handleReceive: function ( msg, type, isHistory ) {
-			if (config.offDuty) return;
 			var str;
 			var message;
 			var ackForMsgId = utils.getDataByPath(msg, 'ext.weichat.ack_for_msg_id');
@@ -296,7 +285,7 @@ easemobim.channel = function ( config ) {
 
 			switch ( type ) {
 				case 'txt':
-				case 'face':
+				case 'emoji':
 					message = new WebIM.message('txt');
 					message.set({msg: isHistory ? msg.data : me.getSafeTextValue(msg)});
 					break;
@@ -316,14 +305,17 @@ easemobim.channel = function ( config ) {
 					break;
 				case 'satisfactionEvaluation':
 					message = new WebIM.message('list');
-					message.set({msg: '请对我的服务做出评价', list: [
+					message.set({
+						value: '请对我的服务做出评价',
+						list: [
 						'<div class="em-widget-list-btns">'
 							+ '<button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="'
 							+ msg.ext.weichat.ctrlArgs.inviteId
 							+ '" data-servicesessionid="'
 							+ msg.ext.weichat.ctrlArgs.serviceSessionId
 							+ '">立即评价</button></div>'
-					]});
+						]
+					});
 
 					if(!isHistory){
 						// 创建隐藏的立即评价按钮，并触发click事件
@@ -489,8 +481,8 @@ easemobim.channel = function ( config ) {
 				, onTextMessage: function ( message ) {
 					me.receiveMsg(message, 'txt');
 				}
-				, onEmotionMessage: function ( message ) {
-					me.receiveMsg(message, 'face');
+				, onEmojiMessage: function ( message ) {
+					me.receiveMsg(message, 'emoji');
 				}
 				, onPictureMessage: function ( message ) {
 					me.receiveMsg(message, 'img');
@@ -575,6 +567,9 @@ easemobim.channel = function ( config ) {
 					// 机器人自定义菜单，机器人转人工
 					me.receiveMsg(msgBody, '', true);
 				}
+				else if(utils.getDataByPath(msgBody, 'ext.weichat.recall_flag') === 1){
+					// 已撤回消息，不展示
+				}
 				else {
 					me.receiveMsg({
 						msgId: element.msgId,
@@ -588,10 +583,11 @@ easemobim.channel = function ( config ) {
 				}
 
 				if (
-					// 非cmd消息, 非空文本消息, 非重复消息
+					// 非cmd消息, 非空文本消息, 非重复消息，非撤回消息
 					msg.type !== 'cmd'
 					&& (msg.type !== 'txt' || msg.msg)
 					&& !receiveMsgSite.get(element.msgId)
+					&& (utils.getDataByPath(msgBody, 'ext.weichat.recall_flag') !== 1)
 				){
 					me.appendDate(element.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
 				}
@@ -631,8 +627,8 @@ easemobim.channel = function ( config ) {
 				_sendMsgChannle(msg, --count);
 			}
 			else {
-				utils.addClass(document.getElementById(id + '_loading'), 'em-hide');
-				utils.removeClass(document.getElementById(id + '_failed'), 'em-hide');
+				utils.addClass(document.getElementById(id + '_loading'), 'hide');
+				utils.removeClass(document.getElementById(id + '_failed'), 'hide');
 			}
 		});
 	}
@@ -669,7 +665,7 @@ easemobim.channel = function ( config ) {
 	}, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
 	
 	// 第二通道收消息轮询
-	!config.offDuty && setInterval(function(){
+	config.isInOfficehours && setInterval(function(){
 		api('receiveMsgChannel', {
 			orgName: config.orgName,
 			appName: config.appName,
@@ -678,7 +674,9 @@ easemobim.channel = function ( config ) {
 			visitorEasemobId: config.user.username
 		}, function (msg) {
 			//处理收消息
-			msg && msg.data.status === 'OK' && _.each(msg.data.entities, function(elem){
+			msg
+			&& msg.data.status === 'OK'
+			&& _.each(msg.data.entities, function(elem){
 				try {
 					_obj.handleReceive(elem, elem.bodies[0].type, false);
 				}

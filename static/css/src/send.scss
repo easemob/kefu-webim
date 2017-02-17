@@ -41,10 +41,6 @@
 	background: #fff;
 	background: rgba(255,255,255,.7);
 }
-#em-widgetSendBtn.disabled {
-	background-color: #ccc;
-	cursor: default;
-}
 .em-widget-send {
 	position: absolute;
 	right: 10px;
@@ -55,7 +51,9 @@
 	text-align: center;
 	line-height: 30px;
 	color: white;
-	&:hover{
-		cursor:pointer;
+	cursor: pointer;
+	&.disabled {
+		background-color: #ccc!important;
+		cursor: default;
 	}
 }

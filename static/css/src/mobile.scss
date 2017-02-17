@@ -52,9 +52,9 @@
 	.em-bar-face-bg {
 		width: 14.2%;
 		margin: 0;
-	}
-	.em-bar-face-bg .em-bar-face-img {
-		margin: 8px 0;
+		.em-bar-face-img {
+			margin: 8px 0;
+		}
 	}
 	.em-widgetHeader-keyboard {
 		position: absolute;
@@ -101,15 +101,6 @@
 		box-shadow: 0 1px 3px rgba(0,0,0,.2) inset;
 	}
 	.em-widget-send {
-		width: 64px;
-		right: 8px;
-		top: auto;
-		bottom: 8px;
-		height: 33px;
-		line-height: 33px;
-		font-size: 15px;
-	}
-	.em-widgetSendBtn {
 		width: 64px;
 		right: 8px;
 		top: auto;

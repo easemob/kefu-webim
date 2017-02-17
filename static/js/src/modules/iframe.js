@@ -261,7 +261,8 @@
 			wechatAuth: this.config.wechatAuth,
 			hideKeyboard: this.config.hideKeyboard,
 			eventCollector: this.config.eventCollector,
-			resources: this.config.resources
+			resources: this.config.resources,
+			offDutyWord: this.config.offDutyWord
 		};
 
 		// todo: 写成自动配置
@@ -270,7 +271,6 @@
 		this.config.to && (destUrl.to = this.config.to);
 		this.config.xmppServer && (destUrl.xmppServer = this.config.xmppServer);
 		this.config.restServer && (destUrl.restServer = this.config.restServer);
-		this.config.offDutyWord && (destUrl.offDutyWord = this.config.offDutyWord);
 		this.config.offDutyType && (destUrl.offDutyType = this.config.offDutyType);
 		this.config.language && (destUrl.language = this.config.language);
 		this.config.appid && (destUrl.appid = this.config.appid);

@@ -10,7 +10,7 @@
 */
 
 var debug = false;
-const VERSION = '43.13.002';
+const VERSION = '43.13.003';
 
 const gulp = require('gulp');
 const postcss = require('gulp-postcss');
@@ -113,7 +113,6 @@ gulp.task('combineJs', function() {
 		'static/js/src/modules/transfer.js',
 		'static/js/src/modules/api.js',
 		'static/js/src/modules/eventsEnum.js',
-		'static/js/src/modules/autogrow.js',
 		'static/js/src/modules/message.js',
 		'static/js/src/modules/paste.js',
 		'static/js/src/modules/leaveMessage.js',
