@@ -1,4 +1,4 @@
-;(function(Polling, utils, api){
+;(function(Polling, utils, api, _const){
 	var POLLING_INTERVAL = 5000;
 
 	var _polling;
@@ -8,7 +8,7 @@
 	var _url;
 
 	function _reportData(userType, userId){
-		transfer.send({event: 'updateURL'}, window.transfer.to);
+		transfer.send({event: _const.EVENTS.REQUIRE_URL}, window.transfer.to);
 
 		_url && easemobim.api('reportEvent', {
 			type: 'VISIT_URL',
@@ -65,7 +65,7 @@
 		if(utils.isTop) return;
 
 		// 要求外部页面更新URL
-		transfer.send({event: 'updateURL'}, window.transfer.to);
+		transfer.send({event: _const.EVENTS.REQUIRE_URL}, window.transfer.to);
 
 		// 用户点击联系客服弹出的窗口，结束会话后调用的startToReport没有传入参数
 		if(!_config){
@@ -86,10 +86,13 @@
 		var guestId = _config.guestId || utils.uuid();
 
 		// 缓存guestId
-		transfer.send({event: 'setItem', data: {
-			key: 'guestId',
-			value: guestId
-		}}, window.transfer.to);
+		transfer.send({
+			event: _const.EVENTS.SET_ITEM,
+			data: {
+				key: 'guestId',
+				value: guestId
+			}
+		}, window.transfer.to);
 
 		_polling = new Polling(function(){
 			_reportData('GUEST', guestId);
@@ -159,5 +162,6 @@
 }(
 	easemobim.Polling,
 	easemobim.utils,
-	easemobim.api
+	easemobim.api,
+	easemobim._const
 ));

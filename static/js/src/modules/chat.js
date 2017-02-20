@@ -79,7 +79,7 @@
 				// bug fix:
 				// minimum = fales 时, 或者 访客回呼模式 调用easemobim.bind时显示问题
 				if(config.minimum === false || config.eventCollector === true){
-					transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
+					transfer.send({event: _const.EVENTS.SHOW}, window.transfer.to);
 				}
 				if ( info && config.user ) {
 					config.user.token = config.user.token || info.accessToken;
@@ -117,7 +117,7 @@
 						utils.clearStore(config.tenantId + config.emgroup + 'ext');
 					}
 				} else {
-					transfer.send(easemobim.EVENTS.ONREADY, window.transfer.to);
+					transfer.send({event: _const.EVENTS.ONREADY}, window.transfer.to);
 				}
 			}
 			, setExt: function ( msg ) {
@@ -259,8 +259,8 @@
 				}
 			}
 			, handleChatWrapperByHistory: function ( chatHistory, chatWrapper ) {
-				if ( chatHistory.length === easemobim.LISTSPAN ) {//认为可以继续获取下一页历史记录
-					var startSeqId = Number(chatHistory[easemobim.LISTSPAN - 1].chatGroupSeqId) - 1;
+				if ( chatHistory.length === _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME ) {//认为可以继续获取下一页历史记录
+					var startSeqId = Number(chatHistory[_const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME - 1].chatGroupSeqId) - 1;
 
 					if ( startSeqId > 0 ) {
 						chatWrapper.setAttribute('data-start', startSeqId);
@@ -280,7 +280,7 @@
 				if ( groupid ) {
 					Number(chatWrapper.getAttribute('data-history')) || easemobim.api('getHistory', {
 						fromSeqId: chatWrapper.getAttribute('data-start') || 0
-						, size: easemobim.LISTSPAN
+						, size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME
 						, chatGroupId: groupid
 						, tenantId: config.tenantId
 					}, function ( msg ) {
@@ -302,7 +302,7 @@
 							chatWrapper.setAttribute('data-groupid', msg.data);
 							easemobim.api('getHistory', {
 								fromSeqId: chatWrapper.getAttribute('data-start') || 0
-								, size: easemobim.LISTSPAN
+								, size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME
 								, chatGroupId: msg.data
 								, tenantId: config.tenantId
 							}, function ( msg ) {
@@ -695,7 +695,7 @@
 				) {
 					easemobim.textarea.focus();
 				}
-				!utils.isTop && transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
+				!utils.isTop && transfer.send({event: _const.EVENTS.RECOVERY}, window.transfer.to);
 			}
 			, appendDate: function ( date, to, isHistory ) {
 				var chatWrapper = this.chatWrapper;
@@ -778,15 +778,15 @@
 				if(!utils.isTop){
 					// 最小化按钮
 					utils.on(document.querySelector('.em-widgetHeader-min'), 'click', function () {
-						transfer.send(easemobim.EVENTS.CLOSE, window.transfer.to);
+						transfer.send({event: _const.EVENTS.CLOSE}, window.transfer.to);
 					});
 
 					utils.on(easemobim.imBtn, utils.click, function () {
-						transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
+						transfer.send({event: _const.EVENTS.SHOW}, window.transfer.to);
 					});
 
 					utils.on(document, 'mouseover', function () {
-						transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
+						transfer.send({event: _const.EVENTS.RECOVERY}, window.transfer.to);
 					});
 				}
 
@@ -806,8 +806,13 @@
 					utils.on(easemobim.dragBar, 'mousedown', function ( ev ) {
 						var e = window.event || ev;
 						easemobim.textarea.blur();//ie a  ie...
-						easemobim.EVENTS.DRAGREADY.data = { x: e.clientX, y: e.clientY };
-						transfer.send(easemobim.EVENTS.DRAGREADY, window.transfer.to);
+						transfer.send({
+							event: _const.EVENTS.DRAGREADY,
+							data: {
+								x: e.clientX,
+								y: e.clientY
+							}
+						}, window.transfer.to);
 						return false;
 					}, false);
 				}
@@ -1240,14 +1245,14 @@
 				}
 
 				if (me.opened) {
-					transfer.send(easemobim.EVENTS.RECOVERY, window.transfer.to);
+					transfer.send({event: _const.EVENTS.RECOVERY}, window.transfer.to);
 				}
 
 				if ( utils.isMin() || !me.opened ) {
 					me.soundReminder();
-					transfer.send(easemobim.EVENTS.SLIDE, window.transfer.to);
+					transfer.send({event: _const.EVENTS.SLIDE}, window.transfer.to);
 					transfer.send({
-						event: 'notify',
+						event: _const.EVENTS.NOTIFY,
 						data: {
 							avatar: this.currentAvatar,
 							title: '新消息',

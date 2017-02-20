@@ -312,19 +312,10 @@
 		}
 		, get: function (key) {
 			var matches = document.cookie.match('(^|;) ?' + encodeURIComponent(key) + '=([^;]*)(;|$)');
-			var results;
-			if(matches){
-				results = decodeURIComponent(matches[2]);
-			}
-			else {
-				results = '';
-			}
-			return results;
+			return matches ? decodeURIComponent(matches[2]) : '';
 		}
 		, getAvatarsFullPath: function ( url, domain ) {
-			var returnValue = null;
-
-			if ( !url ) return returnValue;
+			if (!url) return;
 
 			url = url.replace(/^(https?:)?\/\/?/, '');
 			var isKefuAvatar = ~url.indexOf('img-cn');
@@ -348,11 +339,11 @@
 				return {json: obj, domain: ''};
 			}
 
-			var tmp,
-				idx = src.indexOf('?'),
-				sIdx = ~src.indexOf('//') ? src.indexOf('//') : 0,
-				domain = src.slice(sIdx, src.indexOf('/', sIdx + 2)),
-				arr = src.slice(idx+1).split('&');
+			var tmp;
+			var idx = src.indexOf('?');
+			var sIdx = ~src.indexOf('//') ? src.indexOf('//') : 0;
+			var domain = src.slice(sIdx, src.indexOf('/', sIdx + 2));
+			var arr = src.slice(idx+1).split('&');
 			
 			for ( var i = 0, len = arr.length; i < len; i++ ) {
 				tmp = arr[i].split('=');
@@ -415,35 +406,6 @@
 						output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2)
 								+ keyStr.charAt(enc3) + keyStr.charAt(enc4);
 					} while ( i < input.length );
-
-					return output;
-				},
-
-				byteEncode : function ( bytes ) {
-					var output = "";
-					var chr1, chr2, chr3;
-					var enc1, enc2, enc3, enc4;
-					var i = 0;
-
-					do {
-						chr1 = bytes[i++];
-						chr2 = bytes[i++];
-						chr3 = bytes[i++];
-
-						enc1 = chr1 >> 2;
-						enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-						enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-						enc4 = chr3 & 63;
-
-						if ( isNaN(chr2) ) {
-							enc3 = enc4 = 64;
-						} else if ( isNaN(chr3) ) {
-							enc4 = 64;
-						}
-
-						output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2)
-								+ keyStr.charAt(enc3) + keyStr.charAt(enc4);
-					} while ( i < bytes.length );
 
 					return output;
 				},

@@ -112,7 +112,6 @@ gulp.task('combineJs', function() {
 		'static/js/src/modules/ajax.js',
 		'static/js/src/modules/transfer.js',
 		'static/js/src/modules/api.js',
-		'static/js/src/modules/eventsEnum.js',
 		'static/js/src/modules/message.js',
 		'static/js/src/modules/paste.js',
 		'static/js/src/modules/leaveMessage.js',
@@ -135,6 +134,7 @@ gulp.task('combineJs', function() {
 
 	var ejs = gulp.src([
 		'static/js/src/modules/utils.js',
+		'static/js/src/modules/const.js',
 		'static/js/src/modules/transfer.js',
 		'static/js/src/modules/eventsEnum.js',
 		'static/js/src/modules/notify.js',

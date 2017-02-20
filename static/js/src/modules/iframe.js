@@ -1,30 +1,31 @@
-;(function (utils) {
+;(function (utils, _const) {
 	'use strict';
 
+	var _st = 0;
+	var _startPosition = {
+		x: 0,
+		y: 0
+	};
 
-	var _st = 0,
-		_startPosition = {
-			x: 0,
-			y: 0
-		};
+	function _move( ev ) {
 
-	var _move = function ( ev ) {
-
-		var me = this,
-			e = window.event || ev,
-			_width = document.documentElement.clientWidth,
-			_height = document.documentElement.clientHeight,
-			_x = _width - e.clientX - me.rect.width + _startPosition.x,
-			_y = _height - e.clientY - me.rect.height + _startPosition.y;
+		var me = this;
+		var e = window.event || ev;
+		var _width = document.documentElement.clientWidth;
+		var _height = document.documentElement.clientHeight;
+		var _x = _width - e.clientX - me.rect.width + _startPosition.x;
+		var _y = _height - e.clientY - me.rect.height + _startPosition.y;
 		
 		if ( e.clientX - _startPosition.x <= 0 ) {//left
 			_x = _width - me.rect.width;
-		} else if ( e.clientX + me.rect.width - _startPosition.x >= _width ) {//right
+		}
+		else if ( e.clientX + me.rect.width - _startPosition.x >= _width ) {//right
 			_x = 0;
 		}
 		if ( e.clientY - _startPosition.y <= 0 ) {//top
 			_y = _height - me.rect.height;
-		} else if ( e.clientY + me.rect.height - _startPosition.y >= _height ) {//bottom
+		}
+		else if ( e.clientY + me.rect.height - _startPosition.y >= _height ) {//bottom
 			_y = 0;
 		}
 		me.shadow.style.left = 'auto';
@@ -33,17 +34,17 @@
 		me.shadow.style.bottom = _y + 'px';
 
 		me.position = {
-			x: _x
-			, y: _y
+			x: _x,
+			y: _y
 		};
 		
 		clearTimeout(_st);
 		_st = setTimeout(function () {
 			_moveend.call(me);
 		}, 500);
-	};
+	}
 
-	var _moveend = function () {
+	function _moveend() {
 		utils.remove(document, 'mousemove', this.moveEv);
 		this.iframe.style.left = 'auto';
 		this.iframe.style.top = 'auto';
@@ -55,9 +56,9 @@
 		this.shadow.style.bottom = this.position.y + 'px';
 		this.shadow.style.display = 'none';
 		this.iframe.style.display = 'block';
-	};
+	}
 	   
-	var resize = function () {
+	function _resize() {
 		var me = this;
 
 		utils.on(window, 'resize', function () {
@@ -65,10 +66,10 @@
 				return;
 			}
 
-			var _width = document.documentElement.clientWidth,
-				_height = document.documentElement.clientHeight,
-				_right = Number(me.iframe.style.right.slice(0, -2)),
-				_bottom = Number(me.iframe.style.bottom.slice(0, -2));
+			var _width = document.documentElement.clientWidth;
+			var _height = document.documentElement.clientHeight;
+			var _right = Number(me.iframe.style.right.slice(0, -2));
+			var _bottom = Number(me.iframe.style.bottom.slice(0, -2));
 			
 			//width
 			if ( _width < me.rect.width ) {
@@ -76,12 +77,14 @@
 				me.iframe.style.right = 0;
 				me.shadow.style.left = 'auto';
 				me.shadow.style.right = 0;
-			} else if ( _width - _right < me.rect.width ) {
+			}
+			else if ( _width - _right < me.rect.width ) {
 				me.iframe.style.right = _width - me.rect.width + 'px';
 				me.iframe.style.left = 0;
 				me.shadow.style.right = _width - me.rect.width + 'px';
 				me.shadow.style.left = 0;
-			} else {
+			}
+			else {
 				me.iframe.style.left = 'auto';
 				me.shadow.style.left = 'auto';
 			}
@@ -90,20 +93,22 @@
 			if ( _height < me.rect.height ) {
 				me.iframe.style.top = 'auto';
 				me.iframe.style.bottom = 0;
-			} else if ( _height - _bottom < me.rect.height ) {
+			}
+			else if ( _height - _bottom < me.rect.height ) {
 				me.iframe.style.bottom = _height - me.rect.height + 'px';
 				me.iframe.style.top = 0;
-			} else {
+			}
+			else {
 				me.iframe.style.top = 'auto';
 			}
 		});
-	};
+	}
 
-	var _ready = function () {
+	function _ready() {
 		var me = this;
 
 		if ( me.config.dragenable ) {
-			resize.call(me);
+			_resize.call(me);
 			utils.on(me.shadow, 'mouseup', function () {
 				_moveend.call(me);
 			});
@@ -118,13 +123,12 @@
 		me.config.parentId = me.iframe.id;
 
 		me.message
-		.send({event: 'initConfig', data: me.config})
+		.send({event: _const.EVENTS.INIT_CONFIG, data: me.config})
 		.listen(function ( msg ) {
-
 			if ( msg.to !== me.iframe.id ) { return; }
 
 			switch ( msg.event ) {
-				case easemobim.EVENTS.ONREADY.event://onready
+				case _const.EVENTS.ONREADY://onready
 					if ( typeof me.config.onready === 'function' ) {
 						clearTimeout(me.onreadySt);
 						me.onreadySt = setTimeout(function () {
@@ -132,25 +136,32 @@
 						}, 500);
 					}
 					break;
-				case easemobim.EVENTS.SHOW.event://show Chat window
+				case _const.EVENTS.SHOW:
+					// 显示聊天窗口
 					me.open();
 					break;
-				case easemobim.EVENTS.CLOSE.event://close Chat window
+				case _const.EVENTS.CLOSE:
+					// 最小化聊天窗口
 					me.close();
 					break;
-				case easemobim.EVENTS.NOTIFY.event://notify
+				case _const.EVENTS.NOTIFY:
+					// 显示浏览器通知
 					easemobim.notify(msg.data.avatar, msg.data.title, msg.data.brief);
 					break;
-				case easemobim.EVENTS.SLIDE.event://title slide
+				case _const.EVENTS.SLIDE:
+					// 标题滚动
 					easemobim.titleSlide.start();
 					break;
-				case easemobim.EVENTS.RECOVERY.event://title recovery 
+				case _const.EVENTS.RECOVERY:
+					// 标题滚动恢复
 					easemobim.titleSlide.stop();
 					break;
-				case easemobim.EVENTS.ONMESSAGE.event://onmessage callback
+				case _const.EVENTS.ONMESSAGE:
+					// 收消息回调
 					typeof me.config.onmessage === 'function' && me.config.onmessage(msg.data);
 					break;
-				case easemobim.EVENTS.ONSESSIONCLOSED.event://onservicesessionclosed callback
+				case _const.EVENTS.ONSESSIONCLOSED:
+					// 结束会话回调，此功能文档中没有
 					if ( typeof me.config.onsessionclosed === 'function' ) {
 						clearTimeout(me.onsessionclosedSt);
 						me.onsessionclosedSt = setTimeout(function () {
@@ -158,7 +169,8 @@
 						}, 500);
 					}
 					break;
-				case easemobim.EVENTS.CACHEUSER.event://cache username
+				case _const.EVENTS.CACHEUSER:
+					// 缓存im username
 					if(msg.data.username){
 						utils.set(
 							(me.config.to || '') + me.config.tenantId + (me.config.emgroup || ''),
@@ -166,7 +178,7 @@
 						);
 					}
 					break;
-				case easemobim.EVENTS.DRAGREADY.event:
+				case _const.EVENTS.DRAGREADY:
 					_startPosition.x = isNaN(Number(msg.data.x)) ? 0 : Number(msg.data.x);
 					_startPosition.y = isNaN(Number(msg.data.y)) ? 0 : Number(msg.data.y);
 					me.shadow.style.display = 'block';
@@ -176,14 +188,14 @@
 					});
 					utils.on(document, 'mousemove', me.moveEv);
 					break;
-				case easemobim.EVENTS.DRAGEND.event:
+				case _const.EVENTS.DRAGEND:
 					_moveend.call(me);
 					break;
-				case 'setItem':
+				case _const.EVENTS.SET_ITEM:
 					utils.setStore(msg.data.key, msg.data.value);
 					break;
-				case 'updateURL':
-					me.message.send({event: 'updateURL', data: location.href});
+				case _const.EVENTS.REQUIRE_URL:
+					me.message.send({event: _const.EVENTS.UPDATE_URL, data: location.href});
 					break;
 				default:
 					break;
@@ -193,11 +205,6 @@
 		
 		me.ready instanceof Function && me.ready();
 	};
-
-
-
-
-
 
 
 
@@ -380,7 +387,7 @@
 			iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;border: 1px solid #ccc\\9;';
 		}
 		iframe.style.visibility = 'visible';
-		this.message && this.message.send(easemobim.EVENTS.SHOW);
+		this.message && this.message.send({event: _const.EVENTS.SHOW});
 
 		return this;
 	};
@@ -410,21 +417,22 @@
 			iframe.style.height = '1px';
 		}
 
-		this.message && this.message.send(easemobim.EVENTS.CLOSE);
+		this.message && this.message.send({event: _const.EVENTS.CLOSE});
 		return this;
 	};
 
 	// 发ext消息
 	Iframe.prototype.send = function(extMsg) {
-		this.message.send({event: 'ext', data: extMsg});
+		this.message.send({event: _const.EVENTS.EXT, data: extMsg});
 	};
 
 	// 发文本消息
 	Iframe.prototype.sendText = function(msg) {
-		this.message.send({event: 'textmsg', data: msg});
+		this.message.send({event: _const.EVENTS.TEXTMSG, data: msg});
 	};
 
 	easemobim.Iframe = Iframe;
 }(
-	easemobim.utils
+	easemobim.utils,
+	easemobim._const
 ));
