@@ -392,10 +392,7 @@ easemobim.channel = function ( config ) {
 						config.agentUserId = null;
 						me.stopGettingAgentStatus();
 						// 还原企业头像和企业名称
-						me.setAgentProfile({
-							tenantName: config.defaultAgentName,
-							avatar: config.tenantAvatar
-						});
+						me.setEnterpriseInfo();
 						// 去掉坐席状态
 						me.clearAgentStatus();
 						me.handleEventStatus('close');
