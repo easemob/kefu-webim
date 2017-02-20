@@ -555,7 +555,7 @@ easemobim.channel = function ( config ) {
 			me.conn.listen(handlers);
 		},
 
-		handleHistory: function ( chatHistory ) {
+		handleHistory: function (chatHistory) {
 			_.each(chatHistory, function(element, index){
 				var msgBody = element.body;
 				var msg = utils.getDataByPath(msgBody, 'bodies.0');
