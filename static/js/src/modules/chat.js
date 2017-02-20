@@ -153,35 +153,48 @@
 			, ready: function () {
 				var me = this;
 
-				easemobim.api('graylist', {}, function (msg){
-					// init graylist
-					config.grayList = {};
-					var data = msg && msg.data;
-					data && _.each([
-						'audioVideo',
-						'msgPredictEnable'
-					], function(key){
-						config.grayList[key] = _.contains(data[key], +config.tenantId);
+				// 获取上下班状态
+				getDutyStatusPromise = new Promise(function(resolve, reject){
+					easemobim.api('getDutyStatus', {
+						tenantId: config.tenantId
+					}, function(msg) {
+						config.isInOfficehours = !msg.data || config.offDutyType === 'chat';
+						resolve();
+					}, function(err){
+						reject(err);
 					});
+				});
 
-					// init others
-					//add tenant notice
-					config.isInOfficehours && me.setNotice();
+				// 获取灰度开关
+				getGrayListPromise = new Promise(function(resolve, reject){
+					easemobim.api('graylist', {}, function(msg){
+						var grayList = {};
+						var data = msg.data || {};
+						_.each([
+							'audioVideo',
+							'msgPredictEnable'
+						], function(key){
+							grayList[key] = _.contains(data[key], +config.tenantId);
+						});
+						config.grayList = grayList;
+						resolve();
+					}, function(err){
+						reject(err);
+					});
+				});
 
-					//add msg callback
-					config.isInOfficehours && me.channel.listen();
+				Promise.all([
+					getDutyStatusPromise,
+					getGrayListPromise
+				]).then(function(){
+					init();
+				}, function(err){
+					throw err;
+				});
 
-					//connect to xmpp server
-					config.isInOfficehours && me.open();
-
+				function init(){
 					//create chat container
 					me.handleGroup();
-
-					// get service serssion info
-					config.isInOfficehours && me.getSession();
-
-					// 获取坐席昵称设置
-					config.isInOfficehours && me.getNickNameOption();
 
 					// 显示广告条
 					config.logo && me.setLogo();
@@ -189,12 +202,32 @@
 					// 移动端输入框自动增长
 					utils.isMobile && me.initAutoGrow();
 
-					// 拉取历史消息
-					config.isInOfficehours
-					&& !me.chatWrapper.getAttribute('data-getted')
-					&& !config.isNewUser
-					&& me.getHistory();
-				});
+					if (config.isInOfficehours){
+						//add tenant notice
+						me.setNotice();
+
+						//add msg callback
+						me.channel.listen();
+
+						//connect to xmpp server
+						me.open();
+
+						// get service serssion info
+						me.getSession();
+
+						// 获取坐席昵称设置
+						me.getNickNameOption();
+
+						// 拉取历史消息
+						!me.chatWrapper.getAttribute('data-getted')
+						&& !config.isNewUser
+						&& me.getHistory();
+					}
+					else {
+						// 设置下班时间展示的页面
+						!config.isInOfficehours && me.setOffline();
+					}
+				}
 			}
 			, initAutoGrow: function () {
 				var me = this;

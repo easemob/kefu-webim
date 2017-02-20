@@ -5,7 +5,6 @@
 	var api = easemobim.api;
 	var eventCollector = easemobim.eventCollector;
 	var chat;
-	var afterChatReady;
 	var config;
 
 	getConfig();
@@ -221,16 +220,6 @@
 			var me = this;
 
 			config.toUser = config.toUser || config.to;
-
-			//上下班状态
-			api('getDutyStatus', {
-				tenantId: config.tenantId
-			}, function(msg) {
-				config.isInOfficehours = !msg.data || config.offDutyType === 'chat';
-
-				// 设置下班时间展示的页面
-				!config.isInOfficehours && chat.setOffline();
-			});
 
 			config.orgName = config.appKey.split('#')[0];
 			config.appName = config.appKey.split('#')[1];
