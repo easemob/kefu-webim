@@ -2,6 +2,7 @@
 	'use strict';
 
 	var utils = easemobim.utils;
+	var _const = easemobim._const;
 	var api = easemobim.api;
 	var eventCollector = easemobim.eventCollector;
 	var chat;
@@ -74,7 +75,7 @@
 		} else {
 			window.transfer = new easemobim.Transfer(null, 'main').listen(function(msg) {
 				switch (msg.event) {
-					case easemobim.EVENTS.SHOW.event:
+					case _const.EVENTS.SHOW:
 						if(eventCollector.isStarted()){
 							// 停止上报访客
 							eventCollector.stopReporting();
@@ -85,19 +86,19 @@
 							chatEntry.open();
 						}
 						break;
-					case easemobim.EVENTS.CLOSE.event:
+					case _const.EVENTS.CLOSE:
 						chatEntry.close();
 						break;
-					case easemobim.EVENTS.EXT.event:
+					case _const.EVENTS.EXT:
 						chat.sendTextMsg('', false, msg.data.ext);
 						break;
-					case easemobim.EVENTS.TEXTMSG.event:
+					case _const.EVENTS.TEXTMSG:
 						chat.sendTextMsg(msg.data.data, false, msg.data.ext);
 						break;
-					case 'updateURL':
+					case _const.EVENTS.UPDATE_URL:
 						easemobim.eventCollector.updateURL(msg.data);
 						break;
-					case 'initConfig':
+					case _const.EVENTS.INIT_CONFIG:
 						chat = easemobim.chat(msg.data);
 						window.transfer.to = msg.data.parentId;
 						initUI(msg.data, initAfterUI);
@@ -211,7 +212,7 @@
 			!config.satisfaction
 		);
 
-		//不支持异步上传则加载swfupload
+		// 不支持异步上传则加载swfupload
 		if (!WebIM.utils.isCanUploadFileAsync && WebIM.utils.hasFlash) {
 			var script = document.createElement('script');
 			script.onload = script.onreadystatechange = function() {
@@ -272,9 +273,9 @@
 						chat.cachedCommandMessage = {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}};
 						chat.ready();
 						chat.show();
-						transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
+						transfer.send({event: _const.EVENTS.SHOW}, window.transfer.to);
 						transfer.send({
-							event: 'setUser',
+							event: _const.EVENTS.CACHEUSER,
 							data: {
 								username: targetUserInfo.userName,
 								group: config.user.emgroup
@@ -296,7 +297,7 @@
 								chat.cachedCommandMessage = {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}};
 								chat.ready();
 								chat.show();
-								transfer.send(easemobim.EVENTS.SHOW, window.transfer.to);
+								transfer.send({event: _const.EVENTS.SHOW}, window.transfer.to);
 							}
 						});
 					}
@@ -380,7 +381,8 @@
 					utils.set('root' + config.tenantId + config.emgroup, config.user.username);
 				} else {
 					transfer.send({
-						event: 'setUser', data: {
+						event: _const.EVENTS.CACHEUSER,
+						data: {
 							username: config.user.username,
 							group: config.user.emgroup
 						}
@@ -411,7 +413,8 @@
 				utils.set('root' + config.tenantId + config.emgroup, config.user.username);
 			} else {
 				transfer.send({
-					event: 'setUser', data: {
+					event: _const.EVENTS.CACHEUSER,
+					data: {
 						username: config.user.username,
 						group: config.user.emgroup
 					}

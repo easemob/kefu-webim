@@ -399,7 +399,7 @@ easemobim.channel = function ( config ) {
 						// 去掉坐席状态
 						me.clearAgentStatus();
 						me.handleEventStatus('close');
-						utils.isTop || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
+						!utils.isTop && transfer.send({event: _const.EVENTS.ONSESSIONCLOSED}, window.transfer.to);
 						break;
 					// 会话打开
 					case 'ServiceSessionOpenedEvent':
@@ -459,16 +459,14 @@ easemobim.channel = function ( config ) {
 				me.scrollBottom(50);
 
 				// 收消息回调
-				if (config.hasReceiveCallback && !utils.isTop) {
-					transfer.send({
-						event: easemobim.EVENTS.ONMESSAGE.event,
-						data: {
-							from: msg.from,
-							to: msg.to,
-							message: message
-						}
-					}, window.transfer.to);
-				}
+				!utils.isTop && transfer.send({
+					event: _const.EVENTS.ONMESSAGE,
+					data: {
+						from: msg.from,
+						to: msg.to,
+						message: message
+					}
+				}, window.transfer.to);
 			}
 		},
 

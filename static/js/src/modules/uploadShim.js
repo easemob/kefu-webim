@@ -42,10 +42,8 @@ easemobim.uploadShim = function ( config, chat ) {
 				if ( 10485760 < file.size ) {
 					chat.errorPrompt('请上传大小不超过10M的文件');
 					this.cancelUpload();
-				} else if ( easemobim.PICTYPE[file.type.slice(1).toLowerCase()] ) {
+				} else if (/\.(png|jpg|jpeg|gif)$/i.test(file.type)) {
 					chat.sendImgMsg({name: file.name, data: file});
-				} else if ( easemobim.FILETYPE[file.type.slice(1).toLowerCase()] ) {
-					chat.sendFileMsg({name: file.name, data: file});
 				} else {
 					chat.errorPrompt('不支持此类型' + file.type);
 					this.cancelUpload();
