@@ -192,8 +192,8 @@
 				});
 
 				function init(){
-					// 初始化默认头像
-					me.initAvatar();
+					// 设置企业信息
+					me.setEnterpriseInfo();
 
 					// 显示广告条
 					config.logo && me.setLogo();
@@ -309,13 +309,6 @@
 				}, function ( msg ) {
 					msg && msg.data && me.receiveMsg({
 						data: msg.data,
-						ext: {
-							weichat: {
-								html_safe_body: {
-									msg: msg.data
-								}
-							}
-						},
 						type: 'txt',
 						noprompt: true
 					}, 'txt');
@@ -332,13 +325,6 @@
 								//robert text greeting
 								me.receiveMsg({
 									data: rGreeting.greetingText,
-									ext: {
-										weichat: {
-											html_safe_body: {
-												msg: rGreeting.greetingText
-											}
-										}
-									},
 									type: 'txt',
 									noprompt: true
 								}, 'txt');
@@ -386,36 +372,27 @@
 			, getSession: function () {
 				var me = this;
 
-				me.agent = me.agent || {};
-
 				easemobim.api('getExSession', {
-					id: config.user.username
-					, orgName: config.orgName
-					, appName: config.appName
-					, imServiceNumber: config.toUser
-					, tenantId: config.tenantId
-				}, function ( msg ) {
-					if ( msg && msg.data ) {
-						me.agentCount = msg.data.onlineHumanAgentCount + msg.data.onlineRobotAgentCount;
-						config.agentUserId = utils.getDataByPath(msg, 'data.serviceSession.agentUserId');
+					id: config.user.username,
+					orgName: config.orgName,
+					appName: config.appName,
+					imServiceNumber: config.toUser,
+					tenantId: config.tenantId
+				}, function(msg) {
+					var data = msg.data || {};
+					var serviceSession = data.serviceSession;
 
-						if ( me.agentCount === 0 ) {
-							me.noteShow = false;
-						}
+					me.hasAgentOnline = data.onlineHumanAgentCount + data.onlineRobotAgentCount > 0;
 
+					if (serviceSession){
+						config.agentUserId = serviceSession.agentUserId;
 						// 确保正在进行中的会话，刷新后还会继续轮询坐席状态
-						if(config.agentUserId){
-							me.startToGetAgentStatus();
-						}
-					} else {
-						me.getGreeting();
-					}
-
-					if (!msg.data.serviceSession) {
-						//get greeting only when service session is not exist
-						me.getGreeting();
-					} else {
+						me.startToGetAgentStatus();
 						me.sendAttribute(msg);
+					}
+					else {
+						// 仅当会话不存在时获取欢迎语
+						me.getGreeting();
 					}
 				});
 			},
@@ -432,7 +409,7 @@
 					});
 				}
 			}
-			, initAvatar: function () {
+			, setEnterpriseInfo: function () {
 				this.setAgentProfile({
 					tenantName: config.defaultAgentName,
 					avatar: config.tenantAvatar
@@ -1068,15 +1045,14 @@
 			}
 			, handleEventStatus: function ( action, info, robertToHubman ) {
 
-				var res = robertToHubman ? this.onlineHumanAgentCount < 1 : this.agentCount < 1;
-				if ( res ) {//显示无坐席在线
-					
+				var res = robertToHubman ? this.onlineHumanAgentCount > 0 : this.hasAgentOnline;
+				if (!res) {
+					//显示无坐席在线
 					//每次激活只显示一次
 					if ( !this.noteShow ) {
 						this.noteShow = true;
 						this.appendEventMsg(_const.eventMessageText.NOTE);
 					}
-					
 				}
 
 				if ( action === 'reply' && info ) {
