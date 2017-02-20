@@ -53,9 +53,8 @@ WebIM.message.list = function ( id ) {
 	this.body = {};
 };
 WebIM.message.list.prototype.get = function ( isReceive ) {
-	if ( !this.value ) {
-		return '';
-	}
+	if (!this.value) return '';
+
 	return [
 		"<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper'>",

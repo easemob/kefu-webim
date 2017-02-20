@@ -204,7 +204,7 @@
 
 		
 		me.ready instanceof Function && me.ready();
-	};
+	}
 
 
 

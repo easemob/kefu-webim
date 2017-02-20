@@ -15,6 +15,7 @@
 			imgInput: document.querySelector('.upload-img-container'),
 			fileInput: document.querySelector('.upload-file-container'),
 			emojiContainer: document.querySelector('.em-bar-face-container'),
+			chatWrapper: document.querySelector('.em-widget-chat'),
 			block: null
 		};
 
@@ -58,8 +59,6 @@
 				this.msgTimeSpan = {};
 				//chat window status
 				this.opened = true;
-				//fill theme
-				this.setTheme();
 				//init sound reminder
 				this.soundReminder();
 				//init face
@@ -193,8 +192,8 @@
 				});
 
 				function init(){
-					//create chat container
-					me.handleGroup();
+					// 初始化默认头像
+					me.initAvatar();
 
 					// 显示广告条
 					config.logo && me.setLogo();
@@ -203,29 +202,30 @@
 					utils.isMobile && me.initAutoGrow();
 
 					if (config.isInOfficehours){
-						//add tenant notice
+						// 设置信息栏
 						me.setNotice();
 
-						//add msg callback
+						// 添加收消息回调
 						me.channel.listen();
 
-						//connect to xmpp server
+						// 连接xmpp server
 						me.open();
 
-						// get service serssion info
+						// 获取会话信息
 						me.getSession();
 
 						// 获取坐席昵称设置
 						me.getNickNameOption();
 
 						// 拉取历史消息
-						!me.chatWrapper.getAttribute('data-getted')
-						&& !config.isNewUser
-						&& me.getHistory();
+						!config.isNewUser && !me.hasGotHistoryMsg && me.getHistory(function(){
+							me.scrollBottom();
+							me.hasGotHistoryMsg = true;
+						});
 					}
 					else {
 						// 设置下班时间展示的页面
-						!config.isInOfficehours && me.setOffline();
+						me.setOffline();
 					}
 				}
 			}
@@ -258,64 +258,43 @@
 					me.scrollBottom(800);
 				}
 			}
-			, handleChatWrapperByHistory: function ( chatHistory, chatWrapper ) {
-				if ( chatHistory.length === _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME ) {//认为可以继续获取下一页历史记录
-					var startSeqId = Number(chatHistory[_const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME - 1].chatGroupSeqId) - 1;
+			, getHistory: function (callback) {
+				var me = this;
+				var groupid = me.groupId;
+				var currHistoryMsgSeqId = me.currHistoryMsgSeqId || 0;
 
-					if ( startSeqId > 0 ) {
-						chatWrapper.setAttribute('data-start', startSeqId);
-						chatWrapper.setAttribute('data-history', 0);
-					} else {
-						chatWrapper.setAttribute('data-history', 1);
-					}
-				} else {
-					chatWrapper.setAttribute('data-history', 1);
-				}
-			}
-			, getHistory: function ( notScroll ) {
-				var me = this,
-					chatWrapper = me.chatWrapper,
-					groupid = chatWrapper.getAttribute('data-groupid');
+				if (me.hasHistoryMessage === false) return;
+				if (groupid) {
+					easemobim.api('getHistory', {
+						fromSeqId: currHistoryMsgSeqId,
+						size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME,
+						chatGroupId: groupid,
+						tenantId: config.tenantId
+					}, function(msg) {
+						var historyMsg = msg.data || [];
+						var earliestMsg = historyMsg[historyMsg.length - 1] || {};
+						var nextMsgSeq = earliestMsg.chatGroupSeqId - 1;
 
-				if ( groupid ) {
-					Number(chatWrapper.getAttribute('data-history')) || easemobim.api('getHistory', {
-						fromSeqId: chatWrapper.getAttribute('data-start') || 0
-						, size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME
-						, chatGroupId: groupid
-						, tenantId: config.tenantId
-					}, function ( msg ) {
-						me.handleChatWrapperByHistory(msg.data, chatWrapper);
-						if ( msg.data && msg.data.length > 0 ) {
-							me.channel.handleHistory(msg.data);
-							notScroll || me.scrollBottom();
-						}
+						me.currHistoryMsgSeqId = nextMsgSeq;
+						me.hasHistoryMessage = nextMsgSeq > 0;
+						me.channel.handleHistory(historyMsg);
+						typeof callback === 'function' && callback();
 					});
-				} else {
-					Number(chatWrapper.getAttribute('data-history')) || easemobim.api('getGroupNew', {
-						id: config.user.username
-						, orgName: config.orgName
-						, appName: config.appName
-						, imServiceNumber: config.toUser
-						, tenantId: config.tenantId
-					}, function ( msg ) {
-						if ( msg && msg.data ) {
-							chatWrapper.setAttribute('data-groupid', msg.data);
-							easemobim.api('getHistory', {
-								fromSeqId: chatWrapper.getAttribute('data-start') || 0
-								, size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME
-								, chatGroupId: msg.data
-								, tenantId: config.tenantId
-							}, function ( msg ) {
-								me.handleChatWrapperByHistory(msg.data, chatWrapper);
-								if ( msg && msg.data && msg.data.length > 0 ) {
-									me.channel.handleHistory(msg.data);
-									notScroll || me.scrollBottom();
-								}
-							});
+				}
+				else {
+					easemobim.api('getGroupNew', {
+						id: config.user.username,
+						orgName: config.orgName,
+						appName: config.appName,
+						imServiceNumber: config.toUser,
+						tenantId: config.tenantId
+					}, function(msg) {
+						if (msg && msg.data) {
+							me.groupId = msg.data;
+							me.getHistory(callback);
 						}
 					});
 				}
-				chatWrapper.setAttribute('data-getted', 1);
 			}
 			, getGreeting: function () {
 				var me = this;
@@ -453,9 +432,7 @@
 					});
 				}
 			}
-			, handleGroup: function () {
-				this.chatWrapper = easemobim.imChatBody.querySelector('.em-widget-chat');
-
+			, initAvatar: function () {
 				this.setAgentProfile({
 					tenantName: config.defaultAgentName,
 					avatar: config.tenantAvatar
@@ -511,42 +488,29 @@
 
 				var avatarImg = info && info.avatar ? utils.getAvatarsFullPath(info.avatar, config.domain) : config.tenantAvatar || config.defaultAvatar;
 
-				//更新企业头像和名称
-				if ( info.tenantName ) {
+				// 更新企业头像和名称
+				if (info.tenantName) {
 					doms.nickname.innerText = info.tenantName;
-					easemobim.avatar.setAttribute('src', avatarImg);
+					easemobim.avatar.src = avatarImg;
 				}
 
-				//昵称开关关闭
-				if (!config.nickNameOption) return;
+				if (
+					// 昵称禁用
+					!config.nickNameOption
+					// fake: 默认不显示调度员昵称
+					|| '调度员' === info.userNickname
+					|| !info.userNickname
+				){
+					return;
+				}
 
-				// fake: 默认不显示调度员昵称
-				if('调度员' === info.userNickname) return;
-
-				if(!info.userNickname) return;
-
+				this.currentAvatar = avatarImg;
 				//更新坐席昵称
 				doms.nickname.innerText = info.userNickname;
 
-				this.currentAvatar = avatarImg;
-				var src = easemobim.avatar.getAttribute('src');
-
-				if ( !this.currentAvatar ) { return; }
-				easemobim.avatar.setAttribute('src', this.currentAvatar);
-
-				//更新头像显示状态
-				//只有头像和昵称更新成客服的了才开启轮训
-				//this.updateAgentStatus();
-			}
-			, setTheme: function () {
-				easemobim.api('getTheme', {
-					tenantId: config.tenantId
-				}, function (msg) {
-					var themeName = utils.getDataByPath(msg, 'data.0.optionValue');
-					var className = _const.themeMap[themeName];
-
-					className && utils.addClass(document.body, className);
-				});
+				if (avatarImg) {
+					easemobim.avatar.src = avatarImg;
+				}
 			}
 			, setLogo: function () {
 				utils.removeClass(document.querySelector('.em-widget-tenant-logo'), 'hide');
@@ -650,9 +614,6 @@
 
 						var msg = new WebIM.message('txt');
 						msg.set({msg: word});
-						if ( !this.chatWrapper ) {
-							this.handleGroup();
-						}
 						// 显示下班提示语
 						this.appendMsg(config.toUser, config.user.username, msg);
 						// 禁用工具栏
@@ -661,10 +622,7 @@
 						easemobim.sendBtn.innerHTML = '发送';
 						break;
 					default:
-						// 只允许留言
-						utils.addClass(easemobim.imChatBody, 'hide');
-						utils.addClass(easemobim.send, 'hide');
-						// 不允许关闭留言
+						// 只允许留言此时无法关闭留言页面
 						easemobim.leaveMessage.show(!config.isInOfficehours);
 						break;
 				}
@@ -698,18 +656,16 @@
 				!utils.isTop && transfer.send({event: _const.EVENTS.RECOVERY}, window.transfer.to);
 			}
 			, appendDate: function ( date, to, isHistory ) {
-				var chatWrapper = this.chatWrapper;
+				var chatWrapper = doms.chatWrapper;
 				var dom = document.createElement('div');
 				var fmt = 'M月d日 hh:mm';
-
-				if (!chatWrapper) return;
 
 				dom.innerHTML = new Date(date).format(fmt);
 				utils.addClass(dom, 'em-widget-date');
 
 				if ( !isHistory ) {
 					if ( to ) {
-						if ( !this.msgTimeSpan[to] || (date - this.msgTimeSpan[to] > 60000) ) {//间隔大于1min  show
+						if (this.msgTimeSpan[to] && (date - this.msgTimeSpan[to] > 60000) ) {//间隔大于1min  show
 							chatWrapper.appendChild(dom); 
 						}
 						this.resetSpan(to);
@@ -842,7 +798,7 @@
 							if ( _y - _startY > 8 && this.getBoundingClientRect().top >= 0 ) {
 								clearTimeout(st);
 								st = setTimeout(function () {
-									me.getHistory(true);
+									me.getHistory();
 								}, 100);
 							}
 						}
@@ -857,7 +813,7 @@
 							clearTimeout(st);
 							st = setTimeout(function () {
 								if ( that.getBoundingClientRect().top >= 0 ) {
-									me.getHistory(true);
+									me.getHistory();
 								}
 							}, 400);
 						}
@@ -1176,7 +1132,7 @@
 				dom.className = 'em-widget-event';
 
 				this.appendDate(new Date().getTime());
-				this.chatWrapper.appendChild(dom);
+				doms.chatWrapper.appendChild(dom);
 				this.scrollBottom(utils.isMobile ? 800 : null);
 			}
 			//消息上屏
@@ -1187,7 +1143,7 @@
 					&& config.user.username
 					&& (from === config.user.username)
 				);
-				var curWrapper = me.chatWrapper;
+				var curWrapper = doms.chatWrapper;
 				var div = document.createElement('div');
 				var img;
 

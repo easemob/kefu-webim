@@ -526,7 +526,7 @@ easemobim.channel = function ( config ) {
 			});
 		},
 
-		handleHistory: function ( chatHistory ) {
+		handleHistory: function (chatHistory) {
 			_.each(chatHistory, function(element, index){
 				var msgBody = element.body;
 				var msg = utils.getDataByPath(msgBody, 'bodies.0');
