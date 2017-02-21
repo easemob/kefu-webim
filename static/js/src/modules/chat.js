@@ -1,11 +1,8 @@
-/**
- * webim交互相关
- */
-;(function () {
-
-	easemobim.chat = function ( config ) {
+;(function(){
+	easemobim.chat = function (config) {
 		var utils = easemobim.utils;
 		var _const = easemobim._const;
+		var api = easemobim.api;
 
 		// todo: 把dom都移到里边
 		var doms = {
@@ -88,7 +85,7 @@
 
 				// 发送用于回呼访客的命令消息
 				if(this.cachedCommandMessage){
-					me.sendTextMsg('', false, this.cachedCommandMessage);
+					me.channel.sendText('', false, this.cachedCommandMessage);
 					this.cachedCommandMessage = null;
 				}
 				if ( utils.isTop ) {
@@ -108,11 +105,11 @@
 					var ext = utils.getStore(prefix + 'ext');
 					var parsed;
 					try {
-						parsed = ext && JSON.parse(ext);
+						parsed = JSON.parse(ext);
 					}
 					catch (e){}
 					if (parsed){
-						me.sendTextMsg('', false, {ext: JSON.parse(ext)});
+						me.channel.sendText('', false, {ext: parsed});
 						utils.clearStore(config.tenantId + config.emgroup + 'ext');
 					}
 				} else {
@@ -154,7 +151,7 @@
 
 				// 获取上下班状态
 				getDutyStatusPromise = new Promise(function(resolve, reject){
-					easemobim.api('getDutyStatus', {
+					api('getDutyStatus', {
 						tenantId: config.tenantId
 					}, function(msg) {
 						config.isInOfficehours = !msg.data || config.offDutyType === 'chat';
@@ -166,7 +163,7 @@
 
 				// 获取灰度开关
 				getGrayListPromise = new Promise(function(resolve, reject){
-					easemobim.api('graylist', {}, function(msg){
+					api('graylist', {}, function(msg){
 						var grayList = {};
 						var data = msg.data || {};
 						_.each([
@@ -265,7 +262,7 @@
 
 				if (me.hasHistoryMessage === false) return;
 				if (groupid) {
-					easemobim.api('getHistory', {
+					api('getHistory', {
 						fromSeqId: currHistoryMsgSeqId,
 						size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME,
 						chatGroupId: groupid,
@@ -282,7 +279,7 @@
 					});
 				}
 				else {
-					easemobim.api('getGroupNew', {
+					api('getGroupNew', {
 						id: config.user.username,
 						orgName: config.orgName,
 						appName: config.appName,
@@ -304,21 +301,21 @@
 				me.greetingGetted = true;
 
 				//system greeting
-				easemobim.api('getSystemGreeting', {
+				api('getSystemGreeting', {
 					tenantId: config.tenantId
 				}, function ( msg ) {
-					msg && msg.data && me.receiveMsg({
+					msg.data && me.receiveMsg({
 						data: msg.data,
 						type: 'txt',
 						noprompt: true
 					}, 'txt');
 
 					//robert greeting
-					easemobim.api('getRobertGreeting', {
+					api('getRobertGreeting', {
 						tenantId: config.tenantId,
 						originType: 'webim'
 					}, function ( msg ) {
-						var rGreeting = msg && msg.data;
+						var rGreeting = msg.data;
 						if(!rGreeting) return;
 						switch (rGreeting.greetingTextType) {
 							case 0:
@@ -354,25 +351,16 @@
 				});
 			}
 			, getNickNameOption: function () {
-				if (this.nicknameGetted) return;
-				this.nicknameGetted = true;
-
-				easemobim.api('getNickNameOption', {
+				api('getNickNameOption', {
 					tenantId: config.tenantId
-				}, function ( msg ) {
-					if (msg && msg.data && msg.data.length) {
-						config.nickNameOption = msg.data[0].optionValue === 'true';
-					} else {
-						config.nickNameOption = null;
-					}
-				}, function () {
-					config.nickNameOption = null;
+				}, function(msg) {
+					config.nickNameOption = utils.getDataByPath(msg, 'data.0.optionValue') === 'true';
 				});
 			}
 			, getSession: function () {
 				var me = this;
 
-				easemobim.api('getExSession', {
+				api('getExSession', {
 					id: config.user.username,
 					orgName: config.orgName,
 					appName: config.appName,
@@ -402,7 +390,7 @@
 					this.hasSentAttribute = true;
 					// 缓存 visitorUserId
 					config.visitorUserId = visitorUserId;
-					easemobim.api('sendVisitorInfo', {
+					api('sendVisitorInfo', {
 						tenantId: config.tenantId,
 						visitorId: visitorUserId,
 						referer:  document.referrer
@@ -444,7 +432,7 @@
 					return;
 				}
 
-				easemobim.api('getAgentStatus', {
+				api('getAgentStatus', {
 					tenantId: config.tenantId,
 					orgName: config.orgName,
 					appName: config.appName,
@@ -462,32 +450,29 @@
 				});
 			}
 			, setAgentProfile: function ( info ) {
+				var avatarImg = info.avatar ? utils.getAvatarsFullPath(info.avatar, config.domain) : config.tenantAvatar || config.defaultAvatar;
 
-				var avatarImg = info && info.avatar ? utils.getAvatarsFullPath(info.avatar, config.domain) : config.tenantAvatar || config.defaultAvatar;
-
-				// 更新企业头像和名称
 				if (info.tenantName) {
+					// 更新企业头像和名称
 					doms.nickname.innerText = info.tenantName;
 					easemobim.avatar.src = avatarImg;
 				}
-
-				if (
-					// 昵称禁用
-					!config.nickNameOption
+				else if (
+					info.userNickname
+					// 昵称启用
+					&& config.nickNameOption
 					// fake: 默认不显示调度员昵称
-					|| '调度员' === info.userNickname
-					|| !info.userNickname
+					&& '调度员' !== info.userNickname
 				){
-					return;
+					//更新坐席昵称
+					doms.nickname.innerText = info.userNickname;
+					if (avatarImg) {
+						easemobim.avatar.src = avatarImg;
+					}
 				}
 
+				// 缓存头像地址
 				this.currentAvatar = avatarImg;
-				//更新坐席昵称
-				doms.nickname.innerText = info.userNickname;
-
-				if (avatarImg) {
-					easemobim.avatar.src = avatarImg;
-				}
 			}
 			, setLogo: function () {
 				utils.removeClass(document.querySelector('.em-widget-tenant-logo'), 'hide');
@@ -499,7 +484,7 @@
 				if (me.sloganGot) return;
 				me.sloganGot = true;
 
-				easemobim.api('getSlogan', {
+				api('getSlogan', {
 					tenantId: config.tenantId
 				}, function (msg) {
 					var slogan = utils.getDataByPath(msg, 'data.0.optionValue');
@@ -522,45 +507,63 @@
 				});
 			}
 			, initEmoji: function () {
-				// lazy load
-				if (doms.emojiContainer.innerHTML) return;
-
-				var faceStr = '';
-				var count = 0;
 				var me = this;
 
 				utils.on(easemobim.faceBtn, utils.click, function () {
 					easemobim.textarea.blur();
 					utils.toggleClass(easemobim.chatFaceWrapper, 'hide');
 
-					if ( faceStr ) return false;
-					faceStr = '<li class="e-face">';
-					_.each(WebIM.Emoji.map, function (v, k) {
-						count += 1;
-						faceStr += ["<div class='em-bar-face-bg e-face'>",
-										"<img class='em-bar-face-img e-face emoji' ",
-											"src='" + WebIM.Emoji.path + v + "' ",
-											"data-value=" + k + " />",
-									"</div>"].join('');
-						if ( count % 7 === 0 ) {
-							faceStr += '</li><li class="e-face">';
-						}
-					});
-					if ( count % 7 === 0 ) {
-						faceStr = faceStr.slice(0, -('<li class="e-face">').length);
-					} else {
-						faceStr += '</li>';
+					// 懒加载，打开表情面板时才初始化图标
+					if (!me.isEmojiInitilized){
+						me.isEmojiInitilized = true;
+						doms.emojiContainer.innerHTML = genHtml();
 					}
-
-					doms.emojiContainer.innerHTML = faceStr;
 				});
 
-				//表情的选中
+				// 表情的选中
 				utils.live('img.emoji', utils.click, function ( e ) {
 					!utils.isMobile && easemobim.textarea.focus();
 					easemobim.textarea.value += this.getAttribute('data-value');
 					utils.trigger(easemobim.textarea, 'change');
 				}, easemobim.chatFaceWrapper);
+
+				// 点击别处时隐藏表情面板
+				utils.on(document, utils.click, function ( ev ) {
+					var e = window.event || ev;
+					var target = e.srcElement || e.target;
+
+					if ( !utils.hasClass(target, 'e-face') ) {
+						utils.addClass(easemobim.chatFaceWrapper, 'hide');
+					}
+				});
+
+				function genHtml(){
+					var path = WebIM.Emoji.path;
+					var EMOJI_COUNT_PER_LINE = 7;
+
+					return _.chain(WebIM.Emoji.map)
+						// 生成图标html
+						.map(function(value, key){
+							return '<div class="em-bar-face-bg e-face">'
+								+ '<img class="em-bar-face-img e-face emoji" src="'
+								+ path + value
+								+ '" data-value=' + key + ' />'
+								+ '</div>';
+						})
+						// 按照下标分组
+						.groupBy(function(elem, index){
+							return Math.floor(index / EMOJI_COUNT_PER_LINE);
+						})
+						// 增加wrapper
+						.map(function(elem){
+							return '<li class="e-face">' + elem.join('') + '</li>';
+						})
+						// 结束链式调用
+						.value()
+						// 把数组拼接成字符串
+						.join('')
+						;
+				}
 			}
 			, errorPrompt: function ( msg, isAlive ) {//暂时所有的提示都用这个方法
 				var me = this;
@@ -610,9 +613,7 @@
 
 				if ( !config.hide ) {
 					utils.addClass(easemobim.imChat, 'hide');
-					setTimeout(function () {
-						utils.removeClass(easemobim.imBtn, 'hide');
-					}, 60);
+					utils.removeClass(easemobim.imBtn, 'hide');
 				}
 			}
 			//show chat window
@@ -725,7 +726,6 @@
 
 				utils.on(easemobim.imChatBody, 'click', function () {
 					easemobim.textarea.blur();
-					return false;
 				});
 
 				utils.live('img.em-widget-imgview', 'click', function () {
@@ -751,11 +751,11 @@
 				}
 
 				//pc 和 wap 的上滑加载历史记录的方法
-				(function () {
-					var st,
-						_startY,
-						_y,
-						touch;
+				(function(){
+					var st;
+					var _startY;
+					var _y;
+					var touch;
 
 					//wap
 					utils.live('div.em-widget-date', 'touchstart', function ( ev ) {
@@ -781,10 +781,10 @@
 						}
 					});
 
-					//pc
-					var getHis = function ( ev ) {
-						var e = ev || window.event,
-							that = this;
+					// pc端
+					utils.on(doms.chatWrapper, 'mousewheel DOMMouseScroll', function(ev){
+						var e = ev || window.event;
+						var that = this;
 
 						if ( e.wheelDelta / 120 > 0 || e.detail < 0 ) {
 							clearTimeout(st);
@@ -794,9 +794,7 @@
 								}
 							}, 400);
 						}
-					};
-					utils.live('div.em-widget-chat', 'mousewheel', getHis);
-					utils.live('div.em-widget-chat', 'DOMMouseScroll', getHis);
+					});
 				}());
 
 				//resend
@@ -812,18 +810,21 @@
 					}
 				});
 
-				utils.live('button.js_robotTransferBtn', utils.click,  function () {
-					if ( this.clicked ) { return false; }
+				utils.live('button.js_robotTransferBtn', utils.click, function () {
+					var id = this.getAttribute('data-id');
+					var ssid = this.getAttribute('data-sessionid');
 
-					this.clicked = true;
-					me.transferToKf(this.getAttribute('data-id'), this.getAttribute('data-sessionid'));
-					return false;
+					// 只能评价1次
+					if (!this.clicked){
+						this.clicked = true;
+						me.channel.sendTransferToKf(id, ssid);
+					}
 				});
 
 				//机器人列表
 				utils.live('button.js_robotbtn', utils.click, function () {
-					me.sendTextMsg(this.innerText, null, {ext:
-						{
+					me.channel.sendText(this.innerText, null, {
+						ext: {
 							msgtype: {
 								choice: {
 									menuid: this.getAttribute('data-id')
@@ -831,13 +832,12 @@
 							}
 						}
 					});
-					return false;
 				});
 
 				var messagePredict = _.throttle(function(msg){
 					config.agentUserId
 					&& config.visitorUserId
-					&& easemobim.api('messagePredict', {
+					&& api('messagePredict', {
 						tenantId: config.tenantId,
 						visitor_user_id: config.visitorUserId,
 						agentId: config.agentUserId,
@@ -924,7 +924,7 @@
 						// 未选择文件
 					}
 					else if(filesize < _const.UPLOAD_FILESIZE_LIMIT){
-						me.sendFileMsg(WebIM.utils.getFileUrl(fileInput));
+						me.channel.sendFile(WebIM.utils.getFileUrl(fileInput));
 					}
 					else{
 						me.errorPrompt('文件大小不能超过10MB');
@@ -950,17 +950,7 @@
 						me.errorPrompt('文件大小不能超过10MB');
 					}
 					else{
-						me.sendImgMsg(WebIM.utils.getFileUrl(fileInput));
-					}
-				});
-
-				//hide face wrapper
-				utils.on(document, utils.click, function ( ev ) {
-					var e = window.event || ev;
-					var t = e.srcElement || e.target;
-
-					if ( !utils.hasClass(t, 'e-face') ) {
-						utils.addClass(easemobim.chatFaceWrapper, 'hide');
+						me.channel.sendImg(WebIM.utils.getFileUrl(fileInput));
 					}
 				});
 
@@ -1016,7 +1006,7 @@
 					}
 					else {
 						// todo: 去掉encode
-						me.sendTextMsg(utils.encode(textMsg));
+						me.channel.sendText(utils.encode(textMsg));
 						easemobim.textarea.value = '';
 						utils.trigger(easemobim.textarea, 'change');
 					}
@@ -1035,20 +1025,11 @@
 					ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 9999;
 				}
 			}
-			//send image message function
-			, sendImgMsg: function ( file, isHistory ) {
-				this.channel.send('img', file, isHistory);
-			}
-			//send file message function
-			, sendFileMsg: function ( file, isHistory ) {
-				this.channel.send('file', file, isHistory);
-			}
 			, handleEventStatus: function ( action, info, robertToHubman ) {
-
 				var res = robertToHubman ? this.onlineHumanAgentCount > 0 : this.hasAgentOnline;
 				if (!res) {
-					//显示无坐席在线
-					//每次激活只显示一次
+					// 显示无坐席在线
+					// 每次激活只显示一次
 					if ( !this.noteShow ) {
 						this.noteShow = true;
 						this.appendEventMsg(_const.eventMessageText.NOTE);
@@ -1143,17 +1124,6 @@
 					me.scrollBottom(utils.isMobile ? 800 : null);
 				}
 			}
-			//send text message function
-			, sendTextMsg: function ( message, isHistory, ext ) {
-				this.channel.send('txt', message, isHistory, ext);
-			}
-			, transferToKf: function ( id, sessionId ) {
-				this.channel.send('transferToKf', id, sessionId);
-			}
-			//send satisfaction evaluation message function
-			, sendSatisfaction: function ( level, content, session, invite ) {
-				this.channel.send('satisfaction', level, content, session, invite);
-			}
 			, messagePrompt: function ( message ) {
 				if (utils.isTop) return;
 
@@ -1198,40 +1168,5 @@
 				this.channel.handleReceive(msg, type, isHistory);
 			}
 		};
-	};
-
-
-
-	/**
-	 * 调用指定接口获取数据
-	*/
-	easemobim.api = function ( apiName, data, success, error ) {
-		//cache
-		easemobim.api[apiName] = easemobim.api[apiName] || {};
-
-		var ts = new Date().getTime();
-		easemobim.api[apiName][ts] = {
-			success: success,
-			error: error
-		};
-		easemobim.getData
-		.send({
-			api: apiName
-			, data: data
-			, timespan: ts
-		})
-		.listen(function ( msg ) {
-			if ( easemobim.api[msg.call] && easemobim.api[msg.call][msg.timespan] ) {
-
-				var callback = easemobim.api[msg.call][msg.timespan];
-				delete easemobim.api[msg.call][msg.timespan];
-
-				if ( msg.status !== 0 ) {
-					typeof callback.error === 'function' && callback.error(msg);
-				} else {
-					typeof callback.success === 'function' && callback.success(msg);
-				}
-			}
-		}, ['api']);
 	};
 }());

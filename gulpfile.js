@@ -124,6 +124,7 @@ gulp.task('combineJs', function() {
 		'static/js/src/modules/ui.js',
 		'static/js/src/modules/videoChat.js',
 		'static/js/src/modules/chat.js',
+		'static/js/src/modules/apiTransfer.js',
 		'static/js/src/modules/eventCollector.js',
 		'static/js/src/init.js'
 	])

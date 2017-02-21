@@ -82,10 +82,10 @@
 						chatEntry.close();
 						break;
 					case _const.EVENTS.EXT:
-						chat.sendTextMsg('', false, msg.data.ext);
+						chat.channel.sendText('', false, msg.data.ext);
 						break;
 					case _const.EVENTS.TEXTMSG:
-						chat.sendTextMsg(msg.data.data, false, msg.data.ext);
+						chat.channel.sendText(msg.data.data, false, msg.data.ext);
 						break;
 					case _const.EVENTS.UPDATE_URL:
 						easemobim.eventCollector.updateURL(msg.data);
@@ -224,7 +224,7 @@
 			config.toUser = config.toUser || config.to;
 
 			// 获取主题颜色设置
-			easemobim.api('getTheme', {
+			api('getTheme', {
 				tenantId: config.tenantId
 			}, function (msg) {
 				var themeName = utils.getDataByPath(msg, 'data.0.optionValue');

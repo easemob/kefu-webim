@@ -15,7 +15,7 @@ easemobim.paste = function (chat) {
 		utils.addClass(dom, 'hide');
 	});
 	utils.on(sendImgBtn, 'click', function () {
-		chat.sendImgMsg({data: blob, url: dataURL});
+		chat.channel.sendImg({data: blob, url: dataURL});
 		utils.addClass(dom, 'hide');
 	});
 
