@@ -1,11 +1,14 @@
 (function(){
-	var LOADING = Modernizr.inlinesvg
-		? ["<div class='em-widget-loading'><svg version='1.1' id='图层_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px'",
-		" viewBox='0 0 70 70' enable-background='new 0 0 70 70' xml:space='preserve'>",
-		"<circle opacity='0.3' fill='none' stroke='#000000' stroke-width='4' stroke-miterlimit='10' cx='35' cy='35' r='11'/>",
-		"<path fill='none' stroke='#E5E5E5' stroke-width='4' stroke-linecap='round' stroke-miterlimit='10' d='M24,35c0-6.1,4.9-11,11-11",
-		"c2.8,0,5.3,1,7.3,2.8'/><image src='//kefu.easemob.com/webim/static/img/loading.gif' width='20' style='margin-top:10px;' /></svg></div>"].join('')
-		: "<img src='//kefu.easemob.com/webim/static/img/loading.gif' width='20' style='margin-top:10px;'/>";
+	var LOADING = Modernizr.inlinesvg ? [
+		'<div class="em-widget-loading">',
+		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 70">',
+		'<circle opacity=".3" fill="none" stroke="#000" stroke-width="4" stroke-miterlimit="10" cx="35" cy="35" r="11"/>',
+		'<path fill="none" stroke="#E5E5E5" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M24 35c0-6.1 4.9-11 11-11 2.8 0 5.3 1 7.3 2.8"/>',
+		'<image width="20" style="margin-top:10px"/>',
+		'</svg>',
+		'</div>'
+	].join('')
+	: '<img src="//kefu.easemob.com/webim/static/img/loading.gif" width="20" style="margin-top:10px;"/>';
 
 // 文本消息
 WebIM.message.txt.prototype.get = function ( isReceive ) {
@@ -22,7 +25,9 @@ WebIM.message.txt.prototype.get = function ( isReceive ) {
 				this.id ? "<div id='" + this.id + "_failed' data-type='txt' class='em-widget-msg-status hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>" : "",
 				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + LOADING + "</div>" : "",
 				"<div class='em-widget-msg-container'>",
-					"<pre>" + WebIM.utils.parseLink(this.emotion ? this.value : WebIM.utils.parseEmoji(this.value)) + "</pre>",
+					"<pre>" + WebIM.utils.parseLink(WebIM.utils.parseEmoji(this.value)) + "</pre>",
+					// 这个 emotion 属性看起来没有用，2017-02-21
+					// "<pre>" + WebIM.utils.parseLink(this.emotion ? this.value : WebIM.utils.parseEmoji(this.value)) + "</pre>",
 				"</div>",
 			"</div>",
 		"</div>"
@@ -52,18 +57,17 @@ WebIM.message.list = function ( id ) {
 	this.brief = '';
 	this.body = {};
 };
-WebIM.message.list.prototype.get = function ( isReceive ) {
+WebIM.message.list.prototype.get = function() {
 	if (!this.value) return '';
 
 	return [
 		"<div class='em-widget-left'>",
 			"<div class='em-widget-msg-wrapper'>",
-				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
+				"<i class='icon-corner-left'></i>",
 				"<div class='em-widget-msg-container em-widget-msg-menu'>",
 					"<p>" + WebIM.utils.parseLink(WebIM.utils.parseEmoji(easemobim.utils.encode(this.value))) + "</p>",
 					this.listDom,
 				"</div>",
-				"<div id='" + this.id + "_failed' class='em-widget-msg-status hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>",
 			"</div>",
 		"</div>"
 	].join('');

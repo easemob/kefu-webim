@@ -22,15 +22,18 @@ easemobim.satisfaction = function ( chat ) {
 		utils.removeClass(dom, 'hide');
 		clearInterval(chat.focusText);
 	});
+
 	utils.live('button.js_satisfybtn', 'click', function () {
 		session = this.getAttribute('data-servicesessionid');
 		invite = this.getAttribute('data-inviteid');
 		utils.removeClass(dom, 'hide');
 		clearInterval(chat.focusText);
 	});
+
 	utils.on(cancelBtn, 'click', function () {
 		utils.addClass(dom, 'hide');
 	});
+
 	utils.on(submitBtn, 'click', function () {
 		var level = starsUl.querySelectorAll('li.sel').length;
 
@@ -38,7 +41,7 @@ easemobim.satisfaction = function ( chat ) {
 			chat.errorPrompt('请先选择星级');
 			return;
 		}
-		chat.sendSatisfaction(level, msg.value, session, invite);
+		chat.channel.sendSatisfaction(level, msg.value, session, invite);
 
 		msg.blur();
 		utils.removeClass(success, 'hide');
