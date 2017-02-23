@@ -51,6 +51,7 @@
 					'easemob-target-username': targetUser,
 					'easemob-appkey': appkey,
 					'easemob-username': username,
+					origin_type: 'webim',
 					headers: { Authorization: 'Easemob IM ' + accessToken },
 					projectId: projectId,
 					subject: '',
