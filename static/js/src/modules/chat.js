@@ -7,6 +7,8 @@
 		// todo: 把dom都移到里边
 		var doms = {
 			agentStatusText: document.querySelector('.em-header-status-text'),
+			//待接入排队人数显示
+			agentWaitNumber: document.querySelector('.em-header-status-text-queue-number'),
 			agentStatusSymbol: document.getElementById('em-widgetAgentStatus'),
 			nickname: document.querySelector('.em-widgetHeader-nickname'),
 			imgInput: document.querySelector('.upload-img-container'),
@@ -167,7 +169,8 @@
 						var data = msg.data || {};
 						_.each([
 							'audioVideo',
-							'msgPredictEnable'
+							'msgPredictEnable',
+							'waitListNumberEnable'
 						], function(key){
 							grayList[key] = _.contains(data[key], +config.tenantId);
 						});
@@ -424,7 +427,71 @@
 				doms.agentStatusSymbol.className = 'hide';
 				doms.agentStatusText.innerText = '';
 			}
-			, updateAgentStatus: function () {
+			,waitListNumber:{
+
+				isHasQueueId : true,
+				queueId : null,
+				sessionId : null,
+				startWaitNumber: null,
+				stopWaitNumber:null,
+				timer:null,
+				prevTime: 0,
+
+				getQueueId : function(){
+					if(!config.grayList.waitListNumberEnable){
+						var that = this;
+						clearInterval(this.timer);
+						easemobim.api('getSessionQueueId',{
+							tenantId: config.tenantId,
+							visitorUsername: config.user.username,
+							techChannelInfo : config.orgName + '%23' + config.appName + '%23' + config.toUser
+						},function(resq){
+							if(resq.data.entity && resq.data.entity.state === 'Wait'){
+								var nowData = resq.data.entity;
+								that.queueId = nowData.queueId;
+								that.sessionId = nowData.serviceSessionId;
+								that.startWaitNumber();
+							}else{
+
+							}
+						})
+					}
+				},
+				startWaitNumber : function(){
+					var that = this;
+					this.timer = setInterval(function(){
+						if(that.isHasQueueId){
+							that.getWaitNumber(that.queueId,that.sessionId);
+						}else{
+							clearInterval(that.timer);
+						}
+					},1000);
+				},
+				getWaitNumber : function(queueId,sessionId){
+					var that= this;
+					easemobim.api('getWaitListNumber',{
+						tenantId: config.tenantId,
+						queueId: queueId,
+						serviceSessionId : sessionId
+					},function(resq){
+						var nowData = resq.data.entity;
+						if(nowData.visitorUserWaitingNumber === 'no'){
+							utils.addClass(doms.agentWaitNumber, 'hide');
+						}else{
+							if(nowData.visitorUserWaitingTimestamp>that.prevTime){
+								that.prevTime = nowData.visitorUserWaitingTimestamp;
+								utils.removeClass(doms.agentWaitNumber, 'hide');
+								doms.agentWaitNumber.querySelector('label').innerHTML = nowData.visitorUserWaitingNumber;
+							}
+						}
+					})	
+				},
+				stopWaitNumber : function(){
+					clearInterval(this.timer);
+					this.prevTime = 0;
+					utils.addClass(doms.agentWaitNumber, 'hide');
+				}
+			}, updateAgentStatus: function () {
 				var me = this;
 
 				if ( !config.agentUserId || !config.nickNameOption ) {
