@@ -348,6 +348,9 @@ easemobim.channel = function ( config ) {
 						me.handleEventStatus('transferd', msg.ext.weichat.event.eventObj);
 						break;
 					case 'ServiceSessionTransferedToAgentQueueEvent':
+
+						me.waitListNumber.isHasQueueId = true;
+						me.waitListNumber.getQueueId();
 					// 转人工或者转到技能组
 						me.handleEventStatus('transfering', msg.ext.weichat.event.eventObj);
 						break;
@@ -365,8 +368,13 @@ easemobim.channel = function ( config ) {
 						!utils.isTop && transfer.send({event: _const.EVENTS.ONSESSIONCLOSED}, window.transfer.to);
 						break;
 					case 'ServiceSessionOpenedEvent':
+
 						// fake: 会话接起就认为有坐席在线
 						me.hasAgentOnline = true;
+
+						me.waitListNumber.isHasQueueId = false;
+						me.waitListNumber.stopWaitNumber();
+
 						me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
 						if (!me.hasSentAttribute) {
 							api('getExSession', {
@@ -382,6 +390,7 @@ easemobim.channel = function ( config ) {
 						break;
 					case 'ServiceSessionCreatedEvent':
 						me.handleEventStatus('create');
+						me.waitListNumber.getQueueId();
 						if (!me.hasSentAttribute) {
 							api('getExSession', {
 								id: config.user.username

@@ -73,6 +73,18 @@
 	color: white;
 	color: rgba(255, 255, 255, 0.5);
 }
+
+.em-header-status-text-queue-number{
+	width:100%;
+	height:26px;
+	color:rgb(76, 76, 76);
+	font-size:12px;
+	line-height:26px;
+	padding-left:8px;
+	position:fixed;
+	bottom: 140px;
+	background-color: rgba(223,233,252,.7); 
+}
 .em-widgetHeader-word-status {
 	margin-left: 4px;
 	color: #efefef;
