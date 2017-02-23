@@ -9,111 +9,142 @@
 		'</div>'
 	].join('')
 	: '<img src="//kefu.easemob.com/webim/static/img/loading.gif" width="20" style="margin-top:10px;"/>';
+	var parseLink = WebIM.utils.parseLink;
+	var parseEmoji = WebIM.utils.parseEmoji;
 
-// 文本消息
-WebIM.message.txt.prototype.get = function ( isReceive ) {
-	if ( !this.value ) {
-		return '';
+	function _encode( str ) {
+		if ( !str || str.length === 0 ) {
+			return '';
+		}
+		var s = '';
+		s = str.replace(/&amp;/g, "&");
+		// 避免影响表情解析
+		s = s.replace(/<(?=[^o][^)])/g, "&lt;");
+		s = s.replace(/>/g, "&gt;");
+		//s = s.replace(/\'/g, "&#39;");
+		s = s.replace(/\"/g, "&quot;");
+		return s;
+	}
+	function _decode( str ) {
+		if ( !str || str.length === 0 ) {
+			return '';
+		}
+		var s = '';
+		s = str.replace(/&amp;/g, "&");
+		s = s.replace(/&#39;/g, "'");
+		s = s.replace(/&lt;/g, "<");
+		return s;
+	}
+	function genMsgContent(msg){
+		var type = msg.type;
+		var value = msg.value;
+		var html = '';
+		switch (type){
+			case 'txt':
+				// fake:  todo: remove this
+				value = _encode(_decode(value));
+				html = '<pre>' + parseLink(parseEmoji(value)) + '</pre>';
+				break;
+			case 'img':
+				if (value){
+					// todo: remove a
+					html = '<a href="javascript:;"><img class="em-widget-imgview" src="'
+						+ value.url + '"/></a>';
+				}
+				else {
+					html = '<i class="icon-broken-pic"></i>';
+				}
+				break;
+			case 'list':
+				html = "<p>" + parseLink(_encode(value)) + "</p>" + msg.listDom;
+				break;
+			case 'file':
+				// 历史会话中 filesize = 0
+				// 访客端发文件消息 filesize = undefined
+				// 需要过滤这两种情况，暂时只显示坐席发过来的文件大小
+				if (value){
+					html = '<i class="icon-attachment container-icon-attachment"></i>'
+						+ '<span class="file-info">'
+						+ '<p class="filename">' + msg.filename + '</p>'
+						+ '<p class="filesize">' + easemobim.utils.filesizeFormat(value.filesize) + '</p>'
+						+ '</span>'
+						+ "<a target='_blank' href='" + value.url + "' class='icon-download container-icon-download' title='"
+						+ msg.filename + "'></a>";
+				}
+				else {
+					html = '<i class="icon-broken-pic"></i>';
+				}
+				break;
+			default:
+				break;
+		}
+
+		return html;
+	}
+	function genDomFromMsg(msg, isReceived){
+		var id = this.id;
+		var type = msg.type;
+		var html = '';
+		var stack = [];
+		var dom = document.createElement('div');
+		var direction = isReceived ? 'left' : 'right';
+
+		// 设置消息气泡显示在左侧还是右侧
+		// .em-widget-right, .em-widget-left used here
+		dom.className = 'em-widget-' + direction;
+
+		// 给消息追加id，用于失败重发消息或撤回消息
+		if (id){
+			dom.id = id;
+		}
+
+		// wrapper开始
+		html += '<div class="em-widget-msg-wrapper">';
+
+		// 设置消息气泡的突起位置
+		// .icon-corner-right, .icon-corner-left used here
+		html += '<i class=icon-corner-"' + direction + '"></i>';
+
+		// 发出的消息增加状态显示
+		if (!isReceived && id){
+			html += '<div id="'+ id
+				+ '_failed" data-type="txt" class="em-widget-msg-status hide">'
+				+ '<span>发送失败</span><i class="icon-circle"><i class="icon-exclamation"></i></i></div>'
+				+ '<div id="' + id
+				+ '_loading" class="em-widget-msg-loading">' + LOADING + '</div>';
+		}
+
+
+		// todo: simplify the class name em-widget-msg
+		// container 开始
+		// .em-widget-msg-* used here
+		html += '<div class="em-widget-msg-container em-widget-msg-' + type + '">';
+		// 消息内容
+		html += genMsgContent(msg);
+
+		// container 结束
+		stack.push('</div>');
+
+		// wrapper结尾
+		stack.push('</div>');
+
+		// 追加标签
+		html += _.reduceRight(stack, function(a, b){ return a + b; }, '')
+		dom.innerHTML = html;
+		return dom;
 	}
 
-	this.value = easemobim.utils.decode(this.value);
-	
-	return [
-		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
-			"<div class='em-widget-msg-wrapper'>",
-				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
-				this.id ? "<div id='" + this.id + "_failed' data-type='txt' class='em-widget-msg-status hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>" : "",
-				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + LOADING + "</div>" : "",
-				"<div class='em-widget-msg-container'>",
-					"<pre>" + WebIM.utils.parseLink(WebIM.utils.parseEmoji(this.value)) + "</pre>",
-					// 这个 emotion 属性看起来没有用，2017-02-21
-					// "<pre>" + WebIM.utils.parseLink(this.emotion ? this.value : WebIM.utils.parseEmoji(this.value)) + "</pre>",
-				"</div>",
-			"</div>",
-		"</div>"
-	].join('');
-};
+	// 按钮列表消息，机器人回复，满意度调查
+	WebIM.message.list = function ( id ) {
+		this.id = id;
+		this.type = 'list';
+		this.brief = '';
+		this.body = {};
+	};
+	WebIM.message.list.prototype.set = function ( opt ) {
+		this.value = opt.value;
+		this.listDom = opt.list;
+	};
 
-// 图片消息
-WebIM.message.img.prototype.get = function ( isReceive ) {
-	return [
-		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
-			"<div class='em-widget-msg-wrapper'>",
-				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
-				this.id ? "<div id='" + this.id + "_failed' class='em-widget-msg-status hide'><span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>" : "",
-				this.id ? "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + LOADING + "</div>" : "",
-				"<div class='em-widget-msg-container'>",
-					this.value === null ? "<i class='icon-broken-pic'></i>" : "<a href='javascript:;'><img class='em-widget-imgview' src='" + this.value.url + "'/></a>",
-				"</div>",
-			"</div>",
-		"</div>"
-	].join('');
-};
-
-// 按钮列表消息，机器人回复，满意度调查
-WebIM.message.list = function ( id ) {
-	this.id = id;
-	this.type = 'list';
-	this.brief = '';
-	this.body = {};
-};
-WebIM.message.list.prototype.get = function() {
-	if (!this.value) return '';
-
-	return [
-		"<div class='em-widget-left'>",
-			"<div class='em-widget-msg-wrapper'>",
-				"<i class='icon-corner-left'></i>",
-				"<div class='em-widget-msg-container em-widget-msg-menu'>",
-					"<p>" + WebIM.utils.parseLink(WebIM.utils.parseEmoji(easemobim.utils.encode(this.value))) + "</p>",
-					this.listDom,
-				"</div>",
-			"</div>",
-		"</div>"
-	].join('');
-};
-WebIM.message.list.prototype.set = function ( opt ) {
-	this.value = opt.value;
-	this.listDom = opt.list;
-};
-
-// 文件消息
-WebIM.message.file.prototype.get = function ( isReceive ) {
-	var filename = this.filename;
-	var filesize;
-	// 历史会话中 filesize = 0
-	// 访客端发文件消息 filesize = undefined
-	// 需要过滤这两种情况，暂时只显示坐席发过来的文件大小
-	if(this.value.filesize > 0){
-		filesize = easemobim.utils.filesizeFormat(this.value.filesize);
-	}else{
-		filesize = '';
-	}
-	var url = this.value.url;
-	return [
-		!isReceive ? "<div id='" + this.id + "' class='em-widget-right'>" : "<div class='em-widget-left'>",
-			"<div class='em-widget-msg-wrapper em-widget-msg-file'>",
-				"<i class='" + (!isReceive ? "icon-corner-right" : "icon-corner-left") + "'></i>",
-				this.id
-				? "<div id='" + this.id + "_failed' class='em-widget-msg-status hide'>"
-				+ "<span>发送失败</span><i class='icon-circle'><i class='icon-exclamation'></i></i></div>"
-				+ "<div id='" + this.id + "_loading' class='em-widget-msg-loading'>" + LOADING + "</div>"
-				: "",
-				"<div class='em-widget-msg-container'>",
-					this.value === null
-					? "<i class='icon-broken-pic'></i>"
-					: '<i class="icon-attachment container-icon-attachment"></i>'
-					+ '<span class="file-info">'
-						+ '<p class="filename ">' + filename + '</p>'
-						+ '<p class="filesize">' + filesize + '</p>'
-					+ '</span>'
-					+ "<a target='_blank' href='" + url + "' class='icon-download container-icon-download' title='"
-					+ filename + "'></a>",
-				"</div>",
-			"</div>",
-		"</div>"
-	].join('');
-};
-
+	easemobim.genDomFromMsg = genDomFromMsg;
 }());
-

@@ -27,16 +27,14 @@ button, textarea, input {
 	outline: none;
 }
 
-#EasemobKefuWebim {
+body {
 	position: absolute;
 	left: 0;
 	top: 0;
 	width: 100%;
 	height: 100%;
 }
-/* todo 统一hide 类名 */
-/* 增加id选择是为了提高优先级 */
-.hide,
-#EasemobKefuWebim .hide {
-	display: none;
+
+.hide {
+	display: none!important;
 }

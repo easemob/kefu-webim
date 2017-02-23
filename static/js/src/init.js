@@ -132,11 +132,11 @@
 	}
 
 	function initUI(config, callback) {
-		var iframe = document.getElementById('EasemobKefuWebimIframe');
+		var iframe = document.getElementById('cross-origin-iframe');
 
 		iframe.src = config.domain + '/webim/transfer.html?v=<%=WEBIM_PLUGIN_VERSION%>';
 		utils.on(iframe, 'load', function() {
-			easemobim.getData = new easemobim.Transfer('EasemobKefuWebimIframe', 'data');
+			easemobim.getData = new easemobim.Transfer('cross-origin-iframe', 'data');
 			callback(config);
 		});
 
@@ -280,6 +280,7 @@
 							event: _const.EVENTS.CACHEUSER,
 							data: {
 								username: targetUserInfo.userName,
+								// todo: check if need emgroup
 								group: config.user.emgroup
 							}
 						}, window.transfer.to);

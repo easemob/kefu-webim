@@ -9,6 +9,7 @@
 
 */
 
+// todo: 调整目录结构
 var debug = false;
 const VERSION = '43.13.004';
 
@@ -137,7 +138,6 @@ gulp.task('combineJs', function() {
 		'static/js/src/modules/utils.js',
 		'static/js/src/modules/const.js',
 		'static/js/src/modules/transfer.js',
-		'static/js/src/modules/eventsEnum.js',
 		'static/js/src/modules/notify.js',
 		'static/js/src/modules/titleSlide.js',
 		'static/js/src/modules/iframe.js',

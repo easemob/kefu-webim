@@ -8,176 +8,173 @@
 	<link href='static/css/im.css?v=<%=WEBIM_PLUGIN_VERSION%>' rel='stylesheet'/>
 </head>
 <body>
-	<div id='EasemobKefuWebim'>
+	<!-- 最小化时显示的按钮 -->
+	<div id="em-widgetPopBar" class="hide">
+		<a class="em-widget-pop-bar bg-color icon-easemob" href="javascript:;">联系客服</a>
+	</div>
 
-		<!-- 最小化时显示的按钮 -->
-		<div id="em-widgetPopBar" class="hide">
-			<a class="em-widget-pop-bar bg-color icon-easemob" href="javascript:;">联系客服</a>
+	<!-- UI -->
+	<div id="em-kefu-webim-chat" class="em-widget-wrapper hide">
+
+		<!-- 标题栏 -->
+		<div id="em-widgetHeader" class="em-widgetHeader-wrapper bg-color border-color">
+			<div id="em-widgetDrag">
+
+				<!-- 用于拖动的浮层 -->
+				<p class="drag-bar"></p>
+
+				<!-- 企业头像 -->
+				<img class="em-widgetHeader-portrait border-color"/>
+
+				<!-- 坐席昵称 -->
+				<span class="em-widgetHeader-nickname"></span>
+
+				<!-- 坐席状态 -->
+				<span class="em-header-status-text"></span>
+
+				<!-- 坐席状态标志 -->
+				<i id="em-widgetAgentStatus" class="em-widget-agent-status hide"></i>
+
+				<!-- 最小化按钮 -->
+				<i title="关闭" class="icon-min em-widgetHeader-min bg-color border-color bg-hover-color-light"></i>
+
+				<!-- 静音开关 -->
+				<i class="icon-bell em-widgetHeader-audio fg-color"></i>
+
+				<!-- 输入框位置切换按钮 -->
+				<i class="em-widgetHeader-keyboard icon-keyboard-up hide"></i>
+			</div>
 		</div>
 
-		<!-- UI -->
-		<div id="em-kefu-webim-chat" class="em-widget-wrapper hide">
+		<!-- 信息栏 -->
+		<div class="em-widget-tip">
+			<span class="content"></span>
+			<i class="icon-close tip-close"></i>
+		</div>
 
-			<!-- 标题栏 -->
-			<div id="em-widgetHeader" class="em-widgetHeader-wrapper bg-color border-color">
-				<div id="em-widgetDrag">
+		<!-- 视频窗口 -->
+		<div class="em-widget-video" style="display: none;">
+			<video class="main" autoplay></video>
+			<div class="status">
+				<p class="prompt"></p>
+				<p class="time-escape">00:00</p>
+			</div>
+			<div class="sub-win">
+				<video class="sub" autoplay></video>
+				<span class="btn-minimize icon-minimize"></span>
+			</div>
+			<div class="toolbar-dial">
+				<i class="btn-accept-call hide icon-answer"></i>
+				<i class="btn-end-call icon-decline"></i>
+			</div>
+			<div class="toolbar-control">
+				<p class="btn-change icon-change"></p>
+				<p class="btn-toggle icon-camera"></p>
+			</div>
+			<span class="btn-maximize icon-maximize"></span>
+			<div class="full-screen-prompt hide">
+				<p class="prompt">视频已结束</p>
+				<p class="time-escape">00:00</p>
+			</div>
+		</div>
 
-					<!-- 用于拖动的浮层 -->
-					<p class="drag-bar"></p>
+		<!-- 消息容器 -->
+		<div id="em-widgetBody" class="em-widgetBody-wrapper">
+			<div class="em-widget-tenant-logo hide">
+				<img src="" />
+			</div>
+			<div class="em-widget-chat"></div>
+		</div>
 
-					<!-- 企业头像 -->
-					<img class="em-widgetHeader-portrait border-color"/>
+		<!-- 表情容器 -->
+		<div class="em-bar-emoji-wrapper e-face hide">
+			<ul class="em-bar-emoji-container"></ul>
+		</div>
 
-					<!-- 坐席昵称 -->
-					<span class="em-widgetHeader-nickname"></span>
-
-					<!-- 坐席状态 -->
-					<span class="em-header-status-text"></span>
-
-					<!-- 坐席状态标志 -->
-					<i id="em-widgetAgentStatus" class="em-widget-agent-status hide"></i>
-
-					<!-- 最小化按钮 -->
-					<i title="关闭" class="icon-min em-widgetHeader-min bg-color border-color bg-hover-color-light"></i>
-
-					<!-- 静音开关 -->
-					<i class="icon-bell em-widgetHeader-audio fg-color"></i>
-
-					<!-- 输入框位置切换按钮 -->
-					<i class="em-widgetHeader-keyboard icon-keyboard-up hide"></i>
-				</div>
+		<!-- 输入框 -->
+		<div id="em-widgetSend" class="em-widget-send-wrapper">
+			<div class="toolbar">
+				<i class="em-bar-emoji icon-face e-face fg-hover-color" title="表情"></i>
+				<i class="em-widget-img icon-picture fg-hover-color"></i>
+				<i class="em-widget-file icon-attachment fg-hover-color hide" title="附件"></i>
+				<i class="em-widget-note icon-note fg-hover-color hide" title="留言"></i>
+				<i class="icon-video fg-hover-color em-video-invite hide" title="视频通话"></i>
+				<i class="icon-flower fg-hover-color em-widget-satisfaction hide" title="评价客服"></i>
 			</div>
 
-			<!-- 信息栏 -->
-			<div class="em-widget-tip">
-				<span class="content"></span>
-				<i class="icon-close tip-close"></i>
+			<!-- 文件输入 -->
+			<input type="file" class="upload-file-container hide">
+			<!-- 图片输入，此元素需要有id -->
+			<input id="em-widget-img-input" type="file" class="upload-img-container hide" accept="image/jpg,image/gif,image/jpeg,image/png">
+
+			<textarea class="em-widget-textarea" spellcheck="false" placeholder="点击输入内容..."></textarea>
+			<span class="em-widget-send bg-color disabled">连接中</span>
+		</div>
+
+		<!-- 视频确认对话框 -->
+		<div class="em-dialog-video-confirm hide">
+			<p class="prompt">
+				您要邀请客服为您进行实时视频服务么？点击确认发送邀请，等待客服接受后即可体验实时视频服务。
+			</p>
+			<div class="button-panel">
+				<span class="btn-cancel">取消</span>
+				<span class="btn-confirm">发送</span>
 			</div>
+		</div>
 
-			<!-- 视频窗口 -->
-			<div class="em-widget-video" style="display: none;">
-				<video class="main" autoplay></video>
-				<div class="status">
-					<p class="prompt"></p>
-					<p class="time-escape">00:00</p>
-				</div>
-				<div class="sub-win">
-					<video class="sub" autoplay></video>
-					<span class="btn-minimize icon-minimize"></span>
-				</div>
-				<div class="toolbar-dial">
-					<i class="btn-accept-call hide icon-answer"></i>
-					<i class="btn-end-call icon-decline"></i>
-				</div>
-				<div class="toolbar-control">
-					<p class="btn-change icon-change"></p>
-					<p class="btn-toggle icon-camera"></p>
-				</div>
-				<span class="btn-maximize icon-maximize"></span>
-				<div class="full-screen-prompt hide">
-					<p class="prompt">视频已结束</p>
-					<p class="time-escape">00:00</p>
-				</div>
+		<!-- 满意度评价对话框 -->
+		<div class="em-widget-dialog em-widget-satisfaction-dialog hide">
+			<h3>请对我的服务做出评价</h3>
+			<ul>
+			<!-- fake: IE8 满意度评价会有兼容问题，修改图标需替换字符 -->
+				<li idx="1">H</li>
+				<li idx="2">H</li>
+				<li idx="3">H</li>
+				<li idx="4">H</li>
+				<li idx="5">H</li>
+			</ul>
+			<textarea spellcheck="false" placeholder="请输入留言"></textarea>
+			<div>
+				<button class="em-widget-cancel">取消</button>
+				<button class="bg-color">提交</button>
 			</div>
-
-			<!-- 消息容器 -->
-			<div id="em-widgetBody" class="em-widgetBody-wrapper">
-				<div class="em-widget-tenant-logo hide">
-					<img src="" />
-				</div>
-				<div class="em-widget-chat"></div>
+			<div class="em-widget-success-prompt hide">
+				<i class="icon-circle">
+					<i class="icon-good"></i>
+				</i>
+				<p>提交成功</p>
 			</div>
+		</div>
 
-			<!-- 表情容器 -->
-			<div class="em-bar-face-wrapper e-face hide">
-				<ul class="em-bar-face-container"></ul>
-			</div>
-
-			<!-- 输入框 -->
-			<div id="em-widgetSend" class="em-widget-send-wrapper">
-				<div class="toolbar">
-					<i class="em-bar-face icon-face e-face fg-hover-color" title="表情"></i>
-					<i class="em-widget-img icon-picture fg-hover-color"></i>
-					<i class="em-widget-file icon-attachment fg-hover-color hide" title="附件"></i>
-					<i class="em-widget-note icon-note fg-hover-color hide" title="留言"></i>
-					<i class="icon-video fg-hover-color em-video-invite hide" title="视频通话"></i>
-					<i class="icon-flower fg-hover-color em-widget-satisfaction hide" title="评价客服"></i>
-				</div>
-
-				<!-- 文件输入 -->
-				<input type="file" class="upload-file-container hide">
-				<!-- 图片输入，此元素需要有id -->
-				<input id="em-widget-img-input" type="file" class="upload-img-container hide" accept="image/jpg,image/gif,image/jpeg,image/png">
-
-				<textarea class="em-widget-textarea" spellcheck="false" placeholder="点击输入内容..."></textarea>
-				<span class="em-widget-send bg-color disabled">连接中</span>
-			</div>
-
-			<!-- 视频确认对话框 -->
-			<div class="em-dialog-video-confirm hide">
-				<p class="prompt">
-					您要邀请客服为您进行实时视频服务么？点击确认发送邀请，等待客服接受后即可体验实时视频服务。
-				</p>
-				<div class="button-panel">
-					<span class="btn-cancel">取消</span>
-					<span class="btn-confirm">发送</span>
-				</div>
-			</div>
-
-			<!-- 满意度评价对话框 -->
-			<div class="em-widget-dialog em-widget-satisfaction-dialog hide">
-				<h3>请对我的服务做出评价</h3>
-				<ul>
-				<!-- fake: IE8 满意度评价会有兼容问题，修改图标需替换字符 -->
-					<li idx="1">H</li>
-					<li idx="2">H</li>
-					<li idx="3">H</li>
-					<li idx="4">H</li>
-					<li idx="5">H</li>
-				</ul>
+		<!-- 留言页面 -->
+		<div class="em-widget-offline hide">
+			<div>
+				<h3>请填写以下内容以方便我们及时联系您</h3>
+				<input type="text" class="contact" placeholder="姓名">
+				<input type="text" class="phone" placeholder="电话">
+				<input type="text" class="mail" placeholder="邮箱">
 				<textarea spellcheck="false" placeholder="请输入留言"></textarea>
-				<div>
-					<button class="em-widget-cancel">取消</button>
-					<button class="bg-color">提交</button>
-				</div>
+				<button class="btn-cancel">取消</button>
+				<button class="btn-ok bg-color">留言</button>
 				<div class="em-widget-success-prompt hide">
-					<i class="icon-circle">
-						<i class="icon-good"></i>
-					</i>
-					<p>提交成功</p>
+					<i class="icon-circle"><i class="icon-good"></i></i>
+					<p>留言发送成功</p>
 				</div>
 			</div>
+		</div>
 
-			<!-- 留言页面 -->
-			<div class="em-widget-offline hide">
-				<div>
-					<h3>请填写以下内容以方便我们及时联系您</h3>
-					<input type="text" class="contact" placeholder="姓名">
-					<input type="text" class="phone" placeholder="电话">
-					<input type="text" class="mail" placeholder="邮箱">
-					<textarea spellcheck="false" placeholder="请输入留言"></textarea>
-					<button class="btn-cancel">取消</button>
-					<button class="btn-ok bg-color">留言</button>
-					<div class="em-widget-success-prompt hide">
-						<i class="icon-circle"><i class="icon-good"></i></i>
-						<p>留言发送成功</p>
-					</div>
-				</div>
+		<!-- 粘贴上传对话框 -->
+		<div class="em-widget-dialog em-widget-paste-wrapper hide">
+			<img>
+			<div>
+				<button class="em-widget-cancel">取消</button>
+				<button class="em-widget-confirm bg-color">发送</button>
 			</div>
+		</div>
 
-			<!-- 粘贴上传对话框 -->
-			<div class="em-widget-dialog em-widget-paste-wrapper hide">
-				<img>
-				<div>
-					<button class="em-widget-cancel">取消</button>
-					<button class="em-widget-confirm bg-color">发送</button>
-				</div>
-			</div>
-
-			<!-- 信息提示框 -->
-			<div class="em-widget-error-prompt hide">
-				<span></span>
-			</div>
+		<!-- 信息提示框 -->
+		<div class="em-widget-error-prompt hide">
+			<span></span>
 		</div>
 	</div>
 
@@ -187,7 +184,7 @@
 	</div>
 
 	<!-- 用于跨域请求的iframe -->
-	<iframe id="EasemobKefuWebimIframe" class="hide"></iframe>
+	<iframe id="cross-origin-iframe" class="hide"></iframe>
 
 	<!-- javascript -->
 	<script src="static/js/src/lib/underscore-min.js?v=1.8.3"></script>

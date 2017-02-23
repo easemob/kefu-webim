@@ -5,6 +5,7 @@
 
 	easemobim.utils = {
 		isTop: window.top === window.self
+		// todo: use elementNode.type instead
 		, nodeListType: {
 			'[object Object]': true,
 			'[object NodeList]': true,
@@ -16,12 +17,15 @@
 			var exponent;
 			var result;
 
-			if(filesize){
+			if (filesize > 0){
 				exponent = Math.floor(Math.log(filesize) / Math.log(1024));
 				result = (filesize / Math.pow(1024, exponent)).toFixed(2) + ' ' + UNIT_ARRAY[exponent];
 			}
-			else{
+			else if (filesize === 0) {
 				result = '0 B';
+			}
+			else {
+				result = '';
 			}
 			return result;
 		}
@@ -53,15 +57,6 @@
 				target.parentNode.removeChild(target);
 			}
 			else{}
-		}
-		, insertBefore: function ( parentNode, newDom, curDom ) {
-			if ( parentNode && newDom ) {
-				if ( parentNode.childNodes.length === 0 ) {
-					parentNode.appendChild(newDom);
-				} else {
-					parentNode.insertBefore(newDom, curDom || null);
-				}
-			}
 		}
 		, live: function ( selector, ev, fn, wrapper ) {
 			var me = this;
@@ -247,28 +242,6 @@
 					return;
 				}
 			}
-		}
-		, encode: function ( str ) {
-			if ( !str || str.length === 0 ) {
-				return '';
-			}
-			var s = '';
-			s = str.replace(/&amp;/g, "&");
-			s = s.replace(/<(?=[^o][^)])/g, "&lt;");
-			s = s.replace(/>/g, "&gt;");
-			//s = s.replace(/\'/g, "&#39;");
-			s = s.replace(/\"/g, "&quot;");
-			return s;
-		}
-		, decode: function ( str ) {
-			if ( !str || str.length === 0 ) {
-				return '';
-			}
-			var s = '';
-			s = str.replace(/&amp;/g, "&");
-			s = s.replace(/&#39;/g, "'");
-			s = s.replace(/&lt;o\)/g, "<o)");
-			return s;
 		}
 		, query: function ( key ) {
 			var reg = new RegExp('[?&]' + key + '=([^&]*)(?=&|$)');

@@ -28,32 +28,30 @@
 		border-radius: 0;
 		box-shadow: none;
 	}
-	.em-widget-list-btn,
-	.em-widget-msg-container {
-		font-size: 17px;
-	}
 	.em-widget-list-btn {
+		font-size: 17px;
 		line-height: 30px;
 		box-shadow: none;
 	}
 	.em-widget-msg-container {
+		font-size: 17px;
 		padding: 8px 10px;
+		&.em-widget-msg-file {
+			padding: 0;
+		}
 	}
-	.em-widget-msg-file .em-widget-msg-container {
-		padding: 0;
-	}
-	.em-bar-face-wrapper {
+	.em-bar-emoji-wrapper {
 		width: 100%;
 		left: 0;
 		border-radius: 0;
 		padding-left: 0;
 		bottom: 44px;
-	}
-	.em-bar-face-bg {
-		width: 14.2%;
-		margin: 0;
-		.em-bar-face-img {
-			margin: 8px 0;
+		.em-bar-emoji-bg {
+			width: 14.2%;
+			margin: 0;
+			.emoji {
+				margin: 8px 0;
+			}
 		}
 	}
 	.em-widgetHeader-keyboard {
@@ -92,8 +90,7 @@
 		border-radius: 4px;
 		padding: 9px;
 		padding-right: 36px;
-		overflow-x: hidden;
-		overflow-y: hidden;
+		overflow: hidden;
 		user-select: text!important;
 		line-height: 17px;
 		font-size: 17px;
@@ -119,16 +116,18 @@
 		margin: 0;
 		border-radius: 0;
 		font-size: 15px;
+		h3,
+		button,
+		textarea {
+			font-size: 15px;
+		}
+		button {
+			height: 32px;
+			line-height: 32px;
+		}
 	}
-	.em-widget-error-prompt,
-	.em-widget-satisfaction-dialog h3,
-	.em-widget-satisfaction-dialog button,
-	.em-widget-satisfaction-dialog textarea {
-		font-size: 15px;
-	}
-	.em-widget-satisfaction-dialog button {
-		height: 32px;
-		line-height: 32px;
+	.em-widget-error-prompt {
+			font-size: 15px;
 	}
 }
 @media 
