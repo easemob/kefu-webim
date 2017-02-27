@@ -3,16 +3,84 @@
 
 	var _isMobile = /mobile/i.test(navigator.userAgent);
 
-	easemobim.utils = {
-		isTop: window.top === window.self
-		// todo: use elementNode.type instead
-		, nodeListType: {
-			'[object Object]': true,
-			'[object NodeList]': true,
-			'[object HTMLCollection]': true,
-			'[object Array]': true
+	function _isNodeList(nodes){
+		var stringRepr = Object.prototype.toString.call(nodes);
+
+		return typeof nodes === 'object'
+			&& /^\[object (HTMLCollection|NodeList|Object)\]$/.test(stringRepr)
+			&& typeof nodes.length === 'number'
+			&& (nodes.length === 0 || (typeof nodes[0] === "object" && nodes[0].nodeType > 0));
+	}
+
+	function _addClass(elem, className){
+		if (!_hasClass(elem, className)) {
+			elem.className += ' ' + className;
 		}
-		, filesizeFormat: function(filesize){
+	}
+
+	function _removeClass(elem, className){
+		if (_hasClass(elem, className)) {
+			elem.className = (
+				(' ' + elem.className + ' ')
+					.replace(new RegExp(' ' + className + ' ', 'g'), ' ')
+			).trim();
+		}
+	}
+
+	function _hasClass(elem, className){
+		return !!~(' ' + elem.className + ' ').indexOf(' ' + className + ' ');
+	}
+
+	function _eachElement(elementOrNodeList, fn /* *arguments */){
+		if (typeof fn !== 'function') return;
+
+		var nodeList = _isNodeList(elementOrNodeList) ? elementOrNodeList : [elementOrNodeList];
+		var extraArgs = [];
+		var i, l, tmpElem;
+
+		// parse extra arguments
+		for (i = 2, l = arguments.length; i < l; ++i){
+			extraArgs.push(arguments[i]);
+		}
+
+		for (i = 0, l = nodeList.length; i < l; ++i){
+			(tmpElem = nodeList[i])
+				&& (tmpElem.nodeType === 1 || tmpElem.nodeType === 9 || tmpElem.nodeType === 11)
+				&& fn.apply(null, [tmpElem].concat(extraArgs));
+		}
+	}
+
+	function _bind(elem, evt, handler, isCapture) {
+		if (elem.addEventListener) {
+			elem.addEventListener(evt, handler, isCapture);
+		} else if (elem.attachEvent) {
+			// todo: add window.event to evt
+			// todo: add srcElement
+			// todo: remove this _event
+			elem['_' + evt] = function() {
+				handler.apply(elem, arguments);
+			};
+			elem.attachEvent('on' + evt, elem['_' + evt]);
+		} else {
+			elem['on' + evt] = handler;
+		}
+	}
+
+	function _unbind(elem, evt, handler){
+		if (elem.removeEventListener && handler) {
+			elem.removeEventListener(ev, handler);
+		} else if (elem.detachEvent) {
+			elem.detachEvent('on' + ev, elem['_' + ev]);
+			delete elem['_' + ev];
+		} else {
+			elem['on' + ev] = null;
+		}
+	}
+
+	easemobim.utils = {
+		isTop: window.top === window.self,
+		isNodeList: _isNodeList,
+		filesizeFormat: function(filesize){
 			var UNIT_ARRAY = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'];
 			var exponent;
 			var result;
@@ -47,84 +115,49 @@
 			obj = typeof obj === 'undefined' ? '' : obj;
 			return obj === 'false' ? false : obj;
 		}
-		, $Remove: function ( target ) {
-			if (!target) return;
+		, $Remove: function ( elem ) {
+			if (!elem) return;
 
-			if(target.remove){
-				target.remove();
+			if(elem.remove){
+				elem.remove();
 			}
-			else if(target.parentNode){
-				target.parentNode.removeChild(target);
+			else if(elem.parentNode){
+				elem.parentNode.removeChild(elem);
 			}
 			else{}
 		}
-		, live: function ( selector, ev, fn, wrapper ) {
+		, live: function (selector, ev, handler, wrapper) {
 			var me = this;
-			var el = wrapper || document;
-			me.on(el, ev, function ( e ) {
-				var ev = e || window.event;
-				var tar = ev.target || ev.srcElement;
-				var targetList = el.querySelectorAll(selector);
+			var container = wrapper || document;
+			me.on(container, ev, function (e) {
+				var evt = e || window.event;
+				var target = evt.target || ev.srcElement;
+				var targetList = container.querySelectorAll(selector);
+				var i, l;
 
-				if ( targetList.length ) {
-					for ( var len = targetList.length, i = 0; i < len; i++ ) {
-						if ( targetList[i] == tar || targetList[i] == tar.parentNode ) {
-							fn.apply(targetList[i] == tar ? tar : tar.parentNode, arguments);
-						}   
-					}
+				for (i = 0, l = targetList.length; i < l; ++i){
+					targetList[i] === target && handler.apply(target, evt);
 				}
 			});
 		}
-		, on: (function () {
-			var bind = function ( target, ev, fn, isCapture ) {
-				if ( !ev ) { return false; }
-
-				var evArr = ev.split(' ');
-
-				for ( var i = 0, l = evArr.length; i < l; i++ ) {
-					if ( target.addEventListener ) {
-						target.addEventListener(evArr[i], fn, isCapture);
-					} else if ( target.attachEvent ) {
-						target['_' + evArr[i]] = function () {
-							fn.apply(target, arguments);
-						};
-						target.attachEvent('on' + evArr[i], target['_' + evArr[i]]);
-					} else {
-						target['on' + evArr[i]] = fn;
-					}
-				}
-			};
-			return function ( target, ev, fn, isCapture ) {
-				if ( Object.prototype.toString.call(target) in this.nodeListType && target.length ) {
-					for ( var i = 0, l = target.length; i < l; i++ ) {
-						target[i].nodeType === 1 && bind(target[i], ev, fn, isCapture);
-					}
-				} else {
-					bind(target, ev, fn, isCapture);
-				}
-			};
-		}())
-		, remove: function ( target, ev, fn ) {
-			if ( !target ) {
-				return;
-			}
-			else if ( target.removeEventListener ) {
-				target.removeEventListener(ev, fn);
-			}
-			else if ( target.detachEvent ) {
-				target.detachEvent('on' + ev, target['_' + ev]);
-			}
-			else {
-				target['on' + ev] = null;
-			}
+		, on: function(elementOrNodeList, event, handler, isCapture) {
+			event.split(' ').forEach(function(evt){
+				evt && _eachElement(elementOrNodeList, _bind, evt, handler, isCapture);
+			});
 		}
-		, one: function ( target, ev, fn, isCapture ) {
-			var me = this;
+		, off: function (elementOrNodeList, event, handler) {
+			event.split(' ').forEach(function(evt){
+				evt && _eachElement(elementOrNodeList, _unbind, evt, handler);
+			});
+		}
+		, one: function ( element, ev, handler, isCapture ) {
+			if (!element || !ev) return;
+
 			var tempFn = function () {
-				fn.apply(this, arguments);
-				me.remove(target, ev, tempFn);
+				handler.apply(this, arguments);
+				_unbind(element, ev, tempFn);
 			};
-			me.on(target, ev, tempFn, isCapture);  
+			_bind(element, ev, tempFn, isCapture);  
 		}
 		// 触发事件，对于ie8只支持原生事件，不支持自定义事件
 		, trigger: function(element, eventName){
@@ -154,69 +187,30 @@
 			}
 			return object;
 		}
-		, addClass: function ( target, className ) {
-			var i, l;
-
-			if (!target) { return; }
-
-			if ( Object.prototype.toString.call(target) in this.nodeListType && target.length ) {
-				for ( i = 0, l = target.length; i < l; i++ ) {
-					if ( !this.hasClass(target[i], className) && typeof target[i].className !== 'undefined') {
-						target[i].className += ' ' + className;
-					}
-				}
-			} else {
-				if ( !this.hasClass(target, className) ) {
-					target.className += ' ' + className;
-				}
-			}
-			return target;
+		, addClass: function (elementOrNodeList, className) {
+			_eachElement(elementOrNodeList, _addClass, className);
+			return elementOrNodeList;
 		}
-		, removeClass: function ( target, className ) {
-			var i, l;
-
-			if (!target) { return; }
-
-			if (target.length && Object.prototype.toString.call(target) in this.nodeListType) {
-				for ( i = 0, l = target.length; i < l; i++ ) {
-					if ( typeof target[i].className !== 'undefined' && this.hasClass(target[i], className) ) {
-						target[i].className = (
-							(' ' + target[i].className + ' ')
-								.replace(new RegExp(' ' + className + ' ', 'g'), ' ')
-						).trim();
-					}
-				}
-			} else {
-				if ( typeof target.className !== 'undefined' && this.hasClass(target, className) ) {
-					target.className = (
-						(' ' + target.className + ' ')
-							.replace(new RegExp(' ' + className + ' ', 'g'), ' ')
-					).trim();
-				}
-			}
-			return target;
+		, removeClass: function (elementOrNodeList, className) {
+			_eachElement(elementOrNodeList, _removeClass, className);
+			return elementOrNodeList;
 		}
-		, hasClass: function ( target, className ) {
-			if (!target) return false;
-			return !!~(' ' + target.className + ' ').indexOf(' ' + className + ' ');
+		, hasClass: function (elem, className) {
+			if (!elem) return false;
+			return _hasClass(elem, className);
 		}
-		, toggleClass: function(target, className, stateValue) {
-			var ifNeedAddClass;
+		, toggleClass: function(element, className, stateValue) {
+			if(!element || !className) return;
 
-			if(!target || !className) return;
+			var ifNeedAddClass = typeof stateValue === 'undefined'
+				? !_hasClass(element, className)
+				: stateValue;
 
-			if(typeof stateValue !== 'undefined'){
-				ifNeedAddClass = stateValue;
+			if (ifNeedAddClass){
+				_addClass(element, className);
 			}
 			else{
-				ifNeedAddClass = !this.hasClass(target, className);
-			}
-
-			if(ifNeedAddClass){
-				this.addClass(target, className);
-			}
-			else{
-				this.removeClass(target, className);
+				_removeClass(element, className);
 			}
 		}
 		, getDataByPath: function(obj, path){

@@ -3,25 +3,25 @@
  */
 window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 
-Date.prototype.format = function ( fmt ) {
+Date.prototype.format = function(fmt) {
 	var o = {
-		'M+': this.getMonth() + 1,	//月份
-		'd+': this.getDate(),		//日
-		'h+': this.getHours(),		//小时
-		'm+': this.getMinutes(),	//分
-		's+': this.getSeconds()		//秒
+		'M+': this.getMonth() + 1, //月份
+		'd+': this.getDate(), //日
+		'h+': this.getHours(), //小时
+		'm+': this.getMinutes(), //分
+		's+': this.getSeconds() //秒
 	};
 
-	if ( /(y+)/.test(fmt) ) {
+	if (/(y+)/.test(fmt)) {
 		fmt = fmt.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
 	}
 
-	for ( var k in o ) {
-		if ( new RegExp('(' + k + ')').test(fmt) ) {
+	for (var k in o) {
+		if (new RegExp('(' + k + ')').test(fmt)) {
 			fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? o[k] : (('00' + o[k]).substr(('' + o[k]).length)));
 		}
 	}
-	return fmt;   
+	return fmt;
 };
 
 /** PrivateFunction: Array.prototype.indexOf
@@ -38,8 +38,8 @@ Date.prototype.format = function ( fmt ) {
  *  Returns:
  *	The index of elt in the array or -1 if not found.
  */
-if(!Array.prototype.indexOf){
-	Array.prototype.indexOf = function(elt /*, from*/){
+if (!Array.prototype.indexOf) {
+	Array.prototype.indexOf = function(elt /*, from*/ ) {
 		var len = this.length;
 
 		var from = Number(arguments[1]) || 0;
@@ -60,7 +60,71 @@ if(!Array.prototype.indexOf){
 
 /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim */
 if (!String.prototype.trim) {
-  String.prototype.trim = function () {
-	return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
-  };
+	String.prototype.trim = function() {
+		return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+	};
+}
+
+// Production steps of ECMA-262, Edition 5, 15.4.4.18
+// Reference: http://es5.github.io/#x15.4.4.18
+if (!Array.prototype.forEach) {
+
+	Array.prototype.forEach = function(callback, thisArg) {
+
+		var T, k;
+
+		if (this === null) {
+			throw new TypeError('this is null or not defined');
+		}
+
+		// 1. Let O be the result of calling toObject() passing the
+		// |this| value as the argument.
+		var O = Object(this);
+
+		// 2. Let lenValue be the result of calling the Get() internal
+		// method of O with the argument "length".
+		// 3. Let len be toUint32(lenValue).
+		var len = O.length >>> 0;
+
+		// 4. If isCallable(callback) is false, throw a TypeError exception. 
+		// See: http://es5.github.com/#x9.11
+		if (typeof callback !== 'function') {
+			throw new TypeError(callback + ' is not a function');
+		}
+
+		// 5. If thisArg was supplied, let T be thisArg; else let
+		// T be undefined.
+		if (arguments.length > 1) {
+			T = thisArg;
+		}
+
+		// 6. Let k be 0
+		k = 0;
+
+		// 7. Repeat, while k < len
+		while (k < len) {
+
+			var kValue;
+
+			// a. Let Pk be ToString(k).
+			//    This is implicit for LHS operands of the in operator
+			// b. Let kPresent be the result of calling the HasProperty
+			//    internal method of O with argument Pk.
+			//    This step can be combined with c
+			// c. If kPresent is true, then
+			if (k in O) {
+
+				// i. Let kValue be the result of calling the Get internal
+				// method of O with argument Pk.
+				kValue = O[k];
+
+				// ii. Call the Call internal method of callback with T as
+				// the this value and argument list containing kValue, k, and O.
+				callback.call(T, kValue, k, O);
+			}
+			// d. Increase k by 1.
+			k++;
+		}
+		// 8. return undefined
+	};
 }

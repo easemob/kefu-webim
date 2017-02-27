@@ -8,7 +8,6 @@
 	};
 
 	function _move( ev ) {
-
 		var me = this;
 		var e = window.event || ev;
 		var _width = document.documentElement.clientWidth;
@@ -45,7 +44,7 @@
 	}
 
 	function _moveend() {
-		utils.remove(document, 'mousemove', this.moveEv);
+		utils.off(document, 'mousemove', this.moveEv);
 		this.iframe.style.left = 'auto';
 		this.iframe.style.top = 'auto';
 		this.iframe.style.right = this.position.x + 'px';

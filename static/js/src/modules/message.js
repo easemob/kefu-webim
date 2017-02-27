@@ -129,7 +129,7 @@
 		stack.push('</div>');
 
 		// 追加标签
-		html += _.reduceRight(stack, function(a, b){ return a + b; }, '')
+		html += _.reduceRight(stack, function(a, b){ return a + b; }, '');
 		dom.innerHTML = html;
 		return dom;
 	}
