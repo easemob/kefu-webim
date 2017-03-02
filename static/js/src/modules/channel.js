@@ -464,11 +464,10 @@ easemobim.channel = function ( config ) {
 			}
 		},
 
-		listen: function () {
-				
-			me.conn.listen({
-				onOpened: function ( info ) {
-					
+		listen: function (option) {
+			var opt = option || {receiveMessage: true};
+			var handlers = {
+				onOpened: function (info) {
 					// 连接未超时，清除timer，暂不开启api通道发送消息
 					clearTimeout(firstTS);
 
@@ -525,7 +524,17 @@ easemobim.channel = function ( config ) {
 						typeof config.onerror === 'function' && config.onerror(e);
 					}
 				}
-			});
+			};
+
+			if (!opt.receiveMessage){
+				delete handlers.onTextMessage;
+				delete handlers.onEmojiMessage;
+				delete handlers.onPictureMessage;
+				delete handlers.onFileMessage;
+				delete handlers.onCmdMessage;
+			}
+
+			me.conn.listen(handlers);
 		},
 
 		handleHistory: function ( chatHistory ) {

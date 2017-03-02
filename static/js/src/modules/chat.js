@@ -202,15 +202,15 @@
 					// 移动端输入框自动增长
 					utils.isMobile && me.initAutoGrow();
 
+					// 添加sdk回调，下班时不收消息
+					me.channel.listen({receiveMessage: config.isInOfficehours});
+
+					// 连接xmpp server，下班留言需要获取token，同样需要连接xmpp server
+					me.open();
+
 					if (config.isInOfficehours){
 						//add tenant notice
 						me.setNotice();
-
-						//add msg callback
-						me.channel.listen();
-
-						//connect to xmpp server
-						me.open();
 
 						// get service serssion info
 						me.getSession();
