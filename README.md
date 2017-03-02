@@ -10,12 +10,12 @@
 具体请参考 [nodejs.org](https://nodejs.org/)
 
 2. 在终端执行以下命令，全局安装命令一般需要使用root权限运行
-	- 安装cnpm (此步骤仅为了加速相关依赖包的安装速度)
+	- 修改 npm 的 source（默认 source 安装速度不理想）
 
-		>	$ npm install -g cnpm --registry=https://registry.npm.taobao.org
+		>	$ npm config set registry https://registry.npm.taobao.org
 	- 安装全局gulp，用于在命令行调用，可参考[gulpjs.com](http://gulpjs.com/)
 
-		>	$ cnpm install gulp-cli -g
+		>	$ npm install gulp-cli -g
 	- 下载代码
 
 		>	$ git clone https://github.com/easemob/kefu-webim.git
@@ -24,7 +24,7 @@
 		>	$ cd kefu-webim
 	- 安装依赖
 
-		>	$ cnpm install
+		>	$ npm install
 	- 构建并压缩js (用于生产环境)
 
 		>	$ gulp build
@@ -34,7 +34,7 @@
 	- 安装webserver依赖
 
 		>	$ cd server
-		   $ cnpm install
+		   $ npm install
 	- 运行webserver，让代码在本地跑起来
 
 		>	$ node app -t kefu.easemob.com -p 8080
