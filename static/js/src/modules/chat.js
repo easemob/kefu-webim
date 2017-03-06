@@ -228,7 +228,7 @@
 						&& me.getHistory();
 
 						//待接入人数
-						me.waitListNumber.start();
+						config.grayList.waitListNumberEnable && me.waitListNumber.start();	
 					}
 					else {
 						// 设置下班时间展示的页面
@@ -496,8 +496,6 @@
 				var prevTime = 0;
 
 				function _start() {
-					if (!config.grayList.waitListNumberEnable) return;
-
 					isStarted = true;
 					// 保证当前最多只有1个timer
 					// 每次调用start都必须重新获取queueId
