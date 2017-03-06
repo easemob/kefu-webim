@@ -37,49 +37,13 @@ easemobim.channel = function ( config ) {
 			}
 		},
 
-		send: function ( type ) {
-
-			var id = utils.uuid();
-
-			switch ( type ) {
-
-				case 'txt':
-					//不是历史记录开启倒计时
-					if ( !arguments[2] ) {
-						_detectSendMsgByApi(id);
-					}
-
-
-					_obj.sendText(arguments[1], arguments[2], arguments[3], id);
-					break;
-				//转人工
-				case 'transferToKf':
-					_detectSendMsgByApi(id);
-
-					_obj.transferToKf(arguments[1], arguments[2], id);
-					break;
-
-				case 'img':
-					_obj.sendImg(arguments[1], arguments[2], id);
-					break;
-
-				case 'file':
-					_obj.sendFile(arguments[1], arguments[2], id);
-					break;
-				//满意度评价
-				case 'satisfaction':
-					//不是历史记录开启倒计时, 当前只有文本消息支持降级
-					_detectSendMsgByApi(id);
-					_obj.sendSatisfaction(arguments[1], arguments[2], arguments[3], arguments[4], id);
-					break;
-			}
-		},
-
 		appendAck: function ( msg, id ) {
 			msg.body.ext.weichat.msg_id_for_ack = id;
 		},
 
-		sendSatisfaction: function ( level, content, session, invite, id ) {
+		sendSatisfaction: function(level, content, session, invite) {
+			var id = utils.uuid();
+			_detectSendMsgByApi(id);
 
 			var msg = new WebIM.message('txt', id);
 			msg.set({
@@ -102,8 +66,8 @@ easemobim.channel = function ( config ) {
 			sendMsgSite.set(id, msg);
 		},
 
-		sendText: function ( message, isHistory, ext, id ) {
-
+		sendText: function (message, isHistory, ext) {
+			var id = utils.uuid();
 			var msg = new WebIM.message('txt', isHistory ? null : id);
 			msg.set({
 				msg: message,
@@ -118,6 +82,8 @@ easemobim.channel = function ( config ) {
 			}
 
 			if ( !isHistory ) {
+				// 开启倒计时
+				_detectSendMsgByApi(id);
 				me.setExt(msg);
 				_obj.appendAck(msg, id);
 				me.conn.send(msg.body);
@@ -131,21 +97,22 @@ easemobim.channel = function ( config ) {
 		},
 
 
-		transferToKf: function ( tid, sessionId, id ) {
+		sendTransferToKf: function(tid, sessionId) {
+			var id = utils.uuid();
+			_detectSendMsgByApi(id);
 			var msg = new WebIM.message('cmd', id);
 			msg.set({
-				to: config.toUser
-				, action: 'TransferToKf'
-				, ext: {
+				to: config.toUser,
+				action: 'TransferToKf',
+				ext: {
 					weichat: {
 						ctrlArgs: {
 							id: tid,
-							serviceSessionId: sessionId,
+							serviceSessionId: sessionId
 						}
 					}
 				}
 			});
-
 			_obj.appendAck(msg, id);
 			me.conn.send(msg.body);
 			sendMsgSite.set(id, msg);
@@ -153,8 +120,8 @@ easemobim.channel = function ( config ) {
 			me.handleEventStatus(null, null, true);
 		},
 
-		sendImg: function ( file, isHistory, id ) {
-
+		sendImg: function (file, isHistory) {
+			var id = utils.uuid();
 			var msg = new WebIM.message('img', isHistory ? null : id);
 
 			msg.set({
@@ -204,7 +171,8 @@ easemobim.channel = function ( config ) {
 			}
 		},
 
-		sendFile: function ( file, isHistory, id ) {
+		sendFile: function (file, isHistory) {
+			var id = utils.uuid();
 			var msg = new WebIM.message('file', isHistory ? null : id);
 
 			msg.set({
@@ -375,41 +343,42 @@ easemobim.channel = function ( config ) {
 			if (!isHistory){
 				// 实时消息需要处理事件
 				switch(utils.getDataByPath(msg, 'ext.weichat.event.eventName')){
-					// 转接到客服
 					case 'ServiceSessionTransferedEvent':
+					// 转接到客服
 						me.handleEventStatus('transferd', msg.ext.weichat.event.eventObj);
 						break;
-					// 转人工或者转到技能组
 					case 'ServiceSessionTransferedToAgentQueueEvent':
+
+
 						me.waitListNumber.start();
+					// 转人工或者转到技能组
 						me.handleEventStatus('transfering', msg.ext.weichat.event.eventObj);
 						break;
 					// 会话结束
 					case 'ServiceSessionClosedEvent':
-						me.hasSentAttribute = false;
 					// todo: use promise to opt this code
 						me.waitListNumber.stop();
+
 						config.agentUserId = null;
 						me.stopGettingAgentStatus();
 						// 还原企业头像和企业名称
-						me.setAgentProfile({
-							tenantName: config.defaultAgentName,
-							avatar: config.tenantAvatar
-						});
+						me.setEnterpriseInfo();
 						// 去掉坐席状态
 						me.clearAgentStatus();
 						me.handleEventStatus('close');
-						utils.isTop || transfer.send(easemobim.EVENTS.ONSESSIONCLOSED, window.transfer.to);
+						!utils.isTop && transfer.send({event: _const.EVENTS.ONSESSIONCLOSED}, window.transfer.to);
 						break;
-					// 会话打开
 					case 'ServiceSessionOpenedEvent':
+
 						// fake: 会话接起就认为有坐席在线
-						me.agentCount < 1 && (me.agentCount = 1);
-						// 停止轮询当前排队人数
+						me.hasAgentOnline = true;
+
+
 						me.waitListNumber.stop();
+
 						me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
 						if (!me.hasSentAttribute) {
-							easemobim.api('getExSession', {
+							api('getExSession', {
 								id: config.user.username
 								, orgName: config.orgName
 								, appName: config.appName
@@ -420,12 +389,11 @@ easemobim.channel = function ( config ) {
 							});
 						}	
 						break;
-					// 会话创建
 					case 'ServiceSessionCreatedEvent':
 						me.handleEventStatus('create');
 						me.waitListNumber.start();
 						if (!me.hasSentAttribute) {
-							easemobim.api('getExSession', {
+							api('getExSession', {
 								id: config.user.username
 								, orgName: config.orgName
 								, appName: config.appName
@@ -459,23 +427,22 @@ easemobim.channel = function ( config ) {
 				me.scrollBottom(50);
 
 				// 收消息回调
-				if (config.hasReceiveCallback && !utils.isTop) {
-					transfer.send({
-						event: easemobim.EVENTS.ONMESSAGE.event,
-						data: {
-							from: msg.from,
-							to: msg.to,
-							message: message
-						}
-					}, window.transfer.to);
-				}
+				!utils.isTop && transfer.send({
+					event: _const.EVENTS.ONMESSAGE,
+					data: {
+						from: msg.from,
+						to: msg.to,
+						message: message
+					}
+				}, window.transfer.to);
 			}
 		},
 
-		listen: function (option) {
-			var opt = option || {receiveMessage: true};
-			var handlers = {
-				onOpened: function (info) {
+		listen: function () {
+				
+			me.conn.listen({
+				onOpened: function ( info ) {
+					
 					// 连接未超时，清除timer，暂不开启api通道发送消息
 					clearTimeout(firstTS);
 
@@ -532,20 +499,10 @@ easemobim.channel = function ( config ) {
 						typeof config.onerror === 'function' && config.onerror(e);
 					}
 				}
-			};
-
-			if (!opt.receiveMessage){
-				delete handlers.onTextMessage;
-				delete handlers.onEmojiMessage;
-				delete handlers.onPictureMessage;
-				delete handlers.onFileMessage;
-				delete handlers.onCmdMessage;
-			}
-
-			me.conn.listen(handlers);
+			});
 		},
 
-		handleHistory: function ( chatHistory ) {
+		handleHistory: function (chatHistory) {
 			_.each(chatHistory, function(element, index){
 				var msgBody = element.body;
 				var msg = utils.getDataByPath(msgBody, 'bodies.0');
@@ -558,16 +515,16 @@ easemobim.channel = function ( config ) {
 						case 'img':
 							msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
 							msg.to = msgBody.to;
-							me.sendImgMsg(msg, true);
+							me.channel.sendImg(msg, true);
 							break;
 						case 'file':
 							msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
 							msg.to = msgBody.to;
 							msg.filesize = msg.file_length;
-							me.sendFileMsg(msg, true);
+							me.channel.sendFile(msg, true);
 							break;
 						case 'txt':
-							me.sendTextMsg(msg.msg, true);
+							me.channel.sendText(msg.msg, true);
 							break;
 					}
 				}
