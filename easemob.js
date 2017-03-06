@@ -53,22 +53,6 @@
 			}
 			else{}
 		}
-		, siblings: function ( currentNode, classFilter ) {
-			if ( !currentNode || !currentNode.parentNode ) {
-				return null;
-			}
-			var nodes = currentNode.parentNode.childNodes,
-				result = [];
-
-			for ( var d = 0, len = nodes.length; d < len; d++ ) {
-				if ( nodes[d].nodeType === 1 && nodes[d] != currentNode ) {
-					if ( classFilter && this.hasClass(nodes[d], classFilter) ) {
-						result.push(nodes[d]);
-					}
-				}
-			}
-			return result;
-		}
 		, insertBefore: function ( parentNode, newDom, curDom ) {
 			if ( parentNode && newDom ) {
 				if ( parentNode.childNodes.length === 0 ) {
@@ -223,7 +207,7 @@
 		, toggleClass: function(target, className, stateValue) {
 			var ifNeedAddClass;
 
-			if(!target || ! className) return;
+			if(!target || !className) return;
 
 			if(typeof stateValue !== 'undefined'){
 				ifNeedAddClass = stateValue;
@@ -252,11 +236,7 @@
 					// path 遍历完了，返回当前值
 					return currentObj;
 				}
-				else if (
-					currentObj	// 过滤 null
-					&& typeof currentObj === "object"
-					&& currentObj.hasOwnProperty(prop)
-				){
+				else if (typeof currentObj === 'object' && currentObj !== null){
 					// 正常遍历path，递归调用
 					currentObj = currentObj[prop];
 					return seek();
@@ -347,8 +327,8 @@
 			if ( !url ) return returnValue;
 
 			url = url.replace(/^(https?:)?\/\/?/, '');
-			var isKefuAvatar = url.indexOf('img-cn') > 0 ? true : false;
-			var ossImg = url.indexOf('ossimages') > 0 ? true : false;
+			var isKefuAvatar = ~url.indexOf('img-cn');
+			var ossImg = ~url.indexOf('ossimages');
 
 			return isKefuAvatar && !ossImg ? domain + '/ossimages/' + url : '//' + url;
 		}
@@ -687,11 +667,11 @@ easemobim.notify = function () {
  * title滚动
  */
 easemobim.titleSlide = function () {
-	var newTitle = '新消息提醒',
-		titleST = 0,
-		originTitle = document.title,
-		tempArr = (originTitle + newTitle).split(''),
-		word;
+	var newTitle = '新消息提醒';
+	var titleST = 0;
+	var originTitle = document.title;
+	var tempArr = (originTitle + newTitle).split('');
+	var word;
 
 	easemobim.titleSlide = {
 		stop: function () {
@@ -975,7 +955,8 @@ easemobim.titleSlide = function () {
 			wechatAuth: this.config.wechatAuth,
 			hideKeyboard: this.config.hideKeyboard,
 			eventCollector: this.config.eventCollector,
-			resources: this.config.resources
+			resources: this.config.resources,
+			offDutyWord: this.config.offDutyWord
 		};
 
 		// todo: 写成自动配置
@@ -984,7 +965,6 @@ easemobim.titleSlide = function () {
 		this.config.to && (destUrl.to = this.config.to);
 		this.config.xmppServer && (destUrl.xmppServer = this.config.xmppServer);
 		this.config.restServer && (destUrl.restServer = this.config.restServer);
-		this.config.offDutyWord && (destUrl.offDutyWord = this.config.offDutyWord);
 		this.config.offDutyType && (destUrl.offDutyType = this.config.offDutyType);
 		this.config.language && (destUrl.language = this.config.language);
 		this.config.appid && (destUrl.appid = this.config.appid);
@@ -1002,7 +982,9 @@ easemobim.titleSlide = function () {
 		this.url = utils.updateAttribute(this.url, destUrl, config.path);
 
 		if ( !this.config.user.username ) {
-			// [to + ] tenantId [ + emgroup]
+			// 从cookie里取用户名
+			// keyName = [to + ] tenantId [ + emgroup]
+			this.config.isUsernameFromCookie = true;
 			this.config.user.username = utils.get(
 				(this.config.to || '') + this.config.tenantId + (this.config.emgroup || '')
 			);
@@ -1151,7 +1133,7 @@ easemobim.titleSlide = function () {
 	'use strict';
 	var utils = easemobim.utils;
 	easemobim.config = easemobim.config || {};
-	easemobim.version = '43.12.024';
+	easemobim.version = '43.14.000';
 	easemobim.tenants = {};
 
 	var DEFAULT_CONFIG = {

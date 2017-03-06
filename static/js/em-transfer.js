@@ -23,6 +23,7 @@
 		var error = options.error || EMPTYFN;
 		var xhr = _createStandardXHR () || _createActiveXHR();
 		xhr.onreadystatechange = function () {
+			var json;
 			if( xhr.readyState === 4 ){
 				var status = xhr.status || 0;
 				if ( status === 200 ) {
@@ -32,7 +33,7 @@
 					}
 					if ( dataType === 'json' ) {
 						try {
-							var json = JSON.parse(xhr.responseText);
+							json = JSON.parse(xhr.responseText);
 							suc(json,xhr);
 						} catch ( e ) {}
 						return;
@@ -42,7 +43,7 @@
 				} else {
 					if ( dataType=='json'){
 						try{
-							var json = JSON.parse(xhr.responseText);
+							json = JSON.parse(xhr.responseText);
 							error(json, xhr, '服务器返回错误信息');
 						} catch ( e ) {
 							error(xhr.responseText,xhr, '服务器返回错误信息');
@@ -432,6 +433,21 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 						+ tenantId,
 					msg: msg,
 					type: 'POST'
+				}));
+				break;
+			case 'getSessionQueueId':
+				var visitorUsername = msg.data.visitorUsername;
+				easemobim.emajax(createObject({
+					url:'/v1/visitors/'+visitorUsername+'/waitings/sessions',
+					msg: msg,
+					type: 'GET'
+				}));
+				break;
+			case 'getWaitListNumber':
+				easemobim.emajax(createObject({
+					url:'/v1/visitors/waitings/data',
+					msg: msg,
+					type: 'GET'
 				}));
 				break;
 			default:
