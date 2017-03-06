@@ -228,7 +228,7 @@
 						&& me.getHistory();
 
 						//待接入人数显示
-						em.waitListNumber.start()
+						me.waitListNumber.start()
 					}
 					else {
 						// 设置下班时间展示的页面
