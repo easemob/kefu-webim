@@ -226,6 +226,9 @@
 						!me.chatWrapper.getAttribute('data-getted')
 						&& !config.isNewUser
 						&& me.getHistory();
+
+						//待接入人数
+						me.waitListNumber.start();
 					}
 					else {
 						// 设置下班时间展示的页面
