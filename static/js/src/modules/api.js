@@ -254,6 +254,21 @@
 					type: 'POST'
 				}));
 				break;
+			case 'getSessionQueueId':
+				var visitorUsername = msg.data.visitorUsername;
+				easemobim.emajax(createObject({
+					url:'/v1/visitors/'+visitorUsername+'/waitings/sessions',
+					msg: msg,
+					type: 'GET'
+				}));
+				break;
+			case 'getWaitListNumber':
+				easemobim.emajax(createObject({
+					url:'/v1/visitors/waitings/data',
+					msg: msg,
+					type: 'GET'
+				}));
+				break;
 			default:
 				break;
 		}
