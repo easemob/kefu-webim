@@ -48,6 +48,7 @@
 
 			//没绑定user直接取cookie
 			if (!utils.query('user')) {
+				config.isUsernameFromCookie = true;
 				config.user = {
 					username: utils.get('root' + config.tenantId + config.emgroup),
 					password: '',
@@ -388,4 +389,27 @@
 		}
 	};
 
+	easemobim.reCreateImUser = _.once(function(){
+		api('createVisitor', {
+			orgName: config.orgName,
+			appName: config.appName,
+			imServiceNumber: config.toUser,
+			tenantId: config.tenantId
+		}, function(msg) {
+			config.isNewUser = true;
+			config.user.username = msg.data.userId;
+			config.user.password = msg.data.userPassword;
+			if (utils.isTop) {
+				utils.set('root' + config.tenantId + config.emgroup, config.user.username);
+			} else {
+				transfer.send({
+					event: 'setUser', data: {
+						username: config.user.username,
+						group: config.user.emgroup
+					}
+				}, window.transfer.to);
+			}
+			me.open();
+		});
+	});
 }(window, undefined));

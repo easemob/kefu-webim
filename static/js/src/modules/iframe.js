@@ -288,7 +288,9 @@
 		this.url = utils.updateAttribute(this.url, destUrl, config.path);
 
 		if ( !this.config.user.username ) {
-			// [to + ] tenantId [ + emgroup]
+			// 从cookie里取用户名
+			// keyName = [to + ] tenantId [ + emgroup]
+			this.config.isUsernameFromCookie = true;
 			this.config.user.username = utils.get(
 				(this.config.to || '') + this.config.tenantId + (this.config.emgroup || '')
 			);
