@@ -6,10 +6,13 @@
 	easemobim.chat = function ( config ) {
 		var utils = easemobim.utils;
 		var _const = easemobim._const;
+		var api = easemobim.api;
 
 		// todo: 把dom都移到里边
 		var doms = {
 			agentStatusText: document.querySelector('.em-header-status-text'),
+			//待接入排队人数显示
+			agentWaitNumber: document.querySelector('.em-header-status-text-queue-number'),
 			agentStatusSymbol: document.getElementById('em-widgetAgentStatus'),
 			nickname: document.querySelector('.em-widgetHeader-nickname'),
 			imgInput: document.querySelector('.upload-img-container'),
@@ -172,7 +175,8 @@
 						var data = msg.data || {};
 						_.each([
 							'audioVideo',
-							'msgPredictEnable'
+							'msgPredictEnable',
+							'waitListNumberEnable'
 						], function(key){
 							grayList[key] = _.contains(data[key], +config.tenantId);
 						});
@@ -222,6 +226,9 @@
 						!me.chatWrapper.getAttribute('data-getted')
 						&& !config.isNewUser
 						&& me.getHistory();
+
+						// 待接入排队人数显示
+						me.waitListNumber.start();
 					}
 					else {
 						// 设置下班时间展示的页面
@@ -482,7 +489,72 @@
 				doms.agentStatusSymbol.className = 'hide';
 				doms.agentStatusText.innerText = '';
 			}
-			, updateAgentStatus: function () {
+			, waitListNumber: (function(){
+
+				var isStarted = false;
+				var timer = null;
+				var prevTime = 0;
+
+				function _start() {
+					if (!config.grayList.waitListNumberEnable) return;
+
+					isStarted = true;
+					// 保证当前最多只有1个timer
+					// 每次调用start都必须重新获取queueId
+					clearInterval(timer);
+					api('getSessionQueueId', {
+						tenantId: config.tenantId,
+						visitorUsername: config.user.username,
+						techChannelInfo: config.orgName + '%23' + config.appName + '%23' + config.toUser
+					}, function(resp) {
+						var nowData = resp.data.entity;
+						var queueId;
+						var sessionId;
+
+						if (nowData && nowData.state === 'Wait') {
+							queueId = nowData.queueId;
+							sessionId = nowData.serviceSessionId;
+							// 避免请求在 轮询停止以后回来 而导致误开始
+							// todo: use promise to optimize it
+							if (isStarted) {
+								timer = setInterval(function() {
+									getWaitNumber(queueId, sessionId);
+								}, 1000);
+							}
+						}
+					});
+				}
+
+				function getWaitNumber(queueId, sessionId) {
+					api('getWaitListNumber', {
+						tenantId: config.tenantId,
+						queueId: queueId,
+						serviceSessionId: sessionId
+					}, function(resp) {
+						var nowData = resp.data.entity;
+						if (nowData.visitorUserWaitingNumber === 'no') {
+							utils.addClass(doms.agentWaitNumber, 'hide');
+						}
+						else if (nowData.visitorUserWaitingTimestamp > prevTime) {
+							prevTime = nowData.visitorUserWaitingTimestamp;
+							utils.removeClass(doms.agentWaitNumber, 'hide');
+							doms.agentWaitNumber.querySelector('label').innerHTML = nowData.visitorUserWaitingNumber;
+						}
+						else {}
+					});
+				}
+				function _stop() {
+					clearInterval(timer);
+					prevTime = 0;
+					isStarted = false;
+					utils.addClass(doms.agentWaitNumber, 'hide');
+				}
+				return {
+					start: _start,
+					stop: _stop
+				};
+			}()),
+			updateAgentStatus: function() {
 				var me = this;
 
 				if ( !config.agentUserId || !config.nickNameOption ) {
