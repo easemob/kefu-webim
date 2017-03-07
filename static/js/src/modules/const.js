@@ -45,7 +45,9 @@
 			'商务风格': 'theme-10'
 		},
 		IM: {
+			WEBIM_CONNCTION_OPEN_ERROR: 1,
 			WEBIM_CONNCTION_AUTH_ERROR: 2,
+	        WEBIM_CONNCTION_AJAX_ERROR: 17,
 			WEBIM_CONNCTION_CALLBACK_INNER_ERROR: 31
 		},
 		// 超时未收到 kefu-ack 启用第二通道发消息

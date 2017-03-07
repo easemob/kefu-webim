@@ -45,15 +45,16 @@
 				config.emgroup = utils.query('emgroup');
 			}
 
-
+			var username = utils.query('user');
+			if (username) config.isUsernameFromCookie = true;
 			//没绑定user直接取cookie
-			if (!utils.query('user')) {
+			if (!username) {
 				config.user = {
 					username: utils.get('root' + config.tenantId + config.emgroup),
 					password: '',
 					token: ''
 				};
-			} else if (!config.user || (config.user.username && config.user.username !== utils.query('user'))) {
+			} else if (!config.user || (config.user.username && config.user.username !== username)) {
 				config.user = {
 					username: '',
 					password: '',
@@ -388,4 +389,27 @@
 		}
 	};
 
+	easemobim.reCreateImUser = _.once(function(){
+		api('createVisitor', {
+			orgName: config.orgName,
+			appName: config.appName,
+			imServiceNumber: config.toUser,
+			tenantId: config.tenantId
+		}, function(msg) {
+			config.isNewUser = true;
+			config.user.username = msg.data.userId;
+			config.user.password = msg.data.userPassword;
+			if (utils.isTop) {
+				utils.set('root' + config.tenantId + config.emgroup, config.user.username);
+			} else {
+				transfer.send({
+					event: 'setUser', data: {
+						username: config.user.username,
+						group: config.user.emgroup
+					}
+				}, window.transfer.to);
+			}
+			chat.open();
+		});
+	});
 }(window, undefined));
