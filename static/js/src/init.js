@@ -45,21 +45,30 @@
 				config.emgroup = utils.query('emgroup');
 			}
 
+			config.user = config.user || {};
+			var usernameFromUrl = utils.query('user');
+			var usernameFromCookie = utils.get('root' + config.tenantId + config.emgroup);
+			var usernameFromConfig = config.user.username;
 
-			//没绑定user直接取cookie
-			if (!utils.query('user')) {
-				config.user = {
-					username: utils.get('root' + config.tenantId + config.emgroup),
-					password: '',
-					token: ''
-				};
-			} else if (!config.user || (config.user.username && config.user.username !== utils.query('user'))) {
-				config.user = {
-					username: '',
-					password: '',
-					token: ''
-				};
+			if (usernameFromUrl && usernameFromUrl === usernameFromConfig){
+				// H5模式下，考虑到多租户情景或者是localstorage没清理
+				// 故仅当url和localstorage中的用户名匹配时才认为指定的用户有效
+				// 此时什么都不用做，自动使用从localstorage里取出的 username 和 password
 			}
+			else if (usernameFromUrl){
+				// 用户不匹配时，以url中的用户名为准
+				config.user = {username: usernameFromUrl};
+			}
+			else if (usernameFromCookie){
+				// 未指定用户时，从cookie中取得用户名
+				config.user = {username: usernameFromCookie};
+				config.isUsernameFromCookie = true;
+			}
+			else {
+				// 以上均不匹配时，需要重新创建用户
+				config.user = {};
+			}
+
 			chat = easemobim.chat(config);
 			initUI(config, initAfterUI);
 		} else {
@@ -388,4 +397,27 @@
 		}
 	};
 
+	easemobim.reCreateImUser = _.once(function(){
+		api('createVisitor', {
+			orgName: config.orgName,
+			appName: config.appName,
+			imServiceNumber: config.toUser,
+			tenantId: config.tenantId
+		}, function(msg) {
+			config.isNewUser = true;
+			config.user.username = msg.data.userId;
+			config.user.password = msg.data.userPassword;
+			if (utils.isTop) {
+				utils.set('root' + config.tenantId + config.emgroup, config.user.username);
+			} else {
+				transfer.send({
+					event: 'setUser', data: {
+						username: config.user.username,
+						group: config.user.emgroup
+					}
+				}, window.transfer.to);
+			}
+			chat.open();
+		});
+	});
 }(window, undefined));

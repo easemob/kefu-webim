@@ -523,11 +523,23 @@ easemobim.channel = function ( config ) {
 							me.open();
 						}, 2000));
 					}
+					else if (
+						e.type === _const.IM.WEBIM_CONNCTION_OPEN_ERROR
+						&& e.data.type === _const.IM.WEBIM_CONNCTION_AJAX_ERROR
+						&& /user not found/.test(e.data.data)
+						&& config.isUsernameFromCookie
+					){
+						// 偶发创建用户失败，但依然可以获取到密码的情况，此时需要重新创建用户
+						// 仅当用户名从cookie中取得时才会重新创建用户，客户集成指定用户错误不管
+						console.warn(e.data);
+						easemobim.reCreateImUser();
+					}
 					// im sdk 会捕获 receiveMsg 回调中的异常，需要把出错信息打出来
 					else if (e.type === _const.IM.WEBIM_CONNCTION_CALLBACK_INNER_ERROR){
 						console.error(e.data);
 					}
 					else {
+						console.warn(e.data);
 						//me.conn.stopHeartBeat(me.conn);
 						typeof config.onerror === 'function' && config.onerror(e);
 					}
