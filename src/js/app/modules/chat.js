@@ -466,10 +466,6 @@
 					avatar: config.tenantAvatar
 				});
 			},
-			getMsgid: function (msg) {
-				return utils.getDataByPath(msg, 'ext.weichat.msgId')
-					|| utils.getDataByPath(msg, 'msgId');
-			},
 			startToGetAgentStatus: function () {
 				var me = this;
 

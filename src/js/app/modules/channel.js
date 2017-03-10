@@ -218,23 +218,18 @@ easemobim.channel = function (config) {
 		handleReceive: function (msg, type, isHistory) {
 			var str;
 			var message;
-			var ackForMsgId = utils.getDataByPath(msg, 'ext.weichat.ack_for_msg_id');
+			var msgId = msg.msgId || utils.getDataByPath(msg, 'ext.weichat.msgId');
 
-
-			//如果是ack消息，清除ack对应的site item，返回
-			if (ackForMsgId) {
-				_clearTS(ackForMsgId);
+			if (receiveMsgSite.get(msgId)) {
+				// 重复消息不处理
 				return;
 			}
-
-
-			var msgid = me.getMsgid(msg);
-
-			if (receiveMsgSite.get(msgid)) {
-				return;
+			else if (msgId){
+				// 消息加入去重列表
+				receiveMsgSite.set(msgId, 1);
 			}
 			else {
-				msgid && receiveMsgSite.set(msgid, 1);
+				// 没有msgId忽略，继续处理（KEFU-ACK消息没有msgId）
 			}
 
 			//绑定访客的情况有可能会收到多关联的消息，不是自己的不收
@@ -261,6 +256,20 @@ easemobim.channel = function (config) {
 			case 'emoji':
 				message = new WebIM.message('txt');
 				message.set({ msg: isHistory ? msg.data : me.getSafeTextValue(msg) });
+				break;
+			case 'cmd':
+				var action = msg.action;
+				if (action === 'KF-ACK'){
+					// 清除ack对应的site item
+					_clearTS(msg.ext.weichat.ack_for_msg_id);
+					return;
+				}
+				else if (action === 'KEFU_MESSAGE_RECALL'){
+					// 撤回消息命令
+					var recallMsgId = msg.ext.weichat.recall_msg_id;
+					var dom = document.getElementById(recallMsgId)
+					utils.$Remove(dom);
+				}
 				break;
 			case 'img':
 				message = new WebIM.message('img');
@@ -436,6 +445,8 @@ easemobim.channel = function (config) {
 				}
 				me.appendDate(new Date().getTime(), msg.from);
 				me.resetSpan();
+				// 	给收到的消息加id，用于撤回消息
+				message.id = msgId;
 				me.appendMsg(msg.from, msg.to, message);
 				me.scrollBottom(50);
 
@@ -564,7 +575,7 @@ easemobim.channel = function (config) {
 				}
 				//agents' msg
 				else if (utils.getDataByPath(msgBody, 'ext.weichat.ctrlType') === 'inviteEnquiry') {
-					// 满意度调查的消息，第二通道会重发此消息，需要msgid去重
+					// 满意度调查的消息，第二通道会重发此消息，需要msgId去重
 					msgBody.msgId = element.msgId;
 					me.receiveMsg(msgBody, '', true);
 				}
@@ -576,7 +587,8 @@ easemobim.channel = function (config) {
 					me.receiveMsg(msgBody, '', true);
 				}
 				else if (utils.getDataByPath(msgBody, 'ext.weichat.recall_flag') === 1) {
-					// 已撤回消息，不展示
+					// 已撤回消息，不处理
+					return;
 				}
 				else {
 					me.receiveMsg({
@@ -595,7 +607,6 @@ easemobim.channel = function (config) {
 					msg.type !== 'cmd'
 					&& (msg.type !== 'txt' || msg.msg)
 					&& !receiveMsgSite.get(element.msgId)
-					&& (utils.getDataByPath(msgBody, 'ext.weichat.recall_flag') !== 1)
 				) {
 					me.appendDate(element.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
 				}

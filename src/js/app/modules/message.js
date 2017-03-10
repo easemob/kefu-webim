@@ -85,7 +85,7 @@
 	}
 
 	function genDomFromMsg(msg, isReceived) {
-		var id = this.id;
+		var id = msg.id;
 		var type = msg.type;
 		var html = '';
 		var stack = [];
