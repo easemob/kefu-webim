@@ -298,7 +298,13 @@
 		typeof this.config.ticket !== 'undefined' && this.config.ticket !== '' && (destUrl.ticket = this.config.ticket);
 
 
-		this.url = utils.updateAttribute(this.url, destUrl, config.path);
+		// benz patch
+		if(config.h5Origin){
+			this.url = easemobim.utils.updateAttribute(null, destUrl, config.path.replace(config.domain, config.h5Origin));
+		}
+		else {
+			this.url = easemobim.utils.updateAttribute(this.url, destUrl, config.path);
+		}
 
 		if (!this.config.user.username) {
 			// 从cookie里取用户名

@@ -147,6 +147,22 @@
 			a.setAttribute('href', iframe.url);
 			a.setAttribute('target', '_blank');
 
+			// benz patch
+			if(easemobim.config.h5Origin){
+				// 避免缓存配置
+				reset();
+				utils.extend(_config, config);
+				a.setAttribute(
+					'href',
+					iframe.url + '&ext='
+						+ easemobim.utils.code.encode(
+							encodeURIComponent(JSON.stringify({
+								ext: _config.extMsg,
+								visitor: _config.visitor
+							}))
+					)
+				)
+			}
 		}
 	};
 

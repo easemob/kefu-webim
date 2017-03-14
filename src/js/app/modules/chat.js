@@ -101,6 +101,22 @@
 						utils.clearStore(config.tenantId + config.emgroup + 'visitor');
 					}
 
+					// benz h5 patch get ext
+					var benz_h5_ext = config.ext;
+					if (benz_h5_ext) {
+						if (_.isArray(benz_h5_ext)) {
+							_.each(benz_h5_ext, function (elem) {
+								me.channel.sendTextMsg('', false, {
+									ext: elem
+								});
+							});
+						} else {
+							me.channel.sendTextMsg('', false, {
+								ext: benz_h5_ext
+							});
+						}
+					}
+
 					//get ext
 					var ext = utils.getStore(prefix + 'ext');
 					var parsed;

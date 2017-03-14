@@ -41,6 +41,18 @@
 			config.offDutyWord = decodeURIComponent(utils.query('offDutyWord'));
 			config.language = utils.query('language') || 'zh_CN';
 			config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket')); //true default
+ 
+            // benz patch
+			var benz_parsed;
+			try {
+				benz_parsed = JSON.parse(decodeURIComponent(utils.code.decode(utils.query(
+					'ext'))));
+			} catch (e) {}
+			if (benz_parsed) {
+				config.visitor = benz_parsed.visitor;
+				config.ext = benz_parsed.ext;
+			}
+
 			try {
 				config.emgroup = decodeURIComponent(utils.query('emgroup'));
 			}
