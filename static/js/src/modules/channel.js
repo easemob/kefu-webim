@@ -354,6 +354,7 @@ easemobim.channel = function ( config ) {
 						break;
 					// 会话结束
 					case 'ServiceSessionClosedEvent':
+					// todo: use promise to opt this code
 						me.hasSentAttribute = false;
 					// todo: use promise to opt this code
 						me.waitListNumber.stop();

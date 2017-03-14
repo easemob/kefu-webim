@@ -247,7 +247,7 @@
 .em-widget-agent-status.offline {
 	background-color: #B2B8BA;
 }
-.em-bar-face-wrapper {
+.em-bar-emoji-wrapper {
 	position: fixed;
 	z-index: 1;
 	bottom: 144px;
@@ -257,33 +257,32 @@
 	border-radius: 4px;
 	box-shadow: 0 4px 5px rgba(0,0,0,.1);
 	transform: translate3d(0,0,0);
-	.em-bar-face-container {
+	.em-bar-emoji-container {
 		z-index: 2;
 		position: relative;
 		background-color: white;
 		border-radius: 4px;
 		padding-bottom: 10px;
+		.em-bar-emoji-bg {
+			display: inline-block;
+			border-radius: 2px;
+			text-align: center;
+			margin: 10px 10px 0 0;
+			.emoji {
+				display: inline-block;
+				width: 24px;
+				height: 24px;
+				vertical-align: middle;
+				&:hover {
+					cursor: pointer;
+				}
+			}
+		}
 	}
 }
-.em-widget-msg-container .emoji,
-.em-widget-msg-container .chat-face-all {
+.em-widget-msg-container .emoji {
 	width: 24px;
 	height: 24px;
-}
-.em-bar-face-bg {
-	display: inline-block;
-	border-radius: 2px;
-	text-align: center;
-	margin: 10px 10px 0 0;
-}
-.em-bar-face-img:hover {
-	cursor: pointer;
-}
-.em-bar-face-img {
-	display: inline-block;
-	width: 24px;
-	height: 24px;
-	vertical-align: middle;
 }
 .em-widget-paste-wrapper {
 	text-align: center;

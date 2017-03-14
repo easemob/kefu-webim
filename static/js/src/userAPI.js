@@ -130,7 +130,7 @@
 				utils.setStore(prefix + 'visitor', JSON.stringify(_config.visitor));
 			}
 
-
+			// todo: make this part more readable
 			var a = window.event.srcElement || window.event.target,
 				counter = 5;
 

@@ -1,10 +1,6 @@
 .em-widget-chat {
 	padding-bottom: 20px;
 	overflow: hidden;
-
-	.icon-broken-pic {
-		color: #999;
-	}
 	&:after {
 		content: '';
 		display: block;
@@ -13,21 +9,18 @@
 		overflow: hidden;
 	}
 }
-.em-widget-left {
+.em-widget-left,
+.em-widget-right {
 	float: left;
 	display: block;
 	text-decoration: none;
 	width: 98%;
 	text-align: left;
 	margin-top: 15px;
-
+}
+.em-widget-left {
 	.em-widget-msg-container {
 		background-color: white;
-	}
-	.em-widget-msg-menu {
-		overflow: hidden;
-		padding: 0;
-		background-color: rgb(251, 251, 251);
 	}
 	.em-widget-msg-wrapper {
 		float: left;
@@ -35,13 +28,6 @@
 	}
 }
 .em-widget-right {
-	float: right;
-	display: block;
-	text-decoration: none;
-	width: 98%;
-	text-align: left;
-	margin-top: 15px;
-
 	.em-widget-msg-container {
 		background-color: #e3ecfc;
 		float: right;
@@ -51,16 +37,6 @@
 		float: right;
 		margin-right: 12px;
 	}
-}
-.em-widget-msg-container img {
-	border-radius: 2px;
-	max-width: 190px;
-	word-wrap: break-word;
-	vertical-align: middle;
-}
-.em-widget-msg-container pre {
-	word-break: break-word;
-	white-space: pre-wrap;
 }
 .icon-corner-left {
 	z-index: 1;
@@ -93,79 +69,150 @@
 	text-align: left;
 	font-size: 13px;
 	border: 1px solid #e5e5e5;
-}
-.em-widget-msg-menu > p {
-	padding: 10px;
-	background-color: white;
-	border-bottom: 1px solid rgb(229, 229, 229);
-}
-// 文件消息
-.em-widget-msg-file {
-	.em-widget-msg-container {
+
+	// 图片消息、表情
+	img {
+		border-radius: 2px;
+		max-width: 190px;
+		word-wrap: break-word;
+		vertical-align: middle;
+	}
+	// 坏掉的图片
+	.icon-broken-pic {
+		color: #999;
+	}
+
+	// 文本消息
+	pre {
+		word-break: break-word;
+		white-space: pre-wrap;
+	}
+	// 文件消息
+	&.em-widget-msg-file {
 		position: relative;
 		padding: 0;
 		max-width: initial;
 		width: 200px;
 		height: 60px;
 		overflow: hidden;
-	}
-	.container-icon-attachment {
-		display: inline-block;
-		width: 52px;
-		height: 52px;
-		text-align: center;
-		float: left;
-		background-color: rgb(58, 164, 221);
-		border-radius: 2px;
-		margin: 4px;
-		color: #fff;
-	}
-	.container-icon-attachment:before {
-		font-size: 50px;
-		line-height: 50px;
-	}
-	.file-info {
-		display: inline-block;
-		overflow: hidden;
-		float: left;
-		width: 80px;
-		margin: 10px;
-		font-family: Arial, Helvetica, sans-serif;
-
-		p {
-			vertical-align: middle;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			width: 100%;
+		.container-icon-attachment {
+			display: inline-block;
+			width: 52px;
+			height: 52px;
+			text-align: center;
+			float: left;
+			background-color: rgb(58, 164, 221);
+			border-radius: 2px;
+			margin: 4px;
+			color: #fff;
+			&:before {
+				font-size: 50px;
+				line-height: 50px;
+			}
+		}
+		.file-info {
+			display: inline-block;
 			overflow: hidden;
+			float: left;
+			width: 80px;
+			margin: 10px;
+			font-family: Arial, Helvetica, sans-serif;
+			p {
+				vertical-align: middle;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				width: 100%;
+				overflow: hidden;
+				&.filename {
+					color: rgb(0, 0, 0);
+					font-size: 14px;
+				}
+				&.filesize {
+					line-height: 20px;
+					color: rgb(165, 165, 165);
+					font-size: 12px;
+				}
+			}
 		}
-		.filename {
-			color: rgb(0, 0, 0);
-			font-size: 14px;
-		}
-		.filesize {
-			line-height: 20px;
+		.container-icon-download {
 			color: rgb(165, 165, 165);
-			font-size: 12px;
+			display: inline-block;
+			text-decoration: none;
+			float: right;
+			text-align: center;
+			cursor: pointer;
+			line-height: 20px;
+			margin-top: 15px;
+			margin-right: 10px;
+			&:before {
+				font-size: 20px;
+			}
 		}
 	}
-	.container-icon-download {
-		color: rgb(165, 165, 165);
-		display: inline-block;
-		text-decoration: none;
-		float: right;
-		text-align: center;
-		cursor: pointer;
-		line-height: 20px;
-		margin-top: 15px;
-		margin-right: 10px;
+	// 菜单消息
+	&.em-widget-msg-list {
+		overflow: hidden;
+		padding: 0;
+		background-color: rgb(251, 251, 251);
+		> p {
+			padding: 10px;
+			background-color: white;
+			border-bottom: 1px solid rgb(229, 229, 229);
+		}
 	}
-	.container-icon-download:before {
-		font-size: 20px;
-	}
+
 }
 .em-widget-msg-wrapper {
 	position: relative;
+	.em-widget-msg-loading {
+		z-index: 1;
+		position: absolute;
+		left: -38px;
+		top: 0;
+		bottom: 0;
+		margin: auto;
+		width: 40px;
+		height: 40px;
+		overflow: hidden;
+	}
+	// 消息发送失败标志
+	.em-widget-msg-status {
+		position: absolute;
+		width: 86px;
+		height: 30px;
+		line-height: 30px;
+		left: -88px;
+		margin: auto;
+		top: 0;
+		bottom: 0;
+		cursor: pointer;
+
+		> i {
+			display: inline-block;
+			width: 30px;
+			height: 30px;
+			position: relative;
+
+			&:before {
+				color: red;
+			}
+			i {
+				position: absolute;
+				top: 0;
+				right: 0;
+
+				&:before {
+					color: white;
+				}
+			}
+		}
+		span {
+			line-height: 30px;
+			vertical-align: top;
+			display: inline-block;
+			color: #999;
+		}
+	}
 }
 .em-widget-loading {
 	position: relative;
@@ -174,60 +221,11 @@
 	overflow: hidden;
 	animation: em-widget-loading-frame 1s linear infinite;
 }
-.em-widget-msg-loading {
-	z-index: 1;
-	position: absolute;
-	left: -38px;
-	top: 0;
-	bottom: 0;
-	margin: auto;
-	width: 40px;
-	height: 40px;
-	overflow: hidden;
-}
 @keyframes em-widget-loading-frame {
 	from {
 		transform: rotate(0)
 	}
 	to {
 		transform: rotate(360deg)
-	}
-}
-// 消息发送失败标志
-.em-widget-msg-status {
-	position: absolute;
-	width: 86px;
-	height: 30px;
-	line-height: 30px;
-	left: -88px;
-	margin: auto;
-	top: 0;
-	bottom: 0;
-	cursor: pointer;
-
-	> i {
-		display: inline-block;
-		width: 30px;
-		height: 30px;
-		position: relative;
-
-		&:before {
-			color: red;
-		}
-		i {
-			position: absolute;
-			top: 0;
-			right: 0;
-
-			&:before {
-				color: white;
-			}
-		}
-	}
-	span {
-		line-height: 30px;
-		vertical-align: top;
-		display: inline-block;
-		color: #999;
 	}
 }

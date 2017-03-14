@@ -11,6 +11,7 @@
 			Other: ''
 		},
 
+		// todo: change the class name to icon-*
 		// 坐席状态，dom上的className值
 		agentStatusClassName: {
 			Idle: 'online',
@@ -23,6 +24,7 @@
 			Other: 'hide'
 		},
 
+		// todo: simplify this part
 		eventMessageText: {
 			TRANSFERING: '会话转接中，请稍候',
 			TRANSFER: '会话已被转接至其他客服',
