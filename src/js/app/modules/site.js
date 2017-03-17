@@ -1,4 +1,3 @@
-;
 (function () {
 	var site = function () {
 		this.list = {};
@@ -29,7 +28,6 @@
 	easemobim.site = site;
 }());
 
-;
 (function () {
 	var Polling = function (fn, interval) {
 		this.fn = fn;

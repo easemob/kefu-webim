@@ -1,4 +1,3 @@
-;
 (function () {
 	var getData = new easemobim.Transfer(null, 'api');
 

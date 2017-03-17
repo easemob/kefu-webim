@@ -1,4 +1,3 @@
-;
 (function (Polling, utils, api, _const) {
 	var POLLING_INTERVAL = 5000;
 

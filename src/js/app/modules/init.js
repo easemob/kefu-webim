@@ -1,4 +1,3 @@
-;
 (function (window, undefined) {
 	'use strict';
 
@@ -117,8 +116,6 @@
 	}
 
 	function initAfterUI(config) {
-		// chat = easemobim.chat(config);
-
 		config.base = location.protocol + config.domain;
 
 		//load modules
@@ -185,9 +182,13 @@
 			'hide', !config.minimum || utils.isTop
 		);
 
-		// 低版本浏览器不支持上传文件
+		// 低版本浏览器不支持上传文件/图片
 		utils.toggleClass(
 			document.querySelector('.em-widget-file'),
+			'hide', !WebIM.utils.isCanUploadFileAsync
+		);
+		utils.toggleClass(
+			document.querySelector('.em-widget-img'),
 			'hide', !WebIM.utils.isCanUploadFileAsync
 		);
 
@@ -208,18 +209,6 @@
 			document.querySelector('.em-widget-satisfaction'),
 			'hide', !config.satisfaction
 		);
-
-		// 不支持异步上传则加载swfupload
-		if (!WebIM.utils.isCanUploadFileAsync && WebIM.utils.hasFlash) {
-			var script = document.createElement('script');
-			script.onload = script.onreadystatechange = function () {
-				if (!this.readyState || this.readyState === 'loaded' || this.readyState === 'complete') {
-					easemobim.uploadShim(config, chat);
-				}
-			};
-			script.src = location.protocol + config.staticPath + '/js/swfupload/swfupload.min.js';
-			document.body.appendChild(script);
-		}
 	}
 
 	var chatEntry = {

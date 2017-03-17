@@ -158,7 +158,6 @@ gulp.task('combineJs', function() {
 			'src/js/app/modules/leaveMessage.js',
 			'src/js/app/modules/satisfaction.js',
 			'src/js/app/modules/imgView.js',
-			'src/js/app/modules/uploadShim.js',
 			'src/js/app/modules/wechat.js',
 			'src/js/app/modules/site.js',
 			'src/js/app/modules/channel.js',

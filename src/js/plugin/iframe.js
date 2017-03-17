@@ -1,4 +1,3 @@
-;
 (function (utils, _const) {
 	'use strict';
 
@@ -45,17 +44,21 @@
 	}
 
 	function _moveend() {
-		utils.off(document, 'mousemove', this.moveEv);
-		this.iframe.style.left = 'auto';
-		this.iframe.style.top = 'auto';
-		this.iframe.style.right = this.position.x + 'px';
-		this.iframe.style.bottom = this.position.y + 'px';
-		this.shadow.style.left = 'auto';
-		this.shadow.style.top = 'auto';
-		this.shadow.style.right = this.position.x + 'px';
-		this.shadow.style.bottom = this.position.y + 'px';
-		this.shadow.style.display = 'none';
-		this.iframe.style.display = 'block';
+		var me = this;
+		var iframe = me.iframe;
+		var shadow = me.shadow;
+
+		utils.off(document, 'mousemove', me.moveEv);
+		iframe.style.left = 'auto';
+		iframe.style.top = 'auto';
+		iframe.style.right = me.position.x + 'px';
+		iframe.style.bottom = me.position.y + 'px';
+		iframe.style.display = 'block';
+		shadow.style.left = 'auto';
+		shadow.style.top = 'auto';
+		shadow.style.right = me.position.x + 'px';
+		shadow.style.bottom = me.position.y + 'px';
+		shadow.style.display = 'none';
 	}
 
 	function _resize() {

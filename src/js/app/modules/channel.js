@@ -133,18 +133,13 @@ easemobim.channel = function (config) {
 				uploadError: function (error) {
 					setTimeout(function () {
 						//显示图裂，无法重新发送
-						if (!WebIM.utils.isCanUploadFileAsync) {
-							easemobim.swfupload && easemobim.swfupload.settings.upload_error_handler();
-						}
-						else {
-							var id = error.id;
-							var loading = document.getElementById(id + '_loading');
-							var msgWrap = document.querySelector('#' + id + ' .em-widget-msg-container');
+						var id = error.id;
+						var loading = document.getElementById(id + '_loading');
+						var msgWrap = document.querySelector('#' + id + ' .em-widget-msg-container');
 
-							msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
-							utils.addClass(loading, 'hide');
-							me.scrollBottom();
-						}
+						msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
+						utils.addClass(loading, 'hide');
+						me.scrollBottom();
 					}, 50);
 				},
 				uploadComplete: function () {
@@ -157,17 +152,13 @@ easemobim.channel = function (config) {
 				fail: function (id) {
 					utils.addClass(document.getElementById(id + '_loading'), 'hide');
 					utils.removeClass(document.getElementById(id + '_failed'), 'hide');
-				},
-				flashUpload: easemobim.flashUpload
+				}
 			});
 			if (!isHistory) {
 				me.setExt(msg);
 				me.conn.send(msg.body);
-
-				if (WebIM.utils.isCanUploadFileAsync) {
-					me.appendDate(new Date().getTime(), config.toUser);
-					me.appendMsg(config.user.username, config.toUser, msg);
-				}
+				me.appendDate(new Date().getTime(), config.toUser);
+				me.appendMsg(config.user.username, config.toUser, msg);
 			}
 			else {
 				me.appendMsg(config.user.username, file.to, msg, true);
@@ -267,7 +258,7 @@ easemobim.channel = function (config) {
 				else if (action === 'KEFU_MESSAGE_RECALL'){
 					// 撤回消息命令
 					var recallMsgId = msg.ext.weichat.recall_msg_id;
-					var dom = document.getElementById(recallMsgId)
+					var dom = document.getElementById(recallMsgId);
 					utils.$Remove(dom);
 				}
 				break;

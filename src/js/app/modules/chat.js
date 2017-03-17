@@ -1,4 +1,3 @@
-;
 (function () {
 	easemobim.chat = function (config) {
 		var utils = easemobim.utils;
@@ -724,44 +723,42 @@
 					|| '';
 			},
 			setOffline: function () {
-					switch (config.offDutyType) {
-					case 'none':
-						// 下班禁止留言、禁止接入会话
-						var word = config.offDutyWord || '现在是下班时间。';
+				switch (config.offDutyType) {
+				case 'none':
+					// 下班禁止留言、禁止接入会话
+					var word = config.offDutyWord || '现在是下班时间。';
 
-						// todo: move this code to fronter place
-						try {
-							word = decodeURIComponent(word);
-						}
-						catch (e) {}
-
-						var msg = new WebIM.message('txt');
-						msg.set({ msg: word });
-						// 显示下班提示语
-						this.appendMsg(config.toUser, config.user.username, msg);
-						// 禁用工具栏
-						utils.addClass(easemobim.send, 'em-widget-send-disable');
-						// 发送按钮去掉连接中字样
-						easemobim.sendBtn.innerHTML = '发送';
-						break;
-					default:
-						// 只允许留言此时无法关闭留言页面
-						easemobim.leaveMessage.show(!config.isInOfficehours);
-						break;
+					// todo: move this code to fronter place
+					try {
+						word = decodeURIComponent(word);
 					}
+					catch (e) {}
+
+					var msg = new WebIM.message('txt');
+					msg.set({ msg: word });
+					// 显示下班提示语
+					this.appendMsg(config.toUser, config.user.username, msg);
+					// 禁用工具栏
+					utils.addClass(easemobim.send, 'em-widget-send-disable');
+					// 发送按钮去掉连接中字样
+					easemobim.sendBtn.innerHTML = '发送';
+					break;
+				default:
+					// 只允许留言此时无法关闭留言页面
+					easemobim.leaveMessage.show(!config.isInOfficehours);
+					break;
 				}
-				//close chat window
-				,
+			},
+			//close chat window
 			close: function () {
-					this.opened = false;
+				this.opened = false;
 
-					if (!config.hide) {
-						utils.addClass(easemobim.imChat, 'hide');
-						utils.removeClass(easemobim.imBtn, 'hide');
-					}
+				if (!config.hide) {
+					utils.addClass(easemobim.imChat, 'hide');
+					utils.removeClass(easemobim.imBtn, 'hide');
 				}
-				//show chat window
-				,
+			},
+			//show chat window
 			show: function () {
 				var me = this;
 
@@ -775,7 +772,8 @@
 					&& easemobim.textarea.offsetHeight > 0
 				) {
 					easemobim.textarea.focus();
-				}!utils.isTop && transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
+				}
+				!utils.isTop && transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
 			},
 			appendDate: function (date, to, isHistory) {
 				var chatWrapper = doms.chatWrapper;
@@ -1070,9 +1068,6 @@
 				utils.on(easemobim.sendImgBtn, 'click', function () {
 					if (!me.readyHandled) {
 						me.errorPrompt('正在连接中...');
-					}
-					else if (!WebIM.utils.isCanUploadFileAsync) {
-						me.errorPrompt('当前浏览器需要安装flash发送文件');
 					}
 					else {
 						doms.imgInput.click();

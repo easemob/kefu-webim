@@ -1,4 +1,3 @@
-;
 (function () {
 	var wechat = /MicroMessenger/.test(navigator.userAgent);
 	var wechatAuth = easemobim.utils.query('wechatAuth');

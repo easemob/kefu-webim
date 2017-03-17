@@ -1,4 +1,3 @@
-;
 (function () {
 	window.easemobim = window.easemobim || {};
 
@@ -170,17 +169,16 @@
 			// 触发事件，对于ie8只支持原生事件，不支持自定义事件
 			,
 		trigger: function (element, eventName) {
-				if (document.createEvent) {
-					var ev = document.createEvent('HTMLEvents');
-					ev.initEvent(eventName, true, false);
-					element.dispatchEvent(ev);
-				}
-				else {
-					element.fireEvent('on' + eventName);
-				}
+			if (document.createEvent) {
+				var ev = document.createEvent('HTMLEvents');
+				ev.initEvent(eventName, true, false);
+				element.dispatchEvent(ev);
 			}
-			// todo： 去掉 使用 _.extend 替代
-			,
+			else {
+				element.fireEvent('on' + eventName);
+			}
+		},
+		// todo： 去掉 使用 _.extend 替代
 		extend: function (object, extend) {
 			for (var o in extend) {
 				if (extend.hasOwnProperty(o)) {
@@ -257,9 +255,8 @@
 		},
 		isAndroid: /android/i.test(navigator.useragent),
 		isMobile: _isMobile,
-		click: _isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click'
-			// detect if the browser is minimized
-			,
+		click: _isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click',
+		// detect if the browser is minimized
 		isMin: function () {
 			return document.visibilityState === 'hidden' || document.hidden;
 		},
@@ -308,35 +305,34 @@
 			return isKefuAvatar && !ossImg ? domain + '/ossimages/' + url : '//' + url;
 		},
 		getConfig: function (key) { //get config from current script
-				var src;
-				var obj = {};
-				var scripts = document.scripts;
+			var src;
+			var obj = {};
+			var scripts = document.scripts;
 
-				for (var s = 0, l = scripts.length; s < l; s++) {
-					if (~scripts[s].src.indexOf('easemob.js')) {
-						src = scripts[s].src;
-						break;
-					}
+			for (var s = 0, l = scripts.length; s < l; s++) {
+				if (~scripts[s].src.indexOf('easemob.js')) {
+					src = scripts[s].src;
+					break;
 				}
-
-				if (!src) {
-					return { json: obj, domain: '' };
-				}
-
-				var tmp;
-				var idx = src.indexOf('?');
-				var sIdx = ~src.indexOf('//') ? src.indexOf('//') : 0;
-				var domain = src.slice(sIdx, src.indexOf('/', sIdx + 2));
-				var arr = src.slice(idx + 1).split('&');
-
-				for (var i = 0, len = arr.length; i < len; i++) {
-					tmp = arr[i].split('=');
-					obj[tmp[0]] = tmp.length > 1 ? decodeURIComponent(tmp[1]) : '';
-				}
-				return { json: obj, domain: domain };
 			}
-			// 向url里边添加或更新query params
-			,
+
+			if (!src) {
+				return { json: obj, domain: '' };
+			}
+
+			var tmp;
+			var idx = src.indexOf('?');
+			var sIdx = ~src.indexOf('//') ? src.indexOf('//') : 0;
+			var domain = src.slice(sIdx, src.indexOf('/', sIdx + 2));
+			var arr = src.slice(idx + 1).split('&');
+
+			for (var i = 0, len = arr.length; i < len; i++) {
+				tmp = arr[i].split('=');
+				obj[tmp[0]] = tmp.length > 1 ? decodeURIComponent(tmp[1]) : '';
+			}
+			return { json: obj, domain: domain };
+		},
+		// 向url里边添加或更新query params
 		updateAttribute: function (link, attr, path) {
 			var url = link || location.protocol + path + '/im.html?tenantId=';
 

@@ -1,4 +1,3 @@
-;
 (function (utils) {
 	easemobim.leaveMessage = function (chat, tenantId) {
 
