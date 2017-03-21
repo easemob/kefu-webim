@@ -147,7 +147,7 @@ gulp.task('combineJs', function() {
 			'src/js/app/sdk/webim.config.js',
 			'src/js/app/sdk/websdk-1.4.6.js',
 			'src/js/app/sdk/webrtc-1.4.4.js',
-			'src/js/app/modules/polyfill.js',
+			'src/js/common/polyfill.js',
 			'src/js/common/utils.js',
 			'src/js/common/const.js',
 			'src/js/common/ajax.js',
@@ -174,6 +174,7 @@ gulp.task('combineJs', function() {
 		.pipe(gulp.dest('static/js/'));
 
 	var ejs = gulp.src([
+			'src/js/common/polyfill.js',
 			'src/js/common/utils.js',
 			'src/js/common/const.js',
 			'src/js/common/transfer.js',

@@ -778,9 +778,8 @@
 			appendDate: function (date, to, isHistory) {
 				var chatWrapper = doms.chatWrapper;
 				var dom = document.createElement('div');
-				var fmt = 'M月d日 hh:mm';
 
-				dom.innerHTML = new Date(date).format(fmt);
+				dom.innerHTML = utils.formatDate(date);
 				utils.addClass(dom, 'em-widget-date');
 
 				if (!isHistory) {
