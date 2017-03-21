@@ -52,8 +52,6 @@
 				this.conn = this.channel.getConnection();
 				//sroll bottom timeout stamp
 				this.scbT = 0;
-				//unread message count
-				this.msgCount = 0;
 				//just show date label once in 1 min
 				this.msgTimeSpan = {};
 				//chat window status
@@ -364,8 +362,15 @@
 				api('getSystemGreeting', {
 					tenantId: config.tenantId
 				}, function (msg) {
-					msg.data && me.receiveMsg({
-						data: msg.data,
+					var systemGreetingText = msg.data;
+					systemGreetingText && me.receiveMsg({
+						ext: {
+							weichat: {
+								html_safe_body: {
+									msg: systemGreetingText
+								}
+							}
+						},
 						type: 'txt',
 						noprompt: true
 					}, 'txt');
@@ -375,38 +380,47 @@
 						tenantId: config.tenantId,
 						originType: 'webim'
 					}, function (msg) {
-						var rGreeting = msg.data;
-						if (!rGreeting) return;
-						switch (rGreeting.greetingTextType) {
+						var greetingTextType = utils.getDataByPath(msg, 'data.greetingTextType');
+						var greetingText = utils.getDataByPath(msg, 'data.greetingText');
+						var greetingObj = {};
+						if (typeof greetingTextType !== 'number') return;
+
+						switch (greetingTextType) {
 						case 0:
-							//robert text greeting
+							// robert text greeting
 							me.receiveMsg({
-								data: rGreeting.greetingText,
+								ext: {
+									weichat: {
+										html_safe_body: {
+											msg: greetingText
+										}
+									}
+								},
 								type: 'txt',
 								noprompt: true
 							}, 'txt');
 							break;
 						case 1:
+							// robert list greeting
 							try {
-								var greetingObj = JSON.parse(rGreeting.greetingText.replace(/&quot;/g, '"'));
-								if (rGreeting.greetingText === '{}') {
-									me.receiveMsg({
-										data: '该菜单不存在',
-										type: 'txt',
-										noprompt: true
-									}, 'txt');
-								}
-								else {
-									//robert list greeting
-									me.receiveMsg({
-										ext: greetingObj.ext,
-										noprompt: true
-									});
-								}
+								greetingObj = JSON.parse(greetingText.replace(/&quot;/g, '"'));
 							}
-							catch (e) {}
+							catch (e){
+								console.warn('unexpected JSON string.', e);
+							}
+
+							if (greetingObj.ext) {
+								me.receiveMsg({
+									ext: greetingObj.ext,
+									noprompt: true
+								});
+							}
+							else {
+								console.warn('The menu does not exist.');
+							}
 							break;
 						default:
+							console.warn('unknown greeting type.');
 							break;
 						}
 					});

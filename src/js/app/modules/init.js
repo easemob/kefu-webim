@@ -297,11 +297,13 @@
 							userId: config.user.username,
 							tenantId: config.tenantId
 						}, function (msg) {
-							if (!msg.data) {
-								console.log('用户不存在！');
+							var password = msg.data;
+							if (!password) {
+								// todo: 用户不存在自动降级，重新创建
+								console.warn('用户不存在！');
 							}
 							else {
-								config.user.password = msg.data;
+								config.user.password = password;
 
 								// 发送空的ext消息，延迟发送
 								chat.cachedCommandMessage = { ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } };

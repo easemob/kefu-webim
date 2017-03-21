@@ -529,7 +529,7 @@ easemobim.channel = function (config) {
 						console.error(e.data);
 					}
 					else {
-						console.warn(e.data);
+						console.warn(e);
 						//me.conn.stopHeartBeat(me.conn);
 						typeof config.onerror === 'function' && config.onerror(e);
 					}
