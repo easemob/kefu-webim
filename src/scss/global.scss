@@ -36,10 +36,39 @@ html,
 body {
 	width: 100%;
 	height: 100%;
-	font-size: 13px;
 	font-family: sans-serif, 'Microsoft YaHei', 'Arial';
 	overflow: hidden;
 	-webkit-font-smoothing: antialiased;
+	background-color: #00ADEF;
+}
+
+// benz patch
+pre {
+	font-family: Arial, PingFangSC-Regular;
+}
+html {
+  font-size: 18px;
+}
+@media (max-width: 387px) {
+  html { font-size: 16px; }
+}
+@media (max-width: 363px) {
+  html { font-size: 15px; }
+}
+@media (max-width: 339px) {
+  html { font-size: 14px; }
+}
+@media (max-width: 316px) {
+  html { font-size: 13px; }
+}
+@media (max-width: 292px) {
+  html { font-size: 12px; }
+}
+@media (max-width: 269px) {
+  html { font-size: 11px; }
+}
+@media (max-width: 246px) {
+  html { font-size: 10px; }
 }
 
 a {

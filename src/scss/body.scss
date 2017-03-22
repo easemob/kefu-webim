@@ -2,9 +2,9 @@
 
 .em-widgetBody-wrapper {
 	position: absolute;
-	top: 43px;
+	top: 0;
 	bottom: 140px;
-	background-color: #F4F7FA;
+	background-color: #E6E6E6;
 	width: 100%;
 	border-bottom: 1px solid #E5E9F3;
 	color: #1a1a1a;
@@ -19,7 +19,7 @@
 
 .em-widget-video {
 	position: absolute;
-	top: 43px;
+	top: 0;
 	width: 100%;
 	height: 270px;
 	background-color: black;
@@ -81,10 +81,10 @@
 		right: 10px;
 		top: 10px;
 		>i {
-			width: 30px;
+			width: 1.875rem;
 			display: inline-block;
 			border-radius: 50%;
-			line-height: 30px;
+			line-height: 1.875rem;
 			text-align: center;
 			margin-left: 10px;
 			color: white;
@@ -140,7 +140,7 @@
 	display: none;
 	z-index: 2;
 	position: absolute;
-	top: 43px;
+	top: 0;
 	width: 100%;
 	height: 48px;
 	color: #535252;
@@ -161,7 +161,7 @@
 	.tip-close {
 		position: absolute;
 		right: 10px;
-		height: 30px;
+		height: 1.875rem;
 		color: #EBCFB3;
 	}
 }
@@ -170,7 +170,7 @@
 	/* 有信息栏时 消息窗 和视屏窗 下移 */
 	.em-widgetBody-wrapper,
 	.em-widget-video {
-		top: 90px;
+		top: 42px;
 	}
 	/* 显示信息栏 */
 	.em-widget-tip {

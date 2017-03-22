@@ -38,7 +38,7 @@
 }
 
 .icon-face:before {
-	content: "\44";
+	content: "\43";
 }
 
 .icon-easemob:before {
@@ -59,19 +59,19 @@
 }
 
 .icon-broken-pic:before {
-	content: "\49";
+	content: "\44";
 }
 
 .icon-corner-left:before {
-	content: "\4b";
+	content: "\45";
 }
 
 .icon-corner-right:before {
-	content: "\4a";
+	content: "\46";
 }
 
 .icon-picture:before {
-	content: "\4c";
+	content: "\41";
 }
 
 .icon-M:before {
@@ -143,7 +143,7 @@
 }
 
 .icon-video:before {
-	content: "\74";
+	content: "\42";
 }
 
 .icon-flower:before {
@@ -155,7 +155,7 @@
 }
 
 .icon-download:before {
-	content: "\75"
+	content: "\47"
 }
 
 .icon-camera:before,
@@ -200,11 +200,11 @@
 .em-widget-agent-status.hidden:after,
 .em-just-for-block-class-name {
 	font-family: 'easemobim' !important;
-	font-size: 30px;
+	font-size: 1.875rem;
 	font-style: normal;
 	text-align: center;
 	vertical-align: middle;
-	line-height: 30px;
+	line-height: 1.875rem;
 	-webkit-text-stroke-width: 0.2px;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;

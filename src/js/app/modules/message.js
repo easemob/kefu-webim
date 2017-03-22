@@ -101,6 +101,11 @@
 			dom.id = id;
 		}
 
+		if (direction === 'left'){
+			// 坐席消息头像 & 昵称
+			html += '<img class="avatar" src="' + window.benz_global.avatar + '">';
+			html += '<span class="agent-name">' + window.benz_global.agentName + '</span>';
+		}
 		// wrapper开始
 		html += '<div class="em-widget-msg-wrapper">';
 

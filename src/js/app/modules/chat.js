@@ -36,7 +36,7 @@
 		};
 
 		easemobim.doms = doms;
-
+		window.benz_global = {};
 
 		//cache current agent
 		config.agentUserId = null;
@@ -214,7 +214,7 @@
 					config.logo && me.setLogo();
 
 					// 移动端输入框自动增长
-					utils.isMobile && me.initAutoGrow();
+					// utils.isMobile && me.initAutoGrow();
 
 					// 添加sdk回调，下班时不收消息
 					me.channel.listen({ receiveMessage: config.isInOfficehours });
@@ -495,14 +495,14 @@
 				});
 			},
 			startToGetAgentStatus: function () {
-				var me = this;
+				// var me = this;
 
-				if (config.agentStatusTimer) return;
+				// if (config.agentStatusTimer) return;
 
-				// start to poll
-				config.agentStatusTimer = setInterval(function () {
-					me.updateAgentStatus();
-				}, 5000);
+				// // start to poll
+				// config.agentStatusTimer = setInterval(function () {
+				// 	me.updateAgentStatus();
+				// }, 5000);
 			},
 			stopGettingAgentStatus: function () {
 				config.agentStatusTimer = clearInterval(config.agentStatusTimer);
@@ -608,8 +608,8 @@
 
 				if (info.tenantName) {
 					// 更新企业头像和名称
-					doms.nickname.innerText = info.tenantName;
-					easemobim.avatar.src = avatarImg;
+					window.benz_global.agentName = info.tenantName;
+					window.benz_global.avatar = avatarImg;
 				}
 				else if (
 					info.userNickname
@@ -619,9 +619,9 @@
 					&& '调度员' !== info.userNickname
 				) {
 					//更新坐席昵称
-					doms.nickname.innerText = info.userNickname;
+					window.benz_global.agentName = info.userNickname;
 					if (avatarImg) {
-						easemobim.avatar.src = avatarImg;
+						window.benz_global.avatar = avatarImg;
 					}
 				}
 
@@ -794,7 +794,7 @@
 				var chatWrapper = doms.chatWrapper;
 				var dom = document.createElement('div');
 
-				dom.innerHTML = utils.formatDate(date);
+				dom.innerHTML = '<span>' + utils.formatDate(date) + '</span>';
 				utils.addClass(dom, 'em-widget-date');
 
 				if (!isHistory) {
@@ -1206,7 +1206,7 @@
 
 					var dom = document.createElement('div');
 
-					dom.innerText = msg;
+					dom.innerHTML = '<span>' + msg + '</span>';
 					dom.className = 'em-widget-event';
 
 					this.appendDate(new Date().getTime());

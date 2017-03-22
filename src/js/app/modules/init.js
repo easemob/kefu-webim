@@ -84,6 +84,8 @@
 				config.user = {};
 			}
 
+			// benz_patch
+			config.hideStatus = true;
 			chat = easemobim.chat(config);
 			initUI(config, initAfterUI);
 		}
@@ -114,6 +116,8 @@
 					easemobim.eventCollector.updateURL(msg.data);
 					break;
 				case _const.EVENTS.INIT_CONFIG:
+					// benz_patch
+					msg.data.hideStatus = true;
 					chat = easemobim.chat(msg.data);
 					window.transfer.to = msg.data.parentId;
 					initUI(msg.data, initAfterUI);
@@ -194,11 +198,7 @@
 			'hide', !config.minimum || utils.isTop
 		);
 
-		// 低版本浏览器不支持上传文件/图片
-		utils.toggleClass(
-			document.querySelector('.em-widget-file'),
-			'hide', !WebIM.utils.isCanUploadFileAsync
-		);
+		// 低版本浏览器不支持上传图片
 		utils.toggleClass(
 			document.querySelector('.em-widget-img'),
 			'hide', !WebIM.utils.isCanUploadFileAsync
@@ -228,16 +228,6 @@
 			var me = this;
 
 			config.toUser = config.toUser || config.to;
-
-			// 获取主题颜色设置
-			api('getTheme', {
-				tenantId: config.tenantId
-			}, function (msg) {
-				var themeName = utils.getDataByPath(msg, 'data.0.optionValue');
-				var className = _const.themeMap[themeName];
-
-				className && utils.addClass(document.body, className);
-			});
 
 			config.orgName = config.appKey.split('#')[0];
 			config.appName = config.appKey.split('#')[1];

@@ -1,6 +1,6 @@
 object {
-	width: 30px;
-	height: 30px;
+	width: 1.875rem;
+	height: 1.875rem;
 	left: 36px;
 	top: 3px;
 	position: absolute;
@@ -147,7 +147,7 @@ object {
 	display: block;
 	width: 95%;
 	padding: 5px;
-	min-height: 30px;
+	min-height: 1.875rem;
 	text-align: left;
 	color: #000;
 	background-color: white;
@@ -169,11 +169,16 @@ object {
 
 .em-widget-date,
 .em-widget-event {
+	span {
+		background-color: #ccc;
+		border-radius: 4px;
+		color: #fff;
+		font-size: .75rem;
+		padding: 0 5px;
+	}
 	text-align: center;
 	clear: both;
 	padding: 20px 0 0 0;
-	color: #ADAEAF;
-	font-size: 12px;
 }
 
 .em-widget-event {
@@ -207,8 +212,8 @@ object {
 	button {
 		width: 40%;
 		padding: 0;
-		height: 30px;
-		line-height: 30px;
+		height: 1.875rem;
+		line-height: 1.875rem;
 		border-radius: 4px;
 		color: white;
 		border: none;
@@ -234,7 +239,7 @@ object {
 	h3 {
 		font-weight: normal;
 		color: #646464;
-		margin: 20px 0 30px 16px;
+		margin: 20px 0 1.875rem 16px;
 		font-size: 13px;
 	}
 	.em-widget-satisfaction-success {

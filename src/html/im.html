@@ -19,7 +19,7 @@
 	<div id="em-kefu-webim-chat" class="em-widget-wrapper hide">
 
 		<!-- 标题栏 -->
-		<div id="em-widgetHeader" class="em-widgetHeader-wrapper bg-color border-color">
+		<div id="em-widgetHeader" class="hide em-widgetHeader-wrapper bg-color border-color">
 			<div id="em-widgetDrag">
 
 				<!-- 用于拖动的浮层 -->
@@ -98,6 +98,8 @@
 
 		<!-- 输入框 -->
 		<div id="em-widgetSend" class="em-widget-send-wrapper">
+
+			<textarea class="em-widget-textarea" spellcheck="false" placeholder="输入内容..."></textarea>
 			<div class="toolbar">
 				<i class="em-bar-emoji icon-face e-face fg-hover-color" title="表情"></i>
 				<i class="em-widget-img icon-picture fg-hover-color hide" title="图片"></i>
@@ -105,6 +107,7 @@
 				<i class="em-widget-note icon-note fg-hover-color hide" title="留言"></i>
 				<i class="icon-video fg-hover-color em-video-invite hide" title="视频通话"></i>
 				<i class="icon-flower fg-hover-color em-widget-satisfaction hide" title="评价客服"></i>
+				<span class="em-widget-send bg-color disabled">连接中</span>
 			</div>
 
 			<!-- 文件输入 -->
@@ -112,8 +115,6 @@
 			<!-- 图片输入，此元素需要有id -->
 			<input id="em-widget-img-input" type="file" class="upload-img-container" accept="image/*">
 
-			<textarea class="em-widget-textarea" spellcheck="false" placeholder="点击输入内容..."></textarea>
-			<span class="em-widget-send bg-color disabled">连接中</span>
 		</div>
 
 		<!-- 视频确认对话框 -->

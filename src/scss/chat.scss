@@ -21,20 +21,33 @@
 }
 
 .em-widget-left {
+	> img.avatar {
+		width: 2.5rem;
+		height: 2.5rem;
+		margin-left: .625rem;
+		float: left;
+	}
+	> .agent-name {
+		font-size: .625rem;
+		padding-left: .625rem;
+		float: left;
+	}
 	.em-widget-msg-container {
 		background-color: white;
 	}
 	.em-widget-msg-wrapper {
-		float: left;
-		margin-left: 12px;
+		clear: both;
+		position: relative;
+		left: 3.875rem;
+		top: -1.375rem;
 	}
 }
 
 .em-widget-right {
 	.em-widget-msg-container {
-		background-color: #e3ecfc;
+		color: white;
+		background-color: #00ADEF;
 		float: right;
-		border: 1px solid #c3cbd9;
 	}
 	.em-widget-msg-wrapper {
 		float: right;
@@ -45,10 +58,10 @@
 .icon-corner-left {
 	z-index: 1;
 	position: absolute;
-	top: 5px;
-	left: -17px;
-	width: 30px;
-	height: 30px;
+	top: .25rem;
+	left: -1rem;
+	width: 1.875rem;
+	height: 1.875rem;
 	color: white;
 	text-shadow: -1px 0 0 #e5e5e5;
 }
@@ -56,29 +69,28 @@
 .icon-corner-right {
 	z-index: 1;
 	position: absolute;
-	top: 5px;
-	right: -17px;
-	width: 30px;
-	height: 30px;
-	color: #e3ecfc;
+	top: .25rem;
+	right: -1rem;
+	width: 1.875rem;
+	height: 1.875rem;
+	color: #00ADEF;
 	text-shadow: 1px 0 0 #c3cbd9;
 }
 
 .em-widget-msg-container {
 	display: inline-block;
 	border-radius: 6px;
-	max-width: 190px;
+	max-width: 15rem;
 	padding: 10px;
 	min-width: 20px;
 	min-height: 20px;
 	vertical-align: middle;
 	text-align: left;
-	font-size: 13px;
 	border: 1px solid #e5e5e5;
 	// 图片消息、表情
 	img {
 		border-radius: 2px;
-		max-width: 190px;
+		max-width: 200px;
 		word-wrap: break-word;
 		vertical-align: middle;
 	}
@@ -183,8 +195,8 @@
 	.em-widget-msg-status {
 		position: absolute;
 		width: 86px;
-		height: 30px;
-		line-height: 30px;
+		height: 1.875rem;
+		line-height: 1.875rem;
 		left: -88px;
 		margin: auto;
 		top: 0;
@@ -192,8 +204,8 @@
 		cursor: pointer;
 		>i {
 			display: inline-block;
-			width: 30px;
-			height: 30px;
+			width: 1.875rem;
+			height: 1.875rem;
 			position: relative;
 			&:before {
 				color: red;
@@ -208,7 +220,7 @@
 			}
 		}
 		span {
-			line-height: 30px;
+			line-height: 1.875rem;
 			vertical-align: top;
 			display: inline-block;
 			color: #999;

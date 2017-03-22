@@ -3,17 +3,19 @@
 	height: 140px;
 	width: 100%;
 	bottom: 0;
-	background-color: white;
+	background-color: #e6e6e6;
 	-webkit-backface-visibility: hidden;
 	// 工具栏按钮
 	i {
-		float: left;
-		top: 5px;
-		left: 5px;
-		position: relative;
+		display: inline-block;
+		width: 25%;
 		color: #4d4d4d;
+		text-align: center;
 		&:hover {
 			cursor: pointer;
+		}
+		&:before {
+			font-size: 1.25rem;
 		}
 	}
 	// 输入框
@@ -42,14 +44,10 @@
 }
 
 .em-widget-send {
-	position: absolute;
-	right: 10px;
-	bottom: 10px;
-	width: 100px;
-	border-radius: 4px;
-	height: 30px;
+	border-radius: 2px;
+	height: 1.875rem;
 	text-align: center;
-	line-height: 30px;
+	line-height: 1.875rem;
 	color: white;
 	cursor: pointer;
 	&.disabled {

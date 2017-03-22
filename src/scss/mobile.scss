@@ -21,7 +21,7 @@
 	}
 	.icon-corner-left,
 	.icon-corner-right {
-		top: 4px;
+		top: .25rem;
 	}
 	.em-widgetHeader {
 		font-size: 17px;
@@ -29,12 +29,12 @@
 		box-shadow: none;
 	}
 	.em-widget-list-btn {
-		font-size: 17px;
-		line-height: 30px;
+		font-size: 1rem;
+		line-height: 1.5rem;
 		box-shadow: none;
 	}
 	.em-widget-msg-container {
-		font-size: 17px;
+		font-size: 1rem;
 		padding: 8px 10px;
 		&.em-widget-msg-file {
 			padding: 0;
@@ -73,10 +73,8 @@
 	.em-widget-send-wrapper {
 		position: absolute;
 		height: auto;
-		padding: 3px 80px 3px 6px;
+		padding: 3px 6px;
 		box-sizing: border-box;
-		background-color: white;
-		box-shadow: 0 -1px 0 #e5e5e5;
 	}
 	.em-widget-send-disable:after {
 		height: 78px;
@@ -87,7 +85,7 @@
 		bottom: 0;
 		margin-top: 4px;
 		margin-bottom: 1px;
-		border-radius: 4px;
+		border-radius: 2px;
 		padding: 9px;
 		padding-right: 36px;
 		overflow: hidden;
@@ -98,13 +96,9 @@
 		box-shadow: 0 1px 3px rgba(0, 0, 0, .2) inset;
 	}
 	.em-widget-send {
-		width: 64px;
-		right: 8px;
-		top: auto;
-		bottom: 8px;
-		height: 33px;
-		line-height: 33px;
-		font-size: 15px;
+		width: 25%;
+		position: static;
+		float: right;
 	}
 	.em-widget-satisfaction-dialog {
 		z-index: 3;
