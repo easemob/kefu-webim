@@ -15,7 +15,7 @@ easemobim.titleSlide = function () {
 			document.title = originTitle;
 		},
 		start: function () {
-			if ( titleST ) {
+			if (titleST) {
 				return;
 			}
 			titleST = setInterval(function () {

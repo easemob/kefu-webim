@@ -15,12 +15,12 @@ easemobim.paste = function (chat) {
 		utils.addClass(dom, 'hide');
 	});
 	utils.on(sendImgBtn, 'click', function () {
-		chat.channel.sendImg({data: blob, url: dataURL});
+		chat.channel.sendImg({ data: blob, url: dataURL });
 		utils.addClass(dom, 'hide');
 	});
 
-	function _handler(ev){
-		if (/^image\/\w+$/.test(utils.getDataByPath(ev, 'clipboardData.items.0.type'))){
+	function _handler(ev) {
+		if (/^image\/\w+$/.test(utils.getDataByPath(ev, 'clipboardData.items.0.type'))) {
 			blob = ev.clipboardData.items[0].getAsFile();
 			dataURL = window.URL.createObjectURL(blob);
 			img.src = dataURL;

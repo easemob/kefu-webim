@@ -1,4 +1,5 @@
-;(function (utils, _const) {
+;
+(function (utils, _const) {
 	'use strict';
 
 	var _st = 0;
@@ -7,24 +8,24 @@
 		y: 0
 	};
 
-	function _move( ev ) {
+	function _move(ev) {
 		var me = this;
 		var e = window.event || ev;
 		var _width = document.documentElement.clientWidth;
 		var _height = document.documentElement.clientHeight;
 		var _x = _width - e.clientX - me.rect.width + _startPosition.x;
 		var _y = _height - e.clientY - me.rect.height + _startPosition.y;
-		
-		if ( e.clientX - _startPosition.x <= 0 ) {//left
+
+		if (e.clientX - _startPosition.x <= 0) { //left
 			_x = _width - me.rect.width;
 		}
-		else if ( e.clientX + me.rect.width - _startPosition.x >= _width ) {//right
+		else if (e.clientX + me.rect.width - _startPosition.x >= _width) { //right
 			_x = 0;
 		}
-		if ( e.clientY - _startPosition.y <= 0 ) {//top
+		if (e.clientY - _startPosition.y <= 0) { //top
 			_y = _height - me.rect.height;
 		}
-		else if ( e.clientY + me.rect.height - _startPosition.y >= _height ) {//bottom
+		else if (e.clientY + me.rect.height - _startPosition.y >= _height) { //bottom
 			_y = 0;
 		}
 		me.shadow.style.left = 'auto';
@@ -36,7 +37,7 @@
 			x: _x,
 			y: _y
 		};
-		
+
 		clearTimeout(_st);
 		_st = setTimeout(function () {
 			_moveend.call(me);
@@ -56,12 +57,12 @@
 		this.shadow.style.display = 'none';
 		this.iframe.style.display = 'block';
 	}
-	   
+
 	function _resize() {
 		var me = this;
 
 		utils.on(window, 'resize', function () {
-			if ( !me.rect || !me.rect.width ) {
+			if (!me.rect || !me.rect.width) {
 				return;
 			}
 
@@ -69,15 +70,15 @@
 			var _height = document.documentElement.clientHeight;
 			var _right = Number(me.iframe.style.right.slice(0, -2));
 			var _bottom = Number(me.iframe.style.bottom.slice(0, -2));
-			
+
 			//width
-			if ( _width < me.rect.width ) {
+			if (_width < me.rect.width) {
 				me.iframe.style.left = 'auto';
 				me.iframe.style.right = 0;
 				me.shadow.style.left = 'auto';
 				me.shadow.style.right = 0;
 			}
-			else if ( _width - _right < me.rect.width ) {
+			else if (_width - _right < me.rect.width) {
 				me.iframe.style.right = _width - me.rect.width + 'px';
 				me.iframe.style.left = 0;
 				me.shadow.style.right = _width - me.rect.width + 'px';
@@ -89,11 +90,11 @@
 			}
 
 			//height
-			if ( _height < me.rect.height ) {
+			if (_height < me.rect.height) {
 				me.iframe.style.top = 'auto';
 				me.iframe.style.bottom = 0;
 			}
-			else if ( _height - _bottom < me.rect.height ) {
+			else if (_height - _bottom < me.rect.height) {
 				me.iframe.style.bottom = _height - me.rect.height + 'px';
 				me.iframe.style.top = 0;
 			}
@@ -106,7 +107,7 @@
 	function _ready() {
 		var me = this;
 
-		if ( me.config.dragenable ) {
+		if (me.config.dragenable) {
 			_resize.call(me);
 			utils.on(me.shadow, 'mouseup', function () {
 				_moveend.call(me);
@@ -122,13 +123,13 @@
 		me.config.parentId = me.iframe.id;
 
 		me.message
-		.send({event: _const.EVENTS.INIT_CONFIG, data: me.config})
-		.listen(function ( msg ) {
-			if ( msg.to !== me.iframe.id ) { return; }
+			.send({ event: _const.EVENTS.INIT_CONFIG, data: me.config })
+			.listen(function (msg) {
+				if (msg.to !== me.iframe.id) { return; }
 
-			switch ( msg.event ) {
-				case _const.EVENTS.ONREADY://onready
-					if ( typeof me.config.onready === 'function' ) {
+				switch (msg.event) {
+				case _const.EVENTS.ONREADY: //onready
+					if (typeof me.config.onready === 'function') {
 						clearTimeout(me.onreadySt);
 						me.onreadySt = setTimeout(function () {
 							me.config.onready();
@@ -161,7 +162,7 @@
 					break;
 				case _const.EVENTS.ONSESSIONCLOSED:
 					// 结束会话回调，此功能文档中没有
-					if ( typeof me.config.onsessionclosed === 'function' ) {
+					if (typeof me.config.onsessionclosed === 'function') {
 						clearTimeout(me.onsessionclosedSt);
 						me.onsessionclosedSt = setTimeout(function () {
 							me.config.onsessionclosed();
@@ -170,7 +171,7 @@
 					break;
 				case _const.EVENTS.CACHEUSER:
 					// 缓存im username
-					if(msg.data.username){
+					if (msg.data.username) {
 						utils.set(
 							(me.config.to || '') + me.config.tenantId + (me.config.emgroup || ''),
 							msg.data.username
@@ -182,7 +183,7 @@
 					_startPosition.y = isNaN(Number(msg.data.y)) ? 0 : Number(msg.data.y);
 					me.shadow.style.display = 'block';
 					me.iframe.style.display = 'none';
-					me.moveEv || (me.moveEv = function ( e ) {
+					me.moveEv || (me.moveEv = function (e) {
 						_move.call(me, e);
 					});
 					utils.on(document, 'mousemove', me.moveEv);
@@ -194,25 +195,26 @@
 					utils.setStore(msg.data.key, msg.data.value);
 					break;
 				case _const.EVENTS.REQUIRE_URL:
-					me.message.send({event: _const.EVENTS.UPDATE_URL, data: location.href});
+					me.message.send({ event: _const.EVENTS.UPDATE_URL, data: location.href });
 					break;
 				default:
 					break;
-			}
-		}, ['main']);
+				}
+			}, ['main']);
 
-		
+
 		me.ready instanceof Function && me.ready();
 	}
 
 
 
-	var Iframe = function ( config, signleton ) {
+	var Iframe = function (config, signleton) {
 
-		if ( !(this instanceof Iframe) ) {
+		if (!(this instanceof Iframe)) {
 
 			return new Iframe(config, signleton);
-		} else if ( signleton && Iframe.iframe ) {
+		}
+		else if (signleton && Iframe.iframe) {
 
 			Iframe.iframe.config = utils.copy(config);
 
@@ -232,19 +234,20 @@
 
 		this.show = false;
 
-		if ( !utils.isMobile ) {
+		if (!utils.isMobile) {
 			document.body.appendChild(this.shadow);
 			document.body.appendChild(this.iframe);
 		}
 
 		var me = this;
-		if ( me.iframe.readyState ) {
+		if (me.iframe.readyState) {
 			me.iframe.onreadystatechange = function () {
-				if ( this.readyState === 'loaded' || this.readyState === 'complete' ) {
+				if (this.readyState === 'loaded' || this.readyState === 'complete') {
 					_ready.call(me);
 				}
 			};
-		} else {
+		}
+		else {
 			me.iframe.onload = function () {
 				_ready.call(me);
 			};
@@ -255,7 +258,7 @@
 		return this;
 	};
 
-	Iframe.prototype.set = function ( config, callback ) {
+	Iframe.prototype.set = function (config, callback) {
 
 		this.config = utils.copy(config || this.config);
 
@@ -287,13 +290,14 @@
 		this.config.user && this.config.user.username && (destUrl.user = this.config.user.username);
 
 		// 此处参数有可能为 false
-		typeof this.config.hideStatus !== 'undefined' && this.config.hideStatus !== '' && (destUrl.hideStatus = this.config.hideStatus);
+		typeof this.config.hideStatus !== 'undefined' && this.config.hideStatus !== '' && (destUrl.hideStatus = this.config
+			.hideStatus);
 		typeof this.config.ticket !== 'undefined' && this.config.ticket !== '' && (destUrl.ticket = this.config.ticket);
 
 
 		this.url = utils.updateAttribute(this.url, destUrl, config.path);
 
-		if ( !this.config.user.username ) {
+		if (!this.config.user.username) {
 			// 从cookie里取用户名
 			// keyName = [to + ] tenantId [ + emgroup]
 			this.config.isUsernameFromCookie = true;
@@ -316,7 +320,7 @@
 			'bottom:10px;',
 			'right:-5px;',
 			'border:none;',
-			'width:'			+ this.config.dialogWidth + ';',
+			'width:' + this.config.dialogWidth + ';',
 			'height:0;',
 			'display:none;',
 			'transition:all .01s;'].join('');
@@ -325,11 +329,11 @@
 			'cursor:move;',
 			'z-index:16777270;',
 			'position:fixed;',
-			'bottom:'			+ this.config.dialogPosition.y + ';',
-			'right:'			+ this.config.dialogPosition.x + ';',
+			'bottom:' + this.config.dialogPosition.y + ';',
+			'right:' + this.config.dialogPosition.x + ';',
 			'border:none;',
-			'width:'			+ this.config.dialogWidth + ';',
-			'height:'			+ this.config.dialogHeight + ';',
+			'width:' + this.config.dialogWidth + ';',
+			'height:' + this.config.dialogHeight + ';',
 			'border-radius:4px;',
 			'box-shadow: 0 4px 8px rgba(0,0,0,.2);',
 			'border-radius: 4px;'].join('');
@@ -337,14 +341,15 @@
 		this.shadow.style.background = 'url(' + location.protocol + this.config.staticPath + '/img/drag.png) no-repeat';
 		this.shadow.style.backgroundSize = '100% 100%';
 
-		if ( !this.config.hide ) {
+		if (!this.config.hide) {
 			this.iframe.style.height = '37px';
 			this.iframe.style.width = '104px';
-		} else {
+		}
+		else {
 			this.iframe.style.height = '0';
 			this.iframe.style.width = '0';
 		}
-		if ( utils.isMobile ) {
+		if (utils.isMobile) {
 			this.iframe.style.cssText += 'left:0;bottom:0';
 			this.iframe.style.width = '100%';
 			this.iframe.style.right = '0';
@@ -362,24 +367,25 @@
 
 		this.iframe.src = this.url;
 		this.ready = callback;
-		
+
 		return this;
 	};
 
 	Iframe.prototype.open = function () {
 		var iframe = this.iframe;
 
-		if ( this.show ) { return; }
+		if (this.show) { return; }
 
 		this.show = true;
-		if ( utils.isMobile ) {
+		if (utils.isMobile) {
 			iframe.style.width = '100%';
 			iframe.style.height = '100%';
 			iframe.style.right = '0';
 			iframe.style.bottom = '0';
 			iframe.style.borderRadius = '0';
 			iframe.style.cssText += 'box-shadow: none;';
-		} else {
+		}
+		else {
 			iframe.style.width = this.config.dialogWidth;
 			iframe.style.height = this.config.dialogHeight;
 			iframe.style.visibility = 'visible';
@@ -388,7 +394,7 @@
 			iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;border: 1px solid #ccc\\9;';
 		}
 		iframe.style.visibility = 'visible';
-		this.message && this.message.send({event: _const.EVENTS.SHOW});
+		this.message && this.message.send({ event: _const.EVENTS.SHOW });
 
 		return this;
 	};
@@ -397,7 +403,7 @@
 
 		var iframe = this.iframe;
 
-		if ( this.show === false ) { return; }
+		if (this.show === false) { return; }
 
 		this.show = false;
 
@@ -409,27 +415,28 @@
 		iframe.style.right = '-5px';
 		iframe.style.bottom = '10px';
 		iframe.style.border = 'none';
-		if ( !this.config.hide ) {
+		if (!this.config.hide) {
 			iframe.style.height = '37px';
 			iframe.style.width = '104px';
-		} else {
+		}
+		else {
 			iframe.style.visibility = 'hidden';
 			iframe.style.width = '1px';
 			iframe.style.height = '1px';
 		}
 
-		this.message && this.message.send({event: _const.EVENTS.CLOSE});
+		this.message && this.message.send({ event: _const.EVENTS.CLOSE });
 		return this;
 	};
 
 	// 发ext消息
-	Iframe.prototype.send = function(extMsg) {
-		this.message.send({event: _const.EVENTS.EXT, data: extMsg});
+	Iframe.prototype.send = function (extMsg) {
+		this.message.send({ event: _const.EVENTS.EXT, data: extMsg });
 	};
 
 	// 发文本消息
-	Iframe.prototype.sendText = function(msg) {
-		this.message.send({event: _const.EVENTS.TEXTMSG, data: msg});
+	Iframe.prototype.sendText = function (msg) {
+		this.message.send({ event: _const.EVENTS.TEXTMSG, data: msg });
 	};
 
 	easemobim.Iframe = Iframe;

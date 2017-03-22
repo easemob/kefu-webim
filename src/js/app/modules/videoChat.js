@@ -1,4 +1,4 @@
-easemobim.videoChat = (function(dialog){
+easemobim.videoChat = (function (dialog) {
 	var imChat = document.getElementById('em-kefu-webim-chat');
 	var btnVideoInvite = document.querySelector('.em-video-invite');
 	var videoWidget = document.querySelector('.em-widget-video');
@@ -19,23 +19,23 @@ easemobim.videoChat = (function(dialog){
 		counter: 0,
 		prompt: videoWidget.querySelector('.status p.prompt'),
 		timeSpan: videoWidget.querySelector('.status p.time-escape'),
-		start: function(prompt){
+		start: function (prompt) {
 			var me = this;
 			me.counter = 0;
 			me.prompt.innerHTML = prompt;
 			me.timeSpan.innerHTML = '00:00';
-			me.timer = setInterval(function(){
+			me.timer = setInterval(function () {
 				me.timeSpan.innerHTML = format(++me.counter);
 			}, 1000);
 
-			function format(second){
+			function format(second) {
 				return (new Date(second * 1000))
 					.toISOString()
 					.slice(-'00:00.000Z'.length)
 					.slice(0, '00:00'.length);
 			}
 		},
-		stop: function(){
+		stop: function () {
 			var me = this;
 			clearInterval(me.timer);
 		}
@@ -47,29 +47,29 @@ easemobim.videoChat = (function(dialog){
 		delay: 3000,
 		closingPrompt: videoWidget.querySelector('.full-screen-prompt'),
 		timeSpan: videoWidget.querySelector('.full-screen-prompt p.time-escape'),
-		show: function(){
+		show: function () {
 			var me = this;
-			if(me.isConnected){
+			if (me.isConnected) {
 				me.timeSpan.innerHTML = statusTimer.timeSpan.innerHTML;
 			}
-			else{
+			else {
 				me.timeSpan.innerHTML = '00:00';
 			}
 			me.closingPrompt.classList.remove('hide');
-			setTimeout(function(){
+			setTimeout(function () {
 				imChat.classList.remove('has-video');
 				me.closingPrompt.classList.add('hide');
 			}, me.delay);
 		}
 	};
 
-	var endCall = function(){
+	var endCall = function () {
 		statusTimer.stop();
 		closingTimer.show();
-		localStream && localStream.getTracks().forEach(function(track){
+		localStream && localStream.getTracks().forEach(function (track) {
 			track.stop();
 		});
-		remoteStream && remoteStream.getTracks().forEach(function(track){
+		remoteStream && remoteStream.getTracks().forEach(function (track) {
 			track.stop();
 		});
 		mainVideo.src = '';
@@ -77,7 +77,7 @@ easemobim.videoChat = (function(dialog){
 	};
 
 	var events = {
-		'btn-end-call': function(){
+		'btn-end-call': function () {
 			try {
 				call.endCall();
 			}
@@ -86,9 +86,9 @@ easemobim.videoChat = (function(dialog){
 			}
 			finally {
 				endCall();
-			}			
+			}
 		},
-		'btn-accept-call': function(){
+		'btn-accept-call': function () {
 			closingTimer.isConnected = true;
 			dialBtn.classList.add('hide');
 			ctrlPanel.classList.remove('hide');
@@ -97,12 +97,12 @@ easemobim.videoChat = (function(dialog){
 			statusTimer.start('视频通话中');
 			call.acceptCall();
 		},
-		'btn-toggle': function(){
-			localStream && localStream.getVideoTracks().forEach(function(track){
+		'btn-toggle': function () {
+			localStream && localStream.getVideoTracks().forEach(function (track) {
 				track.enabled = !track.enabled;
 			});
 		},
-		'btn-change': function(){
+		'btn-change': function () {
 			var tmp;
 
 			tmp = subVideo.src;
@@ -114,10 +114,10 @@ easemobim.videoChat = (function(dialog){
 			subVideo.muted = !subVideo.muted;
 			mainVideo.muted = !mainVideo.muted;
 		},
-		'btn-minimize': function(){
+		'btn-minimize': function () {
 			videoWidget.classList.add('minimized');
 		},
-		'btn-maximize': function(){
+		'btn-maximize': function () {
 			videoWidget.classList.remove('minimized');
 		}
 	};
@@ -126,7 +126,7 @@ easemobim.videoChat = (function(dialog){
 	function sendVideoInvite() {
 		console.log('send video invite');
 		sendMessageAPI('邀请客服进行实时视频', false, {
-				ext: {
+			ext: {
 				type: 'rtcmedia/video',
 				msgtype: {
 					liveStreamInvitation: {
@@ -141,7 +141,7 @@ easemobim.videoChat = (function(dialog){
 		});
 	}
 
-	function init(conn, sendMessage, cfg){
+	function init(conn, sendMessage, cfg) {
 		sendMessageAPI = sendMessage;
 		config = cfg;
 
@@ -150,15 +150,15 @@ easemobim.videoChat = (function(dialog){
 		videoWidget.style.display = '';
 		// 按钮初始化
 		btnVideoInvite.classList.remove('hide');
-		btnVideoInvite.addEventListener('click', function(){
+		btnVideoInvite.addEventListener('click', function () {
 			dialog.init(sendVideoInvite);
 		}, false);
 
 		// 视频组件事件绑定
-		videoWidget.addEventListener('click', function(evt){
+		videoWidget.addEventListener('click', function (evt) {
 			var className = evt.target.className;
 
-			Object.keys(events).forEach(function(key){
+			Object.keys(events).forEach(function (key) {
 				~className.indexOf(key) && events[key]();
 			});
 		}, false);
@@ -217,7 +217,7 @@ easemobim.videoChat = (function(dialog){
 
 	return {
 		init: init,
-		onOffline: function() {
+		onOffline: function () {
 			// for debug
 			console.log('onOffline');
 			endCall();

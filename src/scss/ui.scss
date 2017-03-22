@@ -6,6 +6,7 @@ object {
 	position: absolute;
 	z-index: 12;
 }
+
 .em-widget-error-prompt {
 	z-index: 99;
 	font-size: 13px;
@@ -26,6 +27,7 @@ object {
 	transition: all .5s;
 	opacity: .7;
 }
+
 .em-widget-wrapper .em-widget-success-prompt {
 	position: absolute;
 	width: 100%;
@@ -40,7 +42,7 @@ object {
 		color: #59BE00;
 		text-align: center;
 	}
-	> i {
+	>i {
 		display: block;
 		position: relative;
 		margin: 80px auto 0;
@@ -57,7 +59,7 @@ object {
 			width: 100%;
 			top: 0;
 			left: 0;
-    		&:before {
+			&:before {
 				font-size: 60px;
 				color: white;
 				width: 60px;
@@ -67,6 +69,7 @@ object {
 		}
 	}
 }
+
 .em-widget-offline {
 	z-index: 3;
 	width: 100%;
@@ -125,6 +128,7 @@ object {
 		}
 	}
 }
+
 .em-widget-list-btns {
 	min-width: 190px;
 	position: relative;
@@ -137,6 +141,7 @@ object {
 		clear: both;
 	}
 }
+
 .em-widget-list-btn {
 	font-size: 13px;
 	display: block;
@@ -156,10 +161,12 @@ object {
 		color: white;
 	}
 }
+
 .em-widget-list-btn-white {
 	@extend .em-widget-list-btn;
 	color: #fff;
 }
+
 .em-widget-date,
 .em-widget-event {
 	text-align: center;
@@ -168,19 +175,23 @@ object {
 	color: #ADAEAF;
 	font-size: 12px;
 }
+
 .em-widget-event {
 	padding-top: 0;
 }
+
+
 /*
 	pop dialog
 */
+
 .em-widget-dialog {
 	z-index: 3;
 	position: absolute;
 	width: 320px;
 	height: 380px;
 	background-color: white;
-	box-shadow: 0 10px 20px rgba(0,0,0,.3);
+	box-shadow: 0 10px 20px rgba(0, 0, 0, .3);
 	top: 50%;
 	left: 50%;
 	margin-left: -160px;
@@ -212,9 +223,12 @@ object {
 		float: left;
 	}
 }
+
+
 /*
 	satisfaction dialog
 */
+
 .em-widget-satisfaction-dialog {
 	font-size: 13px;
 	h3 {
@@ -226,7 +240,7 @@ object {
 	.em-widget-satisfaction-success {
 		width: 100%;
 		top: 0;
-		background-color: rgba(255,255,255,1);
+		background-color: rgba(255, 255, 255, 1);
 	}
 	ul {
 		width: 96%;
@@ -243,11 +257,9 @@ object {
 			line-height: 55px;
 			cursor: pointer;
 			font-size: 60px;
-
 			width: 80px\9;
 			height: 80px\9;
 			zoom: 50%\9;
-
 			&.sel {
 				color: #ffb31a;
 			}
@@ -267,7 +279,9 @@ object {
 	}
 }
 
+
 /* 图片展示控件 */
+
 .img-view {
 	z-index: 100000;
 	position: fixed;
@@ -276,7 +290,7 @@ object {
 	left: 0;
 	top: 0;
 	overflow: auto;
-	background: rgba(0,0,0,.3);
+	background: rgba(0, 0, 0, .3);
 	img {
 		position: absolute;
 		top: 0;
@@ -287,7 +301,9 @@ object {
 	}
 }
 
+
 /* 视频邀请确认对话框 */
+
 .em-dialog-video-confirm {
 	position: fixed;
 	width: 220px;
@@ -299,9 +315,9 @@ object {
 	left: 0;
 	right: 0;
 	color: white;
-	background-color: rgba(0,0,0,.8);
+	background-color: rgba(0, 0, 0, .8);
 	border-radius: 4px;
-	box-shadow: 5px 5px 5px rgba(0,0,0,.5);
+	box-shadow: 5px 5px 5px rgba(0, 0, 0, .5);
 	.button-panel {
 		display: flex;
 		flex-flow: row nowrap;

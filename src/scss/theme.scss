@@ -11,34 +11,65 @@
 */
 
 @mixin theme($theme-color, $dark-color, $light-color) {
-	.fg-color, .fg-hover-color:hover { color: $theme-color; }
-	.bg-color, .bg-hover-color:hover { background-color: $theme-color; }
-	.border-color { border-color: $dark-color; }
-	.bg-hover-color-light:hover { background-color: $light-color; }
-	.bg-hover-color-dark:hover { background-color: $dark-color; }
+	.fg-color,
+	.fg-hover-color:hover {
+		color: $theme-color;
+	}
+	.bg-color,
+	.bg-hover-color:hover {
+		background-color: $theme-color;
+	}
+	.border-color {
+		border-color: $dark-color;
+	}
+	.bg-hover-color-light:hover {
+		background-color: $light-color;
+	}
+	.bg-hover-color-dark:hover {
+		background-color: $dark-color;
+	}
 }
 
 body {
 	// 默认主题（天空之城）
-	@include theme(#42b8f4, #00a0e7, #7dcdf7)
-	// 天空之城
-	&.theme-1 { @include theme(#42b8f4, #00a0e7, #7dcdf7); }
+	@include theme(#42b8f4, #00a0e7, #7dcdf7) // 天空之城
+	&.theme-1 {
+		@include theme(#42b8f4, #00a0e7, #7dcdf7);
+	}
 	// 丛林物语
-	&.theme-2 { @include theme(#00b45f, #009a51, #16cd77); }
+	&.theme-2 {
+		@include theme(#00b45f, #009a51, #16cd77);
+	}
 	// 红瓦洋房
-	&.theme-3 { @include theme(#b50e03, #811916, #e92b25); }
+	&.theme-3 {
+		@include theme(#b50e03, #811916, #e92b25);
+	}
 	// 鲜美橙汁
-	&.theme-4 { @include theme(#ffa000, #f69000, #ffb63b); }
+	&.theme-4 {
+		@include theme(#ffa000, #f69000, #ffb63b);
+	}
 	// 青草田间
-	&.theme-5 { @include theme(#9ec100, #809a00, #bad921); }
+	&.theme-5 {
+		@include theme(#9ec100, #809a00, #bad921);
+	}
 	// 湖光山色
-	&.theme-6 { @include theme(#00cccd, #12b3b4, #38e6e7); }
+	&.theme-6 {
+		@include theme(#00cccd, #12b3b4, #38e6e7);
+	}
 	// 冷峻山峰
-	&.theme-7 { @include theme(#5b799a, #48627b, #6a8eb5); }
+	&.theme-7 {
+		@include theme(#5b799a, #48627b, #6a8eb5);
+	}
 	// 月色池塘
-	&.theme-8 { @include theme(#3977cf, #2b599b, #548bdc); }
+	&.theme-8 {
+		@include theme(#3977cf, #2b599b, #548bdc);
+	}
 	// 天籁湖光
-	&.theme-9 { @include theme(#06a89c, #07b5a9, #08c2b5); }
+	&.theme-9 {
+		@include theme(#06a89c, #07b5a9, #08c2b5);
+	}
 	// 商务风格
-	&.theme-10 { @include theme(#000000, #1a1a1a, #333333); }
+	&.theme-10 {
+		@include theme(#000000, #1a1a1a, #333333);
+	}
 }

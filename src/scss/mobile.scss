@@ -2,7 +2,7 @@
 	border-radius: 0;
 	.em-widgetHeader-nickname,
 	.em-header-status-text,
-	 {
+	{
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -95,7 +95,7 @@
 		line-height: 17px;
 		font-size: 17px;
 		color: #1a1a1a;
-		box-shadow: 0 1px 3px rgba(0,0,0,.2) inset;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, .2) inset;
 	}
 	.em-widget-send {
 		width: 64px;
@@ -127,11 +127,11 @@
 		}
 	}
 	.em-widget-error-prompt {
-			font-size: 15px;
+		font-size: 15px;
 	}
-	.em-header-status-text-queue-number{
+	.em-header-status-text-queue-number {
 		bottom: 77px;
 	}
 }
-@media 
-(-webkit-min-device-pixel-ratio: 2) {}
+
+@media (-webkit-min-device-pixel-ratio: 2) {}

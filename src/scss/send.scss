@@ -4,7 +4,7 @@
 	width: 100%;
 	bottom: 0;
 	background-color: white;
-	-webkit-backface-visibility:hidden;
+	-webkit-backface-visibility: hidden;
 	// 工具栏按钮
 	i {
 		float: left;
@@ -28,7 +28,6 @@
 	}
 }
 
-
 .em-widget-send-disable:after {
 	z-index: 1;
 	content: ' ';
@@ -39,8 +38,9 @@
 	height: 140px;
 	opacity: .7;
 	background: #fff;
-	background: rgba(255,255,255,.7);
+	background: rgba(255, 255, 255, .7);
 }
+
 .em-widget-send {
 	position: absolute;
 	right: 10px;

@@ -1,7 +1,7 @@
 /**
  * 满意度调查
  */
-easemobim.satisfaction = function ( chat ) {
+easemobim.satisfaction = function (chat) {
 
 	var dom = document.querySelector('.em-widget-satisfaction-dialog');
 	var utils = easemobim.utils;
@@ -15,7 +15,7 @@ easemobim.satisfaction = function ( chat ) {
 	var success = dom.getElementsByTagName('div')[1];
 	var session;
 	var invite;
-	
+
 	utils.on(satisfactionEntry, utils.click, function () {
 		session = null;
 		invite = null;
@@ -37,7 +37,7 @@ easemobim.satisfaction = function ( chat ) {
 	utils.on(submitBtn, 'click', function () {
 		var level = starsUl.querySelectorAll('li.sel').length;
 
-		if ( level === 0 ) {
+		if (level === 0) {
 			chat.errorPrompt('请先选择星级');
 			return;
 		}
@@ -46,22 +46,22 @@ easemobim.satisfaction = function ( chat ) {
 		msg.blur();
 		utils.removeClass(success, 'hide');
 
-		setTimeout(function(){
+		setTimeout(function () {
 			msg.value = '';
 			// clear stars
-			_.each(lis, function(elem){
+			_.each(lis, function (elem) {
 				utils.removeClass(elem, 'sel');
 			});
 			utils.addClass(success, 'hide');
 			utils.addClass(dom, 'hide');
 		}, 1500);
 	});
-	utils.on(starsUl, 'click', function ( e ) {
+	utils.on(starsUl, 'click', function (e) {
 		var ev = e || window.event;
 		var target = ev.target || ev.srcElement;
 		var selIndex = +target.getAttribute('idx') || 0;
 
-		_.each(lis, function(elem, i){
+		_.each(lis, function (elem, i) {
 			utils.toggleClass(elem, 'sel', i < selIndex);
 		});
 	});

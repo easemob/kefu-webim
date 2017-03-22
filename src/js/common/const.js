@@ -1,4 +1,4 @@
-(function(){
+(function () {
 	easemobim._const = {
 		agentStatusText: {
 			Idle: '(离线)',
@@ -50,7 +50,7 @@
 		IM: {
 			WEBIM_CONNCTION_OPEN_ERROR: 1,
 			WEBIM_CONNCTION_AUTH_ERROR: 2,
-	        WEBIM_CONNCTION_AJAX_ERROR: 17,
+			WEBIM_CONNCTION_AJAX_ERROR: 17,
 			WEBIM_CONNCTION_CALLBACK_INNER_ERROR: 31
 		},
 
@@ -75,7 +75,7 @@
 		},
 
 		//上传文件大小限制
-		UPLOAD_FILESIZE_LIMIT : 1024 * 1024 * 10,
+		UPLOAD_FILESIZE_LIMIT: 1024 * 1024 * 10,
 
 		// 超时未收到 kefu-ack 启用第二通道发消息
 		FIRST_CHANNEL_MESSAGE_TIMEOUT: 10000,

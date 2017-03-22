@@ -1,6 +1,6 @@
 // 视频邀请确认对话框
 easemobim.ui = {};
-easemobim.ui.videoConfirmDialog = Modernizr.peerconnection && (function(){
+easemobim.ui.videoConfirmDialog = Modernizr.peerconnection && (function () {
 	var dialog = document.querySelector('div.em-dialog-video-confirm');
 	var buttonPanel = dialog.querySelector('div.button-panel');
 	var btnConfirm = dialog.querySelector('.btn-confirm');
@@ -8,7 +8,7 @@ easemobim.ui.videoConfirmDialog = Modernizr.peerconnection && (function(){
 	var confirmCallback = null;
 	var cancelCallback = null;
 
-	buttonPanel.addEventListener('click', function(evt){
+	buttonPanel.addEventListener('click', function (evt) {
 		var className = evt.target.className;
 
 		if (~className.indexOf('btn-cancel')) {
@@ -25,13 +25,15 @@ easemobim.ui.videoConfirmDialog = Modernizr.peerconnection && (function(){
 		_hide();
 	}, false);
 
-	function _show(){
+	function _show() {
 		dialog.classList.remove('hide');
 	}
-	function _hide(){
+
+	function _hide() {
 		dialog.classList.add('hide');
 	}
-	function _init(confirm, cancel){
+
+	function _init(confirm, cancel) {
 		confirmCallback = confirm;
 		cancelCallback = cancel;
 		_show();

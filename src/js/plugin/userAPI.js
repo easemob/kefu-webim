@@ -2,7 +2,8 @@
  * 环信移动客服WEB访客端插件接入js
  */
 
-;(function ( window, undefined ) {
+;
+(function (window, undefined) {
 	'use strict';
 	var utils = easemobim.utils;
 	easemobim.config = easemobim.config || {};
@@ -59,8 +60,8 @@
 		_config = utils.copy(config);
 
 		var hide = utils.convertFalse(_config.hide) !== '' ? _config.hide : baseConfig.json.hide,
-			resources = utils.convertFalse(_config.resources) !== '' ? _config.resources :  baseConfig.json.resources,
-			sat = utils.convertFalse(_config.satisfaction) !== '' ? _config.satisfaction :  baseConfig.json.sat;
+			resources = utils.convertFalse(_config.resources) !== '' ? _config.resources : baseConfig.json.resources,
+			sat = utils.convertFalse(_config.satisfaction) !== '' ? _config.satisfaction : baseConfig.json.sat;
 
 		_config.tenantId = _config.tenantId || baseConfig.json.tenantId;
 		_config.hide = utils.convertFalse(hide);
@@ -75,34 +76,35 @@
 	 * @param: {String} 技能组名称，选填
 	 * 兼容旧版接口，建议使用easemobim.bind方法
 	 */
-	window.easemobIM = function ( group ) {
+	window.easemobIM = function (group) {
 		easemobim.bind({ emgroup: group });
 	};
-	window.easemobIMS = function ( tenantId, group ) {
+	window.easemobIMS = function (tenantId, group) {
 		easemobim.bind({ tenantId: tenantId, emgroup: group });
 	};
 
 	/*
 	 * @param: {Object} config
 	 */
-	easemobim.bind = function ( config ) {
+	easemobim.bind = function (config) {
 		// 防止空参数调用异常
 		config = config || {};
 		config.emgroup = config.emgroup || easemobim.config.emgroup || '';
 
 		var cacheKeyName = config.tenantId + config.emgroup;
 
-		for ( var i in easemobim.tenants ) {
-			if ( easemobim.tenants.hasOwnProperty(i) ) {
+		for (var i in easemobim.tenants) {
+			if (easemobim.tenants.hasOwnProperty(i)) {
 				easemobim.tenants[i].close();
 			}
 		}
 
 		iframe = easemobim.tenants[cacheKeyName];
 
-		if ( iframe ) {
+		if (iframe) {
 			iframe.open();
-		} else {
+		}
+		else {
 			reset();
 			utils.extend(_config, config);
 
@@ -117,16 +119,16 @@
 		}
 
 
-		if ( utils.isMobile ) {
+		if (utils.isMobile) {
 			var prefix = (_config.tenantId || '') + (_config.emgroup || '');
 
 			//store ext
-			if ( _config.extMsg ) {
+			if (_config.extMsg) {
 				utils.setStore(prefix + 'ext', JSON.stringify(_config.extMsg));
 			}
 
 			//store visitor info 
-			if ( _config.visitor ) {
+			if (_config.visitor) {
 				utils.setStore(prefix + 'visitor', JSON.stringify(_config.visitor));
 			}
 
@@ -134,11 +136,11 @@
 			var a = window.event.srcElement || window.event.target,
 				counter = 5;
 
-			while( a && a.nodeName !== 'A' && counter-- ) {
+			while (a && a.nodeName !== 'A' && counter--) {
 				a = a.parentNode;
 			}
 
-			if ( !a || a.nodeName !== 'A' ) {
+			if (!a || a.nodeName !== 'A') {
 				return;
 			}
 
@@ -149,7 +151,7 @@
 	};
 
 	//open api1: send custom extend message
-	easemobim.sendExt = function ( ext ) {
+	easemobim.sendExt = function (ext) {
 		iframe.send({
 			ext: ext
 		});
@@ -164,15 +166,15 @@
 	 * }
 	 */
 
-	easemobim.sendText = function ( msg ) {
+	easemobim.sendText = function (msg) {
 		iframe && iframe.sendText(msg);
 	};
 
 	//auto load
-	if(
+	if (
 		(!_config.hide || _config.autoConnect || _config.eventCollector)
 		&& _config.tenantId
-	){
+	) {
 		var cacheKeyName = config.tenantId + (config.emgroup || '');
 
 		iframe = easemobim.tenants[cacheKeyName] || easemobim.Iframe(_config);
@@ -183,11 +185,12 @@
 	}
 
 	//support cmd & amd
-	if ( typeof module === 'object' && typeof module.exports === 'object' ) {
-		 module.exports = easemobim;
-	 } else if ( typeof define === 'function' && (define.amd || define.cmd) ) {
-		 define([], function () {
-			 return easemobim;
-		 });
-	 }
+	if (typeof module === 'object' && typeof module.exports === 'object') {
+		module.exports = easemobim;
+	}
+	else if (typeof define === 'function' && (define.amd || define.cmd)) {
+		define([], function () {
+			return easemobim;
+		});
+	}
 }(window, undefined));

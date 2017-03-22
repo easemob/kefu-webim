@@ -8,7 +8,7 @@ easemobim.imgView = (function (utils) {
 	}, false);
 
 	return {
-		show: function ( url ) {
+		show: function (url) {
 			img.setAttribute('src', url);
 			utils.removeClass(imgWrapper, 'hide');
 		}

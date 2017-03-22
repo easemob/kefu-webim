@@ -1,4 +1,5 @@
-;(function(window, undefined) {
+;
+(function (window, undefined) {
 	'use strict';
 
 	var utils = easemobim.utils;
@@ -17,7 +18,8 @@
 			//get config from referrer's config
 			try {
 				config = JSON.parse(utils.code.decode(utils.getStore('emconfig' + tenantId)));
-			} catch (e) {}
+			}
+			catch (e) {}
 
 			config.tenantId = tenantId;
 			config.hide = true;
@@ -42,7 +44,8 @@
 			config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket')); //true default
 			try {
 				config.emgroup = decodeURIComponent(utils.query('emgroup'));
-			} catch (e) {
+			}
+			catch (e) {
 				config.emgroup = utils.query('emgroup');
 			}
 
@@ -51,18 +54,18 @@
 			var usernameFromCookie = utils.get('root' + config.tenantId + config.emgroup);
 			var usernameFromConfig = config.user.username;
 
-			if (usernameFromUrl && usernameFromUrl === usernameFromConfig){
+			if (usernameFromUrl && usernameFromUrl === usernameFromConfig) {
 				// H5模式下，考虑到多租户情景或者是localstorage没清理
 				// 故仅当url和localstorage中的用户名匹配时才认为指定的用户有效
 				// 此时什么都不用做，自动使用从localstorage里取出的 username 和 password
 			}
-			else if (usernameFromUrl){
+			else if (usernameFromUrl) {
 				// 用户不匹配时，以url中的用户名为准
-				config.user = {username: usernameFromUrl};
+				config.user = { username: usernameFromUrl };
 			}
-			else if (usernameFromCookie){
+			else if (usernameFromCookie) {
 				// 未指定用户时，从cookie中取得用户名
-				config.user = {username: usernameFromCookie};
+				config.user = { username: usernameFromCookie };
 				config.isUsernameFromCookie = true;
 			}
 			else {
@@ -72,41 +75,42 @@
 
 			chat = easemobim.chat(config);
 			initUI(config, initAfterUI);
-		} else {
-			window.transfer = new easemobim.Transfer(null, 'main').listen(function(msg) {
+		}
+		else {
+			window.transfer = new easemobim.Transfer(null, 'main').listen(function (msg) {
 				switch (msg.event) {
-					case _const.EVENTS.SHOW:
-						if(eventCollector.isStarted()){
-							// 停止上报访客
-							eventCollector.stopReporting();
-							chatEntry.init(config);
-							chatEntry.open();
-						}
-						else{
-							chatEntry.open();
-						}
-						break;
-					case _const.EVENTS.CLOSE:
-						chatEntry.close();
-						break;
-					case _const.EVENTS.EXT:
-						chat.channel.sendText('', false, msg.data.ext);
-						break;
-					case _const.EVENTS.TEXTMSG:
-						chat.channel.sendText(msg.data.data, false, msg.data.ext);
-						break;
-					case _const.EVENTS.UPDATE_URL:
-						easemobim.eventCollector.updateURL(msg.data);
-						break;
-					case _const.EVENTS.INIT_CONFIG:
-						chat = easemobim.chat(msg.data);
-						window.transfer.to = msg.data.parentId;
-						initUI(msg.data, initAfterUI);
-						// cache config
-						config = msg.data;
-						break;
-					default:
-						break;
+				case _const.EVENTS.SHOW:
+					if (eventCollector.isStarted()) {
+						// 停止上报访客
+						eventCollector.stopReporting();
+						chatEntry.init(config);
+						chatEntry.open();
+					}
+					else {
+						chatEntry.open();
+					}
+					break;
+				case _const.EVENTS.CLOSE:
+					chatEntry.close();
+					break;
+				case _const.EVENTS.EXT:
+					chat.channel.sendText('', false, msg.data.ext);
+					break;
+				case _const.EVENTS.TEXTMSG:
+					chat.channel.sendText(msg.data.data, false, msg.data.ext);
+					break;
+				case _const.EVENTS.UPDATE_URL:
+					easemobim.eventCollector.updateURL(msg.data);
+					break;
+				case _const.EVENTS.INIT_CONFIG:
+					chat = easemobim.chat(msg.data);
+					window.transfer.to = msg.data.parentId;
+					initUI(msg.data, initAfterUI);
+					// cache config
+					config = msg.data;
+					break;
+				default:
+					break;
 				}
 			}, ['easemob']);
 		}
@@ -124,11 +128,11 @@
 
 		// 访客回呼功能
 		if (config.eventCollector && !eventCollector.isStarted()) {
-			eventCollector.startToReport(config, function(targetUserInfo) {
+			eventCollector.startToReport(config, function (targetUserInfo) {
 				chatEntry.init(config, targetUserInfo);
 			});
 			// 增加访客主动联系客服逻辑
-			utils.one(easemobim.imBtn, 'click', function(){
+			utils.one(easemobim.imBtn, 'click', function () {
 				chatEntry.init(config);
 				chatEntry.open();
 			});
@@ -143,7 +147,7 @@
 		var iframe = document.getElementById('cross-origin-iframe');
 
 		iframe.src = config.domain + '/webim/transfer.html?v=<%=WEBIM_PLUGIN_VERSION%>';
-		utils.on(iframe, 'load', function() {
+		utils.on(iframe, 'load', function () {
 			easemobim.getData = new easemobim.Transfer('cross-origin-iframe', 'data');
 			callback(config);
 		});
@@ -158,8 +162,7 @@
 		// em-kefu-webim-chat
 		utils.toggleClass(
 			document.getElementById('em-kefu-webim-chat'),
-			'hide',
-			!(utils.isTop || !config.minimum)
+			'hide', !(utils.isTop || !config.minimum)
 		);
 
 		// 设置联系客服按钮文字
@@ -173,49 +176,43 @@
 		// 留言按钮
 		utils.toggleClass(
 			document.querySelector('.em-widget-note'),
-			'hide',
-			!config.ticket
+			'hide', !config.ticket
 		);
 
 		// 最小化按钮
 		utils.toggleClass(
 			document.querySelector('.em-widgetHeader-min'),
-			'hide',
-			!config.minimum || utils.isTop
+			'hide', !config.minimum || utils.isTop
 		);
 
 		// 低版本浏览器不支持上传文件
 		utils.toggleClass(
 			document.querySelector('.em-widget-file'),
-			'hide',
-			!WebIM.utils.isCanUploadFileAsync
+			'hide', !WebIM.utils.isCanUploadFileAsync
 		);
 
 		// 静音按钮
 		utils.toggleClass(
 			document.querySelector('.em-widgetHeader-audio'),
-			'hide',
-			!window.HTMLAudioElement || utils.isMobile || !config.soundReminder
+			'hide', !window.HTMLAudioElement || utils.isMobile || !config.soundReminder
 		);
 
 		// 输入框位置开关
 		utils.toggleClass(
 			document.querySelector('.em-widgetHeader-keyboard'),
-			'hide',
-			!utils.isMobile || config.hideKeyboard
+			'hide', !utils.isMobile || config.hideKeyboard
 		);
 
 		// 满意度评价按钮
 		utils.toggleClass(
 			document.querySelector('.em-widget-satisfaction'),
-			'hide',
-			!config.satisfaction
+			'hide', !config.satisfaction
 		);
 
 		// 不支持异步上传则加载swfupload
 		if (!WebIM.utils.isCanUploadFileAsync && WebIM.utils.hasFlash) {
 			var script = document.createElement('script');
-			script.onload = script.onreadystatechange = function() {
+			script.onload = script.onreadystatechange = function () {
 				if (!this.readyState || this.readyState === 'loaded' || this.readyState === 'complete') {
 					easemobim.uploadShim(config, chat);
 				}
@@ -226,7 +223,7 @@
 	}
 
 	var chatEntry = {
-		init: function(config, targetUserInfo) {
+		init: function (config, targetUserInfo) {
 			var me = this;
 
 			config.toUser = config.toUser || config.to;
@@ -247,14 +244,15 @@
 			//获取关联信息
 			api('getRelevanceList', {
 				tenantId: config.tenantId
-			}, function(msg) {
+			}, function (msg) {
 				if (msg.data.length === 0) {
 					chat.errorPrompt('未创建关联', true);
 					return;
 				}
 				config.relevanceList = msg.data;
 				config.tenantAvatar = utils.getAvatarsFullPath(msg.data[0].tenantAvatar, config.domain);
-				config.defaultAvatar = config.staticPath ? config.staticPath + '/img/default_avatar.png' : 'static' + '/img/default_avatar.png';
+				config.defaultAvatar = config.staticPath ? config.staticPath + '/img/default_avatar.png' : 'static' +
+					'/img/default_avatar.png';
 				config.defaultAgentName = msg.data[0].tenantName;
 				config.logo = config.logo || msg.data[0].tenantLogo;
 				config.toUser = config.toUser || msg.data[0].imServiceNumber;
@@ -273,17 +271,17 @@
 					config.toUser = targetUserInfo.agentImName;
 
 					// 游客回呼
-					if(targetUserInfo.userName){
+					if (targetUserInfo.userName) {
 						config.user = {
 							username: targetUserInfo.userName,
 							password: targetUserInfo.userPassword
 						};
 
 						// 发送空的ext消息，延迟发送
-						chat.cachedCommandMessage = {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}};
+						chat.cachedCommandMessage = { ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } };
 						chat.ready();
 						chat.show();
-						transfer.send({event: _const.EVENTS.SHOW}, window.transfer.to);
+						transfer.send({ event: _const.EVENTS.SHOW }, window.transfer.to);
 						transfer.send({
 							event: _const.EVENTS.CACHEUSER,
 							data: {
@@ -298,17 +296,18 @@
 						api('getPassword', {
 							userId: config.user.username,
 							tenantId: config.tenantId
-						}, function(msg) {
+						}, function (msg) {
 							if (!msg.data) {
 								console.log('用户不存在！');
-							} else {
+							}
+							else {
 								config.user.password = msg.data;
 
 								// 发送空的ext消息，延迟发送
-								chat.cachedCommandMessage = {ext: {weichat: {agentUsername: targetUserInfo.agentUserName}}};
+								chat.cachedCommandMessage = { ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } };
 								chat.ready();
 								chat.show();
-								transfer.send({event: _const.EVENTS.SHOW}, window.transfer.to);
+								transfer.send({ event: _const.EVENTS.SHOW }, window.transfer.to);
 							}
 						});
 					}
@@ -318,18 +317,21 @@
 				}
 				//检测微信网页授权
 				else if (config.wechatAuth) {
-					easemobim.wechat(function(data) {
+					easemobim.wechat(function (data) {
 						try {
 							data = JSON.parse(data);
-						} catch (e) {
+						}
+						catch (e) {
 							data = null;
 						}
 						if (!data) { //失败自动降级，随机创建访客
 							me.go(config);
-						} else {
+						}
+						else {
 							config.visitor = config.visitor || {};
 							config.visitor.userNickname = data.nickname;
-							var oid = config.tenantId + '_' + config.orgName + '_' + config.appName + '_' + config.toUser + '_' + data.openid;
+							var oid = config.tenantId + '_' + config.orgName + '_' + config.appName + '_' + config.toUser + '_' +
+								data.openid;
 							easemobim.emajax({
 								url: '/v1/webimplugin/visitors/wechat/' + oid + '?tenantId=' + config.tenantId,
 								data: {
@@ -338,22 +340,24 @@
 									imServiceNumber: config.toUser
 								},
 								type: 'POST',
-								success: function(info) {
+								success: function (info) {
 									try {
 										info = JSON.parse(info);
-									} catch (e) {
+									}
+									catch (e) {
 										info = null;
 									}
 									if (info && info.status === 'OK') {
 										config.user.username = info.entity.userId;
 										config.user.password = info.entity.userPassword;
 										chat.ready();
-									} else {
+									}
+									else {
 										me.go(config);
 									}
 
 								},
-								error: function(e) {
+								error: function (e) {
 									//失败自动降级，随机创建访客
 									me.go(config);
 								}
@@ -365,32 +369,35 @@
 					api('getPassword', {
 						userId: config.user.username,
 						tenantId: config.tenantId
-					}, function(msg) {
+					}, function (msg) {
 						if (!msg.data) {
 							me.go(config);
-						} else {
+						}
+						else {
 							config.user.password = msg.data;
 							chat.ready();
 						}
 					});
-				} else {
+				}
+				else {
 					me.go(config);
 				}
 			});
 		},
-		go: function(config) {
+		go: function (config) {
 			api('createVisitor', {
 				orgName: config.orgName,
 				appName: config.appName,
 				imServiceNumber: config.toUser,
 				tenantId: config.tenantId
-			}, function(msg) {
+			}, function (msg) {
 				config.isNewUser = true;
 				config.user.username = msg.data.userId;
 				config.user.password = msg.data.userPassword;
 				if (utils.isTop) {
 					utils.set('root' + config.tenantId + config.emgroup, config.user.username);
-				} else {
+				}
+				else {
 					transfer.send({
 						event: _const.EVENTS.CACHEUSER,
 						data: {
@@ -402,27 +409,28 @@
 				chat.ready();
 			});
 		},
-		open: function() {
+		open: function () {
 			chat.show();
 		},
-		close: function() {
+		close: function () {
 			chat.close();
 		}
 	};
 
-	easemobim.reCreateImUser = _.once(function(){
+	easemobim.reCreateImUser = _.once(function () {
 		api('createVisitor', {
 			orgName: config.orgName,
 			appName: config.appName,
 			imServiceNumber: config.toUser,
 			tenantId: config.tenantId
-		}, function(msg) {
+		}, function (msg) {
 			config.isNewUser = true;
 			config.user.username = msg.data.userId;
 			config.user.password = msg.data.userPassword;
 			if (utils.isTop) {
 				utils.set('root' + config.tenantId + config.emgroup, config.user.username);
-			} else {
+			}
+			else {
 				transfer.send({
 					event: _const.EVENTS.CACHEUSER,
 					data: {

@@ -1,4 +1,4 @@
-(function(){
+(function () {
 	var LOADING = Modernizr.inlinesvg ? [
 		'<div class="em-widget-loading">',
 		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 70">',
@@ -8,12 +8,12 @@
 		'</svg>',
 		'</div>'
 	].join('')
-	: '<img src="//kefu.easemob.com/webim/static/img/loading.gif" width="20" style="margin-top:10px;"/>';
+		: '<img src="//kefu.easemob.com/webim/static/img/loading.gif" width="20" style="margin-top:10px;"/>';
 	var parseLink = WebIM.utils.parseLink;
 	var parseEmoji = WebIM.utils.parseEmoji;
 
-	function _encode( str ) {
-		if ( !str || str.length === 0 ) {
+	function _encode(str) {
+		if (!str || str.length === 0) {
 			return '';
 		}
 		var s = '';
@@ -25,8 +25,9 @@
 		s = s.replace(/\"/g, "&quot;");
 		return s;
 	}
-	function _decode( str ) {
-		if ( !str || str.length === 0 ) {
+
+	function _decode(str) {
+		if (!str || str.length === 0) {
 			return '';
 		}
 		var s = '';
@@ -35,53 +36,55 @@
 		s = s.replace(/&lt;/g, "<");
 		return s;
 	}
-	function genMsgContent(msg){
+
+	function genMsgContent(msg) {
 		var type = msg.type;
 		var value = msg.value;
 		var html = '';
-		switch (type){
-			case 'txt':
-				// fake:  todo: remove this
-				value = _encode(_decode(value));
-				html = '<pre>' + parseLink(parseEmoji(value)) + '</pre>';
-				break;
-			case 'img':
-				if (value){
-					// todo: remove a
-					html = '<a href="javascript:;"><img class="em-widget-imgview" src="'
-						+ value.url + '"/></a>';
-				}
-				else {
-					html = '<i class="icon-broken-pic"></i>';
-				}
-				break;
-			case 'list':
-				html = "<p>" + parseLink(_encode(value)) + "</p>" + msg.listDom;
-				break;
-			case 'file':
-				// 历史会话中 filesize = 0
-				// 访客端发文件消息 filesize = undefined
-				// 需要过滤这两种情况，暂时只显示坐席发过来的文件大小
-				if (value){
-					html = '<i class="icon-attachment container-icon-attachment"></i>'
-						+ '<span class="file-info">'
-						+ '<p class="filename">' + msg.filename + '</p>'
-						+ '<p class="filesize">' + easemobim.utils.filesizeFormat(value.filesize) + '</p>'
-						+ '</span>'
-						+ "<a target='_blank' href='" + value.url + "' class='icon-download container-icon-download' title='"
-						+ msg.filename + "'></a>";
-				}
-				else {
-					html = '<i class="icon-broken-pic"></i>';
-				}
-				break;
-			default:
-				break;
+		switch (type) {
+		case 'txt':
+			// fake:  todo: remove this
+			value = _encode(_decode(value));
+			html = '<pre>' + parseLink(parseEmoji(value)) + '</pre>';
+			break;
+		case 'img':
+			if (value) {
+				// todo: remove a
+				html = '<a href="javascript:;"><img class="em-widget-imgview" src="'
+					+ value.url + '"/></a>';
+			}
+			else {
+				html = '<i class="icon-broken-pic"></i>';
+			}
+			break;
+		case 'list':
+			html = "<p>" + parseLink(_encode(value)) + "</p>" + msg.listDom;
+			break;
+		case 'file':
+			// 历史会话中 filesize = 0
+			// 访客端发文件消息 filesize = undefined
+			// 需要过滤这两种情况，暂时只显示坐席发过来的文件大小
+			if (value) {
+				html = '<i class="icon-attachment container-icon-attachment"></i>'
+					+ '<span class="file-info">'
+					+ '<p class="filename">' + msg.filename + '</p>'
+					+ '<p class="filesize">' + easemobim.utils.filesizeFormat(value.filesize) + '</p>'
+					+ '</span>'
+					+ "<a target='_blank' href='" + value.url + "' class='icon-download container-icon-download' title='"
+					+ msg.filename + "'></a>";
+			}
+			else {
+				html = '<i class="icon-broken-pic"></i>';
+			}
+			break;
+		default:
+			break;
 		}
 
 		return html;
 	}
-	function genDomFromMsg(msg, isReceived){
+
+	function genDomFromMsg(msg, isReceived) {
 		var id = this.id;
 		var type = msg.type;
 		var html = '';
@@ -94,7 +97,7 @@
 		dom.className = 'em-widget-' + direction;
 
 		// 给消息追加id，用于失败重发消息或撤回消息
-		if (id){
+		if (id) {
 			dom.id = id;
 		}
 
@@ -106,8 +109,8 @@
 		html += '<i class="icon-corner-' + direction + '"></i>';
 
 		// 发出的消息增加状态显示
-		if (!isReceived && id){
-			html += '<div id="'+ id
+		if (!isReceived && id) {
+			html += '<div id="' + id
 				+ '_failed" data-type="txt" class="em-widget-msg-status hide">'
 				+ '<span>发送失败</span><i class="icon-circle"><i class="icon-exclamation"></i></i></div>'
 				+ '<div id="' + id
@@ -129,19 +132,19 @@
 		stack.push('</div>');
 
 		// 追加标签
-		html += _.reduceRight(stack, function(a, b){ return a + b; }, '');
+		html += _.reduceRight(stack, function (a, b) { return a + b; }, '');
 		dom.innerHTML = html;
 		return dom;
 	}
 
 	// 按钮列表消息，机器人回复，满意度调查
-	WebIM.message.list = function ( id ) {
+	WebIM.message.list = function (id) {
 		this.id = id;
 		this.type = 'list';
 		this.brief = '';
 		this.body = {};
 	};
-	WebIM.message.list.prototype.set = function ( opt ) {
+	WebIM.message.list.prototype.set = function (opt) {
 		this.value = opt.value;
 		this.listDom = opt.list;
 	};
