@@ -18,6 +18,7 @@
 			imgInput: document.querySelector('.upload-img-container'),
 			fileInput: document.querySelector('.upload-file-container'),
 			emojiContainer: document.querySelector('.em-bar-face-container'),
+			chatWrapper: document.querySelector('.em-widget-chat'),
 			block: null
 		};
 
@@ -227,6 +228,9 @@
 						&& !config.isNewUser
 						&& me.getHistory();
 
+						// 初始化历史消息拉取
+						!config.isNewUser && me.initHistoryPuller();
+
 						// 待接入排队人数显示
 						me.waitListNumber.start();
 
@@ -267,6 +271,53 @@
 					}
 					me.scrollBottom(800);
 				}
+			}
+			, initHistoryPuller: function(){
+				var me = this;
+				//pc 和 wap 的上滑加载历史记录的方法
+				(function () {
+					var st;
+					var _startY;
+					var _y;
+					var touch;
+
+					//wap
+					utils.live('div.em-widget-date', 'touchstart', function (ev) {
+						var touch = ev.touches;
+
+						if (e.touches && e.touches.length > 0) {
+							_startY = touch[0].pageY;
+						}
+					});
+					utils.live('div.em-widget-date', 'touchmove', function (ev) {
+						var touch = e.touches;
+
+						if (e.touches && e.touches.length > 0) {
+							_y = touch[0].pageY;
+							if (_y - _startY > 8 && this.getBoundingClientRect().top >= 0) {
+								clearTimeout(st);
+								st = setTimeout(function () {
+									me.getHistory();
+								}, 100);
+							}
+						}
+					});
+
+					// pc端
+					utils.on(doms.chatWrapper, 'mousewheel DOMMouseScroll', function (ev) {
+						var e = ev || window.event;
+						var that = this;
+
+						if (e.wheelDelta / 120 > 0 || e.detail < 0) {
+							clearTimeout(st);
+							st = setTimeout(function () {
+								if (that.getBoundingClientRect().top >= 0) {
+									me.getHistory();
+								}
+							}, 400);
+						}
+					});
+				}());
 			}
 			, handleChatWrapperByHistory: function ( chatHistory, chatWrapper ) {
 				if ( chatHistory.length === easemobim.LISTSPAN ) {//认为可以继续获取下一页历史记录
@@ -886,55 +937,6 @@
 						return false;
 					}, false);
 				}
-
-				//pc 和 wap 的上滑加载历史记录的方法
-				(function () {
-					var st,
-						_startY,
-						_y,
-						touch;
-
-					//wap
-					utils.live('div.em-widget-date', 'touchstart', function ( ev ) {
-						var e = ev || window.event,
-							touch = e.touches;
-
-						if ( e.touches && e.touches.length > 0 ) {
-							_startY = touch[0].pageY;
-						}
-					});
-					utils.live('div.em-widget-date', 'touchmove', function ( ev ) {
-						var e = ev || window.event,
-							touch = e.touches;
-
-						if ( e.touches && e.touches.length > 0 ) {
-							_y = touch[0].pageY;
-							if ( _y - _startY > 8 && this.getBoundingClientRect().top >= 0 ) {
-								clearTimeout(st);
-								st = setTimeout(function () {
-									me.getHistory(true);
-								}, 100);
-							}
-						}
-					});
-
-					//pc
-					var getHis = function ( ev ) {
-						var e = ev || window.event,
-							that = this;
-
-						if ( e.wheelDelta / 120 > 0 || e.detail < 0 ) {
-							clearTimeout(st);
-							st = setTimeout(function () {
-								if ( that.getBoundingClientRect().top >= 0 ) {
-									me.getHistory(true);
-								}
-							}, 400);
-						}
-					};
-					utils.live('div.em-widget-chat', 'mousewheel', getHis);
-					utils.live('div.em-widget-chat', 'DOMMouseScroll', getHis);
-				}());
 
 				//resend
 				utils.live('div.em-widget-msg-status', utils.click, function () {
