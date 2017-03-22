@@ -557,7 +557,7 @@
 			updateAgentStatus: function() {
 				var me = this;
 
-				if ( !config.agentUserId || !config.nickNameOption ) {
+				if ( !config.agentUserId || !config.nickNameOption || !config.user.token) {
 					me.stopGettingAgentStatus();
 					return;
 				}
