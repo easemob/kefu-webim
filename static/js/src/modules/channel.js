@@ -621,8 +621,32 @@ easemobim.channel = function ( config ) {
 					me.appendDate(element.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
 				}
 			});
+		},
+		initSecondChannle: function(){
+			me.receiveMsgTimer = setInterval(_receiveMsgChannel, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
 		}
 	};
+
+	// 第二通道收消息
+	function _receiveMsgChannel(){
+		api('receiveMsgChannel', {
+			orgName: config.orgName,
+			appName: config.appName,
+			easemobId: config.toUser,
+			tenantId: config.tenantId,
+			visitorEasemobId: config.user.username
+		}, function (msg) {
+			//处理收消息
+			msg.data
+				&& msg.data.status === 'OK'
+				&& _.each(msg.data.entities, function (elem) {
+					try {
+						_obj.handleReceive(elem, elem.bodies[0].type, false);
+					}
+					catch (e) {}
+				});
+		});
+	}
 
 	// 第二通道发消息
 	function _sendMsgChannle( msg, retryCount ) {
@@ -693,26 +717,5 @@ easemobim.channel = function ( config ) {
 		me.handleReady();
 	}, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
 	
-	// 第二通道收消息轮询
-	config.isInOfficehours && setInterval(function(){
-		api('receiveMsgChannel', {
-			orgName: config.orgName,
-			appName: config.appName,
-			easemobId: config.toUser,
-			tenantId: config.tenantId,
-			visitorEasemobId: config.user.username
-		}, function (msg) {
-			//处理收消息
-			msg
-			&& msg.data.status === 'OK'
-			&& _.each(msg.data.entities, function(elem){
-				try {
-					_obj.handleReceive(elem, elem.bodies[0].type, false);
-				}
-				catch (e) {}
-			});
-		});		   
-	}, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
-
 	return _obj;
 };

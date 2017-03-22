@@ -229,6 +229,9 @@
 
 						// 待接入排队人数显示
 						me.waitListNumber.start();
+
+						// 第二通道收消息初始化
+						me.channel.initSecondChannle();
 					}
 					else {
 						// 设置下班时间展示的页面
