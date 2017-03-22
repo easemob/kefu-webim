@@ -4,6 +4,21 @@
 		var _const = easemobim._const;
 		var api = easemobim.api;
 
+		//DOM init
+		easemobim.imBtn = document.getElementById('em-widgetPopBar');
+		easemobim.imChat = document.getElementById('em-kefu-webim-chat');
+		easemobim.imChatBody = document.getElementById('em-widgetBody');
+		easemobim.send = document.getElementById('em-widgetSend');
+		easemobim.textarea = easemobim.send.querySelector('.em-widget-textarea');
+		easemobim.sendBtn = easemobim.send.querySelector('.em-widget-send');
+		easemobim.sendImgBtn = easemobim.send.querySelector('.em-widget-img');
+		easemobim.sendFileBtn = easemobim.send.querySelector('.em-widget-file');
+		easemobim.noteBtn = document.querySelector('.em-widget-note');
+		easemobim.dragHeader = document.getElementById('em-widgetDrag');
+		easemobim.dragBar = easemobim.dragHeader.querySelector('.drag-bar');
+		easemobim.avatar = document.querySelector('.em-widgetHeader-portrait');
+		easemobim.swfupload = null;//flash 上传
+
 		// todo: 把dom都移到里边
 		var doms = {
 			agentStatusText: document.querySelector('.em-header-status-text'),
@@ -16,26 +31,11 @@
 			emojiContainer: document.querySelector('.em-bar-emoji-container'),
 			chatWrapper: document.querySelector('.em-widget-chat'),
 			emojiWrapper: document.querySelector('.em-bar-emoji-wrapper'),
+			emojiBtn: easemobim.send.querySelector('.em-bar-emoji'),
 			block: null
 		};
 
 		easemobim.doms = doms;
-
-		//DOM init
-		easemobim.imBtn = document.getElementById('em-widgetPopBar');
-		easemobim.imChat = document.getElementById('em-kefu-webim-chat');
-		easemobim.imChatBody = document.getElementById('em-widgetBody');
-		easemobim.send = document.getElementById('em-widgetSend');
-		easemobim.textarea = easemobim.send.querySelector('.em-widget-textarea');
-		easemobim.sendBtn = easemobim.send.querySelector('.em-widget-send');
-		easemobim.emojiBtn = easemobim.send.querySelector('.em-bar-emoji');
-		easemobim.sendImgBtn = easemobim.send.querySelector('.em-widget-img');
-		easemobim.sendFileBtn = easemobim.send.querySelector('.em-widget-file');
-		easemobim.noteBtn = document.querySelector('.em-widget-note');
-		easemobim.dragHeader = document.getElementById('em-widgetDrag');
-		easemobim.dragBar = easemobim.dragHeader.querySelector('.drag-bar');
-		easemobim.avatar = document.querySelector('.em-widgetHeader-portrait');
-		easemobim.swfupload = null;//flash 上传
 
 
 		//cache current agent
@@ -244,11 +244,10 @@
 				if (me.isAutoGrowInitialized) return;
 				me.isAutoGrowInitialized = true;
 
-				utils.on(easemobim.textarea, 'input', update);
-				utils.on(easemobim.textarea, 'change', update);
+				utils.on(easemobim.textarea, 'input change', update);
 
 				function update(){
-					var height= this.value ? this.scrollHeight : originHeight;
+					var height = this.value ? this.scrollHeight : originHeight;
 					this.style.height = height + 'px';
 					this.scrollTop = 9999;
 					callback();
@@ -344,7 +343,7 @@
 						imServiceNumber: config.toUser,
 						tenantId: config.tenantId
 					}, function(msg) {
-						if (msg && msg.data) {
+						if (msg.data) {
 							me.groupId = msg.data;
 							me.getHistory(callback);
 						}
@@ -482,8 +481,33 @@
 			, clearAgentStatus: function () {
 				doms.agentStatusSymbol.className = 'hide';
 				doms.agentStatusText.innerText = '';
-			}
-			, waitListNumber: (function(){
+			},
+			updateAgentStatus: function() {
+				var me = this;
+
+				if ( !config.agentUserId || !config.nickNameOption  || !config.user.token) {
+					me.stopGettingAgentStatus();
+					return;
+				}
+
+				api('getAgentStatus', {
+					tenantId: config.tenantId,
+					orgName: config.orgName,
+					appName: config.appName,
+					agentUserId: config.agentUserId,
+					userName: config.user.username,
+					token: config.user.token,
+					imServiceNumber: config.toUser
+				}, function ( msg ) {
+					var state = utils.getDataByPath(msg, 'data.state');
+
+					if (state) {
+						doms.agentStatusText.innerText = _const.agentStatusText[state];
+						doms.agentStatusSymbol.className = 'em-widget-agent-status ' + _const.agentStatusClassName[state];
+					}
+				});
+			},
+			waitListNumber: (function(){
 
 				var isStarted = false;
 				var timer = null;
@@ -548,32 +572,7 @@
 					stop: _stop
 				};
 			}()),
-			updateAgentStatus: function() {
-				var me = this;
-
-				if ( !config.agentUserId || !config.nickNameOption || !config.user.token) {
-					me.stopGettingAgentStatus();
-					return;
-				}
-
-				api('getAgentStatus', {
-					tenantId: config.tenantId,
-					orgName: config.orgName,
-					appName: config.appName,
-					agentUserId: config.agentUserId,
-					userName: config.user.username,
-					token: config.user.token,
-					imServiceNumber: config.toUser
-				}, function ( msg ) {
-					var state = utils.getDataByPath(msg, 'data.state');
-
-					if (state) {
-						doms.agentStatusText.innerText = _const.agentStatusText[state];
-						doms.agentStatusSymbol.className = 'em-widget-agent-status ' + _const.agentStatusClassName[state];
-					}
-				});
-			}
-			, setAgentProfile: function ( info ) {
+			setAgentProfile: function ( info ) {
 				var avatarImg = info.avatar ? utils.getAvatarsFullPath(info.avatar, config.domain) : config.tenantAvatar || config.defaultAvatar;
 
 				if (info.tenantName) {
@@ -633,7 +632,7 @@
 			, initEmoji: function () {
 				var me = this;
 
-				utils.on(easemobim.emojiBtn, utils.click, function () {
+				utils.on(doms.emojiBtn, utils.click, function () {
 					easemobim.textarea.blur();
 					utils.toggleClass(doms.emojiWrapper, 'hide');
 
@@ -652,6 +651,7 @@
 				}, doms.emojiWrapper);
 
 				// todo: kill .e-face to make it more elegant
+				// ie8 does not support stopPropagation -_-||
 				// 点击别处时隐藏表情面板
 				utils.on(document, utils.click, function ( ev ) {
 					var e = window.event || ev;
@@ -1070,7 +1070,10 @@
 						&& !evt.ctrlKey
 						&& !evt.shiftKey
 					){
-						evt.preventDefault();
+						// ie8 does not support preventDefault & stopPropagation
+						if (evt.preventDefault){
+							evt.preventDefault();
+						}
 						utils.trigger(easemobim.sendBtn, 'click');
 					}
 				});

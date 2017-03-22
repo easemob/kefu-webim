@@ -12,6 +12,7 @@
     "gulp": "^3.9.1",
     "gulp-clean": "",
     "gulp-concat": "",
+    "gulp-jsbeautifier": "^2.0.4",
     "gulp-jshint": "~1.12.0",
     "gulp-minify-css": "",
     "gulp-minify-html": "",

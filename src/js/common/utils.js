@@ -67,13 +67,16 @@
 	}
 
 	function _unbind(elem, evt, handler){
+		var keyName = '_' + evt;
+		var eventName = 'on' + evt;
+
 		if (elem.removeEventListener && handler) {
-			elem.removeEventListener(ev, handler);
+			elem.removeEventListener(evt, handler);
 		} else if (elem.detachEvent) {
-			elem.detachEvent('on' + ev, elem['_' + ev]);
-			delete elem['_' + ev];
+			elem.detachEvent(eventName, elem[keyName]);
+			delete elem[keyName];
 		} else {
-			elem['on' + ev] = null;
+			elem[eventName] = null;
 		}
 	}
 
@@ -421,5 +424,4 @@
 		})()
 	};
 }());
-
 
