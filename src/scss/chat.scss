@@ -15,7 +15,7 @@
 	float: left;
 	display: block;
 	text-decoration: none;
-	width: 98%;
+	width: 100%;
 	text-align: left;
 	margin-top: 15px;
 }
@@ -24,16 +24,22 @@
 	> img.avatar {
 		width: 2.5rem;
 		height: 2.5rem;
-		margin-left: .625rem;
+		margin-left: .75rem;
 		float: left;
 	}
 	> .agent-name {
 		font-size: .625rem;
 		padding-left: .625rem;
-		float: left;
+		color: #999;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 10rem;
+		display: inline-block;
 	}
 	.em-widget-msg-container {
 		background-color: white;
+		border: 1px solid #BFBFBF;
 	}
 	.em-widget-msg-wrapper {
 		clear: both;
@@ -48,10 +54,11 @@
 		color: white;
 		background-color: #00ADEF;
 		float: right;
+		max-width: 14.5rem;
 	}
 	.em-widget-msg-wrapper {
 		float: right;
-		margin-right: 12px;
+		margin-right: 1.125rem;
 	}
 }
 
@@ -63,7 +70,7 @@
 	width: 1.875rem;
 	height: 1.875rem;
 	color: white;
-	text-shadow: -1px 0 0 #e5e5e5;
+	text-shadow: -1.5px 0 0 #BFBFBF;
 }
 
 .icon-corner-right {
@@ -79,9 +86,10 @@
 
 .em-widget-msg-container {
 	display: inline-block;
-	border-radius: 6px;
-	max-width: 15rem;
-	padding: 10px;
+	border-radius: .25rem;
+	max-width: 13.5rem;
+	box-sizing: border-box;
+	padding: .625rem;
 	min-width: 20px;
 	min-height: 20px;
 	vertical-align: middle;
@@ -168,12 +176,10 @@
 	// 菜单消息
 	&.em-widget-msg-list {
 		overflow: hidden;
+		width: 13.5rem;
 		padding: 0;
-		background-color: rgb(251, 251, 251);
-		>p {
-			padding: 10px;
+		> p {
 			background-color: white;
-			border-bottom: 1px solid rgb(229, 229, 229);
 		}
 	}
 }

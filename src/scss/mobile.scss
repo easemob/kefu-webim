@@ -29,12 +29,12 @@
 		box-shadow: none;
 	}
 	.em-widget-list-btn {
-		font-size: 1rem;
-		line-height: 1.5rem;
+		font-size: .875rem;
+		line-height: 1.75rem;
 		box-shadow: none;
 	}
 	.em-widget-msg-container {
-		font-size: 1rem;
+		font-size: .9375rem;
 		padding: 8px 10px;
 		&.em-widget-msg-file {
 			padding: 0;
@@ -73,27 +73,23 @@
 	.em-widget-send-wrapper {
 		position: absolute;
 		height: auto;
-		padding: 3px 6px;
+		padding: 0 .75rem;
 		box-sizing: border-box;
+		.em-widget-textarea {
+			display: block;
+			height: 2.25rem;
+			max-height: 88px;
+			border-radius: .125rem;
+			padding: .5rem;
+			overflow: hidden;
+			user-select: text!important;
+			line-height: 17px;
+			font-size: .875rem;
+			color: #1a1a1a;
+		}
 	}
 	.em-widget-send-disable:after {
 		height: 78px;
-	}
-	.em-widget-textarea {
-		height: 34px;
-		max-height: 88px;
-		bottom: 0;
-		margin-top: 4px;
-		margin-bottom: 1px;
-		border-radius: 2px;
-		padding: 9px;
-		padding-right: 36px;
-		overflow: hidden;
-		user-select: text!important;
-		line-height: 17px;
-		font-size: 17px;
-		color: #1a1a1a;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, .2) inset;
 	}
 	.em-widget-send {
 		width: 25%;
