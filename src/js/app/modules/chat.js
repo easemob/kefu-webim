@@ -733,7 +733,7 @@
 					}
 					catch (e) {}
 
-					var msg = new WebIM.message('txt');
+					var msg = new WebIM.message.txt();
 					msg.set({ msg: word });
 					// 显示下班提示语
 					this.appendMsg(config.toUser, config.user.username, msg);

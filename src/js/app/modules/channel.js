@@ -57,7 +57,7 @@ easemobim.channel = function (config) {
 
 		sendText: function (message, isHistory, ext) {
 			var id = utils.uuid();
-			var msg = new WebIM.message('txt', isHistory ? null : id);
+			var msg = new WebIM.message.txt(isHistory ? null : id);
 			msg.set({
 				msg: message,
 				to: config.toUser,
@@ -92,7 +92,7 @@ easemobim.channel = function (config) {
 		sendTransferToKf: function (tid, sessionId) {
 			var id = utils.uuid();
 			_detectSendMsgByApi(id);
-			var msg = new WebIM.message('cmd', id);
+			var msg = new WebIM.message.cmd(id);
 			msg.set({
 				to: config.toUser,
 				action: 'TransferToKf',
@@ -114,7 +114,7 @@ easemobim.channel = function (config) {
 
 		sendImg: function (file, isHistory) {
 			var id = utils.uuid();
-			var msg = new WebIM.message('img', isHistory ? null : id);
+			var msg = new WebIM.message.img(isHistory ? null : id);
 
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
@@ -158,7 +158,7 @@ easemobim.channel = function (config) {
 
 		sendFile: function (file, isHistory) {
 			var id = utils.uuid();
-			var msg = new WebIM.message('file', isHistory ? null : id);
+			var msg = new WebIM.message.file(isHistory ? null : id);
 
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
@@ -236,7 +236,7 @@ easemobim.channel = function (config) {
 			switch (type) {
 			case 'txt':
 			case 'emoji':
-				message = new WebIM.message('txt', msgId);
+				message = new WebIM.message.txt(msgId);
 				message.set({ msg: isHistory ? msg.data : me.getSafeTextValue(msg) });
 				break;
 			case 'cmd':
@@ -254,7 +254,7 @@ easemobim.channel = function (config) {
 				}
 				break;
 			case 'img':
-				message = new WebIM.message('img', msgId);
+				message = new WebIM.message.img(msgId);
 				message.set({
 					file: {
 						url: msg.url || utils.getDataByPath(msg, 'bodies.0.url')
@@ -262,7 +262,7 @@ easemobim.channel = function (config) {
 				});
 				break;
 			case 'file':
-				message = new WebIM.message('file', msgId);
+				message = new WebIM.message.file(msgId);
 				message.set({
 					file: {
 						url: msg.url || utils.getDataByPath(msg, 'bodies.0.url'),
@@ -272,7 +272,7 @@ easemobim.channel = function (config) {
 				});
 				break;
 			case 'satisfactionEvaluation':
-				message = new WebIM.message('list');
+				message = new WebIM.message.list();
 				message.set({
 					value: '请对我的服务做出评价',
 					list: [
@@ -298,7 +298,7 @@ easemobim.channel = function (config) {
 				}
 				break;
 			case 'robotList':
-				message = new WebIM.message('list');
+				message = new WebIM.message.list();
 				var list = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
 
 				if (list.length > 0) {
@@ -319,7 +319,7 @@ easemobim.channel = function (config) {
 				message.set({ value: msg.ext.msgtype.choice.title, list: str });
 				break;
 			case 'robotTransfer':
-				message = new WebIM.message('list');
+				message = new WebIM.message.list();
 				var ctrlArgs = msg.ext.weichat.ctrlArgs;
 				var title = msg.data
 					|| utils.getDataByPath(msg, 'bodies.0.msg')
