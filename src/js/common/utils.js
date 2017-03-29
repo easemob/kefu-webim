@@ -160,12 +160,12 @@
 			var container = wrapper || document;
 			me.on(container, ev, function (e) {
 				var evt = e || window.event;
-				var target = evt.target || ev.srcElement;
+				var target = evt.target || evt.srcElement;
 				var targetList = container.querySelectorAll(selector);
 				var i, l;
 
 				for (i = 0, l = targetList.length; i < l; ++i) {
-					targetList[i] === target && handler.apply(target, evt);
+					targetList[i] === target && handler.call(target, evt);
 				}
 			});
 		},

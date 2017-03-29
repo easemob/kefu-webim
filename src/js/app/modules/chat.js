@@ -278,14 +278,14 @@
 					utils.live('div.em-widget-date', 'touchstart', function (ev) {
 						var touch = ev.touches;
 
-						if (e.touches && e.touches.length > 0) {
+						if (ev.touches && ev.touches.length > 0) {
 							_startY = touch[0].pageY;
 						}
 					});
 					utils.live('div.em-widget-date', 'touchmove', function (ev) {
-						var touch = e.touches;
+						var touch = ev.touches;
 
-						if (e.touches && e.touches.length > 0) {
+						if (ev.touches && ev.touches.length > 0) {
 							_y = touch[0].pageY;
 							if (_y - _startY > 8 && this.getBoundingClientRect().top >= 0) {
 								clearTimeout(st);
@@ -298,10 +298,9 @@
 
 					// pc端
 					utils.on(doms.chatWrapper, 'mousewheel DOMMouseScroll', function (ev) {
-						var e = ev || window.event;
 						var that = this;
 
-						if (e.wheelDelta / 120 > 0 || e.detail < 0) {
+						if (ev.wheelDelta / 120 > 0 || ev.detail < 0) {
 							clearTimeout(st);
 							st = setTimeout(function () {
 								if (that.getBoundingClientRect().top >= 0) {

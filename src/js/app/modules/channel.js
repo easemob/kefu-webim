@@ -42,28 +42,17 @@ easemobim.channel = function (config) {
 		},
 
 		sendSatisfaction: function (level, content, session, invite) {
-			var id = utils.uuid();
-			_detectSendMsgByApi(id);
-
-			var msg = new WebIM.message('txt', id);
-			msg.set({
-				msg: '',
-				to: config.toUser,
-				ext: {
-					weichat: {
-						ctrlType: 'enquiry',
-						ctrlArgs: {
-							inviteId: invite || '',
-							serviceSessionId: session || '',
-							detail: content,
-							summary: level
-						}
+			_obj.sendText('', false, {ext: {
+				weichat: {
+					ctrlType: 'enquiry',
+					ctrlArgs: {
+						inviteId: invite || '',
+						serviceSessionId: session || '',
+						detail: content,
+						summary: level
 					}
 				}
-			});
-			_obj.appendAck(msg, id);
-			me.conn.send(msg.body);
-			sendMsgSite.set(id, msg);
+			}});
 		},
 
 		sendText: function (message, isHistory, ext) {
@@ -88,11 +77,13 @@ easemobim.channel = function (config) {
 				_obj.appendAck(msg, id);
 				me.conn.send(msg.body);
 				sendMsgSite.set(id, msg);
-				if (msg.body.ext && msg.body.ext.type === 'custom') { return; }
+				// 空文本消息不上屏
+				if (!message) return;
 				me.appendDate(new Date().getTime(), config.toUser);
 				me.appendMsg(config.user.username, config.toUser, msg);
 			}
 			else {
+				if (!message) return;
 				me.appendMsg(config.user.username, isHistory, msg, true);
 			}
 		},
@@ -245,11 +236,11 @@ easemobim.channel = function (config) {
 			switch (type) {
 			case 'txt':
 			case 'emoji':
-				message = new WebIM.message('txt');
+				message = new WebIM.message('txt', msgId);
 				message.set({ msg: isHistory ? msg.data : me.getSafeTextValue(msg) });
 				break;
 			case 'cmd':
-				var action = msg.action;
+				var action = msg.action || utils.getDataByPath(msg, 'bodies.0.action');
 				if (action === 'KF-ACK'){
 					// 清除ack对应的site item
 					_clearTS(msg.ext.weichat.ack_for_msg_id);
@@ -263,7 +254,7 @@ easemobim.channel = function (config) {
 				}
 				break;
 			case 'img':
-				message = new WebIM.message('img');
+				message = new WebIM.message('img', msgId);
 				message.set({
 					file: {
 						url: msg.url || utils.getDataByPath(msg, 'bodies.0.url')
@@ -271,7 +262,7 @@ easemobim.channel = function (config) {
 				});
 				break;
 			case 'file':
-				message = new WebIM.message('file');
+				message = new WebIM.message('file', msgId);
 				message.set({
 					file: {
 						url: msg.url || utils.getDataByPath(msg, 'bodies.0.url'),
@@ -556,7 +547,8 @@ easemobim.channel = function (config) {
 					case 'file':
 						msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
 						msg.to = msgBody.to;
-						msg.filesize = msg.file_length;
+						// 此处后端无法取得正确的文件大小，故不读取
+						// msg.filesize = msg.file_length;
 						me.channel.sendFile(msg, true);
 						break;
 					case 'txt':
