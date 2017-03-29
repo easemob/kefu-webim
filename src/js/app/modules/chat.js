@@ -1033,14 +1033,13 @@
 				utils.on(doms.imgInput, 'change', function () {
 					var fileInput = doms.imgInput;
 					// ie8-9 do not support multifiles, so you can not get files
-					var filename = utils.getDataByPath(fileInput, 'files.0.name');
 					var filesize = utils.getDataByPath(fileInput, 'files.0.size');
 
 					if (!fileInput.value) {
 						// 未选择文件
 					}
 					// ie8-9 use value check file type
-					else if (!/\.(png|jpg|jpeg|gif)$/i.test(filename || fileInput.value)) {
+					else if (!/\.(png|jpg|jpeg|gif)$/i.test(fileInput.value)) {
 						me.errorPrompt('不支持的图片格式');
 					}
 					// ie8-9 can not get size, ignore, use flash
