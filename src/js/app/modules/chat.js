@@ -1226,6 +1226,69 @@
 				var dom = easemobim.genDomFromMsg(msg, isReceived);
 				var img = dom.querySelector('.em-widget-imgview');
 
+				// benz robot demo
+				var container;
+				var textMsg = msg.value;
+				var match = typeof textMsg === 'string' && textMsg.match(/^__demo_id_(\w{8})__$/i);
+				if(match){
+					var demo = easemobim.demo;
+
+					switch(match[1]){
+					case '4aa746d1':
+						dom.innerHTML = [
+							'<h1>E级长轴轿车-专为中国市场量身打造</h1>',
+							'<h2>4月1日</h2>',
+							'<img src="static/benz-demo/image1.png">',
+							'<p>延续经典梅赛德斯-奔驰轿车外观，发动机罩上有三叉星徽，优雅之余不失商务气息。浅色材质彰显出优雅而独特的美感。</p>',
+							'<div class="footer">',
+							'	<span>阅读全文</span>',
+							'	<span class="svg-icon-arrow-right"></span>',
+							'</div>',
+							'<a href="static/benz-demo/article-1.html"></a>'
+						].join('');
+						dom.className = 'msg-view';
+						img = dom.querySelector('img');
+						break;
+					case 'daad3787':
+						dom.innerHTML = [
+							'<h1>心怀担当，人生自有为。全新梅赛德斯-奔驰GLC SUV</h1>',
+							'<h2>4月1日</h2>',
+							'<img src="static/benz-demo/image7.png">',
+							'<p>以圆润流线设计尽展夺目锋芒；动态操控选择控制器，五种驾驶模式掌控人生跌宕起伏。</p>',
+							'<div class="footer">',
+							'	<span>阅读全文</span>',
+							'	<span class="svg-icon-arrow-right"></span>',
+							'</div>',
+							'<a href="static/benz-demo/article-2.html"></a>'
+						].join('');
+						dom.className = 'msg-view';
+						img = dom.querySelector('img');
+						break;
+					case '1d0f2ff0':
+						container = dom.querySelector('.em-widget-msg-txt');
+						container.innerHTML = '<video src="static/benz-demo/video-1.mp4" poster="static/benz-demo/preview-1.png" style="max-width:12.25rem;"></video>';
+						img = container.querySelector('video');
+						break;
+					case 'db9a16fd':
+						container = dom.querySelector('.em-widget-msg-txt');
+						container.innerHTML = '<video src="static/benz-demo/video-2.mp4" poster="static/benz-demo/preview-2.png" style="max-width:12.25rem;"></video>';
+						img = container.querySelector('video');
+						break;
+					case 'bc268983':
+					case '5a6a5c07':
+					case 'b607ada9':
+					case '407d95e4':
+					case '8e1afa36':
+					case '15abea83':
+					case '33317460':
+					case 'feb5630e':
+					case 'd1fcf400':
+					case 'fc5d3559':
+					default:
+						throw 'unknown demo id.';
+					}
+				}
+
 				if (isHistory) {
 					curWrapper.insertBefore(dom, curWrapper.firstChild);
 				}

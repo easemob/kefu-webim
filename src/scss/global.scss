@@ -39,7 +39,7 @@ body {
 	font-family: sans-serif, 'Microsoft YaHei', 'Arial';
 	overflow: hidden;
 	-webkit-font-smoothing: antialiased;
-	background-color: #00ADEF;
+	// background-color: #00ADEF;
 }
 
 // benz patch
@@ -100,4 +100,41 @@ body {
 
 .hide {
 	display: none!important;
+}
+
+body.benz-article {
+	height: auto;
+	overflow-y: auto;
+	background-color: white;
+	padding: 1.25rem .9375rem;
+	box-sizing: border-box;
+	> h1 {
+		font-size: 1.375rem;
+		font-weight: normal;
+	}
+	> h2 {
+		font-size: .875rem;
+		color: #999;
+		margin: .9375rem 0 1.875rem;
+
+	}
+	li {
+		font-size: 1rem;
+		list-style: decimal;
+		margin: 1.875rem 0 1rem 1rem;
+		font-weight: bolder;
+	}
+	img {
+		width: 100%;
+		display: block;
+		margin: .9375rem 0;
+	}
+	p {
+		font-size: 1rem;
+		color: #666;
+		margin: 1.25rem 0;
+		line-height: 1.5rem;
+		font-family: Arial;
+	}
+
 }
