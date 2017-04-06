@@ -137,6 +137,7 @@
 			}));
 			break;
 		case 'getRobertGreeting':
+			// deprecated
 			easemobim.emajax(createObject({
 				url: '/v1/Tenants/'
 					+ msg.data.tenantId
@@ -283,6 +284,12 @@
 		case 'getDutyStatus_2':
 			easemobim.emajax(createObject({
 				url: '/v1/webimplugin/tenants/show-message',
+				msg: msg
+			}));
+			break;
+		case 'getRobertGreeting_2':
+			easemobim.emajax(createObject({
+				url: '/v1/webimplugin/tenants/robots/welcome',
 				msg: msg
 			}));
 			break;

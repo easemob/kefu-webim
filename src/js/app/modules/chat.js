@@ -379,12 +379,16 @@
 					}, 'txt');
 
 					//robert greeting
-					api('getRobertGreeting', {
+					api('getRobertGreeting_2', {
+						channelType: 'easemob',
+						originType: 'webim',
+						channelId: config.channelId,
 						tenantId: config.tenantId,
-						originType: 'webim'
+						agentUsername: config.agentName,
+						queueName: config.emgroup
 					}, function (msg) {
-						var greetingTextType = utils.getDataByPath(msg, 'data.greetingTextType');
-						var greetingText = utils.getDataByPath(msg, 'data.greetingText');
+						var greetingTextType = utils.getDataByPath(msg, 'data.entity.greetingTextType');
+						var greetingText = utils.getDataByPath(msg, 'data.entity.greetingText');
 						var greetingObj = {};
 						if (typeof greetingTextType !== 'number') return;
 
@@ -406,7 +410,7 @@
 						case 1:
 							// robert list greeting
 							try {
-								greetingObj = JSON.parse(greetingText.replace(/&quot;/g, '"'));
+								greetingObj = JSON.parse(greetingText.replace(/&amp;quot;/g, '"'));
 							}
 							catch (e){
 								console.warn('unexpected JSON string.', e);
