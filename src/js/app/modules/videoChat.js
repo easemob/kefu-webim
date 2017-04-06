@@ -134,6 +134,7 @@ easemobim.videoChat = (function (dialog) {
 						orgName: config.orgName,
 						appName: config.appName,
 						userName: config.user.username,
+						imServiceNumber: config.toUser,
 						resource: 'webim'
 					}
 				}
