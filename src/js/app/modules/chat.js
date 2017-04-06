@@ -152,10 +152,15 @@
 
 				// 获取上下班状态
 				getDutyStatusPromise = new Promise(function (resolve, reject) {
-					api('getDutyStatus', {
-						tenantId: config.tenantId
+					api('getDutyStatus_2', {
+						channelType: 'easemob',
+						originType: 'webim',
+						channelId: config.channelId,
+						tenantId: config.tenantId,
+						queueName: config.emgroup,
+						agentUsername: config.agentName
 					}, function (msg) {
-						config.isInOfficehours = !msg.data || config.offDutyType === 'chat';
+						config.isInOfficehours = !msg.data.entity || config.offDutyType === 'chat';
 						resolve();
 					}, function (err) {
 						reject(err);

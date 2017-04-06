@@ -53,6 +53,7 @@
 			}));
 			break;
 		case 'getDutyStatus':
+			// deprecated
 			easemobim.emajax(createObject({
 				url: '/v1/webimplugin/showMessage',
 				msg: msg
@@ -277,6 +278,12 @@
 				url: '/v1/visitors/waitings/data',
 				msg: msg,
 				type: 'GET'
+			}));
+			break;
+		case 'getDutyStatus_2':
+			easemobim.emajax(createObject({
+				url: '/v1/webimplugin/tenants/show-message',
+				msg: msg
 			}));
 			break;
 		default:
