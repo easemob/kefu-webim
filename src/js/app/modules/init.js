@@ -138,6 +138,16 @@
 			// 获取关联，创建访客，调用聊天窗口
 			chatEntry.init(config);
 		}
+
+		// 获取主题颜色设置
+		api('getTheme', {
+			tenantId: config.tenantId
+		}, function (msg) {
+			var themeName = utils.getDataByPath(msg, 'data.0.optionValue');
+			var className = _const.themeMap[themeName];
+
+			className && utils.addClass(document.body, className);
+		});
 	}
 
 	function initUI(config, callback) {
@@ -215,44 +225,58 @@
 		init: function (config, targetUserInfo) {
 			var me = this;
 
-			config.toUser = config.toUser || config.to;
-
-			// 获取主题颜色设置
-			api('getTheme', {
-				tenantId: config.tenantId
-			}, function (msg) {
-				var themeName = utils.getDataByPath(msg, 'data.0.optionValue');
-				var className = _const.themeMap[themeName];
-
-				className && utils.addClass(document.body, className);
-			});
-
-			config.orgName = config.appKey.split('#')[0];
-			config.appName = config.appKey.split('#')[1];
-
 			//获取关联信息
 			api('getRelevanceList', {
 				tenantId: config.tenantId
 			}, function (msg) {
-				if (msg.data.length === 0) {
+				var relevanceList = msg.data;
+				var targetItem;
+				var appKey = config.appKey;
+				var splited = appKey.split('#');
+				var orgName = splited[0];
+				var appName = splited[1];
+				var toUser = config.toUser || config.to;
+
+				// toUser 转为字符串， todo: move it to handle config
+				'number' === typeof toUser && (toUser = toUser.toString(10));
+
+				if (!relevanceList.length) {
 					chat.errorPrompt('未创建关联', true);
 					return;
 				}
-				config.relevanceList = msg.data;
-				config.tenantAvatar = utils.getAvatarsFullPath(msg.data[0].tenantAvatar, config.domain);
-				config.defaultAvatar = config.staticPath ? config.staticPath + '/img/default_avatar.png' : 'static' +
-					'/img/default_avatar.png';
-				config.defaultAgentName = msg.data[0].tenantName;
-				config.logo = config.logo || msg.data[0].tenantLogo;
-				config.toUser = config.toUser || msg.data[0].imServiceNumber;
-				config.orgName = config.orgName || msg.data[0].orgName;
-				config.appName = config.appName || msg.data[0].appName;
-				config.channelid = config.channelid || msg.data[0].channelId;
-				config.appKey = config.appKey || config.orgName + '#' + config.appName;
-				config.restServer = config.restServer || msg.data[0].restDomain;
-				var cluster = config.restServer ? config.restServer.match(/vip\d/) : '';
-				cluster = cluster && cluster.length ? '-' + cluster[0] : '';
-				config.xmppServer = config.xmppServer || 'im-api' + cluster + '.easemob.com';
+
+				if (appKey && toUser) {
+					// appKey，imServiceNumber 都指定了
+					targetItem = _.where(relevanceList, {
+						orgName: orgName,
+						appName: appName,
+						imServiceNumber: toUser
+					})[0];
+				}
+
+				// 未指定appKey, toUser时，或未找到符合条件的关联时，默认使用关联列表中的第一项
+				if (!targetItem){
+					targetItem = targetItem || relevanceList[0];
+					console.log('mismatched channel, use default.');
+				}
+
+				// 获取企业头像和名称
+				// todo：move to handle config (defaultAvatar)
+				// todo: rename to tenantName
+				config.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, config.domain);
+				config.defaultAvatar = config.staticPath ? config.staticPath + '/img/default_avatar.png' : 'static/img/default_avatar.png';
+				config.defaultAgentName = targetItem.tenantName;
+
+				config.logo = config.logo || targetItem.tenantLogo;
+				config.toUser = targetItem.imServiceNumber;
+				config.orgName = targetItem.orgName;
+				config.appName = targetItem.appName;
+				config.channelId = targetItem.channelId;
+
+				config.appKey = config.orgName + '#' + config.appName;
+				config.restServer = config.restServer || targetItem.restDomain;
+				config.xmppServer = config.xmppServer || targetItem.xmppServer;
+
 				chat.init();
 
 				if (targetUserInfo) {
@@ -422,6 +446,7 @@
 				utils.set('root' + config.tenantId + config.emgroup, config.user.username);
 			}
 			else {
+				// todo: directly transfer key & value to write cookies
 				transfer.send({
 					event: _const.EVENTS.CACHEUSER,
 					data: {
