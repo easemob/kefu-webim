@@ -49,6 +49,7 @@
 			}
 
 			config.user = config.user || {};
+			config.visitor = config.visitor || {};
 			var usernameFromUrl = utils.query('user');
 			var usernameFromCookie = utils.get('root' + config.tenantId + config.emgroup);
 			var usernameFromConfig = config.user.username;
@@ -73,7 +74,7 @@
 			}
 
 			chat = easemobim.chat(config);
-			initUI(config, initAfterUI);
+			initUI(initAfterUI);
 		}
 		else {
 			window.transfer = new easemobim.Transfer(null, 'main').listen(function (msg) {
@@ -104,9 +105,11 @@
 				case _const.EVENTS.INIT_CONFIG:
 					chat = easemobim.chat(msg.data);
 					window.transfer.to = msg.data.parentId;
-					initUI(msg.data, initAfterUI);
-					// cache config
 					config = msg.data;
+					config.user = config.user || {};
+					config.visitor = config.visitor || {};
+					initUI(initAfterUI);
+					// cache config
 					break;
 				default:
 					break;
@@ -115,9 +118,7 @@
 		}
 	}
 
-	function initAfterUI(config) {
-		config.base = location.protocol + config.domain;
-
+	function initAfterUI() {
 		//load modules
 		easemobim.leaveMessage = easemobim.leaveMessage(chat, config.tenantId);
 		easemobim.paste(chat).init();
@@ -150,7 +151,7 @@
 		});
 	}
 
-	function initUI(config, callback) {
+	function initUI(callback) {
 		var iframe = document.getElementById('cross-origin-iframe');
 
 		iframe.src = config.domain + '/webim/transfer.html?v=<%=WEBIM_PLUGIN_VERSION%>';
