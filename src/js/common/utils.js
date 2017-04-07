@@ -87,6 +87,10 @@
 	easemobim.utils = {
 		isTop: window.top === window.self,
 		isNodeList: _isNodeList,
+		getBrief: function(str, length){
+			if(typeof str !== 'string') return '';
+			return str.length > length ? str.slice(0, length) + '...' : str;
+		},
 		formatDate: function(d, format){
 			var date = d ? new Date(d) : new Date();
 			var fmt = format || 'M月d日 hh:mm';

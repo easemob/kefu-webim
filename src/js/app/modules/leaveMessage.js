@@ -13,7 +13,7 @@
 
 		var dom = document.querySelector('.em-widget-offline');
 		var content = dom.querySelector('textarea');
-		var contact = dom.querySelector('.contact');
+		var name = dom.querySelector('.name');
 		var phone = dom.querySelector('.phone');
 		var mail = dom.querySelector('.mail');
 		var confirmBtn = dom.querySelector('.btn-ok');
@@ -31,7 +31,7 @@
 			else if (!projectId || !targetUser) {
 				chat.errorPrompt('留言失败，token无效');
 			}
-			else if (!contact.value || contact.value.length > 140) {
+			else if (!name.value || name.value.length > 140) {
 				chat.errorPrompt('姓名输入不正确');
 			}
 			else if (!phone.value || phone.value.length > 24) {
@@ -60,7 +60,7 @@
 					priority_id: '',
 					category_id: '',
 					creator: {
-						name: contact.value,
+						name: name.value,
 						avatar: '',
 						email: mail.value,
 						phone: phone.value,
@@ -78,7 +78,7 @@
 							utils.addClass(success, 'hide');
 						}, 1500);
 
-						contact.value = '';
+						name.value = '';
 						phone.value = '';
 						mail.value = '';
 						content.value = '';
@@ -90,6 +90,13 @@
 
 			}
 		});
+
+		function _writePreDate(preData){
+			content.value = utils.getBrief(preData.content, 1000);
+			name.value = preData.name || '';
+			phone.value = preData.phone || '';
+			mail.value = preData.mail || '';
+		}
 
 		return {
 			auth: function (token, config) {
@@ -110,8 +117,10 @@
 					});
 				}
 			},
-			show: function (isHideCancelBtn) {
-				utils.toggleClass(cancelBtn, 'hide', !!isHideCancelBtn);
+			show: function (opt) {
+				opt = opt || {};
+				opt.preData && _writePreDate(opt.preData);
+				opt.hideCloseBtn && utils.addClass(cancelBtn, 'hide');
 				utils.removeClass(dom, 'hide');
 			}
 		};

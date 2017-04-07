@@ -5,13 +5,13 @@ easemobim.channel = function (config) {
 	var _const = easemobim._const;
 
 	//监听ack的timer, 每条消息启动一个
-	var ackTS = new easemobim.site();
+	var ackTimerDict = new easemobim.dict();
 
 	//发消息队列
-	var sendMsgSite = new easemobim.site();
+	var sendMsgDict = new easemobim.dict();
 
 	//收消息队列
-	var receiveMsgSite = new easemobim.site();
+	var receiveMsgDict = new easemobim.dict();
 
 
 	var _obj = {
@@ -27,7 +27,7 @@ easemobim.channel = function (config) {
 
 		reSend: function (type, id) {
 			if (id) {
-				var msg = sendMsgSite.get(id);
+				var msg = sendMsgDict.get(id);
 
 				switch (type) {
 				case 'txt':
@@ -55,9 +55,9 @@ easemobim.channel = function (config) {
 			}});
 		},
 
-		sendText: function (message, isHistory, ext) {
+		sendText: function (message, ext) {
 			var id = utils.uuid();
-			var msg = new WebIM.message.txt(isHistory ? null : id);
+			var msg = new WebIM.message.txt(id);
 			msg.set({
 				msg: message,
 				to: config.toUser,
@@ -70,22 +70,16 @@ easemobim.channel = function (config) {
 				_.extend(msg.body, ext);
 			}
 
-			if (!isHistory) {
-				// 开启倒计时
-				_detectSendMsgByApi(id);
-				me.setExt(msg);
-				_obj.appendAck(msg, id);
-				me.conn.send(msg.body);
-				sendMsgSite.set(id, msg);
-				// 空文本消息不上屏
-				if (!message) return;
-				me.appendDate(new Date().getTime(), config.toUser);
-				me.appendMsg(config.user.username, config.toUser, msg);
-			}
-			else {
-				if (!message) return;
-				me.appendMsg(config.user.username, isHistory, msg, true);
-			}
+			// 开启倒计时
+			_detectSendMsgByApi(id);
+			me.setExt(msg);
+			_obj.appendAck(msg, id);
+			me.conn.send(msg.body);
+			sendMsgDict.set(id, msg);
+
+			// 空文本消息不上屏
+			if (!message) return;
+			me.appendMsg(false, msg, false);
 		},
 
 
@@ -107,14 +101,14 @@ easemobim.channel = function (config) {
 			});
 			_obj.appendAck(msg, id);
 			me.conn.send(msg.body);
-			sendMsgSite.set(id, msg);
+			sendMsgDict.set(id, msg);
 
 			me.handleEventStatus(null, null, true);
 		},
 
-		sendImg: function (file, isHistory, fileInput) {
+		sendImg: function (file, fileInput) {
 			var id = utils.uuid();
-			var msg = new WebIM.message.img(isHistory ? null : id);
+			var msg = new WebIM.message.img(id);
 
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
@@ -144,20 +138,14 @@ easemobim.channel = function (config) {
 					fileInput && (fileInput.value = '');
 				}
 			});
-			if (!isHistory) {
-				me.setExt(msg);
-				me.conn.send(msg.body);
-				me.appendDate(new Date().getTime(), config.toUser);
-				me.appendMsg(config.user.username, config.toUser, msg);
-			}
-			else {
-				me.appendMsg(config.user.username, file.to, msg, true);
-			}
+			me.setExt(msg);
+			me.conn.send(msg.body);
+			me.appendMsg(false, msg, false);
 		},
 
-		sendFile: function (file, isHistory, fileInput) {
+		sendFile: function (file, fileInput) {
 			var id = utils.uuid();
-			var msg = new WebIM.message.file(isHistory ? null : id);
+			var msg = new WebIM.message.file(id);
 
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
@@ -184,15 +172,9 @@ easemobim.channel = function (config) {
 					fileInput && (fileInput.value = '');
 				}
 			});
-			if (!isHistory) {
-				me.setExt(msg);
-				me.conn.send(msg.body);
-				me.appendDate(new Date().getTime(), config.toUser);
-				me.appendMsg(config.user.username, config.toUser, msg);
-			}
-			else {
-				me.appendMsg(config.user.username, file.to, msg, true);
-			}
+			me.setExt(msg);
+			me.conn.send(msg.body);
+			me.appendMsg(false, msg, false);
 		},
 
 		handleReceive: function (msg, type, isHistory) {
@@ -200,13 +182,13 @@ easemobim.channel = function (config) {
 			var message;
 			var msgId = msg.msgId || utils.getDataByPath(msg, 'ext.weichat.msgId');
 
-			if (receiveMsgSite.get(msgId)) {
+			if (receiveMsgDict.get(msgId)) {
 				// 重复消息不处理
 				return;
 			}
 			else if (msgId){
 				// 消息加入去重列表
-				receiveMsgSite.set(msgId, 1);
+				receiveMsgDict.set(msgId, msg);
 			}
 			else {
 				// 没有msgId忽略，继续处理（KEFU-ACK消息没有msgId）
@@ -235,7 +217,7 @@ easemobim.channel = function (config) {
 			case 'txt':
 			case 'emoji':
 				message = new WebIM.message.txt(msgId);
-				message.set({ msg: isHistory ? msg.data : me.getSafeTextValue(msg) });
+				message.set({ msg: me.getSafeTextValue(msg) });
 				break;
 			case 'cmd':
 				var action = msg.action || utils.getDataByPath(msg, 'bodies.0.action');
@@ -412,22 +394,18 @@ easemobim.channel = function (config) {
 					break;
 				}
 			}
-			if (!message || !message.value) {
-				// 空消息不显示
-			}
-			else if (isHistory) {
-				// 历史消息仅上屏
-				me.appendMsg(msg.from, msg.to, message, true);
-			}
-			else {
+			// 空消息不显示
+			if (!message || !message.value) return;
+
+			// 	给收到的消息加id，用于撤回消息
+			message.id = msgId;
+			// 消息上屏
+			me.appendMsg(true, message, isHistory, msg.timestamp);
+
+			if (!isHistory) {
 				if (!msg.noprompt) {
 					me.messagePrompt(message);
 				}
-				me.appendDate(new Date().getTime(), msg.from);
-				me.resetSpan();
-				// 	给收到的消息加id，用于撤回消息
-				message.id = msgId;
-				me.appendMsg(msg.from, msg.to, message);
 				me.scrollBottom(50);
 
 				// 收消息回调
@@ -456,19 +434,19 @@ easemobim.channel = function (config) {
 					me.handleReady(info);
 				},
 				onTextMessage: function (message) {
-					me.receiveMsg(message, 'txt');
+					me.channel.handleReceive(message, 'txt');
 				},
 				onEmojiMessage: function (message) {
-					me.receiveMsg(message, 'emoji');
+					me.channel.handleReceive(message, 'emoji');
 				},
 				onPictureMessage: function (message) {
-					me.receiveMsg(message, 'img');
+					me.channel.handleReceive(message, 'img');
 				},
 				onFileMessage: function (message) {
-					me.receiveMsg(message, 'file');
+					me.channel.handleReceive(message, 'file');
 				},
 				onCmdMessage: function (message) {
-					me.receiveMsg(message, 'cmd');
+					me.channel.handleReceive(message, 'cmd');
 				},
 				onOnline: function () {
 					utils.isMobile && me.open();
@@ -504,7 +482,7 @@ easemobim.channel = function (config) {
 						console.warn(e.data);
 						easemobim.reCreateImUser();
 					}
-					// im sdk 会捕获 receiveMsg 回调中的异常，需要把出错信息打出来
+					// im sdk 会捕获回调中的异常，需要把出错信息打出来
 					else if (e.type === _const.IM.WEBIM_CONNCTION_CALLBACK_INNER_ERROR) {
 						console.error(e.data);
 					}
@@ -527,71 +505,47 @@ easemobim.channel = function (config) {
 			me.conn.listen(handlers);
 		},
 
-		handleHistory: function (chatHistory) {
-			_.each(chatHistory, function (element, index) {
-				var msgBody = element.body;
-				var msg = utils.getDataByPath(msgBody, 'bodies.0');
-				var isSelf = msgBody.from === config.user.username;
+		handleHistoryMsg: function (element) {
+			var msgBody = element.body || {};
+			var msg = utils.getDataByPath(msgBody, 'bodies.0') || {};
+			var type = msg.type;
+			var timestamp = element.timestamp || msgBody.timestamp;
+			var filename = msg.filename;
+			var textMsg = me.getSafeTextValue(msgBody) || msg.msg;
+			var msgId = element.msgId;
+			var msgObj;
 
-				if (!msg) return;
-				if (isSelf) {
-					//visitors' msg
-					switch (msg.type) {
-					case 'img':
-						msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
-						msg.to = msgBody.to;
-						me.channel.sendImg(msg, true);
-						break;
-					case 'file':
-						msg.url = /^http/.test(msg.url) ? msg.url : config.base + msg.url;
-						msg.to = msgBody.to;
-						// 此处后端无法取得正确的文件大小，故不读取
-						// msg.filesize = msg.file_length;
-						me.channel.sendFile(msg, true);
-						break;
-					case 'txt':
-						me.channel.sendText(msg.msg, true);
-						break;
-					}
-				}
-				//agents' msg
-				else if (utils.getDataByPath(msgBody, 'ext.weichat.ctrlType') === 'inviteEnquiry') {
-					// 满意度调查的消息，第二通道会重发此消息，需要msgId去重
-					msgBody.msgId = element.msgId;
-					me.receiveMsg(msgBody, '', true);
-				}
-				else if (
-					utils.getDataByPath(msgBody, 'ext.msgtype.choice')
-					|| utils.getDataByPath(msgBody, 'ext.weichat.ctrlType') === 'TransferToKfHint'
-				) {
-					// 机器人自定义菜单，机器人转人工
-					me.receiveMsg(msgBody, '', true);
-				}
-				else if (utils.getDataByPath(msgBody, 'ext.weichat.recall_flag') === 1) {
-					// 已撤回消息，不处理
-					return;
-				}
-				else {
-					me.receiveMsg({
-						msgId: element.msgId,
-						data: msg.type === 'txt' ? me.getSafeTextValue(msgBody) : msg.msg,
-						filename: msg.filename,
-						file_length: msg.file_length,
-						url: /^http/.test(msg.url) ? msg.url : config.base + msg.url,
-						from: msgBody.from,
-						to: msgBody.to
-					}, msg.type, true);
-				}
+			// 给图片消息或附件消息的url拼上hostname
+			(msg.url && !/^https?/.test(msg.url)) && (msg.url = location.protocol + config.domain + msg.url);
 
-				if (
-					// 非cmd消息, 非空文本消息, 非重复消息，非撤回消息
-					msg.type !== 'cmd'
-					&& (msg.type !== 'txt' || msg.msg)
-					&& !receiveMsgSite.get(element.msgId)
-				) {
-					me.appendDate(element.timestamp || msgBody.timestamp, isSelf ? msgBody.to : msgBody.from, true);
+			// 已撤回消息 不处理
+			if (utils.getDataByPath(msgBody, 'ext.weichat.recall_flag') === 1) return;
+
+			if (msgBody.from === config.user.username) {
+				// 访客发出的消息
+				// 仅处理文本、图片、附件3种
+				// 空文本消息不上屏
+				if (/img|file|txt/.test(type) && (type !== 'txt' || textMsg)){
+					msgObj = new WebIM.message[type](msgId);
+					// 此处后端无法取得正确的文件大小，删除属性
+					delete msg.file_length;
+					msgObj.set({
+						msg: textMsg,
+						file: msg
+					});
+					me.appendMsg(false, msgObj, true, timestamp);
+					me.hideLoading(msgId);
 				}
-			});
+			}
+			else {
+				// 客服坐席发出的消息
+				msgBody.timestamp = timestamp;
+				msgBody.filename = filename;
+				msgBody.data = textMsg;
+				msgBody.msgId = msgId;
+				msgBody.file_length = msg.file_length;
+				me.channel.handleReceive(msgBody, type, true);
+			}
 		},
 		initSecondChannle: function () {
 			me.receiveMsgTimer = setInterval(_receiveMsgChannel, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
@@ -614,7 +568,9 @@ easemobim.channel = function (config) {
 					try {
 						_obj.handleReceive(elem, elem.bodies[0].type, false);
 					}
-					catch (e) {}
+					catch (e) {
+						console.warn(e);
+					}
 				});
 		});
 	}
@@ -659,26 +615,26 @@ easemobim.channel = function (config) {
 
 	//消息发送成功，清除timer
 	function _clearTS(id) {
-		clearTimeout(ackTS.get(id));
-		ackTS.remove(id);
+		clearTimeout(ackTimerDict.get(id));
+		ackTimerDict.remove(id);
 
 		utils.$Remove(document.getElementById(id + '_loading'));
 		utils.$Remove(document.getElementById(id + '_failed'));
 
-		if (sendMsgSite.get(id)) {
-			me.handleEventStatus(null, null, sendMsgSite.get(id).value === '转人工' || sendMsgSite.get(id).value === '转人工客服');
+		if (sendMsgDict.get(id)) {
+			me.handleEventStatus(null, null, sendMsgDict.get(id).value === '转人工' || sendMsgDict.get(id).value === '转人工客服');
 		}
 
-		sendMsgSite.remove(id);
+		sendMsgDict.remove(id);
 	}
 
 	//监听ack，超时则开启api通道, 发消息时调用
 	function _detectSendMsgByApi(id) {
-		ackTS.set(
+		ackTimerDict.set(
 			id,
 			setTimeout(function () {
 				//30s没收到ack使用api发送
-				_sendMsgChannle(sendMsgSite.get(id));
+				_sendMsgChannle(sendMsgDict.get(id));
 			}, _const.FIRST_CHANNEL_MESSAGE_TIMEOUT)
 		);
 	}
