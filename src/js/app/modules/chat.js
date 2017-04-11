@@ -1030,11 +1030,11 @@
 					if (!fileInput.value) {
 						// 未选择文件
 					}
-					else if (filesize < _const.UPLOAD_FILESIZE_LIMIT) {
-						me.channel.sendFile(WebIM.utils.getFileUrl(fileInput));
+					else if (filesize > _const.UPLOAD_FILESIZE_LIMIT) {
+						me.errorPrompt('文件大小不能超过10MB');
 					}
 					else {
-						me.errorPrompt('文件大小不能超过10MB');
+						me.channel.sendFile(WebIM.utils.getFileUrl(fileInput), false, fileInput);
 					}
 				});
 
@@ -1047,16 +1047,17 @@
 					if (!fileInput.value) {
 						// 未选择文件
 					}
-					// ie8-9 use value check file type
-					else if (!/\.(png|jpg|jpeg|gif)$/i.test(fileInput.value)) {
-						me.errorPrompt('不支持的图片格式');
-					}
-					// ie8-9 can not get size, ignore, use flash
+					// 某些浏览器不能获取到正确的文件名，所以放弃文件类型检测
+					// else if (!/\.(png|jpg|jpeg|gif)$/i.test(fileInput.value)) {
+						// me.errorPrompt('不支持的图片格式');
+					// }
+					// 某些浏览器无法获取文件大小, 忽略
 					else if (filesize > _const.UPLOAD_FILESIZE_LIMIT) {
 						me.errorPrompt('文件大小不能超过10MB');
+						fileInput.value = '';
 					}
 					else {
-						me.channel.sendImg(WebIM.utils.getFileUrl(fileInput));
+						me.channel.sendImg(WebIM.utils.getFileUrl(fileInput), false, fileInput);
 					}
 				});
 

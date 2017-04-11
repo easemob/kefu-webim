@@ -112,7 +112,7 @@ easemobim.channel = function (config) {
 			me.handleEventStatus(null, null, true);
 		},
 
-		sendImg: function (file, isHistory) {
+		sendImg: function (file, isHistory, fileInput) {
 			var id = utils.uuid();
 			var msg = new WebIM.message.img(isHistory ? null : id);
 
@@ -133,16 +133,15 @@ easemobim.channel = function (config) {
 						me.scrollBottom();
 					}, 50);
 				},
-				uploadComplete: function () {
-					me.handleEventStatus();
-				},
 				success: function (id) {
 					utils.$Remove(document.getElementById(id + '_loading'));
 					utils.$Remove(document.getElementById(id + '_failed'));
+					fileInput && (fileInput.value = '');
 				},
 				fail: function (id) {
 					utils.addClass(document.getElementById(id + '_loading'), 'hide');
 					utils.removeClass(document.getElementById(id + '_failed'), 'hide');
+					fileInput && (fileInput.value = '');
 				}
 			});
 			if (!isHistory) {
@@ -156,7 +155,7 @@ easemobim.channel = function (config) {
 			}
 		},
 
-		sendFile: function (file, isHistory) {
+		sendFile: function (file, isHistory, fileInput) {
 			var id = utils.uuid();
 			var msg = new WebIM.message.file(isHistory ? null : id);
 
@@ -174,16 +173,15 @@ easemobim.channel = function (config) {
 					utils.addClass(loading, 'hide');
 					me.scrollBottom();
 				},
-				uploadComplete: function () {
-					me.handleEventStatus();
-				},
 				success: function (id) {
 					utils.$Remove(document.getElementById(id + '_loading'));
 					utils.$Remove(document.getElementById(id + '_failed'));
+					fileInput && (fileInput.value = '');
 				},
 				fail: function (id) {
 					utils.addClass(document.getElementById(id + '_loading'), 'hide');
 					utils.removeClass(document.getElementById(id + '_failed'), 'hide');
+					fileInput && (fileInput.value = '');
 				}
 			});
 			if (!isHistory) {
