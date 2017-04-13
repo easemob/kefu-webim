@@ -887,7 +887,7 @@
 						easemobim.imgView.show(imgSrc);
 					}else{
 						transfer.send({
-							event: _const.EVENTS.LARGE_IMG_SHOW,
+							event: _const.EVENTS.SHOW_IMG,
 							data: {
 								imgSrc: imgSrc
 							}
