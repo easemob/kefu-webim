@@ -182,6 +182,7 @@ gulp.task('combineJs', function() {
 			'src/js/plugin/titleSlide.js',
 			'src/js/plugin/iframe.js',
 			'src/js/plugin/userAPI.js',
+			'src/js/plugin/imgview.js',
 		])
 		.pipe(concat('easemob.js'));
 	debug || ejs.pipe(uglify());
