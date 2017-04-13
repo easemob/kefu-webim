@@ -71,7 +71,8 @@
 			SET_ITEM: 'setItem',
 			UPDATE_URL: 'updateURL',
 			REQUIRE_URL: 'requireURL',
-			INIT_CONFIG: 'initConfig'
+			INIT_CONFIG: 'initConfig',
+			SHOW_IMG: 'showIMG'
 		},
 
 		//上传文件大小限制

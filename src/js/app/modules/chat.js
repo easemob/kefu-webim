@@ -881,7 +881,18 @@
 				});
 
 				utils.live('img.em-widget-imgview', 'click', function () {
-					easemobim.imgView.show(this.getAttribute('src'));
+					var imgSrc = this.getAttribute('src');
+					if (utils.isTop){
+						easemobim.imgView.show(imgSrc);
+					}
+					else {
+						transfer.send({
+							event: _const.EVENTS.SHOW_IMG,
+							data: {
+								imgSrc: imgSrc
+							}
+						}, window.transfer.to);
+					}
 				});
 
 				if (config.dragenable && !utils.isTop) {
