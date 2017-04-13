@@ -192,5 +192,6 @@
 		define([], function () {
 			return easemobim;
 		});
-	}
+	};
+	
 }(window, undefined));
