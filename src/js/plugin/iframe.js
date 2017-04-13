@@ -200,6 +200,9 @@
 				case _const.EVENTS.REQUIRE_URL:
 					me.message.send({ event: _const.EVENTS.UPDATE_URL, data: location.href });
 					break;
+				case _const.EVENTS.LARGE_IMG_SHOW:
+					easemobim.pcImgView(msg.data.imgSrc,me);
+					break;
 				default:
 					break;
 				}
