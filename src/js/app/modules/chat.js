@@ -176,7 +176,8 @@
 						_.each([
 							'audioVideo',
 							'msgPredictEnable',
-							'waitListNumberEnable'
+							'waitListNumberEnable',
+							'agentInputStateEnable'
 						], function (key) {
 							grayList[key] = _.contains(data[key], +config.tenantId);
 						});
@@ -539,6 +540,7 @@
 				var timer = null;
 				var me =this;
 				function _start() {
+					if (!config.grayList.agentInputStateEnable) return;//没有灰度的时候  不做查询
 					isStarted = true;
 					// 保证当前最多只有1个timer
 					clearInterval(timer);
@@ -569,6 +571,7 @@
 				function getAgentInputState(sessionId) {
 					
 					if (!config.user.token) {
+						console.warn('undefined token');
 						return;
 					}
 					api('getAgentInputState', {
