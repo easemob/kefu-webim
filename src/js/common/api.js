@@ -81,14 +81,6 @@
 				excludeData: true
 			}));
 			break;
-		case 'getIsSessionOngoing':
-			easemobim.emajax(createObject({
-				url: '/tenant/{tenantId}/visitors/'+ msg.data.id +'/CurrentServiceSession?techChannelInfo='+ msg.data.orgName + '%23'
-					+ msg.data.appName + '%23' + msg.data.imServiceNumber ,
-				msg: msg,
-				excludeData: true
-			}));
-			break;
 		case 'getExSession':
 			easemobim.emajax(createObject({
 				url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data-ex?techChannelInfo=' + msg.data.orgName +

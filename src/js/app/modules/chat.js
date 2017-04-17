@@ -539,26 +539,21 @@
 				var timer = null;
 				var me =this;
 				function _start() {
-					//默认开始轮询是隐藏正在输入中
-					utils.addClass(doms.inputState, 'hide');	
 					isStarted = true;
 					// 保证当前最多只有1个timer
-					
 					clearInterval(timer);
-					api('getExSession', {
+					api('getCurrentServiceSession', {
 						id: config.user.username,
 						orgName: config.orgName,
 						appName: config.appName,
 						imServiceNumber: config.toUser,
-						tenantId: config.tenantId
+						tenantId: config.tenantId,
+						imServiceNumber: config.toUser
 					}, function (msg) {
 						var data = msg.data || {};
-						var serviceSession = data.serviceSession;
+						var sessionId = data.serviceSessionId;
 
-						if (serviceSession) {
-						
-							sessionId = serviceSession.serviceSessionId;
-					
+						if (sessionId) {					
 							if (isStarted) {
 								timer = setInterval(function () {
 									getAgentInputState(sessionId);
@@ -572,9 +567,9 @@
 				}
 
 				function getAgentInputState(sessionId) {
-					var accessToken = null;
-					if (config.user.token) {
-						accessToken = config.user.token;
+					
+					if (!config.user.token) {
+						return;
 					}
 					api('getAgentInputState', {
 						id: config.user.username,
@@ -582,7 +577,7 @@
 						appName: config.appName,
 						tenantId: config.tenantId,
 						serviceSessionId: sessionId,
-						token: accessToken,
+						token: config.user.token,
 					}, function (resp) {
 						var nowData = resp.data.entity;
 						if (!nowData.input_state_tips) {
@@ -596,7 +591,7 @@
 
 				function _stop() {
 					clearInterval(timer);
-
+					utils.addClass(doms.inputState, 'hide');
 					isStarted = false;
 				}
 				return {
