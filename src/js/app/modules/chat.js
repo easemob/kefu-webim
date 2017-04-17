@@ -28,6 +28,7 @@
 			agentWaitNumber: document.querySelector('.em-header-status-text-queue-number'),
 			agentStatusSymbol: document.getElementById('em-widgetAgentStatus'),
 			nickname: document.querySelector('.em-widgetHeader-nickname'),
+			inputState:document.querySelector('.em-agent-input-state'),
 			imgInput: document.querySelector('.upload-img-container'),
 			fileInput: document.querySelector('.upload-file-container'),
 			emojiContainer: document.querySelector('.em-bar-emoji-container'),
@@ -233,6 +234,8 @@
 						// 待接入排队人数显示
 						me.waitListNumber.start();
 
+						//轮询坐席的输入状态
+						me.agentInputState.start();
 						// 第二通道收消息初始化
 						me.channel.initSecondChannle();
 					}
@@ -529,6 +532,78 @@
 					}
 				});
 			},
+
+			agentInputState: (function () {
+
+				var isStarted = false;
+				var timer = null;
+				var me =this;
+				function _start() {
+					//默认开始轮询是隐藏正在输入中
+					utils.addClass(doms.inputState, 'hide');	
+					isStarted = true;
+					// 保证当前最多只有1个timer
+					
+					clearInterval(timer);
+					api('getExSession', {
+						id: config.user.username,
+						orgName: config.orgName,
+						appName: config.appName,
+						imServiceNumber: config.toUser,
+						tenantId: config.tenantId
+					}, function (msg) {
+						var data = msg.data || {};
+						var serviceSession = data.serviceSession;
+
+						if (serviceSession) {
+						
+							sessionId = serviceSession.serviceSessionId;
+					
+							if (isStarted) {
+								timer = setInterval(function () {
+									getAgentInputState(sessionId);
+								}, _const.AGENT_INPUT_STATE_INTERVAL);
+							}
+						}
+						else {
+
+						}
+					});
+				}
+
+				function getAgentInputState(sessionId) {
+					var accessToken = null;
+					if (config.user.token) {
+						accessToken = config.user.token;
+					}
+					api('getAgentInputState', {
+						id: config.user.username,
+						orgName: config.orgName,
+						appName: config.appName,
+						tenantId: config.tenantId,
+						serviceSessionId: sessionId,
+						token: accessToken,
+					}, function (resp) {
+						var nowData = resp.data.entity;
+						if (!nowData.input_state_tips) {
+							utils.addClass(doms.inputState, 'hide');
+						}
+						else {
+							utils.removeClass(doms.inputState, 'hide');
+						}
+					});
+				}
+
+				function _stop() {
+					clearInterval(timer);
+
+					isStarted = false;
+				}
+				return {
+					start: _start,
+					stop: _stop
+				};
+			}()),
 			waitListNumber: (function () {
 
 				var isStarted = false;

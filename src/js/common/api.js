@@ -81,10 +81,27 @@
 				excludeData: true
 			}));
 			break;
+		case 'getIsSessionOngoing':
+			easemobim.emajax(createObject({
+				url: '/tenant/{tenantId}/visitors/'+ msg.data.id +'/CurrentServiceSession?techChannelInfo='+ msg.data.orgName + '%23'
+					+ msg.data.appName + '%23' + msg.data.imServiceNumber ,
+				msg: msg,
+				excludeData: true
+			}));
+			break;
 		case 'getExSession':
 			easemobim.emajax(createObject({
 				url: '/v1/webimplugin/visitors/' + msg.data.id + '/schedule-data-ex?techChannelInfo=' + msg.data.orgName +
 					'%23' + msg.data.appName + '%23' + msg.data.imServiceNumber + '&tenantId=' + msg.data.tenantId,
+				msg: msg,
+				excludeData: true
+			}));
+			break;
+		case 'getAgentInputState':
+			easemobim.emajax(createObject({
+				url: '/v1/webimplugin/sessions/'+msg.data.serviceSessionId+'/agent-input-state?tenantId=' + msg.data.tenantId
+				+ '&orgName='+ msg.data.orgName + '&appName='+ msg.data.appName 
+				+ '&userName='+msg.data.id +'&token='+msg.data.token,
 				msg: msg,
 				excludeData: true
 			}));
