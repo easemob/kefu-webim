@@ -89,15 +89,6 @@
 				excludeData: true
 			}));
 			break;
-		case 'getAgentInputState':
-			easemobim.emajax(createObject({
-				url: '/v1/webimplugin/sessions/'+msg.data.serviceSessionId+'/agent-input-state?tenantId=' + msg.data.tenantId
-				+ '&orgName='+ msg.data.orgName + '&appName='+ msg.data.appName 
-				+ '&userName='+msg.data.id +'&token='+msg.data.token,
-				msg: msg,
-				excludeData: true
-			}));
-			break;
 		case 'getPassword':
 			easemobim.emajax(createObject({
 				url: '/v1/webimplugin/visitors/password',
@@ -300,6 +291,28 @@
 			easemobim.emajax(createObject({
 				url: '/v1/webimplugin/tenants/robots/welcome',
 				msg: msg
+			}));
+			break;
+		case 'getAgentInputState':
+			easemobim.emajax(createObject({
+				url: '/v1/webimplugin/sessions/' + msg.data.serviceSessionId
+				+ '/agent-input-state?tenantId=' + msg.data.tenantId
+				+ '&orgName=' + msg.data.orgName + '&appName='+ msg.data.appName 
+				+ '&userName=' + msg.data.username + '&token=' + msg.data.token,
+				msg: msg,
+				excludeData: true
+			}));
+			break;
+		case 'closeServiceSession':
+			var ssid = msg.data.serviceSessionId;
+			delete msg.data.serviceSessionId;
+			easemobim.emajax(createObject({
+				url: '/webimplugin/tenants/' + msg.data.tenantId
+				+ '/visitors/' + msg.data.userName
+				+ '/servicesessions/' + ssid
+				+ '/stop?tenantId=' + msg.data.tenantId,
+				msg: msg,
+				type: 'POST'
 			}));
 			break;
 		default:

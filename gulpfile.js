@@ -165,6 +165,7 @@ gulp.task('combineJs', function() {
 			'src/js/app/modules/videoChat.js',
 			'src/js/app/modules/chat.js',
 			'src/js/app/modules/apiTransfer.js',
+			'src/js/app/modules/apiHelper.js',
 			'src/js/app/modules/eventCollector.js',
 			'src/js/app/modules/init.js'
 		])

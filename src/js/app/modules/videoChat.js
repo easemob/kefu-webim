@@ -125,7 +125,7 @@ easemobim.videoChat = (function (dialog) {
 
 	function sendVideoInvite() {
 		console.log('send video invite');
-		sendMessageAPI('邀请客服进行实时视频', false, {
+		sendMessageAPI('邀请客服进行实时视频', {
 			ext: {
 				type: 'rtcmedia/video',
 				msgtype: {

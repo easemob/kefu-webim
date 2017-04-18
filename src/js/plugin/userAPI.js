@@ -2,7 +2,6 @@
  * 环信移动客服WEB访客端插件接入js
  */
 
-;
 (function (window, undefined) {
 	'use strict';
 	var utils = easemobim.utils;
