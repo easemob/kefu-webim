@@ -574,6 +574,11 @@
 						console.warn('undefined token');
 						return;
 					}
+					// 当聊天窗口或者浏览器最小化时 不去发轮询请求
+					if(!me.opened || easemobim.utils.isMin() ){
+						return;
+					}
+					
 					api('getAgentInputState', {
 						id: config.user.username,
 						orgName: config.orgName,
