@@ -538,6 +538,7 @@
 			agentInputState: (function () {
 				var isStarted = false;
 				var timer;
+				var prevTimeTamp;
 
 				function _start() {
 					// 没有灰度的时候  不做查询
@@ -582,6 +583,12 @@
 						token: config.user.token,
 					}, function (resp) {
 						var nowData = resp.data.entity;
+						if(nowData.timestamp !=0){
+							if(prevTimeTamp>nowData.timestamp){
+								return;
+							}
+							prevTimeTamp = nowData.timestamp;
+						}
 						if (!nowData.input_state_tips) {
 							utils.addClass(doms.inputState, 'hide');
 						}
