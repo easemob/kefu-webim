@@ -6,6 +6,8 @@
 		var recentTextMsg = [];
 		var msgTimeSpanBegin = new Date(2099, 0).getTime();
 		var msgTimeSpanEnd = new Date(1970, 0).getTime();
+		//用于标记 聊天窗口的打开与否
+		var opened;
 
 		//DOM init
 		easemobim.imBtn = document.getElementById('em-widgetPopBar');
@@ -55,7 +57,7 @@
 				//sroll bottom timeout stamp
 				this.scbT = 0;
 				//chat window status
-				this.opened = true;
+				opened = true;
 				//init sound reminder
 				this.soundReminder();
 
@@ -237,6 +239,7 @@
 
 						//轮询坐席的输入状态
 						me.agentInputState.start();
+
 						// 第二通道收消息初始化
 						me.channel.initSecondChannle();
 					}
@@ -575,7 +578,7 @@
 						return;
 					}
 					// 当聊天窗口或者浏览器最小化时 不去发轮询请求
-					if(!me.opened || easemobim.utils.isMin() ){
+					if(!opened|| utils.isMin() ){
 						return;
 					}
 					
@@ -606,7 +609,7 @@
 					start: _start,
 					stop: _stop
 				};
-			}()),
+			})(),
 			waitListNumber: (function () {
 
 				var isStarted = false;
@@ -837,7 +840,7 @@
 			},
 			//close chat window
 			close: function () {
-				this.opened = false;
+				opened = false;
 
 				if (!config.hide) {
 					utils.addClass(easemobim.imChat, 'hide');
@@ -848,7 +851,7 @@
 			show: function () {
 				var me = this;
 
-				me.opened = true;
+				opened = true;
 				me.scrollBottom(50);
 				utils.addClass(easemobim.imBtn, 'hide');
 				utils.removeClass(easemobim.imChat, 'hide');
@@ -906,7 +909,7 @@
 				});
 
 				me.soundReminder = function () {
-					if (!isSlienceEnable && (utils.isMin() || !me.opened)) {
+					if (!isSlienceEnable && (utils.isMin() || !opened)) {
 						play();
 					}
 				};
@@ -1350,11 +1353,11 @@
 					brief = '';
 				}
 
-				if (me.opened) {
+				if (opened) {
 					transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
 				}
 
-				if (utils.isMin() || !me.opened) {
+				if (utils.isMin() || !opened) {
 					me.soundReminder();
 					transfer.send({ event: _const.EVENTS.SLIDE }, window.transfer.to);
 					transfer.send({
