@@ -538,7 +538,7 @@
 			agentInputState: (function () {
 				var isStarted = false;
 				var timer;
-				var prevTimeTamp;
+				var prevTimestamp = 0;
 
 				function _start() {
 					// 没有灰度的时候  不做查询
@@ -583,12 +583,12 @@
 						token: config.user.token,
 					}, function (resp) {
 						var nowData = resp.data.entity;
-						if(nowData.timestamp !=0){
-							if(prevTimeTamp>nowData.timestamp){
-								return;
-							}
-							prevTimeTamp = nowData.timestamp;
+						//当返回的时间戳小于当前时间戳时  不做任何处理
+						if(prevTimestamp > nowData.timestamp){
+							return;
 						}
+						//当返回的时间戳大于当前时间戳时  处理以下逻辑
+						prevTimestamp = nowData.timestamp;
 						if (!nowData.input_state_tips) {
 							utils.addClass(doms.inputState, 'hide');
 						}
