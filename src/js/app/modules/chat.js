@@ -6,6 +6,8 @@
 		var recentTextMsg = [];
 		var msgTimeSpanBegin = new Date(2099, 0).getTime();
 		var msgTimeSpanEnd = new Date(1970, 0).getTime();
+		//用于标记 聊天窗口的打开与否
+		var opened;
 
 		//DOM init
 		easemobim.imBtn = document.getElementById('em-widgetPopBar');
@@ -28,6 +30,7 @@
 			agentWaitNumber: document.querySelector('.em-header-status-text-queue-number'),
 			agentStatusSymbol: document.getElementById('em-widgetAgentStatus'),
 			nickname: document.querySelector('.em-widgetHeader-nickname'),
+			inputState:document.querySelector('.em-agent-input-state'),
 			imgInput: document.querySelector('.upload-img-container'),
 			fileInput: document.querySelector('.upload-file-container'),
 			emojiContainer: document.querySelector('.em-bar-emoji-container'),
@@ -54,7 +57,7 @@
 				//sroll bottom timeout stamp
 				this.scbT = 0;
 				//chat window status
-				this.opened = true;
+				opened = true;
 				//init sound reminder
 				this.soundReminder();
 
@@ -175,7 +178,8 @@
 						_.each([
 							'audioVideo',
 							'msgPredictEnable',
-							'waitListNumberEnable'
+							'waitListNumberEnable',
+							'agentInputStateEnable'
 						], function (key) {
 							grayList[key] = _.contains(data[key], +config.tenantId);
 						});
@@ -232,6 +236,9 @@
 
 						// 待接入排队人数显示
 						me.waitListNumber.start();
+
+						//轮询坐席的输入状态
+						me.agentInputState.start();
 
 						// 第二通道收消息初始化
 						me.channel.initSecondChannle();
@@ -529,6 +536,80 @@
 					}
 				});
 			},
+
+			agentInputState: (function () {
+
+				var isStarted = false;
+				var timer = null;
+				var me =this;
+				function _start() {
+					if (!config.grayList.agentInputStateEnable) return;//没有灰度的时候  不做查询
+					isStarted = true;
+					// 保证当前最多只有1个timer
+					clearInterval(timer);
+					api('getCurrentServiceSession', {
+						id: config.user.username,
+						orgName: config.orgName,
+						appName: config.appName,
+						imServiceNumber: config.toUser,
+						tenantId: config.tenantId,
+						imServiceNumber: config.toUser
+					}, function (msg) {
+						var data = msg.data || {};
+						var sessionId = data.serviceSessionId;
+
+						if (sessionId) {					
+							if (isStarted) {
+								timer = setInterval(function () {
+									getAgentInputState(sessionId);
+								}, _const.AGENT_INPUT_STATE_INTERVAL);
+							}
+						}
+						else {
+
+						}
+					});
+				}
+
+				function getAgentInputState(sessionId) {
+					
+					if (!config.user.token) {
+						console.warn('undefined token');
+						return;
+					}
+					// 当聊天窗口或者浏览器最小化时 不去发轮询请求
+					if(!opened|| utils.isMin() ){
+						return;
+					}
+					
+					api('getAgentInputState', {
+						id: config.user.username,
+						orgName: config.orgName,
+						appName: config.appName,
+						tenantId: config.tenantId,
+						serviceSessionId: sessionId,
+						token: config.user.token,
+					}, function (resp) {
+						var nowData = resp.data.entity;
+						if (!nowData.input_state_tips) {
+							utils.addClass(doms.inputState, 'hide');
+						}
+						else {
+							utils.removeClass(doms.inputState, 'hide');
+						}
+					});
+				}
+
+				function _stop() {
+					clearInterval(timer);
+					utils.addClass(doms.inputState, 'hide');
+					isStarted = false;
+				}
+				return {
+					start: _start,
+					stop: _stop
+				};
+			})(),
 			waitListNumber: (function () {
 
 				var isStarted = false;
@@ -759,7 +840,7 @@
 			},
 			//close chat window
 			close: function () {
-				this.opened = false;
+				opened = false;
 
 				if (!config.hide) {
 					utils.addClass(easemobim.imChat, 'hide');
@@ -770,7 +851,7 @@
 			show: function () {
 				var me = this;
 
-				me.opened = true;
+				opened = true;
 				me.scrollBottom(50);
 				utils.addClass(easemobim.imBtn, 'hide');
 				utils.removeClass(easemobim.imChat, 'hide');
@@ -828,7 +909,7 @@
 				});
 
 				me.soundReminder = function () {
-					if (!isSlienceEnable && (utils.isMin() || !me.opened)) {
+					if (!isSlienceEnable && (utils.isMin() || !opened)) {
 						play();
 					}
 				};
@@ -1272,11 +1353,11 @@
 					brief = '';
 				}
 
-				if (me.opened) {
+				if (opened) {
 					transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
 				}
 
-				if (utils.isMin() || !me.opened) {
+				if (utils.isMin() || !opened) {
 					me.soundReminder();
 					transfer.send({ event: _const.EVENTS.SLIDE }, window.transfer.to);
 					transfer.send({

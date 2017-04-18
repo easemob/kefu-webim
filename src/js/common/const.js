@@ -102,6 +102,9 @@
 		// 每次拉取历史消息条数
 		GET_HISTORY_MESSAGE_COUNT_EACH_TIME: 10,
 
+		//轮询坐席输入状态间隔
+		AGENT_INPUT_STATE_INTERVAL:1000,
+
 		for_block_only: null
 	};
 }());
