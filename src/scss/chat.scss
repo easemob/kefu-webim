@@ -1,6 +1,22 @@
 .em-widget-chat {
 	padding-bottom: 20px;
 	overflow: hidden;
+
+	.em-widget-date,
+	.em-widget-event {
+		width: 100%;
+		float: left;
+		margin: 8px 0;
+		text-align: center;
+		color: white;
+		font-size: 12px;
+		> span {
+			background-color: #c9ced3;
+			border-radius: 4px;
+			padding: 1px 3px;
+		}
+	}
+
 	&:after {
 		content: '';
 		display: block;
@@ -17,7 +33,7 @@
 	text-decoration: none;
 	width: 98%;
 	text-align: left;
-	margin-top: 15px;
+	margin: 8px 0;
 }
 
 .em-widget-left {

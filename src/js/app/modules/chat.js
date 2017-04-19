@@ -1288,7 +1288,8 @@
 
 				var dom = document.createElement('div');
 
-				dom.innerText = msg;
+				// todo: xss defence
+				dom.innerHTML = '<span>' + msg + '</span>';
 				dom.className = 'em-widget-event';
 
 				this.appendDate(new Date().getTime());
@@ -1340,8 +1341,9 @@
 				var dom = document.createElement('div');
 				var MESSAGE_TIME_SPAN_INTERVAL = 60000;
 
-				dom.innerHTML = utils.formatDate(date);
-				utils.addClass(dom, 'em-widget-date');
+				// todo: xss defence
+				dom.innerHTML = '<span>' + utils.formatDate(date) + '</span>';
+				dom.className = 'em-widget-date';
 
 				if (!isHistory) {
 					date - msgTimeSpanEnd > MESSAGE_TIME_SPAN_INTERVAL
