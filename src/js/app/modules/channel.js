@@ -480,7 +480,12 @@ easemobim.channel = function (config) {
 					// for debug
 					console.log('onOffline-channel');
 					// 断线关闭视频通话
-					if (Modernizr.peerconnection) {
+					if (
+						Modernizr.peerconnection
+						&& WebIM.WebRTC
+						&& easemobim.videoChat
+						&& config.grayList.audioVideo
+					) {
 						easemobim.videoChat.onOffline();
 					}
 					// todo 断线后停止轮询坐席状态

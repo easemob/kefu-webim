@@ -834,6 +834,8 @@
 				me.conn.open(op);
 
 				Modernizr.peerconnection
+					&& WebIM.WebRTC
+					&& easemobim.videoChat
 					&& config.grayList.audioVideo
 					&& easemobim.videoChat.init(me.conn, me.channel.sendText, config);
 			},

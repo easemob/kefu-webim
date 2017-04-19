@@ -143,10 +143,10 @@ gulp.task('lint', function() {
 gulp.task('combineJs', function() {
 	var main = gulp.src([
 			'src/js/app/lib/modernizr.js',
-			'src/js/app/sdk/adapter.js',
+			// 'src/js/app/sdk/adapter.js',
 			'src/js/app/sdk/webim.config.js',
 			'src/js/app/sdk/websdk-1.4.6.js',
-			'src/js/app/sdk/webrtc-1.4.4.js',
+			// 'src/js/app/sdk/webrtc-1.4.4.js',
 			'src/js/common/polyfill.js',
 			'src/js/common/utils.js',
 			'src/js/common/const.js',
@@ -161,8 +161,8 @@ gulp.task('combineJs', function() {
 			'src/js/app/modules/wechat.js',
 			'src/js/app/modules/site.js',
 			'src/js/app/modules/channel.js',
-			'src/js/app/modules/ui.js',
-			'src/js/app/modules/videoChat.js',
+			// 'src/js/app/modules/ui.js',
+			// 'src/js/app/modules/videoChat.js',
 			'src/js/app/modules/chat.js',
 			'src/js/app/modules/apiTransfer.js',
 			'src/js/app/modules/eventCollector.js',

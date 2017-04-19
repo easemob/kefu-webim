@@ -182,11 +182,11 @@
 			utils.addClass(document.body, 'em-mobile');
 		}
 
-		// 留言按钮
-		utils.toggleClass(
-			document.querySelector('.em-widget-note'),
-			'hide', !config.ticket
-		);
+		// // 留言按钮
+		// utils.toggleClass(
+		// 	document.querySelector('.em-widget-note'),
+		// 	'hide', !config.ticket
+		// );
 
 		// 最小化按钮
 		utils.toggleClass(
@@ -216,11 +216,11 @@
 			'hide', !utils.isMobile || config.hideKeyboard
 		);
 
-		// 满意度评价按钮
-		utils.toggleClass(
-			document.querySelector('.em-widget-satisfaction'),
-			'hide', !config.satisfaction
-		);
+		// // 满意度评价按钮
+		// utils.toggleClass(
+		// 	document.querySelector('.em-widget-satisfaction'),
+		// 	'hide', !config.satisfaction
+		// );
 	}
 
 	var chatEntry = {
