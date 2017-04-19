@@ -6,16 +6,24 @@
 	background-color: #e6e6e6;
 	-webkit-backface-visibility: hidden;
 	// 工具栏按钮
-	i {
-		display: inline-block;
-		width: 25%;
-		color: #4d4d4d;
-		text-align: center;
-		&:hover {
-			cursor: pointer;
+	.toolbar {
+		margin: .4375rem 0;
+		// 去掉inline-block 元素间空白
+		font-size: 0;
+		i {
+			display: inline-block;
+			width: 25%;
+			color: #4d4d4d;
+			text-align: center;
+			&:hover {
+				cursor: pointer;
+			}
+			&:before {
+				font-size: 1.25rem;
+			}
 		}
-		&:before {
-			font-size: 1.25rem;
+		.em-widget-send {
+			font-size: initial;
 		}
 	}
 	// 输入框
@@ -27,9 +35,6 @@
 		box-sizing: border-box;
 		font-size: 13px;
 		resize: none;
-	}
-	.toolbar {
-		margin: .4375rem 0;
 	}
 }
 

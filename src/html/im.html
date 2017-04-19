@@ -54,6 +54,26 @@
 			<i class="icon-close tip-close"></i>
 		</div>
 
+		 <!-- 直播状态条 -->
+		<div class="em-live-streaming-bar">
+			<span class="content icon-video playing">正在实时视频 点击进入</span>
+			<span class="content icon-video stopped">视频已结束</span>
+		</div>
+
+		<!-- 直播窗口 -->
+		<div class="em-live-streaming-wrapper hide">
+			<div class="status-panel">
+				<p>
+					<span class="text playing">实时进行中</span>
+					<span class="text stopped">视频已结束</span>
+					<span class="symbol icon-circle"></span>
+					<span class="btn-exit icon-exit"></span>
+				</p>
+				<p class="time hide">00:00</p>
+			</div>
+			<video webkit-playsinline playsinline></video>
+		</div>
+
 		<!-- 视频窗口 -->
 		<div class="em-widget-video" style="display: none;">
 			<video class="main" autoplay></video>
@@ -106,6 +126,7 @@
 				<i class="em-widget-file icon-attachment fg-hover-color hide" title="附件"></i>
 				<i class="em-widget-note icon-note fg-hover-color hide" title="留言"></i>
 				<i class="icon-video fg-hover-color em-video-invite hide" title="视频通话"></i>
+				<i class="icon-video fg-hover-color em-live-streaming-invite hide" title="视频通话"></i>
 				<i class="icon-flower fg-hover-color em-widget-satisfaction hide" title="评价客服"></i>
 				<span class="em-widget-send bg-color disabled">连接中</span>
 			</div>

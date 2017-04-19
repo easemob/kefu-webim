@@ -231,6 +231,10 @@ easemobim.channel = function (config) {
 			else if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'TransferToKfHint') {
 				type = 'robotTransfer';
 			}
+			// 直播消息
+			else if (utils.getDataByPath(msg, 'ext.type') === 'live/video') {
+				type = 'liveStreaming/video';  
+			}
 			else {}
 
 			switch (type) {
@@ -340,6 +344,14 @@ easemobim.channel = function (config) {
 					].join('');
 
 				message.set({ value: title, list: str });
+				break;
+			case 'liveStreaming/video':
+				message = new WebIM.message.txt(msgId);
+				message.set({value: isHistory ? msg.data : me.getSafeTextValue(msg)});
+				!isHistory
+					&& utils.isMobile
+					&& easemobim.liveStreaming
+					&& easemobim.liveStreaming.open(msg.ext.msgtype.streamId);
 				break;
 			default:
 				break;

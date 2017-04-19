@@ -246,6 +246,11 @@
 
 						// 第二通道收消息初始化
 						me.channel.initSecondChannle();
+
+						// 奔驰直播功能
+						utils.isMobile
+							&& easemobim.liveStreaming
+							&& easemobim.liveStreaming.init(me.channel.sendText);
 					}
 					else {
 						// 设置下班时间展示的页面
@@ -984,17 +989,9 @@
 					var handleFocus = function () {
 						easemobim.textarea.style.overflowY = 'auto';
 						me.scrollBottom(800);
-						// todo: kill focusText
-						clearInterval(me.focusText);
-						me.focusText = setInterval(function () {
-							document.body.scrollTop = 10000;
-						}, 100);
 					};
 					utils.on(easemobim.textarea, 'focus', handleFocus);
 					utils.one(easemobim.textarea, 'touchstart', handleFocus);
-					utils.on(easemobim.textarea, 'blur', function () {
-						clearInterval(me.focusText);
-					});
 
 					// 键盘上下切换按钮
 					utils.on(
