@@ -26,7 +26,7 @@
 }
 
 .icon-circle:before {
-	content: "\41";
+	content: "\48";
 }
 
 .icon-exclamation:before {
@@ -158,6 +158,10 @@
 	content: "\47"
 }
 
+.icon-exit:before {
+	content: "\52"
+}
+
 .icon-camera:before,
 .icon-change:before,
 .icon-minimize:before,
@@ -195,6 +199,7 @@
 .icon-flower:before,
 .icon-attachment:before,
 .icon-download:before,
+.icon-exit:before,
 .em-widget-agent-status.leave:after,
 .em-widget-agent-status.busy:after,
 .em-widget-agent-status.hidden:after,

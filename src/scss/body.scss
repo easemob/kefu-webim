@@ -166,7 +166,7 @@
 		.symbol {
 			color: red;
 			&:before {
-				font-size: 14px;
+				font-size: 10px;
 			}
 		}
 	}
@@ -200,8 +200,10 @@
 		text-align: center;
 		&:before {
 			vertical-align: top;
-			font-size: 24px;
+			font-size: 16px;
 			line-height: 24px;
+			position: relative;
+			left: -5px;
 		}
 	}
 	.playing {
