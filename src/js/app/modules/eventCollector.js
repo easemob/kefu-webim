@@ -12,12 +12,11 @@
 
 		_url && easemobim.api('reportEvent', {
 			type: 'VISIT_URL',
+			tenantId: _config.tenantId,
 			// 第一次轮询时URL还未传过来，所以使用origin
 			url: _url,
 			// for debug
 			// url: 'http://172.17.3.86',
-			// 时间戳不传，以服务器时间为准
-			// timestamp: 0,
 			userId: {
 				type: userType,
 				id: userId
