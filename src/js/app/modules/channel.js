@@ -69,13 +69,12 @@ easemobim.channel = function (config) {
 			if (ext) {
 				_.extend(msg.body, ext);
 			}
-
+			sendMsgDict.set(id, msg);
 			// 开启倒计时
 			_detectSendMsgByApi(id);
 			me.setExt(msg);
 			_obj.appendAck(msg, id);
 			me.conn.send(msg.body);
-			sendMsgDict.set(id, msg);
 
 			// 空文本消息不上屏
 			if (!message) return;
@@ -138,9 +137,14 @@ easemobim.channel = function (config) {
 					fileInput && (fileInput.value = '');
 				}
 			});
+			sendMsgDict.set(id, msg);
+			// 开启倒计时
+			_detectSendImgMsgByApi(id, fileInput);
 			me.setExt(msg);
+			_obj.appendAck(msg, id);
 			me.conn.send(msg.body);
 			me.appendMsg(false, msg, false);
+			
 		},
 
 		sendFile: function (file, fileInput) {
@@ -558,7 +562,8 @@ easemobim.channel = function (config) {
 					delete msg.file_length;
 					msgObj.set({
 						msg: textMsg,
-						file: msg
+						file: msg,
+
 					});
 					me.appendMsg(false, msgObj, true, timestamp);
 					me.hideLoading(msgId);
@@ -603,9 +608,8 @@ easemobim.channel = function (config) {
 	}
 
 	// 第二通道发消息
-	function _sendMsgChannle(msg, retryCount) {
+	function _sendMsgChannle(id, sendBody, ext, retryCount) {
 		var count;
-		var id = msg.id;
 
 		if (typeof retryCount === 'number') {
 			count = retryCount;
@@ -617,11 +621,8 @@ easemobim.channel = function (config) {
 			from: config.user.username,
 			to: config.toUser,
 			tenantId: config.tenantId,
-			bodies: [{
-				type: 'txt',
-				msg: msg.value,
-			}],
-			ext: msg.body ? msg.body.ext : null,
+			bodies: [sendBody],
+			ext: ext,
 			orgName: config.orgName,
 			appName: config.appName,
 			originType: 'webim'
@@ -631,11 +632,57 @@ easemobim.channel = function (config) {
 		}, function () {
 			//失败继续重试
 			if (count > 0) {
-				_sendMsgChannle(msg, --count);
+				_sendMsgChannle(id, sendBody, ext,--count);
 			}
 			else {
 				utils.addClass(document.getElementById(id + '_loading'), 'hide');
 				utils.removeClass(document.getElementById(id + '_failed'), 'hide');
+			}
+		});
+	}
+
+	// 第二通道上传图片消息
+		function _sendImgMsgChannle(msg, fileInput, retryCount) {
+		if (!config.user.token) {
+			console.warn('undefined token');
+			return;
+		};
+		var count;
+		var id = msg.id;
+
+		if (typeof retryCount === 'number') {
+			count = retryCount;
+		}
+		else {
+			count = _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
+		}
+
+		api('sendImgMsgChannel', {
+			from: config.user.username,
+			to: config.toUser,
+			isSendObjFile: true,
+			tenantId: config.tenantId,
+			data: fileInput.files[0],
+			headers: {
+				'Authorization':'Bearer ' + config.user.token,
+			},
+			orgName: config.orgName,
+			appName: config.appName,
+			originType: 'webim'
+		}, function (resp) {
+
+			var sendBody = {
+				"filename": resp.data.fileName,
+				'type': 'img',
+				"url": resp.data.url,
+			};
+			// 发送图片相关信息
+			_sendMsgChannle(id, sendBody, null, null);
+
+		}, function () {
+			//失败继续重试
+			if (count > 0) {
+				_sendImgMsgChannle(msg, fileInput, --count);
 			}
 		});
 	}
@@ -657,15 +704,31 @@ easemobim.channel = function (config) {
 
 	//监听ack，超时则开启api通道, 发消息时调用
 	function _detectSendMsgByApi(id) {
+		var sendMsg = sendMsgDict.get(id);
+		var ext = sendMsg.body ? sendMsg.body.ext : null;
+		var sendBody = {
+			type: 'txt',
+			msg: sendMsg.value,
+		}
 		ackTimerDict.set(
 			id,
 			setTimeout(function () {
 				//30s没收到ack使用api发送
-				_sendMsgChannle(sendMsgDict.get(id));
+				_sendMsgChannle(id, sendBody, ext, null);
 			}, _const.FIRST_CHANNEL_MESSAGE_TIMEOUT)
 		);
 	}
-
+	//监听ack，超时则开启api通道, 上传图片消息时调用
+	function _detectSendImgMsgByApi(id,fileInput) {
+		ackTimerDict.set(
+			id,
+			setTimeout(function () {
+				//30s没收到ack使用api发送
+				_sendImgMsgChannle(sendMsgDict.get(id), fileInput);
+			}, _const.FIRST_CHANNEL_IMG_MESSAGE_TIMEOUT)
+		);
+	}
+	
 	// 初始监听xmpp的timer, xmpp连接超时则按钮变为发送
 	var firstTS = setTimeout(function () {
 		me.handleReady();
