@@ -139,7 +139,7 @@ easemobim.channel = function (config) {
 			});
 			sendMsgDict.set(id, msg);
 			// 开启倒计时
-			_detectSendImgMsgByApi(id, fileInput);
+			_detectUploadImgMsgByApi(id, fileInput);
 			me.setExt(msg);
 			_obj.appendAck(msg, id);
 			me.conn.send(msg.body);
@@ -562,8 +562,7 @@ easemobim.channel = function (config) {
 					delete msg.file_length;
 					msgObj.set({
 						msg: textMsg,
-						file: msg,
-
+						file: msg
 					});
 					me.appendMsg(false, msgObj, true, timestamp);
 					me.hideLoading(msgId);
@@ -635,14 +634,13 @@ easemobim.channel = function (config) {
 				_sendMsgChannle(id, sendBody, ext,--count);
 			}
 			else {
-				utils.addClass(document.getElementById(id + '_loading'), 'hide');
-				utils.removeClass(document.getElementById(id + '_failed'), 'hide');
-			}
+				me.hideLoading(id);
+				me.showFail(id);			}
 		});
 	}
 
 	// 第二通道上传图片消息
-		function _sendImgMsgChannle(msg, fileInput, retryCount) {
+		function _uploadImgMsgChannle(msg, fileInput, retryCount) {
 		if (!config.user.token) {
 			console.warn('undefined token');
 			return;
@@ -657,9 +655,8 @@ easemobim.channel = function (config) {
 			count = _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
 		}
 
-		api('sendImgMsgChannel', {
-			from: config.user.username,
-			to: config.toUser,
+		api('uploadImgMsgChannel', {
+			userName: config.user.username,
 			isSendObjFile: true,
 			tenantId: config.tenantId,
 			data: fileInput.files[0],
@@ -668,7 +665,6 @@ easemobim.channel = function (config) {
 			},
 			orgName: config.orgName,
 			appName: config.appName,
-			originType: 'webim'
 		}, function (resp) {
 
 			var sendBody = {
@@ -684,6 +680,11 @@ easemobim.channel = function (config) {
 			if (count > 0) {
 				_sendImgMsgChannle(msg, fileInput, --count);
 			}
+			else {
+				me.hideLoading(id);
+				me.showFail(id);
+			}
+
 		});
 	}
 
@@ -719,12 +720,12 @@ easemobim.channel = function (config) {
 		);
 	}
 	//监听ack，超时则开启api通道, 上传图片消息时调用
-	function _detectSendImgMsgByApi(id,fileInput) {
+	function _detectUploadImgMsgByApi(id,fileInput) {
 		ackTimerDict.set(
 			id,
 			setTimeout(function () {
 				//30s没收到ack使用api发送
-				_sendImgMsgChannle(sendMsgDict.get(id), fileInput);
+				_uploadImgMsgChannle(sendMsgDict.get(id), fileInput);
 			}, _const.FIRST_CHANNEL_IMG_MESSAGE_TIMEOUT)
 		);
 	}

@@ -184,10 +184,10 @@
 				type: 'POST'
 			}));
 			break;
-		case 'sendImgMsgChannel':
+		case 'uploadImgMsgChannel':
 			easemobim.emajax(createObject({
 				url: '/v1/Tenant/' + msg.data.tenantId+ '/'+ msg.data.orgName +'/'
-				+ msg.data.appName +'/'+ msg.data.from +'/MediaFiles',
+				+ msg.data.appName +'/'+ msg.data.userName +'/MediaFiles',
 				msg: msg,
 				type: 'POST'
 			}));
