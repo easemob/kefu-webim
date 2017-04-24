@@ -81,6 +81,9 @@
 		// 超时未收到 kefu-ack 启用第二通道发消息
 		FIRST_CHANNEL_MESSAGE_TIMEOUT: 10000,
 
+		// 发送图片时 超时未收到 kefu-ack 启用第二通道发消息
+		FIRST_CHANNEL_IMG_MESSAGE_TIMEOUT: 15000,
+
 		// 发送消息第二通道失败后，最多再试1次
 		SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT: 1,
 

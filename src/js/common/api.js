@@ -184,6 +184,14 @@
 				type: 'POST'
 			}));
 			break;
+		case 'uploadImgMsgChannel':
+			easemobim.emajax(createObject({
+				url: '/v1/Tenant/' + msg.data.tenantId+ '/'+ msg.data.orgName +'/'
+				+ msg.data.appName +'/'+ msg.data.userName +'/MediaFiles',
+				msg: msg,
+				type: 'POST'
+			}));
+			break;
 		case 'getAgentStatus':
 			easemobim.emajax(createObject({
 				url: '/v1/tenants/' + msg.data.tenantId + '/agents/' + msg.data.agentUserId + '/agentstate',

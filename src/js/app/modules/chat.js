@@ -1426,6 +1426,9 @@
 			},
 			hideLoading: function(msgId){
 				utils.addClass(document.getElementById(msgId + '_loading'), 'hide');
+			},
+			showFailed :function (msgId) {
+				utils.removeClass(document.getElementById(msgId + '_failed'), 'hide');
 			}
 		};
 	};

@@ -79,6 +79,24 @@
 				.getTime();
 			data = null;
 		}
+		else if(data.isSendObjFile) {
+			var fileForm = new FormData();
+			fileForm.append("file", data.data);
+			
+			xhr.open(type, options.url);
+			if (xhr.setRequestHeader) {
+
+				var headers = options.headers || {};
+
+				for (var key in headers) {
+					if (headers.hasOwnProperty(key)) {
+						xhr.setRequestHeader(key, headers[key]);
+					}
+				}
+			}
+			xhr.send(fileForm);
+			return xhr;	
+		}
 		else {
 			data._v = new Date().getTime();
 			data = JSON.stringify(data);
@@ -96,6 +114,7 @@
 				}
 			}
 		}
+
 		xhr.send(data);
 		return xhr;
 	};
