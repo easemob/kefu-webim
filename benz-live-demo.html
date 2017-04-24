@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv='X-UA-Compatible' content='IE=Edge,chrome=1' />
+	<meta name='format-detection' content='telephone=no' />
+	<meta name='viewport' content='width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no' />
+	<style>
+		body, html {
+			background-color: rgb(34, 34, 34);
+		}
+		.entrance-select {
+			display: block;
+			box-sizing: border-box;
+			width: 100%;
+			padding: 0 20px;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+		}
+		.entrance-select > a {
+			display: block;
+			text-align: center;
+			margin: 20px 0;
+			padding: 15px 0;
+			width: 100%;
+			box-sizing: border-box;
+			color: white;
+			font-family: Arial;
+			font-weight: 400;
+			font-size: 18px;
+			background-color: rgb(51, 51, 51);
+			border: 1px solid rgb(68, 68, 68);
+			border-radius: 4px;
+		}
+	</style>
+</head>
+
+<body>
+<div class="entrance-select">
+	<a class="message-entrance-btn">MESSAGE SERVICE</a>
+	<a class="video-entrance-btn">VIDEO SERVICE</a>
+</div>
+<script>
+	window.easemobim = window.easemobim || {};
+
+	easemobim.config = {
+		domain: '//benz.easemob.com',
+		h5Origin: '//benz.easemob.com',
+		tenantId: 14764,
+		hide: true,
+		unused: ''
+	};
+
+	document.querySelector('.video-entrance-btn').onclick = function(){
+		easemobim.bind({liveVideoInvite: true});
+	};
+
+	document.querySelector('.message-entrance-btn').onclick = function(){
+		easemobim.bind({liveVideoInvite: false});
+	};
+</script>
+<script src='easemob.js'></script>
+</body>
+
+</html>

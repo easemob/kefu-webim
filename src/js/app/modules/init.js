@@ -42,6 +42,7 @@
 			config.language = utils.query('language') || 'zh_CN';
 			config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket')); //true default
  
+ 			config.liveVideoInvite = !!utils.convertFalse(utils.query('liveVideoInvite'));
             // benz patch
 			var benz_parsed;
 			try {
@@ -215,6 +216,13 @@
 			document.querySelector('.em-widgetHeader-keyboard'),
 			'hide', !utils.isMobile || config.hideKeyboard
 		);
+
+		if (config.liveVideoInvite){
+			utils.removeClass(document.querySelector('.live-video-wait'), 'hide');
+			utils.on(document.querySelector('.live-video-wait .back-btn'), 'click', function(){
+				history.back();
+			});
+		}
 
 		// // 满意度评价按钮
 		// utils.toggleClass(

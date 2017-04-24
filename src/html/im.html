@@ -54,12 +54,6 @@
 			<i class="icon-close tip-close"></i>
 		</div>
 
-		 <!-- 直播状态条 -->
-		<div class="em-live-streaming-bar">
-			<span class="content icon-video playing">正在实时视频 点击进入</span>
-			<span class="content icon-video stopped">视频已结束</span>
-		</div>
-
 		<!-- 直播窗口 -->
 		<div class="em-live-streaming-wrapper hide">
 			<div class="status-panel">
@@ -67,11 +61,33 @@
 					<span class="text playing">实时进行中</span>
 					<span class="text stopped">视频已结束</span>
 					<span class="symbol icon-circle"></span>
-					<span class="btn-exit icon-exit"></span>
 				</p>
 				<p class="time hide">00:00</p>
 			</div>
 			<video webkit-playsinline playsinline></video>
+		</div>
+
+		<!-- 直播接入等待页面 -->
+		<div class="live-video-wait hide">
+			<div class="header">
+				<button class="back-btn">< back</button>
+			</div>
+			<div class="footer">
+				<div class="em-widget-loading">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 70">
+						<circle opacity=".3" fill="none" stroke="#000" stroke-width="4" stroke-miterlimit="10" cx="35" cy="35" r="11"/>
+						<path fill="none" stroke="#E5E5E5" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M24 35c0-6.1 4.9-11 11-11 2.8 0 5.3 1 7.3 2.8"/>
+						<image width="20" style="margin-top:10px"/>
+					</svg>
+				</div>
+				<button class="start-btn disabled">start</button>
+			</div>
+		</div>
+
+		<!-- 直播关闭倒计时 -->
+		<div class="live-video-closing hide">
+			<p>视频已结束</p>
+			<p><span class="time-remaining"></span>秒后会返回主页</p>
 		</div>
 
 		<!-- 视频窗口 -->

@@ -276,7 +276,7 @@
 			return matches ? matches[1] : '';
 		},
 		isAndroid: /android/i.test(navigator.useragent),
-		_isIOS: /(iPad|iPhone|iPod)/i.test(navigator.userAgent),
+		isIOS: /(iPad|iPhone|iPod)/i.test(navigator.userAgent),
 		isMobile: _isMobile,
 		click: _isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click',
 		// detect if the browser is minimized

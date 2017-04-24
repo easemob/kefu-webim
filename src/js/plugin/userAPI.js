@@ -100,24 +100,19 @@
 			}
 		}
 
-		iframe = easemobim.tenants[cacheKeyName];
 
-		if (iframe) {
-			iframe.open();
+		reset();
+		utils.extend(_config, config);
+
+		if (!_config.tenantId) {
+			console.warn('未指定tenantId!');
+			return;
 		}
-		else {
-			reset();
-			utils.extend(_config, config);
 
-			if (!_config.tenantId) {
-				console.warn('未指定tenantId!');
-				return;
-			}
+		iframe = easemobim.Iframe(_config);
+		easemobim.tenants[cacheKeyName] = iframe;
+		iframe.set(_config, utils.isMobile ? null : iframe.open);
 
-			iframe = easemobim.Iframe(_config);
-			easemobim.tenants[cacheKeyName] = iframe;
-			iframe.set(_config, utils.isMobile ? null : iframe.open);
-		}
 
 
 		if (utils.isMobile) {
@@ -146,7 +141,7 @@
 			}
 
 			a.setAttribute('href', iframe.url);
-			a.setAttribute('target', '_blank');
+			// a.setAttribute('target', '_blank');
 
 			// benz patch
 			if(easemobim.config.h5Origin){

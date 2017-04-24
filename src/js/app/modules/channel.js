@@ -467,7 +467,12 @@ easemobim.channel = function (config) {
 					me.token = info.accessToken;
 					me.conn.setPresence();
 
-					me.handleReady(info);
+					try {
+						me.handleReady(info);
+					}
+					catch (e) {
+						console.warn(e);
+					}
 				},
 				onTextMessage: function (message) {
 					me.receiveMsg(message, 'txt');

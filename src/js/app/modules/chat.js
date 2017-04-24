@@ -87,6 +87,11 @@
 					me.channel.sendText('', false, this.cachedCommandMessage);
 					this.cachedCommandMessage = null;
 				}
+
+				// benz patch
+				if (config.liveVideoInvite){
+					me.channel.sendText('邀请您进行实时视频', false, null);
+				}
 				if (utils.isTop) {
 					//get visitor
 					var visInfo = config.visitor;
@@ -106,12 +111,12 @@
 					if (benz_h5_ext) {
 						if (_.isArray(benz_h5_ext)) {
 							_.each(benz_h5_ext, function (elem) {
-								me.channel.sendTextMsg('', false, {
+								me.channel.sendText('', false, {
 									ext: elem
 								});
 							});
 						} else {
-							me.channel.sendTextMsg('', false, {
+							me.channel.sendText('', false, {
 								ext: benz_h5_ext
 							});
 						}

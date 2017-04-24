@@ -133,9 +133,74 @@
 	}
 }
 
+// 直播等待页面
+.live-video-wait {
+	z-index: 100;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: black;
+	.header {
+		display: block;
+		box-sizing: border-box;
+		width: 100%;
+		padding: 0 20px;
+		position: absolute;
+		top: 0;
+		left: 0;
+		> .back-btn {
+			color: white;
+			font-size: 18px;
+			padding: 12px;
+			border: 1px solid white;
+			border-radius: 4px;
+			margin: 20px 0;
+			background: none;
+		}
+	}
+	.footer {
+		display: block;
+		box-sizing: border-box;
+		width: 100%;
+		padding: 0 20px;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		> .em-widget-loading {
+			width: 100px;
+			height: 100px;
+			left: 0;
+			right: 0;
+			margin: auto
+		}
+		> .start-btn {
+			display: block;
+			text-align: center;
+			margin: 20px 0;
+			padding: 15px 0;
+			width: 100%;
+			box-sizing: border-box;
+			color: white;
+			font-family: Arial;
+			font-weight: 400;
+			font-size: 18px;
+			background-color: #7acc29;
+			border: 1px solid #7acc29;
+			border-radius: 4px;
+			&.disabled {
+				background: none;
+				color: #ccc;
+				border-color: #ccc;
+			}
+		}
+	}
+}
+
 // 直播控件
 .em-live-streaming-wrapper {
-	z-index: 5;
+	z-index: 10;
 	position: absolute;
 	top: 0;
 	width: 100%;
@@ -157,9 +222,6 @@
 		vertical-align: middle;
 		background-color: #333;
 		color: white;
-		.btn-exit {
-			float: right;
-		}
 		.playing {
 			display: none;
 		}
@@ -185,41 +247,25 @@
 	}
 }
 
-.em-live-streaming-bar {
-	cursor: pointer;
-	display: none;
-	z-index: 2;
-	position: absolute;
-	color: white;
+// 直播关闭倒计时
+.live-video-closing  {
+	z-index: 200;
+	position: fixed;
+	left: 0;
+	top: 0;
 	width: 100%;
-	background-color: red;
-	.content {
-		height: 24px;
-		line-height: 24px;
-		display: block;
+	height: 100%;
+	background-color: rgba(0, 0, 0, .7);
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+    > p {
 		text-align: center;
-		&:before {
-			vertical-align: top;
-			font-size: 16px;
-			line-height: 24px;
-			position: relative;
-			left: -5px;
-		}
-	}
-	.playing {
-		display: none;
-	}
-	&.playing {
-		background-color: green;
-		.stopped {
-			display: none;
-		}
-		.playing {
-			display: block;
-		}
+		color: white;
 	}
 }
-
 /* 信息栏 */
 
 .em-widget-tip {
@@ -249,19 +295,6 @@
 		right: 10px;
 		height: 1.875rem;
 		color: #EBCFB3;
-	}
-}
-
-// 直播状态条
-.em-widget-wrapper.has-live-streaming-bar {
-	.em-widget-tip {
-		margin-top: 24px;
-	}
-	.em-widgetBody-wrapper {
-		margin-top: 24px;
-	}
-	.em-live-streaming-bar {
-		display: block;
 	}
 }
 

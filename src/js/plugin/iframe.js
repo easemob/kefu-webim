@@ -287,6 +287,7 @@
 		this.config.language && (destUrl.language = this.config.language);
 		this.config.appid && (destUrl.appid = this.config.appid);
 		this.config.grUserId && (destUrl.grUserId = this.config.grUserId);
+		this.config.liveVideoInvite && (destUrl.liveVideoInvite = this.config.liveVideoInvite);
 
 		// 需特殊处理
 		this.config.appKey && (destUrl.appKey = encodeURIComponent(this.config.appKey));
