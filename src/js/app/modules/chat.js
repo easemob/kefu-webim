@@ -1427,7 +1427,7 @@
 			hideLoading: function(msgId){
 				utils.addClass(document.getElementById(msgId + '_loading'), 'hide');
 			},
-			showFile :function (msgId) {
+			showFailed :function (msgId) {
 				utils.removeClass(document.getElementById(msgId + '_failed'), 'hide');
 			}
 		};
