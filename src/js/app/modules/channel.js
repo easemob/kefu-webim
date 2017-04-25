@@ -42,7 +42,7 @@ easemobim.channel = function (config) {
 		},
 
 		sendSatisfaction: function (level, content, session, invite) {
-			_obj.sendText('', false, {ext: {
+			_obj.sendText('', {ext: {
 				weichat: {
 					ctrlType: 'enquiry',
 					ctrlArgs: {
@@ -180,6 +180,7 @@ easemobim.channel = function (config) {
 		handleReceive: function (msg, type, isHistory) {
 			var str;
 			var message;
+			var title;
 			var msgId = msg.msgId || utils.getDataByPath(msg, 'ext.weichat.msgId');
 
 			if (receiveMsgDict.get(msgId)) {
@@ -210,6 +211,13 @@ easemobim.channel = function (config) {
 			//机器人转人工
 			else if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'TransferToKfHint') {
 				type = 'robotTransfer';
+			}
+			// 待接入超时转留言
+			else if (
+				utils.getDataByPath(msg, 'ext.weichat.event.eventName') === 'ServiceSessionWillScheduleTimeoutEvent'
+				&& utils.getDataByPath(msg, 'ext.weichat.event.eventObj.ticketEnable') === 'true'
+			){
+				type = 'transferToTicket';
 			}
 			else {}
 
@@ -301,8 +309,7 @@ easemobim.channel = function (config) {
 			case 'robotTransfer':
 				message = new WebIM.message.list();
 				var ctrlArgs = msg.ext.weichat.ctrlArgs;
-				var title = msg.data
-					|| utils.getDataByPath(msg, 'bodies.0.msg')
+				title = me.getSafeTextValue(msg)
 					|| utils.getDataByPath(msg, 'ext.weichat.ctrlArgs.label');
 				/*
 					msg.data 用于处理即时消息
@@ -312,12 +319,25 @@ easemobim.channel = function (config) {
 					还有待测试其他带有转人工的情况
 				*/
 				str = [
-						'<div class="em-widget-list-btns">',
-							'<button class="em-widget-list-btn-white bg-color border-color bg-hover-color-dark js_robotTransferBtn" ',
-							'data-sessionid="' + ctrlArgs.serviceSessionId + '" ',
-							'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
-						'</div>'
-					].join('');
+					'<div class="em-widget-list-btns">',
+						'<button class="em-widget-list-btn-white bg-color border-color bg-hover-color-dark js_robotTransferBtn" ',
+						'data-sessionid="' + ctrlArgs.serviceSessionId + '" ',
+						'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
+					'</div>'
+				].join('');
+
+				message.set({ value: title, list: str });
+				break;
+			case 'transferToTicket':
+				message = new WebIM.message.list();
+				title = me.getSafeTextValue(msg);
+				str = [
+					'<div class="em-widget-list-btns">',
+						'<button class="em-widget-list-btn-white bg-color border-color bg-hover-color-dark js-transfer-to-ticket">',
+							'留言',
+						'</button>',
+					'</div>'
+				].join('');
 
 				message.set({ value: title, list: str });
 				break;

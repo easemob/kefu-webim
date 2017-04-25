@@ -3,11 +3,11 @@
 		var utils = easemobim.utils;
 		var _const = easemobim._const;
 		var api = easemobim.api;
-		var recentTextMsg = [];
+		var recentMsg = [];
 		var msgTimeSpanBegin = new Date(2099, 0).getTime();
 		var msgTimeSpanEnd = new Date(1970, 0).getTime();
-		//用于标记 聊天窗口的打开与否
-		var opened;
+		var apiHelper = easemobim.apiHelper;
+		var isChatWindowOpen;
 
 		//DOM init
 		easemobim.imBtn = document.getElementById('em-widgetPopBar');
@@ -24,7 +24,7 @@
 		easemobim.avatar = document.querySelector('.em-widgetHeader-portrait');
 
 		// todo: 把dom都移到里边
-		var doms = {
+		var doms = easemobim.doms = {
 			agentStatusText: document.querySelector('.em-header-status-text'),
 			//待接入排队人数显示
 			agentWaitNumber: document.querySelector('.em-header-status-text-queue-number'),
@@ -40,9 +40,6 @@
 			block: null
 		};
 
-		easemobim.doms = doms;
-
-
 		//cache current agent
 		config.agentUserId = null;
 
@@ -57,7 +54,7 @@
 				//sroll bottom timeout stamp
 				this.scbT = 0;
 				//chat window status
-				opened = true;
+				isChatWindowOpen = true;
 				//init sound reminder
 				this.soundReminder();
 
@@ -87,7 +84,7 @@
 
 				// 发送用于回呼访客的命令消息
 				if (this.cachedCommandMessage) {
-					me.channel.sendText('', false, this.cachedCommandMessage);
+					me.channel.sendText('', this.cachedCommandMessage);
 					this.cachedCommandMessage = null;
 				}
 				if (utils.isTop) {
@@ -112,7 +109,7 @@
 					}
 					catch (e) {}
 					if (parsed) {
-						me.channel.sendText('', false, { ext: parsed });
+						me.channel.sendText('', { ext: parsed });
 						utils.clearStore(config.tenantId + config.emgroup + 'ext');
 					}
 				}
@@ -154,7 +151,7 @@
 				var me = this;
 
 				// 获取上下班状态
-				getDutyStatusPromise = new Promise(function (resolve, reject) {
+				var getDutyStatusPromise = new Promise(function (resolve, reject) {
 					api('getDutyStatus_2', {
 						channelType: 'easemob',
 						originType: 'webim',
@@ -171,7 +168,7 @@
 				});
 
 				// 获取灰度开关
-				getGrayListPromise = new Promise(function (resolve, reject) {
+				var getGrayListPromise = new Promise(function (resolve, reject) {
 					api('graylist', {}, function (msg) {
 						var grayList = {};
 						var data = msg.data || {};
@@ -185,6 +182,7 @@
 						});
 						config.grayList = grayList;
 						resolve();
+						// todo: resolve(result)
 					}, function (err) {
 						reject(err);
 					});
@@ -538,12 +536,12 @@
 			},
 
 			agentInputState: (function () {
-
 				var isStarted = false;
-				var timer = null;
-				var me =this;
+				var timer;
+
 				function _start() {
-					if (!config.grayList.agentInputStateEnable) return;//没有灰度的时候  不做查询
+					// 没有灰度的时候  不做查询
+					if (!config.grayList.agentInputStateEnable) return;
 					isStarted = true;
 					// 保证当前最多只有1个timer
 					clearInterval(timer);
@@ -552,38 +550,31 @@
 						orgName: config.orgName,
 						appName: config.appName,
 						imServiceNumber: config.toUser,
-						tenantId: config.tenantId,
-						imServiceNumber: config.toUser
+						tenantId: config.tenantId
 					}, function (msg) {
 						var data = msg.data || {};
 						var sessionId = data.serviceSessionId;
 
-						if (sessionId) {					
-							if (isStarted) {
-								timer = setInterval(function () {
-									getAgentInputState(sessionId);
-								}, _const.AGENT_INPUT_STATE_INTERVAL);
-							}
-						}
-						else {
-
+						if (sessionId && isStarted) {
+							timer = setInterval(function () {
+								getAgentInputState(sessionId);
+							}, _const.AGENT_INPUT_STATE_INTERVAL);
 						}
 					});
 				}
 
 				function getAgentInputState(sessionId) {
-					
 					if (!config.user.token) {
 						console.warn('undefined token');
 						return;
 					}
 					// 当聊天窗口或者浏览器最小化时 不去发轮询请求
-					if(!opened|| utils.isMin() ){
+					if(!isChatWindowOpen || utils.isMin()){
 						return;
 					}
-					
+
 					api('getAgentInputState', {
-						id: config.user.username,
+						username: config.user.username,
 						orgName: config.orgName,
 						appName: config.appName,
 						tenantId: config.tenantId,
@@ -840,7 +831,7 @@
 			},
 			//close chat window
 			close: function () {
-				opened = false;
+				isChatWindowOpen = false;
 
 				if (!config.hide) {
 					utils.addClass(easemobim.imChat, 'hide');
@@ -851,7 +842,7 @@
 			show: function () {
 				var me = this;
 
-				opened = true;
+				isChatWindowOpen = true;
 				me.scrollBottom(50);
 				utils.addClass(easemobim.imBtn, 'hide');
 				utils.removeClass(easemobim.imChat, 'hide');
@@ -909,7 +900,7 @@
 				});
 
 				me.soundReminder = function () {
-					if (!isSlienceEnable && (utils.isMin() || !opened)) {
+					if (!isSlienceEnable && (utils.isMin() || !isChatWindowOpen)) {
 						play();
 					}
 				};
@@ -994,9 +985,36 @@
 					}
 				});
 
+				utils.live('button.js-transfer-to-ticket', utils.click, function () {
+					Promise.all([
+						apiHelper.fetch('getSessionQueueId'),
+						apiHelper.fetch('getCurrentServiceSession')
+					]).then(function(result){
+						var ssid = utils.getDataByPath(result[0], 'entity.serviceSessionId')
+							|| utils.getDataByPath(result[1], 'serviceSessionId');
+						ssid && api('closeServiceSession', {
+							tenantId: config.tenantId,
+							orgName: config.orgName,
+							appName: config.appName,
+							userName: config.user.username,
+							token: config.user.token,
+							serviceSessionId: ssid
+						});
+					});
+
+					easemobim.leaveMessage.show({
+						preData: {
+							name: config.visitor.trueName,
+							phone: config.visitor.phone,
+							mail: config.visitor.email,
+							content: utils.getBrief('\n' + me.getRecentMsg(), 1000)
+						}
+					});
+				});
+
 				//机器人列表
 				utils.live('button.js_robotbtn', utils.click, function () {
-					me.channel.sendText(this.innerText, null, {
+					me.channel.sendText(this.innerText, {
 						ext: {
 							msgtype: {
 								choice: {
@@ -1101,7 +1119,7 @@
 						me.errorPrompt('文件大小不能超过10MB');
 					}
 					else {
-						me.channel.sendFile(WebIM.utils.getFileUrl(fileInput), false, fileInput);
+						me.channel.sendFile(WebIM.utils.getFileUrl(fileInput), fileInput);
 					}
 				});
 
@@ -1124,7 +1142,7 @@
 						fileInput.value = '';
 					}
 					else {
-						me.channel.sendImg(WebIM.utils.getFileUrl(fileInput), false, fileInput);
+						me.channel.sendImg(WebIM.utils.getFileUrl(fileInput), fileInput);
 					}
 				});
 
@@ -1308,7 +1326,7 @@
 					msg: msg,
 					date: date
 				};
-				isHistory ? recentTextMsg.push(msgData) : recentTextMsg.unshift(msgData);
+				isHistory ? recentMsg.push(msgData) : recentMsg.unshift(msgData);
 			},
 			appendDate: function (date, isHistory) {
 				var chatWrapper = doms.chatWrapper;
@@ -1353,11 +1371,11 @@
 					brief = '';
 				}
 
-				if (opened) {
+				if (isChatWindowOpen) {
 					transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
 				}
 
-				if (utils.isMin() || !opened) {
+				if (utils.isMin() || !isChatWindowOpen) {
 					me.soundReminder();
 					transfer.send({ event: _const.EVENTS.SLIDE }, window.transfer.to);
 					transfer.send({
@@ -1369,6 +1387,33 @@
 						}
 					}, window.transfer.to);
 				}
+			},
+			getRecentMsg: function(){
+				return _.map(recentMsg, function(item){
+					var type = item.msg.type;
+					var date = utils.formatDate(item.date);
+					var role = item.isReceived ? '客服坐席' : '访客';
+					var value = item.msg.value;
+
+					switch (type){
+						case 'txt':
+							break;
+						case 'img':
+							value = '[图片]';
+							break;
+						case 'file':
+							value = '[文件]';
+							break;
+						case 'list':
+							value = '[菜单]';
+							break;
+						default:
+							value = '[未知消息类型]';
+							break;
+					}
+
+					return '[' + date + '] ' + role + '\n' + value;
+				}).join('\n');
 			},
 			hideLoading: function(msgId){
 				utils.addClass(document.getElementById(msgId + '_loading'), 'hide');

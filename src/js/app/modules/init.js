@@ -94,10 +94,10 @@
 					chatEntry.close();
 					break;
 				case _const.EVENTS.EXT:
-					chat.channel.sendText('', false, msg.data.ext);
+					chat.channel.sendText('', msg.data.ext);
 					break;
 				case _const.EVENTS.TEXTMSG:
-					chat.channel.sendText(msg.data.data, false, msg.data.ext);
+					chat.channel.sendText(msg.data.data, msg.data.ext);
 					break;
 				case _const.EVENTS.UPDATE_URL:
 					easemobim.eventCollector.updateURL(msg.data);
@@ -123,6 +123,9 @@
 		easemobim.leaveMessage = easemobim.leaveMessage(chat, config.tenantId);
 		easemobim.paste(chat).init();
 		easemobim.satisfaction(chat);
+
+		// init api helper
+		easemobim.apiHelper.init(config);
 
 		// 访客回呼功能
 		if (config.eventCollector && !eventCollector.isStarted()) {
