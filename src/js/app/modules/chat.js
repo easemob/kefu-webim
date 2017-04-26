@@ -940,10 +940,12 @@
 						easemobim.imgView.show(imgSrc);
 					}
 					else {
+						var imgFile = imgFileList.get(imgSrc);
 						transfer.send({
 							event: _const.EVENTS.SHOW_IMG,
 							data: {
-								imgSrc: imgSrc
+								imgSrc: imgSrc,
+								imgFile: imgFile
 							}
 						}, window.transfer.to);
 					}

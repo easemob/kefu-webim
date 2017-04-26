@@ -49,7 +49,12 @@ easemobim.pcImgView = (function(){
 		this.style.display = 'none';
 	}, false);
 
-	return function(imgSrc){
+	return function(imgData){
+		var imgSrc = imgData.imgSrc;
+		var imgFile = imgData.imgFile;
+		if(imgFile){
+			imgSrc = window.URL.createObjectURL(imgFile);
+		}
 		img.setAttribute('src', imgSrc);
 		imgWrapper.style.display = '';
 	};

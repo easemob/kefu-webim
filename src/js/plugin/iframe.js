@@ -201,7 +201,7 @@
 					me.message.send({ event: _const.EVENTS.UPDATE_URL, data: location.href });
 					break;
 				case _const.EVENTS.SHOW_IMG:
-					easemobim.pcImgView(msg.data.imgSrc);
+					easemobim.pcImgView(msg.data);
 					break;
 				default:
 					break;
