@@ -673,6 +673,12 @@
 			initEmoji: function () {
 				var me = this;
 
+				// 视频模式下预加载表情
+				if (!me.isEmojiInitilized && config.liveVideoInvite) {
+					me.isEmojiInitilized = true;
+					doms.emojiContainer.innerHTML = genHtml();
+				}
+
 				utils.on(doms.emojiBtn, utils.click, function () {
 					easemobim.textarea.blur();
 					utils.toggleClass(doms.emojiWrapper, 'hide');

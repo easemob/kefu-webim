@@ -2,6 +2,7 @@ easemobim.liveStreaming = (function(){
 	var utils = easemobim.utils;
 	var videoWrapper = document.querySelector('.em-live-streaming-wrapper');
 	var video = videoWrapper.querySelector('video');
+	var statusPanel = videoWrapper.querySelector('.status-panel');
 	var timeSpan = videoWrapper.querySelector('.status-panel .time');
 	var messageInput = document.querySelector('.em-widget-textarea');
 	var liveVideoWait = document.querySelector('.live-video-wait');
@@ -57,19 +58,36 @@ easemobim.liveStreaming = (function(){
 	};
 
 	var videoAdjust = _.throttle(function(){
-			var videoWrapperOffset = videoWrapper.getBoundingClientRect().top;
-			var bodyOffset = -document.body.getBoundingClientRect().top;
-			console.log(videoWrapperOffset, bodyOffset);
-			if (videoWrapperOffset){
-				videoWrapper.style.top = bodyOffset + 'px';
-			}
-		}, 600, {leading: false});
+		handleFocus();
+		var videoWrapperOffset = videoWrapper.getBoundingClientRect().top;
+		var bodyOffset = -document.body.getBoundingClientRect().top;
+		
+		console.log(videoWrapperOffset, bodyOffset);
+		if (videoWrapperOffset){
+			videoWrapper.style.top = bodyOffset + 'px';
+		}
+	}, 600, {leading: false});
 
 	// ios safari 输入时视频自动吸在顶部
 	if (utils.isIOS){
 		messageInput.addEventListener('focus', videoAdjust, false);
 		messageInput.addEventListener('blur', videoAdjust, false);
 		document.body.addEventListener('touchmove', videoAdjust, false);
+	}
+	else {
+		messageInput.addEventListener('focus', handleFocus, false);
+		messageInput.addEventListener('blur', handleFocus, false);
+	}
+
+	function handleFocus(){
+		if (document.activeElement ===  messageInput){
+			statusPanel.classList.add('hide');
+			videoWrapper.style.height = Math.floor(window.innerWidth / 16 * 9) + 'px';
+		}
+		else {
+			statusPanel.classList.remove('hide');
+			videoWrapper.style.height = Math.floor(window.innerWidth / 16 * 9) + 44 + 'px';
+		}
 	}
 
 	function bindEvent(){
@@ -85,6 +103,48 @@ easemobim.liveStreaming = (function(){
 			console.log(e.type);
 			console.log('size', video.videoWidth, video.videoHeight);
 		}, false);
+	}
+
+	function videoResize(){
+		// 计算视频高度
+		videoWidth = window.innerWidth;
+		videoHeight = Math.floor(window.innerWidth / 16 * 9);
+
+		// 视频横屏处理，宽高互换，位置修正
+		video.style.height = videoWidth + 'px';
+		video.style.width = videoHeight + 'px';
+		video.style.top = videoHeight + 'px';
+		videoWrapper.style.height = videoHeight + 44 + 'px';
+	}
+
+	function listenVisibilityChange(){
+		// Set the name of the hidden property and the change event for visibility
+		var hidden, visibilityChange;
+		if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
+			hidden = "hidden";
+			visibilityChange = "visibilitychange";
+		}
+		else if (typeof document.msHidden !== "undefined") {
+			hidden = "msHidden";
+			visibilityChange = "msvisibilitychange";
+		}
+		else if (typeof document.webkitHidden !== "undefined") {
+			hidden = "webkitHidden";
+			visibilityChange = "webkitvisibilitychange";
+		}
+		else {
+			hidden = 'unsupport';
+		}
+
+		if (hidden !== 'unsupport') {
+			document.addEventListener(visibilityChange, function () {
+				if (document[hidden]) {
+					video.pause();
+				} else {
+					video.play();
+				}
+			}, false);
+		}
 	}
 
 	function initDebug(){
@@ -151,16 +211,8 @@ easemobim.liveStreaming = (function(){
 			// 按钮初始化
 			bindEvent();
 			initDebug();
-
-			// 计算视频高度
-			videoWidth = window.innerWidth;
-			videoHeight = Math.floor(window.innerWidth / 16 * 9);
-
-			// 视频横屏处理，宽高互换，位置修正
-			video.style.height = videoWidth + 'px';
-			video.style.width = videoHeight + 'px';
-			video.style.top = videoHeight + 'px';
-			videoWrapper.style.height = videoHeight + 44 + 'px';
+			listenVisibilityChange();
+			videoResize();
 
 			var streamId = utils.get('streamId');
 			if (streamId){
