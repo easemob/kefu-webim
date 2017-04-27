@@ -26,6 +26,7 @@ easemobim.liveStreaming = (function(){
 				count--;
 				timeRemaining.innerText = count;
 				if (count < 0){
+					me.timer = clearInterval(me.timer);
 					closing.classList.add('hide');
 					startBtn.classList.remove('disabled');
 					videoWrapper.classList.add('hide');
@@ -68,17 +69,6 @@ easemobim.liveStreaming = (function(){
 		}
 	}, 600, {leading: false});
 
-	// ios safari 输入时视频自动吸在顶部
-	if (utils.isIOS){
-		messageInput.addEventListener('focus', videoAdjust, false);
-		messageInput.addEventListener('blur', videoAdjust, false);
-		document.body.addEventListener('touchmove', videoAdjust, false);
-	}
-	else {
-		messageInput.addEventListener('focus', handleFocus, false);
-		messageInput.addEventListener('blur', handleFocus, false);
-	}
-
 	function handleFocus(){
 		if (document.activeElement ===  messageInput){
 			statusPanel.classList.add('hide');
@@ -103,6 +93,17 @@ easemobim.liveStreaming = (function(){
 			console.log(e.type);
 			console.log('size', video.videoWidth, video.videoHeight);
 		}, false);
+
+		// ios safari 输入时视频自动吸在顶部
+		if (utils.isIOS){
+			messageInput.addEventListener('focus', videoAdjust, false);
+			messageInput.addEventListener('blur', videoAdjust, false);
+			document.body.addEventListener('touchmove', videoAdjust, false);
+		}
+		else {
+			messageInput.addEventListener('focus', handleFocus, false);
+			messageInput.addEventListener('blur', handleFocus, false);
+		}
 	}
 
 	function videoResize(){

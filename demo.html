@@ -35,22 +35,12 @@
 	<br><br><br><h1>测试</h1>
 	<div><input id='testvalue' type='text' placeholder='请输入您的tenantId，点击测试按钮'/></div>
 	<a id='test'>测试</a>
-	<a id='test-benz-live'>benz-live 测试</a>
+	<!-- <a id='test-benz-live'>benz-live 测试</a> -->
 	<br><br><br>
 	<script>
 		var v = document.getElementById('testvalue');
 		v.value = localStorage.getItem('easemobtest') || '';
 		document.getElementById('test').onclick = function () {
-			if (/\d+/.test(v.value)) {
-				localStorage.setItem('easemobtest', v.value);
-				easemobim.bind({ tenantId: v.value.replace(/\s/g, '') })
-			}
-		};
-
-		document.getElementById('test-benz-live').onclick = function () {
-			easemobim.config.domain = '//benz.easemob.com';
-			easemobim.config.h5Origin = '//benz.easemob.com';
-
 			if (/\d+/.test(v.value)) {
 				localStorage.setItem('easemobtest', v.value);
 				easemobim.bind({ tenantId: v.value.replace(/\s/g, '') })
