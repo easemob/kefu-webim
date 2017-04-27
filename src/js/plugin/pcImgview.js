@@ -15,7 +15,7 @@ easemobim.pcImgView = (function(){
 	// IE8 必须上屏后再写样式，否则不生效
 	imgWrapper.style.cssText = [
 		'display:none',
-		'position:absolute',
+		'position:fixed',
 		'top:0',
 		'left:0',
 		'width:100%',
@@ -24,7 +24,7 @@ easemobim.pcImgView = (function(){
 	].join(';');
 
 	shadow.style.cssText = [
-		'position:absolute',
+		'position:fixed',
 		'top:0',
 		'left:0',
 		'width:100%',
@@ -49,7 +49,12 @@ easemobim.pcImgView = (function(){
 		this.style.display = 'none';
 	}, false);
 
-	return function(imgSrc){
+	return function(imgData){
+		var imgSrc = imgData.imgSrc;
+		var imgFile = imgData.imgFile;
+		if(imgFile){
+			imgSrc = window.URL.createObjectURL(imgFile);
+		}
 		img.setAttribute('src', imgSrc);
 		imgWrapper.style.display = '';
 	};

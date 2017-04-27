@@ -1,4 +1,4 @@
-(function () {
+(function (window) {
 	var LOADING = Modernizr.inlinesvg ? [
 		'<div class="em-widget-loading">',
 		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 70">',
@@ -11,6 +11,8 @@
 		: '<img src="//kefu.easemob.com/webim/static/img/loading.gif" width="20" style="margin-top:10px;"/>';
 	var parseLink = WebIM.utils.parseLink;
 	var parseEmoji = WebIM.utils.parseEmoji;
+	//用来储存图片信息的file对象 
+	window.imgFileList = new easemobim.dict();
 
 	function _encode(str) {
 		if (!str || str.length === 0) {
@@ -50,6 +52,9 @@
 		case 'img':
 			if (value) {
 				// todo: remove a
+				if(value.data){
+					imgFileList.set(value.url, value.data);
+				};
 				html = '<a href="javascript:;"><img class="em-widget-imgview" src="'
 					+ value.url + '"/></a>';
 			}
@@ -150,4 +155,4 @@
 	};
 
 	easemobim.genDomFromMsg = genDomFromMsg;
-}());
+}(window));

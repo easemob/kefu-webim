@@ -152,13 +152,13 @@ gulp.task('combineJs', function() {
 			'src/js/common/const.js',
 			'src/js/common/ajax.js',
 			'src/js/common/transfer.js',
+			'src/js/app/modules/site.js',
 			'src/js/app/modules/message.js',
 			'src/js/app/modules/paste.js',
 			'src/js/app/modules/leaveMessage.js',
 			'src/js/app/modules/satisfaction.js',
 			'src/js/app/modules/imgView.js',
 			'src/js/app/modules/wechat.js',
-			'src/js/app/modules/site.js',
 			'src/js/app/modules/channel.js',
 			'src/js/app/modules/ui.js',
 			'src/js/app/modules/videoChat.js',
@@ -182,7 +182,7 @@ gulp.task('combineJs', function() {
 			'src/js/plugin/titleSlide.js',
 			'src/js/plugin/iframe.js',
 			'src/js/plugin/userAPI.js',
-			'src/js/plugin/imgview.js',
+			'src/js/plugin/pcImgview.js',
 		])
 		.pipe(concat('easemob.js'));
 	debug || ejs.pipe(uglify());
