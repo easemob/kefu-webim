@@ -7,6 +7,7 @@ easemobim.liveStreaming = (function(){
 	var messageInput = document.querySelector('.em-widget-textarea');
 	var liveVideoWait = document.querySelector('.live-video-wait');
 	var startBtn = liveVideoWait.querySelector('.start-btn');
+	var waitingFooter = liveVideoWait.querySelector('.footer');
 	var closing = document.querySelector('.live-video-closing');
 	var timeRemaining = closing.querySelector('.time-remaining');
 
@@ -28,7 +29,7 @@ easemobim.liveStreaming = (function(){
 				if (count < 0){
 					me.timer = clearInterval(me.timer);
 					closing.classList.add('hide');
-					startBtn.classList.remove('disabled');
+					waitingFooter.classList.remove('disabled');
 					videoWrapper.classList.add('hide');
 					history.back();
 				}
@@ -82,7 +83,6 @@ easemobim.liveStreaming = (function(){
 
 	function bindEvent(){
 		startBtn.addEventListener('click', function(e){
-			if (this.classList.contains('disabled')) return;
 			video.src = sourceURL;
 			statusPoller.updateStatus('PLAYING');
 			video.play();			
@@ -184,7 +184,7 @@ easemobim.liveStreaming = (function(){
 				// 坐席端开始推流
 				case 'STARTED':
 					sourceURL = streamUri;
-					startBtn.classList.remove('disabled');
+					waitingFooter.classList.remove('disabled');
 					videoWrapper.classList.add('playing');
 					break;
 				// 坐席端停止推流

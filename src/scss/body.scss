@@ -141,7 +141,10 @@
 	top: 0;
 	width: 100%;
 	height: 100%;
-	background-color: black;
+	background-position: 0 0;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-image: url(../benz-demo/waiting-background-image.gif);
 	.header {
 		display: block;
 		box-sizing: border-box;
@@ -161,38 +164,31 @@
 		}
 	}
 	.footer {
+		background-image: url(../benz-demo/btn-waiting.png);
+		background-position: 0 0;
+		background-size: 100% 100%;
+		background-repeat: no-repeat;
 		display: block;
-		box-sizing: border-box;
 		width: 100%;
-		padding: 0 20px;
+		height: 20%;
 		position: absolute;
 		bottom: 0;
 		left: 0;
-		> .em-widget-loading {
-			width: 100px;
-			height: 100px;
-			left: 0;
-			right: 0;
-			margin: auto
-		}
 		> .start-btn {
+			position: fixed;
+			margin: 8.25% 8% 4.5%;
 			display: block;
-			text-align: center;
-			margin: 20px 0;
-			padding: 15px 0;
-			width: 100%;
-			box-sizing: border-box;
-			color: white;
-			font-family: Arial;
-			font-weight: 400;
-			font-size: 18px;
-			background-color: #7acc29;
-			border: 1px solid #7acc29;
-			border-radius: 4px;
-			&.disabled {
-				background: none;
-				color: #ccc;
-				border-color: #ccc;
+			width: 84%;
+			height: 10%;
+			background: none;
+			border: none;
+			color: none;
+			opacity: 0;
+		}
+		&.disabled {
+			background-image: url(../benz-demo/btn-start.png);
+			> .start-btn {
+				display: none;
 			}
 		}
 	}
