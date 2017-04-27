@@ -276,7 +276,7 @@ object {
 	left: 0;
 	top: 0;
 	overflow: auto;
-	background: rgba(0, 0, 0, .7);
+	background: rgba(0, 0, 0, .3);
 	img {
 		position: absolute;
 		top: 0;
@@ -284,8 +284,6 @@ object {
 		right: 0;
 		bottom: 0;
 		margin: auto;
-		max-width: 100%;
-		max-height: 100%;
 	}
 }
 
