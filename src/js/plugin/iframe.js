@@ -117,7 +117,7 @@
 			});
 		}
 
-		me.message = new easemobim.Transfer(me.iframe.id, 'easemob');
+		me.message = new easemobim.Transfer(me.iframe.id, 'easemob', true);
 
 		me.iframe.style.display = 'block';
 

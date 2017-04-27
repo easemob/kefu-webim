@@ -1,8 +1,10 @@
 (function () {
+	// 此处由于要兼容老版本，所以在实例化对象时不能指定 useObject = true，而是依据 options.msg.useObject 来判断
 	var getData = new easemobim.Transfer(null, 'api');
 
 	var createObject = function (options) {
 		var headers = null;
+		var useObject = options.msg.useObject;
 
 		if (options.msg.data && options.msg.data.headers) {
 			headers = options.msg.data.headers;
@@ -23,7 +25,8 @@
 					call: options.msg.api,
 					timespan: options.msg.timespan,
 					status: 0,
-					data: info
+					data: info,
+					useObject: useObject
 				});
 			},
 			error: function (info) {
@@ -35,7 +38,8 @@
 					call: options.msg.api,
 					timespan: options.msg.timespan,
 					status: 1,
-					data: info
+					data: info,
+					useObject: useObject
 				});
 			}
 		};

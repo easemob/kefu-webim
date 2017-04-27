@@ -644,7 +644,7 @@ easemobim.channel = function (config) {
 		if (!config.user.token) {
 			console.warn('undefined token');
 			return;
-		};
+		}
 		var count;
 		var id = msg.id;
 
@@ -710,7 +710,7 @@ easemobim.channel = function (config) {
 		var msgBody = {
 			type: 'txt',
 			msg: sendMsg.value,
-		}
+		};
 		ackTimerDict.set(
 			id,
 			setTimeout(function () {

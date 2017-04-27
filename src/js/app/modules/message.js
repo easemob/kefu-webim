@@ -54,7 +54,7 @@
 				// todo: remove a
 				if(value.data){
 					imgFileList.set(value.url, value.data);
-				};
+				}
 				html = '<a href="javascript:;"><img class="em-widget-imgview" src="'
 					+ value.url + '"/></a>';
 			}

@@ -77,7 +77,7 @@
 			initUI(initAfterUI);
 		}
 		else {
-			window.transfer = new easemobim.Transfer(null, 'main').listen(function (msg) {
+			window.transfer = new easemobim.Transfer(null, 'main', true).listen(function (msg) {
 				switch (msg.event) {
 				case _const.EVENTS.SHOW:
 					if (eventCollector.isStarted()) {
@@ -159,7 +159,7 @@
 
 		iframe.src = config.domain + '/webim/transfer.html?v=<%=WEBIM_PLUGIN_VERSION%>';
 		utils.on(iframe, 'load', function () {
-			easemobim.getData = new easemobim.Transfer('cross-origin-iframe', 'data');
+			easemobim.getData = new easemobim.Transfer('cross-origin-iframe', 'data', true);
 			callback(config);
 		});
 

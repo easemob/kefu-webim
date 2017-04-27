@@ -11,7 +11,9 @@ easemobim.api = function (apiName, data, success, error) {
 		.send({
 			api: apiName,
 			data: data,
-			timespan: ts
+			timespan: ts,
+			// 标记postMessage使用object，47.9 增加
+			useObject: true
 		})
 		.listen(function (msg) {
 			if (easemobim.api[msg.call] && easemobim.api[msg.call][msg.timespan]) {

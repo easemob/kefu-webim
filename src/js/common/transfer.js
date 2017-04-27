@@ -4,31 +4,42 @@ window.easemobIM = window.easemobIM || {};
 easemobIM.Transfer = easemobim.Transfer = (function () {
 	'use strict';
 
-	var isPostmessageSupportObj = (function() {
-			var supportObject = true;
-			try {
-				window.postMessage({
-					toString: function() {
-						supportObject = false;
-					}
-				}, "*");
-			} catch (e) {};
-			return supportObject;
-		})();
+	var isPostMessageSupportObj = (function() {
+		var supportObject = true;
+		try {
+			window.postMessage({
+				toString: function() {
+					supportObject = false;
+				}
+			}, "*");
+		}
+		catch (e) {}
+		return supportObject;
+	})();
 
 	var handleMsg = function (e, callback, accept) {
-		// 微信调试工具会传入对象，导致解析出错
-		var msg ;
-		if (!isPostmessageSupportObj){
-			msg = JSON.parse(e.data);
-		}
-		else {
-			msg = e.data;
-		}
-		var i;
-		var l;
 		//兼容旧版的标志
 		var flag = false;
+		var data = e.data;
+		var msg;
+		var i;
+		var l;
+
+		// 47.9 及以后的版本 postMessage 会传 object （如果浏览器支持的话）
+		if (typeof data === 'object'){
+			msg = data;
+		}
+		// 47.9 以前的版本或者浏览器不支持时 postMessage 会传 JSON.stringigy 后得到的字符串，需要解析
+		else if (typeof data === 'string'){
+			try {
+				msg = JSON.parse(data);
+			}
+			catch (err){}
+
+			if (typeof msg !== 'object'){
+				return;
+			}
+		}
 
 		if (accept && accept.length) {
 			for (i = 0, l = accept.length; i < l; i++) {
@@ -52,13 +63,14 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 		}
 	};
 
-	var Message = function (iframeId, key) {
+	var Message = function (iframeId, key, useObject) {
 		if (!(this instanceof Message)) {
 			return new Message(iframeId);
 		}
 		this.key = key;
 		this.iframe = document.getElementById(iframeId);
 		this.origin = location.protocol + '//' + location.host;
+		this.useObject = useObject;
 	};
 
 	Message.prototype.send = function (msg, to) {
@@ -71,7 +83,12 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 			msg.to = to;
 		}
 
-		if (!isPostmessageSupportObj){
+		// this.useObject 在实例化时指定
+		// msg.useObject 在调用 send 时指定
+		// 这两种情况都有效，之所以这样设计是为了兼容老版本
+		// 因为 em-transfer.js 总是最新版的，main.js 可能是老版本的
+		// 所以需要在通信的 msg 中增加 useObject，用来指示使用哪种方式
+		if (!(isPostMessageSupportObj && (this.useObject || msg.useObject))){
 			msg = JSON.stringify(msg);
 		}
 

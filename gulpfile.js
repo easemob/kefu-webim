@@ -87,6 +87,10 @@ gulp.task('minifyHtml', function() {
 		.pipe(minifyHtml())
 		.pipe(template(TEMPLATE_DATA))
 		.pipe(gulp.dest('.'));
+	gulp.src('src/html/transfer.html')
+		.pipe(minifyHtml())
+		.pipe(template(TEMPLATE_DATA))
+		.pipe(gulp.dest('.'));
 });
 
 //postcss

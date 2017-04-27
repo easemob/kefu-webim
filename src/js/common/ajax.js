@@ -24,6 +24,12 @@
 		var suc = options.success || EMPTYFN;
 		var error = options.error || EMPTYFN;
 		var xhr = _createStandardXHR() || _createActiveXHR();
+		var type = options.type || 'GET';
+		var data = options.data || {};
+		var tempData = '';
+		var headers = options.headers || {};
+		var key;
+
 		xhr.onreadystatechange = function () {
 			var json;
 			if (xhr.readyState === 4) {
@@ -64,10 +70,6 @@
 			}
 		};
 
-		var type = options.type || 'GET',
-			data = options.data || {},
-			tempData = '';
-
 		if (type.toLowerCase() === 'get') {
 			for (var o in data) {
 				if (data.hasOwnProperty(o)) {
@@ -85,10 +87,7 @@
 			
 			xhr.open(type, options.url);
 			if (xhr.setRequestHeader) {
-
-				var headers = options.headers || {};
-
-				for (var key in headers) {
+				for (key in headers) {
 					if (headers.hasOwnProperty(key)) {
 						xhr.setRequestHeader(key, headers[key]);
 					}
@@ -103,12 +102,9 @@
 		}
 		xhr.open(type, options.url);
 		if (xhr.setRequestHeader) {
-
-			var headers = options.headers || {};
-
 			headers['Content-Type'] = headers['Content-Type'] || 'application/json';
 
-			for (var key in headers) {
+			for (key in headers) {
 				if (headers.hasOwnProperty(key)) {
 					xhr.setRequestHeader(key, headers[key]);
 				}
