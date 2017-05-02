@@ -181,17 +181,16 @@
 					this.cachedCommandMessage = null;
 				}
 				if (utils.isTop) {
-					//get visitor
-					var visInfo = config.visitor;
+					var visitorInfo;
 					var prefix = (config.tenantId || '') + (config.emgroup || '');
 
-					if (!visInfo) {
-						visInfo = utils.getStore(prefix + 'visitor');
+					if (_.isEmpty(config.visitor)) {
+						visitorInfo = utils.getStore(prefix + 'visitor');
 						try {
 							config.visitor = JSON.parse(visInfo);
 						}
 						catch (e) {}
-						utils.clearStore(config.tenantId + config.emgroup + 'visitor');
+						utils.clearStore(prefix + 'visitor');
 					}
 
 					//get ext
@@ -220,7 +219,7 @@
 				}
 
 				//bind visitor
-				if (config.visitor) {
+				if (!_.isEmpty(config.visitor)) {
 					msg.body.ext.weichat.visitor = config.visitor;
 				}
 
