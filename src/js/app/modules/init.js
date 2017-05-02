@@ -281,13 +281,15 @@
 				config.restServer = config.restServer || targetItem.restDomain;
 				config.xmppServer = config.xmppServer || targetItem.xmppServer;
 
-				chat.init();
-
 				if (targetUserInfo) {
 
+					// 访客回呼模式使用后端返回的关联信息
 					config.toUser = targetUserInfo.agentImName;
+					config.appName = targetUserInfo.appName;
+					config.orgName = targetUserInfo.orgName;
+					config.appKey = targetUserInfo.orgName + '#' + targetUserInfo.appName;
 
-					// 游客回呼
+					// 游客
 					if (targetUserInfo.userName) {
 						config.user = {
 							username: targetUserInfo.userName,
@@ -296,7 +298,7 @@
 
 						// 发送空的ext消息，延迟发送
 						chat.cachedCommandMessage = { ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } };
-						chat.ready();
+						chat.init();
 						chat.show();
 						transfer.send({ event: _const.EVENTS.SHOW }, window.transfer.to);
 						transfer.send({
@@ -308,7 +310,7 @@
 							}
 						}, window.transfer.to);
 					}
-					// 访客回呼
+					// 访客
 					else {
 						api('getPassword', {
 							userId: config.user.username,
@@ -324,7 +326,7 @@
 
 								// 发送空的ext消息，延迟发送
 								chat.cachedCommandMessage = { ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } };
-								chat.ready();
+								chat.init();
 								chat.show();
 								transfer.send({ event: _const.EVENTS.SHOW }, window.transfer.to);
 							}
@@ -332,7 +334,7 @@
 					}
 				}
 				else if (config.user.username && (config.user.password || config.user.token)) {
-					chat.ready();
+					chat.init();
 				}
 				//检测微信网页授权
 				else if (config.wechatAuth) {
@@ -369,7 +371,7 @@
 									if (info && info.status === 'OK') {
 										config.user.username = info.entity.userId;
 										config.user.password = info.entity.userPassword;
-										chat.ready();
+										chat.init();
 									}
 									else {
 										me.go(config);
@@ -394,7 +396,7 @@
 						}
 						else {
 							config.user.password = msg.data;
-							chat.ready();
+							chat.init();
 						}
 					});
 				}
@@ -425,7 +427,7 @@
 						}
 					}, window.transfer.to);
 				}
-				chat.ready();
+				chat.init();
 			});
 		},
 		open: function () {

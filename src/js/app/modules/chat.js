@@ -46,10 +46,10 @@
 		//chat window object
 		return {
 			init: function () {
+				var me = this;
 
 				this.channel = easemobim.channel.call(this, config);
 
-				//create & init connection
 				this.conn = this.channel.getConnection();
 				//sroll bottom timeout stamp
 				this.scbT = 0;
@@ -61,6 +61,99 @@
 				this.initEmoji();
 				//bind events on dom
 				this.bindEvents();
+
+				// 获取上下班状态
+				var getDutyStatusPromise = new Promise(function (resolve, reject) {
+					api('getDutyStatus_2', {
+						channelType: 'easemob',
+						originType: 'webim',
+						channelId: config.channelId,
+						tenantId: config.tenantId,
+						queueName: config.emgroup,
+						agentUsername: config.agentName
+					}, function (msg) {
+						config.isInOfficehours = !msg.data.entity || config.offDutyType === 'chat';
+						resolve();
+					}, function (err) {
+						reject(err);
+					});
+				});
+
+				// 获取灰度开关
+				var getGrayListPromise = new Promise(function (resolve, reject) {
+					api('graylist', {}, function (msg) {
+						var grayList = {};
+						var data = msg.data || {};
+						_.each([
+							'audioVideo',
+							'msgPredictEnable',
+							'waitListNumberEnable',
+							'agentInputStateEnable'
+						], function (key) {
+							grayList[key] = _.contains(data[key], +config.tenantId);
+						});
+						config.grayList = grayList;
+						resolve();
+						// todo: resolve(result)
+					}, function (err) {
+						reject(err);
+					});
+				});
+
+				Promise.all([
+					getDutyStatusPromise,
+					getGrayListPromise
+				]).then(function () {
+					// 设置企业信息
+					me.setEnterpriseInfo();
+
+					// 显示广告条
+					config.logo && me.setLogo();
+
+					// 移动端输入框自动增长
+					utils.isMobile && me.initAutoGrow();
+
+					// 添加sdk回调，下班时不收消息
+					me.channel.listen({ receiveMessage: config.isInOfficehours });
+
+					// 连接xmpp server，下班留言需要获取token，同样需要连接xmpp server
+					me.open();
+
+					if (config.isInOfficehours) {
+						// 设置信息栏
+						me.setNotice();
+
+						// get service serssion info
+						me.getSession();
+
+						// 获取坐席昵称设置
+						me.getNickNameOption();
+
+						// 拉取历史消息
+						!config.isNewUser && !me.hasGotHistoryMsg && me.getHistory(function () {
+							me.scrollBottom();
+							me.hasGotHistoryMsg = true;
+						});
+
+						// 初始化历史消息拉取
+						!config.isNewUser && me.initHistoryPuller();
+
+						// 待接入排队人数显示
+						me.waitListNumber.start();
+
+						//轮询坐席的输入状态
+						me.agentInputState.start();
+
+						// 第二通道收消息初始化
+						me.channel.initSecondChannle();
+					}
+					else {
+						// 设置下班时间展示的页面
+						me.setOffline();
+					}
+				}, function (err) {
+					throw err;
+				});
 			},
 			handleReady: function (info) {
 				var me = this;
@@ -147,106 +240,7 @@
 					msg.body.ext.weichat.visitor.gr_user_id = config.grUserId;
 				}
 			},
-			ready: function () {
-				var me = this;
 
-				// 获取上下班状态
-				var getDutyStatusPromise = new Promise(function (resolve, reject) {
-					api('getDutyStatus_2', {
-						channelType: 'easemob',
-						originType: 'webim',
-						channelId: config.channelId,
-						tenantId: config.tenantId,
-						queueName: config.emgroup,
-						agentUsername: config.agentName
-					}, function (msg) {
-						config.isInOfficehours = !msg.data.entity || config.offDutyType === 'chat';
-						resolve();
-					}, function (err) {
-						reject(err);
-					});
-				});
-
-				// 获取灰度开关
-				var getGrayListPromise = new Promise(function (resolve, reject) {
-					api('graylist', {}, function (msg) {
-						var grayList = {};
-						var data = msg.data || {};
-						_.each([
-							'audioVideo',
-							'msgPredictEnable',
-							'waitListNumberEnable',
-							'agentInputStateEnable'
-						], function (key) {
-							grayList[key] = _.contains(data[key], +config.tenantId);
-						});
-						config.grayList = grayList;
-						resolve();
-						// todo: resolve(result)
-					}, function (err) {
-						reject(err);
-					});
-				});
-
-				Promise.all([
-					getDutyStatusPromise,
-					getGrayListPromise
-				]).then(function () {
-					init();
-				}, function (err) {
-					throw err;
-				});
-
-				function init() {
-					// 设置企业信息
-					me.setEnterpriseInfo();
-
-					// 显示广告条
-					config.logo && me.setLogo();
-
-					// 移动端输入框自动增长
-					utils.isMobile && me.initAutoGrow();
-
-					// 添加sdk回调，下班时不收消息
-					me.channel.listen({ receiveMessage: config.isInOfficehours });
-
-					// 连接xmpp server，下班留言需要获取token，同样需要连接xmpp server
-					me.open();
-
-					if (config.isInOfficehours) {
-						// 设置信息栏
-						me.setNotice();
-
-						// get service serssion info
-						me.getSession();
-
-						// 获取坐席昵称设置
-						me.getNickNameOption();
-
-						// 拉取历史消息
-						!config.isNewUser && !me.hasGotHistoryMsg && me.getHistory(function () {
-							me.scrollBottom();
-							me.hasGotHistoryMsg = true;
-						});
-
-						// 初始化历史消息拉取
-						!config.isNewUser && me.initHistoryPuller();
-
-						// 待接入排队人数显示
-						me.waitListNumber.start();
-
-						//轮询坐席的输入状态
-						me.agentInputState.start();
-
-						// 第二通道收消息初始化
-						me.channel.initSecondChannle();
-					}
-					else {
-						// 设置下班时间展示的页面
-						me.setOffline();
-					}
-				}
-			},
 			initAutoGrow: function () {
 				var me = this;
 				var originHeight = easemobim.textarea.clientHeight;
