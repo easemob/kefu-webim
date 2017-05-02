@@ -1,4 +1,4 @@
-easemobim.apiHelper = (function (utils, api) {
+easemobim.apiHelper = (function (utils, api, emajax) {
 	var config;
 	var apiList = {
 		getCurrentServiceSession: function(){
@@ -28,6 +28,38 @@ easemobim.apiHelper = (function (utils, api) {
 					reject(err);
 				});
 			});
+		},
+		// 这个函数有副作用，会cache token
+		getToken: function(){
+			return new Promise(function(resolve, reject){
+				var token = config.user.token;
+				if (token){
+					resolve(token);
+				}
+				else {
+					emajax({
+						url: location.protocol + '//' + config.restServer + '/' + config.orgName +
+							'/' + config.appName + '/token',
+						dataType: 'json',
+						data: {
+							grant_type: 'password',
+							username: config.user.username,
+							password: config.user.password
+						},
+						type: 'POST',
+						success: function(resp){
+							var token = resp.access_token;
+
+							// cache token
+							config.user.token = token;
+							resolve(token);
+						},
+						error: function(err){
+							reject(err);
+						}
+					});
+				}
+			});
 		}
 	};
 
@@ -44,4 +76,4 @@ easemobim.apiHelper = (function (utils, api) {
 			}
 		}
 	};
-}(easemobim.utils, easemobim.api));
+}(easemobim.utils, easemobim.api, easemobim.emajax));

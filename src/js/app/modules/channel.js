@@ -3,6 +3,7 @@ easemobim.channel = function (config) {
 	var utils = easemobim.utils;
 	var api = easemobim.api;
 	var _const = easemobim._const;
+	var apiHelper = easemobim.apiHelper;
 
 	//监听ack的timer, 每条消息启动一个
 	var ackTimerDict = new easemobim.dict();
@@ -641,10 +642,6 @@ easemobim.channel = function (config) {
 
 	// 第二通道上传图片消息
 		function _uploadImgMsgChannle(msg, fileInput, retryCount) {
-		if (!config.user.token) {
-			console.warn('undefined token');
-			return;
-		}
 		var count;
 		var id = msg.id;
 
@@ -655,36 +652,38 @@ easemobim.channel = function (config) {
 			count = _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
 		}
 
-		api('uploadImgMsgChannel', {
-			userName: config.user.username,
-			isSendObjFile: true,
-			tenantId: config.tenantId,
-			data: fileInput.files[0],
-			headers: {
-				'Authorization':'Bearer ' + config.user.token,
-			},
-			orgName: config.orgName,
-			appName: config.appName,
-		}, function (resp) {
-
-			var msgBody = {
-				"filename": resp.data.fileName,
-				'type': 'img',
-				"url": resp.data.url,
-			};
-			// 发送图片相关信息
-			_sendMsgChannle(id, msgBody, null, null);
-
-		}, function () {
-			//失败继续重试
-			if (count > 0) {
-				_sendImgMsgChannle(msg, fileInput, --count);
-			}
-			else {
-				me.hideLoading(id);
-				me.showFailed(id);
-			}
-
+		// token 存在时会自动从缓存取
+		apiHelper.fetch('getToken').then(function(token){
+			api('uploadImgMsgChannel', {
+				userName: config.user.username,
+				isSendObjFile: true,
+				tenantId: config.tenantId,
+				data: fileInput.files[0],
+				headers: {
+					'Authorization':'Bearer ' + token,
+				},
+				orgName: config.orgName,
+				appName: config.appName,
+			}, function (resp) {
+				var msgBody = {
+					"filename": resp.data.fileName,
+					'type': 'img',
+					"url": resp.data.url,
+				};
+				// 发送图片相关信息
+				_sendMsgChannle(id, msgBody, null, null);
+			}, function () {
+				//失败继续重试
+				if (count > 0) {
+					_sendImgMsgChannle(msg, fileInput, --count);
+				}
+				else {
+					me.hideLoading(id);
+					me.showFailed(id);
+				}
+			});
+		}, function(err){
+			console.warn(err);
 		});
 	}
 
