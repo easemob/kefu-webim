@@ -48,8 +48,18 @@
 				config.emgroup = utils.query('emgroup');
 			}
 
+			var visitorInfo;
+			var parsed;
+			var prefix = (config.tenantId || '') + (config.emgroup || '');
+
+			visitorInfo = utils.getStore(prefix + 'visitor');
+			utils.clearStore(prefix + 'visitor');
+			try {
+				parsed = JSON.parse(visitorInfo);
+			}
+			catch (e) {}
+			config.visitor = parsed || {};
 			config.user = config.user || {};
-			config.visitor = config.visitor || {};
 			var usernameFromUrl = utils.query('user');
 			var usernameFromCookie = utils.get('root' + config.tenantId + config.emgroup);
 			var usernameFromConfig = config.user.username;

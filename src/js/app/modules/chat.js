@@ -181,17 +181,7 @@
 					this.cachedCommandMessage = null;
 				}
 				if (utils.isTop) {
-					var visitorInfo;
 					var prefix = (config.tenantId || '') + (config.emgroup || '');
-
-					if (_.isEmpty(config.visitor)) {
-						visitorInfo = utils.getStore(prefix + 'visitor');
-						try {
-							config.visitor = JSON.parse(visitorInfo);
-						}
-						catch (e) {}
-						utils.clearStore(prefix + 'visitor');
-					}
 
 					//get ext
 					var ext = utils.getStore(prefix + 'ext');
