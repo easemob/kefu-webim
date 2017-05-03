@@ -6,6 +6,7 @@
 		x: 0,
 		y: 0
 	};
+	var emptyFunc = function(){};
 
 	function _move(ev) {
 		var me = this;
@@ -121,23 +122,32 @@
 
 		me.iframe.style.display = 'block';
 
-		me.config.hasReceiveCallback = typeof me.config.onmessage === 'function';
-		me.onsessionclosedSt = 0, me.onreadySt = 0;
+		me.onsessionclosedSt = 0;
+		me.onreadySt = 0;
 		me.config.parentId = me.iframe.id;
+
+		// 从config中剔除不能clone的内容
+		me.callbackApi = {
+			onready: me.config.onready || emptyFunc,
+			onmessage: me.config.onmessage || emptyFunc,
+			onsessionclosed: me.config.onsessionclosed || emptyFunc
+		};
+		delete me.config.onready;
+		delete me.config.onmessage;
+		delete me.config.onsessionclosed;
 
 		me.message
 			.send({ event: _const.EVENTS.INIT_CONFIG, data: me.config })
 			.listen(function (msg) {
-				if (msg.to !== me.iframe.id) { return; }
+				if (msg.to !== me.iframe.id) return;
 
 				switch (msg.event) {
-				case _const.EVENTS.ONREADY: //onready
-					if (typeof me.config.onready === 'function') {
-						clearTimeout(me.onreadySt);
-						me.onreadySt = setTimeout(function () {
-							me.config.onready();
-						}, 500);
-					}
+					// onready
+				case _const.EVENTS.ONREADY:
+					clearTimeout(me.onreadySt);
+					me.onreadySt = setTimeout(function () {
+						me.callbackApi.onready();
+					}, 500);
 					break;
 				case _const.EVENTS.SHOW:
 					// 显示聊天窗口
@@ -161,16 +171,14 @@
 					break;
 				case _const.EVENTS.ONMESSAGE:
 					// 收消息回调
-					typeof me.config.onmessage === 'function' && me.config.onmessage(msg.data);
+					me.callbackApi.onmessage(msg.data);
 					break;
 				case _const.EVENTS.ONSESSIONCLOSED:
 					// 结束会话回调，此功能文档中没有
-					if (typeof me.config.onsessionclosed === 'function') {
-						clearTimeout(me.onsessionclosedSt);
-						me.onsessionclosedSt = setTimeout(function () {
-							me.config.onsessionclosed();
-						}, 500);
-					}
+					clearTimeout(me.onsessionclosedSt);
+					me.onsessionclosedSt = setTimeout(function () {
+						me.callbackApi.onsessionclosed();
+					}, 500);
 					break;
 				case _const.EVENTS.CACHEUSER:
 					// 缓存im username
