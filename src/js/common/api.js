@@ -1,3 +1,7 @@
+// 此文件用于跨域请求api，故为了兼容老版本，接口不能删
+// 新增接口一律写在后边，按照时间顺序
+// 接口应在url上附加tenantId，用于限流
+
 (function () {
 	// 此处由于要兼容老版本，所以在实例化对象时不能指定 useObject = true，而是依据 options.msg.useObject 来判断
 	var getData = new easemobim.Transfer(null, 'api');
@@ -16,6 +20,7 @@
 			headers: headers,
 			data: options.excludeData ? null : options.msg.data,
 			type: options.type || 'GET',
+			isFileUpload: options.isFileUpload,
 			success: function (info) {
 				try {
 					info = JSON.parse(info);
@@ -188,14 +193,6 @@
 				type: 'POST'
 			}));
 			break;
-		case 'uploadImgMsgChannel':
-			easemobim.emajax(createObject({
-				url: '/v1/Tenant/' + msg.data.tenantId+ '/'+ msg.data.orgName +'/'
-				+ msg.data.appName +'/'+ msg.data.userName +'/MediaFiles',
-				msg: msg,
-				type: 'POST'
-			}));
-			break;
 		case 'getAgentStatus':
 			easemobim.emajax(createObject({
 				url: '/v1/tenants/' + msg.data.tenantId + '/agents/' + msg.data.agentUserId + '/agentstate',
@@ -324,6 +321,16 @@
 				+ '/servicesessions/' + ssid
 				+ '/stop?tenantId=' + msg.data.tenantId,
 				msg: msg,
+				type: 'POST'
+			}));
+			break;
+		case 'uploadImgMsgChannel':
+			easemobim.emajax(createObject({
+				url: '/v1/Tenant/' + msg.data.tenantId
+					+ '/' + msg.data.orgName + '/' + msg.data.appName
+					+ '/' + msg.data.userName +'/MediaFiles',
+				msg: msg,
+				isFileUpload: true,
 				type: 'POST'
 			}));
 			break;

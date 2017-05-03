@@ -28,11 +28,10 @@ easemobim.channel = function (config) {
 
 		reSend: function (type, id) {
 			if (id) {
-				var msg = sendMsgDict.get(id);
-
 				switch (type) {
 				case 'txt':
-					_sendMsgChannle(msg, 0); //重试只发一次
+					// 重试只发一次
+					_sendMsgChannle(id, 0);
 					break;
 				}
 			}
@@ -70,12 +69,11 @@ easemobim.channel = function (config) {
 			if (ext) {
 				_.extend(msg.body, ext);
 			}
-			sendMsgDict.set(id, msg);
-			// 开启倒计时
-			_detectSendMsgByApi(id);
 			me.setExt(msg);
 			_obj.appendAck(msg, id);
 			me.conn.send(msg.body);
+			sendMsgDict.set(id, msg);
+			_detectSendTextMsgByApi(id);
 
 			// 空文本消息不上屏
 			if (!message) return;
@@ -85,7 +83,6 @@ easemobim.channel = function (config) {
 
 		sendTransferToKf: function (tid, sessionId) {
 			var id = utils.uuid();
-			_detectSendMsgByApi(id);
 			var msg = new WebIM.message.cmd(id);
 			msg.set({
 				to: config.toUser,
@@ -102,6 +99,7 @@ easemobim.channel = function (config) {
 			_obj.appendAck(msg, id);
 			me.conn.send(msg.body);
 			sendMsgDict.set(id, msg);
+			_detectSendTextMsgByApi(id);
 
 			me.handleEventStatus(null, null, true);
 		},
@@ -138,14 +136,12 @@ easemobim.channel = function (config) {
 					fileInput && (fileInput.value = '');
 				}
 			});
-			sendMsgDict.set(id, msg);
-			// 开启倒计时
-			_detectUploadImgMsgByApi(id, fileInput);
 			me.setExt(msg);
 			_obj.appendAck(msg, id);
 			me.conn.send(msg.body);
+			sendMsgDict.set(id, msg);
+			_detectUploadImgMsgByApi(id, fileInput);
 			me.appendMsg(false, msg, false);
-			
 		},
 
 		sendFile: function (file, fileInput) {
@@ -608,8 +604,9 @@ easemobim.channel = function (config) {
 	}
 
 	// 第二通道发消息
-	function _sendMsgChannle(id, msgBody, ext, retryCount) {
+	function _sendMsgChannle(id, retryCount) {
 		var count;
+		var msg = sendMsgDict.get(id);
 
 		if (typeof retryCount === 'number') {
 			count = retryCount;
@@ -621,29 +618,29 @@ easemobim.channel = function (config) {
 			from: config.user.username,
 			to: config.toUser,
 			tenantId: config.tenantId,
-			bodies: [msgBody],
-			ext: ext,
+			bodies: [utils.getDataByPath(msg, 'body.body')],
+			ext: utils.getDataByPath(msg, 'body.ext'),
 			orgName: config.orgName,
 			appName: config.appName,
 			originType: 'webim'
 		}, function () {
-			//发送成功清除
+			// 发送成功清除
 			_clearTS(id);
 		}, function () {
-			//失败继续重试
+			// 失败继续重试
 			if (count > 0) {
-				_sendMsgChannle(id, msgBody, ext,--count);
+				_sendMsgChannle(id, --count);
 			}
 			else {
-				me.hideLoading(id);
-				me.showFailed(id);			}
+				me.showFailed(id);
+			}
 		});
 	}
 
 	// 第二通道上传图片消息
-		function _uploadImgMsgChannle(msg, fileInput, retryCount) {
+	function _uploadImgMsgChannle(id, file, retryCount) {
 		var count;
-		var id = msg.id;
+		var msg = sendMsgDict.get(id);
 
 		if (typeof retryCount === 'number') {
 			count = retryCount;
@@ -652,36 +649,33 @@ easemobim.channel = function (config) {
 			count = _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
 		}
 
+		function success(apiMsg){
+			msg.body.body = {
+				filename: apiMsg.data.fileName,
+				'type': 'img',
+				url: apiMsg.data.url
+			};
+			_sendMsgChannle(id, 0);
+		}
+
+		function failed(){
+			if (count > 0) {
+				_uploadImgMsgChannle(msg, file, --count);
+			}
+			else {
+				me.showFailed(id);
+			}
+		}
 		// token 存在时会自动从缓存取
 		apiHelper.fetch('getToken').then(function(token){
 			api('uploadImgMsgChannel', {
 				userName: config.user.username,
-				isSendObjFile: true,
 				tenantId: config.tenantId,
-				data: fileInput.files[0],
-				headers: {
-					'Authorization':'Bearer ' + token,
-				},
+				file: file,
+				auth: 'Bearer ' + token,
 				orgName: config.orgName,
 				appName: config.appName,
-			}, function (resp) {
-				var msgBody = {
-					"filename": resp.data.fileName,
-					'type': 'img',
-					"url": resp.data.url,
-				};
-				// 发送图片相关信息
-				_sendMsgChannle(id, msgBody, null, null);
-			}, function () {
-				//失败继续重试
-				if (count > 0) {
-					_sendImgMsgChannle(msg, fileInput, --count);
-				}
-				else {
-					me.hideLoading(id);
-					me.showFailed(id);
-				}
-			});
+			}, success, failed);
 		}, function(err){
 			console.warn(err);
 		});
@@ -702,29 +696,25 @@ easemobim.channel = function (config) {
 		sendMsgDict.remove(id);
 	}
 
-	//监听ack，超时则开启api通道, 发消息时调用
-	function _detectSendMsgByApi(id) {
-		var sendMsg = sendMsgDict.get(id);
-		var ext = sendMsg.body ? sendMsg.body.ext : null;
-		var msgBody = {
-			type: 'txt',
-			msg: sendMsg.value,
-		};
+	//监听ack，超时则开启api通道, 发文本消息时调用
+	function _detectSendTextMsgByApi(id) {
 		ackTimerDict.set(
 			id,
 			setTimeout(function () {
-				//30s没收到ack使用api发送
-				_sendMsgChannle(id, msgBody, ext, null);
+				_sendMsgChannle(id);
 			}, _const.FIRST_CHANNEL_MESSAGE_TIMEOUT)
 		);
 	}
+
 	//监听ack，超时则开启api通道, 上传图片消息时调用
-	function _detectUploadImgMsgByApi(id,fileInput) {
+	function _detectUploadImgMsgByApi(id, fileInput) {
+		var file = fileInput.files[0];
+
+		fileInput.value = '';
 		ackTimerDict.set(
 			id,
 			setTimeout(function () {
-				//30s没收到ack使用api发送
-				_uploadImgMsgChannle(sendMsgDict.get(id), fileInput);
+				_uploadImgMsgChannle(id, file);
 			}, _const.FIRST_CHANNEL_IMG_MESSAGE_TIMEOUT)
 		);
 	}

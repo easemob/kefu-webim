@@ -1423,6 +1423,7 @@
 				utils.addClass(document.getElementById(msgId + '_loading'), 'hide');
 			},
 			showFailed :function (msgId) {
+				this.hideLoading(msgId);
 				utils.removeClass(document.getElementById(msgId + '_failed'), 'hide');
 			}
 		};

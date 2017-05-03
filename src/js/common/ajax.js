@@ -28,6 +28,7 @@
 		var data = options.data || {};
 		var tempData = '';
 		var headers = options.headers || {};
+		var isFileUpload = options.isFileUpload;
 		var key;
 
 		xhr.onreadystatechange = function () {
@@ -81,20 +82,14 @@
 				.getTime();
 			data = null;
 		}
-		else if(data.isSendObjFile) {
+		else if(isFileUpload) {
 			var fileForm = new FormData();
-			fileForm.append("file", data.data);
-			
-			xhr.open(type, options.url);
-			if (xhr.setRequestHeader) {
-				for (key in headers) {
-					if (headers.hasOwnProperty(key)) {
-						xhr.setRequestHeader(key, headers[key]);
-					}
-				}
-			}
+			fileForm.append("file", data.file);
+
+			xhr.open('POST', options.url);
+			xhr.setRequestHeader('Authorization', data.auth);
 			xhr.send(fileForm);
-			return xhr;	
+			return xhr;
 		}
 		else {
 			data._v = new Date().getTime();
