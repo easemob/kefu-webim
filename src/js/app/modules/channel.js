@@ -104,13 +104,14 @@ easemobim.channel = function (config) {
 			me.handleEventStatus(null, null, true);
 		},
 
-		sendImg: function (file, fileInput) {
+		sendImg: function (fileMsg, fileInput) {
 			var id = utils.uuid();
 			var msg = new WebIM.message.img(id);
 
+			fileInput && (fileInput.value = '');
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
-				file: file,
+				file: fileMsg,
 				accessToken: me.token,
 				to: config.toUser,
 				uploadError: function (error) {
@@ -128,29 +129,28 @@ easemobim.channel = function (config) {
 				success: function (id) {
 					utils.$Remove(document.getElementById(id + '_loading'));
 					utils.$Remove(document.getElementById(id + '_failed'));
-					fileInput && (fileInput.value = '');
 				},
 				fail: function (id) {
 					utils.addClass(document.getElementById(id + '_loading'), 'hide');
 					utils.removeClass(document.getElementById(id + '_failed'), 'hide');
-					fileInput && (fileInput.value = '');
 				}
 			});
 			me.setExt(msg);
 			_obj.appendAck(msg, id);
 			me.conn.send(msg.body);
 			sendMsgDict.set(id, msg);
-			_detectUploadImgMsgByApi(id, fileInput);
+			_detectUploadImgMsgByApi(id, fileMsg.data);
 			me.appendMsg(false, msg, false);
 		},
 
-		sendFile: function (file, fileInput) {
+		sendFile: function (fileMsg, fileInput) {
 			var id = utils.uuid();
 			var msg = new WebIM.message.file(id);
 
+			fileInput && (fileInput.value = '');
 			msg.set({
 				apiUrl: location.protocol + '//' + config.restServer,
-				file: file,
+				file: fileMsg,
 				to: config.toUser,
 				uploadError: function (error) {
 					var id = error.id;
@@ -165,12 +165,10 @@ easemobim.channel = function (config) {
 				success: function (id) {
 					utils.$Remove(document.getElementById(id + '_loading'));
 					utils.$Remove(document.getElementById(id + '_failed'));
-					fileInput && (fileInput.value = '');
 				},
 				fail: function (id) {
 					utils.addClass(document.getElementById(id + '_loading'), 'hide');
 					utils.removeClass(document.getElementById(id + '_failed'), 'hide');
-					fileInput && (fileInput.value = '');
 				}
 			});
 			me.setExt(msg);
@@ -707,10 +705,7 @@ easemobim.channel = function (config) {
 	}
 
 	//监听ack，超时则开启api通道, 上传图片消息时调用
-	function _detectUploadImgMsgByApi(id, fileInput) {
-		var file = fileInput.files[0];
-
-		fileInput.value = '';
+	function _detectUploadImgMsgByApi(id, file) {
 		ackTimerDict.set(
 			id,
 			setTimeout(function () {
