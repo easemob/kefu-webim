@@ -133,6 +133,54 @@ gulp.task('lint', function () {
 
 //compress
 gulp.task('combineJs', function () {
+	var getCssTextPromise = new Promise((resolve, reject) => {
+		gulp.src('src/plugin-scss/easemob.scss')
+			.pipe(sass())
+			.pipe(autoprefixer({
+				browsers: ['ie >= 8', 'ff >= 10', 'Chrome >= 15', 'iOS >= 7',
+					'Android >= 4.4.4']
+			}))
+			.pipe(cssnano({
+				discardComments: {
+					removeAll: true,
+				},
+				mergeRules: false,
+				zindex: false,
+				reduceIdents: false,
+			}))
+			.pipe(through2.obj(function(file, enc, cb){
+				resolve(file.contents.toString());
+				this.push(file);
+				cb();
+			}))
+			.on('error', reject);
+	});
+
+	getCssTextPromise.then((cssText) => gulp.src([
+			'src/js/common/polyfill.js',
+			'src/js/common/utils.js',
+			'src/js/common/const.js',
+			'src/js/common/transfer.js',
+			'src/js/plugin/notify.js',
+			'src/js/plugin/titleSlide.js',
+			'src/js/plugin/pcImgview.js',
+			'src/js/plugin/loading.js',
+			'src/js/plugin/iframe.js',
+			'src/js/plugin/userAPI.js',
+		])
+		.pipe(concat('easemob.js'))
+		.pipe(DEV_MODE ? NO_OPERATION_TRANSFER_STREAM() : uglify())
+		.pipe(
+			template(
+				Object.assign({}, TEMPLATE_DATA, {
+					CSS_TEXT_ON_HOST_PAGE: cssText,
+				})
+			)
+		)
+		.pipe(gulp.dest('.'))
+	);
+
+
 	gulp.src([
 			'src/js/app/lib/modernizr.js',
 			'src/js/app/sdk/adapter.js',
@@ -166,22 +214,6 @@ gulp.task('combineJs', function () {
 		.pipe(gulp.dest('static/js/'));
 
 	gulp.src([
-			'src/js/common/polyfill.js',
-			'src/js/common/utils.js',
-			'src/js/common/const.js',
-			'src/js/common/transfer.js',
-			'src/js/plugin/notify.js',
-			'src/js/plugin/titleSlide.js',
-			'src/js/plugin/iframe.js',
-			'src/js/plugin/userAPI.js',
-			'src/js/plugin/pcImgview.js',
-		])
-		.pipe(concat('easemob.js'))
-		.pipe(DEV_MODE ? NO_OPERATION_TRANSFER_STREAM() : uglify())
-		.pipe(template(TEMPLATE_DATA))
-		.pipe(gulp.dest('.'));
-
-	gulp.src([
 			'src/js/common/ajax.js',
 			'src/js/common/transfer.js',
 			'src/js/common/api.js',
@@ -207,7 +239,8 @@ gulp.task('watch', function () {
 	gulp.watch([
 		'src/js/plugin/*.js',
 		'src/js/common/*.js',
-		'src/js/app/modules/*.js'
+		'src/js/app/modules/*.js',
+		'src/plugin-scss/*.scss',
 	], ['combineJs']);
 	gulp.watch(['src/scss/*.scss'], ['cssmin']);
 	gulp.watch(['src/html/*.html'], ['minifyHtml']);

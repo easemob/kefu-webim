@@ -1,6 +1,6 @@
 .em-mobile {
 	border-radius: 0;
-	.em-widgetHeader-nickname,
+	.em-widget-header-nickname,
 	.em-header-status-text,
 	{
 		overflow: hidden;
@@ -14,17 +14,8 @@
 	.em-widget-tip span {
 		font-size: 14px;
 	}
-	.em-widgetHeader-wrapper {
+	.em-widget-header {
 		font-size: 16px;
-		border-radius: 0;
-		box-shadow: none;
-	}
-	.icon-corner-left,
-	.icon-corner-right {
-		top: 4px;
-	}
-	.em-widgetHeader {
-		font-size: 17px;
 		border-radius: 0;
 		box-shadow: none;
 	}
@@ -52,22 +43,6 @@
 			.emoji {
 				margin: 8px 0;
 			}
-		}
-	}
-	.em-widgetHeader-keyboard {
-		position: absolute;
-		right: 9px;
-		top: 11px;
-		width: 21px;
-		height: 21px;
-		border-radius: 4px;
-		text-decoration: none;
-		&:before {
-			position: absolute;
-			left: -5px;
-			top: -4px;
-			text-align: center;
-			color: white;
 		}
 	}
 	.em-widget-send-wrapper {

@@ -1,14 +1,11 @@
-/**
- * title滚动
- */
-easemobim.titleSlide = function () {
+easemobim.titleSlide = (function () {
 	var newTitle = '新消息提醒';
 	var titleST = 0;
 	var originTitle = document.title;
 	var tempArr = (originTitle + newTitle).split('');
 	var word;
 
-	easemobim.titleSlide = {
+	return {
 		stop: function () {
 			clearInterval(titleST);
 			titleST = 0;
@@ -25,4 +22,4 @@ easemobim.titleSlide = function () {
 			}, 360);
 		}
 	};
-};
+}());

@@ -9,19 +9,18 @@
 		var apiHelper = easemobim.apiHelper;
 		var isChatWindowOpen;
 
-		//DOM init
+		// DOM init
+		var widgetSend = document.getElementById('em-widgetSend');
+		var dragHeader = document.querySelector('.em-widget-header');
 		easemobim.imBtn = document.getElementById('em-widgetPopBar');
 		easemobim.imChat = document.getElementById('em-kefu-webim-chat');
 		easemobim.imChatBody = document.getElementById('em-widgetBody');
-		easemobim.send = document.getElementById('em-widgetSend');
-		easemobim.textarea = easemobim.send.querySelector('.em-widget-textarea');
-		easemobim.sendBtn = easemobim.send.querySelector('.em-widget-send');
-		easemobim.sendImgBtn = easemobim.send.querySelector('.em-widget-img');
-		easemobim.sendFileBtn = easemobim.send.querySelector('.em-widget-file');
+		easemobim.textarea = widgetSend.querySelector('.em-widget-textarea');
+		easemobim.sendBtn = widgetSend.querySelector('.em-widget-send');
+		easemobim.sendImgBtn = widgetSend.querySelector('.em-widget-img');
+		easemobim.sendFileBtn = widgetSend.querySelector('.em-widget-file');
 		easemobim.noteBtn = document.querySelector('.em-widget-note');
-		easemobim.dragHeader = document.getElementById('em-widgetDrag');
-		easemobim.dragBar = easemobim.dragHeader.querySelector('.drag-bar');
-		easemobim.avatar = document.querySelector('.em-widgetHeader-portrait');
+		easemobim.avatar = document.querySelector('.em-widget-header-portrait');
 
 		// todo: 把dom都移到里边
 		var doms = easemobim.doms = {
@@ -29,14 +28,18 @@
 			//待接入排队人数显示
 			agentWaitNumber: document.querySelector('.em-header-status-text-queue-number'),
 			agentStatusSymbol: document.getElementById('em-widgetAgentStatus'),
-			nickname: document.querySelector('.em-widgetHeader-nickname'),
+			nickname: document.querySelector('.em-widget-header-nickname'),
 			inputState:document.querySelector('.em-agent-input-state'),
 			imgInput: document.querySelector('.upload-img-container'),
 			fileInput: document.querySelector('.upload-file-container'),
 			emojiContainer: document.querySelector('.em-bar-emoji-container'),
 			chatWrapper: document.querySelector('.em-widget-chat'),
 			emojiWrapper: document.querySelector('.em-bar-emoji-wrapper'),
-			emojiBtn: easemobim.send.querySelector('.em-bar-emoji'),
+			emojiBtn: widgetSend.querySelector('.em-bar-emoji'),
+			dragBar: dragHeader.querySelector('.drag-bar'),
+			noteBtn: document.querySelector('.em-widget-note'),
+			dragHeader: dragHeader,
+			widgetSend: widgetSend,
 			block: null
 		};
 
@@ -180,23 +183,13 @@
 					me.channel.sendText('', this.cachedCommandMessage);
 					this.cachedCommandMessage = null;
 				}
-				if (utils.isTop) {
-					var prefix = (config.tenantId || '') + (config.emgroup || '');
 
-					//get ext
-					var ext = utils.getStore(prefix + 'ext');
-					var parsed;
-					try {
-						parsed = JSON.parse(ext);
-					}
-					catch (e) {}
-					if (parsed) {
-						me.channel.sendText('', { ext: parsed });
-						utils.clearStore(config.tenantId + config.emgroup + 'ext');
-					}
-				}
-				else {
+				if (!utils.isTop) {
 					transfer.send({ event: _const.EVENTS.ONREADY }, window.transfer.to);
+				}
+
+				if (config.extMsg) {
+					me.channel.sendText('', { ext: config.extMsg });
 				}
 			},
 			setExt: function (msg) {
@@ -247,7 +240,7 @@
 				}
 
 				function callback() {
-					var height = easemobim.send.getBoundingClientRect().height;
+					var height = doms.widgetSend.getBoundingClientRect().height;
 					if (me.direction === 'up') {
 						doms.emojiWrapper.style.top = 43 + height + 'px';
 					}
@@ -809,7 +802,7 @@
 					// 显示下班提示语
 					this.appendMsg(true, msg, false);
 					// 禁用工具栏
-					utils.addClass(easemobim.send, 'em-widget-send-disable');
+					utils.addClass(doms.widgetSend, 'em-widget-send-disable');
 					// 发送按钮去掉连接中字样
 					easemobim.sendBtn.innerHTML = '发送';
 					break;
@@ -874,7 +867,7 @@
 
 				var me = this;
 				var audioDom = document.createElement('audio');
-				var slienceSwitch = document.querySelector('.em-widgetHeader-audio');
+				var slienceSwitch = document.querySelector('.em-widget-header .btn-audio');
 				var isSlienceEnable = false;
 				var play = _.throttle(function () {
 					audioDom.play();
@@ -900,7 +893,7 @@
 
 				if (!utils.isTop) {
 					// 最小化按钮
-					utils.on(document.querySelector('.em-widgetHeader-min'), 'click', function () {
+					utils.on(document.querySelector('.em-widget-header .btn-min'), 'click', function () {
 						transfer.send({ event: _const.EVENTS.CLOSE }, window.transfer.to);
 					});
 
@@ -919,26 +912,14 @@
 
 				utils.live('img.em-widget-imgview', 'click', function () {
 					var imgSrc = this.getAttribute('src');
-					if (utils.isTop){
-						easemobim.imgView.show(imgSrc);
-					}
-					else {
-						var imgFile = imgFileList.get(imgSrc);
-						transfer.send({
-							event: _const.EVENTS.SHOW_IMG,
-							data: {
-								imgSrc: imgSrc,
-								imgFile: imgFile
-							}
-						}, window.transfer.to);
-					}
+					easemobim.imgView.show(imgSrc);
 				});
 
-				if (config.dragenable && !utils.isTop) {
+				if (config.dragenable && !utils.isTop && !utils.isMobile) {
 
-					easemobim.dragBar.style.cursor = 'move';
+					doms.dragBar.style.cursor = 'move';
 
-					utils.on(easemobim.dragBar, 'mousedown', function (ev) {
+					utils.on(doms.dragBar, 'mousedown', function (ev) {
 						var e = window.event || ev;
 						easemobim.textarea.blur(); //ie a  ie...
 						transfer.send({
@@ -1052,25 +1033,17 @@
 					var handleFocus = function () {
 						easemobim.textarea.style.overflowY = 'auto';
 						me.scrollBottom(800);
-						// todo: kill focusText
-						clearInterval(me.focusText);
-						me.focusText = setInterval(function () {
-							document.body.scrollTop = 10000;
-						}, 100);
 					};
 					utils.on(easemobim.textarea, 'focus', handleFocus);
 					utils.one(easemobim.textarea, 'touchstart', handleFocus);
-					utils.on(easemobim.textarea, 'blur', function () {
-						clearInterval(me.focusText);
-					});
 
 					// 键盘上下切换按钮
 					utils.on(
-						document.querySelector('.em-widgetHeader-keyboard'),
-						utils.click,
+						document.querySelector('.em-widget-header .btn-keyboard'),
+						'click',
 						function () {
 							var status = utils.hasClass(this, 'icon-keyboard-down');
-							var height = easemobim.send.getBoundingClientRect().height;
+							var height = doms.widgetSend.getBoundingClientRect().height;
 							me.direction = status ? 'down' : 'up';
 
 							utils.toggleClass(this, 'icon-keyboard-up', status);
@@ -1078,17 +1051,17 @@
 
 							switch (me.direction) {
 							case 'up':
-								easemobim.send.style.bottom = 'auto';
-								easemobim.send.style.zIndex = '3';
-								easemobim.send.style.top = '43px';
+								doms.widgetSend.style.bottom = 'auto';
+								doms.widgetSend.style.zIndex = '3';
+								doms.widgetSend.style.top = '43px';
 								easemobim.imChatBody.style.bottom = '0';
 								doms.emojiWrapper.style.bottom = 'auto';
 								doms.emojiWrapper.style.top = 43 + height + 'px';
 								break;
 							case 'down':
-								easemobim.send.style.bottom = '0';
-								easemobim.send.style.zIndex = '3';
-								easemobim.send.style.top = 'auto';
+								doms.widgetSend.style.bottom = '0';
+								doms.widgetSend.style.zIndex = '3';
+								doms.widgetSend.style.top = 'auto';
 								easemobim.imChatBody.style.bottom = height + 'px';
 								doms.emojiWrapper.style.bottom = height + 'px';
 								doms.emojiWrapper.style.top = 'auto';
@@ -1159,7 +1132,7 @@
 				});
 
 				//显示留言界面
-				utils.on(easemobim.noteBtn, 'click', function () {
+				utils.on(doms.noteBtn, 'click', function () {
 					easemobim.leaveMessage.show();
 				});
 

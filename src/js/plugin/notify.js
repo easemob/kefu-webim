@@ -1,10 +1,10 @@
 /**
  * 浏览器提示
  */
-easemobim.notify = function () {
+easemobim.notify = (function () {
 	var st = 0;
 
-	easemobim.notify = function (img, title, content) {
+	return function (img, title, content) {
 		if (st !== 0) {
 			return;
 		}
@@ -35,4 +35,4 @@ easemobim.notify = function () {
 			}
 		}
 	};
-};
+}());

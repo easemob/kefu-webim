@@ -14,11 +14,6 @@
 		if (utils.isTop) {
 			var tenantId = utils.query('tenantId');
 			config = {};
-			//get config from referrer's config
-			try {
-				config = JSON.parse(utils.code.decode(utils.getStore('emconfig' + tenantId)));
-			}
-			catch (e) {}
 
 			config.tenantId = tenantId;
 			config.hide = true;
@@ -48,40 +43,19 @@
 				config.emgroup = utils.query('emgroup');
 			}
 
-			var visitorInfo;
-			var parsed;
-			var prefix = (config.tenantId || '') + (config.emgroup || '');
-
-			visitorInfo = utils.getStore(prefix + 'visitor');
-			utils.clearStore(prefix + 'visitor');
-			try {
-				parsed = JSON.parse(visitorInfo);
-			}
-			catch (e) {}
-			config.visitor = parsed || {};
-			config.user = config.user || {};
+			config.visitor = {};
+			config.user = {};
 			var usernameFromUrl = utils.query('user');
 			var usernameFromCookie = utils.get('root' + config.tenantId + config.emgroup);
-			var usernameFromConfig = config.user.username;
 
-			if (usernameFromUrl && usernameFromUrl === usernameFromConfig) {
-				// H5模式下，考虑到多租户情景或者是localstorage没清理
-				// 故仅当url和localstorage中的用户名匹配时才认为指定的用户有效
-				// 此时什么都不用做，自动使用从localstorage里取出的 username 和 password
-			}
-			else if (usernameFromUrl) {
-				// 用户不匹配时，以url中的用户名为准
-				config.user = { username: usernameFromUrl };
+			if (usernameFromUrl) {
+				config.user.username = usernameFromUrl;
 			}
 			else if (usernameFromCookie) {
-				// 未指定用户时，从cookie中取得用户名
-				config.user = { username: usernameFromCookie };
+				config.user.username = usernameFromCookie;
 				config.isUsernameFromCookie = true;
 			}
-			else {
-				// 以上均不匹配时，需要重新创建用户
-				config.user = {};
-			}
+			else {}
 
 			chat = easemobim.chat(config);
 			initUI(initAfterUI);
@@ -173,6 +147,8 @@
 			callback(config);
 		});
 
+		// todo: change to un hide
+		// todo: move to chat.js
 		// em-widgetPopBar
 		utils.toggleClass(
 			document.getElementById('em-widgetPopBar'),
@@ -202,7 +178,7 @@
 
 		// 最小化按钮
 		utils.toggleClass(
-			document.querySelector('.em-widgetHeader-min'),
+			document.querySelector('.em-widget-header .btn-min'),
 			'hide', !config.minimum || utils.isTop
 		);
 
@@ -218,13 +194,13 @@
 
 		// 静音按钮
 		utils.toggleClass(
-			document.querySelector('.em-widgetHeader-audio'),
+			document.querySelector('.em-widget-header .btn-audio'),
 			'hide', !window.HTMLAudioElement || utils.isMobile || !config.soundReminder
 		);
 
 		// 输入框位置开关
 		utils.toggleClass(
-			document.querySelector('.em-widgetHeader-keyboard'),
+			document.querySelector('.em-widget-header .btn-keyboard'),
 			'hide', !utils.isMobile || config.hideKeyboard
 		);
 

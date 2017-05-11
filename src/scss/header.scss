@@ -1,15 +1,3 @@
-#em-widgetDrag {
-	position: relative;
-	.drag-bar {
-		position: absolute;
-		z-index: 0;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-	}
-}
-
 #em-widgetPopBar {
 	position: fixed;
 	bottom: 0;
@@ -44,50 +32,96 @@
 
 /*header*/
 
-.em-widgetHeader-wrapper {
+.em-widget-header {
 	height: 41px;
 	line-height: 41px;
 	border-top-left-radius: 4px;
 	border-top-right-radius: 4px;
 	box-shadow: 0 1px 1px rgba(255, 255, 255, .3) inset;
 	cursor: default;
+	position: relative;
+	.drag-bar {
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 80px;
+		width: auto;
+		height: 100%;
+	}
+	.btn-min {
+		position: relative;
+		float: right;
+		margin: 10px;
+		width: 21px;
+		height: 21px;
+		border-radius: 4px;
+		box-shadow: 0 1px 1px rgba(255, 255, 255, .3) inset;
+		&:before {
+			position: absolute;
+			left: -5px;
+			top: -4px;
+			text-align: center;
+			color: white;
+		}
+		&:hover {
+			cursor: pointer;
+		}
+	}
+
+	.btn-keyboard {
+		float: right;
+		&:before {
+			text-align: center;
+			color: white;
+		}
+	}
+
+	.btn-audio {
+		float: right;
+		&:before {
+			text-align: center;
+			color: white;
+		}
+		&:hover {
+			cursor: pointer;
+		}
+	}
+
+	.em-widget-header-portrait {
+		width: 30px;
+		height: 30px;
+		vertical-align: middle;
+		margin: -2px -8px 0 5px;
+		border-radius: 50%;
+	}
+
+	.em-widget-header-status {
+		position: absolute;
+		border-radius: 50%;
+		width: 10px;
+		height: 10px;
+		bottom: -1px;
+		right: -1px;
+		box-shadow: 0 1px 1px #aaa;
+	}
+
+	.em-widget-header-nickname {
+		margin-left: 10px;
+		color: white;
+	}
+
+	.em-agent-input-state {
+		margin-left: 5px;
+		color: white;
+	}
+
+	.em-header-status-text {
+		color: white;
+		color: rgba(255, 255, 255, 0.5);
+	}
 }
 
-.em-widgetHeader-portrait {
-	width: 30px;
-	height: 30px;
-	vertical-align: middle;
-	margin: -2px -8px 0 5px;
-	border-radius: 50%;
-}
-
-.em-widgetHeader-status {
-	position: absolute;
-	border-radius: 50%;
-	width: 10px;
-	height: 10px;
-	bottom: -1px;
-	right: -1px;
-	box-shadow: 0 1px 1px #aaa;
-}
-
-.em-widgetHeader-nickname {
-	margin-left: 10px;
-	color: white;
-}
-
-.em-agent-input-state {
-	margin-left: 5px;
-	color: white;
-	
-}
-
-
-.em-header-status-text {
-	color: white;
-	color: rgba(255, 255, 255, 0.5);
-}
-
+// todo: move this to chat body
 .em-header-status-text-queue-number {
 	width: 100%;
 	height: 26px;
@@ -98,48 +132,4 @@
 	position: fixed;
 	bottom: 140px;
 	background-color: rgba(223, 233, 252, .7);
-}
-
-.em-widgetHeader-word-status {
-	margin-left: 4px;
-	color: #efefef;
-	color: rgba(255, 255, 255, .7);
-}
-
-.em-widgetHeader-min {
-	position: absolute;
-	right: 9px;
-	top: 10px;
-	width: 21px;
-	height: 21px;
-	border-radius: 4px;
-	box-shadow: 0 1px 1px rgba(255, 255, 255, .3) inset;
-	&:before {
-		position: absolute;
-		left: -5px;
-		top: -4px;
-		text-align: center;
-		color: white;
-	}
-	&:hover {
-		cursor: pointer;
-	}
-}
-
-.em-widgetHeader-wrapper .em-widgetHeader-audio {
-	position: absolute;
-	right: 44px;
-	top: 12px;
-	width: 21px;
-	height: 21px;
-	&:before {
-		position: absolute;
-		left: -5px;
-		top: -5px;
-		text-align: center;
-		color: white;
-	}
-	&:hover {
-		cursor: pointer;
-	}
 }
