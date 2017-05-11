@@ -194,6 +194,8 @@
 			}));
 			break;
 		case 'getAgentStatus':
+			// 没有token时不发送请求
+			if (msg.data.token) return;
 			easemobim.emajax(createObject({
 				url: '/v1/tenants/' + msg.data.tenantId + '/agents/' + msg.data.agentUserId + '/agentstate',
 				msg: msg
