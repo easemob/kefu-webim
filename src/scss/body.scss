@@ -1,6 +1,6 @@
 /* 消息窗 */
 
-.em-widgetBody-wrapper {
+.chat-wrapper {
 	position: absolute;
 	top: 43px;
 	bottom: 140px;
@@ -168,7 +168,7 @@
 
 .em-widget-wrapper.has-tip {
 	/* 有信息栏时 消息窗 和视屏窗 下移 */
-	.em-widgetBody-wrapper,
+	.chat-wrapper,
 	.em-widget-video {
 		top: 90px;
 	}
@@ -180,7 +180,7 @@
 
 .em-widget-wrapper.has-video {
 	/* 有视频窗时，消息窗继续下移 */
-	.em-widgetBody-wrapper {
+	.chat-wrapper {
 		margin-top: 270px;
 	}
 	/* 显示视频控件 */

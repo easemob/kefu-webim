@@ -327,7 +327,7 @@
 		}
 
 		// todo: add hash name to this file
-		this.iframe.src = location.protocol + config.path + '/im.html?tenantId=';
+		this.iframe.src = location.protocol + config.path + '/im.html';
 
 		this.ready = callback;
 

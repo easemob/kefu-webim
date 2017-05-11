@@ -195,7 +195,6 @@ gulp.task('combineJs', function () {
 			'src/js/app/modules/site.js',
 			'src/js/app/modules/message.js',
 			'src/js/app/modules/paste.js',
-			'src/js/app/modules/leaveMessage.js',
 			'src/js/app/modules/satisfaction.js',
 			'src/js/app/modules/imgView.js',
 			'src/js/app/modules/wechat.js',
@@ -205,6 +204,7 @@ gulp.task('combineJs', function () {
 			'src/js/app/modules/chat.js',
 			'src/js/app/modules/apiTransfer.js',
 			'src/js/app/modules/apiHelper.js',
+			'src/js/app/modules/leaveMessage.js',
 			'src/js/app/modules/eventCollector.js',
 			'src/js/app/modules/init.js'
 		])

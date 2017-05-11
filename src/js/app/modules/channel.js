@@ -115,16 +115,14 @@ easemobim.channel = function (config) {
 				accessToken: me.token,
 				to: config.toUser,
 				uploadError: function (error) {
-					setTimeout(function () {
-						//显示图裂，无法重新发送
-						var id = error.id;
-						var loading = document.getElementById(id + '_loading');
-						var msgWrap = document.querySelector('#' + id + ' .em-widget-msg-container');
+					//显示图裂，无法重新发送
+					var id = error.id;
+					var loading = document.getElementById(id + '_loading');
+					var msgWrap = document.querySelector('#' + id + ' .em-widget-msg-container');
 
-						msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
-						utils.addClass(loading, 'hide');
-						me.scrollBottom();
-					}, 50);
+					msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
+					utils.addClass(loading, 'hide');
+					me.scrollBottom();
 				},
 				success: function (id) {
 					utils.$Remove(document.getElementById(id + '_loading'));
@@ -137,10 +135,10 @@ easemobim.channel = function (config) {
 			});
 			me.setExt(msg);
 			_obj.appendAck(msg, id);
+			me.appendMsg(false, msg, false);
 			me.conn.send(msg.body);
 			sendMsgDict.set(id, msg);
 			_detectUploadImgMsgByApi(id, fileMsg.data);
-			me.appendMsg(false, msg, false);
 		},
 
 		sendFile: function (fileMsg, fileInput) {
@@ -172,8 +170,8 @@ easemobim.channel = function (config) {
 				}
 			});
 			me.setExt(msg);
-			me.conn.send(msg.body);
 			me.appendMsg(false, msg, false);
+			me.conn.send(msg.body);
 		},
 
 		handleReceive: function (msg, type, isHistory) {
@@ -432,7 +430,6 @@ easemobim.channel = function (config) {
 				if (!msg.noprompt) {
 					me.messagePrompt(message);
 				}
-				me.scrollBottom(50);
 
 				// 收消息回调
 				!utils.isTop && transfer.send({
@@ -446,8 +443,7 @@ easemobim.channel = function (config) {
 			}
 		},
 
-		listen: function (option) {
-			var opt = option || { receiveMessage: true };
+		listen: function () {
 			var handlers = {
 				onOpened: function (info) {
 					// 连接未超时，清除timer，暂不开启api通道发送消息
@@ -519,14 +515,6 @@ easemobim.channel = function (config) {
 					}
 				}
 			};
-
-			if (!opt.receiveMessage) {
-				delete handlers.onTextMessage;
-				delete handlers.onEmojiMessage;
-				delete handlers.onPictureMessage;
-				delete handlers.onFileMessage;
-				delete handlers.onCmdMessage;
-			}
 
 			me.conn.listen(handlers);
 		},
@@ -665,7 +653,7 @@ easemobim.channel = function (config) {
 			}
 		}
 		// token 存在时会自动从缓存取
-		apiHelper.fetch('getToken').then(function(token){
+		apiHelper.getToken().then(function(token){
 			api('uploadImgMsgChannel', {
 				userName: config.user.username,
 				tenantId: config.tenantId,
