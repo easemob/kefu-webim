@@ -14,7 +14,6 @@
 		var dragHeader = document.querySelector('.em-widget-header');
 		easemobim.imBtn = document.getElementById('em-widgetPopBar');
 		easemobim.imChat = document.getElementById('em-kefu-webim-chat');
-		easemobim.imChatBody = document.getElementById('em-widgetBody');
 		easemobim.textarea = widgetSend.querySelector('.em-widget-textarea');
 		easemobim.sendBtn = widgetSend.querySelector('.em-widget-send');
 		easemobim.sendImgBtn = widgetSend.querySelector('.em-widget-img');
@@ -33,11 +32,12 @@
 			imgInput: document.querySelector('.upload-img-container'),
 			fileInput: document.querySelector('.upload-file-container'),
 			emojiContainer: document.querySelector('.em-bar-emoji-container'),
-			chatWrapper: document.querySelector('.em-widget-chat'),
+			chatContainer: document.querySelector('.chat-container'),
 			emojiWrapper: document.querySelector('.em-bar-emoji-wrapper'),
 			emojiBtn: widgetSend.querySelector('.em-bar-emoji'),
 			dragBar: dragHeader.querySelector('.drag-bar'),
 			noteBtn: document.querySelector('.em-widget-note'),
+			chatWrapper: document.querySelector('.chat-wrapper'),
 			dragHeader: dragHeader,
 			widgetSend: widgetSend,
 			block: null
@@ -116,13 +116,13 @@
 					// 移动端输入框自动增长
 					utils.isMobile && me.initAutoGrow();
 
-					// 添加sdk回调，下班时不收消息
-					me.channel.listen({ receiveMessage: config.isInOfficehours });
-
-					// 连接xmpp server，下班留言需要获取token，同样需要连接xmpp server
-					me.open();
-
 					if (config.isInOfficehours) {
+						// 添加sdk回调
+						me.channel.listen();
+
+						// 连接xmpp server
+						me.open();
+
 						// 设置信息栏
 						me.setNotice();
 
@@ -175,8 +175,6 @@
 				if (info && config.user) {
 					config.user.token = config.user.token || info.accessToken;
 				}
-
-				easemobim.leaveMessage && easemobim.leaveMessage.auth(me.token, config);
 
 				// 发送用于回呼访客的命令消息
 				if (this.cachedCommandMessage) {
@@ -245,10 +243,10 @@
 						doms.emojiWrapper.style.top = 43 + height + 'px';
 					}
 					else {
-						easemobim.imChatBody.style.bottom = height + 'px';
+						doms.chatWrapper.style.bottom = height + 'px';
 						doms.emojiWrapper.style.bottom = height + 'px';
 					}
-					me.scrollBottom(800);
+					me.scrollBottom();
 				}
 			},
 			initHistoryPuller: function () {
@@ -283,7 +281,7 @@
 					});
 
 					// pc端
-					utils.on(doms.chatWrapper, 'mousewheel DOMMouseScroll', function (ev) {
+					utils.on(doms.chatContainer, 'mousewheel DOMMouseScroll', function (ev) {
 						var that = this;
 
 						if (ev.wheelDelta / 120 > 0 || ev.detail < 0) {
@@ -826,7 +824,7 @@
 				var me = this;
 
 				isChatWindowOpen = true;
-				me.scrollBottom(50);
+				me.scrollBottom();
 				utils.addClass(easemobim.imBtn, 'hide');
 				utils.removeClass(easemobim.imChat, 'hide');
 				if (
@@ -906,7 +904,7 @@
 					});
 				}
 
-				utils.on(easemobim.imChatBody, 'click', function () {
+				utils.on(doms.chatWrapper, 'click', function () {
 					easemobim.textarea.blur();
 				});
 
@@ -960,8 +958,8 @@
 
 				utils.live('button.js-transfer-to-ticket', utils.click, function () {
 					Promise.all([
-						apiHelper.fetch('getSessionQueueId'),
-						apiHelper.fetch('getCurrentServiceSession')
+						apiHelper.getSessionQueueId(),
+						apiHelper.getCurrentServiceSession()
 					]).then(function(result){
 						var ssid = utils.getDataByPath(result[0], 'entity.serviceSessionId')
 							|| utils.getDataByPath(result[1], 'serviceSessionId');
@@ -980,7 +978,8 @@
 							name: config.visitor.trueName,
 							phone: config.visitor.phone,
 							mail: config.visitor.email,
-							content: utils.getBrief('\n' + me.getRecentMsg(), 1000)
+							// 	取最近10条消息，最大1000字
+							content: utils.getBrief('\n' + me.getRecentMsg(10), 1000)
 						}
 					});
 				});
@@ -1030,12 +1029,10 @@
 				}
 
 				if (utils.isMobile) {
-					var handleFocus = function () {
+					utils.on(easemobim.textarea, 'focus touchstart', function () {
 						easemobim.textarea.style.overflowY = 'auto';
-						me.scrollBottom(800);
-					};
-					utils.on(easemobim.textarea, 'focus', handleFocus);
-					utils.one(easemobim.textarea, 'touchstart', handleFocus);
+						me.scrollBottom();
+					});
 
 					// 键盘上下切换按钮
 					utils.on(
@@ -1054,7 +1051,7 @@
 								doms.widgetSend.style.bottom = 'auto';
 								doms.widgetSend.style.zIndex = '3';
 								doms.widgetSend.style.top = '43px';
-								easemobim.imChatBody.style.bottom = '0';
+								doms.chatWrapper.style.bottom = '0';
 								doms.emojiWrapper.style.bottom = 'auto';
 								doms.emojiWrapper.style.top = 43 + height + 'px';
 								break;
@@ -1062,10 +1059,10 @@
 								doms.widgetSend.style.bottom = '0';
 								doms.widgetSend.style.zIndex = '3';
 								doms.widgetSend.style.top = 'auto';
-								easemobim.imChatBody.style.bottom = height + 'px';
+								doms.chatWrapper.style.bottom = height + 'px';
 								doms.emojiWrapper.style.bottom = height + 'px';
 								doms.emojiWrapper.style.top = 'auto';
-								me.scrollBottom(50);
+								me.scrollBottom();
 								break;
 							}
 						}
@@ -1168,18 +1165,10 @@
 					}
 				});
 			},
-			scrollBottom: function (wait) {
-				var ocw = easemobim.imChatBody;
+			scrollBottom: function () {
+				var chatWrapper = doms.chatWrapper;
 
-				if (wait) {
-					clearTimeout(this.scbT);
-					this.scbT = setTimeout(function () {
-						ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 9999;
-					}, wait);
-				}
-				else {
-					ocw.scrollTop = ocw.scrollHeight - ocw.offsetHeight + 9999;
-				}
+				chatWrapper.scrollTop = chatWrapper.scrollHeight - chatWrapper.offsetHeight + 9999;
 			},
 			handleEventStatus: function (action, info, robertToHubman) {
 				var res = robertToHubman ? this.hasHumanAgentOnline : this.hasAgentOnline;
@@ -1251,13 +1240,13 @@
 				dom.className = 'em-widget-event';
 
 				this.appendDate(new Date().getTime());
-				doms.chatWrapper.appendChild(dom);
-				this.scrollBottom(utils.isMobile ? 800 : null);
+				doms.chatContainer.appendChild(dom);
+				this.scrollBottom();
 			},
 			//消息上屏
 			appendMsg: function (isReceived, msg, isHistory, date) {
 				var me = this;
-				var curWrapper = doms.chatWrapper;
+				var curWrapper = doms.chatContainer;
 				var dom = easemobim.genDomFromMsg(msg, isReceived);
 				var img = dom.querySelector('.em-widget-imgview');
 
@@ -1275,7 +1264,7 @@
 					if (img) {
 						// 如果包含图片，则需要等待图片加载后再滚动消息
 						curWrapper.appendChild(dom);
-						me.scrollBottom(utils.isMobile ? 800 : null);
+						me.scrollBottom();
 						utils.one(img, 'load', function () {
 							me.scrollBottom();
 						});
@@ -1283,7 +1272,7 @@
 					else {
 						// 非图片消息直接滚到底
 						curWrapper.appendChild(dom);
-						me.scrollBottom(utils.isMobile ? 800 : null);
+						me.scrollBottom();
 					}
 				}
 				// 缓存上屏的消息
@@ -1295,7 +1284,7 @@
 				isHistory ? recentMsg.push(msgData) : recentMsg.unshift(msgData);
 			},
 			appendDate: function (date, isHistory) {
-				var chatWrapper = doms.chatWrapper;
+				var chatContainer = doms.chatContainer;
 				var dom = document.createElement('div');
 				var MESSAGE_TIME_SPAN_INTERVAL = 60000;
 
@@ -1305,11 +1294,11 @@
 
 				if (!isHistory) {
 					date - msgTimeSpanEnd > MESSAGE_TIME_SPAN_INTERVAL
-						&& chatWrapper.appendChild(dom);
+						&& chatContainer.appendChild(dom);
 				}
 				else {
 					msgTimeSpanBegin - date > MESSAGE_TIME_SPAN_INTERVAL
-						&& chatWrapper.insertBefore(dom, chatWrapper.firstChild);
+						&& chatContainer.insertBefore(dom, chatContainer.firstChild);
 				}
 
 				// 更新时间范围
@@ -1355,8 +1344,8 @@
 					}, window.transfer.to);
 				}
 			},
-			getRecentMsg: function(){
-				return _.map(recentMsg, function(item){
+			getRecentMsg: function(maxCount){
+				return _.map(recentMsg.slice(0, maxCount), function(item){
 					var type = item.msg.type;
 					var date = utils.formatDate(item.date);
 					var role = item.isReceived ? '客服坐席' : '访客';
