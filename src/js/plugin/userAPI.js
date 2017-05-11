@@ -5,6 +5,9 @@
 (function (window, undefined) {
 	'use strict';
 	var utils = easemobim.utils;
+	var loading = easemobim.loading;
+	var CSS_RULES = "<%=CSS_TEXT_ON_HOST_PAGE%>";
+	utils.addCssRules(CSS_RULES);
 	easemobim.config = easemobim.config || {};
 	easemobim.version = '<%=WEBIM_PLUGIN_VERSION%>';
 	easemobim.tenants = {};
@@ -39,11 +42,6 @@
 	var _config = {};
 
 	var iframe;
-
-	//init title slide function
-	easemobim.titleSlide();
-	//init browser notify function
-	easemobim.notify();
 
 	reset();
 
@@ -104,6 +102,7 @@
 			iframe.open();
 		}
 		else {
+			loading.show();
 			reset();
 			utils.extend(_config, config);
 
@@ -114,39 +113,9 @@
 
 			iframe = easemobim.Iframe(_config);
 			easemobim.tenants[cacheKeyName] = iframe;
-			iframe.set(_config, utils.isMobile ? null : iframe.open);
+			iframe.set(_config, iframe.open);
 		}
 
-
-		if (utils.isMobile) {
-			var prefix = (_config.tenantId || '') + (_config.emgroup || '');
-
-			//store ext
-			if (_config.extMsg) {
-				utils.setStore(prefix + 'ext', JSON.stringify(_config.extMsg));
-			}
-
-			//store visitor info 
-			if (_config.visitor) {
-				utils.setStore(prefix + 'visitor', JSON.stringify(_config.visitor));
-			}
-
-			// todo: make this part more readable
-			var a = window.event.srcElement || window.event.target,
-				counter = 5;
-
-			while (a && a.nodeName !== 'A' && counter--) {
-				a = a.parentNode;
-			}
-
-			if (!a || a.nodeName !== 'A') {
-				return;
-			}
-
-			a.setAttribute('href', iframe.url);
-			a.setAttribute('target', '_blank');
-
-		}
 	};
 
 	//open api1: send custom extend message
@@ -172,7 +141,7 @@
 	//auto load
 	if (
 		(!_config.hide || _config.autoConnect || _config.eventCollector)
-		&& _config.tenantId
+		&& _config.tenantId && !utils.isMobile
 	) {
 		var cacheKeyName = config.tenantId + (config.emgroup || '');
 

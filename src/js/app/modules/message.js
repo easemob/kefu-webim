@@ -1,17 +1,8 @@
-(function (window) {
-	var LOADING = Modernizr.inlinesvg ? [
-		'<div class="em-widget-loading">',
-		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 70">',
-		'<circle opacity=".3" fill="none" stroke="#000" stroke-width="4" stroke-miterlimit="10" cx="35" cy="35" r="11"/>',
-		'<path fill="none" stroke="#E5E5E5" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M24 35c0-6.1 4.9-11 11-11 2.8 0 5.3 1 7.3 2.8"/>',
-		'<image width="20" style="margin-top:10px"/>',
-		'</svg>',
-		'</div>'
-	].join('')
-		: '<img src="//kefu.easemob.com/webim/static/img/loading.gif" width="20" style="margin-top:10px;"/>';
+(function (window, _const) {
+	var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : '<img src="//kefu.easemob.com/webim/static/img/loading.gif" width="20" style="margin-top:10px;"/>';
 	var parseLink = WebIM.utils.parseLink;
 	var parseEmoji = WebIM.utils.parseEmoji;
-	//用来储存图片信息的file对象 
+	// 用来储存图片信息的file对象 
 	window.imgFileList = new easemobim.dict();
 
 	function _encode(str) {
@@ -155,4 +146,4 @@
 	};
 
 	easemobim.genDomFromMsg = genDomFromMsg;
-}(window));
+}(window, easemobim._const));

@@ -1,4 +1,4 @@
-(function (utils, _const) {
+(function (utils, _const, loading) {
 	'use strict';
 
 	var _st = 0;
@@ -111,7 +111,7 @@
 	function _ready() {
 		var me = this;
 
-		if (me.config.dragenable) {
+		if (me.config.dragenable && !utils.isMobile) {
 			_resize.call(me);
 			utils.on(me.shadow, 'mouseup', function () {
 				_moveend.call(me);
@@ -145,6 +145,7 @@
 					// onready
 				case _const.EVENTS.ONREADY:
 					clearTimeout(me.onreadySt);
+					loading.hide();
 					me.onreadySt = setTimeout(function () {
 						me.callbackApi.onready();
 					}, 500);
@@ -223,6 +224,7 @@
 
 
 	var Iframe = function (config, signleton) {
+		var me = this;
 
 		if (!(this instanceof Iframe)) {
 
@@ -235,25 +237,18 @@
 			return Iframe.iframe;
 		}
 
-		this.url = '';
-		// IE6-8 不支持修改iframe名称
-		this.iframe = (/MSIE (6|7|8)/).test(navigator.userAgent)
-			? document.createElement('<iframe name="' + new Date().getTime() + '">')
-			: document.createElement('iframe');
-		this.iframe.id = 'EasemobIframe' + new Date().getTime();
-		this.iframe.name = new Date().getTime();
+		this.iframe = document.createElement('iframe');
+		this.iframe.id = 'easemob-iframe-' + new Date().getTime();
+		this.iframe.className = 'easemobim-panel';
 		this.iframe.style.cssText = 'width: 0;height: 0;border: none; position: fixed;';
 		this.shadow = document.createElement('div');
 		this.config = utils.copy(config);
 
 		this.show = false;
 
-		if (!utils.isMobile) {
-			document.body.appendChild(this.shadow);
-			document.body.appendChild(this.iframe);
-		}
+		document.body.appendChild(this.iframe);
+		document.body.appendChild(this.shadow);
 
-		var me = this;
 		if (me.iframe.readyState) {
 			me.iframe.onreadystatechange = function () {
 				if (this.readyState === 'loaded' || this.readyState === 'complete') {
@@ -276,41 +271,6 @@
 
 		this.config = utils.copy(config || this.config);
 
-		// todo: 写成自动配置
-		var destUrl = {
-			tenantId: this.config.tenantId,
-			hide: this.config.hide,
-			sat: this.config.satisfaction,
-			wechatAuth: this.config.wechatAuth,
-			hideKeyboard: this.config.hideKeyboard,
-			eventCollector: this.config.eventCollector,
-			resources: this.config.resources,
-			offDutyWord: this.config.offDutyWord
-		};
-
-		// todo: 写成自动配置
-		this.config.agentName && (destUrl.agentName = this.config.agentName);
-		this.config.emgroup && (destUrl.emgroup = this.config.emgroup);
-		this.config.to && (destUrl.to = this.config.to);
-		this.config.xmppServer && (destUrl.xmppServer = this.config.xmppServer);
-		this.config.restServer && (destUrl.restServer = this.config.restServer);
-		this.config.offDutyType && (destUrl.offDutyType = this.config.offDutyType);
-		this.config.language && (destUrl.language = this.config.language);
-		this.config.appid && (destUrl.appid = this.config.appid);
-		this.config.grUserId && (destUrl.grUserId = this.config.grUserId);
-
-		// 需特殊处理
-		this.config.appKey && (destUrl.appKey = encodeURIComponent(this.config.appKey));
-		this.config.user && this.config.user.username && (destUrl.user = this.config.user.username);
-
-		// 此处参数有可能为 false
-		typeof this.config.hideStatus !== 'undefined' && this.config.hideStatus !== '' && (destUrl.hideStatus = this.config
-			.hideStatus);
-		typeof this.config.ticket !== 'undefined' && this.config.ticket !== '' && (destUrl.ticket = this.config.ticket);
-
-
-		this.url = utils.updateAttribute(this.url, destUrl, config.path);
-
 		if (!this.config.user.username) {
 			// 从cookie里取用户名
 			// keyName = [to + ] tenantId [ + emgroup]
@@ -320,6 +280,7 @@
 			);
 		}
 
+		// 这个是别人种的cookie
 		this.config.guestId = utils.getStore('guestId');
 
 		this.position = { x: this.config.dialogPosition.x.slice(0, -2), y: this.config.dialogPosition.y.slice(0, -2) };
@@ -328,34 +289,35 @@
 		this.iframe.allowTransparency = 'true';
 
 		this.iframe.style.cssText = [
-			'z-index:16777269;',
-			'overflow:hidden;',
-			'position:fixed;',
-			'bottom:10px;',
-			'right:-5px;',
-			'border:none;',
-			'width:' + this.config.dialogWidth + ';',
-			'height:0;',
-			'display:none;',
-			'transition:all .01s;'].join('');
+			'z-index:16777269',
+			'overflow:hidden',
+			'position:fixed',
+			'bottom:10px',
+			'right:-5px',
+			'border:none',
+			'width:' + this.config.dialogWidth,
+			'height:0',
+			'display:none',
+			'transition:all .01s'
+		].join(';');
 		this.shadow.style.cssText = [
-			'display:none;',
-			'cursor:move;',
-			'z-index:16777270;',
-			'position:fixed;',
-			'bottom:' + this.config.dialogPosition.y + ';',
-			'right:' + this.config.dialogPosition.x + ';',
-			'border:none;',
-			'width:' + this.config.dialogWidth + ';',
-			'height:' + this.config.dialogHeight + ';',
-			'border-radius:4px;',
-			'box-shadow: 0 4px 8px rgba(0,0,0,.2);',
-			'border-radius: 4px;'].join('');
+			'display:none',
+			'cursor:move',
+			'z-index:16777270',
+			'position:fixed',
+			'bottom:' + this.config.dialogPosition.y,
+			'right:' + this.config.dialogPosition.x,
+			'border:none',
+			'width:' + this.config.dialogWidth,
+			'height:' + this.config.dialogHeight,
+			'border-radius:4px',
+			'box-shadow: 0 4px 8px rgba(0,0,0,.2)',
+			'border-radius: 4px',
+			'background-size: 100% 100%',
+			'background: url(' + location.protocol + this.config.staticPath + '/img/drag.png) no-repeat'
+		].join(';');
 
-		this.shadow.style.background = 'url(' + location.protocol + this.config.staticPath + '/img/drag.png) no-repeat';
-		this.shadow.style.backgroundSize = '100% 100%';
-
-		if (!this.config.hide) {
+		if (!this.config.hide && !utils.isMobile) {
 			this.iframe.style.height = '37px';
 			this.iframe.style.width = '104px';
 		}
@@ -363,23 +325,10 @@
 			this.iframe.style.height = '0';
 			this.iframe.style.width = '0';
 		}
-		if (utils.isMobile) {
-			this.iframe.style.cssText += 'left:0;bottom:0';
-			this.iframe.style.width = '100%';
-			this.iframe.style.right = '0';
 
-			var emconfig = {};
-			emconfig.domain = this.config.domain;
-			emconfig.path = this.config.path;
-			emconfig.staticPath = this.config.staticPath;
-			this.config.user && (emconfig.user = this.config.user);
-			utils.setStore(
-				'emconfig' + this.config.tenantId,
-				utils.code.encode(JSON.stringify(emconfig))
-			);
-		}
+		// todo: add hash name to this file
+		this.iframe.src = location.protocol + config.path + '/im.html?tenantId=';
 
-		this.iframe.src = this.url;
 		this.ready = callback;
 
 		return this;
@@ -388,21 +337,28 @@
 	Iframe.prototype.open = function () {
 		var iframe = this.iframe;
 
-		if (this.show) { return; }
-
+		if (this.show) return;
 		this.show = true;
+
+		// 移动端，禁止宿主页面滚动
+		if (utils.isMobile){
+			utils.addClass(document.body, 'easemobim-mobile-body');
+			utils.addClass(document.documentElement, 'easemobim-mobile-html');
+		}
+
 		if (utils.isMobile) {
 			iframe.style.width = '100%';
 			iframe.style.height = '100%';
-			iframe.style.right = '0';
-			iframe.style.bottom = '0';
+			iframe.style.left = '0';
+			iframe.style.top = '0';
+			iframe.style.right = 'auto';
+			iframe.style.bottom = 'auto';
 			iframe.style.borderRadius = '0';
 			iframe.style.cssText += 'box-shadow: none;';
 		}
 		else {
 			iframe.style.width = this.config.dialogWidth;
 			iframe.style.height = this.config.dialogHeight;
-			iframe.style.visibility = 'visible';
 			iframe.style.right = this.position.x + 'px';
 			iframe.style.bottom = this.position.y + 'px';
 			iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;border: 1px solid #ccc\\9;';
@@ -417,19 +373,25 @@
 
 		var iframe = this.iframe;
 
-		if (this.show === false) { return; }
-
+		if (this.show === false) return;
 		this.show = false;
 
+		// 恢复宿主页面滚动
+		if (utils.isMobile){
+			utils.removeClass(document.body, 'easemobim-mobile-body');
+			utils.removeClass(document.documentElement, 'easemobim-mobile-html');
+		}
+
+
 		clearTimeout(_st);
-		iframe.style.boxShadow = 'none';
-		iframe.style.borderRadius = '4px;';
-		iframe.style.left = 'auto';
-		iframe.style.top = 'auto';
-		iframe.style.right = '-5px';
-		iframe.style.bottom = '10px';
-		iframe.style.border = 'none';
-		if (!this.config.hide) {
+		if (!this.config.hide && !utils.isMobile) {
+			iframe.style.boxShadow = 'none';
+			iframe.style.borderRadius = '4px;';
+			iframe.style.left = 'auto';
+			iframe.style.top = 'auto';
+			iframe.style.right = '-5px';
+			iframe.style.bottom = '10px';
+			iframe.style.border = 'none';
 			iframe.style.height = '37px';
 			iframe.style.width = '104px';
 		}
@@ -456,5 +418,6 @@
 	easemobim.Iframe = Iframe;
 }(
 	easemobim.utils,
-	easemobim._const
+	easemobim._const,
+	easemobim.loading
 ));

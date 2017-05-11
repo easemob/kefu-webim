@@ -19,36 +19,33 @@
 	<div id="em-kefu-webim-chat" class="em-widget-wrapper hide">
 
 		<!-- 标题栏 -->
-		<div id="em-widgetHeader" class="em-widgetHeader-wrapper bg-color border-color">
-			<div id="em-widgetDrag">
+		<div class="em-widget-header bg-color border-color">
+			<!-- 用于拖动的浮层 -->
+			<p class="drag-bar"></p>
 
-				<!-- 用于拖动的浮层 -->
-				<p class="drag-bar"></p>
+			<!-- 企业头像 -->
+			<img class="em-widget-header-portrait border-color" />
 
-				<!-- 企业头像 -->
-				<img class="em-widgetHeader-portrait border-color" />
+			<!-- 坐席昵称 -->
+			<span class="em-widget-header-nickname"></span>
 
-				<!-- 坐席昵称 -->
-				<span class="em-widgetHeader-nickname"></span>
+			<!-- 坐席状态 -->
+			<span class="em-header-status-text"></span>
 
-				<!-- 坐席状态 -->
-				<span class="em-header-status-text"></span>
+			<!-- 坐席状态标志 -->
+			<i id="em-widgetAgentStatus" class="em-widget-agent-status hide"></i>
 
-				<!-- 坐席状态标志 -->
-				<i id="em-widgetAgentStatus" class="em-widget-agent-status hide"></i>
+			<!-- 坐席输入状态 -->
+			<span class="em-agent-input-state hide">正在输入...</span>
 
-				<!-- 坐席输入状态 -->
-				<span class="em-agent-input-state hide">正在输入...</span>
+			<!-- 最小化按钮 -->
+			<i title="关闭" class="icon-min btn-min bg-color border-color bg-hover-color-light"></i>
 
-				<!-- 最小化按钮 -->
-				<i title="关闭" class="icon-min em-widgetHeader-min bg-color border-color bg-hover-color-light"></i>
+			<!-- 静音开关 -->
+			<i class="icon-bell btn-audio fg-color"></i>
 
-				<!-- 静音开关 -->
-				<i class="icon-bell em-widgetHeader-audio fg-color"></i>
-
-				<!-- 输入框位置切换按钮 -->
-				<i class="em-widgetHeader-keyboard icon-keyboard-up hide"></i>
-			</div>
+			<!-- 输入框位置切换按钮 -->
+			<i class="btn-keyboard icon-keyboard-up hide"></i>
 		</div>
 
 		<!-- 信息栏 -->
