@@ -19,7 +19,6 @@ const autoprefixer = require('gulp-autoprefixer');
 const jshint = require('gulp-jshint');
 const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
-const clean = require('gulp-clean');
 const minifyHtml = require("gulp-minify-html");
 const template = require('gulp-template');
 const prettify = require('gulp-jsbeautifier');
@@ -68,21 +67,6 @@ gulp.task('prettify', function () {
 			.pipe(prettify(BEAUTIFIER_OPT))
 			.pipe(gulp.dest(item.dest))
 	);
-});
-
-//clean
-gulp.task('clean', function () {
-	gulp.src([
-			'static/css/im.css',
-			'static/js/main.js',
-			'im.html',
-			'easemob.js',
-		], {
-			read: false
-		})
-		.pipe(clean({
-			force: true
-		}));
 });
 
 //minifyHtml
@@ -241,7 +225,7 @@ gulp.task('combineJs', function () {
 
 
 //build default DEV_MODE = false
-gulp.task('build', ['clean'], function () {
+gulp.task('build', function () {
 	gulp.start('cssmin', 'combineJs', 'minifyHtml');
 });
 
