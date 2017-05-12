@@ -104,7 +104,7 @@
 
 	function initAfterUI() {
 		//load modules
-		easemobim.leaveMessage.init(chat, config);
+		easemobim.leaveMessage.init(chat);
 		easemobim.paste(chat).init();
 		easemobim.satisfaction(chat);
 
