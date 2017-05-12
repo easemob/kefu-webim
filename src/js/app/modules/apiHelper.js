@@ -78,7 +78,7 @@ easemobim.apiHelper = (function (utils, api, emajax) {
 						resolve(projectId);
 					}
 					else {
-						reject('no project id exist.')
+						reject('no project id exist.');
 					}
 				}, function(err){
 					reject(err);
