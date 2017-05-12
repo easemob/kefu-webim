@@ -143,7 +143,7 @@
 
 		iframe.src = config.domain + '/webim/transfer.html?v=<%=WEBIM_PLUGIN_VERSION%>';
 		utils.on(iframe, 'load', function () {
-			easemobim.getData = new easemobim.Transfer('cross-origin-iframe', 'data', true);
+			easemobim.initApiTransfer();
 			callback(config);
 		});
 
