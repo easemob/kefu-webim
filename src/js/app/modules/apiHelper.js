@@ -1,5 +1,10 @@
+// 以下调用会缓存参数
+// getVisitorId
+// getToken
+
 easemobim.apiHelper = (function (utils, api, emajax) {
 	var config;
+	var cache = {};
 
 	function getCurrentServiceSession(){
 		return new Promise(function(resolve, reject){
@@ -128,13 +133,112 @@ easemobim.apiHelper = (function (utils, api, emajax) {
 		});
 	}
 
+	function getVisitorId(){
+		return new Promise(function(resolve, reject){
+			if (cache.visitorId){
+				resolve(cache.visitorId);
+			}
+			else {
+				getToken().then(function(token){
+					api('getVisitorInfo', {
+						tenantId: config.tenantId,
+						orgName: config.orgName,
+						appName: config.appName,
+						userName: config.user.username,
+						imServiceNumber: config.toUser,
+						token: token
+					}, function (msg) {
+						var visitorId = utils.getDataByPath(msg, 'data.entities.userId');
+						if (visitorId){
+							// cache visitor id
+							cache.visitorId = visitorId;
+							resolve(visitorId);
+						}
+						else {
+							reject('visitor id is not exist.');
+						}
+					}, function(err){
+						reject(err);
+					});
+				});
+			}
+		});
+	}
+
+	function getOfficalAccounts(){
+		return new Promise(function(resolve, reject){
+			getToken().then(function(token){
+				api('getOfficalAccounts', {
+					tenantId: config.tenantId,
+					orgName: config.orgName,
+					appName: config.appName,
+					userName: config.user.username,
+					token: token
+				}, function (msg) {
+					var list = utils.getDataByPath(msg, 'data.entities');
+					if (_.isArray(list)){
+						resolve(list);
+					}
+					else {
+						reject('unexpect data format.');
+					}
+				}, function(err){
+					reject(err);
+				});
+			});
+		});
+	}
+
+	function getOfficalAccountMessage(opt){
+		 var params = opt.params;
+
+		// todo test this pattern
+		return new Promise(function(resolve, reject){
+			Promise.all([
+				getVisitorId(),
+				getToken()
+			]).then(function(result){
+				var visitorId = result[0];
+				var token = result[1];
+
+				api('getOfficalAccountMessage', {
+					tenantId: config.tenantId,
+					orgName: config.orgName,
+					appName: config.appName,
+					userName: config.user.username,
+					token: token,
+					visitorId: visitorId,
+					officalAccountId: params.officalAccountId,
+					direction: 'before',
+					size: params.size,
+					startId: params.startId
+				}, function (msg) {
+					var list = utils.getDataByPath(msg, 'data.entities');
+					if (_.isArray(list)){
+						resolve(list);
+					}
+					else {
+						reject('unexpect data format.');
+					}
+				}, function(err){
+					reject(err);
+				});
+			})
+			['catch'](function(err){
+				reject(err);
+			});
+		});
+	}
+
 	return {
 		getCurrentServiceSession: getCurrentServiceSession,
 		getSessionQueueId: getSessionQueueId,
-		// 这个函数会缓存 token
 		getToken: getToken,
 		getProjectId: getProjectId,
 		createTicket: createTicket,
+		getVisitorId: getVisitorId,
+		getOfficalAccounts: getOfficalAccounts,
+		getOfficalAccountMessage: getOfficalAccountMessage,
 		init: function(cfg){
 			config = cfg;
 		}
