@@ -8,101 +8,109 @@
 	var chat;
 	var config;
 
-	getConfig();
-
-	function getConfig() {
-		if (utils.isTop) {
-			var tenantId = utils.query('tenantId');
-			config = {};
-
-			config.tenantId = tenantId;
-			config.hide = true;
-			config.offDutyType = utils.query('offDutyType');
-			config.grUserId = utils.query('grUserId');
-
-			// H5 方式集成时不支持eventCollector配置
-			config.to = utils.convertFalse(utils.query('to'));
-			config.xmppServer = utils.convertFalse(utils.query('xmppServer'));
-			config.restServer = utils.convertFalse(utils.query('restServer'));
-			config.agentName = utils.convertFalse(utils.query('agentName'));
-			config.resources = utils.convertFalse(utils.query('resources'));
-			config.hideStatus = utils.convertFalse(utils.query('hideStatus'));
-			config.satisfaction = utils.convertFalse(utils.query('sat'));
-			config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
-			config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
-
-			config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
-			config.domain = config.domain || '//' + location.host;
-			config.offDutyWord = decodeURIComponent(utils.query('offDutyWord'));
-			config.language = utils.query('language') || 'zh_CN';
-			config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket')); //true default
-			try {
-				config.emgroup = decodeURIComponent(utils.query('emgroup'));
-			}
-			catch (e) {
-				config.emgroup = utils.query('emgroup');
-			}
-
-			config.visitor = {};
-			config.user = {};
-			var usernameFromUrl = utils.query('user');
-			var usernameFromCookie = utils.get('root' + config.tenantId + config.emgroup);
-
-			if (usernameFromUrl) {
-				config.user.username = usernameFromUrl;
-			}
-			else if (usernameFromCookie) {
-				config.user.username = usernameFromCookie;
-				config.isUsernameFromCookie = true;
-			}
-			else {}
-
-			chat = easemobim.chat(config);
-			initUI(initAfterUI);
-		}
-		else {
-			window.transfer = new easemobim.Transfer(null, 'main', true).listen(function (msg) {
-				switch (msg.event) {
-				case _const.EVENTS.SHOW:
-					if (eventCollector.isStarted()) {
-						// 停止上报访客
-						eventCollector.stopReporting();
-						chatEntry.init(config);
-						chatEntry.open();
-					}
-					else {
-						chatEntry.open();
-					}
-					break;
-				case _const.EVENTS.CLOSE:
-					chatEntry.close();
-					break;
-				case _const.EVENTS.EXT:
-					chat.channel.sendText('', msg.data.ext);
-					break;
-				case _const.EVENTS.TEXTMSG:
-					chat.channel.sendText(msg.data.data, msg.data.ext);
-					break;
-				case _const.EVENTS.UPDATE_URL:
-					easemobim.eventCollector.updateURL(msg.data);
-					break;
-				case _const.EVENTS.INIT_CONFIG:
-					chat = easemobim.chat(msg.data);
-					window.transfer.to = msg.data.parentId;
-					config = msg.data;
-					config.user = config.user || {};
-					config.visitor = config.visitor || {};
-					initUI(initAfterUI);
-					// cache config
-					break;
-				default:
-					break;
-				}
-			}, ['easemob']);
-		}
+	if (utils.isTop){
+		h5_mode_init();
+	}
+	else {
+		chat_window_mode_init();
 	}
 
-	function initAfterUI() {
+	function h5_mode_init(){
+		var tenantId = utils.query('tenantId');
+		config = {};
+
+		config.tenantId = tenantId;
+		config.offDutyType = utils.query('offDutyType');
+		config.grUserId = utils.query('grUserId');
+
+		// H5 方式集成时不支持eventCollector配置
+		config.to = utils.convertFalse(utils.query('to'));
+		config.xmppServer = utils.convertFalse(utils.query('xmppServer'));
+		config.restServer = utils.convertFalse(utils.query('restServer'));
+		config.agentName = utils.convertFalse(utils.query('agentName'));
+		config.resources = utils.convertFalse(utils.query('resources'));
+		config.hideStatus = utils.convertFalse(utils.query('hideStatus'));
+		config.satisfaction = utils.convertFalse(utils.query('sat'));
+		config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
+		config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
+
+		config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
+		config.domain = config.domain || '//' + location.host;
+		config.offDutyWord = decodeURIComponent(utils.query('offDutyWord'));
+		config.language = utils.query('language') || 'zh_CN';
+		config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket')); //true default
+		try {
+			config.emgroup = decodeURIComponent(utils.query('emgroup'));
+		}
+		catch (e) {
+			config.emgroup = utils.query('emgroup');
+		}
+
+		config.visitor = {};
+		config.user = {};
+		var usernameFromUrl = utils.query('user');
+		var usernameFromCookie = utils.get('root' + config.tenantId + config.emgroup);
+
+		if (usernameFromUrl) {
+			config.user.username = usernameFromUrl;
+		}
+		else if (usernameFromCookie) {
+			config.user.username = usernameFromCookie;
+			config.isUsernameFromCookie = true;
+		}
+		else {}
+
+		chat = easemobim.chat(config);
+
+		// fake transfer
+		window.transfer = {
+			send: function(){}
+		}
+		initApiTransfer();
+	}
+
+	function chat_window_mode_init(){
+		utils.removeClass(document.getElementById('em-widgetPopBar'), 'hide');
+		window.transfer = new easemobim.Transfer(null, 'main', true).listen(function (msg) {
+			switch (msg.event) {
+			case _const.EVENTS.SHOW:
+				if (eventCollector.isStarted()) {
+					// 停止上报访客
+					eventCollector.stopReporting();
+					chatEntry.init(config);
+					chatEntry.open();
+				}
+				else {
+					chatEntry.open();
+				}
+				break;
+			case _const.EVENTS.CLOSE:
+				chatEntry.close();
+				break;
+			case _const.EVENTS.EXT:
+				chat.channel.sendText('', msg.data.ext);
+				break;
+			case _const.EVENTS.TEXTMSG:
+				chat.channel.sendText(msg.data.data, msg.data.ext);
+				break;
+			case _const.EVENTS.UPDATE_URL:
+				easemobim.eventCollector.updateURL(msg.data);
+				break;
+			case _const.EVENTS.INIT_CONFIG:
+				chat = easemobim.chat(msg.data);
+				window.transfer.to = msg.data.parentId;
+				config = msg.data;
+				config.user = config.user || {};
+				config.visitor = config.visitor || {};
+				initApiTransfer();
+				break;
+			default:
+				break;
+			}
+		}, ['easemob']);
+	}
+
+	function initChat() {
 		//load modules
 		easemobim.leaveMessage.init(chat);
 		easemobim.paste(chat).init();
@@ -138,77 +146,14 @@
 		});
 	}
 
-	function initUI(callback) {
+	function initApiTransfer() {
 		var iframe = document.getElementById('cross-origin-iframe');
 
 		iframe.src = config.domain + '/webim/transfer.html?v=<%=WEBIM_PLUGIN_VERSION%>';
 		utils.on(iframe, 'load', function () {
 			easemobim.initApiTransfer();
-			callback(config);
+			initChat();
 		});
-
-		// todo: change to un hide
-		// todo: move to chat.js
-		// em-widgetPopBar
-		utils.toggleClass(
-			document.getElementById('em-widgetPopBar'),
-			'hide',
-			(utils.isTop || !config.minimum || config.hide)
-		);
-
-		// em-kefu-webim-chat
-		utils.toggleClass(
-			document.getElementById('em-kefu-webim-chat'),
-			'hide', !(utils.isTop || !config.minimum)
-		);
-
-		// 设置联系客服按钮文字
-		document.querySelector('.em-widget-pop-bar').innerText = config.buttonText;
-
-		// 添加移动端样式类
-		if (utils.isMobile) {
-			utils.addClass(document.body, 'em-mobile');
-		}
-
-		// 留言按钮
-		utils.toggleClass(
-			document.querySelector('.em-widget-note'),
-			'hide', !config.ticket
-		);
-
-		// 最小化按钮
-		utils.toggleClass(
-			document.querySelector('.em-widget-header .btn-min'),
-			'hide', !config.minimum || utils.isTop
-		);
-
-		// 低版本浏览器不支持上传文件/图片
-		utils.toggleClass(
-			document.querySelector('.em-widget-file'),
-			'hide', !WebIM.utils.isCanUploadFileAsync
-		);
-		utils.toggleClass(
-			document.querySelector('.em-widget-img'),
-			'hide', !WebIM.utils.isCanUploadFileAsync
-		);
-
-		// 静音按钮
-		utils.toggleClass(
-			document.querySelector('.em-widget-header .btn-audio'),
-			'hide', !window.HTMLAudioElement || utils.isMobile || !config.soundReminder
-		);
-
-		// 输入框位置开关
-		utils.toggleClass(
-			document.querySelector('.em-widget-header .btn-keyboard'),
-			'hide', !utils.isMobile || config.hideKeyboard
-		);
-
-		// 满意度评价按钮
-		utils.toggleClass(
-			document.querySelector('.em-widget-satisfaction'),
-			'hide', !config.satisfaction
-		);
 	}
 
 	var chatEntry = {

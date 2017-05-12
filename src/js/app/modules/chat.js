@@ -13,16 +13,13 @@
 		var widgetSend = document.getElementById('em-widgetSend');
 		var dragHeader = document.querySelector('.em-widget-header');
 		easemobim.imBtn = document.getElementById('em-widgetPopBar');
-		easemobim.imChat = document.getElementById('em-kefu-webim-chat');
 		easemobim.textarea = widgetSend.querySelector('.em-widget-textarea');
 		easemobim.sendBtn = widgetSend.querySelector('.em-widget-send');
-		easemobim.sendImgBtn = widgetSend.querySelector('.em-widget-img');
-		easemobim.sendFileBtn = widgetSend.querySelector('.em-widget-file');
-		easemobim.noteBtn = document.querySelector('.em-widget-note');
 		easemobim.avatar = document.querySelector('.em-widget-header-portrait');
 
 		// todo: 把dom都移到里边
-		var doms = easemobim.doms = {
+		var doms = {
+			imChat: document.getElementById('em-kefu-webim-chat'),
 			agentStatusText: document.querySelector('.em-header-status-text'),
 			//待接入排队人数显示
 			agentWaitNumber: document.querySelector('.em-header-status-text-queue-number'),
@@ -35,7 +32,12 @@
 			chatContainer: document.querySelector('.chat-container'),
 			emojiWrapper: document.querySelector('.em-bar-emoji-wrapper'),
 			emojiBtn: widgetSend.querySelector('.em-bar-emoji'),
+			sendImgBtn: widgetSend.querySelector('.em-widget-img'),
+			sendFileBtn: widgetSend.querySelector('.em-widget-file'),
 			dragBar: dragHeader.querySelector('.drag-bar'),
+			minifyBtn: dragHeader.querySelector('.btn-min'),
+			audioBtn: dragHeader.querySelector('.btn-audio'),
+			switchKeyboardBtn: dragHeader.querySelector('.btn-keyboard'),
 			noteBtn: document.querySelector('.em-widget-note'),
 			chatWrapper: document.querySelector('.chat-wrapper'),
 			dragHeader: dragHeader,
@@ -54,12 +56,12 @@
 				this.channel = easemobim.channel.call(this, config);
 
 				this.conn = this.channel.getConnection();
-				//sroll bottom timeout stamp
-				this.scbT = 0;
 				//chat window status
 				isChatWindowOpen = true;
 				//init sound reminder
 				this.soundReminder();
+
+				this.initUI();
 
 				this.initEmoji();
 				//bind events on dom
@@ -692,7 +694,7 @@
 						// 设置信息栏内容
 						document.querySelector('.em-widget-tip .content').innerHTML = WebIM.utils.parseLink(slogan);
 						// 显示信息栏
-						utils.addClass(easemobim.imChat, 'has-tip');
+						utils.addClass(doms.imChat, 'has-tip');
 
 						// 隐藏信息栏按钮
 						utils.on(
@@ -700,7 +702,7 @@
 							utils.click,
 							function () {
 								// 隐藏信息栏
-								utils.removeClass(easemobim.imChat, 'has-tip');
+								utils.removeClass(doms.imChat, 'has-tip');
 							}
 						);
 					}
@@ -815,7 +817,7 @@
 				isChatWindowOpen = false;
 
 				if (!config.hide) {
-					utils.addClass(easemobim.imChat, 'hide');
+					utils.addClass(doms.imChat, 'hide');
 					utils.removeClass(easemobim.imBtn, 'hide');
 				}
 			},
@@ -826,7 +828,7 @@
 				isChatWindowOpen = true;
 				me.scrollBottom();
 				utils.addClass(easemobim.imBtn, 'hide');
-				utils.removeClass(easemobim.imChat, 'hide');
+				utils.removeClass(doms.imChat, 'hide');
 				if (
 					config.isInOfficehours
 					// IE 8 will throw an error when focus an invisible element
@@ -1109,7 +1111,7 @@
 				});
 
 				//弹出文件选择框
-				utils.on(easemobim.sendFileBtn, 'click', function () {
+				utils.on(doms.sendFileBtn, 'click', function () {
 					// 发送文件是后来加的功能，无需考虑IE兼容
 					if (!me.readyHandled) {
 						me.errorPrompt('正在连接中...');
@@ -1119,7 +1121,7 @@
 					}
 				});
 
-				utils.on(easemobim.sendImgBtn, 'click', function () {
+				utils.on(doms.sendImgBtn, 'click', function () {
 					if (!me.readyHandled) {
 						me.errorPrompt('正在连接中...');
 					}
@@ -1377,6 +1379,47 @@
 			showFailed :function (msgId) {
 				this.hideLoading(msgId);
 				utils.removeClass(document.getElementById(msgId + '_failed'), 'hide');
+			},
+			initUI: function(){
+				(utils.isTop || !config.minimum) && utils.removeClass(doms.imChat, 'hide');
+
+				// 设置联系客服按钮文字
+				document.querySelector('.em-widget-pop-bar').innerText = config.buttonText;
+
+				// 添加移动端样式类
+				utils.isMobile && utils.addClass(document.body, 'em-mobile');
+
+				// 留言按钮
+				config.ticket && utils.removeClass(doms.noteBtn, 'hide');
+
+				// 最小化按钮
+				config.minimum
+					&& !utils.isTop
+					&& utils.removeClass(doms.minifyBtn, 'hide');
+
+				// 低版本浏览器不支持上传文件/图片
+				if (WebIM.utils.isCanUploadFileAsync){
+					utils.removeClass(doms.sendImgBtn, 'hide');
+					utils.removeClass(doms.sendFileBtn, 'hide');
+				}
+
+				// 静音按钮
+				window.HTMLAudioElement
+					&& !utils.isMobile
+					&& config.soundReminder
+					&& utils.removeClass(doms.audioBtn, 'hide')
+
+				// 输入框位置开关
+				utils.isMobile
+					&& config.hideKeyboard
+					&& utils.removeClass(doms.switchKeyboardBtn, 'hide');
+
+				// 满意度评价按钮
+				config.satisfaction
+					&& utils.removeClass(
+						document.querySelector('.em-widget-satisfaction'),
+						'hide'
+					);
 			}
 		};
 	};
