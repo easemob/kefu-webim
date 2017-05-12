@@ -1,5 +1,6 @@
 // 以下调用会缓存参数
 // getVisitorId
+// getProjectId
 // getToken
 
 easemobim.apiHelper = (function (utils, api, emajax) {
@@ -70,25 +71,32 @@ easemobim.apiHelper = (function (utils, api, emajax) {
 
 	function getProjectId(){
 		return new Promise(function(resolve, reject){
-			getToken().then(function(token){
-				api('getProject', {
-					tenantId: config.tenantId,
-					'easemob-target-username': config.toUser,
-					'easemob-appkey': config.appKey.replace('#', '%23'),
-					'easemob-username': config.user.username,
-					headers: { Authorization: 'Easemob IM ' + token }
-				}, function (msg) {
-					var projectId = utils.getDataByPath(msg, 'data.entities.0.id');
-					if (projectId){
-						resolve(projectId);
-					}
-					else {
-						reject('no project id exist.');
-					}
-				}, function(err){
-					reject(err);
+			if (cache.projectId){
+				resolve(cache.projectId);
+			}
+			else {
+				getToken().then(function(token){
+					api('getProject', {
+						tenantId: config.tenantId,
+						'easemob-target-username': config.toUser,
+						'easemob-appkey': config.appKey.replace('#', '%23'),
+						'easemob-username': config.user.username,
+						headers: { Authorization: 'Easemob IM ' + token }
+					}, function (msg) {
+						var projectId = utils.getDataByPath(msg, 'data.entities.0.id');
+						if (projectId){
+							// cache projectId
+							cache.projectId = projectId;
+							resolve(projectId);
+						}
+						else {
+							reject('no project id exist.');
+						}
+					}, function(err){
+						reject(err);
+					});
 				});
-			});
+			}
 		});
 	}
 

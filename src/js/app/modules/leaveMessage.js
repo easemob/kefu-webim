@@ -1,8 +1,6 @@
 easemobim.leaveMessage = (function (utils, apiHelper) {
 	var isSending = false;
 	var chat;
-	var config;
-	var getProjectIdPromise;
 
 	var dom = document.querySelector('.em-widget-offline');
 	var content = dom.querySelector('textarea');
@@ -43,7 +41,7 @@ easemobim.leaveMessage = (function (utils, apiHelper) {
 	function _createTicket(){
 		Promise.all([
 			apiHelper.getToken(),
-			getProjectIdPromise
+			apiHelper.getProjectId()
 		]).then(function(result){
 			var token = result[0];
 			var projectId = result[1];
@@ -91,18 +89,14 @@ easemobim.leaveMessage = (function (utils, apiHelper) {
 	}
 
 	return {
-		init: function (currentChat, cfg) {
+		init: function (currentChat) {
 			chat = currentChat;
-			config = cfg;
 		},
 		show: function (opt) {
 			opt = opt || {};
 			opt.preData && _writePreDate(opt.preData);
 			opt.hideCloseBtn && utils.addClass(cancelBtn, 'hide');
 			utils.removeClass(dom, 'hide');
-
-			// cache project id
-			getProjectIdPromise = apiHelper.getProjectId();
 		}
 	};
 }(easemobim.utils, easemobim.apiHelper));
