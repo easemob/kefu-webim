@@ -69,6 +69,10 @@ easemobim.leaveMessage = (function (utils, apiHelper) {
 				chat.errorPrompt('留言失败，请稍后重试');
 				console.warn(err);
 			});
+		})
+		['catch'](function(err){
+			chat.errorPrompt('留言失败，token无效');
+			console.error(err);
 		});
 	}
 
@@ -97,10 +101,8 @@ easemobim.leaveMessage = (function (utils, apiHelper) {
 			opt.hideCloseBtn && utils.addClass(cancelBtn, 'hide');
 			utils.removeClass(dom, 'hide');
 
-			// get project id
-			getProjectIdPromise = apiHelper.getProjectId().then()['catch'](function(err){
-				chat.errorPrompt('留言失败，token无效');
-			});
+			// cache project id
+			getProjectIdPromise = apiHelper.getProjectId();
 		}
 	};
 }(easemobim.utils, easemobim.apiHelper));
