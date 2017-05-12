@@ -1,32 +1,28 @@
 /*
 
-	以下文件老版本会引用到，不能在服务器上彻底删除，但如果需要的话可以在当前代码分支中删除
+	以下文件老版本会引用到，不能在服务器上彻底删除
 
 	/static/js/em-open.js
 	/static/js/em-transfer.js
 	/transfer.html
-	/static/img/file_download.png
-todo: delete file_download.png
 */
 
-var debug = false;
+let DEV_MODE = false;
 const TEMPLATE_DATA = {
 	WEBIM_PLUGIN_VERSION: '47.9.008'
 };
 
 const gulp = require('gulp');
-const postcss = require('gulp-postcss');
 const sass = require('gulp-sass');
-const cssnano = require('cssnano');
-const autoprefixer = require('autoprefixer');
-const minifycss = require('gulp-minify-css');
+const cssnano = require('gulp-cssnano');
+const autoprefixer = require('gulp-autoprefixer');
 const jshint = require('gulp-jshint');
 const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
-const clean = require('gulp-clean');
 const minifyHtml = require("gulp-minify-html");
 const template = require('gulp-template');
 const prettify = require('gulp-jsbeautifier');
+const through2 = require('through2');
 
 const BEAUTIFIER_OPT = {
 	indent_with_tabs: true,
@@ -52,49 +48,42 @@ const BEAUTIFIER_OPT = {
 	},
 };
 
+const NO_OPERATION_TRANSFER_STREAM =
+	() => through2.obj(function (chunk, enc, callback) {
+		this.push(chunk);
+		callback();
+	});
+
 // prettify source code
-gulp.task('prettify', function() {
+gulp.task('prettify', function () {
 	[
 		{src: 'src/scss/*.scss', dest: 'src/scss'},
 		{src: 'src/html/*.html', dest: 'src/html'},
 		{src: 'src/js/common/*.js', dest: 'src/js/common'},
 		{src: 'src/js/plugin/*.js', dest: 'src/js/plugin'},
 		{src: 'src/js/app/modules/*.js', dest: 'src/js/app/modules'},
-	].forEach(item => gulp.src(item.src)
-		.pipe(prettify(BEAUTIFIER_OPT))
-		.pipe(gulp.dest(item.dest))
+	].forEach(
+		item => gulp.src(item.src)
+			.pipe(prettify(BEAUTIFIER_OPT))
+			.pipe(gulp.dest(item.dest))
 	);
 });
 
-//clean
-gulp.task('clean', function() {
-	gulp.src([
-			'static/css/im.css',
-			'static/js/main.js',
-			'im.html',
-			'easemob.js'
-		], {
-			read: false
-		})
-		.pipe(clean({
-			force: true
-		}));
-});
-
 //minifyHtml
-gulp.task('minifyHtml', function() {
+gulp.task('minifyHtml', function () {
 	gulp.src('src/html/im.html')
-		.pipe(minifyHtml())
+		.pipe(DEV_MODE ? NO_OPERATION_TRANSFER_STREAM() : minifyHtml())
 		.pipe(template(TEMPLATE_DATA))
 		.pipe(gulp.dest('.'));
+
 	gulp.src('src/html/transfer.html')
-		.pipe(minifyHtml())
+		.pipe(DEV_MODE ? NO_OPERATION_TRANSFER_STREAM() : minifyHtml())
 		.pipe(template(TEMPLATE_DATA))
 		.pipe(gulp.dest('.'));
 });
 
 //postcss
-gulp.task('cssmin', function() {
+gulp.task('cssmin', function () {
 	gulp.src([
 			'src/scss/global.scss',
 			'src/scss/icon.scss',
@@ -109,26 +98,25 @@ gulp.task('cssmin', function() {
 		.pipe(concat('im.css'))
 		.pipe(template(TEMPLATE_DATA))
 		.pipe(sass())
-		.pipe(postcss([
-			autoprefixer({
-				browsers: ['ie >= 8', 'ff >= 10', 'Chrome >= 15', 'iOS >= 7', 'Android >= 4.4.4']
-			}),
-			cssnano({
-				discardComments: {
-					removeAll: true,
-				},
-				mergeRules: false,
-				zindex: false,
-				reduceIdents: false,
-			}),
-		]))
+		.pipe(autoprefixer({
+			browsers: ['ie >= 8', 'ff >= 10', 'Chrome >= 15', 'iOS >= 7',
+				'Android >= 4.4.4']
+		}))
+		.pipe(DEV_MODE ? NO_OPERATION_TRANSFER_STREAM() : cssnano({
+			discardComments: {
+				removeAll: true,
+			},
+			mergeRules: false,
+			zindex: false,
+			reduceIdents: false,
+		}))
 		.pipe(gulp.dest('static/css/'));
 });
 
 
 
 //jshint
-gulp.task('lint', function() {
+gulp.task('lint', function () {
 	gulp.src([
 			'src/js/common/*.js',
 			'src/js/plugin/*.js',
@@ -144,8 +132,8 @@ gulp.task('lint', function() {
 
 
 //compress
-gulp.task('combineJs', function() {
-	var main = gulp.src([
+gulp.task('combineJs', function () {
+	gulp.src([
 			'src/js/app/lib/modernizr.js',
 			'src/js/app/sdk/adapter.js',
 			'src/js/app/sdk/webim.config.js',
@@ -172,12 +160,12 @@ gulp.task('combineJs', function() {
 			'src/js/app/modules/eventCollector.js',
 			'src/js/app/modules/init.js'
 		])
-		.pipe(concat('main.js'));
-	debug || main.pipe(uglify());
-	main.pipe(template(TEMPLATE_DATA))
+		.pipe(concat('main.js'))
+		.pipe(DEV_MODE ? NO_OPERATION_TRANSFER_STREAM() : uglify())
+		.pipe(template(TEMPLATE_DATA))
 		.pipe(gulp.dest('static/js/'));
 
-	var ejs = gulp.src([
+	gulp.src([
 			'src/js/common/polyfill.js',
 			'src/js/common/utils.js',
 			'src/js/common/const.js',
@@ -188,35 +176,39 @@ gulp.task('combineJs', function() {
 			'src/js/plugin/userAPI.js',
 			'src/js/plugin/pcImgview.js',
 		])
-		.pipe(concat('easemob.js'));
-	debug || ejs.pipe(uglify());
-	ejs.pipe(template(TEMPLATE_DATA))
+		.pipe(concat('easemob.js'))
+		.pipe(DEV_MODE ? NO_OPERATION_TRANSFER_STREAM() : uglify())
+		.pipe(template(TEMPLATE_DATA))
 		.pipe(gulp.dest('.'));
 
-	var transfer = gulp.src([
+	gulp.src([
 			'src/js/common/ajax.js',
 			'src/js/common/transfer.js',
 			'src/js/common/api.js',
 		])
-		.pipe(concat('em-transfer.js'));
-	debug || transfer.pipe(uglify());
-	transfer.pipe(gulp.dest('static/js/'));
+		.pipe(concat('em-transfer.js'))
+		.pipe(DEV_MODE ? NO_OPERATION_TRANSFER_STREAM() : uglify())
+		.pipe(gulp.dest('static/js/'));
 });
 
 
-//build default debug = false
-gulp.task('build', ['clean'], function() {
+//build default DEV_MODE = false
+gulp.task('build', function () {
 	gulp.start('cssmin', 'combineJs', 'minifyHtml');
 });
 
-gulp.task('dev', function() {
-	debug = true;
+gulp.task('dev', function () {
+	DEV_MODE = true;
 	gulp.start('build');
 })
 
-gulp.task('watch', function() {
+gulp.task('watch', function () {
 	gulp.start('dev');
-	gulp.watch(['src/js/plugin/*.js', 'src/js/common/*.js', 'src/js/app/modules/*.js'], ['combineJs']);
+	gulp.watch([
+		'src/js/plugin/*.js',
+		'src/js/common/*.js',
+		'src/js/app/modules/*.js'
+	], ['combineJs']);
 	gulp.watch(['src/scss/*.scss'], ['cssmin']);
-	gulp.watch(['src/html/im.html'], ['minifyHtml']);
+	gulp.watch(['src/html/*.html'], ['minifyHtml']);
 });
