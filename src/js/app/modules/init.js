@@ -401,9 +401,6 @@
 				else {
 					me.go(config);
 				}
-			}, function(err){
-				// zto custom: maintain page
-				utils.removeClass(document.querySelector('.maintaining-page'), 'hide');
 			});
 		},
 		go: function (config) {
