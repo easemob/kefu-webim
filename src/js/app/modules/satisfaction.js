@@ -21,14 +21,12 @@ easemobim.satisfaction = function (chat) {
 		session = null;
 		invite = null;
 		utils.removeClass(dom, 'hide');
-		clearInterval(chat.focusText);
 	});
 
 	utils.live('button.js_satisfybtn', 'click', function () {
 		session = this.getAttribute('data-servicesessionid');
 		invite = this.getAttribute('data-inviteid');
 		utils.removeClass(dom, 'hide');
-		clearInterval(chat.focusText);
 	});
 
 	utils.on(cancelBtn, 'click', function () {
@@ -50,9 +48,7 @@ easemobim.satisfaction = function (chat) {
 		setTimeout(function () {
 			msg.value = '';
 			// clear stars
-			_.each(lis, function (elem) {
-				utils.removeClass(elem, 'sel');
-			});
+			utils.removeClass(lis, 'sel');
 			utils.addClass(success, 'hide');
 			utils.addClass(dom, 'hide');
 		}, 1500);

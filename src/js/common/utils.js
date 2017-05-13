@@ -2,6 +2,7 @@
 	window.easemobim = window.easemobim || {};
 
 	var _isMobile = /mobile/i.test(navigator.userAgent);
+	var _isIE8 = /Trident\/4\.0/.test(navigator.userAgent);
 
 	function _isNodeList(nodes) {
 		var stringRepr = Object.prototype.toString.call(nodes);
@@ -84,6 +85,12 @@
 		isNodeList: _isNodeList,
 		addCssRules: function(cssText){
 			var style = document.createElement('style');
+			if (_isIE8){
+				style.setAttribute('type', 'text/css');
+				style.styleSheet.cssText = cssText;
+				document.querySelector('head').appendChild(style);
+				return;
+			}
 			if (style.styleSheet){
 				style.styleSheet.cssText = cssText;
 			}
@@ -189,16 +196,15 @@
 			});
 		},
 		one: function (element, ev, handler, isCapture) {
-				if (!element || !ev) return;
+			if (!element || !ev) return;
 
-				var tempFn = function () {
-					handler.apply(this, arguments);
-					_unbind(element, ev, tempFn);
-				};
-				_bind(element, ev, tempFn, isCapture);
-			}
-			// 触发事件，对于ie8只支持原生事件，不支持自定义事件
-			,
+			var tempFn = function () {
+				handler.apply(this, arguments);
+				_unbind(element, ev, tempFn);
+			};
+			_bind(element, ev, tempFn, isCapture);
+		},
+		// 触发事件，对于ie8只支持原生事件，不支持自定义事件
 		trigger: function (element, eventName) {
 			if (document.createEvent) {
 				var ev = document.createEvent('HTMLEvents');

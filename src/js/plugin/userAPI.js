@@ -56,9 +56,9 @@
 		utils.extend(config, easemobim.config);
 		_config = utils.copy(config);
 
-		var hide = utils.convertFalse(_config.hide) !== '' ? _config.hide : baseConfig.json.hide,
-			resources = utils.convertFalse(_config.resources) !== '' ? _config.resources : baseConfig.json.resources,
-			sat = utils.convertFalse(_config.satisfaction) !== '' ? _config.satisfaction : baseConfig.json.sat;
+		var hide = utils.convertFalse(_config.hide) !== '' ? _config.hide : baseConfig.json.hide;
+		var resources = utils.convertFalse(_config.resources) !== '' ? _config.resources : baseConfig.json.resources;
+		var sat = utils.convertFalse(_config.satisfaction) !== '' ? _config.satisfaction : baseConfig.json.sat;
 
 		_config.tenantId = _config.tenantId || baseConfig.json.tenantId;
 		_config.hide = utils.convertFalse(hide);
