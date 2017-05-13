@@ -15,7 +15,6 @@
 		var dragHeader = document.querySelector('.em-widget-header');
 		easemobim.imBtn = document.getElementById('em-widgetPopBar');
 		easemobim.textarea = widgetSend.querySelector('.em-widget-textarea');
-		easemobim.sendBtn = widgetSend.querySelector('.em-widget-send');
 		easemobim.avatar = document.querySelector('.em-widget-header-portrait');
 
 		// todo: 把dom都移到里边
@@ -35,6 +34,7 @@
 			emojiBtn: widgetSend.querySelector('.em-bar-emoji'),
 			sendImgBtn: widgetSend.querySelector('.em-widget-img'),
 			sendFileBtn: widgetSend.querySelector('.em-widget-file'),
+			sendBtn: widgetSend.querySelector('.em-widget-send'),
 			dragBar: dragHeader.querySelector('.drag-bar'),
 			minifyBtn: dragHeader.querySelector('.btn-min'),
 			audioBtn: dragHeader.querySelector('.btn-audio'),
@@ -167,7 +167,7 @@
 				if (me.readyHandled) return;
 
 				me.readyHandled = true;
-				easemobim.sendBtn.innerHTML = '发送';
+				doms.sendBtn.innerHTML = '发送';
 				utils.trigger(easemobim.textarea, 'change');
 
 				// bug fix:
@@ -175,7 +175,7 @@
 				if (config.minimum === false || config.eventCollector === true) {
 					transfer.send({ event: _const.EVENTS.SHOW }, window.transfer.to);
 				}
-				if (info && config.user) {
+				if (info) {
 					config.user.token = config.user.token || info.accessToken;
 				}
 
@@ -793,7 +793,7 @@
 					// 禁用工具栏
 					utils.addClass(doms.widgetSend, 'em-widget-send-disable');
 					// 发送按钮去掉连接中字样
-					easemobim.sendBtn.innerHTML = '发送';
+					doms.sendBtn.innerHTML = '发送';
 					break;
 				default:
 					// 只允许留言此时无法关闭留言页面
@@ -1004,7 +1004,7 @@
 					var isEmpty = !easemobim.textarea.value.trim();
 
 					utils.toggleClass(
-						easemobim.sendBtn,
+						doms.sendBtn,
 						'disabled', !me.readyHandled || isEmpty
 					);
 					config.grayList.msgPredictEnable
@@ -1136,11 +1136,11 @@
 						if (evt.preventDefault) {
 							evt.preventDefault();
 						}
-						utils.trigger(easemobim.sendBtn, 'click');
+						utils.trigger(doms.sendBtn, 'click');
 					}
 				});
 
-				utils.on(easemobim.sendBtn, 'click', function () {
+				utils.on(doms.sendBtn, 'click', function () {
 					var textMsg = easemobim.textarea.value;
 
 					if (utils.hasClass(this, 'disabled')) {
