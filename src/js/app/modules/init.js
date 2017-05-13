@@ -2,6 +2,7 @@
 	'use strict';
 
 	var utils = easemobim.utils;
+	var uikit = easemobim.uikit;
 	var _const = easemobim._const;
 	var api = easemobim.api;
 	var eventCollector = easemobim.eventCollector;
@@ -112,7 +113,6 @@
 
 	function initChat() {
 		//load modules
-		easemobim.leaveMessage.init(chat);
 		easemobim.paste(chat).init();
 		easemobim.satisfaction(chat);
 
@@ -176,7 +176,7 @@
 				'number' === typeof toUser && (toUser = toUser.toString(10));
 
 				if (!relevanceList.length) {
-					chat.errorPrompt('未创建关联', true);
+					uikit.prompt('未创建关联');
 					return;
 				}
 

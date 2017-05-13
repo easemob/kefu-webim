@@ -192,6 +192,7 @@ gulp.task('combineJs', function () {
 			'src/js/common/const.js',
 			'src/js/common/ajax.js',
 			'src/js/common/transfer.js',
+			'src/js/app/modules/uikit.js',
 			'src/js/app/modules/site.js',
 			'src/js/app/modules/message.js',
 			'src/js/app/modules/paste.js',
