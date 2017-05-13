@@ -1,6 +1,5 @@
-easemobim.leaveMessage = (function (utils, apiHelper) {
+easemobim.leaveMessage = (function (utils, uikit, apiHelper) {
 	var isSending = false;
-	var chat;
 
 	var dom = document.querySelector('.em-widget-offline');
 	var content = dom.querySelector('textarea');
@@ -17,19 +16,19 @@ easemobim.leaveMessage = (function (utils, apiHelper) {
 
 	utils.on(confirmBtn, utils.click, function () {
 		if (isSending) {
-			chat.errorPrompt('留言提交中...');
+			uikit.tip('留言提交中...');
 		}
 		else if (!name.value || name.value.length > 140) {
-			chat.errorPrompt('姓名输入不正确');
+			uikit.tip('姓名输入不正确');
 		}
 		else if (!phone.value || phone.value.length > 24) {
-			chat.errorPrompt('电话输入不正确');
+			uikit.tip('电话输入不正确');
 		}
 		else if (!mail.value || mail.value.length > 127) {
-			chat.errorPrompt('邮箱输入不正确');
+			uikit.tip('邮箱输入不正确');
 		}
 		else if (!content.value || content.value.length > 1500) {
-			chat.errorPrompt('留言内容不能为空，长度小于1500字');
+			uikit.tip('留言内容不能为空，长度小于1500字');
 		}
 		else {
 			isSending = true;
@@ -64,12 +63,12 @@ easemobim.leaveMessage = (function (utils, apiHelper) {
 				_clearInput()
 			}, function (err){
 				isSending = false;
-				chat.errorPrompt('留言失败，请稍后重试');
+				uikit.tip('留言失败，请稍后重试');
 				console.warn(err);
 			});
 		})
 		['catch'](function(err){
-			chat.errorPrompt('留言失败，token无效');
+			uikit.tip('留言失败，token无效');
 			console.error(err);
 		});
 	}
@@ -88,15 +87,10 @@ easemobim.leaveMessage = (function (utils, apiHelper) {
 		mail.value = preData.mail || '';
 	}
 
-	return {
-		init: function (currentChat) {
-			chat = currentChat;
-		},
-		show: function (opt) {
-			opt = opt || {};
-			opt.preData && _writePreDate(opt.preData);
-			opt.hideCloseBtn && utils.addClass(cancelBtn, 'hide');
-			utils.removeClass(dom, 'hide');
-		}
+	return function(opt) {
+		opt = opt || {};
+		opt.preData && _writePreDate(opt.preData);
+		opt.hideCloseBtn && utils.addClass(cancelBtn, 'hide');
+		utils.removeClass(dom, 'hide');
 	};
-}(easemobim.utils, easemobim.apiHelper));
+}(easemobim.utils, easemobim.uikit, easemobim.apiHelper));

@@ -1,6 +1,7 @@
 (function () {
 	easemobim.chat = function (config) {
 		var utils = easemobim.utils;
+		var uikit = easemobim.uikit;
 		var _const = easemobim._const;
 		var api = easemobim.api;
 		var recentMsg = [];
@@ -768,18 +769,6 @@
 						.join('');
 				}
 			},
-			errorPrompt: function (msg, isAlive) { //暂时所有的提示都用这个方法
-				var me = this;
-
-				if (!me.ePrompt) me.ePrompt = document.querySelector('.em-widget-error-prompt');
-				if (!me.ePromptContent) me.ePromptContent = me.ePrompt.querySelector('span');
-
-				me.ePromptContent.innerHTML = msg;
-				utils.removeClass(me.ePrompt, 'hide');
-				isAlive || setTimeout(function () {
-					utils.addClass(me.ePrompt, 'hide');
-				}, 2000);
-			},
 			getSafeTextValue: function (msg) {
 				return utils.getDataByPath(msg, 'ext.weichat.html_safe_body.msg')
 					|| utils.getDataByPath(msg, 'bodies.0.msg')
@@ -808,7 +797,7 @@
 					break;
 				default:
 					// 只允许留言此时无法关闭留言页面
-					easemobim.leaveMessage.show({hideCloseBtn: true});
+					easemobim.leaveMessage({hideCloseBtn: true});
 					break;
 				}
 			},
@@ -975,7 +964,7 @@
 						});
 					});
 
-					easemobim.leaveMessage.show({
+					easemobim.leaveMessage({
 						preData: {
 							name: config.visitor.trueName,
 							phone: config.visitor.phone,
@@ -1080,7 +1069,7 @@
 						// 未选择文件
 					}
 					else if (filesize > _const.UPLOAD_FILESIZE_LIMIT) {
-						me.errorPrompt('文件大小不能超过10MB');
+						uikit.tip('文件大小不能超过10MB');
 					}
 					else {
 						me.channel.sendFile(WebIM.utils.getFileUrl(fileInput), fileInput);
@@ -1098,11 +1087,11 @@
 					}
 					// 某些浏览器不能获取到正确的文件名，所以放弃文件类型检测
 					// else if (!/\.(png|jpg|jpeg|gif)$/i.test(fileInput.value)) {
-						// me.errorPrompt('不支持的图片格式');
+						// uikit.tip('不支持的图片格式');
 					// }
 					// 某些浏览器无法获取文件大小, 忽略
 					else if (filesize > _const.UPLOAD_FILESIZE_LIMIT) {
-						me.errorPrompt('文件大小不能超过10MB');
+						uikit.tip('文件大小不能超过10MB');
 						fileInput.value = '';
 					}
 					else {
@@ -1114,7 +1103,7 @@
 				utils.on(doms.sendFileBtn, 'click', function () {
 					// 发送文件是后来加的功能，无需考虑IE兼容
 					if (!me.readyHandled) {
-						me.errorPrompt('正在连接中...');
+						uikit.tip('正在连接中...');
 					}
 					else {
 						doms.fileInput.click();
@@ -1123,7 +1112,7 @@
 
 				utils.on(doms.sendImgBtn, 'click', function () {
 					if (!me.readyHandled) {
-						me.errorPrompt('正在连接中...');
+						uikit.tip('正在连接中...');
 					}
 					else {
 						doms.imgInput.click();
@@ -1132,7 +1121,7 @@
 
 				//显示留言界面
 				utils.on(doms.noteBtn, 'click', function () {
-					easemobim.leaveMessage.show();
+					easemobim.leaveMessage();
 				});
 
 				// 回车发送消息
@@ -1158,7 +1147,7 @@
 						// 禁止发送
 					}
 					else if (textMsg.length > _const.MAX_TEXT_MESSAGE_LENGTH) {
-						me.errorPrompt('输入字数过多');
+						uikit.tip('输入字数过多');
 					}
 					else {
 						me.channel.sendText(textMsg);

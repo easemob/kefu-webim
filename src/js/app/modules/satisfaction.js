@@ -3,8 +3,9 @@
  */
 easemobim.satisfaction = function (chat) {
 
-	var dom = document.querySelector('.em-widget-satisfaction-dialog');
 	var utils = easemobim.utils;
+	var uikit = easemobim.uikit;
+	var dom = document.querySelector('.em-widget-satisfaction-dialog');
 	var satisfactionEntry = document.querySelector('.em-widget-satisfaction');
 	var starsUl = dom.getElementsByTagName('ul')[0];
 	var lis = starsUl.getElementsByTagName('li');
@@ -38,7 +39,7 @@ easemobim.satisfaction = function (chat) {
 		var level = starsUl.querySelectorAll('li.sel').length;
 
 		if (level === 0) {
-			chat.errorPrompt('请先选择星级');
+			uikit.tip('请先选择星级');
 			return;
 		}
 		chat.channel.sendSatisfaction(level, msg.value, session, invite);
