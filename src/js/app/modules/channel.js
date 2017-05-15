@@ -125,8 +125,8 @@ easemobim.channel = function (config) {
 					me.scrollBottom();
 				},
 				success: function (id) {
-					utils.$Remove(document.getElementById(id + '_loading'));
-					utils.$Remove(document.getElementById(id + '_failed'));
+					utils.removeDom(document.getElementById(id + '_loading'));
+					utils.removeDom(document.getElementById(id + '_failed'));
 				},
 				fail: function (id) {
 					utils.addClass(document.getElementById(id + '_loading'), 'hide');
@@ -161,8 +161,8 @@ easemobim.channel = function (config) {
 					me.scrollBottom();
 				},
 				success: function (id) {
-					utils.$Remove(document.getElementById(id + '_loading'));
-					utils.$Remove(document.getElementById(id + '_failed'));
+					utils.removeDom(document.getElementById(id + '_loading'));
+					utils.removeDom(document.getElementById(id + '_failed'));
 				},
 				fail: function (id) {
 					utils.addClass(document.getElementById(id + '_loading'), 'hide');
@@ -235,7 +235,7 @@ easemobim.channel = function (config) {
 					// 撤回消息命令
 					var recallMsgId = msg.ext.weichat.recall_msg_id;
 					var dom = document.getElementById(recallMsgId);
-					utils.$Remove(dom);
+					utils.removeDom(dom);
 				}
 				break;
 			case 'img':
@@ -672,8 +672,8 @@ easemobim.channel = function (config) {
 		clearTimeout(ackTimerDict.get(id));
 		ackTimerDict.remove(id);
 
-		utils.$Remove(document.getElementById(id + '_loading'));
-		utils.$Remove(document.getElementById(id + '_failed'));
+		utils.removeDom(document.getElementById(id + '_loading'));
+		utils.removeDom(document.getElementById(id + '_failed'));
 
 		if (sendMsgDict.get(id)) {
 			me.handleEventStatus(null, null, sendMsgDict.get(id).value === '转人工' || sendMsgDict.get(id).value === '转人工客服');

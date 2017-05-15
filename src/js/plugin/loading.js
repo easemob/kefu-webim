@@ -1,18 +1,12 @@
-easemobim.loading = (function(_const){
-	var loadingDom;
-	var loadingHtml = [
+easemobim.loading = (function(_const, utils){
+	var loadingDom = utils.appendHTMLToBody([
 		'<div class="easemobim-prompr-wrapper">',
 		'<div class="loading">',
 		_const.loadingSvg,
 		'</div>',
 		'<span>正在加载，请稍候...</span>',
 		'</div>'
-	].join('');
-	var tmpDom = document.createElement('div');
-
-	tmpDom.innerHTML = loadingHtml;
-	loadingDom = tmpDom.childNodes[0];
-	document.body.appendChild(loadingDom);
+	].join(''));
 
 	return {
 		show: function(){
@@ -22,4 +16,4 @@ easemobim.loading = (function(_const){
 			loadingDom.style.display = 'none';
 		}
 	};
-}(easemobim._const));
+}(easemobim._const, easemobim.utils));

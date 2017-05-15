@@ -1,65 +1,78 @@
 /**
  * 满意度调查
  */
-easemobim.satisfaction = function (chat) {
-
-	var utils = easemobim.utils;
-	var uikit = easemobim.uikit;
-	var dom = document.querySelector('.em-widget-satisfaction-dialog');
+easemobim.initSatisfaction = (function(utils, uikit){
+	var dom = utils.createElementFromHTML([
+		'<div>',
+		'<h3>请对我的服务做出评价</h3>',
+		'<ul>',
+		// fake: IE8 满意度评价会有兼容问题，修改图标需替换字符
+		'<li idx="1">H</li>',
+		'<li idx="2">H</li>',
+		'<li idx="3">H</li>',
+		'<li idx="4">H</li>',
+		'<li idx="5">H</li>',
+		'</ul>',
+		'<textarea spellcheck="false" placeholder="请输入留言"></textarea>',
+		'</div>'
+	].join(''));
 	var satisfactionEntry = document.querySelector('.em-widget-satisfaction');
-	var starsUl = dom.getElementsByTagName('ul')[0];
-	var lis = starsUl.getElementsByTagName('li');
-	var msg = dom.getElementsByTagName('textarea')[0];
-	var buttons = dom.getElementsByTagName('button');
-	var cancelBtn = buttons[0];
-	var submitBtn = buttons[1];
-	var success = dom.getElementsByTagName('div')[1];
+	var starsUl = dom.querySelector('ul');
+	var starList = starsUl.querySelectorAll('li');
+	var msg = dom.querySelector('textarea');
+	var dialog = uikit.createDialog({
+		contentDom: dom,
+		className: 'satisfaction mini'
+	}).addButton({
+		confirmText: '提交',
+		confirm: function () {
+			var level = starsUl.querySelectorAll('li.sel').length;
+
+			if (level === 0) {
+				uikit.tip('请先选择星级');
+				// 防止对话框关闭
+				return true;
+			}
+			chat.channel.sendSatisfaction(level, msg.value, session, invite);
+
+			_clear();
+			uikit.showSuccess('提交成功');
+		}
+	});
 	var session;
 	var invite;
+	var chat;
 
-	utils.on(satisfactionEntry, utils.click, function () {
+	utils.on(satisfactionEntry, 'click', function () {
 		session = null;
 		invite = null;
-		utils.removeClass(dom, 'hide');
+		dialog.show();
 	});
 
 	utils.live('button.js_satisfybtn', 'click', function () {
 		session = this.getAttribute('data-servicesessionid');
 		invite = this.getAttribute('data-inviteid');
-		utils.removeClass(dom, 'hide');
+		dialog.show();
 	});
 
-	utils.on(cancelBtn, 'click', function () {
-		utils.addClass(dom, 'hide');
-	});
-
-	utils.on(submitBtn, 'click', function () {
-		var level = starsUl.querySelectorAll('li.sel').length;
-
-		if (level === 0) {
-			uikit.tip('请先选择星级');
-			return;
-		}
-		chat.channel.sendSatisfaction(level, msg.value, session, invite);
-
-		msg.blur();
-		utils.removeClass(success, 'hide');
-
-		setTimeout(function () {
-			msg.value = '';
-			// clear stars
-			utils.removeClass(lis, 'sel');
-			utils.addClass(success, 'hide');
-			utils.addClass(dom, 'hide');
-		}, 1500);
-	});
 	utils.on(starsUl, 'click', function (e) {
 		var ev = e || window.event;
 		var target = ev.target || ev.srcElement;
 		var selIndex = +target.getAttribute('idx') || 0;
 
-		_.each(lis, function (elem, i) {
+		_.each(starList, function (elem, i) {
 			utils.toggleClass(elem, 'sel', i < selIndex);
 		});
 	});
-};
+
+	function _clear(){
+		msg.blur();
+		msg.value = '';
+		// clear stars
+		utils.removeClass(starList, 'sel');
+	}
+
+	return function(currentChat){
+		chat = currentChat;
+	};
+}(easemobim.utils, easemobim.uikit));

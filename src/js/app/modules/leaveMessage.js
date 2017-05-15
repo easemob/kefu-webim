@@ -1,41 +1,51 @@
 easemobim.leaveMessage = (function (utils, uikit, apiHelper) {
 	var isSending = false;
 
-	var dom = document.querySelector('.em-widget-offline');
+	var dom = utils.createElementFromHTML([
+		'<div class="wrapper">',
+		'<h3>请填写以下内容以方便我们及时联系您</h3>',
+		'<input type="text" class="name" placeholder="姓名">',
+		'<input type="text" class="phone" placeholder="电话">',
+		'<input type="text" class="mail" placeholder="邮箱">',
+		'<textarea spellcheck="false" placeholder="请输入留言"></textarea>',
+		'</div>',
+	].join(''));
 	var content = dom.querySelector('textarea');
 	var name = dom.querySelector('.name');
 	var phone = dom.querySelector('.phone');
 	var mail = dom.querySelector('.mail');
-	var confirmBtn = dom.querySelector('.btn-ok');
-	var cancelBtn = dom.querySelector('.btn-cancel');
-	var success = dom.querySelector('.em-widget-success-prompt');
-
-	utils.on(cancelBtn, utils.click, function () {
-		utils.addClass(dom, 'hide');
+	// todo: lazy load dialog
+	var dialog = uikit.createDialog({
+		contentDom: dom,
+		className: 'ticket'
+	}).addButton({
+		confirmText: '留言',
+		confirm: function () {
+			if (isSending) {
+				uikit.tip('留言提交中...');
+			}
+			else if (!name.value || name.value.length > 140) {
+				uikit.tip('姓名输入不正确');
+			}
+			else if (!phone.value || phone.value.length > 24) {
+				uikit.tip('电话输入不正确');
+			}
+			else if (!mail.value || mail.value.length > 127) {
+				uikit.tip('邮箱输入不正确');
+			}
+			else if (!content.value || content.value.length > 1500) {
+				uikit.tip('留言内容不能为空，长度小于1500字');
+			}
+			else {
+				isSending = true;
+				setTimeout(function () { isSending = false; }, 10000);
+				_createTicket();
+			}
+			// 不关闭对话框
+			return {preventDefult: true};
+		}
 	});
-
-	utils.on(confirmBtn, utils.click, function () {
-		if (isSending) {
-			uikit.tip('留言提交中...');
-		}
-		else if (!name.value || name.value.length > 140) {
-			uikit.tip('姓名输入不正确');
-		}
-		else if (!phone.value || phone.value.length > 24) {
-			uikit.tip('电话输入不正确');
-		}
-		else if (!mail.value || mail.value.length > 127) {
-			uikit.tip('邮箱输入不正确');
-		}
-		else if (!content.value || content.value.length > 1500) {
-			uikit.tip('留言内容不能为空，长度小于1500字');
-		}
-		else {
-			isSending = true;
-			setTimeout(function () { isSending = false; }, 10000);
-			_createTicket();
-		}
-	});
+	var cancelBtn = dialog.el.querySelector('.cancel-btn');
 
 	function _createTicket(){
 		Promise.all([
@@ -54,11 +64,7 @@ easemobim.leaveMessage = (function (utils, uikit, apiHelper) {
 				content: content.value
 			}).then(function (){
 				isSending = false;
-				utils.removeClass(success, 'hide');
-
-				setTimeout(function () {
-					utils.addClass(success, 'hide');
-				}, 1500);
+				uikit.showSuccess('留言发送成功');
 
 				_clearInput()
 			}, function (err){
@@ -91,6 +97,6 @@ easemobim.leaveMessage = (function (utils, uikit, apiHelper) {
 		opt = opt || {};
 		opt.preData && _writePreDate(opt.preData);
 		opt.hideCloseBtn && utils.addClass(cancelBtn, 'hide');
-		utils.removeClass(dom, 'hide');
+		dialog.show();
 	};
 }(easemobim.utils, easemobim.uikit, easemobim.apiHelper));

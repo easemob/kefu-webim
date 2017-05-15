@@ -1224,14 +1224,13 @@
 				//如果设置了hideStatus, 不显示转接中排队中等提示
 				if (config.hideStatus) return;
 
-				var dom = document.createElement('div');
-
-				// todo: xss defence
-				dom.innerHTML = '<span>' + msg + '</span>';
-				dom.className = 'em-widget-event';
-
 				this.appendDate(new Date().getTime());
-				doms.chatContainer.appendChild(dom);
+				// todo: xss defence
+				utils.appendHTMLTo(doms.chatContainer, [
+					'<div class="em-widget-event">',
+					'<span>' + msg + '</span>',
+					'</div>'
+				].join(''));
 				this.scrollBottom();
 			},
 			//消息上屏
