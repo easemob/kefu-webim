@@ -1,4 +1,4 @@
-easemobim.videoChat = (function (dialog) {
+easemobim.videoChat = (function (uikit) {
 	var imChat = document.getElementById('em-kefu-webim-chat');
 	var btnVideoInvite = document.querySelector('.em-video-invite');
 	var videoWidget = document.querySelector('.em-widget-video');
@@ -7,6 +7,14 @@ easemobim.videoChat = (function (dialog) {
 	var subVideoWrapper = videoWidget.querySelector('.sub-win');
 	var mainVideo = videoWidget.querySelector('video.main');
 	var subVideo = videoWidget.querySelector('video.sub');
+	var dialog = uikit.createDialog({
+		contentDom: [
+			'<p class="prompt">',
+			'您要邀请客服为您进行实时视频服务么？点击确认发送邀请，等待客服接受后即可体验实时视频服务。',
+			'</p>'
+		].join(''),
+		className: 'rtc-video-confirm'
+	}).addButton({confirm: sendVideoInvite});
 
 	var config = null;
 	var call = null;
@@ -152,7 +160,7 @@ easemobim.videoChat = (function (dialog) {
 		// 按钮初始化
 		btnVideoInvite.classList.remove('hide');
 		btnVideoInvite.addEventListener('click', function () {
-			dialog.init(sendVideoInvite);
+			dialog.show();
 		}, false);
 
 		// 视频组件事件绑定
@@ -224,4 +232,4 @@ easemobim.videoChat = (function (dialog) {
 			endCall();
 		}
 	};
-}(easemobim.ui.videoConfirmDialog));
+}(easemobim.uikit));

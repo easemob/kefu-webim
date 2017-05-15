@@ -80,9 +80,38 @@
 		else {}
 	}
 
+	function _appendHtmlToElement(element, html){
+		if (!element) return;
+
+		var tmpDiv = document.createElement('div');
+		var documentFragment = document.createDocumentFragment();
+		var children;
+		var el;
+
+		tmpDiv.innerHTML = html;
+		children = tmpDiv.childNodes;
+		el = children[0];
+
+		while (children.length > 0){
+			documentFragment.appendChild(children[0]);
+		}
+
+		element.appendChild(documentFragment);
+		return el;
+	}
+
 	easemobim.utils = {
 		isTop: window.top === window.self,
 		isNodeList: _isNodeList,
+		appendHTMLTo: _appendHtmlToElement,
+		appendHTMLToBody: function(html){
+			return _appendHtmlToElement(document.body, html);
+		},
+		createElementFromHTML: function(html){
+			var tmpDiv = document.createElement('div');
+			tmpDiv.innerHTML = html;
+			return tmpDiv.childNodes[0];
+		},
 		addCssRules: function(cssText){
 			var style = document.createElement('style');
 			if (_isIE8){
@@ -160,7 +189,7 @@
 			obj = typeof obj === 'undefined' ? '' : obj;
 			return obj === 'false' ? false : obj;
 		},
-		$Remove: function (elem) {
+		removeDom: function (elem) {
 			if (!elem) return;
 
 			if (elem.remove) {

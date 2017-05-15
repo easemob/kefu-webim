@@ -114,7 +114,7 @@
 	function initChat() {
 		//load modules
 		easemobim.initPasteImage(chat);
-		easemobim.satisfaction(chat);
+		easemobim.initSatisfaction(chat);
 
 		// init api helper
 		easemobim.apiHelper.init(config);
