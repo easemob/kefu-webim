@@ -27,6 +27,6 @@ easemobim.initPasteImage = (function(utils, uikit){
 	}
 	return function (currentChat){
 		chat = currentChat;
-		utils.on(easemobim.textarea, 'paste', _handler);
+		utils.on(document.querySelector('.em-widget-send-wrapper .em-widget-textarea'), 'paste', _handler);
 	}
 }(easemobim.utils, easemobim.uikit));

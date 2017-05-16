@@ -1,7 +1,7 @@
 /**
  * 满意度调查
  */
-easemobim.initSatisfaction = (function(utils, uikit){
+easemobim.satisfaction = (function(utils, uikit){
 	var dom = utils.createElementFromHTML([
 		'<div>',
 		'<h3>请对我的服务做出评价</h3>',
@@ -16,7 +16,6 @@ easemobim.initSatisfaction = (function(utils, uikit){
 		'<textarea spellcheck="false" placeholder="请输入留言"></textarea>',
 		'</div>'
 	].join(''));
-	var satisfactionEntry = document.querySelector('.em-widget-satisfaction');
 	var starsUl = dom.querySelector('ul');
 	var starList = starsUl.querySelectorAll('li');
 	var msg = dom.querySelector('textarea');
@@ -43,18 +42,6 @@ easemobim.initSatisfaction = (function(utils, uikit){
 	var invite;
 	var chat;
 
-	utils.on(satisfactionEntry, 'click', function () {
-		session = null;
-		invite = null;
-		dialog.show();
-	});
-
-	utils.live('button.js_satisfybtn', 'click', function () {
-		session = this.getAttribute('data-servicesessionid');
-		invite = this.getAttribute('data-inviteid');
-		dialog.show();
-	});
-
 	utils.on(starsUl, 'click', function (e) {
 		var ev = e || window.event;
 		var target = ev.target || ev.srcElement;
@@ -72,7 +59,14 @@ easemobim.initSatisfaction = (function(utils, uikit){
 		utils.removeClass(starList, 'sel');
 	}
 
-	return function(currentChat){
-		chat = currentChat;
+	return {
+		init: function(currentChat){
+			chat = currentChat;
+		},
+		show: function(currentInviteId, currentServiceSessionId){
+			session = currentServiceSessionId;
+			invite = currentInviteId;
+			dialog.show();
+		}
 	};
 }(easemobim.utils, easemobim.uikit));

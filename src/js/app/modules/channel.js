@@ -4,6 +4,7 @@ easemobim.channel = function (config) {
 	var api = easemobim.api;
 	var _const = easemobim._const;
 	var apiHelper = easemobim.apiHelper;
+	var satisfaction = easemobim.satisfaction;
 
 	//监听ack的timer, 每条消息启动一个
 	var ackTimerDict = new easemobim.dict();
@@ -178,6 +179,8 @@ easemobim.channel = function (config) {
 			var str;
 			var message;
 			var title;
+			var inviteId;
+			var serviceSessionId;
 			var msgId = msg.msgId || utils.getDataByPath(msg, 'ext.weichat.msgId');
 
 			if (receiveMsgDict.get(msgId)) {
@@ -257,30 +260,22 @@ easemobim.channel = function (config) {
 				});
 				break;
 			case 'satisfactionEvaluation':
+				inviteId = msg.ext.weichat.ctrlArgs.inviteId;
+				serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
 				message = new WebIM.message.list();
 				message.set({
 					value: '请对我的服务做出评价',
 					list: [
 						'<div class="em-widget-list-btns">'
 							+ '<button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="'
-							+ msg.ext.weichat.ctrlArgs.inviteId
+							+ inviteId
 							+ '" data-servicesessionid="'
-							+ msg.ext.weichat.ctrlArgs.serviceSessionId
+							+ serviceSessionId
 							+ '">立即评价</button></div>'
 						]
 				});
 
-				if (!isHistory) {
-					// 创建隐藏的立即评价按钮，并触发click事件
-					var el = document.createElement('BUTTON');
-					el.className = 'js_satisfybtn';
-					el.style.display = 'none';
-					el.setAttribute('data-inviteid', msg.ext.weichat.ctrlArgs.inviteId);
-					el.setAttribute('data-servicesessionid', msg.ext.weichat.ctrlArgs.serviceSessionId);
-					document.body.appendChild(el);
-					utils.trigger(el, 'click');
-					easemobim.textarea.blur();
-				}
+				!isHistory && satisfaction.show(inviteId, serviceSessionId);
 				break;
 			case 'robotList':
 				message = new WebIM.message.list();
