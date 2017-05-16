@@ -83,6 +83,13 @@
 			SHOW_IMG: 'showIMG'
 		},
 
+		GRAY_LIST_KEYS: [
+			'audioVideo',
+			'msgPredictEnable',
+			'waitListNumberEnable',
+			'agentInputStateEnable'
+		],
+
 		//上传文件大小限制
 		UPLOAD_FILESIZE_LIMIT: 1024 * 1024 * 10,
 
