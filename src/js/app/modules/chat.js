@@ -74,48 +74,19 @@
 				//bind events on dom
 				this.bindEvents();
 
-				// 获取上下班状态
-				var getDutyStatusPromise = new Promise(function (resolve, reject) {
-					api('getDutyStatus_2', {
-						channelType: 'easemob',
-						originType: 'webim',
-						channelId: config.channelId,
-						tenantId: config.tenantId,
-						queueName: config.emgroup,
-						agentUsername: config.agentName
-					}, function (msg) {
-						config.isInOfficehours = !msg.data.entity || config.offDutyType === 'chat';
-						resolve();
-					}, function (err) {
-						reject(err);
-					});
-				});
-
-				// 获取灰度开关
-				var getGrayListPromise = new Promise(function (resolve, reject) {
-					api('graylist', {}, function (msg) {
-						var grayList = {};
-						var data = msg.data || {};
-						_.each([
-							'audioVideo',
-							'msgPredictEnable',
-							'waitListNumberEnable',
-							'agentInputStateEnable'
-						], function (key) {
-							grayList[key] = _.contains(data[key], +config.tenantId);
-						});
-						config.grayList = grayList;
-						resolve();
-						// todo: resolve(result)
-					}, function (err) {
-						reject(err);
-					});
-				});
-
 				Promise.all([
-					getDutyStatusPromise,
-					getGrayListPromise
-				]).then(function () {
+					apiHelper.getDutyStatus(),
+					apiHelper.getGrayList()
+				]).then(function(result){
+					var dutyStatus = result[0];
+					var grayList = result[1];
+
+					// 灰度列表
+					config.grayList = grayList;
+
+					// 当配置为下班进会话时执行与上班相同的逻辑
+					config.isInOfficehours = dutyStatus || config.offDutyType === 'chat';
+
 					// 设置企业信息
 					me.setEnterpriseInfo();
 
@@ -345,15 +316,17 @@
 			getGreeting: function () {
 				var me = this;
 
-				if (me.greetingGetted) return;
-
-				me.greetingGetted = true;
-
-				//system greeting
-				api('getSystemGreeting', {
-					tenantId: config.tenantId
-				}, function (msg) {
-					var systemGreetingText = msg.data;
+				Promise.all([
+					apiHelper.getSystemGreeting(),
+					apiHelper.getRobertGreeting()
+				]).then(function(result){
+					var systemGreetingText = result[0];
+					var robotGreetingObj = result[1];
+					var greetingTextType = robotGreetingObj.greetingTextType;
+					var greetingText = robotGreetingObj.greetingText;
+					var greetingObj = {};
+					
+					// 系统欢迎语
 					systemGreetingText && me.channel.handleReceive({
 						ext: {
 							weichat: {
@@ -366,59 +339,38 @@
 						noprompt: true
 					}, 'txt');
 
-					//robert greeting
-					api('getRobertGreeting_2', {
-						channelType: 'easemob',
-						originType: 'webim',
-						channelId: config.channelId,
-						tenantId: config.tenantId,
-						agentUsername: config.agentName,
-						queueName: config.emgroup
-					}, function (msg) {
-						var greetingTextType = utils.getDataByPath(msg, 'data.entity.greetingTextType');
-						var greetingText = utils.getDataByPath(msg, 'data.entity.greetingText');
-						var greetingObj = {};
-						if (typeof greetingTextType !== 'number') return;
-
-						switch (greetingTextType) {
-						case 0:
-							// robert text greeting
-							me.channel.handleReceive({
-								ext: {
-									weichat: {
-										html_safe_body: {
-											msg: greetingText
-										}
+					// 机器人欢迎语
+					switch (greetingTextType) {
+					case 0:
+						// 文本消息
+						me.channel.handleReceive({
+							ext: {
+								weichat: {
+									html_safe_body: {
+										msg: greetingText
 									}
-								},
-								type: 'txt',
-								noprompt: true
-							}, 'txt');
-							break;
-						case 1:
-							// robert list greeting
-							try {
-								greetingObj = JSON.parse(greetingText.replace(/&amp;quot;/g, '"'));
-							}
-							catch (e){
-								console.warn('unexpected JSON string.', e);
-							}
+								}
+							},
+							type: 'txt',
+							noprompt: true
+						}, 'txt');
+						break;
+					case 1:
+						// 菜单消息
+						greetingObj = JSON.parse(greetingText.replace(/&amp;quot;/g, '"'));
 
-							if (greetingObj.ext) {
-								me.channel.handleReceive({
-									ext: greetingObj.ext,
-									noprompt: true
-								});
-							}
-							else {
-								console.warn('The menu does not exist.');
-							}
-							break;
-						default:
-							console.warn('unknown greeting type.');
-							break;
-						}
-					});
+						greetingObj.ext && me.channel.handleReceive({
+							ext: greetingObj.ext,
+							noprompt: true
+						});
+						break;
+					case undefined:
+						// 未设置机器人欢迎语
+						break;
+					default:
+						console.error('unknown robot greeting type.');
+						break;
+					}
 				});
 			},
 			getNickNameOption: function () {
@@ -690,9 +642,6 @@
 			setNotice: function () {
 				var me = this;
 
-				if (me.sloganGot) return;
-				me.sloganGot = true;
-
 				api('getSlogan', {
 					tenantId: config.tenantId
 				}, function (msg) {
@@ -775,11 +724,6 @@
 						.join('');
 				}
 			},
-			getSafeTextValue: function (msg) {
-				return utils.getDataByPath(msg, 'ext.weichat.html_safe_body.msg')
-					|| utils.getDataByPath(msg, 'bodies.0.msg')
-					|| '';
-			},
 			setOffline: function () {
 				switch (config.offDutyType) {
 				case 'none':
@@ -792,14 +736,10 @@
 					}
 					catch (e) {}
 
-					var msg = new WebIM.message.txt();
-					msg.set({ msg: word });
-					// 显示下班提示语
-					this.appendMsg(true, msg, false);
-					// 禁用工具栏
-					utils.addClass(doms.editorView, 'em-widget-send-disable');
-					// 发送按钮去掉连接中字样
-					doms.sendBtn.innerHTML = '发送';
+					uikit.createDialog({
+						contentDom: '<p>' + word + '</p>',
+						className: 'off-duty-prompt'
+					}).show();
 					break;
 				default:
 					// 只允许留言此时无法关闭留言页面

@@ -3,7 +3,7 @@
 // getProjectId
 // getToken
 
-easemobim.apiHelper = (function (utils, api, emajax) {
+easemobim.apiHelper = (function (_const, utils, api, emajax) {
 	var config;
 	var cache = {};
 
@@ -238,6 +238,72 @@ easemobim.apiHelper = (function (utils, api, emajax) {
 		});
 	}
 
+	// 获取上下班状态，false 代表上班，true 代表下班
+	function getDutyStatus(){
+		return new Promise(function(resolve, reject){
+			api('getDutyStatus_2', {
+				channelType: 'easemob',
+				originType: 'webim',
+				channelId: config.channelId,
+				tenantId: config.tenantId,
+				queueName: config.emgroup,
+				agentUsername: config.agentName
+			}, function (msg) {
+				resolve(!utils.getDataByPath(msg, 'data.entity'));
+			}, function (err) {
+				console.error('unable to get duty state: ', err);
+				// 获取状态失败则置为上班状态
+				resolve(true);
+			});
+		});
+	}
+
+	function getGrayList(){
+		return new Promise(function (resolve, reject) {
+			api('graylist', {}, function (msg) {
+				var grayList = {};
+				var data = msg.data || {};
+				_.each(_const.GRAY_LIST_KEYS, function (key) {
+					grayList[key] = _.contains(data[key], +config.tenantId);
+				});
+				resolve(grayList);
+			}, function (err) {
+				console.error('unable to get gray list: ', err);
+				// 获取失败返回空对象
+				resolve({});
+			});
+		});
+	}
+
+	function getRobertGreeting(){
+		return new Promise(function (resolve, reject) {
+			api('getRobertGreeting_2', {
+				channelType: 'easemob',
+				originType: 'webim',
+				channelId: config.channelId,
+				tenantId: config.tenantId,
+				agentUsername: config.agentName,
+				queueName: config.emgroup
+			}, function (msg) {
+				resolve(msg.data.entity || {});
+			}, function (err) {
+				reject(err);
+			});
+		});
+	}
+
+	function getSystemGreeting(){
+		return new Promise(function (resolve, reject) {
+			api('getSystemGreeting', {
+				tenantId: config.tenantId
+			}, function (msg) {
+				resolve(msg.data);
+			}, function (err) {
+				reject(err);
+			});
+		});
+	}
+
 	return {
 		getCurrentServiceSession: getCurrentServiceSession,
 		getSessionQueueId: getSessionQueueId,
@@ -247,8 +313,12 @@ easemobim.apiHelper = (function (utils, api, emajax) {
 		getVisitorId: getVisitorId,
 		getOfficalAccounts: getOfficalAccounts,
 		getOfficalAccountMessage: getOfficalAccountMessage,
+		getDutyStatus: getDutyStatus,
+		getGrayList: getGrayList,
+		getRobertGreeting: getRobertGreeting,
+		getSystemGreeting: getSystemGreeting,
 		init: function(cfg){
 			config = cfg;
 		}
 	};
-}(easemobim.utils, easemobim.api, easemobim.emajax));
+}(easemobim._const, easemobim.utils, easemobim.api, easemobim.emajax));

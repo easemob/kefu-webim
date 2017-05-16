@@ -225,7 +225,7 @@ easemobim.channel = function (config) {
 			case 'txt':
 			case 'emoji':
 				message = new WebIM.message.txt(msgId);
-				message.set({ msg: me.getSafeTextValue(msg) });
+				message.set({ msg: _getSafeTextValue(msg) });
 				break;
 			case 'cmd':
 				var action = msg.action || utils.getDataByPath(msg, 'bodies.0.action');
@@ -302,7 +302,7 @@ easemobim.channel = function (config) {
 			case 'robotTransfer':
 				message = new WebIM.message.list();
 				var ctrlArgs = msg.ext.weichat.ctrlArgs;
-				title = me.getSafeTextValue(msg)
+				title = _getSafeTextValue(msg)
 					|| utils.getDataByPath(msg, 'ext.weichat.ctrlArgs.label');
 				/*
 					msg.data 用于处理即时消息
@@ -323,7 +323,7 @@ easemobim.channel = function (config) {
 				break;
 			case 'transferToTicket':
 				message = new WebIM.message.list();
-				title = me.getSafeTextValue(msg);
+				title = _getSafeTextValue(msg);
 				str = [
 					'<div class="em-widget-list-btns">',
 						'<button class="em-widget-list-btn white bg-color border-color bg-hover-color-dark js-transfer-to-ticket">',
@@ -521,7 +521,7 @@ easemobim.channel = function (config) {
 			var type = msg.type;
 			var timestamp = element.timestamp || msgBody.timestamp;
 			var filename = msg.filename;
-			var textMsg = me.getSafeTextValue(msgBody) || msg.msg;
+			var textMsg = _getSafeTextValue(msgBody) || msg.msg;
 			var msgId = element.msgId;
 			var msgObj;
 
@@ -561,6 +561,12 @@ easemobim.channel = function (config) {
 			me.receiveMsgTimer = setInterval(_receiveMsgChannel, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
 		}
 	};
+
+	function _getSafeTextValue(msg) {
+		return utils.getDataByPath(msg, 'ext.weichat.html_safe_body.msg')
+			|| utils.getDataByPath(msg, 'bodies.0.msg')
+			|| '';
+	}
 
 	// 第二通道收消息
 	function _receiveMsgChannel() {
