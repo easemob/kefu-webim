@@ -225,7 +225,7 @@ easemobim.channel = function (config) {
 			case 'txt':
 			case 'emoji':
 				message = new WebIM.message.txt(msgId);
-				message.set({ msg: _getSafeTextValue(msg) });
+				message.set({ msg: _getTextValue(msg) });
 				break;
 			case 'cmd':
 				var action = msg.action || utils.getDataByPath(msg, 'bodies.0.action');
@@ -266,8 +266,8 @@ easemobim.channel = function (config) {
 				message.set({
 					value: '请对我的服务做出评价',
 					list: [
-						'<div class="em-widget-list-btns">'
-							+ '<button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="'
+						'<div class="em-btn-list">'
+							+ '<button class="bg-hover-color js_satisfybtn" data-inviteid="'
 							+ inviteId
 							+ '" data-servicesessionid="'
 							+ serviceSessionId
@@ -279,13 +279,13 @@ easemobim.channel = function (config) {
 				break;
 			case 'robotList':
 				message = new WebIM.message.list();
-				var list = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
+				var list = msg.ext.msgtype.choice.items;
 
-				str = '<div class="em-widget-list-btns">'
+				str = '<div class="em-btn-list">'
 					+ _.map(list, function(item){
 						var id = item.id;
 						var label = item.name;
-						var className = 'js_robotbtn em-widget-list-btn ';
+						var className = 'js_robotbtn ';
 						if (item.id === 'TransferToKf') {
 							// 转人工按钮突出显示
 							className += 'white bg-color border-color bg-hover-color-dark';
@@ -302,7 +302,7 @@ easemobim.channel = function (config) {
 			case 'robotTransfer':
 				message = new WebIM.message.list();
 				var ctrlArgs = msg.ext.weichat.ctrlArgs;
-				title = _getSafeTextValue(msg)
+				title = _getTextValue(msg)
 					|| utils.getDataByPath(msg, 'ext.weichat.ctrlArgs.label');
 				/*
 					msg.data 用于处理即时消息
@@ -312,8 +312,8 @@ easemobim.channel = function (config) {
 					还有待测试其他带有转人工的情况
 				*/
 				str = [
-					'<div class="em-widget-list-btns">',
-						'<button class="em-widget-list-btn white bg-color border-color bg-hover-color-dark js_robotTransferBtn" ',
+					'<div class="em-btn-list">',
+						'<button class="white bg-color border-color bg-hover-color-dark js_robotTransferBtn" ',
 						'data-sessionid="' + ctrlArgs.serviceSessionId + '" ',
 						'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
 					'</div>'
@@ -323,10 +323,10 @@ easemobim.channel = function (config) {
 				break;
 			case 'transferToTicket':
 				message = new WebIM.message.list();
-				title = _getSafeTextValue(msg);
+				title = _getTextValue(msg);
 				str = [
-					'<div class="em-widget-list-btns">',
-						'<button class="em-widget-list-btn white bg-color border-color bg-hover-color-dark js-transfer-to-ticket">',
+					'<div class="em-btn-list">',
+						'<button class="white bg-color border-color bg-hover-color-dark js-transfer-to-ticket">',
 							'留言',
 						'</button>',
 					'</div>'
@@ -521,7 +521,7 @@ easemobim.channel = function (config) {
 			var type = msg.type;
 			var timestamp = element.timestamp || msgBody.timestamp;
 			var filename = msg.filename;
-			var textMsg = _getSafeTextValue(msgBody) || msg.msg;
+			var textMsg = _getTextValue(msgBody) || msg.msg;
 			var msgId = element.msgId;
 			var msgObj;
 
@@ -562,9 +562,9 @@ easemobim.channel = function (config) {
 		}
 	};
 
-	function _getSafeTextValue(msg) {
-		return utils.getDataByPath(msg, 'ext.weichat.html_safe_body.msg')
-			|| utils.getDataByPath(msg, 'bodies.0.msg')
+	function _getTextValue(msg) {
+		return utils.getDataByPath(msg, 'bodies.0.msg')
+			|| msg.data
 			|| '';
 	}
 
