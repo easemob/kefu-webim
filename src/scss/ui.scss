@@ -60,8 +60,9 @@
 	> div.footer{
 		width: 90%;
 		margin: 15px auto;
-		// position: absolute;
+		position: fixed;
 		bottom: 0;
+		left: 15px;
 		text-align: center;
 		> button {
 			width: 40%;
@@ -108,8 +109,7 @@
 		font-size: 13px;
 		h3 {
 			font-weight: normal;
-			color: #646464;
-			margin: 30px 0;
+			margin: 20px 15px;
 		}
 		ul {
 			width: 96%;
@@ -132,6 +132,27 @@
 				&.sel {
 					color: #ffb31a;
 				}
+			}
+		}
+		.evaluate-label{
+			width: 96%;
+			margin: 0 auto;
+			text-align: center;
+			span{
+				display: inline-block;
+				width: 140px;
+				height: 30px;
+				border: 1px solid #ccc;
+				padding: 0 5px;
+				margin: 5px;
+				border-radius: 5px;
+				color: #ccc;
+				text-align: center;
+				line-height: 30px;
+			}
+			.label-selected{
+				border-color: rgb(242,145,0);
+				color: rgb(242,145,0);
 			}
 		}
 		textarea {
