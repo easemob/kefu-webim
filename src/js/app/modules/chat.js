@@ -325,17 +325,10 @@
 					var greetingTextType = robotGreetingObj.greetingTextType;
 					var greetingText = robotGreetingObj.greetingText;
 					var greetingObj = {};
-					
+
 					// 系统欢迎语
 					systemGreetingText && me.channel.handleReceive({
-						ext: {
-							weichat: {
-								html_safe_body: {
-									msg: systemGreetingText
-								}
-							}
-						},
-						type: 'txt',
+						data: systemGreetingText,
 						noprompt: true
 					}, 'txt');
 
@@ -344,14 +337,7 @@
 					case 0:
 						// 文本消息
 						me.channel.handleReceive({
-							ext: {
-								weichat: {
-									html_safe_body: {
-										msg: greetingText
-									}
-								}
-							},
-							type: 'txt',
+							data: greetingText,
 							noprompt: true
 						}, 'txt');
 						break;
