@@ -943,6 +943,43 @@ app.apiHelper = (function (_const, utils, emajax) {
 		});
 	}
 
+	function getStatisticsnNumber(){
+		 return new Promise(function(resolve, reject){
+			getToken().then(function(token){
+				api('getStatisticsnNumber', {
+					tenantId: config.tenantId,
+					orgName: config.orgName,
+					appName: config.appName,
+					userName: config.user.username,
+					token: token
+				}, function (msg) {
+					resolve(msg.data);
+				}, function (err){
+					reject(err);
+				});
+			});
+		});
+	}
+
+	function getStatisticsnLabelNumber(evaluateId){
+		 return new Promise(function(resolve, reject){
+			getToken().then(function(token){
+				api('getStatisticsnLabelNumber', {
+					tenantId: config.tenantId,
+					orgName: config.orgName,
+					appName: config.appName,
+					userName: config.user.username,
+					token: token,
+					evaluateId: evaluateId
+				}, function (msg) {
+					resolve(msg.data);
+				}, function (err){
+					reject(err);
+				});
+			});
+		});
+	}
+
 	return {
 		getCurrentServiceSession: getCurrentServiceSession,
 		getToken: getToken,
@@ -982,6 +1019,8 @@ app.apiHelper = (function (_const, utils, emajax) {
 		reportMarketingTaskOpened: reportMarketingTaskOpened,
 		reportMarketingTaskReplied: reportMarketingTaskReplied,
 		getLatestMarketingTask: getLatestMarketingTask,
+		getStatisticsnNumber: getStatisticsnNumber,
+		getStatisticsnLabelNumber: getStatisticsnLabelNumber,
 
 		initApiTransfer: initApiTransfer,
 		api: api,
