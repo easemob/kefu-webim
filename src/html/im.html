@@ -33,7 +33,7 @@
 			<span class="em-header-status-text"></span>
 
 			<!-- 坐席状态标志 -->
-			<i id="em-widgetAgentStatus" class="em-widget-agent-status hide"></i>
+			<i class="agent-status hide"></i>
 
 			<!-- 坐席输入状态 -->
 			<span class="em-agent-input-state hide">正在输入...</span>
@@ -82,10 +82,14 @@
 
 		<!-- 消息容器 -->
 		<div class="chat-wrapper">
+			<!-- 广告条 -->
 			<div class="em-widget-tenant-logo hide">
 				<img src="" />
 			</div>
 			<div class="chat-container"></div>
+
+			<!-- 待接入人数状态 -->
+			<div class="queuing-number-status hide">当前排队人数为<label>123</label></div>
 		</div>
 
 		<!-- 表情容器 -->
@@ -93,11 +97,8 @@
 			<ul class="em-bar-emoji-container"></ul>
 		</div>
 
-		<!-- 待接入人数显示浮窗 -->
-		<div class="em-header-status-text-queue-number hide">当前排队人数为<label></label></div>
-
 		<!-- 输入框 -->
-		<div id="em-widgetSend" class="em-widget-send-wrapper">
+		<div class="em-widget-send-wrapper">
 			<div class="toolbar">
 				<i class="em-bar-emoji icon-face e-face fg-hover-color" title="表情"></i>
 				<i class="em-widget-img icon-picture fg-hover-color hide" title="图片"></i>
@@ -109,17 +110,17 @@
 
 			<!-- 文件输入 -->
 			<input type="file" class="upload-file-container">
-			<!-- 图片输入，此元素需要有id -->
-			<input id="em-widget-img-input" type="file" class="upload-img-container" accept="image/*">
+			<!-- 图片输入 -->
+			<input type="file" class="upload-img-container" accept="image/*">
 
 			<textarea class="em-widget-textarea" spellcheck="false" placeholder="点击输入内容..."></textarea>
 			<span class="em-widget-send bg-color disabled">连接中</span>
 		</div>
+	</div>
 
-		<!-- 信息提示框 -->
-		<div class="em-widget-error-prompt hide">
-			<span></span>
-		</div>
+	<!-- 信息提示框 -->
+	<div class="em-widget-error-prompt hide">
+		<span></span>
 	</div>
 
 	<!-- 图片查看 -->

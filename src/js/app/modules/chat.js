@@ -4,45 +4,51 @@
 		var uikit = easemobim.uikit;
 		var _const = easemobim._const;
 		var api = easemobim.api;
+		var apiHelper = easemobim.apiHelper;
+		var satisfaction = easemobim.satisfaction;
+
 		var recentMsg = [];
 		var msgTimeSpanBegin = new Date(2099, 0).getTime();
 		var msgTimeSpanEnd = new Date(1970, 0).getTime();
-		var apiHelper = easemobim.apiHelper;
 		var isChatWindowOpen;
 
 		// DOM init
-		var widgetSend = document.getElementById('em-widgetSend');
-		var dragHeader = document.querySelector('.em-widget-header');
+		var topBar = document.querySelector('.em-widget-header');
+		var editorView = document.querySelector('.em-widget-send-wrapper');
 		easemobim.imBtn = document.getElementById('em-widgetPopBar');
-		easemobim.textarea = widgetSend.querySelector('.em-widget-textarea');
-		easemobim.avatar = document.querySelector('.em-widget-header-portrait');
 
 		// todo: 把dom都移到里边
 		var doms = {
 			imChat: document.getElementById('em-kefu-webim-chat'),
-			agentStatusText: document.querySelector('.em-header-status-text'),
 			//待接入排队人数显示
-			agentWaitNumber: document.querySelector('.em-header-status-text-queue-number'),
-			agentStatusSymbol: document.getElementById('em-widgetAgentStatus'),
-			nickname: document.querySelector('.em-widget-header-nickname'),
-			inputState:document.querySelector('.em-agent-input-state'),
+			agentWaitNumber: document.querySelector('.queuing-number-status'),
+			agentStatusSymbol: topBar.querySelector('.agent-status'),
+			agentStatusText: topBar.querySelector('.em-header-status-text'),
+			avatar: topBar.querySelector('.em-widget-header-portrait'),
+			nickname: topBar.querySelector('.em-widget-header-nickname'),
+			dragBar: topBar.querySelector('.drag-bar'),
+			minifyBtn: topBar.querySelector('.btn-min'),
+			audioBtn: topBar.querySelector('.btn-audio'),
+			switchKeyboardBtn: topBar.querySelector('.btn-keyboard'),
+			inputState: topBar.querySelector('.em-agent-input-state'),
+
+			emojiBtn: editorView.querySelector('.em-bar-emoji'),
+			sendImgBtn: editorView.querySelector('.em-widget-img'),
+			sendFileBtn: editorView.querySelector('.em-widget-file'),
+			sendBtn: editorView.querySelector('.em-widget-send'),
+			satisfaction: editorView.querySelector('.em-widget-satisfaction'),
+			textInput: editorView.querySelector('.em-widget-textarea'),
+			noteBtn: editorView.querySelector('.em-widget-note'),
+
 			imgInput: document.querySelector('.upload-img-container'),
 			fileInput: document.querySelector('.upload-file-container'),
 			emojiContainer: document.querySelector('.em-bar-emoji-container'),
 			chatContainer: document.querySelector('.chat-container'),
 			emojiWrapper: document.querySelector('.em-bar-emoji-wrapper'),
-			emojiBtn: widgetSend.querySelector('.em-bar-emoji'),
-			sendImgBtn: widgetSend.querySelector('.em-widget-img'),
-			sendFileBtn: widgetSend.querySelector('.em-widget-file'),
-			sendBtn: widgetSend.querySelector('.em-widget-send'),
-			dragBar: dragHeader.querySelector('.drag-bar'),
-			minifyBtn: dragHeader.querySelector('.btn-min'),
-			audioBtn: dragHeader.querySelector('.btn-audio'),
-			switchKeyboardBtn: dragHeader.querySelector('.btn-keyboard'),
-			noteBtn: document.querySelector('.em-widget-note'),
 			chatWrapper: document.querySelector('.chat-wrapper'),
-			dragHeader: dragHeader,
-			widgetSend: widgetSend,
+
+			topBar: topBar,
+			editorView: editorView,
 			block: null
 		};
 
@@ -168,7 +174,7 @@
 
 				me.readyHandled = true;
 				doms.sendBtn.innerHTML = '发送';
-				utils.trigger(easemobim.textarea, 'change');
+				utils.trigger(doms.textInput, 'change');
 
 				// bug fix:
 				// minimum = fales 时, 或者 访客回呼模式 调用easemobim.bind时显示问题
@@ -226,12 +232,12 @@
 
 			initAutoGrow: function () {
 				var me = this;
-				var originHeight = easemobim.textarea.clientHeight;
+				var originHeight = doms.textInput.clientHeight;
 
 				if (me.isAutoGrowInitialized) return;
 				me.isAutoGrowInitialized = true;
 
-				utils.on(easemobim.textarea, 'input change', update);
+				utils.on(doms.textInput, 'input change', update);
 
 				function update() {
 					var height = this.value ? this.scrollHeight : originHeight;
@@ -241,7 +247,7 @@
 				}
 
 				function callback() {
-					var height = doms.widgetSend.getBoundingClientRect().height;
+					var height = doms.editorView.getBoundingClientRect().height;
 					if (me.direction === 'up') {
 						doms.emojiWrapper.style.top = 43 + height + 'px';
 					}
@@ -658,7 +664,7 @@
 				if (info.tenantName) {
 					// 更新企业头像和名称
 					doms.nickname.innerText = info.tenantName;
-					easemobim.avatar.src = avatarImg;
+					doms.avatar.src = avatarImg;
 				}
 				else if (
 					info.userNickname
@@ -670,7 +676,7 @@
 					//更新坐席昵称
 					doms.nickname.innerText = info.userNickname;
 					if (avatarImg) {
-						easemobim.avatar.src = avatarImg;
+						doms.avatar.src = avatarImg;
 					}
 				}
 
@@ -713,7 +719,7 @@
 				var me = this;
 
 				utils.on(doms.emojiBtn, utils.click, function () {
-					easemobim.textarea.blur();
+					doms.textInput.blur();
 					utils.toggleClass(doms.emojiWrapper, 'hide');
 
 					// 懒加载，打开表情面板时才初始化图标
@@ -725,9 +731,9 @@
 
 				// 表情的选中
 				utils.live('img.emoji', utils.click, function (e) {
-					!utils.isMobile && easemobim.textarea.focus();
-					easemobim.textarea.value += this.getAttribute('data-value');
-					utils.trigger(easemobim.textarea, 'change');
+					!utils.isMobile && doms.textInput.focus();
+					doms.textInput.value += this.getAttribute('data-value');
+					utils.trigger(doms.textInput, 'change');
 				}, doms.emojiWrapper);
 
 				// todo: kill .e-face to make it more elegant
@@ -791,7 +797,7 @@
 					// 显示下班提示语
 					this.appendMsg(true, msg, false);
 					// 禁用工具栏
-					utils.addClass(doms.widgetSend, 'em-widget-send-disable');
+					utils.addClass(doms.editorView, 'em-widget-send-disable');
 					// 发送按钮去掉连接中字样
 					doms.sendBtn.innerHTML = '发送';
 					break;
@@ -821,9 +827,9 @@
 				if (
 					config.isInOfficehours
 					// IE 8 will throw an error when focus an invisible element
-					&& easemobim.textarea.offsetHeight > 0
+					&& doms.textInput.offsetHeight > 0
 				) {
-					easemobim.textarea.focus();
+					doms.textInput.focus();
 				}
 				!utils.isTop && transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
 			},
@@ -896,7 +902,7 @@
 				}
 
 				utils.on(doms.chatWrapper, 'click', function () {
-					easemobim.textarea.blur();
+					doms.textInput.blur();
 				});
 
 				utils.live('img.em-widget-imgview', 'click', function () {
@@ -910,7 +916,7 @@
 
 					utils.on(doms.dragBar, 'mousedown', function (ev) {
 						var e = window.event || ev;
-						easemobim.textarea.blur(); //ie a  ie...
+						doms.textInput.blur(); //ie a  ie...
 						transfer.send({
 							event: _const.EVENTS.DRAGREADY,
 							data: {
@@ -975,7 +981,7 @@
 					});
 				});
 
-				//机器人列表
+				// 机器人列表
 				utils.live('button.js_robotbtn', utils.click, function () {
 					me.channel.sendText(this.innerText, {
 						ext: {
@@ -986,6 +992,13 @@
 							}
 						}
 					});
+				});
+
+				// 满意度评价
+				utils.live('button.js_satisfybtn', 'click', function () {
+					var serviceSessionId = this.getAttribute('data-servicesessionid');
+					var inviteId = this.getAttribute('data-inviteid');
+					satisfaction.show(inviteId, serviceSessionId);
 				});
 
 				var messagePredict = _.throttle(function (msg) {
@@ -1001,7 +1014,7 @@
 				}, 1000);
 
 				function handleSendBtn() {
-					var isEmpty = !easemobim.textarea.value.trim();
+					var isEmpty = !doms.textInput.value.trim();
 
 					utils.toggleClass(
 						doms.sendBtn,
@@ -1009,19 +1022,19 @@
 					);
 					config.grayList.msgPredictEnable
 						&& !isEmpty
-						&& messagePredict(easemobim.textarea.value);
+						&& messagePredict(doms.textInput.value);
 				}
 
 				if (Modernizr.oninput) {
-					utils.on(easemobim.textarea, 'input change', handleSendBtn);
+					utils.on(doms.textInput, 'input change', handleSendBtn);
 				}
 				else {
-					utils.on(easemobim.textarea, 'keyup change', handleSendBtn);
+					utils.on(doms.textInput, 'keyup change', handleSendBtn);
 				}
 
 				if (utils.isMobile) {
-					utils.on(easemobim.textarea, 'focus touchstart', function () {
-						easemobim.textarea.style.overflowY = 'auto';
+					utils.on(doms.textInput, 'focus touchstart', function () {
+						doms.textInput.style.overflowY = 'auto';
 						me.scrollBottom();
 					});
 
@@ -1031,7 +1044,7 @@
 						'click',
 						function () {
 							var status = utils.hasClass(this, 'icon-keyboard-down');
-							var height = doms.widgetSend.getBoundingClientRect().height;
+							var height = doms.editorView.getBoundingClientRect().height;
 							me.direction = status ? 'down' : 'up';
 
 							utils.toggleClass(this, 'icon-keyboard-up', status);
@@ -1039,17 +1052,17 @@
 
 							switch (me.direction) {
 							case 'up':
-								doms.widgetSend.style.bottom = 'auto';
-								doms.widgetSend.style.zIndex = '3';
-								doms.widgetSend.style.top = '43px';
+								doms.editorView.style.bottom = 'auto';
+								doms.editorView.style.zIndex = '3';
+								doms.editorView.style.top = '43px';
 								doms.chatWrapper.style.bottom = '0';
 								doms.emojiWrapper.style.bottom = 'auto';
 								doms.emojiWrapper.style.top = 43 + height + 'px';
 								break;
 							case 'down':
-								doms.widgetSend.style.bottom = '0';
-								doms.widgetSend.style.zIndex = '3';
-								doms.widgetSend.style.top = 'auto';
+								doms.editorView.style.bottom = '0';
+								doms.editorView.style.zIndex = '3';
+								doms.editorView.style.top = 'auto';
 								doms.chatWrapper.style.bottom = height + 'px';
 								doms.emojiWrapper.style.bottom = height + 'px';
 								doms.emojiWrapper.style.top = 'auto';
@@ -1119,13 +1132,19 @@
 					}
 				});
 
-				//显示留言界面
+				// 显示留言页面
 				utils.on(doms.noteBtn, 'click', function () {
 					easemobim.leaveMessage();
 				});
 
+				// 满意度评价
+				utils.on(doms.satisfaction, 'click', function () {
+					doms.textInput.blur();
+					satisfaction.show();
+				});
+
 				// 回车发送消息
-				utils.on(easemobim.textarea, 'keydown', function (evt) {
+				utils.on(doms.textInput, 'keydown', function (evt) {
 					if (
 						evt.keyCode === 13
 						&& !utils.isMobile
@@ -1141,7 +1160,7 @@
 				});
 
 				utils.on(doms.sendBtn, 'click', function () {
-					var textMsg = easemobim.textarea.value;
+					var textMsg = doms.textInput.value;
 
 					if (utils.hasClass(this, 'disabled')) {
 						// 禁止发送
@@ -1151,8 +1170,8 @@
 					}
 					else {
 						me.channel.sendText(textMsg);
-						easemobim.textarea.value = '';
-						utils.trigger(easemobim.textarea, 'change');
+						doms.textInput.value = '';
+						utils.trigger(doms.textInput, 'change');
 					}
 				});
 			},

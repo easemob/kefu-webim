@@ -112,11 +112,9 @@
 	}
 
 	function initChat() {
-		//load modules
+		// init modules
 		easemobim.initPasteImage(chat);
-		easemobim.initSatisfaction(chat);
-
-		// init api helper
+		easemobim.satisfaction.init(chat);
 		easemobim.apiHelper.init(config);
 
 		// 访客回呼功能
