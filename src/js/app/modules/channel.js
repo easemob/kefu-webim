@@ -281,21 +281,22 @@ easemobim.channel = function (config) {
 				message = new WebIM.message.list();
 				var list = msg.ext.msgtype.choice.items || msg.ext.msgtype.choice.list;
 
-				if (list.length > 0) {
-					str = '<div class="em-widget-list-btns">';
-					for (var i = 0, l = list.length; i < l; i++) {
-						if (list[i].id === 'TransferToKf') {
-							str +=
-								'<button class="em-widget-list-btn-white bg-color border-color bg-hover-color-dark js_robotbtn" data-id="' +
-								list[i].id + '">' + (list[i].name || list[i]) + '</button>';
+				str = '<div class="em-widget-list-btns">'
+					+ _.map(list, function(item){
+						var id = item.id;
+						var label = item.name;
+						var className = 'js_robotbtn em-widget-list-btn ';
+						if (item.id === 'TransferToKf') {
+							// 转人工按钮突出显示
+							className += 'white bg-color border-color bg-hover-color-dark';
 						}
 						else {
-							str += '<button class="em-widget-list-btn bg-hover-color js_robotbtn" data-id="' + list[i].id + '">' + (list[
-								i].name || list[i]) + '</button>';
+							className += 'bg-hover-color';
 						}
-					}
-					str += '</div>';
-				}
+						return '<button class="' + className + '" data-id="' + id + '">' + label + '</button>';
+					}).join('')
+					+ '</div>';
+
 				message.set({ value: msg.ext.msgtype.choice.title, list: str });
 				break;
 			case 'robotTransfer':
@@ -312,7 +313,7 @@ easemobim.channel = function (config) {
 				*/
 				str = [
 					'<div class="em-widget-list-btns">',
-						'<button class="em-widget-list-btn-white bg-color border-color bg-hover-color-dark js_robotTransferBtn" ',
+						'<button class="em-widget-list-btn white bg-color border-color bg-hover-color-dark js_robotTransferBtn" ',
 						'data-sessionid="' + ctrlArgs.serviceSessionId + '" ',
 						'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
 					'</div>'
@@ -325,7 +326,7 @@ easemobim.channel = function (config) {
 				title = me.getSafeTextValue(msg);
 				str = [
 					'<div class="em-widget-list-btns">',
-						'<button class="em-widget-list-btn-white bg-color border-color bg-hover-color-dark js-transfer-to-ticket">',
+						'<button class="em-widget-list-btn white bg-color border-color bg-hover-color-dark js-transfer-to-ticket">',
 							'留言',
 						'</button>',
 					'</div>'

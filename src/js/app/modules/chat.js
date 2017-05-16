@@ -1418,7 +1418,7 @@
 
 				// 输入框位置开关
 				utils.isMobile
-					&& config.hideKeyboard
+					&& !config.hideKeyboard
 					&& utils.removeClass(doms.switchKeyboardBtn, 'hide');
 
 				// 满意度评价按钮

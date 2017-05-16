@@ -50,13 +50,10 @@
 	&:hover {
 		color: white;
 	}
+	&.white {
+		color: #fff;
+	}
 }
-
-.em-widget-list-btn-white {
-	@extend .em-widget-list-btn;
-	color: #fff;
-}
-
 
 /* 图片展示控件 */
 

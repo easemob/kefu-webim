@@ -248,3 +248,15 @@
 		transform: rotate(360deg)
 	}
 }
+
+.queuing-number-status {
+	width: 100%;
+	height: 26px;
+	font-size: 12px;
+	line-height: 26px;
+	padding: 0 8px;
+	position: absolute;
+	bottom: 0;
+	color: rgb(76, 76, 76);
+	background-color: rgba(223, 233, 252, .7);
+}
