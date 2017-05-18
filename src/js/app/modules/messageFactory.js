@@ -3,7 +3,7 @@
 	var parseLink = WebIM.utils.parseLink;
 	var parseEmoji = WebIM.utils.parseEmoji;
 	// 用来储存图片信息的file对象 
-	window.imgFileList = new easemobim.dict();
+	window.imgFileList = new easemobim.Dict();
 
 	function _encode(str) {
 		if (!str || str.length === 0) {

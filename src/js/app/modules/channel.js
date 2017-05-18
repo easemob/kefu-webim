@@ -6,14 +6,14 @@ easemobim.channel = function (config) {
 	var apiHelper = easemobim.apiHelper;
 	var satisfaction = easemobim.satisfaction;
 
-	//监听ack的timer, 每条消息启动一个
-	var ackTimerDict = new easemobim.dict();
+	// 监听ack的timer, 每条消息启动一个
+	var ackTimerDict = new easemobim.Dict();
 
-	//发消息队列
-	var sendMsgDict = new easemobim.dict();
+	// 发消息队列
+	var sendMsgDict = new easemobim.Dict();
 
-	//收消息队列
-	var receiveMsgDict = new easemobim.dict();
+	// 收消息队列
+	var receiveMsgDict = new easemobim.Dict();
 
 
 	var _obj = {
@@ -123,7 +123,7 @@ easemobim.channel = function (config) {
 
 					msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
 					utils.addClass(loading, 'hide');
-					me.scrollBottom();
+					// todo: fix this part can not be called
 				},
 				success: function (id) {
 					utils.removeDom(document.getElementById(id + '_loading'));
@@ -159,7 +159,7 @@ easemobim.channel = function (config) {
 					//显示图裂，无法重新发送
 					msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
 					utils.addClass(loading, 'hide');
-					me.scrollBottom();
+					// todo: fix this part can not be called
 				},
 				success: function (id) {
 					utils.removeDom(document.getElementById(id + '_loading'));
