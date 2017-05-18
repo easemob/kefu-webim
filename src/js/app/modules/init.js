@@ -132,17 +132,72 @@
 			// 获取关联，创建访客，调用聊天窗口
 			chatEntry.init(config);
 		}
-
-		// 获取主题颜色设置
-		api('getTheme', {
-			tenantId: config.tenantId
-		}, function (msg) {
-			var themeName = utils.getDataByPath(msg, 'data.0.optionValue');
+		if(config.themeName){
+			var themeName = config.themeName;
 			var className = _const.themeMap[themeName];
 
 			className && utils.addClass(document.body, className);
-		});
+		}else{
+				// 获取主题颜色设置
+			api('getTheme', {
+				tenantId: config.tenantId
+			}, function (msg) {
+				var themeName = utils.getDataByPath(msg, 'data.0.optionValue');
+				var className = _const.themeMap[themeName];
+
+				className && utils.addClass(document.body, className);
+			});
+		}
+		
 	}
+	function handleMsgData(msgData) {
+		if (msgData.previewObj) {
+			handleConfig(msgData.previewObj);
+			delete config.previewObj;
+			chat = easemobim.chat(config);
+			initChat();
+		}
+		else if (msgData.configId) {
+			api('getConfigByConfigId', {
+				tenantId: msgData.tenantId,
+				configId: msgData.configId
+			}, function (msg) {
+				var configJson = utils.getDataByPath(msg, 'data.entity.configJson');
+				handleConfig(configJson);
+				chat = easemobim.chat(config);
+				initChat();
+			});
+		}
+		else{
+			initChat();
+		}
+	}
+	function handleConfig(configJson) {
+		config.agentName = configJson.channel.agentName;
+		config.appKey = configJson.channel.appKey;
+		config.buttonText = configJson.ui.buttonText;
+		config.dialogHeight = configJson.ui.dialogHeight;
+		config.dialogWidth = configJson.ui.dialogWidth;
+		config.dragenable = configJson.ui.dragenable;
+		config.hide = configJson.ui.hide;
+		config.minimum = configJson.toolbar.minimum;
+		config.minimum = true;
+		config.notice = configJson.toolbar.notice;
+		// config.notice = {
+		// 	enabled:true ,
+		// 	content:'239093240213'
+		// };
+		config.logo = configJson.ui.logo;
+		config.resources = configJson.chat.resources;
+		config.satisfaction = configJson.toolbar.satisfaction;
+		config.soundReminder = configJson.toolbar.soundReminder;
+		config.ticket = configJson.toolbar.ticket;
+		config.to = configJson.channel.to;
+		config.emgroup = configJson.channel.emgroup;
+		config.hideStatus = configJson.chat.hideStatus;
+		config.hideKeyboard = configJson.toolbar.hideKeyboard;
+		config.themeName = configJson.ui.themeName;
+
 
 	function initApiTransfer() {
 		var iframe = document.getElementById('cross-origin-iframe');

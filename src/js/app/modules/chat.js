@@ -106,7 +106,7 @@
 						me.open();
 
 						// 设置信息栏
-						me.setNotice();
+						config.notice ? me.setConfigNotice() : me.setNotice();
 
 						// get service serssion info
 						me.getSession();
@@ -538,8 +538,13 @@
 				this.currentAvatar = avatarImg;
 			},
 			setLogo: function () {
-				utils.removeClass(document.querySelector('.em-widget-tenant-logo'), 'hide');
-				document.querySelector('.em-widget-tenant-logo img').src = config.logo;
+				if(typeof config.logo === 'object'){
+					config.logo.enabled && config.logo.url && utils.removeClass(document.querySelector('.em-widget-tenant-logo'), 'hide');
+					document.querySelector('.em-widget-tenant-logo img').src = config.logo.url;
+				}else{
+					utils.removeClass(document.querySelector('.em-widget-tenant-logo'), 'hide');
+					document.querySelector('.em-widget-tenant-logo img').src = config.logo;
+				}
 			},
 			setNotice: function () {
 				var me = this;
@@ -565,6 +570,32 @@
 						);
 					}
 				});
+			},
+			setConfigNotice: function () {
+				var me = this;
+
+				if (me.configSloganGot) return;
+				me.configSloganGot = true;
+
+				if(!config.notice.enabled) return;
+
+				var slogan = config.notice.content;
+				if (slogan) {
+					// 设置信息栏内容
+					document.querySelector('.em-widget-tip .content').innerHTML = WebIM.utils.parseLink(slogan);
+					// 显示信息栏
+					utils.addClass(doms.imChat, 'has-tip');
+
+					// 隐藏信息栏按钮
+					utils.on(
+						document.querySelector('.em-widget-tip .tip-close'),
+						utils.click,
+						function () {
+							// 隐藏信息栏
+							utils.removeClass(doms.imChat, 'has-tip');
+						}
+					);
+				}
 			},
 			initEmoji: function () {
 				var me = this;
