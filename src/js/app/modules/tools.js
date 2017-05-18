@@ -1,15 +1,15 @@
-(function () {
-	var dict = function () {
+easemobim.Dict = (function () {
+	var Dict = function () {
 		this.list = {};
 	};
 
-	dict.prototype.set = function (key, value) {
+	Dict.prototype.set = function (key, value) {
 		if (typeof this.list[key] === 'undefined') {
 			this.list[key] = value;
 		}
 	};
 
-	dict.prototype.get = function (key) {
+	Dict.prototype.get = function (key) {
 		if (this.list.hasOwnProperty(key)) {
 			return this.list[key];
 		}
@@ -18,16 +18,16 @@
 		}
 	};
 
-	dict.prototype.remove = function (key) {
+	Dict.prototype.remove = function (key) {
 		if (typeof this.list[key] !== 'undefined') {
 			delete this.list[key];
 		}
 	};
 
-	easemobim.dict = dict;
+	return Dict;
 }());
 
-(function () {
+easemobim.Polling = (function () {
 	var Polling = function (fn, interval) {
 		this.fn = fn;
 		this.isStarted = false;
@@ -54,5 +54,8 @@
 		return this.isStarted;
 	};
 
-	easemobim.Polling = Polling;
+	return Polling;
 }());
+
+window.global = {};
+window.app = {};

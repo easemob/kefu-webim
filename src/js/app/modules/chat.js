@@ -6,11 +6,13 @@
 		var api = easemobim.api;
 		var apiHelper = easemobim.apiHelper;
 		var satisfaction = easemobim.satisfaction;
+		var createMessageView = app.createMessageView;
 
 		var recentMsg = [];
 		var msgTimeSpanBegin = new Date(2099, 0).getTime();
 		var msgTimeSpanEnd = new Date(1970, 0).getTime();
 		var isChatWindowOpen;
+		var messageView;
 
 		// DOM init
 		var topBar = document.querySelector('.em-widget-header');
@@ -43,9 +45,9 @@
 			imgInput: document.querySelector('.upload-img-container'),
 			fileInput: document.querySelector('.upload-file-container'),
 			emojiContainer: document.querySelector('.em-bar-emoji-container'),
-			chatContainer: document.querySelector('.chat-container'),
-			emojiWrapper: document.querySelector('.em-bar-emoji-wrapper'),
 			chatWrapper: document.querySelector('.chat-wrapper'),
+			// chatContainer: document.querySelector('.chat-container'),
+			emojiWrapper: document.querySelector('.em-bar-emoji-wrapper'),
 
 			topBar: topBar,
 			editorView: editorView,
@@ -104,7 +106,7 @@
 						me.open();
 
 						// 设置信息栏
-						me.setNotice();
+						config.notice ? me.setConfigNotice() : me.setNotice();
 
 						// get service serssion info
 						me.getSession();
@@ -112,14 +114,12 @@
 						// 获取坐席昵称设置
 						me.getNickNameOption();
 
-						// 拉取历史消息
-						!config.isNewUser && !me.hasGotHistoryMsg && me.getHistory(function () {
-							me.scrollBottom();
-							me.hasGotHistoryMsg = true;
+						messageView = createMessageView({
+							parentContainer: doms.chatWrapper,
+							isNewUser: config.isNewUser,
+							chat: me
 						});
-
-						// 初始化历史消息拉取
-						!config.isNewUser && me.initHistoryPuller();
+						doms.chatContainer = messageView.el;
 
 						// 待接入排队人数显示
 						me.waitListNumber.start();
@@ -226,91 +226,7 @@
 						doms.chatWrapper.style.bottom = height + 'px';
 						doms.emojiWrapper.style.bottom = height + 'px';
 					}
-					me.scrollBottom();
-				}
-			},
-			initHistoryPuller: function () {
-				var me = this;
-				//pc 和 wap 的上滑加载历史记录的方法
-				(function () {
-					var st;
-					var _startY;
-					var _y;
-					var touch;
-
-					//wap
-					utils.live('div.em-widget-date', 'touchstart', function (ev) {
-						var touch = ev.touches;
-
-						if (ev.touches && ev.touches.length > 0) {
-							_startY = touch[0].pageY;
-						}
-					});
-					utils.live('div.em-widget-date', 'touchmove', function (ev) {
-						var touch = ev.touches;
-
-						if (ev.touches && ev.touches.length > 0) {
-							_y = touch[0].pageY;
-							if (_y - _startY > 8 && this.getBoundingClientRect().top >= 0) {
-								clearTimeout(st);
-								st = setTimeout(function () {
-									me.getHistory();
-								}, 100);
-							}
-						}
-					});
-
-					// pc端
-					utils.on(doms.chatContainer, 'mousewheel DOMMouseScroll', function (ev) {
-						var that = this;
-
-						if (ev.wheelDelta / 120 > 0 || ev.detail < 0) {
-							clearTimeout(st);
-							st = setTimeout(function () {
-								if (that.getBoundingClientRect().top >= 0) {
-									me.getHistory();
-								}
-							}, 400);
-						}
-					});
-				}());
-			},
-			getHistory: function (callback) {
-				var me = this;
-				var groupid = me.groupId;
-				var currHistoryMsgSeqId = me.currHistoryMsgSeqId || 0;
-
-				if (me.hasHistoryMessage === false) return;
-				if (groupid) {
-					api('getHistory', {
-						fromSeqId: currHistoryMsgSeqId,
-						size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME,
-						chatGroupId: groupid,
-						tenantId: config.tenantId
-					}, function (msg) {
-						var historyMsg = msg.data || [];
-						var earliestMsg = historyMsg[historyMsg.length - 1] || {};
-						var nextMsgSeq = earliestMsg.chatGroupSeqId - 1;
-
-						me.currHistoryMsgSeqId = nextMsgSeq;
-						me.hasHistoryMessage = nextMsgSeq > 0;
-						_.each(historyMsg, me.channel.handleHistoryMsg);
-						typeof callback === 'function' && callback();
-					});
-				}
-				else {
-					api('getGroupNew', {
-						id: config.user.username,
-						orgName: config.orgName,
-						appName: config.appName,
-						imServiceNumber: config.toUser,
-						tenantId: config.tenantId
-					}, function (msg) {
-						if (msg.data) {
-							me.groupId = msg.data;
-							me.getHistory(callback);
-						}
-					});
+					messageView.scrollToBottom();
 				}
 			},
 			getGreeting: function () {
@@ -622,8 +538,13 @@
 				this.currentAvatar = avatarImg;
 			},
 			setLogo: function () {
-				utils.removeClass(document.querySelector('.em-widget-tenant-logo'), 'hide');
-				document.querySelector('.em-widget-tenant-logo img').src = config.logo;
+				if(typeof config.logo === 'object'){
+					config.logo.enabled && config.logo.url && utils.removeClass(document.querySelector('.em-widget-tenant-logo'), 'hide');
+					document.querySelector('.em-widget-tenant-logo img').src = config.logo.url;
+				}else{
+					utils.removeClass(document.querySelector('.em-widget-tenant-logo'), 'hide');
+					document.querySelector('.em-widget-tenant-logo img').src = config.logo;
+				}
 			},
 			setNotice: function () {
 				var me = this;
@@ -649,6 +570,32 @@
 						);
 					}
 				});
+			},
+			setConfigNotice: function () {
+				var me = this;
+
+				if (me.configSloganGot) return;
+				me.configSloganGot = true;
+
+				if(!config.notice.enabled) return;
+
+				var slogan = config.notice.content;
+				if (slogan) {
+					// 设置信息栏内容
+					document.querySelector('.em-widget-tip .content').innerHTML = WebIM.utils.parseLink(slogan);
+					// 显示信息栏
+					utils.addClass(doms.imChat, 'has-tip');
+
+					// 隐藏信息栏按钮
+					utils.on(
+						document.querySelector('.em-widget-tip .tip-close'),
+						utils.click,
+						function () {
+							// 隐藏信息栏
+							utils.removeClass(doms.imChat, 'has-tip');
+						}
+					);
+				}
 			},
 			initEmoji: function () {
 				var me = this;
@@ -747,7 +694,7 @@
 				var me = this;
 
 				isChatWindowOpen = true;
-				me.scrollBottom();
+				messageView.scrollToBottom();
 				utils.addClass(easemobim.imBtn, 'hide');
 				utils.removeClass(doms.imChat, 'hide');
 				if (
@@ -961,7 +908,7 @@
 				if (utils.isMobile) {
 					utils.on(doms.textInput, 'focus touchstart', function () {
 						doms.textInput.style.overflowY = 'auto';
-						me.scrollBottom();
+						messageView.scrollToBottom();
 					});
 
 					// 键盘上下切换按钮
@@ -992,7 +939,7 @@
 								doms.chatWrapper.style.bottom = height + 'px';
 								doms.emojiWrapper.style.bottom = height + 'px';
 								doms.emojiWrapper.style.top = 'auto';
-								me.scrollBottom();
+								messageView.scrollToBottom();
 								break;
 							}
 						}
@@ -1101,11 +1048,6 @@
 					}
 				});
 			},
-			scrollBottom: function () {
-				var chatWrapper = doms.chatWrapper;
-
-				chatWrapper.scrollTop = chatWrapper.scrollHeight - chatWrapper.offsetHeight + 9999;
-			},
 			handleEventStatus: function (action, info, robertToHubman) {
 				var res = robertToHubman ? this.hasHumanAgentOnline : this.hasAgentOnline;
 				if (!res) {
@@ -1199,15 +1141,15 @@
 					if (img) {
 						// 如果包含图片，则需要等待图片加载后再滚动消息
 						curWrapper.appendChild(dom);
-						me.scrollBottom();
+						messageView.scrollToBottom();
 						utils.one(img, 'load', function () {
-							me.scrollBottom();
+							messageView.scrollToBottom();
 						});
 					}
 					else {
 						// 非图片消息直接滚到底
 						curWrapper.appendChild(dom);
-						me.scrollBottom();
+						messageView.scrollToBottom();
 					}
 				}
 				// 缓存上屏的消息

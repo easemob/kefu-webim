@@ -9,8 +9,11 @@
 
 	function emitAjax(options) {
 		var headers = null;
-		var useObject = options.msg.useObject;
-		var data = options.msg.data;
+		var msg = options.msg;
+		var data = msg.data;
+		var useObject = msg.useObject;
+		var api = msg.api;
+		var timestamp = msg.timespan;
 
 		if (data && data.headers) {
 			headers = data.headers;
@@ -23,29 +26,29 @@
 			data: options.excludeData ? null : data,
 			type: options.type || 'GET',
 			isFileUpload: options.isFileUpload,
-			success: function (info) {
+			success: function (resp) {
 				try {
-					info = JSON.parse(info);
+					resp = JSON.parse(resp);
 				}
 				catch (e) {}
 				getData.send({
-					call: options.msg.api,
-					timespan: options.msg.timespan,
+					call: api,
+					timespan: timestamp,
 					status: 0,
-					data: info,
+					data: resp,
 					useObject: useObject
 				});
 			},
-			error: function (info) {
+			error: function (resp) {
 				try {
-					info = JSON.parse(info);
+					resp = JSON.parse(resp);
 				}
 				catch (e) {}
 				getData.send({
-					call: options.msg.api,
-					timespan: options.msg.timespan,
+					call: api,
+					timespan: timestamp,
 					status: 1,
-					data: info,
+					data: resp,
 					useObject: useObject
 				});
 			}
@@ -184,6 +187,12 @@
 		case 'getProject':
 			emitAjax({
 				url: '/tenants/' + tenantId + '/projects',
+				msg: msg
+			});
+			break;
+		case 'getConfigByConfigId':
+			emitAjax({
+				url: '/v1/webimplugin/settings/visitors/tenants/28026/configs/69b927d5-535d-48b2-b913-ce9b63f09655',
 				msg: msg
 			});
 			break;
@@ -361,7 +370,8 @@
 					+ '&token=' + params.token
 					+ '&techChannelInfo=' + techChannelInfo,
 				msg: msg,
-				type: 'GET'
+				type: 'GET',
+				excludeData: true
 			});
 			break;
 		case 'getOfficalAccounts':
@@ -374,7 +384,8 @@
 					+ '&userName=' + params.userName
 					+ '&token=' + params.token,
 				msg: msg,
-				type: 'GET'
+				type: 'GET',
+				excludeData: true
 			});
 			break;
 		case 'getOfficalAccountMessage':
@@ -390,11 +401,12 @@
 					+ '&userName=' + params.userName
 					+ '&token=' + params.token,
 				msg: msg,
-				type: 'GET'
+				type: 'GET',
+				excludeData: true
 			});
 			break;
 		default:
-			console.warn('unexpect api name: ' + apiName);
+			console.error('unexpect api name: ' + apiName);
 			break;
 		}
 	}, ['data']);

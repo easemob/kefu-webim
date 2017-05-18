@@ -2,6 +2,7 @@
 // getVisitorId
 // getProjectId
 // getToken
+// getGroupId
 
 easemobim.apiHelper = (function (_const, utils, api, emajax) {
 	var config;
@@ -304,6 +305,52 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		});
 	}
 
+	function getGroupId(){
+		return new Promise(function(resolve, reject){
+			if (cache.groupId){
+				resolve(cache.groupId);
+			}
+			else {
+				api('getGroupNew', {
+					id: config.user.username,
+					orgName: config.orgName,
+					appName: config.appName,
+					imServiceNumber: config.toUser,
+					tenantId: config.tenantId
+				}, function (msg) {
+					var groupId = msg.data;
+
+					if (groupId){
+						cache.groupId = groupId;
+						resolve(groupId);
+					}
+					else {
+						reject('unable to get group id.');
+					}
+				}, function (err){
+					reject(err);
+				});
+			}
+		});
+	}
+
+	function getHistory(msgSeqId){
+		return new Promise(function(resolve, reject){
+			getGroupId().then(function(groupId){
+				api('getHistory', {
+					fromSeqId: msgSeqId,
+					size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME,
+					chatGroupId: groupId,
+					tenantId: config.tenantId
+				}, function (msg) {
+					resolve(msg.data || []);
+				}, function(err){
+					reject(err);
+				});
+			});
+		});
+	}
+
 	return {
 		getCurrentServiceSession: getCurrentServiceSession,
 		getSessionQueueId: getSessionQueueId,
@@ -317,6 +364,7 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		getGrayList: getGrayList,
 		getRobertGreeting: getRobertGreeting,
 		getSystemGreeting: getSystemGreeting,
+		getHistory: getHistory,
 		init: function(cfg){
 			config = cfg;
 		}
