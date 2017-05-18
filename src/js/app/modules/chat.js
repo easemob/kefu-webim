@@ -104,7 +104,7 @@
 						me.open();
 
 						// 设置信息栏
-						me.setNotice();
+						config.notice ? me.setConfigNotice() : me.setNotice();
 
 						// get service serssion info
 						me.getSession();
@@ -622,25 +622,32 @@
 				this.currentAvatar = avatarImg;
 			},
 			setLogo: function () {
-				utils.removeClass(document.querySelector('.em-widget-tenant-logo'), 'hide');
-				document.querySelector('.em-widget-tenant-logo img').src = config.logo;
+				var logoImgWapper = document.querySelector('.em-widget-tenant-logo');
+				var logoImg = logoImgWapper.querySelector('img');
+				if(config.isWebChannelConfig){
+					config.logo.enabled && config.logo.url && utils.removeClass(logoImgWapper, 'hide');
+					logoImg.src = config.logo.url;
+				}else{
+					utils.removeClass(logoImgWapper, 'hide');
+					logoImg.src = config.logo;
+				}
 			},
 			setNotice: function () {
 				var me = this;
-
-				api('getSlogan', {
-					tenantId: config.tenantId
-				}, function (msg) {
-					var slogan = utils.getDataByPath(msg, 'data.0.optionValue');
+				var noticeContent = document.querySelector('.em-widget-tip .content');
+				var noticeCloseBtn = document.querySelector('.em-widget-tip .tip-close');
+				if(config.isWebChannelConfig){
+					if(!config.notice.enabled) return;
+					var slogan = config.notice.content;
 					if (slogan) {
 						// 设置信息栏内容
-						document.querySelector('.em-widget-tip .content').innerHTML = WebIM.utils.parseLink(slogan);
+						noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
 						// 显示信息栏
 						utils.addClass(doms.imChat, 'has-tip');
 
 						// 隐藏信息栏按钮
 						utils.on(
-							document.querySelector('.em-widget-tip .tip-close'),
+							noticeCloseBtn,
 							utils.click,
 							function () {
 								// 隐藏信息栏
@@ -648,7 +655,29 @@
 							}
 						);
 					}
-				});
+				}else{
+					api('getSlogan', {
+						tenantId: config.tenantId
+					}, function (msg) {
+						var slogan = utils.getDataByPath(msg, 'data.0.optionValue');
+						if (slogan) {
+							// 设置信息栏内容
+							noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
+							// 显示信息栏
+							utils.addClass(doms.imChat, 'has-tip');
+
+							// 隐藏信息栏按钮
+							utils.on(
+								noticeCloseBtn,
+								utils.click,
+								function () {
+									// 隐藏信息栏
+									utils.removeClass(doms.imChat, 'has-tip');
+								}
+							);
+						}
+					});
+				}
 			},
 			initEmoji: function () {
 				var me = this;
