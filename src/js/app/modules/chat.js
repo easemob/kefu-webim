@@ -1346,7 +1346,7 @@
 				window.HTMLAudioElement
 					&& !utils.isMobile
 					&& config.soundReminder
-					&& utils.removeClass(doms.audioBtn, 'hide')
+					&& utils.removeClass(doms.audioBtn, 'hide');
 
 				// 输入框位置开关
 				utils.isMobile
