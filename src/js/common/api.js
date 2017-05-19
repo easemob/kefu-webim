@@ -187,7 +187,7 @@
 				msg: msg
 			});
 			break;
-		case 'getConfigByConfigId':
+		case 'getConfig':
 			emitAjax({
 				url: '/v1/webimplugin/settings/visitors/tenants/28026/configs/69b927d5-535d-48b2-b913-ce9b63f09655',
 				msg: msg
