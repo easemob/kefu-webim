@@ -77,17 +77,23 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 				api('getSlogan', {
 					tenantId: config.tenantId
 				}, function (msg) {
-					var slogan = utils.getDataByPath(msg, 'data.0.optionValue');
-					var notice = {
-						enabled: true,
-						content: slogan
+					var content = utils.getDataByPath(msg, 'data.0.optionValue');
+					var notice = {};
+					if(content){
+						notice.enabled = true;
+						notice.content = content;
+					}else{
+						notice.enabled = false;
+						notice.content = '';
 					}
 					resolve(notice);
+				}, function(err){
+					reject(err);
 				});
 			}
 		});
 	}	
-	function getThemeName(){
+	function getTheme(){
 		return new Promise(function(resolve, reject){
 			if (config.isWebChannelConfig){
 				resolve(config.themeName);
@@ -98,6 +104,8 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 				}, function (msg) {
 					var themeName = utils.getDataByPath(msg, 'data.0.optionValue');
 					resolve(themeName);
+				}, function(err){
+					reject(err);
 				});
 			}
 		});
@@ -109,7 +117,10 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 			}, function (msg) {
 				var configJson = utils.getDataByPath(msg, 'data.entity.configJson');
 				resolve(configJson);
+			}, function(err){
+				reject(err);
 			});
+
 			
 		});
 	}
@@ -353,7 +364,7 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		getSessionQueueId: getSessionQueueId,
 		getToken: getToken,
 		getNotice: getNotice,
-		getThemeName: getThemeName,
+		getTheme: getTheme,
 		getConfig: getConfig,
 		getProjectId: getProjectId,
 		createTicket: createTicket,
