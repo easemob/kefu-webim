@@ -622,10 +622,11 @@
 				this.currentAvatar = avatarImg;
 			},
 			setLogo: function () {
+				if(!config.logo.enabled) return;
 				var logoImgWapper = document.querySelector('.em-widget-tenant-logo');
 				var logoImg = logoImgWapper.querySelector('img');
 				
-				config.logo.enabled && config.logo.url && utils.removeClass(logoImgWapper, 'hide');
+				utils.removeClass(logoImgWapper, 'hide');
 				logoImg.src = config.logo.url;
 			
 			},
