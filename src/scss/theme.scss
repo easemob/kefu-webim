@@ -13,20 +13,20 @@
 @mixin theme($theme-color, $dark-color, $light-color) {
 	.fg-color,
 	.fg-hover-color:hover {
-		color: $theme-color;
+		color: $theme-color!important;
 	}
 	.bg-color,
 	.bg-hover-color:hover {
-		background-color: $theme-color;
+		background-color: $theme-color!important;
 	}
 	.border-color {
-		border-color: $dark-color;
+		border-color: $dark-color!important;
 	}
 	.bg-hover-color-light:hover {
-		background-color: $light-color;
+		background-color: $light-color!important;
 	}
 	.bg-hover-color-dark:hover {
-		background-color: $dark-color;
+		background-color: $dark-color!important;
 	}
 }
 
