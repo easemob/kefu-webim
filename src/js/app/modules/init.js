@@ -146,7 +146,6 @@
 		// 用于预览模式
 		if (config.previewObj) {
 			handleConfig(config.previewObj);
-			delete config.previewObj;
 			chat = easemobim.chat(config);
 			initChat();
 		}

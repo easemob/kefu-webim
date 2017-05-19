@@ -78,14 +78,10 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 					tenantId: config.tenantId
 				}, function (msg) {
 					var content = utils.getDataByPath(msg, 'data.0.optionValue');
-					var notice = {};
-					if(content){
-						notice.enabled = true;
-						notice.content = content;
-					}else{
-						notice.enabled = false;
-						notice.content = '';
-					}
+					var notice = {
+						enabled: !!content,
+						content: content
+					};
 					resolve(notice);
 				}, function(err){
 					reject(err);
