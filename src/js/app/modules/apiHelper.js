@@ -68,7 +68,58 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 			}
 		});
 	}
+	function getNotice(){
+		return new Promise(function(resolve, reject){
+			if (config.isWebChannelConfig){
+				resolve(config.notice);
+			}
+			else {
+				api('getSlogan', {
+					tenantId: config.tenantId
+				}, function (msg) {
+					var content = utils.getDataByPath(msg, 'data.0.optionValue');
+					var notice = {
+						enabled: !!content,
+						content: content
+					};
+					resolve(notice);
+				}, function(err){
+					reject(err);
+				});
+			}
+		});
+	}	
+	function getTheme(){
+		return new Promise(function(resolve, reject){
+			if (config.isWebChannelConfig){
+				resolve(config.themeName);
+			}
+			else {
+				api('getTheme', {
+					tenantId: config.tenantId
+				}, function (msg) {
+					var themeName = utils.getDataByPath(msg, 'data.0.optionValue');
+					resolve(themeName);
+				}, function(err){
+					reject(err);
+				});
+			}
+		});
+	}
+	function getConfig(configId){
+		return new Promise(function(resolve, reject){
+			api('getConfig', {
+				configId: configId
+			}, function (msg) {
+				var configJson = utils.getDataByPath(msg, 'data.entity.configJson');
+				resolve(configJson);
+			}, function(err){
+				reject(err);
+			});
 
+			
+		});
+	}
 	function getProjectId(){
 		return new Promise(function(resolve, reject){
 			if (cache.projectId){
@@ -308,6 +359,9 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		getCurrentServiceSession: getCurrentServiceSession,
 		getSessionQueueId: getSessionQueueId,
 		getToken: getToken,
+		getNotice: getNotice,
+		getTheme: getTheme,
+		getConfig: getConfig,
 		getProjectId: getProjectId,
 		createTicket: createTicket,
 		getVisitorId: getVisitorId,

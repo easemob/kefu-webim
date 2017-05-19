@@ -5,6 +5,7 @@
 	var uikit = easemobim.uikit;
 	var _const = easemobim._const;
 	var api = easemobim.api;
+	var apiHelper = easemobim.apiHelper;
 	var eventCollector = easemobim.eventCollector;
 	var chat;
 	var config;
@@ -66,8 +67,8 @@
 		// fake transfer
 		window.transfer = {
 			send: function(){}
-		}
-		initApiTransfer();
+		};
+		initCrossOriginIframe();
 	}
 
 	function chat_window_mode_init(){
@@ -103,7 +104,8 @@
 				config = msg.data;
 				config.user = config.user || {};
 				config.visitor = config.visitor || {};
-				initApiTransfer();
+				initCrossOriginIframe();
+
 				break;
 			default:
 				break;
@@ -132,25 +134,66 @@
 			// 获取关联，创建访客，调用聊天窗口
 			chatEntry.init(config);
 		}
+		
 
-		// 获取主题颜色设置
-		api('getTheme', {
-			tenantId: config.tenantId
-		}, function (msg) {
-			var themeName = utils.getDataByPath(msg, 'data.0.optionValue');
+		apiHelper.getTheme().then(function(themeName){
 			var className = _const.themeMap[themeName];
-
 			className && utils.addClass(document.body, className);
 		});
+	
+	}
+	function handleMsgData() {
+		// 用于预览模式
+		if (config.previewObj) {
+			handleConfig(config.previewObj);
+			chat = easemobim.chat(config);
+			initChat();
+		}
+		else if (config.configId) {
+			apiHelper.getConfig(config.configId).then(function(configJson){
+				handleConfig(configJson);
+				chat = easemobim.chat(config);
+				initChat();
+			});
+		}
+		else{
+			chat = easemobim.chat(config);
+			initChat();
+		}
+	}
+	function handleConfig(configJson) {
+		//用于config标记是否是来自于坐席端网页配置
+		config.isWebChannelConfig = true;
+		config.agentName = configJson.channel.agentName;
+		config.appKey = configJson.channel.appKey;
+		config.buttonText = configJson.ui.buttonText;
+		config.dialogHeight = configJson.ui.dialogHeight;
+		config.dialogWidth = configJson.ui.dialogWidth;
+		config.dragenable = configJson.ui.dragenable;
+		config.hide = configJson.ui.hide;
+		config.minimum = configJson.toolbar.minimum;
+		
+		config.notice = configJson.toolbar.notice;
+	
+		config.logo = configJson.ui.logo;
+		config.resources = configJson.chat.resources;
+		config.satisfaction = configJson.toolbar.satisfaction;
+		config.soundReminder = configJson.toolbar.soundReminder;
+		config.ticket = configJson.toolbar.ticket;
+		config.to = configJson.channel.to;
+		config.emgroup = configJson.channel.emgroup;
+		config.hideStatus = configJson.chat.hideStatus;
+		config.hideKeyboard = configJson.toolbar.hideKeyboard;
+		config.themeName = configJson.ui.themeName;
 	}
 
-	function initApiTransfer() {
+	function initCrossOriginIframe() {
 		var iframe = document.getElementById('cross-origin-iframe');
 
 		iframe.src = config.domain + '/webim/transfer.html?v=<%=WEBIM_PLUGIN_VERSION%>';
 		utils.on(iframe, 'load', function () {
 			easemobim.initApiTransfer();
-			initChat();
+			handleMsgData();
 		});
 	}
 
@@ -199,8 +242,7 @@
 				config.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, config.domain);
 				config.defaultAvatar = config.staticPath ? config.staticPath + '/img/default_avatar.png' : 'static/img/default_avatar.png';
 				config.defaultAgentName = targetItem.tenantName;
-
-				config.logo = config.logo || targetItem.tenantLogo;
+				config.logo = config.logo || {enabled: !!targetItem.tenantLogo,url: targetItem.tenantLogo};
 				config.toUser = targetItem.imServiceNumber;
 				config.orgName = targetItem.orgName;
 				config.appName = targetItem.appName;

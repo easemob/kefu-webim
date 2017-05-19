@@ -66,7 +66,7 @@ easemobim.leaveMessage = (function (utils, uikit, apiHelper) {
 				isSending = false;
 				uikit.showSuccess('留言发送成功');
 
-				_clearInput()
+				_clearInput();
 			}, function (err){
 				isSending = false;
 				uikit.tip('留言失败，请稍后重试');
