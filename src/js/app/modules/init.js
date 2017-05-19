@@ -136,7 +136,7 @@
 		}
 		
 
-		apiHelper.getThemeName().then(function(themeName){
+		apiHelper.getTheme().then(function(themeName){
 			var className = _const.themeMap[themeName];
 			className && utils.addClass(document.body, className);
 		});
@@ -173,9 +173,9 @@
 		config.dragenable = configJson.ui.dragenable;
 		config.hide = configJson.ui.hide;
 		config.minimum = configJson.toolbar.minimum;
-		config.minimum = true;
+		
 		config.notice = configJson.toolbar.notice;
-		config.notice = {};
+	
 		config.logo = configJson.ui.logo;
 		config.resources = configJson.chat.resources;
 		config.satisfaction = configJson.toolbar.satisfaction;
@@ -243,15 +243,7 @@
 				config.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, config.domain);
 				config.defaultAvatar = config.staticPath ? config.staticPath + '/img/default_avatar.png' : 'static/img/default_avatar.png';
 				config.defaultAgentName = targetItem.tenantName;
-				var tenantLogoObj = {};
-				if(targetItem.tenantLogo){
-					tenantLogoObj.enabled = true;
-					tenantLogoObj.url = targetItem.tenantLogo;
-				}else{
-					tenantLogoObj.enabled = false;
-					tenantLogoObj.url = targetItem.tenantLogo;
-				}
-				config.logo = config.logo || tenantLogoObj;
+				config.logo = config.logo || {enabled: !!targetItem.tenantLogo,url: targetItem.tenantLogo};
 				config.toUser = targetItem.imServiceNumber;
 				config.orgName = targetItem.orgName;
 				config.appName = targetItem.appName;

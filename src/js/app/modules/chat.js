@@ -637,22 +637,22 @@
 				apiHelper.getNotice().then(function(notice){
 					if(!notice.enabled) return;
 					var slogan = notice.content;
-					if (slogan) {
-						// 设置信息栏内容
-						noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
-						// 显示信息栏
-						utils.addClass(doms.imChat, 'has-tip');
+					
+					// 设置信息栏内容
+					noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
+					// 显示信息栏
+					utils.addClass(doms.imChat, 'has-tip');
 
-						// 隐藏信息栏按钮
-						utils.on(
-							noticeCloseBtn,
-							utils.click,
-							function () {
-								// 隐藏信息栏
-								utils.removeClass(doms.imChat, 'has-tip');
-							}
-						);
-					}
+					// 隐藏信息栏按钮
+					utils.on(
+						noticeCloseBtn,
+						utils.click,
+						function () {
+							// 隐藏信息栏
+							utils.removeClass(doms.imChat, 'has-tip');
+						}
+					);
+					
 				});
 			},
 			initEmoji: function () {
