@@ -67,7 +67,7 @@
 		// fake transfer
 		window.transfer = {
 			send: function(){}
-		}
+		};
 		initCrossOriginIframe();
 	}
 
@@ -193,7 +193,7 @@
 		iframe.src = config.domain + '/webim/transfer.html?v=<%=WEBIM_PLUGIN_VERSION%>';
 		utils.on(iframe, 'load', function () {
 			easemobim.initApiTransfer();
-			handleMsgData()
+			handleMsgData();
 		});
 	}
 

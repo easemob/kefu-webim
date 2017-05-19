@@ -52,5 +52,5 @@
 			// 标记postMessage使用object，47.9 增加
 			useObject: true
 		});
-	};
+	}
 }(easemobim));
