@@ -370,34 +370,6 @@
 
 			return isKefuAvatar && !ossImg ? domain + '/ossimages/' + url : '//' + url;
 		},
-		getConfig: function (key) { //get config from current script
-			var src;
-			var obj = {};
-			var scripts = document.scripts;
-
-			for (var s = 0, l = scripts.length; s < l; s++) {
-				if (~scripts[s].src.indexOf('easemob.js')) {
-					src = scripts[s].src;
-					break;
-				}
-			}
-
-			if (!src) {
-				return { json: obj, domain: '' };
-			}
-
-			var tmp;
-			var idx = src.indexOf('?');
-			var sIdx = ~src.indexOf('//') ? src.indexOf('//') : 0;
-			var domain = src.slice(sIdx, src.indexOf('/', sIdx + 2));
-			var arr = src.slice(idx + 1).split('&');
-
-			for (var i = 0, len = arr.length; i < len; i++) {
-				tmp = arr[i].split('=');
-				obj[tmp[0]] = tmp.length > 1 ? decodeURIComponent(tmp[1]) : '';
-			}
-			return { json: obj, domain: domain };
-		},
 		copy: function (obj) {
 			// todo：移到，easemob.js 里边
 			return this.extend({}, obj);
