@@ -80,7 +80,8 @@
 			UPDATE_URL: 'updateURL',
 			REQUIRE_URL: 'requireURL',
 			INIT_CONFIG: 'initConfig',
-			SHOW_IMG: 'showIMG'
+			SHOW_IMG: 'showIMG',
+			RESIZE_IFRAME: 'resizeIframe'
 		},
 
 		GRAY_LIST_KEYS: [

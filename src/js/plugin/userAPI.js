@@ -38,7 +38,7 @@
 
 
 	//get parameters from easemob.js
-	var baseConfig = utils.getConfig();
+	var baseConfig = getConfig();
 	var _config = {};
 
 	var iframe;
@@ -61,12 +61,41 @@
 		var sat = utils.convertFalse(_config.satisfaction) !== '' ? _config.satisfaction : baseConfig.json.sat;
 
 		_config.tenantId = _config.tenantId || baseConfig.json.tenantId;
+		_config.configId = _config.configId || baseConfig.json.configId;
 		_config.hide = utils.convertFalse(hide);
 		_config.resources = utils.convertFalse(resources);
 		_config.satisfaction = utils.convertFalse(sat);
 		_config.domain = _config.domain || baseConfig.domain;
 		_config.path = _config.path || (baseConfig.domain + '/webim');
 		_config.staticPath = _config.staticPath || (baseConfig.domain + '/webim/static');
+	}
+	function getConfig() { //get config from current script
+		var src;
+		var obj = {};
+		var scripts = document.scripts;
+
+		for (var s = 0, l = scripts.length; s < l; s++) {
+			if (~scripts[s].src.indexOf('easemob.js')) {
+				src = scripts[s].src;
+				break;
+			}
+		}
+
+		if (!src) {
+			return { json: obj, domain: '' };
+		}
+
+		var tmp;
+		var idx = src.indexOf('?');
+		var sIdx = ~src.indexOf('//') ? src.indexOf('//') : 0;
+		var domain = src.slice(sIdx, src.indexOf('/', sIdx + 2));
+		var arr = src.slice(idx + 1).split('&');
+
+		for (var i = 0, len = arr.length; i < len; i++) {
+			tmp = arr[i].split('=');
+			obj[tmp[0]] = tmp.length > 1 ? decodeURIComponent(tmp[1]) : '';
+		}
+		return { json: obj, domain: domain };
 	}
 
 	/*

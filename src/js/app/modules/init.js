@@ -18,10 +18,11 @@
 	}
 
 	function h5_mode_init(){
-		var tenantId = utils.query('tenantId');
+
 		config = {};
 
-		config.tenantId = tenantId;
+		config.tenantId = utils.query('tenantId');
+		config.configId = utils.query('configId');
 		config.offDutyType = utils.query('offDutyType');
 		config.grUserId = utils.query('grUserId');
 
@@ -185,6 +186,15 @@
 		config.hideStatus = configJson.chat.hideStatus;
 		config.hideKeyboard = configJson.toolbar.hideKeyboard;
 		config.themeName = configJson.ui.themeName;
+		// 重新去设置iframe 的宽高
+		transfer.send({
+			event: _const.EVENTS.RESIZE_IFRAME,
+			data: {
+				dialogHeight:config.dialogHeight,
+				dialogWidth: config.dialogWidth
+			}
+		}, window.transfer.to);
+
 	}
 
 	function initCrossOriginIframe() {
