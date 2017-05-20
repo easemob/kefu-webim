@@ -170,12 +170,11 @@
 		config.buttonText = configJson.ui.buttonText;
 		config.dialogHeight = configJson.ui.dialogHeight;
 		config.dialogWidth = configJson.ui.dialogWidth;
+		config.dialogPosition = configJson.ui.dialogPosition;
 		config.dragenable = configJson.ui.dragenable;
 		config.hide = configJson.ui.hide;
-		config.minimum = configJson.toolbar.minimum;
-		
+		config.minimum = configJson.toolbar.minimum;		
 		config.notice = configJson.toolbar.notice;
-	
 		config.logo = configJson.ui.logo;
 		config.resources = configJson.chat.resources;
 		config.satisfaction = configJson.toolbar.satisfaction;
@@ -188,10 +187,11 @@
 		config.themeName = configJson.ui.themeName;
 		// 重新去设置iframe 的宽高
 		transfer.send({
-			event: _const.EVENTS.RESIZE_IFRAME,
+			event: _const.EVENTS.RESET_IFRAME,
 			data: {
-				dialogHeight:config.dialogHeight,
-				dialogWidth: config.dialogWidth
+				dialogHeight: config.dialogHeight,
+				dialogWidth: config.dialogWidth,
+				dialogPosition: config.dialogPosition
 			}
 		}, window.transfer.to);
 

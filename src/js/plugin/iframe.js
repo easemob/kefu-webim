@@ -212,8 +212,8 @@
 				case _const.EVENTS.SHOW_IMG:
 					easemobim.pcImgView(msg.data);
 					break;
-				case _const.EVENTS.RESIZE_IFRAME:
-					me.resizeIframe(msg.data);
+				case _const.EVENTS.RESET_IFRAME:
+					me.resetIframe(msg.data);
 					break;
 				default:
 					break;
@@ -336,13 +336,17 @@
 
 		return this;
 	};
-	Iframe.prototype.resizeIframe = function(msgData){
+	Iframe.prototype.resetIframe = function(msgData){
 		this.config.dialogWidth = msgData.dialogWidth;
 		this.config.dialogHeight = msgData.dialogHeight;
+		this.config.dialogPosition = msgData.dialogPosition;
 		if(!this.show || utils.isMobile) return;
 
 		this.iframe.style.width = this.config.dialogWidth;
 		this.iframe.style.height = this.config.dialogHeight;
+		this.iframe.style.right = this.config.dialogPosition.x;
+		this.iframe.style.bottom = this.config.dialogPosition.y;
+
 	};
 	Iframe.prototype.open = function () {
 		var iframe = this.iframe;
