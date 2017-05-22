@@ -222,7 +222,10 @@
 			break;
 		case 'getAgentStatus':
 			// 没有token时不发送请求
-			if (params.token) return;
+			if (!params.token){
+				console.error('token does not exist.');
+				return;
+			}
 			emitAjax({
 				url: '/v1/tenants/' + tenantId
 					+ '/agents/' + params.agentUserId + '/agentstate',
