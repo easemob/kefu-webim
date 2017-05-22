@@ -1,5 +1,7 @@
 window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 
+/* jshint ignore:start */
+
 /** PrivateFunction: Array.prototype.indexOf
  *  Return the index of an object in an array.
  *
@@ -125,3 +127,5 @@ if (!Array.prototype.forEach) {
 	while (method = methods.pop()) if (!con[method]) con[method] = dummy;
 	// Using `this` for web workers & supports Browserify / Webpack.
 })(typeof window === 'undefined' ? this : window);
+
+/* jshint ignore:end */

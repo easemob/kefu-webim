@@ -9,7 +9,9 @@
 	var emptyFunc = function(){};
 
 	function _move(ev) {
+/* jshint ignore:start */
 		var me = this;
+/* jshint ignore:end */
 		var e = window.event || ev;
 		var _width = document.documentElement.clientWidth;
 		var _height = document.documentElement.clientHeight;
@@ -45,7 +47,9 @@
 	}
 
 	function _moveend() {
+/* jshint ignore:start */
 		var me = this;
+/* jshint ignore:end */
 		var iframe = me.iframe;
 		var shadow = me.shadow;
 
@@ -63,7 +67,9 @@
 	}
 
 	function _resize() {
+/* jshint ignore:start */
 		var me = this;
+/* jshint ignore:end */
 
 		utils.on(window, 'resize', function () {
 			if (!me.rect || !me.rect.width) {
@@ -109,7 +115,9 @@
 	}
 
 	function _ready() {
+/* jshint ignore:start */
 		var me = this;
+/* jshint ignore:end */
 
 		if (me.config.dragenable && !utils.isMobile) {
 			_resize.call(me);
