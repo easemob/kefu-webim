@@ -6,14 +6,14 @@ easemobim.channel = function (config) {
 	var apiHelper = easemobim.apiHelper;
 	var satisfaction = easemobim.satisfaction;
 
-	//监听ack的timer, 每条消息启动一个
-	var ackTimerDict = new easemobim.dict();
+	// 监听ack的timer, 每条消息启动一个
+	var ackTimerDict = new easemobim.Dict();
 
-	//发消息队列
-	var sendMsgDict = new easemobim.dict();
+	// 发消息队列
+	var sendMsgDict = new easemobim.Dict();
 
-	//收消息队列
-	var receiveMsgDict = new easemobim.dict();
+	// 收消息队列
+	var receiveMsgDict = new easemobim.Dict();
 
 
 	var _obj = {
@@ -123,7 +123,7 @@ easemobim.channel = function (config) {
 
 					msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
 					utils.addClass(loading, 'hide');
-					me.scrollBottom();
+					// todo: fix this part can not be called
 				},
 				success: function (id) {
 					utils.removeDom(document.getElementById(id + '_loading'));
@@ -159,7 +159,7 @@ easemobim.channel = function (config) {
 					//显示图裂，无法重新发送
 					msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
 					utils.addClass(loading, 'hide');
-					me.scrollBottom();
+					// todo: fix this part can not be called
 				},
 				success: function (id) {
 					utils.removeDom(document.getElementById(id + '_loading'));
@@ -381,14 +381,8 @@ easemobim.channel = function (config) {
 
 					me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
 					if (!me.hasSentAttribute) {
-						api('getExSession', {
-							id: config.user.username,
-							orgName: config.orgName,
-							appName: config.appName,
-							imServiceNumber: config.toUser,
-							tenantId: config.tenantId
-						}, function (msg) {
-							me.sendAttribute(msg);
+						apiHelper.getExSession().then(function (data){
+							me.sendAttribute(data);
 						});
 					}
 					break;
@@ -397,14 +391,8 @@ easemobim.channel = function (config) {
 					me.handleEventStatus('create');
 					me.waitListNumber.start();
 					if (!me.hasSentAttribute) {
-						api('getExSession', {
-							id: config.user.username,
-							orgName: config.orgName,
-							appName: config.appName,
-							imServiceNumber: config.toUser,
-							tenantId: config.tenantId
-						}, function (msg) {
-							me.sendAttribute(msg);
+						apiHelper.getExSession().then(function (data) {
+							me.sendAttribute(data);
 						});
 					}
 					break;
@@ -497,7 +485,7 @@ easemobim.channel = function (config) {
 					) {
 						// 偶发创建用户失败，但依然可以获取到密码的情况，此时需要重新创建用户
 						// 仅当用户名从cookie中取得时才会重新创建用户，客户集成指定用户错误不管
-						console.warn(e.data);
+						console.error(e.data);
 						easemobim.reCreateImUser();
 					}
 					// im sdk 会捕获回调中的异常，需要把出错信息打出来
@@ -505,7 +493,7 @@ easemobim.channel = function (config) {
 						console.error(e.data);
 					}
 					else {
-						console.warn(e);
+						console.error(e);
 						//me.conn.stopHeartBeat(me.conn);
 						typeof config.onerror === 'function' && config.onerror(e);
 					}
@@ -585,7 +573,7 @@ easemobim.channel = function (config) {
 						_obj.handleReceive(elem, elem.bodies[0].type, false);
 					}
 					catch (e) {
-						console.warn(e);
+						console.error(e);
 					}
 				});
 		});
@@ -665,7 +653,7 @@ easemobim.channel = function (config) {
 				appName: config.appName,
 			}, success, failed);
 		}, function(err){
-			console.warn(err);
+			console.error(err);
 		});
 	}
 

@@ -192,21 +192,23 @@ gulp.task('combineJs', function () {
 			'src/js/common/const.js',
 			'src/js/common/ajax.js',
 			'src/js/common/transfer.js',
+			'src/js/app/modules/tools.js',
 			'src/js/app/modules/uikit.js',
-			'src/js/app/modules/site.js',
-			'src/js/app/modules/message.js',
+			'src/js/app/modules/messageFactory.js',
+			'src/js/app/modules/apiTransfer.js',
+			'src/js/app/modules/apiHelper.js',
+			'src/js/app/modules/sessionList.js',
 			'src/js/app/modules/paste.js',
 			'src/js/app/modules/satisfaction.js',
 			'src/js/app/modules/imgView.js',
 			'src/js/app/modules/wechat.js',
 			'src/js/app/modules/channel.js',
 			'src/js/app/modules/videoChat.js',
+			'src/js/app/modules/messageView.js',
 			'src/js/app/modules/chat.js',
-			'src/js/app/modules/apiTransfer.js',
-			'src/js/app/modules/apiHelper.js',
 			'src/js/app/modules/leaveMessage.js',
 			'src/js/app/modules/eventCollector.js',
-			'src/js/app/modules/init.js'
+			'src/js/app/modules/init.js',
 		])
 		.pipe(concat('main.js'))
 		.pipe(DEV_MODE ? NO_OPERATION_TRANSFER_STREAM() : uglify())

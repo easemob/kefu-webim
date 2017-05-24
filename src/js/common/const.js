@@ -91,7 +91,7 @@
 			'agentInputStateEnable'
 		],
 
-		//上传文件大小限制
+		// 上传文件大小限制
 		UPLOAD_FILESIZE_LIMIT: 1024 * 1024 * 10,
 
 		// 超时未收到 kefu-ack 启用第二通道发消息
@@ -121,8 +121,11 @@
 		// 每次拉取历史消息条数
 		GET_HISTORY_MESSAGE_COUNT_EACH_TIME: 10,
 
-		//轮询坐席输入状态间隔
-		AGENT_INPUT_STATE_INTERVAL:1000,
+		// 轮询坐席输入状态间隔
+		AGENT_INPUT_STATE_INTERVAL: 1000,
+
+		// 消息时间戳最小间隔
+		MESSAGE_TIME_SPAN_INTERVAL: 60000,
 
 		for_block_only: null
 	};

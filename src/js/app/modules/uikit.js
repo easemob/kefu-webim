@@ -42,6 +42,9 @@ easemobim.uikit = (function(utils){
 		function _show(){
 			utils.removeClass(el, 'hide');
 		}
+		function _toggle(){
+			utils.toggle(el, 'hide');
+		}
 		function _cancelCb(){
 			cancel();
 			_hide();
@@ -79,6 +82,10 @@ easemobim.uikit = (function(utils){
 			},
 			hide: function(){
 				_hide();
+				return this;
+			},
+			toggle: function(){
+				_toggle();
 				return this;
 			},
 			destroy: function(){

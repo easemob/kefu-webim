@@ -9,8 +9,11 @@
 
 	function emitAjax(options) {
 		var headers = null;
-		var useObject = options.msg.useObject;
-		var data = options.msg.data;
+		var msg = options.msg;
+		var data = msg.data;
+		var useObject = msg.useObject;
+		var api = msg.api;
+		var timestamp = msg.timespan;
 
 		if (data && data.headers) {
 			headers = data.headers;
@@ -21,36 +24,36 @@
 			url: options.url,
 			headers: headers,
 			data: options.excludeData ? null : data,
-			type: options.type || 'GET',
+			type: options.type,
 			isFileUpload: options.isFileUpload,
-			success: function (info) {
+			success: function (resp) {
 				try {
-					info = JSON.parse(info);
+					resp = JSON.parse(resp);
 				}
 				catch (e) {}
 				getData.send({
-					call: options.msg.api,
-					timespan: options.msg.timespan,
+					call: api,
+					timespan: timestamp,
 					status: 0,
-					data: info,
+					data: resp,
 					useObject: useObject
 				});
 			},
-			error: function (info) {
+			error: function (resp) {
 				try {
-					info = JSON.parse(info);
+					resp = JSON.parse(resp);
 				}
 				catch (e) {}
 				getData.send({
-					call: options.msg.api,
-					timespan: options.msg.timespan,
+					call: api,
+					timespan: timestamp,
 					status: 1,
-					data: info,
+					data: resp,
 					useObject: useObject
 				});
 			}
 		});
-	};
+	}
 
 	getData.listen(function (msg) {
 		var apiName = msg.api;
@@ -66,6 +69,7 @@
 		case 'getRelevanceList':
 			emitAjax({
 				url: '/v1/webimplugin/targetChannels',
+				type: 'GET',
 				msg: msg
 			});
 			break;
@@ -73,6 +77,7 @@
 			// deprecated
 			emitAjax({
 				url: '/v1/webimplugin/showMessage',
+				type: 'GET',
 				msg: msg
 			});
 			break;
@@ -92,11 +97,13 @@
 			});
 			break;
 		case 'getSession':
+			// deprecated
 			emitAjax({
 				url: '/v1/webimplugin/visitors/' + params.id
 					+ '/schedule-data?techChannelInfo=' + techChannelInfo
 					+ '&tenantId=' + tenantId,
 				msg: msg,
+				type: 'GET',
 				excludeData: true
 			});
 			break;
@@ -106,57 +113,66 @@
 					+ '/schedule-data-ex?techChannelInfo=' + techChannelInfo
 					+ '&tenantId=' + tenantId,
 				msg: msg,
+				type: 'GET',
 				excludeData: true
 			});
 			break;
 		case 'getPassword':
 			emitAjax({
 				url: '/v1/webimplugin/visitors/password',
+				type: 'GET',
 				msg: msg
 			});
 			break;
 		case 'getGroup':
+			// deprecated
 			emitAjax({
 				url: '/v1/webimplugin/visitors/' + params.id
-					+ '/ChatGroupId?techChannelInfo='
-					+ params.orgName + '%23' +
-					params.appName + '%23' + params.imServiceNumber
+					+ '/ChatGroupId?techChannelInfo=' + techChannelInfo
 					+ '&tenantId=' + tenantId,
 				msg: msg,
+				type: 'GET',
 				excludeData: true
 			});
 			break;
 		case 'getGroupNew':
+			// deprecated
 			emitAjax({
 				url: '/v1/webimplugin/tenant/' + tenantId
 					+ '/visitors/' + params.id +
 					'/ChatGroupId?techChannelInfo=' + techChannelInfo
 					+ '&tenantId=' + tenantId,
 				msg: msg,
+				type: 'GET',
 				excludeData: true
 			});
 			break;
 		case 'getHistory':
+			// deprecated
 			emitAjax({
 				url: '/v1/webimplugin/visitors/msgHistory',
+				type: 'GET',
 				msg: msg
 			});
 			break;
 		case 'getSlogan':
 			emitAjax({
 				url: '/v1/webimplugin/notice/options',
+				type: 'GET',
 				msg: msg
 			});
 			break;
 		case 'getTheme':
 			emitAjax({
 				url: '/v1/webimplugin/theme/options',
+				type: 'GET',
 				msg: msg
 			});
 			break;
 		case 'getSystemGreeting':
 			emitAjax({
 				url: '/v1/webimplugin/welcome',
+				type: 'GET',
 				msg: msg
 			});
 			break;
@@ -169,6 +185,7 @@
 					+ params.originType
 					+ '?tenantId=' + tenantId,
 				msg: msg,
+				type: 'GET',
 				excludeData: true
 			});
 			break;
@@ -184,6 +201,7 @@
 		case 'getProject':
 			emitAjax({
 				url: '/tenants/' + tenantId + '/projects',
+				type: 'GET',
 				msg: msg
 			});
 			break;
@@ -210,6 +228,7 @@
 		case 'receiveMsgChannel':
 			emitAjax({
 				url: '/v1/imgateway/messages',
+				type: 'GET',
 				msg: msg
 			});
 			break;
@@ -229,6 +248,7 @@
 			emitAjax({
 				url: '/v1/tenants/' + tenantId
 					+ '/agents/' + params.agentUserId + '/agentstate',
+				type: 'GET',
 				msg: msg
 			});
 			break;
@@ -236,6 +256,7 @@
 			emitAjax({
 				url: '/v1/webimplugin/agentnicename/options?tenantId=' + tenantId,
 				msg: msg,
+				type: 'GET',
 				excludeData: true
 			});
 			break;
@@ -270,6 +291,7 @@
 			emitAjax({
 				url: '/management/graylist',
 				msg: msg,
+				type: 'GET',
 				excludeData: true
 			});
 			break;
@@ -283,6 +305,7 @@
 					+ '&tenantId='
 					+ tenantId,
 				msg: msg,
+				type: 'GET',
 				excludeData: true
 			});
 			break;
@@ -322,12 +345,14 @@
 		case 'getDutyStatus_2':
 			emitAjax({
 				url: '/v1/webimplugin/tenants/show-message',
+				type: 'GET',
 				msg: msg
 			});
 			break;
 		case 'getRobertGreeting_2':
 			emitAjax({
 				url: '/v1/webimplugin/tenants/robots/welcome',
+				type: 'GET',
 				msg: msg
 			});
 			break;
@@ -338,6 +363,7 @@
 				+ '&orgName=' + params.orgName + '&appName='+ params.appName 
 				+ '&userName=' + params.username + '&token=' + params.token,
 				msg: msg,
+				type: 'GET',
 				excludeData: true
 			});
 			break;
@@ -365,47 +391,52 @@
 			break;
 		case 'getVisitorInfo':
 			emitAjax({
-				url: 'v1/webimplugin/tenants/' + tenantId
+				url: '/v1/webimplugin/tenants/' + tenantId
 					+ '/visitors?orgName=' + params.orgName
 					+ '&appName=' + params.appName
 					+ '&userName=' + params.userName
 					+ '&token=' + params.token
 					+ '&techChannelInfo=' + techChannelInfo,
 				msg: msg,
-				type: 'GET'
+				type: 'GET',
+				excludeData: true
 			});
 			break;
 		case 'getOfficalAccounts':
 			emitAjax({
-				url: 'v1/webimplugin/tenants/' + tenantId
+				url: '/v1/webimplugin/tenants/' + tenantId
 					+ '/visitors/' + params.visitorId
-					+ 'official-accounts?page=0&size=100'
+					+ '/official-accounts?page=0&size=100'
 					+ '&orgName=' + params.orgName
 					+ '&appName=' + params.appName
 					+ '&userName=' + params.userName
 					+ '&token=' + params.token,
 				msg: msg,
-				type: 'GET'
+				type: 'GET',
+				excludeData: true
 			});
 			break;
 		case 'getOfficalAccountMessage':
 			emitAjax({
-				url: 'v1/webimplugin/tenants/' + tenantId
+				url: '/v1/webimplugin/tenants/' + tenantId
 					+ '/visitors/' + params.visitorId
-					+ 'official-accounts/' + params.officialAccountId
-					+ 'messages'
+					+ '/official-accounts/' + params.officialAccountId
+					+ '/messages'
 					+ '?size=' + params.size
-					+ '&startId=' + params.startId
+					// 当startId为空时不传
+					+ (params.startId ? '&startId=' + params.startId : '')
 					+ '&direction=' + params.direction
+					+ '&orgName=' + params.orgName
 					+ '&appName=' + params.appName
 					+ '&userName=' + params.userName
 					+ '&token=' + params.token,
 				msg: msg,
-				type: 'GET'
+				type: 'GET',
+				excludeData: true
 			});
 			break;
 		default:
-			console.warn('unexpect api name: ' + apiName);
+			console.error('unexpect api name: ' + apiName);
 			break;
 		}
 	}, ['data']);

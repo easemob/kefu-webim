@@ -2,6 +2,7 @@
 // getVisitorId
 // getProjectId
 // getToken
+// getGroupId
 
 easemobim.apiHelper = (function (_const, utils, api, emajax) {
 	var config;
@@ -207,7 +208,7 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 						imServiceNumber: config.toUser,
 						token: token
 					}, function (msg) {
-						var visitorId = utils.getDataByPath(msg, 'data.entities.userId');
+						var visitorId = utils.getDataByPath(msg, 'data.entity.userId');
 						if (visitorId){
 							// cache visitor id
 							cache.visitorId = visitorId;
@@ -226,12 +227,19 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 
 	function getOfficalAccounts(){
 		return new Promise(function(resolve, reject){
-			getToken().then(function(token){
+			Promise.all([
+				getVisitorId(),
+				getToken()
+			]).then(function(result){
+				var visitorId = result[0];
+				var token = result[1];
+
 				api('getOfficalAccounts', {
 					tenantId: config.tenantId,
 					orgName: config.orgName,
 					appName: config.appName,
 					userName: config.user.username,
+					visitorId: visitorId,
 					token: token
 				}, function (msg) {
 					var list = utils.getDataByPath(msg, 'data.entities');
@@ -248,10 +256,7 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		});
 	}
 
-	function getOfficalAccountMessage(opt){
-		 var params = opt.params;
-
-		// todo test this pattern
+	function getOfficalAccountMessage(officialAccountId, startId){
 		return new Promise(function(resolve, reject){
 			Promise.all([
 				getVisitorId(),
@@ -267,10 +272,10 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 					userName: config.user.username,
 					token: token,
 					visitorId: visitorId,
-					officalAccountId: params.officalAccountId,
+					officialAccountId: officialAccountId,
 					direction: 'before',
-					size: params.size,
-					startId: params.startId
+					size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME,
+					startId: startId
 				}, function (msg) {
 					var list = utils.getDataByPath(msg, 'data.entities');
 					if (_.isArray(list)){
@@ -355,6 +360,86 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		});
 	}
 
+	function getGroupId(){
+		return new Promise(function(resolve, reject){
+			if (cache.groupId){
+				resolve(cache.groupId);
+			}
+			else {
+				api('getGroupNew', {
+					id: config.user.username,
+					orgName: config.orgName,
+					appName: config.appName,
+					imServiceNumber: config.toUser,
+					tenantId: config.tenantId
+				}, function (msg) {
+					var groupId = msg.data;
+
+					if (groupId){
+						cache.groupId = groupId;
+						resolve(groupId);
+					}
+					else {
+						reject('unable to get group id.');
+					}
+				}, function (err){
+					reject(err);
+				});
+			}
+		});
+	}
+
+	function getHistory(msgSeqId){
+		return new Promise(function(resolve, reject){
+			getGroupId().then(function(groupId){
+				api('getHistory', {
+					fromSeqId: msgSeqId,
+					size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME,
+					chatGroupId: groupId,
+					tenantId: config.tenantId
+				}, function (msg) {
+					resolve(msg.data || []);
+				}, function(err){
+					reject(err);
+				});
+			});
+		});
+	}
+
+	function getExSession(){
+		return new Promise(function(resolve, reject){
+			api('getExSession', {
+				id: config.user.username,
+				orgName: config.orgName,
+				appName: config.appName,
+				imServiceNumber: config.toUser,
+				tenantId: config.tenantId
+			}, function (msg){
+				resolve(msg.data || {});
+			}, function (err){
+				reject(err);
+			});
+		});
+	}
+
+	function getAgentStatus(agentUserId){
+		return new Promise(function(resolve, reject){
+			api('getAgentStatus', {
+				tenantId: config.tenantId,
+				orgName: config.orgName,
+				appName: config.appName,
+				agentUserId: agentUserId,
+				userName: config.user.username,
+				token: config.user.token,
+				imServiceNumber: config.toUser
+			}, function (msg) {
+				resolve(utils.getDataByPath(msg, 'data.state'));
+			}, function (err){
+				reject(err);
+			});
+		});
+	}
+
 	return {
 		getCurrentServiceSession: getCurrentServiceSession,
 		getSessionQueueId: getSessionQueueId,
@@ -371,6 +456,15 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		getGrayList: getGrayList,
 		getRobertGreeting: getRobertGreeting,
 		getSystemGreeting: getSystemGreeting,
+		getHistory: getHistory,
+		getExSession: getExSession,
+		getAgentStatus: getAgentStatus,
+		setCacheItem: function(key, value){
+			cache[key] = value;
+		},
+		clearCacheItem: function(key){
+			cache[key] = void 0;
+		},
 		init: function(cfg){
 			config = cfg;
 		}

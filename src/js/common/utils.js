@@ -310,7 +310,7 @@
 				}
 				else {
 					// 没有找到path，返回undefined
-					return;
+					return void 0;
 				}
 			}
 		},

@@ -1,9 +1,9 @@
-(function (window, _const) {
+easemobim.genDomFromMsg = (function (window, _const) {
 	var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : '<img src="//kefu.easemob.com/webim/static/img/loading.gif" width="20" style="margin-top:10px;"/>';
 	var parseLink = WebIM.utils.parseLink;
 	var parseEmoji = WebIM.utils.parseEmoji;
 	// 用来储存图片信息的file对象 
-	window.imgFileList = new easemobim.dict();
+	window.imgFileList = new easemobim.Dict();
 
 	function _encode(str) {
 		if (!str || str.length === 0) {
@@ -145,5 +145,5 @@
 		this.listDom = opt.list;
 	};
 
-	easemobim.genDomFromMsg = genDomFromMsg;
+	return genDomFromMsg;
 }(window, easemobim._const));

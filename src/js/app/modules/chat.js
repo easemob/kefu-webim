@@ -6,11 +6,12 @@
 		var api = easemobim.api;
 		var apiHelper = easemobim.apiHelper;
 		var satisfaction = easemobim.satisfaction;
+		var createMessageView = app.createMessageView;
 
 		var recentMsg = [];
-		var msgTimeSpanBegin = new Date(2099, 0).getTime();
-		var msgTimeSpanEnd = new Date(1970, 0).getTime();
 		var isChatWindowOpen;
+		var currentMessageView;
+		var officialAccountList;
 
 		// DOM init
 		var topBar = document.querySelector('.em-widget-header');
@@ -43,9 +44,8 @@
 			imgInput: document.querySelector('.upload-img-container'),
 			fileInput: document.querySelector('.upload-file-container'),
 			emojiContainer: document.querySelector('.em-bar-emoji-container'),
-			chatContainer: document.querySelector('.chat-container'),
-			emojiWrapper: document.querySelector('.em-bar-emoji-wrapper'),
 			chatWrapper: document.querySelector('.chat-wrapper'),
+			emojiWrapper: document.querySelector('.em-bar-emoji-wrapper'),
 
 			topBar: topBar,
 			editorView: editorView,
@@ -76,7 +76,8 @@
 
 				Promise.all([
 					apiHelper.getDutyStatus(),
-					apiHelper.getGrayList()
+					apiHelper.getGrayList(),
+					apiHelper.getToken()
 				]).then(function(result){
 					var dutyStatus = result[0];
 					var grayList = result[1];
@@ -90,13 +91,13 @@
 					// 设置企业信息
 					me.setEnterpriseInfo();
 
-					// 显示广告条
-					config.logo && me.setLogo();
-
-					// 移动端输入框自动增长
-					utils.isMobile && me.initAutoGrow();
-
 					if (config.isInOfficehours) {
+						// 显示广告条
+						me.setLogo();
+
+						// 移动端输入框自动增长
+						utils.isMobile && me.initAutoGrow();
+
 						// 添加sdk回调
 						me.channel.listen();
 
@@ -106,20 +107,10 @@
 						// 设置信息栏
 						me.setNotice();
 
-						// get service serssion info
-						me.getSession();
+						me.initSession();
 
 						// 获取坐席昵称设置
 						me.getNickNameOption();
-
-						// 拉取历史消息
-						!config.isNewUser && !me.hasGotHistoryMsg && me.getHistory(function () {
-							me.scrollBottom();
-							me.hasGotHistoryMsg = true;
-						});
-
-						// 初始化历史消息拉取
-						!config.isNewUser && me.initHistoryPuller();
 
 						// 待接入排队人数显示
 						me.waitListNumber.start();
@@ -226,91 +217,7 @@
 						doms.chatWrapper.style.bottom = height + 'px';
 						doms.emojiWrapper.style.bottom = height + 'px';
 					}
-					me.scrollBottom();
-				}
-			},
-			initHistoryPuller: function () {
-				var me = this;
-				//pc 和 wap 的上滑加载历史记录的方法
-				(function () {
-					var st;
-					var _startY;
-					var _y;
-					var touch;
-
-					//wap
-					utils.live('div.em-widget-date', 'touchstart', function (ev) {
-						var touch = ev.touches;
-
-						if (ev.touches && ev.touches.length > 0) {
-							_startY = touch[0].pageY;
-						}
-					});
-					utils.live('div.em-widget-date', 'touchmove', function (ev) {
-						var touch = ev.touches;
-
-						if (ev.touches && ev.touches.length > 0) {
-							_y = touch[0].pageY;
-							if (_y - _startY > 8 && this.getBoundingClientRect().top >= 0) {
-								clearTimeout(st);
-								st = setTimeout(function () {
-									me.getHistory();
-								}, 100);
-							}
-						}
-					});
-
-					// pc端
-					utils.on(doms.chatContainer, 'mousewheel DOMMouseScroll', function (ev) {
-						var that = this;
-
-						if (ev.wheelDelta / 120 > 0 || ev.detail < 0) {
-							clearTimeout(st);
-							st = setTimeout(function () {
-								if (that.getBoundingClientRect().top >= 0) {
-									me.getHistory();
-								}
-							}, 400);
-						}
-					});
-				}());
-			},
-			getHistory: function (callback) {
-				var me = this;
-				var groupid = me.groupId;
-				var currHistoryMsgSeqId = me.currHistoryMsgSeqId || 0;
-
-				if (me.hasHistoryMessage === false) return;
-				if (groupid) {
-					api('getHistory', {
-						fromSeqId: currHistoryMsgSeqId,
-						size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME,
-						chatGroupId: groupid,
-						tenantId: config.tenantId
-					}, function (msg) {
-						var historyMsg = msg.data || [];
-						var earliestMsg = historyMsg[historyMsg.length - 1] || {};
-						var nextMsgSeq = earliestMsg.chatGroupSeqId - 1;
-
-						me.currHistoryMsgSeqId = nextMsgSeq;
-						me.hasHistoryMessage = nextMsgSeq > 0;
-						_.each(historyMsg, me.channel.handleHistoryMsg);
-						typeof callback === 'function' && callback();
-					});
-				}
-				else {
-					api('getGroupNew', {
-						id: config.user.username,
-						orgName: config.orgName,
-						appName: config.appName,
-						imServiceNumber: config.toUser,
-						tenantId: config.tenantId
-					}, function (msg) {
-						if (msg.data) {
-							me.groupId = msg.data;
-							me.getHistory(callback);
-						}
-					});
+					me.getCurrentMessageView().scrollToBottom();
 				}
 			},
 			getGreeting: function () {
@@ -366,17 +273,10 @@
 					config.nickNameOption = utils.getDataByPath(msg, 'data.0.optionValue') === 'true';
 				});
 			},
-			getSession: function () {
+			initSession: function(){
 				var me = this;
 
-				api('getExSession', {
-					id: config.user.username,
-					orgName: config.orgName,
-					appName: config.appName,
-					imServiceNumber: config.toUser,
-					tenantId: config.tenantId
-				}, function (msg) {
-					var data = msg.data || {};
+				apiHelper.getExSession().then(function(data) {
 					var serviceSession = data.serviceSession;
 
 					me.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
@@ -386,18 +286,61 @@
 						config.agentUserId = serviceSession.agentUserId;
 						// 确保正在进行中的会话，刷新后还会继续轮询坐席状态
 						me.startToGetAgentStatus();
-						me.sendAttribute(msg);
+						me.sendAttribute(data);
+						apiHelper.getOfficalAccounts().then(initMessageView);
 					}
 					else {
+						initMessageView([{type: 'SYSTEM', official_account_id: null, img: '123'}], true);
 						// 仅当会话不存在时获取欢迎语
 						me.getGreeting();
 					}
 				});
+
+				function initMessageView(collection, isNewUser){
+					var sessionList;
+
+					// cache offical account list
+					officialAccountList = collection;
+
+					// init message view
+					_.each(officialAccountList, function(item){
+						item.messageView = createMessageView({
+							parentContainer: doms.chatWrapper,
+							isNewUser: isNewUser,
+							id: item.official_account_id,
+							chat: me
+						});
+					});
+
+					// init session list
+					sessionList = app.sessionList.init({
+						collection: collection,
+						callback: changeMessageViewTo
+					});
+
+					// 如果有自定义服务号则显示列表
+					if (_.findWhere(officialAccountList, {type: 'CUSTOM'})){
+						sessionList.show();
+						// todo: show list button
+						utils.on(doms.avatar, 'click', sessionList.show);
+					}
+					else {
+						currentMessageView = _.findWhere(officialAccountList, {type: 'SYSTEM'}).messageView;
+					}
+
+					function changeMessageViewTo(id){
+						_.each(officialAccountList, function(item){
+							item.messageView.hide();
+						});
+						_.findWhere(officialAccountList, {official_account_id: id}).messageView.show();
+					}
+				}
 			},
-			sendAttribute: function (msg) {
-				var visitorUserId = utils.getDataByPath(msg, 'data.serviceSession.visitorUser.userId');
+			sendAttribute: function (data) {
+				var visitorUserId = utils.getDataByPath(data, 'serviceSession.visitorUser.userId');
 				if (!this.hasSentAttribute && visitorUserId) {
 					this.hasSentAttribute = true;
+					// todo: use apiHelp cache visitorId
 					// 缓存 visitorUserId
 					config.visitorUserId = visitorUserId;
 					api('sendVisitorInfo', {
@@ -438,17 +381,7 @@
 					return;
 				}
 
-				api('getAgentStatus', {
-					tenantId: config.tenantId,
-					orgName: config.orgName,
-					appName: config.appName,
-					agentUserId: config.agentUserId,
-					userName: config.user.username,
-					token: config.user.token,
-					imServiceNumber: config.toUser
-				}, function (msg) {
-					var state = utils.getDataByPath(msg, 'data.state');
-
+				apiHelper.getAgentStatus(config.agentUserId).then(function (state) {
 					if (state) {
 						doms.agentStatusText.innerText = _const.agentStatusText[state];
 						doms.agentStatusSymbol.className = 'em-widget-agent-status ' + _const.agentStatusClassName[state];
@@ -487,7 +420,7 @@
 
 				function getAgentInputState(sessionId) {
 					if (!config.user.token) {
-						console.warn('undefined token');
+						console.error('undefined token');
 						return;
 					}
 					// 当聊天窗口或者浏览器最小化时 不去发轮询请求
@@ -627,8 +560,7 @@
 				var logoImg = logoImgWapper.querySelector('img');
 				
 				utils.removeClass(logoImgWapper, 'hide');
-				logoImg.src = config.logo.url;
-			
+				logoImg.src = config.logo.url;			
 			},
 			setNotice: function () {
 				var me = this;
@@ -753,7 +685,7 @@
 				var me = this;
 
 				isChatWindowOpen = true;
-				me.scrollBottom();
+				me.getCurrentMessageView().scrollToBottom();
 				utils.addClass(easemobim.imBtn, 'hide');
 				utils.removeClass(doms.imChat, 'hide');
 				if (
@@ -967,7 +899,7 @@
 				if (utils.isMobile) {
 					utils.on(doms.textInput, 'focus touchstart', function () {
 						doms.textInput.style.overflowY = 'auto';
-						me.scrollBottom();
+						me.getCurrentMessageView().scrollToBottom();
 					});
 
 					// 键盘上下切换按钮
@@ -998,7 +930,7 @@
 								doms.chatWrapper.style.bottom = height + 'px';
 								doms.emojiWrapper.style.bottom = height + 'px';
 								doms.emojiWrapper.style.top = 'auto';
-								me.scrollBottom();
+								me.getCurrentMessageView().scrollToBottom();
 								break;
 							}
 						}
@@ -1107,11 +1039,6 @@
 					}
 				});
 			},
-			scrollBottom: function () {
-				var chatWrapper = doms.chatWrapper;
-
-				chatWrapper.scrollTop = chatWrapper.scrollHeight - chatWrapper.offsetHeight + 9999;
-			},
 			handleEventStatus: function (action, info, robertToHubman) {
 				var res = robertToHubman ? this.hasHumanAgentOnline : this.hasAgentOnline;
 				if (!res) {
@@ -1170,81 +1097,23 @@
 					avatar: info.avatar
 				});
 			},
-			//转接中排队中等提示上屏
+			// 系统事件消息上屏
 			appendEventMsg: function (msg) {
 				//如果设置了hideStatus, 不显示转接中排队中等提示
 				if (config.hideStatus) return;
 
-				this.appendDate(new Date().getTime());
-				// todo: xss defence
-				utils.appendHTMLTo(doms.chatContainer, [
-					'<div class="em-widget-event">',
-					'<span>' + msg + '</span>',
-					'</div>'
-				].join(''));
-				this.scrollBottom();
+				// 事件消息都显示在系统服务号中
+				this.getMessageViewById(null).appendEventMsg(msg);
 			},
 			//消息上屏
-			appendMsg: function (isReceived, msg, isHistory, date) {
-				var me = this;
-				var curWrapper = doms.chatContainer;
-				var dom = easemobim.genDomFromMsg(msg, isReceived);
-				var img = dom.querySelector('.em-widget-imgview');
-
-				date = date || new Date().getTime();
-
-				if (isHistory) {
-					curWrapper.insertBefore(dom, curWrapper.firstChild);
-					// 历史消息是向前插入，所以时间戳应在消息之后上屏
-					this.appendDate(date, isHistory);
-				}
-				else {
-					// 时间戳上屏
-					this.appendDate(date, isHistory);
-
-					if (img) {
-						// 如果包含图片，则需要等待图片加载后再滚动消息
-						curWrapper.appendChild(dom);
-						me.scrollBottom();
-						utils.one(img, 'load', function () {
-							me.scrollBottom();
-						});
-					}
-					else {
-						// 非图片消息直接滚到底
-						curWrapper.appendChild(dom);
-						me.scrollBottom();
-					}
-				}
-				// 缓存上屏的消息
-				var msgData = {
-					isReceived: isReceived,
-					msg: msg,
-					date: date
-				};
-				isHistory ? recentMsg.push(msgData) : recentMsg.unshift(msgData);
+			appendMsg: function (isReceived, msg, isHistory, date, officialAccountId) {
+				this.getMessageViewById(officialAccountId).appendMsg(isReceived, msg, isHistory, date);
 			},
-			appendDate: function (date, isHistory) {
-				var chatContainer = doms.chatContainer;
-				var dom = document.createElement('div');
-				var MESSAGE_TIME_SPAN_INTERVAL = 60000;
-
-				// todo: xss defence
-				dom.innerHTML = '<span>' + utils.formatDate(date) + '</span>';
-				dom.className = 'em-widget-date';
-
-				if (!isHistory) {
-					date - msgTimeSpanEnd > MESSAGE_TIME_SPAN_INTERVAL
-						&& chatContainer.appendChild(dom);
-				}
-				else {
-					msgTimeSpanBegin - date > MESSAGE_TIME_SPAN_INTERVAL
-						&& chatContainer.insertBefore(dom, chatContainer.firstChild);
-				}
-
-				// 更新时间范围
-				date < msgTimeSpanBegin && (msgTimeSpanBegin = date);
-				date > msgTimeSpanEnd && (msgTimeSpanEnd = date);
+			getCurrentMessageView: function(){
+				return currentMessageView;
+			},
+			getMessageViewById: function(id){
+				return currentMessageView;
 			},
 			messagePrompt: function (message) {
 				if (utils.isTop) return;
@@ -1286,31 +1155,8 @@
 				}
 			},
 			getRecentMsg: function(maxCount){
-				return _.map(recentMsg.slice(0, maxCount), function(item){
-					var type = item.msg.type;
-					var date = utils.formatDate(item.date);
-					var role = item.isReceived ? '客服坐席' : '访客';
-					var value = item.msg.value;
-
-					switch (type){
-						case 'txt':
-							break;
-						case 'img':
-							value = '[图片]';
-							break;
-						case 'file':
-							value = '[文件]';
-							break;
-						case 'list':
-							value = '[菜单]';
-							break;
-						default:
-							value = '[未知消息类型]';
-							break;
-					}
-
-					return '[' + date + '] ' + role + '\n' + value;
-				}).join('\n');
+				// 暂时只能获取系统服务号的消息
+				this.getMessageViewById(null).getRecentMsg(maxCount);
 			},
 			hideLoading: function(msgId){
 				utils.addClass(document.getElementById(msgId + '_loading'), 'hide');
