@@ -81,14 +81,14 @@
 					// 停止上报访客
 					eventCollector.stopReporting();
 					chatEntry.init(config);
-					chatEntry.open();
+					chat.show();
 				}
 				else {
-					chatEntry.open();
+					chat.show();
 				}
 				break;
 			case _const.EVENTS.CLOSE:
-				chatEntry.close();
+				chat.close();
 				break;
 			case _const.EVENTS.EXT:
 				chat.channel.sendText('', msg.data.ext);
@@ -106,7 +106,6 @@
 				config.user = config.user || {};
 				config.visitor = config.visitor || {};
 				initCrossOriginIframe();
-
 				break;
 			default:
 				break;
@@ -128,7 +127,7 @@
 			// 增加访客主动联系客服逻辑
 			utils.one(easemobim.imBtn, 'click', function () {
 				chatEntry.init(config);
-				chatEntry.open();
+				chat.show();
 			});
 		}
 		else {
@@ -300,7 +299,7 @@
 							var password = msg.data;
 							if (!password) {
 								// todo: 用户不存在自动降级，重新创建
-								console.warn('用户不存在！');
+								console.error('用户不存在！');
 							}
 							else {
 								config.user.password = password;
@@ -410,12 +409,6 @@
 				}
 				chat.init();
 			});
-		},
-		open: function () {
-			chat.show();
-		},
-		close: function () {
-			chat.close();
 		}
 	};
 
@@ -442,7 +435,7 @@
 					}
 				}, window.transfer.to);
 			}
-			chat.open();
+			chat.show();
 		});
 	});
 }(window, undefined));

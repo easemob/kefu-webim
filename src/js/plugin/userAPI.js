@@ -136,7 +136,7 @@
 			utils.extend(_config, config);
 
 			if (!_config.tenantId) {
-				console.warn('未指定tenantId!');
+				console.error('未指定tenantId!');
 				return;
 			}
 

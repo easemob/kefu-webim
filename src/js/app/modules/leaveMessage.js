@@ -70,7 +70,7 @@ easemobim.leaveMessage = (function (utils, uikit, apiHelper) {
 			}, function (err){
 				isSending = false;
 				uikit.tip('留言失败，请稍后重试');
-				console.warn(err);
+				console.error(err);
 			});
 		})
 		['catch'](function(err){
