@@ -207,7 +207,7 @@
 			break;
 		case 'getConfig':
 			emitAjax({
-				url: '/v1/webimplugin/settings/visitors/tenants/28026/configs/69b927d5-535d-48b2-b913-ce9b63f09655',
+				url: '/v1/webimplugin/settings/visitors/configs/eafd51cb-1513-4914-bb94-2541a98698c9',
 				msg: msg,
 				type: 'GET',
 				excludeData: true
