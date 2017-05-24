@@ -42,12 +42,7 @@
 		config.offDutyWord = decodeURIComponent(utils.query('offDutyWord'));
 		config.language = utils.query('language') || 'zh_CN';
 		config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket')); //true default
-		try {
-			config.emgroup = decodeURIComponent(utils.query('emgroup'));
-		}
-		catch (e) {
-			config.emgroup = utils.query('emgroup');
-		}
+		config.emgroup = decodeURIComponent(utils.query('emgroup'));
 
 		config.visitor = {};
 		config.user = {};
@@ -164,26 +159,34 @@
 	function handleConfig(configJson) {
 		//用于config标记是否是来自于坐席端网页配置
 		config.isWebChannelConfig = true;
-		config.agentName = configJson.channel.agentName;
+
 		config.appKey = configJson.channel.appKey;
+		config.to = configJson.channel.to;
+		config.agentName = configJson.channel.agentName;
+		config.emgroup = configJson.channel.emgroup;
+
 		config.buttonText = configJson.ui.buttonText;
 		config.dialogHeight = configJson.ui.dialogHeight;
 		config.dialogWidth = configJson.ui.dialogWidth;
 		config.dialogPosition = configJson.ui.dialogPosition;
 		config.dragenable = configJson.ui.dragenable;
 		config.hide = configJson.ui.hide;
+		config.logo = configJson.ui.logo;
+		config.themeName = configJson.ui.themeName;
+
 		config.minimum = configJson.toolbar.minimum;		
 		config.notice = configJson.toolbar.notice;
-		config.logo = configJson.ui.logo;
-		config.resources = configJson.chat.resources;
 		config.satisfaction = configJson.toolbar.satisfaction;
 		config.soundReminder = configJson.toolbar.soundReminder;
 		config.ticket = configJson.toolbar.ticket;
-		config.to = configJson.channel.to;
-		config.emgroup = configJson.channel.emgroup;
-		config.hideStatus = configJson.chat.hideStatus;
 		config.hideKeyboard = configJson.toolbar.hideKeyboard;
-		config.themeName = configJson.ui.themeName;
+		config.offDutyWord = configJson.toolbar.offDutyWord;
+		config.offDutyType = configJson.toolbar.offDutyType;
+
+		config.resources = configJson.chat.resources;
+		config.hideStatus = configJson.chat.hideStatus;
+
+
 		// 重新去设置iframe 的宽高
 		transfer.send({
 			event: _const.EVENTS.RESET_IFRAME,
@@ -194,6 +197,19 @@
 			}
 		}, window.transfer.to);
 
+		// offDutyWord default value
+		config.offDutyWord = config.offDutyWord || '现在是下班时间。';
+
+		// fake patch: 老版本配置的字符串需要decode
+		try {
+			config.offDutyWord = decodeURIComponent(config.offDutyWord);
+		}
+		catch (e){}
+
+		try {
+			config.emgroup = decodeURIComponent(config.emgroup);
+		}
+		catch (e){}
 	}
 
 	function initCrossOriginIframe() {

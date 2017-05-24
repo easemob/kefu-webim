@@ -165,7 +165,7 @@
 
 				//bind skill group
 				if (config.emgroup) {
-					msg.body.ext.weichat.queueName = decodeURIComponent(config.emgroup);
+					msg.body.ext.weichat.queueName = config.emgroup;
 				}
 
 				//bind visitor
@@ -650,18 +650,15 @@
 				switch (config.offDutyType) {
 				case 'none':
 					// 下班禁止留言、禁止接入会话
-					var word = config.offDutyWord || '现在是下班时间。';
-
-					// todo: move this code to fronter place
-					try {
-						word = decodeURIComponent(word);
-					}
-					catch (e) {}
-
-					uikit.createDialog({
-						contentDom: '<p>' + word + '</p>',
-						className: 'off-duty-prompt'
-					}).show();
+					utils.appendHTMLToBody([
+						'<div class="em-model"></div>',
+						'<div class="em-dialog off-duty-prompt">',
+						'<div class="bg-color header">提示</div>',
+						'<div class="body">',
+						'<p class="content">' + config.offDutyWord + '</p>',
+						'</div>',
+						'</div>'
+					].join(''));
 					break;
 				default:
 					// 只允许留言此时无法关闭留言页面
