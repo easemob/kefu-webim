@@ -1208,6 +1208,12 @@
 				// 留言按钮
 				config.ticket && utils.removeClass(doms.noteBtn, 'hide');
 
+				//h5title设置
+				if(config.isWebChannelConfig && config.H5Title.enabled && config.H5Title.content){
+					 document.title = config.H5Title.content;
+				}
+				
+
 				// 最小化按钮
 				config.minimum
 					&& !utils.isTop
