@@ -9,7 +9,7 @@
 
 let DEV_MODE = false;
 const TEMPLATE_DATA = {
-	WEBIM_PLUGIN_VERSION: '47.10.004'
+	WEBIM_PLUGIN_VERSION: 'pre_47.10.006'
 };
 
 const gulp = require('gulp');
