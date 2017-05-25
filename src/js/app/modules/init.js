@@ -165,6 +165,7 @@
 		config.agentName = configJson.channel.agentName;
 		config.emgroup = configJson.channel.emgroup;
 
+		config.H5Title = configJson.ui.H5Title;
 		config.buttonText = configJson.ui.buttonText;
 		config.dialogHeight = configJson.ui.dialogHeight;
 		config.dialogWidth = configJson.ui.dialogWidth;
@@ -172,16 +173,19 @@
 		config.dragenable = configJson.ui.dragenable;
 		config.hide = configJson.ui.hide;
 		config.logo = configJson.ui.logo;
+		config.notice = configJson.ui.notice;
 		config.themeName = configJson.ui.themeName;
 
-		config.minimum = configJson.toolbar.minimum;		
-		config.notice = configJson.toolbar.notice;
+		config.autoConnect = configJson.toolbar.autoConnect;
+		config.hideKeyboard = configJson.toolbar.hideKeyboard;
+		config.minimum = configJson.toolbar.minimum;	
+		config.offDutyWord = configJson.toolbar.offDutyWord;
+		config.offDutyType = configJson.toolbar.offDutyType;
+		config.popupOnInitialized = configJson.toolbar.popupOnInitialized;
 		config.satisfaction = configJson.toolbar.satisfaction;
 		config.soundReminder = configJson.toolbar.soundReminder;
 		config.ticket = configJson.toolbar.ticket;
-		config.hideKeyboard = configJson.toolbar.hideKeyboard;
-		config.offDutyWord = configJson.toolbar.offDutyWord;
-		config.offDutyType = configJson.toolbar.offDutyType;
+		config.toKefu = configJson.toolbar.transferToKefu;
 
 		config.resources = configJson.chat.resources;
 		config.hideStatus = configJson.chat.hideStatus;

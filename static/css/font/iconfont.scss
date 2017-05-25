@@ -1,86 +1,95 @@
 
-@font-face {font-family: "easemobim";
-  src: url('iconfont.eot?t=1479211277441'); /* IE9*/
-  src: url('iconfont.eot?t=1479211277441#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('iconfont.woff?t=1479211277441') format('woff'), /* chrome, firefox */
-  url('iconfont.ttf?t=1479211277441') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
-  url('iconfont.svg?t=1479211277441#easemobim') format('svg'); /* iOS 4.1- */
+@font-face {font-family: "webplug-in";
+  src: url('iconfont.eot?t=1495455392402'); /* IE9*/
+  src: url('iconfont.eot?t=1495455392402#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('iconfont.woff?t=1495455392402') format('woff'), /* chrome, firefox */
+  url('iconfont.ttf?t=1495455392402') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('iconfont.svg?t=1495455392402#webplug-in') format('svg'); /* iOS 4.1- */
 }
 
-.easemobim {
-  font-family:"easemobim" !important;
+.webplug-in {
+  font-family:"webplug-in" !important;
   font-size:16px;
   font-style:normal;
   -webkit-font-smoothing: antialiased;
-  -webkit-text-stroke-width: 0.2px;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.easemobim-camera:before { content: "\63"; }
+.webplug-in-camera:before { content: "\63"; }
 
-.easemobim-change:before { content: "\64"; }
+.webplug-in-change:before { content: "\64"; }
 
-.easemobim-minimize:before { content: "\65"; }
+.webplug-in-zhuanrengong:before { content: "\77"; }
 
-.easemobim-maximize:before { content: "\66"; }
+.webplug-in-parenleft:before { content: "\68"; }
 
-.easemobim-A:before { content: "\41"; }
+.webplug-in-minimize:before { content: "\65"; }
 
-.easemobim-B:before { content: "\42"; }
+.webplug-in-maximize:before { content: "\66"; }
 
-.easemobim-C:before { content: "\43"; }
+.webplug-in-att_bg:before { content: "\41"; }
 
-.easemobim-face:before { content: "\44"; }
+.webplug-in-att:before { content: "\42"; }
 
-.easemobim-E:before { content: "\45"; }
+.webplug-in-close:before { content: "\43"; }
 
-.easemobim-F:before { content: "\46"; }
+.webplug-in-face:before { content: "\44"; }
 
-.easemobim-G:before { content: "\47"; }
+.webplug-in-logo:before { content: "\45"; }
 
-.easemobim-H:before { content: "\48"; }
+.webplug-in-minisize:before { content: "\46"; }
 
-.easemobim-I:before { content: "\49"; }
+.webplug-in-right:before { content: "\47"; }
 
-.easemobim-K:before { content: "\4b"; }
+.webplug-in-star:before { content: "\48"; }
 
-.easemobim-J:before { content: "\4a"; }
+.webplug-in-break:before { content: "\49"; }
 
-.easemobim-L:before { content: "\4c"; }
+.webplug-in-triangle_left:before { content: "\4b"; }
 
-.easemobim-M:before { content: "\4d"; }
+.webplug-in-triangle_right:before { content: "\4a"; }
 
-.easemobim-x:before { content: "\78"; }
+.webplug-in-image:before { content: "\4c"; }
 
-.easemobim-X:before { content: "\58"; }
+.webplug-in-tips:before { content: "\4d"; }
 
-.easemobim-sound:before { content: "\67"; }
+.webplug-in-soundon:before { content: "\78"; }
 
-.easemobim-O:before { content: "\4f"; }
+.webplug-in-soundoff:before { content: "\58"; }
 
-.easemobim-N:before { content: "\4e"; }
+.webplug-in-adjunct:before { content: "\76"; }
 
-.easemobim-qianbao:before { content: "\e600"; }
+.webplug-in-sound:before { content: "\67"; }
 
-.easemobim-1010101:before { content: "\e601"; }
+.webplug-in-keyboard_down:before { content: "\4f"; }
 
-.easemobim-10103:before { content: "\e602"; }
+.webplug-in-keyboard_up:before { content: "\4e"; }
 
-.easemobim-10104:before { content: "\e603"; }
+.webplug-in-wallet:before { content: "\e600"; }
 
-.easemobim-10105:before { content: "\e604"; }
+.webplug-in-redbag2:before { content: "\e601"; }
 
-.easemobim-r:before { content: "\72"; }
+.webplug-in-location:before { content: "\e602"; }
 
-.easemobim-q:before { content: "\71"; }
+.webplug-in-file:before { content: "\e603"; }
 
-.easemobim-p:before { content: "\70"; }
+.webplug-in-redbag:before { content: "\e604"; }
 
-.easemobim-answer:before { content: "\61"; }
+.webplug-in-leave:before { content: "\72"; }
 
-.easemobim-decline:before { content: "\62"; }
+.webplug-in-busy:before { content: "\71"; }
 
-.easemobim-Comment:before { content: "\31"; }
+.webplug-in-hiding:before { content: "\70"; }
 
-.easemobim-video:before { content: "\74"; }
+.webplug-in-answer:before { content: "\61"; }
+
+.webplug-in-decline:before { content: "\62"; }
+
+.webplug-in-Comment:before { content: "\31"; }
+
+.webplug-in-video:before { content: "\74"; }
+
+.webplug-in-download:before { content: "\75"; }
+
+.webplug-in-rengongkefu:before { content: "\e6b8"; }
 

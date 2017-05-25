@@ -193,6 +193,11 @@
 	content: "\31";
 }
 
+.icon-headset:before {
+	@extend .icon-base;
+	content: "\e6b8";
+}
+
 .icon-video:before {
 	@extend .icon-base;
 	content: "\74";
