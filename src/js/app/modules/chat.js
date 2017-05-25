@@ -153,9 +153,7 @@
 					this.cachedCommandMessage = null;
 				}
 
-				if (!utils.isTop) {
-					transfer.send({ event: _const.EVENTS.ONREADY }, window.transfer.to);
-				}
+				transfer.send({ event: _const.EVENTS.ONREADY }, window.transfer.to);
 
 				if (config.extMsg) {
 					me.channel.sendText('', { ext: config.extMsg });
@@ -683,9 +681,9 @@
 			//show chat window
 			show: function () {
 				var me = this;
+				var currentMessageView = me.getCurrentMessageView();
 
 				isChatWindowOpen = true;
-				me.getCurrentMessageView().scrollToBottom();
 				utils.addClass(easemobim.imBtn, 'hide');
 				utils.removeClass(doms.imChat, 'hide');
 				if (
@@ -695,7 +693,9 @@
 				) {
 					doms.textInput.focus();
 				}
-				!utils.isTop && transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
+				// 有可能在 messageView 未初始化时调用
+				currentMessageView && currentMessageView.scrollToBottom();
+				transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
 			},
 			open: function () {
 				var me = this;

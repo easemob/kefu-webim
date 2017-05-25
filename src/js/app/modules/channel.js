@@ -366,7 +366,7 @@ easemobim.channel = function (config) {
 					// 停止轮询 坐席端的输入状态
 					me.agentInputState.stop();
 
-					!utils.isTop && transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED }, window.transfer.to);
+					transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED }, window.transfer.to);
 					break;
 					// 会话打开
 				case 'ServiceSessionOpenedEvent':
@@ -416,7 +416,7 @@ easemobim.channel = function (config) {
 				}
 
 				// 收消息回调
-				!utils.isTop && transfer.send({
+				transfer.send({
 					event: _const.EVENTS.ONMESSAGE,
 					data: {
 						from: msg.from,
