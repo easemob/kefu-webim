@@ -20,14 +20,15 @@ easemobim.genDomFromMsg = (function (window, _const) {
 	}
 
 	function _decode(str) {
-		if (!str || str.length === 0) {
+		if (typeof str !== 'string') {
 			return '';
 		}
-		var s = '';
-		s = str.replace(/&amp;/g, "&");
-		s = s.replace(/&#39;/g, "'");
-		s = s.replace(/&lt;/g, "<");
-		return s;
+		else {
+			return str
+				.replace(/&amp;/g, "&")
+				.replace(/&#39;/g, "'")
+				.replace(/&lt;/g, "<");
+		}
 	}
 
 	function genMsgContent(msg) {
@@ -36,9 +37,33 @@ easemobim.genDomFromMsg = (function (window, _const) {
 		var html = '';
 		switch (type) {
 		case 'txt':
-			// fake:  todo: remove this
-			value = _encode(_decode(value));
-			html = '<pre>' + parseLink(parseEmoji(value)) + '</pre>';
+			// 历史消息表情未经过im sdk 解析
+			if (typeof value === 'string'){
+				// fake:  todo: remove this
+				value = _encode(_decode(value));
+				html = '<pre>' + parseLink(parseEmoji(value)) + '</pre>';
+			}
+			// 实时消息表情经过im sdk 解析
+			else if (_.isArray(value)){
+				html = '<pre>' + _.map(value, function(item){
+					var type = item.type;
+					var data = item.data;
+					var result;
+
+					if (type === 'txt'){
+						result = parseLink(data);
+					}
+					else if (type === 'emoji'){
+						result = '<img class="emoji" src="' + data + '">';
+					}
+					else {}
+
+					return result;
+				}).join('') + '</pre>';
+			}
+			else {
+				console.error('unexpected value type.');
+			}
 			break;
 		case 'img':
 			if (value) {

@@ -1116,12 +1116,18 @@
 				if (utils.isTop) return;
 
 				var me = this;
+				var value = message.value;
 				var tmpVal;
 				var brief;
+
 				switch (message.type) {
 				case 'txt':
 				case 'list':
-					tmpVal = message.value.replace(/\n/mg, '');
+					tmpVal = typeof value === 'string'
+						? value.replace(/\n/mg, '')
+						: _.map(value, function(item){
+							return item.type === 'emoji' ? '[表情]' : item.data;
+						}).join('').replace(/\n/mg, '');
 					brief = utils.getBrief(tmpVal, 15);
 					break;
 				case 'img':
