@@ -83,7 +83,7 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper){
 				if (img) {
 					// 如果包含图片，则需要等待图片加载后再滚动消息
 					el.appendChild(dom);
-					messageView.scrollToBottom();
+					_scrollToBottom();
 					utils.one(img, 'load', function () {
 						_scrollToBottom();
 					});
