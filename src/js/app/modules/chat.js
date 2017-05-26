@@ -38,6 +38,7 @@
 			sendFileBtn: editorView.querySelector('.em-widget-file'),
 			sendBtn: editorView.querySelector('.em-widget-send'),
 			satisfaction: editorView.querySelector('.em-widget-satisfaction'),
+			toKefuBtn: editorView.querySelector('.em-widget-to-kefu'),
 			textInput: editorView.querySelector('.em-widget-textarea'),
 			noteBtn: editorView.querySelector('.em-widget-note'),
 
@@ -286,11 +287,14 @@
 						me.startToGetAgentStatus();
 						me.sendAttribute(data);
 						apiHelper.getOfficalAccounts().then(initMessageView);
+						config.toolbar.transferToKefu && me.setToKefuBtn(true);
+
 					}
 					else {
 						initMessageView([{type: 'SYSTEM', official_account_id: null, img: '123'}], true);
 						// 仅当会话不存在时获取欢迎语
 						me.getGreeting();
+						config.toolbar.transferToKefu && me.setToKefuBtn(false);
 					}
 				});
 
@@ -559,6 +563,28 @@
 				
 				utils.removeClass(logoImgWapper, 'hide');
 				logoImg.src = config.logo.url;			
+			},
+			setToKefuBtn: function(isInSession){
+				if(isInSession){
+					apiHelper.getCurrentServiceSession().then(function (res) {
+						if(res && res.agentUserType === 6){
+							utils.removeClass(doms.toKefuBtn, 'hide');
+						}
+						else{
+							utils.addClass(doms.toKefuBtn, 'hide');
+						}
+					})
+				}
+				else{
+					apiHelper.getRobertIsOpen().then(function (res) {
+						if(res){
+							utils.removeClass(doms.toKefuBtn, 'hide');
+						}
+						else{
+							utils.addClass(doms.toKefuBtn, 'hide');
+						}
+					})
+				}
 			},
 			setNotice: function () {
 				var me = this;
@@ -998,6 +1024,12 @@
 					easemobim.leaveMessage();
 				});
 
+				// 人工客服接起会话
+				utils.on(doms.toKefuBtn, 'click', function () {
+					me.channel.sendTransferToKf();
+					utils.addClass(doms.toKefuBtn, 'hide');
+				});
+
 				// 满意度评价
 				utils.on(doms.satisfaction, 'click', function () {
 					doms.textInput.blur();
@@ -1066,12 +1098,14 @@
 				}
 				else if (action === 'transferd') { //显示转接到客服
 					this.appendEventMsg(_const.eventMessageText.TRANSFER);
+					config.toolbar.transferToKefu && this.setToKefuBtn(true);
 				}
 				else if (action === 'transfering') { //显示转接中
 					this.appendEventMsg(_const.eventMessageText.TRANSFERING);
 				}
 				else if (action === 'linked') { //接入成功
 					this.appendEventMsg(_const.eventMessageText.LINKED);
+					config.toolbar.transferToKefu && this.setToKefuBtn(true);
 				}
 
 				if (action === 'transferd' || action === 'linked') {
@@ -1190,7 +1224,12 @@
 					utils.removeClass(doms.sendImgBtn, 'hide');
 					utils.removeClass(doms.sendFileBtn, 'hide');
 				}
-
+				
+				// h5title设置
+				if( utils.getDataByPath(config.ui, 'H5Title.enabled') && utils.getDataByPath(config.ui, 'H5Title.content') ){
+					 document.title = config.ui.H5Title.content;
+				}
+				
 				// 静音按钮
 				window.HTMLAudioElement
 					&& !utils.isMobile

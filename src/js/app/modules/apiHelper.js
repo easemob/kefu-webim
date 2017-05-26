@@ -348,6 +348,23 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		});
 	}
 
+	function getRobertIsOpen(){
+		return new Promise(function (resolve, reject) {
+			api('getRobertIsOpen', {
+				channelType: 'easemob',
+				originType: 'webim',
+				channelId: config.channelId,
+				tenantId: config.tenantId,
+				agentUsername: config.agentName,
+				queueName: config.emgroup
+			}, function (msg) {
+				resolve(msg.data.entity);
+			}, function (err) {
+				reject(err);
+			});
+		});
+	}
+
 	function getSystemGreeting(){
 		return new Promise(function (resolve, reject) {
 			api('getSystemGreeting', {
