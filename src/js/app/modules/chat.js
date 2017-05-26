@@ -287,14 +287,14 @@
 						me.startToGetAgentStatus();
 						me.sendAttribute(data);
 						apiHelper.getOfficalAccounts().then(initMessageView);
-						config.toKefu && me.setToKefuBtn(true);
+						config.toolbar.transferToKefu && me.setToKefuBtn(true);
 
 					}
 					else {
 						initMessageView([{type: 'SYSTEM', official_account_id: null, img: '123'}], true);
 						// 仅当会话不存在时获取欢迎语
 						me.getGreeting();
-						config.toKefu && me.setToKefuBtn(false);
+						config.toolbar.transferToKefu && me.setToKefuBtn(false);
 					}
 				});
 
@@ -1098,13 +1098,14 @@
 				}
 				else if (action === 'transferd') { //显示转接到客服
 					this.appendEventMsg(_const.eventMessageText.TRANSFER);
-					config.toKefu && this.setToKefuBtn(true);
+					config.toolbar.transferToKefu && this.setToKefuBtn(true);
 				}
 				else if (action === 'transfering') { //显示转接中
 					this.appendEventMsg(_const.eventMessageText.TRANSFERING);
 				}
 				else if (action === 'linked') { //接入成功
 					this.appendEventMsg(_const.eventMessageText.LINKED);
+					config.toolbar.transferToKefu && this.setToKefuBtn(true);
 				}
 
 				if (action === 'transferd' || action === 'linked') {
@@ -1223,7 +1224,7 @@
 					utils.removeClass(doms.sendImgBtn, 'hide');
 					utils.removeClass(doms.sendFileBtn, 'hide');
 				}
-
+				
 				// 静音按钮
 				window.HTMLAudioElement
 					&& !utils.isMobile

@@ -20,6 +20,11 @@
 	function h5_mode_init(){
 
 		config = {};
+		config.channel = {};
+		config.ui = {};
+		config.toolbar = {};
+		config.chat = {};
+
 
 		config.tenantId = utils.query('tenantId');
 		config.configId = utils.query('configId');
@@ -98,6 +103,10 @@
 				chat = easemobim.chat(msg.data);
 				window.transfer.to = msg.data.parentId;
 				config = msg.data;
+				config.channel = config.channel || {};
+				config.ui = {};
+				config.toolbar = {};
+				config.chat = {};
 				config.user = config.user || {};
 				config.visitor = config.visitor || {};
 				initCrossOriginIframe();
@@ -160,12 +169,16 @@
 		//用于config标记是否是来自于坐席端网页配置
 		config.isWebChannelConfig = true;
 
+		config.channel = configJson.channel;
+		config.ui = configJson.ui;
+		config.toolbar = configJson.toolbar;
+		config.chat = configJson.chat;
+
 		config.appKey = configJson.channel.appKey;
 		config.to = configJson.channel.to;
 		config.agentName = configJson.channel.agentName;
 		config.emgroup = configJson.channel.emgroup;
 
-		config.H5Title = configJson.ui.H5Title;
 		config.buttonText = configJson.ui.buttonText;
 		config.dialogHeight = configJson.ui.dialogHeight;
 		config.dialogWidth = configJson.ui.dialogWidth;
@@ -185,7 +198,6 @@
 		config.satisfaction = configJson.toolbar.satisfaction;
 		config.soundReminder = configJson.toolbar.soundReminder;
 		config.ticket = configJson.toolbar.ticket;
-		config.toKefu = configJson.toolbar.transferToKefu;
 
 		config.resources = configJson.chat.resources;
 		config.hideStatus = configJson.chat.hideStatus;
