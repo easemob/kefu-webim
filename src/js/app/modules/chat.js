@@ -1225,6 +1225,11 @@
 					utils.removeClass(doms.sendFileBtn, 'hide');
 				}
 
+				// h5title设置
+				if(config.ui.H5Title.enabled){
+					document.title = config.ui.H5Title.content;
+				}
+
 				// 静音按钮
 				window.HTMLAudioElement
 					&& !utils.isMobile
