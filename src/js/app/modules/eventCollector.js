@@ -8,7 +8,7 @@
 	var _url;
 
 	function _reportData(userType, userId) {
-		transfer.send({ event: _const.EVENTS.REQUIRE_URL }, window.transfer.to);
+		transfer.send({ event: _const.EVENTS.REQUIRE_URL });
 
 		_url && easemobim.api('reportEvent', {
 			type: 'VISIT_URL',
@@ -64,7 +64,7 @@
 		if (utils.isTop) return;
 
 		// 要求外部页面更新URL
-		transfer.send({ event: _const.EVENTS.REQUIRE_URL }, window.transfer.to);
+		transfer.send({ event: _const.EVENTS.REQUIRE_URL });
 
 		// 用户点击联系客服弹出的窗口，结束会话后调用的startToReport没有传入参数
 		if (!_config) {
@@ -91,7 +91,7 @@
 				key: 'guestId',
 				value: guestId
 			}
-		}, window.transfer.to);
+		});
 
 		_polling = new Polling(function () {
 			_reportData('GUEST', guestId);

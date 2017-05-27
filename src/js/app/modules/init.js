@@ -222,7 +222,7 @@
 				dialogWidth: config.dialogWidth,
 				dialogPosition: config.dialogPosition
 			}
-		}, window.transfer.to);
+		});
 	}
 
 	function initCrossOriginIframe() {
@@ -307,7 +307,7 @@
 						chat.cachedCommandMessage = { ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } };
 						chat.init();
 						chat.show();
-						transfer.send({ event: _const.EVENTS.SHOW }, window.transfer.to);
+						transfer.send({ event: _const.EVENTS.SHOW });
 						transfer.send({
 							event: _const.EVENTS.CACHEUSER,
 							data: {
@@ -315,7 +315,7 @@
 								// todo: check if need emgroup
 								group: config.user.emgroup
 							}
-						}, window.transfer.to);
+						});
 					}
 					// 访客
 					else {
@@ -335,7 +335,7 @@
 								chat.cachedCommandMessage = { ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } };
 								chat.init();
 								chat.show();
-								transfer.send({ event: _const.EVENTS.SHOW }, window.transfer.to);
+								transfer.send({ event: _const.EVENTS.SHOW });
 							}
 						});
 					}
@@ -432,7 +432,7 @@
 							username: config.user.username,
 							group: config.user.emgroup
 						}
-					}, window.transfer.to);
+					});
 				}
 				chat.init();
 			});
@@ -460,7 +460,7 @@
 						username: config.user.username,
 						group: config.user.emgroup
 					}
-				}, window.transfer.to);
+				});
 			}
 			chat.show();
 		});

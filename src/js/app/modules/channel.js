@@ -356,7 +356,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 						// 停止轮询 坐席端的输入状态
 						me.agentInputState.stop();
 
-						transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED }, window.transfer.to);
+						transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
 						break;
 						// 会话打开
 					case 'ServiceSessionOpenedEvent':
@@ -417,7 +417,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 							to: msg.to,
 							message: message
 						}
-					}, window.transfer.to);
+					});
 				}
 			},
 			listen: function () {

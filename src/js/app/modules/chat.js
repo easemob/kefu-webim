@@ -140,7 +140,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				// bug fix:
 				// minimum = fales 时, 或者 访客回呼模式 调用easemobim.bind时显示问题
 				if (config.minimum === false || config.eventCollector === true) {
-					transfer.send({ event: _const.EVENTS.SHOW }, window.transfer.to);
+					transfer.send({ event: _const.EVENTS.SHOW });
 				}
 				if (info) {
 					config.user.token = config.user.token || info.accessToken;
@@ -152,7 +152,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 					this.cachedCommandMessage = null;
 				}
 
-				transfer.send({ event: _const.EVENTS.ONREADY }, window.transfer.to);
+				transfer.send({ event: _const.EVENTS.ONREADY });
 
 				if (config.extMsg) {
 					me.channel.sendText('', { ext: config.extMsg });
@@ -690,7 +690,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				}
 				// 有可能在 messageView 未初始化时调用
 				currentMessageView && currentMessageView.scrollToBottom();
-				transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
+				transfer.send({ event: _const.EVENTS.RECOVERY });
 			},
 			open: function () {
 				var me = this;
@@ -748,15 +748,15 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				if (!utils.isTop) {
 					// 最小化按钮
 					utils.on(document.querySelector('.em-widget-header .btn-min'), 'click', function () {
-						transfer.send({ event: _const.EVENTS.CLOSE }, window.transfer.to);
+						transfer.send({ event: _const.EVENTS.CLOSE });
 					});
 
 					utils.on(easemobim.imBtn, utils.click, function () {
-						transfer.send({ event: _const.EVENTS.SHOW }, window.transfer.to);
+						transfer.send({ event: _const.EVENTS.SHOW });
 					});
 
 					utils.on(document, 'mouseover', function () {
-						transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
+						transfer.send({ event: _const.EVENTS.RECOVERY });
 					});
 				}
 
@@ -782,7 +782,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 								x: e.clientX,
 								y: e.clientY
 							}
-						}, window.transfer.to);
+						});
 						return false;
 					}, false);
 				}
@@ -1072,12 +1072,12 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				}
 
 				if (isChatWindowOpen) {
-					transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
+					transfer.send({ event: _const.EVENTS.RECOVERY });
 				}
 
 				if (utils.isBrowserMinimized() || !isChatWindowOpen) {
 					me.soundReminder();
-					transfer.send({ event: _const.EVENTS.SLIDE }, window.transfer.to);
+					transfer.send({ event: _const.EVENTS.SLIDE });
 					transfer.send({
 						event: _const.EVENTS.NOTIFY,
 						data: {
@@ -1085,7 +1085,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 							title: '新消息',
 							brief: brief
 						}
-					}, window.transfer.to);
+					});
 				}
 			},
 			hideLoading: function(msgId){

@@ -21,7 +21,7 @@ easemobim.imgView = (function (utils, _const) {
 						imgSrc: url,
 						imgFile: window.imgFileList.get(url)
 					}
-				}, window.transfer.to);
+				});
 			}
 		}
 	};
