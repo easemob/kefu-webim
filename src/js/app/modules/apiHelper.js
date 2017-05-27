@@ -247,7 +247,8 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 						resolve(list);
 					}
 					else {
-						reject('unexpect data format.');
+						resolve([]);
+						console.error('unexpect data format: ', list);
 					}
 				}, function(err){
 					reject(err);

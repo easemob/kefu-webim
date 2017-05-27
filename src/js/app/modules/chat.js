@@ -1,17 +1,7 @@
-(function () {
-	easemobim.chat = function (config) {
-		var utils = easemobim.utils;
-		var uikit = easemobim.uikit;
-		var _const = easemobim._const;
-		var api = easemobim.api;
-		var apiHelper = easemobim.apiHelper;
-		var satisfaction = easemobim.satisfaction;
-		var createMessageView = app.createMessageView;
-
-		var recentMsg = [];
+easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, createMessageView, profile) {
+	return function (config) {
 		var isChatWindowOpen;
 		var currentMessageView;
-		var officialAccountList;
 
 		// DOM init
 		var topBar = document.querySelector('.em-widget-header');
@@ -56,14 +46,19 @@
 		//cache current agent
 		config.agentUserId = null;
 
-		//chat window object
 		return {
 			init: function () {
 				var me = this;
 
 				this.channel = easemobim.channel.call(this, config);
 
-				this.conn = this.channel.getConnection();
+				this.conn = new WebIM.connection({
+					url: config.xmppServer,
+					retry: true,
+					isMultiLoginSessions: config.resources,
+					heartBeatWait: _const.HEART_BEAT_INTERVAL
+				});
+
 				//chat window status
 				isChatWindowOpen = true;
 				//init sound reminder
@@ -90,7 +85,10 @@
 					config.isInOfficehours = dutyStatus || config.offDutyType === 'chat';
 
 					// 设置企业信息
-					me.setEnterpriseInfo();
+					me.setAgentProfile({
+						tenantName: config.defaultAgentName,
+						avatar: config.tenantAvatar
+					});
 
 					if (config.isInOfficehours) {
 						// 显示广告条
@@ -160,37 +158,6 @@
 					me.channel.sendText('', { ext: config.extMsg });
 				}
 			},
-			setExt: function (msg) {
-				msg.body.ext = msg.body.ext || {};
-				msg.body.ext.weichat = msg.body.ext.weichat || {};
-
-				//bind skill group
-				if (config.emgroup) {
-					msg.body.ext.weichat.queueName = config.emgroup;
-				}
-
-				//bind visitor
-				if (!_.isEmpty(config.visitor)) {
-					msg.body.ext.weichat.visitor = config.visitor;
-				}
-
-				//bind agent
-				if (config.agentName) {
-					msg.body.ext.weichat.agentUsername = config.agentName;
-				}
-
-				//set language
-				if (config.language) {
-					msg.body.ext.weichat.language = config.language;
-				}
-
-				//set growingio id
-				if (config.grUserId) {
-					msg.body.ext.weichat.visitor = msg.body.ext.weichat.visitor || {};
-					msg.body.ext.weichat.visitor.gr_user_id = config.grUserId;
-				}
-			},
-
 			initAutoGrow: function () {
 				var me = this;
 				var originHeight = doms.textInput.clientHeight;
@@ -278,8 +245,8 @@
 				apiHelper.getExSession().then(function(data) {
 					var serviceSession = data.serviceSession;
 
-					me.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
-					me.hasAgentOnline = data.onlineHumanAgentCount + data.onlineRobotAgentCount > 0;
+					profile.hasHumanAgentCount = data.onlineHumanAgentCount > 0;
+					profile.hasRobotAgentCount = data.onlineRobotAgentCount > 0;
 
 					if (serviceSession) {
 						config.agentUserId = serviceSession.agentUserId;
@@ -291,24 +258,28 @@
 
 					}
 					else {
-						initMessageView([{type: 'SYSTEM', official_account_id: null, img: '123'}], true);
+						initMessageView([], {isNewUser: true});
 						// 仅当会话不存在时获取欢迎语
 						me.getGreeting();
 						me.setToKefuBtn({isOnSession: false});
 					}
 				});
 
-				function initMessageView(collection, isNewUser){
+				function initMessageView(collection, opt){
 					var sessionList;
-
-					// cache offical account list
-					officialAccountList = collection;
+					var officialAccountList = _.isEmpty(collection)
+						? [{
+							type: 'SYSTEM',
+							official_account_id: null,
+							img: config.tenantAvatar || config.defaultAvatar
+						}]
+						: collection;
 
 					// init message view
 					_.each(officialAccountList, function(item){
 						item.messageView = createMessageView({
 							parentContainer: doms.chatWrapper,
-							isNewUser: isNewUser,
+							isNewUser: opt.isNewUser,
 							id: item.official_account_id,
 							chat: me
 						});
@@ -327,14 +298,19 @@
 						utils.on(doms.avatar, 'click', sessionList.show);
 					}
 					else {
-						currentMessageView = _.findWhere(officialAccountList, {type: 'SYSTEM'}).messageView;
+						profile.currentOfficialAccount = _.findWhere(officialAccountList, {type: 'SYSTEM'});
 					}
 
+					profile.systemOfficialAccount = _.findWhere(officialAccountList, {type: 'SYSTEM'});
+					profile.officialAccountList = officialAccountList;
+
 					function changeMessageViewTo(id){
+						var targerOfficialAccountProfile = _.findWhere(officialAccountList, {official_account_id: id});
 						_.each(officialAccountList, function(item){
 							item.messageView.hide();
 						});
-						_.findWhere(officialAccountList, {official_account_id: id}).messageView.show();
+						targerOfficialAccountProfile.messageView.show();
+						profile.currentOfficialAccount = targerOfficialAccountProfile;
 					}
 				}
 			},
@@ -351,12 +327,6 @@
 						referer: document.referrer
 					});
 				}
-			},
-			setEnterpriseInfo: function () {
-				this.setAgentProfile({
-					tenantName: config.defaultAgentName,
-					avatar: config.tenantAvatar
-				});
 			},
 			startToGetAgentStatus: function () {
 				var me = this;
@@ -426,7 +396,7 @@
 						return;
 					}
 					// 当聊天窗口或者浏览器最小化时 不去发轮询请求
-					if(!isChatWindowOpen || utils.isMin()){
+					if(!isChatWindowOpen || utils.isBrowserMinimized()){
 						return;
 					}
 
@@ -766,7 +736,7 @@
 				});
 
 				me.soundReminder = function () {
-					if (!isSlienceEnable && (utils.isMin() || !isChatWindowOpen)) {
+					if (!isSlienceEnable && (utils.isBrowserMinimized() || !isChatWindowOpen)) {
 						play();
 					}
 				};
@@ -864,7 +834,7 @@
 							phone: config.visitor.phone,
 							mail: config.visitor.email,
 							// 	取最近10条消息，最大1000字
-							content: utils.getBrief('\n' + me.getRecentMsg(10), 1000)
+							content: utils.getBrief('\n' + profile.systemOfficialAccount.getRecentMsg(10), 1000)
 						}
 					});
 				});
@@ -1069,82 +1039,8 @@
 					}
 				});
 			},
-			handleEventStatus: function (action, info, robertToHubman) {
-				var res = robertToHubman ? this.hasHumanAgentOnline : this.hasAgentOnline;
-				if (!res) {
-					// 显示无坐席在线
-					// 每次激活只显示一次
-					if (!this.noteShow) {
-						this.noteShow = true;
-						this.appendEventMsg(_const.eventMessageText.NOTE);
-					}
-				}
-
-				if (action === 'reply' && info) {
-
-					if (config.agentUserId) {
-						this.startToGetAgentStatus();
-					}
-
-					this.setAgentProfile({
-						userNickname: info.userNickname,
-						avatar: info.avatar
-					});
-				}
-				else if (action === 'create') { //显示会话创建
-					this.appendEventMsg(_const.eventMessageText.CREATE);
-				}
-				else if (action === 'close') { //显示会话关闭
-					this.appendEventMsg(_const.eventMessageText.CLOSED);
-				}
-				else if (action === 'transferd') { //显示转接到客服
-					this.appendEventMsg(_const.eventMessageText.TRANSFER);
-				}
-				else if (action === 'transfering') { //显示转接中
-					this.appendEventMsg(_const.eventMessageText.TRANSFERING);
-				}
-				else if (action === 'linked') { //接入成功
-					this.appendEventMsg(_const.eventMessageText.LINKED);
-				}
-
-				if (action === 'transferd' || action === 'linked') {
-					//坐席发生改变
-					this.handleAgentStatusChanged(info);
-					this.setToKefuBtn({isOnSession: true});
-				}
-			},
-			//坐席改变更新坐席头像和昵称并且开启获取坐席状态的轮训
-			handleAgentStatusChanged: function (info) {
-				if (!info) return;
-
-				config.agentUserId = info.userId;
-
-				this.updateAgentStatus();
-				this.startToGetAgentStatus();
-
-				//更新头像和昵称
-				this.setAgentProfile({
-					userNickname: info.agentUserNiceName,
-					avatar: info.avatar
-				});
-			},
-			// 系统事件消息上屏
-			appendEventMsg: function (msg) {
-				//如果设置了hideStatus, 不显示转接中排队中等提示
-				if (config.hideStatus) return;
-
-				// 事件消息都显示在系统服务号中
-				this.getMessageViewById(null).appendEventMsg(msg);
-			},
-			//消息上屏
-			appendMsg: function (isReceived, msg, isHistory, date, officialAccountId) {
-				this.getMessageViewById(officialAccountId).appendMsg(isReceived, msg, isHistory, date);
-			},
 			getCurrentMessageView: function(){
-				return currentMessageView;
-			},
-			getMessageViewById: function(id){
-				return currentMessageView;
+				return profile.currentOfficialAccount.messageView;
 			},
 			messagePrompt: function (message) {
 				if (utils.isTop) return;
@@ -1178,7 +1074,7 @@
 					transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
 				}
 
-				if (utils.isMin() || !isChatWindowOpen) {
+				if (utils.isBrowserMinimized() || !isChatWindowOpen) {
 					me.soundReminder();
 					transfer.send({ event: _const.EVENTS.SLIDE }, window.transfer.to);
 					transfer.send({
@@ -1190,10 +1086,6 @@
 						}
 					}, window.transfer.to);
 				}
-			},
-			getRecentMsg: function(maxCount){
-				// 暂时只能获取系统服务号的消息
-				this.getMessageViewById(null).getRecentMsg(maxCount);
 			},
 			hideLoading: function(msgId){
 				utils.addClass(document.getElementById(msgId + '_loading'), 'hide');
@@ -1250,4 +1142,13 @@
 			}
 		};
 	};
-}());
+}(
+	easemobim._const,
+	easemobim.utils,
+	easemobim.uikit,
+	easemobim.api,
+	easemobim.apiHelper,
+	easemobim.satisfaction,
+	app.createMessageView,
+	window.profile
+));

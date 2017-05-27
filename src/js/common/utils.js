@@ -103,6 +103,13 @@
 	easemobim.utils = {
 		isTop: window.top === window.self,
 		isNodeList: _isNodeList,
+		isAndroid: /android/i.test(navigator.useragent),
+		isIOS: /(iPad|iPhone|iPod)/i.test(navigator.userAgent),
+		isMobile: _isMobile,
+		click: _isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click',
+		isBrowserMinimized: function () {
+			return document.visibilityState === 'hidden' || document.hidden;
+		},
 		appendHTMLTo: _appendHtmlToElement,
 		appendHTMLToBody: function(html){
 			return _appendHtmlToElement(document.body, html);
@@ -318,13 +325,6 @@
 			var reg = new RegExp('[?&]' + key + '=([^&]*)(?=&|$)');
 			var matches = reg.exec(location.search);
 			return matches ? matches[1] : '';
-		},
-		isAndroid: /android/i.test(navigator.useragent),
-		isMobile: _isMobile,
-		click: _isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click',
-		// detect if the browser is minimized
-		isMin: function () {
-			return document.visibilityState === 'hidden' || document.hidden;
 		},
 		setStore: function (key, value) {
 			try {

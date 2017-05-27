@@ -57,5 +57,8 @@ easemobim.Polling = (function () {
 	return Polling;
 }());
 
-window.global = {};
+window.profile = {
+	currentOfficialAccount: {},
+	systemOfficialAccount: {}
+};
 window.app = {};

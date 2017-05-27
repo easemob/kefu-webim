@@ -276,7 +276,7 @@
 				// todo：move to handle config (defaultAvatar)
 				// todo: rename to tenantName
 				config.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, config.domain);
-				config.defaultAvatar = config.staticPath ? config.staticPath + '/img/default_avatar.png' : 'static/img/default_avatar.png';
+				config.defaultAvatar = (config.staticPath || 'static') + '/img/default_avatar.png';
 				config.defaultAgentName = targetItem.tenantName;
 				config.logo = config.logo || {enabled: !!targetItem.tenantLogo,url: targetItem.tenantLogo};
 				config.toUser = targetItem.imServiceNumber;
