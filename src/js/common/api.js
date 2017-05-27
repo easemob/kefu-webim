@@ -207,7 +207,7 @@
 			break;
 		case 'getConfig':
 			emitAjax({
-				url: '/v1/webimplugin/settings/visitors/tenants/28026/configs/69b927d5-535d-48b2-b913-ce9b63f09655',
+				url: '/v1/webimplugin/settings/visitors/configs/' + params.configId,
 				msg: msg,
 				type: 'GET',
 				excludeData: true
@@ -352,6 +352,14 @@
 		case 'getRobertGreeting_2':
 			emitAjax({
 				url: '/v1/webimplugin/tenants/robots/welcome',
+				type: 'GET',
+				msg: msg
+			});
+			break;
+		// 会话创建前 获取该会话  是否将于机器人进行
+		case 'getRobertIsOpen':
+			emitAjax({
+				url: '/v1/webimplugin/tenants/robot-ready',
 				type: 'GET',
 				msg: msg
 			});

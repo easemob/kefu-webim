@@ -18,9 +18,7 @@
 	}
 
 	function h5_mode_init(){
-
 		config = {};
-
 		config.tenantId = utils.query('tenantId');
 		config.configId = utils.query('configId');
 		config.offDutyType = utils.query('offDutyType');
@@ -129,15 +127,20 @@
 			// 获取关联，创建访客，调用聊天窗口
 			chatEntry.init(config);
 		}
-		
+
 
 		apiHelper.getTheme().then(function(themeName){
 			var className = _const.themeMap[themeName];
 			className && utils.addClass(document.body, className);
 		});
-	
+
 	}
 	function handleMsgData() {
+		config.channel = config.channel || {};
+		config.ui = config.ui || {};
+		config.toolbar = config.toolbar || {};
+		config.chat = config.chat || {};
+
 		// 用于预览模式
 		if (config.previewObj) {
 			handleConfig(config.previewObj);
@@ -160,6 +163,11 @@
 		//用于config标记是否是来自于坐席端网页配置
 		config.isWebChannelConfig = true;
 
+		config.channel = configJson.channel;
+		config.ui = configJson.ui;
+		config.toolbar = configJson.toolbar;
+		config.chat = configJson.chat;
+
 		config.appKey = configJson.channel.appKey;
 		config.to = configJson.channel.to;
 		config.agentName = configJson.channel.agentName;
@@ -172,16 +180,18 @@
 		config.dragenable = configJson.ui.dragenable;
 		config.hide = configJson.ui.hide;
 		config.logo = configJson.ui.logo;
+		config.notice = configJson.ui.notice;
 		config.themeName = configJson.ui.themeName;
 
-		config.minimum = configJson.toolbar.minimum;		
-		config.notice = configJson.toolbar.notice;
+		config.autoConnect = configJson.toolbar.autoConnect;
+		config.hideKeyboard = configJson.toolbar.hideKeyboard;
+		config.minimum = configJson.toolbar.minimum;
+		config.offDutyWord = configJson.toolbar.offDutyWord;
+		config.offDutyType = configJson.toolbar.offDutyType;
+		config.popupOnInitialized = configJson.toolbar.popupOnInitialized;
 		config.satisfaction = configJson.toolbar.satisfaction;
 		config.soundReminder = configJson.toolbar.soundReminder;
 		config.ticket = configJson.toolbar.ticket;
-		config.hideKeyboard = configJson.toolbar.hideKeyboard;
-		config.offDutyWord = configJson.toolbar.offDutyWord;
-		config.offDutyType = configJson.toolbar.offDutyType;
 
 		config.resources = configJson.chat.resources;
 		config.hideStatus = configJson.chat.hideStatus;
