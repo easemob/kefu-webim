@@ -79,7 +79,11 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 
 		msg.key = this.key;
 
-		if (to) {
+		if (this.to){
+			msg.to = this.to;
+			console.log(this.to);
+		}
+		else if (to) {
 			msg.to = to;
 		}
 

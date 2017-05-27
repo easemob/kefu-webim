@@ -87,7 +87,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 					// 设置企业信息
 					me.setAgentProfile({
 						tenantName: config.defaultAgentName,
-						avatar: config.tenantAvatar
+						avatar: profile.tenantAvatar
 					});
 
 					if (config.isInOfficehours) {
@@ -271,7 +271,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 						? [{
 							type: 'SYSTEM',
 							official_account_id: null,
-							img: config.tenantAvatar || config.defaultAvatar
+							img: null
 						}]
 						: collection;
 
@@ -501,8 +501,9 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				};
 			}()),
 			setAgentProfile: function (info) {
-				var avatarImg = info.avatar ? utils.getAvatarsFullPath(info.avatar, config.domain) : config.tenantAvatar ||
-					config.defaultAvatar;
+				var avatarImg = info.avatar
+					? utils.getAvatarsFullPath(info.avatar, config.domain)
+					: profile.tenantAvatar || profile.defaultAvatar;
 
 				if (info.tenantName) {
 					// 更新企业头像和名称
@@ -1150,5 +1151,5 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 	easemobim.apiHelper,
 	easemobim.satisfaction,
 	app.createMessageView,
-	window.profile
+	app.profile
 ));

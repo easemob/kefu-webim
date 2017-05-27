@@ -1,4 +1,4 @@
-(function (window, undefined) {
+(function (window, profile, undefined) {
 	'use strict';
 
 	var utils = easemobim.utils;
@@ -42,7 +42,6 @@
 		config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket')); //true default
 		config.emgroup = decodeURIComponent(utils.query('emgroup'));
 
-		config.visitor = {};
 		config.user = {};
 		var usernameFromUrl = utils.query('user');
 		var usernameFromCookie = utils.get('root' + config.tenantId + config.emgroup);
@@ -93,11 +92,8 @@
 				easemobim.eventCollector.updateURL(msg.data);
 				break;
 			case _const.EVENTS.INIT_CONFIG:
-				chat = easemobim.chat(msg.data);
 				window.transfer.to = msg.data.parentId;
 				config = msg.data;
-				config.user = config.user || {};
-				config.visitor = config.visitor || {};
 				initCrossOriginIframe();
 				break;
 			default:
@@ -136,12 +132,32 @@
 
 	}
 	function handleMsgData() {
+		// offDutyWord default value
+		config.offDutyWord = config.offDutyWord || '现在是下班时间。';
+
+		// fake patch: 老版本配置的字符串需要decode
+		try {
+			config.offDutyWord = decodeURIComponent(config.offDutyWord);
+		}
+		catch (e){}
+
+		try {
+			config.emgroup = decodeURIComponent(config.emgroup);
+		}
+		catch (e){}
+
+		config.user = config.user || {};
+		config.visitor = config.visitor || {};
+
 		config.channel = {};
 		config.ui = {
 	 		H5Title :{}
 		};
 		config.toolbar = {};
 		config.chat = {};
+
+		profile.defaultAvatar = (config.staticPath || 'static') + '/img/default_avatar.png';
+
 		// 用于预览模式
 		if (config.previewObj) {
 			handleConfig(config.previewObj);
@@ -207,20 +223,6 @@
 				dialogPosition: config.dialogPosition
 			}
 		}, window.transfer.to);
-
-		// offDutyWord default value
-		config.offDutyWord = config.offDutyWord || '现在是下班时间。';
-
-		// fake patch: 老版本配置的字符串需要decode
-		try {
-			config.offDutyWord = decodeURIComponent(config.offDutyWord);
-		}
-		catch (e){}
-
-		try {
-			config.emgroup = decodeURIComponent(config.emgroup);
-		}
-		catch (e){}
 	}
 
 	function initCrossOriginIframe() {
@@ -273,10 +275,8 @@
 				}
 
 				// 获取企业头像和名称
-				// todo：move to handle config (defaultAvatar)
 				// todo: rename to tenantName
 				config.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, config.domain);
-				config.defaultAvatar = (config.staticPath || 'static') + '/img/default_avatar.png';
 				config.defaultAgentName = targetItem.tenantName;
 				config.logo = config.logo || {enabled: !!targetItem.tenantLogo,url: targetItem.tenantLogo};
 				config.toUser = targetItem.imServiceNumber;
@@ -465,4 +465,8 @@
 			chat.show();
 		});
 	});
-}(window, undefined));
+}(
+	window,
+	app.profile,
+	undefined
+));

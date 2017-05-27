@@ -799,5 +799,5 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 	easemobim.api,
 	easemobim.apiHelper,
 	easemobim.satisfaction,
-	window.profile
+	app.profile
 ));

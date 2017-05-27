@@ -1,4 +1,4 @@
-app.sessionList = (function(utils, uikit){
+app.sessionList = (function(utils, uikit, profile){
 	var EMPTY_FUNCTION = function(){};
 	var dialog;
 	var listDom;
@@ -48,7 +48,7 @@ app.sessionList = (function(utils, uikit){
 		listDom.innerHTML = _.map(serviceList, function(item){
 			var name = item.name;
 			var id = item.official_account_id;
-			var avatar = item.img;
+			var avatar = item.img || profile.tenantAvatar || profile.defaultAvatar;
 
 			return [
 				'<li data-id="' + id + '">',
@@ -69,4 +69,4 @@ app.sessionList = (function(utils, uikit){
 			return this;
 		}
 	};
-}(easemobim.utils, easemobim.uikit));
+}(easemobim.utils, easemobim.uikit, app.profile));
