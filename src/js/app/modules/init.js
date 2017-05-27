@@ -136,11 +136,12 @@
 
 	}
 	function handleMsgData() {
-		config.channel = config.channel || {};
-		config.ui = config.ui || {};
-		config.toolbar = config.toolbar || {};
-		config.chat = config.chat || {};
-
+		config.channel = {};
+		config.ui = {
+	 		H5Title :{}
+		};
+		config.toolbar = {};
+		config.chat = {};
 		// 用于预览模式
 		if (config.previewObj) {
 			handleConfig(config.previewObj);
