@@ -38,6 +38,7 @@
 			sendFileBtn: editorView.querySelector('.em-widget-file'),
 			sendBtn: editorView.querySelector('.em-widget-send'),
 			satisfaction: editorView.querySelector('.em-widget-satisfaction'),
+			toKefuBtn: editorView.querySelector('.em-widget-to-kefu'),
 			textInput: editorView.querySelector('.em-widget-textarea'),
 			noteBtn: editorView.querySelector('.em-widget-note'),
 
@@ -286,11 +287,14 @@
 						me.startToGetAgentStatus();
 						me.sendAttribute(data);
 						apiHelper.getOfficalAccounts().then(initMessageView);
+						me.setToKefuBtn({isOnSession: true});
+
 					}
 					else {
 						initMessageView([{type: 'SYSTEM', official_account_id: null, img: '123'}], true);
 						// 仅当会话不存在时获取欢迎语
 						me.getGreeting();
+						me.setToKefuBtn({isOnSession: false});
 					}
 				});
 
@@ -553,12 +557,35 @@
 				this.currentAvatar = avatarImg;
 			},
 			setLogo: function () {
-				if(!config.logo.enabled) return;
+				if (!config.logo.enabled) return;
 				var logoImgWapper = document.querySelector('.em-widget-tenant-logo');
 				var logoImg = logoImgWapper.querySelector('img');
-				
+
 				utils.removeClass(logoImgWapper, 'hide');
-				logoImg.src = config.logo.url;			
+				logoImg.src = config.logo.url;
+			},
+			setToKefuBtn: function(flagObj){
+				if (!config.toolbar.transferToKefu) return;
+				if (flagObj.isOnSession){
+					apiHelper.getCurrentServiceSession().then(function (res) {
+						if(res && res.agentUserType === 6){
+							utils.removeClass(doms.toKefuBtn, 'hide');
+						}
+						else{
+							utils.addClass(doms.toKefuBtn, 'hide');
+						}
+					})
+				}
+				else{
+					apiHelper.getRobertIsOpen().then(function (res) {
+						if (res){
+							utils.removeClass(doms.toKefuBtn, 'hide');
+						}
+						else {
+							utils.addClass(doms.toKefuBtn, 'hide');
+						}
+					})
+				}
 			},
 			setNotice: function () {
 				var me = this;
@@ -568,7 +595,7 @@
 				apiHelper.getNotice().then(function(notice){
 					if(!notice.enabled) return;
 					var slogan = notice.content;
-					
+
 					// 设置信息栏内容
 					noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
 					// 显示信息栏
@@ -583,7 +610,7 @@
 							utils.removeClass(doms.imChat, 'has-tip');
 						}
 					);
-					
+
 				});
 			},
 			initEmoji: function () {
@@ -998,6 +1025,12 @@
 					easemobim.leaveMessage();
 				});
 
+				// 人工客服接起会话
+				utils.on(doms.toKefuBtn, 'click', function () {
+					me.channel.sendTransferToKf();
+					utils.addClass(doms.toKefuBtn, 'hide');
+				});
+
 				// 满意度评价
 				utils.on(doms.satisfaction, 'click', function () {
 					doms.textInput.blur();
@@ -1077,6 +1110,7 @@
 				if (action === 'transferd' || action === 'linked') {
 					//坐席发生改变
 					this.handleAgentStatusChanged(info);
+					this.setToKefuBtn({isOnSession: true});
 				}
 			},
 			//坐席改变更新坐席头像和昵称并且开启获取坐席状态的轮训
