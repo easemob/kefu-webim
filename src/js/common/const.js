@@ -91,6 +91,10 @@
 			'agentInputStateEnable'
 		],
 
+		ERRORS: {
+			VISITOR_DOES_NOT_EXIST: 'visitor does not exist.'
+		},
+
 		// 上传文件大小限制
 		UPLOAD_FILESIZE_LIMIT: 1024 * 1024 * 10,
 

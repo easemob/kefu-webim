@@ -108,6 +108,7 @@
 			});
 			break;
 		case 'getExSession':
+			// deprecated
 			emitAjax({
 				url: '/v1/webimplugin/visitors/' + params.id
 					+ '/schedule-data-ex?techChannelInfo=' + techChannelInfo
@@ -368,7 +369,7 @@
 			emitAjax({
 				url: '/v1/webimplugin/sessions/' + params.serviceSessionId
 				+ '/agent-input-state?tenantId=' + tenantId
-				+ '&orgName=' + params.orgName + '&appName='+ params.appName 
+				+ '&orgName=' + params.orgName + '&appName='+ params.appName
 				+ '&userName=' + params.username + '&token=' + params.token,
 				msg: msg,
 				type: 'GET',
@@ -438,6 +439,22 @@
 					+ '&appName=' + params.appName
 					+ '&userName=' + params.userName
 					+ '&token=' + params.token,
+				msg: msg,
+				type: 'GET',
+				excludeData: true
+			});
+			break;
+		case 'getExSession_2':
+			emitAjax({
+				url: '/v1/webimplugin/visitors/' + params.username
+					+ '/schedule-data-ex2'
+					+ '?techChannelInfo=' + techChannelInfo
+					+ '&channelType=' + params.channelType
+					+ '&originType=' + params.originType
+					+ '&channelId=' + params.channelId
+					+ '&queueName=' + params.queueName
+					+ '&agentUsername=' + params.agentUsername
+					+ '&tenantId=' + params.tenantId,
 				msg: msg,
 				type: 'GET',
 				excludeData: true

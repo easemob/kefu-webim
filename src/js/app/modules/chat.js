@@ -85,10 +85,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 					config.isInOfficehours = dutyStatus || config.offDutyType === 'chat';
 
 					// 设置企业信息
-					me.setAgentProfile({
-						tenantName: config.defaultAgentName,
-						avatar: profile.tenantAvatar
-					});
+					me.setEnterpriseInfo();
 
 					if (config.isInOfficehours) {
 						// 显示广告条
@@ -106,7 +103,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 						// 设置信息栏
 						me.setNotice();
 
-						me.initSession();
+						me.initMessageView();
 
 						// 获取坐席昵称设置
 						me.getNickNameOption();
@@ -239,33 +236,21 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 					config.nickNameOption = utils.getDataByPath(msg, 'data.0.optionValue') === 'true';
 				});
 			},
-			initSession: function(){
-				var me = this;
+			initMessageView: function(){
+				me = this;
 
-				apiHelper.getExSession().then(function(data) {
-					var serviceSession = data.serviceSession;
-
-					profile.hasHumanAgentCount = data.onlineHumanAgentCount > 0;
-					profile.hasRobotAgentCount = data.onlineRobotAgentCount > 0;
-
-					if (serviceSession) {
-						config.agentUserId = serviceSession.agentUserId;
-						// 确保正在进行中的会话，刷新后还会继续轮询坐席状态
-						me.startToGetAgentStatus();
-						me.sendAttribute(data);
-						apiHelper.getOfficalAccounts().then(initMessageView);
-						me.setToKefuBtn({isOnSession: true});
-
+				apiHelper.getOfficalAccounts().then(initMessageView, function(err){
+					// 未创建会话时初始化默认服务号
+					if (err === _const.ERRORS.VISITOR_DOES_NOT_EXIST){
+						initMessageView([], {isNewUser: true});
 					}
 					else {
-						initMessageView([], {isNewUser: true});
-						// 仅当会话不存在时获取欢迎语
-						me.getGreeting();
-						me.setToKefuBtn({isOnSession: false});
+						throw err;
 					}
 				});
 
 				function initMessageView(collection, opt){
+					var option = opt || {};
 					var sessionList;
 					var officialAccountList = _.isEmpty(collection)
 						? [{
@@ -279,7 +264,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 					_.each(officialAccountList, function(item){
 						item.messageView = createMessageView({
 							parentContainer: doms.chatWrapper,
-							isNewUser: opt.isNewUser,
+							isNewUser: option.isNewUser,
 							id: item.official_account_id,
 							chat: me
 						});
@@ -312,7 +297,30 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 						targerOfficialAccountProfile.messageView.show();
 						profile.currentOfficialAccount = targerOfficialAccountProfile;
 					}
+					me.initSession();
 				}
+			},
+			initSession: function(){
+				var me = this;
+
+				apiHelper.getExSession().then(function(data) {
+					var serviceSession = data.serviceSession;
+
+					profile.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
+					profile.hasRobotAgentOnline = data.onlineRobotAgentCount > 0;
+
+					if (serviceSession) {
+						config.agentUserId = serviceSession.agentUserId;
+						// 确保正在进行中的会话，刷新后还会继续轮询坐席状态
+						me.startToGetAgentStatus();
+						me.sendAttribute(data);
+					}
+					else {
+						// 仅当会话不存在时获取欢迎语
+						me.getGreeting();
+					}
+					me.setToKefuBtn({isSessionOpen: !!serviceSession});
+				});
 			},
 			sendAttribute: function (data) {
 				var visitorUserId = utils.getDataByPath(data, 'serviceSession.visitorUser.userId');
@@ -327,6 +335,12 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 						referer: document.referrer
 					});
 				}
+			},
+			setEnterpriseInfo: function () {
+				this.setAgentProfile({
+					tenantName: config.defaultAgentName,
+					avatar: config.tenantAvatar
+				});
 			},
 			startToGetAgentStatus: function () {
 				var me = this;
@@ -537,25 +551,16 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 			},
 			setToKefuBtn: function(flagObj){
 				if (!config.toolbar.transferToKefu) return;
-				if (flagObj.isOnSession){
+				if (flagObj.isSessionOpen){
 					apiHelper.getCurrentServiceSession().then(function (res) {
-						if(res && res.agentUserType === 6){
-							utils.removeClass(doms.toKefuBtn, 'hide');
-						}
-						else{
-							utils.addClass(doms.toKefuBtn, 'hide');
-						}
-					})
+						var isRobotAgent = res && res.agentUserType === 6;
+						utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotAgent);
+					});
 				}
 				else{
-					apiHelper.getRobertIsOpen().then(function (res) {
-						if (res){
-							utils.removeClass(doms.toKefuBtn, 'hide');
-						}
-						else {
-							utils.addClass(doms.toKefuBtn, 'hide');
-						}
-					})
+					apiHelper.getRobertIsOpen().then(function (isRobotEnable) {
+						utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotEnable);
+					});
 				}
 			},
 			setNotice: function () {
@@ -1087,13 +1092,6 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 						}
 					});
 				}
-			},
-			hideLoading: function(msgId){
-				utils.addClass(document.getElementById(msgId + '_loading'), 'hide');
-			},
-			showFailed :function (msgId) {
-				this.hideLoading(msgId);
-				utils.removeClass(document.getElementById(msgId + '_failed'), 'hide');
 			},
 			initUI: function(){
 				(utils.isTop || !config.minimum) && utils.removeClass(doms.imChat, 'hide');

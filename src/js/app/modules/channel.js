@@ -61,7 +61,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 
 				// 空文本消息不上屏
 				if (!message) return;
-				_appendMsg(false, msg, false);
+				_appendMsg(false, msg, false, null, null);
 
 				_promptNoAgentOnlineIfNeeded({
 					hasTransferedToKefu: message === '转人工' || message === '转人工客服'
@@ -121,7 +121,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				});
 				_setExt(msg);
 				_appendAck(msg, id);
-				_appendMsg(false, msg, false);
+				_appendMsg(false, msg, false, null, null);
 				me.conn.send(msg.body);
 				sendMsgDict.set(id, msg);
 				_detectUploadImgMsgByApi(id, fileMsg.data);
@@ -156,7 +156,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					}
 				});
 				_setExt(msg);
-				_appendMsg(false, msg, false);
+				_appendMsg(false, msg, false, null, null);
 				me.conn.send(msg.body);
 			},
 
@@ -166,7 +166,8 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				var title;
 				var inviteId;
 				var serviceSessionId;
-				var angentInfo;
+				var agentInfo;
+				var officialAccountId = utils.getDataByPath(msg, 'ext.weichat.official_account.official_account_id');
 				var eventName = utils.getDataByPath(msg, 'ext.weichat.event.eventName');
 				var eventObj = utils.getDataByPath(msg, 'ext.weichat.event.eventObj');
 				var msgId = msg.msgId || utils.getDataByPath(msg, 'ext.weichat.msgId');
@@ -402,7 +403,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				// 	给收到的消息加id，用于撤回消息
 				message.id = msgId;
 				// 消息上屏
-				_appendMsg(true, message, isHistory, msg.timestamp);
+				_appendMsg(true, message, isHistory, msg.timestamp, officialAccountId);
 
 				if (!isHistory) {
 					if (!msg.noprompt) {
@@ -501,6 +502,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				var textMsg = _getTextValue(msgBody) || msg.msg;
 				var msgId = element.msgId;
 				var msgObj;
+				var officialAccountId = utils.getDataByPath(element, 'body.ext.weichat.official_account.official_account_id');
 
 				// 给图片消息或附件消息的url拼上hostname
 				(msg.url && !/^https?/.test(msg.url)) && (msg.url = location.protocol + config.domain + msg.url);
@@ -520,8 +522,9 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 							msg: textMsg,
 							file: msg
 						});
-						_appendMsg(false, msgObj, true, timestamp);
-						me.hideLoading(msgId);
+						msgObj.body.ext = msgBody.ext;
+						_appendMsg(false, msgObj, true, timestamp, officialAccountId);
+						_hideLoading(msgId);
 					}
 				}
 				else {
@@ -538,6 +541,15 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				me.receiveMsgTimer = setInterval(_receiveMsgChannel, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
 			}
 		};
+
+		function _hideLoading(msgId){
+			utils.addClass(document.getElementById(msgId + '_loading'), 'hide');
+		}
+
+		function _showFailed(msgId) {
+			_hideLoading(msgId);
+			utils.removeClass(document.getElementById(msgId + '_failed'), 'hide');
+		}
 
 		function _appendAck(msg, id) {
 			msg.body.ext.weichat.msg_id_for_ack = id;
@@ -632,7 +644,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 
 			config.agentUserId = info.userId;
 
-			me.setToKefuBtn({isOnSession: true});
+			me.setToKefuBtn({isSessionOpen: true});
 			me.updateAgentStatus();
 
 			//更新头像和昵称
@@ -643,9 +655,13 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 		}
 
 		function _appendMsg(isReceived, msg, isHistory, date, officialAccountId) {
-			var targetOfficialAccount = _.findWhere(profile.officialAccountList, {})
-			// todo:
-			profile.currentOfficialAccount.messageView.appendMsg(isReceived, msg, isHistory, date);
+			var targetOfficialAccount = _.findWhere(profile.officialAccountList, {official_account_id: officialAccountId});
+			if (!targetOfficialAccount){
+				// 没有id的默认使用系统服务号
+				targetOfficialAccount = profile.systemOfficialAccount;
+				officialAccountId !== null && console.warn('can not find target official account id: ', officialAccountId);
+			}
+			targetOfficialAccount.messageView.appendMsg(isReceived, msg, isHistory, date);
 		}
 
 		function _getTextValue(msg) {
@@ -706,7 +722,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					_sendMsgChannle(id, --count);
 				}
 				else {
-					me.showFailed(id);
+					_showFailed(id);
 				}
 			});
 		}
@@ -737,7 +753,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					_uploadImgMsgChannle(msg, file, --count);
 				}
 				else {
-					me.showFailed(id);
+					_showFailed(id);
 				}
 			}
 			// token 存在时会自动从缓存取

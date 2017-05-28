@@ -89,7 +89,7 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 				});
 			}
 		});
-	}	
+	}
 	function getTheme(){
 		return new Promise(function(resolve, reject){
 			if (config.isWebChannelConfig){
@@ -118,7 +118,7 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 				reject(err);
 			});
 
-			
+
 		});
 	}
 	function getProjectId(){
@@ -215,7 +215,7 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 							resolve(visitorId);
 						}
 						else {
-							reject('visitor id is not exist.');
+							reject(_const.ERRORS.VISITOR_DOES_NOT_EXIST);
 						}
 					}, function(err){
 						reject(err);
@@ -253,6 +253,10 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 				}, function(err){
 					reject(err);
 				});
+			})
+			// 未创建会话时 visitor不存在，此时 getVisitorId 会reject 特定error，需要捕获此错误
+			['catch'](function(err){
+				reject(err);
 			});
 		});
 	}
@@ -424,6 +428,26 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		});
 	}
 
+	// function getExSession(){
+	// 	return new Promise(function(resolve, reject){
+	// 		api('getExSession_2', {
+	// 			username: config.user.username,
+	// 			orgName: config.orgName,
+	// 			appName: config.appName,
+	// 			imServiceNumber: config.toUser,
+	// 			channelType: 'easemob',
+	// 			originType: 'webim',
+	// 			channelId: config.channelId,
+	// 			queueName: config.emgroup,
+	// 			agentUsername: config.agentName,
+	// 			tenantId: config.tenantId
+	// 		}, function (msg){
+	// 			resolve(msg.data || {});
+	// 		}, function (err){
+	// 			reject(err);
+	// 		});
+	// 	});
+	// }
 	function getExSession(){
 		return new Promise(function(resolve, reject){
 			api('getExSession', {
