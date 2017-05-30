@@ -26,19 +26,6 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					}
 				}
 			},
-			sendSatisfaction: function (level, content, session, invite) {
-				_obj.sendText('', {ext: {
-					weichat: {
-						ctrlType: 'enquiry',
-						ctrlArgs: {
-							inviteId: invite || '',
-							serviceSessionId: session || '',
-							detail: content,
-							summary: level
-						}
-					}
-				}});
-			},
 			sendText: function (message, ext) {
 				var id = utils.uuid();
 				var msg = new WebIM.message.txt(id);
@@ -184,7 +171,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					// 没有msgId忽略，继续处理（KEFU-ACK消息没有msgId）
 				}
 
-				//绑定访客的情况有可能会收到多关联的消息，不是自己的不收
+				// 绑定访客的情况有可能会收到多关联的消息，不是自己的不收
 				if (!isHistory && msg.from && msg.from.toLowerCase() != config.toUser.toLowerCase() && !msg.noprompt) {
 					return;
 				}

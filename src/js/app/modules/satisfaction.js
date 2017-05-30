@@ -32,7 +32,7 @@ easemobim.satisfaction = (function(utils, uikit){
 				// 防止对话框关闭
 				return true;
 			}
-			chat.channel.sendSatisfaction(level, msg.value, session, invite);
+			_sendSatisfaction(level, msg.value, session, invite);
 
 			_clear();
 			uikit.showSuccess('提交成功');
@@ -57,6 +57,20 @@ easemobim.satisfaction = (function(utils, uikit){
 		msg.value = '';
 		// clear stars
 		utils.removeClass(starList, 'sel');
+	}
+
+	function _sendSatisfaction(level, content, session, invite) {
+		chat.channel.sendText('', {ext: {
+			weichat: {
+				ctrlType: 'enquiry',
+				ctrlArgs: {
+					inviteId: invite || '',
+					serviceSessionId: session || '',
+					detail: content,
+					summary: level
+				}
+			}
+		}});
 	}
 
 	return {

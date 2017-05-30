@@ -38,7 +38,6 @@
 		config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
 		config.domain = config.domain || '//' + location.host;
 		config.offDutyWord = decodeURIComponent(utils.query('offDutyWord'));
-		config.language = utils.query('language') || 'zh_CN';
 		config.ticket = utils.query('ticket') === '' ? true : utils.convertFalse(utils.query('ticket')); //true default
 		config.emgroup = decodeURIComponent(utils.query('emgroup'));
 
