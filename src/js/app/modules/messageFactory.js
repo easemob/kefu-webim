@@ -1,4 +1,4 @@
-easemobim.genDomFromMsg = (function (window, _const) {
+easemobim.genDomFromMsg = (function (window, _const, utils, profile) {
 	var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : '<img src="//kefu.easemob.com/webim/static/img/loading.gif" width="20" style="margin-top:10px;"/>';
 	var parseLink = WebIM.utils.parseLink;
 	var parseEmoji = WebIM.utils.parseEmoji;
@@ -33,7 +33,7 @@ easemobim.genDomFromMsg = (function (window, _const) {
 
 	function genMsgContent(msg) {
 		var type = msg.type;
-		var value = msg.value;
+		var value = msg.data;
 		var html = '';
 		switch (type) {
 		case 'txt':
@@ -66,37 +66,29 @@ easemobim.genDomFromMsg = (function (window, _const) {
 			}
 			break;
 		case 'img':
-			if (value) {
-				// todo: remove a
-				if(value.data){
-					imgFileList.set(value.url, value.data);
-				}
-				html = '<a href="javascript:;"><img class="em-widget-imgview" src="'
-					+ value.url + '"/></a>';
+			if(msg.data){
+				// todo: move this to sendImg
+				// 如果是自己发出去的图片则缓存File对象，用于全屏显示图片
+				imgFileList.set(msg.url, msg.data);
 			}
-			else {
-				html = '<i class="icon-broken-pic"></i>';
-			}
+			// todo: remove a
+			html = '<a href="javascript:;"><img class="em-widget-imgview" src="'
+				+ msg.url + '"/></a>';
 			break;
 		case 'list':
-			html = "<p>" + parseLink(_encode(value)) + "</p>" + msg.listDom;
+			html = "<p>" + parseLink(_encode(value)) + "</p>" + msg.list;
 			break;
 		case 'file':
 			// 历史会话中 filesize = 0
 			// 访客端发文件消息 filesize = undefined
 			// 需要过滤这两种情况，暂时只显示坐席发过来的文件大小
-			if (value) {
-				html = '<i class="icon-attachment container-icon-attachment"></i>'
-					+ '<span class="file-info">'
-					+ '<p class="filename">' + msg.filename + '</p>'
-					+ '<p class="filesize">' + easemobim.utils.filesizeFormat(value.filesize) + '</p>'
-					+ '</span>'
-					+ "<a target='_blank' href='" + value.url + "' class='icon-download container-icon-download' title='"
-					+ msg.filename + "'></a>";
-			}
-			else {
-				html = '<i class="icon-broken-pic"></i>';
-			}
+			html = '<i class="icon-attachment container-icon-attachment"></i>'
+				+ '<span class="file-info">'
+				+ '<p class="filename">' + msg.filename + '</p>'
+				+ '<p class="filesize">' + easemobim.utils.filesizeFormat(msg.flie_length) + '</p>'
+				+ '</span>'
+				+ "<a target='_blank' href='" + msg.url + "' class='icon-download container-icon-download' title='"
+				+ msg.filename + "'></a>";
 			break;
 		default:
 			break;
@@ -109,9 +101,9 @@ easemobim.genDomFromMsg = (function (window, _const) {
 		var id = msg.id;
 		var type = msg.type;
 		var html = '';
-		var stack = [];
 		var dom = document.createElement('div');
 		var direction = isReceived ? 'left' : 'right';
+		var avatar = utils.getDataByPath(msg, 'ext.weichat.official_account.img') || profile.defaultAvatar;
 
 		// 设置消息气泡显示在左侧还是右侧
 		// .em-widget-right, .em-widget-left used here
@@ -120,6 +112,11 @@ easemobim.genDomFromMsg = (function (window, _const) {
 		// 给消息追加id，用于失败重发消息或撤回消息
 		if (id) {
 			dom.id = id;
+		}
+
+		// 坐席消息头像
+		if (direction === 'left'){
+			html += '<img class="avatar" src="' + avatar + '">';
 		}
 
 		// wrapper开始
@@ -147,28 +144,14 @@ easemobim.genDomFromMsg = (function (window, _const) {
 		html += genMsgContent(msg);
 
 		// container 结束
-		stack.push('</div>');
+		html += '</div>';
 
 		// wrapper结尾
-		stack.push('</div>');
+		html += '</div>';
 
-		// 追加标签
-		html += _.reduceRight(stack, function (a, b) { return a + b; }, '');
 		dom.innerHTML = html;
 		return dom;
 	}
 
-	// 按钮列表消息，机器人回复，满意度调查
-	WebIM.message.list = function (id) {
-		this.id = id;
-		this.type = 'list';
-		this.brief = '';
-		this.body = {};
-	};
-	WebIM.message.list.prototype.set = function (opt) {
-		this.value = opt.value;
-		this.listDom = opt.list;
-	};
-
 	return genDomFromMsg;
-}(window, easemobim._const));
+}(window, easemobim._const, easemobim.utils, app.profile));

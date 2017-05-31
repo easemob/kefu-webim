@@ -24,41 +24,6 @@
 		zoom: 1;
 		overflow: hidden;
 	}
-
-	.em-btn-list {
-		min-width: 190px;
-		position: relative;
-		border-radius: 6px;
-		margin: 4px 0;
-		text-align: left;
-		clear: both;
-		&:after {
-			content: '';
-			clear: both;
-		}
-		button {
-			font-size: 13px;
-			display: block;
-			width: 95%;
-			padding: 5px;
-			min-height: 30px;
-			text-align: left;
-			color: #000;
-			background-color: white;
-			border-radius: 2px;
-			border: 1px solid #e5e5e5;
-			cursor: pointer;
-			margin: 4px auto;
-			word-break: break-word;
-			white-space: pre-wrap;
-			&:hover {
-				color: white;
-			}
-			&.white {
-				color: #fff;
-			}
-		}
-	}
 }
 
 .em-widget-left,
@@ -72,150 +37,58 @@
 }
 
 .em-widget-left {
-	.em-widget-msg-container {
-		background-color: white;
+	margin-bottom: -22px;
+	> img.avatar {
+		width: 30px;
+		height: 30px;
+		margin-left: 10px;
+		float: left;
+		border-radius: 50%;
 	}
 	.em-widget-msg-wrapper {
-		float: left;
-		margin-left: 12px;
+		clear: both;
+		left: 50px;
+		top: -30px;
+		.icon-corner-left {
+			z-index: 1;
+			position: absolute;
+			top: 5px;
+			left: -17px;
+			width: 30px;
+			height: 30px;
+			color: white;
+			text-shadow: -1px 0 0 #e5e5e5;
+		}
+		.em-widget-msg-container {
+			background-color: white;
+		}
 	}
 }
 
 .em-widget-right {
-	.em-widget-msg-container {
-		background-color: #e3ecfc;
-		float: right;
-		border: 1px solid #c3cbd9;
-	}
 	.em-widget-msg-wrapper {
 		float: right;
 		margin-right: 12px;
-	}
-}
-
-.icon-corner-left {
-	z-index: 1;
-	position: absolute;
-	top: 5px;
-	left: -17px;
-	width: 30px;
-	height: 30px;
-	color: white;
-	text-shadow: -1px 0 0 #e5e5e5;
-}
-
-.icon-corner-right {
-	z-index: 1;
-	position: absolute;
-	top: 5px;
-	right: -17px;
-	width: 30px;
-	height: 30px;
-	color: #e3ecfc;
-	text-shadow: 1px 0 0 #c3cbd9;
-}
-
-.em-widget-msg-container {
-	display: inline-block;
-	border-radius: 6px;
-	max-width: 190px;
-	padding: 10px;
-	min-width: 20px;
-	min-height: 20px;
-	vertical-align: middle;
-	text-align: left;
-	font-size: 13px;
-	border: 1px solid #e5e5e5;
-	// 图片消息、表情
-	img {
-		border-radius: 2px;
-		max-width: 190px;
-		word-wrap: break-word;
-		vertical-align: middle;
-	}
-	// 坏掉的图片
-	.icon-broken-pic {
-		color: #999;
-	}
-	// 文本消息
-	pre {
-		word-break: break-word;
-		white-space: pre-wrap;
-	}
-	// 文件消息
-	&.em-widget-msg-file {
-		position: relative;
-		padding: 0;
-		max-width: initial;
-		width: 200px;
-		height: 60px;
-		overflow: hidden;
-		.container-icon-attachment {
-			display: inline-block;
-			width: 52px;
-			height: 52px;
-			text-align: center;
-			float: left;
-			background-color: rgb(58, 164, 221);
-			border-radius: 2px;
-			margin: 4px;
-			color: #fff;
-			&:before {
-				font-size: 50px;
-				line-height: 50px;
-			}
+		.icon-corner-right {
+			z-index: 1;
+			position: absolute;
+			top: 5px;
+			right: -17px;
+			width: 30px;
+			height: 30px;
+			color: #e3ecfc;
+			text-shadow: 1px 0 0 #c3cbd9;
 		}
-		.file-info {
-			display: inline-block;
-			overflow: hidden;
-			float: left;
-			width: 80px;
-			margin: 10px;
-			font-family: Arial, Helvetica, sans-serif;
-			p {
-				vertical-align: middle;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-				width: 100%;
-				overflow: hidden;
-				&.filename {
-					color: rgb(0, 0, 0);
-					font-size: 14px;
-				}
-				&.filesize {
-					line-height: 20px;
-					color: rgb(165, 165, 165);
-					font-size: 12px;
-				}
-			}
-		}
-		.container-icon-download {
-			color: rgb(165, 165, 165);
-			display: inline-block;
-			text-decoration: none;
+		.em-widget-msg-container {
+			background-color: #e3ecfc;
 			float: right;
-			text-align: center;
-			cursor: pointer;
-			line-height: 20px;
-			margin-top: 15px;
-			margin-right: 10px;
-			&:before {
-				font-size: 20px;
-			}
-		}
-	}
-	// 菜单消息
-	&.em-widget-msg-list {
-		overflow: hidden;
-		padding: 0;
-		background-color: rgb(251, 251, 251);
-		>p {
-			padding: 10px;
-			background-color: white;
-			border-bottom: 1px solid rgb(229, 229, 229);
+			border: 1px solid #c3cbd9;
 		}
 	}
 }
+
+
+
 
 .em-widget-msg-wrapper {
 	position: relative;
@@ -263,6 +136,141 @@
 			vertical-align: top;
 			display: inline-block;
 			color: #999;
+		}
+	}
+	.em-widget-msg-container {
+		display: inline-block;
+		border-radius: 6px;
+		max-width: 190px;
+		padding: 10px;
+		min-width: 20px;
+		min-height: 20px;
+		vertical-align: middle;
+		text-align: left;
+		font-size: 13px;
+		border: 1px solid #e5e5e5;
+		// 图片消息、表情
+		img {
+			border-radius: 2px;
+			max-width: 190px;
+			word-wrap: break-word;
+			vertical-align: middle;
+		}
+		// 坏掉的图片
+		.icon-broken-pic {
+			color: #999;
+		}
+		// 文本消息
+		pre {
+			word-break: break-word;
+			white-space: pre-wrap;
+		}
+		// 文件消息
+		&.em-widget-msg-file {
+			position: relative;
+			padding: 0;
+			max-width: initial;
+			width: 200px;
+			height: 60px;
+			overflow: hidden;
+			.container-icon-attachment {
+				display: inline-block;
+				width: 52px;
+				height: 52px;
+				text-align: center;
+				float: left;
+				background-color: rgb(58, 164, 221);
+				border-radius: 2px;
+				margin: 4px;
+				color: #fff;
+				&:before {
+					font-size: 50px;
+					line-height: 50px;
+				}
+			}
+			.file-info {
+				display: inline-block;
+				overflow: hidden;
+				float: left;
+				width: 80px;
+				margin: 10px;
+				font-family: Arial, Helvetica, sans-serif;
+				p {
+					vertical-align: middle;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					width: 100%;
+					overflow: hidden;
+					&.filename {
+						color: rgb(0, 0, 0);
+						font-size: 14px;
+					}
+					&.filesize {
+						line-height: 20px;
+						color: rgb(165, 165, 165);
+						font-size: 12px;
+					}
+				}
+			}
+			.container-icon-download {
+				color: rgb(165, 165, 165);
+				display: inline-block;
+				text-decoration: none;
+				float: right;
+				text-align: center;
+				cursor: pointer;
+				line-height: 20px;
+				margin-top: 15px;
+				margin-right: 10px;
+				&:before {
+					font-size: 20px;
+				}
+			}
+		}
+		// 菜单消息
+		&.em-widget-msg-list {
+			overflow: hidden;
+			padding: 0;
+			background-color: rgb(251, 251, 251);
+			>p {
+				padding: 10px;
+				background-color: white;
+				border-bottom: 1px solid rgb(229, 229, 229);
+			}
+			.em-btn-list {
+				min-width: 190px;
+				position: relative;
+				border-radius: 6px;
+				margin: 4px 0;
+				text-align: left;
+				clear: both;
+				&:after {
+					content: '';
+					clear: both;
+				}
+				button {
+					font-size: 13px;
+					display: block;
+					width: 95%;
+					padding: 5px;
+					min-height: 30px;
+					text-align: left;
+					color: #000;
+					background-color: white;
+					border-radius: 2px;
+					border: 1px solid #e5e5e5;
+					cursor: pointer;
+					margin: 4px auto;
+					word-break: break-word;
+					white-space: pre-wrap;
+					&:hover {
+						color: white;
+					}
+					&.white {
+						color: #fff;
+					}
+				}
+			}
 		}
 	}
 }

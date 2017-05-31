@@ -263,8 +263,8 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 			if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'inviteEnquiry') {
 				type = 'satisfactionEvaluation';
 			}
-			//机器人自定义菜单
-			else if (utils.getDataByPath(msg, 'ext.msgtype.choice')) {
+			// 机器人自定义菜单，仅收到的此类消息显示为菜单，（发出的渲染为文本消息）
+			else if (isReceived && utils.getDataByPath(msg, 'ext.msgtype.choice')) {
 				type = 'robotList';
 			}
 			//机器人转人工
@@ -284,9 +284,12 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 			switch (type) {
 			case 'txt':
 			case 'emoji':
-				message = new WebIM.message.txt(msgId);
-				message.set({ msg: _getTextValue(msg) });
+			case 'img':
+			case 'file':
+				message = msg;
+				message.type = type;
 				break;
+
 			case 'cmd':
 				var action = msg.action;
 				if (action === 'KF-ACK'){
@@ -301,48 +304,29 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					utils.removeDom(dom);
 				}
 				break;
-			case 'img':
-				message = new WebIM.message.img(msgId);
-				message.set({
-					file: {
-						url: msg.url
-					}
-				});
-				break;
-			case 'file':
-				message = new WebIM.message.file(msgId);
-				message.set({
-					file: {
-						url: msg.url,
-						filename: msg.filename,
-						filesize: msg.file_length
-					}
-				});
-				break;
 			case 'satisfactionEvaluation':
 				inviteId = msg.ext.weichat.ctrlArgs.inviteId;
 				serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
-				message = new WebIM.message.list();
-				message.set({
-					value: '请对我的服务做出评价',
-					list: [
-						'<div class="em-btn-list">'
-							+ '<button class="bg-hover-color js_satisfybtn" data-inviteid="'
-							+ inviteId
-							+ '" data-servicesessionid="'
-							+ serviceSessionId
-							+ '">立即评价</button></div>'
-						]
-				});
+
+				message = msg;
+				message.type = 'list';
+				message.data = '请对我的服务做出评价';
+				message.list = [
+				'<div class="em-btn-list">'
+					+ '<button class="bg-hover-color js_satisfybtn" data-inviteid="'
+					+ inviteId
+					+ '" data-servicesessionid="'
+					+ serviceSessionId
+					+ '">立即评价</button></div>'
+				];
 
 				!isHistory && satisfaction.show(inviteId, serviceSessionId);
 				break;
 			case 'robotList':
-				message = new WebIM.message.list();
-				var list = msg.ext.msgtype.choice.items;
-
-				str = '<div class="em-btn-list">'
-					+ _.map(list, function(item){
+				message = msg;
+				message.type = 'list';
+				message.list = '<div class="em-btn-list">'
+					+ _.map(msg.ext.msgtype.choice.items, function(item){
 						var id = item.id;
 						var label = item.name;
 						var className = 'js_robotbtn ';
@@ -356,43 +340,36 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 						return '<button class="' + className + '" data-id="' + id + '">' + label + '</button>';
 					}).join('')
 					+ '</div>';
-
-				message.set({ value: msg.ext.msgtype.choice.title, list: str });
+				message.data = msg.ext.msgtype.choice.title;
 				break;
 			case 'robotTransfer':
-				message = new WebIM.message.list();
 				var ctrlArgs = msg.ext.weichat.ctrlArgs;
-				title = msg.data
-					|| utils.getDataByPath(msg, 'ext.weichat.ctrlArgs.label');
+				message = msg;
+				message.type = 'list';
+				message.data = message.data || utils.getDataByPath(msg, 'ext.weichat.ctrlArgs.label');
 				/*
-					msg.data 用于处理即时消息
-					msg.bodies[0].msg 用于处理历史消息
 					msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
 					此处修改为了修复取出历史消息时，转人工评价标题改变的bug
 					还有待测试其他带有转人工的情况
 				*/
-				str = [
+				message.list = [
 					'<div class="em-btn-list">',
 						'<button class="white bg-color border-color bg-hover-color-dark js_robotTransferBtn" ',
 						'data-sessionid="' + ctrlArgs.serviceSessionId + '" ',
 						'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
 					'</div>'
 				].join('');
-
-				message.set({ value: title, list: str });
 				break;
 			case 'transferToTicket':
-				message = new WebIM.message.list();
-				title = msg.data;
-				str = [
+				message = msg;
+				message.type = 'list';
+				message.list = [
 					'<div class="em-btn-list">',
 						'<button class="white bg-color border-color bg-hover-color-dark js-transfer-to-ticket">',
 							'留言',
 						'</button>',
 					'</div>'
 				].join('');
-
-				message.set({ value: title, list: str });
 				break;
 			default:
 				break;
@@ -467,11 +444,12 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				agentInfo = utils.getDataByPath(msg, 'ext.weichat.agent');
 				agentInfo && me.setAgentProfile(agentInfo);
 			}
-			// 空消息不显示
-			if (!message || !message.value) return;
+			// 空文本消息不显示
+			if (!message || (type === 'txt' && !message.data)) return;
 
 			// 	给收到的消息加id，用于撤回消息
 			message.id = msgId;
+
 			// 消息上屏
 			_appendMsg(isReceived, message, isHistory, msg.timestamp, officialAccountId);
 
@@ -499,7 +477,6 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 			var url = msg.url;
 			var timestamp = element.timestamp || msgBody.timestamp;
 			var fileLength;
-
 			// 只有坐席发出的消息里边的file_length是准确的
 			if (msgBody.from !== config.user.username){
 				fileLength = msg.file_length;
@@ -516,7 +493,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					url: url,
 					filename: msg.filename,
 					action: msg.action,
-					msgId: element.msgId,
+					msgId: element.msg_id,
 					timestamp: timestamp,
 					file_length: fileLength,
 					ext: msgBody.ext,
@@ -647,12 +624,6 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				officialAccountId !== null && console.warn('can not find target official account id: ', officialAccountId);
 			}
 			targetOfficialAccount.messageView.appendMsg(isReceived, msg, isHistory, date);
-		}
-
-		function _getTextValue(msg) {
-			return utils.getDataByPath(msg, 'bodies.0.msg')
-				|| msg.data
-				|| '';
 		}
 
 		// 第二通道收消息
