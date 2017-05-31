@@ -146,268 +146,6 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				_appendMsg(false, msg, false, null, null);
 				me.conn.send(msg.body);
 			},
-
-			handleReceive: function (msg, type, isHistory) {
-				var str;
-				var message;
-				var title;
-				var inviteId;
-				var serviceSessionId;
-				var agentInfo;
-				var officialAccountId = utils.getDataByPath(msg, 'ext.weichat.official_account.official_account_id');
-				var eventName = utils.getDataByPath(msg, 'ext.weichat.event.eventName');
-				var eventObj = utils.getDataByPath(msg, 'ext.weichat.event.eventObj');
-				var msgId = msg.msgId || utils.getDataByPath(msg, 'ext.weichat.msgId');
-
-				if (receiveMsgDict.get(msgId)) {
-					// 重复消息不处理
-					return;
-				}
-				else if (msgId){
-					// 消息加入去重列表
-					receiveMsgDict.set(msgId, msg);
-				}
-				else {
-					// 没有msgId忽略，继续处理（KEFU-ACK消息没有msgId）
-				}
-
-				// 绑定访客的情况有可能会收到多关联的消息，不是自己的不收
-				if (!isHistory && msg.from && msg.from.toLowerCase() != config.toUser.toLowerCase() && !msg.noprompt) {
-					return;
-				}
-
-				//满意度评价
-				if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'inviteEnquiry') {
-					type = 'satisfactionEvaluation';
-				}
-				//机器人自定义菜单
-				else if (utils.getDataByPath(msg, 'ext.msgtype.choice')) {
-					type = 'robotList';
-				}
-				//机器人转人工
-				else if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'TransferToKfHint') {
-					type = 'robotTransfer';
-				}
-				// 待接入超时转留言
-				else if (
-					eventName === 'ServiceSessionWillScheduleTimeoutEvent'
-					&& eventObj
-					&& eventObj.ticketEnable === 'true'
-				){
-					type = 'transferToTicket';
-				}
-				else {}
-
-				switch (type) {
-				case 'txt':
-				case 'emoji':
-					message = new WebIM.message.txt(msgId);
-					message.set({ msg: _getTextValue(msg) });
-					break;
-				case 'cmd':
-					var action = msg.action || utils.getDataByPath(msg, 'bodies.0.action');
-					if (action === 'KF-ACK'){
-						// 清除ack对应的site item
-						_clearTS(msg.ext.weichat.ack_for_msg_id);
-						return;
-					}
-					else if (action === 'KEFU_MESSAGE_RECALL'){
-						// 撤回消息命令
-						var recallMsgId = msg.ext.weichat.recall_msg_id;
-						var dom = document.getElementById(recallMsgId);
-						utils.removeDom(dom);
-					}
-					break;
-				case 'img':
-					message = new WebIM.message.img(msgId);
-					message.set({
-						file: {
-							url: msg.url || utils.getDataByPath(msg, 'bodies.0.url')
-						}
-					});
-					break;
-				case 'file':
-					message = new WebIM.message.file(msgId);
-					message.set({
-						file: {
-							url: msg.url || utils.getDataByPath(msg, 'bodies.0.url'),
-							filename: msg.filename || utils.getDataByPath(msg, 'bodies.0.filename'),
-							filesize: msg.file_length || utils.getDataByPath(msg, 'bodies.0.file_length')
-						}
-					});
-					break;
-				case 'satisfactionEvaluation':
-					inviteId = msg.ext.weichat.ctrlArgs.inviteId;
-					serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
-					message = new WebIM.message.list();
-					message.set({
-						value: '请对我的服务做出评价',
-						list: [
-							'<div class="em-btn-list">'
-								+ '<button class="bg-hover-color js_satisfybtn" data-inviteid="'
-								+ inviteId
-								+ '" data-servicesessionid="'
-								+ serviceSessionId
-								+ '">立即评价</button></div>'
-							]
-					});
-
-					!isHistory && satisfaction.show(inviteId, serviceSessionId);
-					break;
-				case 'robotList':
-					message = new WebIM.message.list();
-					var list = msg.ext.msgtype.choice.items;
-
-					str = '<div class="em-btn-list">'
-						+ _.map(list, function(item){
-							var id = item.id;
-							var label = item.name;
-							var className = 'js_robotbtn ';
-							if (item.id === 'TransferToKf') {
-								// 转人工按钮突出显示
-								className += 'white bg-color border-color bg-hover-color-dark';
-							}
-							else {
-								className += 'bg-hover-color';
-							}
-							return '<button class="' + className + '" data-id="' + id + '">' + label + '</button>';
-						}).join('')
-						+ '</div>';
-
-					message.set({ value: msg.ext.msgtype.choice.title, list: str });
-					break;
-				case 'robotTransfer':
-					message = new WebIM.message.list();
-					var ctrlArgs = msg.ext.weichat.ctrlArgs;
-					title = _getTextValue(msg)
-						|| utils.getDataByPath(msg, 'ext.weichat.ctrlArgs.label');
-					/*
-						msg.data 用于处理即时消息
-						msg.bodies[0].msg 用于处理历史消息
-						msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
-						此处修改为了修复取出历史消息时，转人工评价标题改变的bug
-						还有待测试其他带有转人工的情况
-					*/
-					str = [
-						'<div class="em-btn-list">',
-							'<button class="white bg-color border-color bg-hover-color-dark js_robotTransferBtn" ',
-							'data-sessionid="' + ctrlArgs.serviceSessionId + '" ',
-							'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
-						'</div>'
-					].join('');
-
-					message.set({ value: title, list: str });
-					break;
-				case 'transferToTicket':
-					message = new WebIM.message.list();
-					title = _getTextValue(msg);
-					str = [
-						'<div class="em-btn-list">',
-							'<button class="white bg-color border-color bg-hover-color-dark js-transfer-to-ticket">',
-								'留言',
-							'</button>',
-						'</div>'
-					].join('');
-
-					message.set({ value: title, list: str });
-					break;
-				default:
-					break;
-				}
-				if (!isHistory) {
-					// 实时消息需要处理事件
-					switch (eventName) {
-						// 转接到客服
-					case 'ServiceSessionTransferedEvent':
-						_handleAgentStatusChanged(eventObj);
-						_handleEventStatus('transferd', eventObj);
-						break;
-						// 转人工或者转到技能组
-					case 'ServiceSessionTransferedToAgentQueueEvent':
-						me.waitListNumber.start();
-						_handleEventStatus('transfering', eventObj);
-						break;
-						// 会话结束
-					case 'ServiceSessionClosedEvent':
-						// todo: use promise to opt this code
-						me.hasSentAttribute = false;
-						// todo: use promise to opt this code
-						me.waitListNumber.stop();
-						config.agentUserId = null;
-						me.stopGettingAgentStatus();
-						// 还原企业头像和企业名称
-						me.setEnterpriseInfo();
-						// 去掉坐席状态
-						me.clearAgentStatus();
-						_handleEventStatus('close');
-
-						// 停止轮询 坐席端的输入状态
-						me.agentInputState.stop();
-
-						transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
-						break;
-						// 会话打开
-					case 'ServiceSessionOpenedEvent':
-						// fake: 会话接起就认为有坐席在线
-						_handleAgentStatusChanged(eventObj);
-						profile.isServiceSessionOpened = true;
-
-						// 停止轮询当前排队人数
-						me.waitListNumber.stop();
-
-						// 开始轮询 坐席端的输入状态
-						me.agentInputState.start();
-
-						_handleEventStatus('linked', eventObj);
-						if (!me.hasSentAttribute) {
-							apiHelper.getExSession().then(function (data){
-								me.sendAttribute(data);
-							});
-						}
-						break;
-						// 会话创建
-					case 'ServiceSessionCreatedEvent':
-						_handleEventStatus('create');
-						me.waitListNumber.start();
-						if (!me.hasSentAttribute) {
-							apiHelper.getExSession().then(function (data) {
-								me.sendAttribute(data);
-							});
-						}
-						break;
-					default:
-						break;
-					}
-
-					// 开始轮询坐席状态
-					me.startToGetAgentStatus();
-					agentInfo = utils.getDataByPath(msg, 'ext.weichat.agent');
-					agentInfo && me.setAgentProfile(agentInfo);
-				}
-				// 空消息不显示
-				if (!message || !message.value) return;
-
-				// 	给收到的消息加id，用于撤回消息
-				message.id = msgId;
-				// 消息上屏
-				_appendMsg(true, message, isHistory, msg.timestamp, officialAccountId);
-
-				if (!isHistory) {
-					if (!msg.noprompt) {
-						me.messagePrompt(message);
-					}
-
-					// 收消息回调
-					transfer.send({
-						event: _const.EVENTS.ONMESSAGE,
-						data: {
-							from: msg.from,
-							to: msg.to,
-							message: message
-						}
-					});
-				}
-			},
 			listen: function () {
 				me.conn.listen({
 					onOpened: function (info) {
@@ -421,19 +159,19 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 						me.handleReady(info);
 					},
 					onTextMessage: function (message) {
-						me.channel.handleReceive(message, 'txt');
+						_handleMessage(message, 'txt');
 					},
 					onEmojiMessage: function (message) {
-						me.channel.handleReceive(message, 'emoji');
+						_handleMessage(message, 'emoji');
 					},
 					onPictureMessage: function (message) {
-						me.channel.handleReceive(message, 'img');
+						_handleMessage(message, 'img');
 					},
 					onFileMessage: function (message) {
-						me.channel.handleReceive(message, 'file');
+						_handleMessage(message, 'file');
 					},
 					onCmdMessage: function (message) {
-						me.channel.handleReceive(message, 'cmd');
+						_handleMessage(message, 'cmd');
 					},
 					onOnline: function () {
 						utils.isMobile && me.open();
@@ -480,54 +218,314 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					}
 				});
 			},
-			handleHistoryMsg: function (element) {
-				var msgBody = element.body || {};
-				var msg = utils.getDataByPath(msgBody, 'bodies.0') || {};
-				var type = msg.type;
-				var timestamp = element.timestamp || msgBody.timestamp;
-				var filename = msg.filename;
-				var textMsg = _getTextValue(msgBody) || msg.msg;
-				var msgId = element.msgId;
-				var msgObj;
-				var officialAccountId = utils.getDataByPath(element, 'body.ext.weichat.official_account.official_account_id');
-
-				// 给图片消息或附件消息的url拼上hostname
-				(msg.url && !/^https?/.test(msg.url)) && (msg.url = location.protocol + config.domain + msg.url);
-
-				// 已撤回消息 不处理
-				if (utils.getDataByPath(msgBody, 'ext.weichat.recall_flag') === 1) return;
-
-				if (msgBody.from === config.user.username) {
-					// 访客发出的消息
-					// 仅处理文本、图片、附件3种
-					// 空文本消息不上屏
-					if (/img|file|txt/.test(type) && (type !== 'txt' || textMsg)){
-						msgObj = new WebIM.message[type](msgId);
-						// 此处后端无法取得正确的文件大小，删除属性
-						delete msg.file_length;
-						msgObj.set({
-							msg: textMsg,
-							file: msg
-						});
-						msgObj.body.ext = msgBody.ext;
-						_appendMsg(false, msgObj, true, timestamp, officialAccountId);
-						_hideLoading(msgId);
-					}
-				}
-				else {
-					// 客服坐席发出的消息
-					msgBody.timestamp = timestamp;
-					msgBody.filename = filename;
-					msgBody.data = textMsg;
-					msgBody.msgId = msgId;
-					msgBody.file_length = msg.file_length;
-					me.channel.handleReceive(msgBody, type, true);
-				}
+			handleHistoryMsg: function(element) {
+				var result = _transformMessageFormat(element);
+				_handleMessage(result.msgBody, result.type, true);
 			},
 			initSecondChannle: function () {
 				me.receiveMsgTimer = setInterval(_receiveMsgChannel, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
-			}
+			},
+			handleReceive: _handleMessage
 		};
+
+		function _handleMessage(msg, type, isHistory) {
+			var str;
+			var message;
+			var title;
+			var inviteId;
+			var serviceSessionId;
+			var agentInfo;
+			var officialAccountId = utils.getDataByPath(msg, 'ext.weichat.official_account.official_account_id');
+			var eventName = utils.getDataByPath(msg, 'ext.weichat.event.eventName');
+			var eventObj = utils.getDataByPath(msg, 'ext.weichat.event.eventObj');
+			var msgId = msg.msgId || utils.getDataByPath(msg, 'ext.weichat.msgId');
+			// from 不存在默认认为是收到的消息
+			var isReceived = !msg.from || (msg.from.toLowerCase() !== config.user.username.toLowerCase());
+
+			if (receiveMsgDict.get(msgId)) {
+				// 重复消息不处理
+				return;
+			}
+			else if (msgId){
+				// 消息加入去重列表
+				receiveMsgDict.set(msgId, msg);
+			}
+			else {
+				// 没有msgId忽略，继续处理（KEFU-ACK消息没有msgId）
+			}
+
+			// 绑定访客的情况有可能会收到多关联的消息，不是自己的不收
+			if (!isHistory && msg.from && msg.from.toLowerCase() != config.toUser.toLowerCase() && !msg.noprompt) {
+				return;
+			}
+
+			//满意度评价
+			if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'inviteEnquiry') {
+				type = 'satisfactionEvaluation';
+			}
+			//机器人自定义菜单
+			else if (utils.getDataByPath(msg, 'ext.msgtype.choice')) {
+				type = 'robotList';
+			}
+			//机器人转人工
+			else if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'TransferToKfHint') {
+				type = 'robotTransfer';
+			}
+			// 待接入超时转留言
+			else if (
+				eventName === 'ServiceSessionWillScheduleTimeoutEvent'
+				&& eventObj
+				&& eventObj.ticketEnable === 'true'
+			){
+				type = 'transferToTicket';
+			}
+			else {}
+
+			switch (type) {
+			case 'txt':
+			case 'emoji':
+				message = new WebIM.message.txt(msgId);
+				message.set({ msg: _getTextValue(msg) });
+				break;
+			case 'cmd':
+				var action = msg.action;
+				if (action === 'KF-ACK'){
+					// 清除ack对应的site item
+					_clearTS(msg.ext.weichat.ack_for_msg_id);
+					return;
+				}
+				else if (action === 'KEFU_MESSAGE_RECALL'){
+					// 撤回消息命令
+					var recallMsgId = msg.ext.weichat.recall_msg_id;
+					var dom = document.getElementById(recallMsgId);
+					utils.removeDom(dom);
+				}
+				break;
+			case 'img':
+				message = new WebIM.message.img(msgId);
+				message.set({
+					file: {
+						url: msg.url
+					}
+				});
+				break;
+			case 'file':
+				message = new WebIM.message.file(msgId);
+				message.set({
+					file: {
+						url: msg.url,
+						filename: msg.filename,
+						filesize: msg.file_length
+					}
+				});
+				break;
+			case 'satisfactionEvaluation':
+				inviteId = msg.ext.weichat.ctrlArgs.inviteId;
+				serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
+				message = new WebIM.message.list();
+				message.set({
+					value: '请对我的服务做出评价',
+					list: [
+						'<div class="em-btn-list">'
+							+ '<button class="bg-hover-color js_satisfybtn" data-inviteid="'
+							+ inviteId
+							+ '" data-servicesessionid="'
+							+ serviceSessionId
+							+ '">立即评价</button></div>'
+						]
+				});
+
+				!isHistory && satisfaction.show(inviteId, serviceSessionId);
+				break;
+			case 'robotList':
+				message = new WebIM.message.list();
+				var list = msg.ext.msgtype.choice.items;
+
+				str = '<div class="em-btn-list">'
+					+ _.map(list, function(item){
+						var id = item.id;
+						var label = item.name;
+						var className = 'js_robotbtn ';
+						if (item.id === 'TransferToKf') {
+							// 转人工按钮突出显示
+							className += 'white bg-color border-color bg-hover-color-dark';
+						}
+						else {
+							className += 'bg-hover-color';
+						}
+						return '<button class="' + className + '" data-id="' + id + '">' + label + '</button>';
+					}).join('')
+					+ '</div>';
+
+				message.set({ value: msg.ext.msgtype.choice.title, list: str });
+				break;
+			case 'robotTransfer':
+				message = new WebIM.message.list();
+				var ctrlArgs = msg.ext.weichat.ctrlArgs;
+				title = msg.data
+					|| utils.getDataByPath(msg, 'ext.weichat.ctrlArgs.label');
+				/*
+					msg.data 用于处理即时消息
+					msg.bodies[0].msg 用于处理历史消息
+					msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
+					此处修改为了修复取出历史消息时，转人工评价标题改变的bug
+					还有待测试其他带有转人工的情况
+				*/
+				str = [
+					'<div class="em-btn-list">',
+						'<button class="white bg-color border-color bg-hover-color-dark js_robotTransferBtn" ',
+						'data-sessionid="' + ctrlArgs.serviceSessionId + '" ',
+						'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
+					'</div>'
+				].join('');
+
+				message.set({ value: title, list: str });
+				break;
+			case 'transferToTicket':
+				message = new WebIM.message.list();
+				title = msg.data;
+				str = [
+					'<div class="em-btn-list">',
+						'<button class="white bg-color border-color bg-hover-color-dark js-transfer-to-ticket">',
+							'留言',
+						'</button>',
+					'</div>'
+				].join('');
+
+				message.set({ value: title, list: str });
+				break;
+			default:
+				break;
+			}
+			if (!isHistory) {
+				// 实时消息需要处理事件
+				switch (eventName) {
+					// 转接到客服
+				case 'ServiceSessionTransferedEvent':
+					_handleAgentStatusChanged(eventObj);
+					_handleEventStatus('transferd', eventObj);
+					break;
+					// 转人工或者转到技能组
+				case 'ServiceSessionTransferedToAgentQueueEvent':
+					me.waitListNumber.start();
+					_handleEventStatus('transfering', eventObj);
+					break;
+					// 会话结束
+				case 'ServiceSessionClosedEvent':
+					// todo: use promise to opt this code
+					me.hasSentAttribute = false;
+					// todo: use promise to opt this code
+					me.waitListNumber.stop();
+					config.agentUserId = null;
+					me.stopGettingAgentStatus();
+					// 还原企业头像和企业名称
+					me.setEnterpriseInfo();
+					// 去掉坐席状态
+					me.clearAgentStatus();
+					_handleEventStatus('close');
+
+					// 停止轮询 坐席端的输入状态
+					me.agentInputState.stop();
+
+					transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
+					break;
+					// 会话打开
+				case 'ServiceSessionOpenedEvent':
+					// fake: 会话接起就认为有坐席在线
+					_handleAgentStatusChanged(eventObj);
+					profile.isServiceSessionOpened = true;
+
+					// 停止轮询当前排队人数
+					me.waitListNumber.stop();
+
+					// 开始轮询 坐席端的输入状态
+					me.agentInputState.start();
+
+					_handleEventStatus('linked', eventObj);
+					if (!me.hasSentAttribute) {
+						apiHelper.getExSession().then(function (data){
+							me.sendAttribute(data);
+						});
+					}
+					break;
+					// 会话创建
+				case 'ServiceSessionCreatedEvent':
+					_handleEventStatus('create');
+					me.waitListNumber.start();
+					if (!me.hasSentAttribute) {
+						apiHelper.getExSession().then(function (data) {
+							me.sendAttribute(data);
+						});
+					}
+					break;
+				default:
+					break;
+				}
+
+				// 开始轮询坐席状态
+				me.startToGetAgentStatus();
+				agentInfo = utils.getDataByPath(msg, 'ext.weichat.agent');
+				agentInfo && me.setAgentProfile(agentInfo);
+			}
+			// 空消息不显示
+			if (!message || !message.value) return;
+
+			// 	给收到的消息加id，用于撤回消息
+			message.id = msgId;
+			// 消息上屏
+			_appendMsg(isReceived, message, isHistory, msg.timestamp, officialAccountId);
+
+			if (!isHistory) {
+				if (!msg.noprompt) {
+					me.messagePrompt(message);
+				}
+
+				// 收消息回调
+				transfer.send({
+					event: _const.EVENTS.ONMESSAGE,
+					data: {
+						from: msg.from,
+						to: msg.to,
+						message: message
+					}
+				});
+			}
+		}
+
+		function _transformMessageFormat(element){
+			var msgBody = element.body || {};
+			var msg = utils.getDataByPath(msgBody, 'bodies.0') || {};
+			var type = msg.type;
+			var url = msg.url;
+			var timestamp = element.timestamp || msgBody.timestamp;
+			var fileLength;
+
+			// 只有坐席发出的消息里边的file_length是准确的
+			if (msgBody.from !== config.user.username){
+				fileLength = msg.file_length;
+			}
+
+			// 给图片消息或附件消息的url拼上hostname
+			if (url && !/^https?/.test(url)) {
+				url = location.protocol + config.domain + url;
+			}
+
+			return {
+				msgBody: {
+					data: msg.msg,
+					url: url,
+					filename: msg.filename,
+					action: msg.action,
+					msgId: element.msgId,
+					timestamp: timestamp,
+					file_length: fileLength,
+					ext: msgBody.ext,
+					to: msgBody.to,
+					from: msgBody.from
+				},
+				type: type
+			};
+		}
 
 		function _hideLoading(msgId){
 			utils.addClass(document.getElementById(msgId + '_loading'), 'hide');
@@ -670,12 +668,8 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				msg.data
 					&& msg.data.status === 'OK'
 					&& _.each(msg.data.entities, function (elem) {
-						try {
-							_obj.handleReceive(elem, elem.bodies[0].type, false);
-						}
-						catch (e) {
-							console.error(e);
-						}
+						var result = _transformMessageFormat({body: elem});
+						_handleMessage(result.msgBody, result.type, false);
 					});
 			});
 		}

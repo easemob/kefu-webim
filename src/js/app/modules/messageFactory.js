@@ -2,7 +2,7 @@ easemobim.genDomFromMsg = (function (window, _const) {
 	var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : '<img src="//kefu.easemob.com/webim/static/img/loading.gif" width="20" style="margin-top:10px;"/>';
 	var parseLink = WebIM.utils.parseLink;
 	var parseEmoji = WebIM.utils.parseEmoji;
-	// 用来储存图片信息的file对象 
+	// 用来储存图片信息的file对象
 	window.imgFileList = new easemobim.Dict();
 
 	function _encode(str) {
@@ -105,7 +105,7 @@ easemobim.genDomFromMsg = (function (window, _const) {
 		return html;
 	}
 
-	function genDomFromMsg(msg, isReceived) {
+	function genDomFromMsg(msg, isReceived, isHistory) {
 		var id = msg.id;
 		var type = msg.type;
 		var html = '';
@@ -130,7 +130,7 @@ easemobim.genDomFromMsg = (function (window, _const) {
 		html += '<i class="icon-corner-' + direction + '"></i>';
 
 		// 发出的消息增加状态显示
-		if (!isReceived && id) {
+		if (!isReceived && !isHistory && id) {
 			html += '<div id="' + id
 				+ '_failed" data-type="txt" class="em-widget-msg-status hide">'
 				+ '<span>发送失败</span><i class="icon-circle"><i class="icon-exclamation"></i></i></div>'

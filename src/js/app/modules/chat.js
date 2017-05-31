@@ -840,7 +840,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 							phone: config.visitor.phone,
 							mail: config.visitor.email,
 							// 	取最近10条消息，最大1000字
-							content: utils.getBrief('\n' + profile.systemOfficialAccount.getRecentMsg(10), 1000)
+							content: utils.getBrief('\n' + profile.systemOfficialAccount.messageView.getRecentMsg(10), 1000)
 						}
 					});
 				});

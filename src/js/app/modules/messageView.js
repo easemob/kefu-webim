@@ -66,7 +66,7 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper){
 		}
 
 		function _appendMsg(isReceived, msg, isHistory, timestamp){
-			var dom = easemobim.genDomFromMsg(msg, isReceived);
+			var dom = easemobim.genDomFromMsg(msg, isReceived, isHistory);
 			var img = dom.querySelector('.em-widget-imgview');
 
 			date = timestamp || _.now();
