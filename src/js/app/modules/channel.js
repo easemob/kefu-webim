@@ -407,7 +407,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					me.hasSentAttribute = false;
 					// todo: use promise to opt this code
 					me.waitListNumber.stop();
-					config.agentUserId = null;
+					profile.agentId = null;
 					me.stopGettingAgentStatus();
 					// 还原企业头像和企业名称
 					me.setEnterpriseInfo();
@@ -614,7 +614,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 		function _handleAgentStatusChanged(info) {
 			if (!info) return;
 
-			config.agentUserId = info.userId;
+			profile.agentId = info.userId;
 
 			me.setToKefuBtn({isSessionOpen: true});
 			me.updateAgentStatus();

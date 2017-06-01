@@ -91,8 +91,18 @@
 			'agentInputStateEnable'
 		],
 
-		ERRORS: {
-			VISITOR_DOES_NOT_EXIST: 'visitor does not exist.'
+		ERROR_MSG: {
+			VISITOR_DOES_NOT_EXIST: 'visitor does not exist.',
+			SESSION_DOES_NOT_EXIST: 'session does not exist.',
+			block: null
+		},
+
+		SESSION_STATE: {
+			WAIT: 'Wait',
+			PROCESSING: 'Processing',
+			TERMINAL: 'Terminal',
+			ABORT: 'Abort',
+			RESOLVED: 'Resolved'
 		},
 
 		// 上传文件大小限制

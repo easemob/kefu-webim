@@ -62,6 +62,7 @@
 		var techChannelInfo = params.orgName
 			+ '%23' + params.appName
 			+ '%23' + params.imServiceNumber;
+		var url;
 
 		getData.targetOrigin = msg.origin;
 
@@ -278,12 +279,11 @@
 			});
 			break;
 		case 'mediaStreamUpdateStatus':
-			// patch
-			var streamId = params.streamId;
+			url = '/v1/rtcmedia/media_streams/' + params.streamId;
 			delete params.streamId;
 
 			emitAjax({
-				url: '/v1/rtcmedia/media_streams/' + streamId,
+				url: url,
 				msg: msg,
 				type: 'PUT'
 			});
@@ -311,27 +311,23 @@
 			});
 			break;
 		case 'messagePredict':
-			// fake: 避免多余的参数传递到 post body 中
-			var _tmpTenantId = params.tenantId;
-			var _tmpAgentId = params.agentId;
+			url = '/v1/webimplugin/agents/' + params.agentId
+				+ '/messagePredict'
+				+ '?tenantId=' + params.tenantId;
 
+			// fake: 避免多余的参数传递到 post body 中
 			delete params.tenantId;
 			delete params.agentId;
 
 			emitAjax({
-				url: '/v1/webimplugin/agents/'
-					+ _tmpAgentId
-					+ '/messagePredict'
-					+ '?tenantId='
-					+ _tmpTenantId,
+				url: url,
 				msg: msg,
 				type: 'POST'
 			});
 			break;
 		case 'getSessionQueueId':
-			var visitorUsername = params.visitorUsername;
 			emitAjax({
-				url: '/v1/visitors/' + visitorUsername + '/waitings/sessions',
+				url: '/v1/visitors/' + params.visitorUsername + '/waitings/sessions',
 				msg: msg,
 				type: 'GET'
 			});
@@ -377,13 +373,13 @@
 			});
 			break;
 		case 'closeServiceSession':
-			var ssid = params.serviceSessionId;
+			url = '/webimplugin/tenants/' + tenantId
+				+ '/visitors/' + params.userName
+				+ '/servicesessions/' + params.serviceSessionId
+				+ '/stop?tenantId=' + tenantId;
 			delete params.serviceSessionId;
 			emitAjax({
-				url: '/webimplugin/tenants/' + tenantId
-				+ '/visitors/' + params.userName
-				+ '/servicesessions/' + ssid
-				+ '/stop?tenantId=' + tenantId,
+				url: url,
 				msg: msg,
 				type: 'POST'
 			});
@@ -454,10 +450,49 @@
 					+ '&channelId=' + params.channelId
 					+ '&queueName=' + params.queueName
 					+ '&agentUsername=' + params.agentUsername
-					+ '&tenantId=' + params.tenantId,
+					+ '&tenantId=' + tenantId,
 				msg: msg,
 				type: 'GET',
 				excludeData: true
+			});
+			break;
+		case 'getLastSession':
+			emitAjax({
+				url: '/v1/webimplugin/tenants/' + tenantId
+					+ '/visitors/' + params.visitorId
+					+ '/official-accounts/' + params.officialAccountId
+					+ '/latest-session'
+					+ '?orgName=' + params.orgName
+					+ '&appName=' + params.appName
+					+ '&userName=' + params.userName
+					+ '&token=' + params.token
+					+ '&techChannelInfo=' + techChannelInfo,
+				msg: msg,
+				type: 'GET',
+				excludeData: true
+			});
+			break;
+		case 'reportVisitorAttributes':
+			url = '/v1/webimplugin/tenants/' + tenantId
+				+ '/sessions/' + params.sessionId
+				+ '/attributes'
+				+ '?orgName=' + params.orgName
+				+ '&appName=' + params.appName
+				+ '&userName=' + params.userName
+				+ '&token=' + params.token
+				+ '&techChannelInfo=' + techChannelInfo;
+
+			delete params.tenantId;
+			delete params.sessionId;
+			delete params.orgName;
+			delete params.appName;
+			delete params.userName;
+			delete params.token;
+			delete params.imServiceNumber;
+			emitAjax({
+				url: url,
+				msg: msg,
+				type: 'POST'
 			});
 			break;
 		default:

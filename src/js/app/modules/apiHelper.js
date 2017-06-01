@@ -215,7 +215,7 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 							resolve(visitorId);
 						}
 						else {
-							reject(_const.ERRORS.VISITOR_DOES_NOT_EXIST);
+							reject(_const.ERROR_MSG.VISITOR_DOES_NOT_EXIST);
 						}
 					}, function(err){
 						reject(err);
@@ -482,6 +482,64 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		});
 	}
 
+	function getLastSession(officialAccountId){
+		return new Promise(function(resolve, reject){
+			Promise.all([
+				getVisitorId(),
+				getToken()
+			]).then(function(result){
+				var visitorId = result[0];
+				var token = result[1];
+
+				api('getLastSession', {
+					tenantId: config.tenantId,
+					orgName: config.orgName,
+					appName: config.appName,
+					imServiceNumber: config.toUser,
+					officialAccountId: officialAccountId,
+					userName: config.user.username,
+					visitorId: visitorId,
+					token: token
+				}, function (msg) {
+					var session = utils.getDataByPath(msg, 'data.entity');
+					if (session){
+						resolve(session);
+					}
+					else {
+						reject(_const.ERROR_MSG.SESSION_DOES_NOT_EXIST);
+					}
+				}, function(err){
+					reject(err);
+				});
+			})
+			// 未创建会话时 visitor不存在，此时 getVisitorId 会reject 特定error，需要捕获此错误
+			['catch'](function(err){
+				reject(err);
+			});
+		});
+	}
+
+	function reportVisitorAttributes(sessionId){
+		return new Promise(function(resolve, reject){
+			getToken().then(function(token){
+				api('reportVisitorAttributes', {
+					tenantId: config.tenantId,
+					orgName: config.orgName,
+					appName: config.appName,
+					imServiceNumber: config.toUser,
+					sessionId: sessionId,
+					userName: config.user.username,
+					referer: document.referrer,
+					token: token
+				}, function (msg) {
+					resolve();
+				}, function(err){
+					reject(err);
+				});
+			});
+		});
+	}
+
 	return {
 		getCurrentServiceSession: getCurrentServiceSession,
 		getSessionQueueId: getSessionQueueId,
@@ -501,6 +559,8 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		getHistory: getHistory,
 		getExSession: getExSession,
 		getAgentStatus: getAgentStatus,
+		getLastSession: getLastSession,
+		reportVisitorAttributes: reportVisitorAttributes,
 		setCacheItem: function(key, value){
 			cache[key] = value;
 		},

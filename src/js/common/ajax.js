@@ -92,7 +92,6 @@
 			return xhr;
 		}
 		else {
-			data._v = new Date().getTime();
 			data = JSON.stringify(data);
 		}
 		xhr.open(type, options.url);

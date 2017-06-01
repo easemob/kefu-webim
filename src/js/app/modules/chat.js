@@ -43,9 +43,6 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 			block: null
 		};
 
-		//cache current agent
-		config.agentUserId = null;
-
 		return {
 			init: function () {
 				var me = this;
@@ -241,12 +238,18 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 
 				apiHelper.getOfficalAccounts().then(initMessageView, function(err){
 					// 未创建会话时初始化默认服务号
-					if (err === _const.ERRORS.VISITOR_DOES_NOT_EXIST){
+					if (err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
 						initMessageView([], {isNewUser: true});
 					}
 					else {
 						throw err;
 					}
+				});
+
+				// 获取在线坐席数
+				apiHelper.getExSession().then(function(data) {
+					profile.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
+					profile.hasRobotAgentOnline = data.onlineRobotAgentCount > 0;
 				});
 
 				function initMessageView(collection, opt){
@@ -299,29 +302,51 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 						targerOfficialAccountProfile.messageView.show();
 						profile.currentOfficialAccount = targerOfficialAccountProfile;
 					}
-					me.initSession();
+					me.getServiveSession(profile.currentOfficialAccount.official_account_id);
 				}
 			},
-			initSession: function(){
+			getServiveSession: function(officialAccountId){
 				var me = this;
 
-				apiHelper.getExSession().then(function(data) {
-					var serviceSession = data.serviceSession;
+				apiHelper.getLastSession(officialAccountId).then(function(session){
+					var sessionId = session.session_id;
+					var state = session.state;
+					var agentId = session.agent_id;
 
-					profile.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
-					profile.hasRobotAgentOnline = data.onlineRobotAgentCount > 0;
+					profile.agentId = agentId;
+					profile.serviceSessionId = sessionId;
+					profile.sessionState = state;
 
-					if (serviceSession) {
-						config.agentUserId = serviceSession.agentUserId;
+					if (state === _const.SESSION_STATE.WAIT){
+						apiHelper.reportVisitorAttributes(sessionId);
+						me.setToKefuBtn({isSessionOpen: true});
+					}
+					else if (state === _const.SESSION_STATE.PROCESSING){
 						// 确保正在进行中的会话，刷新后还会继续轮询坐席状态
 						me.startToGetAgentStatus();
-						me.sendAttribute(data);
+
+						me.setToKefuBtn({isSessionOpen: true});
+						apiHelper.reportVisitorAttributes(sessionId);
 					}
-					else {
-						// 仅当会话不存在时获取欢迎语
+					else if (
+						state === _const.SESSION_STATE.ABORT
+						|| state === _const.SESSION_STATE.TERMINAL
+						|| state === _const.SESSION_STATE.RESOLVED
+					){
+						// 结束的会话获取欢迎语
+						me.getGreeting();
+						me.setToKefuBtn({isSessionOpen: false});
+					}
+					else{
+						throw 'unknown session state';
+					}
+				}, function(err){
+					if (err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
 						me.getGreeting();
 					}
-					me.setToKefuBtn({isSessionOpen: !!serviceSession});
+					else {
+						throw err;
+					}
 				});
 			},
 			sendAttribute: function (data) {
@@ -364,12 +389,12 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 			updateAgentStatus: function () {
 				var me = this;
 
-				if (!config.agentUserId || !config.nickNameOption || !config.user.token) {
+				if (!profile.agentId || !config.nickNameOption || !config.user.token) {
 					me.stopGettingAgentStatus();
 					return;
 				}
 
-				apiHelper.getAgentStatus(config.agentUserId).then(function (state) {
+				apiHelper.getAgentStatus(profile.agentId).then(function (state) {
 					if (state) {
 						doms.agentStatusText.innerText = _const.agentStatusText[state];
 						doms.agentStatusSymbol.className = 'em-widget-agent-status ' + _const.agentStatusClassName[state];
@@ -868,12 +893,12 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				});
 
 				var messagePredict = _.throttle(function (msg) {
-					config.agentUserId
+					profile.agentId
 						&& config.visitorUserId
 						&& api('messagePredict', {
 							tenantId: config.tenantId,
 							visitor_user_id: config.visitorUserId,
-							agentId: config.agentUserId,
+							agentId: profile.agentId,
 							content: utils.getBrief(msg, _const.MESSAGE_PREDICT_MAX_LENGTH),
 							timestamp: _.now(),
 						});
