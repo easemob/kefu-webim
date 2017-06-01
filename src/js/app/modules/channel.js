@@ -48,7 +48,10 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 
 				// 空文本消息不上屏
 				if (!message) return;
-				_appendMsg(false, msg, false, null, null);
+				_appendMsg(false, {
+					type: 'txt',
+					data: message
+				}, false, null, null);
 
 				_promptNoAgentOnlineIfNeeded({
 					hasTransferedToKefu: message === '转人工' || message === '转人工客服'
@@ -108,10 +111,16 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				});
 				_setExt(msg);
 				_appendAck(msg, id);
-				_appendMsg(false, msg, false, null, null);
+				_appendMsg(false, {
+					type: 'img',
+					url: fileMsg.url
+				}, false, null, null);
 				me.conn.send(msg.body);
 				sendMsgDict.set(id, msg);
 				_detectUploadImgMsgByApi(id, fileMsg.data);
+
+				// 自己发出去的图片要缓存File对象，用于全屏显示图片
+				profile.imgFileList.set(fileMsg.url, fileMsg.data);
 			},
 
 			sendFile: function (fileMsg, fileInput) {
@@ -143,7 +152,12 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					}
 				});
 				_setExt(msg);
-				_appendMsg(false, msg, false, null, null);
+				_appendMsg(false, {
+					type: 'file',
+					url: fileMsg.url,
+					filename: fileMsg.filename,
+					fileLength: fileMsg.data.size
+				}, false, null, null);
 				me.conn.send(msg.body);
 			},
 			listen: function () {
@@ -238,7 +252,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 			var officialAccountId = utils.getDataByPath(msg, 'ext.weichat.official_account.official_account_id');
 			var eventName = utils.getDataByPath(msg, 'ext.weichat.event.eventName');
 			var eventObj = utils.getDataByPath(msg, 'ext.weichat.event.eventObj');
-			var msgId = msg.msgId || utils.getDataByPath(msg, 'ext.weichat.msgId');
+			var msgId = utils.getDataByPath(msg, 'ext.weichat.msgId');
 			// from 不存在默认认为是收到的消息
 			var isReceived = !msg.from || (msg.from.toLowerCase() !== config.user.username.toLowerCase());
 
@@ -439,10 +453,12 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					break;
 				}
 
-				// 开始轮询坐席状态
-				me.startToGetAgentStatus();
 				agentInfo = utils.getDataByPath(msg, 'ext.weichat.agent');
-				agentInfo && me.setAgentProfile(agentInfo);
+				if (agentInfo){
+					// 开始轮询坐席状态
+					me.startToGetAgentStatus();
+					me.setAgentProfile(agentInfo);
+				}
 			}
 			// 空文本消息不显示
 			if (!message || (type === 'txt' && !message.data)) return;
@@ -494,8 +510,9 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					filename: msg.filename,
 					action: msg.action,
 					msgId: element.msg_id,
+					fromUser: element.from_user,
 					timestamp: timestamp,
-					file_length: fileLength,
+					fileLength: fileLength,
 					ext: msgBody.ext,
 					to: msgBody.to,
 					from: msgBody.from
@@ -567,14 +584,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 		function _handleEventStatus(action, info) {
 			_promptNoAgentOnlineIfNeeded();
 
-			if (action === 'reply') {
-				me.startToGetAgentStatus();
-				info && me.setAgentProfile({
-					userNickname: info.userNickname,
-					avatar: info.avatar
-				});
-			}
-			else if (action === 'create') { //显示会话创建
+			if (action === 'create') { //显示会话创建
 				_appendEventMsg(_const.eventMessageText.CREATE);
 			}
 			else if (action === 'close') { //显示会话关闭

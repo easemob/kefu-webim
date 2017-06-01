@@ -281,6 +281,8 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 						sessionList.show();
 						// todo: show list button
 						utils.on(doms.avatar, 'click', sessionList.show);
+						// 营销功能打开标志
+						profile.ctaEnable = true;
 					}
 					else {
 						profile.currentOfficialAccount = _.findWhere(officialAccountList, {type: 'SYSTEM'});

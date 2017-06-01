@@ -1,4 +1,4 @@
-easemobim.imgView = (function (utils, _const) {
+easemobim.imgView = (function (utils, _const, profile) {
 
 	var imgWrapper = document.querySelector('div.img-view');
 	var img = imgWrapper.querySelector('img');
@@ -19,10 +19,10 @@ easemobim.imgView = (function (utils, _const) {
 					event: _const.EVENTS.SHOW_IMG,
 					data: {
 						imgSrc: url,
-						imgFile: window.imgFileList.get(url)
+						imgFile: profile.imgFileList.get(url)
 					}
 				});
 			}
 		}
 	};
-}(easemobim.utils, easemobim._const));
+}(easemobim.utils, easemobim._const, app.profile));

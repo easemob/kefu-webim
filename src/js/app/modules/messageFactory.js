@@ -2,8 +2,6 @@ easemobim.genDomFromMsg = (function (window, _const, utils, profile) {
 	var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : '<img src="//kefu.easemob.com/webim/static/img/loading.gif" width="20" style="margin-top:10px;"/>';
 	var parseLink = WebIM.utils.parseLink;
 	var parseEmoji = WebIM.utils.parseEmoji;
-	// 用来储存图片信息的file对象
-	window.imgFileList = new easemobim.Dict();
 
 	function _encode(str) {
 		if (!str || str.length === 0) {
@@ -66,11 +64,6 @@ easemobim.genDomFromMsg = (function (window, _const, utils, profile) {
 			}
 			break;
 		case 'img':
-			if(msg.data){
-				// todo: move this to sendImg
-				// 如果是自己发出去的图片则缓存File对象，用于全屏显示图片
-				imgFileList.set(msg.url, msg.data);
-			}
 			// todo: remove a
 			html = '<a href="javascript:;"><img class="em-widget-imgview" src="'
 				+ msg.url + '"/></a>';
@@ -85,7 +78,7 @@ easemobim.genDomFromMsg = (function (window, _const, utils, profile) {
 			html = '<i class="icon-attachment container-icon-attachment"></i>'
 				+ '<span class="file-info">'
 				+ '<p class="filename">' + msg.filename + '</p>'
-				+ '<p class="filesize">' + easemobim.utils.filesizeFormat(msg.flie_length) + '</p>'
+				+ '<p class="filesize">' + easemobim.utils.filesizeFormat(msg.fileLength) + '</p>'
 				+ '</span>'
 				+ "<a target='_blank' href='" + msg.url + "' class='icon-download container-icon-download' title='"
 				+ msg.filename + "'></a>";
@@ -103,7 +96,9 @@ easemobim.genDomFromMsg = (function (window, _const, utils, profile) {
 		var html = '';
 		var dom = document.createElement('div');
 		var direction = isReceived ? 'left' : 'right';
-		var avatar = utils.getDataByPath(msg, 'ext.weichat.official_account.img') || profile.defaultAvatar;
+		var officialAccountAvatar = utils.getDataByPath(msg, 'ext.weichat.official_account.img');
+		var messageAvatar = utils.getDataByPath(msg, 'fromUser.img')
+		var avatar = messageAvatar || profile.defaultAvatar;
 
 		// 设置消息气泡显示在左侧还是右侧
 		// .em-widget-right, .em-widget-left used here
