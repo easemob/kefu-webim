@@ -201,15 +201,15 @@
 	top: 0;
 	width: 100%;
 	background-color: black;
+	font-size: 0;
 
 	video {
 		position: relative;
 		width: 100%;
-		height: 210px;
-		transform: rotate(-90deg);
-		transform-origin: 0 0;
+		max-height: 240px;
 	}
 	.status-panel {
+		font-size: 16px;
 		padding: 0 10px;
 		line-height: 44px;
 		height: 44px;

@@ -63,21 +63,20 @@ easemobim.liveStreaming = (function(){
 		handleFocus();
 		var videoWrapperOffset = videoWrapper.getBoundingClientRect().top;
 		var bodyOffset = -document.body.getBoundingClientRect().top;
-		
+
 		console.log(videoWrapperOffset, bodyOffset);
 		if (videoWrapperOffset){
 			videoWrapper.style.top = bodyOffset + 'px';
 		}
 	}, 600, {leading: false});
 
+	// 输入框focus时隐藏播放状态栏
 	function handleFocus(){
 		if (document.activeElement ===  messageInput){
 			statusPanel.classList.add('hide');
-			videoWrapper.style.height = Math.floor(window.innerWidth / 16 * 9) + 'px';
 		}
 		else {
 			statusPanel.classList.remove('hide');
-			videoWrapper.style.height = Math.floor(window.innerWidth / 16 * 9) + 44 + 'px';
 		}
 	}
 
@@ -85,7 +84,7 @@ easemobim.liveStreaming = (function(){
 		startBtn.addEventListener('click', function(e){
 			video.src = sourceURL;
 			statusPoller.updateStatus('PLAYING');
-			video.play();			
+			video.play();
 			videoWrapper.classList.remove('hide');
 			liveVideoWait.classList.add('hide');
 		}, false);
@@ -106,22 +105,10 @@ easemobim.liveStreaming = (function(){
 		}
 	}
 
-	function videoResize(){
-		// 计算视频高度
-		videoWidth = window.innerWidth;
-		videoHeight = Math.floor(window.innerWidth / 16 * 9);
-
-		// 视频横屏处理，宽高互换，位置修正
-		video.style.height = videoWidth + 'px';
-		video.style.width = videoHeight + 'px';
-		video.style.top = videoHeight + 'px';
-		videoWrapper.style.height = videoHeight + 44 + 'px';
-	}
-
 	function listenVisibilityChange(){
 		// Set the name of the hidden property and the change event for visibility
 		var hidden, visibilityChange;
-		if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
+		if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
 			hidden = "hidden";
 			visibilityChange = "visibilitychange";
 		}
@@ -213,7 +200,6 @@ easemobim.liveStreaming = (function(){
 			bindEvent();
 			initDebug();
 			listenVisibilityChange();
-			videoResize();
 
 			var streamId = utils.get('streamId');
 			if (streamId){
