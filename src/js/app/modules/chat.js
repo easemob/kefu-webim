@@ -1,7 +1,12 @@
 easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, createMessageView, profile) {
 	return function (config) {
 		var isChatWindowOpen;
+		var isEmojiInitilized;
+		var isMessageChannelReady;
 		var currentMessageView;
+		var inputBoxPosition;
+		var channel;
+		var conn;
 
 		// DOM init
 		var topBar = document.querySelector('.em-widget-header');
@@ -43,13 +48,682 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 			block: null
 		};
 
+		function _initUI(){
+			(utils.isTop || !config.minimum) && utils.removeClass(doms.imChat, 'hide');
+
+			// 设置联系客服按钮文字
+			document.querySelector('.em-widget-pop-bar').innerText = config.buttonText;
+
+			// 添加移动端样式类
+			utils.isMobile && utils.addClass(document.body, 'em-mobile');
+
+			// 留言按钮
+			config.ticket && utils.removeClass(doms.noteBtn, 'hide');
+
+			// 最小化按钮
+			config.minimum
+				&& !utils.isTop
+				&& utils.removeClass(doms.minifyBtn, 'hide');
+
+			// 低版本浏览器不支持上传文件/图片
+			if (WebIM.utils.isCanUploadFileAsync){
+				utils.removeClass(doms.sendImgBtn, 'hide');
+				utils.removeClass(doms.sendFileBtn, 'hide');
+			}
+
+			// h5title设置
+			if(config.ui.H5Title.enabled){
+				document.title = config.ui.H5Title.content;
+			}
+
+			// 静音按钮
+			window.HTMLAudioElement
+				&& !utils.isMobile
+				&& config.soundReminder
+				&& utils.removeClass(doms.audioBtn, 'hide');
+
+			// 输入框位置开关
+			utils.isMobile
+				&& !config.hideKeyboard
+				&& utils.removeClass(doms.switchKeyboardBtn, 'hide');
+
+			// 满意度评价按钮
+			config.satisfaction
+				&& utils.removeClass(
+					document.querySelector('.em-widget-satisfaction'),
+					'hide'
+				);
+		}
+
+		function _setLogo() {
+			if (!config.logo.enabled) return;
+			var logoImgWapper = document.querySelector('.em-widget-tenant-logo');
+			var logoImg = logoImgWapper.querySelector('img');
+
+			utils.removeClass(logoImgWapper, 'hide');
+			logoImg.src = config.logo.url;
+		}
+
+		function _setToKefuBtn(options){
+			if (!config.toolbar.transferToKefu) return;
+			if (options.isSessionOpen){
+				apiHelper.getCurrentServiceSession().then(function (res) {
+					var isRobotAgent = res && res.agentUserType === 6;
+					utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotAgent);
+				});
+			}
+			else{
+				apiHelper.getRobertIsOpen().then(function (isRobotEnable) {
+					utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotEnable);
+				});
+			}
+		}
+
+		function _setNotice() {
+			var noticeContent = document.querySelector('.em-widget-tip .content');
+			var noticeCloseBtn = document.querySelector('.em-widget-tip .tip-close');
+
+			apiHelper.getNotice().then(function(notice){
+				if(!notice.enabled) return;
+				var slogan = notice.content;
+
+				// 设置信息栏内容
+				noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
+				// 显示信息栏
+				utils.addClass(doms.imChat, 'has-tip');
+
+				// 隐藏信息栏按钮
+				utils.on(
+					noticeCloseBtn,
+					utils.click,
+					function () {
+						// 隐藏信息栏
+						utils.removeClass(doms.imChat, 'has-tip');
+					}
+				);
+			});
+		}
+
+		function _initEmoji() {
+			utils.on(doms.emojiBtn, utils.click, function () {
+				doms.textInput.blur();
+				utils.toggleClass(doms.emojiWrapper, 'hide');
+
+				// 懒加载，打开表情面板时才初始化图标
+				if (!isEmojiInitilized) {
+					isEmojiInitilized = true;
+					doms.emojiContainer.innerHTML = genHtml();
+				}
+			});
+
+			// 表情的选中
+			utils.live('img.emoji', utils.click, function (e) {
+				!utils.isMobile && doms.textInput.focus();
+				doms.textInput.value += this.getAttribute('data-value');
+				utils.trigger(doms.textInput, 'change');
+			}, doms.emojiWrapper);
+
+			// todo: kill .e-face to make it more elegant
+			// ie8 does not support stopPropagation -_-||
+			// 点击别处时隐藏表情面板
+			utils.on(document, utils.click, function (ev) {
+				var e = window.event || ev;
+				var target = e.srcElement || e.target;
+
+				if (!utils.hasClass(target, 'e-face')) {
+					utils.addClass(doms.emojiWrapper, 'hide');
+				}
+			});
+
+			function genHtml() {
+				var path = WebIM.Emoji.path;
+				var EMOJI_COUNT_PER_LINE = 7;
+
+				return _.chain(WebIM.Emoji.map)
+					// 生成图标html
+					.map(function (value, key) {
+						return '<div class="em-bar-emoji-bg e-face">'
+							+ '<img class="e-face emoji" src="'
+							+ path + value
+							+ '" data-value=' + key + ' />'
+							+ '</div>';
+					})
+					// 按照下标分组
+					.groupBy(function (elem, index) {
+						return Math.floor(index / EMOJI_COUNT_PER_LINE);
+					})
+					// 增加wrapper
+					.map(function (elem) {
+						return '<li class="e-face">' + elem.join('') + '</li>';
+					})
+					// 结束链式调用
+					.value()
+					// 把数组拼接成字符串
+					.join('');
+			}
+		}
+
+		function _setOffline() {
+			switch (config.offDutyType) {
+			case 'none':
+				// 下班禁止留言、禁止接入会话
+				utils.appendHTMLToBody([
+					'<div class="em-model"></div>',
+					'<div class="em-dialog off-duty-prompt">',
+					'<div class="bg-color header">提示</div>',
+					'<div class="body">',
+					'<p class="content">' + config.offDutyWord + '</p>',
+					'</div>',
+					'</div>'
+				].join(''));
+				break;
+			default:
+				// 只允许留言此时无法关闭留言页面
+				easemobim.leaveMessage({hideCloseBtn: true});
+				break;
+			}
+		}
+
+		function _getGreeting() {
+			Promise.all([
+				apiHelper.getSystemGreeting(),
+				apiHelper.getRobertGreeting()
+			]).then(function(result){
+				var systemGreetingText = result[0];
+				var robotGreetingObj = result[1];
+				var greetingTextType = robotGreetingObj.greetingTextType;
+				var greetingText = robotGreetingObj.greetingText;
+				var greetingObj = {};
+
+				// 系统欢迎语
+				systemGreetingText && channel.handleReceive({
+					data: systemGreetingText,
+					noprompt: true
+				}, 'txt');
+
+				// 机器人欢迎语
+				switch (greetingTextType) {
+				case 0:
+					// 文本消息
+					channel.handleReceive({
+						data: greetingText,
+						noprompt: true
+					}, 'txt');
+					break;
+				case 1:
+					// 菜单消息
+					greetingObj = JSON.parse(greetingText.replace(/&amp;quot;/g, '"'));
+
+					greetingObj.ext && channel.handleReceive({
+						ext: greetingObj.ext,
+						noprompt: true
+					});
+					break;
+				case undefined:
+					// 未设置机器人欢迎语
+					break;
+				default:
+					console.error('unknown robot greeting type.');
+					break;
+				}
+			});
+		}
+
+		function getNickNameOption() {
+			api('getNickNameOption', {
+				tenantId: config.tenantId
+			}, function (msg) {
+				config.nickNameOption = utils.getDataByPath(msg, 'data.0.optionValue') === 'true';
+			});
+		}
+
+		function _getCurrentMessageView(){
+			return profile.currentOfficialAccount.messageView;
+		}
+
+		function _initAutoGrow(){
+			var originHeight = doms.textInput.clientHeight;
+
+			utils.on(doms.textInput, 'input change', update);
+
+			function update() {
+				var height = this.value ? this.scrollHeight : originHeight;
+				this.style.height = height + 'px';
+				this.scrollTop = 9999;
+				callback();
+			}
+
+			function callback() {
+				var height = doms.editorView.getBoundingClientRect().height;
+				if (inputBoxPosition === 'up') {
+					doms.emojiWrapper.style.top = 43 + height + 'px';
+				}
+				else {
+					doms.chatWrapper.style.bottom = height + 'px';
+					doms.emojiWrapper.style.bottom = height + 'px';
+				}
+				_getCurrentMessageView().scrollToBottom();
+			}
+		}
+
+		function _initMessageView(){
+			apiHelper.getOfficalAccounts().then(initMessageView, function(err){
+				// 未创建会话时初始化默认服务号
+				if (err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
+					initMessageView([], {isNewUser: true});
+				}
+				else {
+					throw err;
+				}
+			});
+
+			// 获取在线坐席数
+			apiHelper.getExSession().then(function(data) {
+				profile.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
+				profile.hasRobotAgentOnline = data.onlineRobotAgentCount > 0;
+			});
+
+			function initMessageView(collection, opt){
+				var option = opt || {};
+				var sessionList;
+				var officialAccountList = _.isEmpty(collection)
+					? [{
+						type: 'SYSTEM',
+						official_account_id: null,
+						img: null
+					}]
+					: collection;
+
+				// init message view
+				_.each(officialAccountList, function(item){
+					item.messageView = createMessageView({
+						parentContainer: doms.chatWrapper,
+						isNewUser: option.isNewUser,
+						id: item.official_account_id,
+						channel: channel
+					});
+				});
+
+				// init session list
+				sessionList = app.sessionList.init({
+					collection: collection,
+					callback: changeMessageViewTo
+				});
+
+				// 如果有自定义服务号则显示列表
+				if (_.findWhere(officialAccountList, {type: 'CUSTOM'})){
+					sessionList.show();
+					// todo: show list button
+					utils.on(doms.avatar, 'click', sessionList.show);
+					// 营销功能打开标志
+					profile.ctaEnable = true;
+				}
+				else {
+					profile.currentOfficialAccount = _.findWhere(officialAccountList, {type: 'SYSTEM'});
+				}
+
+				profile.systemOfficialAccount = _.findWhere(officialAccountList, {type: 'SYSTEM'});
+				profile.officialAccountList = officialAccountList;
+
+				function changeMessageViewTo(id){
+					var targerOfficialAccountProfile = _.findWhere(officialAccountList, {official_account_id: id});
+					_.each(officialAccountList, function(item){
+						item.messageView.hide();
+					});
+					targerOfficialAccountProfile.messageView.show();
+					profile.currentOfficialAccount = targerOfficialAccountProfile;
+				}
+				_getLastSession(profile.currentOfficialAccount.official_account_id);
+			}
+		}
+
+		function _getLastSession(officialAccountId){
+			apiHelper.getLastSession(officialAccountId).then(function(session){
+				var sessionId = session.session_id;
+				var state = session.state;
+				var agentId = session.agent_id;
+
+				profile.agentId = agentId;
+				profile.serviceSessionId = sessionId;
+				profile.sessionState = state;
+
+				if (state === _const.SESSION_STATE.WAIT){
+					apiHelper.reportVisitorAttributes(sessionId);
+					_setToKefuBtn({isSessionOpen: true});
+				}
+				else if (state === _const.SESSION_STATE.PROCESSING){
+					// 确保正在进行中的会话，刷新后还会继续轮询坐席状态
+					_startToGetAgentStatus();
+
+					_setToKefuBtn({isSessionOpen: true});
+					apiHelper.reportVisitorAttributes(sessionId);
+				}
+				else if (
+					state === _const.SESSION_STATE.ABORT
+					|| state === _const.SESSION_STATE.TERMINAL
+					|| state === _const.SESSION_STATE.RESOLVED
+				){
+					// 结束的会话获取欢迎语
+					_getGreeting();
+					_setToKefuBtn({isSessionOpen: false});
+				}
+				else{
+					throw 'unknown session state';
+				}
+			}, function(err){
+				if (err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
+					_getGreeting();
+				}
+				else {
+					throw err;
+				}
+			});
+		}
+
+		function _bindEvents() {
+			if (!utils.isTop) {
+				// 最小化按钮
+				utils.on(document.querySelector('.em-widget-header .btn-min'), 'click', function () {
+					transfer.send({ event: _const.EVENTS.CLOSE });
+				});
+
+				utils.on(easemobim.imBtn, utils.click, function () {
+					transfer.send({ event: _const.EVENTS.SHOW });
+				});
+
+				utils.on(document, 'mouseover', function () {
+					transfer.send({ event: _const.EVENTS.RECOVERY });
+				});
+			}
+
+			utils.on(doms.chatWrapper, 'click', function () {
+				doms.textInput.blur();
+			});
+
+			utils.live('img.em-widget-imgview', 'click', function () {
+				var imgSrc = this.getAttribute('src');
+				easemobim.imgView.show(imgSrc);
+			});
+
+			if (config.dragenable && !utils.isTop && !utils.isMobile) {
+
+				doms.dragBar.style.cursor = 'move';
+
+				utils.on(doms.dragBar, 'mousedown', function (ev) {
+					var e = window.event || ev;
+					doms.textInput.blur(); //ie a  ie...
+					transfer.send({
+						event: _const.EVENTS.DRAGREADY,
+						data: {
+							x: e.clientX,
+							y: e.clientY
+						}
+					});
+					return false;
+				}, false);
+			}
+
+			//resend
+			utils.live('div.em-widget-msg-status', utils.click, function () {
+				var id = this.getAttribute('id').slice(0, -'_failed'.length);
+
+				utils.addClass(this, 'hide');
+				utils.removeClass(document.getElementById(id + '_loading'), 'hide');
+				if (this.getAttribute('data-type') === 'txt') {
+					channel.reSend('txt', id);
+				}
+				else {
+					conn.send(id);
+				}
+			});
+
+			utils.live('button.js_robotTransferBtn', utils.click, function () {
+				var id = this.getAttribute('data-id');
+				var ssid = this.getAttribute('data-sessionid');
+
+				// 只能评价1次
+				if (!this.clicked) {
+					this.clicked = true;
+					channel.sendTransferToKf(id, ssid);
+				}
+			});
+
+			utils.live('button.js-transfer-to-ticket', utils.click, function () {
+				Promise.all([
+					apiHelper.getSessionQueueId(),
+					apiHelper.getCurrentServiceSession()
+				]).then(function(result){
+					var ssid = utils.getDataByPath(result[0], 'entity.serviceSessionId')
+						|| utils.getDataByPath(result[1], 'serviceSessionId');
+					ssid && api('closeServiceSession', {
+						tenantId: config.tenantId,
+						orgName: config.orgName,
+						appName: config.appName,
+						userName: config.user.username,
+						token: config.user.token,
+						serviceSessionId: ssid
+					});
+				});
+
+				easemobim.leaveMessage({
+					preData: {
+						name: config.visitor.trueName,
+						phone: config.visitor.phone,
+						mail: config.visitor.email,
+						// 	取最近10条消息，最大1000字
+						content: utils.getBrief('\n' + profile.systemOfficialAccount.messageView.getRecentMsg(10), 1000)
+					}
+				});
+			});
+
+			// 机器人列表
+			utils.live('button.js_robotbtn', utils.click, function () {
+				channel.sendText(this.innerText, {
+					ext: {
+						msgtype: {
+							choice: {
+								menuid: this.getAttribute('data-id')
+							}
+						}
+					}
+				});
+			});
+
+			// 满意度评价
+			utils.live('button.js_satisfybtn', 'click', function () {
+				var serviceSessionId = this.getAttribute('data-servicesessionid');
+				var inviteId = this.getAttribute('data-inviteid');
+				satisfaction.show(inviteId, serviceSessionId);
+			});
+
+			var messagePredict = _.throttle(function (msg) {
+				profile.agentId
+					&& config.visitorUserId
+					&& api('messagePredict', {
+						tenantId: config.tenantId,
+						visitor_user_id: config.visitorUserId,
+						agentId: profile.agentId,
+						content: utils.getBrief(msg, _const.MESSAGE_PREDICT_MAX_LENGTH),
+						timestamp: _.now(),
+					});
+			}, 1000);
+
+			function handleSendBtn() {
+				var isEmpty = !doms.textInput.value.trim();
+
+				utils.toggleClass(
+					doms.sendBtn,
+					'disabled', !isMessageChannelReady || isEmpty
+				);
+				config.grayList.msgPredictEnable
+					&& !isEmpty
+					&& messagePredict(doms.textInput.value);
+			}
+
+			if (Modernizr.oninput) {
+				utils.on(doms.textInput, 'input change', handleSendBtn);
+			}
+			else {
+				utils.on(doms.textInput, 'keyup change', handleSendBtn);
+			}
+
+			if (utils.isMobile) {
+				utils.on(doms.textInput, 'focus touchstart', function () {
+					doms.textInput.style.overflowY = 'auto';
+					_getCurrentMessageView().scrollToBottom();
+				});
+
+				// 键盘上下切换按钮
+				utils.on(
+					document.querySelector('.em-widget-header .btn-keyboard'),
+					'click',
+					function () {
+						var status = utils.hasClass(this, 'icon-keyboard-down');
+						var height = doms.editorView.getBoundingClientRect().height;
+						inputBoxPosition = status ? 'down' : 'up';
+
+						utils.toggleClass(this, 'icon-keyboard-up', status);
+						utils.toggleClass(this, 'icon-keyboard-down', !status);
+
+						switch (inputBoxPosition) {
+						case 'up':
+							doms.editorView.style.bottom = 'auto';
+							doms.editorView.style.zIndex = '3';
+							doms.editorView.style.top = '43px';
+							doms.chatWrapper.style.bottom = '0';
+							doms.emojiWrapper.style.bottom = 'auto';
+							doms.emojiWrapper.style.top = 43 + height + 'px';
+							break;
+						case 'down':
+							doms.editorView.style.bottom = '0';
+							doms.editorView.style.zIndex = '3';
+							doms.editorView.style.top = 'auto';
+							doms.chatWrapper.style.bottom = height + 'px';
+							doms.emojiWrapper.style.bottom = height + 'px';
+							doms.emojiWrapper.style.top = 'auto';
+							_getCurrentMessageView().scrollToBottom();
+							break;
+						}
+					}
+				);
+			}
+
+			// 发送文件
+			utils.on(doms.fileInput, 'change', function () {
+				var fileInput = doms.fileInput;
+				var filesize = utils.getDataByPath(fileInput, 'files.0.size');
+
+				if (!fileInput.value) {
+					// 未选择文件
+				}
+				else if (filesize > _const.UPLOAD_FILESIZE_LIMIT) {
+					uikit.tip('文件大小不能超过10MB');
+				}
+				else {
+					channel.sendFile(WebIM.utils.getFileUrl(fileInput), fileInput);
+				}
+			});
+
+			// 发送图片
+			utils.on(doms.imgInput, 'change', function () {
+				var fileInput = doms.imgInput;
+				// ie8-9 do not support multifiles, so you can not get files
+				var filesize = utils.getDataByPath(fileInput, 'files.0.size');
+
+				if (!fileInput.value) {
+					// 未选择文件
+				}
+				// 某些浏览器不能获取到正确的文件名，所以放弃文件类型检测
+				// else if (!/\.(png|jpg|jpeg|gif)$/i.test(fileInput.value)) {
+					// uikit.tip('不支持的图片格式');
+				// }
+				// 某些浏览器无法获取文件大小, 忽略
+				else if (filesize > _const.UPLOAD_FILESIZE_LIMIT) {
+					uikit.tip('文件大小不能超过10MB');
+					fileInput.value = '';
+				}
+				else {
+					channel.sendImg(WebIM.utils.getFileUrl(fileInput), fileInput);
+				}
+			});
+
+			//弹出文件选择框
+			utils.on(doms.sendFileBtn, 'click', function () {
+				// 发送文件是后来加的功能，无需考虑IE兼容
+				if (!isMessageChannelReady) {
+					uikit.tip('正在连接中...');
+				}
+				else {
+					doms.fileInput.click();
+				}
+			});
+
+			utils.on(doms.sendImgBtn, 'click', function () {
+				if (!isMessageChannelReady) {
+					uikit.tip('正在连接中...');
+				}
+				else {
+					doms.imgInput.click();
+				}
+			});
+
+			// 显示留言页面
+			utils.on(doms.noteBtn, 'click', function () {
+				easemobim.leaveMessage();
+			});
+
+			// 人工客服接起会话
+			utils.on(doms.toKefuBtn, 'click', function () {
+				channel.sendTransferToKf();
+				utils.addClass(doms.toKefuBtn, 'hide');
+			});
+
+			// 满意度评价
+			utils.on(doms.satisfaction, 'click', function () {
+				doms.textInput.blur();
+				satisfaction.show();
+			});
+
+			// 回车发送消息
+			utils.on(doms.textInput, 'keydown', function (evt) {
+				if (
+					evt.keyCode === 13
+					&& !utils.isMobile
+					&& !evt.ctrlKey
+					&& !evt.shiftKey
+				) {
+					// ie8 does not support preventDefault & stopPropagation
+					if (evt.preventDefault) {
+						evt.preventDefault();
+					}
+					utils.trigger(doms.sendBtn, 'click');
+				}
+			});
+
+			utils.on(doms.sendBtn, 'click', function () {
+				var textMsg = doms.textInput.value;
+
+				if (utils.hasClass(this, 'disabled')) {
+					// 禁止发送
+				}
+				else if (textMsg.length > _const.MAX_TEXT_MESSAGE_LENGTH) {
+					uikit.tip('输入字数过多');
+				}
+				else {
+					channel.sendText(textMsg);
+					doms.textInput.value = '';
+					utils.trigger(doms.textInput, 'change');
+				}
+			});
+		}
+
 		return {
 			init: function () {
 				var me = this;
 
-				this.channel = easemobim.channel.call(this, config);
+				channel = this.channel = easemobim.channel.call(this, config);
 
-				this.conn = new WebIM.connection({
+				conn = this.conn = new WebIM.connection({
 					url: config.xmppServer,
 					retry: true,
 					isMultiLoginSessions: config.resources,
@@ -61,11 +735,11 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				//init sound reminder
 				this.soundReminder();
 
-				this.initUI();
+				_initUI();
 
-				this.initEmoji();
+				_initEmoji();
 				//bind events on dom
-				this.bindEvents();
+				_bindEvents();
 
 				Promise.all([
 					apiHelper.getDutyStatus(),
@@ -86,24 +760,24 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 
 					if (config.isInOfficehours) {
 						// 显示广告条
-						me.setLogo();
+						_setLogo();
 
 						// 移动端输入框自动增长
-						utils.isMobile && me.initAutoGrow();
+						utils.isMobile && _initAutoGrow();
 
 						// 添加sdk回调
-						me.channel.listen();
+						channel.listen();
 
 						// 连接xmpp server
 						me.open();
 
 						// 设置信息栏
-						me.setNotice();
+						_setNotice();
 
-						me.initMessageView();
+						_initMessageView();
 
 						// 获取坐席昵称设置
-						me.getNickNameOption();
+						_getNickNameOption();
 
 						// 待接入排队人数显示
 						me.waitListNumber.start();
@@ -112,11 +786,11 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 						me.agentInputState.start();
 
 						// 第二通道收消息初始化
-						me.channel.initSecondChannle();
+						channel.initSecondChannle();
 					}
 					else {
 						// 设置下班时间展示的页面
-						me.setOffline();
+						_setOffline();
 					}
 				}, function (err) {
 					throw err;
@@ -125,9 +799,9 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 			handleReady: function (info) {
 				var me = this;
 
-				if (me.readyHandled) return;
+				if (isMessageChannelReady) return;
 
-				me.readyHandled = true;
+				isMessageChannelReady = true;
 				doms.sendBtn.innerHTML = '发送';
 				utils.trigger(doms.textInput, 'change');
 
@@ -142,227 +816,17 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 
 				// 发送用于回呼访客的命令消息
 				if (this.cachedCommandMessage) {
-					me.channel.sendText('', this.cachedCommandMessage);
+					channel.sendText('', this.cachedCommandMessage);
 					this.cachedCommandMessage = null;
 				}
 
 				transfer.send({ event: _const.EVENTS.ONREADY });
 
 				if (config.extMsg) {
-					me.channel.sendText('', { ext: config.extMsg });
+					channel.sendText('', { ext: config.extMsg });
 				}
 			},
-			initAutoGrow: function () {
-				var me = this;
-				var originHeight = doms.textInput.clientHeight;
 
-				if (me.isAutoGrowInitialized) return;
-				me.isAutoGrowInitialized = true;
-
-				utils.on(doms.textInput, 'input change', update);
-
-				function update() {
-					var height = this.value ? this.scrollHeight : originHeight;
-					this.style.height = height + 'px';
-					this.scrollTop = 9999;
-					callback();
-				}
-
-				function callback() {
-					var height = doms.editorView.getBoundingClientRect().height;
-					if (me.direction === 'up') {
-						doms.emojiWrapper.style.top = 43 + height + 'px';
-					}
-					else {
-						doms.chatWrapper.style.bottom = height + 'px';
-						doms.emojiWrapper.style.bottom = height + 'px';
-					}
-					me.getCurrentMessageView().scrollToBottom();
-				}
-			},
-			getGreeting: function () {
-				var me = this;
-
-				Promise.all([
-					apiHelper.getSystemGreeting(),
-					apiHelper.getRobertGreeting()
-				]).then(function(result){
-					var systemGreetingText = result[0];
-					var robotGreetingObj = result[1];
-					var greetingTextType = robotGreetingObj.greetingTextType;
-					var greetingText = robotGreetingObj.greetingText;
-					var greetingObj = {};
-
-					// 系统欢迎语
-					systemGreetingText && me.channel.handleReceive({
-						data: systemGreetingText,
-						noprompt: true
-					}, 'txt');
-
-					// 机器人欢迎语
-					switch (greetingTextType) {
-					case 0:
-						// 文本消息
-						me.channel.handleReceive({
-							data: greetingText,
-							noprompt: true
-						}, 'txt');
-						break;
-					case 1:
-						// 菜单消息
-						greetingObj = JSON.parse(greetingText.replace(/&amp;quot;/g, '"'));
-
-						greetingObj.ext && me.channel.handleReceive({
-							ext: greetingObj.ext,
-							noprompt: true
-						});
-						break;
-					case undefined:
-						// 未设置机器人欢迎语
-						break;
-					default:
-						console.error('unknown robot greeting type.');
-						break;
-					}
-				});
-			},
-			getNickNameOption: function () {
-				api('getNickNameOption', {
-					tenantId: config.tenantId
-				}, function (msg) {
-					config.nickNameOption = utils.getDataByPath(msg, 'data.0.optionValue') === 'true';
-				});
-			},
-			initMessageView: function(){
-				me = this;
-
-				apiHelper.getOfficalAccounts().then(initMessageView, function(err){
-					// 未创建会话时初始化默认服务号
-					if (err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
-						initMessageView([], {isNewUser: true});
-					}
-					else {
-						throw err;
-					}
-				});
-
-				// 获取在线坐席数
-				apiHelper.getExSession().then(function(data) {
-					profile.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
-					profile.hasRobotAgentOnline = data.onlineRobotAgentCount > 0;
-				});
-
-				function initMessageView(collection, opt){
-					var option = opt || {};
-					var sessionList;
-					var officialAccountList = _.isEmpty(collection)
-						? [{
-							type: 'SYSTEM',
-							official_account_id: null,
-							img: null
-						}]
-						: collection;
-
-					// init message view
-					_.each(officialAccountList, function(item){
-						item.messageView = createMessageView({
-							parentContainer: doms.chatWrapper,
-							isNewUser: option.isNewUser,
-							id: item.official_account_id,
-							chat: me
-						});
-					});
-
-					// init session list
-					sessionList = app.sessionList.init({
-						collection: collection,
-						callback: changeMessageViewTo
-					});
-
-					// 如果有自定义服务号则显示列表
-					if (_.findWhere(officialAccountList, {type: 'CUSTOM'})){
-						sessionList.show();
-						// todo: show list button
-						utils.on(doms.avatar, 'click', sessionList.show);
-						// 营销功能打开标志
-						profile.ctaEnable = true;
-					}
-					else {
-						profile.currentOfficialAccount = _.findWhere(officialAccountList, {type: 'SYSTEM'});
-					}
-
-					profile.systemOfficialAccount = _.findWhere(officialAccountList, {type: 'SYSTEM'});
-					profile.officialAccountList = officialAccountList;
-
-					function changeMessageViewTo(id){
-						var targerOfficialAccountProfile = _.findWhere(officialAccountList, {official_account_id: id});
-						_.each(officialAccountList, function(item){
-							item.messageView.hide();
-						});
-						targerOfficialAccountProfile.messageView.show();
-						profile.currentOfficialAccount = targerOfficialAccountProfile;
-					}
-					me.getServiveSession(profile.currentOfficialAccount.official_account_id);
-				}
-			},
-			getServiveSession: function(officialAccountId){
-				var me = this;
-
-				apiHelper.getLastSession(officialAccountId).then(function(session){
-					var sessionId = session.session_id;
-					var state = session.state;
-					var agentId = session.agent_id;
-
-					profile.agentId = agentId;
-					profile.serviceSessionId = sessionId;
-					profile.sessionState = state;
-
-					if (state === _const.SESSION_STATE.WAIT){
-						apiHelper.reportVisitorAttributes(sessionId);
-						me.setToKefuBtn({isSessionOpen: true});
-					}
-					else if (state === _const.SESSION_STATE.PROCESSING){
-						// 确保正在进行中的会话，刷新后还会继续轮询坐席状态
-						me.startToGetAgentStatus();
-
-						me.setToKefuBtn({isSessionOpen: true});
-						apiHelper.reportVisitorAttributes(sessionId);
-					}
-					else if (
-						state === _const.SESSION_STATE.ABORT
-						|| state === _const.SESSION_STATE.TERMINAL
-						|| state === _const.SESSION_STATE.RESOLVED
-					){
-						// 结束的会话获取欢迎语
-						me.getGreeting();
-						me.setToKefuBtn({isSessionOpen: false});
-					}
-					else{
-						throw 'unknown session state';
-					}
-				}, function(err){
-					if (err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
-						me.getGreeting();
-					}
-					else {
-						throw err;
-					}
-				});
-			},
-			sendAttribute: function (data) {
-				var visitorUserId = utils.getDataByPath(data, 'serviceSession.visitorUser.userId');
-				if (!this.hasSentAttribute && visitorUserId) {
-					this.hasSentAttribute = true;
-					// todo: use apiHelp cache visitorId
-					// 缓存 visitorUserId
-					config.visitorUserId = visitorUserId;
-					api('sendVisitorInfo', {
-						tenantId: config.tenantId,
-						visitorId: visitorUserId,
-						referer: document.referrer
-					});
-				}
-			},
 			setEnterpriseInfo: function () {
 				this.setAgentProfile({
 					tenantName: config.defaultAgentName,
@@ -568,134 +1032,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				// 缓存头像地址
 				this.currentAvatar = avatarImg;
 			},
-			setLogo: function () {
-				if (!config.logo.enabled) return;
-				var logoImgWapper = document.querySelector('.em-widget-tenant-logo');
-				var logoImg = logoImgWapper.querySelector('img');
 
-				utils.removeClass(logoImgWapper, 'hide');
-				logoImg.src = config.logo.url;
-			},
-			setToKefuBtn: function(flagObj){
-				if (!config.toolbar.transferToKefu) return;
-				if (flagObj.isSessionOpen){
-					apiHelper.getCurrentServiceSession().then(function (res) {
-						var isRobotAgent = res && res.agentUserType === 6;
-						utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotAgent);
-					});
-				}
-				else{
-					apiHelper.getRobertIsOpen().then(function (isRobotEnable) {
-						utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotEnable);
-					});
-				}
-			},
-			setNotice: function () {
-				var me = this;
-				var noticeContent = document.querySelector('.em-widget-tip .content');
-				var noticeCloseBtn = document.querySelector('.em-widget-tip .tip-close');
-
-				apiHelper.getNotice().then(function(notice){
-					if(!notice.enabled) return;
-					var slogan = notice.content;
-
-					// 设置信息栏内容
-					noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
-					// 显示信息栏
-					utils.addClass(doms.imChat, 'has-tip');
-
-					// 隐藏信息栏按钮
-					utils.on(
-						noticeCloseBtn,
-						utils.click,
-						function () {
-							// 隐藏信息栏
-							utils.removeClass(doms.imChat, 'has-tip');
-						}
-					);
-
-				});
-			},
-			initEmoji: function () {
-				var me = this;
-
-				utils.on(doms.emojiBtn, utils.click, function () {
-					doms.textInput.blur();
-					utils.toggleClass(doms.emojiWrapper, 'hide');
-
-					// 懒加载，打开表情面板时才初始化图标
-					if (!me.isEmojiInitilized) {
-						me.isEmojiInitilized = true;
-						doms.emojiContainer.innerHTML = genHtml();
-					}
-				});
-
-				// 表情的选中
-				utils.live('img.emoji', utils.click, function (e) {
-					!utils.isMobile && doms.textInput.focus();
-					doms.textInput.value += this.getAttribute('data-value');
-					utils.trigger(doms.textInput, 'change');
-				}, doms.emojiWrapper);
-
-				// todo: kill .e-face to make it more elegant
-				// ie8 does not support stopPropagation -_-||
-				// 点击别处时隐藏表情面板
-				utils.on(document, utils.click, function (ev) {
-					var e = window.event || ev;
-					var target = e.srcElement || e.target;
-
-					if (!utils.hasClass(target, 'e-face')) {
-						utils.addClass(doms.emojiWrapper, 'hide');
-					}
-				});
-
-				function genHtml() {
-					var path = WebIM.Emoji.path;
-					var EMOJI_COUNT_PER_LINE = 7;
-
-					return _.chain(WebIM.Emoji.map)
-						// 生成图标html
-						.map(function (value, key) {
-							return '<div class="em-bar-emoji-bg e-face">'
-								+ '<img class="e-face emoji" src="'
-								+ path + value
-								+ '" data-value=' + key + ' />'
-								+ '</div>';
-						})
-						// 按照下标分组
-						.groupBy(function (elem, index) {
-							return Math.floor(index / EMOJI_COUNT_PER_LINE);
-						})
-						// 增加wrapper
-						.map(function (elem) {
-							return '<li class="e-face">' + elem.join('') + '</li>';
-						})
-						// 结束链式调用
-						.value()
-						// 把数组拼接成字符串
-						.join('');
-				}
-			},
-			setOffline: function () {
-				switch (config.offDutyType) {
-				case 'none':
-					// 下班禁止留言、禁止接入会话
-					utils.appendHTMLToBody([
-						'<div class="em-model"></div>',
-						'<div class="em-dialog off-duty-prompt">',
-						'<div class="bg-color header">提示</div>',
-						'<div class="body">',
-						'<p class="content">' + config.offDutyWord + '</p>',
-						'</div>',
-						'</div>'
-					].join(''));
-					break;
-				default:
-					// 只允许留言此时无法关闭留言页面
-					easemobim.leaveMessage({hideCloseBtn: true});
-					break;
-				}
-			},
 			//close chat window
 			close: function () {
 				isChatWindowOpen = false;
@@ -708,7 +1045,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 			//show chat window
 			show: function () {
 				var me = this;
-				var currentMessageView = me.getCurrentMessageView();
+				var currentMessageView = _getCurrentMessageView();
 
 				isChatWindowOpen = true;
 				utils.addClass(easemobim.imBtn, 'hide');
@@ -725,8 +1062,6 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				transfer.send({ event: _const.EVENTS.RECOVERY });
 			},
 			open: function () {
-				var me = this;
-
 				var op = {
 					user: config.user.username,
 					appKey: config.appKey,
@@ -740,11 +1075,11 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 					op.pwd = config.user.password;
 				}
 
-				me.conn.open(op);
+				conn.open(op);
 
 				Modernizr.peerconnection
 					&& config.grayList.audioVideo
-					&& easemobim.videoChat.init(me.conn, me.channel.sendText, config);
+					&& easemobim.videoChat.init(conn, channel.sendText, config);
 			},
 			soundReminder: function () {
 				if (!window.HTMLAudioElement || utils.isMobile || !config.soundReminder) {
@@ -774,307 +1109,8 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 					}
 				};
 			},
-			bindEvents: function () {
-				var me = this;
 
-				if (!utils.isTop) {
-					// 最小化按钮
-					utils.on(document.querySelector('.em-widget-header .btn-min'), 'click', function () {
-						transfer.send({ event: _const.EVENTS.CLOSE });
-					});
-
-					utils.on(easemobim.imBtn, utils.click, function () {
-						transfer.send({ event: _const.EVENTS.SHOW });
-					});
-
-					utils.on(document, 'mouseover', function () {
-						transfer.send({ event: _const.EVENTS.RECOVERY });
-					});
-				}
-
-				utils.on(doms.chatWrapper, 'click', function () {
-					doms.textInput.blur();
-				});
-
-				utils.live('img.em-widget-imgview', 'click', function () {
-					var imgSrc = this.getAttribute('src');
-					easemobim.imgView.show(imgSrc);
-				});
-
-				if (config.dragenable && !utils.isTop && !utils.isMobile) {
-
-					doms.dragBar.style.cursor = 'move';
-
-					utils.on(doms.dragBar, 'mousedown', function (ev) {
-						var e = window.event || ev;
-						doms.textInput.blur(); //ie a  ie...
-						transfer.send({
-							event: _const.EVENTS.DRAGREADY,
-							data: {
-								x: e.clientX,
-								y: e.clientY
-							}
-						});
-						return false;
-					}, false);
-				}
-
-				//resend
-				utils.live('div.em-widget-msg-status', utils.click, function () {
-					var id = this.getAttribute('id').slice(0, -'_failed'.length);
-
-					utils.addClass(this, 'hide');
-					utils.removeClass(document.getElementById(id + '_loading'), 'hide');
-					if (this.getAttribute('data-type') === 'txt') {
-						me.channel.reSend('txt', id);
-					}
-					else {
-						me.conn.send(id);
-					}
-				});
-
-				utils.live('button.js_robotTransferBtn', utils.click, function () {
-					var id = this.getAttribute('data-id');
-					var ssid = this.getAttribute('data-sessionid');
-
-					// 只能评价1次
-					if (!this.clicked) {
-						this.clicked = true;
-						me.channel.sendTransferToKf(id, ssid);
-					}
-				});
-
-				utils.live('button.js-transfer-to-ticket', utils.click, function () {
-					Promise.all([
-						apiHelper.getSessionQueueId(),
-						apiHelper.getCurrentServiceSession()
-					]).then(function(result){
-						var ssid = utils.getDataByPath(result[0], 'entity.serviceSessionId')
-							|| utils.getDataByPath(result[1], 'serviceSessionId');
-						ssid && api('closeServiceSession', {
-							tenantId: config.tenantId,
-							orgName: config.orgName,
-							appName: config.appName,
-							userName: config.user.username,
-							token: config.user.token,
-							serviceSessionId: ssid
-						});
-					});
-
-					easemobim.leaveMessage({
-						preData: {
-							name: config.visitor.trueName,
-							phone: config.visitor.phone,
-							mail: config.visitor.email,
-							// 	取最近10条消息，最大1000字
-							content: utils.getBrief('\n' + profile.systemOfficialAccount.messageView.getRecentMsg(10), 1000)
-						}
-					});
-				});
-
-				// 机器人列表
-				utils.live('button.js_robotbtn', utils.click, function () {
-					me.channel.sendText(this.innerText, {
-						ext: {
-							msgtype: {
-								choice: {
-									menuid: this.getAttribute('data-id')
-								}
-							}
-						}
-					});
-				});
-
-				// 满意度评价
-				utils.live('button.js_satisfybtn', 'click', function () {
-					var serviceSessionId = this.getAttribute('data-servicesessionid');
-					var inviteId = this.getAttribute('data-inviteid');
-					satisfaction.show(inviteId, serviceSessionId);
-				});
-
-				var messagePredict = _.throttle(function (msg) {
-					profile.agentId
-						&& config.visitorUserId
-						&& api('messagePredict', {
-							tenantId: config.tenantId,
-							visitor_user_id: config.visitorUserId,
-							agentId: profile.agentId,
-							content: utils.getBrief(msg, _const.MESSAGE_PREDICT_MAX_LENGTH),
-							timestamp: _.now(),
-						});
-				}, 1000);
-
-				function handleSendBtn() {
-					var isEmpty = !doms.textInput.value.trim();
-
-					utils.toggleClass(
-						doms.sendBtn,
-						'disabled', !me.readyHandled || isEmpty
-					);
-					config.grayList.msgPredictEnable
-						&& !isEmpty
-						&& messagePredict(doms.textInput.value);
-				}
-
-				if (Modernizr.oninput) {
-					utils.on(doms.textInput, 'input change', handleSendBtn);
-				}
-				else {
-					utils.on(doms.textInput, 'keyup change', handleSendBtn);
-				}
-
-				if (utils.isMobile) {
-					utils.on(doms.textInput, 'focus touchstart', function () {
-						doms.textInput.style.overflowY = 'auto';
-						me.getCurrentMessageView().scrollToBottom();
-					});
-
-					// 键盘上下切换按钮
-					utils.on(
-						document.querySelector('.em-widget-header .btn-keyboard'),
-						'click',
-						function () {
-							var status = utils.hasClass(this, 'icon-keyboard-down');
-							var height = doms.editorView.getBoundingClientRect().height;
-							me.direction = status ? 'down' : 'up';
-
-							utils.toggleClass(this, 'icon-keyboard-up', status);
-							utils.toggleClass(this, 'icon-keyboard-down', !status);
-
-							switch (me.direction) {
-							case 'up':
-								doms.editorView.style.bottom = 'auto';
-								doms.editorView.style.zIndex = '3';
-								doms.editorView.style.top = '43px';
-								doms.chatWrapper.style.bottom = '0';
-								doms.emojiWrapper.style.bottom = 'auto';
-								doms.emojiWrapper.style.top = 43 + height + 'px';
-								break;
-							case 'down':
-								doms.editorView.style.bottom = '0';
-								doms.editorView.style.zIndex = '3';
-								doms.editorView.style.top = 'auto';
-								doms.chatWrapper.style.bottom = height + 'px';
-								doms.emojiWrapper.style.bottom = height + 'px';
-								doms.emojiWrapper.style.top = 'auto';
-								me.getCurrentMessageView().scrollToBottom();
-								break;
-							}
-						}
-					);
-				}
-
-				// 发送文件
-				utils.on(doms.fileInput, 'change', function () {
-					var fileInput = doms.fileInput;
-					var filesize = utils.getDataByPath(fileInput, 'files.0.size');
-
-					if (!fileInput.value) {
-						// 未选择文件
-					}
-					else if (filesize > _const.UPLOAD_FILESIZE_LIMIT) {
-						uikit.tip('文件大小不能超过10MB');
-					}
-					else {
-						me.channel.sendFile(WebIM.utils.getFileUrl(fileInput), fileInput);
-					}
-				});
-
-				// 发送图片
-				utils.on(doms.imgInput, 'change', function () {
-					var fileInput = doms.imgInput;
-					// ie8-9 do not support multifiles, so you can not get files
-					var filesize = utils.getDataByPath(fileInput, 'files.0.size');
-
-					if (!fileInput.value) {
-						// 未选择文件
-					}
-					// 某些浏览器不能获取到正确的文件名，所以放弃文件类型检测
-					// else if (!/\.(png|jpg|jpeg|gif)$/i.test(fileInput.value)) {
-						// uikit.tip('不支持的图片格式');
-					// }
-					// 某些浏览器无法获取文件大小, 忽略
-					else if (filesize > _const.UPLOAD_FILESIZE_LIMIT) {
-						uikit.tip('文件大小不能超过10MB');
-						fileInput.value = '';
-					}
-					else {
-						me.channel.sendImg(WebIM.utils.getFileUrl(fileInput), fileInput);
-					}
-				});
-
-				//弹出文件选择框
-				utils.on(doms.sendFileBtn, 'click', function () {
-					// 发送文件是后来加的功能，无需考虑IE兼容
-					if (!me.readyHandled) {
-						uikit.tip('正在连接中...');
-					}
-					else {
-						doms.fileInput.click();
-					}
-				});
-
-				utils.on(doms.sendImgBtn, 'click', function () {
-					if (!me.readyHandled) {
-						uikit.tip('正在连接中...');
-					}
-					else {
-						doms.imgInput.click();
-					}
-				});
-
-				// 显示留言页面
-				utils.on(doms.noteBtn, 'click', function () {
-					easemobim.leaveMessage();
-				});
-
-				// 人工客服接起会话
-				utils.on(doms.toKefuBtn, 'click', function () {
-					me.channel.sendTransferToKf();
-					utils.addClass(doms.toKefuBtn, 'hide');
-				});
-
-				// 满意度评价
-				utils.on(doms.satisfaction, 'click', function () {
-					doms.textInput.blur();
-					satisfaction.show();
-				});
-
-				// 回车发送消息
-				utils.on(doms.textInput, 'keydown', function (evt) {
-					if (
-						evt.keyCode === 13
-						&& !utils.isMobile
-						&& !evt.ctrlKey
-						&& !evt.shiftKey
-					) {
-						// ie8 does not support preventDefault & stopPropagation
-						if (evt.preventDefault) {
-							evt.preventDefault();
-						}
-						utils.trigger(doms.sendBtn, 'click');
-					}
-				});
-
-				utils.on(doms.sendBtn, 'click', function () {
-					var textMsg = doms.textInput.value;
-
-					if (utils.hasClass(this, 'disabled')) {
-						// 禁止发送
-					}
-					else if (textMsg.length > _const.MAX_TEXT_MESSAGE_LENGTH) {
-						uikit.tip('输入字数过多');
-					}
-					else {
-						me.channel.sendText(textMsg);
-						doms.textInput.value = '';
-						utils.trigger(doms.textInput, 'change');
-					}
-				});
-			},
-			getCurrentMessageView: function(){
-				return profile.currentOfficialAccount.messageView;
-			},
+			getCurrentMessageView: _getCurrentMessageView,
 			messagePrompt: function (message) {
 				if (utils.isTop) return;
 
@@ -1120,52 +1156,6 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 					});
 				}
 			},
-			initUI: function(){
-				(utils.isTop || !config.minimum) && utils.removeClass(doms.imChat, 'hide');
-
-				// 设置联系客服按钮文字
-				document.querySelector('.em-widget-pop-bar').innerText = config.buttonText;
-
-				// 添加移动端样式类
-				utils.isMobile && utils.addClass(document.body, 'em-mobile');
-
-				// 留言按钮
-				config.ticket && utils.removeClass(doms.noteBtn, 'hide');
-
-				// 最小化按钮
-				config.minimum
-					&& !utils.isTop
-					&& utils.removeClass(doms.minifyBtn, 'hide');
-
-				// 低版本浏览器不支持上传文件/图片
-				if (WebIM.utils.isCanUploadFileAsync){
-					utils.removeClass(doms.sendImgBtn, 'hide');
-					utils.removeClass(doms.sendFileBtn, 'hide');
-				}
-
-				// h5title设置
-				if(config.ui.H5Title.enabled){
-					document.title = config.ui.H5Title.content;
-				}
-
-				// 静音按钮
-				window.HTMLAudioElement
-					&& !utils.isMobile
-					&& config.soundReminder
-					&& utils.removeClass(doms.audioBtn, 'hide');
-
-				// 输入框位置开关
-				utils.isMobile
-					&& !config.hideKeyboard
-					&& utils.removeClass(doms.switchKeyboardBtn, 'hide');
-
-				// 满意度评价按钮
-				config.satisfaction
-					&& utils.removeClass(
-						document.querySelector('.em-widget-satisfaction'),
-						'hide'
-					);
-			}
 		};
 	};
 }(

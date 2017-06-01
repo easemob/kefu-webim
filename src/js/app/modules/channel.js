@@ -404,7 +404,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					// 会话结束
 				case 'ServiceSessionClosedEvent':
 					// todo: use promise to opt this code
-					me.hasSentAttribute = false;
+					profile.hasReportedAttributes = false;
 					// todo: use promise to opt this code
 					me.waitListNumber.stop();
 					profile.agentId = null;
@@ -433,21 +433,13 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					me.agentInputState.start();
 
 					_handleEventStatus('linked', eventObj);
-					if (!me.hasSentAttribute) {
-						apiHelper.getExSession().then(function (data){
-							me.sendAttribute(data);
-						});
-					}
+					_attemptToSendAttribute();
 					break;
 					// 会话创建
 				case 'ServiceSessionCreatedEvent':
 					_handleEventStatus('create');
 					me.waitListNumber.start();
-					if (!me.hasSentAttribute) {
-						apiHelper.getExSession().then(function (data) {
-							me.sendAttribute(data);
-						});
-					}
+					_attemptToSendAttribute();
 					break;
 				default:
 					break;
@@ -762,6 +754,30 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					_uploadImgMsgChannle(id, file);
 				}, _const.FIRST_CHANNEL_IMG_MESSAGE_TIMEOUT)
 			);
+		}
+
+		function _attemptToSendAttribute(){
+			if (!profile.hasReportedAttributes) {
+				apiHelper.getExSession().then(function (data){
+					me.sendAttribute(data);
+				});
+			}
+		}
+
+		function _sendAttribute(data) {
+			var me = this;
+			var visitorUserId = utils.getDataByPath(data, 'serviceSession.visitorUser.userId');
+			if (!profile.hasReportedAttributes && visitorUserId) {
+				profile.hasReportedAttributes = true;
+				// todo: use apiHelp cache visitorId
+				// 缓存 visitorUserId
+				config.visitorUserId = visitorUserId;
+				api('sendVisitorInfo', {
+					tenantId: config.tenantId,
+					visitorId: visitorUserId,
+					referer: document.referrer
+				});
+			}
 		}
 
 		// 初始监听xmpp的timer, xmpp连接超时则按钮变为发送

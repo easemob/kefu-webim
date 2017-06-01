@@ -4,7 +4,7 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper){
 	return function(opt){
 		var parentContainer = opt.parentContainer;
 		var isNewUser = opt.isNewUser;
-		var chat = opt.chat;
+		var channel = opt.channel;
 		var officialAccountId = opt.id;
 		var el = utils.createElementFromHTML(tpl);
 
@@ -137,7 +137,7 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper){
 
 				currHistoryMsgSeqId = nextMsgSeq;
 				hasHistoryMessage = length === _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME && nextMsgSeq > 0;
-				_.each(msgList, chat.channel.handleHistoryMsg);
+				_.each(msgList, channel.handleHistoryMsg);
 				typeof callback === 'function' && callback();
 			});
 		}
