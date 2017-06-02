@@ -269,7 +269,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 			});
 		}
 
-		function getNickNameOption() {
+		function _getNickNameOption() {
 			api('getNickNameOption', {
 				tenantId: config.tenantId
 			}, function (msg) {
@@ -717,11 +717,44 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 			});
 		}
 
+		// todo: 拆分这部分
+		function _startToGetAgentStatus() {
+			if (config.agentStatusTimer) return;
+
+			// start to poll
+			config.agentStatusTimer = setInterval(function () {
+				_updateAgentStatus();
+			}, 5000);
+		}
+
+		function _stopGettingAgentStatus() {
+			config.agentStatusTimer = clearInterval(config.agentStatusTimer);
+		}
+
+		function _clearAgentStatus() {
+			doms.agentStatusSymbol.className = 'hide';
+			doms.agentStatusText.innerText = '';
+		}
+
+		function _updateAgentStatus() {
+			if (!profile.agentId || !config.nickNameOption || !config.user.token) {
+				_stopGettingAgentStatus();
+				return;
+			}
+
+			apiHelper.getAgentStatus(profile.agentId).then(function (state) {
+				if (state) {
+					doms.agentStatusText.innerText = _const.agentStatusText[state];
+					doms.agentStatusSymbol.className = 'em-widget-agent-status ' + _const.agentStatusClassName[state];
+				}
+			});
+		}
+
 		return {
 			init: function () {
 				var me = this;
 
-				channel = this.channel = easemobim.channel.call(this, config);
+				channel = this.channel = easemobim.channel(this, config);
 
 				conn = this.conn = new WebIM.connection({
 					url: config.xmppServer,
@@ -833,38 +866,11 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 					avatar: config.tenantAvatar
 				});
 			},
-			startToGetAgentStatus: function () {
-				var me = this;
-
-				if (config.agentStatusTimer) return;
-
-				// start to poll
-				config.agentStatusTimer = setInterval(function () {
-					me.updateAgentStatus();
-				}, 5000);
-			},
-			stopGettingAgentStatus: function () {
-				config.agentStatusTimer = clearInterval(config.agentStatusTimer);
-			},
-			clearAgentStatus: function () {
-				doms.agentStatusSymbol.className = 'hide';
-				doms.agentStatusText.innerText = '';
-			},
-			updateAgentStatus: function () {
-				var me = this;
-
-				if (!profile.agentId || !config.nickNameOption || !config.user.token) {
-					me.stopGettingAgentStatus();
-					return;
-				}
-
-				apiHelper.getAgentStatus(profile.agentId).then(function (state) {
-					if (state) {
-						doms.agentStatusText.innerText = _const.agentStatusText[state];
-						doms.agentStatusSymbol.className = 'em-widget-agent-status ' + _const.agentStatusClassName[state];
-					}
-				});
-			},
+			startToGetAgentStatus: _startToGetAgentStatus,
+			clearAgentStatus: _clearAgentStatus,
+			updateAgentStatus: _updateAgentStatus,
+			stopGettingAgentStatus: _stopGettingAgentStatus,
+			setToKefuBtn: _setToKefuBtn,
 
 			agentInputState: (function () {
 				var isStarted = false;
@@ -1030,7 +1036,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				}
 
 				// 缓存头像地址
-				this.currentAvatar = avatarImg;
+				profile.currentAgentAvatar = avatarImg;
 			},
 
 			//close chat window
@@ -1118,6 +1124,9 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				var value = message.value;
 				var tmpVal;
 				var brief;
+				var avatar = profile.ctaEnable
+					? profile.currentOfficialAccount.img
+					: profile.currentAgentAvatar;
 
 				switch (message.type) {
 				case 'txt':
@@ -1149,7 +1158,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 					transfer.send({
 						event: _const.EVENTS.NOTIFY,
 						data: {
-							avatar: this.currentAvatar,
+							avatar: avatar,
 							title: '新消息',
 							brief: brief
 						}

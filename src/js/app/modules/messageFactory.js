@@ -90,15 +90,24 @@ easemobim.genDomFromMsg = (function (window, _const, utils, profile) {
 		return html;
 	}
 
+	function _getAvatar(msg){
+		var avatarFromOfficialAccountExt = utils.getDataByPath(msg, 'ext.weichat.official_account.img');
+		var avatarFromMessageExt = utils.getDataByPath(msg, 'fromUser.img');
+		var avatarFromCurrentAgent = profile.currentAgentAvatar;
+		var avatarFromCurrnetOfficialAccount = profile.currentOfficialAccount.img;
+		var avatar = profile.ctaEnable
+			? avatarFromOfficialAccountExt || avatarFromCurrnetOfficialAccount
+			: avatarFromMessageExt || avatarFromCurrentAgent;
+
+		return avatar || profile.tenantAvatar || profile.defaultAvatar;
+	}
+
 	function genDomFromMsg(msg, isReceived, isHistory) {
 		var id = msg.id;
 		var type = msg.type;
 		var html = '';
 		var dom = document.createElement('div');
 		var direction = isReceived ? 'left' : 'right';
-		var officialAccountAvatar = utils.getDataByPath(msg, 'ext.weichat.official_account.img');
-		var messageAvatar = utils.getDataByPath(msg, 'fromUser.img')
-		var avatar = messageAvatar || profile.defaultAvatar;
 
 		// 设置消息气泡显示在左侧还是右侧
 		// .em-widget-right, .em-widget-left used here
@@ -111,7 +120,7 @@ easemobim.genDomFromMsg = (function (window, _const, utils, profile) {
 
 		// 坐席消息头像
 		if (direction === 'left'){
-			html += '<img class="avatar" src="' + avatar + '">';
+			html += '<img class="avatar" src="' + _getAvatar(msg) + '">';
 		}
 
 		// wrapper开始

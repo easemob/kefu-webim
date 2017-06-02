@@ -1,8 +1,10 @@
 easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profile){
-	return function (config) {
-		var me = this;
+	'strict';
+	return function (chat, config) {
 		var reOpenTimerHandler;
 		var isNoAgentOnlineTipShowed;
+		var receiveMsgTimer;
+		var token;
 
 		// 监听ack的timer, 每条消息启动一个
 		var ackTimerDict = new easemobim.Dict();
@@ -14,233 +16,266 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 		var receiveMsgDict = new easemobim.Dict();
 
 
-		var _obj = {
+		return {
+			reSend: _reSend,
+			sendTransferToKf: _sendTransferToKf,
+			sendText: _sendText,
+			sendImg: _sendImg,
+			sendFile: _sendFile,
+			listen: _listen,
 
-			reSend: function (type, id) {
-				if (id) {
-					switch (type) {
-					case 'txt':
-						// 重试只发一次
-						_sendMsgChannle(id, 0);
-						break;
-					}
-				}
-			},
-			sendText: function (message, ext) {
-				var id = utils.uuid();
-				var msg = new WebIM.message.txt(id);
-				msg.set({
-					msg: message,
-					to: config.toUser,
-					// 此回调用于确认im server收到消息, 有别于kefu ack
-					success: function (id) {},
-					fail: function (id) {}
-				});
-
-				if (ext) {
-					_.extend(msg.body, ext);
-				}
-				_setExt(msg);
-				_appendAck(msg, id);
-				me.conn.send(msg.body);
-				sendMsgDict.set(id, msg);
-				_detectSendTextMsgByApi(id);
-
-				// 空文本消息不上屏
-				if (!message) return;
-				_appendMsg(false, {
-					type: 'txt',
-					data: message
-				}, false, null, null);
-
-				_promptNoAgentOnlineIfNeeded({
-					hasTransferedToKefu: message === '转人工' || message === '转人工客服'
-				});
-			},
-			sendTransferToKf: function (tid, sessionId) {
-				var id = utils.uuid();
-				var msg = new WebIM.message.cmd(id);
-				msg.set({
-					to: config.toUser,
-					action: 'TransferToKf',
-					ext: {
-						weichat: {
-							ctrlArgs: {
-								id: tid,
-								serviceSessionId: sessionId
-							}
-						}
-					}
-				});
-				_appendAck(msg, id);
-				me.conn.send(msg.body);
-				sendMsgDict.set(id, msg);
-				_detectSendTextMsgByApi(id);
-
-				_promptNoAgentOnlineIfNeeded({hasTransferedToKefu: true});
-			},
-
-			sendImg: function (fileMsg, fileInput) {
-				var id = utils.uuid();
-				var msg = new WebIM.message.img(id);
-
-				fileInput && (fileInput.value = '');
-				msg.set({
-					apiUrl: location.protocol + '//' + config.restServer,
-					file: fileMsg,
-					accessToken: me.token,
-					to: config.toUser,
-					uploadError: function (error) {
-						//显示图裂，无法重新发送
-						var id = error.id;
-						var loading = document.getElementById(id + '_loading');
-						var msgWrap = document.querySelector('#' + id + ' .em-widget-msg-container');
-
-						msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
-						utils.addClass(loading, 'hide');
-						// todo: fix this part can not be called
-					},
-					success: function (id) {
-						utils.removeDom(document.getElementById(id + '_loading'));
-						utils.removeDom(document.getElementById(id + '_failed'));
-					},
-					fail: function (id) {
-						utils.addClass(document.getElementById(id + '_loading'), 'hide');
-						utils.removeClass(document.getElementById(id + '_failed'), 'hide');
-					}
-				});
-				_setExt(msg);
-				_appendAck(msg, id);
-				_appendMsg(false, {
-					type: 'img',
-					url: fileMsg.url
-				}, false, null, null);
-				me.conn.send(msg.body);
-				sendMsgDict.set(id, msg);
-				_detectUploadImgMsgByApi(id, fileMsg.data);
-
-				// 自己发出去的图片要缓存File对象，用于全屏显示图片
-				profile.imgFileList.set(fileMsg.url, fileMsg.data);
-			},
-
-			sendFile: function (fileMsg, fileInput) {
-				var id = utils.uuid();
-				var msg = new WebIM.message.file(id);
-
-				fileInput && (fileInput.value = '');
-				msg.set({
-					apiUrl: location.protocol + '//' + config.restServer,
-					file: fileMsg,
-					to: config.toUser,
-					uploadError: function (error) {
-						var id = error.id;
-						var loading = document.getElementById(id + '_loading');
-						var msgWrap = document.querySelector('#' + id + ' .em-widget-msg-container');
-
-						//显示图裂，无法重新发送
-						msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
-						utils.addClass(loading, 'hide');
-						// todo: fix this part can not be called
-					},
-					success: function (id) {
-						utils.removeDom(document.getElementById(id + '_loading'));
-						utils.removeDom(document.getElementById(id + '_failed'));
-					},
-					fail: function (id) {
-						utils.addClass(document.getElementById(id + '_loading'), 'hide');
-						utils.removeClass(document.getElementById(id + '_failed'), 'hide');
-					}
-				});
-				_setExt(msg);
-				_appendMsg(false, {
-					type: 'file',
-					url: fileMsg.url,
-					filename: fileMsg.filename,
-					fileLength: fileMsg.data.size
-				}, false, null, null);
-				me.conn.send(msg.body);
-			},
-			listen: function () {
-				me.conn.listen({
-					onOpened: function (info) {
-						// 连接未超时，清除timer，暂不开启api通道发送消息
-						clearTimeout(firstTS);
-
-						reOpenTimerHandler && clearTimeout(reOpenTimerHandler);
-						me.token = info.accessToken;
-						me.conn.setPresence();
-
-						me.handleReady(info);
-					},
-					onTextMessage: function (message) {
-						_handleMessage(message, 'txt');
-					},
-					onEmojiMessage: function (message) {
-						_handleMessage(message, 'emoji');
-					},
-					onPictureMessage: function (message) {
-						_handleMessage(message, 'img');
-					},
-					onFileMessage: function (message) {
-						_handleMessage(message, 'file');
-					},
-					onCmdMessage: function (message) {
-						_handleMessage(message, 'cmd');
-					},
-					onOnline: function () {
-						utils.isMobile && me.open();
-					},
-					onOffline: function () {
-						utils.isMobile && me.conn.close();
-						// for debug
-						console.log('onOffline-channel');
-						// 断线关闭视频通话
-						if (Modernizr.peerconnection) {
-							easemobim.videoChat.onOffline();
-						}
-						// todo 断线后停止轮询坐席状态
-						// me.stopGettingAgentStatus();
-					},
-					onError: function (e) {
-						if (e.reconnect) {
-							me.open();
-						}
-						else if (e.type === _const.IM.WEBIM_CONNCTION_AUTH_ERROR) {
-							reOpenTimerHandler || (reOpenTimerHandler = setTimeout(function () {
-								me.open();
-							}, 2000));
-						}
-						else if (
-							e.type === _const.IM.WEBIM_CONNCTION_OPEN_ERROR
-							&& e.data.type === _const.IM.WEBIM_CONNCTION_AJAX_ERROR
-							&& /user not found/.test(e.data.data)
-							&& config.isUsernameFromCookie
-						) {
-							// 偶发创建用户失败，但依然可以获取到密码的情况，此时需要重新创建用户
-							// 仅当用户名从cookie中取得时才会重新创建用户，客户集成指定用户错误不管
-							console.error(e.data);
-							easemobim.reCreateImUser();
-						}
-						// im sdk 会捕获回调中的异常，需要把出错信息打出来
-						else if (e.type === _const.IM.WEBIM_CONNCTION_CALLBACK_INNER_ERROR) {
-							console.error(e.data);
-						}
-						else {
-							console.error(e);
-							typeof config.onerror === 'function' && config.onerror(e);
-						}
-					}
-				});
-			},
+			// todo: move this to message view
 			handleHistoryMsg: function(element) {
 				var result = _transformMessageFormat(element);
 				_handleMessage(result.msgBody, result.type, true);
 			},
 			initSecondChannle: function () {
-				me.receiveMsgTimer = setInterval(_receiveMsgChannel, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
+				receiveMsgTimer = setInterval(function() {
+					api('receiveMsgChannel', {
+						orgName: config.orgName,
+						appName: config.appName,
+						easemobId: config.toUser,
+						tenantId: config.tenantId,
+						visitorEasemobId: config.user.username
+					}, function (msg) {
+						//处理收消息
+						msg.data
+							&& msg.data.status === 'OK'
+							&& _.each(msg.data.entities, function (elem) {
+								var result = _transformMessageFormat({body: elem});
+								_handleMessage(result.msgBody, result.type, false);
+							});
+					});
+				}, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
 			},
 			handleReceive: _handleMessage
 		};
+
+		function _listen() {
+			// xmpp连接超时则改为可发送消息状态
+			// todo: 自动切换通道状态
+			var firstTS = setTimeout(function () {
+				chat.handleReady();
+			}, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
+
+			chat.conn.listen({
+				onOpened: function (info) {
+					// 连接未超时，清除timer，暂不开启api通道发送消息
+					clearTimeout(firstTS);
+
+					reOpenTimerHandler && clearTimeout(reOpenTimerHandler);
+					token = info.accessToken;
+					chat.conn.setPresence();
+
+					chat.handleReady(info);
+				},
+				onTextMessage: function (message) {
+					_handleMessage(message, 'txt');
+				},
+				onEmojiMessage: function (message) {
+					_handleMessage(message, 'emoji');
+				},
+				onPictureMessage: function (message) {
+					_handleMessage(message, 'img');
+				},
+				onFileMessage: function (message) {
+					_handleMessage(message, 'file');
+				},
+				onCmdMessage: function (message) {
+					_handleMessage(message, 'cmd');
+				},
+				onOnline: function () {
+					utils.isMobile && chat.open();
+				},
+				onOffline: function () {
+					utils.isMobile && chat.conn.close();
+					// for debug
+					console.log('onOffline-channel');
+					// 断线关闭视频通话
+					if (Modernizr.peerconnection) {
+						easemobim.videoChat.onOffline();
+					}
+					// todo 断线后停止轮询坐席状态
+					// chat.stopGettingAgentStatus();
+				},
+				onError: function (e) {
+					if (e.reconnect) {
+						chat.open();
+					}
+					else if (e.type === _const.IM.WEBIM_CONNCTION_AUTH_ERROR) {
+						reOpenTimerHandler || (reOpenTimerHandler = setTimeout(function () {
+							chat.open();
+						}, 2000));
+					}
+					else if (
+						e.type === _const.IM.WEBIM_CONNCTION_OPEN_ERROR
+						&& e.data.type === _const.IM.WEBIM_CONNCTION_AJAX_ERROR
+						&& /user not found/.test(e.data.data)
+						&& config.isUsernameFromCookie
+					) {
+						// 偶发创建用户失败，但依然可以获取到密码的情况，此时需要重新创建用户
+						// 仅当用户名从cookie中取得时才会重新创建用户，客户集成指定用户错误不管
+						console.error(e.data);
+						easemobim.reCreateImUser();
+					}
+					// im sdk 会捕获回调中的异常，需要把出错信息打出来
+					else if (e.type === _const.IM.WEBIM_CONNCTION_CALLBACK_INNER_ERROR) {
+						console.error(e.data);
+					}
+					else {
+						console.error(e);
+						typeof config.onerror === 'function' && config.onerror(e);
+					}
+				}
+			});
+		}
+
+		function _reSend(type, id) {
+			if (id) {
+				switch (type) {
+				case 'txt':
+					// 重试只发一次
+					_sendMsgChannle(id, 0);
+					break;
+				}
+			}
+		}
+
+		function _sendText(message, ext) {
+			var id = utils.uuid();
+			var msg = new WebIM.message.txt(id);
+			msg.set({
+				msg: message,
+				to: config.toUser,
+				// 此回调用于确认im server收到消息, 有别于kefu ack
+				success: function (id) {},
+				fail: function (id) {}
+			});
+
+			if (ext) {
+				_.extend(msg.body, ext);
+			}
+			_setExt(msg);
+			_appendAck(msg, id);
+			chat.conn.send(msg.body);
+			sendMsgDict.set(id, msg);
+			_detectSendTextMsgByApi(id);
+
+			// 空文本消息不上屏
+			if (!message) return;
+			_appendMsg(false, {
+				type: 'txt',
+				data: message
+			}, false, null, null);
+
+			_promptNoAgentOnlineIfNeeded({
+				hasTransferedToKefu: message === '转人工' || message === '转人工客服'
+			});
+		}
+
+		function _sendTransferToKf(tid, sessionId) {
+			var id = utils.uuid();
+			var msg = new WebIM.message.cmd(id);
+			msg.set({
+				to: config.toUser,
+				action: 'TransferToKf',
+				ext: {
+					weichat: {
+						ctrlArgs: {
+							id: tid,
+							serviceSessionId: sessionId
+						}
+					}
+				}
+			});
+			_appendAck(msg, id);
+			chat.conn.send(msg.body);
+			sendMsgDict.set(id, msg);
+			_detectSendTextMsgByApi(id);
+
+			_promptNoAgentOnlineIfNeeded({hasTransferedToKefu: true});
+		}
+
+		function _sendImg(fileMsg, fileInput) {
+			var id = utils.uuid();
+			var msg = new WebIM.message.img(id);
+
+			fileInput && (fileInput.value = '');
+			msg.set({
+				apiUrl: location.protocol + '//' + config.restServer,
+				file: fileMsg,
+				accessToken: token,
+				to: config.toUser,
+				uploadError: function (error) {
+					//显示图裂，无法重新发送
+					var id = error.id;
+					var loading = document.getElementById(id + '_loading');
+					var msgWrap = document.querySelector('#' + id + ' .em-widget-msg-container');
+
+					msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
+					utils.addClass(loading, 'hide');
+					// todo: fix this part can not be called
+				},
+				success: function (id) {
+					utils.removeDom(document.getElementById(id + '_loading'));
+					utils.removeDom(document.getElementById(id + '_failed'));
+				},
+				fail: function (id) {
+					utils.addClass(document.getElementById(id + '_loading'), 'hide');
+					utils.removeClass(document.getElementById(id + '_failed'), 'hide');
+				}
+			});
+			_setExt(msg);
+			_appendAck(msg, id);
+			_appendMsg(false, {
+				type: 'img',
+				url: fileMsg.url
+			}, false, null, null);
+			chat.conn.send(msg.body);
+			sendMsgDict.set(id, msg);
+			_detectUploadImgMsgByApi(id, fileMsg.data);
+
+			// 自己发出去的图片要缓存File对象，用于全屏显示图片
+			profile.imgFileList.set(fileMsg.url, fileMsg.data);
+		}
+
+		function _sendFile(fileMsg, fileInput) {
+			var id = utils.uuid();
+			var msg = new WebIM.message.file(id);
+
+			fileInput && (fileInput.value = '');
+			msg.set({
+				apiUrl: location.protocol + '//' + config.restServer,
+				file: fileMsg,
+				to: config.toUser,
+				uploadError: function (error) {
+					var id = error.id;
+					var loading = document.getElementById(id + '_loading');
+					var msgWrap = document.querySelector('#' + id + ' .em-widget-msg-container');
+
+					//显示图裂，无法重新发送
+					msgWrap && (msgWrap.innerHTML = '<i class="icon-broken-pic"></i>');
+					utils.addClass(loading, 'hide');
+					// todo: fix this part can not be called
+				},
+				success: function (id) {
+					utils.removeDom(document.getElementById(id + '_loading'));
+					utils.removeDom(document.getElementById(id + '_failed'));
+				},
+				fail: function (id) {
+					utils.addClass(document.getElementById(id + '_loading'), 'hide');
+					utils.removeClass(document.getElementById(id + '_failed'), 'hide');
+				}
+			});
+			_setExt(msg);
+			_appendMsg(false, {
+				type: 'file',
+				url: fileMsg.url,
+				filename: fileMsg.filename,
+				fileLength: fileMsg.data.size
+			}, false, null, null);
+			chat.conn.send(msg.body);
+		}
 
 		function _handleMessage(msg, type, isHistory) {
 			var str;
@@ -398,7 +433,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					break;
 					// 转人工或者转到技能组
 				case 'ServiceSessionTransferedToAgentQueueEvent':
-					me.waitListNumber.start();
+					chat.waitListNumber.start();
 					_handleEventStatus('transfering', eventObj);
 					break;
 					// 会话结束
@@ -406,17 +441,17 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					// todo: use promise to opt this code
 					profile.hasReportedAttributes = false;
 					// todo: use promise to opt this code
-					me.waitListNumber.stop();
+					chat.waitListNumber.stop();
 					profile.agentId = null;
-					me.stopGettingAgentStatus();
+					chat.stopGettingAgentStatus();
 					// 还原企业头像和企业名称
-					me.setEnterpriseInfo();
+					chat.setEnterpriseInfo();
 					// 去掉坐席状态
-					me.clearAgentStatus();
+					chat.clearAgentStatus();
 					_handleEventStatus('close');
 
 					// 停止轮询 坐席端的输入状态
-					me.agentInputState.stop();
+					chat.agentInputState.stop();
 
 					transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
 					break;
@@ -427,10 +462,10 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					profile.isServiceSessionOpened = true;
 
 					// 停止轮询当前排队人数
-					me.waitListNumber.stop();
+					chat.waitListNumber.stop();
 
 					// 开始轮询 坐席端的输入状态
-					me.agentInputState.start();
+					chat.agentInputState.start();
 
 					_handleEventStatus('linked', eventObj);
 					_attemptToSendAttribute();
@@ -438,7 +473,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 					// 会话创建
 				case 'ServiceSessionCreatedEvent':
 					_handleEventStatus('create');
-					me.waitListNumber.start();
+					chat.waitListNumber.start();
 					_attemptToSendAttribute();
 					break;
 				default:
@@ -448,8 +483,9 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				agentInfo = utils.getDataByPath(msg, 'ext.weichat.agent');
 				if (agentInfo){
 					// 开始轮询坐席状态
-					me.startToGetAgentStatus();
-					me.setAgentProfile(agentInfo);
+					chat.startToGetAgentStatus();
+					chat.setAgentProfile(agentInfo);
+					// todo: cache current avatar
 				}
 			}
 			// 空文本消息不显示
@@ -463,7 +499,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 
 			if (!isHistory) {
 				if (!msg.noprompt) {
-					me.messagePrompt(message);
+					chat.messagePrompt(message);
 				}
 
 				// 收消息回调
@@ -495,6 +531,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				url = location.protocol + config.domain + url;
 			}
 
+			// todo: merge message & type
 			return {
 				msgBody: {
 					data: msg.msg,
@@ -608,11 +645,11 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 
 			profile.agentId = info.userId;
 
-			me.setToKefuBtn({isSessionOpen: true});
-			me.updateAgentStatus();
+			chat.setToKefuBtn({isSessionOpen: true});
+			chat.updateAgentStatus();
 
 			//更新头像和昵称
-			me.setAgentProfile({
+			chat.setAgentProfile({
 				userNickname: info.agentUserNiceName,
 				avatar: info.avatar
 			});
@@ -626,25 +663,6 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				officialAccountId !== null && console.warn('can not find target official account id: ', officialAccountId);
 			}
 			targetOfficialAccount.messageView.appendMsg(isReceived, msg, isHistory, date);
-		}
-
-		// 第二通道收消息
-		function _receiveMsgChannel() {
-			api('receiveMsgChannel', {
-				orgName: config.orgName,
-				appName: config.appName,
-				easemobId: config.toUser,
-				tenantId: config.tenantId,
-				visitorEasemobId: config.user.username
-			}, function (msg) {
-				//处理收消息
-				msg.data
-					&& msg.data.status === 'OK'
-					&& _.each(msg.data.entities, function (elem) {
-						var result = _transformMessageFormat({body: elem});
-						_handleMessage(result.msgBody, result.type, false);
-					});
-			});
 		}
 
 		// 第二通道发消息
@@ -757,35 +775,16 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 		}
 
 		function _attemptToSendAttribute(){
-			if (!profile.hasReportedAttributes) {
-				apiHelper.getExSession().then(function (data){
-					me.sendAttribute(data);
-				});
-			}
+			if (profile.hasReportedAttributes) return;
+
+			apiHelper.getExSession().then(function (data){
+				var sessionId = utils.getDataByPath(data, 'serviceSession.serviceSessionId');
+				if (!profile.hasReportedAttributes && sessionId) {
+					profile.hasReportedAttributes = true;
+					apiHelper.reportVisitorAttributes(sessionId);
+				}
+			});
 		}
-
-		function _sendAttribute(data) {
-			var me = this;
-			var visitorUserId = utils.getDataByPath(data, 'serviceSession.visitorUser.userId');
-			if (!profile.hasReportedAttributes && visitorUserId) {
-				profile.hasReportedAttributes = true;
-				// todo: use apiHelp cache visitorId
-				// 缓存 visitorUserId
-				config.visitorUserId = visitorUserId;
-				api('sendVisitorInfo', {
-					tenantId: config.tenantId,
-					visitorId: visitorUserId,
-					referer: document.referrer
-				});
-			}
-		}
-
-		// 初始监听xmpp的timer, xmpp连接超时则按钮变为发送
-		var firstTS = setTimeout(function () {
-			me.handleReady();
-		}, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
-
-		return _obj;
 	};
 }(
 	easemobim._const,
