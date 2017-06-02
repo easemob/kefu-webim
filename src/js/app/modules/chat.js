@@ -111,7 +111,10 @@
 					if (benz_h5_ext) {
 						if (_.isArray(benz_h5_ext)) {
 							_.each(benz_h5_ext, function (elem) {
-								me.channel.sendText('', false, {
+								// benz patch disabled track msg & order msg
+								var isTrackMsg = !!utils.getDataByPath(elem, 'msgtype.track');
+								var isOrderMsg = !!utils.getDataByPath(elem, 'msgtype.order');
+								!isTrackMsg && !isOrderMsg && me.channel.sendText('', false, {
 									ext: elem
 								});
 							});
