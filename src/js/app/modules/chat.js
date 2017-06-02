@@ -384,6 +384,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				var agentId = session.agent_id;
 
 				profile.agentId = agentId;
+				// todo: fix this
 				profile.serviceSessionId = sessionId;
 				profile.sessionState = state;
 

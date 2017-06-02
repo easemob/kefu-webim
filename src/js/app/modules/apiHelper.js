@@ -428,33 +428,18 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		});
 	}
 
-	// function getExSession(){
-	// 	return new Promise(function(resolve, reject){
-	// 		api('getExSession_2', {
-	// 			username: config.user.username,
-	// 			orgName: config.orgName,
-	// 			appName: config.appName,
-	// 			imServiceNumber: config.toUser,
-	// 			channelType: 'easemob',
-	// 			originType: 'webim',
-	// 			channelId: config.channelId,
-	// 			queueName: config.emgroup,
-	// 			agentUsername: config.agentName,
-	// 			tenantId: config.tenantId
-	// 		}, function (msg){
-	// 			resolve(msg.data || {});
-	// 		}, function (err){
-	// 			reject(err);
-	// 		});
-	// 	});
-	// }
 	function getExSession(){
 		return new Promise(function(resolve, reject){
-			api('getExSession', {
-				id: config.user.username,
+			api('getExSession_2', {
+				username: config.user.username,
 				orgName: config.orgName,
 				appName: config.appName,
 				imServiceNumber: config.toUser,
+				channelType: 'easemob',
+				originType: 'webim',
+				channelId: config.channelId,
+				queueName: config.emgroup,
+				agentUsername: config.agentName,
 				tenantId: config.tenantId
 			}, function (msg){
 				resolve(msg.data || {});
@@ -540,6 +525,34 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		});
 	}
 
+	function reportPredictMessage(content){
+		return new Promise(function(resolve, reject){
+			var visitorId = cache.visitorId;
+			var sessionId = cache.sessionId;
+			if (visitorId && sessionId){
+				getToken().then(function(token){
+					api('messagePredict_2', {
+						sessionId: sessionId,
+						visitor_user_id: visitorId,
+						content: content,
+						timestamp: _.now(),
+						orgName: config.orgName,
+						appName: config.appName,
+						imServiceNumber: config.toUser,
+						token: token
+					}, function (msg) {
+						resolve();
+					}, function(err){
+						reject(err);
+					});
+				});
+			}
+			else {
+				resolve();
+			}
+		});
+	}
+
 	return {
 		getCurrentServiceSession: getCurrentServiceSession,
 		getSessionQueueId: getSessionQueueId,
@@ -561,6 +574,7 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		getAgentStatus: getAgentStatus,
 		getLastSession: getLastSession,
 		reportVisitorAttributes: reportVisitorAttributes,
+		reportPredictMessage: reportPredictMessage,
 		setCacheItem: function(key, value){
 			cache[key] = value;
 		},

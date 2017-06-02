@@ -1,7 +1,7 @@
 // 此文件用于跨域请求api，故为了兼容老版本，接口不能删
 // 新增接口一律写在后边，按照时间顺序
 // 主要入口的url上附加tenantId，用于限流
-// post 请求时，所以msg.data参数都会被序列化为request body，如果需要去除参数需要使用 delete
+// post 请求时，所有msg.data参数都会被序列化为request body，如果需要去除参数需要使用 delete
 
 (function (emajax, Transfer) {
 	// 此处由于要兼容老版本，所以在实例化对象时不能指定 useObject = true，而是依据 options.msg.useObject 来判断
@@ -75,7 +75,7 @@
 			});
 			break;
 		case 'getDutyStatus':
-			// deprecated
+		// DEPRECATED!!!
 			emitAjax({
 				url: '/v1/webimplugin/showMessage',
 				type: 'GET',
@@ -98,7 +98,7 @@
 			});
 			break;
 		case 'getSession':
-			// deprecated
+		// DEPRECATED!!!
 			emitAjax({
 				url: '/v1/webimplugin/visitors/' + params.id
 					+ '/schedule-data?techChannelInfo=' + techChannelInfo
@@ -109,7 +109,7 @@
 			});
 			break;
 		case 'getExSession':
-			// deprecated
+		// DEPRECATED!!!
 			emitAjax({
 				url: '/v1/webimplugin/visitors/' + params.id
 					+ '/schedule-data-ex?techChannelInfo=' + techChannelInfo
@@ -127,7 +127,7 @@
 			});
 			break;
 		case 'getGroup':
-			// deprecated
+		// DEPRECATED!!!
 			emitAjax({
 				url: '/v1/webimplugin/visitors/' + params.id
 					+ '/ChatGroupId?techChannelInfo=' + techChannelInfo
@@ -138,7 +138,7 @@
 			});
 			break;
 		case 'getGroupNew':
-			// deprecated
+		// DEPRECATED!!!
 			emitAjax({
 				url: '/v1/webimplugin/tenant/' + tenantId
 					+ '/visitors/' + params.id +
@@ -150,7 +150,7 @@
 			});
 			break;
 		case 'getHistory':
-			// deprecated
+		// DEPRECATED!!!
 			emitAjax({
 				url: '/v1/webimplugin/visitors/msgHistory',
 				type: 'GET',
@@ -179,7 +179,7 @@
 			});
 			break;
 		case 'getRobertGreeting':
-			// deprecated
+		// DEPRECATED!!!
 			emitAjax({
 				url: '/v1/Tenants/'
 					+ tenantId
@@ -192,6 +192,7 @@
 			});
 			break;
 		case 'sendVisitorInfo':
+		// DEPRECATED!!!
 			emitAjax({
 				url: '/v1/webimplugin/tenants/' + tenantId
 					+ '/visitors/' + params.visitorId +
@@ -205,14 +206,6 @@
 				url: '/tenants/' + tenantId + '/projects',
 				type: 'GET',
 				msg: msg
-			});
-			break;
-		case 'getConfig':
-			emitAjax({
-				url: '/v1/webimplugin/settings/visitors/configs/' + params.configId,
-				msg: msg,
-				type: 'GET',
-				excludeData: true
 			});
 			break;
 		case 'createTicket':
@@ -311,6 +304,7 @@
 			});
 			break;
 		case 'messagePredict':
+		// DEPRECATED!!!
 			url = '/v1/webimplugin/agents/' + params.agentId
 				+ '/messagePredict'
 				+ '?tenantId=' + params.tenantId;
@@ -349,14 +343,6 @@
 		case 'getRobertGreeting_2':
 			emitAjax({
 				url: '/v1/webimplugin/tenants/robots/welcome',
-				type: 'GET',
-				msg: msg
-			});
-			break;
-		// 会话创建前 获取该会话  是否将于机器人进行
-		case 'getRobertIsOpen':
-			emitAjax({
-				url: '/v1/webimplugin/tenants/robot-ready',
 				type: 'GET',
 				msg: msg
 			});
@@ -440,6 +426,22 @@
 				excludeData: true
 			});
 			break;
+		case 'getConfig':
+			emitAjax({
+				url: '/v1/webimplugin/settings/visitors/configs/' + params.configId,
+				msg: msg,
+				type: 'GET',
+				excludeData: true
+			});
+			break;
+		// 会话创建前 获取该会话  是否将于机器人进行
+		case 'getRobertIsOpen':
+			emitAjax({
+				url: '/v1/webimplugin/tenants/robot-ready',
+				type: 'GET',
+				msg: msg
+			});
+			break;
 		case 'getExSession_2':
 			emitAjax({
 				url: '/v1/webimplugin/visitors/' + params.username
@@ -484,11 +486,36 @@
 
 			delete params.tenantId;
 			delete params.sessionId;
+
 			delete params.orgName;
 			delete params.appName;
 			delete params.userName;
 			delete params.token;
 			delete params.imServiceNumber;
+
+			emitAjax({
+				url: url,
+				msg: msg,
+				type: 'POST'
+			});
+			break;
+		case 'messagePredict_2':
+			url = '/v1/webimplugin/servicesessions/' + params.sessionId
+				+ '/messagePredict'
+				+ '?orgName=' + params.orgName
+				+ '&appName=' + params.appName
+				+ '&userName=' + params.userName
+				+ '&token=' + params.token
+				+ '&techChannelInfo=' + techChannelInfo;
+
+			delete params.sessionId;
+
+			delete params.orgName;
+			delete params.appName;
+			delete params.userName;
+			delete params.token;
+			delete params.imServiceNumber;
+
 			emitAjax({
 				url: url,
 				msg: msg,

@@ -32,14 +32,16 @@
 			Other: 'hide'
 		},
 
-		// todo: simplify this part
 		eventMessageText: {
-			TRANSFERING: '会话转接中，请稍候',
-			TRANSFER: '会话已被转接至其他客服',
-			LINKED: '会话已被客服接起',
-			CLOSED: '会话已结束',
-			NOTE: '当前暂无客服在线，请您留下联系方式，稍后我们将主动联系您',
-			CREATE: '会话创建成功'
+			NOTE: '当前暂无客服在线，请您留下联系方式，稍后我们将主动联系您'
+		},
+
+		SYSTEM_EVENT_MSG_TEXT: {
+			ServiceSessionCreatedEvent: '会话创建成功',
+			ServiceSessionClosedEvent: '会话已结束',
+			ServiceSessionTransferedEvent: '会话已被转接至其他客服',
+			ServiceSessionTransferedToAgentQueueEvent: '会话转接中，请稍候',
+			ServiceSessionOpenedEvent: '会话已被客服接起'
 		},
 
 		themeMap: {

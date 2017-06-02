@@ -421,64 +421,12 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 				].join('');
 				break;
 			default:
+				console.error('unexpected msg type');
 				break;
 			}
 			if (!isHistory) {
-				// 实时消息需要处理事件
-				switch (eventName) {
-					// 转接到客服
-				case 'ServiceSessionTransferedEvent':
-					_handleAgentStatusChanged(eventObj);
-					_handleEventStatus('transferd', eventObj);
-					break;
-					// 转人工或者转到技能组
-				case 'ServiceSessionTransferedToAgentQueueEvent':
-					chat.waitListNumber.start();
-					_handleEventStatus('transfering', eventObj);
-					break;
-					// 会话结束
-				case 'ServiceSessionClosedEvent':
-					// todo: use promise to opt this code
-					profile.hasReportedAttributes = false;
-					// todo: use promise to opt this code
-					chat.waitListNumber.stop();
-					profile.agentId = null;
-					chat.stopGettingAgentStatus();
-					// 还原企业头像和企业名称
-					chat.setEnterpriseInfo();
-					// 去掉坐席状态
-					chat.clearAgentStatus();
-					_handleEventStatus('close');
-
-					// 停止轮询 坐席端的输入状态
-					chat.agentInputState.stop();
-
-					transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
-					break;
-					// 会话打开
-				case 'ServiceSessionOpenedEvent':
-					// fake: 会话接起就认为有坐席在线
-					_handleAgentStatusChanged(eventObj);
-					profile.isServiceSessionOpened = true;
-
-					// 停止轮询当前排队人数
-					chat.waitListNumber.stop();
-
-					// 开始轮询 坐席端的输入状态
-					chat.agentInputState.start();
-
-					_handleEventStatus('linked', eventObj);
-					_attemptToSendAttribute();
-					break;
-					// 会话创建
-				case 'ServiceSessionCreatedEvent':
-					_handleEventStatus('create');
-					chat.waitListNumber.start();
-					_attemptToSendAttribute();
-					break;
-				default:
-					break;
-				}
+				// 实时消息需要处理系统事件
+				_handleSystemEvent(eventName, eventObj, msg);
 
 				agentInfo = utils.getDataByPath(msg, 'ext.weichat.agent');
 				if (agentInfo){
@@ -610,24 +558,61 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 			}
 		}
 
-		function _handleEventStatus(action, info) {
-			_promptNoAgentOnlineIfNeeded();
+		function _handleSystemEvent(event, data, msg){
+			var eventMessageText = _const.SYSTEM_EVENT_MSG_TEXT[event];
 
-			if (action === 'create') { //显示会话创建
-				_appendEventMsg(_const.eventMessageText.CREATE);
+			eventMessageText && _appendEventMsg(eventMessageText);
+
+			switch (event) {
+				// 转接到客服
+			case 'ServiceSessionTransferedEvent':
+				_handleAgentStatusChanged(data);
+				break;
+				// 转人工或者转到技能组
+			case 'ServiceSessionTransferedToAgentQueueEvent':
+				chat.waitListNumber.start();
+				break;
+				// 会话结束
+			case 'ServiceSessionClosedEvent':
+				// todo: use promise to opt this code
+				profile.hasReportedAttributes = false;
+				// todo: use promise to opt this code
+				chat.waitListNumber.stop();
+				profile.agentId = null;
+				profile.isServiceSessionOpened = false;
+				chat.stopGettingAgentStatus();
+				// 还原企业头像和企业名称
+				chat.setEnterpriseInfo();
+				// 去掉坐席状态
+				chat.clearAgentStatus();
+
+				// 停止轮询 坐席端的输入状态
+				chat.agentInputState.stop();
+
+				transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
+				break;
+				// 会话打开
+			case 'ServiceSessionOpenedEvent':
+				// fake: 会话接起就认为有坐席在线
+				_handleAgentStatusChanged(eventObj);
+				profile.isServiceSessionOpened = true;
+
+				// 停止轮询当前排队人数
+				chat.waitListNumber.stop();
+
+				// 开始轮询 坐席端的输入状态
+				chat.agentInputState.start();
+
+				_attemptToSendAttribute();
+				break;
+				// 会话创建
+			case 'ServiceSessionCreatedEvent':
+				chat.waitListNumber.start();
+				break;
+			default:
+				break;
 			}
-			else if (action === 'close') { //显示会话关闭
-				_appendEventMsg(_const.eventMessageText.CLOSED);
-			}
-			else if (action === 'transferd') { //显示转接到客服
-				_appendEventMsg(_const.eventMessageText.TRANSFER);
-			}
-			else if (action === 'transfering') { //显示转接中
-				_appendEventMsg(_const.eventMessageText.TRANSFERING);
-			}
-			else if (action === 'linked') { //接入成功
-				_appendEventMsg(_const.eventMessageText.LINKED);
-			}
+			_promptNoAgentOnlineIfNeeded();
 		}
 
 		// 系统事件消息上屏
@@ -660,7 +645,7 @@ easemobim.channel = (function(_const, utils, api, apiHelper, satisfaction, profi
 			if (!targetOfficialAccount){
 				// 没有id的默认使用系统服务号
 				targetOfficialAccount = profile.systemOfficialAccount;
-				officialAccountId !== null && console.warn('can not find target official account id: ', officialAccountId);
+				officialAccountId && console.error('can not find target official account id: ', officialAccountId);
 			}
 			targetOfficialAccount.messageView.appendMsg(isReceived, msg, isHistory, date);
 		}
