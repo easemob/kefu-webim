@@ -93,6 +93,7 @@
 			case _const.EVENTS.INIT_CONFIG:
 				window.transfer.to = msg.data.parentId;
 				config = msg.data;
+				chat = easemobim.chat(config);
 				initCrossOriginIframe();
 				break;
 			default:
@@ -160,18 +161,15 @@
 		// 用于预览模式
 		if (config.previewObj) {
 			handleConfig(config.previewObj);
-			chat = easemobim.chat(config);
 			initChat();
 		}
 		else if (config.configId) {
 			apiHelper.getConfig(config.configId).then(function(configJson){
 				handleConfig(configJson);
-				chat = easemobim.chat(config);
 				initChat();
 			});
 		}
 		else{
-			chat = easemobim.chat(config);
 			initChat();
 		}
 	}
