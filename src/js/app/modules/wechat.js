@@ -1,4 +1,4 @@
-(function () {
+app.wechat = (function () {
 	var wechat = /MicroMessenger/.test(navigator.userAgent);
 	var wechatAuth = easemobim.utils.query('wechatAuth');
 	var appid = easemobim.utils.query('appid');
@@ -10,7 +10,7 @@
 		return;
 	}
 
-	easemobim.wechat = function (callback) {
+	return function (callback) {
 		//get profile
 		var getComponentId = function (callback) {
 			easemobim.emajax({

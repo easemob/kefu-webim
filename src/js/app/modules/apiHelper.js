@@ -4,7 +4,7 @@
 // getToken
 // getGroupId
 
-easemobim.apiHelper = (function (_const, utils, api, emajax) {
+app.apiHelper = (function (_const, utils, api, emajax) {
 	var config;
 	var cache = {};
 
@@ -156,7 +156,7 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 		var data = opt.data;
 
 		return new Promise(function(resolve, reject){
-			easemobim.api('createTicket', {
+			app.api('createTicket', {
 				tenantId: config.tenantId,
 				'easemob-target-username': config.toUser,
 				'easemob-appkey': config.appKey.replace('#', '%23'),
@@ -585,4 +585,4 @@ easemobim.apiHelper = (function (_const, utils, api, emajax) {
 			config = cfg;
 		}
 	};
-}(easemobim._const, easemobim.utils, easemobim.api, easemobim.emajax));
+}(easemobim._const, easemobim.utils, app.api, easemobim.emajax));

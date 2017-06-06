@@ -1,4 +1,4 @@
-easemobim.leaveMessage = (function (utils, uikit, apiHelper) {
+app.leaveMessage = (function (utils, uikit, apiHelper) {
 	var isSending = false;
 
 	var dom = utils.createElementFromHTML([
@@ -99,4 +99,4 @@ easemobim.leaveMessage = (function (utils, uikit, apiHelper) {
 		opt.hideCloseBtn && utils.addClass(cancelBtn, 'hide');
 		dialog.show();
 	};
-}(easemobim.utils, easemobim.uikit, easemobim.apiHelper));
+}(easemobim.utils, app.uikit, app.apiHelper));

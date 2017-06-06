@@ -1,4 +1,4 @@
-easemobim.genDomFromMsg = (function (window, _const, utils, profile) {
+app.genDomFromMsg = (function (window, _const, utils, profile) {
 	var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : '<img src="//kefu.easemob.com/webim/static/img/loading.gif" width="20" style="margin-top:10px;"/>';
 	var parseLink = WebIM.utils.parseLink;
 	var parseEmoji = WebIM.utils.parseEmoji;

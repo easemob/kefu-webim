@@ -61,15 +61,15 @@ window.app = {
 	profile: {
 		ctaEnable: false,
 		agentId: null,
-		sessionId: null,
-		sessionState: null,
 		currentAgentAvatar: null,
+		isChatWindowOpen: null,
 		// 用来缓存图片的file对象，用于全屏查看图片
 		imgFileList: new easemobim.Dict(),
 		isServiceSessionOpened: false,
 		hasHumanAgentOnline: false,
 		hasRobotAgentOnline: false,
 		officialAccountList: [],
+		commandMessageToBeSendList: [],
 		tenantAvatar: null,
 		defaultAvatar: null,
 		currentOfficialAccount: {},

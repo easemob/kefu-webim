@@ -53,4 +53,4 @@
 			useObject: true
 		});
 	}
-}(easemobim));
+}(app));

@@ -1,4 +1,4 @@
-easemobim.videoChat = (function (uikit) {
+app.videoChat = (function (uikit) {
 	var imChat = document.getElementById('em-kefu-webim-chat');
 	var btnVideoInvite = document.querySelector('.em-video-invite');
 	var videoWidget = document.querySelector('.em-widget-video');
@@ -232,4 +232,4 @@ easemobim.videoChat = (function (uikit) {
 			endCall();
 		}
 	};
-}(easemobim.uikit));
+}(app.uikit));

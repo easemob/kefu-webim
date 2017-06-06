@@ -1,8 +1,7 @@
 /**
  * ctrl+v发送截图功能:当前仅支持chrome/firefox/edge
  */
-easemobim.initPasteImage = (function(utils, uikit){
-	var chat;
+app.initPasteImage = (function(utils, uikit, channel){
 	var blob;
 	var dataURL;
 
@@ -13,7 +12,7 @@ easemobim.initPasteImage = (function(utils, uikit){
 	}).addButton({
 		confirmText: '发送',
 		confirm: function(){
-			chat.channel.sendImg({ data: blob, url: dataURL });
+			channel.sendImg({ data: blob, url: dataURL });
 		}
 	});
 
@@ -25,8 +24,7 @@ easemobim.initPasteImage = (function(utils, uikit){
 			dialog.show();
 		}
 	}
-	return function (currentChat){
-		chat = currentChat;
+	return function (){
 		utils.on(document.querySelector('.em-widget-send-wrapper .em-widget-textarea'), 'paste', _handler);
 	};
-}(easemobim.utils, easemobim.uikit));
+}(easemobim.utils, app.uikit, app.channel));

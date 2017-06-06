@@ -1,13 +1,6 @@
-(function (window, profile, undefined) {
+(function (_const, utils, uikit, api, apiHelper, eventCollector, chat, channel, profile, window, undefined) {
 	'use strict';
 
-	var utils = easemobim.utils;
-	var uikit = easemobim.uikit;
-	var _const = easemobim._const;
-	var api = easemobim.api;
-	var apiHelper = easemobim.apiHelper;
-	var eventCollector = easemobim.eventCollector;
-	var chat;
 	var config;
 
 	if (utils.isTop){
@@ -54,8 +47,7 @@
 		}
 		else {}
 
-		chat = easemobim.chat(config);
-
+		profile.config = config;
 		// fake transfer
 		window.transfer = {
 			send: function(){}
@@ -82,18 +74,18 @@
 				chat.close();
 				break;
 			case _const.EVENTS.EXT:
-				chat.channel.sendText('', msg.data.ext);
+				channel.sendText('', msg.data.ext);
 				break;
 			case _const.EVENTS.TEXTMSG:
-				chat.channel.sendText(msg.data.data, msg.data.ext);
+				channel.sendText(msg.data.data, msg.data.ext);
 				break;
 			case _const.EVENTS.UPDATE_URL:
-				easemobim.eventCollector.updateURL(msg.data);
+				eventCollector.updateURL(msg.data);
 				break;
 			case _const.EVENTS.INIT_CONFIG:
 				window.transfer.to = msg.data.parentId;
 				config = msg.data;
-				chat = easemobim.chat(config);
+				profile.config = config;
 				initCrossOriginIframe();
 				break;
 			default:
@@ -103,10 +95,7 @@
 	}
 
 	function initChat() {
-		// init modules
-		easemobim.initPasteImage(chat);
-		easemobim.satisfaction.init(chat);
-		easemobim.apiHelper.init(config);
+		apiHelper.init(config);
 
 		// 访客回呼功能
 		if (config.eventCollector && !eventCollector.isStarted()) {
@@ -228,7 +217,7 @@
 
 		iframe.src = config.domain + '/webim/transfer.html?v=<%=WEBIM_PLUGIN_VERSION%>';
 		utils.on(iframe, 'load', function () {
-			easemobim.initApiTransfer();
+			app.initApiTransfer();
 			handleMsgData();
 		});
 	}
@@ -300,7 +289,7 @@
 					};
 
 					// 发送空的ext消息，延迟发送
-					chat.cachedCommandMessage = { ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } };
+					profile.commandMessageToBeSendList.push({ ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } });
 					chat.init();
 					chat.show();
 					transfer.send({ event: _const.EVENTS.SHOW });
@@ -328,7 +317,7 @@
 							config.user.password = password;
 
 							// 发送空的ext消息，延迟发送
-							chat.cachedCommandMessage = { ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } };
+							profile.commandMessageToBeSendList.push({ ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } });
 							chat.init();
 							chat.show();
 							transfer.send({ event: _const.EVENTS.SHOW });
@@ -341,7 +330,7 @@
 			}
 			//检测微信网页授权
 			else if (config.wechatAuth) {
-				easemobim.wechat(function (data) {
+				app.wechat(function (data) {
 					try {
 						data = JSON.parse(data);
 					}
@@ -352,8 +341,6 @@
 						_downgrade();
 					}
 					else {
-						config.visitor = config.visitor || {};
-						config.visitor.userNickname = data.nickname;
 						var oid = config.tenantId + '_' + config.orgName + '_' + config.appName + '_' + config.toUser + '_' +
 							data.openid;
 						easemobim.emajax({
@@ -460,7 +447,15 @@
 		});
 	});
 }(
-	window,
+	easemobim._const,
+	easemobim.utils,
+	app.uikit,
+	app.api,
+	app.apiHelper,
+	app.eventCollector,
+	app.chat,
+	app.channel,
 	app.profile,
+	window,
 	undefined
 ));

@@ -70,7 +70,7 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper){
 			var isReceived = opt.isReceived;
 			var isHistory = opt.isHistory;
 			var date = opt.timestamp || _.now();
-			var dom = easemobim.genDomFromMsg(msg, isReceived, isHistory);
+			var dom = app.genDomFromMsg(msg, isReceived, isHistory);
 			var img = dom.querySelector('.em-widget-imgview');
 
 			if (isHistory) {
@@ -209,4 +209,4 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper){
 			el: el
 		};
 	};
-}(easemobim._const, easemobim.utils, easemobim.uikit, easemobim.apiHelper));
+}(easemobim._const, easemobim.utils, app.uikit, app.apiHelper));

@@ -1,7 +1,7 @@
 /**
  * 满意度调查
  */
-easemobim.satisfaction = (function(utils, uikit){
+app.satisfaction = (function(utils, uikit, channel){
 	var dom = utils.createElementFromHTML([
 		'<div>',
 		'<h3>请对我的服务做出评价</h3>',
@@ -40,7 +40,6 @@ easemobim.satisfaction = (function(utils, uikit){
 	});
 	var session;
 	var invite;
-	var chat;
 
 	utils.on(starsUl, 'click', function (e) {
 		var ev = e || window.event;
@@ -60,7 +59,7 @@ easemobim.satisfaction = (function(utils, uikit){
 	}
 
 	function _sendSatisfaction(level, content, session, invite) {
-		chat.channel.sendText('', {ext: {
+		channel.sendText('', {ext: {
 			weichat: {
 				ctrlType: 'enquiry',
 				ctrlArgs: {
@@ -74,13 +73,10 @@ easemobim.satisfaction = (function(utils, uikit){
 	}
 
 	return {
-		init: function(currentChat){
-			chat = currentChat;
-		},
 		show: function(currentInviteId, currentServiceSessionId){
 			session = currentServiceSessionId;
 			invite = currentInviteId;
 			dialog.show();
 		}
 	};
-}(easemobim.utils, easemobim.uikit));
+}(easemobim.utils, app.uikit, app.channel));

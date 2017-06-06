@@ -1,4 +1,4 @@
-(function (Polling, utils, api, _const) {
+app.eventCollector = (function (Polling, utils, api, _const) {
 	var POLLING_INTERVAL = 5000;
 
 	var _polling;
@@ -10,7 +10,7 @@
 	function _reportData(userType, userId) {
 		transfer.send({ event: _const.EVENTS.REQUIRE_URL });
 
-		_url && easemobim.api('reportEvent', {
+		_url && app.api('reportEvent', {
 			type: 'VISIT_URL',
 			tenantId: _config.tenantId,
 			// 第一次轮询时URL还未传过来，所以使用origin
@@ -150,7 +150,7 @@
 		return _polling && _polling.isStarted;
 	}
 
-	easemobim.eventCollector = {
+	return {
 		startToReport: _startToReoprt,
 		stopReporting: _stopReporting,
 		isStarted: _isStarted,
@@ -161,6 +161,6 @@
 }(
 	easemobim.Polling,
 	easemobim.utils,
-	easemobim.api,
+	app.api,
 	easemobim._const
 ));

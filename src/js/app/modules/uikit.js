@@ -1,6 +1,6 @@
 // prompt 不会消失
 // tip 2秒后自动消失
-easemobim.uikit = (function(utils){
+app.uikit = (function(utils){
 	var EMPTY_FUNCTION = function(){};
 	var promptDom = document.querySelector('.em-widget-error-prompt');
 	var promptTextSpanDom = promptDom.querySelector('span');

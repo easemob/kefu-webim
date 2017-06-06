@@ -78,4 +78,4 @@ app.sessionList = (function(utils, uikit, profile){
 			return this;
 		}
 	};
-}(easemobim.utils, easemobim.uikit, app.profile));
+}(easemobim.utils, app.uikit, app.profile));
