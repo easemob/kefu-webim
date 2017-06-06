@@ -35,33 +35,27 @@ app.genDomFromMsg = (function (window, _const, utils, profile) {
 		var html = '';
 		switch (type) {
 		case 'txt':
-			// 历史消息表情未经过im sdk 解析
-			if (typeof value === 'string'){
-				// fake:  todo: remove this
-				value = _encode(_decode(value));
-				html = '<pre>' + parseLink(parseEmoji(value)) + '</pre>';
-			}
-			// 实时消息表情经过im sdk 解析
-			else if (_.isArray(value)){
-				html = '<pre>' + _.map(value, function(item){
-					var type = item.type;
-					var data = item.data;
-					var result;
+			// 历史消息表情未经过im sdk 解析，所以类型为txt
+			// fake:  todo: remove this
+			value = _encode(_decode(value));
+			html = '<pre>' + parseLink(parseEmoji(value)) + '</pre>';
+			break;
+		case 'emoji':
+			html = '<pre>' + _.map(value, function(item){
+				var type = item.type;
+				var data = item.data;
+				var result;
 
-					if (type === 'txt'){
-						result = parseLink(data);
-					}
-					else if (type === 'emoji'){
-						result = '<img class="emoji" src="' + data + '">';
-					}
-					else {}
+				if (type === 'txt'){
+					result = parseLink(data);
+				}
+				else if (type === 'emoji'){
+					result = '<img class="emoji" src="' + data + '">';
+				}
+				else {}
 
-					return result;
-				}).join('') + '</pre>';
-			}
-			else {
-				console.error('unexpected value type.');
-			}
+				return result;
+			}).join('') + '</pre>';
 			break;
 		case 'img':
 			// todo: remove a
@@ -84,6 +78,7 @@ app.genDomFromMsg = (function (window, _const, utils, profile) {
 				+ msg.filename + "'></a>";
 			break;
 		default:
+			throw 'unexpected value type.';
 			break;
 		}
 

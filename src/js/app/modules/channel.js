@@ -1,7 +1,6 @@
 app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessageView, profile){
 	'strict';
 
-	var reOpenTimerHandler;
 	var isNoAgentOnlineTipShowed;
 	var receiveMsgTimer;
 	var token;
@@ -33,8 +32,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 
 		// todo: move this to message view
 		handleHistoryMsg: function(element) {
-			var result = _transformMessageFormat(element);
-			_handleMessage(result.msgBody, result.type, true);
+			_handleMessage(_transformMessageFormat(element), null, true);
 		},
 		initSecondChannle: function () {
 			receiveMsgTimer = setInterval(function() {
@@ -49,8 +47,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 					msg.data
 						&& msg.data.status === 'OK'
 						&& _.each(msg.data.entities, function (elem) {
-							var result = _transformMessageFormat({body: elem});
-							_handleMessage(result.msgBody, result.type, false);
+							_handleMessage(_transformMessageFormat({body: elem}), null, false);
 						});
 				});
 			}, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
@@ -61,6 +58,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 	function _listen() {
 		// xmpp连接超时则改为可发送消息状态
 		// todo: 自动切换通道状态
+		var reOpenTimerHandler;
 		var firstTS = setTimeout(function () {
 			chat.handleReady();
 		}, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
@@ -293,13 +291,14 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 		chat.conn.send(msg.body);
 	}
 
-	function _handleMessage(msg, type, isHistory) {
+	function _handleMessage(msg, msgType, isHistory) {
 		var str;
 		var message;
 		var title;
 		var inviteId;
 		var serviceSessionId;
 		var agentInfo;
+		var type = msgType || (msg && msg.type);
 		var eventName = utils.getDataByPath(msg, 'ext.weichat.event.eventName');
 		var eventObj = utils.getDataByPath(msg, 'ext.weichat.event.eventObj');
 		var msgId = utils.getDataByPath(msg, 'ext.weichat.msgId');
@@ -469,6 +468,8 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 				_messagePrompt(message);
 			}
 
+			// 兼容旧的消息格式
+			message.value = message.data;
 			// 收消息回调
 			transfer.send({
 				event: _const.EVENTS.ONMESSAGE,
@@ -484,7 +485,6 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 	function _transformMessageFormat(element){
 		var msgBody = element.body || {};
 		var msg = utils.getDataByPath(msgBody, 'bodies.0') || {};
-		var type = msg.type;
 		var url = msg.url;
 		var timestamp = element.timestamp || msgBody.timestamp;
 		var fileLength;
@@ -498,22 +498,19 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 			url = location.protocol + config.domain + url;
 		}
 
-		// todo: merge message & type
 		return {
-			msgBody: {
-				data: msg.msg,
-				url: url,
-				filename: msg.filename,
-				action: msg.action,
-				msgId: element.msg_id,
-				fromUser: element.from_user,
-				timestamp: timestamp,
-				fileLength: fileLength,
-				ext: msgBody.ext,
-				to: msgBody.to,
-				from: msgBody.from
-			},
-			type: type
+			data: msg.msg,
+			url: url,
+			filename: msg.filename,
+			action: msg.action,
+			type: msg.type,
+			msgId: element.msg_id,
+			fromUser: element.from_user,
+			timestamp: timestamp,
+			fileLength: fileLength,
+			ext: msgBody.ext,
+			to: msgBody.to,
+			from: msgBody.from
 		};
 	}
 
@@ -663,7 +660,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 		var opt = options || {};
 		var officialAccount = utils.getDataByPath(msg, 'ext.weichat.official_account') || {};
 		var officialAccountId = officialAccount.official_account_id;
-		var isReceived = opt.isRecieved;
+		var isReceived = opt.isReceived;
 		var isHistory = opt.isHistory;
 		var targetOfficialAccount;
 
@@ -694,6 +691,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 			profile.systemOfficialAccount.official_account_id = id;
 		}
 		else if ('CUSTOM' === type){
+			// todo: 若sessionList未初始化则此时应该初始化
 			officialAccount.messageView = createMessageView({
 				parentContainer: chat.doms.chatWrapper,
 				isNewUser: false,
@@ -832,22 +830,23 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 	function _messagePrompt(message){
 		if (utils.isTop) return;
 
-		var me = this;
-		var value = message.value;
+		var value = message.data;
+		var type = message.type;
 		var tmpVal;
 		var brief;
 		var avatar = profile.ctaEnable
 			? profile.currentOfficialAccount.img
 			: profile.currentAgentAvatar;
 
-		switch (message.type) {
+		switch (type) {
 		case 'txt':
 		case 'list':
-			tmpVal = typeof value === 'string'
-				? value.replace(/\n/mg, '')
-				: _.map(value, function(item){
-					return item.type === 'emoji' ? '[表情]' : item.data;
-				}).join('').replace(/\n/mg, '');
+			brief = utils.getBrief(value.replace(/\n/mg, ''), 15);
+			break;
+		case 'emoji':
+			tmpVal = _.map(value, function(item){
+				return item.type === 'emoji' ? '[表情]' : item.data;
+			}).join('').replace(/\n/mg, '');
 			brief = utils.getBrief(tmpVal, 15);
 			break;
 		case 'img':
@@ -857,6 +856,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 			brief = '[文件]';
 			break;
 		default:
+			console.warn('unexpected message type.')
 			brief = '';
 		}
 

@@ -31,10 +31,15 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper){
 				var type = item.msg.type;
 				var date = utils.formatDate(item.date);
 				var role = item.isReceived ? '客服坐席' : '访客';
-				var value = item.msg.value;
+				var value = item.msg.data;
 
 				switch (type){
 					case 'txt':
+						break;
+					case 'emoji':
+						value = _.map(value, function(item){
+							return item.type === 'emoji' ? '[表情]' : item.data;
+						}).join('');
 						break;
 					case 'img':
 						value = '[图片]';
@@ -153,7 +158,7 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper){
 				// wap
 				utils.live('div.em-widget-date', 'touchstart', function (ev) {
 					_startY = utils.getDataByPath(ev, 'touches.0.pageY');
-				});
+				}, el);
 				utils.live('div.em-widget-date', 'touchmove', function (ev) {
 					_y = utils.getDataByPath(ev, 'touches.0.pageY');
 					if (_y - _startY > 8 && this.getBoundingClientRect().top >= 0) {
@@ -162,7 +167,7 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper){
 							_getHistory();
 						}, 100);
 					}
-				});
+				}, el);
 			}
 			else {
 				// pc端

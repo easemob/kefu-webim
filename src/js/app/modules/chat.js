@@ -1056,6 +1056,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 
 		_bindEvents();
 
+		// todo: 去掉getGrayList的block
 		Promise.all([
 			apiHelper.getDutyStatus(),
 			apiHelper.getGrayList(),
@@ -1080,6 +1081,9 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 				// 移动端输入框自动增长
 				utils.isMobile && _initAutoGrow();
 
+				// 初始化服务号列表
+				_initOfficialAccount();
+
 				// 添加sdk回调
 				channel.listen();
 
@@ -1088,8 +1092,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 
 				// 设置信息栏
 				_setNotice();
-
-				_initOfficialAccount();
 
 				// 获取坐席昵称设置
 				_getNickNameOption();
