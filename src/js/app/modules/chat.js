@@ -3,6 +3,9 @@
 		var utils = easemobim.utils;
 		var _const = easemobim._const;
 		var api = easemobim.api;
+		// benz patch: 延迟发送扩展消息
+		var hasSentExtMsg;
+		var channel;
 
 		//DOM init
 		easemobim.imBtn = document.getElementById('em-widgetPopBar');
@@ -41,11 +44,33 @@
 		//cache current agent
 		config.agentUserId = null;
 
+		function _attemptToSendExtMsg(){
+			// benz h5 patch get ext
+			var benz_h5_ext = config.ext;
+			if (!hasSentExtMsg && benz_h5_ext) {
+				hasSentExtMsg = true;
+				if (_.isArray(benz_h5_ext)) {
+					_.each(benz_h5_ext, function (elem) {
+						// benz patch disabled track msg & order msg
+						var isTrackMsg = !!utils.getDataByPath(elem, 'msgtype.track');
+						var isOrderMsg = !!utils.getDataByPath(elem, 'msgtype.order');
+						!isTrackMsg && !isOrderMsg && channel.sendText('', false, {
+							ext: elem
+						});
+					});
+				} else {
+					channel.sendText('', false, {
+						ext: benz_h5_ext
+					});
+				}
+			}
+		}
+
 		//chat window object
 		return {
 			init: function () {
 
-				this.channel = easemobim.channel.call(this, config);
+				this.channel = channel = easemobim.channel.call(this, config);
 
 				//create & init connection
 				this.conn = this.channel.getConnection();
@@ -106,25 +131,8 @@
 						utils.clearStore(config.tenantId + config.emgroup + 'visitor');
 					}
 
-					// benz h5 patch get ext
-					var benz_h5_ext = config.ext;
-					if (benz_h5_ext) {
-						if (_.isArray(benz_h5_ext)) {
-							_.each(benz_h5_ext, function (elem) {
-								// benz patch disabled track msg & order msg
-								var isTrackMsg = !!utils.getDataByPath(elem, 'msgtype.track');
-								var isOrderMsg = !!utils.getDataByPath(elem, 'msgtype.order');
-								!isTrackMsg && !isOrderMsg && me.channel.sendText('', false, {
-									ext: elem
-								});
-							});
-						} else {
-							me.channel.sendText('', false, {
-								ext: benz_h5_ext
-							});
-						}
-					}
-
+					// benz patch: disable old ext msg
+					if (config.ext) return;
 					//get ext
 					var ext = utils.getStore(prefix + 'ext');
 					var parsed;
@@ -1124,6 +1132,7 @@
 				utils.on(easemobim.sendBtn, 'click', function () {
 					var textMsg = easemobim.textarea.value;
 
+					_attemptToSendExtMsg();
 					if (utils.hasClass(this, 'disabled')) {
 						// 禁止发送
 					}
