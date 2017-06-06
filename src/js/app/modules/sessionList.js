@@ -45,21 +45,30 @@ app.sessionList = (function(utils, uikit, profile){
 	}
 
 	function _render(serviceList){
-		listDom.innerHTML = _.map(serviceList, function(item){
-			var name = item.name;
-			var id = item.official_account_id;
-			var avatar = item.img || profile.tenantAvatar || profile.defaultAvatar;
+		listDom.innerHTML = _.map(serviceList, _renderItem).join('');
+	}
 
-			return [
-				'<li data-id="' + id + '">',
-				'<img src="' + avatar + '">',
-				'<span class="name">' + name + '</span>',
-				'</li>'
-			].join('');
-		}).join('');
+	function _appendItem(item){
+		var itemDom = utils.createElementFromHTML(_renderItem(item));
+		listDom.appendChild(itemDom);
+		utils.on(itemDom, click, _cb);
+	}
+
+	function _renderItem(item){
+		var name = item.name;
+		var id = item.official_account_id;
+		var avatar = item.img || profile.tenantAvatar || profile.defaultAvatar;
+
+		return [
+			'<li data-id="' + id + '">',
+			'<img src="' + avatar + '">',
+			'<span class="name">' + name + '</span>',
+			'</li>'
+		].join('');
 	}
 
 	return {
+		appendItem: _appendItem,
 		show: function(){
 			_show();
 			return this;

@@ -1,6 +1,5 @@
 easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, createMessageView, profile) {
 	return function (config) {
-		var isChatWindowOpen;
 		var isEmojiInitilized;
 		var isMessageChannelReady;
 		var currentMessageView;
@@ -14,7 +13,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 		easemobim.imBtn = document.getElementById('em-widgetPopBar');
 
 		// todo: 把dom都移到里边
-		var doms = {
+		var doms = chat.doms = {
 			imChat: document.getElementById('em-kefu-webim-chat'),
 			//待接入排队人数显示
 			agentWaitNumber: document.querySelector('.queuing-number-status'),
@@ -277,8 +276,10 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 			});
 		}
 
-		function _getCurrentMessageView(){
-			return profile.currentOfficialAccount.messageView;
+		function _scrollToBottom(){
+			var currentMessageView = profile.currentOfficialAccount.messageView;
+			// 有可能在 messageView 未初始化时调用
+			currentMessageView && currentMessageView.scrollToBottom();
 		}
 
 		function _initAutoGrow(){
@@ -302,15 +303,15 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 					doms.chatWrapper.style.bottom = height + 'px';
 					doms.emojiWrapper.style.bottom = height + 'px';
 				}
-				_getCurrentMessageView().scrollToBottom();
+				_scrollToBottom();
 			}
 		}
 
-		function _initMessageView(){
-			apiHelper.getOfficalAccounts().then(initMessageView, function(err){
+		function _initOfficialAccount(){
+			apiHelper.getOfficalAccounts().then(_initMessageView, function(err){
 				// 未创建会话时初始化默认服务号
 				if (err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
-					initMessageView([], {isNewUser: true});
+					_initMessageView([], {isNewUser: true});
 				}
 				else {
 					throw err;
@@ -322,57 +323,60 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				profile.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
 				profile.hasRobotAgentOnline = data.onlineRobotAgentCount > 0;
 			});
+		}
 
-			function initMessageView(collection, opt){
-				var option = opt || {};
-				var sessionList;
-				var officialAccountList = _.isEmpty(collection)
-					? [{
-						type: 'SYSTEM',
-						official_account_id: null,
-						img: null
-					}]
-					: collection;
+		function _initMessageView(officialAccountList, options){
+			var opt = options || {};
+			var isNewUser = opt.isNewUser;
+			profile.officialAccountList = _.isEmpty(officialAccountList)
+				? [{
+					type: 'SYSTEM',
+					official_account_id: null,
+					img: null
+				}]
+				: officialAccountList;
 
-				// init message view
-				_.each(officialAccountList, function(item){
-					item.messageView = createMessageView({
-						parentContainer: doms.chatWrapper,
-						isNewUser: option.isNewUser,
-						id: item.official_account_id,
-						channel: channel
-					});
+			profile.systemOfficialAccount = _.findWhere(profile.officialAccountList, {type: 'SYSTEM'});
+			// 营销功能打开标志
+			profile.ctaEnable = !!_.findWhere(profile.officialAccountList, {type: 'CUSTOM'});
+
+			// init message view
+			_.each(profile.officialAccountList, function(item){
+				item.messageView = createMessageView({
+					parentContainer: doms.chatWrapper,
+					isNewUser: opt.isNewUser,
+					id: item.official_account_id,
+					channel: channel
 				});
+			});
 
-				// init session list
-				sessionList = app.sessionList.init({
-					collection: collection,
-					callback: changeMessageViewTo
-				});
-
-				// 如果有自定义服务号则显示列表
-				if (_.findWhere(officialAccountList, {type: 'CUSTOM'})){
-					sessionList.show();
-					// todo: show list button
-					utils.on(doms.avatar, 'click', sessionList.show);
-					// 营销功能打开标志
-					profile.ctaEnable = true;
-				}
-				else {
-					profile.currentOfficialAccount = _.findWhere(officialAccountList, {type: 'SYSTEM'});
-				}
-
-				profile.systemOfficialAccount = _.findWhere(officialAccountList, {type: 'SYSTEM'});
-				profile.officialAccountList = officialAccountList;
-
-				function changeMessageViewTo(id){
-					var targerOfficialAccountProfile = _.findWhere(officialAccountList, {official_account_id: id});
-					_.each(officialAccountList, function(item){
+			// init session list
+			profile.sessionList = app.sessionList.init({
+				collection: profile.officialAccountList,
+				callback: function(id){
+					var targerOfficialAccountProfile = _.findWhere(profile.officialAccountList, {official_account_id: id});
+					_.each(profile.officialAccountList, function(item){
 						item.messageView.hide();
 					});
 					targerOfficialAccountProfile.messageView.show();
 					profile.currentOfficialAccount = targerOfficialAccountProfile;
 				}
+			});
+
+			if (profile.ctaEnable){
+				profile.sessionList.show();
+				// todo: show list button
+				utils.on(doms.avatar, 'click', profile.sessionList.show);
+			}
+			else {
+				profile.currentOfficialAccount = _.findWhere(profile.officialAccountList, {type: 'SYSTEM'});
+			}
+
+			if (isNewUser){
+				_getGreeting();
+				_setToKefuBtn({isSessionOpen: false});
+			}
+			else {
 				_getLastSession(profile.currentOfficialAccount.official_account_id);
 			}
 		}
@@ -382,11 +386,12 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				var sessionId = session.session_id;
 				var state = session.state;
 				var agentId = session.agent_id;
+				var officialAccount = _.findWhere(profile.officialAccountList, {official_account_id: officialAccountId});
 
 				profile.agentId = agentId;
 				// todo: fix this
-				profile.serviceSessionId = sessionId;
-				profile.sessionState = state;
+				officialAccount.sessionId = sessionId;
+				officialAccount.sessionState = state;
 
 				if (state === _const.SESSION_STATE.WAIT){
 					apiHelper.reportVisitorAttributes(sessionId);
@@ -414,6 +419,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 			}, function(err){
 				if (err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
 					_getGreeting();
+					_setToKefuBtn({isSessionOpen: false});
 				}
 				else {
 					throw err;
@@ -571,7 +577,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 			if (utils.isMobile) {
 				utils.on(doms.textInput, 'focus touchstart', function () {
 					doms.textInput.style.overflowY = 'auto';
-					_getCurrentMessageView().scrollToBottom();
+					_scrollToBottom();
 				});
 
 				// 键盘上下切换按钮
@@ -602,7 +608,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 							doms.chatWrapper.style.bottom = height + 'px';
 							doms.emojiWrapper.style.bottom = height + 'px';
 							doms.emojiWrapper.style.top = 'auto';
-							_getCurrentMessageView().scrollToBottom();
+							_scrollToBottom();
 							break;
 						}
 					}
@@ -765,7 +771,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				});
 
 				//chat window status
-				isChatWindowOpen = true;
+				profile.isChatWindowOpen = true;
 				//init sound reminder
 				this.soundReminder();
 
@@ -808,7 +814,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 						// 设置信息栏
 						_setNotice();
 
-						_initMessageView();
+						_initOfficialAccount();
 
 						// 获取坐席昵称设置
 						_getNickNameOption();
@@ -908,7 +914,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 						return;
 					}
 					// 当聊天窗口或者浏览器最小化时 不去发轮询请求
-					if(!isChatWindowOpen || utils.isBrowserMinimized()){
+					if(!profile.isChatWindowOpen || utils.isBrowserMinimized()){
 						return;
 					}
 
@@ -1042,7 +1048,7 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 
 			//close chat window
 			close: function () {
-				isChatWindowOpen = false;
+				profile.isChatWindowOpen = false;
 
 				if (!config.hide) {
 					utils.addClass(doms.imChat, 'hide');
@@ -1052,11 +1058,11 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 			//show chat window
 			show: function () {
 				var me = this;
-				var currentMessageView = _getCurrentMessageView();
 
-				isChatWindowOpen = true;
+				profile.isChatWindowOpen = true;
 				utils.addClass(easemobim.imBtn, 'hide');
 				utils.removeClass(doms.imChat, 'hide');
+				_scrollToBottom();
 				if (
 					config.isInOfficehours
 					// IE 8 will throw an error when focus an invisible element
@@ -1064,8 +1070,6 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 				) {
 					doms.textInput.focus();
 				}
-				// 有可能在 messageView 未初始化时调用
-				currentMessageView && currentMessageView.scrollToBottom();
 				transfer.send({ event: _const.EVENTS.RECOVERY });
 			},
 			open: function () {
@@ -1093,7 +1097,6 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 					return;
 				}
 
-				var me = this;
 				var audioDom = document.createElement('audio');
 				var slienceSwitch = document.querySelector('.em-widget-header .btn-audio');
 				var isSlienceEnable = false;
@@ -1110,62 +1113,13 @@ easemobim.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, 
 					utils.toggleClass(slienceSwitch, 'icon-bell', !isSlienceEnable);
 				});
 
-				me.soundReminder = function () {
-					if (!isSlienceEnable && (utils.isBrowserMinimized() || !isChatWindowOpen)) {
+				this.soundReminder = function () {
+					if (!isSlienceEnable) {
 						play();
 					}
 				};
 			},
-
-			getCurrentMessageView: _getCurrentMessageView,
-			messagePrompt: function (message) {
-				if (utils.isTop) return;
-
-				var me = this;
-				var value = message.value;
-				var tmpVal;
-				var brief;
-				var avatar = profile.ctaEnable
-					? profile.currentOfficialAccount.img
-					: profile.currentAgentAvatar;
-
-				switch (message.type) {
-				case 'txt':
-				case 'list':
-					tmpVal = typeof value === 'string'
-						? value.replace(/\n/mg, '')
-						: _.map(value, function(item){
-							return item.type === 'emoji' ? '[表情]' : item.data;
-						}).join('').replace(/\n/mg, '');
-					brief = utils.getBrief(tmpVal, 15);
-					break;
-				case 'img':
-					brief = '[图片]';
-					break;
-				case 'file':
-					brief = '[文件]';
-					break;
-				default:
-					brief = '';
-				}
-
-				if (isChatWindowOpen) {
-					transfer.send({ event: _const.EVENTS.RECOVERY });
-				}
-
-				if (utils.isBrowserMinimized() || !isChatWindowOpen) {
-					me.soundReminder();
-					transfer.send({ event: _const.EVENTS.SLIDE });
-					transfer.send({
-						event: _const.EVENTS.NOTIFY,
-						data: {
-							avatar: avatar,
-							title: '新消息',
-							brief: brief
-						}
-					});
-				}
-			},
+			block: null
 		};
 	};
 }(

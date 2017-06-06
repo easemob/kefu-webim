@@ -65,11 +65,13 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper){
 			_scrollToBottom();
 		}
 
-		function _appendMsg(isReceived, msg, isHistory, timestamp){
+		function _appendMsg(msg, options){
+			var opt = options || {};
+			var isReceived = opt.isReceived;
+			var isHistory = opt.isHistory;
+			var date = opt.timestamp || _.now();
 			var dom = easemobim.genDomFromMsg(msg, isReceived, isHistory);
 			var img = dom.querySelector('.em-widget-imgview');
-
-			date = timestamp || _.now();
 
 			if (isHistory) {
 				el.insertBefore(dom, el.firstChild);
