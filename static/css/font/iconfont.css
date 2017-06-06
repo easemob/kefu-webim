@@ -1,10 +1,10 @@
 
 @font-face {font-family: "webplug-in";
-  src: url('iconfont.eot?t=1495455392402'); /* IE9*/
-  src: url('iconfont.eot?t=1495455392402#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('iconfont.woff?t=1495455392402') format('woff'), /* chrome, firefox */
-  url('iconfont.ttf?t=1495455392402') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
-  url('iconfont.svg?t=1495455392402#webplug-in') format('svg'); /* iOS 4.1- */
+  src: url('iconfont.eot?t=1496289124094'); /* IE9*/
+  src: url('iconfont.eot?t=1496289124094#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('iconfont.woff?t=1496289124094') format('woff'), /* chrome, firefox */
+  url('iconfont.ttf?t=1496289124094') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('iconfont.svg?t=1496289124094#webplug-in') format('svg'); /* iOS 4.1- */
 }
 
 .webplug-in {
@@ -20,6 +20,8 @@
 .webplug-in-change:before { content: "\64"; }
 
 .webplug-in-zhuanrengong:before { content: "\77"; }
+
+.webplug-in-colon:before { content: "\7b"; }
 
 .webplug-in-parenleft:before { content: "\68"; }
 
@@ -91,5 +93,7 @@
 
 .webplug-in-download:before { content: "\75"; }
 
-.webplug-in-rengongkefu:before { content: "\e6b8"; }
+.webplug-in-rengongkefu:before { content: "\79"; }
+
+.webplug-in-list-1:before { content: "\7a"; }
 
