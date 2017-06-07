@@ -639,15 +639,11 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 		//resend
 		utils.live('div.em-widget-msg-status', utils.click, function () {
 			var id = this.getAttribute('id').slice(0, -'_failed'.length);
+			var type = this.getAttribute('data-type');
 
+			channel.reSend(type, id);
 			utils.addClass(this, 'hide');
 			utils.removeClass(document.getElementById(id + '_loading'), 'hide');
-			if (this.getAttribute('data-type') === 'txt') {
-				channel.reSend('txt', id);
-			}
-			else {
-				conn.send(id);
-			}
 		});
 
 		utils.live('button.js_robotTransferBtn', utils.click, function () {
@@ -923,27 +919,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 		});
 	}
 
-	function _open(){
-		var op = {
-			user: config.user.username,
-			appKey: config.appKey,
-			apiUrl: location.protocol + '//' + config.restServer
-		};
-
-		if (config.user.token) {
-			op.accessToken = config.user.token;
-		}
-		else {
-			op.pwd = config.user.password;
-		}
-
-		conn.open(op);
-
-		Modernizr.peerconnection
-			&& config.grayList.audioVideo
-			&& app.videoChat.init(conn, channel.sendText, config);
-	}
-
 	function _close() {
 		profile.isChatWindowOpen = false;
 
@@ -1037,14 +1012,9 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 	function _init() {
 		config = profile.config;
 
-		conn = chat.conn = new WebIM.connection({
-			url: config.xmppServer,
-			retry: true,
-			isMultiLoginSessions: config.resources,
-			heartBeatWait: _const.HEART_BEAT_INTERVAL
-		});
-
 		channel.init(chat);
+
+		channel.initConnection();
 
 		profile.isChatWindowOpen = true;
 
@@ -1088,7 +1058,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 				channel.listen();
 
 				// 连接xmpp server
-				_open();
+				channel.open();
 
 				// 设置信息栏
 				_setNotice();
@@ -1131,7 +1101,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 		setAgentProfile: _setAgentProfile,
 		close: _close,
 		show: _show,
-		open: _open,
 		playSound: function(){},
 		block: null
 	};

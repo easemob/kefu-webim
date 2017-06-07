@@ -7,6 +7,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 	var channel;
 	var config;
 	var chat;
+	var conn;
 
 	// 监听ack的timer, 每条消息启动一个
 	var ackTimerDict = new easemobim.Dict();
@@ -23,7 +24,16 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 			config = profile.config;
 			chat = currentChat;
 		},
+		initConnection: function(){
+			conn = new WebIM.connection({
+				url: config.xmppServer,
+				retry: true,
+				isMultiLoginSessions: config.resources,
+				heartBeatWait: _const.HEART_BEAT_INTERVAL
+			});
+		},
 		reSend: _reSend,
+		open: _open,
 		sendTransferToKf: _sendTransferToKf,
 		sendText: _sendText,
 		sendImg: _sendImg,
@@ -55,6 +65,27 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 		handleReceive: _handleMessage
 	};
 
+	function _open(){
+		var op = {
+			user: config.user.username,
+			appKey: config.appKey,
+			apiUrl: location.protocol + '//' + config.restServer
+		};
+
+		if (config.user.token) {
+			op.accessToken = config.user.token;
+		}
+		else {
+			op.pwd = config.user.password;
+		}
+
+		conn.open(op);
+
+		Modernizr.peerconnection
+			&& config.grayList.audioVideo
+			&& app.videoChat.init(conn, _sendText, config);
+	}
+
 	function _listen() {
 		// xmpp连接超时则改为可发送消息状态
 		// todo: 自动切换通道状态
@@ -63,14 +94,14 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 			chat.handleReady();
 		}, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
 
-		chat.conn.listen({
+		conn.listen({
 			onOpened: function (info) {
 				// 连接未超时，清除timer，暂不开启api通道发送消息
 				clearTimeout(firstTS);
 
 				reOpenTimerHandler && clearTimeout(reOpenTimerHandler);
 				token = info.accessToken;
-				chat.conn.setPresence();
+				conn.setPresence();
 
 				chat.handleReady(info);
 			},
@@ -90,10 +121,10 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 				_handleMessage(message, 'cmd');
 			},
 			onOnline: function () {
-				utils.isMobile && chat.open();
+				utils.isMobile && _open();
 			},
 			onOffline: function () {
-				utils.isMobile && chat.conn.close();
+				utils.isMobile && conn.close();
 				// for debug
 				console.log('onOffline-channel');
 				// 断线关闭视频通话
@@ -105,11 +136,11 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 			},
 			onError: function (e) {
 				if (e.reconnect) {
-					chat.open();
+					_open();
 				}
 				else if (e.type === _const.IM.WEBIM_CONNCTION_AUTH_ERROR) {
 					reOpenTimerHandler || (reOpenTimerHandler = setTimeout(function () {
-						chat.open();
+						_open();
 					}, 2000));
 				}
 				else if (
@@ -136,13 +167,17 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 	}
 
 	function _reSend(type, id) {
-		if (id) {
-			switch (type) {
-			case 'txt':
-				// 重试只发一次
-				_sendMsgChannle(id, 0);
-				break;
-			}
+		if (!id) return;
+
+		switch (type) {
+		case 'txt':
+			// 重试只发一次
+			_sendMsgChannle(id, 0);
+			break;
+		default:
+			// todo: 解决图片文件无法重发问题
+			conn.send(id);
+			break;
 		}
 	}
 
@@ -162,13 +197,14 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 		}
 		_setExt(msg);
 		_appendAck(msg, id);
-		chat.conn.send(msg.body);
+		conn.send(msg.body);
 		sendMsgDict.set(id, msg);
 		_detectSendTextMsgByApi(id);
 
 		// 空文本消息不上屏
 		if (!message) return;
 		_appendMsg({
+			id: id,
 			type: 'txt',
 			data: message
 		}, {
@@ -197,7 +233,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 			}
 		});
 		_appendAck(msg, id);
-		chat.conn.send(msg.body);
+		conn.send(msg.body);
 		sendMsgDict.set(id, msg);
 		_detectSendTextMsgByApi(id);
 
@@ -225,24 +261,24 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 				// todo: fix this part can not be called
 			},
 			success: function (id) {
-				utils.removeDom(document.getElementById(id + '_loading'));
-				utils.removeDom(document.getElementById(id + '_failed'));
+				// todo: 验证这里是否执行，验证此处id是im msg id 还是 kefu-ack-id
+				_hideFailedAndLoading(id);
 			},
 			fail: function (id) {
-				utils.addClass(document.getElementById(id + '_loading'), 'hide');
-				utils.removeClass(document.getElementById(id + '_failed'), 'hide');
+				_showFailed(id);
 			}
 		});
 		_setExt(msg);
 		_appendAck(msg, id);
 		_appendMsg({
+			id: id,
 			type: 'img',
 			url: fileMsg.url
 		}, {
 			isReceived: false,
 			isHistory: false
 		});
-		chat.conn.send(msg.body);
+		conn.send(msg.body);
 		sendMsgDict.set(id, msg);
 		_detectUploadImgMsgByApi(id, fileMsg.data);
 
@@ -270,16 +306,16 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 				// todo: fix this part can not be called
 			},
 			success: function (id) {
-				utils.removeDom(document.getElementById(id + '_loading'));
-				utils.removeDom(document.getElementById(id + '_failed'));
+				// todo: 验证这里是否执行，验证此处id是im msg id 还是 kefu-ack-id
+				_hideFailedAndLoading(id);
 			},
 			fail: function (id) {
-				utils.addClass(document.getElementById(id + '_loading'), 'hide');
-				utils.removeClass(document.getElementById(id + '_failed'), 'hide');
+				_showFailed(id);
 			}
 		});
 		_setExt(msg);
 		_appendMsg({
+			id: id,
 			type: 'file',
 			url: fileMsg.url,
 			filename: fileMsg.filename,
@@ -288,7 +324,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 			isReceived: false,
 			isHistory: false
 		});
-		chat.conn.send(msg.body);
+		conn.send(msg.body);
 	}
 
 	function _handleMessage(msg, msgType, isHistory) {
@@ -364,7 +400,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 				// 撤回消息命令
 				var recallMsgId = msg.ext.weichat.recall_msg_id;
 				var dom = document.getElementById(recallMsgId);
-				utils.removeDom(dom);
+				utils.addClass(dom, 'hide');
 			}
 			break;
 		case 'satisfactionEvaluation':
@@ -514,15 +550,18 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 		};
 	}
 
-	function _hideLoading(msgId){
-		utils.addClass(document.getElementById(msgId + '_loading'), 'hide');
-	}
-
 	function _showFailed(msgId) {
-		_hideLoading(msgId);
+		utils.addClass(document.getElementById(msgId + '_loading'), 'hide');
 		utils.removeClass(document.getElementById(msgId + '_failed'), 'hide');
 	}
 
+	function _hideFailedAndLoading(msgId){
+		utils.addClass(document.getElementById(msgId + '_loading'), 'hide');
+		_showFailed(msgId);
+		utils.addClass(document.getElementById(msgId + '_failed'), 'hide');
+	}
+
+	// todo: merge setExt & appendAck
 	function _appendAck(msg, id) {
 		msg.body.ext.weichat.msg_id_for_ack = id;
 	}
@@ -789,9 +828,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 		clearTimeout(ackTimerDict.get(id));
 		ackTimerDict.remove(id);
 
-		utils.removeDom(document.getElementById(id + '_loading'));
-		utils.removeDom(document.getElementById(id + '_failed'));
-
+		_hideFailedAndLoading(id);
 		sendMsgDict.remove(id);
 	}
 

@@ -127,8 +127,10 @@ app.genDomFromMsg = (function (window, _const, utils, profile) {
 
 		// 发出的消息增加状态显示
 		if (!isReceived && !isHistory && id) {
+			// todo: 只拼一遍id
+			// todo: 去掉type
 			html += '<div id="' + id
-				+ '_failed" data-type="txt" class="em-widget-msg-status hide">'
+				+ '_failed" data-type="' + type + '" class="em-widget-msg-status hide">'
 				+ '<span>发送失败</span><i class="icon-circle"><i class="icon-exclamation"></i></i></div>'
 				+ '<div id="' + id
 				+ '_loading" class="em-widget-msg-loading">' + LOADING + '</div>';

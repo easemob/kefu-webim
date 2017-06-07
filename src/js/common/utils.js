@@ -213,11 +213,20 @@
 			me.on(container, ev, function (e) {
 				var evt = e || window.event;
 				var target = evt.target || evt.srcElement;
+				var parentOfTarget = target.parentNode;
 				var targetList = container.querySelectorAll(selector);
-				var i, l;
+				var i;
+				var l;
+				var currentElement;
 
 				for (i = 0, l = targetList.length; i < l; ++i) {
-					targetList[i] === target && handler.call(target, evt);
+					currentElement = targetList[i];
+					if (currentElement === target){
+						handler.call(target, evt);
+					}
+					else if (currentElement === parentOfTarget){
+						handler.call(parentOfTarget, evt);
+					}
 				}
 			});
 		},
