@@ -1,13 +1,17 @@
-app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessageView, profile){
+app.channel = (function(_const, utils, api, apiHelper, satisfaction, profile){
 	'strict';
 
 	var isNoAgentOnlineTipShowed;
 	var receiveMsgTimer;
+	var sessionListView;
 	var token;
-	var channel;
 	var config;
-	var chat;
 	var conn;
+
+	// other module
+	var chat;
+	var createMessageView;
+	var sessionList;
 
 	// 监听ack的timer, 每条消息启动一个
 	var ackTimerDict = new easemobim.Dict();
@@ -19,10 +23,12 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 	var receiveMsgDict = new easemobim.Dict();
 
 
-	return channel = {
-		init: function(currentChat){
+	var channel = {
+		init: function(){
 			config = profile.config;
-			chat = currentChat;
+			chat = app.chat;
+			createMessageView = app.createMessageView;
+			sessionList = app.sessionList;
 		},
 		initConnection: function(){
 			conn = new WebIM.connection({
@@ -39,6 +45,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 		sendImg: _sendImg,
 		sendFile: _sendFile,
 		listen: _listen,
+		attemptToAppendOfficialAccount: _attemptToAppendOfficialAccount,
 
 		// todo: move this to message view
 		handleHistoryMsg: function(element) {
@@ -64,6 +71,8 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 		},
 		handleReceive: _handleMessage
 	};
+
+	return channel;
 
 	function _open(){
 		var op = {
@@ -338,8 +347,10 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 		var eventName = utils.getDataByPath(msg, 'ext.weichat.event.eventName');
 		var eventObj = utils.getDataByPath(msg, 'ext.weichat.event.eventObj');
 		var msgId = utils.getDataByPath(msg, 'ext.weichat.msgId');
+
 		// from 不存在默认认为是收到的消息
 		var isReceived = !msg.from || (msg.from.toLowerCase() !== config.user.username.toLowerCase());
+		var officialAccount = utils.getDataByPath(msg, 'ext.weichat.official_account');
 
 		if (receiveMsgDict.get(msgId)) {
 			// 重复消息不处理
@@ -357,6 +368,8 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 		if (!isHistory && msg.from && msg.from.toLowerCase() != config.toUser.toLowerCase() && !msg.noprompt) {
 			return;
 		}
+
+		officialAccount && _attemptToAppendOfficialAccount(officialAccount);
 
 		//满意度评价
 		if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'inviteEnquiry') {
@@ -616,7 +629,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 	function _handleSystemEvent(event, data, msg){
 		var eventMessageText = _const.SYSTEM_EVENT_MSG_TEXT[event];
 
-		eventMessageText && _appendEventMsg(eventMessageText);
+		eventMessageText && _appendEventMsg(eventMessageText, msg);
 
 		switch (event) {
 			// 转接到客服
@@ -671,12 +684,21 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 	}
 
 	// 系统事件消息上屏
-	function _appendEventMsg(msg) {
-		//如果设置了hideStatus, 不显示转接中排队中等提示
-		if (config.hideStatus) return;
+	function _appendEventMsg(test, msg) {
+		// 如果设置了hideStatus, 不显示此类提示
+		if (!config.hideStatus) return;
 
-		// 事件消息都显示在系统服务号中
-		profile.systemOfficialAccount.messageView.appendEventMsg(msg);
+		var officialAccountId = utils.getDataByPath(msg, 'ext.weichat.official_account.official_account_id');
+		var targetOfficialAccount = _getOfficialAccountById(officialAccountId);
+
+		targetOfficialAccount.messageView.appendEventMsg(msg);
+	}
+
+	function _getOfficialAccountById(id){
+		// 默认返回系统服务号
+		if (!id) return profile.systemOfficialAccount;
+
+		return _.findWhere(profile.officialAccountList, {official_account_id: id});
 	}
 
 	// 坐席改变更新坐席头像和昵称并且开启获取坐席状态的轮训
@@ -697,52 +719,82 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 
 	function _appendMsg(msg, options) {
 		var opt = options || {};
-		var officialAccount = utils.getDataByPath(msg, 'ext.weichat.official_account') || {};
-		var officialAccountId = officialAccount.official_account_id;
 		var isReceived = opt.isReceived;
 		var isHistory = opt.isHistory;
-		var targetOfficialAccount;
+		var officialAccountId;
 
 		if (!isReceived && !isHistory){
 			// 自己发出去的即时消息使用当前messageView
-			targetOfficialAccount = profile.currentOfficialAccount;
+			profile.currentOfficialAccount.messageView.appendMsg(msg, opt);
 		}
 		else{
-			targetOfficialAccount = _.findWhere(profile.officialAccountList, {official_account_id: officialAccountId});
-			if (!targetOfficialAccount && officialAccountId){
-				// 缓存的服务号列表里没有则添加
-				targetOfficialAccount = _appendOfficialAccount(officialAccount);
-			}
-			else {
-				targetOfficialAccount = profile.systemOfficialAccount;
-			}
+			officialAccountId = utils.getDataByPath(msg, 'ext.weichat.official_account.official_account_id');
+			_getOfficialAccountById(officialAccountId).messageView.appendMsg(msg, opt);
 		}
-		targetOfficialAccount.messageView.appendMsg(msg, opt);
 	}
 
-	function _appendOfficialAccount(officialAccount){
-		var type = officialAccount.type;
+	function _attemptToAppendOfficialAccount(officialAccount){
 		var id = officialAccount.official_account_id;
-		var targetOfficialAccount = _.findWhere(profile.officialAccountList, {official_account_id: officialAccountId});
+		var type = officialAccount.type;
+		var img = officialAccount.img;
+		var name = officialAccount.name;
+		var targetOfficialAccount = _.findWhere(profile.officialAccountList, {official_account_id: id});
 
-		if ('SYSTEM' === type){
-			profile.systemOfficialAccount.img = officialAccount.img;
-			profile.systemOfficialAccount.official_account_id = id;
+		// 如果相应messageView已存在，则不处理
+		if (targetOfficialAccount) return;
+
+		if (type === 'SYSTEM'){
+			if (_.isEmpty(profile.systemOfficialAccount)){
+				profile.systemOfficialAccount = officialAccount;
+				officialAccount.messageView = createMessageView({
+					parentContainer: chat.doms.chatWrapper,
+					officialAccount: officialAccount
+				});
+				profile.officialAccountList.push(officialAccount);
+			}
+			else if (profile.systemOfficialAccount.official_account_id !== id){
+			 	// 如果id不为null则更新 systemOfficialAccount
+			 	profile.systemOfficialAccount.official_account_id = id;
+				profile.systemOfficialAccount.img = img;
+				profile.systemOfficialAccount.name = name;
+			 }
 		}
-		else if ('CUSTOM' === type){
-			// todo: 若sessionList未初始化则此时应该初始化
+		else if (type === 'CUSTOM'){
+			profile.ctaEnable = true;
 			officialAccount.messageView = createMessageView({
 				parentContainer: chat.doms.chatWrapper,
-				isNewUser: false,
-				id: id,
-				channel: channel
-			})
+				officialAccount: officialAccount
+			});
 			profile.officialAccountList.push(officialAccount);
+			_createSessionListViewIfNeeded();
+			profile.sessionListView.appendItem(officialAccount);
 		}
 		else {
 			throw 'unexpected official_account type.';
 		}
-		return officialAccount;
+	}
+
+	function _createSessionListViewIfNeeded(){
+		if (profile.sessionListView) return;
+
+		profile.sessionListView = sessionList.init({
+			onItemClick: function(id){
+				var targerOfficialAccountProfile = id === 'SYSTEM'
+				? profile.systemOfficialAccount
+				: _.findWhere(profile.officialAccountList, {official_account_id: id});
+
+				_.each(profile.officialAccountList, function(item){
+					item.messageView.hide();
+				});
+
+				targerOfficialAccountProfile.messageView.show();
+				profile.currentOfficialAccount = targerOfficialAccountProfile;
+				_getLastSession(profile.currentOfficialAccount.official_account_id);
+			}
+		});
+		// todo: show list button
+		// todo: add list button
+		utils.on(chat.doms.avatar, 'click', profile.sessionListView.show);
 	}
 
 	// 第二通道发消息
@@ -893,7 +945,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 			brief = '[文件]';
 			break;
 		default:
-			console.warn('unexpected message type.')
+			console.warn('unexpected message type.');
 			brief = '';
 		}
 
@@ -916,6 +968,5 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, createMessa
 	app.api,
 	app.apiHelper,
 	app.satisfaction,
-	app.createMessageView,
 	app.profile
 ));

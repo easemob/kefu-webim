@@ -3,7 +3,6 @@ app.sessionList = (function(utils, uikit, profile){
 	var dialog;
 	var listDom;
 	var itemOnClickCallback;
-	var collection;
 
 	function _createDialog(){
 		return uikit.createDialog({
@@ -25,13 +24,10 @@ app.sessionList = (function(utils, uikit, profile){
 	}
 
 	function _init(opt){
-		itemOnClickCallback = opt.callback || EMPTY_FUNCTION;
-		collection = opt.collection || [];
+		itemOnClickCallback = opt.onItemClick || EMPTY_FUNCTION;
 
 		dialog = _createDialog();
 		listDom = dialog.el.querySelector('ul');
-		_render(collection);
-		utils.on(listDom.querySelectorAll('li'), 'click', _cb);
 	}
 
 	function _cb(){
@@ -40,42 +36,30 @@ app.sessionList = (function(utils, uikit, profile){
 		_hide();
 	}
 
-	function _removing(){
-		utils.off(listDom.querySelectorAll('li'), 'click', _cb);
-	}
-
-	function _render(serviceList){
-		listDom.innerHTML = _.map(serviceList, _renderItem).join('');
-	}
-
 	function _appendItem(item){
-		var itemDom = utils.createElementFromHTML(_renderItem(item));
+		// 系统服务号的id强制设置为 'SYSTEM'
+		// 因为系统服务号id初始化时为null，后续会更新
+		var id = item.type === 'SYSTEM' ? 'SYSTEM' :item.official_account_id;
+		var itemDom = _renderItem(item);
 		listDom.appendChild(itemDom);
-		utils.on(itemDom, click, _cb);
+		utils.on(itemDom, 'click', _cb);
 	}
 
 	function _renderItem(item){
 		var name = item.name;
 		var id = item.official_account_id;
 		var avatar = item.img || profile.tenantAvatar || profile.defaultAvatar;
-
-		return [
+		return utils.createElementFromHTML([
 			'<li data-id="' + id + '">',
 			'<img src="' + avatar + '">',
 			'<span class="name">' + name + '</span>',
 			'</li>'
-		].join('');
+		].join(''));
 	}
 
 	return {
 		appendItem: _appendItem,
-		show: function(){
-			_show();
-			return this;
-		},
-		init: function(opt){
-			_init(opt);
-			return this;
-		}
+		show: _show,
+		init: _init
 	};
 }(easemobim.utils, app.uikit, app.profile));

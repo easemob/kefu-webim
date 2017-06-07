@@ -79,7 +79,6 @@ app.genDomFromMsg = (function (window, _const, utils, profile) {
 			break;
 		default:
 			throw 'unexpected value type.';
-			break;
 		}
 
 		return html;

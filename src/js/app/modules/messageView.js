@@ -1,11 +1,9 @@
-app.createMessageView = (function(_const, utils, uikit, apiHelper){
+app.createMessageView = (function(_const, utils, uikit, apiHelper, channel){
 	var tpl = '<div class="chat-container"></div>';
 
 	return function(opt){
 		var parentContainer = opt.parentContainer;
-		var isNewUser = opt.isNewUser;
-		var channel = opt.channel;
-		var officialAccountId = opt.id;
+		var officialAccount = opt.officialAccount;
 		var el = utils.createElementFromHTML(tpl);
 
 		var currHistoryMsgSeqId = 0;
@@ -18,7 +16,8 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper){
 
 		parentContainer.appendChild(el);
 
-		if (!isNewUser){
+		function _getHistoryAndInitHistoryPuller(){
+
 			// 拉取历史消息
 			_getHistory(_scrollToBottom);
 
@@ -135,7 +134,7 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper){
 		function _getHistory(callback){
 			if (hasHistoryMessage === false) return;
 			apiHelper.getOfficalAccountMessage(
-				officialAccountId,
+				officialAccount.official_account_id,
 				currHistoryMsgSeqId
 			).then(function(msgList){
 				var length = msgList.length;
@@ -199,19 +198,14 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper){
 		}
 
 		return {
-			show: function(){
-				_show();
-				return this;
-			},
-			hide: function(){
-				_hide();
-				return this;
-			},
+			show: _show,
+			hide: _hide,
 			scrollToBottom: _scrollToBottom,
 			appendMsg: _appendMsg,
 			appendEventMsg: _appendEventMsg,
 			getRecentMsg: _getRecentMsg,
+			getHistoryAndInitHistoryPuller: _getHistoryAndInitHistoryPuller,
 			el: el
 		};
 	};
-}(easemobim._const, easemobim.utils, app.uikit, app.apiHelper));
+}(easemobim._const, easemobim.utils, app.uikit, app.apiHelper, app.channel));

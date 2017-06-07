@@ -2,8 +2,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 	var isEmojiInitilized;
 	var isMessageChannelReady;
 	var inputBoxPosition;
-	var chat;
-	var conn;
 	var config;
 
 	// DOM init
@@ -186,6 +184,28 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 		};
 	}());
 
+
+	var chat = {
+		doms: doms,
+		init: _init,
+		handleReady: _handleReady,
+		setEnterpriseInfo: _setEnterpriseInfo,
+		startToGetAgentStatus: _startToGetAgentStatus,
+		clearAgentStatus: _clearAgentStatus,
+		updateAgentStatus: _updateAgentStatus,
+		stopGettingAgentStatus: _stopGettingAgentStatus,
+		setToKefuBtn: _setToKefuBtn,
+		agentInputState: _agentInputState,
+		waitListNumber: _waitListNumber,
+		setAgentProfile: _setAgentProfile,
+		close: _close,
+		show: _show,
+		playSound: function(){},
+		block: null
+	};
+
+	return chat;
+
 	function _initUI(){
 		(utils.isTop || !config.minimum) && utils.removeClass(doms.imChat, 'hide');
 
@@ -273,6 +293,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 	function _setToKefuBtn(options){
 		if (!config.toolbar.transferToKefu) return;
 		if (options.isSessionOpen){
+			// todo: change to get lastest session
 			apiHelper.getCurrentServiceSession().then(function (res) {
 				var isRobotAgent = res && res.agentUserType === 6;
 				utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotAgent);
@@ -475,10 +496,28 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 	}
 
 	function _initOfficialAccount(){
-		apiHelper.getOfficalAccounts().then(_initMessageView, function(err){
+		// init default system message view
+		channel.attemptToAppendOfficialAccount({
+			type: 'SYSTEM',
+			official_account_id: null,
+			img: null
+		});
+		profile.currentOfficialAccount = profile.systemOfficialAccount;
+
+		apiHelper.getOfficalAccounts().then(function(officialAccountList){
+			_.each(officialAccountList, channel.attemptToAppendOfficialAccount);
+			_.each(profile.officialAccountList, function(officialAccount){
+				officialAccount.messageView.getHistoryAndInitHistoryPuller();
+			});
+
+			if (profile.ctaEnable){
+				profile.sessionListView.show();
+			}
+		}, function(err){
 			// 未创建会话时初始化默认服务号
 			if (err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
-				_initMessageView([], {isNewUser: true});
+				_getGreeting();
+				_setToKefuBtn({isSessionOpen: false});
 			}
 			else {
 				throw err;
@@ -490,62 +529,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 			profile.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
 			profile.hasRobotAgentOnline = data.onlineRobotAgentCount > 0;
 		});
-	}
-
-	function _initMessageView(officialAccountList, options){
-		var opt = options || {};
-		var isNewUser = opt.isNewUser;
-		profile.officialAccountList = _.isEmpty(officialAccountList)
-			? [{
-				type: 'SYSTEM',
-				official_account_id: null,
-				img: null
-			}]
-			: officialAccountList;
-
-		profile.systemOfficialAccount = _.findWhere(profile.officialAccountList, {type: 'SYSTEM'});
-		// 营销功能打开标志
-		profile.ctaEnable = !!_.findWhere(profile.officialAccountList, {type: 'CUSTOM'});
-
-		// init message view
-		_.each(profile.officialAccountList, function(item){
-			item.messageView = createMessageView({
-				parentContainer: doms.chatWrapper,
-				isNewUser: opt.isNewUser,
-				id: item.official_account_id,
-				channel: channel
-			});
-		});
-
-		// init session list
-		profile.sessionList = app.sessionList.init({
-			collection: profile.officialAccountList,
-			callback: function(id){
-				var targerOfficialAccountProfile = _.findWhere(profile.officialAccountList, {official_account_id: id});
-				_.each(profile.officialAccountList, function(item){
-					item.messageView.hide();
-				});
-				targerOfficialAccountProfile.messageView.show();
-				profile.currentOfficialAccount = targerOfficialAccountProfile;
-			}
-		});
-
-		if (profile.ctaEnable){
-			profile.sessionList.show();
-			// todo: show list button
-			utils.on(doms.avatar, 'click', profile.sessionList.show);
-		}
-		else {
-			profile.currentOfficialAccount = _.findWhere(profile.officialAccountList, {type: 'SYSTEM'});
-		}
-
-		if (isNewUser){
-			_getGreeting();
-			_setToKefuBtn({isSessionOpen: false});
-		}
-		else {
-			_getLastSession(profile.currentOfficialAccount.official_account_id);
-		}
 	}
 
 	function _getLastSession(officialAccountId){
@@ -934,7 +917,9 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 		utils.removeClass(doms.imChat, 'hide');
 		_scrollToBottom();
 		if (
-			config.isInOfficehours
+			// todo: fix this issue
+			// 可能会在初始化完成之前读取config
+			config && config.isInOfficehours
 			// IE 8 will throw an error when focus an invisible element
 			&& doms.textInput.offsetHeight > 0
 		) {
@@ -944,8 +929,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 	}
 
 	function _handleReady(info) {
-		var extMessage;
-
 		if (isMessageChannelReady) return;
 
 		isMessageChannelReady = true;
@@ -961,9 +944,10 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 			config.user.token = config.user.token || info.accessToken;
 		}
 
+
 		// 发送扩展消息
-		while (extMessage = profile.commandMessageToBeSendList.pop()){
-			channel.sendText('', extMessage);
+		while (profile.commandMessageToBeSendList.length > 0){
+			channel.sendText('', profile.commandMessageToBeSendList.pop());
 		}
 
 		// onready 回调
@@ -1012,7 +996,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 	function _init() {
 		config = profile.config;
 
-		channel.init(chat);
+		channel.init();
 
 		channel.initConnection();
 
@@ -1075,6 +1059,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 				// 第二通道收消息初始化
 				channel.initSecondChannle();
 
+				// todo: move to handle ready
 				app.initPasteImage();
 			}
 			else {
@@ -1085,25 +1070,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 			throw err;
 		});
 	}
-
-	return chat = {
-		doms: doms,
-		init: _init,
-		handleReady: _handleReady,
-		setEnterpriseInfo: _setEnterpriseInfo,
-		startToGetAgentStatus: _startToGetAgentStatus,
-		clearAgentStatus: _clearAgentStatus,
-		updateAgentStatus: _updateAgentStatus,
-		stopGettingAgentStatus: _stopGettingAgentStatus,
-		setToKefuBtn: _setToKefuBtn,
-		agentInputState: _agentInputState,
-		waitListNumber: _waitListNumber,
-		setAgentProfile: _setAgentProfile,
-		close: _close,
-		show: _show,
-		playSound: function(){},
-		block: null
-	};
 }(
 	easemobim._const,
 	easemobim.utils,
