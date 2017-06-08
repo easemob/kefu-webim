@@ -504,6 +504,18 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 		});
 	}
 
+	function getSkillgroupMenu() {
+		return new Promise(function(resolve, reject){
+			api('getSkillgroupMenu', {
+				tenantId: config.tenantId
+			}, function (msg) {
+				resolve(utils.getDataByPath(msg, 'data.entities.0'));
+			}, function (err){
+				reject(err);
+			});
+		});
+	}
+
 	function reportVisitorAttributes(sessionId){
 		return new Promise(function(resolve, reject){
 			getToken().then(function(token){
@@ -573,6 +585,7 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 		getExSession: getExSession,
 		getAgentStatus: getAgentStatus,
 		getLastSession: getLastSession,
+		getSkillgroupMenu: getSkillgroupMenu,
 		reportVisitorAttributes: reportVisitorAttributes,
 		reportPredictMessage: reportPredictMessage,
 		setCacheItem: function(key, value){
