@@ -347,6 +347,14 @@
 				msg: msg
 			});
 			break;
+		case 'getSkillgroupMenu':
+			emitAjax({
+				url: '/v1/webimplugin/tenants/' + tenantId + '/skillgroup-menu',
+				type: 'GET',
+				msg: msg,
+				excludeData: true
+			});
+			break;
 		case 'getAgentInputState':
 			emitAjax({
 				url: '/v1/webimplugin/sessions/' + params.serviceSessionId

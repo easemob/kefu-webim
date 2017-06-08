@@ -454,6 +454,20 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, profile){
 				+ '</div>';
 			message.data = msg.ext.msgtype.choice.title;
 			break;
+		case 'skillgroupMenu':
+			message = msg;
+			message.type = 'list';
+			message.list = '<div class="em-btn-list">'
+				+ _.map(msg.data.children, function(item){
+					var queueName = item.queueName;
+					var label = item.menuName;
+					var className = 'js_skillgroupbtn bg-hover-color';
+
+					return '<button class="' + className + '" data-queue-name="' + queueName + '">' + label + '</button>';
+				}).join('')
+				+ '</div>';
+			message.data = msg.data.menuName;
+			break;
 		case 'robotTransfer':
 			var ctrlArgs = msg.ext.weichat.ctrlArgs;
 			message = msg;

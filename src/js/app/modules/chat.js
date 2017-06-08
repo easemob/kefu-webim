@@ -456,6 +456,18 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 		});
 	}
 
+	function _getSkillgroupMenu() {
+		apiHelper.getSkillgroupMenu().then(function(groupMenus) {
+			// 当skillGroupMenuEnable 为false时  返回值为空
+			if(!groupMenus) return;
+			channel.handleReceive({
+				data: groupMenus,
+				type: 'skillgroupMenu',
+				noprompt: true
+			});
+		});
+	}
+
 	function _getNickNameOption() {
 		api('getNickNameOption', {
 			tenantId: config.tenantId
@@ -517,6 +529,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 			// 未创建会话时初始化默认服务号
 			if (err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
 				_getGreeting();
+				_getSkillgroupMenu();
 				_setToKefuBtn({isSessionOpen: false});
 			}
 			else {
@@ -560,6 +573,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 			){
 				// 结束的会话获取欢迎语
 				_getGreeting();
+				_getSkillgroupMenu();
 				_setToKefuBtn({isSessionOpen: false});
 			}
 			else{
@@ -568,6 +582,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 		}, function(err){
 			if (err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
 				_getGreeting();
+				_getSkillgroupMenu();
 				_setToKefuBtn({isSessionOpen: false});
 			}
 			else {
@@ -676,6 +691,17 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 						choice: {
 							menuid: this.getAttribute('data-id')
 						}
+					}
+				}
+			});
+		});
+
+		// 根据菜单项选择指定的技能组
+		utils.live('button.js_skillgroupbtn', utils.click, function () {
+			channel.sendText(this.innerText, {
+				ext: {
+					weichat: {
+						queueName: this.getAttribute('data-queue-name')
 					}
 				}
 			});
