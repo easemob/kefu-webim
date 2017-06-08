@@ -351,7 +351,8 @@
 			emitAjax({
 				url: '/v1/webimplugin/tenants/' + tenantId + '/skillgroup-menu',
 				type: 'GET',
-				msg: msg
+				msg: msg,
+				excludeData: true
 			});
 			break;
 		case 'getAgentInputState':
