@@ -1,4 +1,4 @@
-app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channel, createMessageView, profile) {
+app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channel, profile) {
 	var isEmojiInitilized;
 	var isMessageChannelReady;
 	var inputBoxPosition;
@@ -1104,6 +1104,5 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 	app.apiHelper,
 	app.satisfaction,
 	app.channel,
-	app.createMessageView,
 	app.profile
 ));

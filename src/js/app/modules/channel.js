@@ -1,4 +1,4 @@
-app.channel = (function(_const, utils, api, apiHelper, satisfaction, profile){
+app.channel = (function(_const, utils, api, apiHelper, profile){
 	'strict';
 
 	var isNoAgentOnlineTipShowed;
@@ -12,6 +12,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, profile){
 	var chat;
 	var createMessageView;
 	var sessionList;
+	var satisfaction;
 
 	// 监听ack的timer, 每条消息启动一个
 	var ackTimerDict = new easemobim.Dict();
@@ -29,6 +30,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, profile){
 			chat = app.chat;
 			createMessageView = app.createMessageView;
 			sessionList = app.sessionList;
+			satisfaction = app.satisfaction;
 		},
 		initConnection: function(){
 			conn = new WebIM.connection({
@@ -169,7 +171,6 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, profile){
 				}
 				else {
 					console.error(e);
-					typeof config.onerror === 'function' && config.onerror(e);
 				}
 			}
 		});
@@ -584,7 +585,6 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, profile){
 
 	function _hideFailedAndLoading(msgId){
 		utils.addClass(document.getElementById(msgId + '_loading'), 'hide');
-		_showFailed(msgId);
 		utils.addClass(document.getElementById(msgId + '_failed'), 'hide');
 	}
 
@@ -636,7 +636,7 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, profile){
 		// 显示无坐席在线(只显示一次)
 		if (!hasAgentOnline && !isNoAgentOnlineTipShowed) {
 			isNoAgentOnlineTipShowed = true;
-			_appendEventMsg(_const.eventMessageText.NOTE);
+			_appendEventMsg(_const.eventMessageText.NOTE, {ext: {weichat: {official_account: profile.currentOfficialAccount}}});
 		}
 	}
 
@@ -981,6 +981,5 @@ app.channel = (function(_const, utils, api, apiHelper, satisfaction, profile){
 	easemobim.utils,
 	app.api,
 	app.apiHelper,
-	app.satisfaction,
 	app.profile
 ));
