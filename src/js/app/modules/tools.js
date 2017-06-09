@@ -62,7 +62,9 @@ window.app = {
 		ctaEnable: false,
 		agentId: null,
 		currentAgentAvatar: null,
+		currentAgentNickname: null,
 		isChatWindowOpen: null,
+		nickNameOption: null,
 		// 用来缓存图片的file对象，用于全屏查看图片
 		imgFileList: new easemobim.Dict(),
 		isServiceSessionOpened: false,

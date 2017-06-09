@@ -4,6 +4,8 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 	var isNoAgentOnlineTipShowed;
 	var receiveMsgTimer;
 	var sessionListView;
+	var systemEventCallbackTable = {};
+	// todo: use profile.token instead
 	var token;
 	var config;
 	var conn;
@@ -48,6 +50,7 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 		sendFile: _sendFile,
 		listen: _listen,
 		attemptToAppendOfficialAccount: _attemptToAppendOfficialAccount,
+		addSystemEventListener: _addSystemEventListener,
 
 		// todo: move this to message view
 		handleHistoryMsg: function(element) {
@@ -76,6 +79,13 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 
 	return channel;
 
+	function _addSystemEventListener(event, callback){
+		if (!systemEventCallbackTable[event]) systemEventCallbackTable[event] = [];
+		systemEventCallbackTable[event].push(callback);
+	}
+
+	function _removeSystemEventListener(event, callback){}
+
 	function _open(){
 		var op = {
 			user: config.user.username,
@@ -94,6 +104,7 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 
 		Modernizr.peerconnection
 			&& config.grayList.audioVideo
+			// todo: discard _sendText & config
 			&& app.videoChat.init(conn, _sendText, config);
 	}
 
@@ -142,8 +153,6 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 				if (Modernizr.peerconnection) {
 					app.videoChat.onOffline();
 				}
-				// todo 断线后停止轮询坐席状态
-				// chat.stopGettingAgentStatus();
 			},
 			onError: function (e) {
 				if (e.reconnect) {
@@ -343,7 +352,6 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 		var title;
 		var inviteId;
 		var serviceSessionId;
-		var agentInfo;
 		var type = msgType || (msg && msg.type);
 		var eventName = utils.getDataByPath(msg, 'ext.weichat.event.eventName');
 		var eventObj = utils.getDataByPath(msg, 'ext.weichat.event.eventObj');
@@ -502,18 +510,24 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 			console.error('unexpected msg type');
 			break;
 		}
+
 		if (!isHistory) {
 			// 实时消息需要处理系统事件
-			_handleSystemEvent(eventName, eventObj, msg);
 
-			agentInfo = utils.getDataByPath(msg, 'ext.weichat.agent');
-			if (agentInfo){
-				// 开始轮询坐席状态
-				chat.startToGetAgentStatus();
-				chat.setAgentProfile(agentInfo);
-				// todo: cache current avatar
+			if (eventName){
+				_handleSystemEvent(eventName, eventObj, msg);
+			}
+			else {
+				var agentNickname = utils.getDataByPath(msg, 'ext.weichat.agent.userNickname');
+				if (agentNickname && (agentNickname !== profile.currentAgentNickname)){
+					profile.currentAgentNickname = agentNickname;
+					_handleSystemEvent(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGE, null, msg);
+				}
+				var agentAvatar = utils.getAvatarsFullPath(utils.getDataByPath(msg, 'ext.weichat.agent.avatar'), config.domain);
+				agentAvatar && (profile.currentAgentAvatar = agentAvatar);
 			}
 		}
+
 		// 空文本消息不显示
 		if (!message || (type === 'txt' && !message.data)) return;
 
@@ -628,84 +642,88 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 
 	function _promptNoAgentOnlineIfNeeded(opt){
 		var hasTransferedToKefu = opt && opt.hasTransferedToKefu;
-		// isServiceSessionOpened = true 时会话已被客服接起，此时认为有坐席在线
+		var officialAccountId = opt && opt.officialAccountId;
+		var officialAccount = _getOfficialAccountById(officialAccountId);
 		var hasAgentOnline = hasTransferedToKefu
-			? profile.isServiceSessionOpened || profile.hasHumanAgentOnline
-			: profile.isServiceSessionOpened || profile.hasHumanAgentOnline || profile.hasRobotAgentOnline;
+			? profile.hasHumanAgentOnline
+			: profile.hasHumanAgentOnline || profile.hasRobotAgentOnline;
+
+		// isServiceSessionOpened = true 时会话已被客服接起，此时认为有坐席在线
+		officialAccount.isSessionOpen && (hasAgentOnline = true);
 
 		// 显示无坐席在线(只显示一次)
 		if (!hasAgentOnline && !isNoAgentOnlineTipShowed) {
 			isNoAgentOnlineTipShowed = true;
-			_appendEventMsg(_const.eventMessageText.NOTE, {ext: {weichat: {official_account: profile.currentOfficialAccount}}});
+			_appendEventMsg(_const.eventMessageText.NOTE, {ext: {weichat: {official_account: officialAccount}}});
 		}
 	}
 
-	function _handleSystemEvent(event, data, msg){
+	function _handleSystemEvent(event, eventObj, msg){
 		var eventMessageText = _const.SYSTEM_EVENT_MSG_TEXT[event];
+		var officialAccountId = utils.getDataByPath(msg, 'ext.weichat.official_account.official_account_id');
+		var officialAccount = _getOfficialAccountById(officialAccountId);
 
 		eventMessageText && _appendEventMsg(eventMessageText, msg);
 
 		switch (event) {
-			// 转接到客服
-		case 'ServiceSessionTransferedEvent':
-			_handleAgentStatusChanged(data);
+		case _const.SYSTEM_EVENT.SESSION_TRANSFERED:
+			officialAccount.agentId = eventObj.userId;
+			chat.setToKefuBtn(officialAccount);
 			break;
-			// 转人工或者转到技能组
-		case 'ServiceSessionTransferedToAgentQueueEvent':
-			chat.waitListNumber.start();
+		case _const.SYSTEM_EVENT.SESSION_TRANSFERING:
+			chat.waitListNumber.start(officialAccount);
 			break;
-			// 会话结束
-		case 'ServiceSessionClosedEvent':
+		case _const.SYSTEM_EVENT.SESSION_CLOSED:
 			// todo: use promise to opt this code
-			profile.hasReportedAttributes = false;
+			officialAccount.hasReportedAttributes = false;
 			// todo: use promise to opt this code
-			chat.waitListNumber.stop();
-			profile.agentId = null;
-			profile.isServiceSessionOpened = false;
-			chat.stopGettingAgentStatus();
-			// 还原企业头像和企业名称
-			chat.setEnterpriseInfo();
-			// 去掉坐席状态
-			chat.clearAgentStatus();
+			chat.waitListNumber.stop(officialAccount);
+			officialAccount.agentId = null;
+			officialAccount.isServiceSessionOpened = false;
 
 			// 停止轮询 坐席端的输入状态
-			chat.agentInputState.stop();
+			chat.agentInputState.stop(officialAccount);
 
 			transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
 			break;
-			// 会话打开
-		case 'ServiceSessionOpenedEvent':
+		case _const.SYSTEM_EVENT.SESSION_OPENED:
 			// fake: 会话接起就认为有坐席在线
-			_handleAgentStatusChanged(data);
-			profile.isServiceSessionOpened = true;
+			officialAccount.agentId = eventObj.userId;
+
+			chat.setToKefuBtn(officialAccount);
+			officialAccount.isServiceSessionOpened = true;
 
 			// 停止轮询当前排队人数
-			chat.waitListNumber.stop();
+			chat.waitListNumber.stop(officialAccount);
 
 			// 开始轮询 坐席端的输入状态
-			chat.agentInputState.start();
+			chat.agentInputState.start(officialAccount);
 
-			_attemptToSendAttribute();
 			break;
-			// 会话创建
-		case 'ServiceSessionCreatedEvent':
-			chat.waitListNumber.start();
+		case _const.SYSTEM_EVENT.SESSION_CREATED:
+			chat.waitListNumber.start(officialAccount);
 			break;
 		default:
 			break;
 		}
-		_promptNoAgentOnlineIfNeeded();
+
+		// excute event callbacks
+		_.each(systemEventCallbackTable[event], function(callback){
+			callback(event, eventObj, officialAccount);
+		});
+
+		_promptNoAgentOnlineIfNeeded({officialAccountId: officialAccountId});
 	}
 
 	// 系统事件消息上屏
-	function _appendEventMsg(test, msg) {
+	function _appendEventMsg(text, msg) {
 		// 如果设置了hideStatus, 不显示此类提示
-		if (!config.hideStatus) return;
+		if (config.hideStatus) return;
 
 		var officialAccountId = utils.getDataByPath(msg, 'ext.weichat.official_account.official_account_id');
 		var targetOfficialAccount = _getOfficialAccountById(officialAccountId);
 
-		targetOfficialAccount.messageView.appendEventMsg(msg);
+		targetOfficialAccount.messageView.appendEventMsg(text);
 	}
 
 	function _getOfficialAccountById(id){
@@ -713,22 +731,6 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 		if (!id) return profile.systemOfficialAccount;
 
 		return _.findWhere(profile.officialAccountList, {official_account_id: id});
-	}
-
-	// 坐席改变更新坐席头像和昵称并且开启获取坐席状态的轮训
-	function _handleAgentStatusChanged(info) {
-		if (!info) return;
-
-		profile.agentId = info.userId;
-
-		chat.setToKefuBtn({isSessionOpen: true});
-		chat.updateAgentStatus();
-
-		//更新头像和昵称
-		chat.setAgentProfile({
-			userNickname: info.agentUserNiceName,
-			avatar: info.avatar
-		});
 	}
 
 	function _appendMsg(msg, options) {
@@ -916,18 +918,6 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 				_uploadImgMsgChannle(id, file);
 			}, _const.FIRST_CHANNEL_IMG_MESSAGE_TIMEOUT)
 		);
-	}
-
-	function _attemptToSendAttribute(){
-		if (profile.hasReportedAttributes) return;
-
-		apiHelper.getExSession().then(function (data){
-			var sessionId = utils.getDataByPath(data, 'serviceSession.serviceSessionId');
-			if (!profile.hasReportedAttributes && sessionId) {
-				profile.hasReportedAttributes = true;
-				apiHelper.reportVisitorAttributes(sessionId);
-			}
-		});
 	}
 
 	function _messagePrompt(message){

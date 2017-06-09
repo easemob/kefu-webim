@@ -442,7 +442,13 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 				agentUsername: config.agentName,
 				tenantId: config.tenantId
 			}, function (msg){
-				resolve(msg.data || {});
+				var entity = utils.getDataByPath(msg, 'data.entity');
+				if (entity){
+					resolve(entity);
+				}
+				else {
+					reject('unexpected data format.');
+				}
 			}, function (err){
 				reject(err);
 			});
@@ -451,6 +457,12 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 
 	function getAgentStatus(agentUserId){
 		return new Promise(function(resolve, reject){
+			// 没有token 不发送请求 也不报错
+			if (!config.user.token) {
+				resolve();
+				return;
+			}
+
 			api('getAgentStatus', {
 				tenantId: config.tenantId,
 				orgName: config.orgName,

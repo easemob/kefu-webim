@@ -1,4 +1,4 @@
-app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channel, profile) {
+app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, satisfaction, agentStatusPoller) {
 	var isEmojiInitilized;
 	var isMessageChannelReady;
 	var inputBoxPosition;
@@ -189,15 +189,9 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 		doms: doms,
 		init: _init,
 		handleReady: _handleReady,
-		setEnterpriseInfo: _setEnterpriseInfo,
-		startToGetAgentStatus: _startToGetAgentStatus,
-		clearAgentStatus: _clearAgentStatus,
-		updateAgentStatus: _updateAgentStatus,
-		stopGettingAgentStatus: _stopGettingAgentStatus,
 		setToKefuBtn: _setToKefuBtn,
 		agentInputState: _agentInputState,
 		waitListNumber: _waitListNumber,
-		setAgentProfile: _setAgentProfile,
 		close: _close,
 		show: _show,
 		playSound: function(){},
@@ -205,6 +199,49 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 	};
 
 	return chat;
+
+	function _initSystemEventListener(){
+		// 更新坐席在线状态标志
+		channel.addSystemEventListener(_const.SYSTEM_EVENT.SESSION_OPENED, agentStatusPoller.update);
+		channel.addSystemEventListener(_const.SYSTEM_EVENT.SESSION_TRANSFERED, agentStatusPoller.update);
+		channel.addSystemEventListener(_const.SYSTEM_EVENT.SESSION_CLOSED, agentStatusPoller.update);
+
+		// 更新坐席名称
+		channel.addSystemEventListener(_const.SYSTEM_EVENT.SESSION_OPENED, _updateAgentNickname);
+		channel.addSystemEventListener(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _updateAgentNickname);
+		channel.addSystemEventListener(_const.SYSTEM_EVENT.SESSION_CLOSED, _updateAgentNickname);
+		channel.addSystemEventListener(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGE, _updateAgentNickname);
+
+		// report visitor info
+		channel.addSystemEventListener(
+			_const.SYSTEM_EVENT.SESSION_OPENED,
+			function(event, eventObj, officialAccount){
+			if (officialAccount.hasReportedAttributes) return;
+
+			var officialAccountId = officialAccount.official_account_id;
+			var sessionId = officialAccount.sessionId;
+
+			officialAccount.hasReportedAttributes = true;
+			if (sessionId){
+				apiHelper.reportVisitorAttributes(sessionId);
+			}
+			else {
+		 		apiHelper.getLastSession(officialAccountId).then(function(session){
+					var sessionId = session.session_id;
+					var state = session.state;
+					var agentId = session.agent_id;
+
+					officialAccount.agentId = agentId;
+					officialAccount.sessionId = sessionId;
+					officialAccount.sessionState = state;
+
+					apiHelper.reportVisitorAttributes(sessionId);
+				}, function(err){
+					throw err;
+				});
+			}
+		});
+	}
 
 	function _initUI(){
 		(utils.isTop || !config.minimum) && utils.removeClass(doms.imChat, 'hide');
@@ -251,6 +288,9 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 				document.querySelector('.em-widget-satisfaction'),
 				'hide'
 			);
+
+		// 设置企业名称
+		_updateAgentNickname();
 	}
 
 	function _initSoundReminder(){
@@ -472,7 +512,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 		api('getNickNameOption', {
 			tenantId: config.tenantId
 		}, function (msg) {
-			config.nickNameOption = utils.getDataByPath(msg, 'data.0.optionValue') === 'true';
+			profile.nickNameOption = utils.getDataByPath(msg, 'data.0.optionValue') === 'true';
 		});
 	}
 
@@ -519,7 +559,9 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 		apiHelper.getOfficalAccounts().then(function(officialAccountList){
 			_.each(officialAccountList, channel.attemptToAppendOfficialAccount);
 			_.each(profile.officialAccountList, function(officialAccount){
+				var id = officialAccount.official_account_id;
 				officialAccount.messageView.getHistoryAndInitHistoryPuller();
+				_getLastSession(id);
 			});
 
 			if (profile.ctaEnable){
@@ -551,20 +593,19 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 			var agentId = session.agent_id;
 			var officialAccount = _.findWhere(profile.officialAccountList, {official_account_id: officialAccountId});
 
-			profile.agentId = agentId;
+			officialAccount.agentId = agentId;
 			officialAccount.sessionId = sessionId;
 			officialAccount.sessionState = state;
 
 			if (state === _const.SESSION_STATE.WAIT){
-				apiHelper.reportVisitorAttributes(sessionId);
 				_setToKefuBtn({isSessionOpen: true});
 			}
 			else if (state === _const.SESSION_STATE.PROCESSING){
 				// 确保正在进行中的会话，刷新后还会继续轮询坐席状态
-				_startToGetAgentStatus();
 
 				_setToKefuBtn({isSessionOpen: true});
 				apiHelper.reportVisitorAttributes(sessionId);
+				officialAccount.isSessionOpen = true;
 			}
 			else if (
 				state === _const.SESSION_STATE.ABORT
@@ -575,10 +616,12 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 				_getGreeting();
 				_getSkillgroupMenu();
 				_setToKefuBtn({isSessionOpen: false});
+
 			}
 			else{
 				throw 'unknown session state';
 			}
+			agentStatusPoller.update();
 		}, function(err){
 			if (err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
 				_getGreeting();
@@ -715,7 +758,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 		});
 
 		var messagePredict = _.throttle(function (msg) {
-			profile.agentId
+			profile.currentOfficialAccount.agentId
 				&& config.visitorUserId
 				&& api('messagePredict', {
 					tenantId: config.tenantId,
@@ -895,39 +938,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 		});
 	}
 
-	// todo: 拆分这部分
-	function _startToGetAgentStatus() {
-		if (config.agentStatusTimer) return;
-
-		// start to poll
-		config.agentStatusTimer = setInterval(function () {
-			_updateAgentStatus();
-		}, 5000);
-	}
-
-	function _stopGettingAgentStatus() {
-		config.agentStatusTimer = clearInterval(config.agentStatusTimer);
-	}
-
-	function _clearAgentStatus() {
-		doms.agentStatusSymbol.className = 'hide';
-		doms.agentStatusText.innerText = '';
-	}
-
-	function _updateAgentStatus() {
-		if (!profile.agentId || !config.nickNameOption || !config.user.token) {
-			_stopGettingAgentStatus();
-			return;
-		}
-
-		apiHelper.getAgentStatus(profile.agentId).then(function (state) {
-			if (state) {
-				doms.agentStatusText.innerText = _const.agentStatusText[state];
-				doms.agentStatusSymbol.className = 'em-widget-agent-status ' + _const.agentStatusClassName[state];
-			}
-		});
-	}
-
 	function _close() {
 		profile.isChatWindowOpen = false;
 
@@ -984,39 +994,19 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 		}
 	}
 
-	function _setEnterpriseInfo() {
-		_setAgentProfile({
-			tenantName: config.defaultAgentName,
-			avatar: config.tenantAvatar
-		});
-	}
+	function _updateAgentNickname() {
+		var nickname = profile.currentAgentNickname;
 
-	function _setAgentProfile(info) {
-		var avatarImg = info.avatar
-			? utils.getAvatarsFullPath(info.avatar, config.domain)
-			: profile.tenantAvatar || profile.defaultAvatar;
-
-		if (info.tenantName) {
-			// 更新企业头像和名称
-			doms.nickname.innerText = info.tenantName;
-			doms.avatar.src = avatarImg;
-		}
-		else if (
-			info.userNickname
-			// 昵称启用
-			&& config.nickNameOption
-			// fake: 默认不显示调度员昵称
-			&& '调度员' !== info.userNickname
+		if (
+			profile.nickNameOption
+			&& nickname
+			&& profile.currentOfficialAccount.isSessionOpen
 		) {
-			//更新坐席昵称
-			doms.nickname.innerText = info.userNickname;
-			if (avatarImg) {
-				doms.avatar.src = avatarImg;
-			}
+			doms.nickname.innerText = nickname;
 		}
-
-		// 缓存头像地址
-		profile.currentAgentAvatar = avatarImg;
+		else {
+			doms.nickname.innerText = profile.defaultAgentName;
+		}
 	}
 
 	function _init() {
@@ -1051,9 +1041,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 			// 当配置为下班进会话时执行与上班相同的逻辑
 			config.isInOfficehours = dutyStatus || config.offDutyType === 'chat';
 
-			// 设置企业信息
-			_setEnterpriseInfo();
-
 			if (config.isInOfficehours) {
 				// 显示广告条
 				_setLogo();
@@ -1076,11 +1063,15 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 				// 获取坐席昵称设置
 				_getNickNameOption();
 
+				_initSystemEventListener();
+
 				// 待接入排队人数显示
 				_waitListNumber.start();
 
 				//轮询坐席的输入状态
 				_agentInputState.start();
+
+				agentStatusPoller.start();
 
 				// 第二通道收消息初始化
 				channel.initSecondChannle();
@@ -1102,7 +1093,8 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, satisfaction, channe
 	app.uikit,
 	app.api,
 	app.apiHelper,
-	app.satisfaction,
 	app.channel,
-	app.profile
+	app.profile,
+	app.satisfaction,
+	app.agentStatusPoller
 ));

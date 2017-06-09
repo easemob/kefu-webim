@@ -1,5 +1,5 @@
-(function () {
-	easemobim._const = {
+easemobim._const = (function () {
+	return {
 		loadingSvg: [
 			'<div class="em-widget-loading">',
 			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 70">',
@@ -42,6 +42,15 @@
 			ServiceSessionTransferedEvent: '会话已被转接至其他客服',
 			ServiceSessionTransferedToAgentQueueEvent: '会话转接中，请稍候',
 			ServiceSessionOpenedEvent: '会话已被客服接起'
+		},
+
+		SYSTEM_EVENT: {
+			SESSION_CREATED: 'ServiceSessionCreatedEvent',
+			SESSION_OPENED: 'ServiceSessionOpenedEvent',
+			SESSION_CLOSED: 'ServiceSessionClosedEvent',
+			SESSION_TRANSFERED: 'ServiceSessionTransferedEvent',
+			SESSION_TRANSFERING: 'ServiceSessionTransferedToAgentQueueEvent',
+			AGENT_NICKNAME_CHANGE: 'agent.nickname.change'
 		},
 
 		themeMap: {

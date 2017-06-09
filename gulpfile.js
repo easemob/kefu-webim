@@ -199,6 +199,7 @@ gulp.task('combineJs', function () {
 			'src/js/app/modules/apiHelper.js',
 			'src/js/app/modules/channel.js',
 			'src/js/app/modules/sessionList.js',
+			'src/js/app/modules/chat/agentStatusPoller.js',
 			'src/js/app/modules/paste.js',
 			'src/js/app/modules/satisfaction.js',
 			'src/js/app/modules/imgView.js',

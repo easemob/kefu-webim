@@ -261,8 +261,8 @@
 
 			// 获取企业头像和名称
 			// todo: rename to tenantName
-			config.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, config.domain);
-			config.defaultAgentName = targetItem.tenantName;
+			profile.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, config.domain);
+			profile.defaultAgentName = targetItem.tenantName;
 			config.logo = config.logo || {enabled: !!targetItem.tenantLogo,url: targetItem.tenantLogo};
 			config.toUser = targetItem.imServiceNumber;
 			config.orgName = targetItem.orgName;
