@@ -48,6 +48,7 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 				emajax({
 					url: location.protocol + '//' + config.restServer + '/' + config.orgName +
 						'/' + config.appName + '/token',
+					useXDomainRequestInIE: true,
 					dataType: 'json',
 					data: {
 						grant_type: 'password',

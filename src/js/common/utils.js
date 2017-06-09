@@ -262,19 +262,24 @@
 		},
 		// todo： 去掉 使用 _.extend 替代
 		extend: function (object, extend) {
-			for (var o in extend) {
-				if (extend.hasOwnProperty(o)) {
-					var t = Object.prototype.toString.call(extend[o]);
-					if (t === '[object Array]') {
-						object[o] = [];
-						this.extend(object[o], extend[o]);
+			for (var key in extend) {
+				if (extend.hasOwnProperty(key)) {
+					var value = extend[key];
+					var type = Object.prototype.toString.call(value);
+					if (value === void 0){
+						// patch ie8 will change undefined to {}
+						object[key] = value;
 					}
-					else if (t === '[object Object]') {
-						object[o] = {};
-						this.extend(object[o], extend[o]);
+					else if (type === '[object Array]') {
+						object[key] = [];
+						this.extend(object[key], value);
+					}
+					else if (type === '[object Object]') {
+						object[key] = {};
+						this.extend(object[key], value);
 					}
 					else {
-						object[o] = extend[o];
+						object[key] = value;
 					}
 				}
 			}
