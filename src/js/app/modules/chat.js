@@ -12,8 +12,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 	// todo: 把dom都移到里边
 	var doms = {
 		imChat: document.getElementById('em-kefu-webim-chat'),
-		//待接入排队人数显示
-		agentWaitNumber: document.querySelector('.queuing-number-status'),
 		agentStatusSymbol: topBar.querySelector('.agent-status'),
 		agentStatusText: topBar.querySelector('.em-header-status-text'),
 		nickname: topBar.querySelector('.em-widget-header-nickname'),
@@ -21,7 +19,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 		minifyBtn: topBar.querySelector('.btn-min'),
 		audioBtn: topBar.querySelector('.btn-audio'),
 		switchKeyboardBtn: topBar.querySelector('.btn-keyboard'),
-		inputState: topBar.querySelector('.em-agent-input-state'),
 
 		emojiBtn: editorView.querySelector('.em-bar-emoji'),
 		sendImgBtn: editorView.querySelector('.em-widget-img'),
@@ -43,144 +40,120 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 		block: null
 	};
 
-	var _agentInputState = (function(){
+	var _startOrStopAgentInputStatePoller = (function(){
 		var isStarted = false;
-		var timer;
-		var prevTimestamp = 0;
+		var timerHandler;
+		var preventTimestamp = 0;
+		var inputState = topBar.querySelector('.em-agent-input-state');
+
+		return function(officialAccount){
+			// todo: stop when agent is robot
+			var state = officialAccount.sessionState;
+
+			if (state === _const.SESSION_STATE.PROCESSING){
+				_start();
+			}
+			else {
+				_stop();
+			}
+		};
 
 		function _start() {
-			// 没有灰度的时候  不做查询
-			if (!config.grayList.agentInputStateEnable) return;
 			isStarted = true;
-			// 保证当前最多只有1个timer
-			clearInterval(timer);
-			api('getCurrentServiceSession', {
-				id: config.user.username,
-				orgName: config.orgName,
-				appName: config.appName,
-				imServiceNumber: config.toUser,
-				tenantId: config.tenantId
-			}, function (msg) {
-				var data = msg.data || {};
-				var sessionId = data.serviceSessionId;
+			// 保证当前最多只有1个timerHandler
+			clearInterval(timerHandler);
+			apiHelper.getCurrentServiceSession().then(function (response) {
+				var sessionId = response && response.serviceSessionId;
 
-				if (sessionId && isStarted) {
-					timer = setInterval(function () {
-						getAgentInputState(sessionId);
+				if (
+					sessionId
+					&& isStarted
+					// 仅当聊天窗口打开时才发送请求
+					&& profile.isChatWindowOpen
+					// 仅当浏览器非最小化状态时才发送请求
+					&& !utils.isBrowserMinimized()
+				) {
+					timerHandler = setInterval(function(){
+						apiHelper.getAgentInputState(sessionId).then(function (entity){
+							var currentTimestamp = entity.timestamp;
+							var ifDisplayTypingState = entity.input_state_tips;
+
+							// 为了先发送的请求后回来的异步问题，仅处理时间戳比当前大的response
+							if (currentTimestamp > preventTimestamp){
+								preventTimestamp = currentTimestamp;
+								utils.toggleClass(inputState, 'hide', !displayTypingState);
+							}
+						});
 					}, _const.AGENT_INPUT_STATE_INTERVAL);
 				}
 			});
 		}
 
-		function getAgentInputState(sessionId) {
-			if (!config.user.token) {
-				console.error('undefined token');
-				return;
-			}
-			// 当聊天窗口或者浏览器最小化时 不去发轮询请求
-			if(!profile.isChatWindowOpen || utils.isBrowserMinimized()){
-				return;
-			}
-
-			api('getAgentInputState', {
-				username: config.user.username,
-				orgName: config.orgName,
-				appName: config.appName,
-				tenantId: config.tenantId,
-				serviceSessionId: sessionId,
-				token: config.user.token,
-			}, function (resp) {
-				var nowData = resp.data.entity;
-				//当返回的时间戳小于当前时间戳时  不做任何处理
-				if(prevTimestamp > nowData.timestamp){
-					return;
-				}
-				//当返回的时间戳大于当前时间戳时  处理以下逻辑
-				prevTimestamp = nowData.timestamp;
-				if (!nowData.input_state_tips) {
-					utils.addClass(doms.inputState, 'hide');
-				}
-				else {
-					utils.removeClass(doms.inputState, 'hide');
-				}
-			});
-		}
-
 		function _stop() {
-			clearInterval(timer);
-			utils.addClass(doms.inputState, 'hide');
+			clearInterval(timerHandler);
+			utils.addClass(inputState, 'hide');
 			isStarted = false;
 		}
-		return {
-			start: _start,
-			stop: _stop
-		};
 	}());
 
-	var _waitListNumber = (function () {
+	var _startOrStopQueuingNumberPoller = (function () {
 		var isStarted = false;
-		var timer = null;
-		var prevTime = 0;
+		var timerHandler;
+		var preventTimestamp = 0;
+		var $queuingNumberStatus = document.querySelector('.queuing-number-status');
+		var $queuingNumberLabel = $queuingNumberStatus.querySelector('label');
+
+		return function(officialAccount){
+			// todo: stop when agent is robot
+			var state = officialAccount.sessionState;
+
+			if (state === _const.SESSION_STATE.WAIT){
+				_start();
+			}
+			else {
+				_stop();
+			}
+		};
 
 		function _start() {
-			if (!config.grayList.waitListNumberEnable) return;
-
 			isStarted = true;
 			// 保证当前最多只有1个timer
 			// 每次调用start都必须重新获取queueId
-			clearInterval(timer);
-			api('getSessionQueueId', {
-				tenantId: config.tenantId,
-				visitorUsername: config.user.username,
-				techChannelInfo: config.orgName + '%23' + config.appName + '%23' + config.toUser
-			}, function (resp) {
-				var nowData = resp.data.entity;
+			clearInterval(timerHandler);
+			apiHelper.getSessionQueueId().then(function (entity){
 				var queueId;
 				var sessionId;
 
-				if (nowData && nowData.state === 'Wait') {
-					queueId = nowData.queueId;
-					sessionId = nowData.serviceSessionId;
+				if (entity.state === 'Wait' && isStarted) {
+					queueId = entity.queueId;
+					sessionId = entity.serviceSessionId;
 					// 避免请求在 轮询停止以后回来 而导致误开始
 					// todo: use promise to optimize it
-					if (isStarted) {
-						timer = setInterval(function () {
-							getWaitNumber(queueId, sessionId);
-						}, 1000);
-					}
-				}
-			});
-		}
+					timerHandler = setInterval(function () {
+						apiHelper.getWaitListNumber().then(function (entity){
+							var waitingNumber = entity.visitorUserWaitingNumber;
+							var currentTimestamp = entity.visitorUserWaitingTimestamp;
 
-		function getWaitNumber(queueId, sessionId) {
-			api('getWaitListNumber', {
-				tenantId: config.tenantId,
-				queueId: queueId,
-				serviceSessionId: sessionId
-			}, function (resp) {
-				var nowData = resp.data.entity;
-				if (nowData.visitorUserWaitingNumber === 'no') {
-					utils.addClass(doms.agentWaitNumber, 'hide');
+							if (waitingNumber === 'no') {
+								utils.addClass($queuingNumberStatus, 'hide');
+							}
+							else if (currentTimestamp > preventTimestamp) {
+								preventTimestamp = currentTimestamp;
+								utils.removeClass($queuingNumberStatus, 'hide');
+								$queuingNumberLabel.innerHTML = entity.visitorUserWaitingNumber;
+							}
+						});
+					}, 1000);
 				}
-				else if (nowData.visitorUserWaitingTimestamp > prevTime) {
-					prevTime = nowData.visitorUserWaitingTimestamp;
-					utils.removeClass(doms.agentWaitNumber, 'hide');
-					doms.agentWaitNumber.querySelector('label').innerHTML = nowData.visitorUserWaitingNumber;
-				}
-				else {}
 			});
 		}
 
 		function _stop() {
-			clearInterval(timer);
-			prevTime = 0;
+			clearInterval(timerHandler);
+			preventTimestamp = 0;
 			isStarted = false;
-			utils.addClass(doms.agentWaitNumber, 'hide');
+			utils.addClass($queuingNumberStatus, 'hide');
 		}
-		return {
-			start: _start,
-			stop: _stop
-		};
 	}());
 
 	function _displayOrHideTransferToKefuBtn(officialAccount){
@@ -205,8 +178,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 		doms: doms,
 		init: _init,
 		handleReady: _handleReady,
-		agentInputState: _agentInputState,
-		waitListNumber: _waitListNumber,
 		close: _close,
 		show: _show,
 		playSound: function(){},
@@ -237,6 +208,25 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 			eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _displayOrHideTransferToKefuBtn);
 			eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideTransferToKefuBtn);
 			eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideTransferToKefuBtn);
+		}
+
+		if (config.grayList.agentInputStateEnable){
+			// update transferToKefu button state
+			// todo: add listener to official changed
+			eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _startOrStopAgentInputStatePoller);
+			eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _startOrStopAgentInputStatePoller);
+			eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _startOrStopAgentInputStatePoller);
+			eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _startOrStopAgentInputStatePoller);
+		}
+
+		if (config.grayList.waitListNumberEnable){
+			// update transferToKefu button state
+			// todo: add listener to official changed
+			eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _startOrStopQueuingNumberPoller);
+			eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _startOrStopQueuingNumberPoller);
+			eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _startOrStopQueuingNumberPoller);
+			eventListener.add(_const.SYSTEM_EVENT.SESSION_CREATED, _startOrStopQueuingNumberPoller);
+			eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _startOrStopQueuingNumberPoller);
 		}
 	}
 
@@ -705,21 +695,18 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 			}
 		});
 
-		utils.live('button.js-transfer-to-ticket', utils.click, function () {
-			Promise.all([
-				apiHelper.getSessionQueueId(),
-				apiHelper.getCurrentServiceSession()
-			]).then(function(result){
-				var ssid = utils.getDataByPath(result[0], 'entity.serviceSessionId')
-					|| utils.getDataByPath(result[1], 'serviceSessionId');
-				ssid && api('closeServiceSession', {
-					tenantId: config.tenantId,
-					orgName: config.orgName,
-					appName: config.appName,
-					userName: config.user.username,
-					token: config.user.token,
-					serviceSessionId: ssid
-				});
+		utils.live('button.js-transfer-to-ticket', utils.click, function (){
+			var officialAccount = profile.currentOfficialAccount;
+			var isSessionOpen = officialAccount.isSessionOpen;
+			var sessionId = officialAccount.sessionId;
+
+			isSessionOpen && api('closeServiceSession', {
+				tenantId: config.tenantId,
+				orgName: config.orgName,
+				appName: config.appName,
+				userName: config.user.username,
+				token: config.user.token,
+				serviceSessionId: sessionId
 			});
 
 			app.leaveMessage({
@@ -1071,14 +1058,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 				_getNickNameOption();
 
 				_initSystemEventListener();
-
-				// 待接入排队人数显示
-				_waitListNumber.start();
-
-				//轮询坐席的输入状态
-				_agentInputState.start();
-
-				agentStatusPoller.start();
 
 				// 第二通道收消息初始化
 				channel.initSecondChannle();

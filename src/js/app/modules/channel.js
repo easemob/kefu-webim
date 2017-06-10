@@ -663,18 +663,12 @@ app.channel = (function(_const, utils, api, apiHelper, eventListener, profile){
 			break;
 		case _const.SYSTEM_EVENT.SESSION_TRANSFERING:
 			officialAccount.sessionState = _const.SESSION_STATE.WAIT;
-			chat.waitListNumber.start(officialAccount);
 			break;
 		case _const.SYSTEM_EVENT.SESSION_CLOSED:
 			officialAccount.sessionState = _const.SESSION_STATE.ABORT;
 			officialAccount.agentId = null;
 			officialAccount.isServiceSessionOpened = false;
 			officialAccount.hasReportedAttributes = false;
-
-			chat.waitListNumber.stop(officialAccount);
-
-			// 停止轮询 坐席端的输入状态
-			chat.agentInputState.stop(officialAccount);
 
 			transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
 			break;
@@ -683,16 +677,9 @@ app.channel = (function(_const, utils, api, apiHelper, eventListener, profile){
 			officialAccount.agentId = eventObj.userId;
 			officialAccount.isServiceSessionOpened = true;
 
-			// 停止轮询当前排队人数
-			chat.waitListNumber.stop(officialAccount);
-
-			// 开始轮询 坐席端的输入状态
-			chat.agentInputState.start(officialAccount);
-
 			break;
 		case _const.SYSTEM_EVENT.SESSION_CREATED:
 			officialAccount.sessionState = _const.SESSION_STATE.WAIT;
-			chat.waitListNumber.start(officialAccount);
 			break;
 		default:
 			break;

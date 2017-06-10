@@ -321,6 +321,7 @@
 			break;
 		case 'getSessionQueueId':
 			emitAjax({
+				// todo: delete visitorUserName
 				url: '/v1/visitors/' + params.visitorUsername + '/waitings/sessions',
 				msg: msg,
 				type: 'GET'

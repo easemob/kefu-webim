@@ -31,7 +31,7 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 				visitorUsername: config.user.username,
 				techChannelInfo: config.orgName + '%23' + config.appName + '%23' + config.toUser
 			}, function (msg) {
-				resolve(msg.data);
+				resolve(msg.data.entity || {});
 			}, function(err){
 				reject(err);
 			});
@@ -586,6 +586,42 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 		});
 	}
 
+	function getAgentInputState(sessionId){
+		return new Promise(function(resolve, reject){
+			getToken().then(function(result){
+				var visitorId = result[0];
+				var token = result[1];
+
+				api('getAgentInputState', {
+					username: config.user.username,
+					orgName: config.orgName,
+					appName: config.appName,
+					tenantId: config.tenantId,
+					serviceSessionId: sessionId,
+					token: token,
+				}, function (msg) {
+					resolve(resp.data.entity);
+				}, function(err){
+					reject(err);
+				});
+			});
+		});
+	}
+
+	function getWaitListNumber(sessionId, queueId){
+		return new Promise(function(resolve, reject){
+			api('getWaitListNumber', {
+				tenantId: config.tenantId,
+				queueId: queueId,
+				serviceSessionId: sessionId
+			}, function (msg) {
+				resolve(resp.data.entity);
+			}, function(err){
+				reject(err);
+			});
+		});
+	}
+
 	return {
 		getCurrentServiceSession: getCurrentServiceSession,
 		getSessionQueueId: getSessionQueueId,
@@ -609,6 +645,8 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 		getSkillgroupMenu: getSkillgroupMenu,
 		reportVisitorAttributes: reportVisitorAttributes,
 		reportPredictMessage: reportPredictMessage,
+		getAgentInputState: getAgentInputState,
+		getWaitListNumber: getWaitListNumber,
 		setCacheItem: function(key, value){
 			cache[key] = value;
 		},
