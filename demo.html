@@ -2,9 +2,9 @@
 <html>
 <head>
 	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
 	<style>
 		body { background-color: #eee;color: #555; }
 		button, a { display: block;margin: 20px 0;background: #00CEB9;border: none;color: #fff;line-height: 40px;width: 200px;cursor: pointer;outline: none;text-align: center; }
@@ -26,7 +26,7 @@
 	})'>窗口加宽示例</a>
 	<a href='javascript:;' onclick='easemobim.bind({
 		tenantId: 10954,
-        emgroup: "技能组1"
+		emgroup: "技能组1"
 	})'>绑定技能组示例</a>
 
 
@@ -35,6 +35,7 @@
 	<br><br><br><h1>测试</h1>
 	<div><input id='testvalue' type='text' placeholder='请输入您的tenantId，点击测试按钮'/></div>
 	<a id='test'>测试</a>
+	<button onclick="deleteCurrentCookies()">Clear Current Cookie</button>
 	<br><br><br>
 	<script>
 		var v = document.getElementById('testvalue');
@@ -45,6 +46,14 @@
 				easemobim.bind({ tenantId: v.value.replace(/\s/g, '') })
 			}
 		};
+
+		function deleteCurrentCookies() {
+			var name = easemobim.config.tenantId || v.value;
+
+			name && (document.cookie = name
+			+ "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/");
+			alert('cleared');
+		}
 	</script>
 
 
