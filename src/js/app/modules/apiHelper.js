@@ -356,18 +356,26 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 
 	function getRobertIsOpen(){
 		return new Promise(function (resolve, reject) {
-			api('getRobertIsOpen', {
-				channelType: 'easemob',
-				originType: 'webim',
-				channelId: config.channelId,
-				tenantId: config.tenantId,
-				agentUsername: config.agentName,
-				queueName: config.emgroup
-			}, function (msg) {
-				resolve(msg.data.entity);
-			}, function (err) {
-				reject(err);
-			});
+			if (typeof cache.isRobotOpen === 'boolean'){
+				resolve(cache.isRobotOpen);
+			}
+			else {
+				api('getRobertIsOpen', {
+					channelType: 'easemob',
+					originType: 'webim',
+					channelId: config.channelId,
+					tenantId: config.tenantId,
+					agentUsername: config.agentName,
+					queueName: config.emgroup
+				}, function (msg) {
+					var entity = msg.data.entity;
+
+					cache.isRobotOpen = entity;
+					resolve(entity);
+				}, function (err) {
+					reject(err);
+				});
+			}
 		});
 	}
 

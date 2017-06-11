@@ -50,6 +50,8 @@ easemobim._const = (function () {
 			SESSION_CLOSED: 'ServiceSessionClosedEvent',
 			SESSION_TRANSFERED: 'ServiceSessionTransferedEvent',
 			SESSION_TRANSFERING: 'ServiceSessionTransferedToAgentQueueEvent',
+			SESSION_RESTORED: 'session.restored',
+			SESSION_NOT_CREATED: 'session.not.created',
 			AGENT_NICKNAME_CHANGE: 'agent.nickname.change'
 		},
 
@@ -113,7 +115,8 @@ easemobim._const = (function () {
 			PROCESSING: 'Processing',
 			TERMINAL: 'Terminal',
 			ABORT: 'Abort',
-			RESOLVED: 'Resolved'
+			RESOLVED: 'Resolved',
+			PREPARE: 'Prepare'
 		},
 
 		// 上传文件大小限制

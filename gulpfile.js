@@ -197,6 +197,7 @@ gulp.task('combineJs', function () {
 			'src/js/app/modules/messageFactory.js',
 			'src/js/app/modules/apiTransfer.js',
 			'src/js/app/modules/apiHelper.js',
+			'src/js/app/modules/tools/eventListener.js',
 			'src/js/app/modules/channel.js',
 			'src/js/app/modules/sessionList.js',
 			'src/js/app/modules/chat/agentStatusPoller.js',

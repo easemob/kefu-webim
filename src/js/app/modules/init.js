@@ -125,15 +125,19 @@
 		config.offDutyWord = config.offDutyWord || '现在是下班时间。';
 
 		// fake patch: 老版本配置的字符串需要decode
-		try {
-			config.offDutyWord = decodeURIComponent(config.offDutyWord);
+		if (config.offDutyWord){
+			try {
+				config.offDutyWord = decodeURIComponent(config.offDutyWord);
+			}
+			catch (e){}
 		}
-		catch (e){}
 
-		try {
-			config.emgroup = decodeURIComponent(config.emgroup);
+		if (config.emgroup){
+			try {
+				config.emgroup = decodeURIComponent(config.emgroup);
+			}
+			catch (e){}
 		}
-		catch (e){}
 
 		config.user = config.user || {};
 		config.visitor = config.visitor || {};

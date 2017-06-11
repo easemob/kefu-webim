@@ -1,4 +1,4 @@
-app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, satisfaction, agentStatusPoller) {
+app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, eventListener, satisfaction, agentStatusPoller) {
 	var isEmojiInitilized;
 	var isMessageChannelReady;
 	var inputBoxPosition;
@@ -16,7 +16,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, sa
 		agentWaitNumber: document.querySelector('.queuing-number-status'),
 		agentStatusSymbol: topBar.querySelector('.agent-status'),
 		agentStatusText: topBar.querySelector('.em-header-status-text'),
-		avatar: topBar.querySelector('.em-widget-header-portrait'),
 		nickname: topBar.querySelector('.em-widget-header-nickname'),
 		dragBar: topBar.querySelector('.drag-bar'),
 		minifyBtn: topBar.querySelector('.btn-min'),
@@ -184,12 +183,28 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, sa
 		};
 	}());
 
+	function _displayOrHideTransferToKefuBtn(officialAccount){
+		var state = officialAccount.sessionState;
+		var agentType = officialAccount.agentType;
+
+		if (state === _const.SESSION_STATE.PROCESSING){
+			// todo: change to get lastest session
+			apiHelper.getCurrentServiceSession().then(function (res) {
+				var isRobotAgent = res && res.agentUserType === 6;
+				utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotAgent);
+			});
+		}
+		else{
+			apiHelper.getRobertIsOpen().then(function (isRobotEnable) {
+				utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotEnable);
+			});
+		}
+	}
 
 	var chat = {
 		doms: doms,
 		init: _init,
 		handleReady: _handleReady,
-		setToKefuBtn: _setToKefuBtn,
 		agentInputState: _agentInputState,
 		waitListNumber: _waitListNumber,
 		close: _close,
@@ -202,45 +217,54 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, sa
 
 	function _initSystemEventListener(){
 		// 更新坐席在线状态标志
-		channel.addSystemEventListener(_const.SYSTEM_EVENT.SESSION_OPENED, agentStatusPoller.update);
-		channel.addSystemEventListener(_const.SYSTEM_EVENT.SESSION_TRANSFERED, agentStatusPoller.update);
-		channel.addSystemEventListener(_const.SYSTEM_EVENT.SESSION_CLOSED, agentStatusPoller.update);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, agentStatusPoller.update);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, agentStatusPoller.update);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, agentStatusPoller.update);
 
 		// 更新坐席名称
-		channel.addSystemEventListener(_const.SYSTEM_EVENT.SESSION_OPENED, _updateAgentNickname);
-		channel.addSystemEventListener(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _updateAgentNickname);
-		channel.addSystemEventListener(_const.SYSTEM_EVENT.SESSION_CLOSED, _updateAgentNickname);
-		channel.addSystemEventListener(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGE, _updateAgentNickname);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _updateAgentNickname);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _updateAgentNickname);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _updateAgentNickname);
+		eventListener.add(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGE, _updateAgentNickname);
 
 		// report visitor info
-		channel.addSystemEventListener(
-			_const.SYSTEM_EVENT.SESSION_OPENED,
-			function(event, eventObj, officialAccount){
-			if (officialAccount.hasReportedAttributes) return;
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _reportVisitorInfo);
 
-			var officialAccountId = officialAccount.official_account_id;
-			var sessionId = officialAccount.sessionId;
+		if (config.toolbar.transferToKefu){
+			// update transferToKefu button state
+			// todo: add listener to official changed
+			eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideTransferToKefuBtn);
+			eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _displayOrHideTransferToKefuBtn);
+			eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideTransferToKefuBtn);
+			eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideTransferToKefuBtn);
+		}
+	}
 
-			officialAccount.hasReportedAttributes = true;
-			if (sessionId){
+	function _reportVisitorInfo(officialAccount){
+		if (officialAccount.hasReportedAttributes) return;
+
+		var officialAccountId = officialAccount.official_account_id;
+		var sessionId = officialAccount.sessionId;
+
+		officialAccount.hasReportedAttributes = true;
+		if (sessionId){
+			apiHelper.reportVisitorAttributes(sessionId);
+		}
+		else {
+	 		apiHelper.getLastSession(officialAccountId).then(function(session){
+				var sessionId = session.session_id;
+				var state = session.state;
+				var agentId = session.agent_id;
+
+				officialAccount.agentId = agentId;
+				officialAccount.sessionId = sessionId;
+				officialAccount.sessionState = state;
+
 				apiHelper.reportVisitorAttributes(sessionId);
-			}
-			else {
-		 		apiHelper.getLastSession(officialAccountId).then(function(session){
-					var sessionId = session.session_id;
-					var state = session.state;
-					var agentId = session.agent_id;
-
-					officialAccount.agentId = agentId;
-					officialAccount.sessionId = sessionId;
-					officialAccount.sessionState = state;
-
-					apiHelper.reportVisitorAttributes(sessionId);
-				}, function(err){
-					throw err;
-				});
-			}
-		});
+			}, function(err){
+				throw err;
+			});
+		}
 	}
 
 	function _initUI(){
@@ -328,22 +352,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, sa
 
 		utils.removeClass(logoImgWapper, 'hide');
 		logoImg.src = config.logo.url;
-	}
-
-	function _setToKefuBtn(options){
-		if (!config.toolbar.transferToKefu) return;
-		if (options.isSessionOpen){
-			// todo: change to get lastest session
-			apiHelper.getCurrentServiceSession().then(function (res) {
-				var isRobotAgent = res && res.agentUserType === 6;
-				utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotAgent);
-			});
-		}
-		else{
-			apiHelper.getRobertIsOpen().then(function (isRobotEnable) {
-				utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotEnable);
-			});
-		}
 	}
 
 	function _setNotice() {
@@ -572,7 +580,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, sa
 			if (err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
 				_getGreeting();
 				_getSkillgroupMenu();
-				_setToKefuBtn({isSessionOpen: false});
+				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [profile.currentOfficialAccount]);
 			}
 			else {
 				throw err;
@@ -598,12 +606,10 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, sa
 			officialAccount.sessionState = state;
 
 			if (state === _const.SESSION_STATE.WAIT){
-				_setToKefuBtn({isSessionOpen: true});
 			}
 			else if (state === _const.SESSION_STATE.PROCESSING){
 				// 确保正在进行中的会话，刷新后还会继续轮询坐席状态
 
-				_setToKefuBtn({isSessionOpen: true});
 				apiHelper.reportVisitorAttributes(sessionId);
 				officialAccount.isSessionOpen = true;
 			}
@@ -611,22 +617,23 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, sa
 				state === _const.SESSION_STATE.ABORT
 				|| state === _const.SESSION_STATE.TERMINAL
 				|| state === _const.SESSION_STATE.RESOLVED
+				|| state === _const.SESSION_STATE.PREPARE
 			){
 				// 结束的会话获取欢迎语
 				_getGreeting();
 				_getSkillgroupMenu();
-				_setToKefuBtn({isSessionOpen: false});
-
 			}
 			else{
-				throw 'unknown session state';
+				throw 'unknown session state: ' + state;
 			}
 			agentStatusPoller.update();
+
 		}, function(err){
 			if (err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
 				_getGreeting();
 				_getSkillgroupMenu();
-				_setToKefuBtn({isSessionOpen: false});
+				throw 'it is should not reach there, i think';
+				// todo: confirm if it's should reach there
 			}
 			else {
 				throw err;
@@ -1095,6 +1102,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, sa
 	app.apiHelper,
 	app.channel,
 	app.profile,
+	app.eventListener,
 	app.satisfaction,
 	app.agentStatusPoller
 ));

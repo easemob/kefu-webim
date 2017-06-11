@@ -1,10 +1,9 @@
-app.channel = (function(_const, utils, api, apiHelper, profile){
+app.channel = (function(_const, utils, api, apiHelper, eventListener, profile){
 	'strict';
 
 	var isNoAgentOnlineTipShowed;
 	var receiveMsgTimer;
 	var sessionListView;
-	var systemEventCallbackTable = {};
 	// todo: use profile.token instead
 	var token;
 	var config;
@@ -50,7 +49,6 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 		sendFile: _sendFile,
 		listen: _listen,
 		attemptToAppendOfficialAccount: _attemptToAppendOfficialAccount,
-		addSystemEventListener: _addSystemEventListener,
 
 		// todo: move this to message view
 		handleHistoryMsg: function(element) {
@@ -78,13 +76,6 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 	};
 
 	return channel;
-
-	function _addSystemEventListener(event, callback){
-		if (!systemEventCallbackTable[event]) systemEventCallbackTable[event] = [];
-		systemEventCallbackTable[event].push(callback);
-	}
-
-	function _removeSystemEventListener(event, callback){}
 
 	function _open(){
 		var op = {
@@ -148,7 +139,6 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 			onOffline: function () {
 				utils.isMobile && conn.close();
 				// for debug
-				console.log('onOffline-channel');
 				// 断线关闭视频通话
 				if (Modernizr.peerconnection) {
 					app.videoChat.onOffline();
@@ -668,18 +658,20 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 		switch (event) {
 		case _const.SYSTEM_EVENT.SESSION_TRANSFERED:
 			officialAccount.agentId = eventObj.userId;
-			chat.setToKefuBtn(officialAccount);
+			officialAccount.agentType = null;
+			officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
 			break;
 		case _const.SYSTEM_EVENT.SESSION_TRANSFERING:
+			officialAccount.sessionState = _const.SESSION_STATE.WAIT;
 			chat.waitListNumber.start(officialAccount);
 			break;
 		case _const.SYSTEM_EVENT.SESSION_CLOSED:
-			// todo: use promise to opt this code
-			officialAccount.hasReportedAttributes = false;
-			// todo: use promise to opt this code
-			chat.waitListNumber.stop(officialAccount);
+			officialAccount.sessionState = _const.SESSION_STATE.ABORT;
 			officialAccount.agentId = null;
 			officialAccount.isServiceSessionOpened = false;
+			officialAccount.hasReportedAttributes = false;
+
+			chat.waitListNumber.stop(officialAccount);
 
 			// 停止轮询 坐席端的输入状态
 			chat.agentInputState.stop(officialAccount);
@@ -687,10 +679,8 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 			transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
 			break;
 		case _const.SYSTEM_EVENT.SESSION_OPENED:
-			// fake: 会话接起就认为有坐席在线
+			officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
 			officialAccount.agentId = eventObj.userId;
-
-			chat.setToKefuBtn(officialAccount);
 			officialAccount.isServiceSessionOpened = true;
 
 			// 停止轮询当前排队人数
@@ -701,16 +691,14 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 
 			break;
 		case _const.SYSTEM_EVENT.SESSION_CREATED:
+			officialAccount.sessionState = _const.SESSION_STATE.WAIT;
 			chat.waitListNumber.start(officialAccount);
 			break;
 		default:
 			break;
 		}
 
-		// excute event callbacks
-		_.each(systemEventCallbackTable[event], function(callback){
-			callback(event, eventObj, officialAccount);
-		});
+		eventListener.excuteCallbacks(event, [officialAccount]);
 
 		_promptNoAgentOnlineIfNeeded({officialAccountId: officialAccountId});
 	}
@@ -971,5 +959,6 @@ app.channel = (function(_const, utils, api, apiHelper, profile){
 	easemobim.utils,
 	app.api,
 	app.apiHelper,
+	app.eventListener,
 	app.profile
 ));
