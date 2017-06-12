@@ -1,4 +1,4 @@
-app.channel = (function(_const, utils, api, apiHelper, eventListener, profile){
+app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 	'strict';
 
 	var isNoAgentOnlineTipShowed;
@@ -54,21 +54,13 @@ app.channel = (function(_const, utils, api, apiHelper, eventListener, profile){
 		handleHistoryMsg: function(element) {
 			_handleMessage(_transformMessageFormat(element), null, true);
 		},
-		initSecondChannle: function () {
+		initSecondChannle: function (){
+			receiveMsgTimer = clearInterval(receiveMsgTimer);
 			receiveMsgTimer = setInterval(function() {
-				api('receiveMsgChannel', {
-					orgName: config.orgName,
-					appName: config.appName,
-					easemobId: config.toUser,
-					tenantId: config.tenantId,
-					visitorEasemobId: config.user.username
-				}, function (msg) {
-					//处理收消息
-					msg.data
-						&& msg.data.status === 'OK'
-						&& _.each(msg.data.entities, function (elem) {
-							_handleMessage(_transformMessageFormat({body: elem}), null, false);
-						});
+				apiHelper.receiveMsgChannel().then(function (msgList){
+					_.each(msgList, function (elem) {
+						_handleMessage(_transformMessageFormat({body: elem}), null, false);
+					});
 				});
 			}, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
 		},
@@ -791,25 +783,14 @@ app.channel = (function(_const, utils, api, apiHelper, eventListener, profile){
 
 	// 第二通道发消息
 	function _sendMsgChannle(id, retryCount) {
-		var count;
 		var msg = sendMsgDict.get(id);
+		var body = utils.getDataByPath(msg, 'body.body');
+		var ext = utils.getDataByPath(msg, 'body.ext');
+		var count = typeof retryCount === 'number'
+			? retryCount
+			: _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
 
-		if (typeof retryCount === 'number') {
-			count = retryCount;
-		}
-		else {
-			count = _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
-		}
-		api('sendMsgChannel', {
-			from: config.user.username,
-			to: config.toUser,
-			tenantId: config.tenantId,
-			bodies: [utils.getDataByPath(msg, 'body.body')],
-			ext: utils.getDataByPath(msg, 'body.ext'),
-			orgName: config.orgName,
-			appName: config.appName,
-			originType: 'webim'
-		}, function () {
+		apiHelper.sendMsgChannel(body, ext).then(function (){
 			// 发送成功清除
 			_clearTS(id);
 		}, function () {
@@ -825,45 +806,26 @@ app.channel = (function(_const, utils, api, apiHelper, eventListener, profile){
 
 	// 第二通道上传图片消息
 	function _uploadImgMsgChannle(id, file, retryCount) {
-		var count;
 		var msg = sendMsgDict.get(id);
+		var count = typeof retryCount === 'number'
+			? retryCount
+			: _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
 
-		if (typeof retryCount === 'number') {
-			count = retryCount;
-		}
-		else {
-			count = _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
-		}
 
-		function success(apiMsg){
+		apiHelper.uploadImgMsgChannel(file).then(function (resp){
 			msg.body.body = {
-				filename: apiMsg.data.fileName,
+				filename: resp.fileName,
 				'type': 'img',
-				url: apiMsg.data.url
+				url: resp.url
 			};
 			_sendMsgChannle(id, 0);
-		}
-
-		function failed(){
+		}, function (){
 			if (count > 0) {
 				_uploadImgMsgChannle(msg, file, --count);
 			}
 			else {
 				_showFailed(id);
 			}
-		}
-		// token 存在时会自动从缓存取
-		apiHelper.getToken().then(function(token){
-			api('uploadImgMsgChannel', {
-				userName: config.user.username,
-				tenantId: config.tenantId,
-				file: file,
-				auth: 'Bearer ' + token,
-				orgName: config.orgName,
-				appName: config.appName,
-			}, success, failed);
-		}, function(err){
-			console.error(err);
 		});
 	}
 
@@ -945,7 +907,6 @@ app.channel = (function(_const, utils, api, apiHelper, eventListener, profile){
 }(
 	easemobim._const,
 	easemobim.utils,
-	app.api,
 	app.apiHelper,
 	app.eventListener,
 	app.profile

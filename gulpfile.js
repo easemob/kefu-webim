@@ -195,7 +195,6 @@ gulp.task('combineJs', function () {
 			'src/js/app/modules/tools.js',
 			'src/js/app/modules/uikit.js',
 			'src/js/app/modules/messageFactory.js',
-			'src/js/app/modules/apiTransfer.js',
 			'src/js/app/modules/apiHelper.js',
 			'src/js/app/modules/tools/eventListener.js',
 			'src/js/app/modules/channel.js',
