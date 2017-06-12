@@ -1,30 +1,23 @@
-app.eventCollector = (function (Polling, utils, api, _const) {
+app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 	var POLLING_INTERVAL = 5000;
 
 	var _polling;
 	var _callback;
 	var _config;
 	var _gid;
-	var _url;
 
 	function _reportData(userType, userId) {
-		transfer.send({ event: _const.EVENTS.REQUIRE_URL });
+		var url = profile.currentBrowsingURL;
 
-		_url && app.api('reportEvent', {
-			type: 'VISIT_URL',
-			tenantId: _config.tenantId,
-			// 第一次轮询时URL还未传过来，所以使用origin
-			url: _url,
-			// for debug
-			// url: 'http://172.17.3.86',
-			userId: {
-				type: userType,
-				id: userId
-			}
-		}, function (res) {
-			var data = res.data;
+		transfer.send({event: _const.EVENTS.REQUIRE_URL});
 
-			switch (data && data.type) {
+		url && apiHelper.reportEvent(url, userType, userId).then(function (resp){
+			var type = resp.type;
+			var username = resp.userName;
+			var orgName = resp.orgName;
+			var appName = resp.appName;
+
+			switch (type) {
 				// 没有坐席呼叫，什么都不做
 			case 'OK':
 				break;
@@ -32,33 +25,29 @@ app.eventCollector = (function (Polling, utils, api, _const) {
 			case 'INIT_CALL':
 				if (_isStarted()) {
 					// 回呼游客，游客身份变为访客
-					if (data.userName) {
-						_gid = data.orgName + '#' + data.appName + '_' + data.userName;
+					if (username) {
+						_gid = orgName + '#' + appName + '_' + username;
 						_polling.stop();
 						_polling = new Polling(function () {
 							_reportData('VISITOR', _gid);
 						}, POLLING_INTERVAL);
 					}
 					_stopReporting();
-					_callback(data);
+					_callback(resp);
 				}
 				// 已停止轮询 （被呼叫的访客/游客 已经创建会话），不回呼
 				else {}
 				break;
 			default:
+				throw 'unexpected event type.'
 				break;
 			}
 		});
 	}
 
-	function _deleteEvent() {
-		_gid && api('deleteEvent', { userId: _gid });
-		// _gid = '';
-	}
-
-	function _startToReoprt(config, callback) {
+	function _startToReoprt(cfg, callback) {
 		_callback || (_callback = callback);
-		_config || (_config = config);
+		_config || (_config = cfg);
 
 		// h5 方式屏蔽访客回呼功能
 		if (utils.isTop) return;
@@ -68,7 +57,7 @@ app.eventCollector = (function (Polling, utils, api, _const) {
 
 		// 用户点击联系客服弹出的窗口，结束会话后调用的startToReport没有传入参数
 		if (!_config) {
-			console.log('not config yet.');
+			console.error('not config yet.');
 		}
 		else if (_polling) {
 			_polling.start();
@@ -102,48 +91,38 @@ app.eventCollector = (function (Polling, utils, api, _const) {
 
 	function _reportVisitor(username) {
 		// 获取关联信息
-		api('getRelevanceList', {
-			tenantId: _config.tenantId
-		}, function (msg) {
-			if (!msg.data.length) {
-				throw '未创建关联';
-			}
+		apiHelper.getRelevanceList().then(function (relevanceList){
+			var targetItem = relevanceList[0];
 			var splited = _config.appKey.split('#');
-			var relevanceList = msg.data[0];
-			var orgName = splited[0] || relevanceList.orgName;
-			var appName = splited[1] || relevanceList.appName;
-			var imServiceNumber = relevanceList.imServiceNumber;
 
-			_config.restServer = _config.restServer || relevanceList.restDomain;
+			_config.orgName = splited[0] || targetItem.orgName;
+			_config.appName = splited[1] || targetItem.appName;
+			_config.imServiceNumber = targetItem.imServiceNumber;
+			_config.restServer = _config.restServer || targetItem.restDomain;
+
 			var cluster = _config.restServer ? _config.restServer.match(/vip\d/) : '';
 			cluster = cluster && cluster.length ? '-' + cluster[0] : '';
 			_config.xmppServer = _config.xmppServer || 'im-api' + cluster + '.easemob.com';
 
-			_gid = orgName + '#' + appName + '_' + username;
+			_gid = _config.orgName + '#' + _config.appName + '_' + _config.username;
 
-			_polling = new Polling(function () {
+			_polling = new Polling(function (){
 				_reportData('VISITOR', _gid);
 			}, POLLING_INTERVAL);
 
 			// 获取当前会话信息
-			api('getCurrentServiceSession', {
-				tenantId: _config.tenantId,
-				orgName: orgName,
-				appName: appName,
-				imServiceNumber: imServiceNumber,
-				id: username
-			}, function (msg) {
+			apiHelper.getCurrentServiceSession().then(function (response){
 				// 没有会话数据，则开始轮询
-				if (!msg.data) {
-					_polling.start();
-				}
+				!response && _polling.start();
 			});
+		}, function(err){
+			throw err;
 		});
 	}
 
 	function _stopReporting() {
 		_polling && _polling.stop();
-		_deleteEvent();
+		_gid && apiHelper.deleteEvent(_gid);
 	}
 
 	function _isStarted() {
@@ -153,14 +132,12 @@ app.eventCollector = (function (Polling, utils, api, _const) {
 	return {
 		startToReport: _startToReoprt,
 		stopReporting: _stopReporting,
-		isStarted: _isStarted,
-		updateURL: function (url) {
-			_url = url;
-		}
+		isStarted: _isStarted
 	};
 }(
 	easemobim.Polling,
 	easemobim.utils,
-	app.api,
-	easemobim._const
+	easemobim._const,
+	app.apiHelper,
+	app.profile
 ));

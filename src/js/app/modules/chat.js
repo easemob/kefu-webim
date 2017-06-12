@@ -1,4 +1,4 @@
-app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, eventListener, satisfaction, agentStatusPoller) {
+app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventListener, satisfaction, agentStatusPoller) {
 	var isEmojiInitilized;
 	var isMessageChannelReady;
 	var inputBoxPosition;
@@ -61,7 +61,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 			isStarted = true;
 			// 保证当前最多只有1个timerHandler
 			clearInterval(timerHandler);
-			apiHelper.getCurrentServiceSession().then(function (response) {
+			apiHelper.getCurrentServiceSession().then(function (response){
 				var sessionId = response && response.serviceSessionId;
 
 				if (
@@ -206,6 +206,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 
 		// report visitor info
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _reportVisitorInfo);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _reportVisitorInfo);
 
 		if (config.toolbar.transferToKefu){
 			// update transferToKefu button state
@@ -512,14 +513,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 		});
 	}
 
-	function _getNickNameOption() {
-		api('getNickNameOption', {
-			tenantId: config.tenantId
-		}, function (msg) {
-			profile.nickNameOption = utils.getDataByPath(msg, 'data.0.optionValue') === 'true';
-		});
-	}
-
 	function _scrollToBottom(){
 		var currentMessageView = profile.currentOfficialAccount.messageView;
 		// 有可能在 messageView 未初始化时调用
@@ -563,9 +556,8 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 		apiHelper.getOfficalAccounts().then(function(officialAccountList){
 			_.each(officialAccountList, channel.attemptToAppendOfficialAccount);
 			_.each(profile.officialAccountList, function(officialAccount){
-				var id = officialAccount.official_account_id;
 				officialAccount.messageView.getHistoryAndInitHistoryPuller();
-				_getLastSession(id);
+				_getLastSession(officialAccount);
 			});
 
 			if (profile.ctaEnable){
@@ -590,13 +582,14 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 		});
 	}
 
-	function _getLastSession(officialAccountId){
-		apiHelper.getLastSession(officialAccountId).then(function(session){
+	function _getLastSession(officialAccount){
+		var id = officialAccount.official_account_id;
+
+		apiHelper.getLastSession(id).then(function(session){
 			var sessionId = session.session_id;
 			var state = session.state;
 			var agentId = session.agent_id;
 			var agentType = session.agent_type;
-			var officialAccount = _.findWhere(profile.officialAccountList, {official_account_id: officialAccountId});
 
 			officialAccount.agentId = agentId;
 			officialAccount.sessionId = sessionId;
@@ -608,7 +601,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 			else if (state === _const.SESSION_STATE.PROCESSING){
 				// 确保正在进行中的会话，刷新后还会继续轮询坐席状态
 
-				apiHelper.reportVisitorAttributes(sessionId);
 				officialAccount.isSessionOpen = true;
 			}
 			else if (
@@ -624,18 +616,10 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 			else{
 				throw 'unknown session state: ' + state;
 			}
-			agentStatusPoller.update();
 
+			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);
 		}, function(err){
-			if (err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
-				_getGreeting();
-				_getSkillgroupMenu();
-				throw 'it is should not reach there, i think';
-				// todo: confirm if it's should reach there
-			}
-			else {
-				throw err;
-			}
+			throw err;
 		});
 	}
 
@@ -708,14 +692,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 			var isSessionOpen = officialAccount.isSessionOpen;
 			var sessionId = officialAccount.sessionId;
 
-			isSessionOpen && api('closeServiceSession', {
-				tenantId: config.tenantId,
-				orgName: config.orgName,
-				appName: config.appName,
-				userName: config.user.username,
-				token: config.user.token,
-				serviceSessionId: sessionId
-			});
+			isSessionOpen && apiHelper.closeServiceSession(sessionId);
 
 			app.leaveMessage({
 				preData: {
@@ -760,15 +737,13 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 		});
 
 		var messagePredict = _.throttle(function (msg) {
-			profile.currentOfficialAccount.agentId
-				&& config.visitorUserId
-				&& api('messagePredict', {
-					tenantId: config.tenantId,
-					visitor_user_id: config.visitorUserId,
-					agentId: profile.agentId,
-					content: utils.getBrief(msg, _const.MESSAGE_PREDICT_MAX_LENGTH),
-					timestamp: _.now(),
-				});
+			var sessionId = profile.currentOfficialAccount.sessionId;
+			var sessionState = profile.currentOfficialAccount.sessionState;
+			var content = utils.getBrief(msg, _const.MESSAGE_PREDICT_MAX_LENGTH);
+
+			if (sessionState === _const.SESSION_STATE.PROCESSING){
+				apiHelper.reportPredictMessage(sessionId, content);
+			}
 		}, 1000);
 
 		function handleSendBtn() {
@@ -780,6 +755,7 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 			);
 			config.grayList.msgPredictEnable
 				&& !isEmpty
+				&& isMessageChannelReady
 				&& messagePredict(doms.textInput.value);
 		}
 
@@ -1063,7 +1039,9 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 				_setNotice();
 
 				// 获取坐席昵称设置
-				_getNickNameOption();
+				apiHelper.getNickNameOption().then(function(displayNickname){
+					profile.nickNameOption = displayNickname;
+				});
 
 				_initSystemEventListener();
 
@@ -1085,7 +1063,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 	easemobim._const,
 	easemobim.utils,
 	app.uikit,
-	app.api,
 	app.apiHelper,
 	app.channel,
 	app.profile,

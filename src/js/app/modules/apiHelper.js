@@ -2,11 +2,61 @@
 // getVisitorId
 // getProjectId
 // getToken
-// getGroupId
 
-app.apiHelper = (function (_const, utils, api, emajax) {
+app.apiHelper = (function (_const, utils, emajax) {
 	var config;
 	var cache = {};
+	var cachedApiCallbackTable = {};
+	var apiTransfer;
+
+	function initApiTransfer(){
+		apiTransfer = new easemobim.Transfer('cross-origin-iframe', 'data', true);
+
+		apiTransfer.listen(function (msg) {
+			var apiName = msg.call;
+			var timestamp = msg.timespan;
+			var isSuccess = msg.status === 0;
+			var callbacks;
+			var successCallback;
+			var errorCallback;
+
+			if (cachedApiCallbackTable[apiName] && cachedApiCallbackTable[apiName][timestamp]) {
+
+				callbacks = cachedApiCallbackTable[apiName][timestamp];
+				delete cachedApiCallbackTable[apiName][timestamp];
+
+				successCallback = callbacks.success;
+				errorCallback = callbacks.error;
+
+				if (isSuccess) {
+					typeof successCallback === 'function' && successCallback(msg);
+				}
+				else {
+					typeof errorCallback === 'function' && errorCallback(msg);
+				}
+			}
+		}, ['api']);
+	}
+
+	function api(apiName, data, success, error) {
+		var ts = new Date().getTime();
+
+		//cache
+		cachedApiCallbackTable[apiName] = cachedApiCallbackTable[apiName] || {};
+
+		cachedApiCallbackTable[apiName][ts] = {
+			success: success,
+			error: error
+		};
+
+		apiTransfer.send({
+			api: apiName,
+			data: data,
+			timespan: ts,
+			// 标记postMessage使用object，47.9 增加
+			useObject: true
+		});
+	}
 
 	function getCurrentServiceSession(){
 		return new Promise(function(resolve, reject){
@@ -157,7 +207,7 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 		var data = opt.data;
 
 		return new Promise(function(resolve, reject){
-			app.api('createTicket', {
+			api('createTicket', {
 				tenantId: config.tenantId,
 				'easemob-target-username': config.toUser,
 				'easemob-appkey': config.appKey.replace('#', '%23'),
@@ -391,52 +441,6 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 		});
 	}
 
-	function getGroupId(){
-		return new Promise(function(resolve, reject){
-			if (cache.groupId){
-				resolve(cache.groupId);
-			}
-			else {
-				api('getGroupNew', {
-					id: config.user.username,
-					orgName: config.orgName,
-					appName: config.appName,
-					imServiceNumber: config.toUser,
-					tenantId: config.tenantId
-				}, function (msg) {
-					var groupId = msg.data;
-
-					if (groupId){
-						cache.groupId = groupId;
-						resolve(groupId);
-					}
-					else {
-						reject('unable to get group id.');
-					}
-				}, function (err){
-					reject(err);
-				});
-			}
-		});
-	}
-
-	function getHistory(msgSeqId){
-		return new Promise(function(resolve, reject){
-			getGroupId().then(function(groupId){
-				api('getHistory', {
-					fromSeqId: msgSeqId,
-					size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME,
-					chatGroupId: groupId,
-					tenantId: config.tenantId
-				}, function (msg) {
-					resolve(msg.data || []);
-				}, function(err){
-					reject(err);
-				});
-			});
-		});
-	}
-
 	function getExSession(){
 		return new Promise(function(resolve, reject){
 			api('getExSession_2', {
@@ -558,40 +562,36 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 		});
 	}
 
-	function reportPredictMessage(content){
+	function reportPredictMessage(sessionId, content){
 		return new Promise(function(resolve, reject){
-			var visitorId = cache.visitorId;
-			var sessionId = cache.sessionId;
-			if (visitorId && sessionId){
-				getToken().then(function(token){
-					api('messagePredict_2', {
-						sessionId: sessionId,
-						visitor_user_id: visitorId,
-						content: content,
-						timestamp: _.now(),
-						orgName: config.orgName,
-						appName: config.appName,
-						imServiceNumber: config.toUser,
-						token: token
-					}, function (msg) {
-						resolve();
-					}, function(err){
-						reject(err);
-					});
+			Promise.all([
+				getVisitorId(),
+				getToken()
+			]).then(function(result){
+				var visitorId = result[0];
+				var token = result[1];
+
+				api('messagePredict_2', {
+					sessionId: sessionId,
+					visitor_user_id: visitorId,
+					content: content,
+					timestamp: _.now(),
+					orgName: config.orgName,
+					appName: config.appName,
+					imServiceNumber: config.toUser,
+					token: token
+				}, function (msg) {
+					resolve();
+				}, function(err){
+					reject(err);
 				});
-			}
-			else {
-				resolve();
-			}
+			});
 		});
 	}
 
 	function getAgentInputState(sessionId){
 		return new Promise(function(resolve, reject){
-			getToken().then(function(result){
-				var visitorId = result[0];
-				var token = result[1];
-
+			getToken().then(function(token){
 				api('getAgentInputState', {
 					username: config.user.username,
 					orgName: config.orgName,
@@ -622,6 +622,191 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 		});
 	}
 
+	function getNickNameOption(){
+		return new Promise(function(resolve, reject){
+			api('getNickNameOption', {
+				tenantId: config.tenantId
+			}, function (msg) {
+				var optionValue = utils.getDataByPath(msg, 'data.0.optionValue');
+				resolve(optionValue === 'true');
+			}, function(err){
+				resolve(err);
+			});
+		});
+	}
+
+	function closeServiceSession(sessionId){
+		return new Promise(function(resolve, reject){
+			getToken().then(function(token){
+				api('closeServiceSession', {
+					tenantId: config.tenantId,
+					orgName: config.orgName,
+					appName: config.appName,
+					userName: config.user.username,
+					token: config.user.token,
+					serviceSessionId: sessionId
+				}, function(msg){
+					resolve();
+				}, function(err){
+					reject(err);
+				});
+			});
+		});
+	}
+
+	function createVisitor(){
+		return new Promise(function(resolve, reject){
+			api('createVisitor', {
+				orgName: config.orgName,
+				appName: config.appName,
+				imServiceNumber: config.toUser,
+				tenantId: config.tenantId
+			}, function (msg) {
+				resolve(msg.data);
+			}, function(err){
+				resolve(err);
+			});
+		});
+	}
+
+	function getPassword(){
+		return new Promise(function(resolve, reject){
+			api('getPassword', {
+				userId: config.user.username,
+				tenantId: config.tenantId
+			}, function (msg){
+				var password = msg.data;
+
+				if (password){
+					resolve(password);
+				}
+				else {
+					reject('unable to get password.');
+				}
+			}, function(err){
+				resolve(err);
+			});
+		});
+	}
+
+	function getRelevanceList(){
+		return new Promise(function(resolve, reject){
+			api('getRelevanceList', {
+				tenantId: config.tenantId
+			}, function (msg){
+				var relevanceList = msg.data;
+
+				if (_.isArray(relevanceList) && !_.isEmpty(relevanceList)){
+					resolve(relevanceList);
+				}
+				else {
+					reject('未创建关联');
+				}
+			}, function(err){
+				resolve(err);
+			});
+		});
+	}
+
+	function deleteEvent(gid){
+		return new Promise(function(resolve, reject){
+			api('deleteEvent', {
+				userId: gid
+			}, function(msg){
+				resolve();
+			}, function(err){
+				reject(err);
+			});
+		});
+	}
+
+	function reportEvent(url, userType, userId){
+		return new Promise(function(resolve, reject){
+			api('reportEvent', {
+				type: 'VISIT_URL',
+				tenantId: config.tenantId,
+				url: url,
+				userId: {
+					type: userType,
+					id: userId
+				}
+			}, function (msg){
+				var resp = msg.data;
+
+				if (resp){
+					resolve(resp);
+				}
+				else {
+					reject('unexpected resopnse data.');
+				}
+			}, function(err){
+				reject(err);
+			});
+		});
+	}
+
+	function receiveMsgChannel(){
+		return new Promise(function(resolve, reject){
+			api('receiveMsgChannel', {
+				orgName: config.orgName,
+				appName: config.appName,
+				easemobId: config.toUser,
+				tenantId: config.tenantId,
+				visitorEasemobId: config.user.username
+			}, function (msg){
+				var status = utils.getDataByPath(msg, 'data.status');
+				var entities = utils.getDataByPath(msg, 'data.entities');
+
+				if (status === 'OK'){
+					resolve(entities);
+				}
+				else {
+					reject('unexpected response data.');
+				}
+			}, function(err){
+				reject(err);
+			});
+		});
+	}
+
+	function sendMsgChannel(body, ext){
+		return new Promise(function(resolve, reject){
+			api('sendMsgChannel', {
+				from: config.user.username,
+				to: config.toUser,
+				tenantId: config.tenantId,
+				bodies: [body],
+				ext: ext,
+				orgName: config.orgName,
+				appName: config.appName,
+				originType: 'webim'
+			}, function (msg){
+				resolve(msg.data);
+			}, function (err) {
+				reject(err);
+			});
+		});
+	}
+
+	function uploadImgMsgChannel(file){
+		return new Promise(function(resolve, reject){
+			getToken().then(function(token){
+				api('uploadImgMsgChannel', {
+					userName: config.user.username,
+					tenantId: config.tenantId,
+					file: file,
+					auth: 'Bearer ' + token,
+					orgName: config.orgName,
+					appName: config.appName,
+				}, function(msg){
+					resolve(msg.data);
+				}, function(err){
+					reject(err);
+				});
+			});
+		});
+	}
+
 	return {
 		getCurrentServiceSession: getCurrentServiceSession,
 		getSessionQueueId: getSessionQueueId,
@@ -638,7 +823,6 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 		getGrayList: getGrayList,
 		getRobertGreeting: getRobertGreeting,
 		getSystemGreeting: getSystemGreeting,
-		getHistory: getHistory,
 		getExSession: getExSession,
 		getAgentStatus: getAgentStatus,
 		getLastSession: getLastSession,
@@ -647,6 +831,19 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 		reportPredictMessage: reportPredictMessage,
 		getAgentInputState: getAgentInputState,
 		getWaitListNumber: getWaitListNumber,
+		getNickNameOption: getNickNameOption,
+		closeServiceSession: closeServiceSession,
+		createVisitor: createVisitor,
+		getPassword: getPassword,
+		getRelevanceList: getRelevanceList,
+		deleteEvent: deleteEvent,
+		reportEvent: reportEvent,
+		receiveMsgChannel: receiveMsgChannel,
+		sendMsgChannel: sendMsgChannel,
+		uploadImgMsgChannel: uploadImgMsgChannel,
+
+		initApiTransfer: initApiTransfer,
+		api: api,
 		setCacheItem: function(key, value){
 			cache[key] = value;
 		},
@@ -657,4 +854,4 @@ app.apiHelper = (function (_const, utils, api, emajax) {
 			config = cfg;
 		}
 	};
-}(easemobim._const, easemobim.utils, app.api, easemobim.emajax));
+}(easemobim._const, easemobim.utils, easemobim.emajax));

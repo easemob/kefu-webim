@@ -1,4 +1,4 @@
-(function (_const, utils, uikit, api, apiHelper, eventCollector, chat, channel, profile, window, undefined) {
+(function (_const, utils, uikit, apiHelper, eventCollector, chat, channel, profile, window) {
 	'use strict';
 
 	var config;
@@ -57,8 +57,11 @@
 
 	function chat_window_mode_init(){
 		utils.removeClass(document.getElementById('em-widgetPopBar'), 'hide');
-		window.transfer = new easemobim.Transfer(null, 'main', true).listen(function (msg) {
-			switch (msg.event) {
+		window.transfer = new easemobim.Transfer(null, 'main', true).listen(function (msg){
+			var event = msg.event;
+			var data = msg.data;
+
+			switch (event) {
 			case _const.EVENTS.SHOW:
 				if (eventCollector.isStarted()) {
 					// 停止上报访客
@@ -74,17 +77,17 @@
 				chat.close();
 				break;
 			case _const.EVENTS.EXT:
-				channel.sendText('', msg.data.ext);
+				channel.sendText('', data.ext);
 				break;
 			case _const.EVENTS.TEXTMSG:
-				channel.sendText(msg.data.data, msg.data.ext);
+				channel.sendText(data.data, data.ext);
 				break;
 			case _const.EVENTS.UPDATE_URL:
-				eventCollector.updateURL(msg.data);
+				profile.currentBrowsingURL = data;
 				break;
 			case _const.EVENTS.INIT_CONFIG:
-				window.transfer.to = msg.data.parentId;
-				config = msg.data;
+				window.transfer.to = data.parentId;
+				config = data;
 				profile.config = config;
 				initCrossOriginIframe();
 				break;
@@ -221,7 +224,7 @@
 
 		iframe.src = config.domain + '/webim/transfer.html?v=<%=WEBIM_PLUGIN_VERSION%>';
 		utils.on(iframe, 'load', function () {
-			app.initApiTransfer();
+			apiHelper.initApiTransfer();
 			handleMsgData();
 		});
 	}
@@ -229,10 +232,7 @@
 
 	function initChatEntry(targetUserInfo) {
 		//获取关联信息
-		api('getRelevanceList', {
-			tenantId: config.tenantId
-		}, function (msg) {
-			var relevanceList = msg.data;
+		apiHelper.getRelevanceList().then(function (relevanceList){
 			var targetItem;
 			var appKey = config.appKey;
 			var splited = appKey.split('#');
@@ -242,11 +242,6 @@
 
 			// toUser 转为字符串， todo: move it to handle config
 			'number' === typeof toUser && (toUser = toUser.toString(10));
-
-			if (!relevanceList.length) {
-				uikit.prompt('未创建关联');
-				return;
-			}
 
 			if (appKey && toUser) {
 				// appKey，imServiceNumber 都指定了
@@ -308,24 +303,17 @@
 				}
 				// 访客
 				else {
-					api('getPassword', {
-						userId: config.user.username,
-						tenantId: config.tenantId
-					}, function (msg) {
-						var password = msg.data;
-						if (!password) {
-							// todo: 用户不存在自动降级，重新创建
-							console.error('用户不存在！');
-						}
-						else {
-							config.user.password = password;
+					apiHelper.getPassword().then(function(password){
+						config.user.password = password;
 
-							// 发送空的ext消息，延迟发送
-							profile.commandMessageToBeSendList.push({ ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } });
-							chat.init();
-							chat.show();
-							transfer.send({ event: _const.EVENTS.SHOW });
-						}
+						// 发送空的ext消息，延迟发送
+						profile.commandMessageToBeSendList.push({ ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } });
+						chat.init();
+						chat.show();
+						transfer.send({ event: _const.EVENTS.SHOW });
+					}, function(err){
+						console.error('用户不存在！');
+						throw err;
 					});
 				}
 			}
@@ -381,34 +369,27 @@
 				});
 			}
 			else if (config.user.username) {
-				api('getPassword', {
-					userId: config.user.username,
-					tenantId: config.tenantId
-				}, function (msg) {
-					if (!msg.data) {
-						_downgrade();
-					}
-					else {
-						config.user.password = msg.data;
-						chat.init();
-					}
+				apiHelper.getPassword().then(function(password){
+					config.user.password = password;
+					chat.init();
+				}, function(err){
+					_downgrade();
 				});
 			}
 			else {
 				_downgrade();
 			}
+		}, function(err){
+			uikit.prompt('未创建关联');
+			throw err;
 		});
 	}
 
 	function _downgrade() {
-		api('createVisitor', {
-			orgName: config.orgName,
-			appName: config.appName,
-			imServiceNumber: config.toUser,
-			tenantId: config.tenantId
-		}, function (msg) {
-			config.user.username = msg.data.userId;
-			config.user.password = msg.data.userPassword;
+		apiHelper.createVisitor().then(function(account){
+			config.user.username = account.userId;
+			config.user.password = account.userPassword;
+
 			if (utils.isTop) {
 				utils.set('root' + config.tenantId + config.emgroup, config.user.username);
 			}
@@ -425,15 +406,11 @@
 		});
 	}
 
-	easemobim.reCreateImUser = _.once(function () {
-		api('createVisitor', {
-			orgName: config.orgName,
-			appName: config.appName,
-			imServiceNumber: config.toUser,
-			tenantId: config.tenantId
-		}, function (msg) {
-			config.user.username = msg.data.userId;
-			config.user.password = msg.data.userPassword;
+	easemobim.reCreateImUser = _.once(function (){
+		apiHelper.createVisitor().then(function(account){
+			config.user.username = account.userId;
+			config.user.password = account.userPassword;
+
 			if (utils.isTop) {
 				utils.set('root' + config.tenantId + config.emgroup, config.user.username);
 			}
@@ -454,12 +431,10 @@
 	easemobim._const,
 	easemobim.utils,
 	app.uikit,
-	app.api,
 	app.apiHelper,
 	app.eventCollector,
 	app.chat,
 	app.channel,
 	app.profile,
-	window,
-	undefined
+	window
 ));
