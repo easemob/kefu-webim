@@ -40,6 +40,9 @@
 	box-shadow: 0 1px 1px rgba(255, 255, 255, .3) inset;
 	cursor: default;
 	position: relative;
+	padding-left: 10px;
+	color: white;
+
 	.drag-bar {
 		position: absolute;
 		left: 40px;
@@ -60,8 +63,6 @@
 			position: absolute;
 			left: -5px;
 			top: -4px;
-			text-align: center;
-			color: white;
 		}
 		&:hover {
 			cursor: pointer;
@@ -72,7 +73,6 @@
 		float: right;
 		&:before {
 			text-align: center;
-			color: white;
 		}
 	}
 
@@ -80,43 +80,23 @@
 		float: right;
 		&:before {
 			text-align: center;
-			color: white;
 		}
 		&:hover {
 			cursor: pointer;
 		}
 	}
 
-	.em-widget-header-portrait {
+	.session-list-btn {
+		cursor: pointer;
 		width: 30px;
 		height: 30px;
-		vertical-align: middle;
-		margin: -2px -8px 0 5px;
-		border-radius: 50%;
-	}
-
-	.em-widget-header-status {
-		position: absolute;
-		border-radius: 50%;
-		width: 10px;
-		height: 10px;
-		bottom: -1px;
-		right: -1px;
-		box-shadow: 0 1px 1px #aaa;
-	}
-
-	.em-widget-header-nickname {
-		margin-left: 10px;
-		color: white;
 	}
 
 	.em-agent-input-state {
 		margin-left: 5px;
-		color: white;
 	}
 
 	.em-header-status-text {
-		color: white;
 		color: rgba(255, 255, 255, 0.5);
 	}
 }

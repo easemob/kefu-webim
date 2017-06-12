@@ -14,6 +14,6 @@ app.eventListener = (function(){
 	function _excuteCallbacks(event, argumentList){
 		_.each(eventCallbackTable[event], function(callback){
 			callback.apply(null, argumentList);
-		})
+		});
 	}
 }());

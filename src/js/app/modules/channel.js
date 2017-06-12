@@ -658,6 +658,7 @@ app.channel = (function(_const, utils, api, apiHelper, eventListener, profile){
 		switch (event) {
 		case _const.SYSTEM_EVENT.SESSION_TRANSFERED:
 			officialAccount.agentId = eventObj.userId;
+			// todo: get agentType
 			officialAccount.agentType = null;
 			officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
 			break;

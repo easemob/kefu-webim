@@ -1,7 +1,6 @@
 app.agentStatusPoller = (function(_const, profile, utils, apiHelper){
 	// todo: dom 操作分离出去
 	var topBar = document.querySelector('.em-widget-header');
-	var $agentStatusSymbol = topBar.querySelector('.agent-status');
 	var $agentStatusText = topBar.querySelector('.em-header-status-text');
 	var _timerHandler;
 
@@ -19,7 +18,6 @@ app.agentStatusPoller = (function(_const, profile, utils, apiHelper){
 	}
 
 	function _clear() {
-		doms.agentStatusSymbol.className = 'hide';
 		doms.agentStatusText.innerText = '';
 	}
 
@@ -33,14 +31,12 @@ app.agentStatusPoller = (function(_const, profile, utils, apiHelper){
 		var agentId = profile.currentOfficialAccount.agentId;
 
 		if (!agentId){
-			doms.agentStatusSymbol.className = 'hide';
 			doms.agentStatusText.innerText = '';
 		}
 		else {
 			apiHelper.getAgentStatus(agentId).then(function (state) {
 				if (state) {
 					$agentStatusText.innerText = _const.agentStatusText[state];
-					$agentStatusSymbol.className = 'em-widget-agent-status ' + _const.agentStatusClassName[state];
 				}
 			});
 		}
