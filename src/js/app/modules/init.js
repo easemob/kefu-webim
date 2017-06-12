@@ -168,7 +168,7 @@
 	}
 	function handleConfig(configJson) {
 		// todo: 把配置转换为新的
-		//用于config标记是否是来自于坐席端网页配置
+		// 用于config标记是否是来自于坐席端网页配置
 		config.isWebChannelConfig = true;
 
 		config.channel = configJson.channel;

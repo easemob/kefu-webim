@@ -218,9 +218,13 @@
 	content: "\75"
 }
 
-// todo: to be removed
-.em-widget-agent-status.leave:after,
-.em-widget-agent-status.busy:after,
-.em-widget-agent-status.hidden:after {
+.icon-list:before {
 	@extend .icon-base;
+	content: "\7a"
 }
+
+.icon-message:before {
+	@extend .icon-base;
+	content: "\7b"
+}
+

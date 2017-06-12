@@ -12,7 +12,6 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 	// todo: 把dom都移到里边
 	var doms = {
 		imChat: document.getElementById('em-kefu-webim-chat'),
-		agentStatusSymbol: topBar.querySelector('.agent-status'),
 		agentStatusText: topBar.querySelector('.em-header-status-text'),
 		nickname: topBar.querySelector('.em-widget-header-nickname'),
 		dragBar: topBar.querySelector('.drag-bar'),
@@ -159,13 +158,20 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 	function _displayOrHideTransferToKefuBtn(officialAccount){
 		var state = officialAccount.sessionState;
 		var agentType = officialAccount.agentType;
+		var isRobotAgent;
 
 		if (state === _const.SESSION_STATE.PROCESSING){
 			// todo: change to get lastest session
-			apiHelper.getCurrentServiceSession().then(function (res) {
-				var isRobotAgent = res && res.agentUserType === 6;
+			if (agentType){
+				isRobotAgent = agentType === 6;
 				utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotAgent);
-			});
+			}
+			else {
+				apiHelper.getCurrentServiceSession().then(function (res) {
+					var isRobotAgent = res && res.agentUserType === 6;
+					utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotAgent);
+				});
+			}
 		}
 		else{
 			apiHelper.getRobertIsOpen().then(function (isRobotEnable) {
@@ -589,11 +595,13 @@ app.chat = (function (_const, utils, uikit, api, apiHelper, channel, profile, ev
 			var sessionId = session.session_id;
 			var state = session.state;
 			var agentId = session.agent_id;
+			var agentType = session.agent_type;
 			var officialAccount = _.findWhere(profile.officialAccountList, {official_account_id: officialAccountId});
 
 			officialAccount.agentId = agentId;
 			officialAccount.sessionId = sessionId;
 			officialAccount.sessionState = state;
+			officialAccount.agentType = agentType;
 
 			if (state === _const.SESSION_STATE.WAIT){
 			}
