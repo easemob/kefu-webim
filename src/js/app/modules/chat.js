@@ -1,4 +1,4 @@
-app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventListener, satisfaction, agentStatusPoller) {
+app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventListener, satisfaction, startOrStopPollAgentState) {
 	var isEmojiInitilized;
 	var isMessageChannelReady;
 	var inputBoxPosition;
@@ -46,11 +46,16 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 		var inputState = topBar.querySelector('.em-agent-input-state');
 
 		return function(officialAccount){
-			// todo: stop when agent is robot
-			var state = officialAccount.sessionState;
+			if (officialAccount !== profile.currentOfficialAccount) return;
 
-			if (state === _const.SESSION_STATE.PROCESSING){
-				_start();
+			var state = officialAccount.sessionState;
+			var agentType = officialAccount.agentType;
+
+			if (
+				state === _const.SESSION_STATE.PROCESSING
+				&& agentType !== _const.AGENT_ROLE.ROBOT
+			){
+				_start(officialAccount);
 			}
 			else {
 				_stop();
@@ -103,7 +108,8 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 		var $queuingNumberLabel = $queuingNumberStatus.querySelector('label');
 
 		return function(officialAccount){
-			// todo: stop when agent is robot
+			if (profile.currentOfficialAccount !== officialAccount) return;
+
 			var state = officialAccount.sessionState;
 
 			if (state === _const.SESSION_STATE.WAIT){
@@ -156,22 +162,14 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 	}());
 
 	function _displayOrHideTransferToKefuBtn(officialAccount){
+		if (profile.currentOfficialAccount !== officialAccount) return;
+
 		var state = officialAccount.sessionState;
 		var agentType = officialAccount.agentType;
-		var isRobotAgent;
+		var isRobotAgent = agentType === _const.AGENT_ROLE.ROBOT;
 
 		if (state === _const.SESSION_STATE.PROCESSING){
-			// todo: change to get lastest session
-			if (agentType){
-				isRobotAgent = agentType === 6;
-				utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotAgent);
-			}
-			else {
-				apiHelper.getCurrentServiceSession().then(function (res) {
-					var isRobotAgent = res && res.agentUserType === 6;
-					utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotAgent);
-				});
-			}
+			utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotAgent);
 		}
 		else{
 			apiHelper.getRobertIsOpen().then(function (isRobotEnable) {
@@ -194,9 +192,11 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 
 	function _initSystemEventListener(){
 		// 更新坐席在线状态标志
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, agentStatusPoller.update);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, agentStatusPoller.update);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, agentStatusPoller.update);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, startOrStopPollAgentState);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, startOrStopPollAgentState);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, startOrStopPollAgentState);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, startOrStopPollAgentState);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, startOrStopPollAgentState);
 
 		// 更新坐席名称
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _updateAgentNickname);
@@ -207,6 +207,10 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 		// report visitor info
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _reportVisitorInfo);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _reportVisitorInfo);
+
+		// get greetings
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _getGreetings);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _getGreetings);
 
 		if (config.toolbar.transferToKefu){
 			// update transferToKefu button state
@@ -237,30 +241,23 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 		}
 	}
 
+	function _getGreetings(officialAccount){
+		if (!officialAccount.isSessionOpen){
+			_getGreeting();
+			_getSkillgroupMenu();
+		}
+	}
+
 	function _reportVisitorInfo(officialAccount){
 		if (officialAccount.hasReportedAttributes) return;
 
 		var officialAccountId = officialAccount.official_account_id;
 		var sessionId = officialAccount.sessionId;
+		var isSessionOpen = officialAccount.isSessionOpen;
 
-		officialAccount.hasReportedAttributes = true;
-		if (sessionId){
+		if (isSessionOpen){
+			officialAccount.hasReportedAttributes = true;
 			apiHelper.reportVisitorAttributes(sessionId);
-		}
-		else {
-	 		apiHelper.getLastSession(officialAccountId).then(function(session){
-				var sessionId = session.session_id;
-				var state = session.state;
-				var agentId = session.agent_id;
-
-				officialAccount.agentId = agentId;
-				officialAccount.sessionId = sessionId;
-				officialAccount.sessionState = state;
-
-				apiHelper.reportVisitorAttributes(sessionId);
-			}, function(err){
-				throw err;
-			});
 		}
 	}
 
@@ -566,8 +563,6 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 		}, function(err){
 			// 未创建会话时初始化默认服务号
 			if (err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
-				_getGreeting();
-				_getSkillgroupMenu();
 				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [profile.currentOfficialAccount]);
 			}
 			else {
@@ -586,40 +581,16 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 		var id = officialAccount.official_account_id;
 
 		apiHelper.getLastSession(id).then(function(session){
-			var sessionId = session.session_id;
-			var state = session.state;
-			var agentId = session.agent_id;
-			var agentType = session.agent_type;
-
-			officialAccount.agentId = agentId;
-			officialAccount.sessionId = sessionId;
-			officialAccount.sessionState = state;
-			officialAccount.agentType = agentType;
-
-			if (state === _const.SESSION_STATE.WAIT){
-			}
-			else if (state === _const.SESSION_STATE.PROCESSING){
-				// 确保正在进行中的会话，刷新后还会继续轮询坐席状态
-
-				officialAccount.isSessionOpen = true;
-			}
-			else if (
-				state === _const.SESSION_STATE.ABORT
-				|| state === _const.SESSION_STATE.TERMINAL
-				|| state === _const.SESSION_STATE.RESOLVED
-				|| state === _const.SESSION_STATE.PREPARE
-			){
-				// 结束的会话获取欢迎语
-				_getGreeting();
-				_getSkillgroupMenu();
-			}
-			else{
-				throw 'unknown session state: ' + state;
-			}
+			officialAccount.agentId = session.agent_id;
+			officialAccount.sessionId = session.session_id;
+			officialAccount.sessionState = session.state;
+			officialAccount.agentType = session.agent_type;
+			officialAccount.isSessionOpen = (
+				session.state === _const.SESSION_STATE.PROCESSING
+				|| session.state === _const.SESSION_STATE.WAIT
+			);
 
 			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);
-		}, function(err){
-			throw err;
 		});
 	}
 
@@ -737,11 +708,16 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 		});
 
 		var messagePredict = _.throttle(function (msg) {
-			var sessionId = profile.currentOfficialAccount.sessionId;
-			var sessionState = profile.currentOfficialAccount.sessionState;
+			var officialAccount = profile.currentOfficialAccount;
+			var sessionId = officialAccount.sessionId;
+			var sessionState = officialAccount.sessionState;
+			var agentType = officialAccount.agentType;
 			var content = utils.getBrief(msg, _const.MESSAGE_PREDICT_MAX_LENGTH);
 
-			if (sessionState === _const.SESSION_STATE.PROCESSING){
+			if (
+				sessionState === _const.SESSION_STATE.PROCESSING
+				&& agentType !== _const.AGENT_ROLE.ROBOT
+			){
 				apiHelper.reportPredictMessage(sessionId, content);
 			}
 		}, 1000);
@@ -974,11 +950,12 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 
 	function _updateAgentNickname() {
 		var nickname = profile.currentAgentNickname;
+		var isSessionOpen = profile.currentOfficialAccount.isSessionOpen;
 
 		if (
 			profile.nickNameOption
 			&& nickname
-			&& profile.currentOfficialAccount.isSessionOpen
+			&& isSessionOpen
 		) {
 			doms.nickname.innerText = nickname;
 		}
@@ -1068,5 +1045,5 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 	app.profile,
 	app.eventListener,
 	app.satisfaction,
-	app.agentStatusPoller
+	app.startOrStopPollAgentState
 ));

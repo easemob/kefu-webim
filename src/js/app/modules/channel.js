@@ -626,15 +626,17 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 		var hasTransferedToKefu = opt && opt.hasTransferedToKefu;
 		var officialAccountId = opt && opt.officialAccountId;
 		var officialAccount = _getOfficialAccountById(officialAccountId);
+		var sessionState = officialAccount.sessionState;
 		var hasAgentOnline = hasTransferedToKefu
 			? profile.hasHumanAgentOnline
 			: profile.hasHumanAgentOnline || profile.hasRobotAgentOnline;
 
-		// isServiceSessionOpened = true 时会话已被客服接起，此时认为有坐席在线
-		officialAccount.isSessionOpen && (hasAgentOnline = true);
-
 		// 显示无坐席在线(只显示一次)
-		if (!hasAgentOnline && !isNoAgentOnlineTipShowed) {
+		if (
+			!hasAgentOnline
+			&& !isNoAgentOnlineTipShowed
+			&& sessionState !== _const.SESSION_STATE.PROCESSING
+		) {
 			isNoAgentOnlineTipShowed = true;
 			_appendEventMsg(_const.eventMessageText.NOTE, {ext: {weichat: {official_account: officialAccount}}});
 		}
@@ -650,29 +652,37 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 		switch (event) {
 		case _const.SYSTEM_EVENT.SESSION_TRANSFERED:
 			officialAccount.agentId = eventObj.userId;
-			// todo: get agentType
+			// todo: get agentType & agentId
 			officialAccount.agentType = null;
+			officialAccount.agentId = eventObj.userId;
 			officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
+			officialAccount.isSessionOpen = true;
 			break;
 		case _const.SYSTEM_EVENT.SESSION_TRANSFERING:
 			officialAccount.sessionState = _const.SESSION_STATE.WAIT;
+			officialAccount.isSessionOpen = true;
 			break;
 		case _const.SYSTEM_EVENT.SESSION_CLOSED:
 			officialAccount.sessionState = _const.SESSION_STATE.ABORT;
 			officialAccount.agentId = null;
-			officialAccount.isServiceSessionOpened = false;
+			officialAccount.sessionId = null;
+			officialAccount.isSessionOpen = false;
 			officialAccount.hasReportedAttributes = false;
 
 			transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
 			break;
 		case _const.SYSTEM_EVENT.SESSION_OPENED:
 			officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
+			// todo: get agentType & agentId
+			officialAccount.agentType = null;
 			officialAccount.agentId = eventObj.userId;
-			officialAccount.isServiceSessionOpened = true;
-
+			// todo: get session id
+			officialAccount.sessionId = null;
+			officialAccount.isSessionOpen = true;
 			break;
 		case _const.SYSTEM_EVENT.SESSION_CREATED:
 			officialAccount.sessionState = _const.SESSION_STATE.WAIT;
+			officialAccount.isSessionOpen = true;
 			break;
 		default:
 			break;
