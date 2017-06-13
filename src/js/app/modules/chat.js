@@ -244,7 +244,6 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 	function _getGreetings(officialAccount){
 		if (!officialAccount.isSessionOpen){
 			_getGreeting();
-			_getSkillgroupMenu();
 		}
 	}
 
@@ -456,10 +455,12 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 	function _getGreeting() {
 		Promise.all([
 			apiHelper.getSystemGreeting(),
-			apiHelper.getRobertGreeting()
+			apiHelper.getRobertGreeting(),
+			apiHelper.getSkillgroupMenu()
 		]).then(function(result){
 			var systemGreetingText = result[0];
 			var robotGreetingObj = result[1];
+			var groupMenus = result[2];
 			var greetingTextType = robotGreetingObj.greetingTextType;
 			var greetingText = robotGreetingObj.greetingText;
 			var greetingObj = {};
@@ -494,15 +495,10 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 			default:
 				console.error('unknown robot greeting type.');
 				break;
-			}
-		});
-	}
+			};
 
-	function _getSkillgroupMenu() {
-		apiHelper.getSkillgroupMenu().then(function(groupMenus) {
-			// 当skillGroupMenuEnable 为false时  返回值为空
-			if(!groupMenus) return;
-			channel.handleReceive({
+			// 技能组列表
+			groupMenus && channel.handleReceive({
 				data: groupMenus,
 				type: 'skillgroupMenu',
 				noprompt: true
