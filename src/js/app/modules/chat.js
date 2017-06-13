@@ -1,4 +1,8 @@
-app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventListener, satisfaction, startOrStopPollAgentState) {
+app.chat = (function (
+	_const, utils, uikit, apiHelper, channel, profile, eventListener,
+	satisfaction, initAgentInputStatePoller, initAgentStatePoller,
+	initQueuingNumberPoller, initTransferToKefuButton
+){
 	var isEmojiInitilized;
 	var isMessageChannelReady;
 	var inputBoxPosition;
@@ -24,7 +28,6 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 		sendFileBtn: editorView.querySelector('.em-widget-file'),
 		sendBtn: editorView.querySelector('.em-widget-send'),
 		satisfaction: editorView.querySelector('.em-widget-satisfaction'),
-		toKefuBtn: editorView.querySelector('.em-widget-to-kefu'),
 		textInput: editorView.querySelector('.em-widget-textarea'),
 		noteBtn: editorView.querySelector('.em-widget-note'),
 
@@ -39,145 +42,6 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 		block: null
 	};
 
-	var _startOrStopAgentInputStatePoller = (function(){
-		var isStarted = false;
-		var timerHandler;
-		var preventTimestamp = 0;
-		var inputState = topBar.querySelector('.em-agent-input-state');
-
-		return function(officialAccount){
-			if (officialAccount !== profile.currentOfficialAccount) return;
-
-			var state = officialAccount.sessionState;
-			var agentType = officialAccount.agentType;
-
-			if (
-				state === _const.SESSION_STATE.PROCESSING
-				&& agentType !== _const.AGENT_ROLE.ROBOT
-			){
-				_start(officialAccount);
-			}
-			else {
-				_stop();
-			}
-		};
-
-		function _start() {
-			isStarted = true;
-			// 保证当前最多只有1个timerHandler
-			clearInterval(timerHandler);
-			apiHelper.getCurrentServiceSession().then(function (response){
-				var sessionId = response && response.serviceSessionId;
-
-				if (
-					sessionId
-					&& isStarted
-					// 仅当聊天窗口打开时才发送请求
-					&& profile.isChatWindowOpen
-					// 仅当浏览器非最小化状态时才发送请求
-					&& !utils.isBrowserMinimized()
-				) {
-					timerHandler = setInterval(function(){
-						apiHelper.getAgentInputState(sessionId).then(function (entity){
-							var currentTimestamp = entity.timestamp;
-							var ifDisplayTypingState = entity.input_state_tips;
-
-							// 为了先发送的请求后回来的异步问题，仅处理时间戳比当前大的response
-							if (currentTimestamp > preventTimestamp){
-								preventTimestamp = currentTimestamp;
-								utils.toggleClass(inputState, 'hide', !displayTypingState);
-							}
-						});
-					}, _const.AGENT_INPUT_STATE_INTERVAL);
-				}
-			});
-		}
-
-		function _stop() {
-			clearInterval(timerHandler);
-			utils.addClass(inputState, 'hide');
-			isStarted = false;
-		}
-	}());
-
-	var _startOrStopQueuingNumberPoller = (function () {
-		var isStarted = false;
-		var timerHandler;
-		var preventTimestamp = 0;
-		var $queuingNumberStatus = document.querySelector('.queuing-number-status');
-		var $queuingNumberLabel = $queuingNumberStatus.querySelector('label');
-
-		return function(officialAccount){
-			if (profile.currentOfficialAccount !== officialAccount) return;
-
-			var state = officialAccount.sessionState;
-
-			if (state === _const.SESSION_STATE.WAIT){
-				_start();
-			}
-			else {
-				_stop();
-			}
-		};
-
-		function _start() {
-			isStarted = true;
-			// 保证当前最多只有1个timer
-			// 每次调用start都必须重新获取queueId
-			clearInterval(timerHandler);
-			apiHelper.getSessionQueueId().then(function (entity){
-				var queueId;
-				var sessionId;
-
-				if (entity.state === 'Wait' && isStarted) {
-					queueId = entity.queueId;
-					sessionId = entity.serviceSessionId;
-					// 避免请求在 轮询停止以后回来 而导致误开始
-					// todo: use promise to optimize it
-					timerHandler = setInterval(function () {
-						apiHelper.getWaitListNumber().then(function (entity){
-							var waitingNumber = entity.visitorUserWaitingNumber;
-							var currentTimestamp = entity.visitorUserWaitingTimestamp;
-
-							if (waitingNumber === 'no') {
-								utils.addClass($queuingNumberStatus, 'hide');
-							}
-							else if (currentTimestamp > preventTimestamp) {
-								preventTimestamp = currentTimestamp;
-								utils.removeClass($queuingNumberStatus, 'hide');
-								$queuingNumberLabel.innerHTML = entity.visitorUserWaitingNumber;
-							}
-						});
-					}, 1000);
-				}
-			});
-		}
-
-		function _stop() {
-			clearInterval(timerHandler);
-			preventTimestamp = 0;
-			isStarted = false;
-			utils.addClass($queuingNumberStatus, 'hide');
-		}
-	}());
-
-	function _displayOrHideTransferToKefuBtn(officialAccount){
-		if (profile.currentOfficialAccount !== officialAccount) return;
-
-		var state = officialAccount.sessionState;
-		var agentType = officialAccount.agentType;
-		var isRobotAgent = agentType === _const.AGENT_ROLE.ROBOT;
-
-		if (state === _const.SESSION_STATE.PROCESSING){
-			utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotAgent);
-		}
-		else{
-			apiHelper.getRobertIsOpen().then(function (isRobotEnable) {
-				utils.toggleClass(doms.toKefuBtn, 'hide', !isRobotEnable);
-			});
-		}
-	}
-
 	var chat = {
 		doms: doms,
 		init: _init,
@@ -191,18 +55,13 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 	return chat;
 
 	function _initSystemEventListener(){
-		// 更新坐席在线状态标志
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, startOrStopPollAgentState);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, startOrStopPollAgentState);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, startOrStopPollAgentState);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, startOrStopPollAgentState);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, startOrStopPollAgentState);
-
 		// 更新坐席名称
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _updateAgentNickname);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _updateAgentNickname);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _updateAgentNickname);
 		eventListener.add(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGE, _updateAgentNickname);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _updateAgentNickname);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _updateAgentNickname);
 
 		// report visitor info
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _reportVisitorInfo);
@@ -211,34 +70,6 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 		// get greetings
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _getGreetings);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _getGreetings);
-
-		if (config.toolbar.transferToKefu){
-			// update transferToKefu button state
-			// todo: add listener to official changed
-			eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideTransferToKefuBtn);
-			eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _displayOrHideTransferToKefuBtn);
-			eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideTransferToKefuBtn);
-			eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideTransferToKefuBtn);
-		}
-
-		if (config.grayList.agentInputStateEnable){
-			// update transferToKefu button state
-			// todo: add listener to official changed
-			eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _startOrStopAgentInputStatePoller);
-			eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _startOrStopAgentInputStatePoller);
-			eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _startOrStopAgentInputStatePoller);
-			eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _startOrStopAgentInputStatePoller);
-		}
-
-		if (config.grayList.waitListNumberEnable){
-			// update transferToKefu button state
-			// todo: add listener to official changed
-			eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _startOrStopQueuingNumberPoller);
-			eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _startOrStopQueuingNumberPoller);
-			eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _startOrStopQueuingNumberPoller);
-			eventListener.add(_const.SYSTEM_EVENT.SESSION_CREATED, _startOrStopQueuingNumberPoller);
-			eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _startOrStopQueuingNumberPoller);
-		}
 	}
 
 	function _reportVisitorInfo(officialAccount){
@@ -299,9 +130,6 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 				document.querySelector('.em-widget-satisfaction'),
 				'hide'
 			);
-
-		// 设置企业名称
-		_updateAgentNickname();
 	}
 
 	function _initSoundReminder(){
@@ -720,7 +548,7 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 				doms.sendBtn,
 				'disabled', !isMessageChannelReady || isEmpty
 			);
-			config.grayList.msgPredictEnable
+			profile.grayList.msgPredictEnable
 				&& !isEmpty
 				&& isMessageChannelReady
 				&& messagePredict(doms.textInput.value);
@@ -836,12 +664,6 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 		// 显示留言页面
 		utils.on(doms.noteBtn, 'click', function () {
 			app.leaveMessage();
-		});
-
-		// 人工客服接起会话
-		utils.on(doms.toKefuBtn, 'click', function () {
-			channel.sendTransferToKf();
-			utils.addClass(doms.toKefuBtn, 'hide');
 		});
 
 		// 满意度评价
@@ -982,7 +804,7 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 			var grayList = result[1];
 
 			// 灰度列表
-			config.grayList = grayList;
+			profile.grayList = grayList;
 
 			// 当配置为下班进会话时执行与上班相同的逻辑
 			config.isInOfficehours = dutyStatus || config.offDutyType === 'chat';
@@ -1012,6 +834,10 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 				});
 
 				_initSystemEventListener();
+				initAgentInputStatePoller();
+				initAgentStatePoller();
+				initQueuingNumberPoller();
+				initTransferToKefuButton();
 
 				// 第二通道收消息初始化
 				channel.initSecondChannle();
@@ -1036,5 +862,8 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 	app.profile,
 	app.eventListener,
 	app.satisfaction,
-	app.startOrStopPollAgentState
+	app.initAgentInputStatePoller,
+	app.initAgentStatePoller,
+	app.initQueuingNumberPoller,
+	app.initTransferToKefuButton
 ));

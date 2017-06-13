@@ -86,7 +86,7 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 		conn.open(op);
 
 		Modernizr.peerconnection
-			&& config.grayList.audioVideo
+			&& profile.grayList.audioVideo
 			// todo: discard _sendText & config
 			&& app.videoChat.init(conn, _sendText, config);
 	}

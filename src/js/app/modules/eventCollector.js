@@ -39,7 +39,7 @@ app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 				else {}
 				break;
 			default:
-				throw 'unexpected event type.'
+				throw 'unexpected event type.';
 				break;
 			}
 		});

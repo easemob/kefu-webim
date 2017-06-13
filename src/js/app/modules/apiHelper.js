@@ -822,6 +822,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 		getDutyStatus: getDutyStatus,
 		getGrayList: getGrayList,
 		getRobertGreeting: getRobertGreeting,
+		getRobertIsOpen: getRobertIsOpen,
 		getSystemGreeting: getSystemGreeting,
 		getExSession: getExSession,
 		getAgentStatus: getAgentStatus,

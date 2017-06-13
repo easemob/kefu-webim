@@ -199,7 +199,10 @@ gulp.task('combineJs', function () {
 			'src/js/app/modules/tools/eventListener.js',
 			'src/js/app/modules/channel.js',
 			'src/js/app/modules/sessionList.js',
-			'src/js/app/modules/chat/agentStatusPoller.js',
+			'src/js/app/modules/chat/initAgentStatusPoller.js',
+			'src/js/app/modules/chat/initAgentInputStatePoller.js',
+			'src/js/app/modules/chat/initTransferToKefuButton.js',
+			'src/js/app/modules/chat/initQueuingNumberPoller.js',
 			'src/js/app/modules/paste.js',
 			'src/js/app/modules/satisfaction.js',
 			'src/js/app/modules/imgView.js',
@@ -243,6 +246,7 @@ gulp.task('watch', function () {
 		'src/js/plugin/*.js',
 		'src/js/common/*.js',
 		'src/js/app/modules/*.js',
+		'src/js/app/modules/chat/*.js',
 		'src/plugin-scss/*.scss',
 	], ['combineJs']);
 	gulp.watch(['src/scss/*.scss'], ['cssmin']);

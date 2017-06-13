@@ -1,8 +1,17 @@
-app.startOrStopPollAgentState = (function(_const, profile, utils, apiHelper){
-	// todo: dom 操作分离出去
-	var topBar = document.querySelector('.em-widget-header');
-	var $agentStatusText = topBar.querySelector('.em-header-status-text');
+app.initAgentStatePoller = (function(_const,  utils, profile, eventListener, apiHelper){
+	var $agentStatusText;
 	var _timerHandler;
+
+	return function(){
+		var topBar = document.querySelector('.em-widget-header');
+		$agentStatusText = topBar.querySelector('.em-header-status-text');
+
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, startOrStopPollAgentState);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, startOrStopPollAgentState);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, startOrStopPollAgentState);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, startOrStopPollAgentState);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, startOrStopPollAgentState);
+	};
 
 	function _start() {
 		if (_timerHandler) return;
@@ -15,7 +24,7 @@ app.startOrStopPollAgentState = (function(_const, profile, utils, apiHelper){
 
 	function _stop() {
 		_timerHandler = clearInterval(_timerHandler);
-		doms.agentStatusText.innerText = '';
+		$agentStatusText.innerText = '';
 	}
 
 	function _update() {
@@ -31,7 +40,7 @@ app.startOrStopPollAgentState = (function(_const, profile, utils, apiHelper){
 		var isSessionOpen = officialAccount.isSessionOpen;
 
 		if (!isSessionOpen){
-			doms.agentStatusText.innerText = '';
+			$agentStatusText.innerText = '';
 		}
 		else if (agentType === _const.AGENT_ROLE.ROBOT){
 			// 机器人不去轮询，显示为在线
@@ -46,7 +55,7 @@ app.startOrStopPollAgentState = (function(_const, profile, utils, apiHelper){
 		}
 	}
 
-	return function(officialAccount){
+	function startOrStopPollAgentState(officialAccount, event){
 		if (officialAccount !== profile.currentOfficialAccount) return;
 
 		var sessionState = officialAccount.sessionState;
@@ -55,8 +64,7 @@ app.startOrStopPollAgentState = (function(_const, profile, utils, apiHelper){
 			_start();
 		}
 		else{
-			stop();
+			_stop();
 		}
-
-	};
-}(easemobim._const, easemobim.utils, app.profile, app.apiHelper));
+	}
+}(easemobim._const, easemobim.utils, app.profile, app.eventListener, app.apiHelper));
