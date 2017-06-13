@@ -241,12 +241,6 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 		}
 	}
 
-	function _getGreetings(officialAccount){
-		if (!officialAccount.isSessionOpen){
-			_getGreeting();
-		}
-	}
-
 	function _reportVisitorInfo(officialAccount){
 		if (officialAccount.hasReportedAttributes) return;
 
@@ -452,7 +446,8 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 		}
 	}
 
-	function _getGreeting() {
+	function _getGreetings(officialAccount) {
+		if (officialAccount.isSessionOpen) return;
 		Promise.all([
 			apiHelper.getSystemGreeting(),
 			apiHelper.getRobertGreeting(),
@@ -495,7 +490,7 @@ app.chat = (function (_const, utils, uikit, apiHelper, channel, profile, eventLi
 			default:
 				console.error('unknown robot greeting type.');
 				break;
-			};
+			}
 
 			// 技能组列表
 			groupMenus && channel.handleReceive({
