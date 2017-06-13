@@ -19,19 +19,6 @@ easemobim._const = (function () {
 			Other: ''
 		},
 
-		// todo: change the class name to icon-*
-		// 坐席状态，dom上的className值
-		agentStatusClassName: {
-			Idle: 'online',
-			Online: 'online',
-			Busy: 'busy',
-			Leave: 'leave',
-			Hidden: 'hidden',
-			Offline: 'offline',
-			Logout: 'offline',
-			Other: 'hide'
-		},
-
 		eventMessageText: {
 			NOTE: '当前暂无客服在线，请您留下联系方式，稍后我们将主动联系您'
 		},
@@ -117,6 +104,11 @@ easemobim._const = (function () {
 			ABORT: 'Abort',
 			RESOLVED: 'Resolved',
 			PREPARE: 'Prepare'
+		},
+
+		AGENT_ROLE: {
+			AGENT: 1,
+			ROBOT: 6
 		},
 
 		// 上传文件大小限制

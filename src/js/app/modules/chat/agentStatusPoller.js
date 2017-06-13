@@ -1,4 +1,4 @@
-app.agentStatusPoller = (function(_const, profile, utils, apiHelper){
+app.startOrStopPollAgentState = (function(_const, profile, utils, apiHelper){
 	// todo: dom 操作分离出去
 	var topBar = document.querySelector('.em-widget-header');
 	var $agentStatusText = topBar.querySelector('.em-header-status-text');
@@ -15,9 +15,6 @@ app.agentStatusPoller = (function(_const, profile, utils, apiHelper){
 
 	function _stop() {
 		_timerHandler = clearInterval(_timerHandler);
-	}
-
-	function _clear() {
 		doms.agentStatusText.innerText = '';
 	}
 
@@ -28,10 +25,17 @@ app.agentStatusPoller = (function(_const, profile, utils, apiHelper){
 			|| utils.isBrowserMinimized()
 		) return;
 
-		var agentId = profile.currentOfficialAccount.agentId;
+		var officialAccount = profile.currentOfficialAccount;
+		var agentId = officialAccount.agentId;
+		var agentType = officialAccount.agentType;
+		var isSessionOpen = officialAccount.isSessionOpen;
 
-		if (!agentId){
+		if (!isSessionOpen){
 			doms.agentStatusText.innerText = '';
+		}
+		else if (agentType === _const.AGENT_ROLE.ROBOT){
+			// 机器人不去轮询，显示为在线
+			$agentStatusText.innerText = _const.agentStatusText.Online;
 		}
 		else {
 			apiHelper.getAgentStatus(agentId).then(function (state) {
@@ -42,9 +46,17 @@ app.agentStatusPoller = (function(_const, profile, utils, apiHelper){
 		}
 	}
 
-	return {
-		start: _start,
-		stop: _stop,
-		update: _update
+	return function(officialAccount){
+		if (officialAccount !== profile.currentOfficialAccount) return;
+
+		var sessionState = officialAccount.sessionState;
+
+		if (sessionState === _const.SESSION_STATE.PROCESSING){
+			_start();
+		}
+		else{
+			stop();
+		}
+
 	};
 }(easemobim._const, easemobim.utils, app.profile, app.apiHelper));
