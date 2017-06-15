@@ -26,6 +26,8 @@ app.videoChat = (function (uikit, channel, profile) {
 							appName: config.appName,
 							userName: config.user.username,
 							imServiceNumber: config.toUser,
+							restServer: config.restServer,
+							xmppServer: config.xmppServer,
 							resource: 'webim'
 						}
 					}
