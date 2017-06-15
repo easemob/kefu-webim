@@ -3,7 +3,6 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 
 	var isNoAgentOnlineTipShowed;
 	var receiveMsgTimer;
-	var sessionListView;
 	// todo: use profile.token instead
 	var token;
 	var config;
@@ -11,26 +10,22 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 
 	// other module
 	var chat;
-	var createMessageView;
-	var sessionList;
 	var satisfaction;
 
 	// 监听ack的timer, 每条消息启动一个
-	var ackTimerDict = new easemobim.Dict();
+	var ackTimerDict = new app.Dict();
 
 	// 发消息队列
-	var sendMsgDict = new easemobim.Dict();
+	var sendMsgDict = new app.Dict();
 
 	// 收消息队列
-	var receiveMsgDict = new easemobim.Dict();
+	var receiveMsgDict = new app.Dict();
 
 
 	var channel = {
 		init: function(){
 			config = profile.config;
 			chat = app.chat;
-			createMessageView = app.createMessageView;
-			sessionList = app.sessionList;
 			satisfaction = app.satisfaction;
 		},
 		initConnection: function(){
@@ -87,8 +82,7 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 
 		Modernizr.peerconnection
 			&& profile.grayList.audioVideo
-			// todo: discard _sendText & config
-			&& app.videoChat.init(conn, _sendText, config);
+			&& app.videoChat.init(conn);
 	}
 
 	function _listen() {
@@ -329,7 +323,6 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 	}
 
 	function _handleMessage(msg, msgType, isHistory) {
-		var str;
 		var message;
 		var title;
 		var inviteId;
@@ -503,7 +496,7 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 				var agentNickname = utils.getDataByPath(msg, 'ext.weichat.agent.userNickname');
 				if (agentNickname && (agentNickname !== profile.currentAgentNickname)){
 					profile.currentAgentNickname = agentNickname;
-					_handleSystemEvent(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGE, null, msg);
+					_handleSystemEvent(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGED, null, msg);
 				}
 				var agentAvatar = utils.getAvatarsFullPath(utils.getDataByPath(msg, 'ext.weichat.agent.avatar'), config.domain);
 				agentAvatar && (profile.currentAgentAvatar = agentAvatar);
@@ -614,10 +607,10 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 			msg.body.ext.weichat.visitor.gr_user_id = config.grUserId;
 		}
 
-		if (profile.currentOfficialAccount.official_account_id){
+		// 初始化时系统服务号的ID为defaut，此时不用传
+		if (profile.currentOfficialAccount.official_account_id !== 'default'){
 			msg.body.ext.weichat.official_account = {
-				id: profile.currentOfficialAccount.id,
-				type: profile.currentOfficialAccount.type
+				id: profile.currentOfficialAccount.id
 			};
 		}
 	}
@@ -740,55 +733,32 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 		if (type === 'SYSTEM'){
 			if (_.isEmpty(profile.systemOfficialAccount)){
 				profile.systemOfficialAccount = officialAccount;
-				officialAccount.messageView = createMessageView({
-					parentContainer: chat.doms.chatWrapper,
-					officialAccount: officialAccount
-				});
+				profile.currentOfficialAccount = officialAccount;
 				profile.officialAccountList.push(officialAccount);
+				eventListener.excuteCallbacks(
+					_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND,
+					[officialAccount]
+				);
 			}
 			else if (profile.systemOfficialAccount.official_account_id !== id){
 			 	// 如果id不为null则更新 systemOfficialAccount
 			 	profile.systemOfficialAccount.official_account_id = id;
 				profile.systemOfficialAccount.img = img;
 				profile.systemOfficialAccount.name = name;
+				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SYSTEM_OFFICIAL_ACCOUNT_UPDATED, []);
 			 }
 		}
 		else if (type === 'CUSTOM'){
 			profile.ctaEnable = true;
-			officialAccount.messageView = createMessageView({
-				parentContainer: chat.doms.chatWrapper,
-				officialAccount: officialAccount
-			});
 			profile.officialAccountList.push(officialAccount);
-			_createSessionListViewIfNeeded();
-			profile.sessionListView.appendItem(officialAccount);
+			eventListener.excuteCallbacks(
+				_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND,
+				[officialAccount]
+			);
 		}
 		else {
 			throw 'unexpected official_account type.';
 		}
-	}
-
-	function _createSessionListViewIfNeeded(){
-		if (profile.sessionListView) return;
-
-		profile.sessionListView = sessionList.init({
-			onItemClick: function(id){
-				var targerOfficialAccountProfile = id === 'SYSTEM'
-				? profile.systemOfficialAccount
-				: _.findWhere(profile.officialAccountList, {official_account_id: id});
-
-				_.each(profile.officialAccountList, function(item){
-					item.messageView.hide();
-				});
-
-				targerOfficialAccountProfile.messageView.show();
-				profile.currentOfficialAccount = targerOfficialAccountProfile;
-				_getLastSession(profile.currentOfficialAccount.official_account_id);
-			}
-		});
-		// todo: show list button
-		// todo: add list button
-		utils.on(chat.doms.avatar, 'click', profile.sessionListView.show);
 	}
 
 	// 第二通道发消息

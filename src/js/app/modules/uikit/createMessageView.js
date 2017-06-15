@@ -1,13 +1,13 @@
-app.createMessageView = (function(_const, utils, uikit, apiHelper, channel){
+app.createMessageView = (function(_const, utils, uikit, apiHelper, channel, eventListener){
 	var tpl = '<div class="chat-container"></div>';
+	var parentContainer = document.querySelector('.chat-wrapper');
 
 	return function(opt){
-		var parentContainer = opt.parentContainer;
 		var officialAccount = opt.officialAccount;
 		var el = utils.createElementFromHTML(tpl);
 
 		var currHistoryMsgSeqId = 0;
-		var hasHistoryMessage;
+		var noMoreHistoryMessage;
 
 		var msgTimeSpanBegin = new Date(2099, 0).getTime();
 		var msgTimeSpanEnd = new Date(1970, 0).getTime();
@@ -15,15 +15,37 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper, channel){
 		var recentMsg = [];
 
 		parentContainer.appendChild(el);
-
-		function _getHistoryAndInitHistoryPuller(){
-
+		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, function (){
+			var id = officialAccount.official_account_id;
 			// 拉取历史消息
 			_getHistory(_scrollToBottom);
 
 			// 初始化历史消息拉取
 			_initHistoryPuller();
-		}
+
+			apiHelper.getLastSession(id).then(function(session){
+				officialAccount.agentId = session.agent_id;
+				officialAccount.sessionId = session.session_id;
+				officialAccount.sessionState = session.state;
+				officialAccount.agentType = session.agent_type;
+				officialAccount.isSessionOpen = (
+					session.state === _const.SESSION_STATE.PROCESSING
+					|| session.state === _const.SESSION_STATE.WAIT
+				);
+
+				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);
+			});
+		});
+
+		return {
+			show: _show,
+			hide: _hide,
+			scrollToBottom: _scrollToBottom,
+			appendMsg: _appendMsg,
+			appendEventMsg: _appendEventMsg,
+			getRecentMsg: _getRecentMsg,
+			el: el
+		};
 
 		function _getRecentMsg(maxCount){
 			return _.map(recentMsg.slice(0, maxCount), function(item){
@@ -132,7 +154,7 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper, channel){
 		}
 
 		function _getHistory(callback){
-			if (hasHistoryMessage === false) return;
+			if (noMoreHistoryMessage) return;
 			apiHelper.getOfficalAccountMessage(
 				officialAccount.official_account_id,
 				currHistoryMsgSeqId
@@ -142,7 +164,7 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper, channel){
 				var nextMsgSeq = earliestMsg.id;
 
 				currHistoryMsgSeqId = nextMsgSeq;
-				hasHistoryMessage = length === _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME && nextMsgSeq > 0;
+				noMoreHistoryMessage = length < _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME || nextMsgSeq <= 0;
 				_.each(msgList, channel.handleHistoryMsg);
 				typeof callback === 'function' && callback();
 			});
@@ -196,16 +218,5 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper, channel){
 		function _show(){
 			utils.removeClass(el, 'hide');
 		}
-
-		return {
-			show: _show,
-			hide: _hide,
-			scrollToBottom: _scrollToBottom,
-			appendMsg: _appendMsg,
-			appendEventMsg: _appendEventMsg,
-			getRecentMsg: _getRecentMsg,
-			getHistoryAndInitHistoryPuller: _getHistoryAndInitHistoryPuller,
-			el: el
-		};
 	};
-}(easemobim._const, easemobim.utils, app.uikit, app.apiHelper, app.channel));
+}(easemobim._const, easemobim.utils, app.uikit, app.apiHelper, app.channel, app.eventListener));

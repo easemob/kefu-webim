@@ -1,4 +1,4 @@
-app.videoChat = (function (uikit) {
+app.videoChat = (function (uikit, channel, profile) {
 	var imChat = document.getElementById('em-kefu-webim-chat');
 	var btnVideoInvite = document.querySelector('.em-video-invite');
 	var videoWidget = document.querySelector('.em-widget-video');
@@ -14,11 +14,28 @@ app.videoChat = (function (uikit) {
 			'</p>'
 		].join(''),
 		className: 'rtc-video-confirm'
-	}).addButton({confirm: sendVideoInvite});
+	}).addButton({
+		confirm: function (){
+			channel.sendText('邀请客服进行实时视频', {
+				ext: {
+					type: 'rtcmedia/video',
+					msgtype: {
+						liveStreamInvitation: {
+							msg: '邀请客服进行实时视频',
+							orgName: config.orgName,
+							appName: config.appName,
+							userName: config.user.username,
+							imServiceNumber: config.toUser,
+							resource: 'webim'
+						}
+					}
+				}
+			});
+		}
+	});
 
-	var config = null;
+	var config;
 	var call = null;
-	var sendMessageAPI = null;
 	var localStream = null;
 	var remoteStream = null;
 
@@ -131,28 +148,8 @@ app.videoChat = (function (uikit) {
 	};
 
 
-	function sendVideoInvite() {
-		console.log('send video invite');
-		sendMessageAPI('邀请客服进行实时视频', {
-			ext: {
-				type: 'rtcmedia/video',
-				msgtype: {
-					liveStreamInvitation: {
-						msg: '邀请客服进行实时视频',
-						orgName: config.orgName,
-						appName: config.appName,
-						userName: config.user.username,
-						imServiceNumber: config.toUser,
-						resource: 'webim'
-					}
-				}
-			}
-		});
-	}
-
-	function init(conn, sendMessage, cfg) {
-		sendMessageAPI = sendMessage;
-		config = cfg;
+	function init(conn) {
+		config = profile.config;
 
 		// 视频组件初始化
 		// 直接操作style是为了避免video标签在加载时一闪而过，影响体验
@@ -232,4 +229,4 @@ app.videoChat = (function (uikit) {
 			endCall();
 		}
 	};
-}(app.uikit));
+}(app.uikit, app.channel, app.profile));

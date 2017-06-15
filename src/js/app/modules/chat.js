@@ -1,7 +1,7 @@
 app.chat = (function (
 	_const, utils, uikit, apiHelper, channel, profile, eventListener,
 	satisfaction, initAgentInputStatePoller, initAgentStatePoller,
-	initQueuingNumberPoller, initTransferToKefuButton
+	initQueuingNumberPoller, initTransferToKefuButton, initSessionList
 ){
 	var isEmojiInitilized;
 	var isMessageChannelReady;
@@ -59,7 +59,7 @@ app.chat = (function (
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _updateAgentNickname);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _updateAgentNickname);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _updateAgentNickname);
-		eventListener.add(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGE, _updateAgentNickname);
+		eventListener.add(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGED, _updateAgentNickname);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _updateAgentNickname);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _updateAgentNickname);
 
@@ -364,21 +364,14 @@ app.chat = (function (
 		// init default system message view
 		channel.attemptToAppendOfficialAccount({
 			type: 'SYSTEM',
-			official_account_id: null,
+			official_account_id: 'default',
 			img: null
 		});
-		profile.currentOfficialAccount = profile.systemOfficialAccount;
 
 		apiHelper.getOfficalAccounts().then(function(officialAccountList){
 			_.each(officialAccountList, channel.attemptToAppendOfficialAccount);
-			_.each(profile.officialAccountList, function(officialAccount){
-				officialAccount.messageView.getHistoryAndInitHistoryPuller();
-				_getLastSession(officialAccount);
-			});
 
-			if (profile.ctaEnable){
-				profile.sessionListView.show();
-			}
+			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, []);
 		}, function(err){
 			// 未创建会话时初始化默认服务号
 			if (err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
@@ -393,23 +386,6 @@ app.chat = (function (
 		apiHelper.getExSession().then(function(data) {
 			profile.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
 			profile.hasRobotAgentOnline = data.onlineRobotAgentCount > 0;
-		});
-	}
-
-	function _getLastSession(officialAccount){
-		var id = officialAccount.official_account_id;
-
-		apiHelper.getLastSession(id).then(function(session){
-			officialAccount.agentId = session.agent_id;
-			officialAccount.sessionId = session.session_id;
-			officialAccount.sessionState = session.state;
-			officialAccount.agentType = session.agent_type;
-			officialAccount.isSessionOpen = (
-				session.state === _const.SESSION_STATE.PROCESSING
-				|| session.state === _const.SESSION_STATE.WAIT
-			);
-
-			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);
 		});
 	}
 
@@ -794,6 +770,8 @@ app.chat = (function (
 
 		_bindEvents();
 
+		initSessionList();
+
 		// todo: 去掉getGrayList的block
 		Promise.all([
 			apiHelper.getDutyStatus(),
@@ -865,5 +843,6 @@ app.chat = (function (
 	app.initAgentInputStatePoller,
 	app.initAgentStatePoller,
 	app.initQueuingNumberPoller,
-	app.initTransferToKefuButton
+	app.initTransferToKefuButton,
+	app.initSessionList
 ));

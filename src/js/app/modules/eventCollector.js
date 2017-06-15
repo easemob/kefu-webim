@@ -40,7 +40,6 @@ app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 				break;
 			default:
 				throw 'unexpected event type.';
-				break;
 			}
 		});
 	}
@@ -135,7 +134,7 @@ app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 		isStarted: _isStarted
 	};
 }(
-	easemobim.Polling,
+	app.Poller,
 	easemobim.utils,
 	easemobim._const,
 	app.apiHelper,

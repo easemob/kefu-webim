@@ -1,4 +1,6 @@
-easemobim.Dict = (function () {
+window.app = {};
+
+app.Dict = (function () {
 	var Dict = function () {
 		this.list = {};
 	};
@@ -27,15 +29,15 @@ easemobim.Dict = (function () {
 	return Dict;
 }());
 
-easemobim.Polling = (function () {
-	var Polling = function (fn, interval) {
+app.Poller = (function () {
+	var Poller = function (fn, interval) {
 		this.fn = fn;
 		this.isStarted = false;
 		this.timerHandler = null;
 		this.interval = interval;
 	};
 
-	Polling.prototype.start = function () {
+	Poller.prototype.start = function () {
 		if (!this.isStarted) {
 			this.isStarted = true;
 			setTimeout(this.fn, 0);
@@ -43,37 +45,35 @@ easemobim.Polling = (function () {
 		}
 	};
 
-	Polling.prototype.stop = function () {
+	Poller.prototype.stop = function () {
 		if (this.isStarted) {
 			this.isStarted = false;
 			clearInterval(this.timerHandler);
 		}
 	};
 
-	Polling.prototype.isStarted = function () {
+	Poller.prototype.isStarted = function () {
 		return this.isStarted;
 	};
 
-	return Polling;
+	return Poller;
 }());
 
-window.app = {
-	profile: {
-		ctaEnable: false,
-		currentAgentAvatar: null,
-		currentAgentNickname: null,
-		isChatWindowOpen: null,
-		nickNameOption: null,
-		currentBrowsingURL: null,
-		// 用来缓存图片的file对象，用于全屏查看图片
-		imgFileList: new easemobim.Dict(),
-		hasHumanAgentOnline: false,
-		hasRobotAgentOnline: false,
-		officialAccountList: [],
-		commandMessageToBeSendList: [],
-		tenantAvatar: null,
-		defaultAvatar: null,
-		currentOfficialAccount: {},
-		systemOfficialAccount: {}
-	}
+app.profile = {
+	ctaEnable: false,
+	currentAgentAvatar: null,
+	currentAgentNickname: null,
+	isChatWindowOpen: null,
+	nickNameOption: null,
+	currentBrowsingURL: null,
+	// 用来缓存图片的file对象，用于全屏查看图片
+	imgFileList: new app.Dict(),
+	hasHumanAgentOnline: false,
+	hasRobotAgentOnline: false,
+	officialAccountList: [],
+	commandMessageToBeSendList: [],
+	tenantAvatar: null,
+	defaultAvatar: null,
+	currentOfficialAccount: {},
+	systemOfficialAccount: {}
 };

@@ -39,7 +39,12 @@ easemobim._const = (function () {
 			SESSION_TRANSFERING: 'ServiceSessionTransferedToAgentQueueEvent',
 			SESSION_RESTORED: 'session.restored',
 			SESSION_NOT_CREATED: 'session.not.created',
-			AGENT_NICKNAME_CHANGE: 'agent.nickname.change'
+			AGENT_NICKNAME_CHANGED: 'agent.nickname.changed',
+			OFFICIAL_ACCOUNT_SWITCHED: 'official.account.switched',
+			NEW_OFFICIAL_ACCOUNT_FOUND: 'new.official.account.found',
+			SYSTEM_OFFICIAL_ACCOUNT_UPDATED: 'system.official.account.updated',
+			OFFICIAL_ACCOUNT_LIST_GOT: 'official.account.list.got',
+			block: null
 		},
 
 		themeMap: {
