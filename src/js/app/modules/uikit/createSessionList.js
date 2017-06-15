@@ -3,8 +3,12 @@ app.createSessionList = (function(_const, utils, Dict, uikit, profile, eventList
 	var dialog;
 	var listDom;
 	var itemHashTable = new Dict();
+	var itemOnClickCallback;
 
-	return function (opt){
+	return function (options){
+		opt = options || {};
+		itemOnClickCallback = opt.itemOnClickCallback || EMPTY_FUNCTION;
+
 		dialog = uikit.createDialog({
 			className: 'session-list',
 			contentDom:  '<ul></ul>'
@@ -13,7 +17,7 @@ app.createSessionList = (function(_const, utils, Dict, uikit, profile, eventList
 
 		utils.live('li.session-item', 'click', function (){
 			var id = this.getAttribute('data-id');
-			_itemOnClickCallback(id);
+			itemOnClickCallback(id);
 			dialog.hide();
 		}, listDom);
 
@@ -26,16 +30,16 @@ app.createSessionList = (function(_const, utils, Dict, uikit, profile, eventList
 		};
 	};
 
-	function _updateLatestMessage(item, textMessage){
-		var itemId = item.official_account_id;
+	function _updateLatestMessage(itemId, textMessage, timestamp){
 		var itemDom = itemHashTable.get(itemId);
 		var latestMessageDom = itemDom.querySelector('.latest-message');
+		var latestTimestamp = itemDom.querySelector('.lastest-timestamp');
 
+		latestTimestamp = timestamp;
 		latestMessageDom.innerText = textMessage;
 	}
 
-	function _updateUnreadCount(item, unreadCount){
-		var itemId = item.official_account_id;
+	function _updateUnreadCount(itemId, unreadCount){
 		var itemDom = itemHashTable.get(itemId);
 		var unreadCountDom = itemDom.querySelector('.unread-count');
 
@@ -46,24 +50,6 @@ app.createSessionList = (function(_const, utils, Dict, uikit, profile, eventList
 			unreadCountDom.innerText = unreadCount;
 			utils.removeClass(unreadCountDom, 'hide');
 		}
-	}
-
-	function _itemOnClickCallback(id){
-		var targerOfficialAccountProfile = _.findWhere(profile.officialAccountList, {official_account_id: id});
-
-		_.each(profile.officialAccountList, function(item){
-			item.messageView.hide();
-		});
-
-		targerOfficialAccountProfile.messageView.show();
-		profile.currentOfficialAccount = targerOfficialAccountProfile;
-
-		eventListener.excuteCallbacks(
-			_const.SYSTEM_EVENT.SWITCH_OFFICIAL_ACCOUNT,
-			[targerOfficialAccountProfile]
-		);
-		// todo: to confirm this session info
-		// _getLastSession(profile.currentOfficialAccount.official_account_id);
 	}
 
 	function _updateItem(item, oldId){
@@ -89,11 +75,11 @@ app.createSessionList = (function(_const, utils, Dict, uikit, profile, eventList
 		var avatar = item.img || profile.defaultAvatar;
 		return utils.createElementFromHTML([
 			'<li class="session-item" data-id="' + id + '">',
-				'<img src="' + avatar + '">',
+				'<img class="avatar" src="' + avatar + '">',
 				'<span class="name">' + name + '</span>',
-				'<span class="latest-message"></span>',
-				'<span class="latest-message"></span>',
-				'<span class="unread-count icon-circle"></span>',
+				'<span class="latest-message">sdoij;fosmdoijnsdnfsoidddfsdffdfjmslfkmsldfnsofidfn</span>',
+				'<span class="latest-timestamp">2017-01-01 00:00:00</span>',
+				'<span class="unread-count">6</span>',
 			'</li>'
 		].join(''));
 	}

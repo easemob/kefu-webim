@@ -44,9 +44,13 @@ app.initAgentInputStatePoller = (function(_const, utils, profile, apiHelper, eve
 	}
 
 	function _update(){
-		if (!profile.isChatWindowOpen || utils.isBrowserMinimized()) return;
-
 		var sessionId = profile.currentOfficialAccount.sessionId;
+
+		if (
+			!profile.isChatWindowOpen
+			|| utils.isBrowserMinimized()
+			|| !sessionId
+		) return;
 
 		apiHelper.getAgentInputState(sessionId).then(function (entity){
 			var currentTimestamp = entity.timestamp;

@@ -28,16 +28,17 @@ app.initAgentStatePoller = (function(_const,  utils, profile, eventListener, api
 	}
 
 	function _update() {
-		if (
-			!profile.nickNameOption
-			|| profile.isChatWindowOpen
-			|| utils.isBrowserMinimized()
-		) return;
-
 		var officialAccount = profile.currentOfficialAccount;
 		var agentId = officialAccount.agentId;
 		var agentType = officialAccount.agentType;
 		var isSessionOpen = officialAccount.isSessionOpen;
+
+		if (
+			!profile.nickNameOption
+			|| !agentId
+			|| profile.isChatWindowOpen
+			|| utils.isBrowserMinimized()
+		) return;
 
 		if (!isSessionOpen){
 			$agentStatusText.innerText = '';

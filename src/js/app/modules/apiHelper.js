@@ -600,7 +600,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 					serviceSessionId: sessionId,
 					token: token,
 				}, function (msg) {
-					resolve(resp.data.entity);
+					resolve(msg.data.entity);
 				}, function(err){
 					reject(err);
 				});
@@ -630,7 +630,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 				var optionValue = utils.getDataByPath(msg, 'data.0.optionValue');
 				resolve(optionValue === 'true');
 			}, function(err){
-				resolve(err);
+				reject(err);
 			});
 		});
 	}
@@ -664,7 +664,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 			}, function (msg) {
 				resolve(msg.data);
 			}, function(err){
-				resolve(err);
+				reject(err);
 			});
 		});
 	}
@@ -684,7 +684,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 					reject('unable to get password.');
 				}
 			}, function(err){
-				resolve(err);
+				reject(err);
 			});
 		});
 	}
@@ -703,7 +703,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 					reject('未创建关联');
 				}
 			}, function(err){
-				resolve(err);
+				reject(err);
 			});
 		});
 	}

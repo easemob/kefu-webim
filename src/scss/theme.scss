@@ -28,6 +28,9 @@
 	.bg-hover-color-dark:hover {
 		background-color: $dark-color!important;
 	}
+	.bg-border-bottom-color {
+		border-bottom-color: $theme-color!important;
+	}
 }
 
 body {

@@ -259,9 +259,57 @@
 	}
 	&.session-list {
 		ul {
-			li {
+			> .session-item {
+				margin-left: 10px;
+				position: relative;
 				height: 60px;
-				border: 1px solid gray;
+				line-height: 60px;
+				border-bottom: 1px solid #e5e5e5;
+				font-weight: bold;
+				> img.avatar {
+					width: 40px;
+					height: 40px;
+					border-radius: 50%;
+					vertical-align: middle;
+				}
+				.name {
+					position: absolute;
+					padding-left: 10px;
+					line-height: 40px;
+					max-width: 40%;
+					text-overflow: ellipsis;
+					overflow: hidden;
+					font-size: 14px;
+					font-weight: normal;
+				}
+				.latest-message {
+					position: absolute;
+					padding-left: 10px;
+					line-height: 30px;
+					bottom: 0;
+					max-width: 70%;
+					text-overflow: ellipsis;
+					overflow: hidden;
+					color: #999;
+				}
+				.latest-timestamp {
+					float: right;
+					padding-right: 15px;
+					line-height: 40px;
+					color: #999;
+				}
+				.unread-count {
+					line-height: 20px;
+					position: absolute;
+					bottom: 5px;
+					right: 15px;
+					color: white;
+					background-color: #ff661a;
+					border-radius: 50%;
+					width: 20px;
+					height: 20px;
+					text-align: center;
+				}
 			}
 		}
 	}
@@ -297,6 +345,77 @@
 				vertical-align: middle;
 				text-align: center;
 				width: 100%;
+			}
+		}
+	}
+	&.cta-prompt {
+		top: 50px;
+		height: auto;
+		overflow: initial;
+		> .indicator {
+			border-width: 0 10px 10px;
+			border-top-color: #03A9F4;
+			border-left-color: transparent;
+			border-right-color: transparent;
+			border-style: solid;
+			width: 3px;
+			height: 3px;
+			display: inline-block;
+			position: absolute;
+			top: -10px;
+			left: 10px;
+		}
+		> .header {
+			color: white;
+			padding: 0 10px;
+			height: 40px;
+			line-height: 40px;
+			border-top-right-radius: 5px;
+			border-top-left-radius: 5px;
+    		> .avatar {
+				height: 30px;
+				width: 30px;
+				border-radius: 50px;
+			}
+			> .title {
+				font-size: 16px;
+				vertical-align: text-bottom;
+				padding-left: 10px;
+			}
+			> .btn-close {
+				float: right;
+				line-height: 40px;
+				&:before {
+					font-size: 40px;
+				}
+			}
+		}
+		> .body {
+			padding: 10px;
+			height: 100px;
+			font-size: 14px;
+			overflow: scroll;
+			border-bottom: 1px solid #e5e5e5;
+			p {}
+		}
+		> .footer {
+			height: 50px;
+			margin: 0 20px;
+			width: initial;
+			line-height: 50px;
+			float: right;
+			.btn-reply {
+				width: auto;
+				height: 35px;
+				line-height: 35px;
+				font-size: 16px;
+				padding: 0 10px;
+				vertical-align: middle;
+				float: none;
+				&:before {
+					padding-right: 10px;
+					font-size: 25px;
+				}
 			}
 		}
 	}
