@@ -580,7 +580,7 @@
 		case 'reportMarketingTaskReplied':
 			url = '/v1/webimplugin/tenants/' + tenantId
 				+ '/marketing-tasks/' + params.marketingTaskId
-				+ '/opened'
+				+ '/replied'
 				+ '?orgName=' + params.orgName
 				+ '&appName=' + params.appName
 				+ '&userName=' + params.userName

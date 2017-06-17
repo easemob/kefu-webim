@@ -502,7 +502,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 					[
 						msg,
 						marketingTaskId,
-						getOfficialAccountById(officialAccount && officialAccount.official_account_id)
+						_getOfficialAccountById(officialAccount && officialAccount.official_account_id)
 					]
 				);
 
@@ -630,7 +630,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 		// 初始化时系统服务号的ID为defaut，此时不用传
 		if (profile.currentOfficialAccount.official_account_id !== 'default'){
 			msg.body.ext.weichat.official_account = {
-				id: profile.currentOfficialAccount.id
+				official_account_id: profile.currentOfficialAccount.official_account_id
 			};
 		}
 	}
