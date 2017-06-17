@@ -531,6 +531,75 @@
 				type: 'POST'
 			});
 			break;
+		case 'reportMarketingTaskDelivered':
+			url = '/v1/webimplugin/tenants/' + tenantId
+				+ '/marketing-tasks/' + params.marketingTaskId
+				+ '/delivered'
+				+ '?orgName=' + params.orgName
+				+ '&appName=' + params.appName
+				+ '&userName=' + params.userName
+				+ '&token=' + params.token;
+
+			delete params.tenantId;
+			delete params.marketingTaskId;
+
+			delete params.orgName;
+			delete params.appName;
+			delete params.userName;
+			delete params.token;
+
+			emitAjax({
+				url: url,
+				msg: msg,
+				type: 'PUT'
+			});
+			break;
+		case 'reportMarketingTaskOpened':
+			url = '/v1/webimplugin/tenants/' + tenantId
+				+ '/marketing-tasks/' + params.marketingTaskId
+				+ '/opened'
+				+ '?orgName=' + params.orgName
+				+ '&appName=' + params.appName
+				+ '&userName=' + params.userName
+				+ '&token=' + params.token;
+
+			delete params.tenantId;
+			delete params.marketingTaskId;
+
+			delete params.orgName;
+			delete params.appName;
+			delete params.userName;
+			delete params.token;
+
+			emitAjax({
+				url: url,
+				msg: msg,
+				type: 'PUT'
+			});
+			break;
+		case 'reportMarketingTaskReplied':
+			url = '/v1/webimplugin/tenants/' + tenantId
+				+ '/marketing-tasks/' + params.marketingTaskId
+				+ '/opened'
+				+ '?orgName=' + params.orgName
+				+ '&appName=' + params.appName
+				+ '&userName=' + params.userName
+				+ '&token=' + params.token;
+
+			delete params.tenantId;
+			delete params.marketingTaskId;
+
+			delete params.orgName;
+			delete params.appName;
+			delete params.userName;
+			delete params.token;
+
+			emitAjax({
+				url: url,
+				msg: msg,
+				type: 'PUT'
+			});
+			break;
 		default:
 			console.error('unexpect api name: ' + apiName);
 			break;

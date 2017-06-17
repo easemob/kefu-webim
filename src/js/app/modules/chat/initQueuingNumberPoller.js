@@ -16,7 +16,7 @@ app.initQueuingNumberPoller = (function (_const, utils, profile, eventListener, 
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _startOrStopQueuingNumberPoller);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_CREATED, _startOrStopQueuingNumberPoller);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _startOrStopQueuingNumberPoller);
-	}
+	};
 
 	function _startOrStopQueuingNumberPoller(officialAccount, event){
 		if (profile.currentOfficialAccount !== officialAccount) return;

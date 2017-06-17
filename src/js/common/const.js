@@ -44,6 +44,8 @@ easemobim._const = (function () {
 			NEW_OFFICIAL_ACCOUNT_FOUND: 'new.official.account.found',
 			SYSTEM_OFFICIAL_ACCOUNT_UPDATED: 'system.official.account.updated',
 			OFFICIAL_ACCOUNT_LIST_GOT: 'official.account.list.got',
+			MARKETING_MESSAGE_RECEIVED: 'marketing.message.received',
+			MESSAGE_SENT: 'message.sent',
 			block: null
 		},
 

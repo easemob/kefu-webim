@@ -1,4 +1,4 @@
-app.channel = (function(_const, utils, apiHelper, eventListener, profile){
+app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, profile){
 	'strict';
 
 	var isNoAgentOnlineTipShowed;
@@ -13,13 +13,13 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 	var satisfaction;
 
 	// 监听ack的timer, 每条消息启动一个
-	var ackTimerDict = new app.Dict();
+	var ackTimerDict = new Dict();
 
 	// 发消息队列
-	var sendMsgDict = new app.Dict();
+	var sendMsgDict = new Dict();
 
 	// 收消息队列
-	var receiveMsgDict = new app.Dict();
+	var receiveMsgDict = new Dict();
 
 
 	var channel = {
@@ -210,6 +210,8 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 		_promptNoAgentOnlineIfNeeded({
 			hasTransferedToKefu: message === '转人工' || message === '转人工客服'
 		});
+
+		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 	}
 
 	function _sendTransferToKf(tid, sessionId) {
@@ -233,6 +235,7 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 		_detectSendTextMsgByApi(id);
 
 		_promptNoAgentOnlineIfNeeded({hasTransferedToKefu: true});
+		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 	}
 
 	function _sendImg(fileMsg, fileInput) {
@@ -279,6 +282,7 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 
 		// 自己发出去的图片要缓存File对象，用于全屏显示图片
 		profile.imgFileList.set(fileMsg.url, fileMsg.data);
+		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 	}
 
 	function _sendFile(fileMsg, fileInput) {
@@ -320,6 +324,7 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 			isHistory: false
 		});
 		conn.send(msg.body);
+		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 	}
 
 	function _handleMessage(msg, msgType, isHistory) {
@@ -335,6 +340,7 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 		// from 不存在默认认为是收到的消息
 		var isReceived = !msg.from || (msg.from.toLowerCase() !== config.user.username.toLowerCase());
 		var officialAccount = utils.getDataByPath(msg, 'ext.weichat.official_account');
+		var marketingTaskId = utils.getDataByPath(msg, 'ext.weichat.marketing.marketing_task_id');
 
 		if (receiveMsgDict.get(msgId)) {
 			// 重复消息不处理
@@ -489,6 +495,17 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 		if (!isHistory) {
 			// 实时消息需要处理系统事件
 
+			marketingTaskId
+				&& type === 'txt'
+				&& eventListener.excuteCallbacks(
+					_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
+					[
+						msg,
+						marketingTaskId,
+						getOfficialAccountById(officialAccount && officialAccount.official_account_id)
+					]
+				);
+
 			if (eventName){
 				_handleSystemEvent(eventName, eventObj, msg);
 			}
@@ -498,7 +515,10 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 					profile.currentAgentNickname = agentNickname;
 					_handleSystemEvent(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGED, null, msg);
 				}
-				var agentAvatar = utils.getAvatarsFullPath(utils.getDataByPath(msg, 'ext.weichat.agent.avatar'), config.domain);
+				var agentAvatar = utils.getAvatarsFullPath(
+					utils.getDataByPath(msg, 'ext.weichat.agent.avatar'),
+					config.domain
+				);
 				agentAvatar && (profile.currentAgentAvatar = agentAvatar);
 			}
 		}
@@ -735,6 +755,8 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 				profile.systemOfficialAccount = officialAccount;
 				profile.currentOfficialAccount = officialAccount;
 				profile.officialAccountList.push(officialAccount);
+				officialAccount.unopenedMarketingTaskIdList = new List();
+				officialAccount.unrepliedMarketingTaskIdList = new List();
 				eventListener.excuteCallbacks(
 					_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND,
 					[officialAccount]
@@ -751,6 +773,8 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 		else if (type === 'CUSTOM'){
 			profile.ctaEnable = true;
 			profile.officialAccountList.push(officialAccount);
+			officialAccount.unopenedMarketingTaskIdList = new List();
+			officialAccount.unrepliedMarketingTaskIdList = new List();
 			eventListener.excuteCallbacks(
 				_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND,
 				[officialAccount]
@@ -887,6 +911,8 @@ app.channel = (function(_const, utils, apiHelper, eventListener, profile){
 }(
 	easemobim._const,
 	easemobim.utils,
+	app.List,
+	app.Dict,
 	app.apiHelper,
 	app.eventListener,
 	app.profile

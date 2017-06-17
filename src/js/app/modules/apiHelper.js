@@ -807,6 +807,108 @@ app.apiHelper = (function (_const, utils, emajax) {
 		});
 	}
 
+	function reportMarketingTaskDelivered(marketingTaskId){
+		return new Promise(function(resolve, reject){
+			Promise.all([
+				getVisitorId(),
+				getToken()
+			]).then(function(result){
+				var visitorId = result[0];
+				var token = result[1];
+
+				api('reportMarketingTaskDelivered', {
+					marketingTaskId: marketingTaskId,
+					tenantId: config.tenantId,
+					orgName: config.orgName,
+					appName: config.appName,
+					userName: config.user.username,
+					token: token,
+					visitor_id: visitorId,
+				}, function(msg){
+					var status = utils.getDataByPath(msg, 'data.status');
+
+					if (status === 'OK'){
+						resolve();
+					}
+					else {
+						reject('unexpected reaponse status.');
+					}
+					resolve(msg.data);
+				}, function(err){
+					reject(err);
+				});
+			});
+		});
+	}
+
+	function reportMarketingTaskOpened(marketingTaskId){
+		return new Promise(function(resolve, reject){
+			Promise.all([
+				getVisitorId(),
+				getToken()
+			]).then(function(result){
+				var visitorId = result[0];
+				var token = result[1];
+
+				api('reportMarketingTaskOpened', {
+					marketingTaskId: marketingTaskId,
+					tenantId: config.tenantId,
+					orgName: config.orgName,
+					appName: config.appName,
+					userName: config.user.username,
+					token: token,
+					visitor_id: visitorId,
+				}, function(msg){
+					var status = utils.getDataByPath(msg, 'data.status');
+
+					if (status === 'OK'){
+						resolve();
+					}
+					else {
+						reject('unexpected reaponse status.');
+					}
+					resolve(msg.data);
+				}, function(err){
+					reject(err);
+				});
+			});
+		});
+	}
+
+	function reportMarketingTaskReplied(marketingTaskId){
+		return new Promise(function(resolve, reject){
+			Promise.all([
+				getVisitorId(),
+				getToken()
+			]).then(function(result){
+				var visitorId = result[0];
+				var token = result[1];
+
+				api('reportMarketingTaskReplied', {
+					marketingTaskId: marketingTaskId,
+					tenantId: config.tenantId,
+					orgName: config.orgName,
+					appName: config.appName,
+					userName: config.user.username,
+					token: token,
+					visitor_id: visitorId,
+				}, function(msg){
+					var status = utils.getDataByPath(msg, 'data.status');
+
+					if (status === 'OK'){
+						resolve();
+					}
+					else {
+						reject('unexpected reaponse status.');
+					}
+					resolve(msg.data);
+				}, function(err){
+					reject(err);
+				});
+			});
+		});
+	}
+
 	return {
 		getCurrentServiceSession: getCurrentServiceSession,
 		getSessionQueueId: getSessionQueueId,
@@ -842,6 +944,9 @@ app.apiHelper = (function (_const, utils, emajax) {
 		receiveMsgChannel: receiveMsgChannel,
 		sendMsgChannel: sendMsgChannel,
 		uploadImgMsgChannel: uploadImgMsgChannel,
+		reportMarketingTaskDelivered: reportMarketingTaskDelivered,
+		reportMarketingTaskOpened: reportMarketingTaskOpened,
+		reportMarketingTaskReplied: reportMarketingTaskReplied,
 
 		initApiTransfer: initApiTransfer,
 		api: api,

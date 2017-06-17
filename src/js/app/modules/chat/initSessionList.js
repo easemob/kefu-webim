@@ -11,6 +11,7 @@ app.initSessionList = (function (
 		sessionListBtn = topBar.querySelector('.session-list-btn');
 		redDotDom = sessionListBtn.querySelector('.notice');
 
+		eventListener.add(_const.SYSTEM_EVENT.MESSAGE_SENT, _onMessageSent);
 		eventListener.add(_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND, _newOfficialAccountFound);
 		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _officialAccountSwitched);
 
@@ -23,24 +24,39 @@ app.initSessionList = (function (
 		});
 	};
 
-	function _officialAccountSwitched(){
-		// todo: clear unread count
+	function _onMessageSent(){
+		var officialAccount = profile.currentOfficialAccount;
+		_.each(officialAccount.unrepliedMarketingTaskIdList.getAll(), function(marketingTaskId){
+			officialAccount.unrepliedMarketingTaskIdList.remove(marketingTaskId);
+			apiHelper.reportMarketingTaskOpened(marketingTaskId);
+		});
 	}
 
-	function _newMessageAppend(message){
-		var officialAccount;
-		var officialAccountId;
-		var avatar;
-		var content;
-		var title;
-
-		app.promptCtaDialog({
-			title: 'test title',
-			replyCallback: _switchToOfficialAccount,
-			content: '您好,【#访客昵称】，感谢您对我产品的长期支持，自2017年3月5日起，我们即将推出一款全新理财产品【金融旋风】，4月1日开始发售至10月1日后进行返还，预计收益19.31%，风险指数极低，5000万元起，您可以从目前的产品直接过度到【金融旋风】，截止日期至3月31日。如果您对此感兴趣，可以跟我联系。',
-			avatar: 'static/img/default_avatar.png',
-			callbackMessage: '12123123213'
+	function _officialAccountSwitched(officialAccount){
+		_.each(officialAccount.unopenedMarketingTaskIdList.getAll(), function(marketingTaskId){
+			officialAccount.unopenedMarketingTaskIdList.remove(marketingTaskId);
+			apiHelper.reportMarketingTaskOpened(marketingTaskId);
 		});
+	}
+
+	function _onMarketingMessageReceived(msg, marketingTaskId, officialAccount){
+		var avatar = officialAccount.img;
+		var officialAccountId = officialAccount.official_account_id;
+		var content = msg.data;
+		var title = '';
+		var isCurrentOfficialAccount = officialAccount === profile.currentOfficialAccount;
+
+		!isCurrentOfficialAccount && app.promptCtaDialog({
+			title: title,
+			replyCallback: _switchToOfficialAccount,
+			content: content,
+			avatar: avatar,
+			callbackMessage: officialAccountId
+		});
+
+		officialAccount.unopenedMarketingTaskIdList.add(marketingTaskId);
+		officialAccount.unrepliedMarketingTaskIdList.add(marketingTaskId);
+		apiHelper.reportMarketingTaskDelivered(marketingTaskId);
 	}
 
 	function _switchToOfficialAccount(id){
@@ -54,11 +70,9 @@ app.initSessionList = (function (
 		profile.currentOfficialAccount = targerOfficialAccountProfile;
 
 		eventListener.excuteCallbacks(
-			_const.SYSTEM_EVENT.SWITCH_OFFICIAL_ACCOUNT,
+			_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED,
 			[targerOfficialAccountProfile]
 		);
-		// todo: to confirm this session info
-		// _getLastSession(profile.currentOfficialAccount.official_account_id);
 	}
 
 	function _newOfficialAccountFound(officialAccount){
