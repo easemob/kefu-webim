@@ -163,8 +163,8 @@ app.apiHelper = (function (_const, utils, emajax) {
 			api('getConfig', {
 				configId: configId
 			}, function (msg) {
-				var res = utils.getDataByPath(msg, 'data.entity');
-				resolve(res);
+				var entity = utils.getDataByPath(msg, 'data.entity');
+				resolve(entity);
 			}, function(err){
 				reject(err);
 			});

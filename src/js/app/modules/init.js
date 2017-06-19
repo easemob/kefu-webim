@@ -160,9 +160,9 @@
 			initChat();
 		}
 		else if (config.configId) {
-			apiHelper.getConfig(config.configId).then(function(res){
-				config.tenantId = res.tenantId;
-				handleConfig(res.configJson);
+			apiHelper.getConfig(config.configId).then(function(entity){
+				config.tenantId = entity.tenantId;
+				handleConfig(entity.configJson);
 				initChat();
 			});
 		}
