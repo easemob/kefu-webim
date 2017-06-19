@@ -14,7 +14,11 @@ app.initSessionList = (function (
 		eventListener.add(_const.SYSTEM_EVENT.MESSAGE_SENT, _onMessageSent);
 		eventListener.add(_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED, _onMarketingMessageReceived);
 		eventListener.add(_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND, _newOfficialAccountFound);
-		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _officialAccountSwitched);
+		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _reportOpened);
+		eventListener.add(_const.SYSTEM_EVENT.CHAT_WINDOW_OPENED, function (){
+			var officialAccount = profile.currentOfficialAccount;
+			!_.isEmpty(officialAccount) && _reportOpened(officialAccount);
+		});
 
 		eventListener.add(_const.SYSTEM_EVENT.SYSTEM_OFFICIAL_ACCOUNT_UPDATED, function (){
 			sessionListView.updateItem(profile.systemOfficialAccount, 'default');
@@ -33,7 +37,7 @@ app.initSessionList = (function (
 		});
 	}
 
-	function _officialAccountSwitched(officialAccount){
+	function _reportOpened(officialAccount){
 		_.each(officialAccount.unopenedMarketingTaskIdList.getAll(), function(marketingTaskId){
 			officialAccount.unopenedMarketingTaskIdList.remove(marketingTaskId);
 			apiHelper.reportMarketingTaskOpened(marketingTaskId);
@@ -46,16 +50,27 @@ app.initSessionList = (function (
 		var content = msg.data;
 		var title = '';
 		var isCurrentOfficialAccount = officialAccount === profile.currentOfficialAccount;
+		var scheculeInfo = utils.getDataByPath(msg, 'ext.weichat.marketing.schecule_info') || {};
+		officialAccount.bindSkillGroupName = scheduleInfo.skillgroup_name;
+		officialAccount.bindAgentUsername = scheduleInfo.agent_username;
 
-		!isCurrentOfficialAccount && app.promptCtaDialog({
-			title: title,
-			replyCallback: _switchToOfficialAccount,
-			content: content,
-			avatar: avatar,
-			callbackMessage: officialAccountId
-		});
+		!isCurrentOfficialAccount
+			&& !sessionListView.isShowed()
+			&& app.promptCtaDialog({
+				title: title,
+				replyCallback: _switchToOfficialAccount,
+				content: content,
+				avatar: avatar,
+				callbackMessage: officialAccountId
+			});
 
-		officialAccount.unopenedMarketingTaskIdList.add(marketingTaskId);
+		if (profile.isChatWindowOpen){
+			apiHelper.reportMarketingTaskOpened(marketingTaskId);
+		}
+		else {
+			officialAccount.unopenedMarketingTaskIdList.add(marketingTaskId);
+		}
+
 		officialAccount.unrepliedMarketingTaskIdList.add(marketingTaskId);
 		apiHelper.reportMarketingTaskDelivered(marketingTaskId);
 	}

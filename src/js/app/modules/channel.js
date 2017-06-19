@@ -603,11 +603,19 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 	}
 
 	function _setExt(msg) {
+		var officialAccount = profile.currentOfficialAccount;
+		var officialAccountId = officialAccount.official_account_id;
+		var bindAgentUsername = officialAccount.bindAgentUsername;
+		var bindSkillGroupName = officialAccount.bindSkillGroupName;
+
 		msg.body.ext = msg.body.ext || {};
 		msg.body.ext.weichat = msg.body.ext.weichat || {};
 
-		//bind skill group
-		if (config.emgroup) {
+		// bind skill group
+		if (bindSkillGroupName){
+			msg.body.ext.weichat.queueName = bindSkillGroupName;
+		}
+		else if (config.emgroup) {
 			msg.body.ext.weichat.queueName = config.emgroup;
 		}
 
@@ -616,8 +624,11 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 			msg.body.ext.weichat.visitor = config.visitor;
 		}
 
-		//bind agent
-		if (config.agentName) {
+		// bind agent username
+		if (bindAgentUsername){
+			msg.body.ext.weichat.agentUsername = bindAgentUsername;
+		}
+		else if (config.agentName) {
 			msg.body.ext.weichat.agentUsername = config.agentName;
 		}
 
@@ -628,9 +639,9 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 		}
 
 		// 初始化时系统服务号的ID为defaut，此时不用传
-		if (profile.currentOfficialAccount.official_account_id !== 'default'){
+		if (officialAccountId !== 'default'){
 			msg.body.ext.weichat.official_account = {
-				official_account_id: profile.currentOfficialAccount.official_account_id
+				official_account_id: officialAccountId
 			};
 		}
 	}

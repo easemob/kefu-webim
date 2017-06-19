@@ -62,6 +62,7 @@ app.chat = (function (
 		eventListener.add(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGED, _updateAgentNickname);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _updateAgentNickname);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _updateAgentNickname);
+		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _updateAgentNickname);
 
 		// report visitor info
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _reportVisitorInfo);
@@ -79,7 +80,7 @@ app.chat = (function (
 		var sessionId = officialAccount.sessionId;
 		var isSessionOpen = officialAccount.isSessionOpen;
 
-		if (isSessionOpen){
+		if (isSessionOpen && sessionId){
 			officialAccount.hasReportedAttributes = true;
 			apiHelper.reportVisitorAttributes(sessionId);
 		}
@@ -688,6 +689,8 @@ app.chat = (function (
 			utils.addClass(doms.imChat, 'hide');
 			utils.removeClass(easemobim.imBtn, 'hide');
 		}
+
+		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CHAT_WINDOW_CLOSED, []);
 	}
 
 	function _show() {
@@ -697,6 +700,7 @@ app.chat = (function (
 		_scrollToBottom();
 		if (
 			// todo: fix this issue
+			// todo: onInit !isChatWindowOpen && _show()
 			// 可能会在初始化完成之前读取config
 			config && config.isInOfficehours
 			// IE 8 will throw an error when focus an invisible element
@@ -704,7 +708,10 @@ app.chat = (function (
 		) {
 			doms.textInput.focus();
 		}
+
 		transfer.send({ event: _const.EVENTS.RECOVERY });
+
+		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CHAT_WINDOW_OPENED, []);
 	}
 
 	function _handleReady(info) {
@@ -738,10 +745,15 @@ app.chat = (function (
 	}
 
 	function _updateAgentNickname() {
+		var officialAccount = profile.currentOfficialAccount;
 		var nickname = profile.currentAgentNickname;
 		var isSessionOpen = profile.currentOfficialAccount.isSessionOpen;
 
-		if (
+		if (officialAccount.type === 'CUSTOM'){
+			// 昵称显示为服务号名称
+			doms.nickname.innerText = officialAccount.name;
+		}
+		else if (
 			profile.nickNameOption
 			&& nickname
 			&& isSessionOpen

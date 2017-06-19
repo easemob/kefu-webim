@@ -600,6 +600,20 @@
 				type: 'PUT'
 			});
 			break;
+		case 'getLatestMarketingTask':
+			emitAjax({
+				url: '/v1/webimplugin/tenants/' + tenantId
+					+ '/official-accounts/' + params.officialAccountId
+					+ '/marketing-tasks'
+					+ '?orgName=' + params.orgName
+					+ '&appName=' + params.appName
+					+ '&userName=' + params.userName
+					+ '&token=' + params.token,
+				msg: msg,
+				type: 'GET',
+				excludeData: true
+			});
+			break;
 		default:
 			console.error('unexpect api name: ' + apiName);
 			break;
