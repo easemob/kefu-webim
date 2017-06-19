@@ -170,7 +170,7 @@
 	//auto load
 	if (
 		(!_config.hide || _config.autoConnect || _config.eventCollector)
-		&& _config.tenantId && !utils.isMobile
+		&& (_config.tenantId || _config.configId) && !utils.isMobile
 	) {
 		var cacheKeyName = config.tenantId + (config.emgroup || '');
 

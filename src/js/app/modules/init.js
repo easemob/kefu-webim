@@ -160,8 +160,9 @@
 			initChat();
 		}
 		else if (config.configId) {
-			apiHelper.getConfig(config.configId).then(function(configJson){
-				handleConfig(configJson);
+			apiHelper.getConfig(config.configId).then(function(res){
+				config.tenantId = res.tenantId;
+				handleConfig(res.configJson);
 				initChat();
 			});
 		}
@@ -184,10 +185,10 @@
 		config.agentName = configJson.channel.agentName;
 		config.emgroup = configJson.channel.emgroup;
 
-		config.buttonText = configJson.ui.buttonText;
-		config.dialogHeight = configJson.ui.dialogHeight;
-		config.dialogWidth = configJson.ui.dialogWidth;
-		config.dialogPosition = configJson.ui.dialogPosition;
+		// config.buttonText = configJson.ui.buttonText;
+		// config.dialogHeight = configJson.ui.dialogHeight;
+		// config.dialogWidth = configJson.ui.dialogWidth;
+		// config.dialogPosition = configJson.ui.dialogPosition;
 		config.dragenable = configJson.ui.dragenable;
 		config.hide = configJson.ui.hide;
 		config.logo = configJson.ui.logo;
