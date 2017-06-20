@@ -11,7 +11,7 @@ app.initSessionList = (function (
 		sessionListBtn = topBar.querySelector('.session-list-btn');
 		redDotDom = sessionListBtn.querySelector('.notice');
 
-		eventListener.add(_const.SYSTEM_EVENT.MESSAGE_SENT, _onMessageSent);
+		eventListener.add(_const.SYSTEM_EVENT.MESSAGE_SENT, _reportReplied);
 		eventListener.add(_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED, _onMarketingMessageReceived);
 		eventListener.add(_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND, _newOfficialAccountFound);
 		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _reportOpened);
@@ -29,7 +29,7 @@ app.initSessionList = (function (
 		});
 	};
 
-	function _onMessageSent(){
+	function _reportReplied(){
 		var officialAccount = profile.currentOfficialAccount;
 		_.each(officialAccount.unrepliedMarketingTaskIdList.getAll(), function(marketingTaskId){
 			officialAccount.unrepliedMarketingTaskIdList.remove(marketingTaskId);
