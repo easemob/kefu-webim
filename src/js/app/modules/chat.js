@@ -331,9 +331,10 @@ app.chat = (function (
 	}
 
 	function _scrollToBottom(){
-		var currentMessageView = profile.currentOfficialAccount.messageView;
+		var scrollToBottom = utils.getDataByPath(profile, 'currentOfficialAccount.messageView.scrollToBottom');
 		// 有可能在 messageView 未初始化时调用
-		currentMessageView && currentMessageView.scrollToBottom();
+		// todo: remove this detect
+		typeof scrollToBottom === 'function' && scrollToBottom();
 	}
 
 	function _initAutoGrow(){
@@ -362,13 +363,6 @@ app.chat = (function (
 	}
 
 	function _initOfficialAccount(){
-		// init default system message view
-		channel.attemptToAppendOfficialAccount({
-			type: 'SYSTEM',
-			official_account_id: 'default',
-			img: null
-		});
-
 		apiHelper.getOfficalAccounts().then(function(officialAccountList){
 			_.each(officialAccountList, channel.attemptToAppendOfficialAccount);
 
@@ -376,7 +370,16 @@ app.chat = (function (
 		}, function(err){
 			// 未创建会话时初始化默认服务号
 			if (err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
-				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [profile.currentOfficialAccount]);
+				// init default system message view
+				channel.attemptToAppendOfficialAccount({
+					type: 'SYSTEM',
+					official_account_id: 'default',
+					img: null
+				});
+
+				profile.currentOfficialAccount = profile.systemOfficialAccount;
+
+				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [profile.systemOfficialAccount]);
 			}
 			else {
 				throw err;
@@ -456,6 +459,8 @@ app.chat = (function (
 
 		utils.live('button.js-transfer-to-ticket', utils.click, function (){
 			var officialAccount = profile.currentOfficialAccount;
+			if (!officialAccount) return;
+
 			var isSessionOpen = officialAccount.isSessionOpen;
 			var sessionId = officialAccount.sessionId;
 
@@ -467,7 +472,7 @@ app.chat = (function (
 					phone: config.visitor.phone,
 					mail: config.visitor.email,
 					// 	取最近10条消息，最大1000字
-					content: utils.getBrief('\n' + profile.systemOfficialAccount.messageView.getRecentMsg(10), 1000)
+					content: utils.getBrief('\n' + officialAccount.messageView.getRecentMsg(10), 1000)
 				}
 			});
 		});
@@ -504,7 +509,7 @@ app.chat = (function (
 		});
 
 		var messagePredict = _.throttle(function (msg) {
-			var officialAccount = profile.currentOfficialAccount;
+			var officialAccount = profile.currentOfficialAccount || {};
 			var sessionId = officialAccount.sessionId;
 			var sessionState = officialAccount.sessionState;
 			var agentType = officialAccount.agentType;
@@ -513,6 +518,7 @@ app.chat = (function (
 			if (
 				sessionState === _const.SESSION_STATE.PROCESSING
 				&& agentType !== _const.AGENT_ROLE.ROBOT
+				&& sessionId
 			){
 				apiHelper.reportPredictMessage(sessionId, content);
 			}
@@ -744,10 +750,11 @@ app.chat = (function (
 		}
 	}
 
-	function _updateAgentNickname() {
-		var officialAccount = profile.currentOfficialAccount;
+	function _updateAgentNickname(officialAccount) {
+		if (officialAccount !== profile.currentOfficialAccount) return;
+
 		var nickname = profile.currentAgentNickname;
-		var isSessionOpen = profile.currentOfficialAccount.isSessionOpen;
+		var isSessionOpen = officialAccount.isSessionOpen;
 
 		if (officialAccount.type === 'CUSTOM'){
 			// 昵称显示为服务号名称

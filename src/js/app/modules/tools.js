@@ -51,6 +51,14 @@ app.List = (function(){
 		return this.list;
 	};
 
+	List.prototype.getLength = function (){
+		return this.list.length;
+	};
+
+	List.prototype.removeAll = function (){
+		return this.list.length = 0;
+	};
+
 	return List;
 }());
 

@@ -13,17 +13,23 @@ app.initSessionList = (function (
 
 		eventListener.add(_const.SYSTEM_EVENT.MESSAGE_SENT, function (){
 			var officialAccount = profile.currentOfficialAccount;
+			if (!officialAccount) return;
 			_reportReplied(officialAccount);
 		});
 		eventListener.add(_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED, _onMarketingMessageReceived);
 		eventListener.add(_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND, _newOfficialAccountFound);
+
 		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, function (officialAccount){
 			_attemptToGetMarketingTaskInfo(officialAccount);
 			_reportOpened(officialAccount);
+			_clearUnreadCount(officialAccount);
 		});
+
 		eventListener.add(_const.SYSTEM_EVENT.CHAT_WINDOW_OPENED, function (){
 			var officialAccount = profile.currentOfficialAccount;
-			!_.isEmpty(officialAccount) && _reportOpened(officialAccount);
+			if (_.isEmpty(officialAccount)) return;
+			_reportOpened(officialAccount);
+			_clearUnreadCount(officialAccount);
 		});
 
 		eventListener.add(_const.SYSTEM_EVENT.SYSTEM_OFFICIAL_ACCOUNT_UPDATED, function (){
@@ -31,9 +37,52 @@ app.initSessionList = (function (
 		});
 
 		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, function (){
-			profile.ctaEnable && sessionListView.show();
+			if (profile.ctaEnable){
+				sessionListView.show();
+				profile.currentOfficialAccount = null;
+			}
+			else {
+				profile.currentOfficialAccount = profile.systemOfficialAccount;
+			}
+		});
+
+		eventListener.add(_const.SYSTEM_EVENT.MESSAGE_APPENDED, function (officialAccount, officialAccountId, msg){
+			if (officialAccount === profile.currentOfficialAccount) return;
+
+			var msgBrief = msg.brief;
+			var formattedTimestamp = utils.formatDate(_.now());
+
+			officialAccount.unreadMessageIdList.add(msg.id);
+			sessionListView.updateLatestMessage(officialAccountId, msgBrief, formattedTimestamp);
+			sessionListView.updateUnreadCount(officialAccountId, officialAccount.unreadMessageIdList.getLength());
+			_updateSessionListRedDotStatus();
 		});
 	};
+
+	function _updateSessionListRedDotStatus(){
+		var sumOfUnreadMessageCount =_.chain(profile.officialAccountList)
+			// 取得每个服务号的未读消息数
+			.map(function (officialAccount){
+				return officialAccount.unreadMessageIdList.getLength();
+			})
+			// 求和
+			.reduce(function (a, b){
+				return a + b;
+			})
+			// 退出链式调用，并返回结果
+			.value();
+
+		var ifDisplayRedDot = !!sumOfUnreadMessageCount;
+
+		utils.toggleClass(redDotDom, 'hide', !ifDisplayRedDot);
+	}
+
+	function _clearUnreadCount(officialAccount){
+		var officialAccountId = officialAccount.official_account_id;
+		officialAccount.unreadMessageIdList.removeAll();
+		sessionListView.updateUnreadCount(officialAccountId, null);
+		_updateSessionListRedDotStatus();
+	}
 
 	function _attemptToGetMarketingTaskInfo(officialAccount){
 		if (officialAccount.type === 'SYSTEM' || officialAccount.hasGotMarketingInfo) return;
@@ -66,7 +115,7 @@ app.initSessionList = (function (
 		var content = msg.data;
 		var title = '';
 		var isCurrentOfficialAccount = officialAccount === profile.currentOfficialAccount;
-		var scheculeInfo = utils.getDataByPath(msg, 'ext.weichat.marketing.schecule_info') || {};
+		var scheduleInfo = utils.getDataByPath(msg, 'ext.weichat.marketing.schecule_info') || {};
 		officialAccount.bindSkillGroupName = scheduleInfo.skillgroup_name;
 		officialAccount.bindAgentUsername = scheduleInfo.agent_username;
 		officialAccount.hasGotMarketingInfo = true;
@@ -119,7 +168,10 @@ app.initSessionList = (function (
 			sessionListView = createSessionList({
 				itemOnClickCallback: _switchToOfficialAccount
 			});
-			utils.on(sessionListBtn, 'click', sessionListView.show);
+			utils.on(sessionListBtn, 'click', function (){
+				sessionListView.show();
+				profile.currentOfficialAccount = null;
+			});
 		}
 		sessionListView.appendItem(officialAccount);
 

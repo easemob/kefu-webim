@@ -38,9 +38,9 @@ app.createSessionList = (function(_const, utils, Dict, uikit, profile, eventList
 	function _updateLatestMessage(itemId, textMessage, timestamp){
 		var itemDom = itemHashTable.get(itemId);
 		var latestMessageDom = itemDom.querySelector('.latest-message');
-		var latestTimestamp = itemDom.querySelector('.lastest-timestamp');
+		var latestTimestamp = itemDom.querySelector('.latest-timestamp');
 
-		latestTimestamp = timestamp;
+		latestTimestamp.innerText = timestamp;
 		latestMessageDom.innerText = textMessage;
 	}
 
@@ -82,9 +82,9 @@ app.createSessionList = (function(_const, utils, Dict, uikit, profile, eventList
 			'<li class="session-item" data-id="' + id + '">',
 				'<img class="avatar" src="' + avatar + '">',
 				'<span class="name">' + name + '</span>',
-				'<span class="latest-message">sdoij;fosmdoijnsdnfsoidddfsdffdfjmslfkmsldfnsofidfn</span>',
-				'<span class="latest-timestamp">2017-01-01 00:00:00</span>',
-				'<span class="unread-count">6</span>',
+				'<span class="latest-message"></span>',
+				'<span class="latest-timestamp"></span>',
+				'<span class="unread-count hide"></span>',
 			'</li>'
 		].join(''));
 	}

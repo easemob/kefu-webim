@@ -28,7 +28,7 @@ app.initAgentStatePoller = (function(_const,  utils, profile, eventListener, api
 	}
 
 	function _update() {
-		var officialAccount = profile.currentOfficialAccount;
+		var officialAccount = profile.currentOfficialAccount || {};
 		var agentId = officialAccount.agentId;
 		var agentType = officialAccount.agentType;
 		var isSessionOpen = officialAccount.isSessionOpen;

@@ -44,7 +44,7 @@ app.initAgentInputStatePoller = (function(_const, utils, profile, apiHelper, eve
 	}
 
 	function _update(){
-		var sessionId = profile.currentOfficialAccount.sessionId;
+		var sessionId = utils.getDataByPath(profile, 'currentOfficialAccount.sessionId');
 
 		if (
 			!profile.isChatWindowOpen
@@ -59,7 +59,7 @@ app.initAgentInputStatePoller = (function(_const, utils, profile, apiHelper, eve
 			// 为了先发送的请求后回来的异步问题，仅处理时间戳比当前大的response
 			if (isStarted && currentTimestamp > preventTimestamp){
 				preventTimestamp = currentTimestamp;
-				utils.toggleClass(inputState, 'hide', !displayTypingState);
+				utils.toggleClass(inputState, 'hide', !ifDisplayTypingState);
 			}
 		});
 	}

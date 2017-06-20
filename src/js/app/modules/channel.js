@@ -341,6 +341,8 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 		var isReceived = !msg.from || (msg.from.toLowerCase() !== config.user.username.toLowerCase());
 		var officialAccount = utils.getDataByPath(msg, 'ext.weichat.official_account');
 		var marketingTaskId = utils.getDataByPath(msg, 'ext.weichat.marketing.marketing_task_id');
+		var officialAccountId = officialAccount && officialAccount.official_account_id;
+		var targetOfficialAccount = _getOfficialAccountById(officialAccountId);
 
 		if (receiveMsgDict.get(msgId)) {
 			// 重复消息不处理
@@ -385,13 +387,27 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 
 		switch (type) {
 		case 'txt':
+			message = msg;
+			message.type = type;
+			message.brief = message.data.replace(/\n/mg, ' ');
+			break;
 		case 'emoji':
+			message = msg;
+			message.type = type;
+			message.brief = _.map(message.data, function(item){
+				return item.type === 'emoji' ? '[表情]' : item.data;
+			}).join('').replace(/\n/mg, ' ');
+			break;
 		case 'img':
+			message = msg;
+			message.type = type;
+			message.brief = '[图片]';
+			break;
 		case 'file':
 			message = msg;
 			message.type = type;
+			message.brief = '[文件]';
 			break;
-
 		case 'cmd':
 			var action = msg.action;
 			if (action === 'KF-ACK'){
@@ -421,6 +437,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 				+ serviceSessionId
 				+ '">立即评价</button></div>'
 			];
+			message.brief = '[菜单]';
 
 			!isHistory && satisfaction.show(inviteId, serviceSessionId);
 			break;
@@ -443,6 +460,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 				}).join('')
 				+ '</div>';
 			message.data = msg.ext.msgtype.choice.title;
+			message.brief = '[菜单]';
 			break;
 		case 'skillgroupMenu':
 			message = msg;
@@ -457,6 +475,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 				}).join('')
 				+ '</div>';
 			message.data = msg.data.menuName;
+			message.brief = '[菜单]';
 			break;
 		case 'robotTransfer':
 			var ctrlArgs = msg.ext.weichat.ctrlArgs;
@@ -475,6 +494,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 					'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>',
 				'</div>'
 			].join('');
+			message.brief = '[菜单]';
 			break;
 		case 'transferToTicket':
 			message = msg;
@@ -486,6 +506,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 					'</button>',
 				'</div>'
 			].join('');
+			message.brief = '[菜单]';
 			break;
 		default:
 			console.error('unexpected msg type');
@@ -502,7 +523,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 					[
 						msg,
 						marketingTaskId,
-						_getOfficialAccountById(officialAccount && officialAccount.official_account_id)
+						targetOfficialAccount
 					]
 				);
 
@@ -513,7 +534,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 				var agentNickname = utils.getDataByPath(msg, 'ext.weichat.agent.userNickname');
 				if (agentNickname && (agentNickname !== profile.currentAgentNickname)){
 					profile.currentAgentNickname = agentNickname;
-					_handleSystemEvent(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGED, null, msg);
+					_handleSystemEvent(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGED, targetOfficialAccount, msg);
 				}
 				var agentAvatar = utils.getAvatarsFullPath(
 					utils.getDataByPath(msg, 'ext.weichat.agent.avatar'),
@@ -538,7 +559,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 
 		if (!isHistory) {
 			if (!msg.noprompt) {
-				_messagePrompt(message);
+				_messagePrompt(message, targetOfficialAccount);
 			}
 
 			// 兼容旧的消息格式
@@ -603,7 +624,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 	}
 
 	function _setExt(msg) {
-		var officialAccount = profile.currentOfficialAccount;
+		var officialAccount = profile.currentOfficialAccount || profile.systemOfficialAccount;
 		var officialAccountId = officialAccount.official_account_id;
 		var bindAgentUsername = officialAccount.bindAgentUsername;
 		var bindSkillGroupName = officialAccount.bindSkillGroupName;
@@ -739,15 +760,23 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 		var opt = options || {};
 		var isReceived = opt.isReceived;
 		var isHistory = opt.isHistory;
-		var officialAccountId;
+		var officialAccountId = utils.getDataByPath(msg, 'ext.weichat.official_account.official_account_id');
+		var officialAccount = _getOfficialAccountById(officialAccountId);
+		var currentOfficialAccount = profile.currentOfficialAccount || profile.systemOfficialAccount;
 
 		if (!isReceived && !isHistory){
 			// 自己发出去的即时消息使用当前messageView
-			profile.currentOfficialAccount.messageView.appendMsg(msg, opt);
+			currentOfficialAccount.messageView.appendMsg(msg, opt);
 		}
-		else{
-			officialAccountId = utils.getDataByPath(msg, 'ext.weichat.official_account.official_account_id');
-			_getOfficialAccountById(officialAccountId).messageView.appendMsg(msg, opt);
+		else {
+			officialAccount.messageView.appendMsg(msg, opt);
+		}
+
+		if (isReceived && !isHistory && !msg.noprompt){
+			eventListener.excuteCallbacks(
+				_const.SYSTEM_EVENT.MESSAGE_APPENDED,
+				[officialAccount, officialAccountId, msg]
+			);
 		}
 	}
 
@@ -764,10 +793,10 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 		if (type === 'SYSTEM'){
 			if (_.isEmpty(profile.systemOfficialAccount)){
 				profile.systemOfficialAccount = officialAccount;
-				profile.currentOfficialAccount = officialAccount;
 				profile.officialAccountList.push(officialAccount);
 				officialAccount.unopenedMarketingTaskIdList = new List();
 				officialAccount.unrepliedMarketingTaskIdList = new List();
+				officialAccount.unreadMessageIdList = new List();
 				eventListener.excuteCallbacks(
 					_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND,
 					[officialAccount]
@@ -786,6 +815,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 			profile.officialAccountList.push(officialAccount);
 			officialAccount.unopenedMarketingTaskIdList = new List();
 			officialAccount.unrepliedMarketingTaskIdList = new List();
+			officialAccount.unreadMessageIdList = new List();
 			eventListener.excuteCallbacks(
 				_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND,
 				[officialAccount]
@@ -873,38 +903,15 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 		);
 	}
 
-	function _messagePrompt(message){
+	function _messagePrompt(message, officialAccount){
 		if (utils.isTop) return;
 
-		var value = message.data;
-		var type = message.type;
-		var tmpVal;
-		var brief;
+		// todo: discard isTop return
+		// todo: discard utils.getBrief
+		var brief = utils.getBrief(message.brief, 15);
 		var avatar = profile.ctaEnable
-			? profile.currentOfficialAccount.img
+			? officialAccount.img
 			: profile.currentAgentAvatar;
-
-		switch (type) {
-		case 'txt':
-		case 'list':
-			brief = utils.getBrief(value.replace(/\n/mg, ''), 15);
-			break;
-		case 'emoji':
-			tmpVal = _.map(value, function(item){
-				return item.type === 'emoji' ? '[表情]' : item.data;
-			}).join('').replace(/\n/mg, '');
-			brief = utils.getBrief(tmpVal, 15);
-			break;
-		case 'img':
-			brief = '[图片]';
-			break;
-		case 'file':
-			brief = '[文件]';
-			break;
-		default:
-			console.warn('unexpected message type.');
-			brief = '';
-		}
 
 		if (utils.isBrowserMinimized() || !profile.isChatWindowOpen) {
 			chat.playSound();

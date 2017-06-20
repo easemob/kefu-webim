@@ -49,34 +49,11 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper, channel, even
 
 		function _getRecentMsg(maxCount){
 			return _.map(recentMsg.slice(0, maxCount), function(item){
-				var type = item.msg.type;
 				var date = utils.formatDate(item.date);
 				var role = item.isReceived ? '客服坐席' : '访客';
-				var value = item.msg.data;
+				var brief = item.msg.brief;
 
-				switch (type){
-					case 'txt':
-						break;
-					case 'emoji':
-						value = _.map(value, function(item){
-							return item.type === 'emoji' ? '[表情]' : item.data;
-						}).join('');
-						break;
-					case 'img':
-						value = '[图片]';
-						break;
-					case 'file':
-						value = '[文件]';
-						break;
-					case 'list':
-						value = '[菜单]';
-						break;
-					default:
-						value = '[未知消息类型]';
-						break;
-				}
-
-				return '[' + date + '] ' + role + '\n' + value;
+				return '[' + date + '] ' + role + '\n' + brief;
 			}).join('\n');
 		}
 
