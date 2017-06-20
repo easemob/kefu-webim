@@ -42,6 +42,8 @@ app.createSessionList = (function(_const, utils, Dict, uikit, profile, eventList
 
 		latestTimestamp.innerText = timestamp;
 		latestMessageDom.innerText = textMessage;
+
+		listDom.insertBefore(itemDom, listDom.firstChild);
 	}
 
 	function _updateUnreadCount(itemId, unreadCount){

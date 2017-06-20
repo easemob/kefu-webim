@@ -258,6 +258,9 @@
 		}
 	}
 	&.session-list {
+		height: initial;
+		bottom: 0;
+		overflow-y: auto;
 		ul {
 			> .session-item {
 				margin-left: 10px;

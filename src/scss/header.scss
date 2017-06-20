@@ -86,26 +86,26 @@
 		}
 	}
 
-	.session-list-btn {
-		position: relative;
-		display: inline-block;
-		cursor: pointer;
-		width: 30px;
-		height: 30px;
-		.notice {
-			position: absolute;
-			color: red;
-			top: -7px;
-			right: -2px;
-			font-size: 10px;
-			&:before {
-				font-size: 15px;
-			}
-   		}
-	}
-
 	.status-bar {
 		display: inline-block;
+
+		.session-list-btn {
+			position: relative;
+			display: inline-block;
+			cursor: pointer;
+			width: 30px;
+			height: 30px;
+			.notice {
+				position: absolute;
+				color: red;
+				top: -7px;
+				right: -2px;
+				font-size: 10px;
+				&:before {
+					font-size: 15px;
+				}
+	   		}
+		}
 
 		.em-agent-input-state {
 			margin-left: 5px;
