@@ -5,11 +5,13 @@ app.initSessionList = (function (
 	var sessionListBtn;
 	var redDotDom;
 	var sessionListView;
+	var statusBar;
 
 	return function(){
 		var topBar = document.querySelector('.em-widget-header');
 		sessionListBtn = topBar.querySelector('.session-list-btn');
 		redDotDom = sessionListBtn.querySelector('.notice');
+		statusBar = topBar.querySelector('.status-bar');
 
 		eventListener.add(_const.SYSTEM_EVENT.MESSAGE_SENT, function (){
 			var officialAccount = profile.currentOfficialAccount;
@@ -20,6 +22,8 @@ app.initSessionList = (function (
 		eventListener.add(_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND, _newOfficialAccountFound);
 
 		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, function (officialAccount){
+			officialAccount.messageView.scrollToBottom();
+			utils.removeClass(statusBar, 'hide');
 			_attemptToGetMarketingTaskInfo(officialAccount);
 			_reportOpened(officialAccount);
 			_clearUnreadCount(officialAccount);
@@ -28,6 +32,7 @@ app.initSessionList = (function (
 		eventListener.add(_const.SYSTEM_EVENT.CHAT_WINDOW_OPENED, function (){
 			var officialAccount = profile.currentOfficialAccount;
 			if (_.isEmpty(officialAccount)) return;
+			officialAccount.messageView.scrollToBottom();
 			_reportOpened(officialAccount);
 			_clearUnreadCount(officialAccount);
 		});
@@ -38,8 +43,7 @@ app.initSessionList = (function (
 
 		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, function (){
 			if (profile.ctaEnable){
-				sessionListView.show();
-				profile.currentOfficialAccount = null;
+				utils.trigger(sessionListBtn, 'click');
 			}
 			else {
 				profile.currentOfficialAccount = profile.systemOfficialAccount;
@@ -115,7 +119,7 @@ app.initSessionList = (function (
 		var content = msg.data;
 		var title = '';
 		var isCurrentOfficialAccount = officialAccount === profile.currentOfficialAccount;
-		var scheduleInfo = utils.getDataByPath(msg, 'ext.weichat.marketing.schecule_info') || {};
+		var scheduleInfo = utils.getDataByPath(msg, 'ext.weichat.marketing.schedule_info') || {};
 		officialAccount.bindSkillGroupName = scheduleInfo.skillgroup_name;
 		officialAccount.bindAgentUsername = scheduleInfo.agent_username;
 		officialAccount.hasGotMarketingInfo = true;
@@ -171,6 +175,7 @@ app.initSessionList = (function (
 			utils.on(sessionListBtn, 'click', function (){
 				sessionListView.show();
 				profile.currentOfficialAccount = null;
+				utils.addClass(statusBar, 'hide');
 			});
 		}
 		sessionListView.appendItem(officialAccount);

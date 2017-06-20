@@ -104,12 +104,16 @@
    		}
 	}
 
-	.em-agent-input-state {
-		margin-left: 5px;
-	}
+	.status-bar {
+		display: inline-block;
 
-	.em-header-status-text {
-		color: rgba(255, 255, 255, 0.5);
+		.em-agent-input-state {
+			margin-left: 5px;
+		}
+
+		.em-header-status-text {
+			color: rgba(255, 255, 255, 0.5);
+		}
 	}
 }
 

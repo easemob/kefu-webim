@@ -73,6 +73,28 @@ app.chat = (function (
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _getGreetings);
 	}
 
+	function _updateAgentNickname(officialAccount) {
+		if (officialAccount !== profile.currentOfficialAccount) return;
+
+		var nickname = profile.currentAgentNickname;
+		var isSessionOpen = officialAccount.isSessionOpen;
+
+		if (officialAccount.type === 'CUSTOM'){
+			// 昵称显示为服务号名称
+			doms.nickname.innerText = officialAccount.name;
+		}
+		else if (
+			profile.nickNameOption
+			&& nickname
+			&& isSessionOpen
+		) {
+			doms.nickname.innerText = nickname;
+		}
+		else {
+			doms.nickname.innerText = profile.defaultAgentName;
+		}
+	}
+
 	function _reportVisitorInfo(officialAccount){
 		if (officialAccount.hasReportedAttributes) return;
 
@@ -84,6 +106,61 @@ app.chat = (function (
 			officialAccount.hasReportedAttributes = true;
 			apiHelper.reportVisitorAttributes(sessionId);
 		}
+	}
+
+	function _getGreetings(officialAccount) {
+		if (officialAccount.isSessionOpen) return;
+		Promise.all([
+			apiHelper.getSystemGreeting(),
+			apiHelper.getRobertGreeting(),
+			apiHelper.getSkillgroupMenu()
+		]).then(function(result){
+			var systemGreetingText = result[0];
+			var robotGreetingObj = result[1];
+			var groupMenus = result[2];
+			var greetingTextType = robotGreetingObj.greetingTextType;
+			var greetingText = robotGreetingObj.greetingText;
+			var greetingObj = {};
+
+			// 系统欢迎语
+			systemGreetingText && channel.handleReceive({
+				data: systemGreetingText,
+				noprompt: true
+			}, 'txt');
+
+			// 机器人欢迎语
+			switch (greetingTextType) {
+			case 0:
+				// 文本消息
+				channel.handleReceive({
+					data: greetingText,
+					noprompt: true
+				}, 'txt');
+				break;
+			case 1:
+				// 菜单消息
+				greetingObj = JSON.parse(greetingText.replace(/&amp;quot;/g, '"'));
+
+				greetingObj.ext && channel.handleReceive({
+					ext: greetingObj.ext,
+					noprompt: true
+				});
+				break;
+			case undefined:
+				// 未设置机器人欢迎语
+				break;
+			default:
+				console.error('unknown robot greeting type.');
+				break;
+			}
+
+			// 技能组列表
+			groupMenus && channel.handleReceive({
+				data: groupMenus,
+				type: 'skillgroupMenu',
+				noprompt: true
+			});
+		});
 	}
 
 	function _initUI(){
@@ -273,61 +350,6 @@ app.chat = (function (
 			app.leaveMessage({hideCloseBtn: true});
 			break;
 		}
-	}
-
-	function _getGreetings(officialAccount) {
-		if (officialAccount.isSessionOpen) return;
-		Promise.all([
-			apiHelper.getSystemGreeting(),
-			apiHelper.getRobertGreeting(),
-			apiHelper.getSkillgroupMenu()
-		]).then(function(result){
-			var systemGreetingText = result[0];
-			var robotGreetingObj = result[1];
-			var groupMenus = result[2];
-			var greetingTextType = robotGreetingObj.greetingTextType;
-			var greetingText = robotGreetingObj.greetingText;
-			var greetingObj = {};
-
-			// 系统欢迎语
-			systemGreetingText && channel.handleReceive({
-				data: systemGreetingText,
-				noprompt: true
-			}, 'txt');
-
-			// 机器人欢迎语
-			switch (greetingTextType) {
-			case 0:
-				// 文本消息
-				channel.handleReceive({
-					data: greetingText,
-					noprompt: true
-				}, 'txt');
-				break;
-			case 1:
-				// 菜单消息
-				greetingObj = JSON.parse(greetingText.replace(/&amp;quot;/g, '"'));
-
-				greetingObj.ext && channel.handleReceive({
-					ext: greetingObj.ext,
-					noprompt: true
-				});
-				break;
-			case undefined:
-				// 未设置机器人欢迎语
-				break;
-			default:
-				console.error('unknown robot greeting type.');
-				break;
-			}
-
-			// 技能组列表
-			groupMenus && channel.handleReceive({
-				data: groupMenus,
-				type: 'skillgroupMenu',
-				noprompt: true
-			});
-		});
 	}
 
 	function _scrollToBottom(){
@@ -747,28 +769,6 @@ app.chat = (function (
 
 		if (config.extMsg) {
 			channel.sendText('', { ext: config.extMsg });
-		}
-	}
-
-	function _updateAgentNickname(officialAccount) {
-		if (officialAccount !== profile.currentOfficialAccount) return;
-
-		var nickname = profile.currentAgentNickname;
-		var isSessionOpen = officialAccount.isSessionOpen;
-
-		if (officialAccount.type === 'CUSTOM'){
-			// 昵称显示为服务号名称
-			doms.nickname.innerText = officialAccount.name;
-		}
-		else if (
-			profile.nickNameOption
-			&& nickname
-			&& isSessionOpen
-		) {
-			doms.nickname.innerText = nickname;
-		}
-		else {
-			doms.nickname.innerText = profile.defaultAgentName;
 		}
 	}
 

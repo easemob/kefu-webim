@@ -342,7 +342,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 		var officialAccount = utils.getDataByPath(msg, 'ext.weichat.official_account');
 		var marketingTaskId = utils.getDataByPath(msg, 'ext.weichat.marketing.marketing_task_id');
 		var officialAccountId = officialAccount && officialAccount.official_account_id;
-		var targetOfficialAccount = _getOfficialAccountById(officialAccountId);
+		var targetOfficialAccount;
 
 		if (receiveMsgDict.get(msgId)) {
 			// 重复消息不处理
@@ -362,6 +362,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 		}
 
 		officialAccount && _attemptToAppendOfficialAccount(officialAccount);
+		targetOfficialAccount = _getOfficialAccountById(officialAccountId);
 
 		//满意度评价
 		if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'inviteEnquiry') {

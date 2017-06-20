@@ -48,8 +48,12 @@ app.createSessionList = (function(_const, utils, Dict, uikit, profile, eventList
 		var itemDom = itemHashTable.get(itemId);
 		var unreadCountDom = itemDom.querySelector('.unread-count');
 
-		if (!unreadCount){
+		if (!unreadCount || typeof unreadCount !== 'number'){
 			utils.addClass(unreadCountDom, 'hide');
+		}
+		else if (unreadCount > 99){
+			unreadCountDom.innerText = '...';
+			utils.removeClass(unreadCountDom, 'hide');
 		}
 		else {
 			unreadCountDom.innerText = unreadCount;
