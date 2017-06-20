@@ -909,6 +909,26 @@ app.apiHelper = (function (_const, utils, emajax) {
 		});
 	}
 
+	function getLatestMarketingTask(officialAccountId){
+		return new Promise(function(resolve, reject){
+			getToken().then(function(token){
+				api('getLatestMarketingTask', {
+					tenantId: config.tenantId,
+					orgName: config.orgName,
+					appName: config.appName,
+					officialAccountId: officialAccountId,
+					userName: config.user.username,
+					token: token
+				}, function (msg) {
+					var entity = utils.getDataByPath(msg, 'data.entity');
+					resolve(entity);
+				}, function(err){
+					reject(err);
+				});
+			});
+		});
+	}
+
 	return {
 		getCurrentServiceSession: getCurrentServiceSession,
 		getSessionQueueId: getSessionQueueId,
@@ -947,6 +967,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 		reportMarketingTaskDelivered: reportMarketingTaskDelivered,
 		reportMarketingTaskOpened: reportMarketingTaskOpened,
 		reportMarketingTaskReplied: reportMarketingTaskReplied,
+		getLatestMarketingTask: getLatestMarketingTask,
 
 		initApiTransfer: initApiTransfer,
 		api: api,

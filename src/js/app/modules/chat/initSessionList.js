@@ -11,10 +11,16 @@ app.initSessionList = (function (
 		sessionListBtn = topBar.querySelector('.session-list-btn');
 		redDotDom = sessionListBtn.querySelector('.notice');
 
-		eventListener.add(_const.SYSTEM_EVENT.MESSAGE_SENT, _reportReplied);
+		eventListener.add(_const.SYSTEM_EVENT.MESSAGE_SENT, function (){
+			var officialAccount = profile.currentOfficialAccount;
+			_reportReplied(officialAccount);
+		});
 		eventListener.add(_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED, _onMarketingMessageReceived);
 		eventListener.add(_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND, _newOfficialAccountFound);
-		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _reportOpened);
+		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, function (officialAccount){
+			_attemptToGetMarketingTaskInfo(officialAccount);
+			_reportOpened(officialAccount);
+		});
 		eventListener.add(_const.SYSTEM_EVENT.CHAT_WINDOW_OPENED, function (){
 			var officialAccount = profile.currentOfficialAccount;
 			!_.isEmpty(officialAccount) && _reportOpened(officialAccount);
@@ -29,8 +35,18 @@ app.initSessionList = (function (
 		});
 	};
 
-	function _reportReplied(){
-		var officialAccount = profile.currentOfficialAccount;
+	function _attemptToGetMarketingTaskInfo(officialAccount){
+		if (officialAccount.type === 'SYSTEM' || officialAccount.hasGotMarketingInfo) return;
+
+		var officialAccountId = officialAccount.official_account_id;
+		officialAccount.hasGotMarketingInfo = true;
+		apiHelper.getLatestMarketingTask(officialAccountId).then(function (entity){
+			officialAccount.bindSkillGroupName = utils.getDataByPath(entity, 'schedule_info.skillgroup_name');
+			officialAccount.bindAgentUsername = utils.getDataByPath(entity, 'schedule_info.agent_username');
+		});
+	}
+
+	function _reportReplied(officialAccount){
 		_.each(officialAccount.unrepliedMarketingTaskIdList.getAll(), function(marketingTaskId){
 			officialAccount.unrepliedMarketingTaskIdList.remove(marketingTaskId);
 			apiHelper.reportMarketingTaskReplied(marketingTaskId);
@@ -53,6 +69,7 @@ app.initSessionList = (function (
 		var scheculeInfo = utils.getDataByPath(msg, 'ext.weichat.marketing.schecule_info') || {};
 		officialAccount.bindSkillGroupName = scheduleInfo.skillgroup_name;
 		officialAccount.bindAgentUsername = scheduleInfo.agent_username;
+		officialAccount.hasGotMarketingInfo = true;
 
 		!isCurrentOfficialAccount
 			&& !sessionListView.isShowed()
