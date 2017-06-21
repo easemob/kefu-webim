@@ -26,14 +26,9 @@ app.createSessionList = (function(_const, utils, Dict, uikit, profile, eventList
 			updateItem: _updateItem,
 			updateLatestMessage: _updateLatestMessage,
 			updateUnreadCount: _updateUnreadCount,
-			show: dialog.show,
-			isShowed: _isShowed
+			show: dialog.show
 		};
 	};
-
-	function _isShowed(){
-		return !utils.hasClass(dialog.el, 'hide');
-	}
 
 	function _updateLatestMessage(itemId, textMessage, timestamp){
 		var itemDom = itemHashTable.get(itemId);

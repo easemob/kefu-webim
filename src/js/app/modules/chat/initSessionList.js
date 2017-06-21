@@ -118,14 +118,13 @@ app.initSessionList = (function (
 		var officialAccountId = officialAccount.official_account_id;
 		var content = msg.data;
 		var title = '';
-		var isCurrentOfficialAccount = officialAccount === profile.currentOfficialAccount;
 		var scheduleInfo = utils.getDataByPath(msg, 'ext.weichat.marketing.schedule_info') || {};
 		officialAccount.bindSkillGroupName = scheduleInfo.skillgroup_name;
 		officialAccount.bindAgentUsername = scheduleInfo.agent_username;
 		officialAccount.hasGotMarketingInfo = true;
 
-		!isCurrentOfficialAccount
-			&& !sessionListView.isShowed()
+		officialAccount !== profile.currentOfficialAccount
+			&& profile.currentOfficialAccount
 			&& app.promptCtaDialog({
 				title: title,
 				replyCallback: _switchToOfficialAccount,
