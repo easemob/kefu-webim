@@ -69,7 +69,8 @@
 		_config.path = _config.path || (baseConfig.domain + '/webim');
 		_config.staticPath = _config.staticPath || (baseConfig.domain + '/webim/static');
 	}
-	function getConfig() { //get config from current script
+	// get config from current script
+	function getConfig() {
 		var src;
 		var obj = {};
 		var scripts = document.scripts;
@@ -149,9 +150,14 @@
 
 	//open api1: send custom extend message
 	easemobim.sendExt = function (ext) {
-		iframe.send({
-			ext: ext
-		});
+		if (iframe){
+			iframe.send({
+				ext: ext
+			});
+		}
+		else {
+			console.error('The chat window is not initialized.');
+		}
 	};
 
 	//open api2: send text message
@@ -164,7 +170,12 @@
 	 */
 
 	easemobim.sendText = function (msg) {
-		iframe && iframe.sendText(msg);
+		if (iframe){
+			iframe.sendText(msg);
+		}
+		else {
+			console.error('The chat window is not initialized.');
+		}
 	};
 
 	//auto load

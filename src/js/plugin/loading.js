@@ -1,6 +1,6 @@
 easemobim.loading = (function(_const, utils){
 	var loadingDom = utils.appendHTMLToBody([
-		'<div class="easemobim-prompr-wrapper">',
+		'<div class="easemobim-prompt-wrapper">',
 		'<div class="loading">',
 		_const.loadingSvg,
 		'</div>',

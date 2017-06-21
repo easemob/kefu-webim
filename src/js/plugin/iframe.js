@@ -234,19 +234,10 @@
 
 
 
-	var Iframe = function (config, signleton) {
+	var Iframe = function (config) {
 		var me = this;
 
-		if (!(this instanceof Iframe)) {
-
-			return new Iframe(config, signleton);
-		}
-		else if (signleton && Iframe.iframe) {
-
-			Iframe.iframe.config = utils.copy(config);
-
-			return Iframe.iframe;
-		}
+		if (!(this instanceof Iframe)) return new Iframe(config);
 
 		this.iframe = document.createElement('iframe');
 		this.iframe.id = 'easemob-iframe-' + new Date().getTime();
@@ -294,8 +285,14 @@
 		// 这个是别人种的cookie
 		this.config.guestId = utils.getStore('guestId');
 
-		this.position = { x: this.config.dialogPosition.x.slice(0, -2), y: this.config.dialogPosition.y.slice(0, -2) };
-		this.rect = { width: +this.config.dialogWidth.slice(0, -2), height: +this.config.dialogHeight.slice(0, -2) };
+		this.position = {
+			x: this.config.dialogPosition.x.slice(0, -2),
+			y: this.config.dialogPosition.y.slice(0, -2)
+		};
+		this.rect = {
+			width: +this.config.dialogWidth.slice(0, -2),
+			height: +this.config.dialogHeight.slice(0, -2)
+		};
 		this.iframe.frameBorder = 0;
 		this.iframe.allowTransparency = 'true';
 
