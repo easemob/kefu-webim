@@ -233,7 +233,7 @@ easemobim.channel = function (config) {
 			}
 			// 直播消息
 			else if (utils.getDataByPath(msg, 'ext.type') === 'live/video') {
-				type = 'liveStreaming/video';  
+				type = 'liveStreaming/video';
 			}
 			else {}
 
@@ -276,20 +276,21 @@ easemobim.channel = function (config) {
 				});
 				break;
 			case 'satisfactionEvaluation':
-				message = new WebIM.message.list();
-				message.set({
-					value: '请对我的服务做出评价',
-					list: [
-						'<div class="em-widget-list-btns">'
-							+ '<button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="'
-							+ msg.ext.weichat.ctrlArgs.inviteId
-							+ '" data-servicesessionid="'
-							+ msg.ext.weichat.ctrlArgs.serviceSessionId
-							+ '">立即评价</button></div>'
-						]
-				});
 
 				if (!isHistory) {
+
+					message = new WebIM.message.list();
+					message.set({
+						value: '请对我的服务做出评价',
+						list: [
+							'<div class="em-widget-list-btns">'
+								+ '<button class="em-widget-list-btn bg-hover-color js_satisfybtn" data-inviteid="'
+								+ msg.ext.weichat.ctrlArgs.inviteId
+								+ '" data-servicesessionid="'
+								+ msg.ext.weichat.ctrlArgs.serviceSessionId
+								+ '">立即评价</button></div>'
+							]
+					});
 					// 创建隐藏的立即评价按钮，并触发click事件
 					var el = document.createElement('BUTTON');
 					el.className = 'js_satisfybtn';
