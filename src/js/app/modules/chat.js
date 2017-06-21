@@ -617,6 +617,7 @@ app.chat = (function (
 			}
 			else if (filesize > _const.UPLOAD_FILESIZE_LIMIT) {
 				uikit.tip('文件大小不能超过10MB');
+				fileInput.value = '';
 			}
 			else {
 				channel.sendFile(WebIM.utils.getFileUrl(fileInput), fileInput);
