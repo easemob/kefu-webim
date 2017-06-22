@@ -699,8 +699,8 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 		case _const.SYSTEM_EVENT.SESSION_TRANSFERED:
 			officialAccount.agentId = eventObj.userId;
 			officialAccount.agentType = eventObj.agentType;
-			officialAccount.avatar = eventObj.avatar;
-			officialAccount.agentNickname = eventObj.agentUserNiceName;
+			// officialAccount.avatar = eventObj.avatar;
+			// officialAccount.agentNickname = eventObj.agentUserNiceName;
 			officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
 			officialAccount.isSessionOpen = true;
 			break;
@@ -708,6 +708,8 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 			officialAccount.sessionState = _const.SESSION_STATE.WAIT;
 			officialAccount.isSessionOpen = true;
 			officialAccount.skillGroupId = null;
+
+			profile.currentAgentAvatar = null;
 			break;
 		case _const.SYSTEM_EVENT.SESSION_CLOSED:
 			officialAccount.sessionState = _const.SESSION_STATE.ABORT;
@@ -717,6 +719,8 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 			officialAccount.isSessionOpen = false;
 			officialAccount.hasReportedAttributes = false;
 
+			profile.currentAgentAvatar = null;
+
 			transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
 			break;
 		case _const.SYSTEM_EVENT.SESSION_OPENED:
@@ -724,8 +728,8 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 			officialAccount.agentType = eventObj.agentType;
 			officialAccount.agentId = eventObj.userId;
 			officialAccount.sessionId = eventObj.sessionId;
-			officialAccount.avatar = eventObj.avatar;
-			officialAccount.agentNickname = eventObj.agentUserNiceName;
+			// officialAccount.avatar = eventObj.avatar;
+			// officialAccount.agentNickname = eventObj.agentUserNiceName;
 			officialAccount.isSessionOpen = true;
 			break;
 		case _const.SYSTEM_EVENT.SESSION_CREATED:
