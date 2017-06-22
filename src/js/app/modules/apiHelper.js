@@ -39,12 +39,12 @@ app.apiHelper = (function (_const, utils, emajax) {
 	}
 
 	function api(apiName, data, success, error) {
-		var ts = new Date().getTime();
+		var uuid = utils.uuid();
 
 		//cache
 		cachedApiCallbackTable[apiName] = cachedApiCallbackTable[apiName] || {};
 
-		cachedApiCallbackTable[apiName][ts] = {
+		cachedApiCallbackTable[apiName][uuid] = {
 			success: success,
 			error: error
 		};
@@ -52,7 +52,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 		apiTransfer.send({
 			api: apiName,
 			data: data,
-			timespan: ts,
+			timespan: uuid,
 			// 标记postMessage使用object，47.9 增加
 			useObject: true
 		});
