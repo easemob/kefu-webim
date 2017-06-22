@@ -320,9 +320,13 @@
 			});
 			break;
 		case 'getSessionQueueId':
+		// DEPRECATED!!!
+			url = '/v1/visitors/' + params.visitorUsername + '/waitings/sessions';
+
+			delete params.visitorUsername;
+
 			emitAjax({
-				// todo: delete visitorUserName
-				url: '/v1/visitors/' + params.visitorUsername + '/waitings/sessions',
+				url: url,
 				msg: msg,
 				type: 'GET'
 			});

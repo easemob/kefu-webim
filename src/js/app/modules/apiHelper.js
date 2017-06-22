@@ -74,20 +74,6 @@ app.apiHelper = (function (_const, utils, emajax) {
 		});
 	}
 
-	function getSessionQueueId(){
-		return new Promise(function(resolve, reject){
-			api('getSessionQueueId', {
-				tenantId: config.tenantId,
-				visitorUsername: config.user.username,
-				techChannelInfo: config.orgName + '%23' + config.appName + '%23' + config.toUser
-			}, function (msg) {
-				resolve(msg.data.entity || {});
-			}, function(err){
-				reject(err);
-			});
-		});
-	}
-
 	function getToken(){
 		return new Promise(function(resolve, reject){
 			var token = config.user.token;
@@ -511,9 +497,9 @@ app.apiHelper = (function (_const, utils, emajax) {
 					visitorId: visitorId,
 					token: token
 				}, function (msg) {
-					var session = utils.getDataByPath(msg, 'data.entity');
-					if (session){
-						resolve(session);
+					var entity = utils.getDataByPath(msg, 'data.entity');
+					if (entity){
+						resolve(entity);
 					}
 					else {
 						reject(_const.ERROR_MSG.SESSION_DOES_NOT_EXIST);
@@ -615,7 +601,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 				queueId: queueId,
 				serviceSessionId: sessionId
 			}, function (msg) {
-				resolve(resp.data.entity);
+				resolve(msg.data.entity);
 			}, function(err){
 				reject(err);
 			});
@@ -931,7 +917,6 @@ app.apiHelper = (function (_const, utils, emajax) {
 
 	return {
 		getCurrentServiceSession: getCurrentServiceSession,
-		getSessionQueueId: getSessionQueueId,
 		getToken: getToken,
 		getNotice: getNotice,
 		getTheme: getTheme,

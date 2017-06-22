@@ -23,14 +23,15 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper, channel, even
 			// 初始化历史消息拉取
 			_initHistoryPuller();
 
-			apiHelper.getLastSession(id).then(function(session){
-				officialAccount.agentId = session.agent_id;
-				officialAccount.sessionId = session.session_id;
-				officialAccount.sessionState = session.state;
-				officialAccount.agentType = session.agent_type;
+			apiHelper.getLastSession(id).then(function(entity){
+				officialAccount.agentId = entity.agent_id;
+				officialAccount.sessionId = entity.session_id;
+				officialAccount.sessionState = entity.state;
+				officialAccount.agentType = entity.agent_type;
+				officialAccount.skillGroupId = entity.skill_group_id;
 				officialAccount.isSessionOpen = (
-					session.state === _const.SESSION_STATE.PROCESSING
-					|| session.state === _const.SESSION_STATE.WAIT
+					entity.state === _const.SESSION_STATE.PROCESSING
+					|| entity.state === _const.SESSION_STATE.WAIT
 				);
 
 				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);

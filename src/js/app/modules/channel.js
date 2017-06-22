@@ -707,11 +707,13 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 		case _const.SYSTEM_EVENT.SESSION_TRANSFERING:
 			officialAccount.sessionState = _const.SESSION_STATE.WAIT;
 			officialAccount.isSessionOpen = true;
+			officialAccount.skillGroupId = null;
 			break;
 		case _const.SYSTEM_EVENT.SESSION_CLOSED:
 			officialAccount.sessionState = _const.SESSION_STATE.ABORT;
 			officialAccount.agentId = null;
 			officialAccount.sessionId = null;
+			officialAccount.skillGroupId = null;
 			officialAccount.isSessionOpen = false;
 			officialAccount.hasReportedAttributes = false;
 
