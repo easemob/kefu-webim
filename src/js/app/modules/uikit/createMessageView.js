@@ -1,4 +1,4 @@
-app.createMessageView = (function(_const, utils, uikit, apiHelper, channel, eventListener){
+app.createMessageView = (function(_const, utils, profile, uikit, apiHelper, channel, eventListener){
 	var tpl = '<div class="chat-container"></div>';
 	var parentContainer = document.querySelector('.chat-wrapper');
 
@@ -171,6 +171,7 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper, channel, even
 			else {
 				// pc端
 				utils.on(parentContainer, 'mousewheel DOMMouseScroll', function (ev) {
+					if (officialAccount !== profile.currentOfficialAccount) return;
 					var that = this;
 
 					if (ev.wheelDelta / 120 > 0 || ev.detail < 0) {
@@ -197,4 +198,4 @@ app.createMessageView = (function(_const, utils, uikit, apiHelper, channel, even
 			utils.removeClass(el, 'hide');
 		}
 	};
-}(easemobim._const, easemobim.utils, app.uikit, app.apiHelper, app.channel, app.eventListener));
+}(easemobim._const, easemobim.utils, app.profile, app.uikit, app.apiHelper, app.channel, app.eventListener));
