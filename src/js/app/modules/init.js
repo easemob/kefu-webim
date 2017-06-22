@@ -124,8 +124,9 @@
 
 	}
 	function handleMsgData() {
-		// offDutyWord default value
+		// default value
 		config.offDutyWord = config.offDutyWord || '现在是下班时间。';
+		config.emgroup = config.emgroup || '';
 
 		// fake patch: 老版本配置的字符串需要decode
 		if (config.offDutyWord){
