@@ -87,6 +87,7 @@ app.chat = (function (
 			profile.nickNameOption
 			&& nickname
 			&& isSessionOpen
+			&& nickname !== '调度员'
 		) {
 			doms.nickname.innerText = nickname;
 		}
