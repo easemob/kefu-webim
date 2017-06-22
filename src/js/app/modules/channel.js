@@ -698,9 +698,9 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 		switch (event) {
 		case _const.SYSTEM_EVENT.SESSION_TRANSFERED:
 			officialAccount.agentId = eventObj.userId;
-			// todo: get agentType & agentId
-			officialAccount.agentType = null;
-			officialAccount.agentId = eventObj.userId;
+			officialAccount.agentType = eventObj.agentType;
+			officialAccount.avatar = eventObj.avatar;
+			officialAccount.agentNickname = eventObj.agentUserNiceName;
 			officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
 			officialAccount.isSessionOpen = true;
 			break;
@@ -719,15 +719,16 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 			break;
 		case _const.SYSTEM_EVENT.SESSION_OPENED:
 			officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
-			// todo: get agentType & agentId
-			officialAccount.agentType = null;
+			officialAccount.agentType = eventObj.agentType;
 			officialAccount.agentId = eventObj.userId;
-			// todo: get session id
-			officialAccount.sessionId = null;
+			officialAccount.sessionId = eventObj.sessionId;
+			officialAccount.avatar = eventObj.avatar;
+			officialAccount.agentNickname = eventObj.agentUserNiceName;
 			officialAccount.isSessionOpen = true;
 			break;
 		case _const.SYSTEM_EVENT.SESSION_CREATED:
 			officialAccount.sessionState = _const.SESSION_STATE.WAIT;
+			officialAccount.sessionId = eventObj.sessionId;
 			officialAccount.isSessionOpen = true;
 			break;
 		default:

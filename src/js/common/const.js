@@ -8,6 +8,7 @@ easemobim._const = (function () {
 			'</svg>',
 			'</div>'
 		].join(''),
+
 		agentStatusText: {
 			Idle: '(离线)',
 			Online: '(空闲)',
