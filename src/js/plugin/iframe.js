@@ -251,18 +251,9 @@
 		document.body.appendChild(this.iframe);
 		document.body.appendChild(this.shadow);
 
-		if (me.iframe.readyState) {
-			me.iframe.onreadystatechange = function () {
-				if (this.readyState === 'loaded' || this.readyState === 'complete') {
-					_ready.call(me);
-				}
-			};
-		}
-		else {
-			me.iframe.onload = function () {
-				_ready.call(me);
-			};
-		}
+		utils.on(this.iframe, 'load', function (){
+			_ready.call(me);
+		});
 
 		Iframe.iframe = this;
 
