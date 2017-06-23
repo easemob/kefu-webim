@@ -204,6 +204,7 @@ gulp.task('combineJs', function () {
 			'src/js/app/modules/uikit/createSessionList.js',
 			'src/js/app/modules/uikit/createMessageView.js',
 			'src/js/app/modules/uikit/createCtaDialog.js',
+			'src/js/app/modules/uikit/createSelect.js',
 			'src/js/app/modules/chat/initAgentStatusPoller.js',
 			'src/js/app/modules/chat/initAgentInputStatePoller.js',
 			'src/js/app/modules/chat/initTransferToKefuButton.js',

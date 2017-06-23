@@ -228,3 +228,8 @@
 	content: "\7b"
 }
 
+.icon-arrange:before {
+	@extend .icon-base;
+	content: "\32"
+}
+
