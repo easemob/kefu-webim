@@ -532,16 +532,13 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 				_handleSystemEvent(eventName, eventObj, msg);
 			}
 			else {
-				var agentNickname = utils.getDataByPath(msg, 'ext.weichat.agent.userNickname');
-				if (agentNickname && (agentNickname !== profile.currentAgentNickname)){
-					profile.currentAgentNickname = agentNickname;
-					_handleSystemEvent(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGED, targetOfficialAccount, msg);
+				var agentInfo = utils.getDataByPath(msg, 'ext.weichat.agent');
+				if (agentInfo){
+					targetOfficialAccount.agentNickname = agentInfo.userNickname;
+					targetOfficialAccount.agentAvatar = agentInfo.avatar;
+
+					eventListener.excuteCallbacks(_const.SYSTEM_EVENT.AGENT_INFO_UPDATE, [targetOfficialAccount]);
 				}
-				var agentAvatar = utils.getAvatarsFullPath(
-					utils.getDataByPath(msg, 'ext.weichat.agent.avatar'),
-					config.domain
-				);
-				agentAvatar && (profile.currentAgentAvatar = agentAvatar);
 			}
 		}
 
@@ -699,8 +696,8 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 		case _const.SYSTEM_EVENT.SESSION_TRANSFERED:
 			officialAccount.agentId = eventObj.userId;
 			officialAccount.agentType = eventObj.agentType;
-			// officialAccount.avatar = eventObj.avatar;
-			// officialAccount.agentNickname = eventObj.agentUserNiceName;
+			officialAccount.agentAvatar = eventObj.avatar;
+			officialAccount.agentNickname = eventObj.agentUserNiceName;
 			officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
 			officialAccount.isSessionOpen = true;
 			break;
@@ -708,8 +705,6 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 			officialAccount.sessionState = _const.SESSION_STATE.WAIT;
 			officialAccount.isSessionOpen = true;
 			officialAccount.skillGroupId = null;
-
-			profile.currentAgentAvatar = null;
 			break;
 		case _const.SYSTEM_EVENT.SESSION_CLOSED:
 			officialAccount.sessionState = _const.SESSION_STATE.ABORT;
@@ -719,8 +714,6 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 			officialAccount.isSessionOpen = false;
 			officialAccount.hasReportedAttributes = false;
 
-			profile.currentAgentAvatar = null;
-
 			transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
 			break;
 		case _const.SYSTEM_EVENT.SESSION_OPENED:
@@ -728,8 +721,8 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 			officialAccount.agentType = eventObj.agentType;
 			officialAccount.agentId = eventObj.userId;
 			officialAccount.sessionId = eventObj.sessionId;
-			// officialAccount.avatar = eventObj.avatar;
-			// officialAccount.agentNickname = eventObj.agentUserNiceName;
+			officialAccount.agentAvatar = eventObj.avatar;
+			officialAccount.agentNickname = eventObj.agentUserNiceName;
 			officialAccount.isSessionOpen = true;
 			break;
 		case _const.SYSTEM_EVENT.SESSION_CREATED:
@@ -916,10 +909,11 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 
 		// todo: discard isTop return
 		// todo: discard utils.getBrief
+		var officialAccountType = officialAccount.type;
 		var brief = utils.getBrief(message.brief, 15);
-		var avatar = profile.ctaEnable
+		var avatar = officialAccountType === 'CUSTOM'
 			? officialAccount.img
-			: profile.currentAgentAvatar;
+			: profile.systemAgentAvatar || profile.tenantAvatar || profile.defaultAvatar;
 
 		if (utils.isBrowserMinimized() || !profile.isChatWindowOpen) {
 			chat.playSound();

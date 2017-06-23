@@ -85,10 +85,11 @@ app.genDomFromMsg = (function (window, _const, utils, profile) {
 	}
 
 	function _getAvatar(msg){
+		var officialAccountType = utils.getDataByPath(msg, 'ext.weichat.official_account.type');
 		var avatarFromOfficialAccountExt = utils.getDataByPath(msg, 'ext.weichat.official_account.img');
 		var avatarFromMessageExt = utils.getDataByPath(msg, 'fromUser.img');
-		var avatarFromCurrentAgent = profile.currentAgentAvatar;
-		var avatar = profile.ctaEnable
+		var avatarFromCurrentAgent = profile.systemAgentAvatar;
+		var avatar = officialAccountType === 'CUSTOM'
 			? avatarFromOfficialAccountExt
 			: avatarFromMessageExt || avatarFromCurrentAgent;
 

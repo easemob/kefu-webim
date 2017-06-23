@@ -1,7 +1,8 @@
 app.chat = (function (
 	_const, utils, uikit, apiHelper, channel, profile, eventListener,
 	satisfaction, initAgentInputStatePoller, initAgentStatePoller,
-	initQueuingNumberPoller, initTransferToKefuButton, initSessionList
+	initQueuingNumberPoller, initTransferToKefuButton, initSessionList,
+	initAgentNicknameUpdate
 ){
 	var isEmojiInitilized;
 	var isMessageChannelReady;
@@ -17,7 +18,6 @@ app.chat = (function (
 	var doms = {
 		imChat: document.getElementById('em-kefu-webim-chat'),
 		agentStatusText: topBar.querySelector('.em-header-status-text'),
-		nickname: topBar.querySelector('.em-widget-header-nickname'),
 		dragBar: topBar.querySelector('.drag-bar'),
 		minifyBtn: topBar.querySelector('.btn-min'),
 		audioBtn: topBar.querySelector('.btn-audio'),
@@ -55,15 +55,6 @@ app.chat = (function (
 	return chat;
 
 	function _initSystemEventListener(){
-		// 更新坐席名称
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _updateAgentNickname);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _updateAgentNickname);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _updateAgentNickname);
-		eventListener.add(_const.SYSTEM_EVENT.AGENT_NICKNAME_CHANGED, _updateAgentNickname);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _updateAgentNickname);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _updateAgentNickname);
-		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _updateAgentNickname);
-
 		// report visitor info
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _reportVisitorInfo);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _reportVisitorInfo);
@@ -71,29 +62,6 @@ app.chat = (function (
 		// get greetings
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _getGreetings);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _getGreetings);
-	}
-
-	function _updateAgentNickname(officialAccount) {
-		if (officialAccount !== profile.currentOfficialAccount) return;
-
-		var nickname = profile.currentAgentNickname;
-		var isSessionOpen = officialAccount.isSessionOpen;
-
-		if (officialAccount.type === 'CUSTOM'){
-			// 昵称显示为服务号名称
-			doms.nickname.innerText = officialAccount.name;
-		}
-		else if (
-			profile.nickNameOption
-			&& nickname
-			&& isSessionOpen
-			&& nickname !== '调度员'
-		) {
-			doms.nickname.innerText = nickname;
-		}
-		else {
-			doms.nickname.innerText = profile.defaultAgentName;
-		}
 	}
 
 	function _reportVisitorInfo(officialAccount){
@@ -837,6 +805,7 @@ app.chat = (function (
 				initAgentStatePoller();
 				initQueuingNumberPoller();
 				initTransferToKefuButton();
+				initAgentNicknameUpdate();
 
 				// 第二通道收消息初始化
 				channel.initSecondChannle();
@@ -865,5 +834,6 @@ app.chat = (function (
 	app.initAgentStatePoller,
 	app.initQueuingNumberPoller,
 	app.initTransferToKefuButton,
-	app.initSessionList
+	app.initSessionList,
+	app.initAgentNicknameUpdate
 ));

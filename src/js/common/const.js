@@ -41,7 +41,7 @@ easemobim._const = (function () {
 			SESSION_RESTORED: 'session.restored',
 			SESSION_NOT_CREATED: 'session.not.created',
 
-			AGENT_NICKNAME_CHANGED: 'agent.nickname.changed',
+			AGENT_INFO_UPDATE: 'agent.info.update',
 			OFFICIAL_ACCOUNT_SWITCHED: 'official.account.switched',
 			NEW_OFFICIAL_ACCOUNT_FOUND: 'new.official.account.found',
 			SYSTEM_OFFICIAL_ACCOUNT_UPDATED: 'system.official.account.updated',

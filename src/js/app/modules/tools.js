@@ -56,7 +56,7 @@ app.List = (function(){
 	};
 
 	List.prototype.removeAll = function (){
-		return this.list.length = 0;
+		this.list.length = 0;
 	};
 
 	return List;
@@ -94,8 +94,7 @@ app.Poller = (function () {
 
 app.profile = {
 	ctaEnable: false,
-	currentAgentAvatar: null,
-	currentAgentNickname: null,
+	systemAgentAvatar: null,
 	isChatWindowOpen: null,
 	nickNameOption: null,
 	currentBrowsingURL: null,
