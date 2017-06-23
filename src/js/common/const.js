@@ -104,7 +104,8 @@ easemobim._const = (function () {
 			'audioVideo',
 			'msgPredictEnable',
 			'waitListNumberEnable',
-			'agentInputStateEnable'
+			'agentInputStateEnable',
+			'noteCategory'
 		],
 
 		ERROR_MSG: {

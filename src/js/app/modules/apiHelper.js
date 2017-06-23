@@ -189,6 +189,30 @@ app.apiHelper = (function (_const, utils, emajax) {
 		});
 	}
 
+	function getCategories(opt){
+		return new Promise(function(resolve, reject){
+			api('getCategories', {
+				tenantId: config.tenantId,
+				'easemob-target-username': config.toUser,
+				'easemob-appkey': config.appKey.replace('#', '%23'),
+				'easemob-username': config.user.username,
+				headers: { Authorization: 'Easemob IM ' + opt.token },
+				projectId: opt.projectId,
+			}, function (msg) {
+				var list = utils.getDataByPath(msg, 'data.entities');
+					if (_.isArray(list)){
+						resolve(list);
+					}
+					else {
+						resolve([]);
+						console.error('unexpect data format: ', list);
+					}
+			}, function(err){
+				reject(err);
+			});
+		});
+	}
+
 	function createTicket(opt){
 		var data = opt.data;
 
@@ -205,7 +229,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 				content: opt.content,
 				status_id: '',
 				priority_id: '',
-				category_id: '',
+				category_id: opt.category_id,
 				creator: {
 					name: opt.name,
 					avatar: '',
@@ -935,6 +959,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 		getAgentStatus: getAgentStatus,
 		getLastSession: getLastSession,
 		getSkillgroupMenu: getSkillgroupMenu,
+		getCategories: getCategories,
 		reportVisitorAttributes: reportVisitorAttributes,
 		reportPredictMessage: reportPredictMessage,
 		getAgentInputState: getAgentInputState,

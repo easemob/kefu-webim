@@ -97,6 +97,64 @@ app.uikit = (function(utils){
 		};
 	}
 
+	function _createSelect(opt) {
+		opt = opt;
+		var list = opt.list;
+		var listLength = list.length;
+		var className = opt.className;
+		var cb = opt.cb || EMPTY_FUNCTION;
+		var selectHeader;
+		var popuplist;
+		var options = ['<ul class="em-popuplist hide">'];
+		var el = utils.createElementFromHTML('<div class="em-select "></div>');
+		className && utils.addClass(el, className);
+
+		function show () {
+			utils.removeClass(popuplist, 'hide');
+		}
+		function hide () {
+			utils.addClass(popuplist, 'hide');
+		}
+		function selectItem (e) {
+			el.selectValue = this.getAttribute('sign');
+			selectHeader.childNodes[0].innerText = this.innerText;
+
+		}
+
+		selectHeader = utils.createElementFromHTML('<div class="select-header"><label></label><span class="icon-arrow"></span></div>');
+		for( var i = 0; i < listLength; i++ ){
+			var itemStr = '<li class="itm-select" sign="' + list[i].sign + '">' + list[i].desc + '</li>'
+			options.push(itemStr)
+		}
+		options.push('</ul>')
+		popuplist = utils.createElementFromHTML(options.join(''));
+
+		// 默认选中第一个itm-select
+		selectHeader.childNodes[0].innerText = list[0].desc;
+		el.selectValue = list[0].sign;
+
+		el.appendChild(selectHeader);
+		el.appendChild(popuplist);
+
+		// 选中itm-select
+		utils.live('li.itm-select', utils.click, selectItem, popuplist);
+
+		// 点击下拉框头部 展示下拉框
+		utils.on(selectHeader, 'click', show);
+
+		// 点击别处时隐藏列表
+		utils.on(document, 'click', function (ev) {
+			var e = window.event || ev;
+			var target = e.srcElement || e.target;
+			// if (utils.isMobile) return;
+			if (!utils.hasClass(target, 'select-header') && !utils.hasClass(target.parentNode, 'select-header')) {
+				utils.addClass(popuplist, 'hide');
+			}
+		});
+
+		return el;
+	}
+
 	function showSuccess(msg){
 		var contentDom = utils.createElementFromHTML([
 			'<div>',
@@ -117,6 +175,7 @@ app.uikit = (function(utils){
 		prompt: _showPrompt,
 		tip: tip,
 		createDialog: _createDialog,
+		createSelect: _createSelect,
 		showSuccess: showSuccess
 	};
 }(easemobim.utils));

@@ -228,3 +228,8 @@
 	content: "\7b"
 }
 
+.icon-arrow:before {
+	@extend .icon-base;
+	content: "\32"
+}
+
