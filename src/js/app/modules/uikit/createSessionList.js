@@ -6,7 +6,7 @@ app.createSessionList = (function(_const, utils, Dict, uikit, profile, eventList
 	var itemOnClickCallback;
 
 	return function (options){
-		opt = options || {};
+		var opt = options || {};
 		itemOnClickCallback = opt.itemOnClickCallback || EMPTY_FUNCTION;
 
 		dialog = uikit.createDialog({

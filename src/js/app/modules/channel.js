@@ -1,4 +1,4 @@
-app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, profile){
+app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, retryThrottle, profile){
 	'strict';
 
 	var isNoAgentOnlineTipShowed;
@@ -20,6 +20,31 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 
 	// 收消息队列
 	var receiveMsgDict = new Dict();
+
+	var _open = retryThrottle(function (){
+		var op = {
+			user: config.user.username,
+			appKey: config.appKey,
+			apiUrl: location.protocol + '//' + config.restServer
+		};
+
+		if (config.user.token) {
+			op.accessToken = config.user.token;
+		}
+		else {
+			op.pwd = config.user.password;
+		}
+
+		conn.open(op);
+
+		Modernizr.peerconnection
+			&& profile.grayList.audioVideo
+			&& app.videoChat.init(conn);
+	}, {
+		resetTime: 10 * 60 * 1000,
+		waitTime: 2000,
+		retryLimit: 3
+	});
 
 
 	var channel = {
@@ -64,31 +89,9 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 
 	return channel;
 
-	function _open(){
-		var op = {
-			user: config.user.username,
-			appKey: config.appKey,
-			apiUrl: location.protocol + '//' + config.restServer
-		};
-
-		if (config.user.token) {
-			op.accessToken = config.user.token;
-		}
-		else {
-			op.pwd = config.user.password;
-		}
-
-		conn.open(op);
-
-		Modernizr.peerconnection
-			&& profile.grayList.audioVideo
-			&& app.videoChat.init(conn);
-	}
-
 	function _listen() {
 		// xmpp连接超时则改为可发送消息状态
 		// todo: 自动切换通道状态
-		var reOpenTimerHandler;
 		var firstTS = setTimeout(function () {
 			chat.handleReady();
 		}, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
@@ -98,7 +101,6 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 				// 连接未超时，清除timer，暂不开启api通道发送消息
 				clearTimeout(firstTS);
 
-				reOpenTimerHandler && clearTimeout(reOpenTimerHandler);
 				token = info.accessToken;
 				conn.setPresence();
 
@@ -135,9 +137,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 					_open();
 				}
 				else if (e.type === _const.IM.WEBIM_CONNCTION_AUTH_ERROR) {
-					reOpenTimerHandler || (reOpenTimerHandler = setTimeout(function () {
-						_open();
-					}, 2000));
+					_open();
 				}
 				else if (
 					e.type === _const.IM.WEBIM_CONNCTION_OPEN_ERROR
@@ -935,5 +935,6 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, pro
 	app.Dict,
 	app.apiHelper,
 	app.eventListener,
+	app.retryThrottle,
 	app.profile
 ));
