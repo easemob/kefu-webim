@@ -38,7 +38,7 @@ app.initAgentNicknameUpdate = (function (_const, utils, profile, eventListener){
 			$agentNickname.innerText = officialAccount.name;
 		}
 		else if (
-			profile.nickNameOption
+			profile.isAgentNicknameEnable
 			&& agentNickname
 			&& isSessionOpen
 			&& agentNickname !== '调度员'

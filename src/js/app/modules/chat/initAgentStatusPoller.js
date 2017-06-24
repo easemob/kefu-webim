@@ -39,7 +39,7 @@ app.initAgentStatePoller = (function(_const,  utils, profile, eventListener, api
 			_update('Online');
 		}
 		else if (
-			!profile.nickNameOption
+			!profile.isAgentNicknameEnable
 			|| !agentId
 			|| !isSessionOpen
 		){

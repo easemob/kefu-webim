@@ -797,7 +797,7 @@ app.chat = (function (
 
 				// 获取坐席昵称设置
 				apiHelper.getNickNameOption().then(function(displayNickname){
-					profile.nickNameOption = displayNickname;
+					profile.isAgentNicknameEnable = displayNickname;
 				});
 
 				_initSystemEventListener();
