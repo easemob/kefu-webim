@@ -84,7 +84,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 				});
 			}, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
 		},
-		handleReceive: _handleMessage
+		handleMessage: _handleMessage
 	};
 
 	return channel;
@@ -522,9 +522,9 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 				&& eventListener.excuteCallbacks(
 					_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
 					[
-						msg,
+						targetOfficialAccount,
 						marketingTaskId,
-						targetOfficialAccount
+						msg
 					]
 				);
 
@@ -552,6 +552,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 		_appendMsg(message, {
 			isReceived: isReceived,
 			isHistory: isHistory,
+			officialAccount: targetOfficialAccount,
 			timestamp: msg.timestamp
 		});
 
@@ -761,35 +762,35 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 		var opt = options || {};
 		var isReceived = opt.isReceived;
 		var isHistory = opt.isHistory;
-		var officialAccountId = utils.getDataByPath(msg, 'ext.weichat.official_account.official_account_id');
-		var officialAccount = _getOfficialAccountById(officialAccountId);
-		var currentOfficialAccount = profile.currentOfficialAccount || profile.systemOfficialAccount;
+		var officialAccount = opt.officialAccount || profile.currentOfficialAccount || profile.systemOfficialAccount;
 
-		if (!isReceived && !isHistory){
-			// 自己发出去的即时消息使用当前messageView
-			currentOfficialAccount.messageView.appendMsg(msg, opt);
-		}
-		else {
-			officialAccount.messageView.appendMsg(msg, opt);
-		}
+		officialAccount.messageView.appendMsg(msg, opt);
 
 		if (isReceived && !isHistory && !msg.noprompt){
 			eventListener.excuteCallbacks(
 				_const.SYSTEM_EVENT.MESSAGE_APPENDED,
-				[officialAccount, officialAccountId, msg]
+				[officialAccount, msg]
 			);
 		}
 	}
 
-	function _attemptToAppendOfficialAccount(officialAccount){
-		var id = officialAccount.official_account_id;
-		var type = officialAccount.type;
-		var img = officialAccount.img;
-		var name = officialAccount.name;
+	function _attemptToAppendOfficialAccount(officialAccountInfo){
+		var id = officialAccountInfo.official_account_id;
 		var targetOfficialAccount = _.findWhere(profile.officialAccountList, {official_account_id: id});
 
 		// 如果相应messageView已存在，则不处理
 		if (targetOfficialAccount) return;
+
+		var type = officialAccountInfo.type;
+		var img = officialAccountInfo.img;
+		var name = officialAccountInfo.name;
+		// copy object
+		var officialAccount = {
+			official_account_id: id,
+			type: type,
+			img: img,
+			'name': name
+		};
 
 		if (type === 'SYSTEM'){
 			if (_.isEmpty(profile.systemOfficialAccount)){

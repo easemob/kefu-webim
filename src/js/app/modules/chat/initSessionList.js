@@ -47,14 +47,16 @@ app.initSessionList = (function (
 			}
 			else {
 				profile.currentOfficialAccount = profile.systemOfficialAccount;
+				profile.systemOfficialAccount.messageView.show();
 			}
 		});
 
-		eventListener.add(_const.SYSTEM_EVENT.MESSAGE_APPENDED, function (officialAccount, officialAccountId, msg){
+		eventListener.add(_const.SYSTEM_EVENT.MESSAGE_APPENDED, function (officialAccount, msg){
 			if (officialAccount === profile.currentOfficialAccount) return;
 
 			var msgBrief = msg.brief;
 			var formattedTimestamp = utils.formatDate(_.now());
+			var officialAccountId = officialAccount.official_account_id;
 
 			officialAccount.unreadMessageIdList.add(msg.id);
 			sessionListView.updateLatestMessage(officialAccountId, msgBrief, formattedTimestamp);
@@ -113,7 +115,7 @@ app.initSessionList = (function (
 		});
 	}
 
-	function _onMarketingMessageReceived(msg, marketingTaskId, officialAccount){
+	function _onMarketingMessageReceived(officialAccount, marketingTaskId, msg){
 		var avatar = officialAccount.img;
 		var officialAccountId = officialAccount.official_account_id;
 		var content = msg.data;

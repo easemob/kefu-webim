@@ -1,5 +1,5 @@
 app.createMessageView = (function(_const, utils, profile, uikit, apiHelper, channel, eventListener){
-	var tpl = '<div class="chat-container"></div>';
+	var tpl = '<div class="chat-container hide"></div>';
 	var parentContainer = document.querySelector('.chat-wrapper');
 
 	return function(opt){

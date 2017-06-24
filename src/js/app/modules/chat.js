@@ -91,7 +91,7 @@ app.chat = (function (
 			var greetingObj = {};
 
 			// 系统欢迎语
-			systemGreetingText && channel.handleReceive({
+			systemGreetingText && channel.handleMessage({
 				data: systemGreetingText,
 				noprompt: true
 			}, 'txt');
@@ -100,7 +100,7 @@ app.chat = (function (
 			switch (greetingTextType) {
 			case 0:
 				// 文本消息
-				channel.handleReceive({
+				channel.handleMessage({
 					data: greetingText,
 					noprompt: true
 				}, 'txt');
@@ -109,7 +109,7 @@ app.chat = (function (
 				// 菜单消息
 				greetingObj = JSON.parse(greetingText.replace(/&amp;quot;/g, '"'));
 
-				greetingObj.ext && channel.handleReceive({
+				greetingObj.ext && channel.handleMessage({
 					ext: greetingObj.ext,
 					noprompt: true
 				});
@@ -123,7 +123,7 @@ app.chat = (function (
 			}
 
 			// 技能组列表
-			groupMenus && channel.handleReceive({
+			groupMenus && channel.handleMessage({
 				data: groupMenus,
 				type: 'skillgroupMenu',
 				noprompt: true
@@ -368,6 +368,7 @@ app.chat = (function (
 				});
 
 				profile.currentOfficialAccount = profile.systemOfficialAccount;
+				profile.systemOfficialAccount.messageView.show();
 
 				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [profile.systemOfficialAccount]);
 			}
