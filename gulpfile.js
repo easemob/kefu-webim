@@ -198,7 +198,6 @@ gulp.task('combineJs', function () {
 			'src/js/app/modules/tools.js',
 			'src/js/app/modules/uikit.js',
 			'src/js/app/modules/tools/messageFactory.js',
-			'src/js/app/modules/tools/eventListener.js',
 			'src/js/app/modules/apiHelper.js',
 			'src/js/app/modules/channel.js',
 			'src/js/app/modules/uikit/createSessionList.js',
