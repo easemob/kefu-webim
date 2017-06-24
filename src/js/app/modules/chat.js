@@ -12,10 +12,9 @@ app.chat = (function (
 	// DOM init
 	var topBar = document.querySelector('.em-widget-header');
 	var editorView = document.querySelector('.em-widget-send-wrapper');
-	easemobim.imBtn = document.getElementById('em-widgetPopBar');
 
-	// todo: 把dom都移到里边
 	var doms = {
+		imBtn: document.getElementById('em-widgetPopBar'),
 		imChat: document.getElementById('em-kefu-webim-chat'),
 		agentStatusText: topBar.querySelector('.em-header-status-text'),
 		dragBar: topBar.querySelector('.drag-bar'),
@@ -387,12 +386,8 @@ app.chat = (function (
 	function _bindEvents() {
 		if (!utils.isTop) {
 			// 最小化按钮
-			utils.on(document.querySelector('.em-widget-header .btn-min'), 'click', function () {
+			utils.on(doms.minifyBtn, 'click', function () {
 				transfer.send({ event: _const.EVENTS.CLOSE });
-			});
-
-			utils.on(easemobim.imBtn, utils.click, function () {
-				transfer.send({ event: _const.EVENTS.SHOW });
 			});
 
 			utils.on(document, 'mouseover', function () {
@@ -685,7 +680,7 @@ app.chat = (function (
 
 		if (!config.hide) {
 			utils.addClass(doms.imChat, 'hide');
-			utils.removeClass(easemobim.imBtn, 'hide');
+			utils.removeClass(doms.imBtn, 'hide');
 		}
 
 		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CHAT_WINDOW_CLOSED, []);
@@ -693,7 +688,7 @@ app.chat = (function (
 
 	function _show() {
 		profile.isChatWindowOpen = true;
-		utils.addClass(easemobim.imBtn, 'hide');
+		utils.addClass(doms.imBtn, 'hide');
 		utils.removeClass(doms.imChat, 'hide');
 		_scrollToBottom();
 		if (

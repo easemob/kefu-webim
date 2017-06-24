@@ -44,9 +44,9 @@ app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 		});
 	}
 
-	function _startToReoprt(cfg, callback) {
+	function _startToReoprt(callback) {
 		_callback || (_callback = callback);
-		_config || (_config = cfg);
+		_config || (_config = profile.config);
 
 		// h5 方式屏蔽访客回呼功能
 		if (utils.isTop) return;
@@ -96,14 +96,15 @@ app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 
 			_config.orgName = splited[0] || targetItem.orgName;
 			_config.appName = splited[1] || targetItem.appName;
-			_config.imServiceNumber = targetItem.imServiceNumber;
+			_config.toUser = targetItem.imServiceNumber;
 			_config.restServer = _config.restServer || targetItem.restDomain;
 
+			// todo: use xmpp server from relevanceList
 			var cluster = _config.restServer ? _config.restServer.match(/vip\d/) : '';
 			cluster = cluster && cluster.length ? '-' + cluster[0] : '';
 			_config.xmppServer = _config.xmppServer || 'im-api' + cluster + '.easemob.com';
 
-			_gid = _config.orgName + '#' + _config.appName + '_' + _config.username;
+			_gid = _config.orgName + '#' + _config.appName + '_' + username;
 
 			_polling = new Polling(function (){
 				_reportData('VISITOR', _gid);

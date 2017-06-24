@@ -56,7 +56,7 @@
 	}
 
 	function chat_window_mode_init(){
-		utils.removeClass(document.getElementById('em-widgetPopBar'), 'hide');
+		var $contactAgentBtn = document.getElementById('em-widgetPopBar');
 		window.transfer = new easemobim.Transfer(null, 'main', true).listen(function (msg){
 			var event = msg.event;
 			var data = msg.data;
@@ -95,6 +95,11 @@
 				break;
 			}
 		}, ['easemob']);
+
+		utils.removeClass($contactAgentBtn, 'hide');
+		utils.on($contactAgentBtn, utils.click, function (){
+			transfer.send({ event: _const.EVENTS.SHOW });
+		});
 	}
 
 	function initChat() {
@@ -102,13 +107,8 @@
 
 		// 访客回呼功能
 		if (config.eventCollector && !eventCollector.isStarted()) {
-			eventCollector.startToReport(config, function (targetUserInfo) {
+			eventCollector.startToReport(function (targetUserInfo) {
 				initChatEntry(targetUserInfo);
-			});
-			// 增加访客主动联系客服逻辑
-			utils.one(easemobim.imBtn, 'click', function () {
-				initChatEntry();
-				chat.show();
 			});
 		}
 		else {
