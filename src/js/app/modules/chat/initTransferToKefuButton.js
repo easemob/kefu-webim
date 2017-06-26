@@ -17,15 +17,7 @@ app.initTransferToKefuButton = (function (_const, utils, profile, eventListener,
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _displayOrHideTransferToKefuBtn);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideTransferToKefuBtn);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideTransferToKefuBtn);
-		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, function(officialAccount){
-			if (officialAccount.type === 'CUSTOM'){
-				// 营销号一律不显示转人工按钮
-				utils.addClass($toKefuBtn, 'hide');
-			}
-			else {
-				_displayOrHideTransferToKefuBtn(officialAccount);
-			}
-		});
+		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _displayOrHideTransferToKefuBtn);
 	};
 
 	function _displayOrHideTransferToKefuBtn(officialAccount){
@@ -34,9 +26,14 @@ app.initTransferToKefuButton = (function (_const, utils, profile, eventListener,
 
 		var state = officialAccount.sessionState;
 		var agentType = officialAccount.agentType;
+		var type = officialAccount.type;
 		var isRobotAgent = agentType === _const.AGENT_ROLE.ROBOT;
 
-		if (state === _const.SESSION_STATE.PROCESSING){
+		if (type === 'CUSTOM'){
+			// 营销号一律不显示转人工按钮
+			utils.addClass($toKefuBtn, 'hide');
+		}
+		else if (state === _const.SESSION_STATE.PROCESSING){
 			utils.toggleClass($toKefuBtn, 'hide', !isRobotAgent);
 		}
 		else{

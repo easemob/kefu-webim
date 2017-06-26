@@ -35,7 +35,14 @@ app.createMessageView = (function(_const, utils, profile, uikit, apiHelper, chan
 				);
 
 				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);
-			}, function (err){});
+			}, function (err){
+				if (err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
+					eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [officialAccount]);
+				}
+				else {
+					throw err;
+				}
+			});
 		});
 
 		return {

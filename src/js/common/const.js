@@ -38,6 +38,7 @@ easemobim._const = (function () {
 			SESSION_CLOSED: 'ServiceSessionClosedEvent',
 			SESSION_TRANSFERED: 'ServiceSessionTransferedEvent',
 			SESSION_TRANSFERING: 'ServiceSessionTransferedToAgentQueueEvent',
+
 			SESSION_RESTORED: 'session.restored',
 			SESSION_NOT_CREATED: 'session.not.created',
 
