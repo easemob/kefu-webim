@@ -220,6 +220,19 @@
 				type: 'POST'
 			});
 			break;
+		case 'getNoteCategories':
+			emitAjax({
+				url: '/tenants/' + tenantId
+					+ '/projects/' + params.projectId
+					+ '/categories?tenantId=' + tenantId
+					+ '&easemob-target-username=' + params['easemob-target-username']
+					+ '&easemob-appkey=' + params[ 'easemob-appkey']
+					+ '&easemob-username=' + params['easemob-username'],
+				msg: msg,
+				type: 'GET',
+				excludeData: true
+			});
+			break;
 		case 'receiveMsgChannel':
 			emitAjax({
 				url: '/v1/imgateway/messages',
