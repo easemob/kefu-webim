@@ -47,8 +47,8 @@ easemobim._const = (function () {
 			NEW_OFFICIAL_ACCOUNT_FOUND: 'new.official.account.found',
 			SYSTEM_OFFICIAL_ACCOUNT_UPDATED: 'system.official.account.updated',
 			OFFICIAL_ACCOUNT_LIST_GOT: 'official.account.list.got',
+
 			MARKETING_MESSAGE_RECEIVED: 'marketing.message.received',
-			// todo: add this event
 			SATISFACTION_EVALUATION_MESSAGE_RECEIVED: 'satisfaction.evaluation.message.received',
 
 			CHAT_WINDOW_OPENED: 'chat.window.opened',

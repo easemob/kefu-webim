@@ -10,7 +10,6 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 
 	// other module
 	var chat;
-	var satisfaction;
 
 	// 监听ack的timer, 每条消息启动一个
 	var ackTimerDict = new Dict();
@@ -51,7 +50,6 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 		init: function(){
 			config = profile.config;
 			chat = app.chat;
-			satisfaction = app.satisfaction;
 		},
 		initConnection: function(){
 			conn = new WebIM.connection({
@@ -440,7 +438,10 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 			];
 			message.brief = '[菜单]';
 
-			!isHistory && satisfaction.show(inviteId, serviceSessionId);
+			!isHistory && eventListener.excuteCallbacks(
+				_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
+				[targetOfficialAccount, inviteId, serviceSessionId]
+			);
 			break;
 		case 'robotList':
 			message = msg;

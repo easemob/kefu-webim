@@ -61,6 +61,14 @@ app.chat = (function (
 		// get greetings
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _getGreetings);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _getGreetings);
+
+		eventListener.add(
+			_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
+			function (officialAccount, inviteId, serviceSessionId){
+				if (officialAccount !== profile.currentOfficialAccount) return;
+				satisfaction.show(inviteId, serviceSessionId);
+			}
+		);
 	}
 
 	function _reportVisitorInfo(officialAccount){
@@ -173,10 +181,7 @@ app.chat = (function (
 
 		// 满意度评价按钮
 		config.satisfaction
-			&& utils.removeClass(
-				document.querySelector('.em-widget-satisfaction'),
-				'hide'
-			);
+			&& utils.removeClass(doms.satisfaction, 'hide');
 	}
 
 	function _initSoundReminder(){
