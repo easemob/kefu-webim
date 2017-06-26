@@ -77,6 +77,7 @@ app.chat = (function (
 	}
 
 	function _getGreetings(officialAccount) {
+		if (officialAccount !== profile.systemOfficialAccount) return;
 		if (officialAccount.isSessionOpen) return;
 		Promise.all([
 			apiHelper.getSystemGreeting(),
