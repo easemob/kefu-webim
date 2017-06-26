@@ -6,7 +6,8 @@ app.initQueuingNumberPoller = (function (_const, utils, profile, eventListener, 
 
 	return function(){
 		if (!profile.grayList.waitListNumberEnable) return;
-		$queuingNumberStatus = document.querySelector('.queuing-number-status');
+		var editorView = document.querySelector('.em-widget-send-wrapper');
+		$queuingNumberStatus = editorView.querySelector('.queuing-number-status');
 		$queuingNumberLabel = $queuingNumberStatus.querySelector('label');
 
 		// 开始轮询排队人数

@@ -6,7 +6,6 @@ app.chat = (function (
 ){
 	var isEmojiInitilized;
 	var isMessageChannelReady;
-	var inputBoxPosition;
 	var config;
 
 	// DOM init
@@ -29,6 +28,7 @@ app.chat = (function (
 		satisfaction: editorView.querySelector('.em-widget-satisfaction'),
 		textInput: editorView.querySelector('.em-widget-textarea'),
 		noteBtn: editorView.querySelector('.em-widget-note'),
+		queuingNumberStatus: editorView.querySelector('.queuing-number-status'),
 
 		imgInput: document.querySelector('.upload-img-container'),
 		fileInput: document.querySelector('.upload-file-container'),
@@ -335,9 +335,43 @@ app.chat = (function (
 
 	function _initAutoGrow(){
 		var originHeight = doms.textInput.clientHeight;
+		var inputBoxPosition;
+
+		// 键盘上下切换按钮
+		utils.on(doms.switchKeyboardBtn, 'click', function (){
+			var status = utils.hasClass(this, 'icon-keyboard-down');
+			var height = doms.editorView.getBoundingClientRect().height;
+			inputBoxPosition = status ? 'down' : 'up';
+
+			utils.toggleClass(this, 'icon-keyboard-up', status);
+			utils.toggleClass(this, 'icon-keyboard-down', !status);
+
+			switch (inputBoxPosition) {
+			case 'up':
+				doms.editorView.style.bottom = 'auto';
+				doms.editorView.style.zIndex = '3';
+				doms.editorView.style.top = '43px';
+				doms.chatWrapper.style.bottom = '0';
+				doms.emojiWrapper.style.bottom = 'auto';
+				doms.emojiWrapper.style.top = 43 + height + 'px';
+				doms.queuingNumberStatus.style.top = height + 'px';
+				break;
+			case 'down':
+				doms.editorView.style.bottom = '0';
+				doms.editorView.style.zIndex = '3';
+				doms.editorView.style.top = 'auto';
+				doms.chatWrapper.style.bottom = height + 'px';
+				doms.emojiWrapper.style.bottom = height + 'px';
+				doms.emojiWrapper.style.top = 'auto';
+				doms.queuingNumberStatus.style.top = '-26px';
+				_scrollToBottom();
+				break;
+			}
+		});
 
 		utils.on(doms.textInput, 'input change', update);
 
+		// todo: 高度不改变时，不更新dom
 		function update() {
 			var height = this.value ? this.scrollHeight : originHeight;
 			this.style.height = height + 'px';
@@ -349,6 +383,7 @@ app.chat = (function (
 			var height = doms.editorView.getBoundingClientRect().height;
 			if (inputBoxPosition === 'up') {
 				doms.emojiWrapper.style.top = 43 + height + 'px';
+				doms.queuingNumberStatus.style.top = height + 'px';
 			}
 			else {
 				doms.chatWrapper.style.bottom = height + 'px';
@@ -542,40 +577,6 @@ app.chat = (function (
 				doms.textInput.style.overflowY = 'auto';
 				_scrollToBottom();
 			});
-
-			// 键盘上下切换按钮
-			utils.on(
-				document.querySelector('.em-widget-header .btn-keyboard'),
-				'click',
-				function () {
-					var status = utils.hasClass(this, 'icon-keyboard-down');
-					var height = doms.editorView.getBoundingClientRect().height;
-					inputBoxPosition = status ? 'down' : 'up';
-
-					utils.toggleClass(this, 'icon-keyboard-up', status);
-					utils.toggleClass(this, 'icon-keyboard-down', !status);
-
-					switch (inputBoxPosition) {
-					case 'up':
-						doms.editorView.style.bottom = 'auto';
-						doms.editorView.style.zIndex = '3';
-						doms.editorView.style.top = '43px';
-						doms.chatWrapper.style.bottom = '0';
-						doms.emojiWrapper.style.bottom = 'auto';
-						doms.emojiWrapper.style.top = 43 + height + 'px';
-						break;
-					case 'down':
-						doms.editorView.style.bottom = '0';
-						doms.editorView.style.zIndex = '3';
-						doms.editorView.style.top = 'auto';
-						doms.chatWrapper.style.bottom = height + 'px';
-						doms.emojiWrapper.style.bottom = height + 'px';
-						doms.emojiWrapper.style.top = 'auto';
-						_scrollToBottom();
-						break;
-					}
-				}
-			);
 		}
 
 		// 发送文件

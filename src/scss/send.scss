@@ -6,7 +6,6 @@
 	background-color: white;
 	-webkit-backface-visibility: hidden;
 
-	// 状态栏
 	.queuing-number-status {
 		width: 100%;
 		height: 26px;
@@ -14,6 +13,7 @@
 		line-height: 26px;
 		padding: 0 8px;
 		position: absolute;
+		box-sizing: border-box;
 		top: -26px;
 		color: rgb(76, 76, 76);
 		background-color: rgba(223, 233, 252, .7);
