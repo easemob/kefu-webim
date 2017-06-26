@@ -6,6 +6,7 @@ app.initSessionList = (function (
 	var redDotDom;
 	var sessionListView;
 	var statusBar;
+	var ctaDialog;
 
 	return function(){
 		var topBar = document.querySelector('.em-widget-header');
@@ -127,15 +128,18 @@ app.initSessionList = (function (
 
 		officialAccount !== profile.currentOfficialAccount
 			&& profile.currentOfficialAccount
-			&& app.promptCtaDialog({
+			&& (ctaDialog = app.promptCtaDialog({
 				title: title,
 				replyCallback: _switchToOfficialAccount,
 				content: content,
 				avatar: avatar,
 				callbackMessage: officialAccountId
-			});
+			}));
 
-		if (profile.isChatWindowOpen){
+		if (
+			profile.isChatWindowOpen
+			&& officialAccount === profile.currentOfficialAccount
+		){
 			apiHelper.reportMarketingTaskOpened(marketingTaskId);
 		}
 		else {
@@ -175,6 +179,8 @@ app.initSessionList = (function (
 			});
 			utils.on(sessionListBtn, 'click', function (){
 				sessionListView.show();
+				// 如果有ctaPromptDialog则关闭
+				ctaDialog && ctaDialog.hide();
 				profile.currentOfficialAccount = null;
 				utils.addClass(statusBar, 'hide');
 			});
