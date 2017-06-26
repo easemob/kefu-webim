@@ -564,6 +564,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 					timestamp: _.now(),
 					orgName: config.orgName,
 					appName: config.appName,
+					userName: config.user.username,
 					imServiceNumber: config.toUser,
 					token: token
 				}, function (msg) {
