@@ -303,8 +303,8 @@ app.chat = (function (
 		switch (config.offDutyType) {
 		case 'none':
 			// 下班禁止留言、禁止接入会话
-			utils.appendHTMLToBody([
-				'<div class="em-model"></div>',
+			var modelDom = utils.createElementFromHTML('<div class="em-model"></div>');
+			var offDutyPromptDom = utils.createElementFromHTML([
 				'<div class="em-dialog off-duty-prompt">',
 				'<div class="bg-color header">提示</div>',
 				'<div class="body">',
@@ -312,12 +312,17 @@ app.chat = (function (
 				'</div>',
 				'</div>'
 			].join(''));
+			doms.imChat.appendChild(modelDom);
+			doms.imChat.appendChild(offDutyPromptDom);
+			doms.sendBtn.innerHTML = '发送';
 			break;
 		default:
 			// 只允许留言此时无法关闭留言页面
 			app.leaveMessage({hideCloseBtn: true});
 			break;
 		}
+
+		transfer.send({event: _const.EVENTS.ON_OFFDUTY});
 	}
 
 	function _scrollToBottom(){

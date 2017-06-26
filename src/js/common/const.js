@@ -92,6 +92,7 @@ easemobim._const = (function () {
 			EXT: 'ext',
 			TEXTMSG: 'textmsg',
 			ONREADY: 'onready',
+			ON_OFFDUTY: 'onOffDuty',
 			SET_ITEM: 'setItem',
 			UPDATE_URL: 'updateURL',
 			REQUIRE_URL: 'requireURL',

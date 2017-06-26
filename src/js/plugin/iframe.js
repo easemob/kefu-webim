@@ -158,6 +158,9 @@
 						me.callbackApi.onready();
 					}, 500);
 					break;
+				case _const.EVENTS.ON_OFFDUTY:
+					loading.hide();
+					break;
 				case _const.EVENTS.SHOW:
 					// 显示聊天窗口
 					me.open();
