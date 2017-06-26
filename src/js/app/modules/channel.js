@@ -458,7 +458,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 						className += 'bg-hover-color';
 					}
 					return '<button class="' + className + '" data-id="' + id + '">' + label + '</button>';
-				}).join('')
+				}).join('') || ''
 				+ '</div>';
 			message.data = msg.ext.msgtype.choice.title;
 			message.brief = '[菜单]';
@@ -473,7 +473,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 					var className = 'js_skillgroupbtn bg-hover-color';
 
 					return '<button class="' + className + '" data-queue-name="' + queueName + '">' + label + '</button>';
-				}).join('')
+				}).join('') || ''
 				+ '</div>';
 			message.data = msg.data.menuName;
 			message.brief = '[菜单]';

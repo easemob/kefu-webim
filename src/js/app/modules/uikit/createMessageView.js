@@ -35,7 +35,7 @@ app.createMessageView = (function(_const, utils, profile, uikit, apiHelper, chan
 				);
 
 				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);
-			});
+			}, function (err){});
 		});
 
 		return {
