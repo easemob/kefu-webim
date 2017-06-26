@@ -212,7 +212,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 				}, function(err){
 					reject(err);
 				});
-			})
+			});
 		});
 	}
 

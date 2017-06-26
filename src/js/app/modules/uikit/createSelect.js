@@ -1,4 +1,4 @@
-app.createSelect= (function(_const, utils, Dict, uikit, profile){
+app.createSelect = (function(_const, utils, Dict, uikit, profile){
 	var containerDom;
 	var selectDom;
 	var popuplist;
@@ -11,10 +11,10 @@ app.createSelect= (function(_const, utils, Dict, uikit, profile){
 		selectClassName = opt.selectClassName || '';
 		popuplistClassName = opt.popuplistClassName || '';
 		containerDom = opt.container;
-		list = opt.list
+		list = opt.list;
 		if (!_.isArray(list) || _.isEmpty(list) || !containerDom) return;
 
-		var newSelectDom = utils.createElementFromHTML('<div class="em-select ' + selectClassName +'"><label class="em-select-desc"></label><span class="icon-arrange em-select-icon"></span></div>');
+		var newSelectDom = utils.createElementFromHTML('<div class="em-select ' + selectClassName +'"><label class="em-select-desc"></label><span class="icon-arrow-up-down em-select-icon"></span></div>');
 
 		if (selectDom){
 			containerDom.replaceChild(newSelectDom, selectDom);
@@ -22,7 +22,7 @@ app.createSelect= (function(_const, utils, Dict, uikit, profile){
 		else {
 			containerDom.appendChild(newSelectDom);
 		}
-		selectDom = newSelectDom
+		selectDom = newSelectDom;
 
 		var newPopuplist = _render(opt);
 
@@ -44,7 +44,7 @@ app.createSelect= (function(_const, utils, Dict, uikit, profile){
 
 	function _bindEvents(){
 		// 选中itm-select
-		utils.live('li.itm-select', utils.click, _selectItem, popuplist);
+		utils.live('li.itm-select', 'click', _selectItem, popuplist);
 
 		// 点击下拉框头部 展示下拉框
 		utils.on(selectDom, 'click', _show);
@@ -55,7 +55,7 @@ app.createSelect= (function(_const, utils, Dict, uikit, profile){
 			var target = e.srcElement || e.target;
 			// if (utils.isMobile) return;
 			if (!utils.hasClass(target, 'em-select') && !utils.hasClass(target.parentNode, 'em-select')) {
-				_hide()
+				_hide();
 			}
 		});
 	}
@@ -68,28 +68,21 @@ app.createSelect= (function(_const, utils, Dict, uikit, profile){
 	}
 
 	function _getOffset(dom) {
+		var offsetT = 0;
+		var offsetL = 0;
+		var obj = dom;
+		while(obj!=window.document.body&&obj!=null)
+			{
+				offsetL += obj.offsetLeft,
+				offsetT += obj.offsetTop,
+				obj = obj.offsetParent
+			}
 		return {
 			width: dom.clientWidth,
 			height: dom.clientHeight,
-			left: _getLeft(dom),
-			top: _getTop(dom)
-		}
-	}
-
-	function _getTop(e){
-	   var offset=e.offsetTop;
-	   if(e.offsetParent!=null){
-	     offset += _getTop(e.offsetParent);
-	   }
-	   return offset;
-	}
-
-	function _getLeft(e){
-	   var offset=e.offsetLeft;
-	   if(e.offsetParent!=null){
-	      offset += _getLeft(e.offsetParent);
-	   }
-	   return offset;
+			left: offsetL,
+			top: offsetT
+		};
 	}
 
 	function _render() {

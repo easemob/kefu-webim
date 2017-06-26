@@ -7,7 +7,7 @@ app.leaveMessage = (function (utils, uikit, apiHelper, profile, createSelect) {
 		'<input type="text" class="name" placeholder="姓名">',
 		'<input type="text" class="phone" placeholder="电话">',
 		'<input type="text" class="mail" placeholder="邮箱">',
-		'<div class="note-category" placeholder="邮箱"></div>',
+		'<div class="note-category hide"></div>',
 		'<textarea spellcheck="false" placeholder="请输入留言"></textarea>',
 		'</div>',
 	].join(''));
@@ -55,19 +55,17 @@ app.leaveMessage = (function (utils, uikit, apiHelper, profile, createSelect) {
 		apiHelper.getNoteCategories().then(function (list){
 
 			if(!_.isEmpty(list)){
+				utils.removeClass(noteCategory, 'hide');
 				var optionList = _.map(list, function(item){
 					return {
 						sign: item.id,
 						desc: item.name
-					}
-				})
+					};
+				});
 				createSelect({
 					list: optionList,
 					container: noteCategory
 				});
-			}
-			else {
-				utils.addClass(noteCategory, 'hide');
 			}
 		});
 
