@@ -4,7 +4,6 @@ easemobim.loading = (function(_const, utils){
 		'<div class="loading">',
 		_const.loadingSvg,
 		'</div>',
-		'<span>正在加载，请稍候...</span>',
 		'</div>'
 	].join(''));
 

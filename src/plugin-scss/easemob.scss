@@ -28,9 +28,9 @@
 	display: none;
 	z-index: 16777271;
 	position: fixed;
-	width: 220px;
+	width: 30px;
 	height: 30px;
-	padding: 10px 0;
+	padding: 10px;
 	top: 0;
 	bottom: 0;
 	margin: auto;
@@ -52,11 +52,6 @@
 	    padding: 0;
 	    animation: easemobim-loading-frame 1s linear infinite;
 	}
-	> span {
-	    line-height: 30px;
-	    vertical-align: top;
-	    font-size: 15px;
-    }
 }
 
 // loading animation key frame
