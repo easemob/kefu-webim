@@ -2,6 +2,7 @@
 	'use strict';
 
 	var config;
+	var hasChatEntryInitialized;
 
 	if (utils.isTop){
 		h5_mode_init();
@@ -63,15 +64,19 @@
 
 			switch (event) {
 			case _const.EVENTS.SHOW:
+				// 在访客点击联系客服后停止上报访客
 				if (eventCollector.isStarted()) {
-					// 停止上报访客
 					eventCollector.stopReporting();
 					initChatEntry();
-					chat.show();
 				}
-				else {
-					chat.show();
+
+				// 访客端有进行中会话，停止了轮询，此时需要走一遍之前被跳过的初始化流程
+				if (eventCollector.hasProcessingSession()){
+					initChatEntry();
 				}
+
+				// 显示聊天窗口
+				chat.show();
 				break;
 			case _const.EVENTS.CLOSE:
 				chat.close();
@@ -233,6 +238,8 @@
 
 
 	function initChatEntry(targetUserInfo) {
+		if (hasChatEntryInitialized) return;
+		hasChatEntryInitialized = true;
 		//获取关联信息
 		apiHelper.getRelevanceList().then(function (relevanceList){
 			var targetItem;
@@ -382,7 +389,7 @@
 				_downgrade();
 			}
 		}, function(err){
-			uikit.prompt('未创建关联');
+			uikit.prompt(err);
 			throw err;
 		});
 	}

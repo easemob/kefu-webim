@@ -5,6 +5,7 @@ app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 	var _callback;
 	var _config;
 	var _gid;
+	var _hasProcessingSession;
 
 	function _reportData(userType, userId) {
 		var url = profile.currentBrowsingURL;
@@ -96,7 +97,7 @@ app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 
 			_config.orgName = splited[0] || targetItem.orgName;
 			_config.appName = splited[1] || targetItem.appName;
-			_config.toUser = targetItem.imServiceNumber;
+			_config.toUser = _config.to || targetItem.imServiceNumber;
 			_config.restServer = _config.restServer || targetItem.restDomain;
 
 			// todo: use xmpp server from relevanceList
@@ -112,8 +113,9 @@ app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 
 			// 获取当前会话信息
 			apiHelper.getCurrentServiceSession().then(function (response){
+				_hasProcessingSession = !!response;
 				// 没有会话数据，则开始轮询
-				!response && _polling.start();
+				!_hasProcessingSession && _polling.start();
 			});
 		}, function(err){
 			throw err;
@@ -132,6 +134,9 @@ app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 	return {
 		startToReport: _startToReoprt,
 		stopReporting: _stopReporting,
+		hasProcessingSession: function (){
+			return _hasProcessingSession;
+		},
 		isStarted: _isStarted
 	};
 }(
