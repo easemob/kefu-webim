@@ -151,6 +151,7 @@ app.profile = {
 	isChatWindowOpen: null,
 	isAgentNicknameEnable: null,
 	currentBrowsingURL: null,
+	isInOfficeHours: false,
 	// 用来缓存图片的file对象，用于全屏查看图片
 	imgFileList: new app.Dict(),
 	hasHumanAgentOnline: false,

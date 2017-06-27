@@ -2,7 +2,7 @@ app.chat = (function (
 	_const, utils, uikit, apiHelper, channel, profile, eventListener,
 	satisfaction, initAgentInputStatePoller, initAgentStatePoller,
 	initQueuingNumberPoller, initTransferToKefuButton, initSessionList,
-	initAgentNicknameUpdate
+	initGetGreetings, initAgentNicknameUpdate
 ){
 	var isEmojiInitilized;
 	var isMessageChannelReady;
@@ -44,9 +44,9 @@ app.chat = (function (
 	var chat = {
 		doms: doms,
 		init: _init,
-		handleReady: _handleReady,
 		close: _close,
 		show: _show,
+		// todo: discard this
 		playSound: function(){},
 		block: null
 	};
@@ -57,10 +57,6 @@ app.chat = (function (
 		// report visitor info
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _reportVisitorInfo);
 		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _reportVisitorInfo);
-
-		// get greetings
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _getGreetings);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _getGreetings);
 
 		eventListener.add(
 			_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
@@ -82,62 +78,6 @@ app.chat = (function (
 			officialAccount.hasReportedAttributes = true;
 			apiHelper.reportVisitorAttributes(sessionId);
 		}
-	}
-
-	function _getGreetings(officialAccount) {
-		if (officialAccount !== profile.systemOfficialAccount) return;
-		if (officialAccount.isSessionOpen) return;
-		Promise.all([
-			apiHelper.getSystemGreeting(),
-			apiHelper.getRobertGreeting(),
-			apiHelper.getSkillgroupMenu()
-		]).then(function(result){
-			var systemGreetingText = result[0];
-			var robotGreetingObj = result[1];
-			var groupMenus = result[2];
-			var greetingTextType = robotGreetingObj.greetingTextType;
-			var greetingText = robotGreetingObj.greetingText;
-			var greetingObj = {};
-
-			// 系统欢迎语
-			systemGreetingText && channel.handleMessage({
-				data: systemGreetingText,
-				noprompt: true
-			}, 'txt');
-
-			// 机器人欢迎语
-			switch (greetingTextType) {
-			case 0:
-				// 文本消息
-				channel.handleMessage({
-					data: greetingText,
-					noprompt: true
-				}, 'txt');
-				break;
-			case 1:
-				// 菜单消息
-				greetingObj = JSON.parse(greetingText.replace(/&amp;quot;/g, '"'));
-
-				greetingObj.ext && channel.handleMessage({
-					ext: greetingObj.ext,
-					noprompt: true
-				});
-				break;
-			case undefined:
-				// 未设置机器人欢迎语
-				break;
-			default:
-				console.error('unknown robot greeting type.');
-				break;
-			}
-
-			// 技能组列表
-			groupMenus && channel.handleMessage({
-				data: groupMenus,
-				type: 'skillgroupMenu',
-				noprompt: true
-			});
-		});
 	}
 
 	function _initUI(){
@@ -399,34 +339,39 @@ app.chat = (function (
 	}
 
 	function _initOfficialAccount(){
-		apiHelper.getOfficalAccounts().then(function(officialAccountList){
-			_.each(officialAccountList, channel.attemptToAppendOfficialAccount);
+		return new Promise(function (resolve, reject) {
+			apiHelper.getOfficalAccounts().then(function(officialAccountList){
+				_.each(officialAccountList, channel.attemptToAppendOfficialAccount);
 
-			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, []);
-		}, function(err){
-			// 未创建会话时初始化默认服务号
-			if (err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
-				// init default system message view
-				channel.attemptToAppendOfficialAccount({
-					type: 'SYSTEM',
-					official_account_id: 'default',
-					img: null
-				});
+				if (!profile.ctaEnable){
+					profile.currentOfficialAccount = profile.systemOfficialAccount;
+					profile.systemOfficialAccount.messageView.show();
+				}
 
-				profile.currentOfficialAccount = profile.systemOfficialAccount;
-				profile.systemOfficialAccount.messageView.show();
+				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, []);
 
-				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [profile.systemOfficialAccount]);
-			}
-			else {
-				throw err;
-			}
-		});
+				resolve();
+			}, function(err){
+				// 未创建会话时初始化默认服务号
+				if (err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
+					// init default system message view
+					channel.attemptToAppendOfficialAccount({
+						type: 'SYSTEM',
+						official_account_id: 'default',
+						img: null
+					});
 
-		// 获取在线坐席数
-		apiHelper.getExSession().then(function(data) {
-			profile.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
-			profile.hasRobotAgentOnline = data.onlineRobotAgentCount > 0;
+					profile.currentOfficialAccount = profile.systemOfficialAccount;
+					profile.systemOfficialAccount.messageView.show();
+
+					eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [profile.systemOfficialAccount]);
+
+					resolve();
+				}
+				else {
+					reject(err);
+				}
+			});
 		});
 	}
 
@@ -707,8 +652,7 @@ app.chat = (function (
 		if (
 			// todo: fix this issue
 			// todo: onInit !isChatWindowOpen && _show()
-			// 可能会在初始化完成之前读取config
-			config && config.isInOfficehours
+			profile.isInOfficeHours
 			// IE 8 will throw an error when focus an invisible element
 			&& doms.textInput.offsetHeight > 0
 		) {
@@ -720,10 +664,11 @@ app.chat = (function (
 		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CHAT_WINDOW_OPENED, []);
 	}
 
-	function _handleReady(info) {
+	function _onReady(){
 		if (isMessageChannelReady) return;
 
 		isMessageChannelReady = true;
+
 		doms.sendBtn.innerHTML = '发送';
 		utils.trigger(doms.textInput, 'change');
 
@@ -732,10 +677,6 @@ app.chat = (function (
 		if (config.minimum === false || config.eventCollector === true) {
 			transfer.send({ event: _const.EVENTS.SHOW });
 		}
-		if (info) {
-			config.user.token = config.user.token || info.accessToken;
-		}
-
 
 		// 发送扩展消息
 		while (profile.commandMessageToBeSendList.length > 0){
@@ -750,12 +691,23 @@ app.chat = (function (
 		}
 	}
 
+	function _initSDK(){
+		return new Promise(function (resolve, reject){
+			channel.initConnection(function (info){
+				// todo: discard this
+				if (info) {
+					config.user.token = config.user.token || info.accessToken;
+				}
+
+				resolve();
+			});
+		});
+	}
+
 	function _init() {
 		config = profile.config;
 
 		channel.init();
-
-		channel.initConnection();
 
 		profile.isChatWindowOpen = true;
 
@@ -782,26 +734,19 @@ app.chat = (function (
 			profile.grayList = grayList;
 
 			// 当配置为下班进会话时执行与上班相同的逻辑
-			config.isInOfficehours = dutyStatus || config.offDutyType === 'chat';
+			profile.isInOfficeHours = dutyStatus || config.offDutyType === 'chat';
 
-			if (config.isInOfficehours) {
-				// 显示广告条
-				_setLogo();
+			if (profile.isInOfficeHours) {
+				Promise.all([
+					_initOfficialAccount(),
+					_initSDK()
+				]).then(_onReady);
 
-				// 移动端输入框自动增长
-				utils.isMobile && _initAutoGrow();
-
-				// 初始化服务号列表
-				_initOfficialAccount();
-
-				// 添加sdk回调
-				channel.listen();
-
-				// 连接xmpp server
-				channel.open();
-
-				// 设置信息栏
-				_setNotice();
+				// 获取在线坐席数
+				apiHelper.getExSession().then(function(data) {
+					profile.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
+					profile.hasRobotAgentOnline = data.onlineRobotAgentCount > 0;
+				});
 
 				// 获取坐席昵称设置
 				apiHelper.getNickNameOption().then(function(displayNickname){
@@ -814,18 +759,29 @@ app.chat = (function (
 				initQueuingNumberPoller();
 				initTransferToKefuButton();
 				initAgentNicknameUpdate();
+				initGetGreetings();
 
 				// 第二通道收消息初始化
 				channel.initSecondChannle();
 
 				// todo: move to handle ready
 				app.initPasteImage();
+
+				// 显示广告条
+				_setLogo();
+
+				// 设置信息栏
+				_setNotice();
+
+				// 移动端输入框自动增长
+				utils.isMobile && _initAutoGrow();
 			}
 			else {
 				// 设置下班时间展示的页面
 				_setOffline();
 			}
 		}, function (err) {
+			// todo: discard this
 			throw err;
 		});
 	}
@@ -843,5 +799,6 @@ app.chat = (function (
 	app.initQueuingNumberPoller,
 	app.initTransferToKefuButton,
 	app.initSessionList,
+	app.initGetGreetings,
 	app.initAgentNicknameUpdate
 ));

@@ -209,6 +209,7 @@ gulp.task('combineJs', function () {
 			'src/js/app/modules/chat/initQueuingNumberPoller.js',
 			'src/js/app/modules/chat/initAgentNicknameUpdate.js',
 			'src/js/app/modules/chat/initSessionList.js',
+			'src/js/app/modules/chat/initGetGreetings.js',
 			'src/js/app/modules/paste.js',
 			'src/js/app/modules/satisfaction.js',
 			'src/js/app/modules/imgView.js',

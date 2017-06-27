@@ -51,21 +51,12 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 			config = profile.config;
 			chat = app.chat;
 		},
-		initConnection: function(){
-			conn = new WebIM.connection({
-				url: config.xmppServer,
-				retry: true,
-				isMultiLoginSessions: config.resources,
-				heartBeatWait: _const.HEART_BEAT_INTERVAL
-			});
-		},
+		initConnection: _initConnection,
 		reSend: _reSend,
-		open: _open,
 		sendTransferToKf: _sendTransferToKf,
 		sendText: _sendText,
 		sendImg: _sendImg,
 		sendFile: _sendFile,
-		listen: _listen,
 		attemptToAppendOfficialAccount: _attemptToAppendOfficialAccount,
 
 		// todo: move this to message view
@@ -87,12 +78,20 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 
 	return channel;
 
-	function _listen() {
+	function _initConnection(onReadyCallback) {
 		// xmpp连接超时则改为可发送消息状态
 		// todo: 自动切换通道状态
 		var firstTS = setTimeout(function () {
-			chat.handleReady();
+			onReadyCallback();
 		}, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
+
+		// init connection
+		conn = new WebIM.connection({
+			url: config.xmppServer,
+			retry: true,
+			isMultiLoginSessions: config.resources,
+			heartBeatWait: _const.HEART_BEAT_INTERVAL
+		});
 
 		conn.listen({
 			onOpened: function (info) {
@@ -102,7 +101,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 				token = info.accessToken;
 				conn.setPresence();
 
-				chat.handleReady(info);
+				onReadyCallback(info);
 			},
 			onTextMessage: function (message) {
 				_handleMessage(message, 'txt');
@@ -157,6 +156,9 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 				}
 			}
 		});
+
+		// open connection
+		_open();
 	}
 
 	function _reSend(type, id) {

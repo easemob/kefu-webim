@@ -46,10 +46,6 @@ app.initSessionList = (function (
 			if (profile.ctaEnable){
 				utils.trigger(sessionListBtn, 'click');
 			}
-			else {
-				profile.currentOfficialAccount = profile.systemOfficialAccount;
-				profile.systemOfficialAccount.messageView.show();
-			}
 		});
 
 		eventListener.add(_const.SYSTEM_EVENT.MESSAGE_APPENDED, function (officialAccount, msg){
