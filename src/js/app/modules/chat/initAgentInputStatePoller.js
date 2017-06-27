@@ -1,72 +1,57 @@
 app.initAgentInputStatePoller = (function(_const, utils, profile, apiHelper, eventListener){
-	var isStarted = false;
 	var timerHandler;
 	var preventTimestamp = 0;
-	var topBar;
 	var inputState;
 
 	return function (){
 		if (!profile.grayList.agentInputStateEnable) return;
 
-		topBar = document.querySelector('.em-widget-header');
+		var topBar = document.querySelector('.em-widget-header');
 		inputState = topBar.querySelector('.em-agent-input-state');
 
-		// todo: add listener to official changed
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _startOrStopAgentInputStatePoller);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _startOrStopAgentInputStatePoller);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _startOrStopAgentInputStatePoller);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _startOrStopAgentInputStatePoller);
+		// start timer
+		timerHandler = setInterval(function (){
+			var officialAccount = profile.currentOfficialAccount;
+			_update(officialAccount);
+		}, _const.AGENT_INPUT_STATE_INTERVAL);
+
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _update);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _update);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _update);
+		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _update);
+		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _update);
 	};
 
-	function _startOrStopAgentInputStatePoller(officialAccount, event){
-		if (officialAccount !== profile.currentOfficialAccount) return;
+	function _update(officialAccount){
+		if (
+			officialAccount !== profile.currentOfficialAccount
+			|| !officialAccount
+			|| !profile.isChatWindowOpen
+			|| utils.isBrowserMinimized()
+		) return;
 
 		var state = officialAccount.sessionState;
+		var sessionId = officialAccount.sessionId;
 		var agentType = officialAccount.agentType;
 
 		if (
-			state === _const.SESSION_STATE.PROCESSING
+			sessionId
+			&& state === _const.SESSION_STATE.PROCESSING
 			&& agentType !== _const.AGENT_ROLE.ROBOT
 		){
-			_start();
+			apiHelper.getAgentInputState(sessionId).then(function (entity){
+				var currentTimestamp = entity.timestamp;
+				var ifDisplayTypingState = entity.input_state_tips;
+
+				// 为了先发送的请求后回来的异步问题，仅处理时间戳比当前大的response
+				if (currentTimestamp > preventTimestamp){
+					preventTimestamp = currentTimestamp;
+					utils.toggleClass(inputState, 'hide', !ifDisplayTypingState);
+				}
+			});
 		}
 		else {
-			_stop();
+			utils.addClass(inputState, 'hide');
 		}
-	}
-
-	function _start() {
-		isStarted = true;
-
-		// 保证当前最多只有1个timerHandler
-		timerHandler = clearInterval(timerHandler);
-		timerHandler = setInterval(_update, _const.AGENT_INPUT_STATE_INTERVAL);
-	}
-
-	function _update(){
-		var sessionId = utils.getDataByPath(profile, 'currentOfficialAccount.sessionId');
-
-		if (
-			!profile.isChatWindowOpen
-			|| utils.isBrowserMinimized()
-			|| !sessionId
-		) return;
-
-		apiHelper.getAgentInputState(sessionId).then(function (entity){
-			var currentTimestamp = entity.timestamp;
-			var ifDisplayTypingState = entity.input_state_tips;
-
-			// 为了先发送的请求后回来的异步问题，仅处理时间戳比当前大的response
-			if (isStarted && currentTimestamp > preventTimestamp){
-				preventTimestamp = currentTimestamp;
-				utils.toggleClass(inputState, 'hide', !ifDisplayTypingState);
-			}
-		});
-	}
-
-	function _stop(){
-		clearInterval(timerHandler);
-		utils.addClass(inputState, 'hide');
-		isStarted = false;
 	}
 }(easemobim._const, easemobim.utils, app.profile, app.apiHelper, app.eventListener));
