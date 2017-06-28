@@ -1,4 +1,4 @@
-(function (utils, _const, loading) {
+easemobim.Iframe = (function (utils, _const, loading){
 	'use strict';
 
 	var _st = 0;
@@ -8,10 +8,7 @@
 	};
 	var emptyFunc = function(){};
 
-	function _move(ev) {
-/* jshint ignore:start */
-		var me = this;
-/* jshint ignore:end */
+	function _move(me, ev) {
 		var e = window.event || ev;
 		var _width = document.documentElement.clientWidth;
 		var _height = document.documentElement.clientHeight;
@@ -53,33 +50,27 @@
 		var iframe = me.iframe;
 		var shadow = me.shadow;
 
-		utils.off(document, 'mousemove', me.moveEv);
+		utils.off(document, 'mousemove', me._onMouseMove);
 		iframe.style.left = 'auto';
 		iframe.style.top = 'auto';
 		iframe.style.right = me.position.x + 'px';
 		iframe.style.bottom = me.position.y + 'px';
-		iframe.style.display = 'block';
 		shadow.style.left = 'auto';
 		shadow.style.top = 'auto';
 		shadow.style.right = me.position.x + 'px';
 		shadow.style.bottom = me.position.y + 'px';
-		shadow.style.display = 'none';
+		utils.removeClass(shadow, 'easemobim-dragging');
+		utils.removeClass(iframe, 'easemobim-dragging');
 	}
 
-	function _resize() {
-/* jshint ignore:start */
-		var me = this;
-/* jshint ignore:end */
-
-		utils.on(window, 'resize', function () {
-			if (!me.rect || !me.rect.width) {
-				return;
-			}
+	function _bindResizeHandler(me) {
+		utils.on(window, 'resize', function (){
+			if (!me.rect || !me.rect.width) return;
 
 			var _width = document.documentElement.clientWidth;
 			var _height = document.documentElement.clientHeight;
-			var _right = Number(me.iframe.style.right.slice(0, -2));
-			var _bottom = Number(me.iframe.style.bottom.slice(0, -2));
+			var _right = +me.iframe.style.right.slice(0, -2);
+			var _bottom = +me.iframe.style.bottom.slice(0, -2);
 
 			//width
 			if (_width < me.rect.width) {
@@ -119,16 +110,9 @@
 		var me = this;
 /* jshint ignore:end */
 
-		if (me.config.dragenable && !utils.isMobile) {
-			_resize.call(me);
-			utils.on(me.shadow, 'mouseup', function () {
-				_moveend.call(me);
-			});
-		}
+		(me.config.dragenable && !utils.isMobile) && _bindResizeHandler(me);
 
 		me.message = new easemobim.Transfer(me.iframe.id, 'easemob', true);
-
-		me.iframe.style.display = 'block';
 
 		me.onsessionclosedSt = 0;
 		me.onreadySt = 0;
@@ -149,8 +133,10 @@
 			.listen(function (msg) {
 				if (msg.to !== me.iframe.id) return;
 
-				switch (msg.event) {
-					// onready
+				var event = msg.event;
+				var data = msg.data;
+
+				switch (event) {
 				case _const.EVENTS.ONREADY:
 					clearTimeout(me.onreadySt);
 					loading.hide();
@@ -171,7 +157,7 @@
 					break;
 				case _const.EVENTS.NOTIFY:
 					// 显示浏览器通知
-					easemobim.notify(msg.data.avatar, msg.data.title, msg.data.brief);
+					easemobim.notify(data.avatar, data.title, data.brief);
 					break;
 				case _const.EVENTS.SLIDE:
 					// 标题滚动
@@ -183,7 +169,7 @@
 					break;
 				case _const.EVENTS.ONMESSAGE:
 					// 收消息回调
-					me.callbackApi.onmessage(msg.data);
+					me.callbackApi.onmessage(data);
 					break;
 				case _const.EVENTS.ONSESSIONCLOSED:
 					// 结束会话回调，此功能文档中没有
@@ -194,22 +180,21 @@
 					break;
 				case _const.EVENTS.CACHEUSER:
 					// 缓存im username
-					if (msg.data.username) {
+					if (data.username) {
 						utils.set(
 							(me.config.to || '') + me.config.tenantId + (me.config.emgroup || ''),
-							msg.data.username
+							data.username
 						);
 					}
 					break;
 				case _const.EVENTS.DRAGREADY:
-					_startPosition.x = isNaN(Number(msg.data.x)) ? 0 : Number(msg.data.x);
-					_startPosition.y = isNaN(Number(msg.data.y)) ? 0 : Number(msg.data.y);
-					me.shadow.style.display = 'block';
-					me.iframe.style.display = 'none';
-					me.moveEv || (me.moveEv = function (e) {
-						_move.call(me, e);
-					});
-					utils.on(document, 'mousemove', me.moveEv);
+					_startPosition.x = +data.x || 0;
+					_startPosition.y = +data.y || 0;
+
+					utils.addClass(me.iframe, 'easemobim-dragging');
+					utils.addClass(me.shadow, 'easemobim-dragging');
+
+					utils.on(document, 'mousemove', me._onMouseMove);
 					break;
 				case _const.EVENTS.DRAGEND:
 					_moveend.call(me);
@@ -221,58 +206,69 @@
 					me.message.send({ event: _const.EVENTS.UPDATE_URL, data: location.href });
 					break;
 				case _const.EVENTS.SHOW_IMG:
-					easemobim.pcImgView(msg.data);
+					easemobim.pcImgView(data);
 					break;
 				case _const.EVENTS.RESET_IFRAME:
-					me.resetIframe(msg.data);
+					me.config.dialogWidth = data.dialogWidth;
+					me.config.dialogHeight = data.dialogHeight;
+					me.config.dialogPosition = data.dialogPosition;
+
+					me._updatePosition();
 					break;
 				default:
 					break;
 				}
 			}, ['main']);
 
-
-		me.ready instanceof Function && me.ready();
+		typeof me.ready === 'function' && me.ready();
 	}
 
 
 
 	var Iframe = function (config) {
-		var me = this;
-
 		if (!(this instanceof Iframe)) return new Iframe(config);
 
-		this.iframe = document.createElement('iframe');
-		this.iframe.id = 'easemob-iframe-' + new Date().getTime();
-		this.iframe.className = 'easemobim-panel';
-		this.iframe.style.cssText = 'width: 0;height: 0;border: none; position: fixed;';
-		this.shadow = document.createElement('div');
-		this.config = utils.copy(config);
+		var me = this;
+		var id = 'easemob-iframe-' + utils.uuid();
+		var className = 'easemobim-chat-panel easemobim-hide easemobim-minimized';
+		var iframe = document.createElement('iframe');
+		var shadow;
+		utils.isMobile && (className += ' easemobim-mobile');
 
-		this.show = false;
+		iframe.frameBorder = 0;
+		iframe.allowTransparency = 'true';
+		iframe.id = id;
+		iframe.className = className;
+		document.body.appendChild(iframe);
 
-		document.body.appendChild(this.iframe);
-		document.body.appendChild(this.shadow);
+		utils.on(iframe, 'load', function (){
+			_ready.call(me);
+		});
 
-		if (me.iframe.readyState) {
-			me.iframe.onreadystatechange = function () {
-				if (this.readyState === 'loaded' || this.readyState === 'complete') {
-					_ready.call(me);
-				}
-			};
+		if (!utils.isMobile){
+			shadow = document.createElement('div');
+			shadow.className = 'easemobim-iframe-shadow';
+			document.body.appendChild(shadow);
+			utils.on(shadow, 'mouseup', function (){
+				_moveend.call(me);
+			});
 		}
-		else {
-			me.iframe.onload = function () {
-				_ready.call(me);
-			};
-		}
 
-		Iframe.iframe = this;
+		me.config = utils.copy(config);
+		me.iframe = iframe;
+		me.shadow = shadow;
+		me.show = false;
+		me._onMouseMove = function (ev){
+			_move(me, ev);
+		};
 
-		return this;
+		Iframe.iframe = me;
+
+		return me;
 	};
 
 	Iframe.prototype.set = function (config, callback) {
+		var shadowBackgroundImage = location.protocol + this.config.staticPath + '/img/drag.png';
 
 		this.config = utils.copy(config || this.config);
 
@@ -296,66 +292,38 @@
 			width: +this.config.dialogWidth.slice(0, -2),
 			height: +this.config.dialogHeight.slice(0, -2)
 		};
-		this.iframe.frameBorder = 0;
-		this.iframe.allowTransparency = 'true';
 
-		this.iframe.style.cssText = [
-			'z-index:16777269',
-			'overflow:hidden',
-			'position:fixed',
-			'bottom:10px',
-			'right:-5px',
-			'border:none',
-			'width:' + this.config.dialogWidth,
-			'height:0',
-			'display:none',
-			'transition:all .01s'
-		].join(';');
-		this.shadow.style.cssText = [
-			'display:none',
-			'cursor:move',
-			'z-index:16777270',
-			'position:fixed',
-			'bottom:' + this.config.dialogPosition.y,
-			'right:' + this.config.dialogPosition.x,
-			'border:none',
-			'width:' + this.config.dialogWidth,
-			'height:' + this.config.dialogHeight,
-			'border-radius:4px',
-			'box-shadow: 0 4px 8px rgba(0,0,0,.2)',
-			'border-radius: 4px',
-			'background-size: 100% 100%',
-			'background: url(' + location.protocol + this.config.staticPath + '/img/drag.png) no-repeat'
-		].join(';');
+		this._updatePosition();
 
-		if (!this.config.hide && !utils.isMobile) {
-			this.iframe.style.height = '37px';
-			this.iframe.style.width = '104px';
-		}
-		else {
-			this.iframe.style.height = '0';
-			this.iframe.style.width = '0';
-		}
+		utils.toggleClass(this.iframe, 'easemobim-hide', this.config.hide);
 
 		// todo: add hash name to this file
 		this.iframe.src = location.protocol + config.path + '/im.html';
+		this.shadow && (this.shadow.style.backgroundImage = 'url(' + shadowBackgroundImage + ')');
 
 		this.ready = callback;
 
 		return this;
 	};
-	Iframe.prototype.resetIframe = function(msgData){
-		this.config.dialogWidth = msgData.dialogWidth;
-		this.config.dialogHeight = msgData.dialogHeight;
-		this.config.dialogPosition = msgData.dialogPosition;
-		if(!this.show || utils.isMobile) return;
 
-		this.iframe.style.width = this.config.dialogWidth;
-		this.iframe.style.height = this.config.dialogHeight;
-		this.iframe.style.right = this.config.dialogPosition.x;
-		this.iframe.style.bottom = this.config.dialogPosition.y;
+	Iframe.prototype._updatePosition = function (){
+		var iframe = this.iframe;
+		var shadow = this.shadow;
+		var config = this.config;
 
+		iframe.style.width = config.dialogWidth;
+		iframe.style.height = config.dialogHeight;
+		iframe.style.right = config.dialogPosition.x;
+		iframe.style.bottom = config.dialogPosition.y;
+
+		if (shadow){
+			shadow.style.width = config.dialogWidth;
+			shadow.style.height = config.dialogHeight;
+			shadow.style.right = config.dialogPosition.x;
+			shadow.style.bottom = config.dialogPosition.y;
+		}
 	};
+
 	Iframe.prototype.open = function () {
 		var iframe = this.iframe;
 
@@ -368,60 +336,27 @@
 			utils.addClass(document.documentElement, 'easemobim-mobile-html');
 		}
 
-		if (utils.isMobile) {
-			iframe.style.width = '100%';
-			iframe.style.height = '100%';
-			iframe.style.left = '0';
-			iframe.style.top = '0';
-			iframe.style.right = 'auto';
-			iframe.style.bottom = 'auto';
-			iframe.style.borderRadius = '0';
-			iframe.style.cssText += 'box-shadow: none;';
-		}
-		else {
-			iframe.style.width = this.config.dialogWidth;
-			iframe.style.height = this.config.dialogHeight;
-			iframe.style.right = this.position.x + 'px';
-			iframe.style.bottom = this.position.y + 'px';
-			iframe.style.cssText += 'box-shadow: 0 4px 8px rgba(0,0,0,.2);border-radius: 4px;border: 1px solid #ccc\\9;';
-		}
-		iframe.style.visibility = 'visible';
+		utils.removeClass(this.iframe, 'easemobim-minimized');
+		utils.removeClass(this.iframe, 'easemobim-hide');
+
 		this.message && this.message.send({ event: _const.EVENTS.SHOW });
 
 		return this;
 	};
 
 	Iframe.prototype.close = function () {
-
-		var iframe = this.iframe;
-
 		if (this.show === false) return;
 		this.show = false;
 
+		clearTimeout(_st);
 		// 恢复宿主页面滚动
 		if (utils.isMobile){
 			utils.removeClass(document.body, 'easemobim-mobile-body');
 			utils.removeClass(document.documentElement, 'easemobim-mobile-html');
 		}
 
-
-		clearTimeout(_st);
-		if (!this.config.hide && !utils.isMobile) {
-			iframe.style.boxShadow = 'none';
-			iframe.style.borderRadius = '4px;';
-			iframe.style.left = 'auto';
-			iframe.style.top = 'auto';
-			iframe.style.right = '-5px';
-			iframe.style.bottom = '10px';
-			iframe.style.border = 'none';
-			iframe.style.height = '37px';
-			iframe.style.width = '104px';
-		}
-		else {
-			iframe.style.visibility = 'hidden';
-			iframe.style.width = '1px';
-			iframe.style.height = '1px';
-		}
+		utils.addClass(this.iframe, 'easemobim-minimized');
+		utils.toggleClass(this.iframe, 'easemobim-hide', this.config.hide);
 
 		this.message && this.message.send({ event: _const.EVENTS.CLOSE });
 		return this;
@@ -437,7 +372,7 @@
 		this.message.send({ event: _const.EVENTS.TEXTMSG, data: msg });
 	};
 
-	easemobim.Iframe = Iframe;
+	return Iframe;
 }(
 	easemobim.utils,
 	easemobim._const,

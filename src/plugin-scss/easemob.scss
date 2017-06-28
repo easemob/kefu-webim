@@ -16,11 +16,81 @@
 	overflow: hidden !important;
 	padding: 0 !important;
 	margin: 0 !important;
+
 	> * {
 		display: none !important;
 	}
-	> .easemobim-panel {
+	> .easemobim-chat-panel {
 		display: block !important;
+	}
+}
+
+.easemobim-chat-panel {
+	z-index: 16777269;
+	overflow: hidden;
+	position: fixed;
+	bottom: 10px;
+	right: -5px;
+	border: none;
+	width: 0;
+	height: 0;
+	transition: all .01s;
+	box-shadow: 0 4px 8px rgba(0,0,0,.2);
+	border-radius: 4px;
+	border: 1px solid #ccc\9;
+	&.easemobim-minimized {
+		left: auto;
+		top: auto;
+		right: -5px;
+		bottom: 10px;
+		border: none;
+		box-shadow: none;
+		height: 37px!important;
+		width: 104px!important;
+		&.easemobim-has-prompt {
+			width: 300px!important;
+			height: 200px!important;
+		}
+	}
+	&.easemobim-mobile {
+		width: 100%!important;
+		height: 100%!important;
+		left: 0!important;
+		top: 0!important;
+		right: auto!important;
+		bottom: auto!important;
+		border-radius: 0;
+		box-shadow: none;
+		&.easemobim-minimized {
+			height: 0!important;
+			width: 0!important;
+		}
+	}
+	&.easemobim-hide {
+		visibility: hidden;
+		width: 1px!important;
+		height: 1px!important;
+		border: none;
+	}
+	&.easemobim-dragging {
+		display: none;
+	}
+}
+.easemobim-iframe-shadow {
+	left: auto;
+	top: auto;
+	display: none;
+	cursor: move;
+	z-index: 16777270;
+	position: fixed;
+	border: none;
+	border-radius: 4px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, .2);
+	border-radius: 4px;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	&.easemobim-dragging {
+		display: block;
 	}
 }
 
@@ -42,15 +112,16 @@
 	border-radius: 4px;
 	transition: all .5s;
 	opacity: .7;
+
 	> .loading {
 		position: relative;
-	    width: 30px;
-	    height: 30px;
-	    display: inline-block;
-	    overflow: hidden;
-	    margin: 0;
-	    padding: 0;
-	    animation: easemobim-loading-frame 1s linear infinite;
+		width: 30px;
+		height: 30px;
+		display: inline-block;
+		overflow: hidden;
+		margin: 0;
+		padding: 0;
+		animation: easemobim-loading-frame 1s linear infinite;
 	}
 }
 
