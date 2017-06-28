@@ -175,14 +175,10 @@ app.chat = (function (
 			utils.addClass(doms.imChat, 'has-tip');
 
 			// 隐藏信息栏按钮
-			utils.on(
-				noticeCloseBtn,
-				utils.click,
-				function () {
-					// 隐藏信息栏
-					utils.removeClass(doms.imChat, 'has-tip');
-				}
-			);
+			utils.on(noticeCloseBtn, utils.click, function (){
+				// 隐藏信息栏
+				utils.removeClass(doms.imChat, 'has-tip');
+			});
 		});
 	}
 
@@ -415,7 +411,7 @@ app.chat = (function (
 		}
 
 		//resend
-		utils.live('div.em-widget-msg-status', utils.click, function () {
+		utils.live('div.em-widget-msg-status', 'click', function () {
 			var id = this.getAttribute('id').slice(0, -'_failed'.length);
 			var type = this.getAttribute('data-type');
 
@@ -424,18 +420,17 @@ app.chat = (function (
 			utils.removeClass(document.getElementById(id + '_loading'), 'hide');
 		});
 
-		utils.live('button.js_robotTransferBtn', utils.click, function () {
+		utils.live('button.js_robotTransferBtn', 'click', function () {
 			var id = this.getAttribute('data-id');
 			var ssid = this.getAttribute('data-sessionid');
 
-			// 只能评价1次
 			if (!this.clicked) {
 				this.clicked = true;
 				channel.sendTransferToKf(id, ssid);
 			}
 		});
 
-		utils.live('button.js-transfer-to-ticket', utils.click, function (){
+		utils.live('button.js-transfer-to-ticket', 'click', function (){
 			var officialAccount = profile.currentOfficialAccount;
 			if (!officialAccount) return;
 
@@ -456,7 +451,7 @@ app.chat = (function (
 		});
 
 		// 机器人列表
-		utils.live('button.js_robotbtn', utils.click, function () {
+		utils.live('button.js_robotbtn', 'click', function () {
 			channel.sendText(this.innerText, {
 				ext: {
 					msgtype: {
@@ -469,7 +464,7 @@ app.chat = (function (
 		});
 
 		// 根据菜单项选择指定的技能组
-		utils.live('button.js_skillgroupbtn', utils.click, function () {
+		utils.live('button.js_skillgroupbtn', 'click', function () {
 			channel.sendText(this.innerText, {
 				ext: {
 					weichat: {

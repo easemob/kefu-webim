@@ -102,7 +102,7 @@
 		}, ['easemob']);
 
 		utils.removeClass($contactAgentBtn, 'hide');
-		utils.on($contactAgentBtn, utils.click, function (){
+		utils.on($contactAgentBtn, 'click', function (){
 			transfer.send({ event: _const.EVENTS.SHOW });
 		});
 	}
