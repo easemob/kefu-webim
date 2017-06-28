@@ -62,11 +62,11 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 		var target = ev.target || ev.srcElement;
 		var selIndex = +target.getAttribute('data-idx') || 0;
 		var evaluateId = target.getAttribute("data-evaluate-id");
-		if(selIndex!=0){
+		if(selIndex !== 0){
 			_.each(starList, function (elem, i) {
 				utils.toggleClass(elem, 'sel', i < selIndex);
 			});
-			createLabel(evaluateId);
+			evaluateId && _createLabel(evaluateId);
 		}
 	});
 
@@ -101,7 +101,7 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 
 
 
-	function setSatisfaction(){
+	function _setSatisfaction(){
 
 		apiHelper.getEvaluationDegrees().then(function (entities){
 			var timestamp = utils.getDataByPath(entities, '0.createDateTime');
@@ -110,8 +110,7 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 				timestamp && (preventTimestamp = timestamp);
 				entities.sort(function(a,b){
 					return a.level-b.level;
-				})
-
+				});
 				starsUl.innerHTML = _.map(entities, function (elem, i){
 					var idx = i + 1;
 					var name = elem.name;
@@ -121,26 +120,24 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 				}).join('') || '';
 				starList = starsUl.querySelectorAll("li");
 			}
-		});		
+		});
 	}
-	function createLabel(evaluateId){
-		if(evaluateId){
-			apiHelper.getAppraiseTags(evaluateId).then(function (entities){
-				tagContainer.innerHTML = _.map(entities, function (elem, i){
-					var name = elem.name;
-					var id = elem.id;
-					return '<span data-label-id = "' + id + '" class="tag">' + name + '</span>';
-				}).join('') || '';
-				utils.removeClass(tagContainer,"hide");
-			});
-		}
+	function _createLabel(evaluateId){
+		apiHelper.getAppraiseTags(evaluateId).then(function (entities){
+			tagContainer.innerHTML = _.map(entities, function (elem, i){
+				var name = elem.name;
+				var id = elem.id;
+				return '<span data-label-id = "' + id + '" class="tag">' + name + '</span>';
+			}).join('') || '';
+			utils.removeClass(tagContainer,"hide");
+		});
 	}
 
 	return {
 		show: function(currentInviteId, currentServiceSessionId){
 			session = currentServiceSessionId || null;
 			invite = currentInviteId || null;
-			setSatisfaction();
+			_setSatisfaction();
 			dialog.show();
 		}
 	};
