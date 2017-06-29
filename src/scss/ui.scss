@@ -175,6 +175,20 @@
 			input {
 				height: 36px;
 			}
+			.note-category {
+				font-size: 14px;
+				font-weight: normal;
+				margin: 10px 0;
+				position: relative;
+				display: block;
+			    width: 100%;
+				border: 1px solid #D8D9DA;
+				border-radius: 4px;
+				box-sizing: border-box;
+				height: 36px;
+				cursor: pointer;
+			}
+
 		}
 		.footer{
 			max-width: 400px;
@@ -439,6 +453,44 @@
 			}
 		}
 	}
+}
+.em-select {
+	height: 34px;
+	padding: 10px;
+	line-height: 14px;
+	width: 100%;
+	box-sizing: border-box;
+	border-radius: 4px;
+	&:hover {
+		background-color: #fafafa;
+	}
+	.em-select-icon {
+		position: absolute;
+		line-height: 34px;
+		right: 10px;
+		top: 0px;
+	}
+	.em-select-desc {
+		cursor: pointer;
+	}
+}
+
+.em-popuplist{
+	position: absolute;
+	background-color: #fff;
+	border: 1px solid #D8D9DA;
+	border-radius: 4px;
+	max-height: 210px;
+	overflow: auto;
+	z-index: 9999;
+	li {
+		line-height: 35px;
+		padding: 0 10px;
+		&:hover {
+			background-color: #E6E6E6;
+		}
+	}
+
 }
 
 .em-model {
