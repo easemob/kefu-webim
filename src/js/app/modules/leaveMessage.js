@@ -1,4 +1,4 @@
-app.leaveMessage = (function (utils, uikit, apiHelper) {
+app.leaveMessage = (function (utils, uikit, apiHelper, profile, createSelect) {
 	var isSending = false;
 
 	var dom = utils.createElementFromHTML([
@@ -7,6 +7,7 @@ app.leaveMessage = (function (utils, uikit, apiHelper) {
 		'<input type="text" class="name" placeholder="姓名">',
 		'<input type="text" class="phone" placeholder="电话">',
 		'<input type="text" class="mail" placeholder="邮箱">',
+		'<div class="note-category hide"></div>',
 		'<textarea spellcheck="false" placeholder="请输入留言"></textarea>',
 		'</div>',
 	].join(''));
@@ -14,6 +15,7 @@ app.leaveMessage = (function (utils, uikit, apiHelper) {
 	var name = dom.querySelector('.name');
 	var phone = dom.querySelector('.phone');
 	var mail = dom.querySelector('.mail');
+	var noteCategory = dom.querySelector('.note-category');
 	// todo: lazy load dialog
 	var dialog = uikit.createDialog({
 		contentDom: dom,
@@ -47,6 +49,28 @@ app.leaveMessage = (function (utils, uikit, apiHelper) {
 	});
 	var cancelBtn = dialog.el.querySelector('.cancel-btn');
 
+	function _createCategories() {
+		if (!profile.grayList.noteCategory) return;
+
+		apiHelper.getNoteCategories().then(function (list){
+
+			if(!_.isEmpty(list)){
+				utils.removeClass(noteCategory, 'hide');
+				var optionList = _.map(list, function(item){
+					return {
+						sign: item.id,
+						desc: item.name
+					};
+				});
+				createSelect({
+					list: optionList,
+					container: noteCategory
+				});
+			}
+		});
+
+	}
+
 	function _createTicket(){
 		Promise.all([
 			apiHelper.getToken(),
@@ -61,7 +85,8 @@ app.leaveMessage = (function (utils, uikit, apiHelper) {
 				name: name.value,
 				phone: phone.value,
 				mail: mail.value,
-				content: content.value
+				content: content.value,
+				category_id: noteCategory.selectValue
 			}).then(function (){
 				isSending = false;
 				uikit.showSuccess('留言发送成功');
@@ -95,8 +120,9 @@ app.leaveMessage = (function (utils, uikit, apiHelper) {
 
 	return function(opt) {
 		opt = opt || {};
+		_createCategories();
 		opt.preData && _writePreDate(opt.preData);
 		opt.hideCloseBtn && utils.addClass(cancelBtn, 'hide');
 		dialog.show();
 	};
-}(easemobim.utils, app.uikit, app.apiHelper));
+}(easemobim.utils, app.uikit, app.apiHelper, app.profile, app.createSelect));

@@ -189,6 +189,33 @@ app.apiHelper = (function (_const, utils, emajax) {
 		});
 	}
 
+	function getNoteCategories(){
+		return new Promise(function(resolve, reject){
+			Promise.all([
+				getToken(),
+				getProjectId()
+			]).then(function(result){
+				var token = result[0];
+				var projectId = result[1];
+
+				api('getNoteCategories', {
+					tenantId: config.tenantId,
+					'easemob-target-username': config.toUser,
+					'easemob-appkey': config.appKey.replace('#', '%23'),
+					'easemob-username': config.user.username,
+					headers: { Authorization: 'Easemob IM ' + token },
+					projectId: projectId,
+				}, function (msg) {
+					var list = utils.getDataByPath(msg, 'data.entities');
+					resolve(list);
+
+				}, function(err){
+					reject(err);
+				});
+			});
+		});
+	}
+
 	function createTicket(opt){
 		var data = opt.data;
 
@@ -205,7 +232,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 				content: opt.content,
 				status_id: '',
 				priority_id: '',
-				category_id: '',
+				category_id: opt.category_id,
 				creator: {
 					name: opt.name,
 					avatar: '',
@@ -936,6 +963,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 		getAgentStatus: getAgentStatus,
 		getLastSession: getLastSession,
 		getSkillgroupMenu: getSkillgroupMenu,
+		getNoteCategories: getNoteCategories,
 		reportVisitorAttributes: reportVisitorAttributes,
 		reportPredictMessage: reportPredictMessage,
 		getAgentInputState: getAgentInputState,
