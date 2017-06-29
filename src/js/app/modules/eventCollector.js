@@ -1,4 +1,4 @@
-app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
+app.eventCollector = (function (utils, _const, Polling, apiHelper, profile, promptCtaDialog) {
 	var POLLING_INTERVAL = 5000;
 
 	var _polling;
@@ -6,6 +6,8 @@ app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 	var _config;
 	var _gid;
 	var _hasProcessingSession;
+	var _hasCtaInvite;
+	var _ctaPrompt;
 
 	function _reportData(userType, userId) {
 		var url = profile.currentBrowsingURL;
@@ -17,6 +19,12 @@ app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 			var username = resp.userName;
 			var orgName = resp.orgName;
 			var appName = resp.appName;
+			// cta invite extended field
+			var message = resp.message;
+			var agentNickname = resp.agentNickname;
+			var agentAvatar = resp.agentAvatar;
+
+			_hasCtaInvite = !!message;
 
 			switch (type) {
 				// 没有坐席呼叫，什么都不做
@@ -34,7 +42,27 @@ app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 						}, POLLING_INTERVAL);
 					}
 					_stopReporting();
-					_callback(resp);
+
+					if (_hasCtaInvite){
+						transfer.send({event: _const.EVENTS.ADD_PROMPT});
+						_ctaPrompt = promptCtaDialog({
+							title: agentNickname,
+							content: message,
+							avatar: agentAvatar,
+							className: 'cta-prompt bottom',
+							replyCallback: function (){
+								_callback(resp);
+								transfer.send({event: _const.EVENTS.REMOVE_PROMPT});
+							},
+							closeCallback: function (){
+								transfer.send({event: _const.EVENTS.REMOVE_PROMPT});
+							}
+						});
+					}
+					else {
+						// 旧的访客回呼还是直接弹出
+						_callback(resp);
+					}
 				}
 				// 已停止轮询 （被呼叫的访客/游客 已经创建会话），不回呼
 				else {}
@@ -137,12 +165,20 @@ app.eventCollector = (function (Polling, utils, _const, apiHelper, profile) {
 		hasProcessingSession: function (){
 			return _hasProcessingSession;
 		},
+		hasCtaInvite: function (){
+			return _hasCtaInvite;
+		},
+		hideCtaPrompt: function _hideCtaPrompt(){
+			_ctaPrompt && _ctaPrompt.hide();
+			transfer.send({event: _const.EVENTS.REMOVE_PROMPT});
+		},
 		isStarted: _isStarted
 	};
 }(
-	app.Poller,
 	easemobim.utils,
 	easemobim._const,
+	app.Poller,
 	app.apiHelper,
-	app.profile
+	app.profile,
+	app.promptCtaDialog
 ));

@@ -75,6 +75,11 @@
 					initChatEntry();
 				}
 
+				if (eventCollector.hasCtaInvite()){
+					initChatEntry();
+					eventCollector.hideCtaPrompt();
+				}
+
 				// 显示聊天窗口
 				chat.show();
 				break;
@@ -111,7 +116,7 @@
 		apiHelper.init(config);
 
 		// 访客回呼功能
-		if (config.eventCollector && !eventCollector.isStarted()) {
+		if (!utils.isMobile && config.eventCollector && !eventCollector.isStarted()) {
 			eventCollector.startToReport(function (targetUserInfo) {
 				initChatEntry(targetUserInfo);
 			});

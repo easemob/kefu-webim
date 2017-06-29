@@ -124,11 +124,12 @@ app.initSessionList = (function (
 
 		officialAccount !== profile.currentOfficialAccount
 			&& profile.currentOfficialAccount
-			&& (ctaDialog = app.promptCtaDialog({
+			&& (ctaDialog = promptCtaDialog({
 				title: title,
 				replyCallback: _switchToOfficialAccount,
 				content: content,
 				avatar: avatar,
+				className: 'cta-prompt',
 				callbackMessage: officialAccountId
 			}));
 

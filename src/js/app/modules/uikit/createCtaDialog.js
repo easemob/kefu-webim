@@ -4,12 +4,14 @@ app.promptCtaDialog = (function(_const, utils, Dict, uikit, profile){
 	var closeBtn;
 	var replyBtn;
 	var relpyCallback;
+	var closeCallback;
 	var callbackMessage;
 
 	return function (options){
 		var opt = options || {};
 		var newPromptDom = _render(opt);
 		relpyCallback = opt.replyCallback || EMPTY_FUNCTION;
+		closeCallback = opt.closeCallback || EMPTY_FUNCTION;
 		callbackMessage = opt.callbackMessage || null;
 
 		if (promptDom){
@@ -29,14 +31,14 @@ app.promptCtaDialog = (function(_const, utils, Dict, uikit, profile){
 	};
 
 	function _unbindEvents(){
-		utils.off(closeBtn, 'click', _hide);
+		utils.off(closeBtn, 'click', _closeCallback);
 		utils.off(replyBtn, 'click', _replyCallback);
 	}
 
 	function _bindEvents(){
 		closeBtn = promptDom.querySelector('.btn-close');
 		replyBtn = promptDom.querySelector('.btn-reply');
-		utils.on(closeBtn, 'click', _hide);
+		utils.on(closeBtn, 'click', _closeCallback);
 		utils.on(replyBtn, 'click', _replyCallback);
 	}
 
@@ -49,14 +51,20 @@ app.promptCtaDialog = (function(_const, utils, Dict, uikit, profile){
 		relpyCallback(callbackMessage);
 	}
 
+	function _closeCallback(){
+		_hide();
+		closeCallback(callbackMessage);
+	}
+
 	function _render(options){
 		var opt = options || {};
 		var avatar = opt.avatar || '';
 		var title = opt.title || '';
 		var content = opt.content || '';
+		var className = opt.className || '';
 
 		return utils.createElementFromHTML([
-			'<div class="em-dialog cta-prompt">',
+			'<div class="em-dialog ' + className + '">',
 				'<span class="indicator bg-border-bottom-color"></span>',
 				'<div class="bg-color header">',
 					'<img class="avatar" src="' + avatar + '">',

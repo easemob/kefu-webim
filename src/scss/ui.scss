@@ -359,7 +359,6 @@
 		overflow: initial;
 		> .indicator {
 			border-width: 0 10px 10px;
-			border-top-color: #03A9F4;
 			border-left-color: transparent;
 			border-right-color: transparent;
 			border-style: solid;
@@ -421,6 +420,22 @@
 					padding-right: 10px;
 					font-size: 25px;
 				}
+			}
+		}
+		// 访客回呼cta弹框在下边
+		&.bottom {
+			top: auto;
+			width: auto;
+			bottom: 45px;
+			right: 10px;
+			left: 10px;
+			> .indicator {
+				top: auto;
+				bottom: -12px;
+				left: auto;
+				right: 40px;
+				border-width: 10px 10px 0;
+				border-top-color: white;
 			}
 		}
 	}

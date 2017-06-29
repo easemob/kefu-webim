@@ -215,6 +215,12 @@ easemobim.Iframe = (function (utils, _const, loading){
 
 					me._updatePosition();
 					break;
+				case _const.EVENTS.ADD_PROMPT:
+					utils.addClass(me.iframe, 'easemobim-has-prompt');
+					break;
+				case _const.EVENTS.REMOVE_PROMPT:
+					utils.removeClass(me.iframe, 'easemobim-has-prompt');
+					break;
 				default:
 					break;
 				}

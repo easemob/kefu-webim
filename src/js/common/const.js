@@ -99,7 +99,10 @@ easemobim._const = (function () {
 			REQUIRE_URL: 'requireURL',
 			INIT_CONFIG: 'initConfig',
 			SHOW_IMG: 'showIMG',
-			RESIZE_IFRAME: 'resizeIframe'
+			RESIZE_IFRAME: 'resizeIframe',
+			ADD_PROMPT: 'add.prompt',
+			REMOVE_PROMPT: 'remove.prompt',
+			block: null
 		},
 
 		GRAY_LIST_KEYS: [
