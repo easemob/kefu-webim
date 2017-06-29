@@ -631,36 +631,6 @@
 				excludeData: true
 			});
 			break;
-		case 'getStatisticsnNumber':
-			emitAjax({
-				url: '/v1/webimplugin/tenants/'
-					+ tenantId
-					+ '/evaluationdegrees'
-					+ '?orgName=' + params.orgName
-					+ '&appName=' + params.appName
-					+ '&userName=' + params.userName
-					+ '&token=' + params.token,
-				msg: msg,
-				type:'GET',
-				excludeData: true,
-			});
-			break;
-		case 'getStatisticsnLabelNumber':
-			emitAjax({
-				url: '/v1/webimplugin/tenants/'
-					+ tenantId
-					+ '/evaluationdegrees/'
-					+ msg.data.evaluateId
-					+ '/appraisetags'
-					+ '?orgName=' + params.orgName
-					+ '&appName=' + params.appName
-					+ '&userName=' + params.userName
-					+ '&token=' + params.token,
-				msg: msg,
-				type:'GET',
-				excludeData: true,
-			});
-			break;
 		default:
 			console.error('unexpect api name: ' + apiName);
 			break;
