@@ -631,7 +631,7 @@
 				excludeData: true
 			});
 			break;
-		case 'getEvaluationDegrees':
+		case 'getStatisticsnNumber':
 			emitAjax({
 				url: '/v1/webimplugin/tenants/'
 					+ tenantId
@@ -642,15 +642,15 @@
 					+ '&token=' + params.token,
 				msg: msg,
 				type:'GET',
-				excludeData: true
+				excludeData: true,
 			});
 			break;
-		case 'getAppraiseTags':
+		case 'getStatisticsnLabelNumber':
 			emitAjax({
 				url: '/v1/webimplugin/tenants/'
 					+ tenantId
 					+ '/evaluationdegrees/'
-					+ params.evaluateId
+					+ msg.data.evaluateId
 					+ '/appraisetags'
 					+ '?orgName=' + params.orgName
 					+ '&appName=' + params.appName
@@ -658,7 +658,7 @@
 					+ '&token=' + params.token,
 				msg: msg,
 				type:'GET',
-				excludeData: true
+				excludeData: true,
 			});
 			break;
 		default:

@@ -134,11 +134,11 @@
 				}
 			}
 		}
-		.tag-container{
+		.evaluate-label{
 			width: 96%;
 			margin: 0 auto;
 			text-align: center;
-			.tag{
+			span{
 				display: inline-block;
 				width: 140px;
 				height: 30px;
@@ -149,12 +149,11 @@
 				color: #ccc;
 				text-align: center;
 				line-height: 30px;
-				&.selected{
-					border-color: rgb(242,145,0);
-					color: rgb(242,145,0);
-				}
 			}
-			
+			.label-selected{
+				border-color: rgb(242,145,0);
+				color: rgb(242,145,0);
+			}
 		}
 		textarea {
 			resize: none;

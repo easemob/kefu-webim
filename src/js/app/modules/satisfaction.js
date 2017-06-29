@@ -2,19 +2,19 @@
  * 满意度调查
  */
 app.satisfaction = (function(utils, uikit, channel,apiHelper){
-	var preventTimestamp = '1970-01-01 00:00:00';
+	var time = 0;
 	var dom = utils.createElementFromHTML([
 		'<div>',
 		'<h3>请对我的服务做出评价</h3>',
 		'<ul></ul>',
-		'<div class="tag-container"></div>',
+		'<div class="evaluate-label"></div>',
 		'<textarea spellcheck="false" placeholder="请输入留言"></textarea>',
 		'</div>'
 	].join(''));
 	var starsUl = dom.querySelector('ul');
 	var starList = starsUl.querySelectorAll('li');
 	var msg = dom.querySelector('textarea');
-	var tagContainer = dom.querySelector(".tag-container");
+	var label = dom.querySelector(".evaluate-label");
 	var dialog = uikit.createDialog({
 		contentDom: dom,
 		className: 'satisfaction'
@@ -22,8 +22,7 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 		confirmText: '提交',
 		confirm: function () {
 			var level = starsUl.querySelectorAll('li.sel').length;
-			var selectedTagNodeList = tagContainer.querySelectorAll('.selected');
-			var tagNodeListLength = tagContainer.querySelectorAll('.tag').length;
+			var tag = label.querySelectorAll('.label-selected');
 			var star;
 			var tagArr = [];
 
@@ -33,20 +32,22 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 				return true;
 			}
 
-			if( tagNodeListLength > 0 && selectedTagNodeList.length === 0){
+			if(label.children.length > 0 && tag.length === 0){
 				uikit.tip('请先选择标签');
 				// 防止对话框关闭
 				return true;
 			}
 
-			star = level;
+			star = level+1;
 
-			tagArr = _.map(selectedTagNodeList, function (elem){
-				return {
-					id: elem.getAttribute('data-label-id'),
-					name: elem.innerText
-				};
-			}) || [];
+		    tag.forEach(function(e){
+		    	var json = {
+		    		id:e.getAttribute('data-laberid'),
+		    		name:e.innerText
+		    	}
+
+		    	tagArr.push(json);
+		    });
 
 			_sendSatisfaction(level, msg.value, session, invite, star, tagArr);
 
@@ -60,8 +61,8 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 	utils.on(starsUl, 'click', function (e) {
 		var ev = e || window.event;
 		var target = ev.target || ev.srcElement;
-		var selIndex = +target.getAttribute('data-idx') || 0;
-		var evaluateId = target.getAttribute("data-evaluate-id");
+		var selIndex = +target.getAttribute('idx') || 0;
+		var evaluateId = target.getAttribute("data-evaluateId");
 		if(selIndex!=0){
 			_.each(starList, function (elem, i) {
 				utils.toggleClass(elem, 'sel', i < selIndex);
@@ -70,9 +71,18 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 		}
 	});
 
-	utils.live('span.tag', 'click', function(e){
-		utils.toggleClass(this, 'selected');
-	}, tagContainer);
+	utils.on(label, 'click', function(e){
+		var ev = e || window.event;
+		var target = ev.srcElement || ev.target;
+		if(target.nodeName ==='SPAN'){
+			if(target.className != 'label-selected'){
+				target.className = "label-selected";
+			}else{
+				target.className = "";
+			}
+		}
+		return false;
+	});
 
 	function _clear(){
 		msg.blur();
@@ -80,7 +90,7 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 		// clear stars
 		utils.removeClass(starList, 'sel');
 		//clear label
-		tagContainer.innerHTML='';
+		label.innerHTML='';
 	}
 
 	function _sendSatisfaction(level, content, session, invite, star, tagArr) {
@@ -103,35 +113,40 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 
 	function setSatisfaction(){
 
-		apiHelper.getEvaluationDegrees().then(function (entities){
-			var timestamp = utils.getDataByPath(entities, '0.createDateTime');
-
-			if(!timestamp || timestamp > preventTimestamp){
-				timestamp && (preventTimestamp = timestamp);
-				entities.sort(function(a,b){
+		apiHelper.getStatisticsnNumber().then(function (resq){
+			var data = resq.entities;
+			if(time == 0 || data[0].createDateTime > time){
+				time = data[0].createDateTime;
+				starsUl.innerHTML = "";
+				var str = "";
+				data.sort(function(a,b){
 					return a.level-b.level;
 				})
-
-				starsUl.innerHTML = _.map(entities, function (elem, i){
-					var idx = i + 1;
-					var name = elem.name;
-					var id = elem.id;
-
-					return '<li data-idx="' + idx +'" title="' + name + '" data-evaluate-id="' + id + '">H</li>';
-				}).join('') || '';
+				for(var i=0;i<data.length;i++){
+					str+="<li idx='"+(i+1)+"' title='"+data[i].name+"' data-evaluateId='"+data[i].id+"'>H</li>"
+				}
+				starsUl.innerHTML = str;
 				starList = starsUl.querySelectorAll("li");
 			}
-		});		
+		});
+
+		
+		
 	}
 	function createLabel(evaluateId){
-		if(evaluateId){
-			apiHelper.getAppraiseTags(evaluateId).then(function (entities){
-				tagContainer.innerHTML = _.map(entities, function (elem, i){
-					var name = elem.name;
-					var id = elem.id;
-					return '<span data-label-id = "' + id + '" class="tag">' + name + '</span>';
-				}).join('') || '';
-				utils.removeClass(tagContainer,"hide");
+		if(evaluateId != null){
+			apiHelper.getStatisticsnLabelNumber(evaluateId).then(function (resq){
+				var msg = resq.entities;
+				if(msg.length>0){
+					var str = '';
+					label.innerHTML = '';
+					for(var i=0;i<msg.length;i++){
+						str += '<span data-laberId = "'+msg[i].id+'">'+msg[i].name+'</span>';
+					}
+					label.innerHTML = str;
+					label.className = 'evaluate-label';
+					utils.removeClass(label,"hide");
+				}
 			});
 		}
 	}

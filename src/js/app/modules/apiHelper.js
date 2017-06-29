@@ -943,18 +943,17 @@ app.apiHelper = (function (_const, utils, emajax) {
 		});
 	}
 
-	function getEvaluationDegrees(){
+	function getStatisticsnNumber(){
 		 return new Promise(function(resolve, reject){
 			getToken().then(function(token){
-				api('getEvaluationDegrees', {
+				api('getStatisticsnNumber', {
 					tenantId: config.tenantId,
 					orgName: config.orgName,
 					appName: config.appName,
 					userName: config.user.username,
 					token: token
 				}, function (msg) {
-					var entities = utils.getDataByPath(msg, 'data.entities');
-					resolve(entities);
+					resolve(msg.data);
 				}, function (err){
 					reject(err);
 				});
@@ -962,10 +961,10 @@ app.apiHelper = (function (_const, utils, emajax) {
 		});
 	}
 
-	function getAppraiseTags(evaluateId){
+	function getStatisticsnLabelNumber(evaluateId){
 		 return new Promise(function(resolve, reject){
 			getToken().then(function(token){
-				api('getAppraiseTags', {
+				api('getStatisticsnLabelNumber', {
 					tenantId: config.tenantId,
 					orgName: config.orgName,
 					appName: config.appName,
@@ -973,8 +972,7 @@ app.apiHelper = (function (_const, utils, emajax) {
 					token: token,
 					evaluateId: evaluateId
 				}, function (msg) {
-					var entities = utils.getDataByPath(msg, 'data.entities');
-					resolve(entities || []);
+					resolve(msg.data);
 				}, function (err){
 					reject(err);
 				});
@@ -1021,8 +1019,8 @@ app.apiHelper = (function (_const, utils, emajax) {
 		reportMarketingTaskOpened: reportMarketingTaskOpened,
 		reportMarketingTaskReplied: reportMarketingTaskReplied,
 		getLatestMarketingTask: getLatestMarketingTask,
-		getEvaluationDegrees: getEvaluationDegrees,
-		getAppraiseTags: getAppraiseTags,
+		getStatisticsnNumber: getStatisticsnNumber,
+		getStatisticsnLabelNumber: getStatisticsnLabelNumber,
 
 		initApiTransfer: initApiTransfer,
 		api: api,
