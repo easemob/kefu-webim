@@ -74,8 +74,9 @@ app.genDomFromMsg = (function (window, _const, utils, profile) {
 				+ '<p class="filename">' + msg.filename + '</p>'
 				+ '<p class="filesize">' + easemobim.utils.filesizeFormat(msg.fileLength) + '</p>'
 				+ '</span>'
-				+ "<a target='_blank' href='" + msg.url + "' class='icon-download container-icon-download' title='"
-				+ msg.filename + "'></a>";
+				+ '<a target="_blank" href="' + msg.url
+				+ '" class="icon-download container-icon-download" title="'
+				+ msg.filename + '" download="' + msg.filename + '"></a>';
 			break;
 		default:
 			throw 'unexpected value type.';
