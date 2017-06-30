@@ -384,6 +384,9 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 		){
 			type = 'transferToTicket';
 		}
+		else if (utils.getDataByPath(msg, 'data') === 'article') {
+			type = 'article';
+		}
 		else {}
 
 		switch (type) {
@@ -444,6 +447,46 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 				_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
 				[targetOfficialAccount, inviteId, serviceSessionId]
 			);
+			break;
+		case 'article':
+			message = msg;
+			message.type = 'article';
+			var msgArticles = utils.getDataByPath(message, 'ext.msgtype.articles');
+			if (msgArticles.length === 1){
+				var createTime = new Date(msgArticles[0].createdTime);
+				var dateStr = createTime.getMonth()+1+'月';
+				dateStr += createTime.getDate()+'日';
+				message.article = '' + 
+					'<div class="article-msg-outer article-item only-one-article">' +
+						'<div class="body">' +
+							'<h3 class="title">' + msgArticles[0].title + '</h3>' +
+							'<p class="create-time">' + dateStr + '</p>' +
+							'<div class="cover"><img src="' + msgArticles[0].thumbUrl + '"/></div>' +
+							'<div class="desc"><p>' + msgArticles[0].digest + '</p></div>' +
+						'</div>' +
+						'<div class="footer"><span class="look-article">阅读全文</span><i class="icon-corner-right"></i></div>' +
+						'<a class="article-link" target="_blank" href="' + msgArticles[0].url + '"></a>' +
+					'</div>';
+			}
+			else {
+				message.article = '<div class="article-msg-outer more-articles">' 
+						+ _.map(msgArticles, function(item ,index){
+							var str = '';
+							if (index === 0) {
+								str = '<div class="article-item first-item">' +
+								'<h3 class="title">' + item.title + '</h3>';
+							}
+							else {
+								str = '<div class="article-item rest-item">' +
+								'<div class="title-wrapper"><p class="title">' + item.title + '</p></div>';	
+							}
+							str += '<img class="cover-img" src="' + item.thumbUrl + '"/>' +
+								'<a class="article-link" target="_blank" href="' + item.url + '"></a>' +
+								'</div>';
+							return str;
+						}).join('') || ''
+					+ '</div>';
+			}
 			break;
 		case 'robotList':
 			message = msg;

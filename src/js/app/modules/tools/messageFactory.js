@@ -112,6 +112,12 @@ app.genDomFromMsg = (function (window, _const, utils, profile) {
 		var dom = document.createElement('div');
 		var direction = isReceived ? 'left' : 'right';
 
+		if ( type === 'article'){
+			dom.className = 'em-widget-article-wrapper';
+			dom.innerHTML = msg.article;
+			return dom;
+		}
+
 		// 设置消息气泡显示在左侧还是右侧
 		// .em-widget-right, .em-widget-left used here
 		dom.className = 'em-widget-' + direction;
