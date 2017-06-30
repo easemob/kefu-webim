@@ -400,9 +400,9 @@
 	}
 
 	function _downgrade() {
-		apiHelper.createVisitor().then(function(account){
-			config.user.username = account.userId;
-			config.user.password = account.userPassword;
+		apiHelper.createVisitor().then(function(entity){
+			config.user.username = entity.userId;
+			config.user.password = entity.userPassword;
 
 			if (utils.isTop) {
 				utils.set('root' + config.tenantId + config.emgroup, config.user.username);
@@ -421,9 +421,9 @@
 	}
 
 	easemobim.reCreateImUser = _.once(function (){
-		apiHelper.createVisitor().then(function(account){
-			config.user.username = account.userId;
-			config.user.password = account.userPassword;
+		apiHelper.createVisitor().then(function(entity){
+			config.user.username = entity.userId;
+			config.user.password = entity.userPassword;
 
 			if (utils.isTop) {
 				utils.set('root' + config.tenantId + config.emgroup, config.user.username);
