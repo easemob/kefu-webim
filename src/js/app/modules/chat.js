@@ -541,6 +541,11 @@ app.chat = (function (
 			}
 		});
 
+		// qq web browser patch
+		// qq浏览器有时无法选取图片
+		if (utils.isQQBrowser && utils.isAndroid){
+			doms.imgInput.setAttribute('accept', 'image/*');
+		}
 		// 发送图片
 		utils.on(doms.imgInput, 'change', function () {
 			var fileInput = doms.imgInput;

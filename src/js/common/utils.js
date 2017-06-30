@@ -103,7 +103,8 @@
 	easemobim.utils = {
 		isTop: window.top === window.self,
 		isNodeList: _isNodeList,
-		isAndroid: /android/i.test(navigator.useragent),
+		isAndroid: /android/i.test(navigator.userAgent),
+		isQQBrowser: /MQQBrowser/i.test(navigator.userAgent),
 		isIOS: /(iPad|iPhone|iPod)/i.test(navigator.userAgent),
 		isMobile: _isMobile,
 		click: _isMobile && ('ontouchstart' in window) ? 'touchstart' : 'click',
