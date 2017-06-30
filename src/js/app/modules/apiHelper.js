@@ -676,7 +676,14 @@ app.apiHelper = (function (_const, utils, emajax) {
 				imServiceNumber: config.toUser,
 				tenantId: config.tenantId
 			}, function (msg) {
-				resolve(msg.data);
+				var entity = msg.data;
+
+				if (entity){
+					resolve(msg.data);
+				}
+				else {
+					reject('error when attempt to create webim visitor');
+				}
 			}, function(err){
 				reject(err);
 			});
