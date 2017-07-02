@@ -781,7 +781,12 @@ app.chat = (function (
 				_setOffline();
 			}
 		}, function (err) {
-			// todo: discard this
+			if (
+				err.error_description === 'user not found'
+				&& config.isUsernameFromCookie
+			){
+				// todo: recreate visitor
+			}
 			throw err;
 		});
 	}
