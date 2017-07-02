@@ -24,8 +24,8 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 			var level = starsUl.querySelectorAll('li.sel').length;
 			var selectedTagNodeList = tagContainer.querySelectorAll('.selected');
 			var tagNodeListLength = tagContainer.querySelectorAll('.tag').length;
-			var star;
-			var tagArr = [];
+			var evaluationDegreeId;
+			var appraiseTags;
 
 			if (level === 0) {
 				uikit.tip('请先选择星级');
@@ -39,16 +39,16 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 				return true;
 			}
 
-			star = level;
+			evaluationDegreeId = level;
 
-			tagArr = _.map(selectedTagNodeList, function (elem){
+			appraiseTags = _.map(selectedTagNodeList, function (elem){
 				return {
 					id: elem.getAttribute('data-label-id'),
 					name: elem.innerText
 				};
 			}) || [];
 
-			_sendSatisfaction(level, msg.value, session, invite, star, tagArr);
+			_sendSatisfaction(level, msg.value, session, invite, evaluationDegreeId, appraiseTags);
 
 			_clear();
 			uikit.showSuccess('提交成功');
@@ -62,10 +62,10 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 		var target = ev.target || ev.srcElement;
 		var selIndex = +target.getAttribute('data-idx') || 0;
 		var evaluateId = target.getAttribute("data-evaluate-id");
+		_.each(starList, function (elem, i) {
+			utils.toggleClass(elem, 'sel', i < selIndex);
+		});
 		if(selIndex !== 0){
-			_.each(starList, function (elem, i) {
-				utils.toggleClass(elem, 'sel', i < selIndex);
-			});
 			evaluateId && _createLabel(evaluateId);
 		}
 	});
@@ -83,7 +83,7 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 		tagContainer.innerHTML='';
 	}
 
-	function _sendSatisfaction(level, content, session, invite, star, tagArr) {
+	function _sendSatisfaction(level, content, session, invite, evaluationDegreeId, appraiseTags) {
 		channel.sendText('', {ext: {
 			weichat: {
 				ctrlType: 'enquiry',
@@ -92,8 +92,8 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 					serviceSessionId: session || '',
 					detail: content,
 					summary: level,
-					evaluationDegreeId: star,
-					appraiseTags: tagArr,
+					evaluationDegreeId: evaluationDegreeId,
+					appraiseTags: appraiseTags,
 				}
 			}
 		}});
