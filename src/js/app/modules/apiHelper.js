@@ -5,7 +5,9 @@
 
 app.apiHelper = (function (_const, utils, emajax) {
 	var config;
-	var cache = {};
+	var cache = {
+		appraiseTags: {}
+	};
 	var cachedApiCallbackTable = {};
 	var apiTransfer;
 
@@ -950,6 +952,67 @@ app.apiHelper = (function (_const, utils, emajax) {
 		});
 	}
 
+	function getEvaluationDegrees(){
+		 return new Promise(function(resolve, reject){
+		 	if (cache.evaluationDegrees){
+		 		resolve(cache.evaluationDegrees);
+		 	}
+		 	else {
+		 		getToken().then(function(token){
+				api('getEvaluationDegrees', {
+						tenantId: config.tenantId,
+						orgName: config.orgName,
+						appName: config.appName,
+						userName: config.user.username,
+						token: token
+					}, function (msg) {
+						var entities = utils.getDataByPath(msg, 'data.entities');
+						if (entities){
+							cache.evaluationDegrees = entities;
+							resolve(entities);
+						}
+						else {
+							reject('unexpected reaponse value.');
+						}
+					}, function (err){
+						reject(err);
+					});
+				});
+		 	}
+		});
+	}
+
+	function getAppraiseTags(evaluateId){
+		 return new Promise(function(resolve, reject){
+		 	if (cache.appraiseTags[evaluateId]){
+		 		resolve(cache.appraiseTags[evaluateId]);
+		 	}
+		 	else {
+		 		getToken().then(function(token){
+					api('getAppraiseTags', {
+						tenantId: config.tenantId,
+						orgName: config.orgName,
+						appName: config.appName,
+						userName: config.user.username,
+						token: token,
+						evaluateId: evaluateId
+					}, function (msg) {
+						var entities = utils.getDataByPath(msg, 'data.entities');
+						if (entities){
+							cache.appraiseTags[evaluateId] = entities;
+							resolve(entities);
+						}
+						else{
+							reject('unexpected reaponse value.');
+						}
+					}, function (err){
+						reject(err);
+					});
+				});
+		 	}
+		});
+	}
+
 	return {
 		getCurrentServiceSession: getCurrentServiceSession,
 		getToken: getToken,
@@ -989,6 +1052,8 @@ app.apiHelper = (function (_const, utils, emajax) {
 		reportMarketingTaskOpened: reportMarketingTaskOpened,
 		reportMarketingTaskReplied: reportMarketingTaskReplied,
 		getLatestMarketingTask: getLatestMarketingTask,
+		getEvaluationDegrees: getEvaluationDegrees,
+		getAppraiseTags: getAppraiseTags,
 
 		initApiTransfer: initApiTransfer,
 		api: api,

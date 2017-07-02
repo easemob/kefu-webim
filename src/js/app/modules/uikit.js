@@ -33,6 +33,7 @@ app.uikit = (function(utils){
 		if (typeof contentDom === 'string'){
 			contentDom = utils.createElementFromHTML(contentDom);
 		}
+
 		contentDom && el.appendChild(contentDom);
 		document.body.appendChild(el);
 
