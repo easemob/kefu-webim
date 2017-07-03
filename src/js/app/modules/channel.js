@@ -384,6 +384,9 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 		){
 			type = 'transferToTicket';
 		}
+		else if (utils.getDataByPath(msg, 'ext.msgtype.articles')) {
+			type = 'article';
+		}
 		else {}
 
 		switch (type) {
@@ -444,6 +447,11 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 				_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
 				[targetOfficialAccount, inviteId, serviceSessionId]
 			);
+			break;
+		case 'article':
+			message = msg;
+			message.type = 'article';
+		
 			break;
 		case 'robotList':
 			message = msg;
@@ -546,7 +554,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 		}
 
 		// 空文本消息不显示
-		if (!message || (type === 'txt' && !message.data)) return;
+		if (!message || (type === 'txt' && !message.data) || (type === 'article' && _.isEmpty(utils.getDataByPath(msg, 'ext.msgtype.articles'))) ) return;
 
 		// 	给收到的消息加id，用于撤回消息
 		message.id = msgId;
