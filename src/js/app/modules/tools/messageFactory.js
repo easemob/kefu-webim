@@ -112,6 +112,47 @@ app.genDomFromMsg = (function (window, _const, utils, profile) {
 		var dom = document.createElement('div');
 		var direction = isReceived ? 'left' : 'right';
 
+		if ( type === 'article'){
+			var msgArticles = utils.getDataByPath(msg, 'ext.msgtype.articles');
+			var articleNode;
+			if (msgArticles.length === 1){
+				var date = utils.formatDate(msgArticles[0].createdTime,'M月d日');
+				articleNode = '' + 
+					'<div class="article-msg-outer article-item only-one-article">' +
+						'<div class="body">' +
+							'<h3 class="title">' + msgArticles[0].title + '</h3>' +
+							'<p class="create-time">' + date + '</p>' +
+							'<div class="cover"><img src="' + msgArticles[0].thumbUrl + '"/></div>' +
+							'<div class="desc"><p>' + msgArticles[0].digest + '</p></div>' +
+						'</div>' +
+						'<div class="footer"><span class="look-article">阅读全文</span><i class="icon-corner-right"></i></div>' +
+						'<a class="article-link" target="_blank" href="' + msgArticles[0].url + '"></a>' +
+					'</div>';
+			}
+			else {
+				articleNode = '<div class="article-msg-outer more-articles">' 
+						+ _.map(msgArticles, function(item ,index){
+							var str = '';
+							if (index === 0) {
+								str = '<div class="article-item first-item">' +
+								'<h3 class="title">' + item.title + '</h3>';
+							}
+							else {
+								str = '<div class="article-item rest-item">' +
+								'<div class="title-wrapper"><p class="title">' + item.title + '</p></div>';	
+							}
+							str += '<img class="cover-img" src="' + item.thumbUrl + '"/>' +
+								'<a class="article-link" target="_blank" href="' + item.url + '"></a>' +
+								'</div>';
+							return str;
+						}).join('') || ''
+					+ '</div>';
+			}
+			dom.className = 'article-message-wrapper';
+			dom.innerHTML = articleNode;
+			return dom;
+		}
+
 		// 设置消息气泡显示在左侧还是右侧
 		// .em-widget-right, .em-widget-left used here
 		dom.className = 'em-widget-' + direction;
