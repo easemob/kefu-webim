@@ -304,7 +304,7 @@ easemobim.Iframe = (function (utils, _const, loading){
 		utils.toggleClass(this.iframe, 'easemobim-hide', this.config.hide);
 
 		// todo: add hash name to this file
-		this.iframe.src = location.protocol + config.path + '/im.html';
+		this.iframe.src = location.protocol + config.path + '/im.html?v=<%=WEBIM_PLUGIN_VERSION%>';
 		this.shadow && (this.shadow.style.backgroundImage = 'url(' + shadowBackgroundImage + ')');
 
 		this.ready = callback;

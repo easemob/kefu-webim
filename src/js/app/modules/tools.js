@@ -146,6 +146,7 @@ app.eventListener = (function(){
 }());
 
 app.profile = {
+	version: '<%=WEBIM_PLUGIN_VERSION%>',
 	ctaEnable: false,
 	systemAgentAvatar: null,
 	isChatWindowOpen: null,
