@@ -347,8 +347,14 @@
 						_downgrade();
 					}
 					else {
-						var oid = config.tenantId + '_' + config.orgName + '_' + config.appName + '_' + config.toUser + '_' +
-							data.openid;
+						var oid = config.tenantId
+							+ '_' + config.orgName
+							+ '_' + config.appName
+							+ '_' + config.toUser
+							+ '_' + data.openid;
+
+						config.visitor.userNickname = data.nickname;
+
 						easemobim.emajax({
 							url: '/v1/webimplugin/visitors/wechat/' + oid + '?tenantId=' + config.tenantId,
 							data: {
@@ -381,6 +387,7 @@
 						});
 					}
 				});
+
 			}
 			else if (config.user.username) {
 				apiHelper.getPassword().then(function(password){

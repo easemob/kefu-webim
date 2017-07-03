@@ -1,13 +1,15 @@
 app.wechat = (function () {
-	var wechat = /MicroMessenger/.test(navigator.userAgent);
+	var isWechatBrowser = /MicroMessenger/.test(navigator.userAgent);
 	var wechatAuth = easemobim.utils.query('wechatAuth');
 	var appid = easemobim.utils.query('appid');
 	var code = easemobim.utils.query('code');
 	var tenantId = easemobim.utils.query('tenantId');
 
 
-	if (!wechat || !wechatAuth || !tenantId || !appid) {
-		return;
+	if (!isWechatBrowser || !wechatAuth || !tenantId || !appid) {
+		return function(callback){
+			callback();
+		};
 	}
 
 	return function (callback) {
@@ -15,6 +17,7 @@ app.wechat = (function () {
 		var getComponentId = function (callback) {
 			easemobim.emajax({
 				url: '/v1/weixin/admin/appid',
+				type: 'GET',
 				success: function (info) {
 					callback(info);
 				},
@@ -47,26 +50,30 @@ app.wechat = (function () {
 
 		if (!code) {
 			getComponentId(function (id) {
-				if (!id) {
-					callback();
-					return;
+				if (id) {
+					location.href =  'https://open.weixin.qq.com/connect/oauth2/authorize?'
+						+ 'appid=' + appid
+						+ '&redirect_uri=' + encodeURIComponent(location.href)
+						+ '&response_type=code'
+						+ '&scope=snsapi_userinfo'
+						+ '&state=STATE'
+						+ '&component_appid=' + id
+						+ '#wechat_redirect';
 				}
-
-				var url = encodeURIComponent(location.href);
-				var redirect = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appid + '&redirect_uri=' + url +
-					'&response_type=code&scope=snsapi_userinfo&state=STATE&component_appid=' + id + '#wechat_redirect';
-
-				location.href = redirect;
+				else {
+					callback();
+				}
 			});
 
 		}
 		else {
 			getProfile(code, function (resp) {
-				if (!resp) {
-					callback();
-					return;
+				if (resp) {
+					callback(resp);
 				}
-				callback(resp);
+				else {
+					callback();
+				}
 			});
 		}
 	};
