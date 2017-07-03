@@ -125,7 +125,7 @@ app.genDomFromMsg = (function (window, _const, utils, profile) {
 							'<div class="cover"><img src="' + msgArticles[0].thumbUrl + '"/></div>' +
 							'<div class="desc"><p>' + msgArticles[0].digest + '</p></div>' +
 						'</div>' +
-						'<div class="footer"><span class="look-article">阅读全文</span><i class="icon-corner-right"></i></div>' +
+						'<div class="footer"><span class="look-article">阅读全文</span><i class="icon-arrow-right"></i></div>' +
 						'<a class="article-link" target="_blank" href="' + msgArticles[0].url + '"></a>' +
 					'</div>';
 			}
