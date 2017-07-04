@@ -147,6 +147,8 @@
 				color: #ccc;
 				text-align: center;
 				line-height: 30px;
+				overflow: hidden;
+				cursor: pointer;
 				&.selected{
 					border-color: rgb(242,145,0);
 					color: rgb(242,145,0);

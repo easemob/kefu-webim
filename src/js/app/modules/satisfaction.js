@@ -57,7 +57,7 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 	var session;
 	var invite;
 
-	utils.on(starsUl, 'click', function (e) {
+	utils.live('li', 'click', function(e){
 		var ev = e || window.event;
 		var target = ev.target || ev.srcElement;
 		var selIndex = +target.getAttribute('data-idx') || 0;
@@ -65,10 +65,8 @@ app.satisfaction = (function(utils, uikit, channel,apiHelper){
 		_.each(starList, function (elem, i) {
 			utils.toggleClass(elem, 'sel', i < selIndex);
 		});
-		if(selIndex !== 0){
-			evaluateId && _createLabel(evaluateId);
-		}
-	});
+		evaluateId && _createLabel(evaluateId);
+	}, starsUl);
 
 	utils.live('span.tag', 'click', function(e){
 		utils.toggleClass(this, 'selected');
