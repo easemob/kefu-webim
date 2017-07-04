@@ -229,7 +229,7 @@ gulp.task('combineJs', function () {
 	gulp.src([
 			'src/js/common/ajax.js',
 			'src/js/common/transfer.js',
-			'src/js/common/api.js',
+			'src/js/transfer/api.js',
 		])
 		.pipe(concat('em-transfer.js'))
 		.pipe(DEV_MODE ? NO_OPERATION_TRANSFER_STREAM() : uglify())
@@ -245,7 +245,23 @@ gulp.task('build', function () {
 gulp.task('dev', function () {
 	DEV_MODE = true;
 	gulp.start('build');
-})
+});
+
+gulp.task('uglify-webrtc', function (){
+	gulp.src([
+			'src/js/app/sdk/adapter.js',
+		])
+		.pipe(concat('adapter.min.js'))
+		.pipe(uglify())
+		.pipe(gulp.dest('static/js/lib'));
+
+	gulp.src([
+			'src/js/app/sdk/webrtc-1.4.4.js',
+		])
+		.pipe(concat('webrtc-1.4.4.min.js'))
+		.pipe(uglify())
+		.pipe(gulp.dest('static/js/lib'));
+});
 
 gulp.task('watch', function () {
 	gulp.start('dev');
