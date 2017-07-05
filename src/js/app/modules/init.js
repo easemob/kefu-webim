@@ -16,7 +16,7 @@ var eventCollector = require('./eventCollector');
 var chat = require('./chat');
 var channel = require('./channel');
 var profile = require('./tools/profile');
-var wechat = require('./wechat');
+var doWechatAuth = require('./wechat');
 
 var config;
 var hasChatEntryInitialized;
@@ -353,56 +353,12 @@ function initChatEntry(targetUserInfo) {
 		}
 		//检测微信网页授权
 		else if (config.wechatAuth) {
-			wechat(function (data) {
-				try {
-					data = JSON.parse(data);
-				}
-				catch (e) {
-					data = null;
-				}
-				if (!data) { //失败自动降级，随机创建访客
-					_downgrade();
-				}
-				else {
-					var oid = config.tenantId
-						+ '_' + config.orgName
-						+ '_' + config.appName
-						+ '_' + config.toUser
-						+ '_' + data.openid;
-
-					config.visitor.userNickname = data.nickname;
-
-					emajax({
-						url: '/v1/webimplugin/visitors/wechat/' + oid + '?tenantId=' + config.tenantId,
-						data: {
-							orgName: config.orgName,
-							appName: config.appName,
-							imServiceNumber: config.toUser
-						},
-						type: 'POST',
-						success: function (info) {
-							try {
-								info = JSON.parse(info);
-							}
-							catch (e) {
-								info = null;
-							}
-							if (info && info.status === 'OK') {
-								config.user.username = info.entity.userId;
-								config.user.password = info.entity.userPassword;
-								chat.init();
-							}
-							else {
-								_downgrade();
-							}
-
-						},
-						error: function (e) {
-							//失败自动降级，随机创建访客
-							_downgrade();
-						}
-					});
-				}
+			doWechatAuth(function (entity){
+				config.user.username = entity.userId;
+				config.user.password = entity.userPassword;
+				chat.init();
+			}, function (err){
+				_downgrade();
 			});
 		}
 		else if (config.user.username) {

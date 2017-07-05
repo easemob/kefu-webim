@@ -1015,6 +1015,93 @@ function getAppraiseTags(evaluateId){
 	});
 }
 
+function getWechatComponentId(){
+	return new Promise(function(resolve, reject){
+		emajax({
+			url: '/v1/weixin/admin/appid',
+			type: 'GET',
+			success: function (id) {
+				if (id) {
+					resolve(id);
+				}
+				else {
+					reject('unexpected response value.');
+				}
+			},
+			error: function (err){
+				reject(err);
+			}
+		});
+	});
+}
+
+function getWechatProfile(tenantId, appId, code){
+	return new Promise(function(resolve, reject){
+		emajax({
+			url: '/v1/weixin/sns/userinfo/' + appId + '/' + code + '?tenantId=' + tenantId,
+			type: 'GET',
+			success: function (resp){
+				var parsed;
+
+				try {
+					parsed = JSON.parse(resp);
+				}
+				catch (e) {}
+
+				if (parsed) {
+					resolve(parsed);
+				}
+				else {
+					reject('unexpected response value.');
+				}
+			},
+			error: function (err){
+				resolve(err);
+			}
+		});
+	});
+}
+
+function createWechatImUser(openId){
+	return new Promise(function(resolve, reject){
+		emajax({
+			url: '/v1/webimplugin/visitors/wechat/'
+				+ [
+					config.tenantId,
+					config.orgName,
+					config.appName,
+					config.toUser,
+					openId,
+				].join('_')
+				+ '?tenantId=' + config.tenantId,
+			data: {
+				orgName: config.orgName,
+				appName: config.appName,
+				imServiceNumber: config.toUser
+			},
+			type: 'POST',
+			success: function (resp){
+				var parsed;
+
+				try {
+					parsed = JSON.parse(resp);
+				}
+				catch (e) {}
+
+				if ((parsed && parsed.status) === 'OK'){
+					resolve(parsed.entity);
+				}
+				else {
+					reject();
+				}
+			},
+			error: function (e){
+				reject();
+			}
+		});
+	});
+}
+
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
 	getToken: getToken,
@@ -1056,6 +1143,9 @@ module.exports = {
 	getLatestMarketingTask: getLatestMarketingTask,
 	getEvaluationDegrees: getEvaluationDegrees,
 	getAppraiseTags: getAppraiseTags,
+	getWechatComponentId: getWechatComponentId,
+	getWechatProfile: getWechatProfile,
+	createWechatImUser: createWechatImUser,
 
 	initApiTransfer: initApiTransfer,
 	api: api,

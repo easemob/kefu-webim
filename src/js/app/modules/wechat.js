@@ -1,45 +1,62 @@
+
+// 微信授权登录步骤
+// 1. get Wechat Component Id (code does not exist)
+// 2. redirectTo open.weixin.qq.com
+// 3. callback with code
+// 4. get Wechat Profile by code
+// 5. cache Wechat nickname
+// 6. create Wechat im user
+// 7. exec success callback
+
 var utils = require('../../common/utils');
 var emajax = require('../../common/ajax');
+var apiHelper = require('./apiHelper');
+var profile = require('./tools/profile');
 
 var isWechatBrowser = /MicroMessenger/.test(navigator.userAgent);
-var wechatAuth = utils.query('wechatAuth');
 var appid = utils.query('appid');
 var code = utils.query('code');
 var tenantId = utils.query('tenantId');
 
-// todo: fix this
-if (!isWechatBrowser || !wechatAuth || !tenantId || !appid) {
-	module.exports = function(callback){
-		callback();
-	};
-}
+module.exports = function (success, fail) {
+	if (!isWechatBrowser || !tenantId || !appid){
+		fail();
+		return;
+	}
 
-module.exports = function (callback) {
-	//get profile
-	var getComponentId = function (callback) {
-		emajax({
-			url: '/v1/weixin/admin/appid',
-			type: 'GET',
-			success: function (info) {
-				callback(info);
-			},
-			error: function (e) {
-				callback(null);
-			}
+	if (!code) {
+		apiHelper.getWechatComponentId().then(function (id){
+			location.href =  'https://open.weixin.qq.com/connect/oauth2/authorize?'
+				+ 'appid=' + appid
+				+ '&redirect_uri=' + encodeURIComponent(location.href)
+				+ '&response_type=code'
+				+ '&scope=snsapi_userinfo'
+				+ '&state=STATE'
+				+ '&component_appid=' + id
+				+ '#wechat_redirect'
+			;
+		}, function (err){
+			console.warn(err);
+			fail();
 		});
-	};
+	}
+	else {
+		apiHelper.getWechatProfile(tenantId, appid, code).then(function (info){
+			// cache wechat nickname
+			profile.config.visitor.userNickname = info.nickname;
 
-
-	var getProfile = function (code, callback) {
-		//get profile
-		emajax({
-			url: '/v1/weixin/sns/userinfo/' + appid + '/' + code,
-			data: { tenantId: tenantId },
-			type: 'GET',
-			success: function (info) {
-				callback(info);
-			},
-			error: function (e) {
+			apiHelper.createWechatImUser(info.openid).then(function (entity){
+				success(entity);
+			}, function (err){
+				console.warn(err);
+				fail();
+			});
+		}, function (err){
+			if (err === 'unexpected response value.'){
+				fail();
+			}
+			else {
+				// 这段代码不知何意，暂时保留
 				var url = location.href.replace(/&code=[^&]+/, '');
 
 				if (url.indexOf('appid') !== url.lastIndexOf('appid')) {
@@ -48,35 +65,5 @@ module.exports = function (callback) {
 				location.href = url;
 			}
 		});
-	};
-
-	if (!code) {
-		getComponentId(function (id) {
-			if (id) {
-				location.href =  'https://open.weixin.qq.com/connect/oauth2/authorize?'
-					+ 'appid=' + appid
-					+ '&redirect_uri=' + encodeURIComponent(location.href)
-					+ '&response_type=code'
-					+ '&scope=snsapi_userinfo'
-					+ '&state=STATE'
-					+ '&component_appid=' + id
-					+ '#wechat_redirect';
-			}
-			else {
-				callback();
-			}
-		});
-
-	}
-	else {
-		getProfile(code, function (resp) {
-			if (resp) {
-				callback(resp);
-			}
-			else {
-				callback();
-			}
-		});
 	}
 };
-
