@@ -426,28 +426,6 @@
 			chat.init();
 		});
 	}
-
-	easemobim.reCreateImUser = _.once(function (){
-		apiHelper.createVisitor().then(function(account){
-			config.user.username = account.userId;
-			config.user.password = account.userPassword;
-
-			if (utils.isTop) {
-				utils.set('root' + config.tenantId + config.emgroup, config.user.username);
-			}
-			else {
-				// todo: directly transfer key & value to write cookies
-				transfer.send({
-					event: _const.EVENTS.CACHEUSER,
-					data: {
-						username: config.user.username,
-						group: config.user.emgroup
-					}
-				});
-			}
-			chat.show();
-		});
-	});
 }(
 	easemobim._const,
 	easemobim.utils,
