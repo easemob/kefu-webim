@@ -1,18 +1,20 @@
-easemobim.loading = (function(_const, utils){
-	var loadingDom = utils.appendHTMLToBody([
-		'<div class="easemobim-prompt-wrapper">',
-		'<div class="loading">',
-		_const.loadingSvg,
-		'</div>',
-		'</div>'
-	].join(''));
+'use strict';
+var utils = require('../common/utils');
+var _const = require('../common/const');
 
-	return {
-		show: function(){
-			loadingDom.style.display = 'block';
-		},
-		hide: function(){
-			loadingDom.style.display = 'none';
-		}
-	};
-}(easemobim._const, easemobim.utils));
+var loadingDom = utils.appendHTMLToBody([
+	'<div class="easemobim-prompt-wrapper">',
+	'<div class="loading">',
+	_const.loadingSvg,
+	'</div>',
+	'</div>'
+].join(''));
+
+module.exports = {
+	show: function(){
+		loadingDom.style.display = 'block';
+	},
+	hide: function(){
+		loadingDom.style.display = 'none';
+	}
+};
