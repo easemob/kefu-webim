@@ -399,25 +399,3 @@ function _downgrade() {
 	});
 }
 
-// todo: recreate user when 404
-// easemobim.reCreateImUser = _.once(function (){
-// 	apiHelper.createVisitor().then(function(entity){
-// 		config.user.username = entity.userId;
-// 		config.user.password = entity.userPassword;
-
-// 		if (utils.isTop) {
-// 			utils.set('root' + config.tenantId + config.emgroup, config.user.username);
-// 		}
-// 		else {
-// 			// todo: directly transfer key & value to write cookies
-// 			transfer.send({
-// 				event: _const.EVENTS.CACHEUSER,
-// 				data: {
-// 					username: config.user.username,
-// 					group: config.user.emgroup
-// 				}
-// 			});
-// 		}
-// 		chat.show();
-// 	});
-// });

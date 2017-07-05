@@ -24,7 +24,6 @@ var isEmojiInitilized;
 var isMessageChannelReady;
 var config;
 
-// DOM init
 var topBar = document.querySelector('.em-widget-header');
 var editorView = document.querySelector('.em-widget-send-wrapper');
 
@@ -56,6 +55,30 @@ var doms = {
 	editorView: editorView,
 	block: null
 };
+
+var _reCreateImUser = _.once(function (){
+	console.warn('user not found in current appKey, attempt to recreate user.');
+	apiHelper.createVisitor().then(function(entity){
+		config.user.username = entity.userId;
+		config.user.password = entity.userPassword;
+
+		_initSession();
+
+		if (utils.isTop) {
+			utils.set('root' + config.tenantId + config.emgroup, config.user.username);
+		}
+		else {
+			// todo: directly transfer key & value to write cookies
+			transfer.send({
+				event: _const.EVENTS.CACHEUSER,
+				data: {
+					username: config.user.username,
+					group: config.user.emgroup
+				}
+			});
+		}
+	});
+});
 
 module.exports = chat = {
 	doms: doms,
@@ -735,12 +758,15 @@ function _init() {
 
 	initSessionList();
 
-	// todo: 去掉getGrayList的block
+	_initSession();
+}
+
+function _initSession(){
 	Promise.all([
 		apiHelper.getDutyStatus(),
 		apiHelper.getGrayList(),
 		apiHelper.getToken()
-	]).then(function(result){
+	]).then(function (result){
 		var dutyStatus = result[0];
 		var grayList = result[1];
 
@@ -795,7 +821,16 @@ function _init() {
 			_setOffline();
 		}
 	}, function (err) {
-		// todo: discard this
-		throw err;
+		if (
+			err.error_description === 'user not found'
+			&& config.isUsernameFromCookie
+		){
+			_reCreateImUser();
+		}
+		else {
+			throw err;
+		}
 	});
 }
+
+
