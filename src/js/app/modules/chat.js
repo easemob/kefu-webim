@@ -65,17 +65,17 @@ var _reCreateImUser = _.once(function (){
 		_initSession();
 
 		if (utils.isTop) {
-			var cacheKeyName = config.configId ? config.configId : (config.tenantId + config.emgroup);
-			utils.set('root' + config.tenantId + config.emgroup, config.user.username);
+		
+			utils.set('root' + (config.configId || (config.tenantId + config.emgroup)), config.user.username);
 		}
 		else {
 			// todo: directly transfer key & value to write cookies
+			var cacheKeyName = (config.configId || (config.to + config.tenantId + config.emgroup ))
 			transfer.send({
 				event: _const.EVENTS.CACHEUSER,
 				data: {
-					condfigId : config.configId,
-					username: config.user.username,
-					group: config.user.emgroup
+					key: cacheKeyName,
+					value: config.user.username,
 				}
 			});
 		}

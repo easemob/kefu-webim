@@ -384,16 +384,15 @@ function _downgrade() {
 		config.user.password = entity.userPassword;
 
 		if (utils.isTop) {
-			var cacheKeyName = config.configId ? config.configId : (config.tenantId + config.emgroup);
-			utils.set('root' + cacheKeyName, config.user.username);
+			utils.set('root' + (config.configId || (config.tenantId + config.emgroup)), config.user.username);
 		}
 		else {
+			var cacheKeyName = (config.configId || (config.to + config.tenantId + config.emgroup ))
 			transfer.send({
 				event: _const.EVENTS.CACHEUSER,
 				data: {
-					configId: config.configId,
-					username: config.user.username,
-					group: config.user.emgroup
+					key: cacheKeyName,
+					value: config.user.username,
 				}
 			});
 		}

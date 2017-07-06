@@ -187,13 +187,10 @@ function _ready() {
 				break;
 			case _const.EVENTS.CACHEUSER:
 				// 缓存im username
-				if (data.username) {
-					var cookieKeyName = data.configId ? data.configId : ((me.config.to || '') + me.config.tenantId + (me.config.emgroup || ''));
-					utils.set(
-						cookieKeyName,
-						data.username
-					);
-				}
+				utils.set(
+					data.key,
+					data.username
+				);
 				break;
 			case _const.EVENTS.DRAGREADY:
 				_startPosition.x = +data.x || 0;
