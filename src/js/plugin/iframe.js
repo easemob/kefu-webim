@@ -188,8 +188,9 @@ function _ready() {
 			case _const.EVENTS.CACHEUSER:
 				// 缓存im username
 				if (data.username) {
+					var cookieKeyName = data.configId ? data.configId : ((me.config.to || '') + me.config.tenantId + (me.config.emgroup || ''));
 					utils.set(
-						(me.config.to || '') + me.config.tenantId + (me.config.emgroup || ''),
+						cookieKeyName,
 						data.username
 					);
 				}

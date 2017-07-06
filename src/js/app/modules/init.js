@@ -384,12 +384,14 @@ function _downgrade() {
 		config.user.password = entity.userPassword;
 
 		if (utils.isTop) {
-			utils.set('root' + config.tenantId + config.emgroup, config.user.username);
+			var cacheKeyName = config.configId ? config.configId : (config.tenantId + config.emgroup);
+			utils.set('root' + cacheKeyName, config.user.username);
 		}
 		else {
 			transfer.send({
 				event: _const.EVENTS.CACHEUSER,
 				data: {
+					configId: config.configId,
 					username: config.user.username,
 					group: config.user.emgroup
 				}

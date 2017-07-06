@@ -65,6 +65,7 @@ var _reCreateImUser = _.once(function (){
 		_initSession();
 
 		if (utils.isTop) {
+			var cacheKeyName = config.configId ? config.configId : (config.tenantId + config.emgroup);
 			utils.set('root' + config.tenantId + config.emgroup, config.user.username);
 		}
 		else {
@@ -72,6 +73,7 @@ var _reCreateImUser = _.once(function (){
 			transfer.send({
 				event: _const.EVENTS.CACHEUSER,
 				data: {
+					condfigId : config.configId,
 					username: config.user.username,
 					group: config.user.emgroup
 				}
