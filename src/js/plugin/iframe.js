@@ -189,7 +189,7 @@ function _ready() {
 				// 缓存im username
 				utils.set(
 					data.key,
-					data.username
+					data.value
 				);
 				break;
 			case _const.EVENTS.DRAGREADY:

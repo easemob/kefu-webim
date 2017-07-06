@@ -184,7 +184,7 @@ if (
 	(!_config.hide || _config.autoConnect || _config.eventCollector)
 	&& (_config.tenantId || _config.configId) && !utils.isMobile
 ) {
-	var cacheKeyName = _config.configId ? _config.configId : (config.tenantId + (config.emgroup || ''));
+	var cacheKeyName = _config.configId || (config.tenantId + (config.emgroup || ''));
 
 	iframe = easemobim.tenants[cacheKeyName] || Iframe(_config);
 	easemobim.tenants[cacheKeyName] = iframe;
