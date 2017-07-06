@@ -137,7 +137,7 @@ easemobim.bind = function (config) {
 		reset();
 		utils.extend(_config, config);
 
-		if (!_config.tenantId) {
+		if (!_config.tenantId && !_config.configId) {
 			console.error('未指定tenantId!');
 			return;
 		}
