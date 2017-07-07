@@ -8,7 +8,6 @@ var tools = require('./tools/tools');
 var eventListener = require('./tools/eventListener');
 var apiHelper = require('./apiHelper');
 var chat = require('./chat');
-var videoChat = require('./videoChat');
 
 var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;
@@ -43,9 +42,7 @@ var _open = tools.retryThrottle(function (){
 
 	conn.open(op);
 
-	Modernizr.peerconnection
-		&& profile.grayList.audioVideo
-		&& videoChat.init(conn);
+	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.IM_CONNECTION_OPENED, [conn]);
 }, {
 	resetTime: 10 * 60 * 1000,
 	waitTime: 2000,
@@ -128,11 +125,8 @@ function _initConnection(onReadyCallback) {
 		},
 		onOffline: function () {
 			utils.isMobile && conn.close();
-			// for debug
-			// 断线关闭视频通话
-			if (Modernizr.peerconnection) {
-				videoChat.onOffline();
-			}
+
+			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFLINE, []);
 		},
 		onError: function (e) {
 			if (e.reconnect) {

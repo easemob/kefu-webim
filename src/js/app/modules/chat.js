@@ -11,6 +11,7 @@ var satisfaction = require('./satisfaction');
 var imgView = require('./imgview');
 var leaveMessage = require('./leaveMessage');
 var initPasteImage = require('./paste');
+var videoChat = require('./videoChat');
 
 var initAgentInputStatePoller = require('./chat/initAgentInputStatePoller');
 var initAgentStatusPoller = require('./chat/initAgentStatusPoller');
@@ -65,11 +66,11 @@ var _reCreateImUser = _.once(function (){
 		_initSession();
 
 		if (utils.isTop) {
-		
+
 			utils.set('root' + (config.configId || (config.tenantId + config.emgroup)), config.user.username);
 		}
 		else {
-			
+
 			var cacheKeyName = (config.configId || (config.to + config.tenantId + config.emgroup ))
 			transfer.send({
 				event: _const.EVENTS.CACHEUSER,
@@ -779,6 +780,8 @@ function _init() {
 		profile.isInOfficeHours = dutyStatus || config.offDutyType === 'chat';
 
 		if (profile.isInOfficeHours) {
+			videoChat.initEventListener();
+
 			Promise.all([
 				_initOfficialAccount(),
 				_initSDK()
