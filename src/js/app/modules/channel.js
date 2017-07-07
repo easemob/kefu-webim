@@ -633,7 +633,7 @@ function _setExt(msg) {
 		msg.body.ext.weichat.queueName = bindSkillGroupName;
 	}
 	else if (config.emgroup) {
-		msg.body.ext.weichat.queueName = config.emgroup;
+		msg.body.ext.weichat.queueName = msg.body.ext.weichat.queueName || config.emgroup;
 	}
 
 	//bind visitor
