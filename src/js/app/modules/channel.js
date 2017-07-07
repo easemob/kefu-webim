@@ -371,9 +371,9 @@ function _handleMessage(msg, msgType, isHistory) {
 	){
 		type = 'transferToTicket';
 	}
-	else if (utils.getDataByPath(msg, 'ext.msgtype.articles')) {
-		type = 'article';
-	}
+	// else if (utils.getDataByPath(msg, 'ext.msgtype.articles')) {
+	// 	type = 'article';
+	// }
 	else {}
 
 	switch (type) {
