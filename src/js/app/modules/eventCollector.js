@@ -28,7 +28,7 @@ function _reportData(userType, userId) {
 		// cta invite extended field
 		var message = resp.message;
 		var agentNickname = resp.agentNickname;
-		var agentAvatar = resp.agentAvatar;
+		var agentAvatar = resp.agentAvatar || profile.defaultAvatar;
 
 		_hasCtaInvite = !!message;
 
