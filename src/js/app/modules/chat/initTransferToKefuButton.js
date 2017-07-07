@@ -5,7 +5,7 @@ var eventListener = require('../tools/eventListener');
 var apiHelper = require('../apiHelper');
 var channel = require('../channel');
 
-var $toKefuBtn;
+var toKefuBtn;
 
 module.exports = function(){
 	if (!profile.config.toolbar.transferToKefu) return;
@@ -14,9 +14,9 @@ module.exports = function(){
 	toKefuBtn = editorView.querySelector('.em-widget-to-kefu');
 
 	// 人工客服接起会话
-	utils.on($toKefuBtn, 'click', function () {
+	utils.on(toKefuBtn, 'click', function () {
 		channel.sendTransferToKf();
-		utils.addClass($toKefuBtn, 'hide');
+		utils.addClass(toKefuBtn, 'hide');
 	});
 
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideTransferToKefuBtn);
@@ -37,14 +37,14 @@ function _displayOrHideTransferToKefuBtn(officialAccount){
 
 	if (type === 'CUSTOM'){
 		// 营销号一律不显示转人工按钮
-		utils.addClass($toKefuBtn, 'hide');
+		utils.addClass(toKefuBtn, 'hide');
 	}
 	else if (state === _const.SESSION_STATE.PROCESSING){
-		utils.toggleClass($toKefuBtn, 'hide', !isRobotAgent);
+		utils.toggleClass(toKefuBtn, 'hide', !isRobotAgent);
 	}
 	else{
 		apiHelper.getRobertIsOpen().then(function (isRobotEnable) {
-			utils.toggleClass($toKefuBtn, 'hide', !isRobotEnable);
+			utils.toggleClass(toKefuBtn, 'hide', !isRobotEnable);
 		});
 	}
 }
