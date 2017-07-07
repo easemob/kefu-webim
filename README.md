@@ -19,29 +19,29 @@
 	- 进入代码目录
 
 		>	cd kefu-webim
-	- 安装webserver依赖
+	- 进入`server`子目录
 
-		>	cd server && npm install
+		>	cd server
+	- 安装webserver依赖（此命令在kefu-webim/server目录下执行，下同）
+
+		>	npm install
 	- 运行webserver，让代码在本地跑起来
 
 		>	node app -t kefu.easemob.com -p 8080
 	- 此时可以用浏览器打开 `http://localhost:8080/webim/demo.html`
 
-## 定制开发（不推荐用此方法集成，并且绝大多数时候不需要）
+## 定制开发（`目前标准版已支持所有功能，绝大多数情形无需定制开发`）
 
-- 在上述步骤的基础上还要执行下面的命令，全局安装命令一般需要使用root权限运行，推荐使用OSX 或 Linux，在Window下安装依赖可能会有问题
-	- 安装全局gulp，用于在命令行调用，可参考[gulpjs.com](http://gulpjs.com/)
-
-		>	npm install gulp-cli -g
-	- 安装依赖（此命令在kefu-webim目录下执行，下同）
+- 在上述步骤的基础上还要执行下面的命令，推荐使用OSX 或 Linux，Window下安装依赖可能会有问题
+	- 安装开发依赖（此命令在kefu-webim目录下执行，下同）
 
 		>	npm install
-	- 构建并压缩js (用于生产环境)
+	- 构建代码 (用于生产环境)
 
-		>	gulp build
-	- 仅构建 (用于调试)
+		>	npm run build
+	- 构建并启动watch (用于开发)
 
-		>	gulp dev
+		>	npm run dev
 
 ## 其他命令可以查看帮助
 

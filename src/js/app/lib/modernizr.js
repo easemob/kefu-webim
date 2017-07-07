@@ -22,7 +22,7 @@
  * of control over the experience.
 */
 
-;(function(window, document, undefined){
+// ;(function(window, document, undefined){
   /**
    * docElement is a convenience wrapper to grab the root element of the document
    *
@@ -31,10 +31,10 @@
    */
 
   var docElement = document.documentElement;
-  
+
 
   var tests = [];
-  
+
 
   /**
    *
@@ -83,7 +83,7 @@
     }
   };
 
-  
+
 
   // Fake some of Object.create so we can force non test results to be non "own" properties.
   var Modernizr = function() {};
@@ -93,10 +93,10 @@
   // Overwrite name so constructor name is nicer :D
   Modernizr = new Modernizr();
 
-  
+
 
   var classes = [];
-  
+
 
   /**
    * is returns a boolean if the typeof an obj is exactly type.
@@ -192,7 +192,7 @@
    */
 
   var isSVG = docElement.nodeName.toLowerCase() === 'svg';
-  
+
 
   /**
    * createElement is a convenience wrapper around document.createElement. Since we
@@ -320,7 +320,7 @@ Detects support for inline SVG in HTML (not within XHTML).
 
 
   ModernizrProto.hasEvent = hasEvent;
-  
+
 
   /**
    * getBody returns the body of a document, or an element that can stand in for
@@ -479,7 +479,7 @@ Detects support for inline SVG in HTML (not within XHTML).
    */
 
   var testStyles = ModernizrProto.testStyles = injectElementWithStyles;
-  
+
 /*!
 {
   "name": "onInput Event",
@@ -573,11 +573,11 @@ Detects support for inline SVG in HTML (not within XHTML).
    */
 
   var omPrefixes = 'Moz O ms Webkit';
-  
+
 
   var cssomPrefixes = (ModernizrProto._config.usePrefixes ? omPrefixes.split(' ') : []);
   ModernizrProto._cssomPrefixes = cssomPrefixes;
-  
+
 
   /**
    * atRule returns a given CSS property at-rule (eg @keyframes), possibly in
@@ -644,7 +644,7 @@ Detects support for inline SVG in HTML (not within XHTML).
 
   ModernizrProto.atRule = atRule;
 
-  
+
 
   /**
    * List of JavaScript DOM values used for tests
@@ -666,7 +666,7 @@ Detects support for inline SVG in HTML (not within XHTML).
 
   var domPrefixes = (ModernizrProto._config.usePrefixes ? omPrefixes.toLowerCase().split(' ') : []);
   ModernizrProto._domPrefixes = domPrefixes;
-  
+
 
 
   /**
@@ -756,7 +756,7 @@ Detects support for inline SVG in HTML (not within XHTML).
     delete modElem.elem;
   });
 
-  
+
 
   var mStyle = {
     style: modElem.elem.style
@@ -768,7 +768,7 @@ Detects support for inline SVG in HTML (not within XHTML).
     delete mStyle.style;
   });
 
-  
+
 
   /**
    * domToCSS takes a camelCase string and converts it to kebab-case
@@ -959,7 +959,7 @@ Detects support for inline SVG in HTML (not within XHTML).
   // Modernizr.testAllProps('boxSizing')
   ModernizrProto.testAllProps = testPropsAll;
 
-  
+
 
   /**
    * prefixed returns the prefixed or nonprefixed property name variant of your input
@@ -1043,7 +1043,7 @@ Detects support for inline SVG in HTML (not within XHTML).
     }
   };
 
-  
+
 /*!
 {
   "name": "RTC Peer Connection",
@@ -1072,9 +1072,10 @@ Detects support for inline SVG in HTML (not within XHTML).
   }
 
   // Leak Modernizr namespace
-  window.Modernizr = Modernizr;
+  // window.Modernizr = Modernizr;
+  module.exports = Modernizr;
 
 
-;
+// ;
 
-})(window, document);
+// })(window, document);
