@@ -52,7 +52,7 @@ function _createDialog(opt){
 		_hide();
 	}
 	function _confirmCb(){
-		confirm() || _hide();
+		confirm() !== false && _hide();
 	}
 
 	return {
