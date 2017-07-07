@@ -1,57 +1,61 @@
-app.initAgentInputStatePoller = (function(_const, utils, profile, apiHelper, eventListener){
-	var timerHandler;
-	var preventTimestamp = 0;
-	var inputState;
+var _const = require('../../../common/const');
+var utils = require('../../../common/utils');
+var profile = require('../tools/profile');
+var eventListener = require('../tools/eventListener');
+var apiHelper = require('../apiHelper');
 
-	return function (){
-		if (!profile.grayList.agentInputStateEnable) return;
+var timerHandler;
+var preventTimestamp = 0;
+var inputState;
 
-		var topBar = document.querySelector('.em-widget-header');
-		inputState = topBar.querySelector('.em-agent-input-state');
+module.exports = function (){
+	if (!profile.grayList.agentInputStateEnable) return;
 
-		// start timer
-		timerHandler = setInterval(function (){
-			var officialAccount = profile.currentOfficialAccount;
-			_update(officialAccount);
-		}, _const.AGENT_INPUT_STATE_INTERVAL);
+	var topBar = document.querySelector('.em-widget-header');
+	inputState = topBar.querySelector('.em-agent-input-state');
 
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _update);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _update);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _update);
-		eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _update);
-		eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _update);
-	};
+	// start timer
+	timerHandler = setInterval(function (){
+		var officialAccount = profile.currentOfficialAccount;
+		_update(officialAccount);
+	}, _const.AGENT_INPUT_STATE_INTERVAL);
 
-	function _update(officialAccount){
-		if (
-			officialAccount !== profile.currentOfficialAccount
-			|| !officialAccount
-			|| !profile.isChatWindowOpen
-			|| utils.isBrowserMinimized()
-		) return;
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _update);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _update);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _update);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _update);
+	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _update);
+};
 
-		var state = officialAccount.sessionState;
-		var sessionId = officialAccount.sessionId;
-		var agentType = officialAccount.agentType;
+function _update(officialAccount){
+	if (
+		officialAccount !== profile.currentOfficialAccount
+		|| !officialAccount
+		|| !profile.isChatWindowOpen
+		|| utils.isBrowserMinimized()
+	) return;
 
-		if (
-			sessionId
-			&& state === _const.SESSION_STATE.PROCESSING
-			&& agentType !== _const.AGENT_ROLE.ROBOT
-		){
-			apiHelper.getAgentInputState(sessionId).then(function (entity){
-				var currentTimestamp = entity.timestamp;
-				var ifDisplayTypingState = entity.input_state_tips;
+	var state = officialAccount.sessionState;
+	var sessionId = officialAccount.sessionId;
+	var agentType = officialAccount.agentType;
 
-				// 为了先发送的请求后回来的异步问题，仅处理时间戳比当前大的response
-				if (currentTimestamp > preventTimestamp){
-					preventTimestamp = currentTimestamp;
-					utils.toggleClass(inputState, 'hide', !ifDisplayTypingState);
-				}
-			});
-		}
-		else {
-			utils.addClass(inputState, 'hide');
-		}
+	if (
+		sessionId
+		&& state === _const.SESSION_STATE.PROCESSING
+		&& agentType !== _const.AGENT_ROLE.ROBOT
+	){
+		apiHelper.getAgentInputState(sessionId).then(function (entity){
+			var currentTimestamp = entity.timestamp;
+			var ifDisplayTypingState = entity.input_state_tips;
+
+			// 为了先发送的请求后回来的异步问题，仅处理时间戳比当前大的response
+			if (currentTimestamp > preventTimestamp){
+				preventTimestamp = currentTimestamp;
+				utils.toggleClass(inputState, 'hide', !ifDisplayTypingState);
+			}
+		});
 	}
-}(easemobim._const, easemobim.utils, app.profile, app.apiHelper, app.eventListener));
+	else {
+		utils.addClass(inputState, 'hide');
+	}
+}

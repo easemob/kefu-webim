@@ -112,3 +112,5 @@ WebIM.config = {
 	 */
 	isHttpDNS: false
 };
+
+module.exports = WebIM;
