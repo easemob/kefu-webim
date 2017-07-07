@@ -49,6 +49,7 @@ module.exports = {
 
 		MARKETING_MESSAGE_RECEIVED: 'marketing.message.received',
 		SATISFACTION_EVALUATION_MESSAGE_RECEIVED: 'satisfaction.evaluation.message.received',
+		MESSAGE_PROMPT: 'message.prompt',
 
 		CHAT_WINDOW_OPENED: 'chat.window.opened',
 		CHAT_WINDOW_CLOSED: 'chat.window.closed',

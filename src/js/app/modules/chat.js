@@ -88,9 +88,6 @@ module.exports = chat = {
 	init: _init,
 	close: _close,
 	show: _show,
-	// todo: discard this
-	playSound: function(){},
-	block: null
 };
 
 function _initSystemEventListener(){
@@ -164,9 +161,7 @@ function _initUI(){
 }
 
 function _initSoundReminder(){
-	if (!window.HTMLAudioElement || utils.isMobile || !config.soundReminder) {
-		return;
-	}
+	if (!window.HTMLAudioElement || utils.isMobile || !config.soundReminder) return;
 
 	var audioDom = document.createElement('audio');
 	var slienceSwitch = document.querySelector('.em-widget-header .btn-audio');
@@ -184,11 +179,9 @@ function _initSoundReminder(){
 		utils.toggleClass(slienceSwitch, 'icon-bell', !isSlienceEnable);
 	});
 
-	chat.playSound = function () {
-		if (!isSlienceEnable) {
-			play();
-		}
-	};
+	eventListener.add(_const.SYSTEM_EVENT.MESSAGE_PROMPT, function (){
+		!isSlienceEnable && play();
+	});
 }
 
 function _setLogo() {

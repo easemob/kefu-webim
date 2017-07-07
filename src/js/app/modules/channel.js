@@ -7,7 +7,6 @@ var profile = require('./tools/profile');
 var tools = require('./tools/tools');
 var eventListener = require('./tools/eventListener');
 var apiHelper = require('./apiHelper');
-var chat = require('./chat');
 
 var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;
@@ -903,19 +902,15 @@ function _detectUploadImgMsgByApi(id, file) {
 }
 
 function _messagePrompt(message, officialAccount){
-	if (utils.isTop) return;
-
-	// todo: discard isTop return
-	// todo: discard utils.getBrief
 	var officialAccountType = officialAccount.type;
-	var brief = utils.getBrief(message.brief, 15);
+	var brief = message.brief;
 	var avatar = officialAccountType === 'CUSTOM'
 		? officialAccount.img
 		: profile.systemAgentAvatar || profile.tenantAvatar || profile.defaultAvatar;
 
 	if (utils.isBrowserMinimized() || !profile.isChatWindowOpen) {
-		// todo: discard this, use event callback
-		chat.playSound();
+		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_PROMPT, []);
+
 		transfer.send({ event: _const.EVENTS.SLIDE });
 		transfer.send({
 			event: _const.EVENTS.NOTIFY,
