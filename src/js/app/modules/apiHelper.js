@@ -969,7 +969,7 @@ function getEvaluationDegrees(){
 					token: token
 				}, function (msg) {
 					var entities = utils.getDataByPath(msg, 'data.entities');
-					if (entities){
+					if (_.isArray(entities)){
 						cache.evaluationDegrees = entities;
 						resolve(entities);
 					}

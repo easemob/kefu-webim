@@ -48,8 +48,8 @@ var dialog = uikit.createDialog({
 			setTimeout(function () { isSending = false; }, 10000);
 			_createTicket();
 		}
-		// 不关闭对话框
-		return {preventDefult: true};
+		// 阻止对话框关闭
+		return false;
 	}
 });
 var cancelBtn = dialog.el.querySelector('.cancel-btn');
