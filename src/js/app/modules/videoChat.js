@@ -1,6 +1,8 @@
+var _const = require('../../common/const');
 var uikit = require('./uikit');
 var channel = require('./channel');
 var profile = require('./tools/profile');
+var eventListener = require('./tools/eventListener');
 
 var imChat = document.getElementById('em-kefu-webim-chat');
 var btnVideoInvite = document.querySelector('.em-video-invite');
@@ -93,7 +95,7 @@ var closingTimer = {
 	}
 };
 
-var endCall = function () {
+function _endCall(){
 	statusTimer.stop();
 	closingTimer.show();
 	localStream && localStream.getTracks().forEach(function (track) {
@@ -115,7 +117,7 @@ var events = {
 			console.error('end call:', e);
 		}
 		finally {
-			endCall();
+			_endCall();
 		}
 	},
 	'btn-accept-call': function () {
@@ -152,8 +154,14 @@ var events = {
 	}
 };
 
+function _initEventListener(){
+	if (!Modernizr.peerconnection || !profile.grayList.audioVideo) return;
 
-function init(conn) {
+	eventListener.add(_const.SYSTEM_EVENT.IM_CONNECTION_OPENED, _init);
+	eventListener.add(_const.SYSTEM_EVENT.OFFLINE, _endCall);
+}
+
+function _init(conn) {
 	config = profile.config;
 
 	// 视频组件初始化
@@ -203,7 +211,7 @@ function init(conn) {
 			onRinging: function (caller) {
 				// for debug
 				console.log('onRinging', caller);
-				// init
+
 				subVideo.muted = true;
 				mainVideo.muted = false;
 				closingTimer.isConnected = false;
@@ -217,7 +225,7 @@ function init(conn) {
 			onTermCall: function () {
 				// for debug
 				console.log('onTermCall');
-				endCall();
+				_endCall();
 			},
 			onError: function (e) {
 				console.log(e && e.message ? e.message : 'An error occured when calling webrtc');
@@ -227,10 +235,5 @@ function init(conn) {
 }
 
 module.exports = {
-	init: init,
-	onOffline: function () {
-		// for debug
-		console.log('onOffline');
-		endCall();
-	}
+	initEventListener: _initEventListener,
 };

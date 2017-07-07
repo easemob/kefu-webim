@@ -53,9 +53,12 @@ module.exports = {
 		CHAT_WINDOW_OPENED: 'chat.window.opened',
 		CHAT_WINDOW_CLOSED: 'chat.window.closed',
 
+		IM_CONNECTION_OPENED: 'im.connection.opened',
+
+		OFFLINE: 'offline',
+
 		MESSAGE_SENT: 'message.sent',
 		MESSAGE_APPENDED: 'message.appended',
-		block: null
 	},
 
 	themeMap: {
@@ -78,6 +81,7 @@ module.exports = {
 		WEBIM_CONNCTION_CALLBACK_INNER_ERROR: 31
 	},
 
+	// todo: 分离这部分代码
 	EVENTS: {
 		NOTIFY: 'notify',
 		RECOVERY: 'recoveryTitle',
@@ -101,7 +105,6 @@ module.exports = {
 		RESIZE_IFRAME: 'resizeIframe',
 		ADD_PROMPT: 'add.prompt',
 		REMOVE_PROMPT: 'remove.prompt',
-		block: null
 	},
 
 	GRAY_LIST_KEYS: [
@@ -115,7 +118,6 @@ module.exports = {
 	ERROR_MSG: {
 		VISITOR_DOES_NOT_EXIST: 'visitor does not exist.',
 		SESSION_DOES_NOT_EXIST: 'session does not exist.',
-		block: null
 	},
 
 	SESSION_STATE: {
