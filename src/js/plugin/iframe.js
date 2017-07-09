@@ -288,7 +288,7 @@ Iframe.prototype.set = function (config, callback) {
 		// keyName = [to + ] tenantId [ + emgroup]
 		this.config.isUsernameFromCookie = true;
 		this.config.user.username = utils.get(
-			(this.config.to || '') + this.config.tenantId + (this.config.emgroup || '')
+			config.configId || (this.config.to || '') + this.config.tenantId + (this.config.emgroup || '')
 		);
 	}
 

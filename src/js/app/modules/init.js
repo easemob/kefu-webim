@@ -54,7 +54,8 @@ function h5_mode_init(){
 
 	config.user = {};
 	var usernameFromUrl = utils.query('user');
-	var usernameFromCookie = utils.get('root' + config.tenantId + config.emgroup);
+
+	var usernameFromCookie = utils.get(config.configId || 'root' + config.tenantId + config.emgroup);
 
 	if (usernameFromUrl) {
 		config.user.username = usernameFromUrl;
