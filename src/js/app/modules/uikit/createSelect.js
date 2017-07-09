@@ -35,8 +35,6 @@ module.exports = function (opt) {
 	}
 	popuplist = newPopuplist;
 
-	_setOffset();
-
 	_bindEvents ();
 	// 默认选中第一个
 	containerDom.selectValue = list[0].sign;
@@ -96,6 +94,7 @@ function _render() {
 
 function _show () {
 	utils.removeClass(popuplist, 'hide');
+	_setOffset();
 }
 
 function _hide () {
