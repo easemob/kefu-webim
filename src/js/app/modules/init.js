@@ -211,7 +211,7 @@ function handleConfig(configJson) {
 
 	config.appKey = configJson.channel.appKey;
 	config.to = configJson.channel.to;
-	config.agentName = configJson.channel.agentName;
+	// config.agentName = configJson.channel.agentName;
 	config.emgroup = configJson.channel.emgroup;
 
 	// config.buttonText = configJson.ui.buttonText;
@@ -225,7 +225,7 @@ function handleConfig(configJson) {
 	config.themeName = configJson.ui.themeName;
 
 	config.autoConnect = configJson.toolbar.autoConnect;
-	config.hideKeyboard = configJson.toolbar.hideKeyboard;
+	// config.hideKeyboard = configJson.toolbar.hideKeyboard;
 	config.minimum = configJson.toolbar.minimum;
 	config.offDutyWord = configJson.toolbar.offDutyWord;
 	config.offDutyType = configJson.toolbar.offDutyType;
