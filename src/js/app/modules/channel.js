@@ -571,7 +571,7 @@ app.channel = (function(_const, utils, List, Dict, apiHelper, eventListener, ret
 		var msgBody = element.body || {};
 		var msg = utils.getDataByPath(msgBody, 'bodies.0') || {};
 		var url = msg.url;
-		var timestamp = element.timestamp || msgBody.timestamp;
+		var timestamp = moment(element.created_at, 'YYYY-MM-DDTHH:mm:ss.SSSZZ').valueOf();
 		var fileLength;
 		// 只有坐席发出的消息里边的file_length是准确的
 		if (msgBody.from !== config.user.username){
