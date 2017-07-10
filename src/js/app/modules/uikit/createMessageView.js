@@ -126,7 +126,7 @@ module.exports = function(opt){
 	function _appendDate(timestamp, isHistory) {
 		var dom = utils.createElementFromHTML([
 			'<div class="em-widget-date">',
-			'<span>' + utils.formatDate(date) + '</span>',
+			'<span>' + utils.formatDate(timestamp) + '</span>',
 			'</div>'
 		].join(''));
 		var date = timestamp || _.now();
