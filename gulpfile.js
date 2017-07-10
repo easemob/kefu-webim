@@ -9,7 +9,7 @@
 
 let DEV_MODE = false;
 const TEMPLATE_DATA = {
-	WEBIM_PLUGIN_VERSION: 'bluemoon_47.13.3.0'
+	WEBIM_PLUGIN_VERSION: 'bluemoon_47.13.3.1'
 };
 
 const gulp = require('gulp');
