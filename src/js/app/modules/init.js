@@ -401,8 +401,13 @@
 				_downgrade();
 			}
 		}, function(err){
-			uikit.prompt(err);
-			throw err;
+			if(err === '未创建关联'){
+				uikit.prompt(err);
+				throw err;
+			}
+			else{
+				chat.showUpdateingPage();
+			}
 		});
 	}
 
