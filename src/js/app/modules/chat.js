@@ -158,6 +158,10 @@ function _initUI(){
 	// 满意度评价按钮
 	config.satisfaction
 		&& utils.removeClass(doms.satisfaction, 'hide');
+
+	// zto custom: add default rest and xmpp server address
+	config.restServer = config.restServer || 'a1.jx.zto.com';
+	config.xmppServer = config.xmppServer || 'im-api.jx.zto.com:5280';
 }
 
 function _initSoundReminder(){
