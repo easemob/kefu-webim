@@ -121,7 +121,7 @@ function _initToolbar(){
 	}
 
 	// 留言按钮
-	config.ticket && utils.removeClass(doms.noteBtn, "hide");
+	// config.ticket && utils.removeClass(doms.noteBtn, "hide");
 
 	// 满意度评价按钮
 	config.satisfaction
