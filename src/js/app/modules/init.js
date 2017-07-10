@@ -373,8 +373,11 @@ function initChatEntry(targetUserInfo) {
 			_downgrade();
 		}
 	}, function(err){
-		uikit.prompt(err);
-		throw err;
+
+		// zto custom: maintain page
+		utils.removeClass(document.querySelector('.maintaining-page'), 'hide');
+		// uikit.prompt(err);
+		// throw err;
 	});
 }
 
