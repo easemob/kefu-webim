@@ -126,7 +126,7 @@ function _initUI(){
 	utils.isMobile && utils.addClass(document.body, 'em-mobile');
 
 	// 留言按钮
-	config.ticket && utils.removeClass(doms.noteBtn, 'hide');
+	// config.ticket && utils.removeClass(doms.noteBtn, 'hide');
 
 	// 最小化按钮
 	config.minimum
