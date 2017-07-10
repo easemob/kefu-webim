@@ -5,6 +5,7 @@ require('../../common/polyfill');
 require('../lib/modernizr');
 require('../sdk/webim.config');
 require('underscore');
+require('moment');
 
 var utils = require('../../common/utils');
 var _const = require('../../common/const');

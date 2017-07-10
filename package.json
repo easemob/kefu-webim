@@ -29,6 +29,7 @@
   "dependencies": {
     "easemob-websdk": "=1.4.6",
     "es6-promise": "^4.1.1",
+    "moment": "=2.18.1",
     "underscore": "^1.8.3"
   }
 }
