@@ -16,10 +16,10 @@ module.exports = function(){
 	// 人工客服接起会话
 	utils.on(toKefuBtn, 'click', function () {
 		channel.sendTransferToKf();
-		utils.addClass(toKefuBtn, 'hide');
 	});
 
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideTransferToKefuBtn);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, _displayOrHideTransferToKefuBtn);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _displayOrHideTransferToKefuBtn);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideTransferToKefuBtn);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideTransferToKefuBtn);
@@ -41,6 +41,10 @@ function _displayOrHideTransferToKefuBtn(officialAccount){
 	}
 	else if (state === _const.SESSION_STATE.PROCESSING){
 		utils.toggleClass(toKefuBtn, 'hide', !isRobotAgent);
+	}
+	else if (state === _const.SESSION_STATE.WAIT){
+		// 待接入状态 隐藏按钮
+		utils.addClass(toKefuBtn, 'hide');
 	}
 	else{
 		apiHelper.getRobertIsOpen().then(function (isRobotEnable) {
