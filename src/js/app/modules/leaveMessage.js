@@ -27,10 +27,9 @@ app.leaveMessage = (function (utils, uikit, apiHelper) {
 			else if (!name.value || name.value.length > 140) {
 				uikit.tip('姓名输入不正确');
 			}
-			else if (!phone.value || !(/^[0-9+]{1}[0-9-]{10,17}$/.test(phone.value))) {
+			else if (!phone.value || !(/^[0-9+][0-9-]{10,17}$/.test(phone.value))) {
 				uikit.tip('电话号码格式不正确');
 			}
-			// 
 			else if (!mail.value || !(/^[0-9a-z][_.0-9a-z-]{0,30}[0-9a-z]@([0-9a-z][0-9a-z-]{0,30}[.]){1,3}[a-z]{2,4}$/i.test(mail.value))) {
 				uikit.tip('邮箱输入不正确');
 			}
