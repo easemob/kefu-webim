@@ -376,7 +376,7 @@ function initChatEntry(targetUserInfo) {
 			_downgrade();
 		}
 	}, function(err){
-		if (err === ''){
+		if (err === '未创建关联'){
 			uikit.prompt(err);
 			throw err;
 		}
