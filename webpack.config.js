@@ -7,7 +7,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const VERSION = 'pre_47.14.11';
+const VERSION = 'pre_47.14.11_robot_demo';
 
 var conmmonConfig = {
 	plugins: [
