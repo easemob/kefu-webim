@@ -179,6 +179,9 @@ function handleMsgData() {
 	};
 	config.toolbar = {};
 	config.chat = {};
+	// zto custom: add default rest and xmpp server address
+	config.restServer = config.restServer || 'a1.jx.zto.com';
+	config.xmppServer = config.xmppServer || 'im-api.jx.zto.com:5280';
 
 	profile.defaultAvatar = (config.staticPath || 'static') + '/img/default_avatar.png';
 
