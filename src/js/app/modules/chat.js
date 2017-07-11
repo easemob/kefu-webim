@@ -167,10 +167,6 @@ app.chat = (function (
 		// 满意度评价按钮
 		config.satisfaction
 			&& utils.removeClass(doms.satisfaction, 'hide');
-			
-		// bluemoon custom: add default rest and xmpp server address
-		config.restServer = config.restServer || 'a1.bluemoon.com.cn';
-		config.xmppServer = config.xmppServer || 'im-api.bluemoon.com.cn';
 	}
 
 	function _initSoundReminder(){
