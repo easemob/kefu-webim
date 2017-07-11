@@ -455,15 +455,11 @@ function initChatEntry(targetUserInfo){
 				className: "session-over-limit"
 			}).show();
 		}
-		else if(err === "未创建关联"){
+		else{
 			// chat.show()针对移动端，在pc端不是必要的逻辑
 			chat.show();
 			uikit.prompt(err);
 			throw err;
-		}
-		else{
-			// zto custom: maintain page
-			utils.removeClass(document.querySelector('.maintaining-page'), 'hide');
 		}
 	});
 }
