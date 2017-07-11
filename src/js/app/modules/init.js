@@ -379,14 +379,8 @@ function initChatEntry(targetUserInfo) {
 			_downgrade();
 		}
 	}, function(err){
-		if (err === '未创建关联'){
-			uikit.prompt(err);
-			throw err;
-		}
-		else {
-			// zto custom: maintain page
-			utils.removeClass(document.querySelector('.maintaining-page'), 'hide');
-		}
+		uikit.prompt(err);
+		throw err;
 	});
 }
 
