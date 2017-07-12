@@ -44,7 +44,7 @@ var dialog = uikit.createDialog({
 			return false;
 		}
 		else {
-			_sendSatisfaction(score, content, session, invite, appraiseTags);
+			_sendSatisfaction(score, content, session, invite, appraiseTags, evaluationDegreeId);
 			uikit.showSuccess('提交成功');
 			_clear();
 		}
@@ -54,18 +54,19 @@ var dialog = uikit.createDialog({
 var session;
 var invite;
 var score;
+var evaluationDegreeId;
 
 utils.live('li', 'click', function(e){
-	var evaluateId = this.getAttribute("data-evaluate-id");
 	var level = +this.getAttribute('data-level');
 
+	evaluationDegreeId = this.getAttribute("data-evaluate-id");
 	score = this.getAttribute('data-score');
 
 	level && _.each(starList, function (elem, i) {
 		utils.toggleClass(elem, 'sel', i < level);
 	});
 
-	evaluateId && _createLabel(evaluateId);
+	evaluationDegreeId && _createLabel(evaluationDegreeId);
 }, starsUl);
 
 utils.live('span.tag', 'click', function(e){
@@ -82,19 +83,22 @@ function _clear(){
 	tagContainer.innerHTML='';
 }
 
-function _sendSatisfaction(score, content, session, invite, appraiseTags) {
-	channel.sendText('', {ext: {
-		weichat: {
-			ctrlType: 'enquiry',
-			ctrlArgs: {
-				inviteId: invite || '',
-				serviceSessionId: session || '',
-				detail: content,
-				summary: score,
-				appraiseTags: appraiseTags,
+function _sendSatisfaction(score, content, session, invite, appraiseTags, evaluationDegreeId) {
+	channel.sendText('', {
+		ext: {
+			weichat: {
+				ctrlType: 'enquiry',
+				ctrlArgs: {
+					inviteId: invite || '',
+					serviceSessionId: session || '',
+					detail: content,
+					summary: score,
+					appraiseTags: appraiseTags,
+					evaluationDegreeId: evaluationDegreeId,
+				}
 			}
 		}
-	}});
+	});
 }
 
 function _setSatisfaction(){
