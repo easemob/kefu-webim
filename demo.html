@@ -31,14 +31,25 @@
 	<br>
 
 <script>
-	function test(){
-		easemobim.bind({
-			robotDemoUserId: 'test',
-			askApiServer: '114.55.149.174:20018',
-		});
-	}
+function test(){
+	window.easemobim.bind({
+		robotDemoUserId: 'test',
+		askApiServer: '114.55.149.174:20018',
+	});
+}
 </script>
+<script>
+(function(){
+	var path = location.pathname.slice(0, location.pathname.lastIndexOf('/'));
 
+	window.easemobim = {
+		config: {
+			path: '//' + location.host + path,
+			staticPath: '//' + location.host + path + '/static'
+		}
+	};
+}());
+</script>
 <script src='easemob.js'></script>
 </body>
 </html>
