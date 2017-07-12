@@ -6,22 +6,22 @@
 module.exports = {
 	root: true,
 	parserOptions: {
-		ecmaVersion: 6,								// es6
+		ecmaVersion: 5,								// es5
 		sourceType: "module",						// script | module
 		ecmaFeatures: {
-			jsx: true,
+			jsx: false,
 			globalReturn: false,					// top 作用域 return
 			impliedStrict: false,					// 执行 strict 标准
-			experimentalObjectRestSpread: true,		// 实验中的语法特性，react 需要
+			experimentalObjectRestSpread: false,		// 实验中的语法特性，react 需要
 		    allowImportExportEverywhere: false,		// babel-eslint 提供
     		codeFrame: false						// babel-eslint 提供
 		}
 	},
-	parser: "babel-eslint",		// babel-eslint | esprima | espree (default)
+	parser: "espree",		// babel-eslint | esprima | espree (default)
 	env: {
 		browser: true,
-		es6: true,
-		amd: true,
+		es6: false,
+		amd: false,
 		jest: true,
 		jquery: true,
 		commonjs: true,
@@ -49,11 +49,8 @@ module.exports = {
 	// 假定的全局变量，避免模块内 no-undef 时报假错
 	// 值为 false 时，能检测全局被覆盖
 	globals: {
-		app: false,
-		Backbone: false,
-		Handlebars: false,
-		IScroll: false,
-		Backgrid: false,
+		Modernizr: false,
+		Promise: false,
 		_: false,
 	},
 
