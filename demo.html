@@ -25,69 +25,18 @@
 	<br>
 	<br>
 	<h1>测试</h1>
-	<div><input id='testvalue' type='text' placeholder='请输入您的tenantId，点击测试按钮'/></div>
 	<button onclick="test()">测试</button>
-	<button onclick="deleteCurrentCookies()">Clear Current Cookie</button>
-	<button onclick="bindSkillGroup()">绑定技能组</button>
-	<button onclick="resizeChatWindow()">窗口加宽</button>
 	<br>
 	<br>
 	<br>
 
 <script>
-	var tenantIdInput = document.getElementById('testvalue');
-	tenantIdInput.value = localStorage.getItem('easemobtest') || '';
-
 	function test(){
-		easemobim.bind({tenantId: getTenantId()});
-	}
-
-	function getTenantId(){
-		var tenantId = tenantIdInput.value;
-		tenantId = tenantId && tenantId.replace(/\s/g, '');
-
-		if (/\d+/.test(tenantId)) {
-			localStorage.setItem('easemobtest', tenantId);
-			return tenantId;
-		}
-	}
-
-	function deleteCurrentCookies() {
-		var name = easemobim.config.tenantId || v.value;
-
-		name && (document.cookie = name
-		+ "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/");
-		alert('cleared');
-	}
-
-	function bindSkillGroup(){
 		easemobim.bind({
-			tenantId: getTenantId(),
-			emgroup: "技能组1"
+			robotDemoUserId: 'test',
+			askApiServer: '114.55.149.174:20018',
 		});
 	}
-
-	function resizeChatWindow(){
-		easemobim.bind({
-			tenantId: getTenantId(),
-			dialogWidth: "500px"
-		});
-	}
-</script>
-<script>
-	window.easemobim = window.easemobim || {};
-
-easemobim.config = {
-	// domain: '//sandbox5.kefu.easemob.com',
-	// domain: '//kefu.easemob.com',
-	// 访客自动上报
-	// eventCollector: true,
-	satisfaction: true,
-	// hide: false,
-	// minimum: false,
-	tenantId: 11885,
-	unused: ''
-};
 </script>
 
 <script src='easemob.js'></script>

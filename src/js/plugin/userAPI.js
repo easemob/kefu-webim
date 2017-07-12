@@ -137,11 +137,6 @@ easemobim.bind = function (config) {
 		reset();
 		utils.extend(_config, config);
 
-		if (!_config.tenantId && !_config.configId) {
-			console.error('未指定tenantId!');
-			return;
-		}
-
 		iframe = Iframe(_config);
 		easemobim.tenants[cacheKeyName] = iframe;
 		iframe.set(_config, iframe.open);
@@ -182,7 +177,7 @@ easemobim.sendText = function (msg) {
 //auto load
 if (
 	(!_config.hide || _config.autoConnect || _config.eventCollector)
-	&& (_config.tenantId || _config.configId) && !utils.isMobile
+	&& !utils.isMobile
 ) {
 	var cacheKeyName = _config.configId || (config.tenantId + (config.emgroup || ''));
 
