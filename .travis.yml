@@ -1,1 +1,19 @@
 language: node_js
+
+git:
+  submodules: false
+
+node_js:
+  - "node"
+
+sudo: false
+
+install: true
+
+script:
+  - npm install eslint
+  - npm run lint
+
+cache:
+  directories:
+    - ./node_modules

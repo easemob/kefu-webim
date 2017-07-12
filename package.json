@@ -24,7 +24,8 @@
   "scripts": {
     "build": "webpack --env production",
     "dev": "webpack --watch --env development",
-    "server": "node server/app -t"
+    "server": "node server/app -t",
+    "lint": "eslint src/js/app/modules/init.js"
   },
   "dependencies": {
     "easemob-websdk": "=1.4.6",
