@@ -34,6 +34,7 @@ function h5_mode_init(){
 		hideKeyboard: utils.convertFalse(utils.query('hideKeyboard')),
 		askApiServer: utils.query('askApiServer'),
 		robotDemoUserId: utils.query('robotDemoUserId'),
+		askApiPath: decodeURIComponent(utils.query('askApiPath')),
 	};
 	// fake transfer
 	window.transfer = {

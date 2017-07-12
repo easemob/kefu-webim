@@ -35,6 +35,7 @@ function test(){
 	window.easemobim.bind({
 		robotDemoUserId: 'test',
 		askApiServer: '114.55.149.174:20018',
+		askApiPath: '/v1/robotapi/kefu-robotapi/tenants/xinhua/askApi',
 	});
 }
 </script>
@@ -44,8 +45,9 @@ function test(){
 
 	window.easemobim = {
 		config: {
+			hide: true,
 			path: '//' + location.host + path,
-			staticPath: '//' + location.host + path + '/static'
+			staticPath: '//' + location.host + path + '/static',
 		}
 	};
 }());
