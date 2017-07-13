@@ -358,10 +358,6 @@ function _handleMessage(msg, msgType, isHistory) {
 	else if (isReceived && utils.getDataByPath(msg, 'ext.msgtype.choice')) {
 		type = 'robotList';
 	}
-	//机器人转人工
-	// else if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'TransferToKfHint') {
-	// 	type = 'robotTransfer';
-	// }
 	// 待接入超时转留言
 	else if (
 		eventName === 'ServiceSessionWillScheduleTimeoutEvent'
