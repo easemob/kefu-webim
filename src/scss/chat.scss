@@ -49,6 +49,8 @@
 		clear: both;
 		left: 50px;
 		top: -30px;
+		background: #fff;
+		border: 1px solid #e5e5e5;
 		.icon-corner-left {
 			z-index: 1;
 			position: absolute;
@@ -59,9 +61,6 @@
 			color: white;
 			text-shadow: -1px 0 0 #e5e5e5;
 		}
-		.em-widget-msg-container {
-			background-color: white;
-		}
 	}
 }
 
@@ -69,6 +68,8 @@
 	.em-widget-msg-wrapper {
 		float: right;
 		margin-right: 12px;
+		background: #e3ecfc;
+		border: 1px solid #c3cbd9;
 		.icon-corner-right {
 			z-index: 1;
 			position: absolute;
@@ -82,7 +83,6 @@
 		.em-widget-msg-container {
 			background-color: #e3ecfc;
 			float: right;
-			border: 1px solid #c3cbd9;
 		}
 	}
 }
@@ -92,6 +92,44 @@
 
 .em-widget-msg-wrapper {
 	position: relative;
+	float: left;
+	display: inline-block;
+	border-radius: 6px;
+	max-width: 210px;
+	.em-btn-list {
+		min-width: 190px;
+		position: relative;
+		margin: 4px 0;
+		text-align: left;
+		clear: both;
+		border-top: 1px solid #e5e5e5;
+		&:after {
+			content: '';
+			clear: both;
+		}
+		button {
+			font-size: 13px;
+			display: block;
+			width: 95%;
+			padding: 5px;
+			min-height: 30px;
+			text-align: left;
+			color: #000;
+			background-color: white;
+			border-radius: 2px;
+			border: 1px solid #e5e5e5;
+			cursor: pointer;
+			margin: 4px auto;
+			word-break: break-word;
+			white-space: pre-wrap;
+			&:hover {
+				color: white;
+			}
+			&.white {
+				color: #fff;
+			}
+		}
+	}
 	.em-widget-msg-loading {
 		z-index: 1;
 		position: absolute;
@@ -148,7 +186,8 @@
 		vertical-align: middle;
 		text-align: left;
 		font-size: 13px;
-		border: 1px solid #e5e5e5;
+		word-wrap: break-word;
+		white-space : normal;
 		// 图片消息、表情
 		img {
 			border-radius: 2px;
@@ -235,43 +274,10 @@
 			>p {
 				padding: 10px;
 				background-color: white;
-				border-bottom: 1px solid rgb(229, 229, 229);
-			}
-			.em-btn-list {
-				min-width: 190px;
-				position: relative;
-				border-radius: 6px;
-				margin: 4px 0;
-				text-align: left;
-				clear: both;
-				&:after {
-					content: '';
-					clear: both;
-				}
-				button {
-					font-size: 13px;
-					display: block;
-					width: 95%;
-					padding: 5px;
-					min-height: 30px;
-					text-align: left;
-					color: #000;
-					background-color: white;
-					border-radius: 2px;
-					border: 1px solid #e5e5e5;
-					cursor: pointer;
-					margin: 4px auto;
-					word-break: break-word;
-					white-space: pre-wrap;
-					&:hover {
-						color: white;
-					}
-					&.white {
-						color: #fff;
-					}
-				}
 			}
 		}
+
+
 	}
 }
 

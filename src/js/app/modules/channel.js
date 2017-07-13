@@ -359,9 +359,9 @@ function _handleMessage(msg, msgType, isHistory) {
 		type = 'robotList';
 	}
 	//机器人转人工
-	else if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'TransferToKfHint') {
-		type = 'robotTransfer';
-	}
+	// else if (utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'TransferToKfHint') {
+	// 	type = 'robotTransfer';
+	// }
 	// 待接入超时转留言
 	else if (
 		eventName === 'ServiceSessionWillScheduleTimeoutEvent'
