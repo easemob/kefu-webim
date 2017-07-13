@@ -194,6 +194,16 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	// container 结束
 	html += "</div>";
 
+	if (!utils.getDataByPath(msg, 'ext.msgtype.choice') && utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'TransferToKfHint') {
+		var ctrlArgs = msg.ext.weichat.ctrlArgs;
+		html += '<div class="em-btn-list">'
+			+ '<button class="white bg-color border-color bg-hover-color-dark js_robotTransferBtn" '
+			+ 'data-sessionid="' + ctrlArgs.serviceSessionId + '" '
+			+ 'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>'
+		+ '</div>'
+	}
+
+
 	// wrapper结尾
 	html += "</div>";
 
