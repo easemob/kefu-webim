@@ -133,7 +133,7 @@ easemobim.bind = function (config) {
 		iframe.open();
 	}
 	else {
-		loading.show();
+		utils.isMobile && loading.show();
 		reset();
 		utils.extend(_config, config);
 

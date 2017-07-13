@@ -111,6 +111,7 @@
 	border-radius: 4px;
 	transition: all .5s;
 	opacity: .7;
+	box-sizing: content-box;
 
 	> .loading {
 		position: relative;
