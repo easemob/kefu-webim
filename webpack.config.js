@@ -84,6 +84,7 @@ var conmmonConfig = {
 					/userAPI\.js$/,
 					/im\.html/,
 					/icon\.scss/,
+					/iframe\.js/,
 				],
 				loader: 'string-replace-loader',
 				query: {
