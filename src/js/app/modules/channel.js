@@ -347,6 +347,9 @@ function _handleMessage(msg, msgType, isHistory) {
 		return;
 	}
 
+	// 撤回的消息不处理
+	if(utils.getDataByPath(msg, 'ext.weichat.recall_flag') === 1) return;
+
 	officialAccount && _attemptToAppendOfficialAccount(officialAccount);
 	targetOfficialAccount = _getOfficialAccountById(officialAccountId);
 
