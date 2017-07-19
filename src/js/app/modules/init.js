@@ -237,6 +237,16 @@
 
 			config.toUser = config.toUser || config.to;
 
+			// 获取主题颜色设置
+			api('getTheme', {
+				tenantId: config.tenantId
+			}, function (msg) {
+				var themeName = utils.getDataByPath(msg, 'data.0.optionValue');
+				var className = _const.themeMap[themeName];
+
+				className && utils.addClass(document.body, className);
+			});
+
 			config.orgName = config.appKey.split('#')[0];
 			config.appName = config.appKey.split('#')[1];
 

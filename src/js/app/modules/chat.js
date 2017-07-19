@@ -6,6 +6,8 @@
 		// benz patch: 延迟发送扩展消息
 		var hasSentExtMsg;
 		var channel;
+		//用于标记 聊天窗口的打开与否
+		var opened;
 
 		//DOM init
 		easemobim.imBtn = document.getElementById('em-widgetPopBar');
@@ -25,6 +27,7 @@
 		// todo: 把dom都移到里边
 		var doms = {
 			agentStatusText: document.querySelector('.em-header-status-text'),
+			inputState:document.querySelector('.em-agent-input-state'),
 			//待接入排队人数显示
 			agentWaitNumber: document.querySelector('.em-header-status-text-queue-number'),
 			agentStatusSymbol: document.getElementById('em-widgetAgentStatus'),
@@ -79,7 +82,7 @@
 				//just show date label once in 1 min
 				this.msgTimeSpan = {};
 				//chat window status
-				this.opened = true;
+				opened = true;
 				//init sound reminder
 				this.soundReminder();
 
@@ -256,6 +259,9 @@
 
 						// 初始化历史消息拉取
 						!config.isNewUser && me.initHistoryPuller();
+
+						//轮询坐席的输入状态
+						me.agentInputState.start();
 
 						// 待接入排队人数显示
 						me.waitListNumber.start();
@@ -557,6 +563,82 @@
 					}
 				});
 			},
+
+			agentInputState: (function () {
+
+				var isStarted = false;
+				var timer = null;
+				var me =this;
+				function _start() {
+					isStarted = true;
+					// 保证当前最多只有1个timer
+					clearInterval(timer);
+					api('getCurrentServiceSession', {
+						id: config.user.username,
+						orgName: config.orgName,
+						appName: config.appName,
+						imServiceNumber: config.toUser,
+						tenantId: config.tenantId,
+						imServiceNumber: config.toUser
+					}, function (msg) {
+						var data = msg.data || {};
+						var sessionId = data.serviceSessionId;
+
+						if (sessionId) {					
+							if (isStarted) {
+								timer = setInterval(function () {
+									getAgentInputState(sessionId);
+								}, _const.AGENT_INPUT_STATE_INTERVAL);
+							}
+						}
+						else {
+
+						}
+					});
+				}
+
+				function getAgentInputState(sessionId) {
+					
+					if (!config.user.token) {
+						console.warn('undefined token');
+						return;
+					}
+					// 当聊天窗口或者浏览器最小化时 不去发轮询请求
+					if(!opened|| utils.isMin() ){
+						return;
+					}
+					
+					api('getAgentInputState', {
+						id: config.user.username,
+						orgName: config.orgName,
+						appName: config.appName,
+						tenantId: config.tenantId,
+						serviceSessionId: sessionId,
+						token: config.user.token,
+					}, function (resp) {
+						var nowData = resp.data.entity;
+						if (!nowData.input_state_tips) {
+							utils.addClass(doms.inputState, 'hide');
+							utils.removeClass(doms.nickname, 'hide');
+						}
+						else {
+							utils.removeClass(doms.inputState, 'hide'); 
+							utils.addClass(doms.nickname, 'hide'); 
+						}
+					});
+				}
+
+				function _stop() {
+					clearInterval(timer);
+					utils.addClass(doms.inputState, 'hide');
+					isStarted = false;
+				}
+				return {
+					start: _start,
+					stop: _stop
+				};
+			})(),
+
 			waitListNumber: (function () {
 
 				var isStarted = false;
@@ -629,6 +711,8 @@
 
 				if (info.tenantName) {
 					// 更新企业头像和名称
+					doms.nickname.innerText = info.tenantName;
+					easemobim.avatar.src = avatarImg;
 					window.benz_global.agentName = info.tenantName;
 					window.benz_global.avatar = avatarImg;
 				}
@@ -640,9 +724,11 @@
 					&& '调度员' !== info.userNickname
 				) {
 					//更新坐席昵称
+					doms.nickname.innerText = info.userNickname;
 					window.benz_global.agentName = info.userNickname;
 					if (avatarImg) {
 						window.benz_global.avatar = avatarImg;
+						easemobim.avatar.src = avatarImg;
 					}
 				}
 

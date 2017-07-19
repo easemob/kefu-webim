@@ -382,6 +382,8 @@ easemobim.channel = function (config) {
 					// 去掉坐席状态
 					me.clearAgentStatus();
 					me.handleEventStatus('close');
+					// 停止轮询 坐席端的输入状态
+					me.agentInputState.stop();
 					!utils.isTop && transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED }, window.transfer.to);
 					break;
 					// 会话打开
@@ -391,7 +393,8 @@ easemobim.channel = function (config) {
 
 					// 停止轮询当前排队人数
 					me.waitListNumber.stop();
-
+					// 开始轮询 坐席端的输入状态
+					me.agentInputState.start();
 					me.handleEventStatus('linked', msg.ext.weichat.event.eventObj);
 					if (!me.hasSentAttribute) {
 						api('getExSession', {
