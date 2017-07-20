@@ -52,6 +52,7 @@ module.exports = {
 		Modernizr: false,
 		Promise: false,
 		_: false,
+		__: false,
 	},
 
 	rules: {
