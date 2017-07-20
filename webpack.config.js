@@ -7,9 +7,30 @@
 
 const path = require("path");
 const webpack = require("webpack");
+const i18next = require("i18next");
+const languageMap = require("./src/i18n/zh-CN");
 const VERSION = "pre_47.15.0";
 
-var conmmonConfig = {
+var conmmonConfig;
+var transfer;
+var easemob;
+var app;
+var taskList;
+
+i18next.init({
+	lng: "zh-CN",
+	fallbackLng: false,
+	keySeparator: ".",
+	nsSeparator: false,
+	saveMissing: true,
+	resources: {
+		"zh-CN": {
+			translation: languageMap
+		},
+	},
+});
+
+conmmonConfig = {
 	plugins: [
 		new webpack.optimize.UglifyJsPlugin({
 			compress: {
@@ -93,11 +114,18 @@ var conmmonConfig = {
 					flags: "g",
 				},
 			},
+			{
+				test: /\.js$/,
+				loader: "i18next-loader",
+				query: {
+					quotes: "\"",
+				},
+			},
 		],
 	},
 };
 
-var transfer = Object.assign({}, conmmonConfig, {
+transfer = Object.assign({}, conmmonConfig, {
 	name: "transfer",
 	entry: [
 		"./src/js/transfer/api.js",
@@ -109,7 +137,7 @@ var transfer = Object.assign({}, conmmonConfig, {
 	},
 });
 
-var easemob = Object.assign({}, conmmonConfig, {
+easemob = Object.assign({}, conmmonConfig, {
 	name: "easemob",
 	entry: [
 		"./src/js/common/polyfill",
@@ -125,7 +153,7 @@ var easemob = Object.assign({}, conmmonConfig, {
 	},
 });
 
-var app = Object.assign({}, conmmonConfig, {
+app = Object.assign({}, conmmonConfig, {
 	name: "app",
 	entry: [
 		"./src/js/app/modules/init.js",
@@ -138,7 +166,7 @@ var app = Object.assign({}, conmmonConfig, {
 	},
 });
 
-var taskList = [
+taskList = [
 	transfer,
 	easemob,
 	app,

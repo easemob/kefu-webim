@@ -4,17 +4,28 @@ var channel = require("./channel");
 
 var blob;
 var dataURL;
+var imgDom;
+var dialog;
 
-var imgDom = document.createElement("img");
-var dialog = uikit.createDialog({
-	contentDom: imgDom,
-	className: "mini paste-image"
-}).addButton({
-	confirmText: "发送",
-	confirm: function(){
-		channel.sendImg({ data: blob, url: dataURL });
-	}
-});
+function _init(){
+	imgDom = document.createElement("img");
+	dialog = uikit.createDialog({
+		contentDom: imgDom,
+		className: "mini paste-image"
+	}).addButton({
+		confirmText: "发送",
+		confirm: function(){
+			channel.sendImg({ data: blob, url: dataURL });
+		}
+	});
+
+	// bind events
+	utils.on(
+		document.querySelector(".em-widget-send-wrapper .em-widget-textarea"),
+		"paste",
+		_handler
+	);
+}
 
 function _handler(ev){
 	if(/^image\/\w+$/.test(utils.getDataByPath(ev, "clipboardData.items.0.type"))){
@@ -24,6 +35,4 @@ function _handler(ev){
 		dialog.show();
 	}
 }
-module.exports = function(){
-	utils.on(document.querySelector(".em-widget-send-wrapper .em-widget-textarea"), "paste", _handler);
-};
+module.exports = _init;

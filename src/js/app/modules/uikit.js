@@ -3,8 +3,13 @@
 var utils = require("../../common/utils");
 
 var EMPTY_FUNCTION = function(){};
-var promptDom = document.querySelector(".em-widget-error-prompt");
-var promptTextSpanDom = promptDom.querySelector("span");
+var promptDom;
+var promptTextSpanDom;
+
+var _initPrompt = _.once(function(){
+	promptDom = document.querySelector(".em-widget-error-prompt");
+	promptTextSpanDom = promptDom.querySelector("span");
+});
 
 function _showPrompt(msg){
 	promptTextSpanDom.innerText = msg;
@@ -16,6 +21,7 @@ function _hidePrompt(){
 }
 
 function tip(msg){
+	_initPrompt();
 	_showPrompt(msg);
 	setTimeout(_hidePrompt, 2000);
 }
@@ -23,7 +29,7 @@ function tip(msg){
 function _createDialog(opt){
 	opt = opt || {};
 	var className = opt.className;
-	var contentDom = opt.contentDom || "";
+	var contentDom = opt.contentDom;
 	var el = utils.createElementFromHTML("<div class=\"em-dialog hide\"></div>");
 	var cancelBtn;
 	var confirmBtn;

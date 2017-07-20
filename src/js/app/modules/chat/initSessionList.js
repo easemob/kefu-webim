@@ -12,12 +12,14 @@ var redDotDom;
 var sessionListView;
 var statusBar;
 var ctaDialog;
+var parentContainer;
 
 module.exports = function(){
 	var topBar = document.querySelector(".em-widget-header");
 	sessionListBtn = topBar.querySelector(".session-list-btn");
 	redDotDom = sessionListBtn.querySelector(".notice");
 	statusBar = topBar.querySelector(".status-bar");
+	parentContainer = document.querySelector(".chat-wrapper");
 
 	eventListener.add(_const.SYSTEM_EVENT.MESSAGE_SENT, function(){
 		var officialAccount = profile.currentOfficialAccount;
@@ -172,7 +174,8 @@ function _newOfficialAccountFound(officialAccount){
 	var type = officialAccount.type;
 
 	officialAccount.messageView = createMessageView({
-		officialAccount: officialAccount
+		officialAccount: officialAccount,
+		parentContainer: parentContainer,
 	});
 
 	if(!sessionListView){

@@ -3,15 +3,22 @@ var uikit = require("./uikit");
 var channel = require("./channel");
 var profile = require("./tools/profile");
 var eventListener = require("./tools/eventListener");
+var moment = require("moment");
 
-var imChat = document.getElementById("em-kefu-webim-chat");
-var btnVideoInvite = document.querySelector(".em-video-invite");
-var videoWidget = document.querySelector(".em-widget-video");
-var dialBtn = videoWidget.querySelector(".btn-accept-call");
-var ctrlPanel = videoWidget.querySelector(".toolbar-control");
-var subVideoWrapper = videoWidget.querySelector(".sub-win");
-var mainVideo = videoWidget.querySelector("video.main");
-var subVideo = videoWidget.querySelector("video.sub");
+var imChat;
+var btnVideoInvite;
+var videoWidget;
+var dialBtn;
+var ctrlPanel;
+var subVideoWrapper;
+var mainVideo;
+var subVideo;
+
+var statusTimerPrompt;
+var statusTimerTimespan;
+var closingTimerPrompt;
+var closingTimerTimespan;
+
 var dialog = uikit.createDialog({
 	contentDom: [
 		"<p class=\"prompt\">",
@@ -49,23 +56,14 @@ var remoteStream = null;
 var statusTimer = {
 	timer: null,
 	counter: 0,
-	prompt: videoWidget.querySelector(".status p.prompt"),
-	timeSpan: videoWidget.querySelector(".status p.time-escape"),
 	start: function(prompt){
 		var me = this;
 		me.counter = 0;
-		me.prompt.innerHTML = prompt;
-		me.timeSpan.innerHTML = "00:00";
+		statusTimerPrompt.innerHTML = prompt;
+		statusTimerTimespan.innerHTML = "00:00";
 		me.timer = setInterval(function(){
-			me.timeSpan.innerHTML = format(++me.counter);
+			statusTimerTimespan.innerHTML = moment(++me.counter * 1000).format("mm:ss");
 		}, 1000);
-
-		function format(second){
-			return (new Date(second * 1000))
-			.toISOString()
-			.slice(-"00:00.000Z".length)
-			.slice(0, "00:00".length);
-		}
 	},
 	stop: function(){
 		var me = this;
@@ -76,24 +74,23 @@ var statusTimer = {
 var closingTimer = {
 	isConnected: false,
 	timer: null,
-	delay: 3000,
-	closingPrompt: videoWidget.querySelector(".full-screen-prompt"),
-	timeSpan: videoWidget.querySelector(".full-screen-prompt p.time-escape"),
 	show: function(){
 		var me = this;
+		clearTimeout(me.timer);
 		if(me.isConnected){
-			me.timeSpan.innerHTML = statusTimer.timeSpan.innerHTML;
+			closingTimerTimespan.innerHTML = statusTimer.timeSpan.innerHTML;
 		}
 		else{
-			me.timeSpan.innerHTML = "00:00";
+			closingTimerTimespan.innerHTML = "00:00";
 		}
-		me.closingPrompt.classList.remove("hide");
+		closingTimerPrompt.classList.remove("hide");
 		setTimeout(function(){
 			imChat.classList.remove("has-video");
-			me.closingPrompt.classList.add("hide");
-		}, me.delay);
+			closingTimerPrompt.classList.add("hide");
+		}, 3000);
 	}
 };
+
 
 function _endCall(){
 	statusTimer.stop();
@@ -156,6 +153,20 @@ var events = {
 
 function _initEventListener(){
 	if(!Modernizr.peerconnection || !profile.grayList.audioVideo) return;
+
+	imChat = document.getElementById("em-kefu-webim-chat");
+	btnVideoInvite = document.querySelector(".em-video-invite");
+	videoWidget = document.querySelector(".em-widget-video");
+	dialBtn = videoWidget.querySelector(".btn-accept-call");
+	ctrlPanel = videoWidget.querySelector(".toolbar-control");
+	subVideoWrapper = videoWidget.querySelector(".sub-win");
+	mainVideo = videoWidget.querySelector("video.main");
+	subVideo = videoWidget.querySelector("video.sub");
+
+	statusTimerPrompt = videoWidget.querySelector(".status p.prompt");
+	statusTimerTimespan = videoWidget.querySelector(".status p.time-escape");
+	closingTimerPrompt = videoWidget.querySelector(".full-screen-prompt");
+	closingTimerTimespan = videoWidget.querySelector(".full-screen-prompt p.time-escape");
 
 	eventListener.add(_const.SYSTEM_EVENT.IM_CONNECTION_OPENED, _init);
 	eventListener.add(_const.SYSTEM_EVENT.OFFLINE, _endCall);

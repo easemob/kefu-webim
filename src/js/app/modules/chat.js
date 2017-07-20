@@ -24,37 +24,9 @@ var isEmojiInitilized;
 var isMessageChannelReady;
 var config;
 
-var topBar = document.querySelector(".em-widget-header");
-var editorView = document.querySelector(".em-widget-send-wrapper");
-
-var doms = {
-	imBtn: document.getElementById("em-widgetPopBar"),
-	imChat: document.getElementById("em-kefu-webim-chat"),
-	agentStatusText: topBar.querySelector(".em-header-status-text"),
-	dragBar: topBar.querySelector(".drag-bar"),
-	minifyBtn: topBar.querySelector(".btn-min"),
-	audioBtn: topBar.querySelector(".btn-audio"),
-	switchKeyboardBtn: topBar.querySelector(".btn-keyboard"),
-
-	emojiBtn: editorView.querySelector(".em-bar-emoji"),
-	sendImgBtn: editorView.querySelector(".em-widget-img"),
-	sendFileBtn: editorView.querySelector(".em-widget-file"),
-	sendBtn: editorView.querySelector(".em-widget-send"),
-	satisfaction: editorView.querySelector(".em-widget-satisfaction"),
-	textInput: editorView.querySelector(".em-widget-textarea"),
-	noteBtn: editorView.querySelector(".em-widget-note"),
-	queuingNumberStatus: editorView.querySelector(".queuing-number-status"),
-
-	imgInput: document.querySelector(".upload-img-container"),
-	fileInput: document.querySelector(".upload-file-container"),
-	emojiContainer: document.querySelector(".em-bar-emoji-container"),
-	chatWrapper: document.querySelector(".chat-wrapper"),
-	emojiWrapper: document.querySelector(".em-bar-emoji-wrapper"),
-
-	topBar: topBar,
-	editorView: editorView,
-	block: null
-};
+var topBar;
+var editorView;
+var doms;
 
 var _reCreateImUser = _.once(function(){
 	console.warn("user not found in current appKey, attempt to recreate user.");
@@ -84,7 +56,6 @@ var _reCreateImUser = _.once(function(){
 });
 
 module.exports = {
-	doms: doms,
 	init: _init,
 	close: _close,
 	show: _show,
@@ -739,12 +710,47 @@ function _initSDK(){
 	});
 }
 
+function _getDom(){
+	topBar = document.querySelector(".em-widget-header");
+	editorView = document.querySelector(".em-widget-send-wrapper");
+
+	doms = {
+		imBtn: document.getElementById("em-widgetPopBar"),
+		imChat: document.getElementById("em-kefu-webim-chat"),
+		agentStatusText: topBar.querySelector(".em-header-status-text"),
+		dragBar: topBar.querySelector(".drag-bar"),
+		minifyBtn: topBar.querySelector(".btn-min"),
+		audioBtn: topBar.querySelector(".btn-audio"),
+		switchKeyboardBtn: topBar.querySelector(".btn-keyboard"),
+
+		emojiBtn: editorView.querySelector(".em-bar-emoji"),
+		sendImgBtn: editorView.querySelector(".em-widget-img"),
+		sendFileBtn: editorView.querySelector(".em-widget-file"),
+		sendBtn: editorView.querySelector(".em-widget-send"),
+		satisfaction: editorView.querySelector(".em-widget-satisfaction"),
+		textInput: editorView.querySelector(".em-widget-textarea"),
+		noteBtn: editorView.querySelector(".em-widget-note"),
+		queuingNumberStatus: editorView.querySelector(".queuing-number-status"),
+
+		imgInput: document.querySelector(".upload-img-container"),
+		fileInput: document.querySelector(".upload-file-container"),
+		emojiContainer: document.querySelector(".em-bar-emoji-container"),
+		chatWrapper: document.querySelector(".chat-wrapper"),
+		emojiWrapper: document.querySelector(".em-bar-emoji-wrapper"),
+
+		topBar: topBar,
+		editorView: editorView,
+	};
+}
+
 function _init(){
 	config = profile.config;
 
 	channel.init();
 
 	profile.isChatWindowOpen = true;
+
+	_getDom();
 
 	_initSoundReminder();
 

@@ -3,32 +3,40 @@ var uikit = require("./uikit");
 var apiHelper = require("./apiHelper");
 var channel = require("./channel");
 
-var dom = utils.createElementFromHTML([
-	"<div class=\"wrapper\">",
-	"<span class=\"title\">请对我的服务做出评价</span>",
-	"<ul></ul>",
-	"<div class=\"tag-container\"></div>",
-	"<textarea spellcheck=\"false\" placeholder=\"请输入评价内容\"></textarea>",
-	"</div>"
-].join(""));
-var starsUl = dom.querySelector("ul");
+var dom;
+var starsUl;
+var commentDom;
+var tagContainer;
+var dialog;
+
 var starList;
-var commentDom = dom.querySelector("textarea");
-var tagContainer = dom.querySelector(".tag-container");
-var dialog = uikit.createDialog({
-	contentDom: dom,
-	className: "satisfaction"
-}).addButton({
-	confirmText: "提交",
-	confirm: _confirm,
-});
 
 var session;
 var invite;
 var score;
 var evaluationDegreeId;
+var _init = _.once(function(){
+	dom = utils.createElementFromHTML([
+		"<div class=\"wrapper\">",
+		"<span class=\"title\">请对我的服务做出评价</span>",
+		"<ul></ul>",
+		"<div class=\"tag-container\"></div>",
+		"<textarea spellcheck=\"false\" placeholder=\"请输入评价内容\"></textarea>",
+		"</div>"
+	].join(""));
+	starsUl = dom.querySelector("ul");
+	commentDom = dom.querySelector("textarea");
+	tagContainer = dom.querySelector(".tag-container");
+	dialog = uikit.createDialog({
+		contentDom: dom,
+		className: "satisfaction"
+	}).addButton({
+		confirmText: "提交",
+		confirm: _confirm,
+	});
+});
 
-utils.live("li", "click", function(e){
+utils.live("li", "click", function(){
 	var level = +this.getAttribute("data-level");
 
 	evaluationDegreeId = this.getAttribute("data-evaluate-id");
@@ -41,7 +49,7 @@ utils.live("li", "click", function(e){
 	evaluationDegreeId && _createLabel(evaluationDegreeId);
 }, starsUl);
 
-utils.live("span.tag", "click", function(e){
+utils.live("span.tag", "click", function(){
 	utils.toggleClass(this, "selected");
 }, tagContainer);
 
@@ -140,6 +148,7 @@ function _confirm(){
 
 module.exports = {
 	show: function(currentInviteId, currentServiceSessionId){
+		_init();
 		session = currentServiceSessionId;
 		invite = currentInviteId;
 		_setSatisfaction();

@@ -7,10 +7,10 @@ var apiHelper = require("../apiHelper");
 var channel = require("../channel");
 
 var tpl = "<div class=\"chat-container hide\"></div>";
-var parentContainer = document.querySelector(".chat-wrapper");
 
 module.exports = function(opt){
 	var officialAccount = opt.officialAccount;
+	var parentContainer = opt.parentContainer;
 	var el = utils.createElementFromHTML(tpl);
 
 	var currHistoryMsgSeqId = 0;

@@ -1,15 +1,19 @@
 
+var utils = require("../common/utils");
+var loading = require("./loading");
+var Iframe = require("./iframe");
+var tenantList = {};
+var DEFAULT_CONFIG;
+var config;
 
-require('../common/polyfill');
-var utils = require('../common/utils');
-var loading = require('./loading');
-var Iframe = require('./iframe');
+// get parameters from easemob.js
+var baseConfig = getConfig();
+var _config = {};
+var iframe;
 
 window.easemobim = window.easemobim || {};
 window.easemobim.config = window.easemobim.config || {};
 window.easemobim.version = '__WEBIM_PLUGIN_VERSION__';
-// todo: discard global tenants
-window.easemobim.tenants = {};
 
 if(
 	/MSIE 7\.0/.test(navigator.userAgent)
@@ -24,13 +28,13 @@ if(
 
 require('../../plugin-scss/easemob.scss');
 
-var DEFAULT_CONFIG = {
-	tenantId: '',
-	to: '',
-	agentName: '',
-	appKey: '',
-	domain: '',
-	path: '',
+DEFAULT_CONFIG = {
+	tenantId: "",
+	to: "",
+	agentName: "",
+	appKey: "",
+	domain: "",
+	path: "",
 	ticket: true,
 	staticPath: "",
 	buttonText: "联系客服",

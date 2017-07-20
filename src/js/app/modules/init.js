@@ -15,15 +15,23 @@ var chat = require("./chat");
 var channel = require("./channel");
 var profile = require("./tools/profile");
 var doWechatAuth = require("./wechat");
+var body_template = require("raw-loader!../../../template/body.html");
 
 var config;
 var hasChatEntryInitialized;
 
+load_html();
 if(utils.isTop){
 	h5_mode_init();
 }
 else{
 	chat_window_mode_init();
+}
+
+function load_html(){
+	utils.appendHTMLToBody(_.template(body_template)({
+		connecting: __("common.connecting"),
+	}));
 }
 
 function h5_mode_init(){
@@ -343,7 +351,7 @@ function initChatEntry(targetUserInfo){
 					chat.show();
 					transfer.send({ event: _const.EVENTS.SHOW });
 				}, function(err){
-					console.error("用户不存在！");
+					console.error("username is not exist.");
 					throw err;
 				});
 			}
