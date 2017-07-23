@@ -139,6 +139,7 @@
 		easemobim.leaveMessage = easemobim.leaveMessage(chat, config.tenantId);
 		easemobim.paste(chat).init();
 		easemobim.satisfaction(chat);
+		easemobim.apiHelper.init(config);
 
 		// 访客回呼功能
 		if (config.eventCollector && !eventCollector.isStarted()) {
