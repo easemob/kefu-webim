@@ -367,6 +367,8 @@ easemobim.channel = function (config) {
 					// 转人工或者转到技能组
 				case 'ServiceSessionTransferedToAgentQueueEvent':
 					me.waitListNumber.start();
+					// 停止轮询 坐席端的输入状态
+					me.agentInputState.stop();
 					me.handleEventStatus('transfering', msg.ext.weichat.event.eventObj);
 					break;
 					// 会话结束
