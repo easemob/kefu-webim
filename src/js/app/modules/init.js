@@ -139,6 +139,7 @@
 		easemobim.leaveMessage = easemobim.leaveMessage(chat, config.tenantId);
 		easemobim.paste(chat).init();
 		easemobim.satisfaction(chat);
+		easemobim.apiHelper.init(config);
 
 		// 访客回呼功能
 		if (config.eventCollector && !eventCollector.isStarted()) {
@@ -212,10 +213,10 @@
 		);
 
 		// 输入框位置开关
-		utils.toggleClass(
-			document.querySelector('.em-widgetHeader-keyboard'),
-			'hide', !utils.isMobile || config.hideKeyboard
-		);
+		// utils.toggleClass(
+		// 	document.querySelector('.em-widgetHeader-keyboard'),
+		// 	'hide', !utils.isMobile || config.hideKeyboard
+		// );
 
 		if (config.liveVideoInvite){
 			utils.removeClass(document.querySelector('.live-video-wait'), 'hide');

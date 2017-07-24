@@ -3,9 +3,12 @@
 		var utils = easemobim.utils;
 		var _const = easemobim._const;
 		var api = easemobim.api;
+		var apiHelper = easemobim.apiHelper;
 		// benz patch: 延迟发送扩展消息
 		var hasSentExtMsg;
 		var channel;
+		//用于标记 聊天窗口的打开与否
+		var isChatWindowOpen;
 
 		//DOM init
 		easemobim.imBtn = document.getElementById('em-widgetPopBar');
@@ -25,6 +28,7 @@
 		// todo: 把dom都移到里边
 		var doms = {
 			agentStatusText: document.querySelector('.em-header-status-text'),
+			inputState:document.querySelector('.em-agent-input-state'),
 			//待接入排队人数显示
 			agentWaitNumber: document.querySelector('.em-header-status-text-queue-number'),
 			agentStatusSymbol: document.getElementById('em-widgetAgentStatus'),
@@ -79,7 +83,7 @@
 				//just show date label once in 1 min
 				this.msgTimeSpan = {};
 				//chat window status
-				this.opened = true;
+				isChatWindowOpen = true;
 				//init sound reminder
 				this.soundReminder();
 
@@ -256,6 +260,9 @@
 
 						// 初始化历史消息拉取
 						!config.isNewUser && me.initHistoryPuller();
+
+						//轮询坐席的输入状态
+						me.agentInputState.start();
 
 						// 待接入排队人数显示
 						me.waitListNumber.start();
@@ -557,6 +564,72 @@
 					}
 				});
 			},
+
+			agentInputState: (function () {
+				var isStarted = false;
+				var timer;
+				var prevTimestamp = 0;
+
+				function _start() {
+					isStarted = true;
+					// 保证当前最多只有1个timer
+					clearInterval(timer);
+					api('getCurrentServiceSession', {
+						id: config.user.username,
+						orgName: config.orgName,
+						appName: config.appName,
+						imServiceNumber: config.toUser,
+						tenantId: config.tenantId
+					}, function (msg) {
+						var data = msg.data || {};
+						var sessionId = data.serviceSessionId;
+
+						if (sessionId && isStarted) {
+							timer = setInterval(function () {
+								getAgentInputState(sessionId);
+							}, _const.AGENT_INPUT_STATE_INTERVAL);
+						}
+					});
+				}
+
+				function getAgentInputState(sessionId) {
+					if (!config.user.token) {
+						console.warn('undefined token');
+						return;
+					}
+					// 当聊天窗口或者浏览器最小化时 不去发轮询请求
+					if(!isChatWindowOpen || utils.isMin()){
+						return;
+					}
+					apiHelper.getAgentInputState(sessionId).then(function(msg){
+						//当返回的时间戳小于当前时间戳时  不做任何处理
+						if(prevTimestamp > msg.timestamp){
+							return;
+						}
+						//当返回的时间戳大于当前时间戳时  处理以下逻辑
+						prevTimestamp = msg.timestamp;
+						if (!msg.input_state_tips) {
+							utils.addClass(doms.inputState, 'hide');
+							utils.removeClass(doms.nickname, 'hide');
+						}
+						else {
+							utils.removeClass(doms.inputState, 'hide'); 
+							utils.addClass(doms.nickname, 'hide'); 
+						}
+					})
+				}
+
+				function _stop() {
+					clearInterval(timer);
+					utils.addClass(doms.inputState, 'hide');
+					isStarted = false;
+				}
+				return {
+					start: _start,
+					stop: _stop
+				};
+			})(),
+
 			waitListNumber: (function () {
 
 				var isStarted = false;
@@ -793,7 +866,7 @@
 			},
 			//close chat window
 			close: function () {
-				this.opened = false;
+				isChatWindowOpen = false;
 
 				if (!config.hide) {
 					utils.addClass(easemobim.imChat, 'hide');
@@ -804,7 +877,7 @@
 			show: function () {
 				var me = this;
 
-				me.opened = true;
+				isChatWindowOpen = true;
 				me.scrollBottom(50);
 				utils.addClass(easemobim.imBtn, 'hide');
 				utils.removeClass(easemobim.imChat, 'hide');
@@ -889,7 +962,7 @@
 				});
 
 				me.soundReminder = function () {
-					if (!isSlienceEnable && (utils.isMin() || !me.opened)) {
+					if (!isSlienceEnable && (utils.isMin() || !isChatWindowOpen)) {
 						play();
 					}
 				};
@@ -1348,11 +1421,11 @@
 						brief = '';
 					}
 
-					if (me.opened) {
+					if (isChatWindowOpen) {
 						transfer.send({ event: _const.EVENTS.RECOVERY }, window.transfer.to);
 					}
 
-					if (utils.isMin() || !me.opened) {
+					if (utils.isMin() || !isChatWindowOpen) {
 						me.soundReminder();
 						transfer.send({ event: _const.EVENTS.SLIDE }, window.transfer.to);
 						transfer.send({
