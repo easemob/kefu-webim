@@ -213,10 +213,10 @@
 		);
 
 		// 输入框位置开关
-		utils.toggleClass(
-			document.querySelector('.em-widgetHeader-keyboard'),
-			'hide', !utils.isMobile || config.hideKeyboard
-		);
+		// utils.toggleClass(
+		// 	document.querySelector('.em-widgetHeader-keyboard'),
+		// 	'hide', !utils.isMobile || config.hideKeyboard
+		// );
 
 		if (config.liveVideoInvite){
 			utils.removeClass(document.querySelector('.live-video-wait'), 'hide');
