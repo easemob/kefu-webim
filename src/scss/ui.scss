@@ -109,57 +109,57 @@
 			width: 95%;
 			max-width: 400px;
 			margin: auto;
-			>span{
+			.title{
 				font-size: 14px;
 				display: inline-block;
 				margin-top: 15px;
 			}
-		}
-		ul {
-			width: 100%;
-			margin: 15px 0;
-			text-align: center;
-			li {
-				// fake: IE8 满意度评价会有兼容问题，修改图标需替换字符
-				font-family: 'easemobim' !important;
-				display: inline-block;
-				color: #ccc;
-				position: relative;
-				width: 55px;
-				height: 55px;
-				line-height: 55px;
-				cursor: pointer;
-				font-size: 60px;
-				width: 80px\9;
-				height: 80px\9;
-				zoom: 50%\9;
-				&.sel {
-					color: #ffb31a;
-				}
-			}
-		}
-		.tag-container{
-			margin: 0 auto;
-			text-align: center;
-			.tag{
-				display: inline-block;
-				width: 140px;
-				height: 30px;
-				border: 1px solid #ccc;
-				padding: 0 5px;
-				margin: 5px;
-				border-radius: 5px;
-				color: #ccc;
+			ul {
+				width: 100%;
+				margin: 15px 0;
 				text-align: center;
-				line-height: 30px;
-				overflow: hidden;
-				cursor: pointer;
-				&.selected{
-					border-color: rgb(242,145,0);
-					color: rgb(242,145,0);
+				li {
+					// fake: IE8 满意度评价会有兼容问题，修改图标需替换字符
+					font-family: 'easemobim' !important;
+					display: inline-block;
+					color: #ccc;
+					position: relative;
+					width: 55px;
+					height: 55px;
+					line-height: 55px;
+					cursor: pointer;
+					font-size: 60px;
+					width: 80px\9;
+					height: 80px\9;
+					zoom: 50%\9;
+					&.sel {
+						color: #ffb31a;
+					}
 				}
 			}
-			
+			.tag-container{
+				margin: 0 auto;
+				text-align: center;
+				.tag{
+					display: inline-block;
+					width: 140px;
+					height: 30px;
+					border: 1px solid #ccc;
+					padding: 0 5px;
+					margin: 5px;
+					border-radius: 5px;
+					color: #ccc;
+					text-align: center;
+					line-height: 30px;
+					overflow: hidden;
+					cursor: pointer;
+					&.selected{
+						border-color: rgb(242,145,0);
+						color: rgb(242,145,0);
+					}
+				}
+				
+			}
 		}
 		textarea {
 			resize: none;

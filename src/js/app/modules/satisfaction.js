@@ -5,10 +5,10 @@ var channel = require('./channel');
 
 var dom = utils.createElementFromHTML([
 	'<div class="wrapper">',
-	'<span>请对我的服务做出评价</span>',
+	'<span class="title">请对我的服务做出评价</span>',
 	'<ul></ul>',
 	'<div class="tag-container"></div>',
-	'<textarea spellcheck="false" placeholder="请输入留言"></textarea>',
+	'<textarea spellcheck="false" placeholder="请输入评价内容"></textarea>',
 	'</div>'
 ].join(''));
 var starsUl = dom.querySelector('ul');
