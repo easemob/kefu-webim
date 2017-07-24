@@ -16,9 +16,9 @@ var profile = require('./tools/profile');
 var isWechatBrowser = /MicroMessenger/.test(navigator.userAgent);
 var appid = utils.query('appid');
 var code = utils.query('code');
-var tenantId = utils.query('tenantId');
 
 module.exports = function (success, fail) {
+	var tenantId = profile.config.tenantId;
 	if (!isWechatBrowser || !tenantId || !appid){
 		fail();
 		return;
