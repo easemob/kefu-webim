@@ -4,8 +4,8 @@ var apiHelper = require('./apiHelper');
 var channel = require('./channel');
 
 var dom = utils.createElementFromHTML([
-	'<div>',
-	'<h3>请对我的服务做出评价</h3>',
+	'<div class="wrapper">',
+	'<span>请对我的服务做出评价</span>',
 	'<ul></ul>',
 	'<div class="tag-container"></div>',
 	'<textarea spellcheck="false" placeholder="请输入留言"></textarea>',

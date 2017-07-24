@@ -105,13 +105,19 @@
 	// 满意度评价
 	&.satisfaction {
 		font-size: 13px;
-		h3 {
-			font-weight: normal;
-			margin: 20px 15px;
+		.wrapper {
+			width: 95%;
+			max-width: 400px;
+			margin: auto;
+			>span{
+				font-size: 14px;
+				display: inline-block;
+				margin-top: 15px;
+			}
 		}
 		ul {
-			width: 96%;
-			margin: 0 auto;
+			width: 100%;
+			margin: 15px 0;
 			text-align: center;
 			li {
 				// fake: IE8 满意度评价会有兼容问题，修改图标需替换字符
@@ -133,7 +139,6 @@
 			}
 		}
 		.tag-container{
-			width: 96%;
 			margin: 0 auto;
 			text-align: center;
 			.tag{
@@ -158,18 +163,19 @@
 		}
 		textarea {
 			resize: none;
-			width: 90%;
+			width: 100%;
 			padding: 6px;
 			box-sizing: border-box;
 			height: 120px;
-			margin: 35px auto 25px;
+			margin: 15px 0;
 			display: block;
 			border: 1px solid #E4E4E4;
 			border-radius: 6px;
 		}
 		.footer{
-			position: absolute;
-			left: 5%;
+			max-width: 400px;
+			height: 30px;
+			padding: 0 15px;
 		}
 	}
 	// 留言
