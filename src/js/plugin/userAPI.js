@@ -119,7 +119,7 @@ easemobim.bind = function (config) {
 	config = config || {};
 	config.emgroup = config.emgroup || easemobim.config.emgroup || '';
 
-	var cacheKeyName = config.tenantId + config.emgroup;
+	var cacheKeyName = config.configId || (config.tenantId + config.emgroup);
 
 	for (var i in easemobim.tenants) {
 		if (easemobim.tenants.hasOwnProperty(i)) {
