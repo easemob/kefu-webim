@@ -154,6 +154,7 @@ function initChat() {
 }
 function handleMsgData() {
 	// default value
+	config.staticPath = config.staticPath || "static";
 	config.offDutyWord = config.offDutyWord || '现在是下班时间。';
 	config.emgroup = config.emgroup || '';
 
@@ -182,7 +183,7 @@ function handleMsgData() {
 	config.toolbar = {};
 	config.chat = {};
 
-	profile.defaultAvatar = (config.staticPath || 'static') + '/img/default_avatar.png';
+	profile.defaultAvatar = config.staticPath + '/img/default_avatar.png';
 
 	// 用于预览模式
 	if (config.previewObj) {
