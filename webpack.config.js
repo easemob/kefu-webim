@@ -115,9 +115,9 @@ var easemob = Object.assign({}, conmmonConfig, {
 	output: {
 		filename: 'easemob.js',
 		path: path.resolve(__dirname, '.'),
-		library: 'easemob-kefu-webim-plugin',
-		libraryTarget: 'umd',
-		umdNamedDefine: true,
+		// library: 'easemob-kefu-webim-plugin',
+		// libraryTarget: 'umd',
+		// umdNamedDefine: true,
 	},
 });
 

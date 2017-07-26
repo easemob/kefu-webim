@@ -193,3 +193,12 @@ if (
 	easemobim.config.eventCollector = false;
 }
 
+//support cmd & amd
+if (typeof module === 'object' && typeof module.exports === 'object'){
+	module.exports = easemobim;
+}
+else if (typeof define === 'function' && define.amd){
+	define('easemob-kefu-webim-plugin', [], function(){
+		return easemobim;
+	});
+}
