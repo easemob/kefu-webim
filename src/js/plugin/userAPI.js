@@ -5,13 +5,24 @@ var utils = require('../common/utils');
 var loading = require('./loading');
 var Iframe = require('./iframe');
 
-require('../../plugin-scss/easemob.scss');
-
 window.easemobim = window.easemobim || {};
 window.easemobim.config = window.easemobim.config || {};
 window.easemobim.version = '__WEBIM_PLUGIN_VERSION__';
 // todo: discard global tenants
 window.easemobim.tenants = {};
+
+if(
+	/MSIE 7\.0/.test(navigator.userAgent)
+	&& !window.localStorage
+	&& !document.querySelector
+){
+	easemobim.bind = function(){
+		alert("您使用的IE浏览器版本过低，请使用IE8以上版本的IE浏览器或Chrome浏览器");
+	};
+	throw new Error("unsupported browser.");
+}
+
+require('../../plugin-scss/easemob.scss');
 
 var DEFAULT_CONFIG = {
 	tenantId: '',
