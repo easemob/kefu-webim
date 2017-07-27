@@ -36,7 +36,7 @@
 
 <script>
 	var tenantIdInput = document.getElementById('testvalue');
-	tenantIdInput.value = localStorage.getItem('easemobtest') || '';
+	tenantIdInput.value = (window.localStorage && localStorage.getItem('easemobtest')) || '';
 
 	function test(){
 		easemobim.bind({tenantId: getTenantId()});
@@ -47,7 +47,7 @@
 		tenantId = tenantId && tenantId.replace(/\s/g, '');
 
 		if (/\d+/.test(tenantId)) {
-			localStorage.setItem('easemobtest', tenantId);
+			window.localStorage && localStorage.setItem('easemobtest', tenantId);
 			return tenantId;
 		}
 	}
@@ -78,7 +78,7 @@
 	window.easemobim = window.easemobim || {};
 
 easemobim.config = {
-	// domain: '//sandbox5.kefu.easemob.com',
+	// domain: '//sandbox.kefu.easemob.com',
 	// domain: '//kefu.easemob.com',
 	// 访客自动上报
 	// eventCollector: true,
