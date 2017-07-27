@@ -65,12 +65,12 @@ function _createDialog(opt){
 		addButton: function(opt){
 			opt = opt || {};
 			var hideCancel = opt.hideCancel;
-			var confirmText = opt.confirmText || "确定";
+			var confirmText = opt.confirmText || __("common.confirm");
 			cancel = opt.cancel || EMPTY_FUNCTION;
 			confirm = opt.confirm || EMPTY_FUNCTION;
 			var footer = utils.createElementFromHTML([
 				"<div class=\"footer\">",
-				"<button class=\"cancel-btn\">取消</button>",
+				"<button class=\"cancel-btn\">" + __("common.cancel") + "</button>",
 				"<button class=\"confirm-btn bg-color\"></button>",
 				"</div>"
 			].join(""));

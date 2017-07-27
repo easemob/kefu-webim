@@ -7,6 +7,7 @@ var profile = require("./tools/profile");
 var tools = require("./tools/tools");
 var eventListener = require("./tools/eventListener");
 var apiHelper = require("./apiHelper");
+var moment = require("moment");
 
 var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;
@@ -195,7 +196,7 @@ function _sendText(message, ext){
 	});
 
 	_promptNoAgentOnlineIfNeeded({
-		hasTransferedToKefu: message === "转人工" || message === "转人工客服"
+		hasTransferedToKefu: !!~__("config.transfer_to_kefu_words").slice("|").indexOf(message)
 	});
 
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
@@ -384,18 +385,18 @@ function _handleMessage(msg, msgType, isHistory){
 		message = msg;
 		message.type = type;
 		message.brief = _.map(message.data, function(item){
-			return item.type === "emoji" ? "[表情]" : item.data;
+			return item.type === "emoji" ? __("message_brief.emoji") : item.data;
 		}).join("").replace(/\n/mg, " ");
 		break;
 	case "img":
 		message = msg;
 		message.type = type;
-		message.brief = "[图片]";
+		message.brief = __("message_brief.picture");
 		break;
 	case "file":
 		message = msg;
 		message.type = type;
-		message.brief = "[文件]";
+		message.brief = __("message_brief.file");
 		break;
 	case "cmd":
 		var action = msg.action;
@@ -417,16 +418,16 @@ function _handleMessage(msg, msgType, isHistory){
 
 		message = msg;
 		message.type = "list";
-		message.data = "请对我的服务做出评价";
+		message.data = __("chat.evaluate_agent_title");
 		message.list = [
 			"<div class=\"em-btn-list\">"
 			+ "<button class=\"bg-hover-color js_satisfybtn\" data-inviteid=\""
 			+ inviteId
 			+ "\" data-servicesessionid=\""
 			+ serviceSessionId
-			+ "\">立即评价</button></div>"
+			+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
 		];
-		message.brief = "[菜单]";
+		message.brief = __("message_brief.menu");
 
 		!isHistory && eventListener.excuteCallbacks(
 			_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
@@ -456,7 +457,7 @@ function _handleMessage(msg, msgType, isHistory){
 			}).join("") || ""
 			+ "</div>";
 		message.data = msg.ext.msgtype.choice.title;
-		message.brief = "[菜单]";
+		message.brief = __("message_brief.menu");
 		break;
 	case "skillgroupMenu":
 		message = msg;
@@ -471,7 +472,7 @@ function _handleMessage(msg, msgType, isHistory){
 			}).join("") || ""
 			+ "</div>";
 		message.data = msg.data.menuName;
-		message.brief = "[菜单]";
+		message.brief = __("message_brief.menu");
 		break;
 	case "robotTransfer":
 		var ctrlArgs = msg.ext.weichat.ctrlArgs;
@@ -490,7 +491,7 @@ function _handleMessage(msg, msgType, isHistory){
 			"data-id=\"" + ctrlArgs.id + "\">" + ctrlArgs.label + "</button>",
 			"</div>"
 		].join("");
-		message.brief = "[菜单]";
+		message.brief = __("message_brief.menu");
 		break;
 	case "transferToTicket":
 		message = msg;
@@ -498,11 +499,11 @@ function _handleMessage(msg, msgType, isHistory){
 		message.list = [
 			"<div class=\"em-btn-list\">",
 			"<button class=\"white bg-color border-color bg-hover-color-dark js-transfer-to-ticket\">",
-			"留言",
+			__("chat.click_to_ticket"),
 			"</button>",
 			"</div>"
 		].join("");
-		message.brief = "[菜单]";
+		message.brief = __("message_brief.menu");
 		break;
 	default:
 		console.error("unexpected msg type");
@@ -540,7 +541,7 @@ function _handleMessage(msg, msgType, isHistory){
 	// 空文本消息不显示
 	if(!message || (type === "txt" && !message.data) || (type === "article" && _.isEmpty(utils.getDataByPath(msg, "ext.msgtype.articles")))) return;
 
-	// 	给收到的消息加id，用于撤回消息
+	// 给收到的消息加id，用于撤回消息
 	message.id = msgId;
 
 	// 消息上屏
@@ -622,9 +623,12 @@ function _setExt(msg){
 	var officialAccountId = officialAccount.official_account_id;
 	var bindAgentUsername = officialAccount.bindAgentUsername;
 	var bindSkillGroupName = officialAccount.bindSkillGroupName;
+	var language = __("config.language");
 
 	msg.body.ext = msg.body.ext || {};
 	msg.body.ext.weichat = msg.body.ext.weichat || {};
+
+	msg.body.ext.weichat.language = language;
 
 	// bind skill group
 	if(bindSkillGroupName){
@@ -915,7 +919,7 @@ function _messagePrompt(message, officialAccount){
 			event: _const.EVENTS.NOTIFY,
 			data: {
 				avatar: avatar,
-				title: "新消息",
+				title: __("prompt.new_message"),
 				brief: brief
 			}
 		});

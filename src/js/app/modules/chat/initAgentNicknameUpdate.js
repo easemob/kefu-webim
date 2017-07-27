@@ -45,7 +45,7 @@ function _updateAgentNickname(officialAccount){
 		profile.isAgentNicknameEnable
 		&& agentNickname
 		&& isSessionOpen
-		&& agentNickname !== "调度员"
+		&& agentNickname !== __("config.scheduler_role_nickname")
 	){
 		$agentNickname.innerText = agentNickname;
 	}

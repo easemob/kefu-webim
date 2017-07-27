@@ -22,18 +22,18 @@ var closingTimerTimespan;
 var dialog = uikit.createDialog({
 	contentDom: [
 		"<p class=\"prompt\">",
-		"您要邀请客服为您进行实时视频服务么？点击确认发送邀请，等待客服接受后即可体验实时视频服务。",
+		__("video.confirm_prompt"),
 		"</p>"
 	].join(""),
 	className: "rtc-video-confirm"
 }).addButton({
 	confirm: function(){
-		channel.sendText("邀请客服进行实时视频", {
+		channel.sendText(__("video.invite_agent_video"), {
 			ext: {
 				type: "rtcmedia/video",
 				msgtype: {
 					liveStreamInvitation: {
-						msg: "邀请客服进行实时视频",
+						msg: __("video.invite_agent_video"),
 						orgName: config.orgName,
 						appName: config.appName,
 						userName: config.user.username,
@@ -123,7 +123,7 @@ var events = {
 		ctrlPanel.classList.remove("hide");
 		subVideoWrapper.classList.remove("hide");
 		statusTimer.stop();
-		statusTimer.start("视频通话中");
+		statusTimer.start(__("video.connecting"));
 		call.acceptCall();
 	},
 	"btn-toggle": function(){
@@ -230,7 +230,7 @@ function _init(conn){
 				subVideoWrapper.classList.add("hide");
 				ctrlPanel.classList.add("hide");
 				imChat.classList.add("has-video");
-				statusTimer.start("视频连接请求，等待你的确认");
+				statusTimer.start(__("video.waiting_confirm"));
 				dialBtn.classList.remove("hide");
 			},
 			onTermCall: function(){

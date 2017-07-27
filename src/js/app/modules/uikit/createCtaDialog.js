@@ -76,7 +76,7 @@ function _render(options){
 		"<p class=\"content\">" + content + "</p>",
 		"</div>",
 		"<div class=\"footer\">",
-		"<button class=\"btn-reply bg-color icon-message\">回复</button>",
+		"<button class=\"btn-reply bg-color icon-message\">" + __("common.reply") + "</button>",
 		"</div>",
 		"</div>"
 	].join(""));

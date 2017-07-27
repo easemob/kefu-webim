@@ -2,6 +2,7 @@ var WebIM = require("easemob-websdk");
 var utils = require("../../../common/utils");
 var _const = require("../../../common/const");
 var profile = require("../tools/profile");
+var moment = require("moment");
 
 var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com/webim/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
 var parseLink = WebIM.utils.parseLink;
@@ -114,7 +115,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		var msgArticles = utils.getDataByPath(msg, "ext.msgtype.articles");
 		var articleNode;
 		if(msgArticles.length === 1){
-			var date = utils.formatDate(msgArticles[0].createdTime, "M月d日");
+			var date = moment(msgArticles[0].createdTime).format(__("config.article_timestamp_format"));
 			articleNode = "" +
 				"<div class=\"article-msg-outer article-item only-one-article\">" +
 					"<div class=\"body\">" +
@@ -123,7 +124,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 						"<div class=\"cover\"><img src=\"" + msgArticles[0].thumbUrl + "\"/></div>" +
 						"<div class=\"desc\"><p>" + msgArticles[0].digest + "</p></div>" +
 					"</div>" +
-					"<div class=\"footer\"><span class=\"look-article\">阅读全文</span><i class=\"icon-arrow-right\"></i></div>" +
+					"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
 					"<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
 				"</div>";
 		}
@@ -178,7 +179,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		// todo: 去掉type
 		html += "<div id=\"" + id
 			+ "_failed\" data-type=\"" + type + "\" class=\"em-widget-msg-status hide\">"
-			+ "<span>发送失败</span><i class=\"icon-circle\"><i class=\"icon-exclamation\"></i></i></div>"
+			+ "<span>" + __("common.send_failed") + "</span><i class=\"icon-circle\"><i class=\"icon-exclamation\"></i></i></div>"
 			+ "<div id=\"" + id
 			+ "_loading\" class=\"em-widget-msg-loading\">" + LOADING + "</div>";
 	}
@@ -194,13 +195,13 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	// container 结束
 	html += "</div>";
 
-	if (!utils.getDataByPath(msg, 'ext.msgtype.choice') && utils.getDataByPath(msg, 'ext.weichat.ctrlType') === 'TransferToKfHint') {
+	if(!utils.getDataByPath(msg, "ext.msgtype.choice") && utils.getDataByPath(msg, "ext.weichat.ctrlType") === "TransferToKfHint"){
 		var ctrlArgs = msg.ext.weichat.ctrlArgs;
-		html += '<div class="em-btn-list">'
-			+ '<button class="white bg-color border-color bg-hover-color-dark js_robotTransferBtn" '
-			+ 'data-sessionid="' + ctrlArgs.serviceSessionId + '" '
-			+ 'data-id="' + ctrlArgs.id + '">' + ctrlArgs.label + '</button>'
-		+ '</div>'
+		html += "<div class=\"em-btn-list\">"
+			+ "<button class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn\" "
+			+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
+			+ "data-id=\"" + ctrlArgs.id + "\">" + ctrlArgs.label + "</button>"
+		+ "</div>";
 	}
 
 

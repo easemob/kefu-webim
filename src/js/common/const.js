@@ -1,78 +1,78 @@
 module.exports = {
 	loadingSvg: [
-		'<div class="em-widget-loading">',
-		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 70">',
-		'<circle opacity=".3" fill="none" stroke="#000" stroke-width="4" stroke-miterlimit="10" cx="35" cy="35" r="11"/>',
-		'<path fill="none" stroke="#E5E5E5" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M24 35c0-6.1 4.9-11 11-11 2.8 0 5.3 1 7.3 2.8"/>',
-		'</svg>',
-		'</div>'
-	].join(''),
+		"<div class=\"em-widget-loading\">",
+		"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 70 70\">",
+		"<circle opacity=\".3\" fill=\"none\" stroke=\"#000\" stroke-width=\"4\" stroke-miterlimit=\"10\" cx=\"35\" cy=\"35\" r=\"11\"/>",
+		"<path fill=\"none\" stroke=\"#E5E5E5\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-miterlimit=\"10\" d=\"M24 35c0-6.1 4.9-11 11-11 2.8 0 5.3 1 7.3 2.8\"/>",
+		"</svg>",
+		"</div>"
+	].join(""),
 
 	agentStatusText: {
-		Idle: '(离线)',
-		Online: '(空闲)',
-		Busy: '(忙碌)',
-		Leave: '(离开)',
-		Hidden: '(隐身)',
-		Offline: '(离线)',
-		Logout: '(离线)',
-		Other: ''
+		Online: __("agent_status.online"),
+		Busy: __("agent_status.busy"),
+		Leave: __("agent_status.leave"),
+		Hidden: __("agent_status.hidden"),
+		Idle: __("agent_status.offline"),
+		Offline: __("agent_status.offline"),
+		Logout: __("agent_status.offline"),
+		Other: "",
 	},
 
 	eventMessageText: {
-		NOTE: '当前暂无客服在线，请您留下联系方式，稍后我们将主动联系您'
+		NOTE: __("event_message.no_agent_online"),
 	},
 
 	SYSTEM_EVENT_MSG_TEXT: {
-		ServiceSessionCreatedEvent: '会话创建成功',
-		ServiceSessionClosedEvent: '会话已结束',
-		ServiceSessionTransferedEvent: '会话已被转接至其他客服',
-		ServiceSessionTransferedToAgentQueueEvent: '会话转接中，请稍候',
-		ServiceSessionOpenedEvent: '会话已被客服接起'
+		ServiceSessionCreatedEvent: __("event_message.session_created"),
+		ServiceSessionOpenedEvent: __("event_message.session_opened"),
+		ServiceSessionTransferedToAgentQueueEvent: __("event_message.sessing_transfering"),
+		ServiceSessionTransferedEvent: __("event_message.session_transfered"),
+		ServiceSessionClosedEvent: __("event_message.sessing_closed"),
 	},
 
 	SYSTEM_EVENT: {
-		SESSION_CREATED: 'ServiceSessionCreatedEvent',
-		SESSION_OPENED: 'ServiceSessionOpenedEvent',
-		SESSION_CLOSED: 'ServiceSessionClosedEvent',
-		SESSION_TRANSFERED: 'ServiceSessionTransferedEvent',
-		SESSION_TRANSFERING: 'ServiceSessionTransferedToAgentQueueEvent',
+		SESSION_CREATED: "ServiceSessionCreatedEvent",
+		SESSION_OPENED: "ServiceSessionOpenedEvent",
+		SESSION_CLOSED: "ServiceSessionClosedEvent",
+		SESSION_TRANSFERED: "ServiceSessionTransferedEvent",
+		SESSION_TRANSFERING: "ServiceSessionTransferedToAgentQueueEvent",
 
-		SESSION_RESTORED: 'session.restored',
-		SESSION_NOT_CREATED: 'session.not.created',
+		SESSION_RESTORED: "session.restored",
+		SESSION_NOT_CREATED: "session.not.created",
 
-		AGENT_INFO_UPDATE: 'agent.info.update',
-		OFFICIAL_ACCOUNT_SWITCHED: 'official.account.switched',
-		NEW_OFFICIAL_ACCOUNT_FOUND: 'new.official.account.found',
-		SYSTEM_OFFICIAL_ACCOUNT_UPDATED: 'system.official.account.updated',
-		OFFICIAL_ACCOUNT_LIST_GOT: 'official.account.list.got',
+		AGENT_INFO_UPDATE: "agent.info.update",
+		OFFICIAL_ACCOUNT_SWITCHED: "official.account.switched",
+		NEW_OFFICIAL_ACCOUNT_FOUND: "new.official.account.found",
+		SYSTEM_OFFICIAL_ACCOUNT_UPDATED: "system.official.account.updated",
+		OFFICIAL_ACCOUNT_LIST_GOT: "official.account.list.got",
 
-		MARKETING_MESSAGE_RECEIVED: 'marketing.message.received',
-		SATISFACTION_EVALUATION_MESSAGE_RECEIVED: 'satisfaction.evaluation.message.received',
-		MESSAGE_PROMPT: 'message.prompt',
+		MARKETING_MESSAGE_RECEIVED: "marketing.message.received",
+		SATISFACTION_EVALUATION_MESSAGE_RECEIVED: "satisfaction.evaluation.message.received",
+		MESSAGE_PROMPT: "message.prompt",
 
-		CHAT_WINDOW_OPENED: 'chat.window.opened',
-		CHAT_WINDOW_CLOSED: 'chat.window.closed',
+		CHAT_WINDOW_OPENED: "chat.window.opened",
+		CHAT_WINDOW_CLOSED: "chat.window.closed",
 
-		IM_CONNECTION_OPENED: 'im.connection.opened',
+		IM_CONNECTION_OPENED: "im.connection.opened",
 
-		OFFLINE: 'offline',
+		OFFLINE: "offline",
 
-		MESSAGE_SENT: 'message.sent',
-		MESSAGE_APPENDED: 'message.appended',
+		MESSAGE_SENT: "message.sent",
+		MESSAGE_APPENDED: "message.appended",
 	},
 
 	themeMap: {
-		'天空之城': 'theme-1',
-		'丛林物语': 'theme-2',
-		'红瓦洋房': 'theme-3',
-		'鲜美橙汁': 'theme-4',
-		'青草田间': 'theme-5',
-		'湖光山色': 'theme-6',
-		'冷峻山峰': 'theme-7',
-		'月色池塘': 'theme-8',
-		'天籁湖光': 'theme-9',
-		'商务风格': 'theme-10'
+		天空之城: "theme-1",
+		丛林物语: "theme-2",
+		红瓦洋房: "theme-3",
+		鲜美橙汁: "theme-4",
+		青草田间: "theme-5",
+		湖光山色: "theme-6",
+		冷峻山峰: "theme-7",
+		月色池塘: "theme-8",
+		天籁湖光: "theme-9",
+		商务风格: "theme-10"
 	},
 
 	IM: {
@@ -84,50 +84,50 @@ module.exports = {
 
 	// todo: 分离这部分代码
 	EVENTS: {
-		NOTIFY: 'notify',
-		RECOVERY: 'recoveryTitle',
-		SHOW: 'showChat',
-		CLOSE: 'closeChat',
-		CACHEUSER: 'setUser',
-		DRAGREADY: 'dragReady',
-		DRAGEND: 'dragEnd',
-		SLIDE: 'titleSlide',
-		ONMESSAGE: 'onMessage',
-		ONSESSIONCLOSED: 'onSessionClosed',
-		EXT: 'ext',
-		TEXTMSG: 'textmsg',
-		ONREADY: 'onready',
-		ON_OFFDUTY: 'onOffDuty',
-		SET_ITEM: 'setItem',
-		UPDATE_URL: 'updateURL',
-		REQUIRE_URL: 'requireURL',
-		INIT_CONFIG: 'initConfig',
-		SHOW_IMG: 'showIMG',
-		RESIZE_IFRAME: 'resizeIframe',
-		ADD_PROMPT: 'add.prompt',
-		REMOVE_PROMPT: 'remove.prompt',
+		NOTIFY: "notify",
+		RECOVERY: "recoveryTitle",
+		SHOW: "showChat",
+		CLOSE: "closeChat",
+		CACHEUSER: "setUser",
+		DRAGREADY: "dragReady",
+		DRAGEND: "dragEnd",
+		SLIDE: "titleSlide",
+		ONMESSAGE: "onMessage",
+		ONSESSIONCLOSED: "onSessionClosed",
+		EXT: "ext",
+		TEXTMSG: "textmsg",
+		ONREADY: "onready",
+		ON_OFFDUTY: "onOffDuty",
+		SET_ITEM: "setItem",
+		UPDATE_URL: "updateURL",
+		REQUIRE_URL: "requireURL",
+		INIT_CONFIG: "initConfig",
+		SHOW_IMG: "showIMG",
+		RESIZE_IFRAME: "resizeIframe",
+		ADD_PROMPT: "add.prompt",
+		REMOVE_PROMPT: "remove.prompt",
 	},
 
 	GRAY_LIST_KEYS: [
-		'audioVideo',
-		'msgPredictEnable',
-		'waitListNumberEnable',
-		'agentInputStateEnable',
-		'noteCategory'
+		"audioVideo",
+		"msgPredictEnable",
+		"waitListNumberEnable",
+		"agentInputStateEnable",
+		"noteCategory"
 	],
 
 	ERROR_MSG: {
-		VISITOR_DOES_NOT_EXIST: 'visitor does not exist.',
-		SESSION_DOES_NOT_EXIST: 'session does not exist.',
+		VISITOR_DOES_NOT_EXIST: "visitor does not exist.",
+		SESSION_DOES_NOT_EXIST: "session does not exist.",
 	},
 
 	SESSION_STATE: {
-		WAIT: 'Wait',
-		PROCESSING: 'Processing',
-		TERMINAL: 'Terminal',
-		ABORT: 'Abort',
-		RESOLVED: 'Resolved',
-		PREPARE: 'Prepare'
+		WAIT: "Wait",
+		PROCESSING: "Processing",
+		TERMINAL: "Terminal",
+		ABORT: "Abort",
+		RESOLVED: "Resolved",
+		PREPARE: "Prepare"
 	},
 
 	AGENT_ROLE: {

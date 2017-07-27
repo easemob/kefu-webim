@@ -37,7 +37,7 @@ DEFAULT_CONFIG = {
 	path: "",
 	ticket: true,
 	staticPath: "",
-	buttonText: "联系客服",
+	buttonText: __("common.contact_agent"),
 	dialogWidth: "360px",
 	dialogHeight: "550px",
 	dragenable: true,
@@ -149,7 +149,7 @@ easemobim.bind = function(config){
 		utils.extend(_config, config);
 
 		if(!_config.tenantId && !_config.configId){
-			console.error("未指定tenantId!");
+			console.error("No tenantId is specified.");
 			return;
 		}
 

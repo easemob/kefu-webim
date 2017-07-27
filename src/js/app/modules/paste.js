@@ -13,7 +13,7 @@ function _init(){
 		contentDom: imgDom,
 		className: "mini paste-image"
 	}).addButton({
-		confirmText: "发送",
+		confirmText: __("chat.paste_image_submit"),
 		confirm: function(){
 			channel.sendImg({ data: blob, url: dataURL });
 		}

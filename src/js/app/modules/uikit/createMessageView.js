@@ -65,7 +65,7 @@ module.exports = function(opt){
 	function _getRecentMsg(maxCount){
 		return _.map(recentMsg.slice(0, maxCount), function(item){
 			var date = utils.formatDate(item.date);
-			var role = item.isReceived ? "客服坐席" : "访客";
+			var role = item.isReceived ? __("common.agent") : __("common.visitor");
 			var brief = item.msg.brief;
 
 			return "[" + date + "] " + role + "\n" + brief;

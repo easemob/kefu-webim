@@ -724,7 +724,8 @@ function getRelevanceList(){
 				resolve(relevanceList);
 			}
 			else{
-				reject(new Error("未创建关联"));
+				// todo: i18n
+				reject(new Error(__("prompt.no_valid_channel")));
 			}
 		}, function(err){
 			reject(err);

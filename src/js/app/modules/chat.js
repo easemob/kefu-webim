@@ -96,19 +96,10 @@ function _initUI(){
 	// 添加移动端样式类
 	utils.isMobile && utils.addClass(document.body, "em-mobile");
 
-	// 留言按钮
-	config.ticket && utils.removeClass(doms.noteBtn, "hide");
-
 	// 最小化按钮
 	config.minimum
 		&& !utils.isTop
 		&& utils.removeClass(doms.minifyBtn, "hide");
-
-	// 低版本浏览器不支持上传文件/图片
-	if(WebIM.utils.isCanUploadFileAsync){
-		utils.removeClass(doms.sendImgBtn, "hide");
-		utils.removeClass(doms.sendFileBtn, "hide");
-	}
 
 	// h5title设置
 	if(config.ui.H5Title.enabled){
@@ -125,6 +116,17 @@ function _initUI(){
 	utils.isMobile
 		&& !config.hideKeyboard
 		&& utils.removeClass(doms.switchKeyboardBtn, "hide");
+}
+
+function _initToolbar(){
+	// 低版本浏览器不支持上传文件/图片
+	if(WebIM.utils.isCanUploadFileAsync){
+		utils.removeClass(doms.sendImgBtn, "hide");
+		utils.removeClass(doms.sendFileBtn, "hide");
+	}
+
+	// 留言按钮
+	config.ticket && utils.removeClass(doms.noteBtn, "hide");
 
 	// 满意度评价按钮
 	config.satisfaction
@@ -251,7 +253,7 @@ function _setOffline(){
 		var modelDom = utils.createElementFromHTML("<div class=\"em-model\"></div>");
 		var offDutyPromptDom = utils.createElementFromHTML([
 			"<div class=\"em-dialog off-duty-prompt\">",
-			"<div class=\"bg-color header\">提示</div>",
+			"<div class=\"bg-color header\">" + __("common.tip") + "</div>",
 			"<div class=\"body\">",
 			"<p class=\"content\">" + config.offDutyWord + "</p>",
 			"</div>",
@@ -259,7 +261,7 @@ function _setOffline(){
 		].join(""));
 		doms.imChat.appendChild(modelDom);
 		doms.imChat.appendChild(offDutyPromptDom);
-		doms.sendBtn.innerHTML = "发送";
+		doms.sendBtn.innerHTML = __("chat.send");
 		break;
 	default:
 		// 只允许留言此时无法关闭留言页面
@@ -449,7 +451,7 @@ function _bindEvents(){
 				name: config.visitor.trueName,
 				phone: config.visitor.phone,
 				mail: config.visitor.email,
-				// 	取最近10条消息，最大1000字
+				// 取最近10条消息，最大1000字
 				content: utils.getBrief("\n" + officialAccount.messageView.getRecentMsg(10), 1000)
 			}
 		});
@@ -538,7 +540,7 @@ function _bindEvents(){
 			// 未选择文件
 		}
 		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
-			uikit.tip("文件大小不能超过10MB");
+			uikit.tip(__("prompt._10_mb_file_limit"));
 			fileInput.value = "";
 		}
 		else{
@@ -562,11 +564,11 @@ function _bindEvents(){
 		}
 		// 某些浏览器不能获取到正确的文件名，所以放弃文件类型检测
 		// else if (!/\.(png|jpg|jpeg|gif)$/i.test(fileInput.value)) {
-		// uikit.tip('不支持的图片格式');
+		// uikit.tip('unsupported picture format');
 		// }
 		// 某些浏览器无法获取文件大小, 忽略
 		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
-			uikit.tip("文件大小不能超过10MB");
+			uikit.tip(__("prompt._10_mb_file_limit"));
 			fileInput.value = "";
 		}
 		else{
@@ -576,22 +578,11 @@ function _bindEvents(){
 
 	// 弹出文件选择框
 	utils.on(doms.sendFileBtn, "click", function(){
-		// 发送文件是后来加的功能，无需考虑IE兼容
-		if(!isMessageChannelReady){
-			uikit.tip("正在连接中...");
-		}
-		else{
-			doms.fileInput.click();
-		}
+		doms.fileInput.click();
 	});
 
 	utils.on(doms.sendImgBtn, "click", function(){
-		if(!isMessageChannelReady){
-			uikit.tip("正在连接中...");
-		}
-		else{
-			doms.imgInput.click();
-		}
+		doms.imgInput.click();
 	});
 
 	// 显示留言页面
@@ -628,7 +619,7 @@ function _bindEvents(){
 			// 禁止发送
 		}
 		else if(textMsg.length > _const.MAX_TEXT_MESSAGE_LENGTH){
-			uikit.tip("输入字数过多");
+			uikit.tip(__("prompt.too_many_words"));
 		}
 		else{
 			channel.sendText(textMsg);
@@ -674,7 +665,7 @@ function _onReady(){
 
 	isMessageChannelReady = true;
 
-	doms.sendBtn.innerHTML = "发送";
+	doms.sendBtn.innerHTML = __("chat.send");
 	utils.trigger(doms.textInput, "change");
 
 	// todo: discard this
@@ -818,6 +809,8 @@ function _initSession(){
 
 			// 设置信息栏
 			_setNotice();
+
+			_initToolbar();
 
 			// 移动端输入框自动增长
 			utils.isMobile && _initAutoGrow();

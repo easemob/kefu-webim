@@ -18,10 +18,10 @@ var evaluationDegreeId;
 var _init = _.once(function(){
 	dom = utils.createElementFromHTML([
 		"<div class=\"wrapper\">",
-		"<span class=\"title\">请对我的服务做出评价</span>",
+		"<span class=\"title\">" + __("evaluation.rate_my_service") + "</span>",
 		"<ul></ul>",
 		"<div class=\"tag-container\"></div>",
-		"<textarea spellcheck=\"false\" placeholder=\"请输入评价内容\"></textarea>",
+		"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
 		"</div>"
 	].join(""));
 	starsUl = dom.querySelector("ul");
@@ -31,7 +31,7 @@ var _init = _.once(function(){
 		contentDom: dom,
 		className: "satisfaction"
 	}).addButton({
-		confirmText: "提交",
+		confirmText: __("common.submit"),
 		confirm: _confirm,
 	});
 });
@@ -130,19 +130,19 @@ function _confirm(){
 
 	// 必须选择星级
 	if(!score){
-		uikit.tip("请先选择星级");
+		uikit.tip(__("evaluation.select_level_please"));
 		// 防止对话框关闭
 		return false;
 	}
 	// 若有标签则至少选择一个
 	else if(tagNodeList.length > 0 && selectedTagNodeList.length === 0){
-		uikit.tip("请先选择标签");
+		uikit.tip(__("evaluation.select_tag_please"));
 		// 防止对话框关闭
 		return false;
 	}
 
 	_sendSatisfaction(score, content, session, invite, appraiseTags, evaluationDegreeId);
-	uikit.showSuccess("提交成功");
+	uikit.showSuccess(__("evaluation.submit_success"));
 	_clear();
 }
 

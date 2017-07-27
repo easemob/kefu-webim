@@ -3,7 +3,6 @@ require("../../common/polyfill");
 require("../lib/modernizr");
 require("../sdk/webim.config");
 require("underscore");
-require("moment");
 
 var utils = require("../../common/utils");
 var _const = require("../../common/const");
@@ -30,7 +29,20 @@ else{
 
 function load_html(){
 	utils.appendHTMLToBody(_.template(body_template)({
-		connecting: __("common.connecting"),
+		contact_agent: __("common.contact_agent"),
+		close: __("common.close"),
+		video_ended: __("video.video_ended"),
+		agent_is_typing: __("chat.agent_is_typing"),
+		current_queue_number: __("chat.current_queue_number"),
+		connecting: __("chat.connecting"),
+		input_placeholder: __("chat.input_placeholder"),
+		emoji: __("toolbar.emoji"),
+		picture: __("toolbar.picture"),
+		attachment: __("toolbar.attachment"),
+		ticket: __("toolbar.ticket"),
+		video_invite: __("toolbar.video_invite"),
+		evaluate_agent: __("toolbar.evaluate_agent"),
+		transfer_to_kefu: __("toolbar.transfer_to_kefu"),
 	}));
 }
 
@@ -160,7 +172,7 @@ function initChat(){
 function handleMsgData(){
 	// default value
 	config.staticPath = config.staticPath || "static";
-	config.offDutyWord = config.offDutyWord || "现在是下班时间。";
+	config.offDutyWord = config.offDutyWord || __("prompt.default_off_duty_word");
 	config.emgroup = config.emgroup || "";
 
 	// fake patch: 老版本配置的字符串需要decode
