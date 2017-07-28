@@ -1,21 +1,22 @@
-var _const = require('../../../common/const');
-var utils = require('../../../common/utils');
-var profile = require('../tools/profile');
-var eventListener = require('../tools/eventListener');
-var apiHelper = require('../apiHelper');
+var _const = require("../../../common/const");
+var utils = require("../../../common/utils");
+var profile = require("../tools/profile");
+var eventListener = require("../tools/eventListener");
+var apiHelper = require("../apiHelper");
 
-var timerHandler;
 var preventTimestamp = 0;
 var inputState;
 
-module.exports = function (){
-	if (!profile.grayList.agentInputStateEnable) return;
+module.exports = function(){
+	var topBar;
 
-	var topBar = document.querySelector('.em-widget-header');
-	inputState = topBar.querySelector('.em-agent-input-state');
+	if(!profile.grayList.agentInputStateEnable) return;
+
+	topBar = document.querySelector(".em-widget-header");
+	inputState = topBar.querySelector(".em-agent-input-state");
 
 	// start timer
-	timerHandler = setInterval(function (){
+	setInterval(function(){
 		var officialAccount = profile.currentOfficialAccount;
 		_update(officialAccount);
 	}, _const.AGENT_INPUT_STATE_INTERVAL);
@@ -28,34 +29,38 @@ module.exports = function (){
 };
 
 function _update(officialAccount){
-	if (
+	var state;
+	var sessionId;
+	var agentType;
+
+	if(
 		officialAccount !== profile.currentOfficialAccount
 		|| !officialAccount
 		|| !profile.isChatWindowOpen
 		|| utils.isBrowserMinimized()
 	) return;
 
-	var state = officialAccount.sessionState;
-	var sessionId = officialAccount.sessionId;
-	var agentType = officialAccount.agentType;
+	state = officialAccount.sessionState;
+	sessionId = officialAccount.sessionId;
+	agentType = officialAccount.agentType;
 
-	if (
+	if(
 		sessionId
 		&& state === _const.SESSION_STATE.PROCESSING
 		&& agentType !== _const.AGENT_ROLE.ROBOT
 	){
-		apiHelper.getAgentInputState(sessionId).then(function (entity){
+		apiHelper.getAgentInputState(sessionId).then(function(entity){
 			var currentTimestamp = entity.timestamp;
 			var ifDisplayTypingState = entity.input_state_tips;
 
 			// 为了先发送的请求后回来的异步问题，仅处理时间戳比当前大的response
-			if (currentTimestamp > preventTimestamp){
+			if(currentTimestamp > preventTimestamp){
 				preventTimestamp = currentTimestamp;
-				utils.toggleClass(inputState, 'hide', !ifDisplayTypingState);
+				utils.toggleClass(inputState, "hide", !ifDisplayTypingState);
 			}
 		});
 	}
-	else {
-		utils.addClass(inputState, 'hide');
+	else{
+		utils.addClass(inputState, "hide");
 	}
 }

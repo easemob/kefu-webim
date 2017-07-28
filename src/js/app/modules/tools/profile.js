@@ -1,4 +1,4 @@
-var Dict = require('./Dict');
+var Dict = require("./Dict");
 
 var profile = {
 	ctaEnable: false,

@@ -1,13 +1,13 @@
-var _const = require('../../../common/const');
-var utils = require('../../../common/utils');
-var profile = require('../tools/profile');
-var eventListener = require('../tools/eventListener');
+var _const = require("../../../common/const");
+var utils = require("../../../common/utils");
+var profile = require("../tools/profile");
+var eventListener = require("../tools/eventListener");
 
 var $agentNickname;
 
 module.exports = function(){
-	var topBar = document.querySelector('.em-widget-header');
-	$agentNickname = topBar.querySelector('.em-widget-header-nickname');
+	var topBar = document.querySelector(".em-widget-header");
+	$agentNickname = topBar.querySelector(".em-widget-header-nickname");
 
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _updateAgentNickname);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _updateAgentNickname);
@@ -22,8 +22,8 @@ module.exports = function(){
 	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _updateAgentNickname);
 };
 
-function _updateAgentNickname(officialAccount) {
-	if (officialAccount !== profile.currentOfficialAccount) return;
+function _updateAgentNickname(officialAccount){
+	if(officialAccount !== profile.currentOfficialAccount) return;
 
 	var agentNickname = officialAccount.agentNickname;
 	var agentAvatar = officialAccount.agentAvatar;
@@ -31,25 +31,25 @@ function _updateAgentNickname(officialAccount) {
 	var officialAccountType = officialAccount.type;
 
 	// fake: update system agent avatar
-	if (officialAccountType === 'SYSTEM'){
+	if(officialAccountType === "SYSTEM"){
 		profile.systemAgentAvatar = isSessionOpen
 			? utils.getAvatarsFullPath(agentAvatar, profile.config.domain)
 			: null;
 	}
 
-	if (officialAccountType === 'CUSTOM'){
+	if(officialAccountType === "CUSTOM"){
 		// 昵称显示为服务号名称
 		$agentNickname.innerText = officialAccount.name;
 	}
-	else if (
+	else if(
 		profile.isAgentNicknameEnable
 		&& agentNickname
 		&& isSessionOpen
-		&& agentNickname !== '调度员'
-	) {
+		&& agentNickname !== "调度员"
+	){
 		$agentNickname.innerText = agentNickname;
 	}
-	else {
+	else{
 		$agentNickname.innerText = profile.defaultAgentName;
 	}
 }

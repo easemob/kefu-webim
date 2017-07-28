@@ -1,8 +1,6 @@
 
 // 限制一段时间内的重试次数，以及每次调用的时间间隔
 function retryThrottle(fn, options){
-	if (typeof fn !== 'function') throw 'unexpect type of fn.';
-
 	var opt = options || {};
 	var lastResetTimestamp = _.now();
 	var retryLimit = opt.retryLimit || 3;
@@ -11,24 +9,24 @@ function retryThrottle(fn, options){
 	var retryCount = 0;
 	var throttledFn = _.throttle(fn, waitTime);
 
-	return function (){
-		if (_.now() - lastResetTimestamp < resetTime){
-			if (retryCount < retryLimit){
+	return function(){
+		if(_.now() - lastResetTimestamp < resetTime){
+			if(retryCount < retryLimit){
 				retryCount++;
 				throttledFn();
 			}
-			else {
+			else{
 				// 达到重试次数，忽略
 			}
 		}
-		else {
+		else{
 			lastResetTimestamp = _.now();
 			retryCount = 1;
 			throttledFn();
 		}
 
 	};
-};
+}
 
 module.exports = {
 	retryThrottle: retryThrottle

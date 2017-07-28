@@ -1,18 +1,17 @@
-var _const = require('../../../common/const');
-var utils = require('../../../common/utils');
-var profile = require('../tools/profile');
-var eventListener = require('../tools/eventListener');
-var apiHelper = require('../apiHelper');
+var _const = require("../../../common/const");
+var utils = require("../../../common/utils");
+var profile = require("../tools/profile");
+var eventListener = require("../tools/eventListener");
+var apiHelper = require("../apiHelper");
 
 var $agentStatusText;
-var _timerHandler;
 
 module.exports = function(){
-	var topBar = document.querySelector('.em-widget-header');
-	$agentStatusText = topBar.querySelector('.em-header-status-text');
+	var topBar = document.querySelector(".em-widget-header");
+	$agentStatusText = topBar.querySelector(".em-header-status-text");
 
 	// 开始轮询坐席状态
-	_timerHandler = setInterval(function (){
+	setInterval(function(){
 		var officialAccount = profile.currentOfficialAccount;
 		_setAgentStatus(officialAccount);
 	}, 5000);
@@ -22,13 +21,13 @@ module.exports = function(){
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _setAgentStatus);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, _setAgentStatus);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _setAgentStatus);
-	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, function (officialAccount){
+	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, function(officialAccount){
 		_update(officialAccount.status);
 	});
 };
 
-function _setAgentStatus(officialAccount) {
-	if (
+function _setAgentStatus(officialAccount){
+	if(
 		officialAccount !== profile.currentOfficialAccount
 		|| !officialAccount
 		|| !profile.isChatWindowOpen
@@ -39,19 +38,19 @@ function _setAgentStatus(officialAccount) {
 	var agentType = officialAccount.agentType;
 	var isSessionOpen = officialAccount.isSessionOpen;
 
-	if (agentType === _const.AGENT_ROLE.ROBOT){
+	if(agentType === _const.AGENT_ROLE.ROBOT){
 		// 机器人不去轮询，显示为在线
-		_update('Online');
+		_update("Online");
 	}
-	else if (
+	else if(
 		!profile.isAgentNicknameEnable
 		|| !agentId
 		|| !isSessionOpen
 	){
 		_update(null);
 	}
-	else {
-		apiHelper.getAgentStatus(agentId).then(function (status){
+	else{
+		apiHelper.getAgentStatus(agentId).then(function(status){
 			officialAccount.agentState = status;
 			_update(status);
 		});
@@ -59,6 +58,6 @@ function _setAgentStatus(officialAccount) {
 }
 
 function _update(status){
-	var agentStatusText = _const.agentStatusText[status || 'Other'];
+	var agentStatusText = _const.agentStatusText[status || "Other"];
 	$agentStatusText.innerText = agentStatusText;
 }

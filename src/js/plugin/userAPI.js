@@ -1,4 +1,4 @@
-'use strict';
+
 
 require('../common/polyfill');
 var utils = require('../common/utils');
@@ -32,45 +32,41 @@ var DEFAULT_CONFIG = {
 	domain: '',
 	path: '',
 	ticket: true,
-	staticPath: '',
-	buttonText: '联系客服',
-	dialogWidth: '360px',
-	dialogHeight: '550px',
+	staticPath: "",
+	buttonText: "联系客服",
+	dialogWidth: "360px",
+	dialogHeight: "550px",
 	dragenable: true,
 	minimum: true,
 	soundReminder: true,
-	dialogPosition: { x: '10px', y: '10px' },
+	dialogPosition: { x: "10px", y: "10px" },
 	user: {
-		username: '',
-		password: '',
-		token: ''
+		username: "",
+		password: "",
+		token: ""
 	}
 };
-var config = utils.copy(DEFAULT_CONFIG);
+config = utils.copy(DEFAULT_CONFIG);
 
 
-//get parameters from easemob.js
-var baseConfig = getConfig();
-var _config = {};
 
-var iframe;
 
 reset();
 
 // growing io user id
 // 由于存在cookie跨域问题，所以从配置传过去
-config.grUserId = utils.get('gr_user_id');
+config.grUserId = utils.get("gr_user_id");
 
 
-//init _config & concat config and global easemobim.config
-function reset() {
+// init _config & concat config and global easemobim.config
+function reset(){
 	config = utils.copy(DEFAULT_CONFIG);
 	utils.extend(config, easemobim.config);
 	_config = utils.copy(config);
 
-	var hide = utils.convertFalse(_config.hide) !== '' ? _config.hide : baseConfig.json.hide;
-	var resources = utils.convertFalse(_config.resources) !== '' ? _config.resources : baseConfig.json.resources;
-	var sat = utils.convertFalse(_config.satisfaction) !== '' ? _config.satisfaction : baseConfig.json.sat;
+	var hide = utils.convertFalse(_config.hide) !== "" ? _config.hide : baseConfig.json.hide;
+	var resources = utils.convertFalse(_config.resources) !== "" ? _config.resources : baseConfig.json.resources;
+	var sat = utils.convertFalse(_config.satisfaction) !== "" ? _config.satisfaction : baseConfig.json.sat;
 
 	_config.tenantId = _config.tenantId || baseConfig.json.tenantId;
 	_config.configId = _config.configId || baseConfig.json.configId;
@@ -78,35 +74,35 @@ function reset() {
 	_config.resources = utils.convertFalse(resources);
 	_config.satisfaction = utils.convertFalse(sat);
 	_config.domain = _config.domain || baseConfig.domain;
-	_config.path = _config.path || (baseConfig.domain + '/webim');
-	_config.staticPath = _config.staticPath || (baseConfig.domain + '/webim/static');
+	_config.path = _config.path || (baseConfig.domain + "/webim");
+	_config.staticPath = _config.staticPath || (baseConfig.domain + "/webim/static");
 }
 // get config from current script
-function getConfig() {
+function getConfig(){
 	var src;
 	var obj = {};
 	var scripts = document.scripts;
 
-	for (var s = 0, l = scripts.length; s < l; s++) {
-		if (~scripts[s].src.indexOf('easemob.js')) {
+	for(var s = 0, l = scripts.length; s < l; s++){
+		if(~scripts[s].src.indexOf("easemob.js")){
 			src = scripts[s].src;
 			break;
 		}
 	}
 
-	if (!src) {
-		return { json: obj, domain: '' };
+	if(!src){
+		return { json: obj, domain: "" };
 	}
 
 	var tmp;
-	var idx = src.indexOf('?');
-	var sIdx = ~src.indexOf('//') ? src.indexOf('//') : 0;
-	var domain = src.slice(sIdx, src.indexOf('/', sIdx + 2));
-	var arr = src.slice(idx + 1).split('&');
+	var idx = src.indexOf("?");
+	var sIdx = ~src.indexOf("//") ? src.indexOf("//") : 0;
+	var domain = src.slice(sIdx, src.indexOf("/", sIdx + 2));
+	var arr = src.slice(idx + 1).split("&");
 
-	for (var i = 0, len = arr.length; i < len; i++) {
-		tmp = arr[i].split('=');
-		obj[tmp[0]] = tmp.length > 1 ? decodeURIComponent(tmp[1]) : '';
+	for(var i = 0, len = arr.length; i < len; i++){
+		tmp = arr[i].split("=");
+		obj[tmp[0]] = tmp.length > 1 ? decodeURIComponent(tmp[1]) : "";
 	}
 	return { json: obj, domain: domain };
 }
@@ -115,64 +111,64 @@ function getConfig() {
  * @param: {String} 技能组名称，选填
  * 兼容旧版接口，建议使用easemobim.bind方法
  */
-window.easemobIM = function (group) {
+window.easemobIM = function(group){
 	easemobim.bind({ emgroup: group });
 };
-window.easemobIMS = function (tenantId, group) {
+window.easemobIMS = function(tenantId, group){
 	easemobim.bind({ tenantId: tenantId, emgroup: group });
 };
 
 /*
  * @param: {Object} config
  */
-easemobim.bind = function (config) {
+easemobim.bind = function(config){
 	// 防止空参数调用异常
 	config = config || {};
-	config.emgroup = config.emgroup || easemobim.config.emgroup || '';
+	config.emgroup = config.emgroup || easemobim.config.emgroup || "";
 
 	var cacheKeyName = config.configId || (config.tenantId + config.emgroup);
 
-	for (var i in easemobim.tenants) {
-		if (easemobim.tenants.hasOwnProperty(i)) {
-			easemobim.tenants[i].close();
+	for(var i in tenantList){
+		if(tenantList.hasOwnProperty(i)){
+			tenantList[i].close();
 		}
 	}
 
-	iframe = easemobim.tenants[cacheKeyName];
+	iframe = tenantList[cacheKeyName];
 
-	if (iframe) {
+	if(iframe){
 		iframe.open();
 	}
-	else {
+	else{
 		utils.isMobile && loading.show();
 		reset();
 		utils.extend(_config, config);
 
-		if (!_config.tenantId && !_config.configId) {
-			console.error('未指定tenantId!');
+		if(!_config.tenantId && !_config.configId){
+			console.error("未指定tenantId!");
 			return;
 		}
 
 		iframe = Iframe(_config);
-		easemobim.tenants[cacheKeyName] = iframe;
+		tenantList[cacheKeyName] = iframe;
 		iframe.set(_config, iframe.open);
 	}
 
 };
 
-//open api1: send custom extend message
-easemobim.sendExt = function (ext) {
-	if (iframe){
+// open api1: send custom extend message
+easemobim.sendExt = function(ext){
+	if(iframe){
 		iframe.send({
 			ext: ext
 		});
 	}
-	else {
-		console.error('The chat window is not initialized.');
+	else{
+		console.error("The chat window is not initialized.");
 	}
 };
 
-//open api2: send text message
+// open api2: send text message
 /*
  * @param: {object} 消息体
  * {
@@ -181,24 +177,24 @@ easemobim.sendExt = function (ext) {
  * }
  */
 
-easemobim.sendText = function (msg) {
-	if (iframe){
+easemobim.sendText = function(msg){
+	if(iframe){
 		iframe.sendText(msg);
 	}
-	else {
-		console.error('The chat window is not initialized.');
+	else{
+		console.error("The chat window is not initialized.");
 	}
 };
 
-//auto load
-if (
+// auto load
+if(
 	(!_config.hide || _config.autoConnect || _config.eventCollector)
 	&& (_config.tenantId || _config.configId) && !utils.isMobile
-) {
-	var cacheKeyName = _config.configId || (config.tenantId + (config.emgroup || ''));
+){
+	var cacheKeyName = _config.configId || (config.tenantId + (config.emgroup || ""));
 
-	iframe = easemobim.tenants[cacheKeyName] || Iframe(_config);
-	easemobim.tenants[cacheKeyName] = iframe;
+	iframe = tenantList[cacheKeyName] || Iframe(_config);
+	tenantList[cacheKeyName] = iframe;
 	iframe.set(_config, iframe.close);
 	// 访客上报用后失效
 	easemobim.config.eventCollector = false;

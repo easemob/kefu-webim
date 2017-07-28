@@ -2,7 +2,7 @@
 var eventCallbackTable = {};
 
 function _add(event, callback){
-	if (!eventCallbackTable[event]) eventCallbackTable[event] = [];
+	if(!eventCallbackTable[event]) eventCallbackTable[event] = [];
 	eventCallbackTable[event].push(callback);
 }
 

@@ -1,7 +1,7 @@
-var utils = require('../../../common/utils');
-var profile = require('../tools/profile');
-var Dict = require('../tools/Dict');
-var uikit = require('../uikit');
+var utils = require("../../../common/utils");
+var profile = require("../tools/profile");
+var Dict = require("../tools/Dict");
+var uikit = require("../uikit");
 
 var EMPTY_FUNCTION = function(){};
 var dialog;
@@ -9,18 +9,18 @@ var listDom;
 var itemHashTable = new Dict();
 var itemOnClickCallback;
 
-module.exports = function (options){
+module.exports = function(options){
 	var opt = options || {};
 	itemOnClickCallback = opt.itemOnClickCallback || EMPTY_FUNCTION;
 
 	dialog = uikit.createDialog({
-		className: 'session-list',
-		contentDom:  '<ul></ul>'
+		className: "session-list",
+		contentDom:  "<ul></ul>"
 	});
-	listDom = dialog.el.querySelector('ul');
+	listDom = dialog.el.querySelector("ul");
 
-	utils.live('li.session-item', 'click', function (){
-		var id = this.getAttribute('data-id');
+	utils.live("li.session-item", "click", function(){
+		var id = this.getAttribute("data-id");
 		itemOnClickCallback(id);
 		dialog.hide();
 	}, listDom);
@@ -36,8 +36,8 @@ module.exports = function (options){
 
 function _updateLatestMessage(itemId, textMessage, timestamp){
 	var itemDom = itemHashTable.get(itemId);
-	var latestMessageDom = itemDom.querySelector('.latest-message');
-	var latestTimestamp = itemDom.querySelector('.latest-timestamp');
+	var latestMessageDom = itemDom.querySelector(".latest-message");
+	var latestTimestamp = itemDom.querySelector(".latest-timestamp");
 
 	latestTimestamp.innerText = timestamp;
 	latestMessageDom.innerText = textMessage;
@@ -47,18 +47,18 @@ function _updateLatestMessage(itemId, textMessage, timestamp){
 
 function _updateUnreadCount(itemId, unreadCount){
 	var itemDom = itemHashTable.get(itemId);
-	var unreadCountDom = itemDom.querySelector('.unread-count');
+	var unreadCountDom = itemDom.querySelector(".unread-count");
 
-	if (!unreadCount || typeof unreadCount !== 'number'){
-		utils.addClass(unreadCountDom, 'hide');
+	if(!unreadCount || typeof unreadCount !== "number"){
+		utils.addClass(unreadCountDom, "hide");
 	}
-	else if (unreadCount > 99){
-		unreadCountDom.innerText = '...';
-		utils.removeClass(unreadCountDom, 'hide');
+	else if(unreadCount > 99){
+		unreadCountDom.innerText = "...";
+		utils.removeClass(unreadCountDom, "hide");
 	}
-	else {
+	else{
 		unreadCountDom.innerText = unreadCount;
-		utils.removeClass(unreadCountDom, 'hide');
+		utils.removeClass(unreadCountDom, "hide");
 	}
 }
 
@@ -84,12 +84,12 @@ function _renderItem(item){
 	var id = item.official_account_id;
 	var avatar = item.img || profile.defaultAvatar;
 	return utils.createElementFromHTML([
-		'<li class="session-item" data-id="' + id + '">',
-			'<img class="avatar" src="' + avatar + '">',
-			'<span class="name">' + name + '</span>',
-			'<span class="latest-message"></span>',
-			'<span class="latest-timestamp"></span>',
-			'<span class="unread-count hide"></span>',
-		'</li>'
-	].join(''));
+		"<li class=\"session-item\" data-id=\"" + id + "\">",
+		"<img class=\"avatar\" src=\"" + avatar + "\">",
+		"<span class=\"name\">" + name + "</span>",
+		"<span class=\"latest-message\"></span>",
+		"<span class=\"latest-timestamp\"></span>",
+		"<span class=\"unread-count hide\"></span>",
+		"</li>"
+	].join(""));
 }

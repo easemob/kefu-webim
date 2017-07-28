@@ -1,18 +1,18 @@
 // prompt 不会消失
 // tip 2秒后自动消失
-var utils = require('../../common/utils');
+var utils = require("../../common/utils");
 
 var EMPTY_FUNCTION = function(){};
-var promptDom = document.querySelector('.em-widget-error-prompt');
-var promptTextSpanDom = promptDom.querySelector('span');
+var promptDom = document.querySelector(".em-widget-error-prompt");
+var promptTextSpanDom = promptDom.querySelector("span");
 
 function _showPrompt(msg){
 	promptTextSpanDom.innerText = msg;
-	utils.removeClass(promptDom, 'hide');
+	utils.removeClass(promptDom, "hide");
 }
 
 function _hidePrompt(){
-	utils.addClass(promptDom, 'hide');
+	utils.addClass(promptDom, "hide");
 }
 
 function tip(msg){
@@ -23,15 +23,15 @@ function tip(msg){
 function _createDialog(opt){
 	opt = opt || {};
 	var className = opt.className;
-	var contentDom = opt.contentDom || '';
-	var el = utils.createElementFromHTML('<div class="em-dialog hide"></div>');
+	var contentDom = opt.contentDom || "";
+	var el = utils.createElementFromHTML("<div class=\"em-dialog hide\"></div>");
 	var cancelBtn;
 	var confirmBtn;
 	var cancel;
 	var confirm;
 
 	className && utils.addClass(el, className);
-	if (typeof contentDom === 'string'){
+	if(typeof contentDom === "string"){
 		contentDom = utils.createElementFromHTML(contentDom);
 	}
 
@@ -39,13 +39,13 @@ function _createDialog(opt){
 	document.body.appendChild(el);
 
 	function _hide(){
-		utils.addClass(el, 'hide');
+		utils.addClass(el, "hide");
 	}
 	function _show(){
-		utils.removeClass(el, 'hide');
+		utils.removeClass(el, "hide");
 	}
 	function _toggle(){
-		utils.toggle(el, 'hide');
+		utils.toggle(el, "hide");
 	}
 	function _cancelCb(){
 		cancel();
@@ -59,23 +59,23 @@ function _createDialog(opt){
 		addButton: function(opt){
 			opt = opt || {};
 			var hideCancel = opt.hideCancel;
-			var confirmText = opt.confirmText || '确定';
+			var confirmText = opt.confirmText || "确定";
 			cancel = opt.cancel || EMPTY_FUNCTION;
 			confirm = opt.confirm || EMPTY_FUNCTION;
 			var footer = utils.createElementFromHTML([
-				'<div class="footer">',
-				'<button class="cancel-btn">取消</button>',
-				'<button class="confirm-btn bg-color"></button>',
-				'</div>'
-			].join(''));
+				"<div class=\"footer\">",
+				"<button class=\"cancel-btn\">取消</button>",
+				"<button class=\"confirm-btn bg-color\"></button>",
+				"</div>"
+			].join(""));
 
-			cancelBtn = footer.querySelector('.cancel-btn');
-			confirmBtn = footer.querySelector('.confirm-btn');
+			cancelBtn = footer.querySelector(".cancel-btn");
+			confirmBtn = footer.querySelector(".confirm-btn");
 			confirmBtn.innerText = confirmText;
-			hideCancel && utils.addClass(cancelBtn, 'hide');
+			hideCancel && utils.addClass(cancelBtn, "hide");
 			el.appendChild(footer);
-			utils.on(cancelBtn, 'click', _cancelCb);
-			utils.on(confirmBtn, 'click', _confirmCb);
+			utils.on(cancelBtn, "click", _cancelCb);
+			utils.on(confirmBtn, "click", _confirmCb);
 			return this;
 		},
 		show: function(){
@@ -91,8 +91,8 @@ function _createDialog(opt){
 			return this;
 		},
 		destroy: function(){
-			utils.off(cancelBtn, 'click', _cancelCb);
-			utils.off(confirmBtn, 'click', _confirmCb);
+			utils.off(cancelBtn, "click", _cancelCb);
+			utils.off(confirmBtn, "click", _confirmCb);
 			utils.removeDom(el);
 		},
 		el: el
@@ -101,15 +101,15 @@ function _createDialog(opt){
 
 function showSuccess(msg){
 	var contentDom = utils.createElementFromHTML([
-		'<div>',
-		'<i class="icon-circle"><i class="icon-good"></i></i>',
-		'<p></p>',
-		'</div>'
-	].join(''));
-	contentDom.querySelector('p').innerText = msg;
+		"<div>",
+		"<i class=\"icon-circle\"><i class=\"icon-good\"></i></i>",
+		"<p></p>",
+		"</div>"
+	].join(""));
+	contentDom.querySelector("p").innerText = msg;
 	var dialog = _createDialog({
 		contentDom: contentDom,
-		className: 'mini em-success-prompt'
+		className: "mini em-success-prompt"
 	}).show();
 
 	setTimeout(dialog.destroy, 2000);

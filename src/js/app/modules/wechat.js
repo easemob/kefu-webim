@@ -8,10 +8,9 @@
 // 6. create Wechat im user
 // 7. exec success callback
 
-var utils = require('../../common/utils');
-var emajax = require('../../common/ajax');
-var apiHelper = require('./apiHelper');
-var profile = require('./tools/profile');
+var utils = require("../../common/utils");
+var apiHelper = require("./apiHelper");
+var profile = require("./tools/profile");
 
 var isWechatBrowser = /MicroMessenger/.test(navigator.userAgent);
 var appid = utils.query('appid');
@@ -24,43 +23,45 @@ module.exports = function (success, fail) {
 		return;
 	}
 
-	if (!code) {
-		apiHelper.getWechatComponentId().then(function (id){
-			location.href =  'https://open.weixin.qq.com/connect/oauth2/authorize?'
-				+ 'appid=' + appid
-				+ '&redirect_uri=' + encodeURIComponent(location.href)
-				+ '&response_type=code'
-				+ '&scope=snsapi_userinfo'
-				+ '&state=STATE'
-				+ '&component_appid=' + id
-				+ '#wechat_redirect'
+	if(!code){
+		apiHelper.getWechatComponentId().then(function(id){
+			location.href =  "https://open.weixin.qq.com/connect/oauth2/authorize?"
+				+ "appid=" + appid
+				+ "&redirect_uri=" + encodeURIComponent(location.href)
+				+ "&response_type=code"
+				+ "&scope=snsapi_userinfo"
+				+ "&state=STATE"
+				+ "&component_appid=" + id
+				+ "#wechat_redirect"
 			;
-		}, function (err){
+		}, function(err){
 			console.warn(err);
 			fail();
 		});
 	}
-	else {
-		apiHelper.getWechatProfile(tenantId, appid, code).then(function (info){
+	else{
+		apiHelper.getWechatProfile(tenantId, appid, code).then(function(info){
 			// cache wechat nickname
 			profile.config.visitor.userNickname = info.nickname;
 
-			apiHelper.createWechatImUser(info.openid).then(function (entity){
+			apiHelper.createWechatImUser(info.openid).then(function(entity){
 				success(entity);
-			}, function (err){
+			}, function(err){
 				console.warn(err);
 				fail();
 			});
-		}, function (err){
-			if (err === 'unexpected response value.'){
+		}, function(err){
+			var url;
+
+			if(err.message === "unexpected response value."){
 				fail();
 			}
-			else {
+			else{
 				// 这段代码不知何意，暂时保留
-				var url = location.href.replace(/&code=[^&]+/, '');
+				url = location.href.replace(/&code=[^&]+/, "");
 
-				if (url.indexOf('appid') !== url.lastIndexOf('appid')) {
-					url = url.replace(/&appid=wx[^&]+/, '');
+				if(url.indexOf("appid") !== url.lastIndexOf("appid")){
+					url = url.replace(/&appid=wx[^&]+/, "");
 				}
 				location.href = url;
 			}
