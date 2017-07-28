@@ -8,8 +8,12 @@
 const path = require("path");
 const webpack = require("webpack");
 const i18next = require("i18next");
-const languageMap = require("./src/i18n/zh-CN");
+const _zh_cn_map_ = require("./src/i18n/zh-CN");
+const _en_us_map_ = require("./src/i18n/en-US");
 const VERSION = "pre_47.15.0";
+
+const argv = require("yargs").argv;
+const lang = argv.lang || "zh-CN";
 
 var conmmonConfig;
 var transfer;
@@ -18,14 +22,17 @@ var app;
 var taskList;
 
 i18next.init({
-	lng: "zh-CN",
+	lng: lang,
 	fallbackLng: false,
 	keySeparator: ".",
 	nsSeparator: false,
 	saveMissing: true,
 	resources: {
 		"zh-CN": {
-			translation: languageMap
+			translation: _zh_cn_map_,
+		},
+		"en-US": {
+			translation: _en_us_map_,
 		},
 	},
 });
@@ -168,8 +175,4 @@ taskList = [
 	app,
 ];
 
-module.exports = /development/.test(process.env.npm_lifecycle_script)
-	? taskList
-	// todo: modify this configuration
-	: taskList
-;
+module.exports = taskList;
