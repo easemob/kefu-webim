@@ -120,6 +120,7 @@
 
 		//load modules
 		easemobim.leaveMessage = easemobim.leaveMessage(chat, config.tenantId);
+		easemobim.querySkillgroup = easemobim.querySkillgroup(chat,config);
 		easemobim.paste(chat).init();
 		easemobim.satisfaction(chat);
 
