@@ -298,6 +298,7 @@
 				url: '/v1/websites/zto/billCode-webSite-relations?msg_type=ZTO_BILLCODE_ROUTER&logistics_interface=' + encodeURIComponent("{") + "billCode:" + msg.data.billCode + encodeURIComponent("}"), 
 				msg: msg,
 				type: 'POST',
+				excludeData: true
 			}));
 			break;		
 		case 'getSkillgroupByWebsiteId':

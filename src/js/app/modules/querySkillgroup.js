@@ -5,15 +5,15 @@
 		// 仅初始化一次
 		if (dom) return;
 		var dom = document.querySelector('.em-order-num-wrapper');
-		var content = dom.querySelector('input');
+		var content = dom.querySelector('.num-input');
 		var numBtn = dom.querySelector('.btn-num');
-		var noNumBtn = dom.querySelector('.btn-no-num');
+		var cancelBtn = dom.querySelector('.btn-no-num');
 		var success = dom.querySelector('.em-widget-success-prompt');
 
-		utils.on(noNumBtn, utils.click, function () {
+		utils.on(cancelBtn, utils.click, function () {
 			utils.addClass(dom, 'hide');
 		});
-		utils.on(content, 'input change', function () {
+		utils.on(content, 'input change keydown', function () {
 			if(content.value.length === 12){
 				utils.removeClass(numBtn, 'disabled');
 			} else{
@@ -39,7 +39,6 @@
 					if(!res) {
 						isQuerying = false;
 						utils.addClass(dom, 'hide');
-						return;
 					}else {
 						cb(res);
 					}
@@ -52,20 +51,15 @@
 			}, function (msg) {
 				isQuerying = false;
 				var res = msg.data.entities;
+				var extWeichat = { queueId: res[0],reserve_queue: res[1]};
 				if(chat.readyHandled){
 					chat.channel.sendText('',false ,{
 						ext: {
-							weichat: {
-								queueId: res[0],
-								reserve_queue: res[1],
-							}
+							weichat: extWeichat
 						}
 					});
 				}else{
-					chat.cachedSetSkillgroup = {
-						queueId: res[0],	
-						reserve_queue: res[1],
-					}
+					chat.cachedSetSkillgroup = extWeichat;
 				}
 
 				utils.addClass(dom, 'hide')

@@ -449,7 +449,7 @@
 			getSession: function () {
 				var me = this;
 
-				getExSessionPromise = new Promise(function(resolve, reject) {
+				var getExSessionPromise = new Promise(function(resolve, reject) {
 					api('getExSession', {
 						id: config.user.username,
 						orgName: config.orgName,
@@ -476,10 +476,12 @@
 								isInSession: false
 							});
 						}
+					},function (err) {
+						reject(err);
 					});
 				});
 
-				getSessionQueueIdPromise = new Promise(function(resolve, reject) {
+				var getSessionQueueIdPromise = new Promise(function(resolve, reject) {
 					api('getSessionQueueId', {
 						tenantId: config.tenantId,
 						visitorUsername: config.user.username,
@@ -495,6 +497,8 @@
 								isWaiting: false
 							});
 						}
+					},function (err) {
+						reject(err);
 					});
 				});
 
