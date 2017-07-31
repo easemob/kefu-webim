@@ -388,13 +388,22 @@ function getDutyStatus(){
 
 function getGrayList(){
 	return new Promise(function(resolve/* , reject */){
-		api("graylist", {}, function(msg){
-			var grayList = {};
-			var data = msg.data || {};
-			_.each(_const.GRAY_LIST_KEYS, function(key){
-				grayList[key] = _.contains(data[key], +config.tenantId);
-			});
-			resolve(grayList);
+		api("grayScale", {
+			tenantId: config.tenantId,
+		}, function(msg){
+			var grayScaleDescription = utils.getDataByPath(msg, "data.entities") || [];
+			var grayScaleList = _.chain(grayScaleDescription)
+			.map(function(item){
+				var keyName = item.grayName;
+				var status = item.status;
+				var enable = status !== "Disable";
+
+				return [keyName, enable];
+			})
+			.object()
+			.value();
+
+			resolve(grayScaleList);
 		}, function(err){
 			console.error("unable to get gray list: ", err);
 			// 获取失败返回空对象
