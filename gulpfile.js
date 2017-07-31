@@ -156,6 +156,7 @@ gulp.task('combineJs', function() {
 			'src/js/app/modules/message.js',
 			'src/js/app/modules/paste.js',
 			'src/js/app/modules/leaveMessage.js',
+			'src/js/app/modules/querySkillgroup.js',
 			'src/js/app/modules/satisfaction.js',
 			'src/js/app/modules/imgView.js',
 			'src/js/app/modules/wechat.js',
