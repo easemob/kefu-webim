@@ -14,7 +14,7 @@
 		utils.on(cancelBtn, utils.click, function () {
 			utils.addClass(dom, 'hide');
 		});
-		utils.on(content, 'input change keydown', function () {
+		utils.on(content, 'input change keyup', function () {
 			billCodeNum = content.value.trim();
 			if(/^\d{12}$/.test(billCodeNum)){
 				utils.removeClass(numBtn, 'disabled');
