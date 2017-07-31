@@ -297,6 +297,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "graylist":
+	// DEPRECATED!!!
 		emitAjax({
 			url: "/management/graylist",
 			msg: msg,
@@ -661,6 +662,14 @@ getData.listen(function(msg){
 			msg: msg,
 			type: "GET",
 			excludeData: true
+		});
+		break;
+	case "grayScale":
+		emitAjax({
+			url: "/v1/grayscale/tenants/" + tenantId,
+			msg: msg,
+			type: "GET",
+			excludeData: true,
 		});
 		break;
 	default:
