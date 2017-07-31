@@ -88,11 +88,7 @@
 					this.cachedCommandMessage = null;
 				}
 				if (this.cachedSetSkillgroup) {
-					chat.channel.sendText('',false ,{
-						ext: {
-							weichat: this.cachedSetSkillgroup
-						}
-					});
+					chat.channel.sendText('',false ,this.cachedSetSkillgroup);
 				}
 				if (utils.isTop) {
 					//get visitor

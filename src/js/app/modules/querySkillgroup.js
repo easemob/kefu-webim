@@ -49,22 +49,26 @@
 		};
 		function getSkillgroup(msg) {
 			easemobim.api('getSkillgroupByWebsiteId', {
+				argType: 'websiteId',
 				ids: msg.mainSite+','+msg.spareSite,
 				tenantId : config.tenantId
 			}, function (msg) {
 				isQuerying = false;
 				var res = msg.data.entities;
-				var extWeichat = { queueId: res[0],reserve_queue: res[1]};
-				if(chat.readyHandled){
-					chat.channel.sendText(billCodeNum,false ,{
+				var extBody = { 
 						ext: {
-							weichat: extWeichat
+							weichat: {
+								queueId: res[0],
+								reserve_queue: res[1]
+							}
 						}
-					});
+					};
+				if(chat.readyHandled){
+					chat.channel.sendText(billCodeNum,false ,extBody);
 				}else{
-					chat.cachedSetSkillgroup = extWeichat;
+					chat.cachedSetSkillgroup = extBody;
 				}
-				utils.addClass(dom, 'hide')
+				utils.addClass(dom, 'hide');
 			});
 		}
 		return {

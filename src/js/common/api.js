@@ -303,7 +303,7 @@
 			break;		
 		case 'getSkillgroupByWebsiteId':
 			easemobim.emajax(createObject({
-				url: '/v1/websites/tenants/'+ msg.data.tenantId + '/website-queue-relations?argType=websiteId', 
+				url: '/v1/websites/tenants/'+ msg.data.tenantId + '/website-queue-relations', 
 				msg: msg,
 				type: 'get',
 			}));
