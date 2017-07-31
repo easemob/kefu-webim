@@ -87,6 +87,9 @@
 					me.channel.sendText('', false, this.cachedCommandMessage);
 					this.cachedCommandMessage = null;
 				}
+				if (this.cachedSetSkillgroup) {
+					chat.channel.sendText.apply(this,this.cachedSetSkillgroup);
+				}
 				if (utils.isTop) {
 					//get visitor
 					var visInfo = config.visitor;
@@ -125,7 +128,6 @@
 				if (config.emgroup) {
 					msg.body.ext.weichat.queueName = decodeURIComponent(config.emgroup);
 				}
-
 				//bind visitor
 				if (config.visitor) {
 					msg.body.ext.weichat.visitor = config.visitor;
@@ -443,29 +445,74 @@
 			getSession: function () {
 				var me = this;
 
-				api('getExSession', {
-					id: config.user.username,
-					orgName: config.orgName,
-					appName: config.appName,
-					imServiceNumber: config.toUser,
-					tenantId: config.tenantId
-				}, function (msg) {
-					var data = msg.data || {};
-					var serviceSession = data.serviceSession;
+				var getExSessionPromise = new Promise(function(resolve, reject) {
+					api('getExSession', {
+						id: config.user.username,
+						orgName: config.orgName,
+						appName: config.appName,
+						imServiceNumber: config.toUser,
+						tenantId: config.tenantId
+					}, function(msg) {
+						var data = msg.data || {};
+						var serviceSession = data.serviceSession;
 
-					me.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
-					me.hasAgentOnline = data.onlineHumanAgentCount + data.onlineRobotAgentCount > 0;
+						me.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
+						me.hasAgentOnline = data.onlineHumanAgentCount + data.onlineRobotAgentCount > 0;
 
-					if (serviceSession) {
-						config.agentUserId = serviceSession.agentUserId;
-						// 确保正在进行中的会话，刷新后还会继续轮询坐席状态
-						me.startToGetAgentStatus();
-						me.sendAttribute(msg);
-					}
-					else {
+						if (serviceSession) {
+							config.agentUserId = serviceSession.agentUserId;
+							// 确保正在进行中的会话，刷新后还会继续轮询坐席状态
+							me.startToGetAgentStatus();
+							me.sendAttribute(msg);
+							resolve({
+								isInSession: true
+							});
+						} else {
+							resolve({
+								isInSession: false
+							});
+						}
+					},function (err) {
+						reject(err);
+					});
+				});
+
+				var getSessionQueueIdPromise = new Promise(function(resolve, reject) {
+					api('getSessionQueueId', {
+						tenantId: config.tenantId,
+						visitorUsername: config.user.username,
+						techChannelInfo: config.orgName + '%23' + config.appName + '%23' + config.toUser
+					}, function(resp) {
+						var nowData = resp.data.entity;
+						if (nowData && nowData.state === 'Wait') {
+							resolve({
+								isWaiting: true
+							});
+						} else {
+							resolve({
+								isWaiting: false
+							});
+						}
+					},function (err) {
+						reject(err);
+					});
+				});
+
+				Promise.all([
+					getExSessionPromise,
+					getSessionQueueIdPromise
+				]).then(function(result) {
+					var isInSession = result[0].isInSession;
+					var isWaiting = result[1].isWaiting;
+					if (!isInSession && !isWaiting) {
 						// 仅当会话不存在时获取欢迎语
 						me.getGreeting();
+						easemobim.querySkillgroup.show();
+					} else {
+						easemobim.querySkillgroup.hide();
 					}
+				}, function(err) {
+					throw err;
 				});
 			},
 			sendAttribute: function (msg) {
