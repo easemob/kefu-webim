@@ -9,12 +9,14 @@
 		var numBtn = dom.querySelector('.btn-num');
 		var cancelBtn = dom.querySelector('.btn-no-num');
 		var success = dom.querySelector('.em-widget-success-prompt');
+		var billCodeNum;
 
 		utils.on(cancelBtn, utils.click, function () {
 			utils.addClass(dom, 'hide');
 		});
 		utils.on(content, 'input change keydown', function () {
-			if(content.value.length === 12){
+			billCodeNum = content.value.trim();
+			if(/^\d{12}$/.test(billCodeNum)){
 				utils.removeClass(numBtn, 'disabled');
 			} else{
 				utils.addClass(numBtn, 'disabled');
@@ -39,6 +41,7 @@
 					if(!res) {
 						isQuerying = false;
 						utils.addClass(dom, 'hide');
+						me.channel.sendText(billCodeNum);
 					}else {
 						cb(res);
 					}
@@ -53,7 +56,7 @@
 				var res = msg.data.entities;
 				var extWeichat = { queueId: res[0],reserve_queue: res[1]};
 				if(chat.readyHandled){
-					chat.channel.sendText('',false ,{
+					chat.channel.sendText(billCodeNum,false ,{
 						ext: {
 							weichat: extWeichat
 						}
@@ -61,7 +64,6 @@
 				}else{
 					chat.cachedSetSkillgroup = extWeichat;
 				}
-
 				utils.addClass(dom, 'hide')
 			});
 		}
