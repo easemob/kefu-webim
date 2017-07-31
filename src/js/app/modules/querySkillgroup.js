@@ -63,10 +63,11 @@
 							}
 						}
 					};
+				var extArr = [billCodeNum,false,extBody];
 				if(chat.readyHandled){
-					chat.channel.sendText(billCodeNum,false ,extBody);
+					chat.channel.sendText.apply(chat,extArr);
 				}else{
-					chat.cachedSetSkillgroup = extBody;
+					chat.cachedSetSkillgroup = extArr;
 				}
 				utils.addClass(dom, 'hide');
 			});
