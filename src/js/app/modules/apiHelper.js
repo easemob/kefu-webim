@@ -1056,7 +1056,7 @@ function getWechatProfile(tenantId, appId, code){
 				}
 			},
 			error: function(err){
-				resolve(err);
+				reject(err);
 			}
 		});
 	});

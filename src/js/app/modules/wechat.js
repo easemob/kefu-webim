@@ -13,12 +13,12 @@ var apiHelper = require("./apiHelper");
 var profile = require("./tools/profile");
 
 var isWechatBrowser = /MicroMessenger/.test(navigator.userAgent);
-var appid = utils.query('appid');
-var code = utils.query('code');
+var appid = utils.query("appid");
+var code = utils.query("code");
 
-module.exports = function (success, fail) {
+module.exports = function(success, fail){
 	var tenantId = profile.config.tenantId;
-	if (!isWechatBrowser || !tenantId || !appid){
+	if(!isWechatBrowser || !tenantId || !appid){
 		fail();
 		return;
 	}
@@ -50,21 +50,8 @@ module.exports = function (success, fail) {
 				console.warn(err);
 				fail();
 			});
-		}, function(err){
-			var url;
-
-			if(err.message === "unexpected response value."){
-				fail();
-			}
-			else{
-				// 这段代码不知何意，暂时保留
-				url = location.href.replace(/&code=[^&]+/, "");
-
-				if(url.indexOf("appid") !== url.lastIndexOf("appid")){
-					url = url.replace(/&appid=wx[^&]+/, "");
-				}
-				location.href = url;
-			}
+		}, function(){
+			fail();
 		});
 	}
 };
