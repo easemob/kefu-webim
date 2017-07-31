@@ -88,7 +88,7 @@
 					this.cachedCommandMessage = null;
 				}
 				if (this.cachedSetSkillgroup) {
-					chat.channel.sendText('',false ,this.cachedSetSkillgroup);
+					chat.channel.sendText.apply(this,this.cachedSetSkillgroup);
 				}
 				if (utils.isTop) {
 					//get visitor
