@@ -19,6 +19,7 @@ var conmmonConfig;
 var transfer;
 var easemob;
 var app;
+var appPageCached;
 var taskList;
 
 i18next.init({
@@ -149,7 +150,8 @@ easemob = Object.assign({}, conmmonConfig, {
 	output: {
 		filename: "easemob.js",
 		path: path.resolve(__dirname, "."),
-		// todo: test ie 7 prompt
+		// 不能用umd模块输出的原因是：
+		// 监测到AMD Loader时只执行define，此时不会初始化模块，所以不会暴露到全局
 		// library: 'easemob-kefu-webim-plugin',
 		// libraryTarget: 'umd',
 		// umdNamedDefine: true,
@@ -169,10 +171,44 @@ app = Object.assign({}, conmmonConfig, {
 	},
 });
 
+appPageCached = Object.assign({}, conmmonConfig, {
+	name: "appCached",
+	entry: "./src/html/im.html",
+	devtool: false,
+	output: {
+		filename: "appPageCached.js",
+		path: path.resolve("static/js"),
+	},
+	module: {
+		loaders: [
+			{
+				test: /im\.html$/,
+				loaders: [
+					"file-loader?name=../../[name]_cached.[ext]",
+					"extract-loader",
+					"html-loader",
+				],
+			},
+			{
+				test: [
+					/im\.html/,
+				],
+				loader: "string-replace-loader",
+				query: {
+					search: "__WEBIM_PLUGIN_VERSION__",
+					replace: VERSION,
+					flags: "g",
+				},
+			},
+		],
+	},
+});
+
 taskList = [
 	transfer,
 	easemob,
 	app,
+	appPageCached,
 ];
 
 module.exports = taskList;
