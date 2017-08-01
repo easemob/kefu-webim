@@ -1282,7 +1282,7 @@
 
 					config.agentUserId = info.userId;
 
-					this.updateAgentStatus();
+					// this.updateAgentStatus();
 					this.startToGetAgentStatus();
 
 					//更新头像和昵称
