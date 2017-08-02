@@ -1056,7 +1056,7 @@ function getWechatProfile(tenantId, appId, code){
 				}
 			},
 			error: function (err){
-				resolve(err);
+				reject(err);
 			}
 		});
 	});
@@ -1096,7 +1096,7 @@ function createWechatImUser(openId){
 				}
 			},
 			error: function (e){
-				reject();
+				reject(e);
 			}
 		});
 	});
