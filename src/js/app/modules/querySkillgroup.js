@@ -41,7 +41,7 @@
 					if(!res) {
 						isQuerying = false;
 						utils.addClass(dom, 'hide');
-						me.channel.sendText(billCodeNum);
+						chat.channel.sendText(billCodeNum);
 					}else {
 						cb(res);
 					}
