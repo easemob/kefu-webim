@@ -2,7 +2,7 @@ var utils = require("../../common/utils");
 var uikit = require("./uikit");
 var profile = require("./tools/profile");
 var apiHelper = require("./apiHelper");
-var createSelect = require("./uikit/createSelect");
+var Selector = require("./uikit/selector");
 
 var isSending = false;
 
@@ -21,6 +21,8 @@ var name = dom.querySelector(".name");
 var phone = dom.querySelector(".phone");
 var mail = dom.querySelector(".mail");
 var noteCategory = dom.querySelector(".note-category");
+var noteCategoryList = {};
+
 // todo: lazy load dialog
 var dialog = uikit.createDialog({
 	contentDom: dom,
@@ -54,27 +56,28 @@ var dialog = uikit.createDialog({
 });
 var cancelBtn = dialog.el.querySelector(".cancel-btn");
 
-function _createCategories(){
-	if(!profile.grayList.noteCategory) return;
+var _createCategories = _.once(function(){
+	// if(!profile.grayList.noteCategory) return;
 
 	apiHelper.getNoteCategories().then(function(list){
-
+		var optionList;
 		if(!_.isEmpty(list)){
 			utils.removeClass(noteCategory, "hide");
-			var optionList = _.map(list, function(item){
-				return {
-					sign: item.id,
-					desc: item.name
-				};
-			});
-			createSelect({
-				list: optionList,
-				container: noteCategory
-			});
 		}
+		optionList = _.map(list, function(item){
+			return {
+				sign: item.id,
+				desc: item.name
+			};
+		});
+		noteCategoryList = new Selector({
+			list: optionList,
+			container: noteCategory
+		});
+	
 	});
 
-}
+});
 
 function _createTicket(){
 	Promise.all([
@@ -91,7 +94,7 @@ function _createTicket(){
 			phone: phone.value,
 			mail: mail.value,
 			content: content.value,
-			category_id: noteCategory.selectValue
+			category_id: noteCategoryList.getSelectedValue()
 		}).then(function(){
 			isSending = false;
 			uikit.showSuccess(__("ticket.send_success"));
