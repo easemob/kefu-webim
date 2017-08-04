@@ -122,7 +122,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 						"<h3 class=\"title\">" + msgArticles[0].title + "</h3>" +
 						"<p class=\"create-time\">" + date + "</p>" +
 						"<div class=\"cover\"><img src=\"" + msgArticles[0].thumbUrl + "\"/></div>" +
-						"<div class=\"desc\"><p>" + msgArticles[0].digest + "</p></div>" +
+						"<div class=\"desc\"><p>" + msgArticles[0].description + "</p></div>" +
 					"</div>" +
 					"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
 					"<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
