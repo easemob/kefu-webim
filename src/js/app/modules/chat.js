@@ -646,9 +646,8 @@ function _show(){
 	utils.removeClass(doms.imChat, "hide");
 	_scrollToBottom();
 	if(
-		// todo: fix this issue
-		// todo: onInit !isChatWindowOpen && _show()
 		profile.isInOfficeHours
+		&& !utils.isMobile
 		// IE 8 will throw an error when focus an invisible element
 		&& doms.textInput.offsetHeight > 0
 	){
