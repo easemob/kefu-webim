@@ -2,7 +2,7 @@ var utils = require("../../common/utils");
 var uikit = require("./uikit");
 var profile = require("./tools/profile");
 var apiHelper = require("./apiHelper");
-var CreateSelect = require("./uikit/createSelect");
+var Selector = require("./uikit/selector");
 
 var isSending = false;
 
@@ -56,29 +56,28 @@ var dialog = uikit.createDialog({
 });
 var cancelBtn = dialog.el.querySelector(".cancel-btn");
 
-function _createCategories(){
-	if(!profile.grayList.noteCategory) return;
+var _createCategories = _.once(function(){
+	// if(!profile.grayList.noteCategory) return;
 
 	apiHelper.getNoteCategories().then(function(list){
 		var optionList;
 		if(!_.isEmpty(list)){
 			utils.removeClass(noteCategory, "hide");
-			optionList = _.map(list, function(item){
-				return {
-					sign: item.id,
-					desc: item.name
-				};
-			});
-			if(_.isEmpty(noteCategoryList)){
-				noteCategoryList = new CreateSelect({
-					list: optionList,
-					container: noteCategory
-				});
-			}
 		}
+		optionList = _.map(list, function(item){
+			return {
+				sign: item.id,
+				desc: item.name
+			};
+		});
+		noteCategoryList = new Selector({
+			list: optionList,
+			container: noteCategory
+		});
+	
 	});
 
-}
+});
 
 function _createTicket(){
 	Promise.all([
@@ -95,7 +94,7 @@ function _createTicket(){
 			phone: phone.value,
 			mail: mail.value,
 			content: content.value,
-			category_id: noteCategoryList.selectValue
+			category_id: noteCategoryList.getSelectedValue()
 		}).then(function(){
 			isSending = false;
 			uikit.showSuccess(__("ticket.send_success"));
