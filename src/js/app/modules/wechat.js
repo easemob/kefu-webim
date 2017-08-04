@@ -57,7 +57,7 @@ module.exports = function (success, fail) {
 				fail();
 			}
 			else{
-				// 这段代码不知何意，暂时保留
+				// 此处重试次数不能限制，否则会导致手动刷新后失败
 				url = location.href.replace(/&code=[^&]+/, "");
 
 				if(url.indexOf("appid") !== url.lastIndexOf("appid")){
