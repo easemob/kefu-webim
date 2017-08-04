@@ -44,6 +44,8 @@ function load_html(){
 		evaluate_agent: __("toolbar.evaluate_agent"),
 		transfer_to_kefu: __("toolbar.transfer_to_kefu"),
 	}));
+
+	chat.getDom();
 }
 
 function h5_mode_init(){

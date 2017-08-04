@@ -59,6 +59,7 @@ module.exports = {
 	init: _init,
 	close: _close,
 	show: _show,
+	getDom: _getDom,
 };
 
 function _initSystemEventListener(){
@@ -739,8 +740,6 @@ function _init(){
 	channel.init();
 
 	profile.isChatWindowOpen = true;
-
-	_getDom();
 
 	_initSoundReminder();
 
