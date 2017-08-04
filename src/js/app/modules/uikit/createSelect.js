@@ -1,69 +1,63 @@
 var utils = require("../../../common/utils");
 
-var containerDom;
-var selectDom;
-var popuplist;
-var selectClassName;
-var popuplistClassName;
-var list;
-
-module.exports = function(opt){
+ var CreateSelect = function(opt){
 	opt = opt || {};
-	selectClassName = opt.selectClassName || "";
-	popuplistClassName = opt.popuplistClassName || "";
-	containerDom = opt.container;
-	list = opt.list;
-	if(!_.isArray(list) || _.isEmpty(list) || !containerDom) return;
+	this.selectClassName = opt.selectClassName || "";
+	this.popuplistClassName = opt.popuplistClassName || "";
+	this.containerDom = opt.container;
+	this.list = opt.list;
+	if(!_.isArray(this.list) || _.isEmpty(this.list) || !this.containerDom) return;
 
-	var newSelectDom = utils.createElementFromHTML("<div class=\"em-select " + selectClassName + "\"><label class=\"em-select-desc\"></label><span class=\"icon-arrow-up-down em-select-icon\"></span></div>");
+	this.selectDom = utils.createElementFromHTML("<div class=\"em-select " + this.selectClassName + "\"><label class=\"em-select-desc\"></label><span class=\"icon-arrow-up-down em-select-icon\"></span></div>");
 
-	if(selectDom){
-		containerDom.replaceChild(newSelectDom, selectDom);
-	}
-	else{
-		containerDom.appendChild(newSelectDom);
-	}
-	selectDom = newSelectDom;
+	this.containerDom.appendChild(this.selectDom);
 
-	var newPopuplist = _render(opt);
+	this.popuplist = _createList(this);
+	document.body.appendChild(this.popuplist);
 
-	if(popuplist){
-		document.body.replaceChild(newPopuplist, popuplist);
-	}
-	else{
-		document.body.appendChild(newPopuplist);
-	}
-	popuplist = newPopuplist;
-
-	_bindEvents();
+	_bindEvents(this);
 	// 默认选中第一个
-	containerDom.selectValue = list[0].sign;
-	selectDom.querySelector(".em-select-desc").innerText = list[0].desc;
+	this.selectValue = this.list[0].sign;
+	this.selectDom.querySelector(".em-select-desc").innerText = this.list[0].desc;
 };
-
-function _bindEvents(){
+CreateSelect.prototype.updateList = function(list){
+	this.list = list;
+	utils.removeDom(this.popuplist);
+	this.popuplist = _createList(this);
+	document.body.appendChild(this.popuplist);
+	// 更新列表之后 默认选中第一个
+	this.selectValue = this.list[0].sign;
+	this.selectDom.querySelector(".em-select-desc").innerText = this.list[0].desc;
+};
+function _bindEvents(thisObj){
 	// 选中itm-select
-	utils.live("li.itm-select", "click", _selectItem, popuplist);
+	utils.live("li.itm-select", "click", function(){
+		thisObj.selectValue = this.getAttribute("data-sign");
+		thisObj.selectDom.querySelector(".em-select-desc").innerText = this.innerText;
+	}, thisObj.popuplist);
 
 	// 点击下拉框头部 展示下拉框
-	utils.on(selectDom, "click", _show);
+	utils.on(thisObj.selectDom, "click", function(){
+		utils.removeClass(thisObj.popuplist, "hide");
+		_setOffset(thisObj);
+	});
 
-	// 点击别处时隐藏列表
+	// 点击别处及选项时隐藏列表
 	utils.on(document, "click", function(ev){
 		var e = window.event || ev;
 		var target = e.srcElement || e.target;
 		// if (utils.isMobile) return;
 		if(!utils.hasClass(target, "em-select") && !utils.hasClass(target.parentNode, "em-select")){
-			_hide();
+			utils.addClass(thisObj.popuplist, "hide");
 		}
 	});
 }
 
-function _setOffset(){
-	var	containerOffset = _getOffset(containerDom);
-	popuplist.style.top = containerOffset.top + 1 + "px";
-	popuplist.style.left =  containerOffset.left + 1 + "px";
-	popuplist.style.width = containerOffset.width + "px";
+function _setOffset(thisObj){
+	var	containerOffset = _getOffset(thisObj.containerDom);
+	thisObj.popuplist.style.top = containerOffset.top + 1 + "px";
+	thisObj.popuplist.style.left =  containerOffset.left + 1 + "px";
+	thisObj.popuplist.style.width = containerOffset.width + "px";
 }
 
 function _getOffset(dom){
@@ -83,25 +77,13 @@ function _getOffset(dom){
 	};
 }
 
-function _render(){
-	var options = "<ul class=\"em-popuplist hide " + popuplistClassName + "\">";
-	options += (_.map(list, function(item){
+function _createList(opt){
+	var options = "<ul class=\"em-popuplist hide " + opt.popuplistClassName + "\">";
+	options += (_.map(opt.list, function(item){
 		return "<li class=\"itm-select\" data-sign=\"" + item.sign + "\">" + item.desc + "</li>";
 	})).join("");
 	options += "</ul>";
 	return utils.createElementFromHTML(options);
 }
 
-function _show(){
-	utils.removeClass(popuplist, "hide");
-	_setOffset();
-}
-
-function _hide(){
-	utils.addClass(popuplist, "hide");
-}
-
-function _selectItem(){
-	containerDom.selectValue = this.getAttribute("data-sign");
-	selectDom.querySelector(".em-select-desc").innerText = this.innerText;
-}
+module.exports = CreateSelect;
