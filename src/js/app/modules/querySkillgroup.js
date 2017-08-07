@@ -38,12 +38,27 @@
 					"billCode" :content.value
 				}, function (msg) {
 					var res = msg.data.entity;
-					if(!res) {
+					if(!res || !res.result) {
 						isQuerying = false;
 						utils.addClass(dom, 'hide');
-						chat.channel.sendText(billCodeNum);
+						chat.channel.sendText(billCodeNum, false, {
+							ext:{
+								// "imageName": "mallImage3.png",
+								//custom代表自定义消息，无需修改
+								"type": "custom",
+								"msgtype": {
+									"track": {
+										// "title": "我正在看：",
+										"price": billCodeNum,
+										"desc": "运单号",
+										"img_url": "//" + location.host + "/webim/static/img/look_num.png",
+										"item_url": "http://www.zto.com/GuestService/BillNew?txtbill=" + billCodeNum
+									}
+								}
+							}
+						});
 					}else {
-						cb(res);
+						cb(res.result);
 					}
 				});
 		};
@@ -57,6 +72,15 @@
 				var res = msg.data.entities;
 				var extBody = { 
 						ext: {
+							"type": "custom",
+							"msgtype": {
+								"track": {
+									"price": billCodeNum,
+									"desc": "运单号",
+									"img_url": "//" + location.host +"/webim/static/img/zto_logo.png",
+									"item_url": "http://www.zto.com/GuestService/BillNew?txtbill=" + billCodeNum
+								}
+							},
 							weichat: {
 								queueId: res[0],
 								reserve_queue: res[1]
