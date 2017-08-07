@@ -33,6 +33,7 @@
 			agentWaitNumber: document.querySelector('.em-header-status-text-queue-number'),
 			agentStatusSymbol: document.getElementById('em-widgetAgentStatus'),
 			nickname: document.querySelector('.em-widgetHeader-nickname'),
+			benzTextLogo: document.querySelector('.em-widgetHeader-text-logo'),
 			imgInput: document.querySelector('.upload-img-container'),
 			fileInput: document.querySelector('.upload-file-container'),
 			emojiContainer: document.querySelector('.em-bar-emoji-container'),
@@ -610,11 +611,11 @@
 						prevTimestamp = msg.timestamp;
 						if (!msg.input_state_tips) {
 							utils.addClass(doms.inputState, 'hide');
-							utils.removeClass(doms.nickname, 'hide');
+							utils.removeClass(doms.benzTextLogo, 'hide');
 						}
 						else {
 							utils.removeClass(doms.inputState, 'hide'); 
-							utils.addClass(doms.nickname, 'hide'); 
+							utils.addClass(doms.benzTextLogo, 'hide'); 
 						}
 					})
 				}
