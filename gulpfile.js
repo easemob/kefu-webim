@@ -11,7 +11,7 @@ todo: delete file_download.png
 
 var debug = false;
 const TEMPLATE_DATA = {
-	WEBIM_PLUGIN_VERSION: '43.15.002'
+	WEBIM_PLUGIN_VERSION: 'benz.43.15.20'
 };
 
 const gulp = require('gulp');
