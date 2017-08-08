@@ -1,7 +1,7 @@
 module.exports = {
 	config: {
-		message_timestamp_format: "M月d日 hh:mm",
-		article_timestamp_format: "M月d日",
+		message_timestamp_format: "M月D日 hh:mm",
+		article_timestamp_format: "M月D日",
 		language: "zh-CN",
 		transfer_to_kefu_words: "转人工|转坐席|转人工客服|转人工坐席|转人工服务",
 		scheduler_role_nickname: "调度员",
