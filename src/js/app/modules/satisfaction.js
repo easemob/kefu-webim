@@ -2,6 +2,7 @@ var utils = require('../../common/utils');
 var uikit = require('./uikit');
 var apiHelper = require('./apiHelper');
 var channel = require('./channel');
+var profile = require("./tools/profile");
 
 var dom = utils.createElementFromHTML([
 	'<div class="wrapper">',
@@ -89,8 +90,9 @@ function _sendSatisfaction(score, content, session, invite, appraiseTags, evalua
 			weichat: {
 				ctrlType: 'enquiry',
 				ctrlArgs: {
-					inviteId: invite || '',
-					serviceSessionId: session || '',
+					// 后端类型要求，inviteId必须传数字
+					inviteId: invite || 0,
+					serviceSessionId: session || profile.currentOfficialAccount.sessionId || "",
 					detail: content,
 					summary: score,
 					appraiseTags: appraiseTags,
