@@ -709,7 +709,8 @@ function _handleSystemEvent(event, eventObj, msg){
 	case _const.SYSTEM_EVENT.SESSION_CLOSED:
 		officialAccount.sessionState = _const.SESSION_STATE.ABORT;
 		officialAccount.agentId = null;
-		officialAccount.sessionId = null;
+		// 发起满意度评价需要回传sessionId，所以不能清空
+		// officialAccount.sessionId = null;
 		officialAccount.skillGroupId = null;
 		officialAccount.isSessionOpen = false;
 		officialAccount.hasReportedAttributes = false;
