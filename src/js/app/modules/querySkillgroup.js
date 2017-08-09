@@ -37,8 +37,8 @@
 			easemobim.api('getWebsiteIds', {
 					"billCode" :content.value
 				}, function (msg) {
-					var res = msg.data.entity;
-					if(!res || !res.result) {
+					var res = utils.getDataByPath(msg, 'data.entity.result');
+					if(!res.result) {
 						isQuerying = false;
 						utils.addClass(dom, 'hide');
 						chat.channel.sendText(billCodeNum, false, {
@@ -58,7 +58,7 @@
 							}
 						});
 					}else {
-						cb(res.result);
+						cb(res);
 					}
 				});
 		};
