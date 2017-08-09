@@ -158,6 +158,10 @@
 	content: "\75"
 }
 
+.icon-arrow-up-down:before {
+	content: "\32"
+}
+
 .icon-camera:before,
 .icon-change:before,
 .icon-minimize:before,
@@ -198,7 +202,9 @@
 .em-widget-agent-status.leave:after,
 .em-widget-agent-status.busy:after,
 .em-widget-agent-status.hidden:after,
-.em-just-for-block-class-name {
+.em-just-for-block-class-name,
+.icon-arrow-up-down,
+ {
 	font-family: 'easemobim' !important;
 	font-size: 30px;
 	font-style: normal;

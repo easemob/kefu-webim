@@ -119,8 +119,9 @@
 		config.base = location.protocol + config.domain;
 
 		//load modules
-		easemobim.leaveMessage = easemobim.leaveMessage(chat, config.tenantId);
+		// easemobim.leaveMessage = easemobim.leaveMessage(chat, config.tenantId);
 		easemobim.querySkillgroup = easemobim.querySkillgroup(chat,config);
+		easemobim.workOrder = easemobim.workOrder(chat);
 		easemobim.paste(chat).init();
 		easemobim.satisfaction(chat);
 
