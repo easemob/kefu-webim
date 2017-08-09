@@ -37,8 +37,8 @@
 			easemobim.api('getWebsiteIds', {
 					"billCode" :content.value
 				}, function (msg) {
-					var res = utils.getDataByPath(msg, 'data.entity.result');
-					if(!res.result) {
+					var websiteIds = utils.getDataByPath(msg, 'data.entity.result');
+					if(!websiteIds) {
 						isQuerying = false;
 						utils.addClass(dom, 'hide');
 						chat.channel.sendText(billCodeNum, false, {
@@ -58,14 +58,14 @@
 							}
 						});
 					}else {
-						cb(res);
+						cb(websiteIds);
 					}
 				});
 		};
 		function getSkillgroup(msg) {
 			easemobim.api('getSkillgroupByWebsiteId', {
 				argType: 'websiteId',
-				ids: msg.mainSite+','+msg.spareSite,
+				ids: msg.mainSite + ',' + msg.spareSite,
 				tenantId : config.tenantId
 			}, function (msg) {
 				isQuerying = false;
