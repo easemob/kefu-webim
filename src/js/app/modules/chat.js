@@ -80,7 +80,7 @@
 					config.user.token = config.user.token || info.accessToken;
 				}
 
-				easemobim.leaveMessage && easemobim.leaveMessage.auth(me.token, config);
+				// easemobim.leaveMessage && easemobim.leaveMessage.auth(me.token, config);
 
 				// 发送用于回呼访客的命令消息
 				if (this.cachedCommandMessage) {
@@ -800,7 +800,8 @@
 					break;
 				default:
 					// 只允许留言此时无法关闭留言页面
-					easemobim.leaveMessage.show(!config.isInOfficehours);
+					// easemobim.leaveMessage.show(!config.isInOfficehours);
+					easemobim.workOrder.show(!config.isInOfficehours);
 					break;
 				}
 			},
@@ -1130,7 +1131,8 @@
 
 				//显示留言界面
 				utils.on(easemobim.noteBtn, 'click', function () {
-					easemobim.leaveMessage.show();
+					// easemobim.leaveMessage.show();
+					easemobim.workOrder.show();
 				});
 
 				// 回车发送消息

@@ -307,6 +307,14 @@
 				msg: msg,
 				type: 'get',
 			}));
+			break;		
+		case 'createWorkOrder':
+			easemobim.emajax(createObject({
+				url: '/v1/websites/zto/create-work-orders?msg_type=ZTO_CREATE_WORK_ORDER', 
+				msg: msg,
+				type: 'POST',
+				// excludeData: true
+			}));
 			break;
 		default:
 			break;

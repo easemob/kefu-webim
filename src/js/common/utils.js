@@ -375,6 +375,11 @@
 			// todo：移到，easemob.js 里边
 			return this.extend({}, obj);
 		},
+		createElementFromHTML: function(html){
+			var tmpDiv = document.createElement("div");
+			tmpDiv.innerHTML = html;
+			return tmpDiv.childNodes[0];
+		},
 		code: (function () {
 			var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
