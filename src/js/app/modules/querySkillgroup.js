@@ -29,7 +29,7 @@
 			else {
 				isQuerying = true;
 				setTimeout(function () { isQuerying = false; }, 10000);
-				getWebsiteIds (getSkillgroup);
+				getWebsiteIds();
 
 			}
 		});
@@ -37,8 +37,9 @@
 			easemobim.api('getWebsiteIds', {
 					"billCode" :content.value
 				}, function (msg) {
-					var res = msg.data.entity;
-					if(!res || !res.result) {
+					var websiteIds = utils.getDataByPath(msg, 'data.entity.result');
+					if(!websiteIds) {
+						// 取不回来网点 直接发送扩展消息 取回来网点id 调用getSkillgroup查询技能组
 						isQuerying = false;
 						utils.addClass(dom, 'hide');
 						chat.channel.sendText(billCodeNum, false, {
@@ -58,14 +59,14 @@
 							}
 						});
 					}else {
-						cb(res.result);
+						getSkillgroup(websiteIds);
 					}
 				});
 		};
-		function getSkillgroup(msg) {
+		function getSkillgroup(websiteIds) {
 			easemobim.api('getSkillgroupByWebsiteId', {
 				argType: 'websiteId',
-				ids: msg.mainSite+','+msg.spareSite,
+				ids: websiteIds.mainSite + ',' + websiteIds.spareSite,
 				tenantId : config.tenantId
 			}, function (msg) {
 				isQuerying = false;
