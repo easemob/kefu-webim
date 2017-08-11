@@ -359,7 +359,11 @@ function _handleMessage(msg, msgType, isHistory){
 		type = "satisfactionEvaluation";
 	}
 	// 机器人自定义菜单，仅收到的此类消息显示为菜单，（发出的渲染为文本消息）
-	else if(isReceived && utils.getDataByPath(msg, "ext.msgtype.choice")){
+	else if (
+		isReceived
+		&& utils.getDataByPath(msg, 'ext.msgtype.choice.title')
+		&& utils.getDataByPath(msg, 'ext.msgtype.choice.items')
+	) {
 		type = "robotList";
 	}
 	// 待接入超时转留言
