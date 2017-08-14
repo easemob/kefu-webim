@@ -197,12 +197,11 @@ function _setNotice() {
 	var noticeContent = document.querySelector('.em-widget-tip .content');
 	var noticeCloseBtn = document.querySelector('.em-widget-tip .tip-close');
 
-	apiHelper.getNotice().then(function(notice){
-		if(!notice.enabled) return;
-		var slogan = notice.content;
+	apiHelper.getCustomNotice().then(function(content){
+		if(!content) return;
 
 		// 设置信息栏内容
-		noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
+		noticeContent.innerHTML = content;
 		// 显示信息栏
 		utils.addClass(doms.imChat, 'has-tip');
 

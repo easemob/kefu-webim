@@ -1102,6 +1102,23 @@ function createWechatImUser(openId){
 	});
 }
 
+function getCustomNotice(){
+	var targerURL = "/webim-plugin-demo/gh-pages/autohome-custom-notice/notice.html";
+
+	return new Promise(function(resolve, reject){
+		emajax({
+			url: targerURL,
+			type: 'GET',
+			success: function(resp){
+				resolve(resp);
+			},
+			error: function(err){
+				reject(err);
+			}
+		});
+	});
+}
+
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
 	getToken: getToken,
@@ -1146,6 +1163,7 @@ module.exports = {
 	getWechatComponentId: getWechatComponentId,
 	getWechatProfile: getWechatProfile,
 	createWechatImUser: createWechatImUser,
+	getCustomNotice: getCustomNotice,
 
 	initApiTransfer: initApiTransfer,
 	api: api,
