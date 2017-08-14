@@ -7,7 +7,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const VERSION = 'pre_47.15.0';
+const VERSION = 'autohome_47.14.6.0';
 
 var conmmonConfig = {
 	plugins: [
