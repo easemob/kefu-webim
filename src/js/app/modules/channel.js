@@ -349,7 +349,7 @@ function _handleMessage(msg, msgType, isHistory){
 	}
 
 	// 撤回的消息不处理
-	if(utils.getDataByPath(msg, 'ext.weichat.recall_flag') === 1) return;
+	if(utils.getDataByPath(msg, "ext.weichat.recall_flag") === 1) return;
 
 	officialAccount && _attemptToAppendOfficialAccount(officialAccount);
 	targetOfficialAccount = _getOfficialAccountById(officialAccountId);
@@ -359,11 +359,11 @@ function _handleMessage(msg, msgType, isHistory){
 		type = "satisfactionEvaluation";
 	}
 	// 机器人自定义菜单，仅收到的此类消息显示为菜单，（发出的渲染为文本消息）
-	else if (
+	else if(
 		isReceived
-		&& utils.getDataByPath(msg, 'ext.msgtype.choice.title')
-		&& utils.getDataByPath(msg, 'ext.msgtype.choice.items')
-	) {
+		&& utils.getDataByPath(msg, "ext.msgtype.choice.title")
+		&& utils.getDataByPath(msg, "ext.msgtype.choice.items")
+	){
 		type = "robotList";
 	}
 	// 待接入超时转留言
@@ -374,8 +374,8 @@ function _handleMessage(msg, msgType, isHistory){
 	){
 		type = "transferToTicket";
 	}
-	else if (utils.getDataByPath(msg, 'ext.msgtype.articles')) {
-		type = 'article';
+	else if(utils.getDataByPath(msg, "ext.msgtype.articles")){
+		type = "article";
 	}
 	else{}
 
@@ -809,12 +809,12 @@ function _attemptToAppendOfficialAccount(officialAccountInfo){
 			);
 		}
 		else if(profile.systemOfficialAccount.official_account_id !== id){
-		 	// 如果id不为null则更新 systemOfficialAccount
-		 	profile.systemOfficialAccount.official_account_id = id;
+			// 如果id不为null则更新 systemOfficialAccount
+			profile.systemOfficialAccount.official_account_id = id;
 			profile.systemOfficialAccount.img = img;
 			profile.systemOfficialAccount.name = name;
 			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SYSTEM_OFFICIAL_ACCOUNT_UPDATED, []);
-		 }
+		}
 	}
 	else if(type === "CUSTOM"){
 		profile.ctaEnable = true;
