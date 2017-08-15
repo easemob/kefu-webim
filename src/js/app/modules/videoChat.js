@@ -78,7 +78,7 @@ var closingTimer = {
 		var me = this;
 		clearTimeout(me.timer);
 		if(me.isConnected){
-			closingTimerTimespan.innerHTML = statusTimer.timeSpan.innerHTML;
+			closingTimerTimespan.innerHTML = statusTimerTimespan.innerHTML;
 		}
 		else{
 			closingTimerTimespan.innerHTML = "00:00";
