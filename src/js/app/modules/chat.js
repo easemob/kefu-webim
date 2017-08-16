@@ -154,7 +154,7 @@
 
 				// 获取上下班状态
 				getDutyStatusPromise = new Promise(function (resolve, reject) {
-					api('getDutyStatus_2', {
+					api('getDutyStatus_2', {	
 						channelType: 'easemob',
 						originType: 'webim',
 						channelId: config.channelId,
@@ -801,6 +801,7 @@
 				default:
 					// 只允许留言此时无法关闭留言页面
 					// easemobim.leaveMessage.show(!config.isInOfficehours);
+					easemobim.querySkillgroup.hide();
 					easemobim.workOrder.show(!config.isInOfficehours);
 					break;
 				}
