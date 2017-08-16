@@ -4,6 +4,8 @@
 	/static/js/em-open.js
 	/static/js/em-transfer.js
 */
+// todo: 优化构建速度
+// todo: 减少重复构建
 
 const path = require("path");
 const webpack = require("webpack");
@@ -15,6 +17,8 @@ const VERSION = "pre_47.15.0";
 const argv = require("yargs").argv;
 const lang = argv.lang || "zh-CN";
 
+var distPath = lang === "zh-CN" ? "" : lang;
+var staticPath = lang === "zh-CN" ? "static" : "../static";
 var conmmonConfig;
 var transfer;
 var easemob;
@@ -69,6 +73,10 @@ conmmonConfig = {
 					"file-loader?name=../../[name].[ext]",
 					"extract-loader",
 					"html-loader",
+					"string-replace-loader"
+						+ "?search=__STATIC_PATH__"
+						+ "&replace=" + staticPath
+						+ "&flags=g",
 				],
 			},
 			{
@@ -83,10 +91,8 @@ conmmonConfig = {
 				test: /im\.scss$/,
 				loaders: [
 					"file-loader?name=../css/[name].css",
-					"string-replace-loader"
-						+ "?search=__WEBIM_PLUGIN_VERSION__"
-						+ "&replace=" + VERSION
-						+ "&flags=g",
+					"extract-loader",
+					"css-loader?sourceMap=true",
 					"postcss-loader?sourceMap=true",
 					"sass-loader?sourceMap=true&importLoader=true"
 				],
@@ -125,6 +131,15 @@ conmmonConfig = {
 					quotes: "\"",
 				},
 			},
+			// 字体文件
+			{
+				test: /\.(eot|svg|ttf|woff|woff2)/,
+				loader: "file-loader",
+				query: {
+					name: "./font/[name].[ext]",
+					emitFile: false,
+				},
+			},
 		],
 	},
 };
@@ -149,7 +164,7 @@ easemob = Object.assign({}, conmmonConfig, {
 	],
 	output: {
 		filename: "easemob.js",
-		path: path.resolve(__dirname, "."),
+		path: path.resolve(__dirname, distPath, "."),
 		// 不能用umd模块输出的原因是：
 		// 监测到AMD Loader时只执行define，此时不会初始化模块，所以不会暴露到全局
 		// library: 'easemob-kefu-webim-plugin',
@@ -167,7 +182,7 @@ app = Object.assign({}, conmmonConfig, {
 	],
 	output: {
 		filename: "main.js",
-		path: path.resolve(__dirname, "static/js"),
+		path: path.resolve(__dirname, distPath, "static/js"),
 	},
 });
 
@@ -177,28 +192,25 @@ appPageCached = Object.assign({}, conmmonConfig, {
 	devtool: false,
 	output: {
 		filename: "appPageCached.js",
-		path: path.resolve("static/js"),
+		path: path.resolve(__dirname, distPath, "."),
 	},
 	module: {
 		loaders: [
 			{
 				test: /im\.html$/,
 				loaders: [
-					"file-loader?name=../../[name]_cached.[ext]",
+					"file-loader?name=[name]_cached.[ext]",
 					"extract-loader",
 					"html-loader",
+					"string-replace-loader"
+						+ "?search=__STATIC_PATH__"
+						+ "&replace=" + staticPath
+						+ "&flags=g",
+					"string-replace-loader"
+						+ "?search=__WEBIM_PLUGIN_VERSION__"
+						+ "&replace=" + VERSION
+						+ "&flags=g",
 				],
-			},
-			{
-				test: [
-					/im\.html/,
-				],
-				loader: "string-replace-loader",
-				query: {
-					search: "__WEBIM_PLUGIN_VERSION__",
-					replace: VERSION,
-					flags: "g",
-				},
 			},
 		],
 	},

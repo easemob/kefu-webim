@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
+    "css-loader": "^0.28.4",
     "cssnano": "^3.10.0",
     "expose-loader": "^0.7.3",
     "extract-loader": "^0.1.0",
@@ -29,6 +30,7 @@
     "dev": "webpack --watch",
     "start": "node server/app -t",
     "build_en": "webpack --lang en-US",
+    "build_all": "webpack;webpack --lang en-US",
     "lint": "eslint src/js/app/modules/init.js"
   },
   "dependencies": {

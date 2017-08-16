@@ -5,6 +5,7 @@ module.exports = {
 		language: "zh-CN",
 		transfer_to_kefu_words: "转人工|转坐席|转人工客服|转人工坐席|转人工服务",
 		scheduler_role_nickname: "调度员",
+		im_html_path: "/im_cached.html",
 	},
 	common: {
 		confirm: "确定",

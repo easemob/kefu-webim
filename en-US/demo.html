@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	<style>
+		body { background-color: #eee;color: #555; }
+		button, a { display: block;margin: 20px 0;background: #00CEB9;border: none;color: #fff;line-height: 40px;width: 200px;cursor: pointer;outline: none;text-align: center; }
+		button:hover, a:hover { box-shadow: 0 0 5px #33CEB9; }
+		button:active, a:active { background: #fff;color: #00CEB9; }
+		input { height: 40px;outline: none;width: 300px;text-align: center;font-size: 16px;color: #00CEB9; float: left;border: 1px solid #fff; }
+	</style>
+</head>
+
+<body>
+
+	<h1>Demo</h1>
+	<a target='_blank' href='http://docs.easemob.com/cs/300visitoraccess/20webplugin'>集成文档</a>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<h1>测试</h1>
+	<div><input id='testvalue' type='text' placeholder='请输入您的tenantId，点击测试按钮'/></div>
+	<button onclick="test()">测试</button>
+	<button onclick="deleteCurrentCookies()">Clear Current Cookie</button>
+	<button onclick="bindSkillGroup()">绑定技能组</button>
+	<button onclick="resizeChatWindow()">窗口加宽</button>
+	<br>
+	<br>
+	<br>
+
+<script>
+var tenantIdInput = document.getElementById("testvalue");
+tenantIdInput.value = (window.localStorage && localStorage.getItem("easemobtest")) || "";
+
+function test(){
+	window.easemobim.bind({ tenantId: getTenantId() });
+}
+
+function getTenantId(){
+	var tenantId = tenantIdInput.value;
+	tenantId = tenantId && tenantId.replace(/\s/g, "");
+
+	if(/\d+/.test(tenantId)) {
+		window.localStorage && localStorage.setItem("easemobtest", tenantId);
+		return tenantId;
+	}
+}
+
+function deleteCurrentCookies(){
+	var name = window.easemobim.config.tenantId || tenantIdInput.value;
+
+	name && (document.cookie = name
+	+ "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/");
+	alert("cleared");
+}
+
+function bindSkillGroup(){
+	window.easemobim.bind({
+		tenantId: getTenantId(),
+		emgroup: "技能组1"
+	});
+}
+
+function resizeChatWindow(){
+	window.easemobim.bind({
+		tenantId: getTenantId(),
+		dialogWidth: "500px"
+	});
+}
+</script>
+<script>
+window.easemobim = window.easemobim || {};
+
+window.easemobim.config = {
+	// domain: '//sandbox.kefu.easemob.com',
+	// domain: '//kefu.easemob.com',
+	// 访客自动上报
+	// eventCollector: true,
+	satisfaction: true,
+	// hide: false,
+	// minimum: false,
+	tenantId: "11885",
+	unused: ""
+};
+</script>
+
+<script src='easemob.js'></script>
+</body>
+</html>

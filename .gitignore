@@ -3,4 +3,5 @@ node_modules
 /demo/
 *.map
 package-lock.json
-static/js/appPageCached.js
+appPageCached.js
+en-US/static/css/im.css
