@@ -801,6 +801,7 @@
 				default:
 					// 只允许留言此时无法关闭留言页面
 					// easemobim.leaveMessage.show(!config.isInOfficehours);
+					easemobim.querySkillgroup.hide();
 					easemobim.workOrder.show(!config.isInOfficehours);
 					break;
 				}
