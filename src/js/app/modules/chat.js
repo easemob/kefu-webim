@@ -24,6 +24,7 @@ var initAgentNicknameUpdate = require('./chat/initAgentNicknameUpdate');
 var isEmojiInitilized;
 var isMessageChannelReady;
 var config;
+var inputBoxPosition;
 
 var topBar = document.querySelector('.em-widget-header');
 var editorView = document.querySelector('.em-widget-send-wrapper');
@@ -308,7 +309,6 @@ function _scrollToBottom(){
 
 function _initAutoGrow(){
 	var originHeight = doms.textInput.clientHeight;
-	var inputBoxPosition;
 
 	// 键盘上下切换按钮
 	utils.on(doms.switchKeyboardBtn, 'click', function (){
@@ -572,6 +572,19 @@ function _bindEvents() {
 			channel.sendFile(WebIM.utils.getFileUrl(fileInput), fileInput);
 		}
 	});
+
+	// ios patch: scroll page when keyboard is visible infinitely
+	if(utils.isIOS){
+		setInterval(function(){
+			if(
+				document.activeElement === doms.textInput
+				&& inputBoxPosition !== "up"
+			){
+				document.body.scrollTop = 9999;
+				transfer.send({ event: _const.EVENTS.SCROLL_TO_BOTTOM });
+			}
+		}, 500);
+	}
 
 	// qq web browser patch
 	// qq浏览器有时无法选取图片

@@ -106,6 +106,7 @@ module.exports = {
 		RESIZE_IFRAME: 'resizeIframe',
 		ADD_PROMPT: 'add.prompt',
 		REMOVE_PROMPT: 'remove.prompt',
+		SCROLL_TO_BOTTOM: "scroll.to.bottom",
 	},
 
 	GRAY_LIST_KEYS: [

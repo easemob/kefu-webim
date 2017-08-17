@@ -226,6 +226,9 @@ function _ready() {
 			case _const.EVENTS.REMOVE_PROMPT:
 				utils.removeClass(me.iframe, 'easemobim-has-prompt');
 				break;
+			case _const.EVENTS.SCROLL_TO_BOTTOM:
+				document.body.scrollTop = 9999;
+				break;
 			default:
 				break;
 			}
