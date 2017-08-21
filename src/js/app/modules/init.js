@@ -19,6 +19,7 @@ var body_template = require("raw-loader!../../../template/body.html");
 var config;
 var hasChatEntryInitialized;
 
+WebIM.Emoji.path = __("config.language") === "zh-CN" ? "static/img/faces/" : "../static/img/faces/";
 load_html();
 if(utils.isTop){
 	h5_mode_init();
@@ -172,8 +173,9 @@ function initChat(){
 
 }
 function handleMsgData(){
+	var defaultStaticPath = __("config.language") === "zh-CN" ? "static" : "../static";
 	// default value
-	config.staticPath = config.staticPath || "static";
+	config.staticPath = config.staticPath || defaultStaticPath;
 	config.offDutyWord = config.offDutyWord || __("prompt.default_off_duty_word");
 	config.emgroup = config.emgroup || "";
 

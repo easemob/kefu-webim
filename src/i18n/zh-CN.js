@@ -51,7 +51,7 @@ module.exports = {
 		session_opened: "会话已被客服接起",
 		sessing_transfering: "会话转接中，请稍候",
 		session_transfered: "会话已被转接至其他客服",
-		sessing_closed: "会话已被转接至其他客服",
+		sessing_closed: "会话已结束",
 	},
 	evaluation: {
 		rate_my_service: "请对我的服务做出评价",
