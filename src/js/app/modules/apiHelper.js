@@ -1102,6 +1102,34 @@ function createWechatImUser(openId){
 	});
 }
 
+function getWebsiteIdsByBillCode(billCode){
+	return new Promise(function(resolve, reject){
+		api('getWebsiteIds', {
+			"billCode": billCode
+		}, function (msg){
+			var websiteIds = utils.getDataByPath(msg, 'data.entity.result');
+			resolve(websiteIds);
+		}, function (err) {
+			reject(err);
+		});
+	});
+}
+
+function getSkillgroupByWebsiteId(websiteIds){
+	return new Promise(function(resolve, reject){
+		api('getSkillgroupByWebsiteId', {
+			argType: 'websiteId',
+			ids: websiteIds.mainSite + ',' + websiteIds.spareSite,
+			tenantId : config.tenantId
+		}, function (msg){
+			var res = utils.getDataByPath(msg, 'data.entities');
+			resolve(res);
+		}, function (err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
 	getToken: getToken,
@@ -1146,6 +1174,8 @@ module.exports = {
 	getWechatComponentId: getWechatComponentId,
 	getWechatProfile: getWechatProfile,
 	createWechatImUser: createWechatImUser,
+	getWebsiteIdsByBillCode: getWebsiteIdsByBillCode,
+	getSkillgroupByWebsiteId: getSkillgroupByWebsiteId,
 
 	initApiTransfer: initApiTransfer,
 	api: api,
