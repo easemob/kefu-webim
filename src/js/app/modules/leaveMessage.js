@@ -1,8 +1,8 @@
-var utils = require('../../common/utils');
-var uikit = require('./uikit');
-var profile = require('./tools/profile');
-var apiHelper = require('./apiHelper');
-var createSelect = require('./uikit/createSelect');
+var utils = require("../../common/utils");
+var uikit = require("./uikit");
+var profile = require("./tools/profile");
+var apiHelper = require("./apiHelper");
+var Selector = require("./uikit/selector");
 
 var isSending = false;
 
@@ -16,11 +16,13 @@ var dom = utils.createElementFromHTML([
 	'<textarea spellcheck="false" placeholder="请输入留言"></textarea>',
 	'</div>',
 ].join(''));
-var content = dom.querySelector('textarea');
-var name = dom.querySelector('.name');
-var phone = dom.querySelector('.phone');
-var mail = dom.querySelector('.mail');
-var noteCategory = dom.querySelector('.note-category');
+var content = dom.querySelector("textarea");
+var name = dom.querySelector(".name");
+var phone = dom.querySelector(".phone");
+var mail = dom.querySelector(".mail");
+var noteCategory = dom.querySelector(".note-category");
+var noteCategoryList = {};
+
 // todo: lazy load dialog
 var dialog = uikit.createDialog({
 	contentDom: dom,
@@ -54,27 +56,28 @@ var dialog = uikit.createDialog({
 });
 var cancelBtn = dialog.el.querySelector('.cancel-btn');
 
-function _createCategories() {
-	if (!profile.grayList.noteCategory) return;
+var _createCategories = _.once(function(){
+	noteCategoryList = new Selector({
+			list: [],
+			container: noteCategory
+		});
+	if(!profile.grayList.noteCategory) return;
 
-	apiHelper.getNoteCategories().then(function (list){
-
+	apiHelper.getNoteCategories().then(function(list){
+		var optionList;
 		if(!_.isEmpty(list)){
-			utils.removeClass(noteCategory, 'hide');
-			var optionList = _.map(list, function(item){
-				return {
-					sign: item.id,
-					desc: item.name
-				};
-			});
-			createSelect({
-				list: optionList,
-				container: noteCategory
-			});
+			utils.removeClass(noteCategory, "hide");
 		}
+		optionList = _.map(list, function(item){
+			return {
+				sign: item.id,
+				desc: item.name
+			};
+		});
+		noteCategoryList.updateList({list:optionList});
 	});
 
-}
+});
 
 function _createTicket(){
 	Promise.all([
@@ -91,8 +94,8 @@ function _createTicket(){
 			phone: phone.value,
 			mail: mail.value,
 			content: content.value,
-			category_id: noteCategory.selectValue
-		}).then(function (){
+			category_id: noteCategoryList.getSelectedValue()
+		}).then(function(){
 			isSending = false;
 			uikit.showSuccess('留言发送成功');
 
