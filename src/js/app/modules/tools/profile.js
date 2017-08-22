@@ -16,7 +16,9 @@ var profile = {
 	tenantAvatar: null,
 	defaultAvatar: null,
 	currentOfficialAccount: {},
-	systemOfficialAccount: {}
+	systemOfficialAccount: {},
+	isMessageChannelReady: false,
+	cachedSetSkillgroup: []
 };
 
 module.exports = profile;

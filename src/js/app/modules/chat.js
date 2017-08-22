@@ -20,6 +20,8 @@ var initTransferToKefuButton = require('./chat/initTransferToKefuButton');
 var initSessionList = require('./chat/initSessionList');
 var initGetGreetings = require('./chat/initGetGreetings');
 var initAgentNicknameUpdate = require('./chat/initAgentNicknameUpdate');
+var initQuerySkillgroup = require("./chat/initQuerySkillgroup");
+
 
 var isEmojiInitilized;
 var isMessageChannelReady;
@@ -699,7 +701,7 @@ function _show() {
 function _onReady(){
 	if (isMessageChannelReady) return;
 
-	isMessageChannelReady = true;
+	profile.isMessageChannelReady = isMessageChannelReady = true;
 
 	doms.sendBtn.innerHTML = '发送';
 	utils.trigger(doms.textInput, 'change');
@@ -714,6 +716,10 @@ function _onReady(){
 	// 发送扩展消息
 	while (profile.commandMessageToBeSendList.length > 0){
 		channel.sendText('', profile.commandMessageToBeSendList.pop());
+	}
+
+	if (profile.cachedSetSkillgroup) {
+		channel.sendText.apply(chat,profile.cachedSetSkillgroup);
 	}
 
 	// onready 回调
@@ -798,6 +804,7 @@ function _init() {
 			initTransferToKefuButton();
 			initAgentNicknameUpdate();
 			initGetGreetings();
+			initQuerySkillgroup();
 
 			// 第二通道收消息初始化
 			channel.initSecondChannle();
