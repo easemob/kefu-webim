@@ -21,7 +21,10 @@ var name = dom.querySelector(".name");
 var phone = dom.querySelector(".phone");
 var mail = dom.querySelector(".mail");
 var noteCategory = dom.querySelector(".note-category");
-var noteCategoryList = {};
+var noteCategoryList =  new Selector({
+	list: [],
+	container: noteCategory,
+});
 
 // todo: lazy load dialog
 var dialog = uikit.createDialog({
@@ -56,25 +59,18 @@ var dialog = uikit.createDialog({
 });
 var cancelBtn = dialog.el.querySelector('.cancel-btn');
 
-var _createCategories = _.once(function(){
-	noteCategoryList = new Selector({
-			list: [],
-			container: noteCategory
-		});
-	if(!profile.grayList.noteCategory) return;
-
+var _getCategories = _.once(function(){
 	apiHelper.getNoteCategories().then(function(list){
-		var optionList;
-		if(!_.isEmpty(list)){
-			utils.removeClass(noteCategory, "hide");
-		}
-		optionList = _.map(list, function(item){
+		var optionList = _.map(list, function(item){
 			return {
 				sign: item.id,
 				desc: item.name
 			};
 		});
-		noteCategoryList.updateList({list:optionList});
+		if(!_.isEmpty(optionList)){
+			utils.removeClass(noteCategory, "hide");
+			noteCategoryList.updateList({list:optionList});
+		}
 	});
 
 });
@@ -128,7 +124,7 @@ function _writePreDate(preData){
 
 module.exports = function(opt) {
 	opt = opt || {};
-	_createCategories();
+	profile.grayList.noteCategory && _getCategories();
 	opt.preData && _writePreDate(opt.preData);
 	opt.hideCloseBtn && utils.addClass(cancelBtn, 'hide');
 	dialog.show();
