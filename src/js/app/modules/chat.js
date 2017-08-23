@@ -549,19 +549,6 @@ function _bindEvents(){
 		}
 	});
 
-	// ios patch: scroll page when keyboard is visible infinitely
-	if(utils.isIOS){
-		setInterval(function(){
-			if(
-				document.activeElement === doms.textInput
-				&& inputBoxPosition !== "up"
-			){
-				document.body.scrollTop = 9999;
-				transfer.send({ event: _const.EVENTS.SCROLL_TO_BOTTOM });
-			}
-		}, 500);
-	}
-
 	// qq web browser patch
 	// qq浏览器有时无法选取图片
 	if(utils.isQQBrowser && utils.isAndroid){
@@ -610,6 +597,21 @@ function _bindEvents(){
 		satisfaction.show();
 	});
 
+	// ios patch: scroll page when keyboard is visible ones
+	if(utils.isIOS){
+		utils.on(doms.textInput, "focus", function(){
+			setTimeout(function(){
+				if(
+					document.activeElement === doms.textInput
+					&& inputBoxPosition !== "up"
+				){
+					document.body.scrollTop = 9999;
+					transfer.send({ event: _const.EVENTS.SCROLL_TO_BOTTOM });
+				}
+			}, 500);
+		});
+	}
+
 	// 回车发送消息
 	utils.on(doms.textInput, "keydown", function(evt){
 		if(
@@ -625,6 +627,7 @@ function _bindEvents(){
 			utils.trigger(doms.sendBtn, "click");
 		}
 	});
+
 
 	utils.on(doms.sendBtn, "click", function(){
 		var textMsg = doms.textInput.value;
