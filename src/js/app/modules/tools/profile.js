@@ -18,6 +18,8 @@ var profile = {
 	defaultAvatar: null,
 	currentOfficialAccount: {},
 	systemOfficialAccount: {},
+	isMessageChannelReady: false,
+	cachedSetSkillgroup: []
 };
 
 module.exports = profile;

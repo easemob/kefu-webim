@@ -19,6 +19,7 @@ var initTransferToKefuButton = require("./chat/initTransferToKefuButton");
 var initSessionList = require("./chat/initSessionList");
 var initGetGreetings = require("./chat/initGetGreetings");
 var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
+var initQuerySkillgroup = require("./chat/initQuerySkillgroup");
 var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
 
@@ -611,7 +612,7 @@ function _show(){
 function _onReady(){
 	if(isMessageChannelReady) return;
 
-	isMessageChannelReady = true;
+	profile.isMessageChannelReady = isMessageChannelReady = true;
 
 	doms.sendBtn.innerHTML = __("chat.send");
 	utils.trigger(doms.textInput, "change");
@@ -624,6 +625,10 @@ function _onReady(){
 	}
 
 	eventListener.trigger(_const.SYSTEM_EVENT.MESSAGE_CHANNEL_READY);
+
+	if (!_.isEmpty(profile.cachedSetSkillgroup)) {
+		channel.sendText.apply(chat,profile.cachedSetSkillgroup);
+	}
 
 	// onready 回调
 	transfer.send({ event: _const.EVENTS.ONREADY });
@@ -734,6 +739,7 @@ function _initSession(){
 			initTransferToKefuButton();
 			initAgentNicknameUpdate();
 			initGetGreetings();
+			initQuerySkillgroup();
 
 			// 第二通道收消息初始化
 			channel.initSecondChannle();
