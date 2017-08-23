@@ -729,6 +729,13 @@ getData.listen(function(msg){
 			type: 'get',
 		});
 		break;
+	case 'createWorkOrder':
+		emitAjax({
+			url: '/v1/websites/zto/create-work-orders?msg_type=ZTO_CREATE_WORK_ORDER', 
+			msg: msg,
+			type: 'POST',
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;

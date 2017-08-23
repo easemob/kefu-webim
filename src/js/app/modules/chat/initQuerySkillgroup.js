@@ -32,7 +32,13 @@ dialog.show();
 var isQuerying;
 var billCodeNum;
 
-module.exports = function(){
+module.exports = function(opt){
+	opt = opt || {};
+	//不需要订单号查询时   直接隐藏页面
+	if (opt.isHide) {
+		dialog.hide();
+		return;
+	}
 	isQuerying = false;
 	utils.on(cancelBtn, utils.click, function () {
 		dialog.hide();
