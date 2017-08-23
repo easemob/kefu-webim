@@ -730,7 +730,7 @@ function _onReady(){
 		channel.sendText('', profile.commandMessageToBeSendList.pop());
 	}
 
-	if (profile.cachedSetSkillgroup) {
+	if (!_.isEmpty(profile.cachedSetSkillgroup)) {
 		channel.sendText.apply(chat,profile.cachedSetSkillgroup);
 	}
 
