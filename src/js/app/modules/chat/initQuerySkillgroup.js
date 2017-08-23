@@ -79,8 +79,8 @@ function getWebsiteIds (cb) {
 			// 取不回来网点 直接发送扩展消息 取回来网点id 调用getSkillgroup查询技能组
 			isQuerying = false;
 			dialog.hide();
-			channel.sendText(billCodeNum, {
-				ext:{
+			var extBody = { 
+				ext: {
 					"type": "custom",
 					"msgtype": {
 						"track": {
@@ -92,7 +92,13 @@ function getWebsiteIds (cb) {
 						}
 					}
 				}
-			});
+			};
+			var extArr = [billCodeNum,extBody];
+			if(profile.isMessageChannelReady){
+				channel.sendText.apply(chat,extArr);
+			}else{
+				profile.cachedSetSkillgroup = extArr;
+			}
 		}else {
 			getSkillgroup(websiteIds);
 		}
