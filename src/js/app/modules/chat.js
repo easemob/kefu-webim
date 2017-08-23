@@ -9,7 +9,8 @@ var channel = require('./channel');
 var profile = require('./tools/profile');
 var satisfaction = require('./satisfaction');
 var imgView = require('./imgview');
-var leaveMessage = require('./leaveMessage');
+// var leaveMessage = require('./leaveMessage');
+var workOrder = require('./workOrder');
 var initPasteImage = require('./paste');
 var videoChat = require('./videoChat');
 
@@ -294,7 +295,9 @@ function _setOffline() {
 		break;
 	default:
 		// 只允许留言此时无法关闭留言页面
-		leaveMessage({hideCloseBtn: true});
+		// leaveMessage({hideCloseBtn: true});
+		initQuerySkillgroup({isHide:true});
+		workOrder({hideCloseBtn: true});
 		break;
 	}
 
@@ -473,7 +476,15 @@ function _bindEvents() {
 
 		isSessionOpen && apiHelper.closeServiceSession(sessionId);
 
-		leaveMessage({
+		// leaveMessage({
+		// 	preData: {
+		// 		name: config.visitor.trueName,
+		// 		phone: config.visitor.phone,
+		// 		// 	取最近10条消息，最大1000字
+		// 		content: utils.getBrief('\n' + officialAccount.messageView.getRecentMsg(10), 1000)
+		// 	}
+		// });
+		workOrder({
 			preData: {
 				name: config.visitor.trueName,
 				phone: config.visitor.phone,
@@ -481,7 +492,7 @@ function _bindEvents() {
 				// 	取最近10条消息，最大1000字
 				content: utils.getBrief('\n' + officialAccount.messageView.getRecentMsg(10), 1000)
 			}
-		});
+		})
 	});
 
 	// 机器人列表
@@ -625,7 +636,8 @@ function _bindEvents() {
 
 	// 显示留言页面
 	utils.on(doms.noteBtn, 'click', function () {
-		leaveMessage();
+		// leaveMessage();
+		workOrder();
 	});
 
 	// 满意度评价
