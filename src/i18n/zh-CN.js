@@ -37,6 +37,7 @@ module.exports = {
 		file: "[文件]",
 		picture: "[图片]",
 		emoji: "[表情]",
+		unknown: "[未知类型]",
 	},
 	agent_status: {
 		online: "(空闲)",

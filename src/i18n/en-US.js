@@ -37,6 +37,7 @@ module.exports = {
 		file: "[File]",
 		picture: "[Image]",
 		emoji: "[Emoticon]",
+		unknown: "[Unknown]",
 	},
 	agent_status: {
 		online: "(Online)",
