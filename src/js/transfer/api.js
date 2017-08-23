@@ -663,6 +663,21 @@ getData.listen(function (msg) {
 			excludeData: true
 		});
 		break;
+	case 'getWebsiteIds':
+		emitAjax({
+			url: '/v1/websites/zto/billCode-webSite-relations?msg_type=ZTO_BILLCODE_ROUTER&logistics_interface=' + encodeURIComponent("{") + "billCode:" + params.billCode + encodeURIComponent("}"), 
+			msg: msg,
+			type: 'POST',
+			excludeData: true
+		});
+		break;		
+	case 'getSkillgroupByWebsiteId':
+		emitAjax({
+			url: '/v1/websites/tenants/'+ tenantId + '/website-queue-relations', 
+			msg: msg,
+			type: 'get',
+		});
+		break;
 	default:
 		console.error('unexpect api name: ' + apiName);
 		break;
