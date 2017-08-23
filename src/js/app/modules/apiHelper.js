@@ -1234,11 +1234,12 @@ function createWorkOrder(opt){
 			channel: opt.channel,
 			wrContent: opt.wrContent
 		}, function (msg){
-			if (msg.data && msg.data.entity && msg.data.entity.status === "true"){
+
+			if ( utils.getDataByPath(msg, 'data.entity.status') === "true"){
 				resolve();
 			}
 			else {
-				reject('unknown errow.');
+				reject('unknown error.');
 			}
 		}, function (err){
 			reject(err);

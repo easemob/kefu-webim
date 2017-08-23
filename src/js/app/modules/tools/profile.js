@@ -19,7 +19,7 @@ var profile = {
 	currentOfficialAccount: {},
 	systemOfficialAccount: {},
 	isMessageChannelReady: false,
-	cachedSetSkillgroup: []
+	cachedSetSkillgroup: [],
 };
 
 module.exports = profile;

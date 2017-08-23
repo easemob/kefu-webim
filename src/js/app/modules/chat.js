@@ -395,7 +395,7 @@ function _bindEvents(){
 				phone: config.visitor.phone,
 				mail: config.visitor.email,
 			}
-		})
+		});
 	});
 
 	// 机器人列表
