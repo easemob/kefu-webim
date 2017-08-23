@@ -179,7 +179,7 @@
 		}
 	}
 	// 留言
-	&.ticket {
+	&.ticket,&.work-order {
 		.wrapper {
 			width: 95%;
 			max-width: 400px;
@@ -218,6 +218,18 @@
 				border-radius: 4px;
 				box-sizing: border-box;
 				height: 36px;
+				cursor: pointer;
+			}
+			.order-category {
+				font-size: 14px;
+				font-weight: normal;
+				margin: 10px 0;
+				position: relative;
+				display: block;
+				width: 100%;
+				border: 1px solid #D8D9DA;
+				border-radius: 4px;
+				box-sizing: border-box;
 				cursor: pointer;
 			}
 

@@ -1130,6 +1130,28 @@ function getSkillgroupByWebsiteId(websiteIds){
 	});
 }
 
+function createWorkOrder(opt){
+	return new Promise(function(resolve, reject){
+		api('createWorkOrder', {
+			billCode: opt.billCode,
+			createMan: opt.createMan,
+			createIdent: opt.createIdent,
+			createPhone: opt.createPhone,
+			channel: opt.channel,
+			wrContent: opt.wrContent
+		}, function (msg){
+			if (msg.data && msg.data.entity && msg.data.entity.status === "true"){
+				resolve();
+			}
+			else {
+				reject('unknown errow.');
+			}
+		}, function (err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
 	getToken: getToken,
@@ -1176,6 +1198,7 @@ module.exports = {
 	createWechatImUser: createWechatImUser,
 	getWebsiteIdsByBillCode: getWebsiteIdsByBillCode,
 	getSkillgroupByWebsiteId: getSkillgroupByWebsiteId,
+	createWorkOrder: createWorkOrder,
 
 	initApiTransfer: initApiTransfer,
 	api: api,
