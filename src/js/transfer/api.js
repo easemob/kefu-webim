@@ -684,6 +684,13 @@ getData.listen(function (msg) {
 			msg: msg,
 			type: 'POST',
 		});
+		break;	
+	case 'getWebsiteIdsBySiteCode':
+		emitAjax({
+			url: '/v1/websites/zto/webSite-relations?msg_type=ZTO_SITE_ROUTER&logistics_interface=%7DsiteCode:' + params.siteCode + '%7D', 
+			msg: msg,
+			type: 'POST',
+		});
 		break;
 	default:
 		console.error('unexpect api name: ' + apiName);
