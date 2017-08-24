@@ -109,14 +109,6 @@ module.exports = {
 		SCROLL_TO_BOTTOM: "scroll.to.bottom",
 	},
 
-	GRAY_LIST_KEYS: [
-		"audioVideo",
-		"msgPredictEnable",
-		"waitListNumberEnable",
-		"agentInputStateEnable",
-		"noteCategory"
-	],
-
 	ERROR_MSG: {
 		VISITOR_DOES_NOT_EXIST: "visitor does not exist.",
 		SESSION_DOES_NOT_EXIST: "session does not exist.",
