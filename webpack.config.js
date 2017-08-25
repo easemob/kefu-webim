@@ -116,6 +116,7 @@ conmmonConfig = {
 					/im\.html/,
 					/icon\.scss/,
 					/iframe\.js/,
+					/transfer\.html/,
 				],
 				loader: "string-replace-loader",
 				query: {
