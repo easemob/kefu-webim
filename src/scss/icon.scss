@@ -140,27 +140,27 @@
 
 .icon-qianbao:before {
 	@extend .icon-base;
-	content: "\e600";
+	content: "\80";
 }
 
-.icon-1010101:before {
+.icon-red-bag-small:before {
 	@extend .icon-base;
-	content: "\e601";
+	content: "\81";
 }
 
-.icon-10103:before {
+.icon-location:before {
 	@extend .icon-base;
-	content: "\e602";
+	content: "\82";
 }
 
 .icon-file-download:before {
 	@extend .icon-base;
-	content: "\e603";
+	content: "\83";
 }
 
-.icon-10105:before {
+.icon-red-bag:before {
 	@extend .icon-base;
-	content: "\e604";
+	content: "\84";
 }
 
 .icon-r:before {
@@ -236,5 +236,10 @@
 .icon-arrow-right:before {
 	@extend .icon-base;
 	content: "\69"
+}
+
+.icon-exit:before {
+	@extend .icon-base;
+	content: "\92"
 }
 
