@@ -53,6 +53,10 @@ module.exports = {
 		Promise: false,
 		_: false,
 		__: false,
+		transfer: false,
+		WebIM: false,
+		easemobim: false,
+		define: false,
 	},
 
 	rules: {

@@ -31,7 +31,7 @@
     "start": "node server/app -t",
     "build_en": "webpack --lang en-US",
     "build_all": "webpack;webpack --lang en-US",
-    "lint": "eslint src/js/app/modules/init.js"
+    "lint": "eslint src/js/app/modules/init.js src/js/plugin/userAPI.js"
   },
   "dependencies": {
     "easemob-websdk": "=1.4.6",

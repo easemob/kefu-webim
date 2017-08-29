@@ -5,6 +5,7 @@ var Iframe = require("./iframe");
 var tenantList = {};
 var DEFAULT_CONFIG;
 var config;
+var cacheKeyName;
 
 // get parameters from easemob.js
 var baseConfig = getConfig();
@@ -13,7 +14,7 @@ var iframe;
 
 window.easemobim = window.easemobim || {};
 window.easemobim.config = window.easemobim.config || {};
-window.easemobim.version = '__WEBIM_PLUGIN_VERSION__';
+window.easemobim.version = "__WEBIM_PLUGIN_VERSION__";
 
 if(
 	/MSIE 7\.0/.test(navigator.userAgent)
@@ -21,12 +22,12 @@ if(
 	&& !document.querySelector
 ){
 	easemobim.bind = function(){
-		alert("您使用的IE浏览器版本过低，请使用IE8以上版本的IE浏览器或Chrome浏览器");
+		alert("您使用的IE浏览器版本过低，请使用IE8以上版本的IE浏览器或Chrome浏览器"); // eslint-disable-line no-alert
 	};
 	throw new Error("unsupported browser.");
 }
 
-require('../../plugin-scss/easemob.scss');
+require("../../plugin-scss/easemob.scss");
 
 DEFAULT_CONFIG = {
 	tenantId: "",
@@ -86,8 +87,9 @@ function getConfig(){
 	var src;
 	var obj = {};
 	var scripts = document.scripts;
+	var s, l, i, len;
 
-	for(var s = 0, l = scripts.length; s < l; s++){
+	for(s = 0, l = scripts.length; s < l; s++){
 		if(~scripts[s].src.indexOf("easemob.js")){
 			src = scripts[s].src;
 			break;
@@ -104,7 +106,7 @@ function getConfig(){
 	var domain = src.slice(sIdx, src.indexOf("/", sIdx + 2));
 	var arr = src.slice(idx + 1).split("&");
 
-	for(var i = 0, len = arr.length; i < len; i++){
+	for(i = 0, len = arr.length; i < len; i++){
 		tmp = arr[i].split("=");
 		obj[tmp[0]] = tmp.length > 1 ? decodeURIComponent(tmp[1]) : "";
 	}
@@ -126,14 +128,15 @@ window.easemobIMS = function(tenantId, group){
  * @param: {Object} config
  */
 easemobim.bind = function(config){
+	var i;
 	// 防止空参数调用异常
 	config = config || {};
 	config.emgroup = config.emgroup || easemobim.config.emgroup || "";
 
 	var cacheKeyName = config.configId || (config.tenantId + config.emgroup);
 
-	for(var i in tenantList){
-		if(tenantList.hasOwnProperty(i)){
+	for(i in tenantList){
+		if(Object.prototype.hasOwnProperty.call(tenantList, i)){
 			tenantList[i].close();
 		}
 	}
@@ -195,7 +198,7 @@ if(
 	(!_config.hide || _config.autoConnect || _config.eventCollector)
 	&& (_config.tenantId || _config.configId) && !utils.isMobile
 ){
-	var cacheKeyName = _config.configId || (config.tenantId + (config.emgroup || ""));
+	cacheKeyName = _config.configId || (config.tenantId + (config.emgroup || ""));
 
 	iframe = tenantList[cacheKeyName] || Iframe(_config);
 	tenantList[cacheKeyName] = iframe;
@@ -204,12 +207,12 @@ if(
 	easemobim.config.eventCollector = false;
 }
 
-//support cmd & amd
-if (typeof module === 'object' && typeof module.exports === 'object'){
+// support cmd & amd
+if(typeof module === "object" && typeof module.exports === "object"){
 	module.exports = easemobim;
 }
-else if (typeof define === 'function' && define.amd){
-	define('easemob-kefu-webim-plugin', [], function(){
+else if(typeof define === "function" && define.amd){
+	define("easemob-kefu-webim-plugin", [], function(){
 		return easemobim;
 	});
 }
