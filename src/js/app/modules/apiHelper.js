@@ -1115,6 +1115,19 @@ function getWebsiteIdsByBillCode(billCode){
 	});
 }
 
+function getWebsiteIdsBySiteCode(siteCode){
+	return new Promise(function(resolve, reject){
+		api('getWebsiteIdsBySiteCode', {
+			"siteCode": siteCode
+		}, function (msg){
+			var websiteIds = utils.getDataByPath(msg, 'data.entity.result');
+			resolve(websiteIds);
+		}, function (err) {
+			reject(err);
+		});
+	});
+}
+
 function getSkillgroupByWebsiteId(websiteIds){
 	return new Promise(function(resolve, reject){
 		api('getSkillgroupByWebsiteId', {
@@ -1200,6 +1213,7 @@ module.exports = {
 	getWebsiteIdsByBillCode: getWebsiteIdsByBillCode,
 	getSkillgroupByWebsiteId: getSkillgroupByWebsiteId,
 	createWorkOrder: createWorkOrder,
+	getWebsiteIdsBySiteCode: getWebsiteIdsBySiteCode,
 
 	initApiTransfer: initApiTransfer,
 	api: api,
