@@ -545,7 +545,8 @@ function _bindEvents(){
 			fileInput.value = "";
 		}
 		else{
-			channel.sendFile(WebIM.utils.getFileUrl(fileInput), fileInput);
+			channel.sendFile(WebIM.utils.getFileUrl(fileInput));
+			fileInput.value = "";
 		}
 	});
 
@@ -573,7 +574,8 @@ function _bindEvents(){
 			fileInput.value = "";
 		}
 		else{
-			channel.sendImg(WebIM.utils.getFileUrl(fileInput), fileInput);
+			channel.sendImg(WebIM.utils.getFileUrl(fileInput));
+			fileInput.value = "";
 		}
 	});
 

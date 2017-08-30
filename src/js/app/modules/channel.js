@@ -226,33 +226,22 @@ function _sendTransferToKf(tid, sessionId){
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 }
 
-function _sendImg(fileMsg, fileInput){
+function _sendImg(fileMsg){
 	var id = utils.uuid();
 	var msg = new WebIM.message.img(id);
 
-	fileInput && (fileInput.value = "");
 	msg.set({
 		apiUrl: location.protocol + "//" + config.restServer,
 		file: fileMsg,
 		accessToken: token,
 		to: config.toUser,
-		uploadError: function(error){
-			// 显示图裂，无法重新发送
-			var id = error.id;
-			var loading = document.getElementById(id + "_loading");
-			var msgWrap = document.querySelector("#" + id + " .em-widget-msg-container");
-
-			msgWrap && (msgWrap.innerHTML = "<i class=\"icon-broken-pic\"></i>");
-			utils.addClass(loading, "hide");
-			// todo: fix this part can not be called
-		},
 		success: function(id){
 			// todo: 验证这里是否执行，验证此处id是im msg id 还是 kefu-ack-id
 			_hideFailedAndLoading(id);
 		},
 		fail: function(id){
 			_showFailed(id);
-		}
+		},
 	});
 	_setExt(msg);
 	_appendAck(msg, id);
@@ -262,7 +251,7 @@ function _sendImg(fileMsg, fileInput){
 		url: fileMsg.url
 	}, {
 		isReceived: false,
-		isHistory: false
+		isHistory: false,
 	});
 	conn.send(msg.body);
 	sendMsgDict.set(id, msg);
@@ -273,32 +262,21 @@ function _sendImg(fileMsg, fileInput){
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 }
 
-function _sendFile(fileMsg, fileInput){
+function _sendFile(fileMsg){
 	var id = utils.uuid();
 	var msg = new WebIM.message.file(id);
 
-	fileInput && (fileInput.value = "");
 	msg.set({
 		apiUrl: location.protocol + "//" + config.restServer,
 		file: fileMsg,
 		to: config.toUser,
-		uploadError: function(error){
-			var id = error.id;
-			var loading = document.getElementById(id + "_loading");
-			var msgWrap = document.querySelector("#" + id + " .em-widget-msg-container");
-
-			// 显示图裂，无法重新发送
-			msgWrap && (msgWrap.innerHTML = "<i class=\"icon-broken-pic\"></i>");
-			utils.addClass(loading, "hide");
-			// todo: fix this part can not be called
-		},
 		success: function(id){
 			// todo: 验证这里是否执行，验证此处id是im msg id 还是 kefu-ack-id
 			_hideFailedAndLoading(id);
 		},
 		fail: function(id){
 			_showFailed(id);
-		}
+		},
 	});
 	_setExt(msg);
 	_appendMsg({
@@ -306,10 +284,10 @@ function _sendFile(fileMsg, fileInput){
 		type: "file",
 		url: fileMsg.url,
 		filename: fileMsg.filename,
-		fileLength: fileMsg.data.size
+		fileLength: fileMsg.data.size,
 	}, {
 		isReceived: false,
-		isHistory: false
+		isHistory: false,
 	});
 	conn.send(msg.body);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
