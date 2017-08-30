@@ -816,7 +816,6 @@ function _init() {
 			initTransferToKefuButton();
 			initAgentNicknameUpdate();
 			initGetGreetings();
-			initQuerySkillgroup();
 
 			// 第二通道收消息初始化
 			channel.initSecondChannle();
