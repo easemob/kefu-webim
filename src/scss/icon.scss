@@ -243,3 +243,43 @@
 	content: "\92"
 }
 
+.icon-transfer-to-manual:before {
+	@extend .icon-base;
+	content: "\77"
+}
+
+.icon-benz-picture:before {
+	@extend .icon-base;
+	content: "\85"
+}
+
+.icon-benz-video:before {
+	@extend .icon-base;
+	content: "\86"
+}
+
+.icon-benz-face:before {
+	@extend .icon-base;
+	content: "\87"
+}
+
+.icon-benz-circle:before {
+	@extend .icon-base;
+	content: "\88"
+}
+
+.icon-benz-circle-hollow:before {
+	@extend .icon-base;
+	content: "\89"
+}
+
+.icon-benz-power-button:before {
+	@extend .icon-base;
+	content: "\90"
+}
+
+.icon-benz-power-button-hollow:before {
+	@extend .icon-base;
+	content: "\91"
+}
+
