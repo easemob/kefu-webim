@@ -17,6 +17,7 @@ var chat = require("./chat");
 var channel = require("./channel");
 var profile = require("./tools/profile");
 var doWechatAuth = require("./wechat");
+var initQuerySkillgroup = require("./chat/initQuerySkillgroup");
 var extendMessageSender = require("./chat/extendMessageSender");
 var body_template = require("../../../template/body.html");
 
@@ -60,6 +61,8 @@ function h5_mode_init(){
 	config.offDutyType = utils.query("offDutyType");
 	config.grUserId = utils.query("grUserId");
 	config.domain = utils.query("domain") ? "//" + utils.query("domain") : "";
+	config.siteCode = utils.query('siteCode');
+	config.billCode = utils.query('billCode');
 
 	// H5 方式集成时不支持eventCollector配置
 	config.to = utils.convertFalse(utils.query("to"));
@@ -93,6 +96,11 @@ function h5_mode_init(){
 	else{}
 
 	profile.config = config;
+
+	////初始化填写运单号页面  根据url中是否含有 运单号(billCode) 网点号(siteCode) 判断初始化时  是否显示运单号页面
+	(config.siteCode || config.billCode) ? initQuerySkillgroup({isHide: true}) : initQuerySkillgroup();
+
+	
 	// fake transfer
 	window.transfer = {
 		send: function(){}

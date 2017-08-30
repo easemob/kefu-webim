@@ -28,18 +28,33 @@ var dialog = uikit.createDialog({
 	contentDom: dom,
 	className: 'query-skillgroup'
 });
-dialog.show();
 var isQuerying;
 var billCodeNum;
+var siteCodeNum;
+var config;
 
 module.exports = function(opt){
 	opt = opt || {};
-	//不需要订单号查询时   直接隐藏页面
-	if (opt.isHide) {
+	opt.isHide ? dialog.hide() : dialog.show();
+	config = profile.config;
+	_bindEvents();
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideQuerySkillgroup);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideQuerySkillgroup);
+	
+};
+function _displayOrHideQuerySkillgroup(officialAccount) {
+	if (officialAccount !== profile.systemOfficialAccount || officialAccount.isSessionOpen) {
 		dialog.hide();
-		return;
 	}
-	isQuerying = false;
+	else if(config.billCode || config.siteCode){
+		_setSkillgroupByUrl();
+		dialog.hide();
+	}
+	else{
+		dialog.show();;
+	};
+}
+function _bindEvents() {
 	utils.on(cancelBtn, utils.click, function () {
 		dialog.hide();
 	});
@@ -58,23 +73,13 @@ module.exports = function(opt){
 		else {
 			isQuerying = true;
 			setTimeout(function () { isQuerying = false; }, 10000);
-			getWebsiteIds (getSkillgroup);
+			getWebsiteIds ();
 
 		}
 	});
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideQuerySkillgroup);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideQuerySkillgroup);
-};
-function _displayOrHideQuerySkillgroup(officialAccount) {
-	if (officialAccount !== profile.systemOfficialAccount || officialAccount.isSessionOpen) {
-		dialog.hide();
-	}
-	else {
-		dialog.show();;
-	};
 }
-function getWebsiteIds (cb) {
-	apiHelper.getWebsiteIdsByBillCode(content.value).then(function (websiteIds) {
+function getWebsiteIds () {
+	apiHelper.getWebsiteIdsByBillCode(billCodeNum).then(function (websiteIds) {
 		if(!websiteIds) {
 			// 取不回来网点 直接发送扩展消息 取回来网点id 调用getSkillgroup查询技能组
 			isQuerying = false;
@@ -133,4 +138,26 @@ function getSkillgroup(websiteIds) {
 		}
 		dialog.hide();
 	})
+}
+
+function getWebsiteIdsBySiteCode() {
+	apiHelper.getWebsiteIdsBySiteCode(siteCodeNum).then(function (websiteIds) {
+		if(!websiteIds) {
+			// 取不回来网点 不做任何处理
+			dialog.hide();
+		}else {
+			getSkillgroup(websiteIds);
+		}
+	})
+}
+
+function _setSkillgroupByUrl() {
+	if (config.billCode){
+		billCodeNum = config.billCode;
+		getWebsiteIds();
+	}
+	else{
+		siteCodeNum = config.siteCode;
+		getWebsiteIdsBySiteCode();
+	}
 }
