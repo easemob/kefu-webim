@@ -2,229 +2,284 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 	<meta name="format-detection" content="telephone=no">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
 	<style>
-		h1{text-align: center;}	
-        .main{
-            width: 960px;
-            margin:0 auto;
-            color: #666;
-            font-size: 14px;
-            line-height: 1.8;
-            height: 100%;
-            overflow: auto;
-
-        }
-        .icon_lists{
-            padding: 0 46px;
-        }
-        .icon_lists:after{
-            content: '';
-            display: table;
-            clear: both;
-        }
-        .icon_lists li {
-            float: left;
-            width: 100px;
-            height: 120px;
-            margin:12px 0;
-            text-align: center;
-        }
-         .icon_lists li i{
-            line-height: 100px;
-         }  
-        .icon_lists li i:before{
-            transition: font-size 0.25s ease-out 0s;
-        }        
-        .icon_lists li:hover i:before{
-            font-size: 100px;
-        }
+		.title{
+			text-align: center;
+			margin: 30px;
+		}
+		.main{
+			color: #666;
+			font-size: 14px;
+			line-height: 1.8;
+		}
+		.icon_list{
+			padding: 0 46px;
+		}
+		.icon_list:after{
+			content: '';
+			display: table;
+			clear: both;
+		}
+		.icon_list li {
+			float: left;
+			width: 100px;
+			height: 120px;
+			margin:12px 0;
+			text-align: center;
+		}
+		 .icon_list li i{
+			line-height: 100px;
+		 }
+		.icon_list li i:before{
+			transition: font-size 0.25s ease-out 0s;
+		}
+		.icon_list li.unused:before{
+			content: "Unused!";
+			position: absolute;
+			transform: translateY(30px) translateX(-30px) rotate(-40deg);
+			text-shadow: white 1px 1px 1px;
+			background-color: rgba(255, 235, 59, .5);
+		}
+		.icon_list li:hover i:before{
+			font-size: 100px;
+		}
+		.icon_info {
+			margin: 30px;
+		}
+		body {
+			overflow: auto !important;
+		}
 
 
 	</style>
-    <link href='../static/css/im.css' rel='stylesheet' />
+	<link href='../static/css/im.css' rel='stylesheet' />
 </head>
 
 <body>
 	 <div class="main">
-        <h1>IconFont 图标</h1>
-        <ul class="icon_lists clear">
-                <li>
-                    <i class="icon-camera"></i>
-                    <div>camera</div>
-                </li>
-                <li>
-                    <i class="icon-change"></i>
-                    <div>change</div>
-                </li> 
-                <li>
-                    <i class="icon-minimize"></i>
-                    <div>minimize</div>
-                </li>
-                <li>
-                    <i class="icon-maximize"></i>
-                    <div>maximize</div>
-                </li>
-                <li>
-                    <i class="icon-circle"></i>
-                    <div>circle</div>
-                </li>
-                <li>
-                    <i class="icon-exclamation"></i>
-                    <div>exclamation</div>
-                </li>
-                <li>
-                    <i class="icon-close"></i>
-                    <div>close</div>
-                </li>
-                <li>
-                    <i class="icon-face"></i>
-                    <div>face</div>
-                </li>
-                <li>
-                    <i class="icon-easemob"></i>
-                    <div>easemob</div>
-                </li>
-                <li>
-                    <i class="icon-min"></i>
-                    <div>min</div>
-                </li>
-                <li>
-                    <i class="icon-good"></i>
-                    <div>good</div>
-                </li>
-                <li>
-                    <i class="icon-star"></i>
-                    <div>star</div>
-                </li>
-                <li>
-                    <i class="icon-broken-pic"></i>
-                    <div>broken-pic</div>
-                </li>
-                <li>
-                    <i class="icon-corner-left"></i>
-                    <div>corner-left</div>
-                </li>
-                <li>
-                    <i class="icon-corner-right"></i>
-                    <div>corner-right</div>
-                </li>
-                <li>
-                    <i class="icon-picture"></i>
-                    <div>picture</div>
-                </li>
-                <li>
-                    <i class="icon-M"></i>
-                    <div>M</div>
-                </li>
-                <li>
-                    <i class="icon-bell"></i>
-                    <div>bell</div>
-                </li>
-                <li>
-                    <i class="icon-slience"></i>
-                    <div>slience</div>
-                </li>
-                <li>
-                    <i class="icon-sound"></i>
-                    <div>sound</div>
-                </li>
-                <li>
-                    <i class="icon-keyboard-down"></i>
-                    <div>keyboard-down</div>
-                </li>
-                <li>
-                    <i class="icon-keyboard-up"></i>
-                    <div>keyboard-up</div>
-                </li>
-                <li>
-                    <i class="icon-qianbao"></i>
-                    <div>qianbao</div>
-                </li>
-                <li>
-                    <i class="icon-red-bag-small"></i>
-                    <div>red-bag-small</div>
-                </li>
-                <li>
-                    <i class="icon-location"></i>
-                    <div>location</div>
-                </li>
-                <li>
-                    <i class="icon-file-download"></i>
-                    <div>file-download</div>
-                </li>
-                <li>
-                    <i class="icon-red-bag"></i>
-                    <div>red-bag</div>
-                </li>
-                <li>
-                    <i class="icon-r"></i>
-                    <div>r</div>
-                </li>
-                <li>
-                    <i class="icon-q"></i>
-                    <div>q</div>
-                </li>
-                <li>
-                    <i class="icon-p"></i>
-                    <div>p</div>
-                </li>
-                <li>
-                    <i class="icon-answer"></i>
-                    <div>answer</div>
-                </li>
-                <li>
-                    <i class="icon-decline"></i>
-                    <div>decline</div>
-                </li>
-                <li>
-                    <i class="icon-note"></i>
-                    <div>note</div>
-                </li>
-                <li>
-                    <i class="icon-headset"></i>
-                    <div>headset</div>
-                </li>
-                <li>
-                    <i class="icon-video"></i>
-                    <div>video</div>
-                </li>
-                <li>
-                    <i class="icon-flower"></i>
-                    <div>flower</div>
-                </li>
-                <li>
-                    <i class="icon-attachment"></i>
-                    <div>attachment</div>
-                </li>
-                <li>
-                    <i class="icon-download"></i>
-                    <div>download</div>
-                </li>
-                <li>
-                    <i class="icon-list"></i>
-                    <div>list</div>
-                </li>
-                <li>
-                    <i class="icon-message"></i>
-                    <div>message</div>
-                </li>
-                <li>
-                    <i class="icon-arrow-up-down"></i>
-                    <div>arrow-up-down</div>
-                </li>
-                <li>
-                    <i class="icon-arrow-right"></i>
-                    <div>arrow-right</div>
-                </li>                
-                <li>
-                    <i class="icon-exit"></i>
-                    <div>exit</div>
-                </li>
-               
-        </ul>
-    </div>
+		<h1 class="title">kefu-webim iconfont demo</h1>
+		<ul class="icon_list clear">
+			<li>
+				<i class="icon-camera"></i>
+				<div>camera</div>
+			</li>
+			<li>
+				<i class="icon-change"></i>
+				<div>change</div>
+			</li>
+			<li>
+				<i class="icon-minimize"></i>
+				<div>minimize</div>
+			</li>
+			<li>
+				<i class="icon-maximize"></i>
+				<div>maximize</div>
+			</li>
+			<li>
+				<i class="icon-circle"></i>
+				<div>circle</div>
+			</li>
+			<li>
+				<i class="icon-exclamation"></i>
+				<div>exclamation</div>
+			</li>
+			<li>
+				<i class="icon-close"></i>
+				<div>close</div>
+			</li>
+			<li>
+				<i class="icon-face"></i>
+				<div>face</div>
+			</li>
+			<li>
+				<i class="icon-easemob"></i>
+				<div>easemob</div>
+			</li>
+			<li>
+				<i class="icon-min"></i>
+				<div>min</div>
+			</li>
+			<li>
+				<i class="icon-good"></i>
+				<div>good</div>
+			</li>
+			<li>
+				<i class="icon-star"></i>
+				<div>star</div>
+			</li>
+			<li>
+				<i class="icon-broken-pic"></i>
+				<div>broken-pic</div>
+			</li>
+			<li>
+				<i class="icon-corner-left"></i>
+				<div>corner-left</div>
+			</li>
+			<li>
+				<i class="icon-corner-right"></i>
+				<div>corner-right</div>
+			</li>
+			<li>
+				<i class="icon-picture"></i>
+				<div>picture</div>
+			</li>
+			<li class="unused">
+				<i class="icon-M"></i>
+				<div>M</div>
+			</li>
+			<li>
+				<i class="icon-bell"></i>
+				<div>bell</div>
+			</li>
+			<li>
+				<i class="icon-slience"></i>
+				<div>slience</div>
+			</li>
+			<li>
+				<i class="icon-sound"></i>
+				<div>sound</div>
+			</li>
+			<li>
+				<i class="icon-keyboard-down"></i>
+				<div>keyboard-down</div>
+			</li>
+			<li>
+				<i class="icon-keyboard-up"></i>
+				<div>keyboard-up</div>
+			</li>
+			<li class="unused">
+				<i class="icon-qianbao"></i>
+				<div>qianbao</div>
+			</li>
+			<li class="unused">
+				<i class="icon-red-bag-small"></i>
+				<div>red-bag-small</div>
+			</li>
+			<li class="unused">
+				<i class="icon-location"></i>
+				<div>location</div>
+			</li>
+			<li>
+				<i class="icon-file-download"></i>
+				<div>file-download</div>
+			</li>
+			<li class="unused">
+				<i class="icon-red-bag"></i>
+				<div>red-bag</div>
+			</li>
+			<li class="unused">
+				<i class="icon-r"></i>
+				<div>r</div>
+			</li>
+			<li class="unused">
+				<i class="icon-q"></i>
+				<div>q</div>
+			</li>
+			<li class="unused">
+				<i class="icon-p"></i>
+				<div>p</div>
+			</li>
+			<li>
+				<i class="icon-answer"></i>
+				<div>answer</div>
+			</li>
+			<li>
+				<i class="icon-decline"></i>
+				<div>decline</div>
+			</li>
+			<li>
+				<i class="icon-note"></i>
+				<div>note</div>
+			</li>
+			<li>
+				<i class="icon-headset"></i>
+				<div>headset</div>
+			</li>
+			<li>
+				<i class="icon-video"></i>
+				<div>video</div>
+			</li>
+			<li>
+				<i class="icon-flower"></i>
+				<div>flower</div>
+			</li>
+			<li>
+				<i class="icon-attachment"></i>
+				<div>attachment</div>
+			</li>
+			<li>
+				<i class="icon-download"></i>
+				<div>download</div>
+			</li>
+			<li>
+				<i class="icon-list"></i>
+				<div>list</div>
+			</li>
+			<li>
+				<i class="icon-message"></i>
+				<div>message</div>
+			</li>
+			<li>
+				<i class="icon-arrow-up-down"></i>
+				<div>arrow-up-down</div>
+			</li>
+			<li>
+				<i class="icon-arrow-right"></i>
+				<div>arrow-right</div>
+			</li>
+			<li>
+				<i class="icon-exit"></i>
+				<div>exit</div>
+			</li>
+			<li class="unused">
+				<i class="icon-transfer-to-manual"></i>
+				<div>transfer-to-manual</div>
+			</li>
+			<li>
+				<i class="icon-benz-picture"></i>
+				<div>benz-picture</div>
+			</li>
+			<li>
+				<i class="icon-benz-video"></i>
+				<div>benz-video</div>
+			</li>
+			<li>
+				<i class="icon-benz-face"></i>
+				<div>benz-face</div>
+			</li>
+			<li class="unused">
+				<i class="icon-benz-circle"></i>
+				<div>benz-circle</div>
+			</li>
+			<li class="unused">
+				<i class="icon-benz-circle-hollow"></i>
+				<div>benz-circle-hollow</div>
+			</li>
+			<li class="unused">
+				<i class="icon-benz-power-button"></i>
+				<div>benz-power-button</div>
+			</li>
+			<li class="unused">
+				<i class="icon-benz-power-button-hollow"></i>
+				<div>benz-power-button-hollow</div>
+			</li>
+		</ul>
+
+		<h2 class="icon_info"></h2>
+	</div>
+<script>
+(function(){
+	// 统计图标数目
+	var infoDom = document.querySelector(".icon_info");
+	var iconAmount = document.querySelectorAll(".icon_list > li").length;
+	var unusedIconAmount = document.querySelectorAll(".icon_list > li.unused").length;
+	var content = iconAmount + " icon(s), " + unusedIconAmount + " unused.";
+
+	infoDom.innerText = content;
+}());
+</script>
 </body>
 </html>
