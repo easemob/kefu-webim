@@ -570,7 +570,7 @@ function _transformMessageFormat(element){
 	}
 
 	return {
-		data: msg.msg,
+		data: msg.msg || "",
 		url: url,
 		filename: msg.filename,
 		action: msg.action,
