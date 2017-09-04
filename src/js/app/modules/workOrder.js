@@ -91,7 +91,6 @@ function _clearInput(){
 }
 
 function _writePreDate(preData){
-	content.value = preData.content || '';
 	contact.value = preData.name || '';
 	phone.value = preData.phone || '';
 }
