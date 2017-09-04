@@ -393,7 +393,6 @@ function _bindEvents(){
 			preData: {
 				name: config.visitor.trueName,
 				phone: config.visitor.phone,
-				mail: config.visitor.email,
 			}
 		});
 	});
