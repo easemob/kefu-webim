@@ -131,27 +131,30 @@
 	}
 }
 
-.icon-corner-left {
-	z-index: 1;
-	position: absolute;
-	top: .25rem;
-	left: -1rem;
-	width: 1.875rem;
-	height: 1.875rem;
-	color: white;
-	text-shadow: -1.5px 0 0 #BFBFBF;
+.em-widget-chat{
+	.icon-corner-left {
+		z-index: 1;
+		position: absolute;
+		top: .25rem;
+		left: -1rem;
+		width: 1.875rem;
+		height: 1.875rem;
+		color: white;
+		text-shadow: -1.5px 0 0 #BFBFBF;
+	}
+
+	.icon-corner-right {
+		z-index: 1;
+		position: absolute;
+		top: .25rem;
+		right: -1rem;
+		width: 1.875rem;
+		height: 1.875rem;
+		color: #00ADEF;
+		text-shadow: 1px 0 0 #c3cbd9;
+	}
 }
 
-.icon-corner-right {
-	z-index: 1;
-	position: absolute;
-	top: .25rem;
-	right: -1rem;
-	width: 1.875rem;
-	height: 1.875rem;
-	color: #00ADEF;
-	text-shadow: 1px 0 0 #c3cbd9;
-}
 
 .em-widget-msg-container {
 	display: inline-block;
