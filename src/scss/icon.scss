@@ -9,208 +9,282 @@
 	/* iOS 4.1- */
 }
 
+@mixin icon-base {
+	font-family: 'easemobim' !important;
+	font-size: 30px;
+	font-style: normal;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 30px;
+	-webkit-text-stroke-width: 0.2px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+// 这个class仅仅是为了使用 @extend
+// 使用 @extend 而非 @include 是为了优化生成后的css大小
+.icon-base {
+	@include icon-base;
+}
+
 .icon-camera:before {
+	@extend .icon-base;
 	content: "\63";
 }
 
 .icon-change:before {
+	@extend .icon-base;
 	content: "\64";
 }
 
 .icon-minimize:before {
+	@extend .icon-base;
 	content: "\65";
 }
 
 .icon-maximize:before {
+	@extend .icon-base;
 	content: "\66";
 }
 
 .icon-circle:before {
-	content: "\48";
+	@extend .icon-base;
+	content: "\41";
 }
 
 .icon-exclamation:before {
+	@extend .icon-base;
 	content: "\42";
 }
 
 .icon-close:before {
+	@extend .icon-base;
 	content: "\43";
 }
 
 .icon-face:before {
-	content: "\43";
+	@extend .icon-base;
+	content: "\44";
 }
 
 .icon-easemob:before {
+	@extend .icon-base;
 	content: "\45";
 }
 
 .icon-min:before {
+	@extend .icon-base;
 	content: "\46";
 }
 
 .icon-good:before {
+	@extend .icon-base;
 	content: "\47";
 }
 
 // fake: IE8 满意度评价会有兼容问题，需替换字符
 .icon-star:before {
+	@extend .icon-base;
 	content: "\48";
 }
 
 .icon-broken-pic:before {
-	content: "\44";
+	@extend .icon-base;
+	content: "\49";
 }
 
 .icon-corner-left:before {
-	content: "\45";
+	@extend .icon-base;
+	content: "\4b";
 }
 
 .icon-corner-right:before {
-	content: "\46";
+	@extend .icon-base;
+	content: "\4a";
 }
 
 .icon-picture:before {
-	content: "\41";
+	@extend .icon-base;
+	content: "\4c";
 }
 
 .icon-M:before {
+	@extend .icon-base;
 	content: "\4d";
 }
 
 .icon-bell:before {
+	@extend .icon-base;
 	content: "\78";
 }
 
 .icon-slience:before {
+	@extend .icon-base;
 	content: "\58";
 }
 
 .icon-sound:before {
+	@extend .icon-base;
 	content: "\67";
 }
 
 .icon-keyboard-down:before {
+	@extend .icon-base;
 	content: "\4f";
 }
 
 .icon-keyboard-up:before {
+	@extend .icon-base;
 	content: "\4e";
 }
 
 .icon-qianbao:before {
-	content: "\e600";
+	@extend .icon-base;
+	content: "\80";
 }
 
-.icon-1010101:before {
-	content: "\e601";
+.icon-red-bag-small:before {
+	@extend .icon-base;
+	content: "\81";
 }
 
-.icon-10103:before {
-	content: "\e602";
+.icon-location:before {
+	@extend .icon-base;
+	content: "\82";
 }
 
 .icon-file-download:before {
-	content: "\e603";
+	@extend .icon-base;
+	content: "\83";
 }
 
-.icon-10105:before {
-	content: "\e604";
+.icon-red-bag:before {
+	@extend .icon-base;
+	content: "\84";
 }
 
 .icon-r:before {
+	@extend .icon-base;
 	content: "\72";
 }
 
 .icon-q:before {
+	@extend .icon-base;
 	content: "\71";
 }
 
 .icon-p:before {
+	@extend .icon-base;
 	content: "\70";
 }
 
 .icon-answer:before {
+	@extend .icon-base;
 	content: "\61";
 }
 
 .icon-decline:before {
+	@extend .icon-base;
 	content: "\62";
 }
 
 .icon-note:before {
+	@extend .icon-base;
 	content: "\31";
 }
 
+.icon-headset:before {
+	@extend .icon-base;
+	content: "\79";
+}
+
 .icon-video:before {
-	content: "\42";
+	@extend .icon-base;
+	content: "\74";
 }
 
 .icon-flower:before {
+	@extend .icon-base;
 	content: "\68";
 }
 
 .icon-attachment:before {
+	@extend .icon-base;
 	content: "\76"
 }
 
 .icon-download:before {
-	content: "\47"
+	@extend .icon-base;
+	content: "\75"
+}
+
+.icon-list:before {
+	@extend .icon-base;
+	content: "\7a"
+}
+
+.icon-message:before {
+	@extend .icon-base;
+	content: "\7b"
+}
+
+.icon-arrow-up-down:before {
+	@extend .icon-base;
+	content: "\32"
+}
+
+.icon-arrow-right:before {
+	@extend .icon-base;
+	content: "\69"
 }
 
 .icon-exit:before {
-	content: "\52"
+	@extend .icon-base;
+	content: "\92"
 }
 
-.icon-camera:before,
-.icon-change:before,
-.icon-minimize:before,
-.icon-maximize:before,
-.icon-circle:before,
-.icon-exclamation:before,
-.icon-close:before,
-.icon-face:before,
-.icon-easemob:before,
-.icon-min:before,
-.icon-good:before,
-.icon-star:before,
-.icon-broken-pic:before,
-.icon-corner-left:before,
-.icon-corner-right:before,
-.icon-picture:before,
-.icon-M:before,
-.icon-bell:before,
-.icon-slience:before,
-.icon-sound:before,
-.icon-keyboard-down:before,
-.icon-keyboard-up:before,
-.icon-qianbao:before,
-.icon-1010101:before,
-.icon-10103:before,
-.icon-file-download:before,
-.icon-10105:before,
-.icon-r:before,
-.icon-q:before,
-.icon-p:before,
-.icon-answer:before,
-.icon-decline:before,
-.icon-note:before,
-.icon-video:before,
-.icon-flower:before,
-.icon-attachment:before,
-.icon-download:before,
-.icon-exit:before,
-.em-widget-agent-status.leave:after,
-.em-widget-agent-status.busy:after,
-.em-widget-agent-status.hidden:after,
-.em-just-for-block-class-name {
-	font-family: 'easemobim' !important;
-	font-size: 1.875rem;
-	font-style: normal;
-	text-align: center;
-	vertical-align: middle;
-	line-height: 1.875rem;
-	-webkit-text-stroke-width: 0.2px;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+.icon-transfer-to-manual:before {
+	@extend .icon-base;
+	content: "\77"
 }
+
+.icon-benz-picture:before {
+	@extend .icon-base;
+	content: "\85"
+}
+
+.icon-benz-video:before {
+	@extend .icon-base;
+	content: "\86"
+}
+
+.icon-benz-face:before {
+	@extend .icon-base;
+	content: "\87"
+}
+
+.icon-benz-circle:before {
+	@extend .icon-base;
+	content: "\88"
+}
+
+.icon-benz-circle-hollow:before {
+	@extend .icon-base;
+	content: "\89"
+}
+
+.icon-benz-power-button:before {
+	@extend .icon-base;
+	content: "\90"
+}
+
+.icon-benz-power-button-hollow:before {
+	@extend .icon-base;
+	content: "\91"
+}
+
+
+
+
+
+
