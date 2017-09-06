@@ -92,7 +92,7 @@ function getWebsiteIds () {
 							// "title": "我正在看：",
 							"price": billCodeNum,
 							"desc": "运单号",
-							"img_url": "//" + location.host + "/webim/static/img/look_num.png",
+							"img_url": "//" + location.host +"/webim/static/img/zto_logo.jpg",
 							"item_url": "http://www.zto.com/GuestService/BillNew?txtbill=" + billCodeNum
 						}
 					}
@@ -115,21 +115,23 @@ function getSkillgroup(websiteIds) {
 		isQuerying = false;
 		var extBody = { 
 			ext: {
-				"type": "custom",
-				"msgtype": {
-					"track": {
-						"price": billCodeNum,
-						"desc": "运单号",
-						"img_url": "//" + location.host +"/webim/static/img/zto_logo.png",
-						"item_url": "http://www.zto.com/GuestService/BillNew?txtbill=" + billCodeNum
-					}
-				},
 				weichat: {
 					queueId: res[0],
 					reserve_queue: res[1]
 				}
 			}
 		};
+		if(billCodeNum){
+			extBody.ext.type = "custom";
+			extBody.ext.msgtype = {
+				"track": {
+					"price": billCodeNum,
+					"desc": "运单号",
+					"img_url": "//" + location.host +"/webim/static/img/zto_logo.jpg",
+					"item_url": "http://www.zto.com/GuestService/BillNew?txtbill=" + billCodeNum
+				}
+			};
+		}
 		var extArr = [billCodeNum,extBody];
 		if(profile.isMessageChannelReady){
 			channel.sendText.apply(chat,extArr);
