@@ -248,6 +248,11 @@
 	content: "\77"
 }
 
+.icon-form:before {
+	@extend .icon-base;
+	content: "\a070"
+}
+
 .icon-benz-picture:before {
 	@extend .icon-base;
 	content: "\85"
