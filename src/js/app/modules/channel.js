@@ -355,6 +355,9 @@ function _handleMessage(msg, msgType, isHistory){
 	else if(utils.getDataByPath(msg, "ext.msgtype.articles")){
 		type = "article";
 	}
+	else if(utils.getDataByPath(msg, "ext.type") === "html/form"){
+		type = "html-form";
+	}
 	else{}
 
 	switch(type){
@@ -486,6 +489,10 @@ function _handleMessage(msg, msgType, isHistory){
 			"</div>"
 		].join("");
 		message.brief = __("message_brief.menu");
+		break;
+	case "html-form":
+		message = msg;
+		message.type = "html-form";
 		break;
 	default:
 		console.error("unexpected msg type");

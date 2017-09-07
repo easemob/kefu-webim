@@ -276,9 +276,47 @@
 				background-color: white;
 			}
 		}
-
-
 	}
+	.em-widget-msg-html-form{
+		padding: 0px;
+		height: 60px;
+		overflow: hidden;
+		position: relative;
+		.form-url{
+			position: absolute;
+			height: 100%;
+			width: 100%;
+			top: 0;
+			left: 0;
+		}
+		.form-content{
+			float: left;
+			max-width: 130px;
+			min-width: 100px;
+			padding: 10px;
+			box-sizing: border-box;
+			span{
+				display: block;
+				line-height: 20px;
+				height: 20px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+		}
+		.form-aside{
+			float: right;
+			width: 60px;
+			height: 60px;
+			background-color: #e1ecf9;
+			i:before{
+				font-size: 60px;
+				line-height: 60px;
+				color: #00B1DC;
+			}
+		}
+	}
+
 }
 
 .article-message-wrapper {
