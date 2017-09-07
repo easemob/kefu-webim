@@ -32,6 +32,7 @@ function genMsgContent(msg){
 	var type = msg.type;
 	var value = msg.data;
 	var html = "";
+	var msgContent;
 	switch(type){
 	case "txt":
 		// 历史消息表情未经过im sdk 解析，所以类型为txt
@@ -76,6 +77,18 @@ function genMsgContent(msg){
 			+ "<a target=\"_blank\" href=\"" + msg.url
 			+ "\" class=\"icon-download container-icon-download\" title=\""
 			+ msg.filename + "\" download=\"" + msg.filename + "\"></a>";
+		break;
+	case "html-form":
+		msgContent = msg.ext.msgtype.html;
+		html = "<a class=\"form-url\" href=" + msgContent.url + "></a>"
+			+ "<div class=\"form-content\">"
+			+ "<span class=\"title\">" + msgContent.title + "</span>"
+			+ "<span class=\"desc\">" + msgContent.desc + "</span>"
+			+ "</div>"
+			+ "<div class=\"form-aside\">"
+			+ "<i class=\"icon-form\"></i>"
+			+ "</div>";
+
 		break;
 	default:
 		throw new Error("unexpected value type.");
