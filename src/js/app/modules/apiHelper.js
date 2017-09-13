@@ -252,7 +252,7 @@ function createTicket(opt){
 				resolve();
 			}
 			else{
-				reject("unknown errow.");
+				reject(new Error("unknown error."));
 			}
 		}, function(err){
 			reject(err);
@@ -354,7 +354,7 @@ function getOfficalAccountMessage(officialAccountId, startId){
 					resolve(list);
 				}
 				else{
-					reject("unexpect data format.");
+					reject(new Error("unexpect data format."));
 				}
 			}, function(err){
 				reject(err);
@@ -375,7 +375,8 @@ function getDutyStatus(){
 			channelId: config.channelId,
 			tenantId: config.tenantId,
 			queueName: config.emgroup,
-			agentUsername: config.agentName
+			agentUsername: config.agentName,
+			timeScheduleId: config.timeScheduleId,
 		}, function(msg){
 			resolve(!utils.getDataByPath(msg, "data.entity"));
 		}, function(err){

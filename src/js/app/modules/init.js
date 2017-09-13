@@ -178,6 +178,7 @@ function handleMsgData(){
 	config.staticPath = config.staticPath || defaultStaticPath;
 	config.offDutyWord = config.offDutyWord || __("prompt.default_off_duty_word");
 	config.emgroup = config.emgroup || "";
+	config.timeScheduleId = config.timeScheduleId || 0;
 
 	// fake patch: 老版本配置的字符串需要decode
 	if(config.offDutyWord){
@@ -259,6 +260,7 @@ function handleConfig(configJson){
 
 	config.resources = configJson.chat.resources;
 	config.hideStatus = configJson.chat.hideStatus;
+	config.timeScheduleId = configJson.chat.timeScheduleId;
 
 
 	// 重新去设置iframe 的宽高
