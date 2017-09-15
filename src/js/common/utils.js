@@ -341,6 +341,11 @@ module.exports = {
 		return matches ? decodeURIComponent(matches[2]) : "";
 	},
 	getAvatarsFullPath: function(url, domain){
+		// 以前头像上传到阿里云的oss，那时阿里云的oss不支持https
+		// 此处的逻辑是检测到阿里云的地址如果没有使用ossimages代理则加个代理
+		// todo: 现在已经不使用这种逻辑了，但是为了兼容老数据所以没删除
+		// 让运维洗一下数据，这部分逻辑就可以去掉了
+
 		if(!url) return;
 
 		url = url.replace(/^(https?:)?\/\/?/, "");
