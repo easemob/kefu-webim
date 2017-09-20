@@ -82,6 +82,7 @@ function _createTicket(){
 	]).then(function(result){
 		var token = result[0];
 		var projectId = result[1];
+		var sessionId = profile.currentOfficialAccount.sessionId || "";
 
 		apiHelper.createTicket({
 			token: token,
@@ -90,7 +91,8 @@ function _createTicket(){
 			phone: phone.value,
 			mail: mail.value,
 			content: content.value,
-			category_id: noteCategoryList.getSelectedValue()
+			category_id: noteCategoryList.getSelectedValue(),
+			session_id: sessionId,
 		}).then(function(){
 			isSending = false;
 			uikit.showSuccess(__("ticket.send_success"));

@@ -237,6 +237,7 @@ function createTicket(opt){
 			status_id: "",
 			priority_id: "",
 			category_id: opt.category_id,
+			session_id: opt.session_id,
 			creator: {
 				name: opt.name,
 				avatar: "",
