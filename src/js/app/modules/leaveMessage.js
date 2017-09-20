@@ -76,6 +76,7 @@ var _getCategories = _.once(function(){
 });
 
 function _createTicket(){
+	var sessionId = utils.getDataByPath(profile, "currentOfficialAccount.sessionId");
 	Promise.all([
 		apiHelper.getToken(),
 		apiHelper.getProjectId()
@@ -90,7 +91,8 @@ function _createTicket(){
 			phone: phone.value,
 			mail: mail.value,
 			content: content.value,
-			category_id: noteCategoryList.getSelectedValue()
+			category_id: noteCategoryList.getSelectedValue(),
+			session_id: sessionId || ""
 		}).then(function(){
 			isSending = false;
 			uikit.showSuccess(__("ticket.send_success"));
