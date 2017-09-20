@@ -56,7 +56,7 @@ conmmonConfig = {
 			},
 		}),
 	],
-	devtool: "source-map",
+	devtool: "eval",
 	module: {
 		loaders: [
 			{
