@@ -92,7 +92,7 @@ function _createTicket(){
 			mail: mail.value,
 			content: content.value,
 			category_id: noteCategoryList.getSelectedValue(),
-			session_id: sessionId || ""
+			session_id: sessionId || "",
 		}).then(function(){
 			isSending = false;
 			uikit.showSuccess(__("ticket.send_success"));
