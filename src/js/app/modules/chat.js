@@ -19,11 +19,11 @@ var initTransferToKefuButton = require("./chat/initTransferToKefuButton");
 var initSessionList = require("./chat/initSessionList");
 var initGetGreetings = require("./chat/initGetGreetings");
 var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
+var emojiPanel = require("./chat/emojiPanel");
 
-var isEmojiInitilized;
 var isMessageChannelReady;
 var config;
-var inputBoxPosition;
+var inputBoxPosition = "down";
 
 var topBar;
 var editorView;
@@ -189,65 +189,6 @@ function _setNotice(){
 	});
 }
 
-function _initEmoji(){
-	utils.on(doms.emojiBtn, utils.click, function(){
-		doms.textInput.blur();
-		utils.toggleClass(doms.emojiWrapper, "hide");
-
-		// 懒加载，打开表情面板时才初始化图标
-		if(!isEmojiInitilized){
-			isEmojiInitilized = true;
-			doms.emojiContainer.innerHTML = genHtml();
-		}
-	});
-
-	// 表情的选中
-	utils.live("img.emoji", utils.click, function(){
-		!utils.isMobile && doms.textInput.focus();
-		doms.textInput.value += this.getAttribute("data-value");
-		utils.trigger(doms.textInput, "change");
-	}, doms.emojiWrapper);
-
-	// todo: kill .e-face to make it more elegant
-	// ie8 does not support stopPropagation -_-||
-	// 点击别处时隐藏表情面板
-	utils.on(document, utils.click, function(ev){
-		var e = window.event || ev;
-		var target = e.srcElement || e.target;
-
-		if(!utils.hasClass(target, "e-face")){
-			utils.addClass(doms.emojiWrapper, "hide");
-		}
-	});
-
-	function genHtml(){
-		var path = WebIM.Emoji.path;
-		var EMOJI_COUNT_PER_LINE = 7;
-
-		return _.chain(WebIM.Emoji.map)
-		// 生成图标html
-		.map(function(value, key){
-			return "<div class=\"em-bar-emoji-bg e-face\">"
-					+ "<img class=\"e-face emoji\" src=\""
-					+ path + value
-					+ "\" data-value=" + key + " />"
-					+ "</div>";
-		})
-		// 按照下标分组
-		.groupBy(function(elem, index){
-			return Math.floor(index / EMOJI_COUNT_PER_LINE);
-		})
-		// 增加wrapper
-		.map(function(elem){
-			return "<li class=\"e-face\">" + elem.join("") + "</li>";
-		})
-		// 结束链式调用
-		.value()
-		// 把数组拼接成字符串
-		.join("");
-	}
-}
-
 function _setOffline(){
 	switch(config.offDutyType){
 	case "none":
@@ -293,14 +234,13 @@ function _initAutoGrow(){
 		utils.toggleClass(this, "icon-keyboard-up", status);
 		utils.toggleClass(this, "icon-keyboard-down", !status);
 
+		emojiPanel.move(inputBoxPosition, height);
 		switch(inputBoxPosition){
 		case "up":
 			doms.editorView.style.bottom = "auto";
 			doms.editorView.style.zIndex = "3";
 			doms.editorView.style.top = "43px";
 			doms.chatWrapper.style.bottom = "0";
-			doms.emojiWrapper.style.bottom = "auto";
-			doms.emojiWrapper.style.top = 43 + height + "px";
 			doms.queuingNumberStatus.style.top = height + "px";
 			break;
 		case "down":
@@ -308,13 +248,11 @@ function _initAutoGrow(){
 			doms.editorView.style.zIndex = "3";
 			doms.editorView.style.top = "auto";
 			doms.chatWrapper.style.bottom = height + "px";
-			doms.emojiWrapper.style.bottom = height + "px";
-			doms.emojiWrapper.style.top = "auto";
 			doms.queuingNumberStatus.style.top = "-26px";
 			_scrollToBottom();
 			break;
 		default:
-			break;
+			throw new Error("unexpected inputBoxPosition.");
 		}
 	});
 
@@ -331,13 +269,12 @@ function _initAutoGrow(){
 	function callback(){
 		var height = doms.editorView.getBoundingClientRect().height;
 		if(inputBoxPosition === "up"){
-			doms.emojiWrapper.style.top = 43 + height + "px";
 			doms.queuingNumberStatus.style.top = height + "px";
 		}
 		else{
 			doms.chatWrapper.style.bottom = height + "px";
-			doms.emojiWrapper.style.bottom = height + "px";
 		}
+		emojiPanel.move(inputBoxPosition, height);
 		_scrollToBottom();
 	}
 }
@@ -732,7 +669,7 @@ function _getDom(){
 		audioBtn: topBar.querySelector(".btn-audio"),
 		switchKeyboardBtn: topBar.querySelector(".btn-keyboard"),
 
-		emojiBtn: editorView.querySelector(".em-bar-emoji"),
+		emojiToggleButton: editorView.querySelector(".em-bar-emoji"),
 		sendImgBtn: editorView.querySelector(".em-widget-img"),
 		sendFileBtn: editorView.querySelector(".em-widget-file"),
 		sendBtn: editorView.querySelector(".em-widget-send"),
@@ -743,9 +680,7 @@ function _getDom(){
 
 		imgInput: document.querySelector(".upload-img-container"),
 		fileInput: document.querySelector(".upload-file-container"),
-		emojiContainer: document.querySelector(".em-bar-emoji-container"),
 		chatWrapper: document.querySelector(".chat-wrapper"),
-		emojiWrapper: document.querySelector(".em-bar-emoji-wrapper"),
 
 		topBar: topBar,
 		editorView: editorView,
@@ -763,7 +698,11 @@ function _init(){
 
 	_initUI();
 
-	_initEmoji();
+	emojiPanel.init({
+		container: doms.imChat,
+		toggleButton: doms.emojiToggleButton,
+		textInput: doms.textInput,
+	});
 
 	_bindEvents();
 
