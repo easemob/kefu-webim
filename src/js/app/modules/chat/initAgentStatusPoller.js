@@ -38,16 +38,16 @@ function _setAgentStatus(officialAccount){
 	var agentType = officialAccount.agentType;
 	var isSessionOpen = officialAccount.isSessionOpen;
 
-	if(agentType === _const.AGENT_ROLE.ROBOT){
-		// 机器人不去轮询，显示为在线
-		_update("Online");
-	}
-	else if(
+	if(
 		!profile.isAgentNicknameEnable
 		|| !agentId
 		|| !isSessionOpen
 	){
 		_update(null);
+	}
+	else if(agentType === _const.AGENT_ROLE.ROBOT){
+		// 机器人不去轮询，显示为在线
+		_update("Online");
 	}
 	else{
 		apiHelper.getAgentStatus(agentId).then(function(status){
