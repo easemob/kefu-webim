@@ -171,8 +171,8 @@ function _sendText(message, ext){
 		msg: message,
 		to: config.toUser,
 		// 此回调用于确认im server收到消息, 有别于kefu ack
-		success: function(id){},
-		fail: function(id){}
+		success: function(/* id */){},
+		fail: function(/* id */){}
 	});
 
 	if(ext){
@@ -813,7 +813,7 @@ function _attemptToAppendOfficialAccount(officialAccountInfo){
 		);
 	}
 	else{
-		throw "unexpected official_account type.";
+		throw new Error("unexpected official_account type.");
 	}
 }
 

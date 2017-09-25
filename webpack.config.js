@@ -114,7 +114,6 @@ conmmonConfig = {
 					/init\.js$/,
 					/userAPI\.js$/,
 					/im\.html/,
-					/icon\.scss/,
 					/iframe\.js/,
 					/transfer\.html/,
 				],
@@ -134,11 +133,10 @@ conmmonConfig = {
 			},
 			// 字体文件
 			{
-				test: /\.(eot|svg|ttf|woff|woff2)/,
+				test: /\.(eot|svg|ttf|woff|woff2)$/,
 				loader: "file-loader",
 				query: {
-					name: "./font/[name].[ext]",
-					emitFile: false,
+					name: "../css/font/[name]-[hash:6].[ext]",
 				},
 			},
 		],
