@@ -56,10 +56,10 @@ module.exports = {
 
 		IM_CONNECTION_OPENED: "im.connection.opened",
 
-		OFFLINE: "offline",
-
 		MESSAGE_SENT: "message.sent",
 		MESSAGE_APPENDED: "message.appended",
+
+		VIDEO_TICKET_RECEIVED: "video.ticket.received",
 	},
 
 	themeMap: {
