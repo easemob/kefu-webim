@@ -68,6 +68,7 @@ function _initSystemEventListener(){
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _reportVisitorInfo);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _reportVisitorInfo);
 
+	// todo: move this to satisfation.js
 	eventListener.add(
 		_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
 		function(officialAccount, inviteId, serviceSessionId){
