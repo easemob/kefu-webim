@@ -80,7 +80,7 @@ function genMsgContent(msg){
 		break;
 	case "html-form":
 		msgContent = msg.ext.msgtype.html;
-		html = "<a class=\"form-url\" target=\"blank\" href=" + msgContent.url + "></a>"
+		html = "<a class=\"form-url\" target=\"_blank\" href=" + msgContent.url + "></a>"
 			+ "<div class=\"form-content\">"
 			+ "<span class=\"title\">" + msgContent.topic + "</span>"
 			+ "<span class=\"desc\">" + msgContent.desc + "</span>"
