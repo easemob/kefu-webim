@@ -288,3 +288,48 @@
 	content: "\91"
 }
 
+.icon-answer-the-phone:before {
+	@extend .icon-base;
+	content: "\3b1"
+}
+
+.icon-microphone:before {
+	@extend .icon-base;
+	content: "\3b5"
+}
+
+.icon-hung-up:before {
+	@extend .icon-base;
+	content: "\3b2"
+}
+
+.icon-return-to-multi-video:before {
+	@extend .icon-base;
+	content: "\3b6"
+}
+
+.icon-remote-desktop:before {
+	@extend .icon-base;
+	content: "\3b3"
+}
+
+.icon-disable-camera:before {
+	@extend .icon-base;
+	content: "\3b9"
+}
+
+.icon-disable-microphone:before {
+	@extend .icon-base;
+	content: "\3b8"
+}
+
+.icon-minimize-window:before {
+	@extend .icon-base;
+	content: "\3b7"
+}
+
+.icon-maximize-window:before {
+	@extend .icon-base;
+	content: "\3b4"
+}
+
