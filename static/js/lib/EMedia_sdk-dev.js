@@ -59,6 +59,8 @@
 
 	var util = __webpack_require__(5);
 
+	//console.  window.__easemob_current_mservice.current._cacheMembers
+
 	window.emedia = window.emedia || {};
 	emedia.util = util;
 
@@ -746,6 +748,7 @@
 	        // }
 
 	        self.namespace = Math.uuidFast();
+	        window.__easemob_current_mservice = this;
 	    },
 
 	    AVPubstream: __Stream.extend({
@@ -1119,8 +1122,7 @@
 	            op2: 20,
 	            streamId: streamId,
 	            pic: 1,
-	            rspBase64Pic: true,
-	            _reqOps: [100205]
+	            rspBase64Pic: true
 	        };
 
 	        rspBase64Pic && (arg.rspBase64Pic = true);
@@ -1128,7 +1130,8 @@
 	        var message = attendee.newMessage({
 	            op: 1002,
 	            memId: linkedStream.owner.id,
-	            arg: JSON.stringify(arg)
+	            arg: JSON.stringify(arg),
+	            _reqOps: [100205]
 	        });
 
 	        attendee.postMessage(message, function (rsp) {

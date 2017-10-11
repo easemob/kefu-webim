@@ -677,6 +677,7 @@ function _getDom(){
 		satisfaction: editorView.querySelector(".em-widget-satisfaction"),
 		textInput: editorView.querySelector(".em-widget-textarea"),
 		noteBtn: editorView.querySelector(".em-widget-note"),
+		videoInviteButton: editorView.querySelector(".em-video-invite"),
 		queuingNumberStatus: editorView.querySelector(".queuing-number-status"),
 
 		imgInput: document.querySelector(".upload-img-container"),
@@ -728,7 +729,10 @@ function _initSession(){
 		profile.isInOfficeHours = dutyStatus || config.offDutyType === "chat";
 
 		if(profile.isInOfficeHours){
-			videoChat.initEventListener();
+			videoChat.init({
+				triggerButton: doms.videoInviteButton,
+				parentContainer: doms.imChat,
+			});
 
 			Promise.all([
 				_initOfficialAccount(),

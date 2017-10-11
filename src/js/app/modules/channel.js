@@ -360,7 +360,6 @@ function _handleMessage(msg, msgType, isHistory){
 	// 视频ticket
 	else if(videoTicket){
 		type = "rtcVideoTicket";
-		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket]);
 	}
 	else{}
 
@@ -498,6 +497,9 @@ function _handleMessage(msg, msgType, isHistory){
 		message = msg;
 		message.type = "html-form";
 		message.brief = __("message_brief.unknown");
+		break;
+	case "rtcVideoTicket":
+		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket]);
 		break;
 	default:
 		console.error("unexpected msg type");

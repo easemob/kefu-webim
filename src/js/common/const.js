@@ -164,6 +164,15 @@ module.exports = {
 	// 消息时间戳最小间隔
 	MESSAGE_TIME_SPAN_INTERVAL: 60000,
 
-	for_block_only: null
+	E_MEDIA_SDK_ERROR_CODE_MAP: {
+		0: "Normal exit.",
+		1: "No response.",
+		2: "The other side refused.",
+		3: "The other side is busy.",
+		4: "Server refused.",
+		5: "Unsupported.",
+		10: "Log in on other devices.",
+		11: "The conference is closed.",
+	},
 };
 
