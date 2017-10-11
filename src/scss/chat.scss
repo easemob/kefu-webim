@@ -351,6 +351,11 @@
 				font-weight: normal;
 				font-size: 14px;
 				line-height: 24px;
+				height: 24px;
+				overflow: hidden;
+				width: 90%;
+				white-space: nowrap;
+				text-overflow: ellipsis
 			}
 			.create-time {
 				color: #9B9B9B;
@@ -365,6 +370,12 @@
 			}
 			.desc {
 				color: #999;
+				p {
+					overflow: hidden;
+					width: 90%;
+					white-space: nowrap;
+					text-overflow: ellipsis
+				}
 			}
 		}
 		.footer {
