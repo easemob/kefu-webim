@@ -87,7 +87,6 @@
 		background: #fff;
 		border: 1px solid #e5e5e5;
 		.icon-corner-left {
-			z-index: 1;
 			position: absolute;
 			top: 5px;
 			left: -17px;
@@ -106,7 +105,6 @@
 		background: #e3ecfc;
 		border: 1px solid #c3cbd9;
 		.icon-corner-right {
-			z-index: 1;
 			position: absolute;
 			top: 5px;
 			right: -17px;
@@ -381,7 +379,7 @@
 		font-size: 12px;
 	}
 	.only-one-article {
-		.body {		
+		.body {
 			padding: 10px 0;
 			border-bottom: 1px solid #E9E9E9;
 			.title {
@@ -424,7 +422,7 @@
 				top: 5px;
 				color: #dcdcdc;
 				right: -10px;
-			}	
+			}
 		}
 	}
 

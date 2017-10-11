@@ -82,6 +82,8 @@ module.exports = {
 		send_failed_invalid_token: "留言失败，token无效",
 	},
 	video: {
+		waiting: "等待中",
+		me: "我",
 		video_ended: "视频已结束",
 		confirm_prompt: "您要邀请客服为您进行实时视频服务么？点击确认发送邀请，等待客服接受后即可体验实时视频服务。",
 		invite_agent_video: "邀请客服进行实时视频",

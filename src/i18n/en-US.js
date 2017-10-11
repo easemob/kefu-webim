@@ -82,6 +82,8 @@ module.exports = {
 		send_failed_invalid_token: "Failed to submit the note due to invalid token.",
 	},
 	video: {
+		waiting: "Waiting",
+		me: "Me",
 		video_ended: "Video call ended",
 		confirm_prompt: "Invite the agent to a video call? Send the invite and wait for the agent to join the video call.",
 		invite_agent_video: "Invite the agent to a video call",

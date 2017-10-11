@@ -28,121 +28,140 @@
 	}
 }
 
-
-/* 视屏窗控件 */
-
-.em-widget-video {
-	position: absolute;
-	top: 43px;
-	width: 100%;
-	height: 270px;
-	background-color: black;
-	video {
-		background: black;
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}
-	.status {
-		position: absolute;
-		color: white;
-		top: 10px;
-		left: 10px;
-		.prompt {
+.video-chat-wrapper {
+	position: relative;
+	color: white;
+	.status-bar {
+		box-sizing: border-box;
+		position: relative;
+		height: 88px;
+		background-color: rgba(0,0,0,.8);
+		.status-text {
+			padding: 10px;
 			font-size: 12px;
 		}
 		.time-escape {
-			font-size: 14px;
-			margin-top: 6px;
+			padding-left: 10px;
+			font-size: 18px;
 		}
-	}
-	.full-screen-prompt {
-		color: white;
-		display: flex;
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		background: black;
-		flex-flow: column wrap;
-		justify-content: center;
-		align-items: center;
-		p {
-			margin-top: 10px;
-		}
-	}
-	.sub-win {
-		position: absolute;
-		width: 144px;
-		height: 108px;
-		left: 10px;
-		bottom: 10px;
-		border: 1px solid gray;
-		.btn-minimize {
-			color: white;
+		.control-panel {
 			position: absolute;
-			top: 2px;
-			right: 2px;
-			&:before {
-				font-size: 12px;
-				line-height: 12px;
-			}
-		}
-	}
-	.toolbar-dial {
-		position: absolute;
-		right: 10px;
-		top: 10px;
-		>i {
-			width: 30px;
-			display: inline-block;
-			border-radius: 50%;
-			line-height: 30px;
-			text-align: center;
-			margin-left: 10px;
-			color: white;
-			&:before {
-				font-size: 20px;
-			}
-			&.btn-accept-call {
-				background: #6aca6b;
-			}
-			&.btn-end-call {
-				background: #fc363b;
-			}
-		}
-	}
-	.toolbar-control {
-		position: absolute;
-		right: 10px;
-		bottom: 10px;
-		p {
-			display: block;
-			color: white;
-			&:before {
+			bottom: 8px;
+			right: 8px;
+			i {
+				display: inline-block;
+				width: 32px;
+				height: 32px;
 				font-size: 24px;
-				line-height: 24px;
+				cursor: pointer;
+				border-radius: 50%;
+				&:before {
+					font-size: 24px;
+					position: relative;
+					left: 4px;
+				}
+				&.accept-button {
+					background-color: #70ba26;
+					margin-right: 8px;
+				}
+				&.end-button {
+					background-color: #db2400;
+				}
+			}
+		}
+		.collapse-toggle-button {
+			display: inline-block;
+			position: absolute;
+			top: 4px;
+			right: 4px;
+			transform: rotate(-90deg);
+		}
+		&.collapsed {
+			height: 32px;
+			background-color: #70ba26;
+			.control-panel {
+				display: none;
+			}
+			.time-escape,
+			.status-text {
+				display: inline;
+				line-height: 32px;
+				padding: 0 0 0 10px;
+				font-size: 12px;
+			}
+			.collapse-toggle-button {
+				transform: rotate(90deg);
+			}
+			&~.video-panel {
+				display: none;
+			}
+		}
+		&.terminated {
+			background-color: #db2400;
+			.time-escape {
+				display: none;
 			}
 		}
 	}
-	.btn-maximize {
-		display: none;
-		color: white;
-		position: absolute;
-		bottom: 10px;
-		left: 10px;
-		&:before {
-			font-size: 12px;
-			line-height: 12px;
+	.video-panel {
+		background-color: black;
+		.single-video-container {
+			height: 270px;
+			position: relative;
+			.nickname {
+				background: linear-gradient(to top, rgba(0,0,0,0), black, black);
+				box-sizing: border-box;
+				line-height: 32px;
+				position: absolute;
+				top: 0;
+				width: 100%;
+				padding-left: 10px;
+			}
+			video {
+				width: 100%;
+				height: 100%;
+			}
+			.control-panel {
+				background: linear-gradient(to bottom, rgba(0,0,0,0), black, black);
+				box-sizing: border-box;
+				line-height: 32px;
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+				height: 32px;
+				padding: 0 10px;
+				i {
+					cursor: pointer;
+					float: right;
+					&:before {
+						font-size: 24px;
+					}
+					&.return-to-multi-video {
+						float: left;
+					}
+				}
+			}
 		}
-	}
-	&.minimized {
-		.sub-win {
-			display: none;
-		}
-		.btn-maximize {
-			display: initial;
+		.multi-video-container {
+			position: relative;
+			.mini-video-window {
+				display: inline-block;
+				position: relative;
+				width: 33%;
+				.nickname {
+					background: linear-gradient(to bottom, rgba(0,0,0,0), black, black);
+					box-sizing: border-box;
+					line-height: 32px;
+					position: absolute;
+					bottom: 0;
+					width: 100%;
+					padding-left: 10px;
+				}
+				video {
+					display: block;
+					width: 100%;
+				}
+			}
 		}
 	}
 }
@@ -181,24 +200,12 @@
 }
 
 .em-widget-wrapper.has-tip {
-	/* 有信息栏时 消息窗 和视屏窗 下移 */
-	.chat-wrapper,
-	.em-widget-video {
+	/* 有信息栏时 消息窗 下移 */
+	.chat-wrapper {
 		top: 90px;
 	}
 	/* 显示信息栏 */
 	.em-widget-tip {
-		display: block;
-	}
-}
-
-.em-widget-wrapper.has-video {
-	/* 有视频窗时，消息窗继续下移 */
-	.chat-wrapper {
-		margin-top: 270px;
-	}
-	/* 显示视频控件 */
-	.em-widget-video {
 		display: block;
 	}
 }
