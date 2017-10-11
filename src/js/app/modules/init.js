@@ -55,6 +55,7 @@ function h5_mode_init(){
 	config.configId = utils.query("configId");
 	config.offDutyType = utils.query("offDutyType");
 	config.grUserId = utils.query("grUserId");
+	config.domain = utils.query("domain") ? "//" + utils.query("domain") : "";
 
 	// H5 方式集成时不支持eventCollector配置
 	config.to = utils.convertFalse(utils.query("to"));
