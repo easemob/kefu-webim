@@ -27,25 +27,39 @@
 	.em-widget-msg-container {
 		font-size: 17px;
 		padding: 8px 10px;
-		&.em-widget-msg-file {
-			padding: 0;
-		}
-		&.em-widget-msg-html-form{
+		&.em-widget-msg-file,
+		&.em-widget-msg-html-form {
 			padding: 0;
 		}
 	}
-	.em-bar-emoji-wrapper {
+	.emoji-panel {
 		width: 100%;
 		left: 0;
 		border-radius: 0;
-		padding-left: 0;
+		padding: 0;
 		bottom: 44px;
-		.em-bar-emoji-bg {
-			width: 14.2%;
-			margin: 0;
-			.emoji {
-				margin: 8px 0;
+		.emoji-container {
+			.line-container {
+				.emoji-bg {
+					width: 10%;
+					margin: 0;
+					padding: 0;
+					&:hover {
+						background-color: unset;
+					}
+					.emoji {
+						margin: 8px 0;
+					}
+				}
 			}
+			&.magic {
+				.emoji-bg {
+					width: 16.5%;
+				}
+			}
+		}
+		.navigator-wrapper {
+			width: 100%;
 		}
 	}
 	.em-widget-send-wrapper {

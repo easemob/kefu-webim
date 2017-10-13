@@ -31,6 +31,7 @@ module.exports = {
 		click_to_evaluate: "立即评价",
 		paste_image_submit: "发送",
 		read_full_version: "阅读全文",
+		default_emoji: "默认",
 	},
 	message_brief: {
 		menu: "[菜单]",

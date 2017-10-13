@@ -2,8 +2,12 @@ var List = function(){
 	this.list = [];
 };
 
+List.prototype.has = function(value){
+	return !!~this.list.indexOf(value);
+};
+
 List.prototype.add = function(value){
-	if(!~this.list.indexOf(value)){
+	if(!this.has(value)){
 		this.list.push(value);
 	}
 };

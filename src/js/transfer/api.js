@@ -672,6 +672,22 @@ getData.listen(function(msg){
 			excludeData: true,
 		});
 		break;
+	case "getCustomEmojiPackages":
+		emitAjax({
+			url: "/v1/webimplugin/emoj/tenants/" + tenantId + "/packages",
+			msg: msg,
+			type: "GET",
+			excludeData: true,
+		});
+		break;
+	case "getCustomEmojiFiles":
+		emitAjax({
+			url: "/v1/webimplugin/emoj/tenants/" + tenantId + "/files",
+			msg: msg,
+			type: "GET",
+			excludeData: true,
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;

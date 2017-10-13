@@ -203,36 +203,131 @@
 	}
 }
 
-.em-bar-emoji-wrapper {
-	position: fixed;
+.emoji-panel {
+	position: absolute;
 	z-index: 10;
 	bottom: 144px;
 	left: 5px;
 	background-color: white;
-	padding: 0 0 0 10px;
 	border-radius: 4px;
 	box-shadow: 0 4px 5px rgba(0, 0, 0, .1);
 	transform: translate3d(0, 0, 0);
-	.em-bar-emoji-container {
-		z-index: 2;
+	.emoji-container {
+		height: 180px;
 		position: relative;
 		background-color: white;
 		border-radius: 4px;
-		padding-bottom: 10px;
-		.em-bar-emoji-bg {
-			display: inline-block;
-			border-radius: 2px;
-			text-align: center;
-			margin: 10px 10px 0 0;
-			.emoji {
+		padding: 5px;
+		overflow-y: auto;
+		overflow-x: hidden;
+		.line-container {
+			white-space: nowrap;
+			.emoji-bg {
 				display: inline-block;
-				width: 24px;
-				height: 24px;
-				vertical-align: middle;
+				border-radius: 5px;
+				text-align: center;
+				padding: 3px;
+				margin: 2px;
 				&:hover {
+					background-color: #e9e9e9;
+				}
+				.emoji {
+					display: inline-block;
+					width: 24px;
+					height: 24px;
+					vertical-align: middle;
 					cursor: pointer;
 				}
 			}
+		}
+		&.magic {
+			.line-container {
+				.emoji-bg {
+					padding: 5px;
+				}
+				.emoji {
+					width: 42px;
+					height: 42px;
+				}
+			}
+		}
+	}
+	.navigator-wrapper {
+		width: 350px;
+		position: relative;
+		display: block;
+		height: 30px;
+		background-color: #e9e9e9;
+		white-space: nowrap;
+		overflow: hidden;
+		.navigator-container {
+			position: relative;
+			padding: 0 30px;
+			.navigator-item {
+				box-sizing: bolder-box;
+				text-align: center;
+				min-width: 60px;
+				position: relative;
+				line-height: 30px;
+				vertical-align: middle;
+				display: inline-block;
+				padding: 0 10px;
+				cursor: pointer;
+				background-color: #e9e9e9;
+				font-size: 12px;
+				&:after {
+					content: "";
+					position: absolute;
+					right: 0;
+					display: inline-block;
+					height: 30px;
+					width: 1px;
+					background-color: white;
+				}
+				&.selected {
+					background-color: white;
+				}
+			}
+		}
+		.scroll-left,
+		.scroll-right {
+			background-color: #e9e9e9;
+			display: inline-block;
+			position: absolute;
+			width: 30px;
+			height: 30px;
+			cursor: pointer;
+			top: 0;
+
+			&:after {
+				content: "";
+				position: absolute;
+				right: 0;
+				display: inline-block;
+				height: 30px;
+				width: 1px;
+				background-color: white;
+			}
+			&.icon-corner-right:before,
+			&.icon-corner-left:before {
+				// font-size: 20px;
+				// line-height: 20px;
+			}
+			&.disabled {
+				color: #c4c4c4;
+				cursor: not-allowed;
+			}
+		}
+		.scroll-right {
+			position: absolute;
+			right: 0;
+			&:after {
+				left: -1px;
+			}
+		}
+
+		.scroll-left {
+			left: 0;
 		}
 	}
 }
