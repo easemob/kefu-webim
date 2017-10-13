@@ -31,6 +31,7 @@ module.exports = {
 		click_to_evaluate: "Rate",
 		paste_image_submit: "Send",
 		read_full_version: "Read all",
+		default_emoji: "default",
 	},
 	message_brief: {
 		menu: "[Menu]",

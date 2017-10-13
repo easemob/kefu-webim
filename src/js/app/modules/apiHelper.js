@@ -1113,6 +1113,40 @@ function createWechatImUser(openId){
 	});
 }
 
+function getCustomEmojiPackages(){
+	return new Promise(function(resolve, reject){
+		api("getCustomEmojiPackages", { tenantId: config.tenantId }, function(msg){
+			var entities = utils.getDataByPath(msg, "data.entities");
+
+			if(_.isArray(entities)){
+				resolve(entities);
+			}
+			else{
+				reject(new Error("unexpected emoji package list."));
+			}
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
+function getCustomEmojiFiles(){
+	return new Promise(function(resolve, reject){
+		api("getCustomEmojiFiles", { tenantId: config.tenantId }, function(msg){
+			var entities = utils.getDataByPath(msg, "data.entities");
+
+			if(_.isArray(entities)){
+				resolve(entities);
+			}
+			else{
+				reject(new Error("unexpected emoji package list."));
+			}
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
 	getToken: getToken,
@@ -1157,6 +1191,8 @@ module.exports = {
 	getWechatComponentId: getWechatComponentId,
 	getWechatProfile: getWechatProfile,
 	createWechatImUser: createWechatImUser,
+	getCustomEmojiPackages: getCustomEmojiPackages,
+	getCustomEmojiFiles: getCustomEmojiFiles,
 
 	initApiTransfer: initApiTransfer,
 	api: api,

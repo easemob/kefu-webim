@@ -700,12 +700,6 @@ function _init(){
 
 	_initUI();
 
-	emojiPanel.init({
-		container: doms.imChat,
-		toggleButton: doms.emojiToggleButton,
-		textInput: doms.textInput,
-	});
-
 	_bindEvents();
 
 	initSessionList();
@@ -717,7 +711,7 @@ function _initSession(){
 	Promise.all([
 		apiHelper.getDutyStatus(),
 		apiHelper.getGrayList(),
-		apiHelper.getToken()
+		apiHelper.getToken(),
 	]).then(function(result){
 		var dutyStatus = result[0];
 		var grayList = result[1];
@@ -729,6 +723,12 @@ function _initSession(){
 		profile.isInOfficeHours = dutyStatus || config.offDutyType === "chat";
 
 		if(profile.isInOfficeHours){
+			emojiPanel.init({
+				container: doms.imChat,
+				toggleButton: doms.emojiToggleButton,
+				textInput: doms.textInput,
+			});
+
 			videoChat.init({
 				triggerButton: doms.videoInviteButton,
 				parentContainer: doms.imChat,
