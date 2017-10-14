@@ -134,7 +134,7 @@ module.exports = function(opt){
 
 		switch(type){
 		case "txt":
-			return msg.data;
+			return msg.data || "";
 		case "file":
 			return __("message_brief.file");
 		case "img":

@@ -493,6 +493,7 @@ function _handleMessage(msg, msgType, isHistory){
 	case "html-form":
 		message = msg;
 		message.type = "html-form";
+		message.brief = __("message_brief.unknown");
 		break;
 	default:
 		console.error("unexpected msg type");
