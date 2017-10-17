@@ -32,7 +32,7 @@ else {
 
 function h5_mode_init(){
 	config = {};
-	config.tenantId = utils.query('tenantId') + "";
+	config.tenantId = utils.query('tenantId');
 	config.configId = utils.query('configId');
 	config.offDutyType = utils.query('offDutyType');
 	config.grUserId = utils.query('grUserId');
@@ -127,7 +127,6 @@ function chat_window_mode_init(){
 			window.transfer.to = data.parentId;
 			config = data;
 			profile.config = config;
-			config.tenantId += "";
 			initCrossOriginIframe();
 			break;
 		default:
@@ -167,6 +166,7 @@ function handleMsgData() {
 	config.staticPath = config.staticPath || "static";
 	config.offDutyWord = config.offDutyWord || '现在是下班时间。';
 	config.emgroup = config.emgroup || '';
+	config.tenantId += "";
 
 	// fake patch: 老版本配置的字符串需要decode
 	if (config.offDutyWord){
