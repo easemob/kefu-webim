@@ -166,6 +166,7 @@ function handleMsgData() {
 	config.staticPath = config.staticPath || "static";
 	config.offDutyWord = config.offDutyWord || '现在是下班时间。';
 	config.emgroup = config.emgroup || '';
+	config.tenantId += "";
 
 	// fake patch: 老版本配置的字符串需要decode
 	if (config.offDutyWord){
@@ -204,7 +205,7 @@ function handleMsgData() {
 	}
 	else if (config.configId) {
 		apiHelper.getConfig(config.configId).then(function(entity){
-			config.tenantId = entity.tenantId;
+			config.tenantId = entity.tenantId + "";
 			handleConfig(entity.configJson);
 			initChat();
 		});
