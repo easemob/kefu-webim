@@ -32,7 +32,7 @@ else {
 
 function h5_mode_init(){
 	config = {};
-	config.tenantId = utils.query('tenantId');
+	config.tenantId = utils.query('tenantId') + "";
 	config.configId = utils.query('configId');
 	config.offDutyType = utils.query('offDutyType');
 	config.grUserId = utils.query('grUserId');
@@ -127,6 +127,7 @@ function chat_window_mode_init(){
 			window.transfer.to = data.parentId;
 			config = data;
 			profile.config = config;
+			config.tenantId += "";
 			initCrossOriginIframe();
 			break;
 		default:
@@ -204,7 +205,7 @@ function handleMsgData() {
 	}
 	else if (config.configId) {
 		apiHelper.getConfig(config.configId).then(function(entity){
-			config.tenantId = entity.tenantId;
+			config.tenantId = entity.tenantId + "";
 			handleConfig(entity.configJson);
 			initChat();
 		});
