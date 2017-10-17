@@ -202,6 +202,7 @@ function handleMsgData(){
 	config.offDutyWord = config.offDutyWord || __("prompt.default_off_duty_word");
 	config.emgroup = config.emgroup || "";
 	config.timeScheduleId = config.timeScheduleId || 0;
+	config.tenantId += "";
 
 	if(_.isArray(config.extMsg)){
 		_.each(config.extMsg, function(elem){
@@ -249,7 +250,7 @@ function handleMsgData(){
 	}
 	else if(config.configId){
 		apiHelper.getConfig(config.configId).then(function(entity){
-			config.tenantId = entity.tenantId;
+			config.tenantId = entity.tenantId + "";
 			handleConfig(entity.configJson);
 			initChat();
 		});
