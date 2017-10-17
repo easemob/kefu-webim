@@ -37,13 +37,16 @@ module.exports = function(opt){
 	opt = opt || {};
 	opt.isHide ? dialog.hide() : dialog.show();
 	config = profile.config;
+	if(config.tenantId === "27802"){
+		dialog.hide();
+	}
 	_bindEvents();
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideQuerySkillgroup);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideQuerySkillgroup);
 	
 };
 function _displayOrHideQuerySkillgroup(officialAccount) {
-	if (officialAccount !== profile.systemOfficialAccount || officialAccount.isSessionOpen) {
+	if (config.tenantId === "27802" || officialAccount !== profile.systemOfficialAccount || officialAccount.isSessionOpen) {
 		dialog.hide();
 	}
 	else if(config.billCode || config.siteCode){
