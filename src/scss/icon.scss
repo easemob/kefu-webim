@@ -333,3 +333,8 @@
 	content: "\3b4"
 }
 
+.icon-spin:before {
+	@extend .icon-base;
+	content: "\3ba"
+}
+
