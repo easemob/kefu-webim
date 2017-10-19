@@ -1,6 +1,8 @@
+
 .chat-container {
-	padding-bottom: 20px;
+	padding: 24px 0 20px;
 	overflow: hidden;
+	position: relative;
 
 	.em-widget-date,
 	.em-widget-event {
@@ -14,6 +16,39 @@
 			background-color: #c9ced3;
 			border-radius: 4px;
 			padding: 1px 3px;
+		}
+	}
+
+
+	.loading-tip{
+		position: absolute;
+		top: 5px;
+		text-align: center;
+		color: #999;
+		width: 100%;	
+		vertical-align: middle;
+		.loading-btn{
+			margin-right: 5px;
+			display: inline-block;
+			transform:translate3d(0,0,0);
+			animation:em-widget-loading-frame 3s linear infinite;
+			&:before {
+				font-size: 16px;
+			}
+		}
+			
+		
+	}
+	.no-more-msg {
+		position: absolute;
+		top: 5px;
+		text-align: center;
+		width: 100%;
+		>span {
+			background-color: #c9ced3;
+			border-radius: 4px;
+			padding: 1px 3px;
+			color: #fff;
 		}
 	}
 

@@ -19,6 +19,8 @@ module.exports = {
 		reply: "回复",
 		tip: "提示",
 		send_failed: "发送失败",
+		loading: "加载中...",
+		no_more_msg: "没有更多消息",
 	},
 	chat: {
 		agent_is_typing: "正在输入...",
