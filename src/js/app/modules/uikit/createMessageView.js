@@ -6,13 +6,17 @@ var eventListener = require("../tools/eventListener");
 var apiHelper = require("../apiHelper");
 var channel = require("../channel");
 
-var tpl = "<div class=\"chat-container hide\"></div>";
+var tpl = require("raw-loader!../../../../template/chatContainer.html");
 
 module.exports = function(opt){
 	var officialAccount = opt.officialAccount;
 	var parentContainer = opt.parentContainer;
-	var el = utils.createElementFromHTML(tpl);
-
+	var el = utils.createElementFromHTML(_.template(tpl)({
+		msg_in_loading: __("common.loading"),
+		no_more_msg: __("common.no_more_msg"),
+	}));
+	var loadingMore = el.querySelector(".loading-tip");
+	var noMoreMsg = el.querySelector(".no-more-msg");
 	var currHistoryMsgSeqId = 0;
 	var noMoreHistoryMessage;
 
@@ -168,6 +172,7 @@ module.exports = function(opt){
 
 	function _getHistory(callback){
 		if(noMoreHistoryMessage) return;
+		utils.removeClass(loadingMore, "hide");
 		apiHelper.getOfficalAccountMessage(
 			officialAccount.official_account_id,
 			currHistoryMsgSeqId
@@ -175,9 +180,10 @@ module.exports = function(opt){
 			var length = msgList.length;
 			var earliestMsg = msgList[length - 1] || {};
 			var nextMsgSeq = earliestMsg.id;
-
+			utils.addClass(loadingMore, "hide");
 			currHistoryMsgSeqId = nextMsgSeq;
 			noMoreHistoryMessage = length < _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME || nextMsgSeq <= 0;
+			noMoreHistoryMessage && utils.removeClass(noMoreMsg, "hide");
 			_.each(msgList, channel.handleHistoryMsg);
 			typeof callback === "function" && callback();
 		});
@@ -190,18 +196,18 @@ module.exports = function(opt){
 
 		if(utils.isMobile){
 			// wap
-			utils.live("div.em-widget-date", "touchstart", function(ev){
-				_startY = utils.getDataByPath(ev, "touches.0.pageY");
-			}, el);
-			utils.live("div.em-widget-date", "touchmove", function(ev){
-				_y = utils.getDataByPath(ev, "touches.0.pageY");
+			utils.on(el, "touchstart", function(ev){
+				_startY = utils.getDataByPath(ev, "changedTouches.0.pageY");
+			});
+			utils.on(el, "touchend", function(ev){
+				_y = utils.getDataByPath(ev, "changedTouches.0.pageY");
 				if(_y - _startY > 8 && this.getBoundingClientRect().top >= 0){
 					clearTimeout(st);
 					st = setTimeout(function(){
 						_getHistory();
 					}, 100);
 				}
-			}, el);
+			});
 		}
 		else{
 			// pc端
