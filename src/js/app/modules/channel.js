@@ -167,6 +167,7 @@ function _reSend(type, id){
 function _sendText(message, ext){
 	var id = utils.uuid();
 	var msg = new WebIM.message.txt(id);
+	var customMagicEmoji = utils.getDataByPath(ext, "ext.msgtype.customMagicEmoji");
 	msg.set({
 		msg: message,
 		to: config.toUser,
@@ -185,15 +186,28 @@ function _sendText(message, ext){
 	_detectSendTextMsgByApi(id);
 
 	// 空文本消息不上屏
-	if(!message) return;
-	_appendMsg({
-		id: id,
-		type: "txt",
-		data: message
-	}, {
-		isReceived: false,
-		isHistory: false
-	});
+	if(!message && !customMagicEmoji) return;
+
+	if(customMagicEmoji){
+		_appendMsg({
+			id: id,
+			type: "customMagicEmoji",
+			url: customMagicEmoji.url,
+		}, {
+			isReceived: false,
+			isHistory: false
+		});
+	}
+	else{
+		_appendMsg({
+			id: id,
+			type: "txt",
+			data: message
+		}, {
+			isReceived: false,
+			isHistory: false
+		});
+	}
 
 	_promptNoAgentOnlineIfNeeded({
 		hasTransferedToKefu: !!~__("config.transfer_to_kefu_words").slice("|").indexOf(message)
@@ -307,6 +321,8 @@ function _handleMessage(msg, msgType, isHistory){
 	var officialAccount = utils.getDataByPath(msg, "ext.weichat.official_account");
 	var marketingTaskId = utils.getDataByPath(msg, "ext.weichat.marketing.marketing_task_id");
 	var officialAccountId = officialAccount && officialAccount.official_account_id;
+	var videoTicket = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.ticket");
+	var customMagicEmoji = utils.getDataByPath(msg, "ext.msgtype.customMagicEmoji");
 	var targetOfficialAccount;
 
 	if(receiveMsgDict.get(msgId)){
@@ -357,6 +373,13 @@ function _handleMessage(msg, msgType, isHistory){
 	}
 	else if(utils.getDataByPath(msg, "ext.type") === "html/form"){
 		type = "html-form";
+	}
+	// 视频ticket
+	else if(videoTicket){
+		type = "rtcVideoTicket";
+	}
+	else if(customMagicEmoji){
+		type = "customMagicEmoji";
 	}
 	else{}
 
@@ -494,6 +517,14 @@ function _handleMessage(msg, msgType, isHistory){
 		message = msg;
 		message.type = "html-form";
 		message.brief = __("message_brief.unknown");
+		break;
+	case "rtcVideoTicket":
+		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket]);
+		break;
+	case "customMagicEmoji":
+		message = customMagicEmoji;
+		message.type = "customMagicEmoji";
+		message.brief = __("message_brief.emoji");
 		break;
 	default:
 		console.error("unexpected msg type");
