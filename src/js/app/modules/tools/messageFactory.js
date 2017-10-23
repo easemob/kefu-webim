@@ -62,6 +62,15 @@ function genMsgContent(msg){
 		html = "<a href=\"javascript:;\"><img class=\"em-widget-imgview\" src=\""
 			+ msg.url + "\"/></a>";
 		break;
+	case "customMagicEmoji":
+		// 给图片消息或附件消息的url拼上hostname
+		if(msg.url && !/^https?/.test(msg.url)){
+			msg.url = location.protocol + profile.config.domain + msg.url;
+		}
+		// todo: remove a
+		html = "<a href=\"javascript:;\"><img class=\"em-widget-imgview\" src=\""
+			+ msg.url + "\"/></a>";
+		break;
 	case "list":
 		html = "<p>" + parseLink(_encode(value)) + "</p>" + msg.list;
 		break;

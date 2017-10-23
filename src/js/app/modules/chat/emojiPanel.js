@@ -56,7 +56,15 @@ function init(option){
 
 		if(type === "custom"){
 			imageUrl = target.getAttribute("data-origin-url");
-			channel.sendImg({ url: imageUrl });
+			channel.sendText("", {
+				ext: {
+					msgtype: {
+						customMagicEmoji: {
+							url: imageUrl,
+						},
+					},
+				},
+			});
 		}
 		else{
 			!utils.isMobile && textInput.focus();
