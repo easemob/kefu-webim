@@ -17,23 +17,26 @@ var invite;
 var score;
 var evaluationDegreeId;
 var _init = _.once(function(){
-	dom = utils.createElementFromHTML([
-		"<div class=\"wrapper\">",
-		"<span class=\"title\">" + __("evaluation.rate_my_service") + "</span>",
-		"<ul></ul>",
-		"<div class=\"tag-container\"></div>",
-		"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
-		"</div>"
-	].join(""));
-	starsUl = dom.querySelector("ul");
-	commentDom = dom.querySelector("textarea");
-	tagContainer = dom.querySelector(".tag-container");
-	dialog = uikit.createDialog({
-		contentDom: dom,
-		className: "satisfaction"
-	}).addButton({
-		confirmText: __("common.submit"),
-		confirm: _confirm,
+	apiHelper.getSatisfactionTipWord().then(function(tipWord){
+		var title = tipWord || __("evaluation.rate_my_service");
+		dom = utils.createElementFromHTML([
+			"<div class=\"wrapper\">",
+			"<span class=\"title\">" + title + "</span>",
+			"<ul></ul>",
+			"<div class=\"tag-container\"></div>",
+			"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
+			"</div>"
+		].join(""));
+		starsUl = dom.querySelector("ul");
+		commentDom = dom.querySelector("textarea");
+		tagContainer = dom.querySelector(".tag-container");
+		dialog = uikit.createDialog({
+			contentDom: dom,
+			className: "satisfaction"
+		}).addButton({
+			confirmText: __("common.submit"),
+			confirm: _confirm,
+		});
 	});
 });
 
@@ -150,10 +153,10 @@ function _confirm(){
 
 module.exports = {
 	show: function(currentInviteId, currentServiceSessionId){
-		_init();
-		session = currentServiceSessionId;
+		if(!dialog) return; session = currentServiceSessionId;
 		invite = currentInviteId;
 		_setSatisfaction();
 		dialog.show();
-	}
+	},
+	init: _init
 };

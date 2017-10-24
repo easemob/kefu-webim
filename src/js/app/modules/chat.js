@@ -701,6 +701,8 @@ function _init(){
 	initSessionList();
 
 	_initSession();
+
+	satisfaction.init();
 }
 
 function _initSession(){
