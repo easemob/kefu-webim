@@ -390,8 +390,6 @@ function _bindEvents(){
 				name: config.visitor.trueName,
 				phone: config.visitor.phone,
 				mail: config.visitor.email,
-				// 取最近10条消息，最大1000字
-				content: utils.getBrief("\n" + officialAccount.messageView.getRecentMsg(10), 1000)
 			}
 		});
 	});

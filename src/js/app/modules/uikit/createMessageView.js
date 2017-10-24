@@ -23,8 +23,6 @@ module.exports = function(opt){
 	var msgTimeSpanBegin = new Date(2099, 0).getTime();
 	var msgTimeSpanEnd = new Date(1970, 0).getTime();
 
-	var recentMsg = [];
-
 	parentContainer.appendChild(el);
 	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, function(){
 		var id = officialAccount.official_account_id;
@@ -62,19 +60,8 @@ module.exports = function(opt){
 		scrollToBottom: _scrollToBottom,
 		appendMsg: _appendMsg,
 		appendEventMsg: _appendEventMsg,
-		getRecentMsg: _getRecentMsg,
 		el: el
 	};
-
-	function _getRecentMsg(maxCount){
-		return _.map(recentMsg.slice(0, maxCount), function(item){
-			var date = utils.formatDate(item.date);
-			var role = item.isReceived ? __("common.agent") : __("common.visitor");
-			var brief = item.brief;
-
-			return "[" + date + "] " + role + "\n" + brief;
-		}).join("\n");
-	}
 
 	function _appendEventMsg(msg){
 		_appendDate();
@@ -130,7 +117,6 @@ module.exports = function(opt){
 		if(!isHistory && !isReceived){
 			msgData.brief = _getBrief(msg);
 		}
-		isHistory ? recentMsg.push(msgData) : recentMsg.unshift(msgData);
 	}
 
 	function _getBrief(msg){
