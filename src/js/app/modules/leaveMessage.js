@@ -118,7 +118,6 @@ function _clearInput(){
 }
 
 function _writePreDate(preData){
-	content.value = preData.content || "";
 	name.value = preData.name || "";
 	phone.value = preData.phone || "";
 	mail.value = preData.mail || "";
