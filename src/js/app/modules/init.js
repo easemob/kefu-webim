@@ -399,6 +399,8 @@ function initChatEntry(targetUserInfo){
 			_downgrade();
 		}
 	}, function(err){
+		// chat.show()针对移动端，在pc端不是必要的逻辑
+		chat.show();
 		uikit.prompt(err);
 		throw err;
 	});
