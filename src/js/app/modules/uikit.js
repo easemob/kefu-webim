@@ -12,6 +12,7 @@ var _initPrompt = _.once(function(){
 });
 
 function _showPrompt(msg){
+	!(promptDom && promptTextSpanDom) && _initPrompt();
 	promptTextSpanDom.innerText = msg;
 	utils.removeClass(promptDom, "hide");
 }
