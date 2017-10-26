@@ -735,7 +735,6 @@ function getRelevanceList(){
 				resolve(relevanceList);
 			}
 			else{
-				// todo: i18n
 				reject(new Error(__("prompt.no_valid_channel")));
 			}
 		}, function(err){

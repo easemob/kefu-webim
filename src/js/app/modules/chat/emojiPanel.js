@@ -1,5 +1,6 @@
 var template = require("raw-loader!../../../../template/emojiPanel.html");
 var utils = require("../../../common/utils");
+var _const = require("../../../common/const");
 var apiHelper = require("../apiHelper");
 var profile = require("../tools/profile");
 var channel = require("../channel");
@@ -309,9 +310,9 @@ function _initScroll(domList){
 }
 
 function _loadSystemEmojiPackage(){
-	var path = WebIM.Emoji.path;
+	var path = _const.EMOJI_PATH;
 
-	systemEmojiContainer.innerHTML = _.chain(WebIM.Emoji.map)
+	systemEmojiContainer.innerHTML = _.chain(_const.EMOJI_MAP)
 	// 生成图标html
 	.map(function(value, key){
 		return "<div class=\"emoji-bg e-face\">"

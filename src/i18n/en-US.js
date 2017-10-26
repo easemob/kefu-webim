@@ -36,6 +36,7 @@ module.exports = {
 		default_emoji: "default",
 	},
 	message_brief: {
+		link: "[Link]",
 		menu: "[Menu]",
 		file: "[File]",
 		picture: "[Image]",

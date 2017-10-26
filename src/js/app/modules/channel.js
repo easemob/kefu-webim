@@ -6,6 +6,7 @@ var List = require("./tools/List");
 var profile = require("./tools/profile");
 var tools = require("./tools/tools");
 var eventListener = require("./tools/eventListener");
+var textParser = require("./tools/textParser");
 var apiHelper = require("./apiHelper");
 var moment = require("moment");
 
@@ -108,9 +109,8 @@ function _initConnection(onReadyCallback){
 		onTextMessage: function(message){
 			_handleMessage(message, "txt");
 		},
-		onEmojiMessage: function(message){
-			_handleMessage(message, "emoji");
-		},
+		// deprecated!!!
+		onEmojiMessage: function(message){},
 		onPictureMessage: function(message){
 			_handleMessage(message, "img");
 		},
@@ -387,14 +387,8 @@ function _handleMessage(msg, msgType, isHistory){
 	case "txt":
 		message = msg;
 		message.type = type;
-		message.brief = message.data.replace(/\n/mg, " ");
-		break;
-	case "emoji":
-		message = msg;
-		message.type = type;
-		message.brief = _.map(message.data, function(item){
-			return item.type === "emoji" ? __("message_brief.emoji") : item.data;
-		}).join("").replace(/\n/mg, " ");
+		message.data = textParser.parse((msg && msg.data) || "");
+		message.brief = textParser.getTextMessageBrief(message.data);
 		break;
 	case "img":
 		message = msg;

@@ -36,6 +36,7 @@ module.exports = {
 		default_emoji: "默认",
 	},
 	message_brief: {
+		link: "[链接]",
 		menu: "[菜单]",
 		file: "[文件]",
 		picture: "[图片]",

@@ -164,6 +164,56 @@ module.exports = {
 	// 消息时间戳最小间隔
 	MESSAGE_TIME_SPAN_INTERVAL: 60000,
 
-	for_block_only: null
+	E_MEDIA_SDK_ERROR_CODE_MAP: {
+		0: "Normal exit.",
+		1: "No response.",
+		2: "The other side refused.",
+		3: "The other side is busy.",
+		4: "Server refused.",
+		5: "Unsupported.",
+		10: "Log in on other devices.",
+		11: "The conference is closed.",
+	},
+
+	EMOJI_PATH: __("config.language") === "zh-CN" ? "static/img/faces/" : "../static/img/faces/",
+
+	EMOJI_MAP: {
+		"[):]": "ee_1.png",
+		"[:D]": "ee_2.png",
+		"[;)]": "ee_3.png",
+		"[:-o]": "ee_4.png",
+		"[:p]": "ee_5.png",
+		"[(H)]": "ee_6.png",
+		"[:@]": "ee_7.png",
+		"[:s]": "ee_8.png",
+		"[:$]": "ee_9.png",
+		"[:(]": "ee_10.png",
+		"[:'(]": "ee_11.png",
+		"[:|]": "ee_12.png",
+		"[(a)]": "ee_13.png",
+		"[8o|]": "ee_14.png",
+		"[8-|]": "ee_15.png",
+		"[+o(]": "ee_16.png",
+		"[<o)]": "ee_17.png",
+		"[|-)]": "ee_18.png",
+		"[*-)]": "ee_19.png",
+		"[:-#]": "ee_20.png",
+		"[:-*]": "ee_21.png",
+		"[^o)]": "ee_22.png",
+		"[8-)]": "ee_23.png",
+		"[(|)]": "ee_24.png",
+		"[(u)]": "ee_25.png",
+		"[(S)]": "ee_26.png",
+		"[(*)]": "ee_27.png",
+		"[(#)]": "ee_28.png",
+		"[(R)]": "ee_29.png",
+		"[({)]": "ee_30.png",
+		"[(})]": "ee_31.png",
+		"[(k)]": "ee_32.png",
+		"[(F)]": "ee_33.png",
+		"[(W)]": "ee_34.png",
+		"[(D)]": "ee_35.png",
+	},
+
 };
 

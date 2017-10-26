@@ -1,61 +1,27 @@
-var WebIM = require("easemob-websdk");
 var utils = require("../../../common/utils");
 var _const = require("../../../common/const");
 var profile = require("../tools/profile");
+var textParser = require("../tools/textParser");
 var moment = require("moment");
 
 var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com/webim/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
-var parseLink = WebIM.utils.parseLink;
-var parseEmoji = WebIM.utils.parseEmoji;
-
-function _encode(str){
-	if(typeof str !== "string") return "";
-
-	return str
-	.replace(/&amp;/g, "&")
-	// 避免影响表情解析
-	.replace(/<(?=[^o][^)])/g, "&lt;")
-	.replace(/>/g, "&gt;")
-	.replace(/"/g, "&quot;");
-}
-
-function _decode(str){
-	if(typeof str !== "string") return "";
-
-	return str
-	.replace(/&amp;/g, "&")
-	.replace(/&#39;/g, "'")
-	.replace(/&lt;/g, "<");
-}
 
 function genMsgContent(msg){
 	var type = msg.type;
 	var value = msg.data;
 	var html = "";
 	var msgContent;
+
 	switch(type){
 	case "txt":
-		// 历史消息表情未经过im sdk 解析，所以类型为txt
-		// fake:  todo: remove this
-		value = _encode(_decode(value));
-		html = "<pre>" + parseLink(parseEmoji(value)) + "</pre>";
-		break;
-	case "emoji":
-		html = "<pre>" + _.map(value, function(item){
-			var type = item.type;
-			var data = item.data;
-			var result;
-
-			if(type === "txt"){
-				result = parseLink(data);
-			}
-			else if(type === "emoji"){
-				result = "<img class=\"emoji\" src=\"" + data + "\">";
-			}
-			else{}
-
-			return result;
-		}).join("") + "</pre>";
+		// todo: 统一消息处理，无论是不是自己发出的消息都走 handleMessage
+		// todo: discard this if!
+		if(typeof value === "string"){
+			// 访客自己发出去的消息
+			value = textParser.parse(value);
+		}
+		// 历史消息以及收到的实时消息
+		html = "<pre>" + _.map(value, function(fragment){ return fragment.value; }).join("") + "</pre>";
 		break;
 	case "img":
 		// todo: remove a
@@ -72,7 +38,9 @@ function genMsgContent(msg){
 			+ msg.url + "\"/></a>";
 		break;
 	case "list":
-		html = "<p>" + parseLink(_encode(value)) + "</p>" + msg.list;
+		value = textParser.parse(value);
+		value = _.map(value, function(fragment){ return fragment.value; }).join("");
+		html = "<p>" + value + "</p>" + msg.list;
 		break;
 	case "file":
 		// 历史会话中 filesize = 0

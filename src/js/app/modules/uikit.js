@@ -1,5 +1,7 @@
 // prompt 不会消失
 // tip 2秒后自动消失
+
+// todo: 拆分这个文件，把 dialog 拆出去
 var utils = require("../../common/utils");
 
 var EMPTY_FUNCTION = function(){};
@@ -27,8 +29,8 @@ function tip(msg){
 	setTimeout(_hidePrompt, 2000);
 }
 
-function _createDialog(opt){
-	opt = opt || {};
+function _createDialog(options){
+	var opt = options || {};
 	var className = opt.className;
 	var contentDom = opt.contentDom;
 	var el = utils.createElementFromHTML("<div class=\"em-dialog hide\"></div>");
