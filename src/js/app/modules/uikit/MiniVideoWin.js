@@ -4,7 +4,7 @@ var nopFunction = function(){};
 var template = [
 	"<div class=\"mini-video-window\">",
 	"<p class=\"nickname\"></p>",
-	"<video muted></video>",
+	"<video muted autoplay></video>",
 	"</div>",
 ].join("");
 

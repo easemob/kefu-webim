@@ -157,7 +157,7 @@ function _reveiveTicket(ticketInfo){
 	// 加入会议
 	service.setup(ticketInfo, {
 		identity: "visitor",
-		nickname: "",
+		nickname: config.visitor.trueName || config.user.username,
 		avatarUrl: "",
 	});
 
