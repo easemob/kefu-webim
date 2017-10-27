@@ -21,6 +21,7 @@ module.exports = {
 		send_failed: "发送失败",
 		loading: "加载中...",
 		no_more_msg: "没有更多消息",
+		press_save_img: "长按图片保存到本地",
 	},
 	chat: {
 		agent_is_typing: "正在输入...",
