@@ -95,10 +95,9 @@ module.exports = function(options){
 
 	function _onReadyStateChange(){
 		var json;
-		var status = xhr.status || 0;
 
 		if(xhr.readyState === 4){
-			if(status === 200){
+			if(xhr.status === 200){
 				if(dataType === "text"){
 					suc(xhr.responseText, xhr);
 					return;
