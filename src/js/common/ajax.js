@@ -1,7 +1,4 @@
-
-
 var EMPTYFN = function(){};
-
 var _createStandardXHR = function(){
 	try{
 		return new window.XMLHttpRequest();
@@ -10,7 +7,6 @@ var _createStandardXHR = function(){
 		return false;
 	}
 };
-
 var _createActiveXHR = function(){
 	try{
 		return new window.ActiveXObject("Microsoft.XMLHTTP");
@@ -32,6 +28,8 @@ module.exports = function(options){
 	var headers = options.headers || {};
 	var isFileUpload = options.isFileUpload;
 	var key;
+	var fileForm;
+	var o;
 
 	if(useXDomainRequestInIE && window.XDomainRequest){
 		xhr = new XDomainRequest();
@@ -56,8 +54,8 @@ module.exports = function(options){
 
 	xhr.onreadystatechange = _onReadyStateChange;
 	if(type.toLowerCase() === "get"){
-		for(var o in data){
-			if(data.hasOwnProperty(o)){
+		for(o in data){
+			if(Object.prototype.hasOwnProperty.call(data, o)){
 				tempData += o + "=" + data[o] + "&";
 			}
 		}
@@ -68,7 +66,7 @@ module.exports = function(options){
 			+ "_v=" + new Date().getTime();
 	}
 	else if(isFileUpload){
-		var fileForm = new FormData();
+		fileForm = new FormData();
 		fileForm.append("file", data.file);
 
 		xhr.open("POST", options.url);
@@ -84,7 +82,7 @@ module.exports = function(options){
 		headers["Content-Type"] = headers["Content-Type"] || "application/json";
 
 		for(key in headers){
-			if(headers.hasOwnProperty(key)){
+			if(Object.prototype.hasOwnProperty.call(headers, key)){
 				xhr.setRequestHeader(key, headers[key]);
 			}
 		}
@@ -125,10 +123,8 @@ module.exports = function(options){
 				return;
 			}
 			error(xhr.responseText, xhr, "error response.");
-			return;
-
 		}
-		if(xhr.readyState === 0){
+		else if(xhr.readyState === 0){
 			error(xhr.responseText, xhr, "unexpected server error.");
 		}
 	}
