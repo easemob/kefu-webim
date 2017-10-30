@@ -122,7 +122,7 @@ function _reportOpened(officialAccount){
 function _onMarketingMessageReceived(officialAccount, marketingTaskId, msg){
 	var avatar = officialAccount.img;
 	var officialAccountId = officialAccount.official_account_id;
-	var content = msg.data;
+	var content = msg.brief;
 	var title = utils.getDataByPath(msg, "ext.weichat.marketing.name");
 	var scheduleInfo = utils.getDataByPath(msg, "ext.weichat.marketing.schedule_info") || {};
 	officialAccount.bindSkillGroupName = scheduleInfo.skillgroup_name;
