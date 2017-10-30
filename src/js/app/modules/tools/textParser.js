@@ -2,6 +2,7 @@ var _const = require("../../../common/const");
 
 var EMOJI_PATH = _const.EMOJI_PATH;
 var EMOJI_MAP = _const.EMOJI_MAP;
+var URL_RE = /(https?:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(:[0-9]{2,4})?\/?((\.[:_0-9a-zA-Z-]+)|[:_0-9a-zA-Z-]*\/?)*\??[:_#@*&%0-9a-zA-Z-/=]*/;
 
 module.exports = {
 	parse: parse,
@@ -74,8 +75,7 @@ function _encodeParser(text){
 }
 
 function _linkParser(text){
-	var reg = /(https?:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(:[0-9]{2,4})?\/?((\.[:_0-9a-zA-Z-]+)|[:_0-9a-zA-Z-]*\/?)*\??[:_#@*&%0-9a-zA-Z-/=]*/gm;
-	var result = text.match(reg);
+	var result = text.match(URL_RE);
 	var targetLink;
 	var hasProtocol;
 	var taggedLink;
@@ -103,37 +103,40 @@ function _linkParser(text){
 }
 
 function _customLinkParser(text){
-	var divDom = document.createElement("div");
+	var re = /<a[^>]+>[^<>]+<\/a>/i;
+	var matchResult = text.match(re);
+	var divDom;
+	var matchedText;
 	var index;
-	var nodeList;
-	var node;
-	var tagName;
-	var outerHTML;
-	var indexOfOuterHTML;
+	var aDom;
+	var href;
+	var cloneADom;
 
-	divDom.innerHTML = text;
-	nodeList = divDom.childNodes;
+	if(!matchResult) return null;
 
-	for(index in nodeList){
-		if(Object.prototype.hasOwnProperty.call(nodeList, index)){
-			node = nodeList[index];
-			tagName = node.tagName;
-			outerHTML = node.outerHTML;
-			tagName = node.tagName;
-			outerHTML = node.outerHTML;
-			indexOfOuterHTML = text.indexOf(outerHTML);
+	matchedText = matchResult[0];
+	index = matchResult.index;
 
-			if(tagName === "A" && !!~indexOfOuterHTML){
-				// todo: check a tag
+	divDom = document.createElement("div");
+	divDom.innerHTML = matchedText;
+	aDom = divDom.childNodes[0];
 
-				return {
-					index: indexOfOuterHTML,
-					oldStr: outerHTML,
-					newStr: outerHTML,
-					type: "CUSTOM_LINK",
-				};
-			}
-		}
+	if(
+		aDom
+		&& aDom.tagName === "A"
+		&& URL_RE.test(href = aDom.href)
+	){
+		cloneADom = document.createElement("a");
+		cloneADom.href = href;
+		cloneADom.target = "_blank";
+		cloneADom.innerText = aDom.innerText;
+
+		return {
+			index: index,
+			oldStr: matchedText,
+			newStr: cloneADom.outerHTML,
+			type: "CUSTOM_LINK",
+		};
 	}
 
 	return null;
