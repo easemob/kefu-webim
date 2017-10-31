@@ -12,6 +12,8 @@ var _init = _.once(function(){
 	img = imgWrapper.querySelector("img");
 	iosLoadTip = imgWrapper.querySelector("span.ios-load");
 	androidLoadTip = imgWrapper.querySelector("a.android-load");
+	utils.isAndroid && utils.removeClass(androidLoadTip, "hide");
+	utils.isIOS && utils.removeClass(iosLoadTip, "hide");
 	utils.on(imgWrapper, "click", function(){
 		utils.addClass(imgWrapper, "hide");
 	}, false);
@@ -27,16 +29,9 @@ module.exports = {
 		imgSrc = url;
 		_init();
 		if(utils.isTop || utils.isMobile){
-			img.setAttribute("src", url);
-			if(utils.isAndroid){
-				utils.removeClass(androidLoadTip, "hide");
-				androidLoadTip.setAttribute("href", url);
-			}
-			if(utils.isIOS){
-				utils.removeClass(iosLoadTip, "hide");
-			}
+			img.src = url;
+			androidLoadTip.href = url;
 			utils.removeClass(imgWrapper, "hide");
-
 		}
 		else{
 			transfer.send({
