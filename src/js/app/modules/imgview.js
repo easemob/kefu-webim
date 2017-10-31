@@ -32,7 +32,9 @@ module.exports = {
 				utils.removeClass(androidLoadTip, "hide");
 				androidLoadTip.setAttribute("href", url);
 			}
-			if(utils.isIOS) utils.removeClass(iosLoadTip, "hide");
+			if(utils.isIOS){
+				utils.removeClass(iosLoadTip, "hide");
+			}
 			utils.removeClass(imgWrapper, "hide");
 
 		}
