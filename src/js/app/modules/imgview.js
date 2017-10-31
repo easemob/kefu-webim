@@ -13,7 +13,7 @@ var _init = _.once(function(){
 	utils.on(imgWrapper, "click", function(){
 		utils.addClass(imgWrapper, "hide");
 	}, false);
-	utils.live(".android-load", "click", function(){
+	!("download" in document.createElement("a")) && utils.live(".android-load", "click", function(){
 		window.location = imgSrc;
 	}, imgLoadTip);
 
@@ -25,7 +25,7 @@ module.exports = {
 		_init();
 		if(utils.isTop || utils.isMobile){
 			img.setAttribute("src", url);
-			if(utils.isAndroid) imgLoadTip.innerHTML = "<span class=\"android-load icon-download\"></span>";
+			if(utils.isAndroid) imgLoadTip.innerHTML = "<a href=" + url + " class=\"android-load\" download><span class=\"icon-download\"></span></a>";
 			if(utils.isIOS) imgLoadTip.innerHTML = "<span class=\"ios-load \">" + __("common.press_save_img") + "</span>";
 			utils.removeClass(imgWrapper, "hide");
 

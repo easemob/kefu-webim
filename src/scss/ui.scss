@@ -45,20 +45,26 @@
 		width: 100%;
 		bottom: 50px;
 		text-align: center;
-		span {
+		> span {
 			display: inline-block;
 			background-color: #464646;
 			color: #fff;
 			font-size: 12px;
 			padding: 0 3px;
-			height: px;
 			line-height: 20px;
 			border-radius: 2px;
-
-			&.android-load {
-				float: right;
-				margin-right: 20px;
-			}
+		}
+		> .android-load {
+			display: inline-block;
+			background-color: #464646;
+			color: #fff;
+			font-size: 12px;
+			padding: 0 3px;
+			line-height: 20px;
+			border-radius: 2px;
+			float: right;
+			margin-right: 20px;
+			text-decoration: none;
 		}
 	}
 }
