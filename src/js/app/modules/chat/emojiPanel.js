@@ -144,7 +144,7 @@ function _genEmojiPackageHtmlList(packageList, fileList){
 		var currentPageHtml =  _.chain(filesInCurrentPackage)
 		// 生成图标html
 		.map(function(item){
-			var thumbnailUrl = item.thumbnailUrl;
+			var thumbnailUrl = "//" + profile.config.domain + item.thumbnailUrl;
 			var originUrl = item.originUrl;
 
 			return "<div class=\"emoji-bg e-face\">"
