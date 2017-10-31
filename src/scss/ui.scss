@@ -29,7 +29,7 @@
 	left: 0;
 	top: 0;
 	overflow: auto;
-	background: rgba(0, 0, 0, .3);
+	background-color: #000;
 	img {
 		position: absolute;
 		top: 0;
@@ -37,6 +37,36 @@
 		right: 0;
 		bottom: 0;
 		margin: auto;
+		max-width: 100%;
+		max-height: 100%;
+	}
+	.ios-load {
+		position: absolute;
+		width: 100%;
+		bottom: 50px;
+		text-align: center;
+		> span {
+			display: inline-block;
+			background-color: #464646;
+			color: #fff;
+			font-size: 12px;
+			padding: 0 3px;
+			line-height: 20px;
+			border-radius: 2px;
+		}
+	}
+	> .android-load {
+		position: absolute;
+		right: 20px;
+		bottom: 50px;
+		background-color: #464646;
+		color: #fff;
+		font-size: 12px;
+		padding: 0 3px;
+		line-height: 20px;
+		border-radius: 2px;
+		float: right;
+		text-decoration: none;
 	}
 }
 

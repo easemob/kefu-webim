@@ -21,6 +21,7 @@ module.exports = {
 		send_failed: "Failed to send",
 		loading: "loading...",
 		no_more_msg: "no more messages",
+		press_save_img: "Press to save the picture",
 	},
 	chat: {
 		agent_is_typing: "Agent is typing...",
