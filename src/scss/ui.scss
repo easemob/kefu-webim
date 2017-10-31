@@ -40,7 +40,7 @@
 		max-width: 100%;
 		max-height: 100%;
 	}
-	.img-load-tip {
+	.ios-load {
 		position: absolute;
 		width: 100%;
 		bottom: 50px;
@@ -54,18 +54,19 @@
 			line-height: 20px;
 			border-radius: 2px;
 		}
-		> .android-load {
-			display: inline-block;
-			background-color: #464646;
-			color: #fff;
-			font-size: 12px;
-			padding: 0 3px;
-			line-height: 20px;
-			border-radius: 2px;
-			float: right;
-			margin-right: 20px;
-			text-decoration: none;
-		}
+	}
+	> .android-load {
+		position: absolute;
+		right: 20px;
+		bottom: 50px;
+		background-color: #464646;
+		color: #fff;
+		font-size: 12px;
+		padding: 0 3px;
+		line-height: 20px;
+		border-radius: 2px;
+		float: right;
+		text-decoration: none;
 	}
 }
 

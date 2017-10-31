@@ -43,6 +43,7 @@ function load_html(){
 		video_invite: __("toolbar.video_invite"),
 		evaluate_agent: __("toolbar.evaluate_agent"),
 		transfer_to_kefu: __("toolbar.transfer_to_kefu"),
+		press_save_img: __("common.press_save_img"),
 	}));
 
 	chat.getDom();
