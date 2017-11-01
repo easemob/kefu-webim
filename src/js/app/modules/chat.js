@@ -707,14 +707,11 @@ function _initSession(){
 	Promise.all([
 		apiHelper.getDutyStatus(),
 		apiHelper.getGrayList(),
-		apiHelper.getRobertIsOpen(),
 		apiHelper.getToken(),
 	]).then(function(result){
 		var dutyStatus = result[0];
 		var grayList = result[1];
-		var isRobotEnable = result[2];
-		
-		profile.hasRobotAgentOnline = isRobotEnable;
+
 		// 灰度列表
 		profile.grayList = grayList;
 
@@ -734,6 +731,11 @@ function _initSession(){
 				_initOfficialAccount(),
 				_initSDK()
 			]).then(_onReady);
+
+			// 查询是否开启机器人
+			apiHelper.getRobertIsOpen().then(function(isRobotEnable){
+				profile.hasRobotAgentOnline = isRobotEnable;
+			});
 
 			// 获取坐席昵称设置
 			apiHelper.getNickNameOption().then(function(displayNickname){

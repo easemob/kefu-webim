@@ -47,6 +47,8 @@ function _displayOrHideTransferToKefuBtn(officialAccount){
 		utils.addClass(toKefuBtn, "hide");
 	}
 	else{
-		utils.toggleClass(toKefuBtn, "hide", !profile.hasRobotAgentOnline);
+		apiHelper.getRobertIsOpen().then(function(isRobotEnable){
+			utils.toggleClass(toKefuBtn, "hide", !isRobotEnable);
+		});
 	}
 }
