@@ -153,7 +153,8 @@ function _confirm(){
 
 module.exports = {
 	show: function(currentInviteId, currentServiceSessionId){
-		if(!dialog) return; session = currentServiceSessionId;
+		if(!dialog) return;
+		session = currentServiceSessionId;
 		invite = currentInviteId;
 		_setSatisfaction();
 		dialog.show();
