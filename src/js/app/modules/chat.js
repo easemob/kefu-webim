@@ -732,10 +732,9 @@ function _initSession(){
 				_initSDK()
 			]).then(_onReady);
 
-			// 获取在线坐席数
-			apiHelper.getExSession().then(function(data){
-				profile.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
-				profile.hasRobotAgentOnline = data.onlineRobotAgentCount > 0;
+			// 查询是否开启机器人
+			apiHelper.getRobertIsOpen().then(function(isRobotEnable){
+				profile.hasRobotAgentOnline = isRobotEnable;
 			});
 
 			// 获取坐席昵称设置

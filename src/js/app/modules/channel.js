@@ -685,19 +685,25 @@ function _promptNoAgentOnlineIfNeeded(opt){
 	var officialAccountId = opt && opt.officialAccountId;
 	var officialAccount = _getOfficialAccountById(officialAccountId);
 	var sessionState = officialAccount.sessionState;
-	var hasAgentOnline = hasTransferedToKefu
-		? profile.hasHumanAgentOnline
-		: profile.hasHumanAgentOnline || profile.hasRobotAgentOnline;
+	// 只去查询一次有无坐席在线
+	if(isNoAgentOnlineTipShowed) return;
+	// 待接入中的会话 不做查询  
+	if(sessionState === _const.SESSION_STATE.WAIT) return;
+	// 开启机器人接待时 不转人工不查询
+	if(profile.hasRobotAgentOnline && !hasTransferedToKefu) return;
+	// 获取在线坐席数
+	apiHelper.getExSession().then(function(data){
+		profile.hasHumanAgentOnline = data.onlineHumanAgentCount > 0;
+		profile.hasRobotAgentOnline = data.onlineRobotAgentCount > 0;
 
-	// 显示无坐席在线(只显示一次)
-	if(
-		!hasAgentOnline
-		&& !isNoAgentOnlineTipShowed
-		&& sessionState !== _const.SESSION_STATE.PROCESSING
-	){
 		isNoAgentOnlineTipShowed = true;
-		_appendEventMsg(_const.eventMessageText.NOTE, { ext: { weichat: { official_account: officialAccount } } });
-	}
+		// 显示无坐席在线(只显示一次)
+		if(
+			!profile.hasHumanAgentOnline
+		){
+			_appendEventMsg(_const.eventMessageText.NOTE, { ext: { weichat: { official_account: officialAccount } } });
+		}
+	});
 }
 
 function _handleSystemEvent(event, eventObj, msg){
