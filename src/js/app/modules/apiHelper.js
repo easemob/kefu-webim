@@ -762,6 +762,7 @@ function reportEvent(url, userType, userId){
 			type: "VISIT_URL",
 			tenantId: config.tenantId,
 			url: url,
+			designatedAgent: config.agentName || "",
 			userId: {
 				type: userType,
 				id: userId
