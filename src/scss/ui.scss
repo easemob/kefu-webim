@@ -517,6 +517,7 @@
 		}
 	}
 	&.loading {
+		z-index: 9999;
 		.wrapper {
 			width: 100px;
 			height: 100px;

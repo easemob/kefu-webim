@@ -20,10 +20,9 @@ var evaluationDegreeId;
 var _init = _.once(function(){
 	loading.show("satisfaction");
 	apiHelper.getSatisfactionTipWord().then(function(tipWord){
-		var title = tipWord || __("evaluation.rate_my_service");
 		dom = utils.createElementFromHTML([
 			"<div class=\"wrapper\">",
-			"<span class=\"title\">" + title + "</span>",
+			"<span class=\"title\">" + tipWord + "</span>",
 			"<ul></ul>",
 			"<div class=\"tag-container\"></div>",
 			"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",

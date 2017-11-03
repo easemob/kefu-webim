@@ -1151,11 +1151,10 @@ function getSatisfactionTipWord(){
 		api("getSatisfactionTipWord", {
 			tenantId: config.tenantId
 		}, function(msg){
-			var tipWord = utils.getDataByPath(msg, "data.entities.0.optionValue");
+			var tipWord = utils.getDataByPath(msg, "data.entities.0.optionValue") || __("evaluation.rate_my_service");
 			resolve(tipWord);
-		}, function(err){
+		}, function(){
 			resolve();
-			reject(err);
 		});
 	});
 }

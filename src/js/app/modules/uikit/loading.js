@@ -16,6 +16,7 @@ var _init = _.once(function(){
 });
 
 function _show(secret){
+	_init();
 	showLoadingObj[secret] = true;
 	dialog.show();
 }
@@ -28,11 +29,6 @@ function _hide(secret){
 }
 
 module.exports = {
-	show: function(secret){
-		_init();
-		_show(secret);
-	},
-	hide: function(secret){
-		_hide(secret);
-	}
+	show: _show,
+	hide: _hide,
 };
