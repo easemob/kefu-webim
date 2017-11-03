@@ -1146,6 +1146,21 @@ function getCustomEmojiFiles(){
 	});
 }
 
+function getSatisfactionTipWord(){
+	return new Promise(function(resolve, reject){
+		api("getSatisfactionTipWord", {
+			tenantId: config.tenantId
+		}, function(msg){
+			var tipWord = utils.getDataByPath(msg, "data.entities.0.optionValue") || __("evaluation.rate_my_service");
+			resolve(tipWord);
+		}, function(){
+			// 异常时，满意度提示语为默认提示语，无reject
+			var tipWord = __("evaluation.rate_my_service");
+			resolve(tipWord);
+		});
+	});
+}
+
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
 	getToken: getToken,
@@ -1192,6 +1207,7 @@ module.exports = {
 	createWechatImUser: createWechatImUser,
 	getCustomEmojiPackages: getCustomEmojiPackages,
 	getCustomEmojiFiles: getCustomEmojiFiles,
+	getSatisfactionTipWord: getSatisfactionTipWord,
 
 	initApiTransfer: initApiTransfer,
 	api: api,
