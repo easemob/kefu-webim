@@ -1146,6 +1146,20 @@ function getCustomEmojiFiles(){
 	});
 }
 
+function getSatisfactionTipWord(){
+	return new Promise(function(resolve, reject){
+		api("getSatisfactionTipWord", {
+			tenantId: config.tenantId
+		}, function(msg){
+			var tipWord = utils.getDataByPath(msg, "data.entities.0.optionValue");
+			resolve(tipWord);
+		}, function(err){
+			resolve();
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
 	getToken: getToken,
@@ -1192,6 +1206,7 @@ module.exports = {
 	createWechatImUser: createWechatImUser,
 	getCustomEmojiPackages: getCustomEmojiPackages,
 	getCustomEmojiFiles: getCustomEmojiFiles,
+	getSatisfactionTipWord: getSatisfactionTipWord,
 
 	initApiTransfer: initApiTransfer,
 	api: api,
