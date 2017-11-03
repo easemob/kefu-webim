@@ -1154,7 +1154,9 @@ function getSatisfactionTipWord(){
 			var tipWord = utils.getDataByPath(msg, "data.entities.0.optionValue") || __("evaluation.rate_my_service");
 			resolve(tipWord);
 		}, function(){
-			resolve();
+			// 异常时，满意度提示语为默认提示语，无reject
+			var tipWord = __("evaluation.rate_my_service");
+			resolve(tipWord);
 		});
 	});
 }
