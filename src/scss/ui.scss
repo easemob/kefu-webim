@@ -516,6 +516,22 @@
 			}
 		}
 	}
+	&.loading {
+		z-index: 9999;
+		.wrapper {
+			width: 100px;
+			height: 100px;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			>div {
+				position: relative;
+				left: -50%;
+				position: -50%;
+				top: -100%;
+			}
+		}
+	}
 }
 .em-select {
 	height: 34px;

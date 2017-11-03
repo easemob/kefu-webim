@@ -688,6 +688,14 @@ getData.listen(function(msg){
 			excludeData: true,
 		});
 		break;
+	case "getSatisfactionTipWord":
+		emitAjax({
+			url: "/v1/webimplugin/tenants/" + tenantId + "/options/GreetingMsgEnquiryInvite",
+			type: "GET",
+			msg: msg,
+			excludeData: true,
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;
