@@ -2,7 +2,7 @@
 
 ## 集成网页插件
 
-请参考[集成文档](http://docs.easemob.com/cs/300visitoraccess/20webplugin)
+请参考[集成文档](http://docs.easemob.com/cs/300visitoraccess/web-widget)
 
 ## 本地运行
 
@@ -10,7 +10,7 @@
 具体请参考 [nodejs.org](https://nodejs.org/)
 
 2. 在终端执行以下命令
-	- 修改 npm 的 source（默认 source 安装速度不理想）
+	- 修改 npm 的 source（默认 source 安装速度可能不理想）
 
 		>	npm config set registry https://registry.npm.taobao.org
 	- 下载代码
