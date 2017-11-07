@@ -28,7 +28,7 @@
   "scripts": {
     "build": "webpack",
     "dev": "webpack --watch",
-    "start": "node server/app -t",
+    "server": "DEBUG=webim* node server/app",
     "build_en": "webpack --lang en-US",
     "build_all": "webpack;webpack --lang en-US",
     "lint": "eslint src/js/app/modules/init.js src/js/plugin/userAPI.js"

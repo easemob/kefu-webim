@@ -27,8 +27,8 @@
 		>	npm install
 	- 运行webserver，让代码在本地跑起来
 
-		>	node app -t kefu.easemob.com -p 8080
-	- 此时可以用浏览器打开 `http://localhost:8080/webim/demo.html`
+		>	npm run server
+	- 此时可以用浏览器打开 `http://localhost:8008/webim/demo.html`
 
 ## 定制开发（`目前标准版已支持所有功能，绝大多数情形无需定制开发`）
 
@@ -53,5 +53,4 @@
 	-V, --version      output the version number
 	-p, --port <n>     listen port, default 8080
 	-t, --target [domain]    backend domain name, default: sandbox.kefu.easemob.com
-	-s, --ssl            use ssl for http
 

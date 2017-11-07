@@ -1,22 +1,20 @@
-
-
-require("colors");
-require("os");
 const express = require("express");
 const httpProxy = require("http-proxy");
 const path = require("path");
 const fs = require("fs");
 const program = require("commander");
 const https = require("https");
+const http = require("http");
+const debug = require("debug");
 
-// todo list:
-// 增加https指定代理地址支持
-// 修改日志输出
-// 增加指定wwwRoot目录
+const DEFAULT_PORT = 8008;
+const DEFAULT_SERVER = "http://sandbox.kefu.easemob.com/";
+const PROXY_REGEX = /^\/v1/i;
 
-var logProxy = require("debug")("kefu-webim:proxy");
-var logBypass = require("debug")("kefu-webim:bypass");
-var logErr = require("debug")("kefu-webim:error");
+const logInit = debug("webim:init");
+const logProxy = debug("webim:proxy");
+const logBypass = debug("webim:bypass");
+const logErr = debug("webim:error");
 
 program
 .version("0.0.1")
@@ -25,80 +23,49 @@ program
 	"-t, --target [domain]",
 	"backend domain name, default: sandbox.kefu.easemob.com"
 )
-.option("-s, --ssl", "use ssl for http")
-.parse(process.argv);
+.parse(global.process.argv);
 
-const port = program.port || 8080;
-const isSSL = !!program.ssl;
-const protocol = isSSL ? "https:" : "http:";
-const target = protocol + parseTarget(program.target);
+const port = program.port || DEFAULT_PORT;
+const target = typeof program.target === "string"
+	? "http://" + program.target + "/"
+	: DEFAULT_SERVER;
 
-const currentPath = path.dirname(__filename);
+const currentPath = __dirname;
 const wwwRoot = path.resolve(currentPath, "..");
 
-var app = express();
+const app = express();
+
 app.use("/webim", express["static"](wwwRoot));
 
+const proxy = httpProxy.createProxyServer();
+proxy.on("error", e => logErr(e));
 
-if(program.target){
-	// http proxy
-	var proxy = httpProxy.createProxyServer();
-	var cfg = {
-		target: target,
-		port: null,
-	};
-	app.use(function(req, res, next){
-		logBypass(req.path);
-		if(/^\/v1/.test(req.path)){
-			proxy.web(req, res, cfg, next);
-		}
-		else{
-			logErr("assert failed!");
-			proxy.web(req, res, cfg, next);
-		}
-	});
-	proxy.on("error", function(e){
-		logErr(e);
-	});
-}
+app.use((req, res, next) => {
+	var pathname = req.path;
 
-if(isSSL){
-	// https server
-	https.createServer({
-		key: fs.readFileSync(currentPath + "/ssl.key"),
-		cert: fs.readFileSync(currentPath + "/ssl.crt"),
-	}, app).listen(port);
-	printConfig();
-}
-else{
-	// http server
-	var server = app.listen(port, printConfig);
-	server.on("upgrade", function(req, sock, head){
-		console.log("upgrade", req.url);
-	});
-	server.on("error", function(e){
-		console.log("server.err", e);
-	});
-}
-
-function printConfig(){
-	console.log([
-		"",
-		"kefu-webim WEB SERVER running @:".rainbow,
-		(protocol + "//localhost:" + port + "/webim").cyan,
-		("target: " + (program.target ? target : "none")).yellow,
-		"",
-	].join("\n"));
-}
-
-function parseTarget(target){
-	if(target === true){
-		return "//sandbox.kefu.easemob.com/";
+	if(PROXY_REGEX.test(pathname)){
+		logProxy(pathname);
+		proxy.web(req, res, { target }, next);
 	}
-	else if(typeof target === "string"){
-		return "//" + target + "/";
+	else{
+		logBypass(pathname);
 	}
+});
 
-	return false;
+logInit(`backend: ${target}`);
 
-}
+// http server
+http.createServer(app).listen(port, () => logInit(`
+webim http SERVER running @:
+http://localhost:${port}/webim/
+`));
+
+// https server
+https.createServer({
+	key: fs.readFileSync(currentPath + "/ssl.key"),
+	cert: fs.readFileSync(currentPath + "/ssl.crt"),
+}, app)
+.listen(port + 1, () => logInit(`
+webim https SERVER running @:
+https://localhost:${port + 1}/webim/
+`));
