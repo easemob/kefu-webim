@@ -35,6 +35,7 @@
 			config.satisfaction = utils.convertFalse(utils.query('sat'));
 			config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
 			config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
+			config.isSmart = utils.convertFalse(utils.query('isSmart')) === "true";
 
 			config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
 			config.domain = config.domain || '//' + location.host;
@@ -139,8 +140,8 @@
 		easemobim.leaveMessage = easemobim.leaveMessage(chat, config.tenantId);
 		easemobim.paste(chat).init();
 		easemobim.satisfaction(chat);
-		easemobim.apiHelper.init(config);
 
+		easemobim.apiHelper.init(config);
 		// 访客回呼功能
 		if (config.eventCollector && !eventCollector.isStarted()) {
 			eventCollector.startToReport(config, function (targetUserInfo) {
@@ -166,6 +167,8 @@
 			easemobim.getData = new easemobim.Transfer('cross-origin-iframe', 'data');
 			callback(config);
 		});
+
+		config.isSmart && utils.addClass(document.body, "smart-body")
 
 		// em-widgetPopBar
 		utils.toggleClass(
@@ -249,10 +252,11 @@
 					chat.errorPrompt('未创建关联', true);
 					return;
 				}
+				var defaultAvatarSrc = config.isSmart?'/img/smart_defult_avatar.png':'/img/default_avatar.png';
 				config.relevanceList = msg.data;
 				config.tenantAvatar = utils.getAvatarsFullPath(msg.data[0].tenantAvatar, config.domain);
-				config.defaultAvatar = config.staticPath ? config.staticPath + '/img/default_avatar.png' : 'static' +
-					'/img/default_avatar.png';
+				config.defaultAvatar = config.staticPath ? config.staticPath + defaultAvatarSrc : 'static' +
+					defaultAvatarSrc;
 				config.defaultAgentName = msg.data[0].tenantName;
 				config.logo = config.logo || msg.data[0].tenantLogo;
 				config.toUser = config.toUser || msg.data[0].imServiceNumber;
