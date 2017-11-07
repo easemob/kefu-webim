@@ -48,6 +48,13 @@ function _getGreetings(officialAccount){
 				noprompt: true
 			});
 			break;
+		case 2:
+			// 菜单消息
+			greetingObj = JSON.parse(greetingText.replace(/&amp;quot;/g, "\""));
+			greetingObj.url = profile.config.domain + greetingObj.urlPath;
+
+			channel.handleMessage(greetingObj, "img");
+			break;
 		case undefined:
 			// 未设置机器人欢迎语
 			break;
