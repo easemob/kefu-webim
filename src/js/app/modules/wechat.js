@@ -13,12 +13,12 @@ var apiHelper = require("./apiHelper");
 var profile = require("./tools/profile");
 
 var isWechatBrowser = /MicroMessenger/.test(navigator.userAgent);
-var appid = utils.query('appid');
-var code = utils.query('code');
+var appid = utils.query("appid");
+var code = utils.query("code");
 
-module.exports = function (success, fail) {
+module.exports = function(success, fail){
 	var tenantId = profile.config.tenantId;
-	if (!isWechatBrowser || !tenantId || !appid){
+	if(!isWechatBrowser || !tenantId || !appid){
 		fail();
 		return;
 	}
