@@ -6,6 +6,9 @@
     "name": "easemob",
     "url": "http://easemob.com/"
   },
+  "scripts": {
+    "build": "gulp build"
+  },
   "devDependencies": {
     "autoprefixer": "^6.5.3",
     "cssnano": "^3.8.0",
