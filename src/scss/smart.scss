@@ -1,0 +1,31 @@
+.smart-body {
+	.em-widgetHeader-wrapper {
+		background-color: #fff !important;
+		.em-widgetHeader-portrait,.em-widgetHeader-text-logo{
+			display: none;
+		}
+		.em-agent-input-state {
+			color: #999;
+		}
+		.em-widgetHeader-smart-logo {
+			height: 43px;
+			vertical-align: middle;
+			position: absolute;
+			right: 5px;
+			display: block !important;
+		}
+	}
+	.em-widget-send{
+		background-color: #f8c33b;
+	}
+	.em-widget-right {
+		.em-widget-msg-container {
+			background-color: #f8c33b;
+		}
+		.icon-corner-right {
+			color: #f8c33b;
+		}
+	}
+
+
+}
