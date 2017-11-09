@@ -145,10 +145,17 @@ function _eventHandler(e){
 }
 
 function show(info){
-	if(info){
-		currentOwnerName = info.ownerName;
-		_.each(info.streams, _addOrUpdateStream);
-	}
+	// reset video dom
+	currentStream = null;
+	videoDom.src = "";
+	nicknameDom.innerText = "";
+	currentNoAudioStream = null;
+	noAudioVideoDom.src = "";
+	utils.removeClass(videoDom, "hide");
+	utils.addClass(noAudioVideoDom, "hide");
+
+	currentOwnerName = info.ownerName;
+	_.each(info.streams, _addOrUpdateStream);
 	utils.removeClass(wrapperDom, "hide");
 }
 
