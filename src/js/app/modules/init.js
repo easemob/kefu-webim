@@ -154,17 +154,22 @@ function chat_window_mode_init(){
 
 function initChat(){
 	apiHelper.init(config);
+	apiHelper.getGrayList().then(function(grayList){
+		// 灰度列表
+		profile.grayList = grayList;
 
-	// 访客回呼功能
-	if(!utils.isMobile && config.eventCollector && !eventCollector.isStarted()){
-		eventCollector.startToReport(function(targetUserInfo){
-			initChatEntry(targetUserInfo);
-		});
-	}
-	else{
-		// 获取关联，创建访客，调用聊天窗口
-		initChatEntry();
-	}
+		// 访客回呼功能
+		if(!utils.isMobile && config.eventCollector && !eventCollector.isStarted()){
+			eventCollector.startToReport(function(targetUserInfo){
+				initChatEntry(targetUserInfo);
+			});
+		}
+		else{
+			// 获取关联，创建访客，调用聊天窗口
+			initChatEntry();
+		}
+	});
+
 
 
 	apiHelper.getTheme().then(function(themeName){
@@ -393,7 +398,13 @@ function initChatEntry(targetUserInfo){
 				config.user.password = password;
 				chat.init();
 			}, function(){
-				_downgrade();
+				if(profile.grayList.autoCreateAppointedVisitor){
+					_createAppointedVisitor();
+				}
+				else{
+					_downgrade();
+				}
+				
 			});
 		}
 		else{
@@ -406,9 +417,11 @@ function initChatEntry(targetUserInfo){
 		throw err;
 	});
 }
-
-function _downgrade(){
-	apiHelper.createVisitor().then(function(entity){
+function _createAppointedVisitor(){
+	_createVisitor(config.user.username);
+}
+function _createVisitor(username){
+	apiHelper.createVisitor(username).then(function(entity){
 		var cacheKeyName = (config.configId || (config.to + config.tenantId + config.emgroup));
 		config.user.username = entity.userId;
 		config.user.password = entity.userPassword;
@@ -427,4 +440,7 @@ function _downgrade(){
 		}
 		chat.init();
 	});
+}
+function _downgrade(){
+	_createVisitor();
 }

@@ -682,13 +682,14 @@ function closeServiceSession(sessionId){
 	});
 }
 
-function createVisitor(){
+function createVisitor(specifiedUserName){
 	return new Promise(function(resolve, reject){
 		api("createVisitor", {
 			orgName: config.orgName,
 			appName: config.appName,
 			imServiceNumber: config.toUser,
-			tenantId: config.tenantId
+			tenantId: config.tenantId,
+			specifiedUserName: specifiedUserName || ""
 		}, function(msg){
 			var entity = msg.data;
 

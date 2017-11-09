@@ -708,14 +708,9 @@ function _init(){
 function _initSession(){
 	Promise.all([
 		apiHelper.getDutyStatus(),
-		apiHelper.getGrayList(),
 		apiHelper.getToken(),
 	]).then(function(result){
 		var dutyStatus = result[0];
-		var grayList = result[1];
-
-		// 灰度列表
-		profile.grayList = grayList;
 
 		// 当配置为下班进会话时执行与上班相同的逻辑
 		profile.isInOfficeHours = dutyStatus || config.offDutyType === "chat";
