@@ -1,5 +1,5 @@
-var List = function(){
-	this.list = [];
+var List = function(content){
+	this.list = _.isArray(content) ? content : [];
 };
 
 List.prototype.has = function(value){
@@ -27,6 +27,7 @@ List.prototype.getLength = function(){
 	return this.list.length;
 };
 
+// todo: rename to clear
 List.prototype.removeAll = function(){
 	this.list.length = 0;
 };

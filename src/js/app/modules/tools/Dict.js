@@ -1,26 +1,24 @@
-var Dict = function(){
-	this.list = {};
+var Dict;
+
+module.exports = Dict = function(){
+	this.map = {};
 };
 
 Dict.prototype.set = function(key, value){
-	if(typeof this.list[key] === "undefined"){
-		this.list[key] = value;
-	}
+	// todo: new value overwrite old value
+	!this.has(key) && (this.map[key] = value);
+};
+
+Dict.prototype.has = function(key){
+	return Object.prototype.hasOwnProperty.call(this.map, key);
 };
 
 Dict.prototype.get = function(key){
-	if(Object.prototype.hasOwnProperty.call(this.list, key)){
-		return this.list[key];
-	}
-
-	return null;
-
+	return this.has(key)
+		? this.map[key]
+		: undefined;
 };
 
 Dict.prototype.remove = function(key){
-	if(typeof this.list[key] !== "undefined"){
-		delete this.list[key];
-	}
+	this.has(key) && delete this.map[key];
 };
-
-module.exports =  Dict;

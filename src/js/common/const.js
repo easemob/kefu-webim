@@ -125,7 +125,12 @@ module.exports = {
 
 	AGENT_ROLE: {
 		AGENT: 1,
-		ROBOT: 6
+		ROBOT: 6,
+	},
+
+	STREAM_TYPE: {
+		NORMAL: 0,
+		NO_AUDIO: 1,
 	},
 
 	// 上传文件大小限制

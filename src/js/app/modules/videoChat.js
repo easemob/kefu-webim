@@ -16,6 +16,7 @@ var channel = require("./channel");
 var profile = require("./tools/profile");
 var eventListener = require("./tools/eventListener");
 var utils = require("../../common/utils");
+var Dispatcher = require("./tools/Dispatcher");
 
 var statusBar = require("./uikit/videoStatusBar");
 var videoPanel = require("./uikit/videoPanel");
@@ -23,10 +24,15 @@ var videoChatTemplate = require("raw-loader!../../../template/videoChat.html");
 
 var parentContainer;
 var videoWidget;
+var dispatcher;
 
 var config;
 var dialog;
 var service;
+
+module.exports = {
+	init: _initVideoChat,
+};
 
 function _init(){
 	if(videoWidget) return;
@@ -44,6 +50,8 @@ function _init(){
 
 	// disable emedia log
 	window.emedia.LOG_LEVEL = 5;
+
+	dispatcher = new Dispatcher();
 
 	service = new window.emedia.Service({
 		// 这个目前没有定义，前段可写 web
@@ -116,6 +124,7 @@ function _init(){
 	videoPanel.init({
 		wrapperDom: videoWidget.querySelector(".video-panel"),
 		service: service,
+		dispatcher: dispatcher,
 	});
 }
 
@@ -191,7 +200,3 @@ function _onConfirm(){
 		},
 	});
 }
-
-module.exports = {
-	init: _initVideoChat,
-};

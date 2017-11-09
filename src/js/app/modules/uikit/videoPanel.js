@@ -1,12 +1,14 @@
 var utils = require("../../../common/utils");
 var videoViewer = require("./videoViewer");
 var MiniVideoWin = require("./MiniVideoWin");
+var Dict = require("../tools/Dict");
 
 var wrapperDom;
 var multiVideoContainer;
 var singleVideoContainer;
 
 var videoWindowList;
+var dispatcher;
 
 module.exports = {
 	init: init,
@@ -19,12 +21,23 @@ module.exports = {
 function init(option){
 	var opt = option || {};
 	wrapperDom = opt.wrapperDom;
+	dispatcher = opt.dispatcher;
 	multiVideoContainer = wrapperDom.querySelector(".multi-video-container");
 	singleVideoContainer = wrapperDom.querySelector(".single-video-container");
 	videoViewer.init({
 		wrapperDom: singleVideoContainer,
-		onReturnButtonClickCallback: _switchToVideoList,
 		service: opt.service,
+		dispatcher: dispatcher,
+	});
+
+	dispatcher.addEventListener("switchToMiniVideoWindow", function(info){
+		utils.addClass(multiVideoContainer, "hide");
+		videoViewer.show(info);
+	});
+
+	dispatcher.addEventListener("returnToMultiVideoWindow", function(){
+		utils.removeClass(multiVideoContainer, "hide");
+		videoViewer.hide();
 	});
 
 	_reset();
@@ -40,51 +53,41 @@ function hide(){
 }
 
 function _reset(){
-	videoWindowList = [];
+	videoWindowList = new Dict();
 	videoViewer.hide();
 	multiVideoContainer.innerHTML = "";
 	utils.removeClass(multiVideoContainer, "hide");
 }
 
 function addOrUpdateStream(stream){
-	// todo: update video viewer & independent window
-	var streamId = stream.id;
-	var targetMiniVideoWindow = _.find(videoWindowList, function(videoWindow){
-		return videoWindow.getStream().id === streamId;
-	});
+	var streamOwnerName = utils.getDataByPath(stream, "owner.name");
+	var targetMiniVideoWindow = videoWindowList.get(streamOwnerName);
 
 	if(targetMiniVideoWindow){
-		targetMiniVideoWindow.update(stream);
+		targetMiniVideoWindow.updateStream(stream);
 	}
 	else{
-		videoWindowList.push(new MiniVideoWin({
+		videoWindowList.set(streamOwnerName, new MiniVideoWin({
 			parentContainer: multiVideoContainer,
 			stream: stream,
-			clickCallback: _switchToVideoViewer,
+			dispatcher: dispatcher,
 		}));
 	}
+
+	dispatcher.trigger("addOrUpdateStream", stream);
 }
 
 function removeStream(stream){
-	var streamId = stream.id;
-	var index = _.findIndex(videoWindowList, function(videoWindow){
-		return videoWindow.getStream().id === streamId;
-	});
-	var targetMiniVideoWindow = videoWindowList[index];
+	var streamOwnerName = utils.getDataByPath(stream, "owner.name");
+	var targetMiniVideoWindow = videoWindowList.get(streamOwnerName);
 
 	if(!targetMiniVideoWindow) throw new Error("no such object.");
 
-	targetMiniVideoWindow.destroy();
-	videoWindowList.splice(index, 1);
-}
+	targetMiniVideoWindow.removeStream(stream);
+	if(targetMiniVideoWindow.isEmpty()){
+		targetMiniVideoWindow.destroy();
+		videoWindowList.remove(streamOwnerName);
+	}
 
-function _switchToVideoList(){
-	utils.removeClass(multiVideoContainer, "hide");
-	videoViewer.hide();
-}
-
-function _switchToVideoViewer(stream){
-	utils.addClass(multiVideoContainer, "hide");
-	videoViewer.show();
-	videoViewer.update(stream);
+	dispatcher.trigger("removeStream", stream);
 }
