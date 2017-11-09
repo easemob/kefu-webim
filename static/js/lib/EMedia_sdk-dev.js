@@ -87,7 +87,9 @@
 	    checkConnectIntervalMillis: 1000,
 
 	    iceRebuildCount: 3,
-	    iceRebuildIntervalMillis: 500
+	    iceRebuildIntervalMillis: 500,
+
+	    enterTimeout: 20000
 	});
 
 	var Service = __webpack_require__(6);
@@ -127,13 +129,17 @@
 
 	emedia.isWebRTC = (/Firefox/.test(navigator.userAgent) || /WebKit/.test(navigator.userAgent)) && /^https\:$/.test(window.location.protocol);
 
+	emedia.isFirefox = /Firefox/.test(navigator.userAgent);
+	emedia.isChrome = /Chrome/.test(navigator.userAgent);
+	emedia.isSafari = !/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent);
+
 	emedia.config({
 	    baseAcptOps: [107, 300, 302, 303, 304, 301, 204, 206, 400, 401, 1001, 100201, 100202, 100203]
 	    // baseAcptOps: [107, 300, 302, 303, 304, 301, 204, 206, 400, 401, 1001]
 	});
 	emedia.config({
-	    clientType: 'web',
-	    version: '1.0.2',
+	    clientType: 'WEB',
+	    version: '1.1.2',
 
 	    userAgent: navigator.userAgent,
 
@@ -963,6 +969,7 @@
 	        var self = this;
 
 	        self.__assertCurrent();
+	        self.current._session._sessionId = undefined;
 
 	        self.current.join(joined, joinError);
 	    },
@@ -975,6 +982,7 @@
 	        }
 
 	        self.__assertCurrent();
+	        self.current._session._sessionId = undefined;
 
 	        return self.current.withpublish(pubS);
 	    },
@@ -997,7 +1005,7 @@
 	        self.current.push(pubS, pushed, onPushError, false);
 	    },
 
-	    subscribe: function subscribe(streamId, onSub, subfail) {
+	    subscribe: function subscribe(streamId, onSub, subfail, subArgs) {
 	        var self = this;
 
 	        self.__assertCurrent();
@@ -1007,6 +1015,26 @@
 	            onSub = undefined;
 	        }
 
+	        if (onSub && _util.isPlainObject(onSub)) {
+	            subArgs = onSub;
+	            onSub = undefined;
+	        }
+	        if (subfail && _util.isPlainObject(subfail)) {
+	            subArgs = subfail;
+	            subfail = undefined;
+	        }
+
+	        subArgs || (subArgs = { subSVideo: true, subSAudio: true });
+
+	        var webrtc = self.current._getWebrtc(streamId);
+
+	        if (webrtc && webrtc.isConnected() && !emedia.isSafari) {
+	            self.current.subscribeStream(webrtc._rtcId, streamId, subfail, subArgs);
+	            return;
+	        }
+
+	        webrtc && self.current.closeWebrtc(webrtc.getRtcId(), true, false);
+
 	        self.current.createWebrtcAndSubscribeStream(streamId, {
 	            onGotRemote: function onGotRemote(stream) {
 	                onSub && onSub(stream);
@@ -1014,7 +1042,7 @@
 	            onEvent: function onEvent(_evt) {
 	                subfail && subfail(_evt);
 	            }
-	        });
+	        }, undefined, subArgs);
 	    },
 
 	    closePubstream: function closePubstream(stream) {
@@ -1298,9 +1326,12 @@
 	    _republish: function _republish(pubS, success, error) {
 	        var self = this;
 
+	        var webrtc;
 	        if (pubS.id) {
 	            var rtcId = self.current.__getWebrtcFor(pubS.id);
 	            rtcId && self.current.closeWebrtc(rtcId, true);
+
+	            webrtc = self.current._getWebrtc(pubS.id);
 	        }
 
 	        pubS._localMediaStream && pubS._localMediaStream.getTracks().forEach(function (track) {
@@ -1315,6 +1346,8 @@
 
 	                // var pubS1 = _util.extend({}, _pubS);
 	                pubS.isRepublished = true;
+
+	                pubS.optimalVideoCodecs = pubS.optimalVideoCodecs || webrtc && webrtc.optimalVideoCodecs;
 	                self.push(pubS, success, error);
 	            }, error);
 	        }, 500);
@@ -1452,9 +1485,24 @@
 	            },
 	            onTermC: function onTermC(evt) {
 	                //self.onTermC(me, evt);
-	                _logger.info("Server termc rtc: ", evt.rtcId);
+	                _logger.info("Server termc rtc: ", evt.rtcId, evt.message || evt.msg);
 
-	                attendee.closeWebrtc(evt.rtcId, false, true);
+	                if (evt.endReason === 21 || evt.endReason === 22) {
+	                    _util.forEach(attendee._cacheStreams, function (sid, _stream) {
+	                        if (_stream.rtcId === evt.rtcId) {
+	                            var _event;
+	                            if (evt.endReason === 21) {
+	                                _event = new emedia.event.SwitchVCodes({ stream: _stream, useVCodes: evt.useVCodes });
+	                            } else {
+	                                _event = new emedia.event.SubFailNotSupportVCodes({ stream: _stream });
+	                            }
+
+	                            attendee.onEvent(_event);
+	                        }
+	                    });
+	                } else {
+	                    attendee.closeWebrtc(evt.rtcId, false, true);
+	                }
 	            },
 	            onEnter: function onEnter(evt) {
 	                attendee.onEnter(evt.cver, evt.mem);
@@ -1476,7 +1524,7 @@
 	                attendee.onEvent(evt);
 	            },
 	            onStreamControl: function onStreamControl(evt) {
-	                attendee.onStreamControl(evt.streamId, evt.voff, evt.aoff);
+	                attendee.onStreamControl(evt.cver, evt.streamId, evt.voff, evt.aoff);
 	            },
 	            onRemoteControl: function onRemoteControl(evt) {
 	                _logger.error("Web not support remote control");
@@ -1528,9 +1576,7 @@
 	                type: emedia.config.clientType,
 	                ver: emedia.config.version,
 	                agent: emedia.config.userAgent,
-	                ops: emedia.config.acptOps,
-
-	                vcodes: emedia.config.vcodes
+	                ops: emedia.config.acptOps
 	            };
 
 	            //this.res = JSON.stringify(this.res);
@@ -1718,7 +1764,7 @@
 	            var tmp = [];
 	            for (var tsxId in _messageMap) {
 	                var msg = _messageMap[tsxId];
-	                if (retry > 0 && !self.online && (msg.op === 107 || msg.op === 201 || msg.op === 206 || msg.op === 400 || msg.op === 500)) {
+	                if (retry > 0 && !self.online && (msg.op === 107 || msg.op === 201 || msg.op === 204 || msg.op === 206 || msg.op === 400 || msg.op === 500)) {
 	                    tmp.push(msg);
 	                    continue;
 	                }
@@ -2247,9 +2293,7 @@
 	            }
 	        }
 
-	        if (reqMessage) {
-	            self.onEvent(new __event.RecvResponse({ request: reqMessage, response: servMessage }));
-	        }
+	        self.onEvent(new __event.RecvResponse({ request: reqMessage, response: servMessage }));
 
 	        if (reqMessage && reqMessage.__callback__) {
 	            reqMessage.__callback__(servMessage);
@@ -2276,17 +2320,30 @@
 
 	            var cands = message.cands;
 	            for (var i = 0; i < cands.length; i++) {
-	                if (cands[i].type && cands[i].type == "candidate") {
-	                    _cands.push(cands[i]);
-	                    continue;
-	                }
+	                var _cand;
 
-	                var _cand = {
-	                    type: "candidate",
-	                    candidate: cands[i].candidate,
-	                    mlineindex: cands[i].sdpMLineIndex,
-	                    mid: cands[i].sdpMid
-	                };
+	                if (typeof cands[i] === "string") {
+	                    _cand = {
+	                        type: "candidate",
+	                        candidate: cands[i],
+	                        mlineindex: 0,
+	                        mid: "audio"
+	                        // seq: i
+	                    };
+	                } else {
+	                    // if (cands[i].type && cands[i].type == "candidate") {
+	                    //     _cands.push(cands[i]);
+	                    //     continue;
+	                    // }
+
+	                    _cand = {
+	                        type: "candidate",
+	                        candidate: cands[i].candidate,
+	                        mlineindex: cands[i].sdpMLineIndex,
+	                        mid: cands[i].sdpMid
+	                        // seq: i
+	                    };
+	                }
 
 	                _cands.push(_cand);
 	            }
@@ -2359,6 +2416,17 @@
 	        if (message.op === 200) {
 	            // enter 放在首位
 	            self._bufferedMessages.unshift(message);
+
+	            if (callback) {
+	                setTimeout(function () {
+	                    if (!self._callbacks[message.tsxId]) {
+	                        return;
+	                    }
+
+	                    _logger.error("Enter timeout. fail.");
+	                    self.onMessage({ op: 1001, tsxId: message.tsxId, result: -9527, msg: "enter timeout. millis = " + emedia.config.enterTimeout });
+	                }, emedia.config.enterTimeout);
+	            }
 	        } else {
 	            self._bufferedMessages.push(message);
 	        }
@@ -2417,6 +2485,7 @@
 	 *
 	 */
 	var Error = _util.prototypeExtend({
+	    msg: "",
 	    __init__: function __init__() {
 	        this.day = new Date();
 	    },
@@ -2456,7 +2525,7 @@
 	     * {retry: retry, online: self.online, event: evt, cause: e, session: self}
 	     */
 	    WSClose: Error.extend({ message: function message() {
-	            var message = this.execTime() + " Websocket close (" + (this.retry || 0) + ").";
+	            var message = this.execTime() + " WSClose: Websocket close (" + (this.retry || 0) + ").";
 
 	            this.online || (message += " offline.");
 	            this.event && (message += " wscode: " + this.event.code);
@@ -2475,7 +2544,7 @@
 	     * {event: evt, online: self.online, session: self}
 	     */
 	    WSError: Error.extend({ message: function message() {
-	            var message = this.execTime() + " Websocket error. ready state:" + this.event.srcElement.readyState + ". online = " + this.online;
+	            var message = this.execTime() + " WSError: Websocket error. ready state:" + (this.event.srcElement && this.event.srcElement.readyState || this.event.currentTarget.readyState) + ". online = " + this.online;
 	            this.session && this.session.getSessionId() && (message = message + ", sess = " + this.session.getSessionId());
 
 	            this.url && (message += " url: " + this.url);
@@ -2487,7 +2556,7 @@
 	     * {event: evt, session: self}
 	     */
 	    WSConnected: Error.extend({ message: function message() {
-	            var message = this.execTime() + " Websocket success. ready state:" + this.event.srcElement.readyState;
+	            var message = this.execTime() + " WSConnected: Websocket success. ready state:" + (this.event.srcElement && this.event.srcElement.readyState || this.event.currentTarget.readyState);
 	            this.session && this.session.getSessionId() && (message = message + ", sess = " + this.session.getSessionId());
 
 	            return message;
@@ -2497,56 +2566,56 @@
 	     * {webrtc: webrtc, event: webrtcEvent, state: webrtcEvent.target.iceConnectionState}
 	     */
 	    ICEChanage: __ICEEvent.extend({ message: function message() {
-	            return this.execTime() + " " + this._webrtcDesc() + " state: " + this.state;
+	            return this.execTime() + " ICEChanage: " + this._webrtcDesc() + " state: " + this.state;
 	        } }),
 
 	    /**
 	     * {webrtc: webrtc, event: err}
 	     */
 	    AddIceCandError: __ICEEvent.extend({ message: function message() {
-	            return this.execTime() + " " + this._webrtcDesc() + ", add cand error";
+	            return this.execTime() + " AddIceCandError: " + this._webrtcDesc() + ", add cand error";
 	        } }),
 
 	    /**
 	     * {webrtc: webrtc, event: event}
 	     */
 	    ICEConnectFail: __ICEEvent.extend({ message: function message() {
-	            return this.execTime() + " " + this._webrtcDesc() + " failed";
+	            return this.execTime() + " ICEConnectFail: " + this._webrtcDesc() + " failed";
 	        } }),
 
 	    /**
 	     * {webrtc: webrtc, event: event}
 	     */
 	    ICEConnected: __ICEEvent.extend({ message: function message() {
-	            return this.execTime() + " " + this._webrtcDesc() + " connected";
+	            return this.execTime() + " ICEConnected: " + this._webrtcDesc() + " connected";
 	        } }),
 
 	    /**
 	     * {webrtc: webrtc, event: event}
 	     */
 	    ICEDisconnected: __ICEEvent.extend({ message: function message() {
-	            return this.execTime() + " " + this._webrtcDesc() + " disconnected";
+	            return this.execTime() + " ICEDisconnected: " + this._webrtcDesc() + " disconnected";
 	        } }),
 
 	    /**
 	     * {webrtc: webrtc}
 	     */
 	    ICEClosed: __ICEEvent.extend({ message: function message() {
-	            return this.execTime() + " " + this._webrtcDesc() + " closed";
+	            return this.execTime() + " ICEClosed: " + this._webrtcDesc() + " closed";
 	        } }),
 
 	    /**
 	     * {webrtc: webrtc}
 	     */
 	    ICERemoteMediaStream: __ICEEvent.extend({ message: function message() {
-	            return this.execTime() + " " + this._webrtcDesc() + " got remote stream";
+	            return this.execTime() + " ICERemoteMediaStream: " + this._webrtcDesc() + " got remote stream";
 	        } }),
 
 	    /**
 	     * {stream: stream, state:, msg: }
 	     */
 	    StreamState: Error.extend({ message: function message() {
-	            return this.execTime() + " " + " stream " + this.stream.id + " state: " + this.state + " " + this.msg;
+	            return this.execTime() + " StreamState: " + " stream " + this.stream.id + " state: " + this.state + " " + this.msg;
 	        },
 	        iceFail: function iceFail() {
 	            this.state = 1;
@@ -2558,7 +2627,7 @@
 	     * {member: self.current, event: e}
 	     */
 	    OpenMediaError: Error.extend({ message: function message() {
-	            return this.execTime() + " " + " open media error. caused by " + this.event.toString();
+	            return this.execTime() + " OpenMediaError: " + " open media error. caused by " + this.event.toString();
 	        } }),
 
 	    /**
@@ -2568,7 +2637,7 @@
 	            if (this.self) {
 	                return "hangup id = " + (this.self.id || "--") + " reason：" + (this.reason || 0);
 	            } else {
-	                return this.execTime() + " " + (this.parnter && (this.parnter.name || this.parnter.id || " ") || "") + " hangup, reason：" + (this.reason || 0);
+	                return this.execTime() + " Hangup: " + (this.parnter && (this.parnter.name || this.parnter.id || " ") || "") + " hangup, reason：" + (this.reason || 0);
 	            }
 	        } }),
 
@@ -2576,7 +2645,7 @@
 	     * {failed: rsp.result, msg: rsp.msg}
 	     */
 	    ServerRefuseEnter: Error.extend({ message: function message() {
-	            return this.execTime() + " " + "server refuse, cause：" + this.failed + ", msg:" + (this.msg || "");
+	            return this.execTime() + " ServerRefuseEnter: " + "server refuse, cause：" + this.failed + ", msg:" + (this.msg || "");
 	        } }),
 
 	    /**
@@ -2586,10 +2655,10 @@
 	        __init__: function __init__() {
 	            this.day = new Date();
 	            this.failed = this.response.result;
-	            this.msg = this.response.msg;
+	            this.msg = this.response.msg || this.response.message || "--";
 	        },
 	        message: function message() {
-	            return this.execTime() + " " + this.request.tsxId + ", " + (this.response.sessId || "--") + " op: " + this.request.op + ", cause: " + this.failed + " " + this.msg;
+	            return this.execTime() + " RspFail: " + this.request.tsxId + ", " + (this.response.sessId || "--") + " op: " + this.request.op + ", cause: " + this.failed + " " + this.msg;
 	        }
 	    }),
 
@@ -2602,7 +2671,11 @@
 	            //this.response = this.response.msg;
 	        },
 	        message: function message() {
-	            return this.execTime() + " " + this.request.tsxId + ", " + (this.response.sessId || "--") + " op: " + this.request.op + ", cause: " + this.failed + " " + this.msg;
+	            if (this.request) {
+	                return this.execTime() + " RecvResponse: " + (this.request && this.request.tsxId) + ", " + (this.response.sessId || "--") + " op: " + (this.request && this.request.op) + ", cause: " + this.failed + " " + this.msg;
+	            } else {
+	                return this.execTime() + " RecvMessage: " + (this.response && this.response.tsxId) + ", " + (this.response.sessId || "--") + " op: " + (this.response && this.response.op) + " " + this.msg;
+	            }
 	        }
 	    }),
 
@@ -2610,65 +2683,86 @@
 	     * {me: me, cause: _event_}
 	     */
 	    EnterFail: Error.extend({ message: function message() {
-	            return this.execTime() + " " + "enter fail：" + (this.cause ? this.cause.message() : "unkown");
+	            return this.execTime() + " EnterFail: " + "enter fail：" + (this.cause ? this.cause.message() : "unkown");
 	        } }),
 
 	    EnterSuccess: Error.extend({ message: function message() {
-	            return this.execTime() + " " + "enter success";
+	            return this.execTime() + " EnterSuccess: " + "enter success";
 	        } }),
 
 	    /**
 	     * {streamId: rsp.streamId}
 	     */
 	    PushSuccess: Error.extend({ message: function message() {
-	            return this.execTime() + " " + "push success, streamId = " + this.stream.id + " webrtc = " + this.stream.rtcId;
+	            return this.execTime() + " PushSuccess: " + "push success, streamId = " + this.stream.id + ", " + this.stream.optimalVideoCodecs + ", webrtc = " + this.stream.rtcId;
 	        } }),
 
 	    /**
 	     * {webrtc: webrtc, pubS: pubS, me: me, cause: _event_}
 	     */
 	    PushFail: Error.extend({ message: function message() {
-	            return this.execTime() + " " + "push fail, streamId = " + this.stream.id + " webrtc = " + this.stream.rtcId + " cause：" + (this.cause ? this.cause.message ? this.cause.message() : this.cause : "unkown");
+	            return this.execTime() + " PushFail: " + "push fail, streamId = " + this.stream.id + ", " + this.stream.optimalVideoCodecs + ", webrtc = " + this.stream.rtcId + " cause：" + (this.cause ? this.cause.message ? this.cause.message() : this.cause : "unkown");
 	        } }),
 
 	    /**
 	     * {stream: stream, failed: failed, me: me, cause: cause}
 	     */
 	    RemoteControlFail: Error.extend({ message: function message() {
-	            return this.execTime() + " " + "remote control fail, streamId = " + this.stream.id + " failed = " + this.failed + " cause：" + (this.cause ? this.cause.message ? this.cause.message() : this.cause : "unkown");
+	            return this.execTime() + " RemoteControlFail: " + "remote control fail, streamId = " + this.stream.id + " failed = " + this.failed + " cause：" + (this.cause ? this.cause.message ? this.cause.message() : this.cause : "unkown");
 	        } }),
 
 	    /**
-	     * {subMember: subMember, subStream: subStream, cause: ))
+	     * {stream: stream, cause: }
 	     */
 	    SubSuccess: Error.extend({ message: function message() {
-	            return this.execTime() + " " + "sub success, streamId = " + this.stream.id + " webrtc = " + this.stream.rtcId;
+	            return this.execTime() + " SubSuccess: " + "sub success, streamId = " + this.stream.id + ", " + this.stream.vcodes + ", webrtc = " + this.stream.rtcId;
 	        } }),
 
 	    /**
-	     * {subMember: subMember, subStream: subStream, cause: ))
+	     * {stream: stream, cause: }
 	     */
 	    SubFail: Error.extend({ message: function message() {
-	            return this.execTime() + " " + "sub fail, streamId = " + this.stream.id + " webrtc = " + this.stream.rtcId + " cause：" + (this.cause ? this.cause.message ? this.cause.message() : this.cause : "unkown");
+	            return this.execTime() + " SubFail: " + "sub fail, streamId = " + this.stream.id + ", " + this.stream.vcodes + ", webrtc = " + this.stream.rtcId + " cause：" + (this.cause ? this.cause.message ? this.cause.message() : this.cause : "unkown");
+	        } }),
+
+	    /**
+	     * {stream: stream, cause: }
+	     */
+	    SubFailNotSupportVCodes: Error.extend({ message: function message() {
+	            return this.execTime() + " SubFailNotSupportVCodes: " + "sub fail, streamId = " + this.stream.id + " cause：" + (this.cause ? this.cause.message ? this.cause.message() : this.cause : "unkown");
+	        } }),
+
+	    /**
+	     * {stream: stream, cause: }
+	     */
+	    SubFailSafariNotAllowSubBeforePub: Error.extend({ message: function message() {
+	            return this.execTime() + " SubFailSafariNotAllowSubBeforePub: " + "sub fail, streamId = " + this.stream.id + " cause：Safari without access to capture devices, " + "WebKit only exposes Server Reflexive and TURN ICE candidates, " + "which expose IPs that could already be gathered by websites.";
+	        } }),
+
+	    /**
+	     * {stream: stream, useVCodes: []}
+	     */
+	    SwitchVCodes: Error.extend({ message: function message() {
+	            return this.execTime() + " SwitchVCodes: " + "pub streamId = " + this.stream.id;
 	        } }),
 
 	    CurrentCalling: Error.extend({ message: function message() {
-	            return this.execTime() + " " + "warn! current calling...";
+	            return this.execTime() + " CurrentCalling: " + "warn! current calling...";
 	        } }),
 
 	    /**
 	     * {desktopStreamId: m.streamId}
 	     */
 	    OpenDesktopMedia: Error.extend({ message: function message() {
-	            return this.execTime() + " " + "shared desktop, desktopStreamId = " + desktopStreamId;
+	            return this.execTime() + " OpenDesktopMedia: " + "shared desktop, desktopStreamId = " + desktopStreamId;
 	        } }),
 
 	    OpenDesktopMediaAccessDenied: Error.extend({ message: function message() {
-	            return this.execTime() + " " + "shared desktop not allow";
+	            return this.execTime() + " OpenDesktopMediaAccessDenied: " + "shared desktop not allow";
 	        } }),
 
 	    ShareDesktopExtensionNotFound: Error.extend({ message: function message() {
-	            return this.execTime() + " " + "shared desktop plugin required";
+	            return this.execTime() + " ShareDesktopExtensionNotFound: " + "shared desktop plugin required";
 	        } })
 	};
 
@@ -2820,6 +2914,8 @@
 	                return;
 	            }
 
+	            self.reflushSupportVCodes(rsp.vcodes);
+
 	            self.setMemberId(rsp.memId);
 
 	            self.onEvent(new __event.EnterSuccess());
@@ -2884,6 +2980,8 @@
 	                }
 	            }
 
+	            var optimalVideoCodecs = self.getOptimalVideoCodecs();
+
 	            function enterRsp(rsp) {
 	                if (rsp.result != 0) {
 	                    try {
@@ -2898,6 +2996,8 @@
 	                    return;
 	                }
 
+	                self.reflushSupportVCodes(rsp.vcodes);
+
 	                self.setMemberId(rsp.memId);
 
 	                self.onEvent(new __event.EnterSuccess());
@@ -2909,8 +3009,10 @@
 	                stream.id = rsp.streamId;
 	                stream.owner = { id: rsp.memId, nickName: self.nickName, name: self.sysUserId, ext: self.extObj };
 
+	                stream.optimalVideoCodecs = optimalVideoCodecs;
+
 	                joined && joined(rsp.memId, stream);
-	                self.onEvent(new __event.PushSuccess({ stream: stream, hidden: true }));
+	                self.onEvent(new __event.PushSuccess({ stream: stream, hidden: true })); //ice重连成功后 会 再次 onEvent PushSuccess
 
 	                rsp.sdp && self.ansC(webrtc.getRtcId(), rsp.sdp);
 	                rsp.cands && self.tcklC(webrtc.getRtcId(), rsp.cands);
@@ -2924,7 +3026,7 @@
 
 	                var stream = pubS.localStream;
 
-	                webrtc = self.createWebrtc({ _rtcId: pubS.rtcId });
+	                webrtc = self.createWebrtc({ _rtcId: pubS.rtcId, optimalVideoCodecs: optimalVideoCodecs });
 	                self.setLocalStream(stream, webrtc.getRtcId());
 
 	                self.doOffer(webrtc.getRtcId(), function (sdp) {
@@ -2989,6 +3091,8 @@
 	            }
 	        }
 
+	        var optimalVideoCodecs = pubS.optimalVideoCodecs || self.getOptimalVideoCodecs();
+
 	        function pushRsp(webrtc, rsp) {
 	            if (rsp.result != 0) {
 	                _onPushError(new __event.RspFail({ request: initC, response: rsp, hidden: rsp.retrying === true }));
@@ -3003,7 +3107,9 @@
 	            stream.id = rsp.streamId;
 	            stream.owner = { id: self.getMemberId(), nickName: self.nickName, name: self.sysUserId, ext: self.extObj };
 
-	            self.onEvent(new __event.PushSuccess({ stream: stream, hidden: true }));
+	            stream.optimalVideoCodecs = optimalVideoCodecs;
+
+	            self.onEvent(new __event.PushSuccess({ stream: stream, hidden: true })); //ice重连成功后 会 再次 onEvent PushSuccess
 	            pushed && pushed(stream);
 
 	            rsp.sdp && self.ansC(webrtc.getRtcId(), rsp.sdp);
@@ -3015,7 +3121,7 @@
 
 	            var stream = pubS.localStream;
 
-	            webrtc = self.createWebrtc({ _rtcId: pubS.rtcId });
+	            webrtc = self.createWebrtc({ _rtcId: pubS.rtcId, optimalVideoCodecs: optimalVideoCodecs });
 	            self.setLocalStream(stream, webrtc.getRtcId());
 
 	            self.doOffer(webrtc.getRtcId(), function (sdp) {
@@ -3031,7 +3137,29 @@
 	        _logger.debug("push", self.ticket.url);
 	    },
 
-	    createWebrtcAndSubscribeStream: function createWebrtcAndSubscribeStream(streamId, callbacks, iceServerConfig) {
+	    isSafari: function isSafari() {
+	        return (/Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
+	        );
+	    },
+	    isSafariButNotPushStream: function isSafariButNotPushStream() {
+	        var self = this;
+
+	        if (self.isSafari() && !emedia._isSafariYetPushedStream) {
+	            // var pubCount = 0;
+	            // _util.forEach(self._cacheStreams, function (_sid, _stream) {
+	            //     if(_stream.located()){
+	            //         pubCount ++;
+	            //     }
+	            // });
+	            // if(pubCount == 0){
+	            //     return true;
+	            // }
+	            return true;
+	        }
+
+	        return false;
+	    },
+	    createWebrtcAndSubscribeStream: function createWebrtcAndSubscribeStream(streamId, callbacks, iceServerConfig, subArgs) {
 	        var self = this;
 
 	        callbacks || (callbacks = {});
@@ -3039,7 +3167,65 @@
 	        var subStream = self._cacheStreams[streamId];
 	        var subMember = self._cacheMembers[subStream.memId];
 
-	        var webrtc = self.createWebrtc({ iceServerConfig: iceServerConfig,
+	        //var stream = self.newStream(subStream);
+	        var stream = subStream;
+	        subArgs = subArgs || stream.subArgs || { subSVideo: true, subSAudio: true };
+
+	        function _onSubFail(evt) {
+	            _logger.error("sub stream error", streamId, evt);
+
+	            preSubArgs && stream._webrtc && stream._webrtc.setSubArgs(preSubArgs);
+	            preSubArgs && (stream.subArgs = preSubArgs);
+
+	            evt = new __event.SubFail({
+	                stream: stream,
+	                hidden: evt.hidden === true,
+	                cause: evt
+	            });
+
+	            callbacks && callbacks.onEvent && callbacks.onEvent(evt);
+	            self.onEvent && self.onEvent(evt);
+	        }
+
+	        if (self.isSafariButNotPushStream()) {
+	            _onSubFail(_util.extend(new __event.SubFail(), new __event.SubFailSafariNotAllowSubBeforePub({
+	                stream: stream
+	            })));
+	            return;
+	        }
+
+	        var pubStreamVCodes = subStream.vcodes;
+	        var pubMemberSupportVCodes = subMember.vcodes;
+	        var selfSupportVCodes = self.supportVCodes;
+
+	        var optimalVideoCodecs = self._getOptimalVideoCodecsSubset(pubStreamVCodes, pubMemberSupportVCodes, selfSupportVCodes);
+
+	        // if(!stream.voff && subArgs.subSVideo && optimalVideoCodecs.length == 0){ // 订阅视频 但是 没有相同的 视频编码格式。失败
+	        //     _onSubFail(_util.extend(new __event.SubFail(), new __event.SubFailNotSupportVCodes({
+	        //         stream: stream
+	        //     })));
+	        //     return;
+	        // }
+
+	        subArgs = subArgs || stream.subArgs;
+
+	        var preSubArgs = stream.subArgs;
+
+	        var offerOptions = {
+	            offerToReceiveAudio: emedia.isSafari ? subArgs.subSAudio : true,
+	            offerToReceiveVideo: emedia.isSafari ? subArgs.subSVideo && !stream.voff : true
+	        };
+
+	        if (!offerOptions.offerToReceiveAudio && !offerOptions.offerToReceiveVideo) {
+	            _logger.error("offerToReceiveAudio == false and offerToReceiveVideo == false");
+	            console.error("offerToReceiveAudio == false and offerToReceiveVideo == false");
+	        }
+
+	        var webrtc = self.createWebrtc({
+	            iceServerConfig: iceServerConfig,
+	            optimalVideoCodecs: optimalVideoCodecs,
+	            offerOptions: offerOptions,
+
 	            onGotMediaStream: function onGotMediaStream(remoteMediaStream) {
 	                var evt = new __event.SubSuccess({
 	                    stream: stream,
@@ -3052,29 +3238,40 @@
 	        });
 	        var rtcId = webrtc.getRtcId();
 
-	        //var stream = self.newStream(subStream);
-	        var stream = subStream;
+	        _logger.warn(rtcId, " sub stream ", streamId, optimalVideoCodecs);
+
 	        stream._webrtc = webrtc;
 	        stream.rtcId = rtcId;
 	        stream.owner = _util.extend({}, subMember);
 
-	        function _onSubFail(evt) {
-	            _logger.error("sub stream error", streamId, evt);
+	        subArgs && stream._webrtc && stream._webrtc.setSubArgs(subArgs);
+	        subArgs && (stream.subArgs = subArgs);
 
-	            evt = new __event.SubFail({
-	                stream: stream,
-	                hidden: evt.hidden === true,
-	                cause: evt
-	            });
-
-	            callbacks && callbacks.onEvent && callbacks.onEvent(evt);
-	            self.onEvent && self.onEvent(evt);
-	        }
-
-	        self.offerCall(rtcId, null, streamId, _onSubFail);
+	        self.offerCall(rtcId, null, streamId, _onSubFail, function onRspSuccess() {});
 	    },
 
-	    subscribeStream: function subscribeStream(rtcId, streamId, rspFail) {
+	    _getOptimalVideoCodecsSubset: function _getOptimalVideoCodecsSubset(pubStreamVCodes, pubMemberSupportVCodes, selfSupportVCodes) {
+	        var self = this;
+
+	        var optimalVideoCodecs = [];
+
+	        if (pubStreamVCodes && pubStreamVCodes.length > 0 && selfSupportVCodes[pubStreamVCodes[0]]) {
+	            optimalVideoCodecs.push(pubStreamVCodes[0]);
+	        }
+	        if (optimalVideoCodecs.length == 0) {
+	            for (var i = 0; i < self._orderVCodes.length; i++) {
+	                _util.forEach(pubMemberSupportVCodes, function (index, sVCode) {
+	                    if (sVCode == self._orderVCodes[i]) {
+	                        optimalVideoCodecs.push(sVCode);
+	                    }
+	                });
+	            }
+	        }
+
+	        return optimalVideoCodecs;
+	    },
+
+	    subscribeStream: function subscribeStream(rtcId, streamId, rspFail, subArgs) {
 	        var self = this;
 
 	        var webrtc = self._ices[rtcId];
@@ -3088,13 +3285,49 @@
 	        stream.rtcId = rtcId;
 	        stream.owner = _util.extend({}, subMember);
 
-	        var unsubMessage = self.newMessage().setOp(205).setRtcId(rtcId).setSubSId(streamId);
+	        var preSubArgs = stream.subArgs;
 
-	        self.postMessage(unsubMessage, function (rsp) {
+	        subArgs = subArgs || { subSVideo: true, subSAudio: true };
+	        stream.subArgs = stream.subArgs || { subSVideo: true, subSAudio: true };
+	        stream._webrtc && (stream._webrtc.subArgs = stream._webrtc.subArgs || { subSVideo: true, subSAudio: true });
+
+	        if (!stream.subArgs.subSVideo && subArgs.subSVideo && !stream.voff) {
+	            var pubStreamVCodes = subStream.vcodes;
+	            var pubMemberSupportVCodes = subMember.vcodes;
+	            var selfSupportVCodes = self.supportVCodes;
+
+	            var optimalVideoCodecs = self._getOptimalVideoCodecsSubset(pubStreamVCodes, pubMemberSupportVCodes, selfSupportVCodes);
+
+	            // if(optimalVideoCodecs.length == 0){ // 订阅视频 但是 没有相同的 视频编码格式。失败
+	            //     preSubArgs && stream._webrtc && stream._webrtc.setSubArgs(preSubArgs);
+	            //     preSubArgs && (stream.subArgs = preSubArgs);
+	            //
+	            //     var evt = _util.extend(new __event.SubFail(), new __event.SubFailNotSupportVCodes({
+	            //         stream: stream
+	            //     }));
+	            //
+	            //     rspFail && rspFail(evt);
+	            //     self.onEvent(evt);
+	            //
+	            //     return;
+	            // }
+	        }
+
+	        subArgs && stream._webrtc && stream._webrtc.setSubArgs(subArgs);
+	        subArgs && (stream.subArgs = subArgs);
+
+	        var subMessage = self.newMessage().setOp(205).setRtcId(rtcId).setSubSId(streamId);
+
+	        subArgs && _util.extend(subMessage, subArgs);
+
+	        self.postMessage(subMessage, function (rsp) {
 	            if (rsp.result != 0) {
+	                preSubArgs && stream._webrtc && stream._webrtc.setSubArgs(preSubArgs);
+	                preSubArgs && (stream.subArgs = preSubArgs);
+
 	                var evt = new __event.SubFail({
 	                    stream: stream,
-	                    cause: new __event.RspFail({ request: unsubMessage, response: rsp })
+	                    cause: new __event.RspFail({ request: subMessage, response: rsp })
 	                });
 
 	                rspFail && rspFail(evt);
@@ -3107,6 +3340,7 @@
 	                stream: stream,
 	                hidden: true
 	            });
+	            self._updateRemoteStream(stream, stream._webrtc.getRemoteStream());
 	            self.onEvent(evt);
 	        });
 	    },
@@ -3134,12 +3368,25 @@
 	    onEnter: function onEnter(cver, mem) {
 	        var self = this;
 
+	        cver && (self._cver = cver);
+
 	        if (!mem) return;
 	        if (self._cacheMembers[mem.id]) {
 	            return;
 	        }
 
 	        self._cacheMembers[mem.id] = mem;
+
+	        var _tmpMap = {};
+	        if (mem.res && mem.res.vcodes && mem.res.vcodes.length > 0) {
+	            _util.forEach(mem.res.vcodes, function (index, vcode) {
+	                if (_tmpMap[vcode]) {} else {
+	                    _tmpMap[vcode] = true;
+	                    self.supportVCodes[vcode] && self.supportVCodes[vcode]++;
+	                }
+	            });
+	        }
+
 	        self.onAddMember(mem);
 	    },
 
@@ -3152,11 +3399,16 @@
 	        self._ices = {};
 	        self._maybeNotExistStreams = {};
 
+	        //self._session._sessionId = undefined;
+	        //self._session = undefined;
+
 	        _logger.warn("finally. all clean.");
 	    },
 
 	    onExit: function onExit(cver, memId, reason) {
 	        var self = this;
+
+	        cver && (self._cver = cver);
 
 	        if (memId == self.getMemberId()) {
 	            //被服务器 强制 exit
@@ -3176,6 +3428,12 @@
 
 	        var rmMember = self._cacheMembers[memId];
 	        if (rmMember) {
+	            if (rmMember.res && rmMember.res.vcodes && rmMember.res.vcodes.length > 0) {
+	                _util.forEach(rmMember.res.vcodes, function (index, vcode) {
+	                    self.supportVCodes[vcode]--;
+	                });
+	            }
+
 	            self._onRemoveMember(rmMember, reason);
 	            self.onEvent(new __event.Hangup({ reason: reason, parnter: rmMember }));
 	        }
@@ -3189,15 +3447,17 @@
 	        var newStream = self.newStream(pubS);
 	        var _stream = self._cacheStreams[pubS.id];
 
+	        cver && (self._cver = cver);
+
 	        if (_stream && newStream.sver !== _stream.sver) {
 	            _logger.info("Onpub. the steam ", _stream.id, " republish. sver ", _stream.sver, newStream.sver);
 
 	            if (newStream && (newStream.aoff !== _stream.aoff || newStream.voff != _stream.voff)) {
-	                self.onStreamControl(pubS.id, newStream.voff, newStream.aoff);
+	                self.onStreamControl(undefined, pubS.id, newStream.voff, newStream.aoff);
 	            }
 
+	            _util.extend(_stream, newStream);
 	            self._onRepublishStream(_stream);
-	            _stream.sver = newStream.sver;
 
 	            return;
 	        }
@@ -3209,6 +3469,12 @@
 	        self.onAddStream(self.newStream(stream));
 
 	        if (self.autoSub) {
+	            if (self.isSafariButNotPushStream()) {
+	                stream._autoSubWhenPushStream = true;
+	                _logger.warn("Dont auto sub stream ", stream.id, ", caused by safari not pub stream");
+	                return;
+	            }
+
 	            self.createWebrtcAndSubscribeStream(pubS.id, {
 	                onGotRemote: function onGotRemote(stream) {
 	                    //self.onAddStream(stream);
@@ -3222,6 +3488,8 @@
 
 	        var rmStream = self._cacheStreams[sId];
 	        self._onRemovePubstream(self._cacheMembers[memId], rmStream);
+
+	        cver && (self._cver = cver);
 	    },
 
 	    onClose: function onClose(cver, confrId, reason) {
@@ -3240,18 +3508,24 @@
 	        var webrtc = self._cacheStreams[pubStreamId]._webrtc;
 	        return webrtc && webrtc.getRtcId();
 	    },
+	    _getWebrtc: function _getWebrtc(pubStreamId) {
+	        var self = this;
+
+	        var webrtc = self._cacheStreams[pubStreamId]._webrtc;
+	        return webrtc;
+	    },
 
 	    _updateRemoteStream: function _updateRemoteStream(stream, remoteMediaStream) {
 	        remoteMediaStream && remoteMediaStream.getAudioTracks().forEach(function (track) {
-	            track.enabled = !stream.aoff;
+	            track.enabled = !stream.aoff && !(stream.subArgs && stream.subArgs.subSAudio === false);
 	        });
 
 	        remoteMediaStream && remoteMediaStream.getVideoTracks().forEach(function (track) {
-	            track.enabled = !stream.voff;
+	            track.enabled = !stream.voff && !(stream.subArgs && stream.subArgs.subSVideo === false);
 	        });
 	    },
 
-	    onStreamControl: function onStreamControl(streamId, voff, aoff) {
+	    onStreamControl: function onStreamControl(cver, streamId, voff, aoff) {
 	        var self = this;
 
 	        var stream = self._cacheStreams[streamId];
@@ -3264,6 +3538,8 @@
 
 	        var stream = self.newStream(stream);
 	        self.onUpdateStream && self.onUpdateStream(stream, new stream.Update({ voff: voff, aoff: aoff }));
+
+	        cver && (self._cver = cver);
 	    },
 
 	    aoff: function aoff(pubS, _aoff, callback) {
@@ -3333,7 +3609,7 @@
 	            members[_memberId] || removedMembers.push(_member);
 	        });
 	        _util.forEach(removedMembers, function (_index, _member) {
-	            self.onExit(cver, _member.id);
+	            self.onExit(undefined, _member.id);
 	        });
 
 	        var addMembers = [];
@@ -3343,7 +3619,7 @@
 	            }
 	        });
 	        _util.forEach(addMembers, function (_index, _member) {
-	            self.onEnter(cver, _member);
+	            self.onEnter(undefined, _member);
 	        });
 
 	        cver && (self._cver = cver);
@@ -3357,7 +3633,7 @@
 	            _stream.located() || streams[_pubSId] || removedStreams.push(_stream);
 	        });
 	        _util.forEach(removedStreams, function (_index, _stream) {
-	            self.onUnpub(cver, _stream.memId, _stream.id);
+	            self.onUnpub(undefined, _stream.memId, _stream.id);
 	        });
 
 	        var addStreams = [];
@@ -3367,18 +3643,19 @@
 	            }
 	        });
 	        _util.forEach(addStreams, function (_index, _stream) {
-	            self.onPub(cver, _stream.memId, _stream);
+	            self.onPub(undefined, _stream.memId, _stream);
 	        });
 
 	        _util.forEach(self._cacheStreams, function (_pubSId, _stream) {
-	            var newStream = streams[_pubSId];
+	            var newStream;
+	            _stream.located() || (newStream = streams[_pubSId]);
 	            if (newStream && (newStream.aoff !== _stream.aoff || newStream.voff != _stream.voff)) {
-	                self.onStreamControl(_pubSId, newStream.voff, newStream.aoff);
+	                self.onStreamControl(undefined, _pubSId, newStream.voff, newStream.aoff);
 	            }
 
 	            if (newStream && newStream.sver !== _stream.sver) {
-	                self._onRepublishStream(newStream);
-	                _stream.sver = newStream.sver;
+	                _util.extend(_stream, newStream);
+	                self._onRepublishStream(_stream);
 	            }
 	        });
 
@@ -3484,6 +3761,61 @@
 
 	        self.closed = false;
 	        self._ices = {};
+
+	        self.supportVCodes = {};
+	    },
+
+	    reflushSupportVCodes: function reflushSupportVCodes(vcodes) {
+	        var self = this;
+
+	        self.supportVCodes = {};
+
+	        self._orderVCodes = vcodes;
+
+	        if (!vcodes || vcodes.length == 0) {
+	            _logger.warn("Not config support vcodes");
+	            return;
+	        }
+
+	        _util.forEach(vcodes, function (index, vcode) {
+	            self.supportVCodes[vcode] = 1;
+	        });
+	    },
+
+	    getOptimalVideoCodecs: function getOptimalVideoCodecs() {
+	        var self = this;
+
+	        if (!self._orderVCodes || self._orderVCodes.length == 0) {
+	            return (/Chrome/.test(navigator.userAgent) ? 'VP8' : /Safari/.test(navigator.userAgent) ? 'H264' : 'VP8'
+	            );
+	        }
+
+	        var memberCount = 0;
+	        _util.forEach(self._cacheMembers, function () {
+	            memberCount++;
+	        });
+
+	        var maxSupportCount = 0;
+	        var optimalVCode;
+
+	        for (var i = 0; i < self._orderVCodes.length; i++) {
+	            var vcode = self._orderVCodes[i];
+
+	            if (maxSupportCount == 0) {
+	                maxSupportCount = self.supportVCodes[vcode];
+	            }
+
+	            if (self.supportVCodes[vcode] > memberCount) {
+	                return vcode;
+	            }
+
+	            if (self.supportVCodes[vcode] > maxSupportCount) {
+	                maxSupportCount = self.supportVCodes[vcode];
+	                optimalVCode = vcode;
+	            }
+	        }
+
+	        return optimalVCode;
 	    },
 
 	    setMemberId: function setMemberId(memberId) {
@@ -3543,9 +3875,9 @@
 	                self._onIceStateChange && self._onIceStateChange(webrtc, event);
 	            },
 
-	            onIceCandidate: function onIceCandidate(event) {
+	            onIceCandidate: function onIceCandidate(candidate) {
 	                //event.candidate
-	                self._onIceCandidate && self._onIceCandidate(webrtc, event);
+	                self._onIceCandidate && candidate && self._onIceCandidate(webrtc, candidate);
 	            },
 
 	            onGotRemoteStream: function onGotRemoteStream(remoteStream) {
@@ -3561,19 +3893,21 @@
 
 	            onSetSessionDescriptionError: function onSetSessionDescriptionError(error) {
 	                _logger.error('onSetSessionDescriptionError : Failed to set session description: ' + error.toString());
-	                webrtc.onEvent && webrtc.onEvent(new __event.ICEConnectFail({ webrtc: webrtc, event: error }));
+	                self.onEvent && self.onEvent(new __event.ICEConnectFail({ webrtc: webrtc, event: error }));
 	            },
 	            onCreateSessionDescriptionError: function onCreateSessionDescriptionError(error) {
 	                _logger.error('Failed to create session description: ' + error.toString());
-	                webrtc.onEvent && webrtc.onEvent(new __event.ICEConnectFail({ webrtc: webrtc, event: error }));
+	                self.onEvent && self.onEvent(new __event.ICEConnectFail({ webrtc: webrtc, event: error }));
 	            }
 	        }, webrtcCfg || {});
 
 	        self._ices || (self._ices = {});
 	        if (self._ices[webrtc.getRtcId()]) {
-	            throw "Webrtc id exsits at ices. it is " + webrtc.getRtcId();
+	            //throw "Webrtc id exsits at ices. it is " + webrtc.getRtcId();
+	            self.closeWebrtc(webrtc.getRtcId(), true, false);
 	        }
 	        self._ices[webrtc.getRtcId()] = webrtc;
+	        self._ices[webrtc.__id] = webrtc;
 
 	        self._iceCreateRtcPeerConnection(webrtc.getRtcId());
 	        _logger.debug("create rtc ", webrtc);
@@ -3619,12 +3953,17 @@
 	        self.onEvent(new __event.ICEChanage({ webrtc: webrtc, event: webrtcEvent, state: webrtcEvent.target.iceConnectionState }));
 	    },
 
-	    _onIceCandidate: function _onIceCandidate(webrtc, webrtcEvent) {
+	    _onIceCandidate: function _onIceCandidate(webrtc, cand) {
 	        //event.candidate
 	        var self = this;
 
-	        var cands = [];
-	        cands.push(webrtcEvent.candidate);
+	        var cands;
+	        if (_util.isArray(cand)) {
+	            cands = cand;
+	        } else {
+	            cands = [];
+	            cands.push(cand);
+	        }
 
 	        var tcklC = self.newMessage().setOp(105).setRtcId(webrtc.getRtcId()).setCands(cands);
 
@@ -3637,7 +3976,7 @@
 	        });
 	    },
 
-	    _initC: function _initC(webrtc, stream, sdp, subSId, rspFail) {
+	    _initC: function _initC(webrtc, stream, sdp, subSId, rspFail, rspSuccess) {
 	        var self = this;
 
 	        if (stream && stream.rtcId !== webrtc.getRtcId()) {
@@ -3645,6 +3984,9 @@
 	        }
 
 	        var initC = self.newMessage().setOp(102).setRtcId(webrtc.getRtcId()).setSdp(sdp).setSubSId(subSId);
+
+	        webrtc.subArgs && _util.extend(initC, webrtc.subArgs);
+
 	        if (stream && stream.located()) {
 	            initC.setPubS(stream);
 	        }
@@ -3659,6 +4001,12 @@
 
 	            if (stream && !stream.id && rsp.streamId) {
 	                stream.id = rsp.streamId;
+	            }
+
+	            try {
+	                rspSuccess && rspSuccess();
+	            } catch (e) {
+	                _logger.error(e);
 	            }
 
 	            rsp.sdp && self.ansC(webrtc.getRtcId(), rsp.sdp, rsp.cands);
@@ -3726,18 +4074,18 @@
 
 	        var webrtc = self._ices[rtcId];
 
-	        webrtc && webrtc.createOffer(function (sdp) {
+	        webrtc.createOffer(function (sdp) {
 	            onGotOffer(sdp);
 	        });
 	    },
 
-	    offerCall: function offerCall(rtcId, stream, subSId, rspFail) {
+	    offerCall: function offerCall(rtcId, stream, subSId, rspFail, rspSuccess) {
 	        var self = this;
 
 	        var webrtc = self._ices[rtcId];
 
-	        webrtc && webrtc.createOffer(function (sdp) {
-	            self._initC && self._initC(webrtc, stream, sdp, subSId, rspFail);
+	        webrtc.createOffer(function (sdp) {
+	            self._initC && self._initC(webrtc, stream, sdp, subSId, rspFail, rspSuccess);
 	        });
 	    },
 
@@ -3745,7 +4093,7 @@
 	        var self = this;
 
 	        var webrtc = self._ices[rtcId];
-	        webrtc && webrtc.createPRAnswer(function (sdp) {
+	        webrtc.createPRAnswer(function (sdp) {
 	            self._acptC && self._acptC(webrtc, sdp, rspFail);
 	        });
 	    },
@@ -3754,7 +4102,7 @@
 	        var self = this;
 
 	        var webrtc = self._ices[rtcId];
-	        webrtc && webrtc.createAnswer(function (sdp) {
+	        webrtc.createAnswer(function (sdp) {
 	            self._ansC && self._ansC(webrtc, sdp, rspFail);
 	        });
 	    },
@@ -3785,7 +4133,7 @@
 	        }
 
 	        var webrtc = self._ices[rtcId];
-	        webrtc && webrtc.addIceCandidate(cands);
+	        webrtc.addIceCandidate(cands);
 	    },
 
 	    closeWebrtc: function closeWebrtc(rtcId, remainLocalStream, serverClosed) {
@@ -3889,19 +4237,27 @@
 	    exit: function exit(closeMyConfrIfICrtConfr) {
 	        var self = this;
 
-	        if (closeMyConfrIfICrtConfr) {
-	            self._closeMyConfr(11);
+	        if (!closeMyConfrIfICrtConfr) {
+	            self.close(0); // 正常挂断
 	            return;
 	        }
 
-	        self.close(0); // 正常挂断
+	        if (closeMyConfrIfICrtConfr) {
+	            self._closeMyConfr(11);
+	            //return;
+	        }
+	        setTimeout(function () {
+	            self.close(0); // 正常挂断
+	        }, 100);
 	    },
 
 	    _closeMyConfr: function _closeMyConfr(reason) {
 	        var self = this;
 
 	        var closeConfr = self.newMessage().setOp(204).setReason(reason || 0);
-	        self.postMessage(closeConfr);
+	        self.postMessage(closeConfr, function (rsp) {
+	            _logger.warn("Close confr ", rsp.result, rsp.msg);
+	        });
 	    },
 
 	    /**
@@ -3943,21 +4299,21 @@
 	        var self = this;
 
 	        var webrtc = self._ices[rtcId];
-	        return webrtc && webrtc.iceConnectionState();
+	        return webrtc.iceConnectionState();
 	    },
 
 	    _iceSetRemoteSDP: function _iceSetRemoteSDP(sdp, rtcId) {
 	        var self = this;
 
 	        var webrtc = self._ices[rtcId];
-	        webrtc && webrtc.setRemoteDescription(sdp);
+	        webrtc.setRemoteDescription(sdp);
 	    },
 
 	    setLocalStream: function setLocalStream(stream, rtcId) {
 	        var self = this;
 
 	        var webrtc = self._ices[rtcId];
-	        webrtc && webrtc.setLocalStream(stream);
+	        webrtc.setLocalStream(stream);
 	    },
 
 	    onWebrtcTermC: function onWebrtcTermC(_webrtc) {}
@@ -4051,9 +4407,83 @@
 	    spiltSection: function spiltSection(sdp) {
 	        var self = this;
 
+	        self._preSDP = sdp;
+
 	        self.headerSection = self._parseHeaderSection(sdp);
 	        self.audioSection = self._parseAudioSection(sdp);
 	        self.videoSection = self._parseVideoSection(sdp);
+	    },
+
+	    updateVCodes: function updateVCodes(vcodes) {
+	        var self = this;
+
+	        if (!vcodes) {
+	            return;
+	        }
+	        if (!self.videoSection) {
+	            return;
+	        }
+
+	        if (typeof vcodes === "string") {
+	            var arr = [];
+	            arr.push(vcodes);
+	            vcodes = arr;
+	        }
+
+	        var vcodeMap = {};
+	        var regexp = /a=rtpmap:(\d+) ([A-Za-z0-9]+)\/.*/ig;
+	        var arr = self._parseLine(self.videoSection, regexp);
+	        for (var i = 0; i < arr.length; i++) {
+	            var codeNum = arr[++i];
+	            var code = arr[++i];
+	            vcodeMap[code] = codeNum;
+	        }
+
+	        //H264
+	        //if(/Firefox/.test(navigator.userAgent) || /Chrome/.test(navigator.userAgent)){ //a=fmtp:126 profile-level-id=42e01f;level-asymmetry-allowed=1;packetization-mode=1
+	        var h264_regexp = /a=fmtp:(\d+) .*profile-level-id=42e01f;?.*/ig;
+	        var h264_arr = self._parseLine(self.videoSection, h264_regexp);
+
+	        if (h264_arr && h264_arr.length >= 2) {
+	            vcodeMap['H264'] = h264_arr[1];
+	        }
+	        //}
+
+	        var numCodes = [];
+	        for (var i = 0; i < vcodes.length; i++) {
+	            var supportVCode = vcodeMap[vcodes[i]];
+	            supportVCode && numCodes.push(supportVCode);
+	        }
+
+	        var codeLineLastIndex = self.videoSection.indexOf('\r');
+	        var codeLine = self.videoSection.substring(0, codeLineLastIndex);
+
+	        var fields = codeLine.split(' ');
+
+	        Array.prototype.push.apply(numCodes, fields.slice(3));
+
+	        var newNumCodes = [];
+	        var _map = {};
+	        _util.forEach(numCodes, function (index, ele) {
+	            if (newNumCodes.length == 0) {
+	                newNumCodes.push(ele);
+	                _map[ele] = true;
+	            } else {
+	                if (!_map[ele]) {
+	                    newNumCodes.push(ele);
+	                    _map[ele] = true;
+	                }
+	            }
+	        });
+	        //alert(numCodes.join(' '));
+
+	        //fields.splice(3, 0, numCodes);
+	        fields.splice(3, fields.length - 3, newNumCodes.join(' '));
+
+	        codeLine = fields.join(' ');
+	        _logger.warn(codeLine);
+
+	        self.videoSection = codeLine + self.videoSection.substring(codeLineLastIndex);
 	    },
 
 	    removeSSRC: function removeSSRC(section) {
@@ -4267,14 +4697,21 @@
 	        offerToReceiveVideo: true
 	    },
 
+	    optimalVideoCodecs: null,
+	    optimalAudioCodecs: null,
+
 	    __init__: function __init__() {
 	        var self = this;
 
 	        self._rtcId || (self._rtcId = "RTC" + __rtc_globalCount++);
+	        self.__id = "_i_" + __rtc_globalCount++;
 
 	        self.__setRemoteSDP = false;
 	        self.__tmpRemoteCands = [];
+	        self.__tmpLocalCands = [];
 	        self._rtcPeerConnection = null;
+
+	        _logger.info("Webrtc created. rtcId = ", self._rtcId, ", __id = ", self.__id);
 	    },
 
 	    getRtcId: function getRtcId() {
@@ -4286,9 +4723,27 @@
 	        return self._rtcPeerConnection.iceConnectionState;
 	    },
 
+	    setSubArgs: function setSubArgs(subArgs) {
+	        var self = this;
+	        self.subArgs = subArgs;
+	    },
+
+	    updateRemoteBySubArgs: function updateRemoteBySubArgs(subArgs) {
+	        var self = this;
+
+	        self._remoteStream && self._remoteStream.getVideoTracks().forEach(function (track) {
+	            track.enabled = !(self.subArgs && self.subArgs.subSVideo === false);
+	            //_logger.debug("video track. enabled ", track.enabled, track);
+	        });
+	        self._remoteStream && self._remoteStream.getAudioTracks().forEach(function (track) {
+	            track.enabled = !(self.subArgs && self.subArgs.subSAudio === false);
+	            //_logger.debug("audio track. enabled ", track.enabled, track);
+	        });
+	    },
+
 	    createRtcPeerConnection: function createRtcPeerConnection(iceServerConfig) {
 	        var self = this;
-	        _logger.debug('begin create RtcPeerConnection ......', "closed:", self.closed);
+	        _logger.debug('begin create RtcPeerConnection ......', self._rtcId, "closed:", self.closed);
 
 	        iceServerConfig || (iceServerConfig = self.iceServerConfig);
 
@@ -4319,21 +4774,32 @@
 	        //     recvVideo: true,
 	        //     relayOnly: false,
 	        // };
-	        _logger.debug('RtcPeerConnection config:', iceServerConfig, "closed:", self.closed);
+	        _logger.debug('RtcPeerConnection config:', iceServerConfig, self._rtcId, "closed:", self.closed);
 
 	        var rtcPeerConnection = self._rtcPeerConnection = new RTCPeerConnection(iceServerConfig);
-	        _logger.debug('created local peer connection object', rtcPeerConnection);
+	        _logger.debug('created local peer connection object', rtcPeerConnection, self._rtcId);
 
 	        rtcPeerConnection.onicecandidate = function (event) {
 	            //reduce icecandidate number: don't deal with tcp, udp only
 	            if (event.type == "icecandidate" && (event.candidate == null || / tcp /.test(event.candidate.candidate))) {
 	                return;
 	            }
-	            self.onIceCandidate(event);
+
+	            if (!event.candidate.candidate) {
+	                throw "Not found candidate. candidate is error, " + event.candidate.candidate;
+	            }
+	            if (!self.__setRemoteSDP) {
+	                (self.__tmpLocalCands || (self.__tmpLocalCands = {})).push(event.candidate);
+	                _logger.debug('On ICE candidate but tmp buffer caused by not set remote sdp: ', event.candidate.candidate, self._rtcId, "closed:", self.closed);
+	                return;
+	            } else {
+	                _logger.debug('On ICE candidate: ', event.candidate.candidate, self._rtcId, "closed:", self.closed);
+	            }
+	            self.onIceCandidate(event.candidate);
 	        };
 
 	        rtcPeerConnection.onicestatechange = function (event) {
-	            _logger.debug("ice connect state", self.webRtc.iceConnectionState(), "evt.target state", event.target.iceConnectionState, "closed:", self.closed);
+	            _logger.debug("ice connect state", self.webRtc.iceConnectionState(), "evt.target state", event.target.iceConnectionState, self._rtcId, "closed:", self.closed);
 	            self.onIceStateChange(event);
 	        };
 
@@ -4349,7 +4815,7 @@
 	    setLocalStream: function setLocalStream(localStream) {
 	        this._localStream = localStream;
 	        this._rtcPeerConnection.addStream(localStream);
-	        _logger.debug('Added local stream to RtcPeerConnection', localStream, "closed:", this.closed);
+	        _logger.debug('Added local stream to RtcPeerConnection', localStream, self._rtcId, "closed:", this.closed);
 	    },
 
 	    getLocalStream: function getLocalStream() {
@@ -4367,8 +4833,20 @@
 	        return self._rtcPeerConnection.createOffer(self.offerOptions).then(function (desc) {
 	            self.offerDescription = desc;
 
-	            _logger.debug('Offer ', desc, "closed:", self.closed); //_logger.debug('from \n' + desc.sdp);
-	            _logger.debug('setLocalDescription start', "closed:", self.closed);
+	            //_logger.debug('Offer ', desc, "closed:", self.closed);//_logger.debug('from \n' + desc.sdp);
+	            _logger.debug('setLocalDescription start', self._rtcId, "closed:", self.closed, self.optimalVideoCodecs);
+	            //_logger.debug(desc.sdp);
+	            //_logger.debug(desc);
+
+	            if (self.optimalVideoCodecs && (typeof self.optimalVideoCodecs === "string" || self.optimalVideoCodecs.length > 0)) {
+	                var sdpSection = new SDPSection(desc.sdp);
+	                sdpSection.updateVCodes(self.optimalVideoCodecs);
+	                desc.sdp = sdpSection.getUpdatedSDP();
+	            }
+	            //_logger.debug(desc.sdp);
+	            //_logger.debug(desc);
+	            //_logger.debug(JSON.stringify(desc));
+
 
 	            self._rtcPeerConnection.setLocalDescription(desc).then(self.onSetLocalSessionDescriptionSuccess, self.onSetSessionDescriptionError).then(function () {
 	                (onCreateOfferSuccess || self.onCreateOfferSuccess)(desc);
@@ -4384,15 +4862,15 @@
 	        // to pass in the right constraints in order for it to
 	        // accept the incoming offer of audio and video.
 	        return self._rtcPeerConnection.createAnswer(self.sdpConstraints).then(function (desc) {
-	            _logger.debug('_____________PRAnswer ', desc.sdp, "closed:", self.closed); //_logger.debug('from :\n' + desc.sdp);
+	            _logger.debug('_____________PRAnswer ', desc.sdp, self._rtcId, "closed:", self.closed); //_logger.debug('from :\n' + desc.sdp);
 
 	            desc.type = "pranswer";
 	            desc.sdp = desc.sdp.replace(/a=recvonly/g, 'a=inactive');
 
 	            self.__prAnswerDescription = desc;
 
-	            _logger.debug('inactive PRAnswer ', desc.sdp, "closed:", self.closed); //_logger.debug('from :\n' + desc.sdp);
-	            _logger.debug('setLocalDescription start', "closed:", self.closed);
+	            _logger.debug('inactive PRAnswer ', desc.sdp, self._rtcId, "closed:", self.closed); //_logger.debug('from :\n' + desc.sdp);
+	            _logger.debug('setLocalDescription start', self._rtcId, "closed:", self.closed);
 
 	            self._rtcPeerConnection.setLocalDescription(desc).then(self.onSetLocalSuccess, self.onSetSessionDescriptionError).then(function () {
 	                var sdpSection = new SDPSection(desc.sdp);
@@ -4402,7 +4880,7 @@
 
 	                desc.sdp = sdpSection.getUpdatedSDP();
 
-	                _logger.debug('Send PRAnswer ', desc.sdp, "closed:", self.closed); //_logger.debug('from :\n' + desc.sdp);
+	                _logger.debug('Send PRAnswer ', desc.sdp, self._rtcId, "closed:", self.closed); //_logger.debug('from :\n' + desc.sdp);
 
 	                (onCreatePRAnswerSuccess || self.onCreatePRAnswerSuccess)(desc);
 	            });
@@ -4417,7 +4895,7 @@
 	        // to pass in the right constraints in order for it to
 	        // accept the incoming offer of audio and video.
 	        return self._rtcPeerConnection.createAnswer(self.sdpConstraints).then(function (desc) {
-	            _logger.debug('_____________________Answer ', desc.sdp, "closed:", self.closed); //_logger.debug('from :\n' + desc.sdp);
+	            _logger.debug('_____________________Answer ', desc.sdp, self._rtcId, "closed:", self.closed); //_logger.debug('from :\n' + desc.sdp);
 
 	            desc.type = 'answer';
 
@@ -4441,8 +4919,8 @@
 
 	            self.__answerDescription = desc;
 
-	            _logger.debug('Answer ', desc.sdp, "closed:", self.closed); //_logger.debug('from :\n' + desc.sdp);
-	            _logger.debug('setLocalDescription start', "closed:", self.closed);
+	            _logger.debug('Answer ', desc.sdp, self._rtcId, "closed:", self.closed); //_logger.debug('from :\n' + desc.sdp);
+	            _logger.debug('setLocalDescription start', self._rtcId, "closed:", self.closed);
 
 	            self._rtcPeerConnection.setLocalDescription(desc).then(self.onSetLocalSuccess, self.onSetSessionDescriptionError).then(function () {
 	                if (emedia.supportPRAnswer) {
@@ -4455,7 +4933,7 @@
 	                    desc.sdp = sdpSection.getUpdatedSDP();
 	                }
 
-	                _logger.debug('Send Answer ', desc.sdp, "closed:", self.closed); //_logger.debug('from :\n' + desc.sdp);
+	                _logger.debug('Send Answer ', desc.sdp, self._rtcId, "closed:", self.closed); //_logger.debug('from :\n' + desc.sdp);
 
 	                (onCreateAnswerSuccess || self.onCreateAnswerSuccess)(desc);
 	            });
@@ -4464,18 +4942,19 @@
 
 	    close: function close(remainLocalStream) {
 	        var self = this;
-	        _logger.warn("webrtc closing", "closed:", self.closed);
+	        _logger.warn("webrtc closing", "closed:", self._rtcId, self.closed);
 
 	        if (self.closed) {
 	            return;
 	        }
+
+	        self.closed = true;
 
 	        try {
 	            self._rtcPeerConnection && self._rtcPeerConnection.close();
 	        } catch (e) {
 	            _logger.error(e);
 	        } finally {
-	            self.closed = true;
 
 	            // if (!remainLocalStream && self._localStream) {
 	            //     self._localStream.getTracks().forEach(function (track) {
@@ -4492,6 +4971,8 @@
 	            self._remoteStream = null;
 
 	            self.onClose && self.onClose();
+
+	            _logger.warn("webrtc closed. closed:", self._rtcId, self.closed);
 	        }
 	    },
 
@@ -4502,7 +4983,7 @@
 	            return;
 	        }
 
-	        _logger.debug('Add ICE candidate: ', candidate, "closed:", self.closed);
+	        _logger.debug('Add ICE candidate: ', candidate, self._rtcId, "closed:", self.closed);
 
 	        var _cands = _util.isArray(candidate) ? candidate : [];
 	        !_util.isArray(candidate) && _cands.push(candidate);
@@ -4510,7 +4991,7 @@
 	        if (!self.__setRemoteSDP) {
 	            Array.prototype.push.apply(self.__tmpRemoteCands || (self.__tmpRemoteCands = {}), _cands);
 
-	            _logger.debug('Add ICE candidate but tmp buffer caused by not set remote sdp: ', candidate, "closed:", self.closed);
+	            _logger.debug('Add ICE candidate but tmp buffer caused by not set remote sdp: ', candidate, self._rtcId, "closed:", self.closed);
 	            return;
 	        }
 
@@ -4524,7 +5005,7 @@
 	    setRemoteDescription: function setRemoteDescription(desc) {
 	        var self = this;
 
-	        _logger.debug('setRemoteDescription start. ', desc, "closed:", self.closed);
+	        _logger.debug('setRemoteDescription start. ', desc, self._rtcId, "closed:", self.closed);
 
 	        desc.sdp = desc.sdp.replace(/UDP\/TLS\/RTP\/SAVPF/g, "RTP/SAVPF");
 	        _logger.debug('setRemoteDescription.', desc, "closed:", self.closed);
@@ -4535,8 +5016,15 @@
 	            self.__setRemoteSDP = true;
 	            self.onSetRemoteSuccess.apply(self, arguments);
 
+	            if (self.__tmpLocalCands && self.__tmpLocalCands.length > 0) {
+	                _logger.debug('After setRemoteDescription. send cands', self._rtcId, "closed:", self.closed);
+	                self.onIceCandidate(self.__tmpLocalCands);
+
+	                self.__tmpLocalCands = [];
+	            }
+
 	            if (self.__tmpRemoteCands && self.__tmpRemoteCands.length > 0) {
-	                _logger.debug('After setRemoteDescription. add tmp cands', "closed:", self.closed);
+	                _logger.debug('After setRemoteDescription. add tmp cands', self._rtcId, "closed:", self.closed);
 	                self.addIceCandidate(self.__tmpRemoteCands);
 
 	                self.__tmpRemoteCands = [];
@@ -4550,63 +5038,72 @@
 	        return self._rtcPeerConnection.iceConnectionState;
 	    },
 
+	    isConnected: function isConnected() {
+	        var self = this;
+
+	        var state = self._rtcPeerConnection.iceConnectionState;
+
+	        return "connected" === state || "completed" === state;
+	    },
+
 	    _onGotRemoteStream: function _onGotRemoteStream(event) {
-	        _logger.debug('onGotRemoteStream.', event);
+	        _logger.debug('onGotRemoteStream.', self._rtcId, event);
 	        this._remoteStream = event.stream;
 	        this.onGotRemoteStream(this._remoteStream, event);
-	        _logger.debug('received remote stream, you will see the other.', "closed:", this.closed);
+
+	        _logger.debug('received remote stream, you will see the other.', self._rtcId, "closed:", this.closed);
 	    },
 
 	    onSetRemoteSuccess: function onSetRemoteSuccess() {
-	        _logger.info('onSetRemoteSuccess complete');
+	        _logger.info('onSetRemoteSuccess complete', self._rtcId);
 	    },
 
 	    onSetLocalSuccess: function onSetLocalSuccess() {
-	        _logger.info('setLocalDescription complete');
+	        _logger.info('setLocalDescription complete', self._rtcId);
 	    },
 
 	    onAddIceCandidateSuccess: function onAddIceCandidateSuccess() {
-	        _logger.debug('addIceCandidate success');
+	        _logger.debug('addIceCandidate success', self._rtcId);
 	    },
 
 	    onAddIceCandidateError: function onAddIceCandidateError(error) {
-	        _logger.debug('failed to add ICE Candidate: ' + error.toString());
+	        _logger.debug('failed to add ICE Candidate: ' + error.toString(), self._rtcId);
 	    },
 
-	    onIceCandidate: function onIceCandidate(event) {
-	        _logger.debug('onIceCandidate : ICE candidate: \n' + event.candidate);
+	    onIceCandidate: function onIceCandidate(candidate) {
+	        _logger.debug('onIceCandidate : ICE candidate: \n' + candidate, self._rtcId);
 	    },
 
 	    onIceStateChange: function onIceStateChange(event) {
-	        _logger.debug('onIceStateChange : ICE state change event: ');
+	        _logger.debug('onIceStateChange : ICE state change event: ', self._rtcId);
 	    },
 
 	    onCreateSessionDescriptionError: function onCreateSessionDescriptionError(error) {
-	        _logger.error('Failed to create session description: ' + error.toString());
+	        _logger.error('Failed to create session description: ' + error.toString(), self._rtcId);
 	    },
 
 	    onCreateOfferSuccess: function onCreateOfferSuccess(desc) {
-	        _logger.debug('create offer success');
+	        _logger.debug('create offer success', self._rtcId);
 	    },
 
 	    onCreatePRAnswerSuccess: function onCreatePRAnswerSuccess(desc) {
-	        _logger.debug('create answer success');
+	        _logger.debug('create answer success', self._rtcId);
 	    },
 
 	    onCreateAnswerSuccess: function onCreateAnswerSuccess(desc) {
-	        _logger.debug('create answer success');
+	        _logger.debug('create answer success', self._rtcId);
 	    },
 
 	    onSetSessionDescriptionError: function onSetSessionDescriptionError(error) {
-	        _logger.error('onSetSessionDescriptionError : Failed to set session description: ' + error.toString());
+	        _logger.error('onSetSessionDescriptionError : Failed to set session description: ' + error.toString(), self._rtcId);
 	    },
 
 	    onSetLocalSessionDescriptionSuccess: function onSetLocalSessionDescriptionSuccess() {
-	        _logger.debug('onSetLocalSessionDescriptionSuccess : setLocalDescription complete');
+	        _logger.debug('onSetLocalSessionDescriptionSuccess : setLocalDescription complete', self._rtcId);
 	    },
 
 	    onGotRemoteStream: function onGotRemoteStream(remoteStream) {
-	        _logger.debug("Got remote stream. ", remoteStream);
+	        _logger.debug("Got remote stream. ", remoteStream, self._rtcId);
 	    }
 	});
 
@@ -4737,7 +5234,11 @@
 	        }
 
 	        function afterNotify() {
-	            self.handleEvent(evt);
+	            try {
+	                self.handleEvent(evt);
+	            } catch (e) {
+	                _logger.error(e);
+	            }
 	        }
 
 	        if (evt instanceof emedia.event.StreamState && evt.stream && evt.stream.located()) {
@@ -4794,17 +5295,34 @@
 	                return;
 	            }
 
-	            _stream && (_stream.mediaStream = _stream.getMediaStream());
-	            _stream && self.onUpdateStream(_stream, new _stream.Update({ voff: _stream.voff, aoff: _stream.aoff, mediaStream: _stream.mediaStream }));
+	            if (self.isSafari()) {
+	                emedia._isSafariYetPushedStream = true;
+	            }
+
+	            try {
+	                _stream && (_stream.mediaStream = _stream.getMediaStream());
+	                _stream && self.onUpdateStream(_stream, new _stream.Update({ voff: _stream.voff, aoff: _stream.aoff, mediaStream: _stream.mediaStream }));
+	            } finally {
+	                if (self.isSafari()) {
+	                    _util.forEach(self._cacheStreams, function (_sid, _stream) {
+	                        if (_stream._autoSubWhenPushStream === true) {
+	                            _util.removeAttribute(_stream, "_autoSubWhenPushStream");
+	                            self.createWebrtcAndSubscribeStream(_stream.id);
+	                        }
+	                    });
+	                }
+	            }
 	        } else if (evt instanceof __event.SubSuccess) {
 	            self._linkedStreams[evt.stream.id] = evt.stream;
 	            evt.stream._zoom = 1;
 	        } else if (evt instanceof __event.PushFail) {
 	            if (evt.hidden !== true) {
-	                delete self._linkedStreams[evt.stream.id];
+	                var _removeStream = _util.removeAttribute(self._linkedStreams, evt.stream.id);
 
-	                var _stream = self.newStream(evt.stream);
-	                self.onRemoveStream(_stream);
+	                if (_removeStream) {
+	                    var _stream = self.newStream(evt.stream);
+	                    self.onRemoveStream(_stream);
+	                }
 	            }
 	        } else if (evt instanceof __event.SubFail) {
 	            if (evt.hidden !== true) {
@@ -4817,8 +5335,46 @@
 
 	                self.onUpdateStream(_stream, new _stream.Update(_stream));
 	            }
+	        } else if (evt instanceof __event.SubFailNotSupportVCodes) {
+	            // Server发现 此订阅时 不支持视频视频编码。或者 推送流 打开视频时，并不是所有的订阅端 都支持此视频编码
+	            // Server保持这个channel，客户端自行处理
+
+	            var stream = evt.stream;
+
+	            _logger.warn("Rtc donot support pub VCodes. close. sub fail.", stream.rtcId, " -> ", stream.id);
+	            try {
+	                self.onNotSupportPublishVideoCodecs && self.onNotSupportPublishVideoCodecs(stream);
+	            } catch (e) {
+	                _logger.error(e);
+	            }
+
+	            // var streamId = stream.id;
+	            //
+	            // var webrtc = self._getWebrtc(streamId);
+	            // if(webrtc && webrtc.isConnected()){
+	            //     self.subscribeStream(webrtc._rtcId, streamId, undefined, {subSVideo: false, subSAudio: true});
+	            //     return;
+	            // }
 	        } else if (evt instanceof __event.EnterSuccess) {
 	            self.onEnterSuccess();
+	        } else if (evt instanceof __event.SwitchVCodes) {
+	            var stream = evt.stream;
+	            var useVCodes = evt.useVCodes;
+	            var webrtc = stream._webrtc;
+	            _logger.warn("Rtc switch VCodes. ", stream.id, useVCodes);
+
+	            if (!useVCodes || useVCodes.length == 0) {
+	                _logger.warn("Rtc switch VCodes. error! useVCodes is empty ", stream.id, useVCodes);
+	            }
+
+	            stream.optimalVideoCodecs = useVCodes;
+
+	            webrtc && self.closeWebrtc(webrtc.getRtcId(), true);
+	            setTimeout(function () {
+	                stream.iceRebuildCount = 1;
+	                self.iceRebuild(stream);
+	                _logger.warn("Rtc switch VCodes. iceRebuild end.", stream.id, useVCodes);
+	            }, 300);
 	        }
 	    },
 
@@ -4827,6 +5383,13 @@
 
 	        var request = evt.request;
 	        var response = evt.response;
+
+	        // if(!request && response.result !== 0 && response.op === 1001 && !response.tsxId){
+	        //     _logger.error("Exit. server error. rspMessage tsxId undefined. when response = ", response);
+	        //     self.onServerRefuseEnter({failed: response.result, msg: "rspMessage tsxId undefined"});
+	        //
+	        //     return;
+	        // }
 
 	        //_logger.debug("Server recv request = ", request, response);
 	        if (request && response && request.op !== 200 && response.result !== 0) {
@@ -4842,11 +5405,15 @@
 	                case -502:
 	                case -504:
 	                case -508:
+	                case -510:
 	                    self.close(4, failed);
 	                    break;
 	                case -506:
 	                    self.close(11, failed);
 	                    break;
+
+	                case -501:
+	                    self.close(11, failed);
 	                default: // -501 异常引起 忽略
 	            }
 	        }
@@ -4865,6 +5432,7 @@
 	            case -502:
 	            case -504:
 	            case -508:
+	            case -510:
 	                self.close(4, failed);
 	                break;
 	            case -506:
@@ -5004,8 +5572,24 @@
 	        //     }
 	        // });
 
-	        _util.removeAttribute(self._ices, webrtc.getRtcId());
-	        _logger.info("Remove rtc", webrtc.getRtcId(), "caused by closed");
+	        if (webrtc.closed) {
+	            _logger.warn("Webrtc will be removed. by __id = ", webrtc.__id, ", rtcId = ", webrtc.getRtcId());
+	            var removedWebrtc = _util.removeAttribute(self._ices, webrtc.__id);
+	            if (removedWebrtc) {
+	                _logger.warn("Webrtc removed. by id = ", removedWebrtc.__id, ", rtcId = ", removedWebrtc.getRtcId());
+	            } else {
+	                _logger.warn("Webrtc removed. by id = ", webrtc.__id, ", rtcId = ", webrtc.getRtcId());
+	            }
+
+	            var webrtc22 = self._ices[webrtc.getRtcId()];
+	            if (webrtc22 && webrtc22.__id === removedWebrtc.__id) {
+	                removedWebrtc = _util.removeAttribute(self._ices, webrtc.getRtcId());
+	                _logger.warn("Webrtc removed. by rtcId = ", removedWebrtc.getRtcId(), ", __id = ", removedWebrtc.__id);
+	            }
+	        } else {
+	            _logger.info("ICE self closed. not allow. will rebuild", webrtc.getRtcId());
+	            self.onICEConnectFail(webrtc);
+	        }
 	    },
 
 	    onICEConnected: function onICEConnected(webrtc) {
@@ -5113,6 +5697,7 @@
 	        _logger.warn("Begin rebuild ice ", stream.iceRebuildCount, stream.id);
 
 	        if (stream.located()) {
+	            stream.isRepublished = true;
 	            self.push(stream, undefined, undefined, true);
 	        } else {
 	            self.createWebrtcAndSubscribeStream(stream.id);

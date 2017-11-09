@@ -185,6 +185,7 @@ function _onConfirm(){
 					xmppServer: config.xmppServer,
 					resource: "webim",
 					isNewInvitation: true,
+					userAgent: navigator.userAgent,
 				},
 			},
 		},
