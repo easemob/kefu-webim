@@ -89,6 +89,8 @@ module.exports = {
 		invite_agent_video: "邀请客服进行实时视频",
 		connecting: "视频通话中",
 		waiting_confirm: "视频连接请求，等待你的确认",
+		can_not_connected: "视频无法接通，请重试",
+		can_not_open_camera: "打开摄像头失败",
 	},
 	toolbar: {
 		emoji: "表情",

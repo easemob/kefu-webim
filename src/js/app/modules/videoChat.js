@@ -1,13 +1,12 @@
 /*
-视频流程
-访客发起邀请
-访客收到ticket
-init service
-访客加入会议
-振铃
-访客接起
-访客推流
-订阅流？
+	视频流程
+	1. 访客发起邀请
+	2. 访客收到ticket
+	3. 初始化sdk，回调
+	4. 访客加入会议
+	5. 振铃
+	6. 访客接起
+	7. 访客推流
 */
 
 var _const = require("../../common/const");
@@ -94,7 +93,21 @@ function _init(){
 			// 可能是 断网后，重新获取到远端媒体流，或者对方静音或关闭摄像头
 			onUpdateStream: videoPanel.addOrUpdateStream,
 			// 这个事件比较多，以后业务拓展时，根据需要再给开放一些回调，目前忽略
-			onNotifyEvent: function(){},
+			onNotifyEvent: function(evt){
+				// 接听 打开本地摄像头 并成功推流
+				if(evt instanceof window.emedia.event.PushSuccess){}
+				// 接听 打开本地摄像头 推流失败
+				else if(evt instanceof window.emedia.event.PushFail){
+					uikit.tip(__("video.can_not_connected"));
+					service.exit();
+				}
+				// 接听 打开摄像头失败
+				else if(evt instanceof window.emedia.event.OpenMediaError){
+					uikit.tip(__("video.can_not_open_camera"));
+					service.exit();
+				}
+				else{}
+			},
 		}
 	});
 
@@ -151,12 +164,7 @@ function _pushStream(){
 	var myStream = new service.AVPubstream({ voff: 0, aoff: 0, name: "video" });
 
 	service.openUserMedia(myStream).then(function(){
-		service.push(myStream, function(){
-			// todo: ...
-		}, function(evt){
-			// fail
-			console.warn(evt.message());
-		});
+		service.push(myStream);
 	});
 }
 

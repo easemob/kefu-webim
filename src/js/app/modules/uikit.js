@@ -13,6 +13,13 @@ var _initPrompt = _.once(function(){
 	promptTextSpanDom = promptDom.querySelector("span");
 });
 
+module.exports = {
+	prompt: _showPrompt,
+	tip: tip,
+	createDialog: _createDialog,
+	showSuccess: showSuccess
+};
+
 function _showPrompt(msg){
 	_initPrompt();
 	promptTextSpanDom.innerText = msg;
@@ -123,10 +130,3 @@ function showSuccess(msg){
 
 	setTimeout(dialog.destroy, 2000);
 }
-
-module.exports = {
-	prompt: _showPrompt,
-	tip: tip,
-	createDialog: _createDialog,
-	showSuccess: showSuccess
-};

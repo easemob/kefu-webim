@@ -90,6 +90,8 @@ module.exports = {
 		// 这个文案待确认
 		connecting: "Recording",
 		waiting_confirm: "Video call request. Waiting for your confirmation",
+		can_not_connected: "Video call can’t be connected. Please try again.",
+		can_not_open_camera: "Can’t open camera.",
 	},
 	toolbar: {
 		emoji: "Emoticon",
