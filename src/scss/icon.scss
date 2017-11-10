@@ -337,4 +337,8 @@
 	@extend .icon-base;
 	content: "\3ba"
 }
+.icon-waiting:before {
+	@extend .icon-base;
+	content: "\e9"
+}
 
