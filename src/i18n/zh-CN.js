@@ -22,6 +22,7 @@ module.exports = {
 		loading: "加载中...",
 		no_more_msg: "没有更多消息",
 		press_save_img: "长按图片保存到本地",
+		session_over_limit: "目前咨询人数较多，请稍候再试~~~",
 	},
 	chat: {
 		agent_is_typing: "正在输入...",

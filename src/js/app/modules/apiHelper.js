@@ -2,6 +2,7 @@ var utils = require("../../common/utils");
 var _const = require("../../common/const");
 var emajax = require("../../common/ajax");
 var Transfer = require("../../common/transfer");
+var uikit = require("./uikit");
 
 // 以下调用会缓存参数
 // getVisitorId
@@ -738,8 +739,24 @@ function getRelevanceList(){
 			else{
 				reject(new Error(__("prompt.no_valid_channel")));
 			}
+
+		
+
 		}, function(err){
-			reject(err);
+			if(err.statusCode === 503){
+				uikit.createDialog({
+					contentDom: utils.createElementFromHTML([
+						"<div class=\"wrapper\">",
+						"<span class=\"icon-waiting\"></span>",
+						"<p class=\"tip-word\">" +  __("common.session_over_limit") + "</p>",
+						"</div>"
+					].join("")),
+					className: "session-over-limit"
+				}).show();
+			}
+			else{
+				reject(err);
+			}
 		});
 	});
 }
