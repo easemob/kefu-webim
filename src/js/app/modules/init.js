@@ -411,10 +411,23 @@ function initChatEntry(targetUserInfo){
 			_downgrade();
 		}
 	}, function(err){
+		if(err.statusCode === 503){
+			uikit.createDialog({
+				contentDom: utils.createElementFromHTML([
+					"<div class=\"wrapper\">",
+					"<span class=\"icon-waiting\"></span>",
+					"<p class=\"tip-word\">" +  __("common.session_over_limit") + "</p>",
+					"</div>"
+				].join("")),
+				className: "session-over-limit"
+			}).show();
+		}
+		else{
 		// chat.show()针对移动端，在pc端不是必要的逻辑
-		chat.show();
-		uikit.prompt(err);
-		throw err;
+			chat.show();
+			uikit.prompt(err);
+			throw err;
+		}
 	});
 }
 function _createAppointedVisitor(){
