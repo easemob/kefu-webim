@@ -21,6 +21,7 @@ module.exports = {
 		send_failed: "发送失败",
 		loading: "加载中...",
 		no_more_msg: "没有更多消息",
+		session_over_limit: "目前咨询人数较多，请稍候再试~~~",
 	},
 	chat: {
 		agent_is_typing: "正在输入...",
