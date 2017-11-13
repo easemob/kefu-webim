@@ -21,6 +21,7 @@ module.exports = {
 		send_failed: "Failed to send",
 		loading: "loading...",
 		no_more_msg: "no more messages",
+		session_over_limit: "All agents are busy now. Please try again later…",
 	},
 	chat: {
 		agent_is_typing: "Agent is typing...",
