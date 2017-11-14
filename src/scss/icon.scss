@@ -10,7 +10,7 @@
 }
 
 @mixin icon-base {
-	font-family: 'easemobim' !important;
+	font-family: "easemobim" !important;
 	font-size: 30px;
 	font-style: normal;
 	text-align: center;
@@ -248,6 +248,11 @@
 	content: "\77"
 }
 
+.icon-form:before {
+	@extend .icon-base;
+	content: "\a070"
+}
+
 .icon-benz-picture:before {
 	@extend .icon-base;
 	content: "\85"
@@ -281,5 +286,59 @@
 .icon-benz-power-button-hollow:before {
 	@extend .icon-base;
 	content: "\91"
+}
+
+.icon-answer-the-phone:before {
+	@extend .icon-base;
+	content: "\3b1"
+}
+
+.icon-microphone:before {
+	@extend .icon-base;
+	content: "\3b5"
+}
+
+.icon-hung-up:before {
+	@extend .icon-base;
+	content: "\3b2"
+}
+
+.icon-return-to-multi-video:before {
+	@extend .icon-base;
+	content: "\3b6"
+}
+
+.icon-remote-desktop:before {
+	@extend .icon-base;
+	content: "\3b3"
+}
+
+.icon-disable-camera:before {
+	@extend .icon-base;
+	content: "\3b9"
+}
+
+.icon-disable-microphone:before {
+	@extend .icon-base;
+	content: "\3b8"
+}
+
+.icon-minimize-window:before {
+	@extend .icon-base;
+	content: "\3b7"
+}
+
+.icon-maximize-window:before {
+	@extend .icon-base;
+	content: "\3b4"
+}
+
+.icon-spin:before {
+	@extend .icon-base;
+	content: "\3ba"
+}
+.icon-waiting:before {
+	@extend .icon-base;
+	content: "\e9"
 }
 
