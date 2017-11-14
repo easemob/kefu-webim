@@ -17,7 +17,8 @@
 <body>
 
 	<h1>Demo</h1>
-	<a target='_blank' href='http://docs.easemob.com/cs/300visitoraccess/20webplugin'>集成文档</a>
+	<a target="_blank" href="http://docs.easemob.com/cs/300visitoraccess/web-widget">集成文档</a>
+	<a target="_blank" href="demos/custom-launch-button.html">自定义按钮样式demo</a>
 	<br>
 	<br>
 	<br>
@@ -25,7 +26,7 @@
 	<br>
 	<br>
 	<h1>测试</h1>
-	<div><input id='testvalue' type='text' placeholder='请输入您的tenantId，点击测试按钮'/></div>
+	<div><input id="testvalue" type="text" placeholder="请输入您的tenantId，点击测试按钮"/></div>
 	<button onclick="test()">测试</button>
 	<button onclick="deleteCurrentCookies()">Clear Current Cookie</button>
 	<button onclick="bindSkillGroup()">绑定技能组</button>
@@ -78,8 +79,8 @@ function resizeChatWindow(){
 window.easemobim = window.easemobim || {};
 
 window.easemobim.config = {
-	// domain: '//sandbox.kefu.easemob.com',
-	// domain: '//kefu.easemob.com',
+	domain: "//sandbox.kefu.easemob.com",
+	// domain: "//kefu.easemob.com",
 	// 访客自动上报
 	// eventCollector: true,
 	satisfaction: true,
@@ -90,6 +91,6 @@ window.easemobim.config = {
 };
 </script>
 
-<script src='easemob.js'></script>
+<script src="easemob.js"></script>
 </body>
 </html>
