@@ -389,8 +389,23 @@ function initChatEntry(targetUserInfo) {
 			_downgrade();
 		}
 	}, function(err){
-		uikit.prompt(err);
-		throw err;
+		if(err.statusCode === 503){
+			uikit.createDialog({
+				contentDom: utils.createElementFromHTML([
+					"<div class=\"wrapper\">",
+					"<span class=\"icon-waiting\"></span>",
+					"<p class=\"tip-word\">目前咨询人数较多，请稍候再试~~~</p>",
+					"</div>"
+				].join("")),
+				className: "session-over-limit"
+			}).show();
+		}
+		else{
+		// chat.show()针对移动端，在pc端不是必要的逻辑
+			chat.show();
+			uikit.prompt(err);
+			throw err;
+		}
 	});
 }
 

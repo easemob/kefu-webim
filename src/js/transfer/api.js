@@ -28,7 +28,7 @@ function emitAjax(options) {
 		data: options.excludeData ? null : data,
 		type: options.type,
 		isFileUpload: options.isFileUpload,
-		success: function (resp) {
+		success: function (resp, xhr) {
 			try {
 				resp = JSON.parse(resp);
 			}
@@ -38,10 +38,11 @@ function emitAjax(options) {
 				timespan: timestamp,
 				status: 0,
 				data: resp,
+				statusCode: xhr.status,
 				useObject: useObject
 			});
 		},
-		error: function (resp) {
+		error: function (resp, xhr) {
 			try {
 				resp = JSON.parse(resp);
 			}
@@ -51,6 +52,7 @@ function emitAjax(options) {
 				timespan: timestamp,
 				status: 1,
 				data: resp,
+				statusCode: xhr.status,
 				useObject: useObject
 			});
 		}
