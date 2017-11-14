@@ -497,6 +497,24 @@
 			}
 		}
 	}
+	&.session-over-limit{
+		.wrapper {
+			width: 300px;
+			height: 190px;
+			position: fixed;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin: auto;
+			border: none;
+			text-align: center;
+			color: #666;
+			.tip-word{
+				margin-top: 10px;
+			}
+		}
+	}
 }
 .em-select {
 	height: 34px;
