@@ -458,7 +458,7 @@ function initChatEntry(targetUserInfo){
 				contentDom: utils.createElementFromHTML([
 					"<div class=\"wrapper\">",
 					"<span class=\"icon-waiting\"></span>",
-					"<p class=\"tip-word\">" +  __("common.session_over_limit") + "</p>",
+					"<p class=\"tip-word\">目前咨询人数较多，请稍候再试~~~</p>",
 					"</div>"
 				].join("")),
 				className: "session-over-limit"
