@@ -6,6 +6,7 @@ module.exports = {
 		transfer_to_kefu_words: "Chat with agent",
 		scheduler_role_nickname: "Scheduler",
 		im_html_path: "/en-US/im_cached.html",
+		static_path: "../static",
 	},
 	common: {
 		confirm: "Confirm",

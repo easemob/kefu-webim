@@ -1,3 +1,35 @@
+var emajax = require("../../../common/ajax.js");
+
+module.exports = window.tools = {
+	retryThrottle: retryThrottle,
+	DOMEval: DOMEval,
+	loadScript: loadScript,
+	resolvePromiseSequentially: resolvePromiseSequentially,
+};
+
+// todo: implemnet this
+function resolvePromiseSequentially(list){
+
+}
+
+function loadScript(path){
+	return new Promise(function(resolve, reject){
+		emajax({
+			url: path,
+			success: resolve,
+			error: reject,
+			disableTimeStampInGet: true,
+		});
+	})
+	.then(DOMEval);
+}
+
+function DOMEval(code){
+	var script = document.createElement("script");
+
+	script.text = code;
+	document.head.appendChild(script).parentNode.removeChild(script);
+}
 
 // 限制一段时间内的重试次数，以及每次调用的时间间隔
 function retryThrottle(fn, options){
@@ -27,7 +59,3 @@ function retryThrottle(fn, options){
 
 	};
 }
-
-module.exports = {
-	retryThrottle: retryThrottle
-};

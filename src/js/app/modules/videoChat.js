@@ -15,6 +15,7 @@ var channel = require("./channel");
 var profile = require("./tools/profile");
 var eventListener = require("./tools/eventListener");
 var utils = require("../../common/utils");
+var tools = require("./tools/tools");
 var Dispatcher = require("./tools/Dispatcher");
 
 var statusBar = require("./uikit/videoStatusBar");
@@ -142,9 +143,10 @@ function _init(){
 }
 
 function _initVideoChat(option){
-	var opt = option || {};
-	var triggerButton = opt.triggerButton;
-	parentContainer = opt.parentContainer;
+	var opt;
+	var triggerButton;
+	var adapterPath;
+	var eMediaSdkPath;
 
 	if(
 		window.location.protocol !== "https:"
@@ -152,11 +154,25 @@ function _initVideoChat(option){
 		|| !profile.grayList.audioVideo
 	) return;
 
-	// 显示视频邀请按钮，并绑定事件
-	utils.removeClass(triggerButton, "hide");
-	utils.on(triggerButton, "click", function(){
-		_init();
-		dialog.show();
+	opt = option || {};
+	triggerButton = opt.triggerButton;
+	parentContainer = opt.parentContainer;
+
+	adapterPath = __("config.static_path") + "/js/lib/adapter.min.js?v=unknown-000";
+	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk.min.js?v=1.1.2";
+
+	// todo: resolve promise sequentially
+	tools.loadScript(adapterPath)
+	.then(function(){
+		return tools.loadScript(eMediaSdkPath);
+	})
+	.then(function(){
+		// 显示视频邀请按钮，并绑定事件
+		utils.removeClass(triggerButton, "hide");
+		utils.on(triggerButton, "click", function(){
+			_init();
+			dialog.show();
+		});
 	});
 }
 

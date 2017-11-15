@@ -27,6 +27,7 @@ module.exports = function(options){
 	var tempData = "";
 	var headers = options.headers || {};
 	var isFileUpload = options.isFileUpload;
+	var disableTimeStampInGet = options.disableTimeStampInGet;
 	var key;
 	var fileForm;
 	var o;
@@ -63,7 +64,8 @@ module.exports = function(options){
 		tempData = tempData ? tempData.slice(0, -1) : tempData;
 		options.url += (options.url.indexOf("?") > 0 ? "&" : "?")
 			+ (tempData ? tempData + "&" : tempData)
-			+ "_v=" + new Date().getTime();
+			// 在需要读取缓存资源时不加时间戳
+			+ (disableTimeStampInGet ? "" : "_v=" + new Date().getTime());
 	}
 	else if(isFileUpload){
 		fileForm = new FormData();
