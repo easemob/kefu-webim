@@ -17,7 +17,7 @@ var navigateToNewWindowButtonDom;
 var dispatcher;
 var service;
 var nickname;
-var mediaStream;
+var currentMediaStream;
 var currentStream;
 var currentNoAudioStream;
 var currentOwnerName;
@@ -137,7 +137,7 @@ function _eventHandler(e){
 		subWindowHandler && subWindowHandler.postMessage({
 			type: "updateVideoBlobSrcUrl",
 			info: {
-				blobVideoUrl: nativeCreateObjectURL(mediaStream),
+				blobVideoUrl: nativeCreateObjectURL(currentMediaStream),
 				nickname: nickname,
 			},
 		}, "*");
@@ -177,6 +177,7 @@ function _addOrUpdateStream(stream){
 	switch(stream.type){
 	case _const.STREAM_TYPE.NORMAL:
 		currentStream = stream;
+		currentMediaStream = mediaStream;
 		videoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
 		nicknameDom.innerText = stream.located()
 			? __("video.me")
@@ -191,6 +192,7 @@ function _addOrUpdateStream(stream){
 	default:
 		throw new Error("unexpected stream type.");
 	}
+	_updateButtonStatus();
 }
 
 function _removeStream(stream){
