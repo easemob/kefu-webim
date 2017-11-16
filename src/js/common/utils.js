@@ -105,6 +105,7 @@ module.exports = {
 	isAndroid: /android/i.test(navigator.userAgent),
 	isQQBrowser: /MQQBrowser/i.test(navigator.userAgent),
 	isIOS: /(iPad|iPhone|iPod)/i.test(navigator.userAgent),
+	isSafari: /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent),
 	isMobile: _isMobile,
 	click: _isMobile && ("ontouchstart" in window) ? "touchstart" : "click",
 	isBrowserMinimized: function(){
@@ -146,8 +147,9 @@ module.exports = {
 	uuid: function(){
 		var s = [];
 		var hexDigits = "0123456789abcdef";
+		var i;
 
-		for(var i = 0; i < 36; i++){
+		for(i = 0; i < 36; i++){
 			s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
 		}
 
@@ -216,8 +218,9 @@ module.exports = {
 	},
 	// 触发事件，对于ie8只支持原生事件，不支持自定义事件
 	trigger: function(element, eventName){
+		var ev;
 		if(document.createEvent){
-			var ev = document.createEvent("HTMLEvents");
+			ev = document.createEvent("HTMLEvents");
 			ev.initEvent(eventName, true, false);
 			element.dispatchEvent(ev);
 		}
@@ -227,11 +230,14 @@ module.exports = {
 	},
 	// todo： 去掉 使用 _.extend 替代
 	extend: function(object, extend){
-		for(var key in extend){
-			if(extend.hasOwnProperty(key)){
-				var value = extend[key];
-				var type = Object.prototype.toString.call(value);
-				if(value === void 0){
+		var key;
+		var type;
+		var value;
+		for(key in extend){
+			if(Object.prototype.hasOwnProperty.call(extend, key)){
+				value = extend[key];
+				type = Object.prototype.toString.call(value);
+				if(value === undefined){
 					// patch ie8 will change undefined to {}
 					object[key] = value;
 				}
@@ -296,7 +302,7 @@ module.exports = {
 			}
 
 			// 没有找到path，返回undefined
-			return void 0;
+			return undefined;
 
 		}
 	},
