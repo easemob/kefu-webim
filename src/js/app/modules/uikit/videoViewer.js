@@ -17,7 +17,6 @@ var navigateToNewWindowButtonDom;
 var dispatcher;
 var service;
 var nickname;
-var currentMediaStream;
 var currentStream;
 var currentNoAudioStream;
 var currentOwnerName;
@@ -132,12 +131,16 @@ function _closeSubWindow(){
 
 function _eventHandler(e){
 	var message = e.data;
+	var mediaStream;
+	var stream = currentNoAudioStream || currentStream;
+
+	mediaStream = stream.getMediaStream();
 
 	if(message === "independentVidowSubWindowLoaded"){
 		subWindowHandler && subWindowHandler.postMessage({
 			type: "updateVideoBlobSrcUrl",
 			info: {
-				blobVideoUrl: nativeCreateObjectURL(currentMediaStream),
+				blobVideoUrl: nativeCreateObjectURL(mediaStream),
 				nickname: nickname,
 			},
 		}, "*");
@@ -177,7 +180,6 @@ function _addOrUpdateStream(stream){
 	switch(stream.type){
 	case _const.STREAM_TYPE.NORMAL:
 		currentStream = stream;
-		currentMediaStream = mediaStream;
 		videoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
 		nicknameDom.innerText = stream.located()
 			? __("video.me")
