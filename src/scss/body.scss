@@ -188,9 +188,8 @@
 
 .em-widget-tip {
 	display: none;
-	z-index: 2;
 	position: absolute;
-	top: 43px;
+	top: 41px;
 	width: 100%;
 	height: 48px;
 	color: #535252;
@@ -219,7 +218,7 @@
 .em-widget-wrapper.has-tip {
 	/* 有信息栏时 消息窗 下移 */
 	.chat-wrapper {
-		top: 90px;
+		top: 89px;
 	}
 	/* 显示信息栏 */
 	.em-widget-tip {
