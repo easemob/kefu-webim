@@ -35,7 +35,7 @@
 			config.satisfaction = utils.convertFalse(utils.query('sat'));
 			config.wechatAuth = utils.convertFalse(utils.query('wechatAuth'));
 			config.hideKeyboard = utils.convertFalse(utils.query('hideKeyboard'));
-			config.isSmart = utils.convertFalse(utils.query('isSmart')) === "true";
+			config.isSmart = utils.convertFalse(utils.query('isSmart'));
 
 			config.appKey = utils.convertFalse(decodeURIComponent(utils.query('appKey')));
 			config.domain = config.domain || '//' + location.host;
