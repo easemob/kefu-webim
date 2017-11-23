@@ -1,14 +1,14 @@
 var utils = require("../../../common/utils");
 var _const = require("../../../common/const");
 
-var template = [
+var template = _.template([
 	"<div class=\"mini-video-window\">",
 	"<p class=\"nickname\"></p>",
-	"<video muted autoplay playsinline class=\"main-video\"></video>",
-	"<video muted autoplay playsinline class=\"no-audio-video hide\"></video>",
+	"<video <%= muted %> autoplay playsinline webkit-playsinline class=\"main-video\"></video>",
+	"<video muted autoplay playsinline webkit-playsinline class=\"no-audio-video hide\"></video>",
 	"<span class=\"play-button hide\"><i class=\"button-icon icon-star\"></i></span>",
 	"</div>",
-].join("");
+].join(""));
 
 var MiniVideoWin;
 
@@ -16,6 +16,7 @@ module.exports = MiniVideoWin = function(option){
 	var opt = option || {};
 	var stream = opt.stream;
 	var me = this;
+	var isLocalStream = stream.located();
 
 	this.parentContainer = opt.parentContainer;
 	this.dispatcher = opt.dispatcher;
@@ -32,7 +33,10 @@ module.exports = MiniVideoWin = function(option){
 		e.stopPropagation();
 	};
 
-	this.dom = utils.createElementFromHTML(template);
+	// 本地视频需要 muted
+	this.dom = utils.createElementFromHTML(template({
+		muted: isLocalStream ? "muted" : ""
+	}));
 	this.nicknameDom = this.dom.querySelector(".nickname");
 	this.videoDom = this.dom.querySelector(".main-video");
 	this.playButtonDom = this.dom.querySelector(".play-button");
@@ -82,6 +86,7 @@ MiniVideoWin.prototype.removeStream = function(stream){
 
 MiniVideoWin.prototype.updateStream = function(stream){
 	var mediaStream = stream.getMediaStream();
+	var isLocalStream = stream.located();
 
 	this.ownerName = utils.getDataByPath(stream, "owner.name");
 
@@ -89,7 +94,7 @@ MiniVideoWin.prototype.updateStream = function(stream){
 	case _const.STREAM_TYPE.NORMAL:
 		this.stream = stream;
 		this.videoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
-		this.nicknameDom.innerText = stream.located()
+		this.nicknameDom.innerText = isLocalStream
 			? __("video.me")
 			: utils.getDataByPath(stream, "owner.ext.nickname");
 		break;

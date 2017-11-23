@@ -171,6 +171,7 @@ function hide(){
 
 function _addOrUpdateStream(stream){
 	var ownerName = utils.getDataByPath(stream, "owner.name");
+	var isLocalStream = stream.located();
 	var mediaStream;
 
 	if(ownerName !== currentOwnerName) return;
@@ -181,7 +182,9 @@ function _addOrUpdateStream(stream){
 	case _const.STREAM_TYPE.NORMAL:
 		currentStream = stream;
 		videoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
-		nicknameDom.innerText = stream.located()
+		// 本地视频需要 muted
+		videoDom.muted = isLocalStream;
+		nicknameDom.innerText = isLocalStream
 			? __("video.me")
 			: utils.getDataByPath(stream, "owner.ext.nickname");
 		break;
