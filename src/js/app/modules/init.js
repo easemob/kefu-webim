@@ -252,7 +252,7 @@
 					chat.errorPrompt('未创建关联', true);
 					return;
 				}
-				var defaultAvatarSrc = config.isSmart?'/img/smart_defult_avatar.png':'/img/default_avatar.png';
+				var defaultAvatarSrc = config.isSmart?'/img/smart_defult_avatar.png':'/img/benz_defult_avatar.png';
 				config.relevanceList = msg.data;
 				config.tenantAvatar = utils.getAvatarsFullPath(msg.data[0].tenantAvatar, config.domain);
 				config.defaultAvatar = config.staticPath ? config.staticPath + defaultAvatarSrc : 'static' +
