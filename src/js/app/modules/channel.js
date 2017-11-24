@@ -12,8 +12,6 @@ var moment = require("moment");
 
 var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;
-// todo: use profile.token instead
-var token;
 var config;
 var conn;
 
@@ -34,8 +32,8 @@ var _open = tools.retryThrottle(function(){
 		apiUrl: location.protocol + "//" + config.restServer
 	};
 
-	if(config.user.token){
-		op.accessToken = config.user.token;
+	if(profile.imToken !== null){
+		op.accessToken = profile.imToken;
 	}
 	else{
 		op.pwd = config.user.password;
@@ -94,12 +92,19 @@ function _initConnection(onReadyCallback){
 		heartBeatWait: _const.HEART_BEAT_INTERVAL
 	});
 
+	if(profile.imRestDown){
+		onReadyCallback();
+	}
+
 	conn.listen({
 		onOpened: function(info){
+			// discard this
+			if(info && info.accessToken && (profile.imToken === null)){
+				profile.imToken = info.accessToken;
+			}
 			// 连接未超时，清除timer，暂不开启api通道发送消息
 			clearTimeout(firstTS);
 
-			token = info.accessToken;
 			conn.setPresence();
 
 			onReadyCallback(info);
@@ -245,7 +250,7 @@ function _sendImg(fileMsg){
 	msg.set({
 		apiUrl: location.protocol + "//" + config.restServer,
 		file: fileMsg,
-		accessToken: token,
+		accessToken: profile.imToken,
 		to: config.toUser,
 		success: function(id){
 			// todo: 验证这里是否执行，验证此处id是im msg id 还是 kefu-ack-id
@@ -692,7 +697,7 @@ function _promptNoAgentOnlineIfNeeded(opt){
 	var sessionState = officialAccount.sessionState;
 	// 只去查询一次有无坐席在线
 	if(isNoAgentOnlineTipShowed) return;
-	// 待接入中的会话 不做查询  
+	// 待接入中的会话 不做查询
 	if(sessionState === _const.SESSION_STATE.WAIT) return;
 	// 开启机器人接待时 不转人工不查询
 	if(profile.hasRobotAgentOnline && !hasTransferedToKefu) return;

@@ -124,6 +124,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "getPassword":
+	// DEPRECATED!!!
 		emitAjax({
 			url: "/v1/webimplugin/visitors/password",
 			type: "GET",
@@ -693,6 +694,18 @@ getData.listen(function(msg){
 	case "getSatisfactionTipWord":
 		emitAjax({
 			url: "/v1/webimplugin/tenants/" + tenantId + "/options/GreetingMsgEnquiryInvite",
+			type: "GET",
+			msg: msg,
+			excludeData: true,
+		});
+		break;
+	case "getPassword2":
+		emitAjax({
+			url: "/v1/webimplugin/visitors/password2"
+			+ "?userId=" + params.userId
+			+ "&orgName=" + params.orgName
+			+ "&appName=" + params.appName
+			+ "&imServiceNumber=" + params.imServiceNumber,
 			type: "GET",
 			msg: msg,
 			excludeData: true,

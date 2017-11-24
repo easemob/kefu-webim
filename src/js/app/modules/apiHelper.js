@@ -2,6 +2,7 @@ var utils = require("../../common/utils");
 var _const = require("../../common/const");
 var emajax = require("../../common/ajax");
 var Transfer = require("../../common/transfer");
+var profile = require("./tools/profile");
 
 // 以下调用会缓存参数
 // getVisitorId
@@ -82,34 +83,48 @@ function getCurrentServiceSession(){
 
 function getToken(){
 	return new Promise(function(resolve, reject){
-		var token = config.user.token;
-		if(token){
-			resolve(token);
-		}
-		else{
-			emajax({
-				url: location.protocol + "//" + config.restServer + "/" + config.orgName +
-					"/" + config.appName + "/token",
-				useXDomainRequestInIE: true,
-				dataType: "json",
-				data: {
-					grant_type: "password",
-					username: config.user.username,
-					password: config.user.password
-				},
-				type: "POST",
-				success: function(resp){
-					var token = resp.access_token;
+		var token = profile.imToken;
 
-					// cache token
-					config.user.token = token;
-					resolve(token);
-				},
-				error: function(err){
+		// 超时降级
+		setTimeout(function(){
+			if(profile.imToken === null){
+				profile.imToken = "";
+				resolve("");
+			}
+		}, 5000);
+		if(token !== null || profile.imRestDown){
+			resolve(token);
+			return;
+		}
+		emajax({
+			url: location.protocol + "//" + config.restServer + "/" + config.orgName +
+				"/" + config.appName + "/token",
+			useXDomainRequestInIE: true,
+			dataType: "json",
+			data: {
+				grant_type: "password",
+				username: config.user.username,
+				password: config.user.password
+			},
+			type: "POST",
+			success: function(resp){
+				var token = resp.access_token;
+
+				// cache token
+				profile.imToken = token;
+				resolve(token);
+			},
+			error: function(err){
+				if(err.error_description === "user not found"){
 					reject(err);
 				}
-			});
-		}
+				else{
+					// 未知错误降级走第二通道
+					profile.imToken = "";
+					resolve("");
+				}
+			}
+		});
 	});
 }
 function getNotice(){
@@ -497,8 +512,9 @@ function getExSession(){
 
 function getAgentStatus(agentUserId){
 	return new Promise(function(resolve, reject){
+		// todo: discard this
 		// 没有token 不发送请求 也不报错
-		if(!config.user.token){
+		if(!profile.imToken){
 			resolve();
 			return;
 		}
@@ -509,7 +525,7 @@ function getAgentStatus(agentUserId){
 			appName: config.appName,
 			agentUserId: agentUserId,
 			userName: config.user.username,
-			token: config.user.token,
+			token: profile.imToken,
 			imServiceNumber: config.toUser
 		}, function(msg){
 			resolve(utils.getDataByPath(msg, "data.state"));
@@ -707,20 +723,37 @@ function createVisitor(specifiedUserName){
 
 function getPassword(){
 	return new Promise(function(resolve, reject){
-		api("getPassword", {
+		api("getPassword2", {
 			userId: config.user.username,
-			tenantId: config.tenantId
+			orgName: config.orgName,
+			appName: config.appName,
+			imServiceNumber: config.toUser,
 		}, function(msg){
-			var password = msg.data;
+			var status = utils.getDataByPath(msg, "data.status");
+			var password = utils.getDataByPath(msg, "data.entity.userPassword");
 
-			if(password){
+			if(status === "OK"){
 				resolve(password);
 			}
 			else{
 				reject(new Error("unable to get password."));
 			}
 		}, function(err){
-			reject(err);
+			var status = utils.getDataByPath(err, "data.status");
+			var errorDescription = utils.getDataByPath(err, "data.errorDescription");
+
+			if(status === "FAIL"){
+				if(errorDescription === "IM user create fail."){
+					profile.imRestDown = true;
+					resolve("");
+					return;
+				}
+				else if(errorDescription === "IM user not found."){
+					reject(new Error("im user not found"));
+					return;
+				}
+			}
+			reject(new Error("unknown error when get password"));
 		});
 	});
 }

@@ -1,6 +1,8 @@
 var Dict = require("./Dict");
 
 var profile = {
+	imToken: null,
+	imRestDown: false,
 	ctaEnable: false,
 	systemAgentAvatar: null,
 	isChatWindowOpen: null,
@@ -16,7 +18,7 @@ var profile = {
 	tenantAvatar: null,
 	defaultAvatar: null,
 	currentOfficialAccount: {},
-	systemOfficialAccount: {}
+	systemOfficialAccount: {},
 };
 
 module.exports = profile;

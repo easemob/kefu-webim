@@ -37,6 +37,10 @@ var _reCreateImUser = _.once(function(){
 		config.user.username = entity.userId;
 		config.user.password = entity.userPassword;
 
+		if(entity.userPassword === ""){
+			profile.imRestDown = true;
+		}
+
 		_initSession();
 
 		if(utils.isTop){
@@ -643,15 +647,8 @@ function _onReady(){
 }
 
 function _initSDK(){
-	return new Promise(function(resolve, reject){
-		channel.initConnection(function(info){
-			// todo: discard this
-			if(info){
-				config.user.token = config.user.token || info.accessToken;
-			}
-
-			resolve();
-		});
+	return new Promise(function(resolve){
+		channel.initConnection(resolve);
 	});
 }
 

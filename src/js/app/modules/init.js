@@ -304,7 +304,7 @@ function initChatEntry(targetUserInfo){
 		var toUser = config.toUser || config.to;
 
 		// toUser 转为字符串， todo: move it to handle config
-		typeof toUser === "number" && (toUser = toUser.toString(10));
+		typeof toUser === "number" && (toUser = toUser.toString());
 
 		if(appKey && toUser){
 			// appKey，imServiceNumber 都指定了
@@ -381,6 +381,13 @@ function initChatEntry(targetUserInfo){
 			}
 		}
 		else if(config.user.username && (config.user.password || config.user.token)){
+			if(config.user.token){
+				// todo: move imToken to an independent key
+				profile.imToken = config.user.token;
+			}
+			else{
+				profile.imPassword = config.user.password;
+			}
 			chat.init();
 		}
 		// 检测微信网页授权
@@ -404,7 +411,7 @@ function initChatEntry(targetUserInfo){
 				else{
 					_downgrade();
 				}
-				
+
 			});
 		}
 		else{
@@ -439,6 +446,9 @@ function _createVisitor(username){
 		config.user.username = entity.userId;
 		config.user.password = entity.userPassword;
 
+		if(entity.userPassword === ""){
+			profile.imRestDown = true;
+		}
 		if(utils.isTop){
 			utils.set("root" + (config.configId || (config.tenantId + config.emgroup)), config.user.username);
 		}
