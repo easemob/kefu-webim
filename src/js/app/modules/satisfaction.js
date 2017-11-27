@@ -1,8 +1,10 @@
 var utils = require("../../common/utils");
+var _const = require("../../common/const");
 var uikit = require("./uikit");
 var apiHelper = require("./apiHelper");
 var channel = require("./channel");
 var profile = require("./tools/profile");
+var eventListener = require("./tools/eventListener");
 var loading = require("./uikit/loading");
 
 var dom;
@@ -17,7 +19,14 @@ var session;
 var invite;
 var score;
 var evaluationDegreeId;
-var _init = _.once(function(){
+var _initOnce = _.once(_init);
+
+module.exports = {
+	init: init,
+	show: show,
+};
+
+function _init(){
 	loading.show("satisfaction");
 	apiHelper.getSatisfactionTipWord().then(function(tipWord){
 		dom = utils.createElementFromHTML([
@@ -31,6 +40,24 @@ var _init = _.once(function(){
 		starsUl = dom.querySelector("ul");
 		commentDom = dom.querySelector("textarea");
 		tagContainer = dom.querySelector(".tag-container");
+
+		utils.live("li", "click", function(){
+			var level = +this.getAttribute("data-level");
+
+			evaluationDegreeId = this.getAttribute("data-evaluate-id");
+			score = this.getAttribute("data-score");
+
+			level && _.each(starList, function(elem, i){
+				utils.toggleClass(elem, "sel", i < level);
+			});
+
+			evaluationDegreeId && _createLabel(evaluationDegreeId);
+		}, starsUl);
+
+		utils.live("span.tag", "click", function(){
+			utils.toggleClass(this, "selected");
+		}, tagContainer);
+
 		dialog = uikit.createDialog({
 			contentDom: dom,
 			className: "satisfaction"
@@ -41,24 +68,7 @@ var _init = _.once(function(){
 		loading.hide("satisfaction");
 		dialog.show();
 	});
-});
-
-utils.live("li", "click", function(){
-	var level = +this.getAttribute("data-level");
-
-	evaluationDegreeId = this.getAttribute("data-evaluate-id");
-	score = this.getAttribute("data-score");
-
-	level && _.each(starList, function(elem, i){
-		utils.toggleClass(elem, "sel", i < level);
-	});
-
-	evaluationDegreeId && _createLabel(evaluationDegreeId);
-}, starsUl);
-
-utils.live("span.tag", "click", function(){
-	utils.toggleClass(this, "selected");
-}, tagContainer);
+}
 
 function _clear(){
 	commentDom.blur();
@@ -154,12 +164,20 @@ function _confirm(){
 	_clear();
 }
 
-module.exports = {
-	show: function(currentInviteId, currentServiceSessionId){
-		_init();
-		session = currentServiceSessionId;
-		invite = currentInviteId;
-		_setSatisfaction();
-		dialog && dialog.show();
-	}
-};
+function show(inviteId, serviceSessionId){
+	_initOnce();
+	session = serviceSessionId;
+	invite = inviteId;
+	_setSatisfaction();
+	dialog && dialog.show();
+}
+
+function init(){
+	eventListener.add(
+		_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
+		function(officialAccount, inviteId, serviceSessionId){
+			if(officialAccount !== profile.currentOfficialAccount) return;
+			show(inviteId, serviceSessionId);
+		}
+	);
+}

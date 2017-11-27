@@ -68,30 +68,33 @@ module.exports = {
 };
 
 function _initSystemEventListener(){
-	// report visitor info
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _reportVisitorInfo);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _reportVisitorInfo);
+	// send crm extend message
+	eventListener.add([
+		_const.SYSTEM_EVENT.SESSION_OPENED,
+		_const.SYSTEM_EVENT.SESSION_RESTORED,
+	], _.once(function(officialAccount){
+		var sessionId = officialAccount.sessionId;
+		var isSessionOpen = officialAccount.isSessionOpen;
 
-	// todo: move this to satisfation.js
-	eventListener.add(
-		_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
-		function(officialAccount, inviteId, serviceSessionId){
-			if(officialAccount !== profile.currentOfficialAccount) return;
-			satisfaction.show(inviteId, serviceSessionId);
+		if(isSessionOpen && sessionId){
+			apiHelper.reportVisitorAttributes(sessionId);
 		}
-	);
-}
+	}));
 
-function _reportVisitorInfo(officialAccount){
-	if(officialAccount.hasReportedAttributes) return;
+	// report visitor info
+	eventListener.add([
+		_const.SYSTEM_EVENT.SESSION_OPENED,
+		_const.SYSTEM_EVENT.SESSION_RESTORED,
+	], _.once(function(officialAccount){
+		if(!officialAccount.isSessionOpen) return;
 
-	var sessionId = officialAccount.sessionId;
-	var isSessionOpen = officialAccount.isSessionOpen;
-
-	if(isSessionOpen && sessionId){
-		officialAccount.hasReportedAttributes = true;
-		apiHelper.reportVisitorAttributes(sessionId);
-	}
+		_.each(profile.commandMessageToBeSendList, function(msg){
+			// 发送订单轨迹消息
+			if(!utils.isCrmExtendMessage(msg)){
+				channel.sendText("", msg);
+			}
+		});
+	}));
 }
 
 function _initUI(){
@@ -633,17 +636,15 @@ function _onReady(){
 		transfer.send({ event: _const.EVENTS.SHOW });
 	}
 
-	// 发送扩展消息
-	while(profile.commandMessageToBeSendList.length > 0){
-		channel.sendText("", profile.commandMessageToBeSendList.pop());
-	}
+	_.each(profile.commandMessageToBeSendList, function(msg){
+		// 发送订单、轨迹消息
+		if(!utils.isCrmExtendMessage(msg)){
+			channel.sendText("", msg);
+		}
+	});
 
 	// onready 回调
 	transfer.send({ event: _const.EVENTS.ONREADY });
-
-	if(config.extMsg){
-		channel.sendText("", { ext: config.extMsg });
-	}
 }
 
 function _initSDK(){
@@ -740,6 +741,7 @@ function _initSession(){
 			});
 
 			_initSystemEventListener();
+			satisfaction.init();
 			initAgentInputStatePoller();
 			initAgentStatusPoller();
 			initQueuingNumberPoller();
