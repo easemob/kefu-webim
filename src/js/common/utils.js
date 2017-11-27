@@ -276,30 +276,7 @@ module.exports = {
 			_removeClass(element, className);
 		}
 	},
-	getDataByPath: function(obj, path){
-		var propArray = path.split(".");
-		var currentObj = obj;
-
-		return seek();
-
-		function seek(){
-			var prop = propArray.shift();
-
-			if(typeof prop !== "string"){
-				// path 遍历完了，返回当前值
-				return currentObj;
-			}
-			else if(typeof currentObj === "object" && currentObj !== null){
-				// 正常遍历path，递归调用
-				currentObj = currentObj[prop];
-				return seek();
-			}
-
-			// 没有找到path，返回undefined
-			return void 0;
-
-		}
-	},
+	getDataByPath: getDataByPath,
 	query: function(key){
 		var reg = new RegExp("[?&]" + key + "=([^&]*)(?=&|$)");
 		var matches = reg.exec(location.search);
@@ -357,5 +334,32 @@ module.exports = {
 	copy: function(obj){
 		// todo：移到，easemob.js 里边
 		return this.extend({}, obj);
-	}
+	},
+	isCrmExtendMessage: function(msg){
+		return !!getDataByPath(msg, "ext.cmd.updateVisitorInfoSrc");
+	},
 };
+
+function getDataByPath(obj, path){
+	var propArray = path.split(".");
+	var currentObj = obj;
+
+	return seek();
+
+	function seek(){
+		var prop = propArray.shift();
+
+		if(typeof prop !== "string"){
+			// path 遍历完了，返回当前值
+			return currentObj;
+		}
+		else if(typeof currentObj === "object" && currentObj !== null){
+			// 正常遍历path，递归调用
+			currentObj = currentObj[prop];
+			return seek();
+		}
+
+		// 没有找到path，返回undefined
+		return undefined;
+	}
+}

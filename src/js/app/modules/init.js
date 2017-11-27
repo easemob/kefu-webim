@@ -99,6 +99,8 @@ function chat_window_mode_init(){
 	window.transfer = new Transfer(null, "main", true).listen(function(msg){
 		var event = msg.event;
 		var data = msg.data;
+		var extendMessage;
+		var textMessage;
 
 		switch(event){
 		case _const.EVENTS.SHOW:
@@ -125,7 +127,17 @@ function chat_window_mode_init(){
 			chat.close();
 			break;
 		case _const.EVENTS.EXT:
-			channel.sendText("", data.ext);
+			extendMessage = data.ext;
+			if(
+				utils.isCrmExtendMessage(extendMessage)
+				&& !profile.currentOfficialAccount.isSessionOpen
+			){
+				// crm 对接消息必须等会话打开后才能发
+				profile.commandMessageToBeSendList.push(extendMessage);
+			}
+			else{
+				channel.sendText("", extendMessage);
+			}
 			break;
 		case _const.EVENTS.TEXTMSG:
 			channel.sendText(data.data, data.ext);
@@ -171,6 +183,8 @@ function initChat(){
 	});
 
 }
+
+// todo: rename this function
 function handleMsgData(){
 	var defaultStaticPath = __("config.language") === "zh-CN" ? "static" : "../static";
 	// default value
@@ -178,6 +192,10 @@ function handleMsgData(){
 	config.offDutyWord = config.offDutyWord || __("prompt.default_off_duty_word");
 	config.emgroup = config.emgroup || "";
 	config.timeScheduleId = config.timeScheduleId || 0;
+
+	if(config.extMsg){
+		profile.commandMessageToBeSendList.push({ ext: config.extMsg });
+	}
 
 	// fake patch: 老版本配置的字符串需要decode
 	if(config.offDutyWord){
@@ -343,8 +361,6 @@ function initChatEntry(targetUserInfo){
 					password: targetUserInfo.userPassword
 				};
 
-				// 发送空的ext消息，延迟发送
-				profile.commandMessageToBeSendList.push({ ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } });
 				chat.init();
 				chat.show();
 				transfer.send({ event: _const.EVENTS.SHOW });
@@ -362,8 +378,6 @@ function initChatEntry(targetUserInfo){
 				apiHelper.getPassword().then(function(password){
 					config.user.password = password;
 
-					// 发送空的ext消息，延迟发送
-					profile.commandMessageToBeSendList.push({ ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } });
 					chat.init();
 					chat.show();
 					transfer.send({ event: _const.EVENTS.SHOW });
@@ -372,6 +386,8 @@ function initChatEntry(targetUserInfo){
 					throw err;
 				});
 			}
+			// 发送指定坐席的ext消息，延迟发送
+			profile.commandMessageToBeSendList.push({ ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } });
 		}
 		else if(config.user.username && (config.user.password || config.user.token)){
 			chat.init();
