@@ -39,10 +39,10 @@ var dialog = uikit.createDialog({
 		else if(!name.value || name.value.length > 140){
 			uikit.tip(__("ticket.invalid_name"));
 		}
-		else if(!phone.value || phone.value.length > 24){
+		else if(!(/^[0-9+][0-9-]{10,17}$/.test(phone.value))){
 			uikit.tip(__("ticket.invalid_phone"));
 		}
-		else if(!mail.value || mail.value.length > 127){
+		else if(!(/^[0-9a-z][_.0-9a-z-]{0,30}[0-9a-z]@([0-9a-z][0-9a-z-]{0,30}[.]){1,3}[a-z]{2,4}$/i.test(mail.value))){
 			uikit.tip(__("ticket.invalid_email"));
 		}
 		else if(!content.value || content.value.length > 1500){

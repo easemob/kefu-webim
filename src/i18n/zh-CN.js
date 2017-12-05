@@ -74,7 +74,7 @@ module.exports = {
 		content_placeholder: "请输入留言",
 		is_sending: "留言提交中...",
 		invalid_name: "姓名输入不正确",
-		invalid_phone: "电话输入不正确",
+		invalid_phone: "电话号码格式不正确",
 		invalid_email: "邮箱输入不正确",
 		invalid_content: "留言内容不能为空，长度小于1500字",
 		send_success: "留言发送成功",
