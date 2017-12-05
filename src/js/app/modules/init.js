@@ -415,9 +415,13 @@ function initChatEntry(targetUserInfo){
 			uikit.prompt(err.message);
 			throw err;
 		}
-		else{
+
+		else if(err.message === "unexpected reponse data."){
 			// bluemoon patch： maintaining page
 			chat.showBluemoonMaintainingPage();
+		}
+		else{
+			throw err;
 		}
 	});
 }

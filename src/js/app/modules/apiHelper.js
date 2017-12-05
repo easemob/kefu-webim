@@ -734,8 +734,13 @@ function getRelevanceList(){
 			if(_.isArray(relevanceList) && !_.isEmpty(relevanceList)){
 				resolve(relevanceList);
 			}
-			else{
+			else if(_.isArray(relevanceList) && _.isEmpty(relevanceList)){
 				reject(new Error(__("prompt.no_valid_channel")));
+			}
+			else{
+				// bluemoon patch:
+				// 运维挂上维护页面后会返回 status 200，内容是一个html页面
+				reject(new Error("unexpected reponse data."));
 			}
 		}, function(err){
 			reject(err);
