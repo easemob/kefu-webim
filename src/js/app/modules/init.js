@@ -409,11 +409,15 @@ function initChatEntry(targetUserInfo){
 				className: "session-over-limit"
 			}).show();
 		}
-		else{
-		// chat.show()针对移动端，在pc端不是必要的逻辑
+		else if(err.message === __("prompt.no_valid_channel")){
+			// chat.show()针对移动端，在pc端不是必要的逻辑
 			chat.show();
-			uikit.prompt(err);
+			uikit.prompt(err.message);
 			throw err;
+		}
+		else{
+			// bluemoon patch： maintaining page
+			chat.showBluemoonMaintainingPage();
 		}
 	});
 }

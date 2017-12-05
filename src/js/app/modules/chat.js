@@ -61,7 +61,29 @@ module.exports = {
 	close: _close,
 	show: _show,
 	getDom: _getDom,
+	showBluemoonMaintainingPage: showBluemoonMaintainingPage,
 };
+
+function showBluemoonMaintainingPage(){
+	config = profile.config;
+	_bindEvents();
+	_initUI();
+	// 蓝月亮升级维护显示tip
+	var modelDom = utils.createElementFromHTML("<div class=\"em-model\"></div>");
+	var offDutyPromptDom = utils.createElementFromHTML([
+		"<div class=\"em-dialog off-duty-prompt\">",
+		"<div class=\"bg-color header\">系统维护通知</div>",
+		"<div class=\"body\">",
+		"<p class=\"content\">在线咨询系统于7月10日 23点-7月11日 8点进行系统维护，维护期间有任何问题，请拨打蓝月亮24小时热线电话：4001111118，不便之处敬请谅解</p>",
+		"</div>",
+		"</div>"
+	].join(""));
+	doms.imChat.appendChild(modelDom);
+	doms.imChat.appendChild(offDutyPromptDom);
+	doms.sendBtn.innerHTML = "发送";
+	// onready 回调
+	transfer.send({ event: _const.EVENTS.ONREADY });
+}
 
 function _initSystemEventListener(){
 	// report visitor info
