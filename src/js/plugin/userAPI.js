@@ -2,6 +2,11 @@
 var utils = require("../common/utils");
 var loading = require("./loading");
 var Iframe = require("./iframe");
+var _const = require("../common/const");
+var Transfer = require("../common/transfer");
+var titleSlide = require("./titleSlide");
+var notify = require("./notify");
+var pcImgView = require("./pcImgView");
 var tenantList = {};
 var DEFAULT_CONFIG;
 var config;
@@ -15,6 +20,15 @@ var iframe;
 window.easemobim = window.easemobim || {};
 window.easemobim.config = window.easemobim.config || {};
 window.easemobim.version = "__WEBIM_PLUGIN_VERSION__";
+
+// bluemoon patch:
+// 由于蓝月亮特殊的需求，需要暴露一下内容到 esasmob 下
+window.easemobim.utils = utils;
+window.easemobim._const = _const;
+window.easemobim.Transfer = Transfer;
+window.easemobim.titleSlide = titleSlide;
+window.easemobim.notify = notify;
+window.easemobim.pcImgView = pcImgView;
 
 if(
 	/MSIE 7\.0/.test(navigator.userAgent)
