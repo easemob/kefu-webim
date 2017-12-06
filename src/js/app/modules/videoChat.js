@@ -1,6 +1,8 @@
 /*
 	视频流程
-	1. 访客发起邀请
+	1.
+		a. 访客发起邀请
+		b. 坐席发起邀请
 	2. 访客收到ticket
 	3. 初始化sdk，回调
 	4. 访客加入会议
@@ -22,6 +24,7 @@ var statusBar = require("./uikit/videoStatusBar");
 var videoPanel = require("./uikit/videoPanel");
 var videoChatTemplate = require("raw-loader!../../../template/videoChat.html");
 
+var _initOnce = _.once(_init);
 var parentContainer;
 var videoWidget;
 var dispatcher;
@@ -31,7 +34,7 @@ var dialog;
 var service;
 
 module.exports = {
-	init: _initVideoChat,
+	init: init,
 };
 
 function _init(){
@@ -40,8 +43,6 @@ function _init(){
 	videoWidget = utils.createElementFromHTML(_.template(videoChatTemplate)());
 
 	parentContainer.appendChild(videoWidget);
-
-	eventListener.add(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, _reveiveTicket);
 
 	config = profile.config;
 
@@ -142,7 +143,7 @@ function _init(){
 	});
 }
 
-function _initVideoChat(option){
+function init(option){
 	var opt;
 	var triggerButton;
 	var adapterPath;
@@ -167,10 +168,12 @@ function _initVideoChat(option){
 		return tools.loadScript(eMediaSdkPath);
 	})
 	.then(function(){
+		eventListener.add(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, _reveiveTicket);
+
 		// 显示视频邀请按钮，并绑定事件
 		utils.removeClass(triggerButton, "hide");
 		utils.on(triggerButton, "click", function(){
-			_init();
+			_initOnce();
 			dialog.show();
 		});
 	});
@@ -185,7 +188,8 @@ function _pushStream(){
 }
 
 function _reveiveTicket(ticketInfo){
-	if(!service) throw new Error("not initialized.");
+	// 有可能收到客服的主动邀请，此时需要初始化
+	_initOnce();
 
 	// 加入会议
 	service.setup(ticketInfo, {
