@@ -395,7 +395,8 @@
 				orgName: config.orgName,
 				appName: config.appName,
 				imServiceNumber: config.toUser,
-				tenantId: config.tenantId
+				tenantId: config.tenantId,
+				specifiedUserName: config.user.username || ""
 			}, function (msg) {
 				config.isNewUser = true;
 				config.user.username = msg.data.userId;
