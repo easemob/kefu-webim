@@ -452,8 +452,8 @@ function _handleMessage(msg, msgType, isHistory){
 				var label = item.name;
 				var className = "js_robotbtn ";
 				if(item.id === "TransferToKf"){
-					// 转人工按钮突出显示
-					className += "white bg-color border-color bg-hover-color-dark";
+					// 为以后转人工按钮样式调整做准备
+					className += "bg-hover-color";
 				}
 				else{
 					className += "bg-hover-color";
