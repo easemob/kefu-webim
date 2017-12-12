@@ -284,7 +284,7 @@ function handleConfig(configJson){
 
 	config.resources = configJson.chat.resources;
 	config.hideStatus = configJson.chat.hideStatus;
-	config.timeScheduleId = configJson.chat.timeScheduleId;
+	config.timeScheduleId = configJson.chat.timeScheduleId || 0;
 
 
 	// 重新去设置iframe 的宽高
