@@ -41,7 +41,8 @@ function _getGreetings(officialAccount){
 			break;
 		case 1:
 			// 菜单消息
-			greetingObj = JSON.parse(greetingText.replace(/&amp;quot;/g, "\""));
+			// 适配后端有转义两次／三次的情况
+			greetingObj = JSON.parse(greetingText.replace(/&amp;amp;quot;|&amp;quot;/g, "\""));
 
 			greetingObj.ext && channel.handleMessage({
 				ext: greetingObj.ext,
@@ -50,7 +51,8 @@ function _getGreetings(officialAccount){
 			break;
 		case 2:
 			// 菜单消息
-			greetingObj = JSON.parse(greetingText.replace(/&amp;quot;/g, "\""));
+			// 适配后端有转义两次／三次的情况
+			greetingObj = JSON.parse(greetingText.replace(/&amp;amp;quot;|&amp;quot;/g, "\""));
 			greetingObj.url = profile.config.domain + greetingObj.urlPath;
 
 			channel.handleMessage(greetingObj, "img");
