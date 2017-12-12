@@ -37,8 +37,8 @@ module.exports = function(opt){
 	opt = opt || {};
 	opt.isHide ? dialog.hide() : dialog.show();
 	config = profile.config;
-	// 当租户tenantId=27802时，永远不进入运单填写页面 
-	if(config.tenantId === "27802"){
+	// 当租户tenantId不为27801时，永远不进入运单填写页面 
+	if(config.tenantId !== "27801"){
 		dialog.hide();
 	}
 	_bindEvents();
@@ -47,8 +47,8 @@ module.exports = function(opt){
 	
 };
 function _displayOrHideQuerySkillgroup(officialAccount) {
-	// 当租户tenantId=27802时，永远不进入运单填写页面 
-	if (config.tenantId === "27802"  || officialAccount !== profile.systemOfficialAccount || officialAccount.isSessionOpen) {
+	// 当租户tenantId不为27801时，永远不进入运单填写页面 
+	if (config.tenantId !== "27801"  || officialAccount !== profile.systemOfficialAccount || officialAccount.isSessionOpen) {
 		dialog.hide();
 	}
 	else if(config.billCode || config.siteCode){
