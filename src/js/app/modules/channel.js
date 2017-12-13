@@ -62,14 +62,14 @@ module.exports = {
 
 	// todo: move this to message view
 	handleHistoryMsg: function(element){
-		_handleMessage(_transformMessageFormat(element), null, true);
+		_handleMessage(_transformMessageFormat(element), { isHistory: true });
 	},
 	initSecondChannle: function(){
 		receiveMsgTimer = clearInterval(receiveMsgTimer);
 		receiveMsgTimer = setInterval(function(){
 			apiHelper.receiveMsgChannel().then(function(msgList){
 				_.each(msgList, function(elem){
-					_handleMessage(_transformMessageFormat({ body: elem }), null, false);
+					_handleMessage(_transformMessageFormat({ body: elem }), { isHistory: false });
 				});
 			});
 		}, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
@@ -110,18 +110,16 @@ function _initConnection(onReadyCallback){
 			onReadyCallback(info);
 		},
 		onTextMessage: function(message){
-			_handleMessage(message, "txt");
+			_handleMessage(message, { type: "txt" });
 		},
-		// deprecated!!!
-		onEmojiMessage: function(message){},
 		onPictureMessage: function(message){
-			_handleMessage(message, "img");
+			_handleMessage(message, { type: "img" });
 		},
 		onFileMessage: function(message){
-			_handleMessage(message, "file");
+			_handleMessage(message, { type: "file" });
 		},
 		onCmdMessage: function(message){
-			_handleMessage(message, "cmd");
+			_handleMessage(message, { type: "cmd" });
 		},
 		onOnline: function(){
 			utils.isMobile && _open();
@@ -170,7 +168,6 @@ function _reSend(type, id){
 function _sendText(message, ext){
 	var id = utils.uuid();
 	var msg = new WebIM.message.txt(id);
-	var customMagicEmoji = utils.getDataByPath(ext, "ext.msgtype.customMagicEmoji");
 	msg.set({
 		msg: message,
 		to: config.toUser,
@@ -188,35 +185,24 @@ function _sendText(message, ext){
 	sendMsgDict.set(id, msg);
 	_detectSendTextMsgByApi(id);
 
-	// 空文本消息不上屏
-	if(!message && !customMagicEmoji) return;
-
-	if(customMagicEmoji){
-		_appendMsg({
-			id: id,
-			type: "customMagicEmoji",
-			url: customMagicEmoji.url,
-		}, {
-			isReceived: false,
-			isHistory: false
-		});
-	}
-	else{
-		_appendMsg({
-			id: id,
-			type: "txt",
-			data: message
-		}, {
-			isReceived: false,
-			isHistory: false
-		});
-	}
-
 	_promptNoAgentOnlineIfNeeded({
 		hasTransferedToKefu: !!~__("config.transfer_to_kefu_words").slice("|").indexOf(message)
 	});
 
-	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
+	_handleMessage(
+		_transfromImMessage(msg),
+		{ isReceived: false, isHistory: false, type: "txt" }
+	);
+}
+
+// 这个临时使用，下个版本会去掉
+function _transfromImMessage(msg){
+	return {
+		data: utils.getDataByPath(msg, "body.body.msg") || "",
+		ext: utils.getDataByPath(msg, "body.ext") || "",
+		id: utils.getDataByPath(msg, "body.id") || null,
+		type: utils.getDataByPath(msg, "body.type"),
+	};
 }
 
 function _sendTransferToKf(tid, sessionId){
@@ -240,7 +226,6 @@ function _sendTransferToKf(tid, sessionId){
 	_detectSendTextMsgByApi(id);
 
 	_promptNoAgentOnlineIfNeeded({ hasTransferedToKefu: true });
-	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 }
 
 function _sendImg(fileMsg){
@@ -310,23 +295,28 @@ function _sendFile(fileMsg){
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 }
 
-function _handleMessage(msg, msgType, isHistory){
-	var message;
-	var inviteId;
-	var serviceSessionId;
-	var type = msgType || (msg && msg.type);
+function _handleMessage(msg, options){
+	var opt = options || {};
+	var type = opt.type || (msg && msg.type);
+	var noPrompt = opt.noPrompt;
+	var isHistory = opt.isHistory;
 	var eventName = utils.getDataByPath(msg, "ext.weichat.event.eventName");
 	var eventObj = utils.getDataByPath(msg, "ext.weichat.event.eventObj");
 	var msgId = utils.getDataByPath(msg, "ext.weichat.msgId");
 
-	// from 不存在默认认为是收到的消息
-	var isReceived = !msg.from || (msg.from.toLowerCase() !== config.user.username.toLowerCase());
+	var isReceived = typeof opt.isReceived === "boolean"
+		? opt.isReceived
+		// from 不存在默认认为是收到的消息
+		: (!msg.from || (msg.from.toLowerCase() !== config.user.username.toLowerCase()));
 	var officialAccount = utils.getDataByPath(msg, "ext.weichat.official_account");
 	var marketingTaskId = utils.getDataByPath(msg, "ext.weichat.marketing.marketing_task_id");
 	var officialAccountId = officialAccount && officialAccount.official_account_id;
 	var videoTicket = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.ticket");
 	var customMagicEmoji = utils.getDataByPath(msg, "ext.msgtype.customMagicEmoji");
 	var targetOfficialAccount;
+	var message;
+	var inviteId;
+	var serviceSessionId;
 
 	if(receiveMsgDict.get(msgId)){
 		// 重复消息不处理
@@ -341,7 +331,7 @@ function _handleMessage(msg, msgType, isHistory){
 	}
 
 	// 绑定访客的情况有可能会收到多关联的消息，不是自己的不收
-	if(!isHistory && msg.from && msg.from.toLowerCase() != config.toUser.toLowerCase() && !msg.noprompt){
+	if(!isHistory && msg.from && msg.from.toLowerCase() != config.toUser.toLowerCase() && !noPrompt){
 		return;
 	}
 
@@ -390,7 +380,7 @@ function _handleMessage(msg, msgType, isHistory){
 	case "txt":
 		message = msg;
 		message.type = type;
-		message.data = textParser.parse((msg && msg.data) || "");
+		message.data = (msg && msg.data) || "";
 		message.brief = textParser.getTextMessageBrief(message.data);
 		break;
 	case "img":
@@ -574,13 +564,12 @@ function _handleMessage(msg, msgType, isHistory){
 		isReceived: isReceived,
 		isHistory: isHistory,
 		officialAccount: targetOfficialAccount,
-		timestamp: msg.timestamp
+		timestamp: msg.timestamp,
+		noPrompt: noPrompt,
 	});
 
 	if(!isHistory){
-		if(!msg.noprompt){
-			_messagePrompt(message, targetOfficialAccount);
-		}
+		!noPrompt && _messagePrompt(message, targetOfficialAccount);
 
 		// 兼容旧的消息格式
 		message.value = message.data;
@@ -793,11 +782,12 @@ function _appendMsg(msg, options){
 	var opt = options || {};
 	var isReceived = opt.isReceived;
 	var isHistory = opt.isHistory;
+	var noPrompt = opt.noPrompt;
 	var officialAccount = opt.officialAccount || profile.currentOfficialAccount || profile.systemOfficialAccount;
 
 	officialAccount.messageView.appendMsg(msg, opt);
 
-	if(isReceived && !isHistory && !msg.noprompt){
+	if(isReceived && !isHistory && !noPrompt){
 		eventListener.excuteCallbacks(
 			_const.SYSTEM_EVENT.MESSAGE_APPENDED,
 			[officialAccount, msg]

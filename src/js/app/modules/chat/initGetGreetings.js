@@ -27,8 +27,7 @@ function _getGreetings(officialAccount){
 		// 系统欢迎语
 		systemGreetingText && channel.handleMessage({
 			data: systemGreetingText,
-			noprompt: true
-		}, "txt");
+		}, { type: "txt", noPrompr: true });
 
 		// 机器人欢迎语
 		switch(greetingTextType){
@@ -36,8 +35,7 @@ function _getGreetings(officialAccount){
 			// 文本消息
 			channel.handleMessage({
 				data: greetingText,
-				noprompt: true
-			}, "txt");
+			}, { type: "txt", noPrompr: true });
 			break;
 		case 1:
 			// 菜单消息
@@ -46,8 +44,7 @@ function _getGreetings(officialAccount){
 
 			greetingObj.ext && channel.handleMessage({
 				ext: greetingObj.ext,
-				noprompt: true
-			});
+			}, { type: "txt", noPrompr: true });
 			break;
 		case 2:
 			// 菜单消息
@@ -68,8 +65,6 @@ function _getGreetings(officialAccount){
 		// 技能组列表
 		groupMenus && channel.handleMessage({
 			data: groupMenus,
-			type: "skillgroupMenu",
-			noprompt: true
-		});
+		}, { type: "skillgroupMenu", noPrompr: true });
 	});
 }
