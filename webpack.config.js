@@ -12,7 +12,7 @@ const webpack = require("webpack");
 const i18next = require("i18next");
 const _zh_cn_map_ = require("./src/i18n/zh-CN");
 const _en_us_map_ = require("./src/i18n/en-US");
-const VERSION = "pre_47.15.0";
+const VERSION = "pre_47.22.0";
 
 const argv = require("yargs").argv;
 const lang = argv.lang || "zh-CN";
