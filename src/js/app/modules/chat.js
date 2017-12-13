@@ -549,6 +549,8 @@ function _bindEvents(){
 				if(
 					document.activeElement === doms.textInput
 					&& inputBoxPosition !== "up"
+					// ios 11.1/11.2/11.3 给scrollTop赋值，会使scrollTop值为0
+					&& !/(OS 11_1|OS 11_2|OS 11_3)/i.test(navigator.userAgent)
 				){
 					document.body.scrollTop = 9999;
 					transfer.send({ event: _const.EVENTS.SCROLL_TO_BOTTOM });
