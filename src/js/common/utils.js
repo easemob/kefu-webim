@@ -107,6 +107,7 @@ module.exports = {
 	isIOS: /(iPad|iPhone|iPod)/i.test(navigator.userAgent),
 	isSafari: /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent),
 	isMobile: _isMobile,
+	canUploadFileAsync: canUploadFileAsync(),
 	click: _isMobile && ("ontouchstart" in window) ? "touchstart" : "click",
 	isBrowserMinimized: function(){
 		return document.visibilityState === "hidden" || document.hidden;
@@ -341,6 +342,17 @@ module.exports = {
 		// todo：移到，easemob.js 里边
 		return this.extend({}, obj);
 	},
+	safeJsonParse: function(string){
+		var result;
+		try{
+			result = JSON.parse(string);
+		}
+		catch(error){
+			result = null;
+		}
+
+		return result;
+	},
 };
 
 function getDataByPath(obj, path){
@@ -365,4 +377,25 @@ function getDataByPath(obj, path){
 		// 没有找到path，返回undefined
 		return undefined;
 	}
+}
+
+function _createStandardXHR(){
+	try{
+		return new window.XMLHttpRequest();
+	}
+	catch(e){}
+	return null;
+}
+
+function _createActiveXHR(){
+	try{
+		return new window.ActiveXObject("Microsoft.XMLHTTP");
+	}
+	catch(e){}
+	return null;
+}
+
+function canUploadFileAsync(){
+	return typeof FormData !== "undefined"
+		&& (_createActiveXHR() || _createStandardXHR()).setRequestHeader;
 }

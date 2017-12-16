@@ -57,6 +57,7 @@ module.exports = {
 		WebIM: false,
 		easemobim: false,
 		define: false,
+		deepstream: false,
 	},
 
 	rules: {

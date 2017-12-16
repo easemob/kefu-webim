@@ -1,14 +1,60 @@
 var emajax = require("../common/ajax");
 var Transfer = require("../common/transfer");
-// 此文件用于跨域请求api，故为了兼容老版本，接口不能删
-// 新增接口一律写在后边，按照时间顺序
-// 主要入口的url上附加tenantId，用于限流
-// post 请求时，所有msg.data参数都会被序列化为request body，如果需要去除参数需要使用 delete
+var ajax2 = require("../common/ajax2");
 
-
-// 此处由于要兼容老版本，所以在实例化对象时不能指定 useObject = true，而是依据 options.msg.useObject 来判断
 var getData = new Transfer(null, "api");
 
+getData.listen(function handler(msg){
+	var apiName = msg && msg.api;
+	if(apiName === "easemob-kefu-general-ajax-call"){
+		emitGeneralAjax(msg);
+		return;
+	}
+	// 老版本还是走以前的逻辑，不影响
+	oldHandler(msg);
+}, ["data"]);
+
+function emitGeneralAjax(message){
+	var ajaxOption = message.data;
+	var apiName = message.api;
+	var useObject = message.useObject;
+	var timestamp = message.timespan;
+
+	ajax2(ajaxOption, function(resp, xhr){
+		try{
+			resp = JSON.parse(resp);
+		}
+		catch(e){}
+		getData.send({
+			call: apiName,
+			timespan: timestamp,
+			status: 0,
+			data: resp,
+			statusCode: xhr.status,
+			useObject: useObject
+		});
+	}, function(resp, xhr){
+		try{
+			resp = JSON.parse(resp);
+		}
+		catch(e){}
+		getData.send({
+			call: apiName,
+			timespan: timestamp,
+			status: 1,
+			data: resp,
+			statusCode: xhr.status,
+			useObject: useObject
+		});
+	});
+
+}
+
+// 下面的这些逻辑只有老版本会用到
+// 用于跨域请求rest-api，为了兼容老版本，故不能删
+// 有的url上附加了tenantId，说是用于限流，但实际可能没用
+// 老版本 post 请求时，所有msg.data参数都会被序列化为request body，如果需要去除参数需要使用 delete
+// 此处由于要兼容老版本，所以在实例化对象时不能指定 useObject = true，而是依据 options.msg.useObject 来判断
 function emitAjax(options){
 	var headers = null;
 	var msg = options.msg;
@@ -59,7 +105,7 @@ function emitAjax(options){
 	});
 }
 
-getData.listen(function(msg){
+function oldHandler(msg){
 	var apiName = msg.api;
 	var params = msg.data || {};
 	var tenantId = params.tenantId;
@@ -715,4 +761,4 @@ getData.listen(function(msg){
 		console.error("unexpect api name: " + apiName);
 		break;
 	}
-}, ["data"]);
+}

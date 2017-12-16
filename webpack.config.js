@@ -57,6 +57,9 @@ conmmonConfig = {
 		}),
 	],
 	devtool: "eval",
+	resolve: {
+		root: [path.resolve(".")],
+	},
 	module: {
 		loaders: [
 			{
