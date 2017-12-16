@@ -14,7 +14,8 @@ module.exports = {
 		var type = opt.type || "";
 		var size = opt.size;
 		var id = opt.id || null;
-		var messageBody = _getMessageBody({ url: url, filename: filename, type: type, fileLength: size });
+		var ext = opt.ext || null;
+		var messageBody = _getMessageBody({ url: url, filename: filename, type: type, fileLength: size }, ext);
 		id && setMessageId(messageBody, id);
 		return messageBody;
 	},

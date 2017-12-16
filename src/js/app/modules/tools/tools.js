@@ -1,12 +1,30 @@
-var emajax = require("../../../common/ajax.js");
+var ajax = require("src/js/common/ajax2");
+var utils = require("src/js/common/utils");
+var _const = require("src/js/common/const");
+var profile = require("./profile");
 
 module.exports = window.tools = {
 	retryThrottle: retryThrottle,
-	DOMEval: DOMEval,
 	loadScript: loadScript,
 	resolvePromiseSequentially: resolvePromiseSequentially,
+	cacheUsername: cacheUsername,
 };
-
+function cacheUsername(){
+	// todo: unify 2 cache Key Name
+	var cacheKeyName = profile.config.configId || (profile.config.to + profile.config.tenantId + profile.config.emgroup);
+	if(utils.isTop){
+		utils.set("root" + (profile.config.configId || (profile.config.tenantId + profile.config.emgroup)), profile.options.imUsername);
+	}
+	else{
+		transfer.send({
+			event: _const.EVENTS.CACHEUSER,
+			data: {
+				key: cacheKeyName,
+				value: profile.options.imUsername,
+			}
+		});
+	}
+}
 // todo: implemnet this
 function resolvePromiseSequentially(list){
 
@@ -14,23 +32,15 @@ function resolvePromiseSequentially(list){
 
 function loadScript(path){
 	return new Promise(function(resolve, reject){
-		emajax({
-			url: path,
-			success: resolve,
-			error: reject,
-			disableTimeStampInGet: true,
-		});
+		ajax({ url: path, disableTimeStampInGet: true }, resolve, reject);
 	})
-	.then(DOMEval);
+	.then(function DOMEval(code){
+		var script = document.createElement("script");
+
+		script.text = code;
+		document.head.appendChild(script).parentNode.removeChild(script);
+	});
 }
-
-function DOMEval(code){
-	var script = document.createElement("script");
-
-	script.text = code;
-	document.head.appendChild(script).parentNode.removeChild(script);
-}
-
 // 限制一段时间内的重试次数，以及每次调用的时间间隔
 function retryThrottle(fn, options){
 	var opt = options || {};

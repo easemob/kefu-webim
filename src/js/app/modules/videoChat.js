@@ -13,12 +13,13 @@
 
 var _const = require("../../common/const");
 var uikit = require("./uikit");
-var channel = require("./channel");
 var profile = require("./tools/profile");
 var eventListener = require("./tools/eventListener");
 var utils = require("../../common/utils");
 var tools = require("./tools/tools");
 var Dispatcher = require("./tools/Dispatcher");
+var messageBuilder = require("../sdk/messageBuilder");
+var channelAdapter = require("../sdk/channelAdapter");
 
 var statusBar = require("./uikit/videoStatusBar");
 var videoPanel = require("./uikit/videoPanel");
@@ -58,7 +59,7 @@ function _init(){
 		// 这个目前没有定义，前段可写 web
 		resource: "web",
 		// 这个人的昵称，可以不写。比如 jid 中的name
-		nickName: config.user.username,
+		nickName: profile.options.imUsername,
 
 		// 以下监听，this object == me == service.current
 		listeners: {
@@ -194,7 +195,7 @@ function _reveiveTicket(ticketInfo){
 	// 加入会议
 	service.setup(ticketInfo, {
 		identity: "visitor",
-		nickname: config.visitor.trueName || config.user.username,
+		nickname: config.visitor.trueName || profile.options.imUsername,
 		avatarUrl: "",
 	});
 
@@ -208,23 +209,17 @@ function _reveiveTicket(ticketInfo){
 }
 
 function _onConfirm(){
-	channel.sendText(__("video.invite_agent_video"), {
-		ext: {
-			type: "rtcmedia/video",
-			msgtype: {
-				liveStreamInvitation: {
-					msg: __("video.invite_agent_video"),
-					orgName: config.orgName,
-					appName: config.appName,
-					userName: config.user.username,
-					imServiceNumber: config.toUser,
-					restServer: config.restServer,
-					xmppServer: config.xmppServer,
-					resource: "webim",
-					isNewInvitation: true,
-					userAgent: navigator.userAgent,
-				},
-			},
-		},
+	var inviteMessage = messageBuilder.videoInvitation({
+		msg: __("video.invite_agent_video"),
+		orgName: config.orgName,
+		appName: config.appName,
+		userName: profile.options.imUsername,
+		imServiceNumber: config.toUser,
+		restServer: profile.options.imRestServer,
+		xmppServer: profile.options.imXmppServer,
+		resource: "webim",
+		isNewInvitation: true,
+		userAgent: navigator.userAgent,
 	});
+	channelAdapter.sendText(inviteMessage);
 }

@@ -1,13 +1,15 @@
 var utils = require("../../common/utils");
 var uikit = require("./uikit");
-var channel = require("./channel");
+var channelAdapter = require("../sdk/channelAdapter");
 
-var blob;
-var dataURL;
+var file;
 var imgDom;
 var dialog;
 
-function _init(){
+module.exports = { init: init };
+
+function init(){
+	var textAreaDom = document.querySelector(".em-widget-send-wrapper .em-widget-textarea");
 	imgDom = document.createElement("img");
 	dialog = uikit.createDialog({
 		contentDom: imgDom,
@@ -15,24 +17,17 @@ function _init(){
 	}).addButton({
 		confirmText: __("chat.paste_image_submit"),
 		confirm: function(){
-			channel.sendImg({ data: blob, url: dataURL });
+			channelAdapter.sendMediaFile(file, "img");
 		}
 	});
 
 	// bind events
-	utils.on(
-		document.querySelector(".em-widget-send-wrapper .em-widget-textarea"),
-		"paste",
-		_handler
-	);
+	utils.on(textAreaDom, "paste", function(ev){
+		var contentType = utils.getDataByPath(ev, "clipboardData.items.0.type");
+		if(/^image\/\w+$/.test(contentType)){
+			file = ev.clipboardData.items[0].getAsFile();
+			imgDom.src = window.URL.createObjectURL(file);
+			dialog.show();
+		}
+	});
 }
-
-function _handler(ev){
-	if(/^image\/\w+$/.test(utils.getDataByPath(ev, "clipboardData.items.0.type"))){
-		blob = ev.clipboardData.items[0].getAsFile();
-		dataURL = window.URL.createObjectURL(blob);
-		imgDom.src = dataURL;
-		dialog.show();
-	}
-}
-module.exports = _init;

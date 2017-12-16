@@ -1,4 +1,3 @@
-var WebIM = require("easemob-websdk");
 var utils = require("../../common/utils");
 var _const = require("../../common/const");
 var uikit = require("./uikit");
@@ -9,8 +8,11 @@ var profile = require("./tools/profile");
 var satisfaction = require("./satisfaction");
 var imgView = require("./imgview");
 var leaveMessage = require("./leaveMessage");
-var initPasteImage = require("./paste");
+var pasteImageSupport = require("./paste");
 var videoChat = require("./videoChat");
+var imAdapter = require("../sdk/imAdapter");
+var channelAdapter = require("../sdk/channelAdapter");
+var messageBuilder = require("../sdk/messageBuilder");
 
 var initAgentInputStatePoller = require("./chat/initAgentInputStatePoller");
 var initAgentStatusPoller = require("./chat/initAgentStatusPoller");
@@ -21,6 +23,7 @@ var initGetGreetings = require("./chat/initGetGreetings");
 var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
 var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
+var promptNoAgentIfNeeded = require("./chat/promptNoAgentIfNeeded");
 
 var isMessageChannelReady;
 var config;
@@ -29,37 +32,6 @@ var inputBoxPosition = "down";
 var topBar;
 var editorView;
 var doms;
-
-var _reCreateImUser = _.once(function(){
-	console.warn("user not found in current appKey, attempt to recreate user.");
-	apiHelper.createVisitor().then(function(entity){
-		var cacheKeyName = (config.configId || (config.to + config.tenantId + config.emgroup));
-
-		config.user.username = entity.userId;
-		config.user.password = entity.userPassword;
-
-		if(entity.userPassword === ""){
-			profile.imRestDown = true;
-		}
-
-		_initSession();
-
-		if(utils.isTop){
-
-			utils.set("root" + (config.configId || (config.tenantId + config.emgroup)), config.user.username);
-		}
-		else{
-
-			transfer.send({
-				event: _const.EVENTS.CACHEUSER,
-				data: {
-					key: cacheKeyName,
-					value: config.user.username,
-				}
-			});
-		}
-	});
-});
 
 module.exports = {
 	init: _init,
@@ -114,8 +86,9 @@ function _initUI(){
 }
 
 function _initToolbar(){
+	// todo: adapt this
 	// 低版本浏览器不支持上传文件/图片
-	if(WebIM.utils.isCanUploadFileAsync){
+	if(utils.canUploadFileAsync){
 		utils.removeClass(doms.sendImgBtn, "hide");
 		utils.removeClass(doms.sendFileBtn, "hide");
 	}
@@ -273,39 +246,30 @@ function _initAutoGrow(){
 }
 
 function _initOfficialAccount(){
-	return new Promise(function(resolve, reject){
-		apiHelper.getOfficalAccounts().then(function(officialAccountList){
-			_.each(officialAccountList, channel.attemptToAppendOfficialAccount);
-
-			if(!profile.ctaEnable){
-				profile.currentOfficialAccount = profile.systemOfficialAccount;
-				profile.systemOfficialAccount.messageView.show();
-			}
-
-			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, []);
-
-			resolve();
-		}, function(err){
-			// 未创建会话时初始化默认服务号
-			if(err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
-				// init default system message view
-				channel.attemptToAppendOfficialAccount({
-					type: "SYSTEM",
-					official_account_id: "default",
-					img: null
-				});
-
-				profile.currentOfficialAccount = profile.systemOfficialAccount;
-				profile.systemOfficialAccount.messageView.show();
-
-				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [profile.systemOfficialAccount]);
-
-				resolve();
-			}
-			else{
-				reject(err);
-			}
+	if(!profile.visitorInfo.kefuId){
+		// 此时 kefu visitor 还未创建
+		// 未创建会话时初始化默认服务号
+		channel.attemptToAppendOfficialAccount({
+			type: "SYSTEM",
+			official_account_id: "default",
+			img: null,
 		});
+
+		profile.currentOfficialAccount = profile.systemOfficialAccount;
+		profile.systemOfficialAccount.messageView.show();
+
+		eventListener.trigger(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, profile.systemOfficialAccount);
+		return Promise.resolve();
+	}
+	return apiHelper.getOfficalAccounts().then(function(officialAccountList){
+		_.each(officialAccountList, channel.attemptToAppendOfficialAccount);
+
+		if(!profile.ctaEnable){
+			profile.currentOfficialAccount = profile.systemOfficialAccount;
+			profile.systemOfficialAccount.messageView.show();
+		}
+
+		eventListener.trigger(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT);
 	});
 }
 
@@ -359,12 +323,12 @@ function _bindEvents(){
 	});
 
 	utils.live("button.js_robotTransferBtn", "click", function(){
-		var id = this.getAttribute("data-id");
-		var ssid = this.getAttribute("data-sessionid");
+		var transferId = this.getAttribute("data-id");
+		var sessionId = this.getAttribute("data-sessionid");
 
 		if(!this.clicked){
 			this.clicked = true;
-			channel.sendTransferToKf(id, ssid);
+			channelAdapter.sendText(messageBuilder.toAgentTransfer(sessionId, transferId));
 		}
 	});
 
@@ -388,26 +352,14 @@ function _bindEvents(){
 
 	// 机器人列表
 	utils.live("button.js_robotbtn", "click", function(){
-		channel.sendText(this.innerText, {
-			ext: {
-				msgtype: {
-					choice: {
-						menuid: this.getAttribute("data-id")
-					}
-				}
-			}
-		});
+		var menuSelection = messageBuilder.menuSelection(this.innerText, this.getAttribute("data-id"));
+		channelAdapter.sendText(menuSelection);
 	});
 
 	// 根据菜单项选择指定的技能组
 	utils.live("button.js_skillgroupbtn", "click", function(){
-		channel.sendText(this.innerText, {
-			ext: {
-				weichat: {
-					queueName: this.getAttribute("data-queue-name")
-				}
-			}
-		});
+		var skillGroupSelection = messageBuilder.skillGroupSelection(this.innerText, this.getAttribute("data-queue-name"));
+		channelAdapter.sendText(skillGroupSelection);
 	});
 
 	// 满意度评价
@@ -463,6 +415,7 @@ function _bindEvents(){
 	// 发送文件
 	utils.on(doms.fileInput, "change", function(){
 		var fileInput = doms.fileInput;
+		var file = utils.getDataByPath(fileInput, "files.0");
 		var filesize = utils.getDataByPath(fileInput, "files.0.size");
 
 		if(!fileInput.value){
@@ -473,7 +426,7 @@ function _bindEvents(){
 			fileInput.value = "";
 		}
 		else{
-			channel.sendFile(WebIM.utils.getFileUrl(fileInput));
+			channelAdapter.sendMediaFile(file, "file");
 			fileInput.value = "";
 		}
 	});
@@ -486,7 +439,7 @@ function _bindEvents(){
 	// 发送图片
 	utils.on(doms.imgInput, "change", function(){
 		var fileInput = doms.imgInput;
-		// ie8-9 do not support multifiles, so you can not get files
+		var file = utils.getDataByPath(fileInput, "files.0");
 		var filesize = utils.getDataByPath(fileInput, "files.0.size");
 
 		if(!fileInput.value){
@@ -502,7 +455,7 @@ function _bindEvents(){
 			fileInput.value = "";
 		}
 		else{
-			channel.sendImg(WebIM.utils.getFileUrl(fileInput));
+			channelAdapter.sendMediaFile(file, "img");
 			fileInput.value = "";
 		}
 	});
@@ -562,16 +515,16 @@ function _bindEvents(){
 
 
 	utils.on(doms.sendBtn, "click", function(){
-		var textMsg = doms.textInput.value;
+		var text = doms.textInput.value;
 
 		if(utils.hasClass(this, "disabled")){
 			// 禁止发送
 		}
-		else if(textMsg.length > _const.MAX_TEXT_MESSAGE_LENGTH){
+		else if(text.length > _const.MAX_TEXT_MESSAGE_LENGTH){
 			uikit.tip(__("prompt.too_many_words"));
 		}
 		else{
-			channel.sendText(textMsg);
+			channelAdapter.sendText(messageBuilder.textMessage(text));
 			doms.textInput.value = "";
 			utils.trigger(doms.textInput, "change");
 		}
@@ -629,12 +582,6 @@ function _onReady(){
 	transfer.send({ event: _const.EVENTS.ONREADY });
 }
 
-function _initSDK(){
-	return new Promise(function(resolve){
-		channel.initConnection(resolve);
-	});
-}
-
 function _getDom(){
 	topBar = document.querySelector(".em-widget-header");
 	editorView = document.querySelector(".em-widget-send-wrapper");
@@ -688,7 +635,6 @@ function _init(){
 function _initSession(){
 	Promise.all([
 		apiHelper.getDutyStatus(),
-		apiHelper.getToken(),
 	]).then(function(result){
 		var dutyStatus = result[0];
 
@@ -711,7 +657,7 @@ function _initSession(){
 
 			Promise.all([
 				_initOfficialAccount(),
-				_initSDK()
+				imAdapter.init(),
 			]).then(_onReady);
 
 			// 查询是否开启机器人
@@ -729,17 +675,22 @@ function _initSession(){
 			_initSystemEventListener();
 			satisfaction.init();
 			initAgentInputStatePoller();
+			// for debug only
+			// rest api not ready yet
 			initAgentStatusPoller();
 			initQueuingNumberPoller();
 			initTransferToKefuButton();
 			initAgentNicknameUpdate();
 			initGetGreetings();
+			promptNoAgentIfNeeded.init();
 
 			// 第二通道收消息初始化
-			channel.initSecondChannle();
+			imAdapter.startSecondChannelMessageReceiver();
+			// for debug only
+			// rest api not ready yet
 
 			// todo: move to handle ready
-			initPasteImage();
+			pasteImageSupport.init();
 
 			// 显示广告条
 			_setLogo();
@@ -755,16 +706,6 @@ function _initSession(){
 		else{
 			// 设置下班时间展示的页面
 			_setOffline();
-		}
-	}, function(err){
-		if(
-			err.error_description === "user not found"
-			&& config.isUsernameFromCookie
-		){
-			_reCreateImUser();
-		}
-		else{
-			throw err;
 		}
 	});
 }

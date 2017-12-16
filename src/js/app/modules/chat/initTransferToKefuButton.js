@@ -3,7 +3,8 @@ var utils = require("../../../common/utils");
 var profile = require("../tools/profile");
 var eventListener = require("../tools/eventListener");
 var apiHelper = require("../apiHelper");
-var channel = require("../channel");
+var channelAdapter = require("../../sdk/channelAdapter");
+var messageBuilder = require("../../sdk/messageBuilder");
 
 var toKefuBtn;
 
@@ -15,7 +16,7 @@ module.exports = function(){
 
 	// 人工客服接起会话
 	utils.on(toKefuBtn, "click", function(){
-		channel.sendTransferToKf();
+		channelAdapter.sendText(messageBuilder.toAgentTransfer());
 	});
 
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideTransferToKefuBtn);

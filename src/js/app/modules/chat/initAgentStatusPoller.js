@@ -16,11 +16,13 @@ module.exports = function(){
 		_setAgentStatus(officialAccount);
 	}, 5000);
 
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _setAgentStatus);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _setAgentStatus);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _setAgentStatus);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, _setAgentStatus);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _setAgentStatus);
+	eventListener.add([
+		_const.SYSTEM_EVENT.SESSION_OPENED,
+		_const.SYSTEM_EVENT.SESSION_TRANSFERED,
+		_const.SYSTEM_EVENT.SESSION_CLOSED,
+		_const.SYSTEM_EVENT.SESSION_TRANSFERING,
+		_const.SYSTEM_EVENT.SESSION_RESTORED,
+	], _setAgentStatus);
 	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, function(officialAccount){
 		_update(officialAccount.status);
 	});

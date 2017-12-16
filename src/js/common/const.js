@@ -57,7 +57,9 @@ module.exports = {
 		IM_CONNECTION_OPENED: "im.connection.opened",
 
 		MESSAGE_SENT: "message.sent",
+		MESSAGE_RECEIVED: "message.received",
 		MESSAGE_APPENDED: "message.appended",
+		HISTORY_MESSAGE_GOT: "history.message.got",
 
 		VIDEO_TICKET_RECEIVED: "video.ticket.received",
 		MESSAGE_CHANNEL_READY: "message.channel.ready",
@@ -154,6 +156,7 @@ module.exports = {
 
 	// 第二通道收消息轮询时间间隔
 	SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL: 60000,
+	// SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL: 6000,
 
 	// 消息预知功能截断长度
 	MESSAGE_PREDICT_MAX_LENGTH: 100,

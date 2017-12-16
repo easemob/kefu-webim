@@ -1,6 +1,7 @@
 var Dict = require("./Dict");
 
 var profile = {
+	channelId: null,
 	imToken: null,
 	imRestDown: false,
 	ctaEnable: false,
@@ -18,6 +19,12 @@ var profile = {
 	defaultAvatar: null,
 	currentOfficialAccount: {},
 	systemOfficialAccount: {},
+	deepStreamChannelEnable: false,
+	visitorInfo: {},
+	options: {
+		imRestServer: "",
+		imXmppServer: "",
+	},
 };
 
 module.exports = profile;

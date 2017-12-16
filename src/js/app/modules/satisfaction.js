@@ -2,10 +2,11 @@ var utils = require("../../common/utils");
 var _const = require("../../common/const");
 var uikit = require("./uikit");
 var apiHelper = require("./apiHelper");
-var channel = require("./channel");
 var profile = require("./tools/profile");
 var eventListener = require("./tools/eventListener");
 var loading = require("./uikit/loading");
+var channelAdapter = require("../sdk/channelAdapter");
+var messageBuilder = require("../sdk/messageBuilder");
 
 var dom;
 var starsUl;
@@ -80,25 +81,6 @@ function _clear(){
 	tagContainer.innerHTML = "";
 }
 
-function _sendSatisfaction(score, content, session, invite, appraiseTags, evaluationDegreeId){
-	channel.sendText("", {
-		ext: {
-			weichat: {
-				ctrlType: "enquiry",
-				ctrlArgs: {
-					// 后端类型要求，inviteId必须传数字
-					inviteId: invite || 0,
-					serviceSessionId: session || profile.currentOfficialAccount.sessionId || "",
-					detail: content,
-					summary: score,
-					appraiseTags: appraiseTags,
-					evaluationDegreeId: evaluationDegreeId,
-				}
-			}
-		}
-	});
-}
-
 function _setSatisfaction(){
 	apiHelper.getEvaluationDegrees().then(function(entities){
 		starsUl.innerHTML = _.chain(entities)
@@ -145,6 +127,7 @@ function _confirm(){
 			name: elem.innerText
 		};
 	});
+	var satisfactionEvaluation;
 
 	// 必须选择星级
 	if(!score){
@@ -159,7 +142,16 @@ function _confirm(){
 		return false;
 	}
 
-	_sendSatisfaction(score, content, session, invite, appraiseTags, evaluationDegreeId);
+	satisfactionEvaluation = messageBuilder.satisfactionEvaluation({
+		// 后端类型要求，inviteId必须传数字
+		inviteId: invite || 0,
+		serviceSessionId: session || profile.currentOfficialAccount.sessionId || "",
+		detail: content,
+		summary: score,
+		appraiseTags: appraiseTags,
+		evaluationDegreeId: evaluationDegreeId,
+	});
+	channelAdapter.sendText(satisfactionEvaluation);
 	uikit.showSuccess(__("evaluation.submit_success"));
 	_clear();
 }

@@ -3,7 +3,8 @@ var utils = require("../../../common/utils");
 var _const = require("../../../common/const");
 var apiHelper = require("../apiHelper");
 var profile = require("../tools/profile");
-var channel = require("../channel");
+var channelAdapter = require("../../sdk/channelAdapter");
+var messageBuilder = require("../../sdk/messageBuilder");
 var List = require("../tools/List");
 
 var HEIGHT_OF_TOP_NAVIGATOR = 43;
@@ -53,19 +54,11 @@ function init(option){
 		var event = window.event || ev;
 		var target = event.srcElement || event.target;
 		var type = target.getAttribute("data-type");
-		var imageUrl;
+		var magicEmojiMessage;
 
 		if(type === "custom"){
-			imageUrl = target.getAttribute("data-origin-url");
-			channel.sendText("", {
-				ext: {
-					msgtype: {
-						customMagicEmoji: {
-							url: imageUrl,
-						},
-					},
-				},
-			});
+			magicEmojiMessage = messageBuilder.magicEmoji(target.getAttribute("data-origin-url"));
+			channelAdapter.sendText(magicEmojiMessage);
 		}
 		else{
 			!utils.isMobile && textInput.focus();

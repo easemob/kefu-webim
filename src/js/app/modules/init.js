@@ -11,14 +11,15 @@ var uikit = require("./uikit");
 var apiHelper = require("./apiHelper");
 var eventCollector = require("./eventCollector");
 var chat = require("./chat");
-var channel = require("./channel");
 var profile = require("./tools/profile");
 var doWechatAuth = require("./wechat");
 var extendMessageSender = require("./chat/extendMessageSender");
 var body_template = require("raw-loader!../../../template/body.html");
+var channelAdapter = require("../sdk/channelAdapter");
+var messageBuilder = require("../sdk/messageBuilder");
+var tools = require("src/js/app/modules/tools/tools");
 
 var config;
-var hasChatEntryInitialized;
 
 load_html();
 if(utils.isTop){
@@ -60,8 +61,8 @@ function h5_mode_init(){
 
 	// H5 方式集成时不支持eventCollector配置
 	config.to = utils.convertFalse(utils.query("to"));
-	config.xmppServer = utils.convertFalse(utils.query("xmppServer"));
-	config.restServer = utils.convertFalse(utils.query("restServer"));
+	profile.options.imXmppServer = utils.convertFalse(utils.query("xmppServer"));
+	profile.options.imRestServer = utils.convertFalse(utils.query("restServer"));
 	config.agentName = utils.convertFalse(utils.query("agentName"));
 	config.resources = utils.convertFalse(utils.query("resources"));
 	config.hideStatus = utils.convertFalse(utils.query("hideStatus"));
@@ -81,11 +82,11 @@ function h5_mode_init(){
 	var usernameFromCookie = utils.get("root" + (config.configId || (config.tenantId + config.emgroup)));
 
 	if(usernameFromUrl){
-		config.user.username = usernameFromUrl;
+		profile.options.imUsername = usernameFromUrl;
 	}
 	else if(usernameFromCookie){
-		config.user.username = usernameFromCookie;
-		config.isUsernameFromCookie = true;
+		profile.options.imUsername = usernameFromCookie;
+		profile.options.isUsernameFromCookie = true;
 	}
 	else{}
 
@@ -103,7 +104,6 @@ function chat_window_mode_init(){
 		var event = msg.event;
 		var data = msg.data;
 		var extendMessage;
-		var textMessage;
 
 		switch(event){
 		case _const.EVENTS.SHOW:
@@ -134,7 +134,7 @@ function chat_window_mode_init(){
 			extendMessageSender.push(extendMessage.ext);
 			break;
 		case _const.EVENTS.TEXTMSG:
-			channel.sendText(data.data, data.ext);
+			channelAdapter.sendText(messageBuilder.textMessage(data.data));;
 			break;
 		case _const.EVENTS.UPDATE_URL:
 			profile.currentBrowsingURL = data;
@@ -142,6 +142,12 @@ function chat_window_mode_init(){
 		case _const.EVENTS.INIT_CONFIG:
 			window.transfer.to = data.parentId;
 			config = data;
+			profile.options.isUsernameFromCookie = config.isUsernameFromCookie;
+			profile.options.imUsername = config.user.username;
+			profile.options.imPassword = config.user.password;
+			profile.options.imXmppServer = config.xmppServer;
+			profile.options.imRestServer = config.restServer;
+			profile.visitorInfo = config.visitor || {};
 			profile.config = config;
 			initCrossOriginIframe();
 			break;
@@ -161,7 +167,9 @@ function initChat(){
 	apiHelper.getGrayList().then(function(grayList){
 		// 灰度列表
 		profile.grayList = grayList;
+		profile.deepStreamChannelEnable = grayList.deepStreamChannel && Modernizr.websockets;
 
+		// todo: 避免 initChatEntry 被重复调用
 		// 访客回呼功能
 		if(!utils.isMobile && config.eventCollector && !eventCollector.isStarted()){
 			eventCollector.startToReport(function(targetUserInfo){
@@ -185,9 +193,8 @@ function initChat(){
 
 // todo: rename this function
 function handleMsgData(){
-	var defaultStaticPath = __("config.language") === "zh-CN" ? "static" : "../static";
 	// default value
-	config.staticPath = config.staticPath || defaultStaticPath;
+	config.staticPath = config.staticPath || __("config.static_path");
 	config.offDutyWord = config.offDutyWord || __("prompt.default_off_duty_word");
 	config.emgroup = config.emgroup || "";
 	config.timeScheduleId = config.timeScheduleId || 0;
@@ -307,12 +314,10 @@ function initCrossOriginIframe(){
 
 
 function initChatEntry(targetUserInfo){
-	if(hasChatEntryInitialized) return;
-	hasChatEntryInitialized = true;
-	// 获取关联信息
-	apiHelper.getRelevanceList().then(function(relevanceList){
-		var targetItem;
-		var appKey = config.appKey;
+	return apiHelper.getRelevanceList().then(function(relevanceList){
+		// 获取关联信息
+		var targetChannel;
+		var appKey = config.appKey || "";
 		var splited = appKey.split("#");
 		var orgName = splited[0];
 		var appName = splited[1];
@@ -323,113 +328,33 @@ function initChatEntry(targetUserInfo){
 
 		if(appKey && toUser){
 			// appKey，imServiceNumber 都指定了
-			targetItem = _.where(relevanceList, {
+			targetChannel = _.findWhere(relevanceList, {
 				orgName: orgName,
 				appName: appName,
 				imServiceNumber: toUser
-			})[0];
+			});
 		}
 
-		// 未指定appKey, toUser时，或未找到符合条件的关联时，默认使用关联列表中的第一项
-		if(!targetItem){
-			targetItem = targetItem || relevanceList[0];
+		// 未指定 appKey，imServiceNumber 时，或未找到符合条件的关联时，默认使用关联列表中的第一项
+		if(!targetChannel){
+			targetChannel = relevanceList[0];
 			console.log("mismatched channel, use default.");
 		}
 
+		// todo: adapt this
+		profile.tenantAvatar = utils.getAvatarsFullPath(targetChannel.tenantAvatar, config.domain);
 		// 获取企业头像和名称
 		// todo: rename to tenantName
-		profile.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, config.domain);
-		profile.defaultAgentName = targetItem.tenantName;
-		config.logo = config.logo || { enabled: !!targetItem.tenantLogo, url: targetItem.tenantLogo };
-		config.toUser = targetItem.imServiceNumber;
-		config.orgName = targetItem.orgName;
-		config.appName = targetItem.appName;
-		config.channelId = targetItem.channelId;
+		profile.defaultAgentName = targetChannel.tenantName;
+		config.logo = config.logo || { enabled: !!targetChannel.tenantLogo, url: targetChannel.tenantLogo };
 
-		config.appKey = config.orgName + "#" + config.appName;
-		config.restServer = config.restServer || targetItem.restDomain;
-		config.xmppServer = config.xmppServer || targetItem.xmppServer;
-
-		if(targetUserInfo){
-
-			// 访客回呼模式使用后端返回的关联信息
-			config.toUser = targetUserInfo.agentImName;
-			config.appName = targetUserInfo.appName;
-			config.orgName = targetUserInfo.orgName;
-			config.appKey = targetUserInfo.orgName + "#" + targetUserInfo.appName;
-
-			// 游客
-			if(targetUserInfo.userName){
-				config.user = {
-					username: targetUserInfo.userName,
-					password: targetUserInfo.userPassword
-				};
-
-				chat.init();
-				chat.show();
-				transfer.send({ event: _const.EVENTS.SHOW });
-				transfer.send({
-					event: _const.EVENTS.CACHEUSER,
-					data: {
-						username: targetUserInfo.userName,
-						// todo: check if need emgroup
-						group: config.user.emgroup
-					}
-				});
-			}
-			// 访客
-			else{
-				apiHelper.getPassword().then(function(password){
-					config.user.password = password;
-
-					chat.init();
-					chat.show();
-					transfer.send({ event: _const.EVENTS.SHOW });
-				}, function(err){
-					console.error("username is not exist.");
-					throw err;
-				});
-			}
-			// 发送指定坐席的ext消息，延迟发送
-			extendMessageSender.push({ weichat: { agentUsername: targetUserInfo.agentUserName } });
-		}
-		else if(config.user.username && (config.user.password || config.user.token)){
-			if(config.user.token){
-				// todo: move imToken to an independent key
-				profile.imToken = config.user.token;
-			}
-			else{
-				profile.imPassword = config.user.password;
-			}
-			chat.init();
-		}
-		// 检测微信网页授权
-		else if(config.wechatAuth){
-			doWechatAuth(function(entity){
-				config.user.username = entity.userId;
-				config.user.password = entity.userPassword;
-				chat.init();
-			}, function(){
-				_downgrade();
-			});
-		}
-		else if(config.user.username){
-			apiHelper.getPassword().then(function(password){
-				config.user.password = password;
-				chat.init();
-			}, function(){
-				if(profile.grayList.autoCreateAppointedVisitor){
-					_createAppointedVisitor();
-				}
-				else{
-					_downgrade();
-				}
-
-			});
-		}
-		else{
-			_downgrade();
-		}
+		profile.channelId = targetChannel.channelId;
+		profile.options.imRestServer = profile.options.imRestServer || targetChannel.restDomain;
+		profile.options.imXmppServer = profile.options.imXmppServer || targetChannel.xmppServer;
+		// todo: move this to profile.options
+		config.toUser = targetChannel.imServiceNumber;
+		config.orgName = targetChannel.orgName;
+		config.appName = targetChannel.appName;
 	}, function(err){
 		if(err.statusCode === 503){
 			uikit.createDialog({
@@ -448,35 +373,138 @@ function initChatEntry(targetUserInfo){
 			uikit.prompt(err);
 			throw err;
 		}
-	});
-}
-function _createAppointedVisitor(){
-	_createVisitor(config.user.username);
-}
-function _createVisitor(username){
-	apiHelper.createVisitor(username).then(function(entity){
-		var cacheKeyName = (config.configId || (config.to + config.tenantId + config.emgroup));
-		config.user.username = entity.userId;
-		config.user.password = entity.userPassword;
+	})
+	.then(function(){
+		// todo: 访客回呼稍后再做适配
+		if(targetUserInfo){
 
-		if(entity.userPassword === ""){
-			profile.imRestDown = true;
+			// 访客回呼模式使用后端返回的关联信息
+			config.toUser = targetUserInfo.agentImName;
+			config.appName = targetUserInfo.appName;
+			config.orgName = targetUserInfo.orgName;
+
+			// 游客
+			if(targetUserInfo.userName){
+				profile.options.imUsername = targetUserInfo.userName;
+				config.user = {
+					password: targetUserInfo.userPassword
+				};
+
+				chat.show();
+				transfer.send({ event: _const.EVENTS.SHOW });
+				transfer.send({
+					event: _const.EVENTS.CACHEUSER,
+					data: {
+						username: targetUserInfo.userName,
+						// todo: check if need emgroup
+						group: config.user.emgroup
+					}
+				});
+			}
+			// 访客
+			else{
+				apiHelper.getPassword().then(function(password){
+					profile.options.imPassword = password;
+
+					chat.show();
+					transfer.send({ event: _const.EVENTS.SHOW });
+				});
+			}
+			// 发送指定坐席的ext消息，延迟发送
+			extendMessageSender.push({ weichat: { agentUsername: targetUserInfo.agentUserName } });
+			return Promise.resolve();
 		}
-		if(utils.isTop){
-			utils.set("root" + (config.configId || (config.tenantId + config.emgroup)), config.user.username);
-		}
-		else{
-			transfer.send({
-				event: _const.EVENTS.CACHEUSER,
-				data: {
-					key: cacheKeyName,
-					value: config.user.username,
-				}
+		// 检测微信网页授权
+		else if(config.wechatAuth){
+			// todo: weichat 改为 promise
+			return new Promise(function(resolve, reject){
+				doWechatAuth(function(entity){
+					profile.options.imUsername = entity.userId;
+					profile.options.imPassword = entity.userPassword;
+					resolve();
+				}, reject);
+			})
+			// 失败随机创建访客
+			.then(null, function(){
+				return _createImVisitor();
 			});
 		}
+		else if(profile.options.imUsername && profile.options.imPassword){
+			return Promise.resolve();
+		}
+		else if(profile.options.imUsername && config.user.token){
+			profile.imToken = config.user.token;
+			return Promise.resolve();
+		}
+		else if(profile.options.imUsername){
+			return apiHelper.getPassword().then(function(password){
+				profile.options.imPassword = password;
+			}, function(){
+				var specifiedUserName;
+				if(profile.grayList.autoCreateAppointedVisitor && !profile.options.isUsernameFromCookie){
+					// 仅当灰度开关开启，并且是用户指定的 imUsername 时才创建指定用户
+					specifiedUserName = profile.options.imUsername;
+				}
+				return _createImVisitor(specifiedUserName);
+			});
+		}
+		return _createImVisitor();
+	})
+	.then(function(){
+		// 如果不是 im channel 则跳过获取 token
+		if(profile.deepStreamChannelEnable) return Promise.resolve();
+		return apiHelper.getToken()
+		.then(null, function(err){
+			if(profile.isUsernameFromCookie) return _createImVisitor().then(function(){
+				return apiHelper.getToken();
+			});
+			throw err;
+		});
+	})
+	// 获取 visitorId
+	.then(function(){
+		return apiHelper.getKefuVisitorId(profile.options.imUsername)
+		.then(null, function(){
+			// 获取 visitorId 失败：
+			// im-channel 的做法是不理会
+			// ds-channel 的做法是重新创建kefu访客
+			if(!profile.deepStreamChannelEnable) return Promise.resolve();
+			return _createKefuVisitor();
+		});
+	})
+	.then(function(){
 		chat.init();
 	});
 }
-function _downgrade(){
-	_createVisitor();
+function _createImVisitor(specifiedUserName){
+	return apiHelper.createImVisitor(specifiedUserName).then(function(resp){
+		profile.options.imUsername = resp.userId;
+		profile.options.imPassword = resp.userPassword;
+		tools.cacheUsername();
+	});
+}
+function _createKefuVisitor(){
+	return apiHelper.createKefuVisitor({
+		// username: specific uername
+		channelId: profile.channelId,
+		nickname: profile.visitorInfo.userNickname,
+		trueName: profile.visitorInfo.trueName,
+		qq: profile.visitorInfo.qq,
+		email: profile.visitorInfo.email,
+		phone: profile.visitorInfo.phone,
+		companyName: profile.visitorInfo.companyName,
+		description: profile.visitorInfo.description,
+	})
+	.then(function(entity){
+		profile.visitorInfo = {
+			kefuId: entity.userId,
+			// todo: discard profile.options.imUsername
+			imUsername: profile.options.imUsername = utils.getDataByPath(entity, "channel_users.0.im_id"),
+			nickname: entity.nickname,
+			trueName: entity.trueName,
+			qq: entity.qq,
+			phone: entity.phone,
+		};
+		tools.cacheUsername();
+	});
 }
