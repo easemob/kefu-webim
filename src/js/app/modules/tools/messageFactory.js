@@ -14,12 +14,7 @@ function genMsgContent(msg){
 
 	switch(type){
 	case "txt":
-		// todo: 统一消息处理，无论是不是自己发出的消息都走 handleMessage
-		// todo: discard this if!
-		if(typeof value === "string"){
-			// 访客自己发出去的消息
-			value = textParser.parse(value);
-		}
+		value = textParser.parse(value);
 		// 历史消息以及收到的实时消息
 		html = "<pre>" + _.map(value, function(fragment){ return fragment.value; }).join("") + "</pre>";
 		break;

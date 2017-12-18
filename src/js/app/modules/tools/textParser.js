@@ -21,7 +21,8 @@ function _unescape(str){
 	.replace(/&gt;/g, ">");
 }
 
-function getTextMessageBrief(textMap){
+function getTextMessageBrief(text){
+	var textMap = parse(text);
 	return _.map(textMap, function(fragment){
 		var value = fragment.value;
 		var type = fragment.type;
