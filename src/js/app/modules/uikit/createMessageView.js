@@ -105,33 +105,6 @@ module.exports = function(opt){
 				_scrollToBottom();
 			}
 		}
-		// 缓存上屏的消息
-		var msgData = {
-			isReceived: isReceived,
-			msg: msg,
-			date: date,
-			brief: msg.brief,
-		};
-
-		// 访客发出的消息需要增加 brief
-		if(!isHistory && !isReceived){
-			msgData.brief = _getBrief(msg);
-		}
-	}
-
-	function _getBrief(msg){
-		var type = msg.type;
-
-		switch(type){
-		case "txt":
-			return msg.data || "";
-		case "file":
-			return __("message_brief.file");
-		case "img":
-			return __("message_brief.picture");
-		default:
-			return __("message_brief.unknown");
-		}
 	}
 
 	function _appendDate(timestamp, isHistory){
