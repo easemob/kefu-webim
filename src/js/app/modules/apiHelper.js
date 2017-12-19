@@ -4,21 +4,19 @@ var emajax = require("../../common/ajax");
 var Transfer = require("../../common/transfer");
 var profile = require("./tools/profile");
 
-// 以下调用会缓存参数
-// getVisitorId
-// getProjectId
-// getToken
-
 var config;
 var cache = {
+	projectId: null,
+	evaluationDegrees: null,
+	isRobotOpen: null,
 	appraiseTags: {}
 };
 var cachedApiCallbackTable = {};
 var apiTransfer;
-
+var defaultHeaders = { "Content-Type": "application/json" };
+var tenantId;
 function initApiTransfer(){
 	apiTransfer = new Transfer("cross-origin-iframe", "data", true);
-
 	apiTransfer.listen(function(msg){
 		var apiName = msg.call;
 		var timestamp = msg.timespan;
@@ -26,15 +24,11 @@ function initApiTransfer(){
 		var callbacks;
 		var successCallback;
 		var errorCallback;
-
 		if(cachedApiCallbackTable[apiName] && cachedApiCallbackTable[apiName][timestamp]){
-
 			callbacks = cachedApiCallbackTable[apiName][timestamp];
 			delete cachedApiCallbackTable[apiName][timestamp];
-
 			successCallback = callbacks.success;
 			errorCallback = callbacks.error;
-
 			if(isSuccess){
 				typeof successCallback === "function" && successCallback(msg);
 			}
@@ -44,1022 +38,657 @@ function initApiTransfer(){
 		}
 	}, ["api"]);
 }
-
-function api(apiName, data, success, error){
+function api(apiName, ajaxOption, success, error){
 	var uuid = utils.uuid();
+	var timeout = ajaxOption.timeout;
 
+	if(timeout){
+		// 超时自动 reject
+		setTimeout(function(){
+			var errorCallback = utils.getDataByPath(cachedApiCallbackTable, apiName + "." + uuid + ".error");
+			if(typeof errorCallback === "function"){
+				errorCallback(new Error("timeout"));
+				delete cachedApiCallbackTable[apiName][uuid];
+			}
+		}, timeout);
+	}
 	// cache
 	cachedApiCallbackTable[apiName] = cachedApiCallbackTable[apiName] || {};
-
 	cachedApiCallbackTable[apiName][uuid] = {
 		success: success,
 		error: error
 	};
-
 	apiTransfer.send({
 		api: apiName,
-		data: data,
+		data: ajaxOption,
 		timespan: uuid,
 		// 标记postMessage使用object，47.9 增加
 		useObject: true
 	});
 }
-
-function getCurrentServiceSession(){
+function api2(ajaxOption){
 	return new Promise(function(resolve, reject){
-		api("getCurrentServiceSession", {
-			tenantId: config.tenantId,
-			orgName: config.orgName,
-			appName: config.appName,
-			imServiceNumber: config.toUser,
-			id: config.user.username
-		}, function(msg){
-			resolve(msg.data);
-		}, function(err){
-			reject(err);
-		});
+		api.call(null, "easemob-kefu-general-ajax-call", ajaxOption, resolve, reject);
 	});
 }
+function getCurrentServiceSession(visitorId){
+	return api2({
+		url: "/v1/webim/kefuim/tenants/" + tenantId
+		+ "/visitors/" + visitorId + "/current-service-session"
+	})
+	.then(function(msg){
+		return msg.data;
+	});
+	// todo: confirm this !! when nodata
+}
+function getOptions(){
+	var optionNames = [
+		"WelcomeMsgTenantContent",
+		"WelcomeMsgTenantEnable",
+		"agentNicenameEnable",
+	].join(",");
+	var defaultValue = { displayAgentNickname: true, enterpriseWelcomeMessage: "" };
+	return api2({
+		url: "/v1/webimplugin/tenants/" + tenantId + "/options",
+		params: optionNames,
+	}).then(function(msg){
+		var status = msg.data.status;
+		var entities = msg.data.entities;
+		var tmpResult;
+		if(status !== "OK") throw new Error("error to get options.");
+		tmpResult = _.chain(entities)
+		.map(function(item){
+			return [item.optionName, item.optionValue];
+		})
+		.object()
+		.value();
 
-function getToken(){
-	return new Promise(function(resolve, reject){
-		var token = profile.imToken;
-
-		// 超时降级
-		setTimeout(function(){
-			if(profile.imToken === null){
-				profile.imToken = "";
-				resolve("");
-			}
-		}, 5000);
-		if(token !== null || profile.imRestDown){
-			resolve(token);
-			return;
-		}
-		emajax({
-			url: location.protocol + "//" + config.restServer + "/" + config.orgName +
-				"/" + config.appName + "/token",
-			useXDomainRequestInIE: true,
-			dataType: "json",
-			data: {
-				grant_type: "password",
-				username: config.user.username,
-				password: config.user.password
-			},
-			type: "POST",
-			success: function(resp){
-				var token = resp.access_token;
-
-				// cache token
-				profile.imToken = token;
-				resolve(token);
-			},
-			error: function(err){
-				if(err.error_description === "user not found"){
-					reject(err);
-				}
-				else{
-					// 未知错误降级走第二通道
-					profile.imToken = "";
-					resolve("");
-				}
-			}
-		});
+		return _.defaults({
+			displayAgentNickname: tmpResult.agentNicenameEnable === "true",
+			enterpriseWelcomeMessage: tmpResult.WelcomeMsgTenantEnable === "true"
+				&& tmpResult.WelcomeMsgTenantContent
+		}, defaultValue);
+	}, function(err){
+		console.error("error to get options, downgrade to defaults.", err);
+		return Promise.resolve(defaultValue);
 	});
 }
 function getNotice(){
-	return new Promise(function(resolve, reject){
-		if(config.isWebChannelConfig){
-			resolve(config.notice);
-		}
-		else{
-			api("getSlogan", {
-				tenantId: config.tenantId
-			}, function(msg){
-				var content = utils.getDataByPath(msg, "data.0.optionValue");
-				var notice = {
-					enabled: !!content,
-					content: content
-				};
-				resolve(notice);
-			}, function(err){
-				reject(err);
-			});
-		}
+	if(profile.isConfigFromBackend) return Promise.resolve(profile.options.noticeWord);
+	return api2({
+		url: "/v1/webimplugin/notice/options",
+		params: { tenantId: tenantId },
+	})
+	.then(function(msg){
+		return msg.data[0].optionValue;
 	});
 }
 function getTheme(){
-	return new Promise(function(resolve, reject){
-		if(config.isWebChannelConfig){
-			resolve(config.themeName);
-		}
-		else{
-			api("getTheme", {
-				tenantId: config.tenantId
-			}, function(msg){
-				var themeName = utils.getDataByPath(msg, "data.0.optionValue");
-				resolve(themeName);
-			}, function(err){
-				reject(err);
-			});
-		}
+	if(profile.isConfigFromBackend) return Promise.resolve(profile.options.themeName);
+	return api2({
+		url: "/v1/webimplugin/theme/options",
+		params: { tenantId: tenantId },
+	})
+	.then(function(msg){
+		return msg.data[0].optionValue;
 	});
 }
 function getConfig(configId){
-	return new Promise(function(resolve, reject){
-		api("getConfig", {
-			configId: configId
-		}, function(msg){
-			var entity = utils.getDataByPath(msg, "data.entity");
-			resolve(entity);
-		}, function(err){
-			reject(err);
-		});
-
-
+	// todo: add error handler
+	return api2({ url: "/v1/webimplugin/settings/visitors/configs/" + configId })
+	.then(function(msg){
+		var entity = msg.data.entity;
+		if(entity) return entity;
+		throw new Error("failed to get config");
 	});
 }
 function getProjectId(){
-	return new Promise(function(resolve, reject){
-		if(cache.projectId){
-			resolve(cache.projectId);
-		}
-		else{
-			getToken().then(function(token){
-				api("getProject", {
-					tenantId: config.tenantId,
-					"easemob-target-username": config.toUser,
-					"easemob-appkey": config.appKey.replace("#", "%23"),
-					"easemob-username": config.user.username,
-					headers: { Authorization: "Easemob IM " + token }
-				}, function(msg){
-					var projectId = utils.getDataByPath(msg, "data.entities.0.id");
-					if(projectId){
-						// cache projectId
-						cache.projectId = projectId;
-						resolve(projectId);
-					}
-					else{
-						reject(new Error("no project id exist."));
-					}
-				}, function(err){
-					reject(err);
-				});
-			});
-		}
+	if(cache.projectId) return Promise.resolve(cache.projectId);
+	return api2({
+		url: "/v1/webim/kefuim/tenants/" + tenantId + "/projects",
+	})
+	.then(function(msg){
+		var projectId = msg.data.entities[0].id;
+		if(!projectId) throw new Error("failed to get project id.");
+		// cache projectId
+		cache.projectId = projectId;
+		return projectId;
 	});
 }
-
 function getNoteCategories(){
-	return new Promise(function(resolve, reject){
-		Promise.all([
-			getToken(),
-			getProjectId()
-		]).then(function(result){
-			var token = result[0];
-			var projectId = result[1];
-
-			api("getNoteCategories", {
-				tenantId: config.tenantId,
-				"easemob-target-username": config.toUser,
-				"easemob-appkey": config.appKey.replace("#", "%23"),
-				"easemob-username": config.user.username,
-				headers: { Authorization: "Easemob IM " + token },
-				projectId: projectId,
-			}, function(msg){
-				var list = utils.getDataByPath(msg, "data.entities");
-				resolve(list);
-
-			}, function(err){
-				reject(err);
-			});
+	return getProjectId().then(function(projectId){
+		return api2({
+			url: "/v1/webim/kefuim/tenants/" + tenantId + "/projects/" + projectId + "/categories",
+		})
+		.then(function(msg){
+			var entities = msg.data.entities;
+			if(!entities) throw new Error("failed to get note categories.");
+			return entities;
 		});
 	});
 }
-
-function createTicket(opt){
-	return new Promise(function(resolve, reject){
-		api("createTicket", {
-			tenantId: config.tenantId,
-			"easemob-target-username": config.toUser,
-			"easemob-appkey": config.appKey.replace("#", "%23"),
-			"easemob-username": config.user.username,
-			origin_type: "webim",
-			headers: { Authorization: "Easemob IM " + opt.token },
-			projectId: opt.projectId,
-			subject: "",
-			content: opt.content,
-			status_id: "",
-			priority_id: "",
-			category_id: opt.category_id,
-			session_id: opt.session_id,
-			creator: {
-				name: opt.name,
-				avatar: "",
-				email: opt.mail,
-				phone: opt.phone,
-				qq: "",
-				company: "",
-				description: ""
+function createTicket(options){
+	return getProjectId().then(function(projectId){
+		return api2({
+			url: "/v1/webim/kefuim/tenants/" + tenantId + "/projects/" + projectId + "/tickets",
+			params: {
+				channelType: "webim",
+				techChannelId: profile.channelId,
 			},
-			attachments: null
-		}, function(msg){
-			if(utils.getDataByPath(msg, "data.id")){
-				resolve();
-			}
-			else{
-				reject(new Error("unknown error."));
-			}
-		}, function(err){
-			reject(err);
+			method: "POST",
+			headers: defaultHeaders,
+			body: {
+				tenantId: tenantId,
+				origin_type: "webim",
+				projectId: projectId,
+				subject: "",
+				content: options.content,
+				status_id: "",
+				priority_id: "",
+				category_id: options.category_id || "",
+				session_id: options.session_id || "",
+				creator: {
+					name: options.name,
+					username: profile.options.imUsername,
+					type: "VISITOR",
+					avatar: "",
+					email: options.mail || "",
+					phone: options.phone || "",
+					qq: "",
+					company: "",
+					description: "",
+				},
+				attachments: null,
+			},
+		})
+		.then(function(msg){
+			var id = msg.data.id;
+			if(!id) throw new Error("failed to createTicket.");
+			return id;
 		});
 	});
 }
-
-function getVisitorId(){
-	return new Promise(function(resolve, reject){
-		if(cache.visitorId){
-			resolve(cache.visitorId);
-		}
-		else{
-			getToken().then(function(token){
-				api("getVisitorInfo", {
-					tenantId: config.tenantId,
-					orgName: config.orgName,
-					appName: config.appName,
-					userName: config.user.username,
-					imServiceNumber: config.toUser,
-					token: token
-				}, function(msg){
-					var visitorId = utils.getDataByPath(msg, "data.entity.userId");
-					if(visitorId){
-						// cache visitor id
-						cache.visitorId = visitorId;
-						resolve(visitorId);
-					}
-					else{
-						reject(_const.ERROR_MSG.VISITOR_DOES_NOT_EXIST);
-					}
-				}, function(err){
-					reject(err);
-				});
-			});
-		}
-	});
-}
-
 function getOfficalAccounts(){
-	return new Promise(function(resolve, reject){
-		Promise.all([
-			getVisitorId(),
-			getToken()
-		]).then(function(result){
-			var visitorId = result[0];
-			var token = result[1];
-
-			api("getOfficalAccounts", {
-				tenantId: config.tenantId,
-				orgName: config.orgName,
-				appName: config.appName,
-				userName: config.user.username,
-				visitorId: visitorId,
-				token: token
-			}, function(msg){
-				var list = utils.getDataByPath(msg, "data.entities");
-				if(_.isArray(list)){
-					resolve(list);
-				}
-				else{
-					resolve([]);
-					console.error("unexpect data format: ", list);
-				}
-			}, function(err){
-				reject(err);
-			});
-		})
-		// 未创建会话时 visitor不存在，此时 getVisitorId 会reject 特定error，需要捕获此错误
-		["catch"](function(err){
-			reject(err);
-		});
+	var visitorId = profile.visitorInfo.kefuId;
+	// 没有 kefuVisitorId 自动reject，仅 im-channel 有这种情况，ds-channel 初始化后必有visitorId
+	if(!visitorId) return Promise.reject();
+	return api2({
+		url: "/v1/webim/kefuim/tenants/" + tenantId + "/visitors/" + visitorId + "/official-accounts",
+		params: { page: 0, size: 99 },
+	})
+	.then(function(msg){
+		var entities = msg.data.entities;
+		if(_.isArray(entities) && !_.isEmpty(entities)) return entities;
+		throw new Error("failed to get official account list, auto downgrade.");
 	});
 }
-
 function getOfficalAccountMessage(officialAccountId, startId){
-	return new Promise(function(resolve, reject){
-		Promise.all([
-			getVisitorId(),
-			getToken()
-		]).then(function(result){
-			var visitorId = result[0];
-			var token = result[1];
+	var visitorId = profile.visitorInfo.kefuId;
+	var params;
+	// 没有 kefuVisitorId 自动reject，仅 im-channel 有这种情况，ds-channel 初始化后必有visitorId
+	if(!visitorId) return Promise.reject();
 
-			api("getOfficalAccountMessage", {
-				tenantId: config.tenantId,
-				orgName: config.orgName,
-				appName: config.appName,
-				userName: config.user.username,
-				token: token,
-				visitorId: visitorId,
-				officialAccountId: officialAccountId,
-				direction: "before",
-				size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME,
-				startId: startId
-			}, function(msg){
-				var list = utils.getDataByPath(msg, "data.entities");
-				if(_.isArray(list)){
-					resolve(list);
-				}
-				else{
-					reject(new Error("unexpect data format."));
-				}
-			}, function(err){
-				reject(err);
-			});
-		})
-		["catch"](function(err){
-			reject(err);
-		});
+	params = {
+		direction: "before",
+		size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME,
+		startId: startId,
+	};
+	// 当 startId 为空时 不传递此参数
+	if(!startId) delete params.startId;
+	return api2({
+		url: "/v1/webim/kefuim/tenants/" + tenantId + "/visitors/" + visitorId
+			+ "/official-accounts/" + officialAccountId + "/messages",
+		params: params,
+	})
+	.then(function(msg){
+		var entities = msg.data.entities;
+		if(_.isArray(entities)) return entities;
+		throw new Error("unexpect data format.");
 	});
 }
-
-// 获取上下班状态，false 代表上班，true 代表下班
 function getDutyStatus(){
-	return new Promise(function(resolve/* , reject */){
-		api("getDutyStatus_2", {
-			channelType: "easemob",
-			originType: "webim",
-			channelId: config.channelId,
-			tenantId: config.tenantId,
-			queueName: config.emgroup,
-			agentUsername: config.agentName,
-			timeScheduleId: config.timeScheduleId,
-		}, function(msg){
-			resolve(!utils.getDataByPath(msg, "data.entity"));
-		}, function(err){
-			console.error("unable to get duty state: ", err);
-			// 获取状态失败则置为上班状态
-			resolve(true);
-		});
+	var defaultValue = true;
+	return api2({
+		url: "/v1/webim/kefuim/tenants/" + tenantId + "/show-message",
+		params: {
+			channelType: "kefuim",
+			originType: "kefuim",
+			channelId: profile.channelId,
+		},
+	})
+	.then(function(msg){
+		var entity = msg.data.entity;
+		var status = msg.data.status;
+		if(status === "OK" && typeof entity === "boolean") return !entity;
+		throw new Error("unexpected resp from show-message");
+	})
+	// 此接口失败也要 resolve 并能返回默认值
+	// 这种写法可以捕捉 上一个 fulfilled callback 中的异常
+	.then(null, function(err){
+		console.error(err);
+		return Promise.resolve(defaultValue);
 	});
 }
-
 function getGrayList(){
-	return new Promise(function(resolve/* , reject */){
-		api("grayScale", {
-			tenantId: config.tenantId,
-		}, function(msg){
-			var grayScaleDescription = utils.getDataByPath(msg, "data.entities") || [];
-			var grayScaleList = _.chain(grayScaleDescription)
-			.map(function(item){
-				var keyName = item.grayName;
-				var status = item.status;
-				var enable = status !== "Disable";
-
-				return [keyName, enable];
-			})
-			.object()
-			.value();
-
-			resolve(grayScaleList);
-		}, function(err){
-			console.error("unable to get gray list: ", err);
-			// 获取失败返回空对象
-			resolve({});
-		});
+	return api2({
+		url: "/v1/grayscale/tenants/" + tenantId
+	})
+	.then(function(msg){
+		return _.chain(msg.data.entities)
+		.map(function(item){
+			var keyName = item.grayName;
+			var status = item.status;
+			var enable = status !== "Disable";
+			return [keyName, enable];
+		})
+		.object()
+		.value();
+	})
+	.then(null, function(err){
+		console.error("error occurred when attempt to get gray list: ", err);
+		return Promise.resolve({});
 	});
 }
-
 function getRobertGreeting(){
-	return new Promise(function(resolve, reject){
-		api("getRobertGreeting_2", {
+	return api2({
+		url: "/v1/webimplugin/tenants/robots/welcome",
+		params: {
 			channelType: "easemob",
 			originType: "webim",
-			channelId: config.channelId,
+			channelId: profile.channelId,
 			tenantId: config.tenantId,
 			agentUsername: config.agentName,
-			queueName: config.emgroup
-		}, function(msg){
-			resolve(msg.data.entity || {});
-		}, function(err){
-			reject(err);
-		});
+			queueName: config.emgroup,
+		},
+	})
+	.then(function(msg){
+		return msg.data.entity || {};
+	})
+	.then(null, function(err){
+		console.error(err);
+		return Promise.resolve({});
 	});
 }
-
 function getRobertIsOpen(){
-	return new Promise(function(resolve, reject){
-		if(typeof cache.isRobotOpen === "boolean"){
-			resolve(cache.isRobotOpen);
-		}
-		else{
-			api("getRobertIsOpen", {
+	if(typeof cache.isRobotOpen === "boolean"){
+		return Promise.resolve(cache.isRobotOpen);
+	}
+	return api2({
+		url: "/v1/webimplugin/tenants/robot-ready",
+		params: {
+			channelType: "easemob",
+			originType: "webim",
+			channelId: profile.channelId,
+			tenantId: config.tenantId,
+			agentUsername: config.agentName,
+			queueName: config.emgroup,
+		},
+	})
+	.then(function(msg){
+		var entity = msg.data.entity;
+		if(typeof entity !== "boolean") throw new Error("unexpected response");
+		cache.isRobotOpen = entity;
+		return entity;
+	})
+	.then(null, function(err){
+		console.error(err);
+		return Promise.resolve(false);
+	});
+}
+function getSystemGreeting(){
+	return api2({
+		url: "/v1/webimplugin/welcome",
+		params: { tenantId: tenantId },
+	})
+	.then(function(msg){
+		return msg.data || "";
+	})
+	.then(null, function(err){
+		console.error("unexpected response getSystemGreeting", err);
+		return Promise.resolve("");
+	});
+}
+function getOnlineAgentCount(){
+	var visitorId;
+	if(profile.deepStreamChannelEnable){
+		visitorId = profile.visitorInfo.kefuId;
+		return api2({
+			url: "/v1/webim/kefuim/tenants/" + tenantId + "/visitors/" + visitorId + "/schedule-data-ex",
+			params: {
 				channelType: "easemob",
 				originType: "webim",
-				channelId: config.channelId,
-				tenantId: config.tenantId,
+				channelId: profile.channelId,
+				queueName: config.emgroup,
 				agentUsername: config.agentName,
-				queueName: config.emgroup
-			}, function(msg){
-				var entity = msg.data.entity;
-
-				cache.isRobotOpen = entity;
-				resolve(entity);
-			}, function(err){
-				reject(err);
-			});
-		}
-	});
-}
-
-function getSystemGreeting(){
-	return new Promise(function(resolve, reject){
-		api("getSystemGreeting", {
-			tenantId: config.tenantId
-		}, function(msg){
-			resolve(msg.data);
-		}, function(err){
-			reject(err);
+			},
+		})
+		.then(function(msg){
+			var entity = msg.data.entity;
+			if(entity) return entity;
+			throw new Error("unexpected data format.");
 		});
-	});
-}
-
-function getExSession(){
-	return new Promise(function(resolve, reject){
-		api("getExSession_2", {
-			username: config.user.username,
-			orgName: config.orgName,
-			appName: config.appName,
-			imServiceNumber: config.toUser,
+	}
+	return api2({
+		url: "/v1/webimplugin/visitors/" + profile.options.imUsername + "/schedule-data-ex2",
+		params: {
+			techChannelInfo: config.orgName + "#" + config.appName + "#" + config.toUser,
 			channelType: "easemob",
 			originType: "webim",
-			channelId: config.channelId,
+			channelId: profile.channelId,
 			queueName: config.emgroup,
 			agentUsername: config.agentName,
-			tenantId: config.tenantId
-		}, function(msg){
-			var entity = utils.getDataByPath(msg, "data.entity");
-			if(entity){
-				resolve(entity);
-			}
-			else{
-				reject(new Error("unexpected data format."));
-			}
-		}, function(err){
-			reject(err);
-		});
+			tenantId: tenantId,
+		},
+	})
+	.then(function(msg){
+		var entity = msg.data.entity;
+		if(entity) return entity;
+		throw new Error("unexpected data format.");
 	});
 }
-
 function getAgentStatus(agentUserId){
-	return new Promise(function(resolve, reject){
-		// todo: discard this
-		// 没有token 不发送请求 也不报错
-		if(!profile.imToken){
-			resolve();
-			return;
-		}
-
-		api("getAgentStatus", {
-			tenantId: config.tenantId,
-			orgName: config.orgName,
-			appName: config.appName,
-			agentUserId: agentUserId,
-			userName: config.user.username,
-			token: profile.imToken,
-			imServiceNumber: config.toUser
-		}, function(msg){
-			resolve(utils.getDataByPath(msg, "data.state"));
-		}, function(err){
-			reject(err);
-		});
+	return api2({
+		url: "/v1/webim/kefuim/tenants/" + tenantId + "/agents/" + agentUserId + "/agentstate",
+	})
+	.then(function(msg){
+		var state = msg.data.entity.state;
+		if(state) return state;
+		throw new Error("unexpected resp from getAgentStatus");
 	});
 }
-
-function getLastSession(officialAccountId){
-	return new Promise(function(resolve, reject){
-		Promise.all([
-			getVisitorId(),
-			getToken()
-		]).then(function(result){
-			var visitorId = result[0];
-			var token = result[1];
-
-			api("getLastSession", {
-				tenantId: config.tenantId,
-				orgName: config.orgName,
-				appName: config.appName,
-				imServiceNumber: config.toUser,
-				officialAccountId: officialAccountId,
-				userName: config.user.username,
-				visitorId: visitorId,
-				token: token
-			}, function(msg){
-				var entity = utils.getDataByPath(msg, "data.entity");
-				if(entity){
-					resolve(entity);
-				}
-				else{
-					reject(_const.ERROR_MSG.SESSION_DOES_NOT_EXIST);
-				}
-			}, function(err){
-				reject(err);
-			});
+function getLatestSession(officialAccountId){
+	return getKefuVisitorId().then(function(visitorId){
+		return api2({
+			url: "/v1/webim/kefuim/tenants/" + tenantId + "/visitors/" + visitorId
+				+ "/official-accounts/" + officialAccountId + "/latest-session",
 		})
-		// 未创建会话时 visitor不存在，此时 getVisitorId 会reject 特定error，需要捕获此错误
-		["catch"](function(err){
-			reject(err);
+		.then(function(msg){
+			var entity = msg.data.entity;
+			if(entity) return entity;
+			throw new Error(_const.ERROR_MSG.SESSION_DOES_NOT_EXIST);
 		});
 	});
 }
-
 function getSkillgroupMenu(){
-	return new Promise(function(resolve, reject){
-		api("getSkillgroupMenu", {
-			tenantId: config.tenantId
-		}, function(msg){
-			resolve(utils.getDataByPath(msg, "data.entities.0"));
-		}, function(err){
-			reject(err);
-		});
+	return api2({
+		url: "/v1/webimplugin/tenants/" + tenantId + "/skillgroup-menu",
+	})
+	.then(function(msg){
+		return msg.data.entities[0];
+	})
+	.then(null, function(err){
+		console.error("error occurred in getSkillgroupMenu", err);
+		return Promise.resolve();
 	});
 }
-
 function reportVisitorAttributes(sessionId){
-	return new Promise(function(resolve, reject){
-		getToken().then(function(token){
-			api("reportVisitorAttributes", {
-				tenantId: config.tenantId,
-				orgName: config.orgName,
-				appName: config.appName,
-				imServiceNumber: config.toUser,
-				sessionId: sessionId,
-				userName: config.user.username,
-				referer: document.referrer,
-				token: token
-			}, function(){
-				resolve();
-			}, function(err){
-				reject(err);
-			});
-		});
+	return api2({
+		url: "/v1/webim/kefuim/tenants/" + tenantId + "/sessions/" + sessionId + "/attributes",
+		method: "POST",
+		headers: defaultHeaders,
+		body: { referer: document.referrer },
+	})
+	.then(function(msg){
+		var status = msg.data.status;
+		if(status === "OK") return;
+		throw new Error("error when report visitor attributes.");
 	});
 }
-
 function reportPredictMessage(sessionId, content){
-	return new Promise(function(resolve, reject){
-		Promise.all([
-			getVisitorId(),
-			getToken()
-		]).then(function(result){
-			var visitorId = result[0];
-			var token = result[1];
-
-			api("messagePredict_2", {
-				sessionId: sessionId,
+	// todo: confirm this 该接口没有用到appkey,直接用原来接口就行。
+	return getKefuVisitorId().then(function(visitorId){
+		return api2({
+			url: "/v1/webimplugin/servicesessions/" + sessionId + "/messagePredict",
+			params: { userName: profile.options.imUsername },
+			method: "POST",
+			headers: defaultHeaders,
+			body: {
 				visitor_user_id: visitorId,
 				content: content,
 				timestamp: _.now(),
-				orgName: config.orgName,
-				appName: config.appName,
-				userName: config.user.username,
-				imServiceNumber: config.toUser,
-				token: token
-			}, function(){
-				resolve();
-			}, function(err){
-				reject(err);
-			});
+			},
 		});
 	});
 }
-
 function getAgentInputState(sessionId){
-	return new Promise(function(resolve, reject){
-		getToken().then(function(token){
-			api("getAgentInputState", {
-				username: config.user.username,
-				orgName: config.orgName,
-				appName: config.appName,
-				tenantId: config.tenantId,
-				serviceSessionId: sessionId,
-				token: token,
-			}, function(msg){
-				resolve(msg.data.entity);
-			}, function(err){
-				reject(err);
-			});
+	// todo: add sessionId issue
+	return getKefuVisitorId().then(function(visitorId){
+		return api2({
+			url: "/v1/webim/kefuim/tenants/" + tenantId
+				+ "/visitors/" + visitorId + "/agent-input-state",
+		})
+		.then(function(msg){
+			return msg.data.entity;
 		});
 	});
 }
-
 function getWaitListNumber(sessionId, queueId){
-	return new Promise(function(resolve, reject){
-		api("getWaitListNumber", {
+	return api2({
+		url: "/v1/visitors/waitings/data",
+		params: {
 			tenantId: config.tenantId,
 			queueId: queueId,
 			serviceSessionId: sessionId
-		}, function(msg){
-			resolve(msg.data.entity);
-		}, function(err){
-			reject(err);
-		});
+		},
+	})
+	.then(function(msg){
+		return msg.data.entity;
 	});
 }
-
 function getNickNameOption(){
-	return new Promise(function(resolve, reject){
-		api("getNickNameOption", {
-			tenantId: config.tenantId
-		}, function(msg){
-			var optionValue = utils.getDataByPath(msg, "data.0.optionValue");
-			resolve(optionValue === "true");
-		}, function(err){
-			reject(err);
-		});
+	return api2({
+		url: "/v1/webimplugin/agentnicename/options",
+		params: { tenantId: tenantId },
+	})
+	.then(function(msg){
+		var optionValue = msg.data[0].optionValue;
+		return optionValue === "true";
+	})
+	.then(null, function(msg){
+		console.error("error to get nickname option, downgrade default");
+		return Promise.resolve(true);
 	});
 }
-
 function closeServiceSession(sessionId){
-	return new Promise(function(resolve, reject){
-		getToken().then(function(token){
-			api("closeServiceSession", {
-				tenantId: config.tenantId,
-				orgName: config.orgName,
-				appName: config.appName,
-				userName: config.user.username,
-				token: token,
-				serviceSessionId: sessionId
-			}, function(){
-				resolve();
-			}, function(err){
-				reject(err);
-			});
+	return getKefuVisitorId().then(function(visitorId){
+		return api2({
+			url: "/v1/webim/kefuim/tenants/" + tenantId + "/visitors/" + visitorId
+				+ "/servicesessions/" + sessionId + "/stop",
+			method: "POST",
+			headers: defaultHeaders,
+		})
+		.then(function(msg){
+			if(msg.data.status === "OK") return;
+			throw new Error("error when report visitor attributes.");
 		});
 	});
 }
-
-function createVisitor(specifiedUserName){
-	return new Promise(function(resolve, reject){
-		api("createVisitor", {
-			orgName: config.orgName,
-			appName: config.appName,
-			imServiceNumber: config.toUser,
-			tenantId: config.tenantId,
-			specifiedUserName: specifiedUserName || ""
-		}, function(msg){
-			var entity = msg.data;
-
-			if(entity){
-				resolve(msg.data);
-			}
-			else{
-				reject(new Error("error when attempt to create webim visitor"));
-			}
-		}, function(err){
-			reject(err);
-		});
+function createKefuVisitor(visitorInfo){
+	return api2({
+		url: "/v1/webim/kefuim/tenants/" + tenantId + "/visitors",
+		method: "POST",
+		headers: defaultHeaders,
+		body: visitorInfo,
+	})
+	.then(function(msg){
+		return msg.data.entity;
 	});
 }
+function getKefuVisitorId(username){
+	var visitorId = profile.visitorInfo.kefuId;
 
-function getPassword(){
-	return new Promise(function(resolve, reject){
-		api("getPassword2", {
-			userId: config.user.username,
-			orgName: config.orgName,
-			appName: config.appName,
-			imServiceNumber: config.toUser,
-		}, function(msg){
-			var status = utils.getDataByPath(msg, "data.status");
-			var password = utils.getDataByPath(msg, "data.entity.userPassword");
+	// 在 ds-channel 里边已经可以确保初始化后必须有 kefu visitor id
+	// 在 im-channel 里边还未做相应改造，所以还要有这个逻辑
+	if(visitorId) return Promise.resolve();
 
-			if(status === "OK"){
-				resolve(password);
-			}
-			else{
-				reject(new Error("unable to get password."));
-			}
-		}, function(err){
-			var status = utils.getDataByPath(err, "data.status");
-			var errorDescription = utils.getDataByPath(err, "data.errorDescription");
-
-			if(status === "FAIL"){
-				if(errorDescription === "IM user create fail."){
-					profile.imRestDown = true;
-					resolve("");
-					return;
-				}
-				else if(errorDescription === "IM user not found."){
-					reject(new Error("im user not found"));
-					return;
-				}
-			}
-			reject(new Error("unknown error when get password"));
-		});
+	return api2({
+		url: "/v1/webim/kefuim/tenants/" + tenantId + "/visitors",
+		params: {
+			userName: username,
+			techChannelInstanceId: profile.channelId,
+		},
+	})
+	.then(function(msg){
+		var visitorId = msg.data.entity.userId;
+		// 缓存 visitor id
+		profile.visitorInfo.kefuId = visitorId;
+		if(visitorId) return visitorId;
+		throw new Error("visitor not found.");
 	});
 }
-
 function getRelevanceList(){
-	return new Promise(function(resolve, reject){
-		api("getRelevanceList", {
-			tenantId: config.tenantId
-		}, function(msg){
-			var relevanceList = msg.data;
-
-			if(_.isArray(relevanceList) && !_.isEmpty(relevanceList)){
-				resolve(relevanceList);
-			}
-			else{
-				reject(new Error(__("prompt.no_valid_channel")));
-			}
-		}, function(err){
-			reject(err);
-		});
+	return api2({
+		url: "/v1/webimplugin/targetChannels",
+		params: { tenantId: tenantId },
+	})
+	.then(function(msg){
+		var relevanceList = msg.data;
+		if(_.isArray(relevanceList)){
+			if(!_.isEmpty(relevanceList)) return relevanceList;
+			throw new Error(_const.ERROR_MSG.NO_VALID_CHANNEL);
+		}
+		throw new Error("unexpected response data", msg);
 	});
 }
-
 function deleteEvent(gid){
-	return new Promise(function(resolve, reject){
-		api("deleteEvent", {
-			userId: gid
-		}, function(){
-			resolve();
-		}, function(err){
-			reject(err);
-		});
+	return api2({
+		url: "/v1/event_collector/event/" + encodeURIComponent(gid),
+		method: "DELETE",
 	});
 }
-
 function reportEvent(url, userType, userId){
-	return new Promise(function(resolve, reject){
-		api("reportEvent", {
+	return api2({
+		url: "/v1/event_collector/events",
+		method: "POST",
+		headers: defaultHeaders,
+		body: {
 			type: "VISIT_URL",
 			tenantId: config.tenantId,
 			url: url,
 			designatedAgent: config.agentName || "",
 			userId: {
 				type: userType,
-				id: userId
-			}
-		}, function(msg){
+				id: userId,
+			},
+		},
+	})
+	.then(function(msg){
+		var resp = msg.data;
+		if(resp) return resp;
+		throw new Error("unexpected resopnse data.");
+	});
+}
+function kefuUploadFile(file){
+	// 由于 visitor id 机制差异，导致还需要适配老的 media-files 接口
+	var visitorId;
+
+	if(profile.deepStreamChannelEnable){
+		visitorId = profile.visitorInfo.kefuId;
+		return api2({
+			url: "/v1/media-service/tenants/" + tenantId + "/visitors/" + visitorId + "/media-files",
+			method: "POST",
+			body: file,
+		})
+		.then(function(msg){
 			var resp = msg.data;
-
-			if(resp){
-				resolve(resp);
-			}
-			else{
-				reject(new Error("unexpected resopnse data."));
-			}
-		}, function(err){
-			reject(err);
+			if(resp) return resp;
+			throw new Error("unexpected resp from kefuUploadFile");
 		});
+	}
+	return api2({
+		url: "/v1/Tenant/" + tenantId + "/" + config.orgName + "/" + config.appName
+			+ "/" + profile.options.imUsername + "/MediaFiles",
+		method: "POST",
+		headers: {
+			Authorization: "Bearer " + profile.imToken,
+		},
+		body: file,
+	})
+	.then(function(msg){
+		var resp = msg.data;
+		if(resp) return resp;
+		throw new Error("unexpected resp from kefuUploadFile");
 	});
 }
-
-function receiveMsgChannel(){
-	return new Promise(function(resolve, reject){
-		api("receiveMsgChannel", {
-			orgName: config.orgName,
-			appName: config.appName,
-			easemobId: config.toUser,
-			tenantId: config.tenantId,
-			visitorEasemobId: config.user.username
-		}, function(msg){
-			var status = utils.getDataByPath(msg, "data.status");
-			var entities = utils.getDataByPath(msg, "data.entities");
-
-			if(status === "OK"){
-				resolve(entities);
-			}
-			else{
-				reject(new Error("unexpected response data."));
-			}
-		}, function(err){
-			reject(err);
-		});
-	});
-}
-
-function sendMsgChannel(body, ext){
-	return new Promise(function(resolve, reject){
-		api("sendMsgChannel", {
-			from: config.user.username,
-			to: config.toUser,
-			tenantId: config.tenantId,
-			bodies: [body],
-			ext: ext,
-			orgName: config.orgName,
-			appName: config.appName,
-			originType: "webim"
-		}, function(msg){
-			resolve(msg.data);
-		}, function(err){
-			reject(err);
-		});
-	});
-}
-
-function uploadImgMsgChannel(file){
-	return new Promise(function(resolve, reject){
-		getToken().then(function(token){
-			api("uploadImgMsgChannel", {
-				userName: config.user.username,
-				tenantId: config.tenantId,
-				file: file,
-				auth: "Bearer " + token,
-				orgName: config.orgName,
-				appName: config.appName,
-			}, function(msg){
-				resolve(msg.data);
-			}, function(err){
-				reject(err);
-			});
-		});
-	});
-}
-
 function reportMarketingTaskDelivered(marketingTaskId){
-	return new Promise(function(resolve, reject){
-		Promise.all([
-			getVisitorId(),
-			getToken()
-		]).then(function(result){
-			var visitorId = result[0];
-			var token = result[1];
-
-			api("reportMarketingTaskDelivered", {
-				marketingTaskId: marketingTaskId,
-				tenantId: config.tenantId,
-				orgName: config.orgName,
-				appName: config.appName,
-				userName: config.user.username,
-				token: token,
-				visitor_id: visitorId,
-			}, function(msg){
-				var status = utils.getDataByPath(msg, "data.status");
-
-				if(status === "OK"){
-					resolve();
-				}
-				else{
-					reject(new Error("unexpected reaponse status."));
-				}
-				resolve(msg.data);
-			}, function(err){
-				reject(err);
-			});
+	return getKefuVisitorId().then(function(visitorId){
+		return api2({
+			url: "/v1/webim/kefuim/tenants/" + tenantId
+				+ "/marketing-tasks/" + marketingTaskId + "/delivered",
+			method: "PUT",
+			body: { visitor_id: visitorId },
+		})
+		.then(function(msg){
+			var status = msg.data.status;
+			if(status !== "OK") throw new Error("unexpected resp data.");
 		});
 	});
 }
-
 function reportMarketingTaskOpened(marketingTaskId){
-	return new Promise(function(resolve, reject){
-		Promise.all([
-			getVisitorId(),
-			getToken()
-		]).then(function(result){
-			var visitorId = result[0];
-			var token = result[1];
-
-			api("reportMarketingTaskOpened", {
-				marketingTaskId: marketingTaskId,
-				tenantId: config.tenantId,
-				orgName: config.orgName,
-				appName: config.appName,
-				userName: config.user.username,
-				token: token,
-				visitor_id: visitorId,
-			}, function(msg){
-				var status = utils.getDataByPath(msg, "data.status");
-
-				if(status === "OK"){
-					resolve();
-				}
-				else{
-					reject(new Error("unexpected reaponse status."));
-				}
-				resolve(msg.data);
-			}, function(err){
-				reject(err);
-			});
+	return getKefuVisitorId().then(function(visitorId){
+		return api2({
+			url: "/v1/webim/kefuim/tenants/" + tenantId
+				+ "/marketing-tasks/" + marketingTaskId + "/opened",
+			method: "PUT",
+			body: { visitor_id: visitorId },
+		})
+		.then(function(msg){
+			var status = msg.data.status;
+			if(status !== "OK") throw new Error("unexpected resp data.");
 		});
 	});
 }
-
 function reportMarketingTaskReplied(marketingTaskId){
-	return new Promise(function(resolve, reject){
-		Promise.all([
-			getVisitorId(),
-			getToken()
-		]).then(function(result){
-			var visitorId = result[0];
-			var token = result[1];
-
-			api("reportMarketingTaskReplied", {
-				marketingTaskId: marketingTaskId,
-				tenantId: config.tenantId,
-				orgName: config.orgName,
-				appName: config.appName,
-				userName: config.user.username,
-				token: token,
-				visitor_id: visitorId,
-			}, function(msg){
-				var status = utils.getDataByPath(msg, "data.status");
-
-				if(status === "OK"){
-					resolve();
-				}
-				else{
-					reject(new Error("unexpected reaponse status."));
-				}
-				resolve(msg.data);
-			}, function(err){
-				reject(err);
-			});
+	return getKefuVisitorId().then(function(visitorId){
+		return api2({
+			url: "/v1/webim/kefuim/tenants/" + tenantId
+				+ "/marketing-tasks/" + marketingTaskId + "/replied",
+			method: "PUT",
+			body: { visitor_id: visitorId },
+		})
+		.then(function(msg){
+			var status = msg.data.status;
+			if(status !== "OK") throw new Error("unexpected resp data.");
 		});
 	});
 }
-
 function getLatestMarketingTask(officialAccountId){
-	return new Promise(function(resolve, reject){
-		getToken().then(function(token){
-			api("getLatestMarketingTask", {
-				tenantId: config.tenantId,
-				orgName: config.orgName,
-				appName: config.appName,
-				officialAccountId: officialAccountId,
-				userName: config.user.username,
-				token: token
-			}, function(msg){
-				var entity = utils.getDataByPath(msg, "data.entity");
-				resolve(entity);
-			}, function(err){
-				reject(err);
-			});
-		});
+	return api2({
+		url: "/v1/webim/kefuim/tenants/" + tenantId + "/"
+			+ "official-accounts/" + officialAccountId + "/marketing-tasks",
+	})
+	.then(function(msg){
+		return msg.data.entity;
 	});
 }
-
 function getEvaluationDegrees(){
-	return new Promise(function(resolve, reject){
-		if(cache.evaluationDegrees){
-			resolve(cache.evaluationDegrees);
+	if(cache.evaluationDegrees) return Promise.resolve(cache.evaluationDegrees);
+	return api2({ url: "/v1/webim/kefuim/tenants/" + tenantId + "/evaluationdegrees" })
+	.then(function(msg){
+		var entities = msg.data.entities;
+		if(_.isArray(entities)){
+			cache.evaluationDegrees = entities;
+			return entities;
 		}
-		else{
-			getToken().then(function(token){
-				api("getEvaluationDegrees", {
-					tenantId: config.tenantId,
-					orgName: config.orgName,
-					appName: config.appName,
-					userName: config.user.username,
-					token: token
-				}, function(msg){
-					var entities = utils.getDataByPath(msg, "data.entities");
-					if(_.isArray(entities)){
-						cache.evaluationDegrees = entities;
-						resolve(entities);
-					}
-					else{
-						reject(new Error("unexpected reaponse value."));
-					}
-				}, function(err){
-					reject(err);
-				});
-			});
-		}
+		throw new Error("unexpected reaponse value.");
 	});
 }
-
 function getAppraiseTags(evaluateId){
-	return new Promise(function(resolve, reject){
-		if(cache.appraiseTags[evaluateId]){
-			resolve(cache.appraiseTags[evaluateId]);
+	var targetTag = cache.appraiseTags[evaluateId];
+	if(targetTag) return Promise.resolve(targetTag);
+	return api2({
+		url: "/v1/webim/kefuim/tenants/" + tenantId
+		+ "/evaluationdegrees/" + evaluateId + "/appraisetags",
+	})
+	.then(function(msg){
+		var entities = msg.data.entities;
+		if(entities){
+			cache.appraiseTags[evaluateId] = entities;
+			return entities;
 		}
-		else{
-			getToken().then(function(token){
-				api("getAppraiseTags", {
-					tenantId: config.tenantId,
-					orgName: config.orgName,
-					appName: config.appName,
-					userName: config.user.username,
-					token: token,
-					evaluateId: evaluateId
-				}, function(msg){
-					var entities = utils.getDataByPath(msg, "data.entities");
-					if(entities){
-						cache.appraiseTags[evaluateId] = entities;
-						resolve(entities);
-					}
-					else{
-						reject(new Error("unexpected reaponse value."));
-					}
-				}, function(err){
-					reject(err);
-				});
-			});
-		}
+		throw new Error("unexpected reaponse value.");
 	});
 }
-
 function getWechatComponentId(){
 	return new Promise(function(resolve, reject){
 		emajax({
@@ -1079,7 +708,6 @@ function getWechatComponentId(){
 		});
 	});
 }
-
 function getWechatProfile(tenantId, appId, code){
 	return new Promise(function(resolve, reject){
 		emajax({
@@ -1087,12 +715,10 @@ function getWechatProfile(tenantId, appId, code){
 			type: "GET",
 			success: function(resp){
 				var parsed;
-
 				try{
 					parsed = JSON.parse(resp);
 				}
 				catch(e){}
-
 				if(parsed){
 					resolve(parsed);
 				}
@@ -1106,7 +732,6 @@ function getWechatProfile(tenantId, appId, code){
 		});
 	});
 }
-
 function createWechatImUser(openId){
 	return new Promise(function(resolve, reject){
 		emajax({
@@ -1127,12 +752,10 @@ function createWechatImUser(openId){
 			type: "POST",
 			success: function(resp){
 				var parsed;
-
 				try{
 					parsed = JSON.parse(resp);
 				}
 				catch(e){}
-
 				if((parsed && parsed.status) === "OK"){
 					resolve(parsed.entity);
 				}
@@ -1146,65 +769,210 @@ function createWechatImUser(openId){
 		});
 	});
 }
-
 function getCustomEmojiPackages(){
-	return new Promise(function(resolve, reject){
-		api("getCustomEmojiPackages", { tenantId: config.tenantId }, function(msg){
-			var entities = utils.getDataByPath(msg, "data.entities");
-
-			if(_.isArray(entities)){
-				resolve(entities);
-			}
-			else{
-				reject(new Error("unexpected emoji package list."));
-			}
-		}, function(err){
-			reject(err);
-		});
+	return api2({ url: "/v1/webimplugin/emoj/tenants/" + tenantId + "/packages" })
+	.then(function(msg){
+		var entities = msg.data.entities;
+		if(_.isArray(entities)) return entities;
+		throw new Error("unexpected emoji package list.");
 	});
 }
-
 function getCustomEmojiFiles(){
-	return new Promise(function(resolve, reject){
-		api("getCustomEmojiFiles", { tenantId: config.tenantId }, function(msg){
-			var entities = utils.getDataByPath(msg, "data.entities");
-
-			if(_.isArray(entities)){
-				resolve(entities);
-			}
-			else{
-				reject(new Error("unexpected emoji package list."));
-			}
-		}, function(err){
-			reject(err);
-		});
+	return api2({ url: "/v1/webimplugin/emoj/tenants/" + tenantId + "/files" })
+	.then(function(msg){
+		var entities = msg.data.entities;
+		if(_.isArray(entities)) return entities;
+		throw new Error("unexpected emoji package list.");
 	});
 }
-
 function getSatisfactionTipWord(){
-	return new Promise(function(resolve, reject){
-		api("getSatisfactionTipWord", {
-			tenantId: config.tenantId
-		}, function(msg){
-			var tipWord = utils.getDataByPath(msg, "data.entities.0.optionValue") || __("evaluation.rate_my_service");
-			resolve(tipWord);
-		}, function(){
-			// 异常时，满意度提示语为默认提示语，无reject
-			var tipWord = __("evaluation.rate_my_service");
-			resolve(tipWord);
-		});
+	var defaultWord = __("evaluation.rate_my_service");
+	// todo: merge options
+	return api2({
+		url: "/v1/webimplugin/tenants/" + tenantId + "/options/GreetingMsgEnquiryInvite",
+	})
+	.then(function(msg){
+		return msg.data.entities[0].optionValue || defaultWord;
+	})
+	.then(null, function(err){
+		// 有异常时，返回默认提示语
+		console.log("unexpected response data", err);
+		return Promise.resolve(defaultWord);
 	});
 }
+function getDeepStreamServer(){
+	var defaultDeepStreamServer = "sandbox-fym.kefu.easemob.com/ws";
+	return api2({ url: "/v1/webim/kefuim/tenants/" + tenantId + "/deepstream/websocket" })
+	.then(function(msg){
+		var entity = msg.data.entity;
+		var status = msg.data.status;
+		var protocol;
+		if(status === "OK"){
+			protocol = location.protocol === "https:" ? "wss://" : "ws://";
+			return protocol + entity + "/ws";
+		}
+		throw new Error("unexpected response value.");
+	})
+	.then(null, function(err){
+		// 有异常时，返回默认地址
+		console.error("unexpected response data: getDeepStreamServer", err);
+		return Promise.resolve(defaultDeepStreamServer);
+	});
+}
+function postMessage(messageBody){
+	if(profile.deepStreamChannelEnable){
+		return api2({
+			url: "/v1/kefuim-gateway-partner/messages",
+			method: "POST",
+			headers: defaultHeaders,
+			body: messageBody,
+		})
+		.then(function(msg){
+			if(msg.data.status === "OK") return;
+			throw new Error("failed to send message with second channel.");
+		});
+	}
+	return api2({
+		url: "/v1/imgateway/messages",
+		method: "POST",
+		headers: defaultHeaders,
+		body: {
+			from: profile.options.imUsername,
+			to: config.toUser,
+			tenantId: config.tenantId,
+			// todo: get body, get ext
+			bodies: messageBody.bodies,
+			ext: messageBody.ext,
+			orgName: config.orgName,
+			appName: config.appName,
+			originType: "webim"
+		},
+	})
+	.then(function(msg){
+		if(msg.data.status === "OK") return;
+		throw new Error("failed to send message with second channel.");
+	});
+}
+function getMessage(){
+	if(profile.deepStreamChannelEnable){
+		return api2({
+			url: "/v1/kefuim-gateway-partner/messages",
+			params: {
+				tenantId: tenantId,
+				channelId: profile.channelId,
+				visitorUserId: profile.visitorInfo.kefuId,
+			},
+		})
+		.then(function(msg){
+			if(msg.data.status === "OK") return msg.data.entities;
+			throw new Error("failed to send message with second channel.");
+		});
+	}
+	return api2({
+		url: "/v1/imgateway/messages",
+		params: {
+			orgName: config.orgName,
+			appName: config.appName,
+			easemobId: config.toUser,
+			tenantId: tenantId,
+			visitorEasemobId: profile.options.imUsername,
+		},
+	})
+	.then(function(msg){
+		if(msg.data.status === "OK") return msg.data.entities;
+		throw new Error("failed to send message with second channel.");
+	});
+}
+function getPassword(){
+	return api2({
+		url: "/v1/webimplugin/visitors/password2",
+		params: {
+			userId: profile.options.imUsername,
+			orgName: config.orgName,
+			appName: config.appName,
+			imServiceNumber: config.toUser,
+		},
+	})
+	.then(function(msg){
+		var status = msg.data.status;
+		var password = msg.data.entity.userPassword;
 
+		if(status === "OK") return password;
+		throw new Error("unable to get password.");
+	}, function(err){
+		var status = utils.getDataByPath(err, "data.status");
+		var errorDescription = utils.getDataByPath(err, "data.errorDescription");
+
+		if(status === "FAIL"){
+			if(errorDescription === "IM user create fail."){
+				profile.imRestDown = true;
+				return Promise.resolve("");
+			}
+			else if(errorDescription === "IM user not found."){
+				throw new Error("im user not found");
+			}
+		}
+		throw new Error("unknown error when get password");
+	});
+}
+function getToken(){
+	// 已有token直接resolve，im挂掉直接resolve
+	if(profile.imToken !== null || profile.imRestDown){
+		return Promise.resolve(profile.imToken);
+	}
+	return api2({
+		url: location.protocol + "//" + profile.options.imRestServer + "/"
+			+ profile.config.orgName + "/" + profile.config.appName + "/token",
+		useXDomainRequestInIE: true,
+		method: "POST",
+		body: {
+			grant_type: "password",
+			username: profile.options.imUsername,
+			password: profile.options.imPassword,
+		},
+		timeout: 5000,
+	})
+	.then(function(msg){
+		var token = profile.imToken = msg.data.access_token;
+		return token;
+	}, function(msg){
+		// todo: 仅当user not found 时才重新创建访客
+		console.error(msg.data);
+		throw new Error("failed to login im xmppServer");
+	});
+}
+function createImVisitor(specifiedUserName){
+	return api2({
+		url: "/v1/webimplugin/visitors",
+		method: "POST",
+		headers: defaultHeaders,
+		body: {
+			orgName: config.orgName,
+			appName: config.appName,
+			imServiceNumber: config.toUser,
+			tenantId: tenantId,
+			specifiedUserName: specifiedUserName || ""
+		},
+	})
+	.then(function(msg){
+		var entity = msg.data;
+		if(entity) return entity;
+		throw new Error("unexpected response when attempt to create im visitor.");
+	});
+}
 module.exports = {
-	getCurrentServiceSession: getCurrentServiceSession,
+	createImVisitor: createImVisitor,
 	getToken: getToken,
+	getPassword: getPassword,
+	postMessage: postMessage,
+	getMessage: getMessage,
+	getDeepStreamServer: getDeepStreamServer,
+	getCurrentServiceSession: getCurrentServiceSession,
 	getNotice: getNotice,
 	getTheme: getTheme,
 	getConfig: getConfig,
 	getProjectId: getProjectId,
 	createTicket: createTicket,
-	getVisitorId: getVisitorId,
 	getOfficalAccounts: getOfficalAccounts,
 	getOfficalAccountMessage: getOfficalAccountMessage,
 	getDutyStatus: getDutyStatus,
@@ -1212,9 +980,9 @@ module.exports = {
 	getRobertGreeting: getRobertGreeting,
 	getRobertIsOpen: getRobertIsOpen,
 	getSystemGreeting: getSystemGreeting,
-	getExSession: getExSession,
+	getOnlineAgentCount: getOnlineAgentCount,
 	getAgentStatus: getAgentStatus,
-	getLastSession: getLastSession,
+	getLatestSession: getLatestSession,
 	getSkillgroupMenu: getSkillgroupMenu,
 	getNoteCategories: getNoteCategories,
 	reportVisitorAttributes: reportVisitorAttributes,
@@ -1223,14 +991,12 @@ module.exports = {
 	getWaitListNumber: getWaitListNumber,
 	getNickNameOption: getNickNameOption,
 	closeServiceSession: closeServiceSession,
-	createVisitor: createVisitor,
-	getPassword: getPassword,
+	createKefuVisitor: createKefuVisitor,
+	getKefuVisitorId: getKefuVisitorId,
 	getRelevanceList: getRelevanceList,
 	deleteEvent: deleteEvent,
 	reportEvent: reportEvent,
-	receiveMsgChannel: receiveMsgChannel,
-	sendMsgChannel: sendMsgChannel,
-	uploadImgMsgChannel: uploadImgMsgChannel,
+	kefuUploadFile: kefuUploadFile,
 	reportMarketingTaskDelivered: reportMarketingTaskDelivered,
 	reportMarketingTaskOpened: reportMarketingTaskOpened,
 	reportMarketingTaskReplied: reportMarketingTaskReplied,
@@ -1243,16 +1009,11 @@ module.exports = {
 	getCustomEmojiPackages: getCustomEmojiPackages,
 	getCustomEmojiFiles: getCustomEmojiFiles,
 	getSatisfactionTipWord: getSatisfactionTipWord,
+	getOptions: getOptions,
 
 	initApiTransfer: initApiTransfer,
-	api: api,
-	setCacheItem: function(key, value){
-		cache[key] = value;
-	},
-	clearCacheItem: function(key){
-		cache[key] = null;
-	},
 	init: function(cfg){
 		config = cfg;
+		tenantId = config.tenantId;
 	}
 };
