@@ -76,36 +76,23 @@ var _getCategories = _.once(function(){
 });
 
 function _createTicket(){
-	Promise.all([
-		apiHelper.getToken(),
-		apiHelper.getProjectId()
-	]).then(function(result){
-		var token = result[0];
-		var projectId = result[1];
-		var sessionId = profile.currentOfficialAccount.sessionId || "";
+	var sessionId = profile.currentOfficialAccount.sessionId || "";
 
-		apiHelper.createTicket({
-			token: token,
-			projectId: projectId,
-			name: name.value,
-			phone: phone.value,
-			mail: mail.value,
-			content: content.value,
-			category_id: noteCategoryList.getSelectedValue(),
-			session_id: sessionId,
-		}).then(function(){
-			isSending = false;
-			uikit.showSuccess(__("ticket.send_success"));
+	apiHelper.createTicket({
+		name: name.value,
+		phone: phone.value,
+		mail: mail.value,
+		content: content.value,
+		category_id: noteCategoryList.getSelectedValue(),
+		session_id: sessionId,
+	}).then(function(){
+		isSending = false;
+		uikit.showSuccess(__("ticket.send_success"));
 
-			_clearInput();
-		}, function(err){
-			isSending = false;
-			uikit.tip(__("ticket.send_failed_retry"));
-			console.error(err);
-		});
-	})
-	["catch"](function(err){
-		uikit.tip(__("ticket.send_failed_invalid_token"));
+		_clearInput();
+	}, function(err){
+		isSending = false;
+		uikit.tip(__("ticket.send_failed_retry"));
 		console.error(err);
 	});
 }
