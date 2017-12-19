@@ -246,9 +246,19 @@ function _initAutoGrow(){
 }
 
 function _initOfficialAccount(){
-	if(!profile.visitorInfo.kefuId){
-		// 此时 kefu visitor 还未创建
-		// 未创建会话时初始化默认服务号
+	return apiHelper.getOfficalAccounts().then(function(officialAccountList){
+		_.each(officialAccountList, channel.attemptToAppendOfficialAccount);
+
+		if(!profile.ctaEnable){
+			profile.currentOfficialAccount = profile.systemOfficialAccount;
+			profile.systemOfficialAccount.messageView.show();
+		}
+
+		eventListener.trigger(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT);
+	}, function(){
+		// 获取失败自动降级
+		// im-channel 新访客没有 kefuVisitorId，获取不到 officialAccount
+		// todo: official account 单独放到一个文件中处理
 		channel.attemptToAppendOfficialAccount({
 			type: "SYSTEM",
 			official_account_id: "default",
@@ -260,16 +270,6 @@ function _initOfficialAccount(){
 
 		eventListener.trigger(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, profile.systemOfficialAccount);
 		return Promise.resolve();
-	}
-	return apiHelper.getOfficalAccounts().then(function(officialAccountList){
-		_.each(officialAccountList, channel.attemptToAppendOfficialAccount);
-
-		if(!profile.ctaEnable){
-			profile.currentOfficialAccount = profile.systemOfficialAccount;
-			profile.systemOfficialAccount.messageView.show();
-		}
-
-		eventListener.trigger(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT);
 	});
 }
 

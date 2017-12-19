@@ -32,7 +32,7 @@ module.exports = function(opt){
 		// 初始化历史消息拉取
 		_initHistoryPuller();
 
-		apiHelper.getLastSession(id).then(function(entity){
+		apiHelper.getLatestSession(id).then(function(entity){
 			officialAccount.agentId = entity.agent_id;
 			officialAccount.sessionId = entity.session_id;
 			officialAccount.sessionState = entity.state;
@@ -45,12 +45,11 @@ module.exports = function(opt){
 
 			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);
 		}, function(err){
-			if(err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
+			if(err.message === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
 				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [officialAccount]);
+				return;
 			}
-			else{
-				throw err;
-			}
+			throw err;
 		});
 	});
 

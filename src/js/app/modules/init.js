@@ -254,7 +254,7 @@ function handleMsgData(){
 function handleConfig(configJson){
 	// todo: 把配置转换为新的
 	// 用于config标记是否是来自于坐席端网页配置
-	config.isWebChannelConfig = true;
+	profile.isConfigFromBackend = true;
 
 	config.channel = configJson.channel;
 	config.ui = configJson.ui;
@@ -273,8 +273,8 @@ function handleConfig(configJson){
 	config.dragenable = configJson.ui.dragenable;
 	config.hide = configJson.ui.hide;
 	config.logo = configJson.ui.logo;
-	config.notice = configJson.ui.notice;
-	config.themeName = configJson.ui.themeName;
+	profile.options.noticeWord = configJson.ui.notice.enabled && configJson.ui.notice.content;
+	profile.options.themeName = configJson.ui.themeName;
 
 	config.autoConnect = configJson.toolbar.autoConnect;
 	// config.hideKeyboard = configJson.toolbar.hideKeyboard;
@@ -364,15 +364,16 @@ function initChatEntry(targetUserInfo){
 					"<p class=\"tip-word\">" +  __("common.session_over_limit") + "</p>",
 					"</div>"
 				].join("")),
-				className: "session-over-limit"
+				className: "session-over-limit",
 			}).show();
 		}
-		else{
-		// chat.show()针对移动端，在pc端不是必要的逻辑
+		else if(err.message === _const.ERROR_MSG.NO_VALID_CHANNEL){
+			// chat.show()针对移动端，在pc端不是必要的逻辑
 			chat.show();
-			uikit.prompt(err);
+			uikit.prompt(__("prompt.no_valid_channel"));
 			throw err;
 		}
+		throw err;
 	})
 	.then(function(){
 		// todo: 访客回呼稍后再做适配
@@ -455,6 +456,8 @@ function initChatEntry(targetUserInfo){
 		if(profile.deepStreamChannelEnable) return Promise.resolve();
 		return apiHelper.getToken()
 		.then(null, function(err){
+			// 如果登录失败则重新创建用户
+			// todo: 仅当user not found 时才重新创建访客
 			if(profile.isUsernameFromCookie) return _createImVisitor().then(function(){
 				return apiHelper.getToken();
 			});

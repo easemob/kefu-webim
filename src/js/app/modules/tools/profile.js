@@ -1,6 +1,4 @@
-var Dict = require("./Dict");
-
-var profile = {
+module.exports = {
 	channelId: null,
 	imToken: null,
 	imRestDown: false,
@@ -8,10 +6,9 @@ var profile = {
 	systemAgentAvatar: null,
 	isChatWindowOpen: null,
 	isAgentNicknameEnable: null,
+	isConfigFromBackend: false,
 	currentBrowsingURL: null,
 	isInOfficeHours: false,
-	// 用来缓存图片的file对象，用于全屏查看图片
-	imgFileList: new Dict(),
 	hasHumanAgentOnline: false,
 	hasRobotAgentOnline: false,
 	officialAccountList: [],
@@ -26,5 +23,3 @@ var profile = {
 		imXmppServer: "",
 	},
 };
-
-module.exports = profile;

@@ -54,7 +54,7 @@ function _getQueuingNumber(officialAccount){
 			});
 		}
 		else{
-			apiHelper.getLastSession(officialAccountId).then(function(entity){
+			apiHelper.getLatestSession(officialAccountId).then(function(entity){
 				officialAccount.skillGroupId = entity.skill_group_id;
 			});
 		}

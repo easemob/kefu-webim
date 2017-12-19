@@ -115,6 +115,9 @@ module.exports = {
 	ERROR_MSG: {
 		VISITOR_DOES_NOT_EXIST: "visitor does not exist.",
 		SESSION_DOES_NOT_EXIST: "session does not exist.",
+		NO_VALID_CHANNEL: "no valid channel found.",
+		IM_USER_NOT_FOUND: "im user not found.",
+		IM_REST_SERVER_UNAVAILABLE: "im rest server unavailable.",
 	},
 
 	SESSION_STATE: {

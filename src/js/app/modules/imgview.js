@@ -38,7 +38,6 @@ module.exports = {
 				event: _const.EVENTS.SHOW_IMG,
 				data: {
 					imgSrc: url,
-					imgFile: profile.imgFileList.get(url)
 				}
 			});
 		}

@@ -151,8 +151,6 @@ function _reportVisitor(username){
 			// 没有会话数据，则开始轮询
 			!_hasProcessingSession && _polling.start();
 		});
-	}, function(err){
-		throw err;
 	});
 }
 
