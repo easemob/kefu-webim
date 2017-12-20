@@ -65,7 +65,7 @@ function _getMessageBody(body, ext){
 	var messageBody = {
 		bodies: [ body ],
 		ext: ext || {},
-		from: profile.visitorInfo.name,
+		from: profile.options.imUsername,
 		channel_id: profile.channelId,
 		tenantId: parseInt(profile.config.tenantId, 10),
 		visitorUserId: profile.visitorInfo.kefuId,
@@ -87,10 +87,13 @@ function _setExt(messageBody){
 	var emgroup = profile.config.emgroup;
 	var agentName = profile.config.agentName;
 	var grUserId = profile.grUserId;
+	var messageId = utils.uuid();
 
 	_.assign(weichat, {
 		originType: "webim",
-		msgId: utils.uuid(),
+		msgId: messageId,
+		// 这个字段 im-channel 以及 im-second-channel 要用
+		msg_id_for_ack: messageId,
 		language: __("config.language"),
 	});
 

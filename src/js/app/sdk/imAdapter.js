@@ -6,6 +6,7 @@ var apiHelper = require("../modules/apiHelper");
 var eventListener = require("../modules/tools/eventListener");
 var messageBuilder = require("./messageBuilder");
 var cache = require("./cache");
+// todo: lazy load
 var WebIM = require("easemob-websdk");
 
 var ds;
@@ -144,8 +145,6 @@ function _initDeepStreamConnection(){
 
 	eventSendPath = channelPath + "/agent";
 	return apiHelper.getDeepStreamServer().then(function(serverAddress){
-	// for debug only
-	// return Promise.resolve("wss://deepstream-server.kefu.easemob.com/ws").then(function(serverAddress){
 		return new Promise(function(resolve, reject){
 			// 超时自动 reject
 			timerHandler = setTimeout(reject, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);

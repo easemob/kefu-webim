@@ -14,9 +14,7 @@ function genMsgContent(msg){
 
 	switch(type){
 	case "txt":
-		value = textParser.parse(value);
-		// 历史消息以及收到的实时消息
-		html = "<pre>" + _.map(value, function(fragment){ return fragment.value; }).join("") + "</pre>";
+		html = "<pre>" + textParser.parse(value) + "</pre>";
 		break;
 	case "img":
 		// todo: remove a
@@ -33,9 +31,7 @@ function genMsgContent(msg){
 			+ msg.url + "\"/></a>";
 		break;
 	case "list":
-		value = textParser.parse(value);
-		value = _.map(value, function(fragment){ return fragment.value; }).join("");
-		html = "<p>" + value + "</p>" + msg.list;
+		html = "<p>" + textParser.parse(value) + "</p>" + msg.list;
 		break;
 	case "file":
 		// 历史会话中 filesize = 0

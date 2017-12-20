@@ -5,8 +5,12 @@ var EMOJI_MAP = _const.EMOJI_MAP;
 var URL_RE = /(https?:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(:[0-9]{2,4})?\/?((\.[:_0-9a-zA-Z-]+)|[:_0-9a-zA-Z-]*\/?)*\??[:_#@*&%0-9a-zA-Z-/=]*/i;
 
 module.exports = {
-	parse: parse,
 	getTextMessageBrief: getTextMessageBrief,
+	parse: function(text){
+		return _.map(_parse(text), function(fragment){
+			return fragment.value;
+		}).join("");
+	},
 };
 
 // 从消息通道来的消息需要 _unescape
@@ -22,7 +26,7 @@ function _unescape(str){
 }
 
 function getTextMessageBrief(text){
-	var textMap = parse(text);
+	var textMap = _parse(text);
 	return _.map(textMap, function(fragment){
 		var value = fragment.value;
 		var type = fragment.type;
@@ -45,7 +49,7 @@ function getTextMessageBrief(text){
 	}).join("");
 }
 
-function parse(text){
+function _parse(text){
 	if(typeof text !== "string") return "";
 
 	return _.reduce([

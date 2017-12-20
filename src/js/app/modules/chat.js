@@ -24,6 +24,8 @@ var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
 var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
 var promptNoAgentIfNeeded = require("./chat/promptNoAgentIfNeeded");
+var textParser = require("src/js/app/modules/tools/textParser");
+
 
 var isMessageChannelReady;
 var config;
@@ -135,15 +137,16 @@ function _setLogo(){
 }
 
 function _setNotice(){
-	var noticeContent = document.querySelector(".em-widget-tip .content");
-	var noticeCloseBtn = document.querySelector(".em-widget-tip .tip-close");
+	apiHelper.getNotice().then(function(noticeContentWord){
+		var noticeContent;
+		var noticeCloseBtn;
+		if(!noticeContentWord) return;
 
-	apiHelper.getNotice().then(function(notice){
-		if(!notice.enabled) return;
-		var slogan = notice.content;
+		noticeContent = document.querySelector(".em-widget-tip .content");
+		noticeCloseBtn = document.querySelector(".em-widget-tip .tip-close");
 
 		// 设置信息栏内容
-		noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
+		noticeContent.innerHTML = textParser.parse(noticeContentWord);
 		// 显示信息栏
 		utils.addClass(doms.imChat, "has-tip");
 
@@ -268,7 +271,7 @@ function _initOfficialAccount(){
 		profile.currentOfficialAccount = profile.systemOfficialAccount;
 		profile.systemOfficialAccount.messageView.show();
 
-		eventListener.trigger(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, profile.systemOfficialAccount);
+		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [profile.systemOfficialAccount]);
 		return Promise.resolve();
 	});
 }
@@ -662,7 +665,7 @@ function _initSession(){
 
 			// 查询是否开启机器人
 			// todo: move this to prompt no agent online if needed
-			apiHelper.getRobertIsOpen().then(function(isRobotEnable){
+			apiHelper.getIsRobotOpen().then(function(isRobotEnable){
 				profile.hasRobotAgentOnline = isRobotEnable;
 			});
 

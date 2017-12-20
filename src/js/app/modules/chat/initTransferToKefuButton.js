@@ -48,7 +48,7 @@ function _displayOrHideTransferToKefuBtn(officialAccount){
 		utils.addClass(toKefuBtn, "hide");
 	}
 	else{
-		apiHelper.getRobertIsOpen().then(function(isRobotEnable){
+		apiHelper.getIsRobotOpen().then(function(isRobotEnable){
 			utils.toggleClass(toKefuBtn, "hide", !isRobotEnable);
 		});
 	}

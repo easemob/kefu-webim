@@ -32,15 +32,12 @@ module.exports = {
 };
 
 function handleMessage(msg, options){
-	var message;
-	var inviteId;
-	var serviceSessionId;
 	var opt = options || {};
 	var type = opt.type || (msg && msg.type) || null;
 	var isHistory = opt.isHistory;
 	var noPrompt = opt.noPrompt;
-	var eventName = utils.getDataByPath(msg, "ext.event.eventName");
-	var eventObj = utils.getDataByPath(msg, "ext.event.eventObj");
+	var eventName = utils.getDataByPath(msg, "ext.weichat.event.eventName");
+	var eventObj = utils.getDataByPath(msg, "ext.weichat.event.eventObj");
 	var msgId = utils.getDataByPath(msg, "ext.weichat.msgId");
 
 	var isReceived = typeof opt.isReceived === "boolean"
@@ -362,7 +359,7 @@ function _handleSystemEvent(event, eventObj, msg){
 		break;
 	}
 
-	eventListener.trigger(event, officialAccount);
+	eventListener.excuteCallbacks(event, [officialAccount]);
 }
 
 // 系统事件消息上屏

@@ -75,7 +75,18 @@ module.exports = {
 		冷峻山峰: "theme-7",
 		月色池塘: "theme-8",
 		天籁湖光: "theme-9",
-		商务风格: "theme-10"
+		商务风格: "theme-10",
+		// todo: unify these keys
+		Sky: "theme-1",
+		Tree: "theme-2",
+		House: "theme-3",
+		Orange: "theme-4",
+		Grass: "theme-5",
+		Sea: "theme-6",
+		Mountain: "theme-7",
+		Moon: "theme-8",
+		Business: "theme-9",
+		Lake: "theme-10",
 	},
 
 	IM: {

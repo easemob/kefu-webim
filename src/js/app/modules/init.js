@@ -20,6 +20,7 @@ var messageBuilder = require("../sdk/messageBuilder");
 var tools = require("src/js/app/modules/tools/tools");
 
 var config;
+var hasChatEntryInitialized = false;
 
 load_html();
 if(utils.isTop){
@@ -92,9 +93,7 @@ function h5_mode_init(){
 
 	profile.config = config;
 	// fake transfer
-	window.transfer = {
-		send: function(){}
-	};
+	window.transfer = { send: function(){} };
 	initCrossOriginIframe();
 }
 
@@ -145,6 +144,8 @@ function chat_window_mode_init(){
 			profile.options.isUsernameFromCookie = config.isUsernameFromCookie;
 			profile.options.imUsername = config.user.username;
 			profile.options.imPassword = config.user.password;
+			// todo: add options
+			profile.imToken = config.user.token || null;
 			profile.options.imXmppServer = config.xmppServer;
 			profile.options.imRestServer = config.restServer;
 			profile.visitorInfo = config.visitor || {};
@@ -168,8 +169,9 @@ function initChat(){
 		// 灰度列表
 		profile.grayList = grayList;
 		profile.deepStreamChannelEnable = grayList.deepStreamChannel && Modernizr.websockets;
-
-		// todo: 避免 initChatEntry 被重复调用
+	})
+	.then(function(){
+		// todo: eventCollector 改为 Promise
 		// 访客回呼功能
 		if(!utils.isMobile && config.eventCollector && !eventCollector.isStarted()){
 			eventCollector.startToReport(function(targetUserInfo){
@@ -182,13 +184,10 @@ function initChat(){
 		}
 	});
 
-
-
 	apiHelper.getTheme().then(function(themeName){
 		var className = _const.themeMap[themeName];
 		className && utils.addClass(document.body, className);
 	});
-
 }
 
 // todo: rename this function
@@ -314,6 +313,8 @@ function initCrossOriginIframe(){
 
 
 function initChatEntry(targetUserInfo){
+	if(hasChatEntryInitialized) return;
+	hasChatEntryInitialized = true;
 	return apiHelper.getRelevanceList().then(function(relevanceList){
 		// 获取关联信息
 		var targetChannel;
@@ -331,7 +332,7 @@ function initChatEntry(targetUserInfo){
 			targetChannel = _.findWhere(relevanceList, {
 				orgName: orgName,
 				appName: appName,
-				imServiceNumber: toUser
+				imServiceNumber: toUser,
 			});
 		}
 
@@ -375,44 +376,24 @@ function initChatEntry(targetUserInfo){
 		}
 		throw err;
 	})
+	// preprocess
 	.then(function(){
-		// todo: 访客回呼稍后再做适配
 		if(targetUserInfo){
-
 			// 访客回呼模式使用后端返回的关联信息
 			config.toUser = targetUserInfo.agentImName;
 			config.appName = targetUserInfo.appName;
 			config.orgName = targetUserInfo.orgName;
 
+			// 发送指定坐席的ext消息，延迟发送
+			extendMessageSender.push({ weichat: { agentUsername: targetUserInfo.agentUserName } });
+
 			// 游客
 			if(targetUserInfo.userName){
 				profile.options.imUsername = targetUserInfo.userName;
-				config.user = {
-					password: targetUserInfo.userPassword
-				};
-
-				chat.show();
-				transfer.send({ event: _const.EVENTS.SHOW });
-				transfer.send({
-					event: _const.EVENTS.CACHEUSER,
-					data: {
-						username: targetUserInfo.userName,
-						// todo: check if need emgroup
-						group: config.user.emgroup
-					}
-				});
+				profile.options.imPassword = targetUserInfo.userPassword;
+				tools.cacheUsername();
 			}
-			// 访客
-			else{
-				apiHelper.getPassword().then(function(password){
-					profile.options.imPassword = password;
-
-					chat.show();
-					transfer.send({ event: _const.EVENTS.SHOW });
-				});
-			}
-			// 发送指定坐席的ext消息，延迟发送
-			extendMessageSender.push({ weichat: { agentUsername: targetUserInfo.agentUserName } });
+			// 访客无需处理
 			return Promise.resolve();
 		}
 		// 检测微信网页授权
@@ -427,55 +408,55 @@ function initChatEntry(targetUserInfo){
 			})
 			// 失败随机创建访客
 			.then(null, function(){
-				return _createImVisitor();
+				return Promise.resolve();
 			});
 		}
-		else if(profile.options.imUsername && profile.options.imPassword){
-			return Promise.resolve();
-		}
-		else if(profile.options.imUsername && config.user.token){
-			profile.imToken = config.user.token;
-			return Promise.resolve();
-		}
-		else if(profile.options.imUsername){
-			return apiHelper.getPassword().then(function(password){
-				profile.options.imPassword = password;
-			}, function(){
-				var specifiedUserName;
-				if(profile.grayList.autoCreateAppointedVisitor && !profile.options.isUsernameFromCookie){
-					// 仅当灰度开关开启，并且是用户指定的 imUsername 时才创建指定用户
-					specifiedUserName = profile.options.imUsername;
-				}
-				return _createImVisitor(specifiedUserName);
-			});
-		}
-		return _createImVisitor();
+		return Promise.resolve();
 	})
 	.then(function(){
 		// 如果不是 im channel 则跳过获取 token
-		if(profile.deepStreamChannelEnable) return Promise.resolve();
-		return apiHelper.getToken()
-		.then(null, function(err){
-			// 如果登录失败则重新创建用户
-			// todo: 仅当user not found 时才重新创建访客
-			if(profile.isUsernameFromCookie) return _createImVisitor().then(function(){
-				return apiHelper.getToken();
-			});
-			throw err;
-		});
+		return profile.deepStreamChannelEnable
+			? Promise.resolve()
+			: _getImToken();
 	})
-	// 获取 visitorId
+	// 获取 kefuVisitorId
 	.then(function(){
-		return apiHelper.getKefuVisitorId(profile.options.imUsername)
+		return apiHelper.getKefuVisitorId()
 		.then(null, function(){
 			// 获取 visitorId 失败：
 			// im-channel 的做法是不理会
-			// ds-channel 的做法是重新创建kefu访客
+			// ds-channel 的做法是重新创建kefu访客(可能是由于 imUsername 不存在)
 			if(!profile.deepStreamChannelEnable) return Promise.resolve();
-			return _createKefuVisitor();
+			return apiHelper.createKefuVisitor({
+				username: profile.options.imUsername,
+				channelId: profile.channelId,
+				nickname: profile.visitorInfo.userNickname,
+				trueName: profile.visitorInfo.trueName,
+				qq: profile.visitorInfo.qq,
+				email: profile.visitorInfo.email,
+				phone: profile.visitorInfo.phone,
+				companyName: profile.visitorInfo.companyName,
+				description: profile.visitorInfo.description,
+			})
+			.then(function(entity){
+				profile.options.imUsername = utils.getDataByPath(entity, "channel_users.0.im_id");
+				tools.cacheUsername();
+				profile.visitorInfo = {
+					kefuId: entity.userId,
+					nickname: entity.nickname,
+					trueName: entity.trueName,
+					qq: entity.qq,
+					phone: entity.phone,
+				};
+			});
 		});
 	})
 	.then(function(){
+		// 访客回呼渠道来的需要弹聊天窗
+		if(targetUserInfo){
+			chat.show();
+			transfer.send({ event: _const.EVENTS.SHOW });
+		}
 		chat.init();
 	});
 }
@@ -486,28 +467,52 @@ function _createImVisitor(specifiedUserName){
 		tools.cacheUsername();
 	});
 }
-function _createKefuVisitor(){
-	return apiHelper.createKefuVisitor({
-		// username: specific uername
-		channelId: profile.channelId,
-		nickname: profile.visitorInfo.userNickname,
-		trueName: profile.visitorInfo.trueName,
-		qq: profile.visitorInfo.qq,
-		email: profile.visitorInfo.email,
-		phone: profile.visitorInfo.phone,
-		companyName: profile.visitorInfo.companyName,
-		description: profile.visitorInfo.description,
+function _createImVisitorAndGetToken(specifiedUserName){
+	_createImVisitor(specifiedUserName)
+	.then(function(){
+		return apiHelper.getToken();
 	})
-	.then(function(entity){
-		profile.visitorInfo = {
-			kefuId: entity.userId,
-			// todo: discard profile.options.imUsername
-			imUsername: profile.options.imUsername = utils.getDataByPath(entity, "channel_users.0.im_id"),
-			nickname: entity.nickname,
-			trueName: entity.trueName,
-			qq: entity.qq,
-			phone: entity.phone,
-		};
-		tools.cacheUsername();
+	.then(null, function(err){
+		// 如果登录失败则重新创建用户
+		// todo: 仅当user not found 时才重新创建访客
+		// imRestDown 时 resolve
+		if(profile.isUsernameFromCookie){
+			return apiHelper.createImVisitor(specifiedUserName).then(function(resp){
+				profile.options.imUsername = resp.userId;
+				profile.options.imPassword = resp.userPassword;
+				tools.cacheUsername();
+			})
+			.then(function(){
+				return apiHelper.getToken();
+			});
+		}
+		throw err;
 	});
+}
+
+function _getImToken(){
+	if(profile.options.imUsername && profile.options.imPassword){
+		return apiHelper.getToken();
+	}
+	else if(profile.options.imUsername && profile.imToken){
+		return Promise.resolve();
+	}
+	else if(profile.options.imUsername){
+		return apiHelper.getPassword().then(function(password){
+			profile.options.imPassword = password;
+		})
+		.then(function(){
+			return apiHelper.getToken();
+		})
+		.then(null, function(){
+			// todo: add im rest down detect
+			var specifiedUserName;
+			if(profile.grayList.autoCreateAppointedVisitor && !profile.options.isUsernameFromCookie){
+				// 仅当灰度开关开启，并且是用户指定的 imUsername 时才创建指定用户
+				specifiedUserName = profile.options.imUsername;
+			}
+			return _createImVisitorAndGetToken(specifiedUserName);
+		});
+	}
+	return _createImVisitorAndGetToken();
 }

@@ -120,7 +120,7 @@ function getNotice(){
 		params: { tenantId: tenantId },
 	})
 	.then(function(msg){
-		return msg.data[0].optionValue;
+		return utils.getDataByPath(msg, "data.0.optionValue");
 	});
 }
 function getTheme(){
@@ -309,7 +309,7 @@ function getRobertGreeting(){
 		return Promise.resolve({});
 	});
 }
-function getRobertIsOpen(){
+function getIsRobotOpen(){
 	if(typeof cache.isRobotOpen === "boolean"){
 		return Promise.resolve(cache.isRobotOpen);
 	}
@@ -414,7 +414,7 @@ function getSkillgroupMenu(){
 		url: "/v1/webimplugin/tenants/" + tenantId + "/skillgroup-menu",
 	})
 	.then(function(msg){
-		return msg.data.entities[0];
+		return utils.getDataByPath(msg, "data.entities.0");
 	})
 	.then(null, function(err){
 		console.error("error occurred in getSkillgroupMenu", err);
@@ -451,15 +451,11 @@ function reportPredictMessage(sessionId, content){
 	});
 }
 function getAgentInputState(sessionId){
-	// todo: add sessionId issue
-	return getKefuVisitorId().then(function(visitorId){
-		return api2({
-			url: "/v1/webim/kefuim/tenants/" + tenantId
-				+ "/visitors/" + visitorId + "/agent-input-state",
-		})
-		.then(function(msg){
-			return msg.data.entity;
-		});
+	return api2({
+		url: "/v1/webim/kefuim/sessions/" + sessionId + "/agent-input-state",
+	})
+	.then(function(msg){
+		return utils.getDataByPath(msg, "data.entity");
 	});
 }
 function getWaitListNumber(sessionId, queueId){
@@ -481,10 +477,10 @@ function getNickNameOption(){
 		params: { tenantId: tenantId },
 	})
 	.then(function(msg){
-		var optionValue = msg.data[0].optionValue;
+		var optionValue = utils.getDataByPath(msg, "data.0.optionValue");
 		return optionValue === "true";
 	})
-	.then(null, function(msg){
+	.then(null, function(){
 		console.error("error to get nickname option, downgrade default");
 		return Promise.resolve(true);
 	});
@@ -514,17 +510,20 @@ function createKefuVisitor(visitorInfo){
 		return msg.data.entity;
 	});
 }
-function getKefuVisitorId(username){
+function getKefuVisitorId(){
 	var visitorId = profile.visitorInfo.kefuId;
+	var imUsername = profile.options.imUsername;
 
 	// 在 ds-channel 里边已经可以确保初始化后必须有 kefu visitor id
 	// 在 im-channel 里边还未做相应改造，所以还要有这个逻辑
-	if(visitorId) return Promise.resolve();
+	if(visitorId) return Promise.resolve(visitorId);
+	// imUsername 不存在时 reject
+	if(!imUsername) return Promise.reject(new Error("im username not exist."));
 
 	return api2({
 		url: "/v1/webim/kefuim/tenants/" + tenantId + "/visitors",
 		params: {
-			userName: username,
+			userName: imUsername,
 			techChannelInstanceId: profile.channelId,
 		},
 	})
@@ -978,7 +977,7 @@ module.exports = {
 	getDutyStatus: getDutyStatus,
 	getGrayList: getGrayList,
 	getRobertGreeting: getRobertGreeting,
-	getRobertIsOpen: getRobertIsOpen,
+	getIsRobotOpen: getIsRobotOpen,
 	getSystemGreeting: getSystemGreeting,
 	getOnlineAgentCount: getOnlineAgentCount,
 	getAgentStatus: getAgentStatus,

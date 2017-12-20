@@ -188,10 +188,7 @@ function _ready(){
 			break;
 		case _const.EVENTS.CACHEUSER:
 			// 缓存im username
-			utils.set(
-				data.key,
-				data.value
-			);
+			utils.set(data.key, data.value);
 			break;
 		case _const.EVENTS.DRAGREADY:
 			_startPosition.x = +data.x || 0;
