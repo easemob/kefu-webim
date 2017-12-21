@@ -68,33 +68,36 @@ module.exports = {
 };
 
 function _initSystemEventListener(){
-	// send crm extend message
+	var hasVisitorArrtibuteReported = false;
+	var hasVisitorInfoReported = false;
+
 	eventListener.add([
 		_const.SYSTEM_EVENT.SESSION_OPENED,
 		_const.SYSTEM_EVENT.SESSION_RESTORED,
-	], _.once(function(officialAccount){
+	], function(officialAccount){
 		var sessionId = officialAccount.sessionId;
 		var isSessionOpen = officialAccount.isSessionOpen;
 
-		if(isSessionOpen && sessionId){
-			apiHelper.reportVisitorAttributes(sessionId);
+		if(isSessionOpen && sessionId && !hasVisitorArrtibuteReported){
+			apiHelper.reportVisitorAttributes(sessionId).then(function(){
+				hasVisitorArrtibuteReported = true;
+			});
 		}
-	}));
+	});
 
-	// report visitor info
 	eventListener.add([
 		_const.SYSTEM_EVENT.SESSION_OPENED,
 		_const.SYSTEM_EVENT.SESSION_RESTORED,
-	], _.once(function(officialAccount){
-		if(!officialAccount.isSessionOpen) return;
-
+	], function(officialAccount){
+		if(!officialAccount.isSessionOpen || hasVisitorInfoReported) return;
+		hasVisitorInfoReported = true;
 		_.each(profile.commandMessageToBeSendList, function(msg){
 			// 发送订单轨迹消息
 			if(!utils.isCrmExtendMessage(msg)){
 				channel.sendText("", msg);
 			}
 		});
-	}));
+	});
 }
 
 function _initUI(){
