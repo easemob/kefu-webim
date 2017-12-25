@@ -14,7 +14,6 @@ var profile = {
 	hasHumanAgentOnline: false,
 	hasRobotAgentOnline: false,
 	officialAccountList: [],
-	commandMessageToBeSendList: [],
 	tenantAvatar: null,
 	defaultAvatar: null,
 	currentOfficialAccount: {},

@@ -116,6 +116,7 @@ function _ready(){
 /* jshint ignore:start */
 	var me = this;
 	/* jshint ignore:end */
+	var i, l;
 
 	(me.config.dragenable && !utils.isMobile) && _bindResizeHandler(me);
 
@@ -234,6 +235,14 @@ function _ready(){
 		}
 	}, ["main"]);
 
+	// 发送ready前缓存的消息
+	for(i = 0, l = me.extendMessageList.length; i < l; i++){
+		me.message.send({ event: _const.EVENTS.EXT, data: me.extendMessageList[i] });
+	}
+	for(i = 0, l = me.textMessageList.length; i < l; i++){
+		me.message.send({ event: _const.EVENTS.TEXTMSG, data: me.textMessageList[i] });
+	}
+
 	typeof me.ready === "function" && me.ready();
 }
 
@@ -275,6 +284,8 @@ var Iframe = function(config){
 	me._onMouseMove = function(ev){
 		_move(me, ev);
 	};
+	me.textMessageList = [];
+	me.extendMessageList = [];
 
 	Iframe.iframe = me;
 
@@ -377,12 +388,23 @@ Iframe.prototype.close = function(){
 
 // 发ext消息
 Iframe.prototype.send = function(extMsg){
-	this.message.send({ event: _const.EVENTS.EXT, data: extMsg });
+	if(this.message){
+		this.message.send({ event: _const.EVENTS.EXT, data: extMsg });
+	}
+	else{
+		// 没有初始化前缓存消息，等ready 后发送
+		this.extendMessageList.push(extMsg);
+	}
 };
 
 // 发文本消息
 Iframe.prototype.sendText = function(msg){
-	this.message.send({ event: _const.EVENTS.TEXTMSG, data: msg });
+	if(this.message){
+		this.message.send({ event: _const.EVENTS.TEXTMSG, data: msg });
+	}
+	else{
+		this.textMessageList.push(msg);
+	}
 };
 
 module.exports = Iframe;

@@ -69,7 +69,6 @@ module.exports = {
 
 function _initSystemEventListener(){
 	var hasVisitorArrtibuteReported = false;
-	var hasVisitorInfoReported = false;
 
 	eventListener.add([
 		_const.SYSTEM_EVENT.SESSION_OPENED,
@@ -83,20 +82,6 @@ function _initSystemEventListener(){
 				hasVisitorArrtibuteReported = true;
 			});
 		}
-	});
-
-	eventListener.add([
-		_const.SYSTEM_EVENT.SESSION_OPENED,
-		_const.SYSTEM_EVENT.SESSION_RESTORED,
-	], function(officialAccount){
-		if(!officialAccount.isSessionOpen || hasVisitorInfoReported) return;
-		hasVisitorInfoReported = true;
-		_.each(profile.commandMessageToBeSendList, function(msg){
-			// 发送订单轨迹消息
-			if(!utils.isCrmExtendMessage(msg)){
-				channel.sendText("", msg);
-			}
-		});
 	});
 }
 
@@ -641,12 +626,7 @@ function _onReady(){
 		transfer.send({ event: _const.EVENTS.SHOW });
 	}
 
-	_.each(profile.commandMessageToBeSendList, function(msg){
-		// 发送订单、轨迹消息
-		if(!utils.isCrmExtendMessage(msg)){
-			channel.sendText("", msg);
-		}
-	});
+	eventListener.trigger(_const.SYSTEM_EVENT.MESSAGE_CHANNEL_READY);
 
 	// onready 回调
 	transfer.send({ event: _const.EVENTS.ONREADY });
@@ -736,11 +716,13 @@ function _initSession(){
 			]).then(_onReady);
 
 			// 查询是否开启机器人
+			// todo: move this to prompt no agent online if needed
 			apiHelper.getRobertIsOpen().then(function(isRobotEnable){
 				profile.hasRobotAgentOnline = isRobotEnable;
 			});
 
 			// 获取坐席昵称设置
+			// todo: move this to init Agent status poller
 			apiHelper.getNickNameOption().then(function(displayNickname){
 				profile.isAgentNicknameEnable = displayNickname;
 			});

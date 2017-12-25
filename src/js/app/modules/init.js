@@ -14,6 +14,7 @@ var chat = require("./chat");
 var channel = require("./channel");
 var profile = require("./tools/profile");
 var doWechatAuth = require("./wechat");
+var extendMessageSender = require("./chat/extendMessageSender");
 var body_template = require("raw-loader!../../../template/body.html");
 
 var config;
@@ -130,16 +131,7 @@ function chat_window_mode_init(){
 			break;
 		case _const.EVENTS.EXT:
 			extendMessage = data.ext;
-			if(
-				utils.isCrmExtendMessage(extendMessage)
-				&& !profile.currentOfficialAccount.isSessionOpen
-			){
-				// crm 对接消息必须等会话打开后才能发
-				profile.commandMessageToBeSendList.push(extendMessage);
-			}
-			else{
-				channel.sendText("", extendMessage);
-			}
+			extendMessageSender.push(extendMessage.ext);
 			break;
 		case _const.EVENTS.TEXTMSG:
 			channel.sendText(data.data, data.ext);
@@ -200,8 +192,13 @@ function handleMsgData(){
 	config.emgroup = config.emgroup || "";
 	config.timeScheduleId = config.timeScheduleId || 0;
 
-	if(config.extMsg){
-		profile.commandMessageToBeSendList.push({ ext: config.extMsg });
+	if(_.isArray(config.extMsg)){
+		_.each(config.extMsg, function(elem){
+			extendMessageSender.push(elem);
+		});
+	}
+	else if(_.isObject(config.extMsg)){
+		extendMessageSender.push(config.extMsg);
 	}
 
 	// fake patch: 老版本配置的字符串需要decode
@@ -394,7 +391,7 @@ function initChatEntry(targetUserInfo){
 				});
 			}
 			// 发送指定坐席的ext消息，延迟发送
-			profile.commandMessageToBeSendList.push({ ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } });
+			extendMessageSender.push({ weichat: { agentUsername: targetUserInfo.agentUserName } });
 		}
 		else if(config.user.username && (config.user.password || config.user.token)){
 			if(config.user.token){

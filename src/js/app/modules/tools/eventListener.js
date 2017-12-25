@@ -21,6 +21,7 @@ function add(eventOrArray, callback){
 	}
 }
 function _add(event, callback){
+	if(typeof event !== "string") throw new Error("unexpected type of event.");
 	if(!eventCallbackTable[event]) eventCallbackTable[event] = [];
 	eventCallbackTable[event].push(callback);
 }

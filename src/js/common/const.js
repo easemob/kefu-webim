@@ -60,6 +60,7 @@ module.exports = {
 		MESSAGE_APPENDED: "message.appended",
 
 		VIDEO_TICKET_RECEIVED: "video.ticket.received",
+		MESSAGE_CHANNEL_READY: "message.channel.ready",
 	},
 
 	themeMap: {

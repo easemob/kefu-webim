@@ -341,9 +341,6 @@ module.exports = {
 		// todo：移到，easemob.js 里边
 		return this.extend({}, obj);
 	},
-	isCrmExtendMessage: function(msg){
-		return !!getDataByPath(msg, "ext.cmd.updateVisitorInfoSrc");
-	},
 };
 
 function getDataByPath(obj, path){
