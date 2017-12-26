@@ -96,12 +96,12 @@ gulp.task('cssmin', function() {
 			'src/scss/icon.scss',
 			'src/scss/header.scss',
 			'src/scss/body.scss',
-			'src/scss/smart.scss',
 			'src/scss/chat.scss',
 			'src/scss/send.scss',
 			'src/scss/theme.scss',
 			'src/scss/ui.scss',
 			'src/scss/mobile.scss',
+			'src/scss/smart.scss',
 		])
 		.pipe(concat('im.css'))
 		.pipe(template(TEMPLATE_DATA))

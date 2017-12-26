@@ -1,31 +1,58 @@
 .smart-body {
 	.em-widgetHeader-wrapper {
-		background-color: #fff !important;
-		.em-widgetHeader-portrait,.em-widgetHeader-text-logo{
+		background-color: white !important;
+		height: 3.75rem;
+		line-height: 3.75rem;
+		.em-widgetHeader-portrait,
+		.em-widgetHeader-text-logo {
 			display: none;
 		}
 		.em-agent-input-state {
 			color: #999;
 		}
 		.em-widgetHeader-smart-logo {
-			height: 43px;
+			height: 3.75rem;
 			vertical-align: middle;
 			position: absolute;
-			right: 5px;
+			right: 1.5rem;
 			display: block !important;
 		}
 	}
-	.em-widget-send{
-		background-color: #f8c33b;
-	}
-	.em-widget-right {
+	.em-widgetBody-wrapper {
+		top: 3.75rem;
 		.em-widget-msg-container {
-			background-color: #f8c33b;
+			font-size: .9375rem;
+			padding: .75rem;
 		}
-		.icon-corner-right {
-			color: #f8c33b;
+		.em-widget-right {
+			.em-widget-msg-container {
+				background-color: #f8c33b;
+			}
+			.icon-corner-right {
+				color: #f8c33b;
+			}
+		}
+		.em-widget-date,
+		.em-widget-event {
+			span {
+				padding: .125rem .25rem;
+			}
 		}
 	}
-
-
+	.em-widget-send-wrapper {
+		.toolbar {
+			i {
+				width: 5.625rem;
+				&:before{
+					font-size: 1.875rem;
+				}
+			}
+		}
+		.em-widget-send{
+			background-color: #f8c33b;
+			width: 5rem;
+			height: 1.875rem;
+			line-height: 1.875rem;
+		}
+	}
 }
