@@ -20,6 +20,7 @@ var initSessionList = require("./chat/initSessionList");
 var initGetGreetings = require("./chat/initGetGreetings");
 var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
 var emojiPanel = require("./chat/emojiPanel");
+var extendMessageSender = require("./chat/extendMessageSender");
 
 var isMessageChannelReady;
 var config;
@@ -709,6 +710,8 @@ function _initSession(){
 				triggerButton: doms.videoInviteButton,
 				parentContainer: doms.imChat,
 			});
+
+			extendMessageSender.init();
 
 			Promise.all([
 				_initOfficialAccount(),

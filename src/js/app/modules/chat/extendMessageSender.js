@@ -9,6 +9,7 @@ var sessionOpenPromise;
 var initOnce = _.once(_init);
 
 module.exports = {
+	init: initOnce,
 	push: push,
 };
 
