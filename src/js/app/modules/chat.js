@@ -69,8 +69,6 @@ module.exports = {
 };
 
 function _initSystemEventListener(){
-	var hasVisitorArrtibuteReported = false;
-
 	eventListener.add([
 		_const.SYSTEM_EVENT.SESSION_OPENED,
 		_const.SYSTEM_EVENT.SESSION_RESTORED,
@@ -78,10 +76,8 @@ function _initSystemEventListener(){
 		var sessionId = officialAccount.sessionId;
 		var isSessionOpen = officialAccount.isSessionOpen;
 
-		if(isSessionOpen && sessionId && !hasVisitorArrtibuteReported){
-			apiHelper.reportVisitorAttributes(sessionId).then(function(){
-				hasVisitorArrtibuteReported = true;
-			});
+		if(isSessionOpen && sessionId){
+			apiHelper.reportVisitorAttributes(sessionId);
 		}
 	});
 }
