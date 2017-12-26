@@ -68,14 +68,14 @@ function _initSystemEventListener(){
 	eventListener.add([
 		_const.SYSTEM_EVENT.SESSION_OPENED,
 		_const.SYSTEM_EVENT.SESSION_RESTORED,
-	], _.once(function(officialAccount){
+	], function(officialAccount){
 		var sessionId = officialAccount.sessionId;
 		var isSessionOpen = officialAccount.isSessionOpen;
 
 		if(isSessionOpen && sessionId){
 			apiHelper.reportVisitorAttributes(sessionId);
 		}
-	}));
+	});
 
 	eventListener.add(
 		_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
@@ -89,7 +89,7 @@ function _initSystemEventListener(){
 	eventListener.add([
 		_const.SYSTEM_EVENT.SESSION_OPENED,
 		_const.SYSTEM_EVENT.SESSION_RESTORED,
-	], _.once(function(officialAccount){
+	], function(officialAccount){
 		if(!officialAccount.isSessionOpen) return;
 
 		_.each(profile.commandMessageToBeSendList, function(msg){
@@ -98,7 +98,7 @@ function _initSystemEventListener(){
 				channel.sendText("", msg);
 			}
 		});
-	}));
+	});
 }
 
 function _initUI(){
