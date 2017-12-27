@@ -2,7 +2,8 @@ var _const = require("../../../common/const");
 var utils = require("../../../common/utils");
 var profile = require("../tools/profile");
 var eventListener = require("../tools/eventListener");
-var channel = require("../channel");
+var channelAdapter = require("src/js/app/sdk/channelAdapter");
+var messageBuilder = require("src/js/app/sdk/messageBuilder");
 
 var messageChannelReadyPromise;
 var sessionOpenPromise;
@@ -25,11 +26,15 @@ function push(extendMessage){
 	if(isCrmExtendMessage){
 		// crm 对接消息必须等会话打开后才能发
 		// todo: discard ext
-		sessionOpenPromise.then(function(){ channel.sendText("", { ext: extendMessage }); });
+		sessionOpenPromise.then(function(){
+			channelAdapter.sendText(messageBuilder.textMessage(null, extendMessage));
+		});
 	}
 	else{
 		// 其他消息只要 channelReady 就可以发
-		messageChannelReadyPromise.then(function(){ channel.sendText("", { ext: extendMessage }); });
+		messageChannelReadyPromise.then(function(){
+			channelAdapter.sendText(messageBuilder.textMessage(null, extendMessage));
+		});
 	}
 }
 

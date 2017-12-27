@@ -460,15 +460,12 @@ function initChatEntry(targetUserInfo){
 		chat.init();
 	});
 }
-function _createImVisitor(specifiedUserName){
+function _createImVisitorAndGetToken(specifiedUserName){
 	return apiHelper.createImVisitor(specifiedUserName).then(function(resp){
 		profile.options.imUsername = resp.userId;
 		profile.options.imPassword = resp.userPassword;
 		tools.cacheUsername();
-	});
-}
-function _createImVisitorAndGetToken(specifiedUserName){
-	_createImVisitor(specifiedUserName)
+	})
 	.then(function(){
 		return apiHelper.getToken();
 	})
@@ -476,8 +473,9 @@ function _createImVisitorAndGetToken(specifiedUserName){
 		// 如果登录失败则重新创建用户
 		// todo: 仅当user not found 时才重新创建访客
 		// imRestDown 时 resolve
+		// recreate User
 		if(profile.isUsernameFromCookie){
-			return apiHelper.createImVisitor(specifiedUserName).then(function(resp){
+			return apiHelper.createImVisitor().then(function(resp){
 				profile.options.imUsername = resp.userId;
 				profile.options.imPassword = resp.userPassword;
 				tools.cacheUsername();

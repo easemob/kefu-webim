@@ -130,7 +130,7 @@ function getTheme(){
 		params: { tenantId: tenantId },
 	})
 	.then(function(msg){
-		return msg.data[0].optionValue;
+		return utils.getDataByPath(msg, "data.0.optionValue");
 	});
 }
 function getConfig(configId){
@@ -477,8 +477,7 @@ function getNickNameOption(){
 		params: { tenantId: tenantId },
 	})
 	.then(function(msg){
-		var optionValue = utils.getDataByPath(msg, "data.0.optionValue");
-		return optionValue === "true";
+		return utils.getDataByPath(msg, "data.0.optionValue") === "true";
 	})
 	.then(null, function(){
 		console.error("error to get nickname option, downgrade default");
@@ -791,9 +790,8 @@ function getSatisfactionTipWord(){
 		url: "/v1/webimplugin/tenants/" + tenantId + "/options/GreetingMsgEnquiryInvite",
 	})
 	.then(function(msg){
-		return msg.data.entities[0].optionValue || defaultWord;
-	})
-	.then(null, function(err){
+		return utils.getDataByPath(msg, "data.entities.0.optionValue") || defaultWord;
+	}, function(err){
 		// 有异常时，返回默认提示语
 		console.log("unexpected response data", err);
 		return Promise.resolve(defaultWord);
