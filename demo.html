@@ -2,94 +2,128 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-	<meta name="format-detection" content="telephone=no">
-	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
 	<style>
 		body { background-color: #eee;color: #555; }
 		button, a { display: block;margin: 20px 0;background: #00CEB9;border: none;color: #fff;line-height: 40px;width: 200px;cursor: pointer;outline: none;text-align: center; }
 		button:hover, a:hover { box-shadow: 0 0 5px #33CEB9; }
 		button:active, a:active { background: #fff;color: #00CEB9; }
 		input { height: 40px;outline: none;width: 300px;text-align: center;font-size: 16px;color: #00CEB9; float: left;border: 1px solid #fff; }
+		#target-iframe {
+		  height: 550px;
+		  width: 600px;
+		}
 	</style>
 </head>
 
 <body>
 
-	<h1>Demo</h1>
-	<a target='_blank' href='http://docs.easemob.com/cs/300visitoraccess/20webplugin'>集成文档</a>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<h1>测试</h1>
-	<div><input id='testvalue' type='text' placeholder='请输入您的tenantId，点击测试按钮'/></div>
-	<button onclick="test()">测试</button>
-	<button onclick="deleteCurrentCookies()">Clear Current Cookie</button>
-	<button onclick="bindSkillGroup()">绑定技能组</button>
-	<button onclick="resizeChatWindow()">窗口加宽</button>
-	<br>
-	<br>
-	<br>
+	<h1>Demo 把聊天窗口嵌入到用户自定义的iframe中</h1>
+	<a target="_blank" href="http://docs.easemob.com/cs/300visitoraccess/20webplugin">标准版集成文档</a>
 
+	<!-- 注意此iframe标签的id属性要与配置中保持一致 -->
+	<iframe id="target-iframe"></iframe>
+
+	<p>注意事项：</p>
+	<ul>
+		<li>这种方法属于非标准集成，暂时不支持 onready, onmessage, eventCollector 选项</li>
+		<li>查看集成代码请右键单击页面 => 查看源代码</li>
+		<li>path，staticPath请严格按照示例格式配置，不能增加或省略任何部分</li>
+		<li>私有部署时，请将配置中的 kefu.easemob.com 替换为自己的域名</li>
+		<li>本例中的iframe标签的id属性为 target-iframe，集成时请根据实际情况替换</li>
+		<li>tenantId，集成时请根据实际情况替换</li>
+		<li>补丁代码需要原样拷贝到您的页面上</li>
+	</ul>
+
+<script src="easemob.js"></script>
 <script>
-var tenantIdInput = document.getElementById("testvalue");
-tenantIdInput.value = (window.localStorage && localStorage.getItem("easemobtest")) || "";
-
-function test(){
-	window.easemobim.bind({ tenantId: getTenantId() });
-}
-
-function getTenantId(){
-	var tenantId = tenantIdInput.value;
-	tenantId = tenantId && tenantId.replace(/\s/g, "");
-
-	if(/\d+/.test(tenantId)) {
-		window.localStorage && localStorage.setItem("easemobtest", tenantId);
-		return tenantId;
-	}
-}
-
-function deleteCurrentCookies(){
-	var name = window.easemobim.config.tenantId || tenantIdInput.value;
-
-	name && (document.cookie = name
-	+ "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/");
-	alert("cleared");
-}
-
-function bindSkillGroup(){
-	window.easemobim.bind({
-		tenantId: getTenantId(),
-		emgroup: "技能组1"
-	});
-}
-
-function resizeChatWindow(){
-	window.easemobim.bind({
-		tenantId: getTenantId(),
-		dialogWidth: "500px"
-	});
-}
-</script>
-<script>
-window.easemobim = window.easemobim || {};
-
-window.easemobim.config = {
-	// domain: '//sandbox.kefu.easemob.com',
-	// domain: '//kefu.easemob.com',
-	// 访客自动上报
-	// eventCollector: true,
-	satisfaction: true,
-	// hide: false,
-	// minimum: false,
-	tenantId: "11885",
-	unused: ""
+// em_custom_iframe_config 这个key 不能修改
+window.em_custom_iframe_config = {
+	// 此处的配置请参考集成文档中 easemobim.config 中的配置，不一样的地方在于下面列出的这些配置可以为空，但是不能省略
+	tenantId: 22961,
+	to: "",
+	agentName: "",
+	appKey: "",
+	domain: "//kefu.easemob.com",
+	path: "//kefu.easemob.com/webim",
+	staticPath: "//kefu.easemob.com/webim/static",
+	user: {
+		// 从cookie中获取缓存的用户名
+		username: easemobim.utils.get("easemobim-im-username"),
+		password: "",
+	},
+	// 禁止拖动窗口
+	dragenable: false,
+	// 隐藏最小化按钮
+	minimum: false,
+	ticket: true,
+	// 此处的 target-iframe 应与 html 中的 iframe 标签id一致
+	parentId: "target-iframe"
 };
 </script>
 
-<script src='easemob.js'></script>
+<!-- 以下是补丁代码，无须修改，原样拷贝到您的页面上即可 -->
+<script>
+(function(Transfer, utils, _const){
+	var options = window.em_custom_iframe_config;
+	var parentId = options.parentId;
+	var iframe = document.getElementById(options.parentId);
+	var transfer = Transfer(parentId, "easemob");
+	var message = {
+		event: "initConfig",
+		data: options,
+		key: "easemob"
+	};
+
+	// load iframe
+	iframe.src = options.path + "/im.html";
+	// todo: add support for callbackApi
+	transfer.listen(function(msg){
+		if(msg.to !== parentId) return;
+
+		switch(msg.event){
+		case _const.EVENTS.NOTIFY:
+			// 显示浏览器通知
+			easemobim.notify(msg.data.avatar, msg.data.title, msg.data.brief);
+			break;
+		case _const.EVENTS.SLIDE:
+			// 标题滚动
+			easemobim.titleSlide.start();
+			break;
+		case _const.EVENTS.RECOVERY:
+			// 标题滚动恢复
+			easemobim.titleSlide.stop();
+			break;
+		case _const.EVENTS.CACHEUSER:
+			// 缓存im username
+			if(msg.data.value){
+				utils.set("easemobim-im-username", msg.data.value);
+			}
+			break;
+		case _const.EVENTS.SET_ITEM:
+			utils.setStore(msg.data.key, msg.data.value);
+			break;
+		case _const.EVENTS.REQUIRE_URL:
+			transfer.send({
+				event: _const.EVENTS.UPDATE_URL,
+				data: location.href
+			});
+			break;
+		case _const.EVENTS.SHOW_IMG:
+			easemobim.pcImgView(msg.data);
+			break;
+		default:
+			break;
+		}
+	}, ["main"]);
+
+	utils.on(iframe, "load", function(){
+		iframe.contentWindow.postMessage(JSON.stringify(message), "*");
+	});
+
+}(easemobim.Transfer, easemobim.utils, easemobim._const));
+</script>
 </body>
 </html>
