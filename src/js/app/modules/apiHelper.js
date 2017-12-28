@@ -614,6 +614,7 @@ function reportMarketingTaskDelivered(marketingTaskId){
 			url: "/v1/webim/kefuim/tenants/" + tenantId
 				+ "/marketing-tasks/" + marketingTaskId + "/delivered",
 			method: "PUT",
+			headers: defaultHeaders,
 			body: { visitor_id: visitorId },
 		})
 		.then(function(msg){
@@ -628,6 +629,7 @@ function reportMarketingTaskOpened(marketingTaskId){
 			url: "/v1/webim/kefuim/tenants/" + tenantId
 				+ "/marketing-tasks/" + marketingTaskId + "/opened",
 			method: "PUT",
+			headers: defaultHeaders,
 			body: { visitor_id: visitorId },
 		})
 		.then(function(msg){
@@ -642,6 +644,7 @@ function reportMarketingTaskReplied(marketingTaskId){
 			url: "/v1/webim/kefuim/tenants/" + tenantId
 				+ "/marketing-tasks/" + marketingTaskId + "/replied",
 			method: "PUT",
+			headers: defaultHeaders,
 			body: { visitor_id: visitorId },
 		})
 		.then(function(msg){
