@@ -62,6 +62,11 @@ module.exports = {
 
 	// todo: move this to message view
 	handleHistoryMsg: function(element){
+		var textMessage = utils.getDataByPath(element, "body.bodies.0.msg");
+		// 后端历史消息转义2次，需要处理
+		if(typeof textMessage === "string"){
+			element.body.bodies[0].msg = textParser.unescape(textParser.unescape(textMessage));
+		}
 		_handleMessage(_transformMessageFormat(element), { isHistory: true });
 	},
 	initSecondChannle: function(){

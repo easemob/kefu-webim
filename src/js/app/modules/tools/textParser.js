@@ -6,6 +6,7 @@ var URL_RE = /(https?:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(:[0-9]{2,4})?\
 
 module.exports = {
 	parse: parse,
+	unescape: _unescape,
 	getTextMessageBrief: getTextMessageBrief,
 };
 
@@ -14,11 +15,12 @@ function _unescape(str){
 	if(typeof str !== "string") return "";
 
 	return str
-	.replace(/&amp;/g, "&")
 	.replace(/&#39;/g, "'")
 	.replace(/&quot;/g, "\"")
 	.replace(/&lt;/g, "<")
-	.replace(/&gt;/g, ">");
+	.replace(/&gt;/g, ">")
+	// &amp; 要最后处理
+	.replace(/&amp;/g, "&");
 }
 
 function getTextMessageBrief(text){
@@ -57,13 +59,15 @@ function parse(text){
 		return _parseMap(result, parser);
 	}, [{
 		type: "UNPARSED",
-		value: _unescape(text),
+		value: text,
 		baseIndex: 0,
 	}]);
 }
 
 function _encodeParser(text){
 	var newStr = text
+	// 此处 & 要先处理
+	.replace(/&/g, "&amp;")
 	.replace(/</g, "&lt;")
 	.replace(/>/g, "&gt;");
 
