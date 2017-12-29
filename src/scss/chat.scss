@@ -128,14 +128,16 @@
 	float: left;
 	display: inline-block;
 	border-radius: 6px;
-	max-width: 210px;
+	max-width: 70%;
+	p{
+		border-bottom:1px solid #e5e5e5;
+	}
 	.em-btn-list {
 		min-width: 190px;
 		position: relative;
-		margin: 4px 0;
+		margin: 4px;
 		text-align: left;
 		clear: both;
-		border-top: 1px solid #e5e5e5;
 		&:after {
 			content: '';
 			clear: both;
@@ -143,16 +145,16 @@
 		button {
 			font-size: 13px;
 			display: block;
-			width: 95%;
+			width: 100%;
 			padding: 5px;
 			min-height: 30px;
 			text-align: left;
+			margin: 4px 0;
 			color: #000;
 			background-color: white;
 			border-radius: 2px;
 			border: 1px solid #e5e5e5;
 			cursor: pointer;
-			margin: 4px auto;
 			word-break: break-word;
 			white-space: pre-wrap;
 			&:hover {
@@ -212,7 +214,6 @@
 	.em-widget-msg-container {
 		display: inline-block;
 		border-radius: 6px;
-		max-width: 190px;
 		padding: 10px;
 		min-width: 20px;
 		min-height: 20px;
@@ -302,6 +303,7 @@
 		// 菜单消息
 		&.em-widget-msg-list {
 			overflow: hidden;
+			min-width: 190px;
 			padding: 0;
 			background-color: rgb(251, 251, 251);
 			>p {
