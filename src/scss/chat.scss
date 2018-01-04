@@ -25,7 +25,7 @@
 		top: 5px;
 		text-align: center;
 		color: #999;
-		width: 100%;	
+		width: 100%;
 		vertical-align: middle;
 		.loading-btn{
 			margin-right: 5px;
@@ -36,8 +36,8 @@
 				font-size: 16px;
 			}
 		}
-			
-		
+
+
 	}
 	.no-more-msg {
 		position: absolute;
@@ -128,7 +128,7 @@
 	float: left;
 	display: inline-block;
 	border-radius: 6px;
-	max-width: 70%;
+	max-width: 76%;
 	p{
 		border-bottom:1px solid #e5e5e5;
 	}
@@ -146,7 +146,7 @@
 			font-size: 13px;
 			display: block;
 			width: 100%;
-			padding: 5px;
+			padding: 5px 10px;
 			min-height: 30px;
 			text-align: left;
 			margin: 4px 0;
@@ -234,7 +234,7 @@
 			color: #999;
 		}
 		// 文本消息
-		pre {
+		span.text {
 			word-break: break-word;
 			white-space: pre-wrap;
 		}

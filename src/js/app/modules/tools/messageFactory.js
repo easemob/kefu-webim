@@ -16,7 +16,7 @@ function genMsgContent(msg){
 	case "txt":
 		value = textParser.parse(value);
 		// 历史消息以及收到的实时消息
-		html = "<pre>" + _.map(value, function(fragment){ return fragment.value; }).join("") + "</pre>";
+		html = "<span class=\"text\">" + _.map(value, function(fragment){ return fragment.value; }).join("") + "</span>";
 		break;
 	case "img":
 		// todo: remove a
