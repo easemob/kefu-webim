@@ -8,19 +8,20 @@ const http = require("http");
 const debug = require("debug");
 
 const DEFAULT_PORT = 8008;
-const DEFAULT_SERVER = "http://sandbox.kefu.easemob.com/";
-const PROXY_REGEX = /^\/v1/i;
+const DEFAULT_DOMAIN = "sandbox.kefu.easemob.com";
+const DEFAULT_SERVER = `http://${DEFAULT_DOMAIN}`;
+const PROXY_REGEX = /^\/(v1)/i;
 
 const logProxy = debug("webim:proxy");
 const logBypass = debug("webim:bypass");
 const logErr = debug("webim:error");
 
 program
-.version("0.0.1")
-.option("-p, --port <n>", "listen port, default 8080", parseInt)
+.version("0.0.2")
+.option(`-p, --port <n>", "listen port, default ${DEFAULT_PORT}`, parseInt)
 .option(
 	"-t, --target [domain]",
-	"backend domain name, default: sandbox.kefu.easemob.com"
+	`backend domain name, default: ${DEFAULT_DOMAIN}`
 )
 .parse(global.process.argv);
 

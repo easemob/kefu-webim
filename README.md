@@ -19,13 +19,10 @@
 	- 进入代码目录
 
 		>	cd kefu-webim
-	- 进入`server`子目录
-
-		>	cd server
-	- 安装webserver依赖（此命令在kefu-webim/server目录下执行，下同）
+	- 安装开发依赖
 
 		>	npm install
-	- 运行webserver，让代码在本地跑起来
+	- 启动 dev-server （也可以使用自己配置的 webserver）
 
 		>	npm run server
 	- 此时可以用浏览器打开 `http://localhost:8008/webim/demo.html`
@@ -33,9 +30,6 @@
 ## 定制开发（`目前标准版已支持所有功能，绝大多数情形无需定制开发`）
 
 - 在上述步骤的基础上还要执行下面的命令，推荐使用OSX 或 Linux，Window下安装依赖可能会有问题
-	- 安装开发依赖（此命令在kefu-webim目录下执行，下同）
-
-		>	npm install
 	- 构建代码 (用于生产环境)
 
 		>	npm run build
