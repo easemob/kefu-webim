@@ -259,6 +259,7 @@ function _imMessageAdapterBeforeSending(messageBody){
 	result = {
 		type: messageBody.bodies[0].type,
 		msg: messageBody.bodies[0].msg,
+		action: messageBody.bodies[0].action,
 		ext: messageBody.ext,
 		from: profile.options.imUsername,
 		to: profile.config.toUser,
