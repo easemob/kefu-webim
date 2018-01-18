@@ -138,6 +138,7 @@ function _initEasemobImConnection(){
 	});
 }
 function _initDeepStreamConnection(){
+	var MAX_RECONNECT_ATTEMPTS = 3;
 	var channelPath = "event/" + profile.config.tenantId + "/" + profile.channelId;
 	var eventReceivePath =  channelPath + "/visitor/" + profile.visitorInfo.kefuId;
 	var timerHandler;
@@ -149,7 +150,9 @@ function _initDeepStreamConnection(){
 			// 超时自动 reject
 			timerHandler = setTimeout(reject, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
 
-			ds = window.deepstream(serverAddress);
+			ds = window.deepstream(serverAddress, {
+				maxReconnectAttempts: MAX_RECONNECT_ATTEMPTS,
+			});
 
 			ds.on("connectionStateChanged", function(connectionState){
 				switch(connectionState){
@@ -169,7 +172,7 @@ function _initDeepStreamConnection(){
 				if(event === "connectionError"){
 					reconnectTimes++;
 				}
-				if(reconnectTimes >= 3) reject();
+				if(reconnectTimes >= MAX_RECONNECT_ATTEMPTS) reject();
 				console.warn(error, event, topic);
 			});
 
