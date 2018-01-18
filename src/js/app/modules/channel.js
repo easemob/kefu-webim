@@ -260,7 +260,7 @@ function handleMessage(msg, options){
 			_handleSystemEvent(eventName, eventObj, msg);
 		}
 		else{
-			var agentInfo = utils.getDataByPath(msg, "ext.agent");
+			var agentInfo = utils.getDataByPath(msg, "ext.weichat.agent");
 			if(agentInfo){
 				targetOfficialAccount.agentNickname = agentInfo.userNickname;
 				targetOfficialAccount.agentAvatar = agentInfo.avatar;
