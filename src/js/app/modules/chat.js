@@ -44,7 +44,7 @@ module.exports = {
 
 function _initSystemEventListener(){
 	eventListener.add([
-		_const.SYSTEM_EVENT.SESSION_OPENED,
+		_const.SYSTEM_EVENT.SESSION_CREATED,
 		_const.SYSTEM_EVENT.SESSION_RESTORED,
 	], function(officialAccount){
 		var sessionId = officialAccount.sessionId;
