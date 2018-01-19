@@ -251,9 +251,11 @@ function getDutyStatus(){
 	return api2({
 		url: "/v1/webim/kefuim/tenants/" + tenantId + "/show-message",
 		params: {
-			channelType: "kefuim",
-			originType: "kefuim",
+			channelType: "easemob",
+			originType: "webim",
 			channelId: profile.channelId,
+			agentUsername: config.agentName,
+			queueName: config.emgroup,
 		},
 	})
 	.then(function(msg){
