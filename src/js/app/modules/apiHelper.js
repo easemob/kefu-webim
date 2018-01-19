@@ -291,12 +291,11 @@ function getGrayList(){
 }
 function getRobertGreeting(){
 	return api2({
-		url: "/v1/webimplugin/tenants/robots/welcome",
+		url: "/v1/webim/kefuim/tenants/" + tenantId + "/robots/welcome",
 		params: {
 			channelType: "easemob",
 			originType: "webim",
 			channelId: profile.channelId,
-			tenantId: config.tenantId,
 			agentUsername: config.agentName,
 			queueName: config.emgroup,
 		},
