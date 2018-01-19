@@ -1,3 +1,5 @@
+var Dict = require("./Dict");
+
 module.exports = {
 	channelId: null,
 	imToken: null,
@@ -18,6 +20,7 @@ module.exports = {
 	systemOfficialAccount: {},
 	deepStreamChannelEnable: false,
 	visitorInfo: {},
+	imgFileList: new Dict(),
 	options: {
 		imRestServer: "",
 		imXmppServer: "",

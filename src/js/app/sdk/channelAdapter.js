@@ -1,5 +1,6 @@
 var _const = require("../../common/const");
-var eventListener = require("../modules/tools/eventListener");
+var eventListener = require("src/js/app/modules/tools/eventListener");
+var profile = require("src/js/app/modules/tools/profile");
 var apiHelper = require("src/js/app/modules/apiHelper");
 var imAdapter = require("./imAdapter");
 var messageBuilder = require("./messageBuilder");
@@ -26,6 +27,8 @@ function sendMediaFile(file, type){
 	var messageBodyForRender = messageBuilder.mediaFileMessage({ url: blobUrl, filename: filename, type: type, size: size });
 	var id = messageBuilder.getMessageId(messageBodyForRender);
 
+	// 用于图片展示
+	profile.imgFileList.set(blobUrl, file);
 	// 发送图片后需要立即上屏
 	eventListener.trigger(
 		_const.SYSTEM_EVENT.MESSAGE_SENT,
