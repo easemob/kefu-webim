@@ -110,9 +110,8 @@ function _setExt(messageBody){
 	}
 
 	// bind visitor
-	// todo: confirm this
 	if(!_.isEmpty(profile.visitorInfo)){
-		weichat.visitor = profile.visitor;
+		weichat.visitor = profile.visitorInfo;
 	}
 
 	// bind agent username

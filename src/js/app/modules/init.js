@@ -441,13 +441,8 @@ function initChatEntry(targetUserInfo){
 			.then(function(entity){
 				profile.options.imUsername = utils.getDataByPath(entity, "channel_users.0.im_id");
 				tools.cacheUsername();
-				profile.visitorInfo = {
-					kefuId: entity.userId,
-					nickname: entity.nickname,
-					trueName: entity.trueName,
-					qq: entity.qq,
-					phone: entity.phone,
-				};
+				// todo: move kefuId to other scope
+				profile.visitorInfo.kefuId = entity.userId;
 			});
 		});
 	})
