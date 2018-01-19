@@ -128,6 +128,7 @@ function _reportVisitor(username){
 	apiHelper.getRelevanceList().then(function(relevanceList){
 		var targetItem = relevanceList[0];
 		var splited = _config.appKey.split("#");
+		profile.channelId = targetItem.channelId;
 
 		_config.orgName = splited[0] || targetItem.orgName;
 		_config.appName = splited[1] || targetItem.appName;
@@ -146,10 +147,12 @@ function _reportVisitor(username){
 		}, POLLING_INTERVAL);
 
 		// 获取当前会话信息
-		apiHelper.getCurrentServiceSession().then(function(response){
-			_hasProcessingSession = !!response;
-			// 没有会话数据，则开始轮询
-			!_hasProcessingSession && _polling.start();
+		apiHelper.getCurrentServiceSession().then(function(entity){
+			var state = entity.state;
+
+			if(state !== _const.SESSION_STATE.PROCESSING && state !== _const.SESSION_STATE.WAIT){
+				_polling.start();
+			}
 		});
 	});
 }

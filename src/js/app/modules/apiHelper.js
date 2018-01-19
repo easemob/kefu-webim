@@ -71,15 +71,16 @@ function api2(ajaxOption){
 		api.call(null, "easemob-kefu-general-ajax-call", ajaxOption, resolve, reject);
 	});
 }
-function getCurrentServiceSession(visitorId){
-	return api2({
-		url: "/v1/webim/kefuim/tenants/" + tenantId
-		+ "/visitors/" + visitorId + "/current-service-session"
-	})
-	.then(function(msg){
-		return msg.data;
+function getCurrentServiceSession(){
+	return getKefuVisitorId().then(function(visitorId){
+		return api2({
+			url: "/v1/webim/kefuim/tenants/" + tenantId
+			+ "/visitors/" + visitorId + "/current-service-session"
+		})
+		.then(function(msg){
+			return msg.data.entity || {};
+		});
 	});
-	// todo: confirm this !! when nodata
 }
 function getOptions(){
 	var optionNames = [
