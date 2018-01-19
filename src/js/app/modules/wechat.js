@@ -42,7 +42,7 @@ module.exports = function(success, fail){
 	else{
 		apiHelper.getWechatProfile(tenantId, appid, code).then(function(info){
 			// cache wechat nickname
-			profile.config.visitor.userNickname = info.nickname;
+			profile.visitorInfo.userNickname = info.nickname;
 
 			apiHelper.createWechatImUser(info.openid).then(function(entity){
 				success(entity);
