@@ -165,19 +165,28 @@ function _confirm(){
 }
 
 function show(inviteId, serviceSessionId){
-	_initOnce();
-	session = serviceSessionId;
-	invite = inviteId;
-	_setSatisfaction();
-	dialog && dialog.show();
+	var redirectUrl = "xw-plugindev.bestwehotel.com/Im/Appraisal/3333";
+	var sessionId = profile.currentOfficialAccount.sessionId;
+	var agentId = profile.currentOfficialAccount.agentId;
+
+	// 锦江之星自定义评价页面
+	if(sessionId && agentId){
+		window.location.href = window.location.protocol + "//" + redirectUrl
+			+ "?employeeId=" + agentId + "&sessionId=" + sessionId;
+	}
+	else{
+		_initOnce();
+		session = serviceSessionId;
+		invite = inviteId;
+		_setSatisfaction();
+		dialog && dialog.show();
+
+		console.warn("sessionId or agentId not exist.", {
+			sessionId: sessionId,
+			agentId: agentId,
+		});
+	}
 }
 
 function init(){
-	eventListener.add(
-		_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
-		function(officialAccount, inviteId, serviceSessionId){
-			if(officialAccount !== profile.currentOfficialAccount) return;
-			show(inviteId, serviceSessionId);
-		}
-	);
 }
