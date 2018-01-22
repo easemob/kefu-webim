@@ -61,7 +61,7 @@ window.easemobim.config = {
 };
 
 function launchWebim(){
-	easemobim.bind({ tenantId: "11885" });
+	easemobim.bind();
 	sendOrderExtendMessage();
 }
 
@@ -116,11 +116,8 @@ function sendTraceExtendMessage(){
 			}
 		}
 	});
-
 }
 </script>
-<script src="/webim/easemob.js"></script>
-<!-- todo: change this demo domain to kefu.easemob.com -->
-<!-- <script src="/webim/easemob.js?configId=819c0879-db6e-40d7-b5b0-d19531903b55"></script> -->
+<script src="//kefu.easemob.com/webim/easemob.js?configId=819c0879-db6e-40d7-b5b0-d19531903b55"></script>
 </body>
 </html>

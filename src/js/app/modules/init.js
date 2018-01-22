@@ -134,7 +134,7 @@ function chat_window_mode_init(){
 			extendMessageSender.push(extendMessage.ext);
 			break;
 		case _const.EVENTS.TEXTMSG:
-			channel.sendText(data.data, data.ext);
+			channel.sendText(data);
 			break;
 		case _const.EVENTS.UPDATE_URL:
 			profile.currentBrowsingURL = data;
