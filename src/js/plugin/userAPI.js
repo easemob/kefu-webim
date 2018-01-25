@@ -129,9 +129,11 @@ window.easemobIMS = function(tenantId, group){
  */
 easemobim.bind = function(config){
 	var i;
+	var popupWindow;
 	// 防止空参数调用异常
 	config = config || {};
 	config.emgroup = config.emgroup || easemobim.config.emgroup || "";
+	popupWindow = config.popupWindow !== false;
 
 	var cacheKeyName = config.configId || (config.tenantId + config.emgroup);
 
@@ -144,7 +146,7 @@ easemobim.bind = function(config){
 	iframe = tenantList[cacheKeyName];
 
 	if(iframe){
-		iframe.open();
+		popupWindow && iframe.open();
 	}
 	else{
 		utils.isMobile && loading.show();
@@ -158,7 +160,7 @@ easemobim.bind = function(config){
 
 		iframe = Iframe(_config);
 		tenantList[cacheKeyName] = iframe;
-		iframe.set(_config, iframe.open);
+		iframe.set(_config, popupWindow ? iframe.open : null);
 	}
 
 };

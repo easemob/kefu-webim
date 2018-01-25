@@ -619,7 +619,7 @@ function _onReady(){
 	// todo: discard this
 	// bug fix:
 	// minimum = fales 时, 或者 访客回呼模式 调用easemobim.bind时显示问题
-	if(config.minimum === false || config.eventCollector === true){
+	if((config.minimum === false || config.eventCollector === true) && config.popupWindow !== false){
 		transfer.send({ event: _const.EVENTS.SHOW });
 	}
 

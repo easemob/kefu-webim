@@ -30,8 +30,7 @@
 	<div><input id="testvalue" type="text" placeholder="请输入您的tenantId，点击测试按钮"/></div>
 	<button onclick="test()">测试</button>
 	<button onclick="deleteCurrentCookies()">Clear Current Cookie</button>
-	<button onclick="bindSkillGroup()">绑定技能组</button>
-	<button onclick="resizeChatWindow()">窗口加宽</button>
+	<button onclick="popupWindow()">弹起聊天窗口</button>
 	<br>
 	<br>
 	<br>
@@ -62,36 +61,26 @@ function deleteCurrentCookies(){
 	alert("cleared");
 }
 
-function bindSkillGroup(){
+function popupWindow(){
 	window.easemobim.bind({
-		tenantId: getTenantId(),
-		emgroup: "技能组1"
-	});
-}
-
-function resizeChatWindow(){
-	window.easemobim.bind({
-		tenantId: getTenantId(),
-		dialogWidth: "500px"
+		popupWindow: true,
 	});
 }
 </script>
+ <script src='easemob.js?configId=bf6c346d-6223-4faa-91ee-63f553a89e57'></script>
 <script>
-window.easemobim = window.easemobim || {};
-
-window.easemobim.config = {
-	domain: "//sandbox.kefu.easemob.com",
-	// domain: "//kefu.easemob.com",
-	// 访客自动上报
-	// eventCollector: true,
-	satisfaction: true,
-	// hide: false,
-	// minimum: false,
-	tenantId: "11885",
-	unused: ""
-};
-</script>
-
-<script src="easemob.js"></script>
+easemobim.bind({
+	domain: "//xw-kefu.bestwehotel.com",
+	// autoConnect: true,
+	minimum: true,
+	popupWindow: false,
+	hide: true,
+	agentName: 'tong.wang@bestwehotel.com',
+	// pc端采用 onReady 回调来发送扩展消息
+	onready: function(){
+		easemobim.sendText({ data: "ddddd", ext: {} });
+	}
+});
+ </script>
 </body>
 </html>
