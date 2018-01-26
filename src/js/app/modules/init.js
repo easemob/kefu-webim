@@ -377,7 +377,14 @@ function initChatEntry(targetUserInfo){
 					}
 				});
 			}
-			// 访客
+			// 访客带token，sina patch
+			else if(config.user.token){
+				// 发送空的ext消息，延迟发送
+				profile.commandMessageToBeSendList.push({ ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } });
+				chat.init();
+				chat.show();
+				transfer.send({ event: _const.EVENTS.SHOW });
+			}
 			else{
 				apiHelper.getPassword().then(function(password){
 					config.user.password = password;
