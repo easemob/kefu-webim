@@ -751,6 +751,13 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.sessionState = _const.SESSION_STATE.WAIT;
 		officialAccount.sessionId = eventObj.sessionId;
 		officialAccount.isSessionOpen = true;
+
+		transfer.send({
+			event: _const.EVENTS.SESSION_CREATED,
+			data: {
+				id: eventObj.sessionId,
+			},
+		});
 		break;
 	default:
 		break;

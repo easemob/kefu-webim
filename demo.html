@@ -79,7 +79,12 @@ easemobim.bind({
 	// pc端采用 onReady 回调来发送扩展消息
 	onready: function(){
 		easemobim.sendText({ data: "ddddd", ext: {} });
-	}
+	},
+	onSessionCreated: function(sessionInfo){
+		var sessionId = sessionInfo.id;
+		alert("sessionId: " + sessionId);
+		console.log("sessionId: ", sessionId);
+	},
 });
  </script>
 </body>

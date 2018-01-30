@@ -130,11 +130,13 @@ function _ready(){
 	me.callbackApi = {
 		onready: me.config.onready || emptyFunc,
 		onmessage: me.config.onmessage || emptyFunc,
-		onsessionclosed: me.config.onsessionclosed || emptyFunc
+		onsessionclosed: me.config.onsessionclosed || emptyFunc,
+		sessionCreated: me.config.onSessionCreated || emptyFunc,
 	};
 	delete me.config.onready;
 	delete me.config.onmessage;
 	delete me.config.onsessionclosed;
+	delete me.config.onSessionCreated;
 
 	me.message
 	.send({ event: _const.EVENTS.INIT_CONFIG, data: me.config })
@@ -186,6 +188,11 @@ function _ready(){
 				me.callbackApi.onsessionclosed();
 			}, 500);
 			break;
+		case _const.EVENTS.SESSION_CREATED:
+			setTimeout(function(){
+				me.callbackApi.sessionCreated(data);
+			}, 0);
+			break;
 		case _const.EVENTS.CACHEUSER:
 			// 缓存im username
 			utils.set(
@@ -231,6 +238,7 @@ function _ready(){
 			document.body.scrollTop = 9999;
 			break;
 		default:
+			throw new Error("unknown event name");
 			break;
 		}
 	}, ["main"]);
