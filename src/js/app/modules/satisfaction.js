@@ -170,22 +170,25 @@ function show(inviteId, serviceSessionId){
 	var agentId = profile.currentOfficialAccount.agentId;
 
 	// 锦江之星自定义评价页面
-	if(sessionId && agentId){
+	apiHelper.getVisitorId()
+	.then(function(visitorId){
+		if(!sessionId || !agentId) throw new Error("missing parameters.");
 		window.location.href = window.location.protocol + "//" + redirectUrl
-			+ "?employeeId=" + agentId + "&sessionId=" + sessionId;
-	}
-	else{
+			+ "?employeeId=" + agentId + "&sessionId=" + sessionId + "&visitorUserId=" + visitorId;
+	})
+	.then(null, function(error){
 		_initOnce();
 		session = serviceSessionId;
 		invite = inviteId;
 		_setSatisfaction();
 		dialog && dialog.show();
 
-		console.warn("sessionId or agentId not exist.", {
+		console.warn("sessionId or agentId or visitorUserId not exist.", {
 			sessionId: sessionId,
 			agentId: agentId,
+			error: error,
 		});
-	}
+	});
 }
 
 function init(){
