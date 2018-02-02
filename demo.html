@@ -82,6 +82,18 @@ window.easemobim = window.easemobim || {};
 window.easemobim.config = {
 	domain: "//sandbox.kefu.easemob.com",
 	// domain: "//kefu.easemob.com",
+	// 每条消息都会在扩展中带这些内容
+	customExtendMessage: {
+		robot: {
+			userId: "123456",
+			channel: "微信01", // FAQ的渠道管理命名一致
+			context: {
+				// 根据需要自定义内容，透传给机器人的context
+				name: "xxx",
+				// 其他字段
+			},
+		},
+	},
 	// 访客自动上报
 	// eventCollector: true,
 	satisfaction: true,
