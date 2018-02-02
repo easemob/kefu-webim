@@ -645,10 +645,16 @@ function _setExt(msg){
 	var officialAccountId = officialAccount.official_account_id;
 	var bindAgentUsername = officialAccount.bindAgentUsername;
 	var bindSkillGroupName = officialAccount.bindSkillGroupName;
+	var customExtendMessage = profile.config.customExtendMessage;
 
 	msg.body.ext = msg.body.ext || {};
 	msg.body.ext.weichat = msg.body.ext.weichat || {};
 	msg.body.ext.weichat.language = __LANGUAGE__;
+
+	// 对接百度机器人，增加消息扩展
+	if(typeof customExtendMessage === "object"){
+		_.assign(msg.body.ext, customExtendMessage);
+	}
 
 	// bind skill group
 	if(bindSkillGroupName){
