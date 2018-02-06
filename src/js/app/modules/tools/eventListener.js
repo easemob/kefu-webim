@@ -13,6 +13,7 @@ function add(eventOrArray, callback){
 	}
 	else if(_.isArray(eventOrArray)){
 		_.each(eventOrArray, function(event){
+			if(typeof event !== "string") throw new Error("unexpected type of event:", typeof event);
 			_add(event, callback);
 		});
 	}

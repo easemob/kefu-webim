@@ -143,9 +143,17 @@ function _initDeepStreamConnection(){
 	var eventReceivePath =  channelPath + "/visitor/" + profile.visitorInfo.kefuId;
 	var timerHandler;
 	var reconnectTimes = 0;
+	var deepstreamPath = __("config.static_path") + "/js/lib/deepstream.min.js?v=2.3.0";
+
 
 	eventSendPath = channelPath + "/agent";
-	return apiHelper.getDeepStreamServer().then(function(serverAddress){
+	return Promise.all([
+		apiHelper.getDeepStreamServer(),
+		tools.loadScript(deepstreamPath),
+	])
+	.then(function(results){
+		var serverAddress = results[0];
+
 		return new Promise(function(resolve, reject){
 			// 超时自动 reject
 			timerHandler = setTimeout(reject, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);

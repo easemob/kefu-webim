@@ -396,6 +396,6 @@ function _createActiveXHR(){
 }
 
 function canUploadFileAsync(){
-	return typeof FormData !== "undefined"
-		&& (_createActiveXHR() || _createStandardXHR()).setRequestHeader;
+	var xhr = _createStandardXHR() || _createActiveXHR();
+	return typeof FormData !== "undefined" && !!xhr.setRequestHeader;
 }
