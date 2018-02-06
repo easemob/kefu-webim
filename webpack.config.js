@@ -15,7 +15,8 @@ const _en_us_map_ = require("./src/i18n/en-US");
 
 const argv = require("yargs").argv;
 const lang = argv.lang || "zh-CN";
-const VERSION = argv["tag-name"];
+const tmpVersion = "local_"+(Math.floor(Math.random()*1000000)).toString();
+const VERSION = argv["tag-name"] || tmpVersion;
 
 var distPath = lang === "zh-CN" ? "" : lang;
 var staticPath = lang === "zh-CN" ? "static" : "../static";
