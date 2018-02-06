@@ -12,10 +12,11 @@ const webpack = require("webpack");
 const i18next = require("i18next");
 const _zh_cn_map_ = require("./src/i18n/zh-CN");
 const _en_us_map_ = require("./src/i18n/en-US");
-const VERSION = "pre_47.26.0";
 
 const argv = require("yargs").argv;
 const lang = argv.lang || "zh-CN";
+const tmpVersion = "local_"+(Math.floor(Math.random()*1000000)).toString();
+const VERSION = argv["tag-name"] || tmpVersion;
 
 var distPath = lang === "zh-CN" ? "" : lang;
 var staticPath = lang === "zh-CN" ? "static" : "../static";
