@@ -74,7 +74,7 @@ function _reportData(userType, userId){
 			else{}
 			break;
 		default:
-			throw "unexpected event type.";
+			throw new Error("unexpected event type.");
 		}
 	});
 }
@@ -152,6 +152,9 @@ function _reportVisitor(username){
 
 			if(state !== _const.SESSION_STATE.PROCESSING && state !== _const.SESSION_STATE.WAIT){
 				_polling.start();
+			}
+			else{
+				_hasProcessingSession = true;
 			}
 		});
 	});
