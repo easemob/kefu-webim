@@ -129,7 +129,7 @@
 	display: inline-block;
 	border-radius: 6px;
 	max-width: 76%;
-	p{
+	> p {
 		border-bottom:1px solid #e5e5e5;
 	}
 	.em-btn-list {
@@ -215,6 +215,7 @@
 		display: inline-block;
 		border-radius: 6px;
 		padding: 10px;
+		max-width: 98%;
 		min-width: 20px;
 		min-height: 20px;
 		vertical-align: middle;
