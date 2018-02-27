@@ -24,6 +24,9 @@ function _getGreetings(officialAccount) {
 		var greetingText = robotGreetingObj.greetingText;
 		var greetingObj = {};
 
+		// fuck patch for getting robot id
+		profile.robotId = robotGreetingObj && robotGreetingObj.tenantId;
+
 		// 系统欢迎语
 		systemGreetingText && channel.handleMessage({
 			data: systemGreetingText,

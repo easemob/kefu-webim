@@ -1,3 +1,46 @@
+.question-suggestion-wrapper {
+	position: absolute;
+	bottom: 139px;
+	width: 100%;
+	background-color: white;
+
+	.close-button {
+		position: absolute;
+		right: 0;
+		width: 30px;
+		height: 30px;
+		color: #666;
+
+		&:hover {
+			cursor: pointer;
+		}
+	}
+
+	.header {
+		line-height: 20px;
+		font-size: 12px;
+		padding: 0 10px;
+		color: #666;
+	}
+
+	.tag-container {
+		padding: 0 5px;
+		> .item {
+			padding: 0 5px;
+			display: inline-block;
+			color: white;
+			border-radius: 4px;
+			margin: 5px;
+			line-height: 24px;
+			font-size: 14px;
+
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
+}
+
 .em-widget-send-wrapper {
 	position: fixed;
 	height: 140px;

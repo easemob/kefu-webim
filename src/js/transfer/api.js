@@ -667,29 +667,41 @@ getData.listen(function (msg) {
 		break;
 	case 'getWebsiteIds':
 		emitAjax({
-			url: '/v1/websites/zto/billCode-webSite-relations?msg_type=ZTO_BILLCODE_ROUTER&logistics_interface=' + encodeURIComponent("{") + "billCode:" + params.billCode + encodeURIComponent("}"), 
+			url: '/v1/websites/zto/billCode-webSite-relations?msg_type=ZTO_BILLCODE_ROUTER&logistics_interface=' + encodeURIComponent("{") + "billCode:" + params.billCode + encodeURIComponent("}"),
 			msg: msg,
 			type: 'POST',
 			excludeData: true
 		});
-		break;		
+		break;
 	case 'getSkillgroupByWebsiteId':
 		emitAjax({
-			url: '/v1/websites/tenants/'+ tenantId + '/website-queue-relations', 
+			url: '/v1/websites/tenants/'+ tenantId + '/website-queue-relations',
 			msg: msg,
 			type: 'get',
 		});
 		break;
 	case 'createWorkOrder':
 		emitAjax({
-			url: '/v1/websites/zto/create-work-orders?msg_type=ZTO_CREATE_WORK_ORDER', 
+			url: '/v1/websites/zto/create-work-orders?msg_type=ZTO_CREATE_WORK_ORDER',
 			msg: msg,
 			type: 'POST',
 		});
-		break;	
+		break;
 	case 'getWebsiteIdsBySiteCode':
 		emitAjax({
-			url: '/v1/websites/zto/webSite-relations?msg_type=ZTO_SITE_ROUTER&logistics_interface=' + encodeURIComponent("{") + "siteCode:" + params.siteCode + encodeURIComponent("}"), 
+			url: '/v1/websites/zto/webSite-relations?msg_type=ZTO_SITE_ROUTER&logistics_interface=' + encodeURIComponent("{") + "siteCode:" + params.siteCode + encodeURIComponent("}"),
+			msg: msg,
+			type: 'POST',
+		});
+		break;
+	case 'getRobotQuestionSuggestion':
+		url = "/v1/webimplugin/tenants/" + tenantId + "/servicesessions/" + params.sessionId + "/visitor-replenishment";
+
+		delete params.tenantId;
+		delete params.sessionId;
+
+		emitAjax({
+			url: url,
 			msg: msg,
 			type: 'POST',
 		});

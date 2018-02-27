@@ -22,6 +22,7 @@ var initSessionList = require('./chat/initSessionList');
 var initGetGreetings = require('./chat/initGetGreetings');
 var initAgentNicknameUpdate = require('./chat/initAgentNicknameUpdate');
 var initQuerySkillgroup = require("./chat/initQuerySkillgroup");
+var initRobotQuestionSuggestion = require("./chat/initRobotQuestionSuggestion");
 
 
 var isEmojiInitilized;
@@ -813,6 +814,7 @@ function _init() {
 			initTransferToKefuButton();
 			initAgentNicknameUpdate();
 			initGetGreetings();
+			initRobotQuestionSuggestion({ textareaDom: doms.textInput });
 
 			// 第二通道收消息初始化
 			channel.initSecondChannle();
