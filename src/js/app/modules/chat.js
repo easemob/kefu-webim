@@ -23,6 +23,7 @@ var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
 var initQuerySkillgroup = require("./chat/initQuerySkillgroup");
 var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
+var initRobotQuestionSuggestion = require("./chat/initRobotQuestionSuggestion");
 
 var isMessageChannelReady;
 var config;
@@ -750,6 +751,7 @@ function _initSession(){
 			initTransferToKefuButton();
 			initAgentNicknameUpdate();
 			initGetGreetings();
+			initRobotQuestionSuggestion({ textareaDom: doms.textInput });
 
 			// 第二通道收消息初始化
 			channel.initSecondChannle();

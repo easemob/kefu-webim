@@ -11,7 +11,8 @@ var profile = require("./tools/profile");
 
 var config;
 var cache = {
-	appraiseTags: {}
+	appraiseTags: {},
+	robotQuestionSuggestion: {},
 };
 var cachedApiCallbackTable = {};
 var apiTransfer;
@@ -1260,6 +1261,35 @@ function createWorkOrder(opt){
 	});
 }
 
+function getRobotQuestionSuggestion(sessionId, responseData){
+	var question = responseData.question;
+	var robotId = responseData.robotId;
+	var userId = responseData.userId;
+	var cachedResult = cache.robotQuestionSuggestion[question];
+
+	if(cachedResult){
+		return Promise.resolve(cachedResult);
+	}
+	return new Promise(function(resolve, reject){
+		api("getRobotQuestionSuggestion", {
+			tenantId: config.tenantId,
+			sessionId: sessionId,
+			question: question,
+			robotId: robotId,
+			userId: userId,
+		}, function (msg){
+			var questionAnswer = utils.getDataByPath(msg, "data.questionAnswer");
+			if (_.isArray(questionAnswer)){
+				cache.robotQuestionSuggestion[question] = questionAnswer;
+				resolve(questionAnswer);
+			}
+			else {
+				reject('unknown error.');
+			}
+		}, reject);
+	});
+}
+
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
 	getToken: getToken,
@@ -1311,6 +1341,7 @@ module.exports = {
 	getSkillgroupByWebsiteId: getSkillgroupByWebsiteId,
 	createWorkOrder: createWorkOrder,
 	getWebsiteIdsBySiteCode: getWebsiteIdsBySiteCode,
+	getRobotQuestionSuggestion: getRobotQuestionSuggestion,
 
 	initApiTransfer: initApiTransfer,
 	api: api,
