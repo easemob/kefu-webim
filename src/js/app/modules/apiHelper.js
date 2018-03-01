@@ -1171,28 +1171,34 @@ function getRobotQuestionSuggestion(sessionId, responseData){
 	var question = responseData.question;
 	var robotId = responseData.robotId;
 	var userId = responseData.userId;
-	var cachedResult = cache.robotQuestionSuggestion[question];
-
-	if(cachedResult){
-		return Promise.resolve(cachedResult);
-	}
+	// var cachedResult = cache.robotQuestionSuggestion[question];
+	//
+	// if(cachedResult){
+	// 	return Promise.resolve(cachedResult);
+	// }
 	return new Promise(function(resolve, reject){
-		api("getRobotQuestionSuggestion", {
-			tenantId: config.tenantId,
-			sessionId: sessionId,
-			question: question,
-			robotId: robotId,
-			userId: userId,
-		}, function (msg){
-			var questionAnswer = utils.getDataByPath(msg, "data.questionAnswer");
-			if (_.isArray(questionAnswer)){
-				cache.robotQuestionSuggestion[question] = questionAnswer;
-				resolve(questionAnswer);
-			}
-			else {
-				reject('unknown error.');
-			}
-		}, reject);
+		// apiName, data, success, error
+		api(
+			"getRobotQuestionSuggestion",
+			{
+				tenantId: config.tenantId,
+				sessionId: sessionId,
+				question: question,
+				robotId: robotId,
+				userId: userId,
+			},
+			function (msg){
+				var questionAnswer = utils.getDataByPath(msg, "data.entity.queryAnswer");
+				if (_.isArray(questionAnswer)){
+					// cache.robotQuestionSuggestion[question] = questionAnswer;
+					resolve(questionAnswer);
+				}
+				else {
+					reject('unknown error.');
+				}
+			},
+			reject
+		);
 	});
 }
 

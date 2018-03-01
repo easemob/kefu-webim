@@ -694,18 +694,27 @@ getData.listen(function (msg) {
 			type: 'POST',
 		});
 		break;
-	case 'getRobotQuestionSuggestion':
-		url = "/v1/webimplugin/tenants/" + tenantId + "/servicesessions/" + params.sessionId + "/visitor-replenishment";
 
+	case 'getRobotQuestionSuggestion':
+		url = "/v1/webimplugin/tenants/" + tenantId
+			+ "/servicesessions/" + params.sessionId
+			+ "/visitor-replenishment-sync"
+			+ "?question=" + params.question
+			+ (params.userId ? ("&userId=" + params.userId): "")
+			+ (params.robotId ? ("&robotId=" + params.robotId) : "");
+		// 不删除 params（msg.data），emitAjax 又会贴进来
 		delete params.tenantId;
 		delete params.sessionId;
-
+		delete params.question;
+		delete params.robotId;
+		delete params.userId;
 		emitAjax({
 			url: url,
 			msg: msg,
-			type: 'POST',
+			type: 'GET',
 		});
 		break;
+
 	default:
 		console.error('unexpect api name: ' + apiName);
 		break;

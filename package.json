@@ -26,7 +26,9 @@
   "scripts": {
     "build": "webpack --env production",
     "dev": "webpack --watch --env development",
-    "server": "node server/app -t"
+    "server": "node server/app -t",
+    "server:moya": "node server/app -t 172.17.3.91:7575",
+    "server:debug": "node --inspect --debug-brk server/app -t 172.17.3.91:7575"
   },
   "dependencies": {
     "easemob-websdk": "=1.4.6",
