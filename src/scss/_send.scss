@@ -1,5 +1,7 @@
 .question-suggestion-wrapper {
 	position: absolute;
+	z-index: 2;
+    border-top: 1px solid #e5e9f3;
 	bottom: 139px;
 	width: 100%;
 	background-color: white;
@@ -24,13 +26,19 @@
 	}
 
 	.tag-container {
-		padding: 0 5px;
+		padding: 5px 10px 0 0;
 		> .item {
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			box-sizing: border-box;
+			max-width: 100%;
+
 			padding: 0 5px;
+			margin-left: 5px;
 			display: inline-block;
 			color: white;
 			border-radius: 4px;
-			margin: 5px;
 			line-height: 24px;
 			font-size: 14px;
 

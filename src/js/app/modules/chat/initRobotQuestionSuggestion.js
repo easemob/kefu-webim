@@ -7,6 +7,7 @@ var channel = require("../channel");
 var wrapperView;
 var tagContainer;
 var latest = onlyExcuteLatestCallback();
+var userDisabled = false;
 
 module.exports = function(opt){
 	var closeButton;
@@ -27,15 +28,23 @@ module.exports = function(opt){
 	tagContainer = wrapperView.querySelector(".tag-container");
 	throttledGetSuggestion = _.throttle(_getRobotSuggestion, 1000);
 
-	utils.on(closeButton, "click", _hideSuggestion);
+	// 关闭
+	utils.on(closeButton, "click", function(){
+		userDisabled = true;
+		_hideSuggestion();
+	});
 
+	// 点击发送
 	utils.live("li.item", "click", function(e){
 		var text = this.innerText;
 		textareaDom.value = "";
 		channel.sendText(text);
+		_hideSuggestion();
 	}, tagContainer);
 
-	utils.on(textareaDom, "change input", function(){
+	// blur 会触发 change，使得首次点击发送失效
+	// keypress 不支持退格
+	utils.on(textareaDom, "input propertychange", function(){
 		throttledGetSuggestion(textareaDom.value);
 	});
 };
@@ -66,7 +75,6 @@ function _getRobotSuggestion(text){
 		_hideSuggestion();
 		return;
 	}
-
 	apiHelper.getRobotQuestionSuggestion(sessionId, {
 		question: question,
 		robotId: robotId,
@@ -81,7 +89,9 @@ function _getRobotSuggestion(text){
 		tagContainer.innerHTML = suggestionList.map(function(itemText){
 			return "<li class=\"item bg-color bg-hover-color-dark\">" + _.escape(itemText) + "</li>";
 		}).join("");
-		utils.removeClass(wrapperView, "hide");
+
+		// 用户没有禁止，才能打开
+		!userDisabled && utils.removeClass(wrapperView, "hide");
 	}));
 }
 
@@ -98,4 +108,3 @@ function onlyExcuteLatestCallback(){
 		};
 	};
 }
-
