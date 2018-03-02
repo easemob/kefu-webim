@@ -100,6 +100,7 @@ function _appendHtmlToElement(element, html){
 }
 
 module.exports = {
+	sendDisabled: false,			// 是否阻止编辑器发送
 	isTop: window.top === window.self,
 	isNodeList: _isNodeList,
 	isAndroid: /android/i.test(navigator.userAgent),
