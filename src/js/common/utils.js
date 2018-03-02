@@ -100,6 +100,7 @@ function _appendHtmlToElement(element, html){
 }
 
 module.exports = {
+	sendDisabled: false,			// 是否阻止编辑器发送
 	isTop: window.top === window.self,
 	isNodeList: _isNodeList,
 	isAndroid: /android/i.test(navigator.userAgent),
@@ -313,10 +314,10 @@ module.exports = {
 				currentObj = currentObj[prop];
 				return seek();
 			}
-			
+
 			// 没有找到path，返回undefined
 			return void 0;
-			
+
 		}
 	},
 	query: function(key){

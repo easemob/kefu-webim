@@ -654,6 +654,7 @@ function _bindEvents(){
 			&& !utils.isMobile
 			&& !evt.ctrlKey
 			&& !evt.shiftKey
+			&& !utils.sendDisabled
 		){
 			// ie8 does not support preventDefault & stopPropagation
 			if(evt.preventDefault){

@@ -22,9 +22,11 @@
 	.border-color {
 		border-color: $dark-color!important;
 	}
+	.bg-active-color-light,
 	.bg-hover-color-light:hover {
 		background-color: $light-color!important;
 	}
+	.bg-active-color-dark,
 	.bg-hover-color-dark:hover {
 		background-color: $dark-color!important;
 	}

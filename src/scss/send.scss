@@ -26,7 +26,7 @@
 	}
 
 	.tag-container {
-		padding: 5px 10px 0 0;
+		padding: 0 10px 0 0;
 		> .item {
 			overflow: hidden;
 			white-space: nowrap;
@@ -34,16 +34,31 @@
 			box-sizing: border-box;
 			max-width: 100%;
 
+			float: left;
+			clear: both;
+			margin-top: 5px;
+
+			color: black;
+			background-color: white;
+			border: 1px solid #e5e5e5;
+
 			padding: 0 5px;
 			margin-left: 5px;
 			display: inline-block;
-			color: white;
 			border-radius: 4px;
 			line-height: 24px;
 			font-size: 14px;
 
 			&:hover {
 				cursor: pointer;
+				color: white;
+				border-color: white;
+			}
+			// active 专用，强制字色 white
+			&.bg-active-color-light,
+			&.bg-active-color-dark {
+				color: white;
+				border-color: white;
 			}
 		}
 	}
