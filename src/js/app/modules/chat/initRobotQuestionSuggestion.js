@@ -46,13 +46,10 @@ module.exports = function(opt){
 
 	// blur 会触发 change，使得首次点击发送失效
 	// keypress 不支持退格
-	// utils.on(textareaDom, "input propertychange", function(){
-	// 	_getRobotSuggestion(textareaDom.value);
-	// });
 	suggestionTimer = setInterval(function(){
 		var curQuestion = textareaDom.value;
 		if(curQuestion){
-			_getRobotSuggestion(curQuestion);
+			_getRobotSuggestion(curQuestion, getEditContent);
 		}
 	}, 500);
 
@@ -71,6 +68,7 @@ module.exports = function(opt){
 		case 13:
 			sendSelection();
 			textareaDom.value = "";		// dom 不外露，放在这里面把
+			e.preventDefault();			// 防止多余的换行
 			result = false;
 			break;
 
@@ -92,6 +90,10 @@ module.exports = function(opt){
 
 		return result;
 	});
+
+	function getEditContent(){
+		return textareaDom.value;
+	}
 };
 
 
@@ -159,7 +161,7 @@ function _hideSuggestion(){
 	utils.sendDisabled = false;
 }
 
-function _getRobotSuggestion(text){
+function _getRobotSuggestion(text, getEditContent){
 	var currentOfficialAccount = profile.currentOfficialAccount;
 	var sessionId = currentOfficialAccount.sessionId;
 	var agentId = currentOfficialAccount.agentId;
@@ -187,11 +189,13 @@ function _getRobotSuggestion(text){
 	})
 	.then(latest(function(suggestionList){
 		// 没有结果时隐藏建议
-		if(_.isEmpty(suggestionList)){
+		// 再次检查编辑器没内容则抛弃，不要继续
+		if(_.isEmpty(suggestionList) || !getEditContent()){
 			_hideSuggestion();
 			return;
 		}
 
+		// open suggestion
 		tagContainer.innerHTML = suggestionList.map(function(itemText, idx){
 			// 恢复选中
 			if(idx === curSelectionIdx){
