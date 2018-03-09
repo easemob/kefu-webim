@@ -1,6 +1,22 @@
-node_modules
-*.map
+# npm 生成文件
 package-lock.json
+
+# 开发依赖
+node_modules
+
+# source map
+*.map
+
+# 常用配置
+server/cfg.js
+
+# 编译的文件都要忽略掉
 appPageCached.js
 en-US/static/css/im.css
-server/cfg.js
+static/js/em-transfer.js
+static/js/main.js
+static/fonts/
+easemob.js
+demo.html
+im.html
+transfer.html

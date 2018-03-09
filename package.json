@@ -29,6 +29,8 @@
     "raw-loader": "^0.5.1",
     "sass-loader": "^4.1.1",
     "string-replace-loader": "^1.3.0",
+    "nodemon": "^1.17.1",
+    "prompt": "^1.0.0",
     "webpack": "^3.11.0",
     "webpack-dev-middleware": "^2.0.6",
     "webpack-hot-middleware": "^2.21.2",
@@ -37,13 +39,12 @@
   },
   "scripts": {
     "build": "webpack --env production",
-    "dev": "DEBUG=webim* node server/app",
-    "dev:debug": "DEBUG=webim* node --inspect --debug-brk server/app",
-    "server": "DEBUG=webim* node server/app --only",
+    "dev": "DEBUG=webim* nodemon ./server/app --watch server --env development",
+    "dev:debug": "DEBUG=webim* node --inspect --debug-brk server/app --env development",
+    "server": "DEBUG=webim* nodemon ./server/app --watch server --only",
     "server:debug": "DEBUG=webim* node --inspect --debug-brk server/app --only",
     "build_en": "webpack --lang en-US",
-    "build_all": "webpack;webpack --lang en-US",
-    "lint": "eslint src/js/app/modules/init.js src/js/plugin/userAPI.js"
+    "build_all": "webpack;webpack --lang en-US"
   },
   "dependencies": {
     "easemob-websdk": "=1.4.6",
