@@ -77,12 +77,17 @@ function _getAvatar(msg){
 	var avatar;
 
 	if(officialAccountType === "CUSTOM"){
+		// avatarFromOfficialAccountExt = ext.weichat.official_account.img
 		avatar = avatarFromOfficialAccountExt;
 	}
 	else if(profile.isAgentNicknameEnable){
+		// avatarFromMessageExt = fromUser.img 但是已经弃用了？
+		// avatarFromCurrentAgent = ext.weichat.agent.avatar
 		avatar = avatarFromMessageExt || avatarFromCurrentAgent;
 	}
 	else{
+		// tenantAvatar = /v1/webimplugin/targetChannels 下的 tenantAvatar
+		// defaultAvatar = 白头
 		avatar = profile.tenantAvatar || profile.defaultAvatar;
 	}
 
@@ -116,20 +121,20 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		else{
 			articleNode = "<div class=\"article-msg-outer more-articles\">"
 					+ _.map(msgArticles, function(item, index){
-					var str = "";
-					if(index === 0){
-						str = "<div class=\"article-item first-item\">" +
+						var str = "";
+						if(index === 0){
+							str = "<div class=\"article-item first-item\">" +
 							"<h3 class=\"title\">" + item.title + "</h3>";
-					}
-					else{
-						str = "<div class=\"article-item rest-item\">" +
+						}
+						else{
+							str = "<div class=\"article-item rest-item\">" +
 							"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
-					}
-					str += "<img class=\"cover-img\" src=\"" + item.thumbUrl + "\"/>" +
+						}
+						str += "<img class=\"cover-img\" src=\"" + item.thumbUrl + "\"/>" +
 							"<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
 							"</div>";
-					return str;
-				}).join("") || ""
+						return str;
+					}).join("") || ""
 				+ "</div>";
 		}
 		dom.className = "article-message-wrapper";
