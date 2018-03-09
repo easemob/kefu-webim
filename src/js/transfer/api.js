@@ -1,6 +1,8 @@
+// em-transfer 的入口，此文件用于跨域请求 api（iframe 中的 iframe 引用）
+
 var emajax = require("../common/ajax");
 var Transfer = require("../common/transfer");
-// 此文件用于跨域请求api，故为了兼容老版本，接口不能删
+// 为了兼容老版本，接口不能删
 // 新增接口一律写在后边，按照时间顺序
 // 主要入口的url上附加tenantId，用于限流
 // post 请求时，所有msg.data参数都会被序列化为request body，如果需要去除参数需要使用 delete

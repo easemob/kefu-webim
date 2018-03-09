@@ -1,8 +1,11 @@
+// main.js 的入口（iframe 引用）
+
 require("es6-promise").polyfill();
 require("../../common/polyfill");
 require("../lib/modernizr");
 require("../sdk/webim.config");
 require("underscore");
+require("../../../scss/im.scss");
 
 var utils = require("../../common/utils");
 var _const = require("../../common/const");

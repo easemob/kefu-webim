@@ -37,37 +37,35 @@
 		<video autoplay></video>
 		<div class="control-panel"></div>
 	</div>
+</body>
 
 <script>
-(function(){
+	(function(){
+		var videoWrapperDom = document.querySelector(".video-wrapper");
+		var videoDom = videoWrapperDom.querySelector("video");
+		var nicknameDom = videoWrapperDom.querySelector(".nickname");
 
-	var videoWrapperDom = document.querySelector(".video-wrapper");
-	var videoDom = videoWrapperDom.querySelector("video");
-	var nicknameDom = videoWrapperDom.querySelector(".nickname");
+		// tell opener i'm ready
+		window.opener.postMessage("independentVidowSubWindowLoaded", "*");
+		window.addEventListener("message", function(e){
+			var message = e.data || {};
+			var messageType = message.type;
+			var info = message.info || {};
+			var nickname = info.nickname || "";
+			var blobVideoUrl = info.blobVideoUrl || "";
+			// var isMicroPhoneDisabled = !!info.isMicroPhoneDisabled;
+			// var isCameraDisabled = !!info.isCameraDisabled;
 
-	// tell opener i'm ready
-	window.opener.postMessage("independentVidowSubWindowLoaded", "*");
-
-	window.addEventListener("message", function(e){
-		var message = e.data || {};
-		var messageType = message.type;
-		var info = message.info || {};
-		var nickname = info.nickname || "";
-		var blobVideoUrl = info.blobVideoUrl || "";
-		// var isMicroPhoneDisabled = !!info.isMicroPhoneDisabled;
-		// var isCameraDisabled = !!info.isCameraDisabled;
-
-		switch(messageType){
-		case "updateVideoBlobSrcUrl":
-			videoDom.src = blobVideoUrl;
-			nicknameDom.innerText = nickname;
-			break;
-		default:
-			break;
-		}
-	});
-}());
+			switch(messageType){
+				case "updateVideoBlobSrcUrl":
+				videoDom.src = blobVideoUrl;
+				nicknameDom.innerText = nickname;
+				break;
+				default:
+				break;
+			}
+		});
+	}());
 </script>
-</body>
 
 </html>

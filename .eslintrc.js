@@ -17,7 +17,7 @@ module.exports = {
     		codeFrame: false						// babel-eslint 提供
 		}
 	},
-	parser: "espree",		// babel-eslint | esprima | espree (default)
+	parser: "babel-eslint",		// babel-eslint | esprima | espree (default)
 	env: {
 		browser: true,
 		es6: false,
@@ -241,4 +241,3 @@ module.exports = {
 
 	}
 };
-

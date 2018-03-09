@@ -3,3 +3,4 @@ node_modules
 package-lock.json
 appPageCached.js
 en-US/static/css/im.css
+server/cfg.js
