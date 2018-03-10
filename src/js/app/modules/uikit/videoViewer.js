@@ -1,7 +1,7 @@
 var utils = require("../../../common/utils");
 var _const = require("../../../common/const");
 
-var independentVideoWindow = require("raw-loader!../../../../html/independentVideoWindow.html");
+var independentVideoWindow = require("../../../../html/independentVideoWindow.html");
 
 // adapter.js 会劫持这个 api，为了达到预期效果，事先保存
 var nativeCreateObjectURL = URL && URL.createObjectURL;

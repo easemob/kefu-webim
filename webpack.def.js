@@ -94,13 +94,23 @@ module.exports = function(envcfg){
 		resolve: {
 			alias: {
 				"@": path.resolve("./src/js"),
-			}
+			},
+		},
+
+		// 自定义 loader
+		resolveLoader: {
+			alias: {
+				"template-loader": path.resolve("./loaders/template-loader.js"),
+			},
 		},
 
 		//
 		module: {
 			rules: [
-			// HtmlWebpackPlugin 需要此 loader
+				// HtmlWebpackPlugin 需要此 loader
+				// 内部 html 可以直接加载了，因为 html 被这个 loader 转换成 CommonJs 了
+				// 添加一层 extract 脱壳，反而不能执行了
+				// loader 外 -> 内 执行顺序
 				{
 					test: /\.html$/,
 					use: [ "html-loader" ]

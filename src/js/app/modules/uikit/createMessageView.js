@@ -6,7 +6,7 @@ var eventListener = require("../tools/eventListener");
 var apiHelper = require("../apiHelper");
 var channel = require("../channel");
 
-var tpl = require("raw-loader!../../../../template/chatContainer.html");
+var tpl = require("../../../../template/chatContainer.html");
 
 module.exports = function(opt){
 	var officialAccount = opt.officialAccount;

@@ -18,7 +18,7 @@ var channel = require("./channel");
 var profile = require("./tools/profile");
 var doWechatAuth = require("./wechat");
 var extendMessageSender = require("./chat/extendMessageSender");
-var body_template = require("raw-loader!../../../template/body.html");
+var body_template = require("../../../template/body.html");
 
 var config;
 var hasChatEntryInitialized;
