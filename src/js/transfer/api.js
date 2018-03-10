@@ -1,6 +1,6 @@
 // em-transfer 的入口，此文件用于跨域请求 api（iframe 中的 iframe 引用）
 
-require("../../common/polyfill");
+require("../common/polyfill");
 var emajax = require("../common/ajax");
 var Transfer = require("../common/transfer");
 // 为了兼容老版本，接口不能删
