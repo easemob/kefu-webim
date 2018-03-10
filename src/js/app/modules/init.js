@@ -301,7 +301,7 @@ function handleConfig(configJson){
 function initCrossOriginIframe(){
 	var iframe = document.getElementById("cross-origin-iframe");
 
-	iframe.src = config.domain + "/webim/transfer.html?v=__WEBIM_PLUGIN_VERSION__";
+	iframe.src = config.domain + "/webim/transfer.html?v=" + __WEBIM_PLUGIN_VERSION__;
 	utils.on(iframe, "load", function(){
 		apiHelper.initApiTransfer();
 		handleMsgData();

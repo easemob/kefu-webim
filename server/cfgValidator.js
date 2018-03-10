@@ -17,15 +17,15 @@ var promptPropsSchema = {
 				return true;
 			}
 		},
-		robotId: {
-			description: "Enter you robotId:",
+		configId: {
+			description: "Enter you configId:",
 			pattern: /^[0-9a-z-]{36}$/,
-			message: "'robotId' 举例：b79f650a-6b35-4048-a971-ef73b5b0007d",
+			message: "'configId' 举例：2722cf2a-8ca0-4236-8142-0551589b7adf",
 			required: true
 		}
 	}
 };
-prompt.message = "RobotWebim";
+prompt.message = "KefuWebim";
 const promise = new Promise(function(resolve){
 	const CFG_PATH = path.join(__dirname, "./cfg.js");
 	try{

@@ -2,7 +2,7 @@ module.exports = function(promptResult){
 	return `module.exports = {
 	appcfg: {
 		tenantId: "${promptResult.tenantId}",
-		robotId: "${promptResult.robotId}",
+		configId: "${promptResult.configId}",
 		ajaxProxyDomain: "sandbox.robot.easemob.com",
 	},
 	servercfg: {

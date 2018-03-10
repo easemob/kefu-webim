@@ -19,4 +19,8 @@ static/fonts/
 easemob.js
 demo.html
 im.html
+im_cached.html
 transfer.html
+
+# 多语言目录
+en-US

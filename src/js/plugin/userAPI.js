@@ -14,7 +14,7 @@ var iframe;
 
 window.easemobim = window.easemobim || {};
 window.easemobim.config = window.easemobim.config || {};
-window.easemobim.version = "__WEBIM_PLUGIN_VERSION__";
+window.easemobim.version = __WEBIM_PLUGIN_VERSION__;
 
 if(
 	/MSIE 7\.0/.test(navigator.userAgent)

@@ -7,80 +7,15 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const merge = require("webpack-merge");
 const path = require("path");
 const webpack = require("webpack");
-const argv = require("yargs").argv;
-const fs = require("fs");
-const isPrd = argv.env === "production";
-
-// 自动生成配置
-const CFG_PATH = path.join(__dirname, "server/cfg.js");
-const CFG_CONTENT = "\
-module.exports = {\n\
-	appcfg: {\n\
-		tenantId: '49',\n\
-		robotId: 'b79f650a-6b35-4048-a971-ef73b5b0007d',\n\
-		domain: 'sandbox.robot.easemob.com',\n\
-	},\n\
-	servercfg: {\n\
-		port: 8010,\n\
-		proxyto: 'sandbox.robot.easemob.com',\n\
-		secure: false,\n\
-	},\n\
-};";
-try{
-	fs.statSync(CFG_PATH);
-}
-catch(e){
-	fs.writeFileSync(CFG_PATH, CFG_CONTENT);
-}
-const cfg = require("./server/cfg");
 
 const tmpVersion = "local_" + (Math.floor(Math.random() * 1e6)).toString();
-const VERSION = argv["tag-name"] || tmpVersion;
-const ORIGIN = 	(cfg.servercfg.secure ? "https" : "http") + "://localhost:" + cfg.servercfg.port;
+const VERSION = process.env["tag-name"] || tmpVersion;
+const argv = require("yargs").argv;
+const isPrd = argv.env === "production";
 
-
-//
-const setEnvVariable = (key, value) => {
-	const env = {};
-	env[key] = JSON.stringify(value);
-	return {
-		plugins: [new webpack.DefinePlugin(env)],
-	};
-};
-
-const setHtmlBuilder = ({ filename, template, opt = {} }) => ({
-	plugins: [
-		new HtmlWebpackPlugin({
-			//
-			filename,		// 输出地址（关联 entry.path）
-			template,		// 模板路径（不关联 entry.path）
-			hash: true,		// 是否 hash css & js
-			cache: true,	// 确定文件变更才更新 hash
-			inject: false,
-
-			// 是否压缩，竟然无规则报错！？
-			// 不能用 true，文档有误！
-			minify: isPrd
-				? {
-					removeComments: true,
-					collapseWhitespace: true,
-					minifyJS: true,
-					minifyCSS: true
-				}
-				: false,
-
-			// 自定义 opt
-			version: VERSION,
-
-			//
-			opt
-		})
-	]
-});
 
 // 多语言
-const lang = argv.lang || "zh-CN";
-const distPath = lang === "zh-CN" ? "" : lang;
+const lang = process.env.LOCALE;
 const i18next = require("i18next");
 const _zh_cn_map_ = require("./src/i18n/zh-CN");
 const _en_us_map_ = require("./src/i18n/en-US");
@@ -100,275 +35,309 @@ i18next.init({
 	},
 });
 
-// 语言目录深一层
-const staticPath = lang === "zh-CN" ? "static" : "../static";
-const commonCfg = merge([{
 
-	bail: true,
-
-	resolve: {
-		alias: {
-			"@": path.resolve("./src/js"),
-		}
-	},
+//
+module.exports = function(envcfg){
+	const ORIGIN = 	(envcfg.servercfg.secure ? "https" : "http") + "://localhost:" + envcfg.servercfg.port;
 
 	//
-	module: {
-		rules: [
+	const setEnvVariable = (key, value) => {
+		const env = {};
+		env[key] = JSON.stringify(value);
+		return {
+			plugins: [new webpack.DefinePlugin(env)],
+		};
+	};
+
+	const setHtmlBuilder = ({
+		filename,
+		template,
+		opt = {},
+		inject = false,
+		staticPath = "."
+	}) => ({
+		plugins: [
+			new HtmlWebpackPlugin({
+				//
+				filename,		// 输出地址（关联 entry.path）
+				template,		// 模板路径（不关联 entry.path）
+				hash: true,		// 是否 hash css & js
+				cache: true,	// 确定文件变更才更新 hash
+				inject: inject,
+
+				// 是否压缩，竟然无规则报错！？
+				// 不能用 true，文档有误！
+				minify: isPrd
+					? {
+						removeComments: true,
+						collapseWhitespace: true,
+						minifyJS: true,
+						minifyCSS: true
+					}
+					: false,
+
+				// 自定义 opt
+				version: VERSION,
+				staticPath,
+
+				//
+				opt,
+			})
+		]
+	});
+
+
+	const commonCfg = merge([{
+
+		bail: true,
+
+		resolve: {
+			alias: {
+				"@": path.resolve("./src/js"),
+			}
+		},
+
+		//
+		module: {
+			rules: [
 			// HtmlWebpackPlugin 需要此 loader
-			{
-				test: /\.html$/,
-				use: [ "html-loader" ]
-			},
+				{
+					test: /\.html$/,
+					use: [ "html-loader" ]
+				},
 
 
 
-			// fonts
-			{
-				test: /\.(eot|ttf|woff|woff2|svg)$/,
-				use: [
+				// fonts
+				{
+					test: /\.(eot|ttf|woff|woff2|svg)$/,
+					use: [
 					// 这个也能解决，不如 file-loader 贴切
 					// "url-loader",
-					{
-						loader: "file-loader",
-						options: {
-							outputPath: "../../static/fonts/",
-							// font 加载问题，与 sourcemap 冲突
-							// 基于 file-loader 的 outputPath = ../../static/fonts/
-							publicPath: ORIGIN + "/webim/static/fonts/",
-							name: "[name].[hash:8].[ext]"
+						{
+							loader: "file-loader",
+							options: {
+							// join output.path
+								outputPath: "static/fonts/",
+								// join outputPath
+								// font 加载问题，与 sourcemap 冲突
+								publicPath: ORIGIN + "/webim/",
+								name: "[name].[hash:8].[ext]"
+							}
 						}
-					}
-				]
-			},
+					]
+				},
 
 
 
-			// 第三方注入，expose-loader 注入到 window 下的
-			{
-				test: require.resolve("underscore"),
-				use: [
-					"expose-loader?_"
-				]
-			},
-			{
-				test: require.resolve("./src/js/app/lib/modernizr.js"),
-				use: [
-					"expose-loader?Modernizr"
-				]
-			},
-			{
-				test: require.resolve("moment"),
-				use: [
-					"expose-loader?moment"
-				]
-			},
+				// 第三方注入，expose-loader 注入到 window 下的
+				{
+					test: require.resolve("underscore"),
+					use: [
+						"expose-loader?_"
+					]
+				},
+				{
+					test: require.resolve("./src/js/app/lib/modernizr.js"),
+					use: [
+						"expose-loader?Modernizr"
+					]
+				},
+				{
+					test: require.resolve("moment"),
+					use: [
+						"expose-loader?moment"
+					]
+				},
 
 
 
-			// 版本注入
-			{
-				test: [
-					/init\.js$/,
-					/userAPI\.js$/,
-				],
-				use: [
+				// 版本注入
+				{
+					test: [
+						path.resolve("src/js/app/modules/init"),
+						path.resolve("src/js/plugin/userAPI"),
+						path.resolve("src/js/plugin/iframe"),
+					],
+					use: "imports-loader?__WEBIM_PLUGIN_VERSION__=>\"" + VERSION + "\""
+				},
+
+
+
+				// 多语言注入
+				{
+					test: /\.js$/,
+					loader: "i18next-loader",
+					query: {
+						quotes: "\"",
+					},
+				},
+
+
+
+			],
+		},
+	}]);
+
+	let devCfg = merge([
+		commonCfg,
+		{
+			devtool: "cheap-module-eval-source-map",
+			module: {
+				rules: [
+					// sourcemap 有效
 					{
-						loader: "string-replace-loader",
-						options: {
-							search: "__WEBIM_PLUGIN_VERSION__",
-							replace: VERSION,
-							flags: "g",
-						}
-					}
+						test: /(easemob|im)\.scss$/,
+						use: [
+						// 兼容 ie8 的 style-loader
+							"ie8-style-loader?sourceMap=true",
+
+							// "file-loader?outputPath=../../static/css/&name=im.css",
+							// "extract-loader",
+
+							"css-loader?sourceMap=true&importLoaders=2",	// 转换 CSS 为 CommonJS
+							"postcss-loader?sourceMap=true",
+							"sass-loader?sourceMap=true",
+						],
+					},
 				]
 			},
+			plugins: [
+				new webpack.HotModuleReplacementPlugin(),
+			]
+		}
+	]);
 
+	// production 才执行，以免影响速度
+	let prdCfg = merge([
+		commonCfg,
+		setEnvVariable("process.env.NODE_ENV", "production"),
+		{
+			devtool: "source-map",
+			plugins: [
+				new webpack.optimize.UglifyJsPlugin({
+					compress: {
+						warnings: false
+					},
+					test: /\.js$/i,
+					sourceMap: true,
+					comments: false,
+					mangle: {
+						screw_ie8: false
+					}
+				})
+			],
+			module: {
+				rules: [
+					// 去除 sourcemap
+					{
+						test: /(easemob|im)\.scss$/,
+						use: [
+							"ie8-style-loader",
+							"css-loader?importLoaders=2",
+							"postcss-loader",
+							"sass-loader",
+						],
+					},
+				]
+			}
+		}
+	]);
 
-
-		],
-	},
-}]);
-
-
-conmmonConfig = {
-	plugins: [
-		new webpack.optimize.UglifyJsPlugin({
-			compress: {
-				warnings: false,
-			},
-			test: /\.js$/i,
-			sourceMap: true,
-			comments: false,
-			mangle: {
-				screw_ie8: false,
-			},
+	let transfer = merge([
+		setHtmlBuilder({
+			filename: "transfer.html",
+			template: "src/html/transfer.ejs",
 		}),
-	],
-	devtool: "eval",
-	module: {
-		loaders: [
-			{
-				test: /easemob\.scss$/,
-				loaders: [
-					"ie8-style-loader?sourceMap=true",
-					"postcss-loader?sourceMap=true",
-					"sass-loader?sourceMap=true",
-				],
-			},
-			{
-				test: /im\.html$/,
-				loaders: [
-					"file-loader?name=../../[name].[ext]",
-					"extract-loader",
-					"html-loader",
-					"string-replace-loader"
-						+ "?search=__STATIC_PATH__"
-						+ "&replace=" + staticPath
-						+ "&flags=g",
-				],
-			},
-			{
-				test: /transfer\.html$/,
-				loaders: [
-					"file-loader?name=../../[name].[ext]",
-					"extract-loader",
-					"html-loader",
-				],
-			},
-			{
-				test: /im\.scss$/,
-				loaders: [
-					"file-loader?name=../css/[name].css",
-					"extract-loader",
-					"css-loader?sourceMap=true",
-					"postcss-loader?sourceMap=true",
-					"sass-loader?sourceMap=true&importLoader=true"
-				],
-			},
-			{
-				test: require.resolve("./src/js/app/sdk/webim.config.js"),
-				loader: "expose-loader?WebIM"
-			},
-			{
-				test: require.resolve("underscore"),
-				loader: "expose-loader?_"
-			},
-			{
-				test: require.resolve("./src/js/app/lib/modernizr.js"),
-				loader: "expose-loader?Modernizr"
-			},
-			{
-				test: [
-					/init\.js$/,
-					/userAPI\.js$/,
-					/im\.html/,
-					/iframe\.js/,
-					/transfer\.html/,
-				],
-				loader: "string-replace-loader",
-				query: {
-					search: "__WEBIM_PLUGIN_VERSION__",
-					replace: VERSION,
-					flags: "g",
-				},
-			},
-			{
-				test: /\.js$/,
-				loader: "i18next-loader",
-				query: {
-					quotes: "\"",
-				},
-			},
-			// 字体文件
-			{
-				test: /\.(eot|svg|ttf|woff|woff2)$/,
-				loader: "file-loader",
-				query: {
-					name: "../css/font/[name]-[hash:6].[ext]",
-				},
-			},
-		],
-	},
+		{
+			name: "transfer",
+			entry: ["./src/js/transfer/api.js"],
+			output: {
+				filename: "static/js/em-transfer.js",
+				path: __dirname,			// 推荐取 root
+				publicPath: "/webim/"		// 取 path 对应的 server 路径
+			}
+		}
+	]);
+	transfer = isPrd
+		? transfer
+		: merge([
+			transfer,
+			// append 的，不是替换
+			{ entry: ["webpack-hot-middleware/client?name=transfer"] }
+		]);
+
+	let easemob = merge([
+		setHtmlBuilder({
+			filename: "demo.html",			// 输出地址（关联 entry.path）
+			template: "src/html/demo.ejs",	// 模板路径（不关联 entry.path）
+			// 其中 domain 在 travis 中不会被 build 成 localhost
+			opt: envcfg.appcfg
+		}),
+		{
+			name: "easemob",
+			entry: [
+				// 增加一个文件（用 require 在内部做）
+				// "./src/js/common/polyfill",
+				"./src/js/plugin/userAPI.js"
+			],
+			output: {
+				filename: "easemob.js",
+				path: lang === "zh-CN" ? __dirname : path.join(__dirname, lang),
+				publicPath: "/webim/"		// 取 path 对应的 server 路径
+				// 不能用 umd 模块输出的原因是：
+				// 监测到 AMD Loader 时只执行 define，此时不会初始化模块，所以不会暴露到全局
+				// library: "easemob-kefu-webim-plugin",
+				// libraryTarget: "umd",
+				// umdNamedDefine: true,
+			}
+		}
+	]);
+	easemob = isPrd
+		? easemob
+		: merge([
+			easemob,
+			{ entry: ["webpack-hot-middleware/client?name=easemob"] }
+		]);
+
+	let app = merge([
+		setHtmlBuilder({
+			filename: "im_cached.html",		// 输出地址（关联 entry.path）
+			template: "src/html/im.ejs",	// 模板路径（不关联 entry.path）
+			staticPath: lang === "zh-CN" ? "." : "..",	// 语言目录深一层
+		}),
+		setHtmlBuilder({
+			filename: "im.html",
+			template: "src/html/im.ejs",
+			staticPath: lang === "zh-CN" ? "." : "..",
+		}),
+		{
+			name: "main",	// 匹配 client?name=main
+			entry: ["./src/js/app/modules/init.js"],
+			output: {
+				filename: "static/js/main.js",	// join output.path
+				path: lang === "zh-CN" ? __dirname : path.join(__dirname, lang),
+				publicPath: "/webim/"			// 取 path 对应的 server 路径
+			}
+		}
+	]);
+	app = isPrd
+		? app
+		: merge([
+			app,
+			{ entry: ["webpack-hot-middleware/client?name=main"] }
+		]);
+
+	//
+	return isPrd
+		? [
+			merge([transfer, prdCfg]),
+			merge([easemob, prdCfg]),
+			merge([app, prdCfg])
+		]
+		: [
+			merge([transfer, devCfg]),
+			merge([easemob, devCfg]),
+			merge([app, devCfg])
+		];
 };
-
-transfer = Object.assign({}, conmmonConfig, {
-	name: "transfer",
-	entry: [
-		"./src/js/transfer/api.js",
-		"./src/html/transfer.html",
-	],
-	output: {
-		filename: "em-transfer.js",
-		path: path.resolve(__dirname, "static/js"),
-	},
-});
-
-easemob = Object.assign({}, conmmonConfig, {
-	name: "easemob",
-	entry: [
-		"./src/js/common/polyfill",
-		"./src/js/plugin/userAPI.js",
-	],
-	output: {
-		filename: "easemob.js",
-		path: path.resolve(__dirname, distPath, "."),
-		// 不能用umd模块输出的原因是：
-		// 监测到AMD Loader时只执行define，此时不会初始化模块，所以不会暴露到全局
-		// library: 'easemob-kefu-webim-plugin',
-		// libraryTarget: 'umd',
-		// umdNamedDefine: true,
-	},
-});
-
-app = Object.assign({}, conmmonConfig, {
-	name: "app",
-	entry: [
-		"./src/js/app/modules/init.js",
-		"./src/scss/im.scss",
-		"./src/html/im.html",
-	],
-	output: {
-		filename: "main.js",
-		path: path.resolve(__dirname, distPath, "static/js"),
-	},
-});
-
-appPageCached = Object.assign({}, conmmonConfig, {
-	name: "appCached",
-	entry: "./src/html/im.html",
-	devtool: false,
-	output: {
-		filename: "appPageCached.js",
-		path: path.resolve(__dirname, distPath, "."),
-	},
-	module: {
-		loaders: [
-			{
-				test: /im\.html$/,
-				loaders: [
-					"file-loader?name=[name]_cached.[ext]",
-					"extract-loader",
-					"html-loader",
-					"string-replace-loader"
-						+ "?search=__STATIC_PATH__"
-						+ "&replace=" + staticPath
-						+ "&flags=g",
-					"string-replace-loader"
-						+ "?search=__WEBIM_PLUGIN_VERSION__"
-						+ "&replace=" + VERSION
-						+ "&flags=g",
-				],
-			},
-		],
-	},
-});
-
-taskList = [
-	transfer,
-	easemob,
-	app,
-	appPageCached,
-];
-
-module.exports = taskList;

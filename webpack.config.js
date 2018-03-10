@@ -1,6 +1,17 @@
+// 	TRAVIS=true npm run build			only nocfg
+// 	npm run build						nocfg
+// 	npm run build
+// 	npm run server						nocfg
+// 	npm run server
+// 	npm run dev							nocfg
+// 	npm run dev
+
 const getWebpackTasks = require("./webpack.def");
 const fs = require("fs");
 var colors = require("colors/safe");
+
+// 找到 warning 的 loader
+process.env.WARN_TRACING && (process.traceDeprecation = true);
 
 // 直接自动生成 cfg
 function buildingAtTravisEnv(){
@@ -9,9 +20,13 @@ function buildingAtTravisEnv(){
 		fs.statSync("./server/cfg.js");
 	}
 	catch(e){
+		// cfg 的修改有三个文件
+		// ./webpack.cfg.js
+		// ./server/cfgTemplate.js
+		// ./server/cfgValidator.js
 		fs.writeFileSync("./server/cfg.js", cfgTemplate({
 			tenantId: "49",
-			robotId: "b79f650a-6b35-4048-a971-ef73b5b0007d"
+			configId: "2722cf2a-8ca0-4236-8142-0551589b7adf"
 		}));
 	}
 	console.log(colors.cyan("BUILDING...\n"));
