@@ -5,14 +5,15 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+	<link href="<%= htmlWebpackPlugin.options.staticPath %>/static/css/im.css?v=<%= htmlWebpackPlugin.options.version %>" rel="stylesheet" />
 </head>
 
 <body>
 	<!-- 用于跨域请求的 iframe -->
 	<iframe id="cross-origin-iframe" class="hide"></iframe>
+	<!-- javascript -->
+	<script src="<%= htmlWebpackPlugin.options.staticPath %>/static/js/lib/strophe-1.2.8.min.js"></script>
+	<script src="<%= htmlWebpackPlugin.options.staticPath %>/static/js/main.js?v=<%= htmlWebpackPlugin.options.version %>"></script>
 </body>
 
-<!-- javascript -->
-<script src="<%= htmlWebpackPlugin.options.staticPath %>/static/js/lib/strophe-1.2.8.min.js"></script>
-<script src="<%= htmlWebpackPlugin.options.staticPath %>/static/js/main.js?v=<%= htmlWebpackPlugin.options.version %>"></script>
 </html>

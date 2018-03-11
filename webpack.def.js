@@ -4,6 +4,7 @@
 	/static/js/em-transfer.js		// 这是老文件？
 */
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const merge = require("webpack-merge");
 const path = require("path");
 const webpack = require("webpack");
@@ -61,7 +62,7 @@ module.exports = function(envcfg){
 				//
 				filename,		// 输出地址（关联 entry.path）
 				template,		// 模板路径（不关联 entry.path）
-				hash: true,		// 是否 hash css & js
+				// hash: true,		// 是否 hash css & js
 				cache: true,	// 确定文件变更才更新 hash
 				inject: inject,
 
@@ -85,6 +86,35 @@ module.exports = function(envcfg){
 			})
 		]
 	});
+
+	// PRODUCTION ONLY
+	var extractCSS = ({ test, include, exclude, use }) => {
+		// Output extracted CSS to a file
+		const plugin = new ExtractTextPlugin({
+			// 加入 hash 版本号
+			// filename: "static/css/im.[contenthash:8].css",
+			filename: "static/css/im.css",
+			// `allChunks` is needed with CommonsChunkPlugin to extract from extracted chunks as well
+			// allChunks: true,
+		});
+		return {
+			module: {
+				rules: [{
+					test,
+					include,
+					exclude,
+					// 这是一个 loader
+					use: plugin.extract({
+						use,
+						// loader(e.g 'style-loader') that should be used when the CSS is not extracted (i.e. in an additional chunk when allChunks: false)
+						fallback: "ie8-style-loader",
+					}),
+				}],
+			},
+			plugins: [plugin],
+		};
+	};
+
 
 
 	const commonCfg = merge([{
@@ -122,12 +152,12 @@ module.exports = function(envcfg){
 				{
 					test: /\.(eot|ttf|woff|woff2|svg)$/,
 					use: [
-					// 这个也能解决，不如 file-loader 贴切
-					// "url-loader",
+						// 这个也能解决，不如 file-loader 贴切
+						// "url-loader",
 						{
 							loader: "file-loader",
 							options: {
-							// join output.path
+								// join output.path
 								outputPath: "static/fonts/",
 								// join outputPath
 								// font 加载问题，与 sourcemap 冲突
@@ -199,7 +229,7 @@ module.exports = function(envcfg){
 					{
 						test: /(easemob|im)\.scss$/,
 						use: [
-						// 兼容 ie8 的 style-loader
+							// 兼容 ie8 的 style-loader
 							"ie8-style-loader?sourceMap=true",
 
 							// "file-loader?outputPath=../../static/css/&name=im.css",
@@ -222,6 +252,15 @@ module.exports = function(envcfg){
 	let prdCfg = merge([
 		commonCfg,
 		setEnvVariable("process.env.NODE_ENV", "production"),
+		// file-loader 不能注入 HtmlWebpackPlugin
+		extractCSS({
+			test: /im\.scss$/,
+			use: [
+				"css-loader?importLoaders=2",
+				"postcss-loader",
+				"sass-loader",
+			]
+		}),
 		{
 			devtool: "source-map",
 			plugins: [
@@ -241,7 +280,7 @@ module.exports = function(envcfg){
 				rules: [
 					// 去除 sourcemap
 					{
-						test: /(easemob|im)\.scss$/,
+						test: /easemob\.scss$/,
 						use: [
 							"ie8-style-loader",
 							"css-loader?importLoaders=2",
