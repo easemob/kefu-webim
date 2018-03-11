@@ -7,7 +7,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const VERSION = 'zto_47.14.6.8';
+const VERSION = 'zto_47.14.6.9';
 
 var conmmonConfig = {
 	plugins: [
