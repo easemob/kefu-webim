@@ -221,17 +221,26 @@ module.exports = function(envcfg){
 
 	let devCfg = merge([
 		commonCfg,
+		extractCSS({
+			test: /im\.scss$/,
+			use: [
+				"css-loader?sourceMap=true&importLoaders=2",	// 转换 CSS 为 CommonJS
+				"postcss-loader?sourceMap=true",
+				"sass-loader?sourceMap=true",
+			]
+		}),
 		{
-			devtool: "cheap-module-eval-source-map",
+			// ExtractTextPlugin 只支持 source-map
+			devtool: "source-map",
+			// devtool: "cheap-module-eval-source-map",
 			module: {
 				rules: [
 					// sourcemap 有效
 					{
-						test: /(easemob|im)\.scss$/,
+						test: /easemob\.scss$/,
 						use: [
 							// 兼容 ie8 的 style-loader
 							"ie8-style-loader?sourceMap=true",
-
 							// "file-loader?outputPath=../../static/css/&name=im.css",
 							// "extract-loader",
 
