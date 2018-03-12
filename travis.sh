@@ -12,7 +12,7 @@ if [ $TRAVIS_TAG ] && [ "$TRAVIS_TAG"x != ""x ]; then
         npm config set registry https://registry.npm.taobao.org
 
         npm install
-        TRAVIS=true TAG_NAME=$TRAVIS_TAG npm run build || exit 1
+        TRAVIS=true TAG_NAME=$TRAVIS_TAG npm run build:all || exit 1
 
 		# 去除 node_modules、源码、server
 		cd ../
