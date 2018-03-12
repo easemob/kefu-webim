@@ -10,7 +10,7 @@ const path = require("path");
 const webpack = require("webpack");
 
 const tmpVersion = "local_" + (Math.floor(Math.random() * 1e6)).toString();
-const VERSION = process.env["tag-name"] || tmpVersion;
+const VERSION = process.env["TAG_NAME"] || tmpVersion;
 const argv = require("yargs").argv;
 const isPrd = argv.env === "production";
 
