@@ -6,7 +6,7 @@ var Transfer = require("../common/transfer");
 var loading = require("./loading");
 var notify = require("./notify");
 var titleSlide = require("./titleSlide");
-var pcImgView = require("./pcImgView");
+var pcImgView = require("./pcImgview");
 
 var _st = 0;
 var _startPosition = {
