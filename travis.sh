@@ -18,9 +18,9 @@ if [ $TRAVIS_TAG ] && [ "$TRAVIS_TAG"x != ""x ]; then
 		cd ../
         zip -r ${TRAVIS_TAG}.zip kefu-webim -x "kefu-webim/node_modules/*" -x "kefu-webim/src/*" -x "kefu-webim/server/*" -x "kefu-webim/.git/*"
         if [ IS_FINAL_TAG ]; then
-            curl -v -F r=releases -F hasPom=false -F e=zip -F g=com.easemob.kefu.webim.product -F a=kefu-webim -F v=${TRAVIS_TAG} -F p=zip -F file=${TRAVIS_TAG}.zip -u ${nexus_user}:${nexus_password} https://hk.nexus.op.easemob.com/nexus/service/local/artifact/maven/content
+            curl -v -F r=releases -F hasPom=false -F e=zip -F g=com.easemob.kefu.webim.product -F a=kefu-webim -F v=${TRAVIS_TAG} -F p=zip -F file=@${TRAVIS_TAG}.zip -u ${nexus_user}:${nexus_password} https://hk.nexus.op.easemob.com/nexus/service/local/artifact/maven/content
         else
-            curl -v -F r=releases -F hasPom=false -F e=zip -F g=com.easemob.kefu.webim.development -F a=kefu-webim -F v=${TRAVIS_TAG} -F p=zip -F file=${TRAVIS_TAG}.zip -u ${nexus_user}:${nexus_password} https://hk.nexus.op.easemob.com/nexus/service/local/artifact/maven/content
+            curl -v -F r=releases -F hasPom=false -F e=zip -F g=com.easemob.kefu.webim.development -F a=kefu-webim -F v=${TRAVIS_TAG} -F p=zip -F file=@${TRAVIS_TAG}.zip -u ${nexus_user}:${nexus_password} https://hk.nexus.op.easemob.com/nexus/service/local/artifact/maven/content
         fi
     else
         echo ''
