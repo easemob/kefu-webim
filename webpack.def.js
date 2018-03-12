@@ -10,7 +10,7 @@ const path = require("path");
 const webpack = require("webpack");
 
 const tmpVersion = "local_" + (Math.floor(Math.random() * 1e6)).toString();
-const VERSION = process.env["TAG_NAME"] || tmpVersion;
+const VERSION = process.env.TAG_NAME || tmpVersion;
 const argv = require("yargs").argv;
 const isPrd = argv.env === "production";
 
@@ -39,7 +39,9 @@ i18next.init({
 
 //
 module.exports = function(envcfg){
-	const ORIGIN = 	(envcfg.servercfg.secure ? "https" : "http") + "://localhost:" + envcfg.servercfg.port;
+	const _protocol = envcfg.servercfg.secure ? "https://" : "http://";
+	const _domain = envcfg.appcfg.ajaxProxyDomain;
+	const ORIGIN_ON_DEV = _protocol + _domain;
 
 	//
 	const setEnvVariable = (key, value) => {
@@ -115,6 +117,26 @@ module.exports = function(envcfg){
 		};
 	};
 
+	var setFonts = ({ publicPath }) => {
+		var options = {
+			// join output.path
+			outputPath: "static/fonts/",
+			name: "[name].[hash:8].[ext]"
+		};
+		publicPath && (options.publicPath = publicPath);
+		return {
+			test: /\.(eot|ttf|woff|woff2|svg)$/,
+			use: [
+				// 这个也能解决，不如 file-loader 贴切
+				// "url-loader",
+				{
+					loader: "file-loader",
+					options
+				}
+			]
+		};
+	};
+
 
 
 	const commonCfg = merge([{
@@ -144,28 +166,6 @@ module.exports = function(envcfg){
 				{
 					test: /\.html$/,
 					use: [ "html-loader" ]
-				},
-
-
-
-				// fonts
-				{
-					test: /\.(eot|ttf|woff|woff2|svg)$/,
-					use: [
-						// 这个也能解决，不如 file-loader 贴切
-						// "url-loader",
-						{
-							loader: "file-loader",
-							options: {
-								// join output.path
-								outputPath: "static/fonts/",
-								// join outputPath
-								// font 加载问题，与 sourcemap 冲突
-								publicPath: ORIGIN + "/webim/",
-								name: "[name].[hash:8].[ext]"
-							}
-						}
-					]
 				},
 
 
@@ -249,6 +249,11 @@ module.exports = function(envcfg){
 							"sass-loader?sourceMap=true",
 						],
 					},
+					// join outputPath
+					// font 加载问题，与 sourcemap 冲突
+					setFonts({
+						publicPath: ORIGIN_ON_DEV + "/webim/"
+					}),
 				]
 			},
 			plugins: [
@@ -271,7 +276,8 @@ module.exports = function(envcfg){
 			]
 		}),
 		{
-			devtool: "source-map",
+			// 关闭
+			// devtool: "source-map",
 			plugins: [
 				new webpack.optimize.UglifyJsPlugin({
 					compress: {
@@ -297,6 +303,8 @@ module.exports = function(envcfg){
 							"sass-loader",
 						],
 					},
+					// 不加 publicPath
+					setFonts({}),
 				]
 			}
 		}
