@@ -33,6 +33,15 @@ function _decode(str) {
 	}
 }
 
+function parseEmojiPath2code(path){
+	var splitPath = path.split("/");
+	var fileName = splitPath[splitPath.length - 1];
+	var emojiCode = _.findKey(WebIM.Emoji.map, function(val, key){
+		return fileName === val;
+	});
+	return emojiCode;
+}
+
 function genMsgContent(msg) {
 	var type = msg.type;
 	var value = msg.data;
@@ -67,7 +76,21 @@ function genMsgContent(msg) {
 			+ msg.url + '"/></a>';
 		break;
 	case 'list':
-		html = "<p>" + parseLink(_encode(value)) + "</p>" + msg.list;
+		if(_.isArray(value)){
+			var listTypeTempArr = _.chain(value.slice(1))
+			.map(function(val, key){
+				return val.data;
+			})
+			.map(function(val){
+				return parseEmojiPath2code(val);
+			})
+			.value();
+			value = [value[0].data].concat(listTypeTempArr).join("");
+		}
+		else{
+			value = _encode(_decode(value));
+		}
+		html = "<p style='font-family:monospace;'>" + parseLink(parseEmoji(value)) + "</p>" + msg.list;
 		break;
 	case 'file':
 		// 历史会话中 filesize = 0
@@ -121,20 +144,20 @@ function genDomFromMsg(msg, isReceived, isHistory) {
 		var articleNode;
 		if (msgArticles.length === 1){
 			var date = utils.formatDate(msgArticles[0].createdTime,'M月d日');
-			articleNode = '' + 
+			articleNode = '' +
 				'<div class="article-msg-outer article-item only-one-article">' +
 					'<div class="body">' +
 						'<h3 class="title">' + msgArticles[0].title + '</h3>' +
 						'<p class="create-time">' + date + '</p>' +
-						'<div class="cover"><img src="' + msgArticles[0].thumbUrl + '"/></div>' +
-						'<div class="desc"><p>' + msgArticles[0].digest + '</p></div>' +
+						'<div class="cover"><img src="' + msgArticles[0].picurl + '"/></div>' +
+						'<div class="desc"><p>' + msgArticles[0].description + '</p></div>' +
 					'</div>' +
 					'<div class="footer"><span class="look-article">阅读全文</span><i class="icon-arrow-right"></i></div>' +
 					'<a class="article-link" target="_blank" href="' + msgArticles[0].url + '"></a>' +
 				'</div>';
 		}
 		else {
-			articleNode = '<div class="article-msg-outer more-articles">' 
+			articleNode = '<div class="article-msg-outer more-articles">'
 					+ _.map(msgArticles, function(item ,index){
 						var str = '';
 						if (index === 0) {
@@ -143,7 +166,7 @@ function genDomFromMsg(msg, isReceived, isHistory) {
 						}
 						else {
 							str = '<div class="article-item rest-item">' +
-							'<div class="title-wrapper"><p class="title">' + item.title + '</p></div>';	
+							'<div class="title-wrapper"><p class="title">' + item.title + '</p></div>';
 						}
 						str += '<img class="cover-img" src="' + item.thumbUrl + '"/>' +
 							'<a class="article-link" target="_blank" href="' + item.url + '"></a>' +
