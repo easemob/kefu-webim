@@ -141,7 +141,8 @@ function _initSoundReminder(){
 		audioDom.play();
 	}, 3000, { trailing: false });
 
-	audioDom.src = config.staticPath + "/mp3/msg.m4a";
+	// 资源都要相对 html 路径加载
+	audioDom.src = "static/mp3/msg.m4a";
 
 	// 音频按钮静音
 	utils.on(slienceSwitch, "click", function(){

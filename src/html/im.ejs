@@ -5,7 +5,10 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 	<meta name="format-detection" content="telephone=no" />
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+	<link rel="icon" href="favicon.ico" sizes="32x32" type="image/png">
+	<% if( htmlWebpackPlugin.options.isPrd ){ %>
 	<link href="static/css/im.css?v=<%= htmlWebpackPlugin.options.version %>" rel="stylesheet" />
+	<% } %>
 </head>
 
 <body>

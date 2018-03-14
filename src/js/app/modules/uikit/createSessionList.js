@@ -82,6 +82,8 @@ function _appendItem(item){
 function _renderItem(item){
 	var name = item.name;
 	var id = item.official_account_id;
+	// 这个会 block 我们的 dev 服务器
+	/0/.test(item.img) && (item.img = "");
 	var avatar = item.img || profile.defaultAvatar;
 	return utils.createElementFromHTML([
 		"<li class=\"session-item\" data-id=\"" + id + "\">",

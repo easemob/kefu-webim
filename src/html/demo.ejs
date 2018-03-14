@@ -5,6 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
 	<meta name="format-detection" content="telephone=no">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	<link rel="icon" href="favicon.ico" sizes="32x32" type="image/png">
 	<style>
 		body {
 			background-color: #eee;
@@ -50,21 +51,12 @@
 	<a target="_blank" href="http://docs.easemob.com/cs/300visitoraccess/web-widget">集成文档</a>
 	<a target="_blank" href="demos/custom-launch-button.html">自定义按钮样式 demo</a>
 	<a target="_blank" href="demos/send-extend-message.html">发送扩展消息</a>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
 	<h1>测试</h1>
 	<div><input id="testvalue" type="text" placeholder="请输入您的 tenantId，点击测试按钮"/></div>
 	<button onclick="test()">测试</button>
 	<button onclick="deleteCurrentCookies()">Clear Current Cookie</button>
 	<button onclick="bindSkillGroup()">绑定技能组</button>
 	<button onclick="resizeChatWindow()">窗口加宽</button>
-	<br>
-	<br>
-	<br>
 
 <script>
 	var tenantIdInput = document.getElementById("testvalue");
@@ -112,5 +104,7 @@
 	};
 </script>
 <script src="easemob.js?configId=<%= htmlWebpackPlugin.options.opt.configId %>"></script>
+
 </body>
+
 </html>

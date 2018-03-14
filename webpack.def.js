@@ -78,10 +78,11 @@ module.exports = function(envcfg){
 					}
 					: false,
 
-				// 自定义 opt
+				// 来自打包的
 				version: VERSION,
+				isPrd,
 
-				//
+				// 来自配置的
 				opt,
 			})
 		]
@@ -134,6 +135,20 @@ module.exports = function(envcfg){
 			]
 		};
 	};
+
+	var setImages = ({ include, exclude, options } = {}) => ({
+		module: {
+			rules: [{
+				test: /\.(png|jpg|jpeg)$/,
+				include,
+				exclude,
+				use: {
+					loader: "url-loader",
+					options
+				},
+			}]
+		}
+	});
 
 
 
@@ -219,14 +234,6 @@ module.exports = function(envcfg){
 
 	let devCfg = merge([
 		commonCfg,
-		extractCSS({
-			test: /im\.scss$/,
-			use: [
-				"css-loader?sourceMap=true&importLoaders=2",	// 转换 CSS 为 CommonJS
-				"postcss-loader?sourceMap=true",
-				"sass-loader?sourceMap=true",
-			]
-		}),
 		{
 			// ExtractTextPlugin 只支持 source-map
 			devtool: "source-map",
@@ -235,7 +242,7 @@ module.exports = function(envcfg){
 				rules: [
 					// sourcemap 有效
 					{
-						test: /easemob\.scss$/,
+						test: /(im|easemob)\.scss$/,
 						use: [
 							// 兼容 ie8 的 style-loader
 							"ie8-style-loader?sourceMap=true",
@@ -265,6 +272,7 @@ module.exports = function(envcfg){
 		commonCfg,
 		setEnvVariable("process.env.NODE_ENV", "production"),
 		// file-loader 不能注入 HtmlWebpackPlugin
+		// 单独导出的 css 不能支持 hot
 		extractCSS({
 			test: /im\.scss$/,
 			use: [
