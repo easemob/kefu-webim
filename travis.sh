@@ -15,8 +15,8 @@ if [ $TRAVIS_TAG ] && [ "$TRAVIS_TAG"x != ""x ]; then
         TRAVIS=true TAG_NAME=$TRAVIS_TAG npm run build || exit 1
 
 		# 去除 node_modules、源码、server
-		cd ../
-        zip -r ${TRAVIS_TAG}.zip kefu-webim -x "kefu-webim/node_modules/*" -x "kefu-webim/src/*" -x "kefu-webim/server/*" -x "kefu-webim/.git/*"
+        # zip -r ${TRAVIS_TAG}.zip build -x "kefu-webim/.git/*"
+        zip -r ${TRAVIS_TAG}.zip build
         if [ IS_FINAL_TAG ]; then
             curl -v -F r=releases -F hasPom=false -F e=zip -F g=com.easemob.kefu.webim.product -F a=kefu-webim -F v=${TRAVIS_TAG} -F p=zip -F file=@${TRAVIS_TAG}.zip -u ${nexus_user}:${nexus_password} https://hk.nexus.op.easemob.com/nexus/service/local/artifact/maven/content
         else
