@@ -110,7 +110,6 @@ cfgValidator
 	}
 	function routing(){
 		// i18n
-		// 不包括 demos 目录
 		app.use("/webim", express["static"](path.join(wwwRoot, "build")));
 
 		// 默认跳转

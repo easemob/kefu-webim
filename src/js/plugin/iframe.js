@@ -293,7 +293,8 @@ var Iframe = function(config){
 };
 
 Iframe.prototype.set = function(config, callback){
-	var shadowBackgroundImage = location.protocol + this.config.staticPath + "/img/drag.png";
+	// 资源加载都要相对 html 路径进行加载
+	var shadowBackgroundImage = location.protocol + "static/img/drag.png";
 
 	this.config = utils.copy(config || this.config);
 
@@ -321,8 +322,8 @@ Iframe.prototype.set = function(config, callback){
 	this._updatePosition();
 
 	utils.toggleClass(this.iframe, "easemobim-hide", this.config.hide);
-
-	this.iframe.src = location.protocol + config.path + __("config.im_html_path") + "?v=" + __WEBIM_PLUGIN_VERSION__;
+	// 资源加载都要相对 html 路径进行加载
+	this.iframe.src = "im_cached.html?v=" + __WEBIM_PLUGIN_VERSION__;
 	this.shadow && (this.shadow.style.backgroundImage = "url(" + shadowBackgroundImage + ")");
 
 	this.ready = callback;

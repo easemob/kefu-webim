@@ -229,7 +229,8 @@ function handleMsgData(){
 	config.toolbar = {};
 	config.chat = {};
 
-	profile.defaultAvatar = config.staticPath + "/img/default_avatar.png";
+	// 资源加载都要相对 html 路径进行加载
+	profile.defaultAvatar = "static/img/default_avatar.png";
 
 	// 用于预览模式
 	if(config.previewObj){
