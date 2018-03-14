@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	<style type="text/css">
+		body {
+			margin: 50px;
+		}
+		.custom-button {
+			width: 300px;
+			height: 50px;
+			border: none;
+			background: aquamarine;
+			font-size: 18px;
+			cursor: pointer;
+		}
+		.custom-button:hover {
+			animation: heartbeat .5s ease-in infinite;
+		}
+		@keyframes heartbeat {
+			from {
+				transform: scale(1.0)
+			}
+			to {
+				transform: scale(1.2)
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<h1>Demo 自定义联系客服按钮样式</h1>
+	<br>
+	<p>
+		<li>配置 hide: true 选项隐藏原有联系客服按钮</li>
+		<li>调用 easemobim.bind 来启动网页插件</li>
+		<li>可以右键查看本demo的源代码</li>
+	</p>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<button onclick="launchWebim()" class="custom-button">自定义按钮样式</button>
+	<br>
+	<br>
+	<br>
+
+<script>
+window.easemobim = window.easemobim || {};
+
+window.easemobim.config = {
+	// 隐藏自带的联系客服按钮
+	hide: true
+};
+
+function launchWebim(){
+	easemobim.bind();
+}
+</script>
+
+<script src="//kefu.easemob.com/webim/easemob.js?configId=819c0879-db6e-40d7-b5b0-d19531903b55"></script>
+</body>
+</html>

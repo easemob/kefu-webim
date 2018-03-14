@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	<style>
+		body { background-color: #eee;color: #555; }
+		button, a { display: block;margin: 20px 0;background: #00CEB9;border: none;color: #fff;line-height: 40px;width: 200px;cursor: pointer;outline: none;text-align: center; }
+		button:hover, a:hover { box-shadow: 0 0 5px #33CEB9; }
+		button:active, a:active { background: #fff;color: #00CEB9; }
+		input { height: 40px;outline: none;width: 300px;text-align: center;font-size: 16px;color: #00CEB9; float: left;border: 1px solid #fff; }
+	</style>
+</head>
+
+<body>
+
+	<h1>Demo 发送文本消息</h1>
+	<br>
+	<p>
+		<li>调用 easemobim.sendText(text) 来主动发送扩展消息</li>
+		<li>注意：此方法必须在初始化完成之后才能调用（初始化完成后有onready 回调）</li>
+		<li>可以右键查看本demo的源代码</li>
+	</p>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<button onclick="launchWebim()" class="custom-button">启动网页插件并发送文本消息</button>
+	<button onclick="sendTextMessage()" class="custom-button">发送文本扩展消息</button>
+	<br>
+	<br>
+	<br>
+
+<script>
+window.easemobim = window.easemobim || {};
+
+window.easemobim.config = {
+	onready: function(){
+		easemobim.sendText("测试消息");
+	},
+};
+
+function launchWebim(){
+	easemobim.bind({
+		configId: "819c0879-db6e-40d7-b5b0-d19531903b55",
+	});
+}
+
+function sendTextMessage(){
+	easemobim.sendText("测试消息");
+}
+
+</script>
+<script src="//kefu.easemob.com/webim/easemob.js"></script>
+</body>
+</html>

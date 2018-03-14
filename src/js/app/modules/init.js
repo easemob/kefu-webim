@@ -300,8 +300,8 @@ function handleConfig(configJson){
 
 function initCrossOriginIframe(){
 	var iframe = document.getElementById("cross-origin-iframe");
-
-	iframe.src = config.domain + "/webim/transfer.html?v=" + __WEBIM_PLUGIN_VERSION__;
+	// 取相对 html 的位置（因为多语言根目录不同）
+	iframe.src = "transfer.html?v=" + __WEBIM_PLUGIN_VERSION__;
 	utils.on(iframe, "load", function(){
 		apiHelper.initApiTransfer();
 		handleMsgData();

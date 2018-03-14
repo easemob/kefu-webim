@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	<title>webim iconfont demo</title>
+	<style>
+		.title{
+			text-align: center;
+			margin: 30px;
+		}
+		.main{
+			color: #666;
+			font-size: 14px;
+			line-height: 1.8;
+		}
+		.icon_list{
+			padding: 0 46px;
+		}
+		.icon_list:after{
+			content: '';
+			display: table;
+			clear: both;
+		}
+		.icon_list li {
+			float: left;
+			width: 100px;
+			height: 120px;
+			margin:12px 0;
+			text-align: center;
+		}
+		 .icon_list li i{
+			line-height: 100px;
+		 }
+		.icon_list li i:before{
+			transition: font-size 0.25s ease-out 0s;
+		}
+		.icon_list li.unused:before{
+			content: "Unused!";
+			position: absolute;
+			transform: translateY(30px) translateX(-30px) rotate(-40deg);
+			text-shadow: white 1px 1px 1px;
+			background-color: rgba(255, 235, 59, .5);
+		}
+		.icon_list li:hover i:before{
+			font-size: 100px;
+		}
+		.icon_info {
+			margin: 30px;
+		}
+		body {
+			overflow: auto !important;
+		}
+
+
+	</style>
+	<link href='../static/css/im.css' rel='stylesheet' />
+</head>
+
+<body>
+<div class="main">
+	<h1 class="title">kefu-webim iconfont demo</h1>
+	<ul class="icon_list clear"></ul>
+	<h2 class="icon_info"></h2>
+</div>
+<script src="../node_modules/underscore/underscore-min.js"></script>
+<script>
+(function(){
+	var templateData = [
+		{ wrapperClassName: "", description: "camera" },
+		{ wrapperClassName: "", description: "change" },
+		{ wrapperClassName: "", description: "minimize" },
+		{ wrapperClassName: "", description: "maximize" },
+		{ wrapperClassName: "", description: "circle" },
+		{ wrapperClassName: "", description: "exclamation" },
+		{ wrapperClassName: "", description: "close" },
+		{ wrapperClassName: "", description: "face" },
+		{ wrapperClassName: "", description: "easemob" },
+		{ wrapperClassName: "", description: "min" },
+		{ wrapperClassName: "", description: "good" },
+		{ wrapperClassName: "", description: "star" },
+		{ wrapperClassName: "", description: "broken-pic" },
+		{ wrapperClassName: "", description: "corner-left" },
+		{ wrapperClassName: "", description: "corner-right" },
+		{ wrapperClassName: "", description: "picture" },
+		{ wrapperClassName: "unused", description: "M" },
+		{ wrapperClassName: "", description: "bell" },
+		{ wrapperClassName: "", description: "slience" },
+		{ wrapperClassName: "", description: "sound" },
+		{ wrapperClassName: "", description: "keyboard-down" },
+		{ wrapperClassName: "", description: "keyboard-up" },
+		{ wrapperClassName: "unused", description: "qianbao" },
+		{ wrapperClassName: "unused", description: "red-bag-small" },
+		{ wrapperClassName: "unused", description: "location" },
+		{ wrapperClassName: "", description: "file-download" },
+		{ wrapperClassName: "unused", description: "red-bag" },
+		{ wrapperClassName: "unused", description: "r" },
+		{ wrapperClassName: "unused", description: "q" },
+		{ wrapperClassName: "unused", description: "p" },
+		{ wrapperClassName: "", description: "answer" },
+		{ wrapperClassName: "", description: "decline" },
+		{ wrapperClassName: "", description: "note" },
+		{ wrapperClassName: "", description: "headset" },
+		{ wrapperClassName: "", description: "video" },
+		{ wrapperClassName: "", description: "flower" },
+		{ wrapperClassName: "", description: "attachment" },
+		{ wrapperClassName: "", description: "download" },
+		{ wrapperClassName: "", description: "list" },
+		{ wrapperClassName: "", description: "message" },
+		{ wrapperClassName: "", description: "arrow-up-down" },
+		{ wrapperClassName: "", description: "arrow-right" },
+		{ wrapperClassName: "", description: "exit" },
+		{ wrapperClassName: "unused", description: "transfer-to-manual" },
+		{ wrapperClassName: "", description: "benz-picture" },
+		{ wrapperClassName: "", description: "benz-video" },
+		{ wrapperClassName: "", description: "benz-face" },
+		{ wrapperClassName: "unused", description: "benz-circle" },
+		{ wrapperClassName: "unused", description: "benz-circle-hollow" },
+		{ wrapperClassName: "unused", description: "benz-power-button" },
+		{ wrapperClassName: "unused", description: "benz-power-button-hollow" },
+		{ wrapperClassName: "", description: "form" },
+		{ wrapperClassName: "", description: "answer-the-phone" },
+		{ wrapperClassName: "", description: "microphone" },
+		{ wrapperClassName: "", description: "hung-up" },
+		{ wrapperClassName: "", description: "return-to-multi-video" },
+		{ wrapperClassName: "", description: "remote-desktop" },
+		{ wrapperClassName: "", description: "disable-camera" },
+		{ wrapperClassName: "", description: "disable-microphone" },
+		{ wrapperClassName: "", description: "minimize-window" },
+		{ wrapperClassName: "", description: "maximize-window" },
+		{ wrapperClassName: "", description: "spin" },
+		{ wrapperClassName: "", description: "waiting" },
+	];
+	var html = _.map(templateData, function(item){
+		if(!item) return "";
+
+		var wrapperClassName = item.wrapperClassName;
+		var description = item.description;
+		var iconfontClassName = "icon-" + description;
+
+		return "<li class=\"" + wrapperClassName + "\">"
+			+ "<i class=\"" + iconfontClassName + "\"></i>"
+			+ "<div>" + description + "</div>"
+		+ "</li>";
+
+	}).join("");
+	var iconListDom = document.querySelector(".icon_list");
+	// 统计图标数目
+	var infoDom = document.querySelector(".icon_info");
+	var iconAmount;
+	var unusedIconAmount;
+
+	iconListDom.innerHTML = html;
+	iconAmount = iconListDom.querySelectorAll("li").length;
+	unusedIconAmount = iconListDom.querySelectorAll("li.unused").length;
+	infoDom.innerText = iconAmount + " icon(s), " + unusedIconAmount + " unused.";
+}());
+</script>
+</body>
+</html>
