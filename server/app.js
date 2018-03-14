@@ -109,14 +109,33 @@ cfgValidator
 		}));
 	}
 	function routing(){
+		// i18n
+		// 不包括 demos 目录
+		app.use("/webim", express["static"](path.join(wwwRoot, "build")));
+
+		// 默认跳转
 		app.get("/", function(req, res, next){
 			// res.location("/webim/demo.html");
-			res.redirect("/webim/demo.html");
+			res.redirect("/webim/zh-CN/demo.html");
 		});
 		app.get("/webim", function(req, res, next){
-			res.redirect("/webim/demo.html");
+			res.redirect("/webim/zh-CN/demo.html");
 		});
-		app.use("/webim", express["static"](wwwRoot));
+
+		// 兼容旧版（only zh-CN）
+		// 控制好 html 就行
+		app.get("/webim/demo.html", function(req, res, next){
+			res.redirect("/webim/zh-CN/demo.html");
+		});
+		app.get("/webim/im.html", function(req, res, next){
+			res.redirect("/webim/zh-CN/im.html");
+		});
+		app.get("/webim/im_cached.html", function(req, res, next){
+			res.redirect("/webim/zh-CN/im_cached.html");
+		});
+		app.get("/webim/transfer.html", function(req, res, next){
+			res.redirect("/webim/zh-CN/transfer.html");
+		});
 	}
 	function proxying(){
 		app.use((req, res, next) => {

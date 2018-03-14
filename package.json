@@ -39,10 +39,11 @@
     "yargs": "^8.0.2"
   },
   "scripts": {
-    "build": "LOCALE=zh-CN webpack --env production",
-    "build:trace": "LOCALE=zh-CN WARN_TRACING=true webpack --env production",
+    "build": "npm run build:zh",
+    "build:trace": "WARN_TRACING=true npm run build:zh",
+	"build:all": "npm run build; npm run build:en",
     "build:en": "LOCALE=en-US webpack --env production",
-    "build:all": "npm run build; npm run build:en",
+    "build:zh": "LOCALE=zh-CN webpack --env production",
     "dev": "DEBUG=webim* LOCALE=zh-CN nodemon ./server/app --watch server --env development",
     "dev:debug": "DEBUG=webim* LOCALE=zh-CN node --inspect --debug-brk server/app --env development",
     "server": "DEBUG=webim* LOCALE=zh-CN nodemon ./server/app --watch server --only",

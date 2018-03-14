@@ -57,7 +57,6 @@ module.exports = function(envcfg){
 		template,
 		opt = {},
 		inject = false,
-		staticPath = "."
 	}) => ({
 		plugins: [
 			new HtmlWebpackPlugin({
@@ -81,7 +80,6 @@ module.exports = function(envcfg){
 
 				// 自定义 opt
 				version: VERSION,
-				staticPath,
 
 				//
 				opt,
@@ -249,10 +247,10 @@ module.exports = function(envcfg){
 							"sass-loader?sourceMap=true",
 						],
 					},
-					// join outputPath
+					// 取 output.path 对应的 server 路径
 					// font 加载问题，与 sourcemap 冲突
 					setFonts({
-						publicPath: ORIGIN_ON_DEV + "/webim/"
+						publicPath: ORIGIN_ON_DEV + "/webim/" + lang + "/"
 					}),
 				]
 			},
@@ -310,6 +308,10 @@ module.exports = function(envcfg){
 		}
 	]);
 
+
+	//
+	let i18nOutputPath = path.join(__dirname, "build/" + lang);
+	let i18nPublicPath = "/webim/" + lang + "/";
 	let transfer = merge([
 		setHtmlBuilder({
 			filename: "transfer.html",
@@ -320,8 +322,8 @@ module.exports = function(envcfg){
 			entry: ["./src/js/transfer/api.js"],
 			output: {
 				filename: "static/js/em-transfer.js",
-				path: __dirname,			// 推荐取 root
-				publicPath: "/webim/"		// 取 path 对应的 server 路径
+				path: i18nOutputPath,		// 建议取相对 root
+				publicPath: i18nPublicPath	// 取 output.path 对应的 server 路径
 			}
 		}
 	]);
@@ -349,8 +351,8 @@ module.exports = function(envcfg){
 			],
 			output: {
 				filename: "easemob.js",
-				path: lang === "zh-CN" ? __dirname : path.join(__dirname, lang),
-				publicPath: "/webim/"		// 取 path 对应的 server 路径
+				path: i18nOutputPath,
+				publicPath: i18nPublicPath	// 取 output.path 对应的 server 路径
 				// 不能用 umd 模块输出的原因是：
 				// 监测到 AMD Loader 时只执行 define，此时不会初始化模块，所以不会暴露到全局
 				// library: "easemob-kefu-webim-plugin",
@@ -370,20 +372,18 @@ module.exports = function(envcfg){
 		setHtmlBuilder({
 			filename: "im_cached.html",		// 输出地址（关联 entry.path）
 			template: "src/html/im.ejs",	// 模板路径（不关联 entry.path）
-			staticPath: lang === "zh-CN" ? "." : "..",	// 语言目录深一层
 		}),
 		setHtmlBuilder({
 			filename: "im.html",
 			template: "src/html/im.ejs",
-			staticPath: lang === "zh-CN" ? "." : "..",
 		}),
 		{
 			name: "main",	// 匹配 client?name=main
 			entry: ["./src/js/app/modules/init.js"],
 			output: {
 				filename: "static/js/main.js",	// join output.path
-				path: lang === "zh-CN" ? __dirname : path.join(__dirname, lang),
-				publicPath: "/webim/"			// 取 path 对应的 server 路径
+				path: i18nOutputPath,
+				publicPath: i18nPublicPath		// 取 output.path 对应的 server 路径
 			}
 		}
 	]);

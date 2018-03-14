@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	<style>
+		body { background-color: #eee;color: #555; }
+		button, a { display: block;margin: 20px 0;background: #00CEB9;border: none;color: #fff;line-height: 40px;width: 200px;cursor: pointer;outline: none;text-align: center; }
+		button:hover, a:hover { box-shadow: 0 0 5px #33CEB9; }
+		button:active, a:active { background: #fff;color: #00CEB9; }
+		input { height: 40px;outline: none;width: 300px;text-align: center;font-size: 16px;color: #00CEB9; float: left;border: 1px solid #fff; }
+	</style>
+</head>
+
+<body>
+
+	<h1>Demo 发送扩展消息</h1>
+	<br>
+	<p>
+		<li>扩展消息有：crm对接、指定访客信息、绑定坐席、绑定技能组、订单消息、轨迹消息等</li>
+		<li>配置 extMsg: [] 在初始化时要发送的扩展消息，支持多条</li>
+		<li>调用 easemobim.sendExt 来主动发送扩展消息，注意，调用此方法需要加一层 ext 对象</li>
+		<li>可以右键查看本demo的源代码</li>
+	</p>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<button onclick="launchWebim()" class="custom-button">启动网页插件并发送订单消息</button>
+	<button onclick="sendCrmExtendMessage()" class="custom-button">主动发送crm扩展消息</button>
+	<button onclick="sendOrderExtendMessage()" class="custom-button">主动发送订单消息</button>
+	<button onclick="sendTraceExtendMessage()" class="custom-button">主动发送轨迹消息</button>
+	<br>
+	<br>
+	<br>
+
+<script>
+window.easemobim = window.easemobim || {};
+
+window.easemobim.config = {
+	// tenantId: "11885",
+	// 在初始化时发送扩展消息，支持多条
+	// crm 对接消息会在会话打开后才会发送
+	// extMsg: [
+	// 	{
+	// 		cmd: {
+	// 			updateVisitorInfoSrc: {
+	// 				params: {
+	// 					customUserId: "EEP4EVP9CCMTRTCKVJHX",
+	// 					name: "Jack",
+	// 					age: "40",
+	// 					sex: "man"
+	// 				}
+	// 			}
+	// 		}
+	// 	},
+	// ]
+};
+
+function launchWebim(){
+	easemobim.bind();
+	sendOrderExtendMessage();
+}
+
+function sendCrmExtendMessage(){
+	easemobim.sendExt({
+		ext: {
+			cmd: {
+				updateVisitorInfoSrc: {
+					params: {
+						customUserId: "EEP4EVP9CCMTRTCKVJHX",
+						name: "Make",
+						age: "22",
+						sex: "man"
+					}
+				}
+			}
+		}
+	});
+}
+
+function sendOrderExtendMessage(){
+	easemobim.sendExt({
+		ext: {
+			imageName: "mallImage3.png",
+			type: "custom",
+			msgtype: {
+				track: {
+					title: "我现在正在看：这个商品",
+					price: "¥: 199.00",
+					desc: "其他商品",
+					img_url: "https://www.yourdomain.com/img/a.jpg",
+					item_url: "https://www.yourdomain.com/item/a.html"
+				}
+			}
+		}
+	});
+}
+
+function sendTraceExtendMessage(){
+	easemobim.sendExt({
+		ext: {
+			imageName: "mallImage3.png",
+			type: "custom",
+			msgtype: {
+				track: {
+					title: "我正在看：",
+					price: "¥: 235.00",
+					desc: "女装小香风气质蕾丝假两件短袖",
+					img_url: "https://www.yourdomain.com/img/a.jpg",
+					item_url: "https://www.yourdomain.com/item/a.html"
+				}
+			}
+		}
+	});
+}
+</script>
+<script src="//kefu.easemob.com/webim/easemob.js?configId=819c0879-db6e-40d7-b5b0-d19531903b55"></script>
+</body>
+</html>
