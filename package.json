@@ -41,7 +41,7 @@
   "scripts": {
     "build": "npm run build:zh",
     "build:trace": "WARN_TRACING=true npm run build:zh",
-	"build:all": "npm run build; npm run build:en",
+    "build:all": "npm run build; npm run build:en",
     "build:en": "LOCALE=en-US webpack --env production",
     "build:zh": "LOCALE=zh-CN webpack --env production",
     "dev": "DEBUG=webim* LOCALE=zh-CN nodemon ./server/app --watch server --env development",
