@@ -54,6 +54,7 @@ function load_html(){
 	chat.getDom();
 }
 
+// 直接加载 im.html 模式
 function h5_mode_init(){
 	config = {};
 	config.tenantId = utils.query("tenantId");
@@ -64,8 +65,10 @@ function h5_mode_init(){
 	config.siteCode = utils.query('siteCode');
 	config.billCode = utils.query('billCode');
 
-	// H5 方式集成时不支持eventCollector配置
+	// H5 方式集成时不支持 eventCollector 配置
 	config.to = utils.convertFalse(utils.query("to"));
+	// h5	step 1
+	// ifm	no way
 	config.xmppServer = utils.convertFalse(utils.query("xmppServer"));
 	config.restServer = utils.convertFalse(utils.query("restServer"));
 	config.agentName = utils.convertFalse(utils.query("agentName"));
@@ -108,6 +111,7 @@ function h5_mode_init(){
 	initCrossOriginIframe();
 }
 
+// iframe 加载 im.html 模式
 function chat_window_mode_init(){
 	var $contactAgentBtn = document.getElementById("em-widgetPopBar");
 	window.transfer = new Transfer(null, "main", true).listen(function(msg){
@@ -364,6 +368,8 @@ function initChatEntry(targetUserInfo){
 
 		config.appKey = config.orgName + "#" + config.appName;
 		config.restServer = config.restServer || targetItem.restDomain;
+		// h5	step 2
+		// ifm	step 1
 		config.xmppServer = config.xmppServer || targetItem.xmppServer;
 
 		if(targetUserInfo){
