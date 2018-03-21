@@ -159,8 +159,8 @@ function init(option){
 	triggerButton = opt.triggerButton;
 	parentContainer = opt.parentContainer;
 
-	adapterPath = __("config.static_path") + "/js/lib/adapter.min.js?v=unknown-000";
-	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk.min.js?v=1.1.2";
+	adapterPath = "static/js/lib/adapter.min.js?v=unknown-000";
+	eMediaSdkPath = "static/js/lib/EMedia_sdk.min.js?v=1.1.2";
 
 	// todo: resolve promise sequentially
 	tools.loadScript(adapterPath)
