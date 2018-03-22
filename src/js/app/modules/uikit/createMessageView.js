@@ -44,6 +44,12 @@ module.exports = function(opt){
 			);
 
 			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);
+			transfer.send({
+				event: _const.EVENTS.SESSION_CREATED,
+				data: {
+					id: entity.session_id,
+				},
+			});
 		}, function(err){
 			if(err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
 				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [officialAccount]);

@@ -67,19 +67,25 @@ function popupWindow(){
 	});
 }
 </script>
- <script src='easemob.js?configId=bf6c346d-6223-4faa-91ee-63f553a89e57'></script>
+<!-- 线上 -->
+<script src='easemob.js?configId=b3eab144-c70d-4385-884d-71355f165c2d'></script>
+<!-- 锦江 -->
+<!-- <script src='easemob.js?configId=77749a6b-21b4-427a-bf28-e448a2f36dc3'></script> -->
+<!-- 沙箱 -->
+<!-- <script src='easemob.js?configId=3cbaf516-5dba-47c7-a964-2e38aa2cef74'></script> -->
 <script>
 easemobim.bind({
-	domain: "//xw-kefu.bestwehotel.com",
+	// domain: "kefu.easemob.com",
+	// domain: "//xw-kefu.bestwehotel.com",
 	// autoConnect: true,
 	minimum: true,
 	popupWindow: false,
 	hide: true,
 	agentName: 'tong.wang@bestwehotel.com',
 	// pc端采用 onReady 回调来发送扩展消息
-	onready: function(){
-		easemobim.sendText({ data: "ddddd", ext: {} });
-	},
+	// onready: function(){
+	// 	easemobim.sendText({ data: "ddddd", ext: {} });
+	// },
 	onSessionCreated: function(sessionInfo){
 		var sessionId = sessionInfo.id;
 		alert("sessionId: " + sessionId);

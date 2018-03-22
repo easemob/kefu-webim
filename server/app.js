@@ -8,7 +8,9 @@ const http = require("http");
 const debug = require("debug");
 
 const DEFAULT_PORT = 8008;
-const DEFAULT_SERVER = "http://sandbox.kefu.easemob.com/";
+// const DEFAULT_SERVER = "http://xw-kefu.bestwehotel.com/";
+// const DEFAULT_SERVER = "http://xw-kefu.bestwehotel.com/";
+const DEFAULT_SERVER = "http://kefu.easemob.com/";
 const PROXY_REGEX = /^\/v1/i;
 
 const logProxy = debug("webim:proxy");
@@ -43,7 +45,7 @@ app.use((req, res, next) => {
 	var pathname = req.path;
 
 	if(PROXY_REGEX.test(pathname)){
-		logProxy(pathname);
+		logProxy(pathname + " - " + target);
 		proxy.web(req, res, { target }, next);
 	}
 	else{
