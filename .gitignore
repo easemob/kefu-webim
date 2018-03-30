@@ -17,6 +17,7 @@ build/*/static/fonts/
 build/*/static/css/
 build/*/easemob.js
 build/*/demo.html
+build/*/demo_online.html
 build/*/im.html
 build/*/im_cached.html
 build/*/transfer.html

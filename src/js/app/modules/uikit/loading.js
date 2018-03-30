@@ -1,8 +1,8 @@
-var utils = require("../../../common/utils");
+var utils = require("@/common/utils");
+var _const = require("@/common/const");
 var uikit = require("../uikit");
-var _const = require("../../../common/const");
 
-var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com/webim/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
+var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
 
 var dialog;
 var showLoadingObj = {};

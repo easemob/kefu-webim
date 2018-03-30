@@ -1,4 +1,3 @@
-var moment = require("moment");
 
 var TimerLabel = function(dom){
 	this.displayDom = dom;

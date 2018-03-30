@@ -1,15 +1,13 @@
-// main.js 的入口（iframe 引用）
-
 require("es6-promise").polyfill();
-require("../../common/polyfill");
-require("../lib/modernizr");
+require("@/common/polyfill");
 require("../sdk/webim.config");
-require("underscore");
 require("../../../scss/im.scss");
 
-var utils = require("../../common/utils");
-var _const = require("../../common/const");
-var Transfer = require("../../common/transfer");
+var utils =		require("@/common/utils");
+var _const =	require("@/common/const");
+var kefuPath =	require("@/common/kefuPath");
+var Transfer =	require("@/common/transfer");
+
 var uikit = require("./uikit");
 var apiHelper = require("./apiHelper");
 var eventCollector = require("./eventCollector");
@@ -56,11 +54,17 @@ function load_html(){
 // 直接加载 im.html 模式
 function h5_mode_init(){
 	config = {};
+	// query：从 url 上获取参数
 	config.tenantId = utils.query("tenantId");
 	config.configId = utils.query("configId");
 	config.offDutyType = utils.query("offDutyType");
 	config.grUserId = utils.query("grUserId");
-	config.domain = utils.query("domain") ? "//" + utils.query("domain") : "";
+
+	// ajaxProxyDomain 100% 要有值
+	// 这里 domain 不做添加，在 kefuPath 中检测去杂
+	config.domain = utils.query("domain") ? utils.query("domain") : "";
+	config.domain = config.domain || location.host;
+	config.staticPath = config.staticPath || "";	// 不写就是同域
 
 	// H5 方式集成时不支持 eventCollector 配置
 	config.to = utils.convertFalse(utils.query("to"));
@@ -76,7 +80,6 @@ function h5_mode_init(){
 	config.hideKeyboard = utils.convertFalse(utils.query("hideKeyboard"));
 
 	config.appKey = utils.convertFalse(decodeURIComponent(utils.query("appKey")));
-	config.domain = config.domain || "//" + location.host;
 	config.offDutyWord = decodeURIComponent(utils.query("offDutyWord"));
 	config.ticket = utils.query("ticket") === "" ? true : utils.convertFalse(utils.query("ticket")); // true default
 	config.emgroup = decodeURIComponent(utils.query("emgroup"));
@@ -181,20 +184,15 @@ function initChat(){
 		}
 	});
 
-
-
 	apiHelper.getTheme().then(function(themeName){
 		var className = _const.themeMap[themeName];
 		className && utils.addClass(document.body, className);
 	});
-
 }
 
 // todo: rename this function
 function handleMsgData(){
-	var defaultStaticPath = __("config.language") === "zh-CN" ? "static" : "../static";
 	// default value
-	config.staticPath = config.staticPath || defaultStaticPath;
 	config.offDutyWord = config.offDutyWord || __("prompt.default_off_duty_word");
 	config.emgroup = config.emgroup || "";
 	config.timeScheduleId = config.timeScheduleId || 0;
@@ -304,15 +302,15 @@ function handleConfig(configJson){
 }
 
 function initCrossOriginIframe(){
-	var iframe = document.getElementById("cross-origin-iframe");
-	// 取相对 html 的位置（因为多语言根目录不同）
-	iframe.src = "transfer.html?v=" + __WEBIM_PLUGIN_VERSION__;
+	var iframe;
+	kefuPath.init(config.domain);
+	iframe = document.getElementById("cross-origin-iframe");
+	iframe.src = kefuPath.getRes().transterHtml + "?v=" + __WEBIM_PLUGIN_VERSION__;
 	utils.on(iframe, "load", function(){
 		apiHelper.initApiTransfer();
 		handleMsgData();
 	});
 }
-
 
 function initChatEntry(targetUserInfo){
 	if(hasChatEntryInitialized) return;

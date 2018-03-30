@@ -1,4 +1,5 @@
-var _const = require("../../../common/const");
+var _const =	require("@/common/const");
+var kefuPath =	require("@/common/kefuPath");
 var profile = require("../tools/profile");
 var eventListener = require("../tools/eventListener");
 var apiHelper = require("../apiHelper");
@@ -50,9 +51,8 @@ function _getGreetings(officialAccount){
 			// 图片消息
 			// 适配后端有转义两次／三次的情况
 			greetingObj = JSON.parse(greetingText.replace(/&amp;amp;quot;|&amp;quot;/g, "\""));
-			greetingObj.url = profile.config.domain + greetingObj.urlPath;
-
-			channel.handleMessage(greetingObj, { type: "img", noPrompt: true});
+			greetingObj.url = kefuPath.getToBackend(greetingObj.urlPath);
+			channel.handleMessage(greetingObj, { type: "img", noPrompt: true });
 			break;
 		case undefined:
 			// 未设置机器人欢迎语
