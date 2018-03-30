@@ -1,35 +1,12 @@
-
 var utils = require("../common/utils");
 var loading = require("./loading");
 var Iframe = require("./iframe");
-var tenantList = {};
-var DEFAULT_CONFIG;
-var config;
+
 var cacheKeyName;
-
-// get parameters from easemob.js
-var baseConfig = getConfig();
-var _config = {};
 var iframe;
+var tenantList = {};
 
-window.easemobim = window.easemobim || {};
-window.easemobim.config = window.easemobim.config || {};
-window.easemobim.version = __WEBIM_PLUGIN_VERSION__;
-
-if(
-	/MSIE 7\.0/.test(navigator.userAgent)
-	&& !window.localStorage
-	&& !document.querySelector
-){
-	easemobim.bind = function(){
-		alert("您使用的IE浏览器版本过低，请使用IE8以上版本的IE浏览器或Chrome浏览器"); // eslint-disable-line no-alert
-	};
-	throw new Error("unsupported browser.");
-}
-
-require("../../plugin-scss/easemob.scss");
-
-DEFAULT_CONFIG = {
+var DEFAULT_CONFIG = {
 	tenantId: "",
 	to: "",
 	agentName: "",
@@ -51,37 +28,48 @@ DEFAULT_CONFIG = {
 		token: ""
 	}
 };
-config = utils.copy(DEFAULT_CONFIG);
-
-
-
-
-reset();
-
-// growing io user id
-// 由于存在cookie跨域问题，所以从配置传过去
+var config = {};
+var _config = {};
+var scriptConfig = getConfig();		// get parameters from easemob.js
+// growing io user id，由于存在cookie跨域问题，所以从配置传过去
 config.grUserId = utils.get("gr_user_id");
 
+require("../../plugin-scss/easemob.scss");
+window.easemobim = window.easemobim || {};
+window.easemobim.config = window.easemobim.config || {};
+window.easemobim.version = __WEBIM_PLUGIN_VERSION__;
+if(
+	/MSIE 7\.0/.test(navigator.userAgent)
+	&& !window.localStorage
+	&& !document.querySelector
+){
+	easemobim.bind = function(){
+		alert("您使用的IE浏览器版本过低，请使用IE8以上版本的IE浏览器或Chrome浏览器"); // eslint-disable-line no-alert
+	};
+	throw new Error("unsupported browser.");
+}
 
-// init _config & concat config and global easemobim.config
+reset();
 function reset(){
 	config = utils.copy(DEFAULT_CONFIG);
 	utils.extend(config, easemobim.config);
 	_config = utils.copy(config);
 
-	var hide = utils.convertFalse(_config.hide) !== "" ? _config.hide : baseConfig.json.hide;
-	var resources = utils.convertFalse(_config.resources) !== "" ? _config.resources : baseConfig.json.resources;
-	var sat = utils.convertFalse(_config.satisfaction) !== "" ? _config.satisfaction : baseConfig.json.sat;
+	var hide = utils.convertFalse(_config.hide) !== "" ? _config.hide : scriptConfig.json.hide;
+	var resources = utils.convertFalse(_config.resources) !== "" ? _config.resources : scriptConfig.json.resources;
+	var sat = utils.convertFalse(_config.satisfaction) !== "" ? _config.satisfaction : scriptConfig.json.sat;
 
-	_config.tenantId = _config.tenantId || baseConfig.json.tenantId;
-	_config.configId = _config.configId || baseConfig.json.configId;
+	_config.tenantId = _config.tenantId || scriptConfig.json.tenantId;
+	_config.configId = _config.configId || scriptConfig.json.configId;
 	_config.hide = utils.convertFalse(hide);
 	_config.resources = utils.convertFalse(resources);
 	_config.satisfaction = utils.convertFalse(sat);
-	_config.domain = _config.domain || baseConfig.domain;
-	_config.path = _config.path || (baseConfig.domain + "/webim");
-	_config.staticPath = _config.staticPath || (baseConfig.domain + "/webim/static");
+	// 不写则与 easemob.js 同域
+	_config.domain = _config.domain || scriptConfig.scriptDomain;
+	// 不写则与 easemob.js 同域
+	_config.staticPath = _config.staticPath || (scriptConfig.scriptDomain + "/webim/" + __LANGUAGE__ + "/");
 }
+
 // get config from current script
 function getConfig(){
 	var src;
@@ -97,7 +85,7 @@ function getConfig(){
 	}
 
 	if(!src){
-		return { json: obj, domain: "" };
+		return { json: obj, scriptDomain: "" };
 	}
 
 	var tmp;
@@ -110,7 +98,7 @@ function getConfig(){
 		tmp = arr[i].split("=");
 		obj[tmp[0]] = tmp.length > 1 ? decodeURIComponent(tmp[1]) : "";
 	}
-	return { json: obj, domain: domain };
+	return { json: obj, scriptDomain: domain };
 }
 
 /*
@@ -155,7 +143,6 @@ easemobim.bind = function(config){
 			console.error("No tenantId is specified.");
 			return;
 		}
-
 		iframe = Iframe(_config);
 		tenantList[cacheKeyName] = iframe;
 		iframe.set(_config, iframe.open);

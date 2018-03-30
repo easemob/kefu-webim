@@ -181,7 +181,7 @@ module.exports = {
 		11: "The conference is closed.",
 	},
 
-	EMOJI_PATH: __("config.language") === "zh-CN" ? "static/img/faces/" : "../static/img/faces/",
+	EMOJI_PATH: "static/img/faces/",
 
 	EMOJI_MAP: {
 		"[):]": "ee_1.png",
@@ -222,4 +222,3 @@ module.exports = {
 	},
 
 };
-

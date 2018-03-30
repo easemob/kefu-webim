@@ -1,8 +1,8 @@
+var utils =		require("@/common/utils");
+var _const =	require("@/common/const");
+var Transfer =	require("@/common/transfer");
+var resPath =	require("@/common/resPath");
 
-
-var utils = require("../common/utils");
-var _const = require("../common/const");
-var Transfer = require("../common/transfer");
 var loading = require("./loading");
 var notify = require("./notify");
 var titleSlide = require("./titleSlide");
@@ -293,8 +293,9 @@ var Iframe = function(config){
 };
 
 Iframe.prototype.set = function(config, callback){
-	// 资源加载都要相对 html 路径进行加载
-	var shadowBackgroundImage = location.protocol + "static/img/drag.png";
+	var shadowBackgroundImage;
+	resPath.initRes(config.staticPath);
+	shadowBackgroundImage = resPath.getRes().dragImg;
 
 	this.config = utils.copy(config || this.config);
 
@@ -306,8 +307,7 @@ Iframe.prototype.set = function(config, callback){
 			config.configId || ((this.config.to || "") + this.config.tenantId + (this.config.emgroup || ""))
 		);
 	}
-
-	// 这个是别人种的cookie
+	// 这个是别人种的 cookie
 	this.config.guestId = utils.getStore("guestId");
 
 	this.position = {
@@ -318,16 +318,14 @@ Iframe.prototype.set = function(config, callback){
 		width: +this.config.dialogWidth.slice(0, -2),
 		height: +this.config.dialogHeight.slice(0, -2)
 	};
-
 	this._updatePosition();
-
 	utils.toggleClass(this.iframe, "easemobim-hide", this.config.hide);
+
 	// 资源加载都要相对 html 路径进行加载
-	this.iframe.src = "im_cached.html?v=" + __WEBIM_PLUGIN_VERSION__;
+	this.iframe.src = resPath.getRes().imCachedHtml + "?v=" + __WEBIM_PLUGIN_VERSION__;
 	this.shadow && (this.shadow.style.backgroundImage = "url(" + shadowBackgroundImage + ")");
 
 	this.ready = callback;
-
 	return this;
 };
 

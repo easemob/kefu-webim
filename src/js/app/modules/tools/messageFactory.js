@@ -1,10 +1,11 @@
-var utils = require("../../../common/utils");
-var _const = require("../../../common/const");
+var utils =		require("@/common/utils");
+var _const =	require("@/common/const");
+var kefuPath =	require("@/common/kefuPath");
+
 var profile = require("../tools/profile");
 var textParser = require("../tools/textParser");
-var moment = require("moment");
 
-var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com/webim/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
+var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
 
 function genMsgContent(msg){
 	var type = msg.type;
@@ -26,7 +27,7 @@ function genMsgContent(msg){
 	case "customMagicEmoji":
 		// 给图片消息或附件消息的url拼上hostname
 		if(msg.url && !/^https?/.test(msg.url)){
-			msg.url = location.protocol + profile.config.domain + msg.url;
+			msg.url = kefuPath.getToBackend(msg.url);
 		}
 		// todo: remove a
 		html = "<a href=\"javascript:;\"><img class=\"em-widget-imgview\" src=\""

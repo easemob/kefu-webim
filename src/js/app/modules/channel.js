@@ -1,6 +1,9 @@
 var WebIM = require("easemob-websdk");
-var utils = require("../../common/utils");
-var _const = require("../../common/const");
+
+var utils =		require("@/common/utils");
+var kefuPath =	require("@/common/kefuPath");
+var _const =	require("@/common/const");
+
 var Dict = require("./tools/Dict");
 var List = require("./tools/List");
 var profile = require("./tools/profile");
@@ -8,7 +11,6 @@ var tools = require("./tools/tools");
 var eventListener = require("./tools/eventListener");
 var textParser = require("./tools/textParser");
 var apiHelper = require("./apiHelper");
-var moment = require("moment");
 
 var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;
@@ -530,13 +532,13 @@ function _handleMessage(msg, options){
 		marketingTaskId
 			&& type === "txt"
 			&& eventListener.excuteCallbacks(
-			_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
-			[
-				targetOfficialAccount,
-				marketingTaskId,
-				msg
-			]
-		);
+				_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
+				[
+					targetOfficialAccount,
+					marketingTaskId,
+					msg
+				]
+			);
 
 		if(eventName){
 			_handleSystemEvent(eventName, eventObj, msg);
@@ -602,9 +604,9 @@ function _transformMessageFormat(element){
 		fileLength = msg.file_length;
 	}
 
-	// 给图片消息或附件消息的url拼上hostname
+	// 图片消息或附件消息
 	if(url && !/^https?/.test(url)){
-		url = location.protocol + config.domain + url;
+		url = kefuPath.getToBackend(url);
 	}
 
 	return {
@@ -643,12 +645,10 @@ function _setExt(msg){
 	var officialAccountId = officialAccount.official_account_id;
 	var bindAgentUsername = officialAccount.bindAgentUsername;
 	var bindSkillGroupName = officialAccount.bindSkillGroupName;
-	var language = __("config.language");
 
 	msg.body.ext = msg.body.ext || {};
 	msg.body.ext.weichat = msg.body.ext.weichat || {};
-
-	msg.body.ext.weichat.language = language;
+	msg.body.ext.weichat.language = __LANGUAGE__;
 
 	// bind skill group
 	if(bindSkillGroupName){
@@ -953,4 +953,3 @@ function _messagePrompt(message, officialAccount){
 		});
 	}
 }
-

@@ -2,7 +2,6 @@ module.exports = {
 	config: {
 		message_timestamp_format: "MMM D HH:mm",
 		article_timestamp_format: "MMM D",
-		language: "en-US",
 		transfer_to_kefu_words: "Chat with agent",
 		scheduler_role_nickname: "Scheduler",
 	},

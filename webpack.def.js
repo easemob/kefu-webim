@@ -3,6 +3,29 @@
 	/static/js/em-open.js
 	/static/js/em-transfer.js		// 这是老文件？
 */
+
+// 资源跨域概述
+// demo.html	直接输入
+// 	res			来自 staticPath			唯一使用 resPath
+//
+// im.html		来自 staticPath			唯一使用 kefuPath
+// 	res			相对 html
+// 	url			来自 ajaxProxyDomain
+//
+// trans.html	来自 ajaxProxyDomain		全部同域
+// 	res			相对 html
+// 	url			相对 html
+
+// path 变量流转
+// cfg		ajax_domain & static_domain
+// 被读取 ->
+// webpack	static_domain + lang_path = static_path
+// 注入 ->
+// demo		ajax_domain & static_path
+
+// 验证
+// network 过滤 zh-CN 查看静态资源的去向
+
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const merge = require("webpack-merge");
@@ -40,8 +63,12 @@ i18next.init({
 //
 module.exports = function(envcfg){
 	const _protocol = envcfg.servercfg.secure ? "https://" : "http://";
-	const _domain = envcfg.appcfg.ajaxProxyDomain;
-	const ORIGIN_ON_DEV = _protocol + _domain;
+	// 100% 要填，demo.html 的 staticPath 可以不填
+	// online.staticDomain 暂不需要
+	const ORIGIN_ON_DEV = _protocol + envcfg.appcfg.dev.staticDomain;
+	//
+	const i18nOutputPath = path.join(__dirname, "build/" + lang);
+	const i18nPublicPath = "/webim/" + lang + "/";
 
 	//
 	const setEnvVariable = (key, value) => {
@@ -55,12 +82,13 @@ module.exports = function(envcfg){
 	const setHtmlBuilder = ({
 		filename,
 		template,
-		opt = {},
+		// cfg 的两个 domain 在 travis 中默认是 sandbox
+		opt = envcfg.appcfg,
 		inject = false,
+		online = false,
 	}) => ({
 		plugins: [
 			new HtmlWebpackPlugin({
-				//
 				filename,		// 输出地址（关联 entry.path）
 				template,		// 模板路径（不关联 entry.path）
 				// hash: true,		// 是否 hash css & js
@@ -80,7 +108,9 @@ module.exports = function(envcfg){
 
 				// 来自打包的
 				version: VERSION,
+				langPath: i18nPublicPath,
 				isPrd,
+				online,
 
 				// 来自配置的
 				opt,
@@ -181,41 +211,21 @@ module.exports = function(envcfg){
 					use: [ "html-loader" ]
 				},
 
-
-
-				// 第三方注入，expose-loader 注入到 window 下的
-				{
-					test: require.resolve("underscore"),
-					use: [
-						"expose-loader?_"
-					]
-				},
-				{
-					test: require.resolve("./src/js/app/lib/modernizr.js"),
-					use: [
-						"expose-loader?Modernizr"
-					]
-				},
-				{
-					test: require.resolve("moment"),
-					use: [
-						"expose-loader?moment"
-					]
-				},
-
-
-
-				// 版本注入
+				// 变量注入
 				{
 					test: [
-						path.resolve("src/js/app/modules/init"),
+						path.resolve("src/js/common/kefuPath"),
 						path.resolve("src/js/plugin/userAPI"),
 						path.resolve("src/js/plugin/iframe"),
+						path.resolve("src/js/app/modules/init"),
+						path.resolve("src/js/app/modules/channel"),
 					],
-					use: "imports-loader?__WEBIM_PLUGIN_VERSION__=>\"" + VERSION + "\""
+					use: [
+						"imports-loader",
+						"?__WEBIM_PLUGIN_VERSION__=>\"" + VERSION + "\"",
+						"&__LANGUAGE__=>\"" + lang + "\"",
+					].join("")
 				},
-
-
 
 				// 多语言注入
 				{
@@ -226,10 +236,18 @@ module.exports = function(envcfg){
 					},
 				},
 
-
-
 			],
 		},
+
+		// 特别蠢，只能注入文件
+		// 按需注入的
+		plugins: [
+			new webpack.ProvidePlugin({
+				_: "underscore",
+				moment: "moment",
+				Modernizr: path.resolve("./src/js/common/libs/modernizr"),
+			}),
+		],
 	}]);
 
 	let devCfg = merge([
@@ -257,7 +275,7 @@ module.exports = function(envcfg){
 					// 取 output.path 对应的 server 路径
 					// font 加载问题，与 sourcemap 冲突
 					setFonts({
-						publicPath: ORIGIN_ON_DEV + "/webim/" + lang + "/"
+						publicPath: ORIGIN_ON_DEV + i18nPublicPath
 					}),
 				]
 			},
@@ -316,10 +334,6 @@ module.exports = function(envcfg){
 		}
 	]);
 
-
-	//
-	let i18nOutputPath = path.join(__dirname, "build/" + lang);
-	let i18nPublicPath = "/webim/" + lang + "/";
 	let transfer = merge([
 		setHtmlBuilder({
 			filename: "transfer.html",
@@ -347,8 +361,11 @@ module.exports = function(envcfg){
 		setHtmlBuilder({
 			filename: "demo.html",			// 输出地址（关联 entry.path）
 			template: "src/html/demo.ejs",	// 模板路径（不关联 entry.path）
-			// 其中 domain 在 travis 中不会被 build 成 localhost
-			opt: envcfg.appcfg
+		}),
+		setHtmlBuilder({
+			filename: "demo_online.html",
+			template: "src/html/demo.ejs",
+			online: true,
 		}),
 		{
 			name: "easemob",

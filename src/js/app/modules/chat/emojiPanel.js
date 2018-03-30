@@ -1,10 +1,12 @@
-var template = require("../../../../template/emojiPanel.html");
-var utils = require("../../../common/utils");
-var _const = require("../../../common/const");
+var utils =		require("@/common/utils");
+var _const =	require("@/common/const");
+var kefuPath =	require("@/common/kefuPath");
+
 var apiHelper = require("../apiHelper");
 var profile = require("../tools/profile");
 var channel = require("../channel");
 var List = require("../tools/List");
+var template = require("../../../../template/emojiPanel.html");
 
 var HEIGHT_OF_TOP_NAVIGATOR = 43;
 var MAGIC_EMOJI_COUNT_PER_LINE = 6;
@@ -144,9 +146,8 @@ function _genEmojiPackageHtmlList(packageList, fileList){
 		var currentPageHtml =  _.chain(filesInCurrentPackage)
 		// 生成图标html
 		.map(function(item){
-			var thumbnailUrl = "//" + profile.config.domain + item.thumbnailUrl;
+			var thumbnailUrl = kefuPath.getToBackend(item.thumbnailUrl);
 			var originUrl = item.originUrl;
-
 			return "<div class=\"emoji-bg e-face\">"
 					+ "<img class=\"e-face emoji\" src=\""
 					+ thumbnailUrl
@@ -315,6 +316,7 @@ function _loadSystemEmojiPackage(){
 	systemEmojiContainer.innerHTML = _.chain(_const.EMOJI_MAP)
 	// 生成图标html
 	.map(function(value, key){
+		// 基于 html 页面地址加载
 		return "<div class=\"emoji-bg e-face\">"
 				+ "<img class=\"e-face emoji\" src=\""
 				+ path + value
