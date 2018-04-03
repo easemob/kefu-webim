@@ -8,7 +8,7 @@
 	<% var def = htmlWebpackPlugin.options; %>
 	<link rel="icon" href="favicon.ico" sizes="32x32" type="image/png">
 	<% if( def.isPrd ){ %>
-	<link href="static/css/im.css?v=<%= htmlWebpackPlugin.options.version %>" rel="stylesheet" />
+	<link href="static/css/im.css?v=<%= def.version %>" rel="stylesheet" />
 	<% } %>
 </head>
 
