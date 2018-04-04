@@ -1196,6 +1196,29 @@ function getSatisfactionTipWord(){
 	});
 }
 
+function updateCustomerInfo(data){
+	return new Promise(function(resolve, reject){
+		Promise.all([
+			getVisitorId(),
+			getToken()
+		]).then(function(result){
+			var visitorId = result[0];
+			var token = result[1];
+			data["visitorId"] = visitorId;
+			data["tenantId"] = config.tenantId;
+			data["orgName"] = config.orgName;
+			data["appName"] = config.appName;
+			data["userName"] = config.user.username;
+			data["token"] = token;
+			api("updateCustomerInfo", data, function(msg){
+				// resolve(msg.data);
+			}, function(err){
+				// reject(err);
+			});
+		});
+	});
+}
+
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
 	getToken: getToken,
@@ -1243,6 +1266,7 @@ module.exports = {
 	getCustomEmojiPackages: getCustomEmojiPackages,
 	getCustomEmojiFiles: getCustomEmojiFiles,
 	getSatisfactionTipWord: getSatisfactionTipWord,
+	updateCustomerInfo: updateCustomerInfo,
 
 	initApiTransfer: initApiTransfer,
 	api: api,
