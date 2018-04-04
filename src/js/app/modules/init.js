@@ -160,10 +160,63 @@ function chat_window_mode_init(){
 		}
 	}, ["easemob"]);
 
+	window.transfer.listen(function(e){
+		var data = getDatByPath(e, "easemob.kefu.cta");
+		if(data){
+			var trackMsg = {
+				ext: {
+					imageName: "mallImage3.png",
+					//custom代表自定义消息，无需修改
+                    type: "custom",
+					msgtype: {
+						track: {
+							// 消息标题 
+							title: "我正在看",
+							// 商品价格 
+							price: "",
+							// 商品描述 
+							desc: data.title,
+							// 商品图片链接 
+							img_url: "/images/robot/article_image.png",
+							// 商品页面链接 
+							item_url: data.item_url
+						}
+					}
+				}
+			};
+
+			apiHelper.updateCustomerInfo({
+				phone: data.phone
+			});
+			channel.sendText("", trackMsg);
+		}
+	});
 	utils.removeClass($contactAgentBtn, "hide");
 	utils.on($contactAgentBtn, "click", function(){
 		transfer.send({ event: _const.EVENTS.SHOW });
 	});
+}
+
+function getDatByPath(obj, path){
+	var found = false;
+	var propPath = path.split(".");
+	r(propPath.shift());
+	
+	function r(prop){
+		if(typeof prop != "string"){
+			return;
+		}
+		if((typeof obj != "object") || (obj == null)){
+			found = false;
+			return;
+		}
+		found = prop in obj;
+		if(found){
+			obj = obj[prop];
+			r(propPath.shift());
+		}
+	}
+	return found ? obj : false;
 }
 
 function initChat(){
