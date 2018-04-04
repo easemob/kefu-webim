@@ -711,6 +711,25 @@ getData.listen(function(msg){
 			excludeData: true,
 		});
 		break;
+	case "updateCustomerInfo":
+		url = " /v1/tenants/" + tenantId
+				+ "/visitors/" + params.visitorId + "/customer-info"
+				+ "?orgName=" + params.orgName
+				+ "&appName=" + params.appName
+				+ "&userName=" + params.userName
+				+ "&token=" + params.token;
+		delete params.tenantId;
+		delete params.visitorId;
+		delete params.orgName;
+		delete params.appName;
+		delete params.userName;
+		delete params.token;
+		emitAjax({
+			url: url,
+			msg: msg,
+			type: "put"
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;

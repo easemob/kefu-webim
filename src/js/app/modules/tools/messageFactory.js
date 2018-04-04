@@ -110,7 +110,8 @@ function genDomFromMsg(msg, isReceived, isHistory){
 						"<div class=\"desc\"><p>" + msgArticles[0].description + "</p></div>" +
 					"</div>" +
 					"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
-					"<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
+					// "<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
+					"<div class=\"article-link\"><span>" + msgArticles[0].url + "</span></div>" +
 				"</div>";
 		}
 		else{
@@ -124,9 +125,10 @@ function genDomFromMsg(msg, isReceived, isHistory){
 					else{
 						str = "<div class=\"article-item rest-item\">" +
 							"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
-					}
-					str += "<img class=\"cover-img\" src=\"" + item.thumbUrl + "\"/>" +
-							"<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
+						}
+						str += "<img class=\"cover-img\" src=\"" + item.thumbUrl + "\"/>" +
+							// "<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
+							"<div class=\"article-link\"><span>" + item.url + "</span></div>" +
 							"</div>";
 					return str;
 				}).join("") || ""
@@ -134,6 +136,10 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		}
 		dom.className = "article-message-wrapper";
 		dom.innerHTML = articleNode;
+		
+		utils.live(".article-link", "click", function(e){
+			window.open(e.target.firstElementChild.innerText);
+		}, dom);
 		return dom;
 	}
 
