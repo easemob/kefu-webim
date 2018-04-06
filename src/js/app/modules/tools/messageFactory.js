@@ -138,7 +138,16 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		dom.innerHTML = articleNode;
 		
 		utils.live(".article-link", "click", function(e){
-			window.open(e.target.firstElementChild.innerText);
+			var url = e.target.firstElementChild.innerText;
+			if(utils.isTop){
+				var myIframe = document.createElement("iframe");
+				myIframe.src = url;
+				myIframe.className = "em-article-iframe";
+				document.body.appendChild(myIframe);
+			}
+			else{
+				window.open(url);
+			}
 		}, dom);
 		return dom;
 	}
