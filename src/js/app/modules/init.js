@@ -66,8 +66,7 @@ function h5_mode_init(){
 
 	// ajaxProxyDomain 100% 要有值
 	// 这里 domain 不做添加，在 kefuPath 中检测去杂
-	config.domain = utils.query("domain") ? utils.query("domain") : "";
-	config.domain = config.domain || location.host;
+	config.domain = utils.query("domain") || location.host;
 	config.staticPath = config.staticPath || "";	// 不写就是同域
 
 	// H5 方式集成时不支持 eventCollector 配置
@@ -176,24 +175,24 @@ function updateCustomerInfo(e){
 	if(typeof data === "string"){
 		data = JSON.parse(data);
 	}
-	data = getDatByPath(data, "easemob.kefu.cta");
+	data = utils.getDataByPath(data, "easemob.kefu.cta");
 	if(data){
 		var trackMsg = {
 			ext: {
 				imageName: "mallImage3.png",
-				//custom代表自定义消息，无需修改
-                type: "custom",
+				// custom代表自定义消息，无需修改
+				type: "custom",
 				msgtype: {
 					track: {
-						// 消息标题 
+						// 消息标题
 						title: "我正在看",
-						// 商品价格 
+						// 商品价格
 						price: "",
-						// 商品描述 
+						// 商品描述
 						desc: data.title,
-						// 商品图片链接 
+						// 商品图片链接
 						img_url: "/images/robot/article_image.png",
-						// 商品页面链接 
+						// 商品页面链接
 						item_url: data.item_url
 					}
 				}
@@ -206,28 +205,6 @@ function updateCustomerInfo(e){
 		channel.sendText("转人工客服");
 		channel.sendText("", trackMsg);
 	}
-}
-
-function getDatByPath(obj, path){
-	var found = false;
-	var propPath = path.split(".");
-	r(propPath.shift());
-	
-	function r(prop){
-		if(typeof prop != "string"){
-			return;
-		}
-		if((typeof obj != "object") || (obj == null)){
-			found = false;
-			return;
-		}
-		found = prop in obj;
-		if(found){
-			obj = obj[prop];
-			r(propPath.shift());
-		}
-	}
-	return found ? obj : false;
 }
 
 function initChat(){
@@ -369,7 +346,7 @@ function initCrossOriginIframe(){
 	var iframe;
 	kefuPath.init(config.domain);
 	iframe = document.getElementById("cross-origin-iframe");
-	iframe.src = kefuPath.getRes().transterHtml + "?v=" + __WEBIM_PLUGIN_VERSION__;
+	iframe.src = kefuPath.getRes().transferHtml + "?v=" + __WEBIM_PLUGIN_VERSION__;
 	utils.on(iframe, "load", function(){
 		apiHelper.initApiTransfer();
 		handleMsgData();

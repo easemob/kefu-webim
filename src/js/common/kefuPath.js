@@ -3,7 +3,7 @@
 // app only
 var kefuRoot;
 var ajaxProxy = {
-	transterHtml: "transfer.html",
+	transferHtml: "transfer.html",
 };
 
 module.exports = {
