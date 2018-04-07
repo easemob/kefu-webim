@@ -146,10 +146,14 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		utils.live(".article-link", "click", function(e){
 			var url = e.target.firstElementChild.innerText;
 			if(utils.isTop){
-				var myIframe = document.createElement("iframe");
+				// var myIframe = document.createElement("iframe");
+				// myIframe.src = url;
+				// myIframe.className = "em-article-iframe";
+				// document.body.appendChild(myIframe);
+				var articleContainer = document.getElementById("em-article-container");
+				var myIframe = document.getElementById("em-article-iframe");
+				articleContainer.style.display = "block";
 				myIframe.src = url;
-				myIframe.className = "em-article-iframe";
-				document.body.appendChild(myIframe);
 			}
 			else{
 				window.open(url);
