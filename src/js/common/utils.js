@@ -286,6 +286,14 @@ module.exports = {
 		var matches = reg.exec(location.search);
 		return matches ? matches[1] : "";
 	},
+	sameProtocol: function(url){
+		url = url || "";
+		// 全清理
+		url = url.replace(/^http[s]?:/, "");
+		url = url.replace(/^\/\//, "");
+		url = "//" + url;
+		return url;
+	},
 	setStore: function(key, value){
 		try{
 			localStorage.setItem(key, value);

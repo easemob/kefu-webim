@@ -1,4 +1,4 @@
-
+var utils = require("@/common/utils");
 // 不包括 avatar
 // app only
 var kefuRoot;
@@ -9,12 +9,10 @@ var ajaxProxy = {
 module.exports = {
 	init: function(ajaxProxyDomain){
 		var kefuPath;
-		// 全清理
-		ajaxProxyDomain = ajaxProxyDomain.replace(/^http[s]?:/, "");
-		ajaxProxyDomain = ajaxProxyDomain.replace(/^\/\//, "");
+		var sameProtocolAjaxProxyDomain = utils.sameProtocol(ajaxProxyDomain);
 		// 再加上，正则好写
-		kefuPath = "//" + ajaxProxyDomain + "/webim/" + __LANGUAGE__ + "/";
-		kefuRoot = "//" + ajaxProxyDomain + "/";
+		kefuPath = sameProtocolAjaxProxyDomain + "/webim/" + __LANGUAGE__ + "/";
+		kefuRoot = sameProtocolAjaxProxyDomain + "/";
 		_.each(ajaxProxy, function(v, k){
 			ajaxProxy[k] = kefuPath + v;
 		});

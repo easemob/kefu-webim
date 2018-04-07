@@ -142,9 +142,10 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		}
 		dom.className = "article-message-wrapper";
 		dom.innerHTML = articleNode;
-		
+
 		utils.live(".article-link", "click", function(e){
 			var url = e.target.firstElementChild.innerText;
+			url = utils.sameProtocol(url);
 			if(utils.isTop){
 				// var myIframe = document.createElement("iframe");
 				// myIframe.src = url;
