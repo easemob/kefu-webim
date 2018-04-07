@@ -417,6 +417,11 @@ function _bindEvents(){
 		satisfaction.show(inviteId, serviceSessionId);
 	});
 
+	utils.live("#article-close .icon-back", "click", function(){
+		var articleContainer = document.getElementById("em-article-container");
+		articleContainer.style.display = "none";
+	});
+
 	var messagePredict = _.throttle(function(msg){
 		var officialAccount = profile.currentOfficialAccount || {};
 		var sessionId = officialAccount.sessionId;
