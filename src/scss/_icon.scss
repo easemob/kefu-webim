@@ -232,6 +232,12 @@
 	content: "\32"
 }
 
+.icon-back:before {
+	@extend .icon-base;
+	content: "\34"
+}
+
+
 .icon-arrow-right:before {
 	@extend .icon-base;
 	content: "\69"

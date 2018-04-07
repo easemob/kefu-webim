@@ -599,3 +599,31 @@
     bottom: 0;
     z-index: 999;
 }
+
+#em-article-container {
+	position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: none;
+
+    >#article-close{
+    	background-color: #00a0e7;
+	    width: 100%;
+	    z-index: 1;
+	    height: 30px;
+	    position: absolute;
+
+	    .icon-back {
+	    	cursor: pointer;
+	    	&:before{
+	    		color: white;
+	    	}
+	    }
+    }
+
+    >iframe{
+    	width: 100%;
+    	height: 100%;
+    }
+}
