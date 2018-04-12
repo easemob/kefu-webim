@@ -1,4 +1,5 @@
 var utils = require("@/common/utils");
+
 // 不包括 avatar
 // app only
 var kefuRoot;
@@ -7,14 +8,10 @@ var ajaxProxy = {
 };
 
 module.exports = {
-	init: function(ajaxProxyDomain){
-		var kefuPath;
-		var sameProtocolAjaxProxyDomain = utils.sameProtocol(ajaxProxyDomain);
-		// 再加上，正则好写
-		kefuPath = sameProtocolAjaxProxyDomain + "/webim/" + __LANGUAGE__ + "/";
-		kefuRoot = sameProtocolAjaxProxyDomain + "/";
+	init: function(path){
+		kefuRoot = path;
 		_.each(ajaxProxy, function(v, k){
-			ajaxProxy[k] = kefuPath + v;
+			ajaxProxy[k] = utils.mergePath(kefuRoot, "/webim/", __LANGUAGE__, v);
 		});
 	},
 	getRes: function(){
@@ -22,7 +19,6 @@ module.exports = {
 	},
 	getToBackend: function(path){
 		if(!kefuRoot) throw new Error("kefuRoot not found!");
-		path = path.replace(/^\//, "");	// 去掉开头的 /
-		return kefuRoot + path;
+		return utils.mergePath(kefuRoot, path);
 	},
 };

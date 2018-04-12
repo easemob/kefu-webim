@@ -5,22 +5,21 @@
 */
 
 // 资源跨域概述
-// demo.html	直接输入
-// 	res			来自 staticPath			唯一使用 resPath
-//
-// im.html		来自 staticPath			唯一使用 kefuPath
-// 	res			相对 html
-// 	url			来自 ajaxProxyDomain
-//
-// trans.html	来自 ajaxProxyDomain		全部同域
-// 	res			相对 html
-// 	url			相对 html
+// demo.html	地址栏输入
+// 	res			（跨域）来自 staticPath
+//	im.html		（跨域）来自 staticPath
+// 		res			（同域）相对 html
+// 		url			（跨域）来自 ajaxProxyDomain
+// 		trans.html	（跨域）来自 ajaxProxyDomain
+// 			res			（同域）相对 html
+// 			url			（同域）相对 html
+// 跨域工具对应
+// staticPath => resPath
+// ajaxProxyDomain => kefuPath
 
 // path 变量流转
-// cfg		ajax_domain & static_domain
-// 被读取 ->
-// webpack	static_domain + lang_path = static_path
-// 注入 ->
+// cfg		ajax_domain & static_domain		被读取 ->
+// webpack	static_domain => static_path	注入 ->
 // demo		ajax_domain & static_path
 
 // 验证
@@ -36,12 +35,6 @@ const tmpVersion = "local_" + (Math.floor(Math.random() * 1e6)).toString();
 const VERSION = process.env.TAG_NAME || tmpVersion;
 const argv = require("yargs").argv;
 const isPrd = argv.env === "production";
-
-function handleProtocol(val, prefix){
-	return /(http:|https:)?(\/\/)/.test(val)
-		? val
-		: prefix + val;
-}
 
 // 多语言
 const lang = process.env.LOCALE;
@@ -67,14 +60,11 @@ i18next.init({
 
 //
 module.exports = function(envcfg){
-	const _protocol = envcfg.servercfg.secure ? "https://" : "http://";
 	// 100% 要填，demo.html 的 staticPath 可以不填
 	// online.staticDomain 暂不需要
-	// const ORIGIN_ON_DEV = _protocol + envcfg.appcfg.dev.staticDomain;
-	const ORIGIN_ON_DEV = handleProtocol(envcfg.appcfg.dev.staticDomain, _protocol);
-	//
-	const i18nOutputPath = path.join(__dirname, "build/" + lang);
-	const i18nPublicPath = "/webim/" + lang + "/";
+	const ORIGIN_ON_DEV = handleProtocol(envcfg.appcfg.dev.staticDomain);
+	const i18nOutputPath = path.join(__dirname, mergePath("build/", lang));
+	const i18nPublicPath = mergePath("/webim/", lang);
 
 	//
 	const setEnvVariable = (key, value) => {
@@ -92,37 +82,47 @@ module.exports = function(envcfg){
 		opt = envcfg.appcfg,
 		inject = false,
 		online = false,
-	}) => ({
-		plugins: [
-			new HtmlWebpackPlugin({
-				filename,		// 输出地址（关联 entry.path）
-				template,		// 模板路径（不关联 entry.path）
-				// hash: true,		// 是否 hash css & js
-				cache: true,	// 确定文件变更才更新 hash
-				inject: inject,
+	}) => {
+		var langPath = i18nPublicPath;
+		var ajaxProxy = handleProtocol(online ? opt.online.ajaxProxyDomain : opt.dev.ajaxProxyDomain);
+		var staticPath = mergePath(
+			handleProtocol(online ? opt.online.staticDomain : opt.dev.staticDomain),
+			langPath
+		);
+		return {
+			plugins: [
+				new HtmlWebpackPlugin({
+					filename,		// 输出地址（关联 entry.path）
+					template,		// 模板路径（不关联 entry.path）
+					// hash: true,		// 是否 hash css & js
+					cache: true,	// 确定文件变更才更新 hash
+					inject: inject,
 
-				// 是否压缩，竟然无规则报错！？
-				// 不能用 true，文档有误！
-				minify: isPrd
-					? {
-						removeComments: true,
-						collapseWhitespace: true,
-						minifyJS: true,
-						minifyCSS: true
-					}
-					: false,
+					// 是否压缩，竟然无规则报错！？
+					// 不能用 true，文档有误！
+					minify: isPrd
+						? {
+							removeComments: true,
+							collapseWhitespace: true,
+							minifyJS: true,
+							minifyCSS: true
+						}
+						: false,
 
-				// 来自打包的
-				version: VERSION,
-				langPath: i18nPublicPath,
-				isPrd,
-				online,
+					// 来自打包的
+					version: VERSION,
+					langPath,
+					isPrd,
+					staticPath,
+					ajaxProxy,
+					easemobjs: mergePath(staticPath, "easemob.js"),
 
-				// 来自配置的
-				opt,
-			})
-		]
-	});
+					// 来自配置的
+					opt,
+				})
+			]
+		};
+	};
 
 	// PRODUCTION ONLY
 	var extractCSS = ({ test, include, exclude, use }) => {
@@ -281,7 +281,7 @@ module.exports = function(envcfg){
 					// 取 output.path 对应的 server 路径
 					// font 加载问题，与 sourcemap 冲突
 					setFonts({
-						publicPath: ORIGIN_ON_DEV + i18nPublicPath
+						publicPath: mergePath(ORIGIN_ON_DEV, i18nPublicPath)
 					}),
 				]
 			},
@@ -424,6 +424,20 @@ module.exports = function(envcfg){
 			app,
 			{ entry: ["webpack-hot-middleware/client?name=main"] }
 		]);
+
+	function handleProtocol(val){
+		const _protocol = envcfg.servercfg.secure ? "https://" : "http://";
+		return /(http:|https:)?(\/\/)/.test(val)
+			? val
+			: _protocol + val;
+	}
+
+	function mergePath(){
+		var paths = Array.prototype.slice.apply(arguments);
+		return paths.reduce(function(preResult, curElem){
+			return preResult.replace(/\/*$/, "") + "/" + curElem.replace(/^\/*/, "");
+		}, paths.shift());
+	}
 
 	//
 	return isPrd

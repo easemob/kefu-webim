@@ -65,10 +65,13 @@ function reset(){
 	_config.resources = utils.convertFalse(resources);
 	_config.satisfaction = utils.convertFalse(sat);
 	// 不写则与 easemob.js 同域
-	// 这里 domain 不做添加，在 kefuPath 中检测去杂
 	_config.domain = _config.domain || scriptConfig.scriptDomain;
 	// 不写则与 easemob.js 同域
-	_config.staticPath = _config.staticPath || (scriptConfig.scriptDomain + "/webim/" + __LANGUAGE__ + "/");
+	_config.staticPath = _config.staticPath || utils.mergePath(scriptConfig.scriptDomain, "/webim/", __LANGUAGE__);
+
+	// 处理协议头，支持 https:// & http:// & // & 无 四种配置
+	_config.domain = utils.handleProtocol(_config.domain);
+	_config.staticPath = utils.handleProtocol(_config.staticPath);
 }
 
 // get config from current script

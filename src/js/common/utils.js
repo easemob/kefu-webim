@@ -347,6 +347,19 @@ module.exports = {
 		// todo：移到，easemob.js 里边
 		return this.extend({}, obj);
 	},
+
+	handleProtocol: function(val){
+		return /(http:|https:)?(\/\/)/.test(val)
+			? val
+			: "//" + val;
+	},
+
+	mergePath: function(){
+		var paths = Array.prototype.slice.apply(arguments);
+		return paths.reduce(function(preResult, curElem){
+			return preResult.replace(/\/*$/, "") + "/" + curElem.replace(/^\/*/, "");
+		}, paths.shift());
+	},
 };
 
 function getDataByPath(obj, path){

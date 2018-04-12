@@ -36,6 +36,7 @@ cfgValidator
 	const PROXY_REGEX = [
 		/^\/(v1)/i,
 		/^\/socket\/info/i,
+		/^\/ossimages\//i,
 	];
 	proxy.on("error", e => logErr(e));
 

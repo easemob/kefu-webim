@@ -1,3 +1,4 @@
+var utils = require("@/common/utils");
 
 // plugin only
 var res = {
@@ -9,7 +10,7 @@ module.exports = {
 	initRes: function(staticPath){
 		staticPath = staticPath || "";
 		_.each(res, function(v, k){
-			res[k] = staticPath + v;
+			res[k] = utils.mergePath(staticPath, v);
 		});
 	},
 	getRes: function(){

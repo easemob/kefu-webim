@@ -45,23 +45,7 @@
 		}
 	</style>
 </head>
-<%
-	var def = htmlWebpackPlugin.options;
-	var staticPath = def.online
-		? def.opt.online.staticDomain + def.langPath
-		: def.opt.dev.staticDomain + def.langPath;
-	var ajaxProxy = def.online
-		? def.opt.online.ajaxProxyDomain
-		: def.opt.dev.ajaxProxyDomain;
-	staticPath = handleProtocol(staticPath);
-	ajaxProxy = handleProtocol(ajaxProxy);
-	<!-- 处理协议，兼容 http:// & https:// & // -->
-	function handleProtocol(val){
-		return /(http:|https:)?(\/\/)/.test(val)
-			? val
-			: "//" + val;
-	}
-%>
+<% var def = htmlWebpackPlugin.options; %>
 <body>
 	<h1>Demo</h1>
 	<a target="_blank" href="//docs.easemob.com/cs/300visitoraccess/web-widget">集成文档</a>
@@ -109,8 +93,8 @@
 	<script>
 		window.easemobim = window.easemobim || {};
 		window.easemobim.config = {
-			domain: "<%= ajaxProxy %>",
-			staticPath: "<%= staticPath %>",
+			domain: "<%= def.ajaxProxy %>",
+			staticPath: "<%= def.staticPath %>",
 			tenantId: "<%= def.opt.tenantId %>",
 			configId: "<%= def.opt.configId %>",
 			// hide: false,
@@ -119,7 +103,7 @@
 			// eventCollector: true,
 		};
 	</script>
-	<script src="<%= staticPath %>easemob.js"></script>
+	<script src="<%= def.easemobjs %>"></script>
 
 </body>
 
