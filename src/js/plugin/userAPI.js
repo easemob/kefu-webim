@@ -65,6 +65,7 @@ function reset(){
 	_config.resources = utils.convertFalse(resources);
 	_config.satisfaction = utils.convertFalse(sat);
 	// 不写则与 easemob.js 同域
+	// 这里 domain 不做添加，在 kefuPath 中检测去杂
 	_config.domain = _config.domain || scriptConfig.scriptDomain;
 	// 不写则与 easemob.js 同域
 	_config.staticPath = _config.staticPath || (scriptConfig.scriptDomain + "/webim/" + __LANGUAGE__ + "/");
@@ -91,7 +92,7 @@ function getConfig(){
 	var tmp;
 	var idx = src.indexOf("?");
 	var sIdx = ~src.indexOf("//") ? src.indexOf("//") : 0;
-	var domain = src.slice(sIdx, src.indexOf("/", sIdx + 2));
+	var domain = src.slice(0, src.indexOf("/", sIdx + 2));
 	var arr = src.slice(idx + 1).split("&");
 
 	for(i = 0, len = arr.length; i < len; i++){

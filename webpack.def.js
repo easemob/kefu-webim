@@ -37,6 +37,11 @@ const VERSION = process.env.TAG_NAME || tmpVersion;
 const argv = require("yargs").argv;
 const isPrd = argv.env === "production";
 
+function handleProtocol(val, prefix){
+	return /(http:|https:)?(\/\/)/.test(val)
+		? val
+		: prefix + val;
+}
 
 // 多语言
 const lang = process.env.LOCALE;
@@ -65,7 +70,8 @@ module.exports = function(envcfg){
 	const _protocol = envcfg.servercfg.secure ? "https://" : "http://";
 	// 100% 要填，demo.html 的 staticPath 可以不填
 	// online.staticDomain 暂不需要
-	const ORIGIN_ON_DEV = _protocol + envcfg.appcfg.dev.staticDomain;
+	// const ORIGIN_ON_DEV = _protocol + envcfg.appcfg.dev.staticDomain;
+	const ORIGIN_ON_DEV = handleProtocol(envcfg.appcfg.dev.staticDomain, _protocol);
 	//
 	const i18nOutputPath = path.join(__dirname, "build/" + lang);
 	const i18nPublicPath = "/webim/" + lang + "/";

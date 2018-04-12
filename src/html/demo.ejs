@@ -48,11 +48,19 @@
 <%
 	var def = htmlWebpackPlugin.options;
 	var staticPath = def.online
-		? "//" + def.opt.online.staticDomain + def.langPath
-		: "//" + def.opt.dev.staticDomain + def.langPath;
+		? def.opt.online.staticDomain + def.langPath
+		: def.opt.dev.staticDomain + def.langPath;
 	var ajaxProxy = def.online
-		? "//" + def.opt.online.ajaxProxyDomain
-		: "//" + def.opt.dev.ajaxProxyDomain;
+		? def.opt.online.ajaxProxyDomain
+		: def.opt.dev.ajaxProxyDomain;
+	staticPath = handleProtocol(staticPath);
+	ajaxProxy = handleProtocol(ajaxProxy);
+	<!-- 处理协议，兼容 http:// & https:// & // -->
+	function handleProtocol(val){
+		return /(http:|https:)?(\/\/)/.test(val)
+			? val
+			: "//" + val;
+	}
 %>
 <body>
 	<h1>Demo</h1>
