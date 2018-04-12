@@ -91,6 +91,7 @@ function getConfig(){
 
 	for(s = 0, l = scripts.length; s < l; s++){
 		if(~scripts[s].src.indexOf("easemob.js")){
+			// src 会被强制加上域名
 			src = scripts[s].src;
 			break;
 		}
@@ -103,7 +104,7 @@ function getConfig(){
 	var tmp;
 	var idx = src.indexOf("?");
 	var sIdx = ~src.indexOf("//") ? src.indexOf("//") : 0;
-	var domain = src.slice(sIdx, src.indexOf("/", sIdx + 2));
+	var domain = src.slice(0, src.indexOf("/", sIdx + 2));
 	var arr = src.slice(idx + 1).split("&");
 
 	for(i = 0, len = arr.length; i < len; i++){
