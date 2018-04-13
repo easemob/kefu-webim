@@ -136,24 +136,6 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		}
 		dom.className = "article-message-wrapper";
 		dom.innerHTML = articleNode;
-
-		utils.live(".article-link", "click", function(e){
-			var url = e.target.firstElementChild.innerText;
-			url = utils.sameProtocol(url);
-			if(utils.isTop){
-				// var myIframe = document.createElement("iframe");
-				// myIframe.src = url;
-				// myIframe.className = "em-article-iframe";
-				// document.body.appendChild(myIframe);
-				var articleContainer = document.getElementById("em-article-container");
-				var myIframe = document.getElementById("em-article-iframe");
-				articleContainer.style.display = "block";
-				myIframe.src = url;
-			}
-			else{
-				window.open(url);
-			}
-		}, dom);
 		return dom;
 	}
 

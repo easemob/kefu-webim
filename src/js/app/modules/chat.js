@@ -419,7 +419,28 @@ function _bindEvents(){
 
 	utils.live("#article-close .icon-back", "click", function(){
 		var articleContainer = document.getElementById("em-article-container");
+		var iframe = articleContainer.querySelector("iframe");
+		iframe && utils.removeDom(iframe);
 		articleContainer.style.display = "none";
+	});
+
+	utils.live(".article-link", "click", function(e){
+		var articleContainer;
+		var myIframe;
+		var url = e.target.firstElementChild.innerText;
+		url = utils.sameProtocol(url);
+		if(utils.isTop){
+			articleContainer = document.getElementById("em-article-container");
+			myIframe = utils.createElementFromHTML(
+				"<iframe class=\"em-article-iframe\" src=\"\" id=\"em-article-iframe\"></iframe>"
+			);
+			articleContainer.appendChild(myIframe);
+			articleContainer.style.display = "block";
+			myIframe.src = url;
+		}
+		else{
+			window.open(url);
+		}
 	});
 
 	var messagePredict = _.throttle(function(msg){
