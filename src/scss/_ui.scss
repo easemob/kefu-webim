@@ -605,22 +605,39 @@
 	display: none;
 
 	> #article-close {
-		background-color: #00a0e7;
+		background-color: #fff;
 		width: 100%;
-		z-index: 1;
-		height: 30px;
-		position: absolute;
+		position: relative;
+		z-index: 10;
+		height: 50px;
+		box-shadow: 0px 0px 10px 0 rgba(0, 0, 0, 0.3);
+		// position: absolute;
 
 		.icon-back {
 			cursor: pointer;
+			font-size: 16px;
+			line-height: 50px;
 			&:before {
-				color: white;
+				color: #000;
 			}
 		}
 	}
 
 	> iframe {
+		z-index: 1;
 		width: 100%;
 		height: 100%;
+		padding-top: 50px;
+		position: absolute;
+		top: 0;
+		border: 0;
+		box-sizing: border-box;
 	}
+}
+
+.em-article-iframe{
+	position: absolute;
+	top: 0;
+	height: 100%;
+	width: 100%;
 }

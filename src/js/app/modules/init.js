@@ -66,8 +66,8 @@ function h5_mode_init(){
 
 	// ajaxProxyDomain 100% 要有值
 	// 这里 domain 不做添加，在 kefuPath 中检测去杂
-	config.domain = utils.query("domain") || location.host;
-	config.staticPath = config.staticPath || "";	// 不写就是同域
+	config.domain = utils.handleProtocol(utils.query("domain") || location.host);
+	config.staticPath = "";		// 不写就是同域
 
 	// H5 方式集成时不支持 eventCollector 配置
 	config.to = utils.convertFalse(utils.query("to"));
