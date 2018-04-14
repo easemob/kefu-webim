@@ -154,8 +154,9 @@ module.exports = function(envcfg){
 
 	var setFonts = ({ publicPath }) => {
 		var options = {
-			// join output.path
-			outputPath: "static/fonts/",
+			// join output.publicPath
+			// 推测是使用 + 拼接的，结果少了一个杠，必须补在 static 前面
+			outputPath: "/static/fonts/",
 			name: "[name].[hash:8].[ext]"
 		};
 		publicPath && (options.publicPath = publicPath);
