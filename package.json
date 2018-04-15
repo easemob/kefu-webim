@@ -44,9 +44,9 @@
     "build:all": "npm run build; npm run build:en",
     "build:en": "LOCALE=en-US webpack --env production",
     "build:zh": "LOCALE=zh-CN webpack --env production",
-    "dev": "DEBUG=webim* LOCALE=zh-CN nodemon ./server/app --watch server --env development",
+    "dev": "DEBUG=webim* LOCALE=zh-CN nodemon ./server/app --env development",
     "dev:debug": "DEBUG=webim* LOCALE=zh-CN node --inspect --debug-brk server/app --env development",
-    "server": "DEBUG=webim* LOCALE=zh-CN nodemon ./server/app --watch server --only",
+    "server": "DEBUG=webim* LOCALE=zh-CN nodemon ./server/app --only",
     "server:debug": "DEBUG=webim* LOCALE=zh-CN node --inspect --debug-brk server/app --only"
   },
   "dependencies": {
