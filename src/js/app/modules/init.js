@@ -162,17 +162,18 @@ function chat_window_mode_init(){
 }
 
 function updateCustomerInfo(e){
+	var temp;
 	var data = e.data;
 	if(typeof data === "string"){
 		data = JSON.parse(data);
 	}
-	data = utils.getDataByPath(data, "easemob.kefu.cta");
-	if(data){
+	temp = utils.getDataByPath(data, "easemob.kefu.cta");
+	if(temp){
 		var trackMsg = {
 			ext: {
-				imageName: "mallImage3.png",
-				// custom代表自定义消息，无需修改
-				type: "custom",
+				// imageName: "mallImage3.png",
+				// // custom代表自定义消息，无需修改
+				// type: "custom",
 				msgtype: {
 					track: {
 						// 消息标题
@@ -180,11 +181,11 @@ function updateCustomerInfo(e){
 						// 商品价格
 						price: "",
 						// 商品描述
-						desc: data.title,
+						desc: temp.title,
 						// 商品图片链接
 						img_url: "/images/robot/article_image.png",
 						// 商品页面链接
-						item_url: data.item_url
+						item_url: temp.item_url
 					}
 				}
 			}
@@ -193,8 +194,11 @@ function updateCustomerInfo(e){
 		apiHelper.updateCustomerInfo({
 			phone: data.phone
 		});
-		channel.sendText("转人工客服");
-		channel.sendText("", trackMsg);
+		channel.sendText("转人工客服", trackMsg);
+	}
+	temp = utils.getDataByPath(data, "easemob.kefu.iframe.scroll");
+	if(temp){
+		chat.setArticleIframeScrolling(temp.enable);
 	}
 }
 
