@@ -63,17 +63,19 @@ module.exports = {
 		MESSAGE_CHANNEL_READY: "message.channel.ready",
 	},
 
+	/* eslint-disable quote-props */
+	// 兼容 GBK 问题（宿主页面如果是 GBK，至少保证这个乱码的 key 不会使 easemob.js 报错）
 	themeMap: {
-		天空之城: "theme-1",
-		丛林物语: "theme-2",
-		红瓦洋房: "theme-3",
-		鲜美橙汁: "theme-4",
-		青草田间: "theme-5",
-		湖光山色: "theme-6",
-		冷峻山峰: "theme-7",
-		月色池塘: "theme-8",
-		天籁湖光: "theme-9",
-		商务风格: "theme-10"
+		"天空之城": "theme-1",
+		"丛林物语": "theme-2",
+		"红瓦洋房": "theme-3",
+		"鲜美橙汁": "theme-4",
+		"青草田间": "theme-5",
+		"湖光山色": "theme-6",
+		"冷峻山峰": "theme-7",
+		"月色池塘": "theme-8",
+		"天籁湖光": "theme-9",
+		"商务风格": "theme-10"
 	},
 
 	IM: {
