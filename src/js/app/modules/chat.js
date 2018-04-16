@@ -438,6 +438,7 @@ function _bindEvents(){
 			articleContainer.appendChild(myIframe);
 			articleContainer.style.display = "block";
 			myIframe.src = url;
+			// myIframe.src = "http://kefu.webim.com:8081/pages/robot/article.html";
 		}
 		else{
 			window.open(url);

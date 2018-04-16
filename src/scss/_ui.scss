@@ -603,6 +603,9 @@
 	height: 100%;
 	z-index: 1;
 	display: none;
+	// safari scroll ios
+	-webkit-overflow-scrolling: touch;
+	overflow: auto;
 
 	> #article-close {
 		background-color: #fff;
@@ -627,17 +630,12 @@
 		z-index: 1;
 		width: 100%;
 		height: 100%;
+		margin-top: -50px;
 		padding-top: 50px;
-		position: absolute;
+		// safari -webkit-overflow-scrolling 设置要求 iframe 不能是 absolute
+		// position: absolute;
 		top: 0;
 		border: 0;
 		box-sizing: border-box;
 	}
-}
-
-.em-article-iframe{
-	position: absolute;
-	top: 0;
-	height: 100%;
-	width: 100%;
 }
