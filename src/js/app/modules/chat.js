@@ -438,8 +438,8 @@ function _bindEvents(){
 			articleContainer.querySelector(".em-article-body").appendChild(myIframe);
 			articleContainer.style.display = "block";
 			setArticleIframeScrolling(true);
-			// myIframe.src = url;
-			myIframe.src = "http://kefu.webim.com:8081/pages/robot/article.html";
+			myIframe.src = url;
+			// myIframe.src = "http://kefu.webim.com:8081/pages/robot/article.html";
 		}
 		else{
 			window.open(url);
