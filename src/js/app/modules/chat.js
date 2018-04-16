@@ -66,6 +66,7 @@ module.exports = {
 	close: _close,
 	show: _show,
 	getDom: _getDom,
+	setArticleIframeScrolling: setArticleIframeScrolling,
 };
 
 function _initSystemEventListener(){
@@ -418,7 +419,7 @@ function _bindEvents(){
 		satisfaction.show(inviteId, serviceSessionId);
 	});
 
-	utils.live("#article-close .icon-back", "click", function(){
+	utils.live("#em-article-close .icon-back", "click", function(){
 		var articleContainer = document.getElementById("em-article-container");
 		var iframe = articleContainer.querySelector("iframe");
 		iframe && utils.removeDom(iframe);
@@ -435,10 +436,11 @@ function _bindEvents(){
 			myIframe = utils.createElementFromHTML(
 				"<iframe class=\"em-article-iframe\" src=\"\" id=\"em-article-iframe\"></iframe>"
 			);
-			articleContainer.appendChild(myIframe);
+			articleContainer.querySelector(".em-article-body").appendChild(myIframe);
 			articleContainer.style.display = "block";
-			myIframe.src = url;
-			// myIframe.src = "http://kefu.webim.com:8081/pages/robot/article.html";
+			setArticleIframeScrolling(true);
+			// myIframe.src = url;
+			myIframe.src = "http://kefu.webim.com:8081/pages/robot/article.html";
 		}
 		else{
 			window.open(url);
@@ -604,6 +606,21 @@ function _bindEvents(){
 			utils.trigger(doms.textInput, "change");
 		}
 	});
+}
+
+function setArticleIframeScrolling(enable){
+	if(enable){
+		utils.addClass(
+			document.body.querySelector("#em-article-container .em-article-body"),
+			"ios-scroll"
+		);
+	}
+	else{
+		utils.removeClass(
+			document.body.querySelector("#em-article-container .em-article-body"),
+			"ios-scroll"
+		);
+	}
 }
 
 function _close(){
