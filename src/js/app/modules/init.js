@@ -190,9 +190,8 @@ function updateCustomerInfo(e){
 				}
 			}
 		};
-
 		apiHelper.updateCustomerInfo({
-			phone: data.phone
+			phone: temp.phone
 		});
 		channel.sendText("转人工客服", trackMsg);
 	}
