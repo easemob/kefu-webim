@@ -1,6 +1,6 @@
 var utils =		require("@/common/kit/utils");
 var Const =		require("@/common/cfg/const");
-var uikit =		require("@common/uikit/uikit");
+var uikit =		require("@/common/uikit/dialog");
 
 var LOADING = Modernizr.inlinesvg ? Const.loadingSvg : "<img src=\"static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
 

@@ -2,7 +2,7 @@ var Const =			require("@/common/cfg/const");
 var profile =		require("@/common/cfg/profile");
 var utils =			require("@/common/kit/utils");
 var apiHelper =		require("@/common/kit/apiHelper");
-var uikit =			require("@/common/uikit/uikit");
+var uikit =			require("@/common/uikit/dialog");
 var loading =		require("@/common/uikit/loading");
 var eventListener =	require("@/common/disp/eventListener");
 

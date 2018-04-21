@@ -1,7 +1,7 @@
 var getData;
-var emajax =	require("@/common/ajax");
-var Transfer =	require("@/common/transfer");
-require("@/common/polyfill");
+var emajax =	require("@/common/kit/ajax");
+var Transfer =	require("@/common/disp/transfer");
+require("@/common/libs/polyfill");
 
 // 为了兼容老版本，接口不能删
 // 新增接口一律写在后边，按照时间顺序

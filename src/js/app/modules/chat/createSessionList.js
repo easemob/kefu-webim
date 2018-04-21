@@ -1,7 +1,7 @@
 var profile =	require("@/common/cfg/profile");
 var utils =		require("@/common/kit/utils");
 var Dict =		require("@/common/kit/dict");
-var uikit =		require("@/common/uikit/uikit");
+var uikit =		require("@/common/uikit/dialog");
 
 var EMPTY_FUNCTION = function(){};
 var dialog;

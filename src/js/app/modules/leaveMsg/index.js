@@ -1,7 +1,7 @@
 var profile =	require("@/common/cfg/profile");
 var utils =		require("@/common/kit/utils");
 var apiHelper =	require("@/common/kit/apiHelper");
-var uikit =		require("@/common/uikit/uikit");
+var uikit =		require("@/common/uikit/dialog");
 var Selector =	require("@/common/uikit/selector");
 
 var isSending = false;

@@ -9,10 +9,10 @@ var kefuPath =	require("@/common/cfg/kefuPath");
 var profile =	require("@/common/cfg/profile");
 var Transfer =	require("@/common/disp/transfer");
 
-var uikit =		require("@/common/uikit/uikit");
+var uikit =		require("@/common/uikit/dialog");
 var apiHelper =	require("@/common/kit/apiHelper");
 
-var chat =					require("@/app/modules/chat/chat");
+var chat =					require("@/app/modules/chat");
 var channel =				require("@/app/modules/chat/channel");
 var extendMessageSender =	require("@/app/modules/chat/extendMessageSender");
 

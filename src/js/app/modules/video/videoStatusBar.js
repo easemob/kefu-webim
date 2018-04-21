@@ -1,4 +1,4 @@
-var utils =			require("@/common/cfg/utils");
+var utils =			require("@/common/kit/utils");
 var TimerLabel =	require("@/common/uikit/timerLabel");
 
 var wrapperDom;

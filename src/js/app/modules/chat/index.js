@@ -2,12 +2,12 @@ var WebIM = require("easemob-websdk");
 
 var utils =			require("@/common/kit/utils");
 var Const =			require("@/common/cfg/const");
-var uikit =			require("@/common/uikit/uikit");
+var uikit =			require("@/common/uikit/dialog");
 var apiHelper =		require("@/common/kit/apiHelper");
 var eventListener =	require("@/common/disp/eventListener");
 var profile =		require("@/common/cfg/profile");
 
-var leaveMessage =		require("@/app/modules/leaveMessage");
+var leaveMessage =		require("@/app/modules/leaveMsg");
 var satisfaction =		require("@/app/modules/satisfaction");
 var videoChat =			require("@/app/modules/video");
 

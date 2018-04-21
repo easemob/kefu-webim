@@ -1,5 +1,5 @@
 var utils =		require("@/common/kit/utils");
-var uikit =		require("@/common/uikit/uikit");
+var uikit =		require("@/common/uikit/dialog");
 var channel =	require("@/app/modules/chat/channel");
 
 var blob;

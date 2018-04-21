@@ -13,7 +13,7 @@
 
 var Const =			require("@/common/cfg/const");
 var profile =		require("@/common/cfg/profile");
-var uikit =			require("@/common/uikit/uikit");
+var uikit =			require("@/common/uikit/dialog");
 var utils =			require("@/common/kit/utils");
 var tools =			require("@/common/kit/tools");
 var Dispatcher =	require("@/common/disp/dispatcher");

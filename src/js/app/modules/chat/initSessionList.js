@@ -6,7 +6,7 @@ var eventListener =	require("@/common/disp/eventListener");
 
 var createSessionList =	require("@/app/modules/chat/createSessionList");
 var createMessageView =	require("@/app/modules/chat/createMessageView");
-var createCtaDialog =	require("@/app/modules/chat/createCtaDialog");
+var createCtaDialog =	require("@/app/modules/cta/createCtaDialog");
 
 
 var sessionListBtn;
