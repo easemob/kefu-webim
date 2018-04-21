@@ -1,4 +1,4 @@
-var titleSlide = require("./titleSlide");
+var titleSlide = require("@/plugin/titleSlide");
 var st = 0;
 
 module.exports = function(img, title, content){

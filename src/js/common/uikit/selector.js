@@ -1,4 +1,4 @@
-var utils = require("../../../common/utils");
+var utils = require("@/common/kit/utils");
 
 var Selector = function(opt){
 	opt = opt || {};
@@ -94,7 +94,7 @@ Selector.prototype._createList = function(){
 	return utils.createElementFromHTML(options);
 };
 Selector.prototype.unbindEvents = function(){
-	
+
 	// 解绑点击下拉框头部 展示下拉框
 	utils.off(this.selectDom, "click", this.showList);
 

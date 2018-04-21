@@ -1,12 +1,12 @@
-var utils = require("../../../common/utils");
-var _const = require("../../../common/const");
-var profile = require("../tools/profile");
-var genDomFromMsg = require("../tools/messageFactory");
-var eventListener = require("../tools/eventListener");
-var apiHelper = require("../apiHelper");
-var channel = require("../channel");
+var Const =			require("@/common/cfg/const");
+var profile =		require("@/common/cfg/profile");
+var utils =			require("@/common/kit/utils");
+var apiHelper =		require("@/common/kit/apiHelper");
+var eventListener =	require("@/common/disp/eventListener");
 
-var tpl = require("../../../../template/chatContainer.html");
+var channel =		require("@/app/modules/chat/channel");
+var genDomFromMsg =	require("@/app/modules/chat/messageFactory");
+var tpl =			require("@/../template/chatContainer.html");
 
 module.exports = function(opt){
 	var officialAccount = opt.officialAccount;
@@ -24,7 +24,7 @@ module.exports = function(opt){
 	var msgTimeSpanEnd = new Date(1970, 0).getTime();
 
 	parentContainer.appendChild(el);
-	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, function(){
+	eventListener.add(Const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, function(){
 		var id = officialAccount.official_account_id;
 		// 拉取历史消息
 		_getHistory(_scrollToBottom);
@@ -39,14 +39,14 @@ module.exports = function(opt){
 			officialAccount.agentType = entity.agent_type;
 			officialAccount.skillGroupId = entity.skill_group_id;
 			officialAccount.isSessionOpen = (
-				entity.state === _const.SESSION_STATE.PROCESSING
-				|| entity.state === _const.SESSION_STATE.WAIT
+				entity.state === Const.SESSION_STATE.PROCESSING
+				|| entity.state === Const.SESSION_STATE.WAIT
 			);
 
-			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);
+			eventListener.excuteCallbacks(Const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);
 		}, function(err){
-			if(err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
-				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [officialAccount]);
+			if(err === Const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
+				eventListener.excuteCallbacks(Const.SYSTEM_EVENT.SESSION_NOT_CREATED, [officialAccount]);
 			}
 			else{
 				throw err;
@@ -116,11 +116,11 @@ module.exports = function(opt){
 		var date = timestamp || _.now();
 
 		if(isHistory){
-			msgTimeSpanBegin - date > _const.MESSAGE_TIME_SPAN_INTERVAL
+			msgTimeSpanBegin - date > Const.MESSAGE_TIME_SPAN_INTERVAL
 				&& el.insertBefore(dom, el.firstChild);
 		}
 		else{
-			date - msgTimeSpanEnd > _const.MESSAGE_TIME_SPAN_INTERVAL
+			date - msgTimeSpanEnd > Const.MESSAGE_TIME_SPAN_INTERVAL
 				&& el.appendChild(dom);
 		}
 
@@ -141,7 +141,7 @@ module.exports = function(opt){
 			var nextMsgSeq = earliestMsg.id;
 			utils.addClass(loadingMore, "hide");
 			currHistoryMsgSeqId = nextMsgSeq;
-			noMoreHistoryMessage = length < _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME || nextMsgSeq <= 0;
+			noMoreHistoryMessage = length < Const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME || nextMsgSeq <= 0;
 			noMoreHistoryMessage && utils.removeClass(noMoreMsg, "hide");
 			_.each(msgList, channel.handleHistoryMsg);
 			typeof callback === "function" && callback();

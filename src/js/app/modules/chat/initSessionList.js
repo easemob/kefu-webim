@@ -1,11 +1,13 @@
-var _const = require("../../../common/const");
-var utils = require("../../../common/utils");
-var profile = require("../tools/profile");
-var eventListener = require("../tools/eventListener");
-var apiHelper = require("../apiHelper");
-var createSessionList = require("../uikit/createSessionList");
-var createMessageView = require("../uikit/createMessageView");
-var createCtaDialog = require("../uikit/createCtaDialog");
+var Const =			require("@/common/cfg/const");
+var profile =		require("@/common/cfg/profile");
+var utils =			require("@/common/kit/utils");
+var apiHelper =		require("@/common/kit/apiHelper");
+var eventListener =	require("@/common/disp/eventListener");
+
+var createSessionList =	require("@/app/modules/chat/createSessionList");
+var createMessageView =	require("@/app/modules/chat/createMessageView");
+var createCtaDialog =	require("@/app/modules/chat/createCtaDialog");
+
 
 var sessionListBtn;
 var redDotDom;
@@ -21,15 +23,15 @@ module.exports = function(){
 	statusBar = topBar.querySelector(".status-bar");
 	parentContainer = document.querySelector(".chat-wrapper");
 
-	eventListener.add(_const.SYSTEM_EVENT.MESSAGE_SENT, function(){
+	eventListener.add(Const.SYSTEM_EVENT.MESSAGE_SENT, function(){
 		var officialAccount = profile.currentOfficialAccount;
 		if(!officialAccount) return;
 		_reportReplied(officialAccount);
 	});
-	eventListener.add(_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED, _onMarketingMessageReceived);
-	eventListener.add(_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND, _newOfficialAccountFound);
+	eventListener.add(Const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED, _onMarketingMessageReceived);
+	eventListener.add(Const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND, _newOfficialAccountFound);
 
-	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, function(officialAccount){
+	eventListener.add(Const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, function(officialAccount){
 		officialAccount.messageView.scrollToBottom();
 		utils.removeClass(statusBar, "hide");
 		_attemptToGetMarketingTaskInfo(officialAccount);
@@ -37,7 +39,7 @@ module.exports = function(){
 		_clearUnreadCount(officialAccount);
 	});
 
-	eventListener.add(_const.SYSTEM_EVENT.CHAT_WINDOW_OPENED, function(){
+	eventListener.add(Const.SYSTEM_EVENT.CHAT_WINDOW_OPENED, function(){
 		var officialAccount = profile.currentOfficialAccount;
 		if(_.isEmpty(officialAccount)) return;
 		officialAccount.messageView.scrollToBottom();
@@ -45,17 +47,17 @@ module.exports = function(){
 		_clearUnreadCount(officialAccount);
 	});
 
-	eventListener.add(_const.SYSTEM_EVENT.SYSTEM_OFFICIAL_ACCOUNT_UPDATED, function(){
+	eventListener.add(Const.SYSTEM_EVENT.SYSTEM_OFFICIAL_ACCOUNT_UPDATED, function(){
 		sessionListView.updateItem(profile.systemOfficialAccount, "default");
 	});
 
-	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, function(){
+	eventListener.add(Const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, function(){
 		if(profile.ctaEnable){
 			utils.trigger(sessionListBtn, "click");
 		}
 	});
 
-	eventListener.add(_const.SYSTEM_EVENT.MESSAGE_APPENDED, function(officialAccount, msg){
+	eventListener.add(Const.SYSTEM_EVENT.MESSAGE_APPENDED, function(officialAccount, msg){
 		if(officialAccount === profile.currentOfficialAccount) return;
 
 		var msgBrief = msg.brief;
@@ -132,13 +134,13 @@ function _onMarketingMessageReceived(officialAccount, marketingTaskId, msg){
 	officialAccount !== profile.currentOfficialAccount
 		&& profile.currentOfficialAccount
 		&& (ctaDialog = createCtaDialog({
-		title: title,
-		replyCallback: _switchToOfficialAccount,
-		content: content,
-		avatar: avatar,
-		className: "cta-prompt",
-		callbackMessage: officialAccountId
-	}));
+			title: title,
+			replyCallback: _switchToOfficialAccount,
+			content: content,
+			avatar: avatar,
+			className: "cta-prompt",
+			callbackMessage: officialAccountId
+		}));
 
 	if(
 		profile.isChatWindowOpen
@@ -165,7 +167,7 @@ function _switchToOfficialAccount(id){
 	profile.currentOfficialAccount = targerOfficialAccountProfile;
 
 	eventListener.excuteCallbacks(
-		_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED,
+		Const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED,
 		[targerOfficialAccountProfile]
 	);
 }

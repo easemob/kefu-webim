@@ -1,4 +1,4 @@
-var Dict = require("./Dict");
+var Dict = require("@/common/kit/dict");
 
 var profile = {
 	imToken: null,

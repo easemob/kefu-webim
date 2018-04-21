@@ -1,22 +1,25 @@
 require("es6-promise").polyfill();
-require("@/common/polyfill");
-require("../sdk/webim.config");
-require("../../../scss/im.scss");
+require("@/common/libs/polyfill");
+require("@/common/cfg/webim.config");
+require("@/../scss/im.scss");
 
-var utils =		require("@/common/utils");
-var _const =	require("@/common/const");
-var kefuPath =	require("@/common/kefuPath");
-var Transfer =	require("@/common/transfer");
+var utils =		require("@/common/kit/utils");
+var Const =		require("@/common/cfg/const");
+var kefuPath =	require("@/common/cfg/kefuPath");
+var profile =	require("@/common/cfg/profile");
+var Transfer =	require("@/common/disp/transfer");
 
-var uikit = require("./uikit");
-var apiHelper = require("./apiHelper");
-var eventCollector = require("./eventCollector");
-var chat = require("./chat");
-var channel = require("./channel");
-var profile = require("./tools/profile");
-var doWechatAuth = require("./wechat");
-var extendMessageSender = require("./chat/extendMessageSender");
-var body_template = require("../../../template/body.html");
+var uikit =		require("@/common/uikit/uikit");
+var apiHelper =	require("@/common/kit/apiHelper");
+
+var chat =					require("@/app/modules/chat/chat");
+var channel =				require("@/app/modules/chat/channel");
+var extendMessageSender =	require("@/app/modules/chat/extendMessageSender");
+
+var eventCollector =		require("@/app/modules/cta/eventCollector");
+var doWechatAuth =			require("@/app/modules/auth/wechat");
+
+var body_template =			require("@/../template/body.html");
 
 var config;
 var hasChatEntryInitialized;
@@ -120,7 +123,7 @@ function chat_window_mode_init(){
 		var textMessage;
 
 		switch(event){
-		case _const.EVENTS.SHOW:
+		case Const.EVENTS.SHOW:
 			// 在访客点击联系客服后停止上报访客
 			if(eventCollector.isStarted()){
 				eventCollector.stopReporting();
@@ -140,20 +143,20 @@ function chat_window_mode_init(){
 			// 显示聊天窗口
 			chat.show();
 			break;
-		case _const.EVENTS.CLOSE:
+		case Const.EVENTS.CLOSE:
 			chat.close();
 			break;
-		case _const.EVENTS.EXT:
+		case Const.EVENTS.EXT:
 			extendMessage = data.ext;
 			extendMessageSender.push(extendMessage.ext);
 			break;
-		case _const.EVENTS.TEXTMSG:
+		case Const.EVENTS.TEXTMSG:
 			channel.sendText(data);
 			break;
-		case _const.EVENTS.UPDATE_URL:
+		case Const.EVENTS.UPDATE_URL:
 			profile.currentBrowsingURL = data;
 			break;
-		case _const.EVENTS.INIT_CONFIG:
+		case Const.EVENTS.INIT_CONFIG:
 			window.transfer.to = data.parentId;
 			config = data;
 			profile.config = config;
@@ -166,7 +169,7 @@ function chat_window_mode_init(){
 
 	utils.removeClass($contactAgentBtn, "hide");
 	utils.on($contactAgentBtn, "click", function(){
-		transfer.send({ event: _const.EVENTS.SHOW });
+		transfer.send({ event: Const.EVENTS.SHOW });
 	});
 }
 
@@ -229,7 +232,7 @@ function initChat(){
 	});
 
 	apiHelper.getTheme().then(function(themeName){
-		var className = _const.themeMap[themeName];
+		var className = Const.themeMap[themeName];
 		className && utils.addClass(document.body, className);
 	});
 }
@@ -336,7 +339,7 @@ function handleConfig(configJson){
 
 	// 重新去设置iframe 的宽高
 	transfer.send({
-		event: _const.EVENTS.RESET_IFRAME,
+		event: Const.EVENTS.RESET_IFRAME,
 		data: {
 			dialogHeight: config.dialogHeight,
 			dialogWidth: config.dialogWidth,
@@ -419,9 +422,9 @@ function initChatEntry(targetUserInfo){
 
 				chat.init();
 				chat.show();
-				transfer.send({ event: _const.EVENTS.SHOW });
+				transfer.send({ event: Const.EVENTS.SHOW });
 				transfer.send({
-					event: _const.EVENTS.CACHEUSER,
+					event: Const.EVENTS.CACHEUSER,
 					data: {
 						username: targetUserInfo.userName,
 						// todo: check if need emgroup
@@ -435,7 +438,7 @@ function initChatEntry(targetUserInfo){
 				profile.commandMessageToBeSendList.push({ ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } });
 				chat.init();
 				chat.show();
-				transfer.send({ event: _const.EVENTS.SHOW });
+				transfer.send({ event: Const.EVENTS.SHOW });
 			}
 			else{
 				apiHelper.getPassword().then(function(password){
@@ -443,7 +446,7 @@ function initChatEntry(targetUserInfo){
 
 					chat.init();
 					chat.show();
-					transfer.send({ event: _const.EVENTS.SHOW });
+					transfer.send({ event: Const.EVENTS.SHOW });
 				}, function(err){
 					console.error("username is not exist.");
 					throw err;
@@ -526,7 +529,7 @@ function _createVisitor(username){
 		}
 		else{
 			transfer.send({
-				event: _const.EVENTS.CACHEUSER,
+				event: Const.EVENTS.CACHEUSER,
 				data: {
 					key: cacheKeyName,
 					value: config.user.username,

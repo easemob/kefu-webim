@@ -1,8 +1,8 @@
-var utils = require("../../common/utils");
-var _const = require("../../common/const");
-var emajax = require("../../common/ajax");
-var Transfer = require("../../common/transfer");
-var profile = require("./tools/profile");
+var Const =		require("@/common/cfg/const");
+var profile =	require("@/common/cfg/profile");
+var utils =		require("@/common/kit/utils");
+var emajax =	require("@/common/kit/ajax");
+var Transfer =	require("@/common/disp/transfer");
 
 // 以下调用会缓存参数
 // getVisitorId
@@ -298,7 +298,7 @@ function getVisitorId(){
 						resolve(visitorId);
 					}
 					else{
-						reject(_const.ERROR_MSG.VISITOR_DOES_NOT_EXIST);
+						reject(Const.ERROR_MSG.VISITOR_DOES_NOT_EXIST);
 					}
 				}, function(err){
 					reject(err);
@@ -362,7 +362,7 @@ function getOfficalAccountMessage(officialAccountId, startId){
 				visitorId: visitorId,
 				officialAccountId: officialAccountId,
 				direction: "before",
-				size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME,
+				size: Const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME,
 				startId: startId
 			}, function(msg){
 				var list = utils.getDataByPath(msg, "data.entities");
@@ -559,7 +559,7 @@ function getLastSession(officialAccountId){
 					resolve(entity);
 				}
 				else{
-					reject(_const.ERROR_MSG.SESSION_DOES_NOT_EXIST);
+					reject(Const.ERROR_MSG.SESSION_DOES_NOT_EXIST);
 				}
 			}, function(err){
 				reject(err);
@@ -1112,12 +1112,12 @@ function createWechatImUser(openId){
 		emajax({
 			url: "/v1/webimplugin/visitors/wechat/"
 				+ [
-				config.tenantId,
-				config.orgName,
-				config.appName,
-				config.toUser,
-				openId,
-			].join("_")
+					config.tenantId,
+					config.orgName,
+					config.appName,
+					config.toUser,
+					openId,
+				].join("_")
 				+ "?tenantId=" + config.tenantId,
 			data: {
 				orgName: config.orgName,
@@ -1204,12 +1204,12 @@ function updateCustomerInfo(data){
 		]).then(function(result){
 			var visitorId = result[0];
 			var token = result[1];
-			data["visitorId"] = visitorId;
-			data["tenantId"] = config.tenantId;
-			data["orgName"] = config.orgName;
-			data["appName"] = config.appName;
-			data["userName"] = config.user.username;
-			data["token"] = token;
+			data.visitorId = visitorId;
+			data.tenantId = config.tenantId;
+			data.orgName = config.orgName;
+			data.appName = config.appName;
+			data.userName = config.user.username;
+			data.token = token;
 			api("updateCustomerInfo", data, function(msg){
 				// resolve(msg.data);
 			}, function(err){

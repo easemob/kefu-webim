@@ -1,4 +1,4 @@
-var _const = require("../../../common/const");
+var _const = require("@/common/cfg/const");
 
 var EMOJI_PATH = _const.EMOJI_PATH;
 var EMOJI_MAP = _const.EMOJI_MAP;

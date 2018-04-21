@@ -1,5 +1,5 @@
-var utils = require("../../../common/utils");
-var _const = require("../../../common/const");
+var utils =		require("@/common/kit/utils");
+var Const =		require("@/common/cfg/const");
 
 var template = _.template([
 	"<div class=\"mini-video-window\">",
@@ -68,12 +68,12 @@ MiniVideoWin.prototype.isEmpty = function(){
 
 MiniVideoWin.prototype.removeStream = function(stream){
 	switch(stream.type){
-	case _const.STREAM_TYPE.NORMAL:
+	case Const.STREAM_TYPE.NORMAL:
 		this.stream = null;
 		this.videoDom.src = "";
 		this.nicknameDom.innerText = "";
 		break;
-	case _const.STREAM_TYPE.NO_AUDIO:
+	case Const.STREAM_TYPE.NO_AUDIO:
 		this.noAudioStream = null;
 		this.noAudioVideoDom.src = "";
 		utils.removeClass(this.videoDom, "hide");
@@ -91,14 +91,14 @@ MiniVideoWin.prototype.updateStream = function(stream){
 	this.ownerName = utils.getDataByPath(stream, "owner.name");
 
 	switch(stream.type){
-	case _const.STREAM_TYPE.NORMAL:
+	case Const.STREAM_TYPE.NORMAL:
 		this.stream = stream;
 		this.videoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
 		this.nicknameDom.innerText = isLocalStream
 			? __("video.me")
 			: utils.getDataByPath(stream, "owner.ext.nickname");
 		break;
-	case _const.STREAM_TYPE.NO_AUDIO:
+	case Const.STREAM_TYPE.NO_AUDIO:
 		this.noAudioStream = stream;
 		this.noAudioVideoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
 		utils.addClass(this.videoDom, "hide");
@@ -118,4 +118,3 @@ MiniVideoWin.prototype.updateStream = function(stream){
 		utils.removeClass(this.playButtonDom, "hide");
 	}
 };
-

@@ -1,12 +1,12 @@
-var utils =		require("@/common/utils");
-var _const =	require("@/common/const");
-var Transfer =	require("@/common/transfer");
-var resPath =	require("@/common/resPath");
+var Const =		require("@/common/cfg/const");
+var resPath =	require("@/common/cfg/resPath");
+var utils =		require("@/common/kit/utils");
+var Transfer =	require("@/common/disp/transfer");
 
-var loading = require("./loading");
-var notify = require("./notify");
-var titleSlide = require("./titleSlide");
-var pcImgView = require("./pcImgview");
+var loading =		require("@/plugin/loading");
+var notify =		require("@/plugin/notify");
+var titleSlide =	require("@/plugin/titleSlide");
+var pcImgView =		require("@/plugin/pcImgview");
 
 var _st = 0;
 var _startPosition = {
@@ -137,7 +137,7 @@ function _ready(){
 	delete me.config.onsessionclosed;
 
 	me.message
-	.send({ event: _const.EVENTS.INIT_CONFIG, data: me.config })
+	.send({ event: Const.EVENTS.INIT_CONFIG, data: me.config })
 	.listen(function(msg){
 		if(msg.to !== me.iframe.id) return;
 
@@ -145,55 +145,55 @@ function _ready(){
 		var data = msg.data;
 
 		switch(event){
-		case _const.EVENTS.ONREADY:
+		case Const.EVENTS.ONREADY:
 			clearTimeout(me.onreadySt);
 			loading.hide();
 			me.onreadySt = setTimeout(function(){
 				me.callbackApi.onready();
 			}, 500);
 			break;
-		case _const.EVENTS.ON_OFFDUTY:
+		case Const.EVENTS.ON_OFFDUTY:
 			loading.hide();
 			break;
-		case _const.EVENTS.SHOW:
+		case Const.EVENTS.SHOW:
 			// 显示聊天窗口
 			me.open();
 			break;
-		case _const.EVENTS.CLOSE:
+		case Const.EVENTS.CLOSE:
 			// 最小化聊天窗口
 			me.close();
 			break;
-		case _const.EVENTS.NOTIFY:
+		case Const.EVENTS.NOTIFY:
 			// 显示浏览器通知
 			notify(data.avatar, data.title, data.brief);
 			break;
-		case _const.EVENTS.SLIDE:
+		case Const.EVENTS.SLIDE:
 			// 标题滚动
 			titleSlide.start();
 			break;
-		case _const.EVENTS.RECOVERY:
+		case Const.EVENTS.RECOVERY:
 			// 标题滚动恢复
 			titleSlide.stop();
 			break;
-		case _const.EVENTS.ONMESSAGE:
+		case Const.EVENTS.ONMESSAGE:
 			// 收消息回调
 			me.callbackApi.onmessage(data);
 			break;
-		case _const.EVENTS.ONSESSIONCLOSED:
+		case Const.EVENTS.ONSESSIONCLOSED:
 			// 结束会话回调，此功能文档中没有
 			clearTimeout(me.onsessionclosedSt);
 			me.onsessionclosedSt = setTimeout(function(){
 				me.callbackApi.onsessionclosed();
 			}, 500);
 			break;
-		case _const.EVENTS.CACHEUSER:
+		case Const.EVENTS.CACHEUSER:
 			// 缓存im username
 			utils.set(
 				data.key,
 				data.value
 			);
 			break;
-		case _const.EVENTS.DRAGREADY:
+		case Const.EVENTS.DRAGREADY:
 			_startPosition.x = +data.x || 0;
 			_startPosition.y = +data.y || 0;
 
@@ -202,32 +202,32 @@ function _ready(){
 
 			utils.on(document, "mousemove", me._onMouseMove);
 			break;
-		case _const.EVENTS.DRAGEND:
+		case Const.EVENTS.DRAGEND:
 			_moveend.call(me);
 			break;
-		case _const.EVENTS.SET_ITEM:
+		case Const.EVENTS.SET_ITEM:
 			utils.setStore(msg.data.key, msg.data.value);
 			break;
-		case _const.EVENTS.REQUIRE_URL:
-			me.message.send({ event: _const.EVENTS.UPDATE_URL, data: location.href });
+		case Const.EVENTS.REQUIRE_URL:
+			me.message.send({ event: Const.EVENTS.UPDATE_URL, data: location.href });
 			break;
-		case _const.EVENTS.SHOW_IMG:
+		case Const.EVENTS.SHOW_IMG:
 			pcImgView(data);
 			break;
-		case _const.EVENTS.RESET_IFRAME:
+		case Const.EVENTS.RESET_IFRAME:
 			me.config.dialogWidth = data.dialogWidth;
 			me.config.dialogHeight = data.dialogHeight;
 			me.config.dialogPosition = data.dialogPosition;
 
 			me._updatePosition();
 			break;
-		case _const.EVENTS.ADD_PROMPT:
+		case Const.EVENTS.ADD_PROMPT:
 			utils.addClass(me.iframe, "easemobim-has-prompt");
 			break;
-		case _const.EVENTS.REMOVE_PROMPT:
+		case Const.EVENTS.REMOVE_PROMPT:
 			utils.removeClass(me.iframe, "easemobim-has-prompt");
 			break;
-		case _const.EVENTS.SCROLL_TO_BOTTOM:
+		case Const.EVENTS.SCROLL_TO_BOTTOM:
 			document.body.scrollTop = 9999;
 			break;
 		default:
@@ -237,10 +237,10 @@ function _ready(){
 
 	// 发送ready前缓存的消息
 	for(i = 0, l = me.extendMessageList.length; i < l; i++){
-		me.message.send({ event: _const.EVENTS.EXT, data: me.extendMessageList[i] });
+		me.message.send({ event: Const.EVENTS.EXT, data: me.extendMessageList[i] });
 	}
 	for(i = 0, l = me.textMessageList.length; i < l; i++){
-		me.message.send({ event: _const.EVENTS.TEXTMSG, data: me.textMessageList[i] });
+		me.message.send({ event: Const.EVENTS.TEXTMSG, data: me.textMessageList[i] });
 	}
 
 	typeof me.ready === "function" && me.ready();
@@ -362,7 +362,7 @@ Iframe.prototype.open = function(){
 	utils.removeClass(iframe, "easemobim-minimized");
 	utils.removeClass(iframe, "easemobim-hide");
 
-	this.message && this.message.send({ event: _const.EVENTS.SHOW });
+	this.message && this.message.send({ event: Const.EVENTS.SHOW });
 
 	return this;
 };
@@ -381,14 +381,14 @@ Iframe.prototype.close = function(){
 	utils.addClass(this.iframe, "easemobim-minimized");
 	utils.toggleClass(this.iframe, "easemobim-hide", this.config.hide);
 
-	this.message && this.message.send({ event: _const.EVENTS.CLOSE });
+	this.message && this.message.send({ event: Const.EVENTS.CLOSE });
 	return this;
 };
 
 // 发ext消息
 Iframe.prototype.send = function(extMsg){
 	if(this.message){
-		this.message.send({ event: _const.EVENTS.EXT, data: extMsg });
+		this.message.send({ event: Const.EVENTS.EXT, data: extMsg });
 	}
 	else{
 		// 没有初始化前缓存消息，等ready 后发送
@@ -399,7 +399,7 @@ Iframe.prototype.send = function(extMsg){
 // 发文本消息
 Iframe.prototype.sendText = function(msg){
 	if(this.message){
-		this.message.send({ event: _const.EVENTS.TEXTMSG, data: msg });
+		this.message.send({ event: Const.EVENTS.TEXTMSG, data: msg });
 	}
 	else{
 		this.textMessageList.push(msg);

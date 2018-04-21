@@ -11,18 +11,19 @@
 	7. 访客推流
 */
 
-var _const = require("../../common/const");
-var uikit = require("./uikit");
-var channel = require("./channel");
-var profile = require("./tools/profile");
-var eventListener = require("./tools/eventListener");
-var utils = require("../../common/utils");
-var tools = require("./tools/tools");
-var Dispatcher = require("./tools/Dispatcher");
+var Const =			require("@/common/cfg/const");
+var profile =		require("@/common/cfg/profile");
+var uikit =			require("@/common/uikit/uikit");
+var utils =			require("@/common/kit/utils");
+var tools =			require("@/common/kit/tools");
+var Dispatcher =	require("@/common/disp/dispatcher");
+var eventListener =	require("@/common/disp/eventListener");
 
-var statusBar = require("./uikit/videoStatusBar");
-var videoPanel = require("./uikit/videoPanel");
-var videoChatTemplate = require("../../../template/videoChat.html");
+var channel =		require("@/app/modules/chat/channel");
+var statusBar =		require("@/app/modules/video/videoStatusBar");
+var videoPanel =	require("@/app/modules/video/videoPanel");
+
+var videoChatTemplate = require("@/../template/videoChat.html");
 
 var _initOnce = _.once(_init);
 var parentContainer;
@@ -64,7 +65,7 @@ function _init(){
 		listeners: {
 			// 退出，服务端强制退出，进入会议失败，sdk重连失败等 均会调用到此处
 			onMeExit: function(errorCode){
-				// var errorMessage = _const.E_MEDIA_SDK_ERROR_CODE_MAP[errorCode] || "unknown error code.";
+				// var errorMessage = Const.E_MEDIA_SDK_ERROR_CODE_MAP[errorCode] || "unknown error code.";
 
 				statusBar.showClosing();
 				videoPanel.hide();
@@ -168,7 +169,7 @@ function init(option){
 		return tools.loadScript(eMediaSdkPath);
 	})
 	.then(function(){
-		eventListener.add(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, _reveiveTicket);
+		eventListener.add(Const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, _reveiveTicket);
 
 		// 显示视频邀请按钮，并绑定事件
 		utils.removeClass(triggerButton, "hide");

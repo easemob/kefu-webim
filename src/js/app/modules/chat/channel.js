@@ -1,16 +1,15 @@
 var WebIM = require("easemob-websdk");
 
-var utils =		require("@/common/utils");
-var kefuPath =	require("@/common/kefuPath");
-var _const =	require("@/common/const");
-
-var Dict = require("./tools/Dict");
-var List = require("./tools/List");
-var profile = require("./tools/profile");
-var tools = require("./tools/tools");
-var eventListener = require("./tools/eventListener");
-var textParser = require("./tools/textParser");
-var apiHelper = require("./apiHelper");
+var kefuPath =		require("@/common/cfg/kefuPath");
+var Const =			require("@/common/cfg/const");
+var profile =		require("@/common/cfg/profile");
+var utils =			require("@/common/kit/utils");
+var Dict =			require("@/common/kit/dict");
+var tools =			require("@/common/kit/tools");
+var textParser =	require("@/common/kit/textParser");
+var apiHelper =		require("@/common/kit/apiHelper");
+var List =			require("@/common/uikit/list");
+var eventListener =	require("@/common/disp//eventListener");
 
 var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;
@@ -79,7 +78,7 @@ module.exports = {
 					_handleMessage(_transformMessageFormat({ body: elem }), { isHistory: false });
 				});
 			});
-		}, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
+		}, Const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
 	},
 	handleMessage: _handleMessage
 };
@@ -89,14 +88,14 @@ function _initConnection(onReadyCallback){
 	// todo: 自动切换通道状态
 	var firstTS = setTimeout(function(){
 		onReadyCallback();
-	}, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
+	}, Const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
 
 	// init connection
 	conn = new WebIM.connection({
 		url: config.xmppServer,
 		retry: true,
 		isMultiLoginSessions: config.resources,
-		heartBeatWait: _const.HEART_BEAT_INTERVAL
+		heartBeatWait: Const.HEART_BEAT_INTERVAL
 	});
 
 	if(profile.imRestDown){
@@ -134,17 +133,17 @@ function _initConnection(onReadyCallback){
 		onOffline: function(){
 			utils.isMobile && conn.close();
 
-			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFLINE, []);
+			eventListener.excuteCallbacks(Const.SYSTEM_EVENT.OFFLINE, []);
 		},
 		onError: function(e){
 			if(e.reconnect){
 				_open();
 			}
-			else if(e.type === _const.IM.WEBIM_CONNCTION_AUTH_ERROR){
+			else if(e.type === Const.IM.WEBIM_CONNCTION_AUTH_ERROR){
 				_open();
 			}
 			// im sdk 会捕获回调中的异常，需要把出错信息打出来
-			else if(e.type === _const.IM.WEBIM_CONNCTION_CALLBACK_INNER_ERROR){
+			else if(e.type === Const.IM.WEBIM_CONNCTION_CALLBACK_INNER_ERROR){
 				console.error(e.data);
 			}
 			else{
@@ -267,7 +266,7 @@ function _sendImg(fileMsg){
 
 	// 自己发出去的图片要缓存File对象，用于全屏显示图片
 	profile.imgFileList.set(fileMsg.url, fileMsg.data);
-	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
+	eventListener.excuteCallbacks(Const.SYSTEM_EVENT.MESSAGE_SENT, []);
 }
 
 function _sendFile(fileMsg){
@@ -298,7 +297,7 @@ function _sendFile(fileMsg){
 		isHistory: false,
 	});
 	conn.send(msg.body);
-	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
+	eventListener.excuteCallbacks(Const.SYSTEM_EVENT.MESSAGE_SENT, []);
 }
 
 function _handleMessage(msg, options){
@@ -433,7 +432,7 @@ function _handleMessage(msg, options){
 		message.brief = __("message_brief.menu");
 
 		!isHistory && eventListener.excuteCallbacks(
-			_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
+			Const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
 			[targetOfficialAccount, inviteId, serviceSessionId]
 		);
 		break;
@@ -514,7 +513,7 @@ function _handleMessage(msg, options){
 		message.brief = __("message_brief.unknown");
 		break;
 	case "rtcVideoTicket":
-		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket]);
+		!isHistory && eventListener.excuteCallbacks(Const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket]);
 		break;
 	case "customMagicEmoji":
 		message = customMagicEmoji;
@@ -532,7 +531,7 @@ function _handleMessage(msg, options){
 		marketingTaskId
 			&& type === "txt"
 			&& eventListener.excuteCallbacks(
-				_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
+				Const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
 				[
 					targetOfficialAccount,
 					marketingTaskId,
@@ -549,7 +548,7 @@ function _handleMessage(msg, options){
 				targetOfficialAccount.agentNickname = agentInfo.userNickname;
 				targetOfficialAccount.agentAvatar = agentInfo.avatar;
 
-				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.AGENT_INFO_UPDATE, [targetOfficialAccount]);
+				eventListener.excuteCallbacks(Const.SYSTEM_EVENT.AGENT_INFO_UPDATE, [targetOfficialAccount]);
 			}
 		}
 	}
@@ -583,7 +582,7 @@ function _handleMessage(msg, options){
 		message.value = message.data;
 		// 收消息回调
 		transfer.send({
-			event: _const.EVENTS.ONMESSAGE,
+			event: Const.EVENTS.ONMESSAGE,
 			data: {
 				from: msg.from,
 				to: msg.to,
@@ -699,7 +698,7 @@ function _promptNoAgentOnlineIfNeeded(opt){
 	// 只去查询一次有无坐席在线
 	if(isNoAgentOnlineTipShowed) return;
 	// 待接入中的会话 不做查询
-	if(sessionState === _const.SESSION_STATE.WAIT) return;
+	if(sessionState === Const.SESSION_STATE.WAIT) return;
 	// 开启机器人接待时 不转人工不查询
 	if(profile.hasRobotAgentOnline && !hasTransferedToKefu) return;
 	// 获取在线坐席数
@@ -712,34 +711,34 @@ function _promptNoAgentOnlineIfNeeded(opt){
 		if(
 			!profile.hasHumanAgentOnline
 		){
-			_appendEventMsg(_const.eventMessageText.NOTE, { ext: { weichat: { official_account: officialAccount } } });
+			_appendEventMsg(Const.eventMessageText.NOTE, { ext: { weichat: { official_account: officialAccount } } });
 		}
 	});
 }
 
 function _handleSystemEvent(event, eventObj, msg){
-	var eventMessageText = _const.SYSTEM_EVENT_MSG_TEXT[event];
+	var eventMessageText = Const.SYSTEM_EVENT_MSG_TEXT[event];
 	var officialAccountId = utils.getDataByPath(msg, "ext.weichat.official_account.official_account_id");
 	var officialAccount = _getOfficialAccountById(officialAccountId);
 
 	eventMessageText && _appendEventMsg(eventMessageText, msg);
 
 	switch(event){
-	case _const.SYSTEM_EVENT.SESSION_TRANSFERED:
+	case Const.SYSTEM_EVENT.SESSION_TRANSFERED:
 		officialAccount.agentId = eventObj.userId;
 		officialAccount.agentType = eventObj.agentType;
 		officialAccount.agentAvatar = eventObj.avatar;
 		officialAccount.agentNickname = eventObj.agentUserNiceName;
-		officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
+		officialAccount.sessionState = Const.SESSION_STATE.PROCESSING;
 		officialAccount.isSessionOpen = true;
 		break;
-	case _const.SYSTEM_EVENT.SESSION_TRANSFERING:
-		officialAccount.sessionState = _const.SESSION_STATE.WAIT;
+	case Const.SYSTEM_EVENT.SESSION_TRANSFERING:
+		officialAccount.sessionState = Const.SESSION_STATE.WAIT;
 		officialAccount.isSessionOpen = true;
 		officialAccount.skillGroupId = null;
 		break;
-	case _const.SYSTEM_EVENT.SESSION_CLOSED:
-		officialAccount.sessionState = _const.SESSION_STATE.ABORT;
+	case Const.SYSTEM_EVENT.SESSION_CLOSED:
+		officialAccount.sessionState = Const.SESSION_STATE.ABORT;
 		officialAccount.agentId = null;
 		// 发起满意度评价需要回传sessionId，所以不能清空
 		// officialAccount.sessionId = null;
@@ -747,10 +746,10 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.isSessionOpen = false;
 		officialAccount.hasReportedAttributes = false;
 
-		transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
+		transfer.send({ event: Const.EVENTS.ONSESSIONCLOSED });
 		break;
-	case _const.SYSTEM_EVENT.SESSION_OPENED:
-		officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
+	case Const.SYSTEM_EVENT.SESSION_OPENED:
+		officialAccount.sessionState = Const.SESSION_STATE.PROCESSING;
 		officialAccount.agentType = eventObj.agentType;
 		officialAccount.agentId = eventObj.userId;
 		officialAccount.sessionId = eventObj.sessionId;
@@ -758,8 +757,8 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.agentNickname = eventObj.agentUserNiceName;
 		officialAccount.isSessionOpen = true;
 		break;
-	case _const.SYSTEM_EVENT.SESSION_CREATED:
-		officialAccount.sessionState = _const.SESSION_STATE.WAIT;
+	case Const.SYSTEM_EVENT.SESSION_CREATED:
+		officialAccount.sessionState = Const.SESSION_STATE.WAIT;
 		officialAccount.sessionId = eventObj.sessionId;
 		officialAccount.isSessionOpen = true;
 		break;
@@ -801,7 +800,7 @@ function _appendMsg(msg, options){
 
 	if(isReceived && !isHistory && !noPrompt){
 		eventListener.excuteCallbacks(
-			_const.SYSTEM_EVENT.MESSAGE_APPENDED,
+			Const.SYSTEM_EVENT.MESSAGE_APPENDED,
 			[officialAccount, msg]
 		);
 	}
@@ -833,7 +832,7 @@ function _attemptToAppendOfficialAccount(officialAccountInfo){
 			officialAccount.unrepliedMarketingTaskIdList = new List();
 			officialAccount.unreadMessageIdList = new List();
 			eventListener.excuteCallbacks(
-				_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND,
+				Const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND,
 				[officialAccount]
 			);
 		}
@@ -842,7 +841,7 @@ function _attemptToAppendOfficialAccount(officialAccountInfo){
 			profile.systemOfficialAccount.official_account_id = id;
 			profile.systemOfficialAccount.img = img;
 			profile.systemOfficialAccount.name = name;
-			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SYSTEM_OFFICIAL_ACCOUNT_UPDATED, []);
+			eventListener.excuteCallbacks(Const.SYSTEM_EVENT.SYSTEM_OFFICIAL_ACCOUNT_UPDATED, []);
 		}
 	}
 	else if(type === "CUSTOM"){
@@ -852,7 +851,7 @@ function _attemptToAppendOfficialAccount(officialAccountInfo){
 		officialAccount.unrepliedMarketingTaskIdList = new List();
 		officialAccount.unreadMessageIdList = new List();
 		eventListener.excuteCallbacks(
-			_const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND,
+			Const.SYSTEM_EVENT.NEW_OFFICIAL_ACCOUNT_FOUND,
 			[officialAccount]
 		);
 	}
@@ -868,7 +867,7 @@ function _sendMsgChannle(id, retryCount){
 	var ext = utils.getDataByPath(msg, "body.ext");
 	var count = typeof retryCount === "number"
 		? retryCount
-		: _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
+		: Const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
 
 	apiHelper.sendMsgChannel(body, ext).then(function(){
 		// 发送成功清除
@@ -889,7 +888,7 @@ function _uploadImgMsgChannle(id, file, retryCount){
 	var msg = sendMsgDict.get(id);
 	var count = typeof retryCount === "number"
 		? retryCount
-		: _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
+		: Const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
 
 
 	apiHelper.uploadImgMsgChannel(file).then(function(resp){
@@ -924,7 +923,7 @@ function _detectSendTextMsgByApi(id){
 		id,
 		setTimeout(function(){
 			_sendMsgChannle(id);
-		}, _const.FIRST_CHANNEL_MESSAGE_TIMEOUT)
+		}, Const.FIRST_CHANNEL_MESSAGE_TIMEOUT)
 	);
 }
 
@@ -934,7 +933,7 @@ function _detectUploadImgMsgByApi(id, file){
 		id,
 		setTimeout(function(){
 			_uploadImgMsgChannle(id, file);
-		}, _const.FIRST_CHANNEL_IMG_MESSAGE_TIMEOUT)
+		}, Const.FIRST_CHANNEL_IMG_MESSAGE_TIMEOUT)
 	);
 }
 
@@ -946,11 +945,11 @@ function _messagePrompt(message, officialAccount){
 		: profile.systemAgentAvatar || profile.tenantAvatar || profile.defaultAvatar;
 
 	if(utils.isBrowserMinimized() || !profile.isChatWindowOpen){
-		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_PROMPT, []);
+		eventListener.excuteCallbacks(Const.SYSTEM_EVENT.MESSAGE_PROMPT, []);
 
-		transfer.send({ event: _const.EVENTS.SLIDE });
+		transfer.send({ event: Const.EVENTS.SLIDE });
 		transfer.send({
-			event: _const.EVENTS.NOTIFY,
+			event: Const.EVENTS.NOTIFY,
 			data: {
 				avatar: avatar,
 				title: __("prompt.new_message"),

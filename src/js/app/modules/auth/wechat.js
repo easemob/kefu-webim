@@ -8,9 +8,9 @@
 // 6. create Wechat im user
 // 7. exec success callback
 
-var utils = require("../../common/utils");
-var apiHelper = require("./apiHelper");
-var profile = require("./tools/profile");
+var profile =	require("@/common/cfg/profile");
+var utils =		require("@/common/kit/utils");
+var apiHelper =	require("@/common/kit/apiHelper");
 
 var isWechatBrowser = /MicroMessenger/.test(navigator.userAgent);
 var appid = utils.query("appid");

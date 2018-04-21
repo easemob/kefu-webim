@@ -1,8 +1,8 @@
-var _const = require("../../../common/const");
-var utils = require("../../../common/utils");
-var profile = require("../tools/profile");
-var eventListener = require("../tools/eventListener");
-var apiHelper = require("../apiHelper");
+var Const =			require("@/common/cfg/const");
+var profile =		require("@/common/cfg/profile");
+var utils =			require("@/common/kit/utils");
+var apiHelper =		require("@/common/kit/apiHelper");
+var eventListener =	require("@/common/disp/eventListener");
 
 var preventTimestamp = 0;
 var inputState;
@@ -19,13 +19,13 @@ module.exports = function(){
 	setInterval(function(){
 		var officialAccount = profile.currentOfficialAccount;
 		_update(officialAccount);
-	}, _const.AGENT_INPUT_STATE_INTERVAL);
+	}, Const.AGENT_INPUT_STATE_INTERVAL);
 
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _update);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _update);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _update);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _update);
-	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _update);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_OPENED, _update);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_CLOSED, _update);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_TRANSFERED, _update);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_RESTORED, _update);
+	eventListener.add(Const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _update);
 };
 
 function _update(officialAccount){
@@ -46,8 +46,8 @@ function _update(officialAccount){
 
 	if(
 		sessionId
-		&& state === _const.SESSION_STATE.PROCESSING
-		&& agentType !== _const.AGENT_ROLE.ROBOT
+		&& state === Const.SESSION_STATE.PROCESSING
+		&& agentType !== Const.AGENT_ROLE.ROBOT
 	){
 		apiHelper.getAgentInputState(sessionId).then(function(entity){
 			var currentTimestamp = entity.timestamp;

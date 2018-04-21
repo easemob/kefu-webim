@@ -1,6 +1,6 @@
-var utils = require("../common/utils");
-var loading = require("./loading");
-var Iframe = require("./iframe");
+var utils =		require("@/common/kit/utils");
+var loading =	require("@/plugin/loading");
+var Iframe =	require("@/plugin/iframe");
 
 var cacheKeyName;
 var iframe;

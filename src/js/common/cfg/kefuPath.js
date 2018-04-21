@@ -1,4 +1,4 @@
-var utils = require("@/common/utils");
+var utils = require("@/common/kit/utils");
 
 // 不包括 avatar
 // app only

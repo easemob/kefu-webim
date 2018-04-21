@@ -1,7 +1,6 @@
-var utils = require("../../../common/utils");
-var _const = require("../../../common/const");
-
-var independentVideoWindow = require("../../../../html/independentVideoWindow.html");
+var utils = require("@/common/kit/utils");
+var Const = require("@/common/cfg/const");
+var independentVideoWindow = require("@/../html/independentVideoWindow.html");
 
 // adapter.js 会劫持这个 api，为了达到预期效果，事先保存
 var nativeCreateObjectURL = URL && URL.createObjectURL;
@@ -179,7 +178,7 @@ function _addOrUpdateStream(stream){
 	mediaStream = stream.getMediaStream();
 
 	switch(stream.type){
-	case _const.STREAM_TYPE.NORMAL:
+	case Const.STREAM_TYPE.NORMAL:
 		currentStream = stream;
 		videoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
 		// 本地视频需要 muted
@@ -188,7 +187,7 @@ function _addOrUpdateStream(stream){
 			? __("video.me")
 			: utils.getDataByPath(stream, "owner.ext.nickname");
 		break;
-	case _const.STREAM_TYPE.NO_AUDIO:
+	case Const.STREAM_TYPE.NO_AUDIO:
 		currentNoAudioStream = stream;
 		noAudioVideoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
 		utils.addClass(videoDom, "hide");
@@ -202,12 +201,12 @@ function _addOrUpdateStream(stream){
 
 function _removeStream(stream){
 	switch(stream.type){
-	case _const.STREAM_TYPE.NORMAL:
+	case Const.STREAM_TYPE.NORMAL:
 		currentStream = null;
 		videoDom.src = "";
 		nicknameDom.innerText = "";
 		break;
-	case _const.STREAM_TYPE.NO_AUDIO:
+	case Const.STREAM_TYPE.NO_AUDIO:
 		currentNoAudioStream = null;
 		noAudioVideoDom.src = "";
 		utils.removeClass(videoDom, "hide");

@@ -1,7 +1,7 @@
-var utils = require("../../../common/utils");
-var videoViewer = require("./videoViewer");
-var MiniVideoWin = require("./MiniVideoWin");
-var Dict = require("../tools/Dict");
+var utils =			require("@/common/kit/utils");
+var Dict =			require("@/common/kit/dict");
+var videoViewer =	require("@/app/modules/video/videoViewer");
+var MiniVideoWin =	require("@/app/modules/video/miniVideoWin");
 
 var wrapperDom;
 var multiVideoContainer;

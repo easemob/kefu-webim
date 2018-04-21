@@ -2,7 +2,7 @@
 // tip 2秒后自动消失
 
 // todo: 拆分这个文件，把 dialog 拆出去
-var utils = require("../../common/utils");
+var utils = require("@/common/kit/utils");
 
 var EMPTY_FUNCTION = function(){};
 var promptDom;

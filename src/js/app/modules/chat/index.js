@@ -1,26 +1,29 @@
 var WebIM = require("easemob-websdk");
-var utils = require("../../common/utils");
-var _const = require("../../common/const");
-var uikit = require("./uikit");
-var apiHelper = require("./apiHelper");
-var eventListener = require("./tools/eventListener");
-var channel = require("./channel");
-var profile = require("./tools/profile");
-var satisfaction = require("./satisfaction");
-var imgView = require("./imgview");
-var leaveMessage = require("./leaveMessage");
-var initPasteImage = require("./paste");
-var videoChat = require("./videoChat");
 
-var initAgentInputStatePoller = require("./chat/initAgentInputStatePoller");
-var initAgentStatusPoller = require("./chat/initAgentStatusPoller");
-var initQueuingNumberPoller = require("./chat/initQueuingNumberPoller");
-var initTransferToKefuButton = require("./chat/initTransferToKefuButton");
-var initSessionList = require("./chat/initSessionList");
-var initGetGreetings = require("./chat/initGetGreetings");
-var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
-var emojiPanel = require("./chat/emojiPanel");
-var extendMessageSender = require("./chat/extendMessageSender");
+var utils =			require("@/common/kit/utils");
+var Const =			require("@/common/cfg/const");
+var uikit =			require("@/common/uikit/uikit");
+var apiHelper =		require("@/common/kit/apiHelper");
+var eventListener =	require("@/common/disp/eventListener");
+var profile =		require("@/common/cfg/profile");
+
+var leaveMessage =		require("@/app/modules/leaveMessage");
+var satisfaction =		require("@/app/modules/satisfaction");
+var videoChat =			require("@/app/modules/video");
+
+var channel =			require("@/app/modules/chat/channel");
+var imgView =			require("@/app/modules/chat/imgview");
+var initPasteImage =	require("@/app/modules/chat/paste");
+
+var initAgentInputStatePoller =	require("@/app/modules/chat/initAgentInputStatePoller");
+var initAgentStatusPoller =		require("@/app/modules/chat/initAgentStatusPoller");
+var initQueuingNumberPoller =	require("@/app/modules/chat/initQueuingNumberPoller");
+var initTransferToKefuButton =	require("@/app/modules/chat/initTransferToKefuButton");
+var initSessionList =			require("@/app/modules/chat/initSessionList");
+var initGetGreetings =			require("@/app/modules/chat/initGetGreetings");
+var initAgentNicknameUpdate =	require("@/app/modules/chat/initAgentNicknameUpdate");
+var emojiPanel =				require("@/app/modules/chat/emojiPanel");
+var extendMessageSender =		require("@/app/modules/chat/extendMessageSender");
 
 var isMessageChannelReady;
 var config;
@@ -51,7 +54,7 @@ var _reCreateImUser = _.once(function(){
 		else{
 
 			transfer.send({
-				event: _const.EVENTS.CACHEUSER,
+				event: Const.EVENTS.CACHEUSER,
 				data: {
 					key: cacheKeyName,
 					value: config.user.username,
@@ -71,8 +74,8 @@ module.exports = {
 
 function _initSystemEventListener(){
 	eventListener.add([
-		_const.SYSTEM_EVENT.SESSION_OPENED,
-		_const.SYSTEM_EVENT.SESSION_RESTORED,
+		Const.SYSTEM_EVENT.SESSION_OPENED,
+		Const.SYSTEM_EVENT.SESSION_RESTORED,
 	], function(officialAccount){
 		var sessionId = officialAccount.sessionId;
 		var isSessionOpen = officialAccount.isSessionOpen;
@@ -149,7 +152,7 @@ function _initSoundReminder(){
 		utils.toggleClass(slienceSwitch, "icon-bell", !isSlienceEnable);
 	});
 
-	eventListener.add(_const.SYSTEM_EVENT.MESSAGE_PROMPT, function(){
+	eventListener.add(Const.SYSTEM_EVENT.MESSAGE_PROMPT, function(){
 		!isSlienceEnable && play();
 	});
 }
@@ -207,7 +210,7 @@ function _setOffline(){
 		break;
 	}
 
-	transfer.send({ event: _const.EVENTS.ON_OFFDUTY });
+	transfer.send({ event: Const.EVENTS.ON_OFFDUTY });
 }
 
 function _scrollToBottom(){
@@ -284,12 +287,12 @@ function _initOfficialAccount(){
 				profile.systemOfficialAccount.messageView.show();
 			}
 
-			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, []);
+			eventListener.excuteCallbacks(Const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, []);
 
 			resolve();
 		}, function(err){
 			// 未创建会话时初始化默认服务号
-			if(err === _const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
+			if(err === Const.ERROR_MSG.VISITOR_DOES_NOT_EXIST){
 				// init default system message view
 				channel.attemptToAppendOfficialAccount({
 					type: "SYSTEM",
@@ -300,7 +303,7 @@ function _initOfficialAccount(){
 				profile.currentOfficialAccount = profile.systemOfficialAccount;
 				profile.systemOfficialAccount.messageView.show();
 
-				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [profile.systemOfficialAccount]);
+				eventListener.excuteCallbacks(Const.SYSTEM_EVENT.SESSION_NOT_CREATED, [profile.systemOfficialAccount]);
 
 				resolve();
 			}
@@ -315,11 +318,11 @@ function _bindEvents(){
 	if(!utils.isTop){
 		// 最小化按钮
 		utils.on(doms.minifyBtn, "click", function(){
-			transfer.send({ event: _const.EVENTS.CLOSE });
+			transfer.send({ event: Const.EVENTS.CLOSE });
 		});
 
 		utils.on(document, "mouseover", function(){
-			transfer.send({ event: _const.EVENTS.RECOVERY });
+			transfer.send({ event: Const.EVENTS.RECOVERY });
 		});
 	}
 
@@ -340,7 +343,7 @@ function _bindEvents(){
 			var e = window.event || ev;
 			doms.textInput.blur(); // ie a  ie...
 			transfer.send({
-				event: _const.EVENTS.DRAGREADY,
+				event: Const.EVENTS.DRAGREADY,
 				data: {
 					x: e.clientX,
 					y: e.clientY
@@ -452,11 +455,11 @@ function _bindEvents(){
 		var sessionId = officialAccount.sessionId;
 		var sessionState = officialAccount.sessionState;
 		var agentType = officialAccount.agentType;
-		var content = utils.getBrief(msg, _const.MESSAGE_PREDICT_MAX_LENGTH);
+		var content = utils.getBrief(msg, Const.MESSAGE_PREDICT_MAX_LENGTH);
 
 		if(
-			sessionState === _const.SESSION_STATE.PROCESSING
-			&& agentType !== _const.AGENT_ROLE.ROBOT
+			sessionState === Const.SESSION_STATE.PROCESSING
+			&& agentType !== Const.AGENT_ROLE.ROBOT
 			&& sessionId
 		){
 			apiHelper.reportPredictMessage(sessionId, content);
@@ -498,7 +501,7 @@ function _bindEvents(){
 		if(!fileInput.value){
 			// 未选择文件
 		}
-		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
+		else if(filesize > Const.UPLOAD_FILESIZE_LIMIT){
 			uikit.tip(__("prompt._10_mb_file_limit"));
 			fileInput.value = "";
 		}
@@ -527,7 +530,7 @@ function _bindEvents(){
 		// uikit.tip('unsupported picture format');
 		// }
 		// 某些浏览器无法获取文件大小, 忽略
-		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
+		else if(filesize > Const.UPLOAD_FILESIZE_LIMIT){
 			uikit.tip(__("prompt._10_mb_file_limit"));
 			fileInput.value = "";
 		}
@@ -568,7 +571,7 @@ function _bindEvents(){
 					&& !/(OS 11_1|OS 11_2|OS 11_3)/i.test(navigator.userAgent)
 				){
 					document.body.scrollTop = 9999;
-					transfer.send({ event: _const.EVENTS.SCROLL_TO_BOTTOM });
+					transfer.send({ event: Const.EVENTS.SCROLL_TO_BOTTOM });
 				}
 			}, 500);
 		});
@@ -597,7 +600,7 @@ function _bindEvents(){
 		if(utils.hasClass(this, "disabled")){
 			// 禁止发送
 		}
-		else if(textMsg.length > _const.MAX_TEXT_MESSAGE_LENGTH){
+		else if(textMsg.length > Const.MAX_TEXT_MESSAGE_LENGTH){
 			uikit.tip(__("prompt.too_many_words"));
 		}
 		else{
@@ -631,7 +634,7 @@ function _close(){
 		utils.removeClass(doms.imBtn, "hide");
 	}
 
-	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CHAT_WINDOW_CLOSED, []);
+	eventListener.excuteCallbacks(Const.SYSTEM_EVENT.CHAT_WINDOW_CLOSED, []);
 }
 
 function _show(){
@@ -648,9 +651,9 @@ function _show(){
 		doms.textInput.focus();
 	}
 
-	transfer.send({ event: _const.EVENTS.RECOVERY });
+	transfer.send({ event: Const.EVENTS.RECOVERY });
 
-	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CHAT_WINDOW_OPENED, []);
+	eventListener.excuteCallbacks(Const.SYSTEM_EVENT.CHAT_WINDOW_OPENED, []);
 }
 
 function _onReady(){
@@ -665,13 +668,13 @@ function _onReady(){
 	// bug fix:
 	// minimum = fales 时, 或者 访客回呼模式 调用easemobim.bind时显示问题
 	if(config.minimum === false || config.eventCollector === true){
-		transfer.send({ event: _const.EVENTS.SHOW });
+		transfer.send({ event: Const.EVENTS.SHOW });
 	}
 
-	eventListener.trigger(_const.SYSTEM_EVENT.MESSAGE_CHANNEL_READY);
+	eventListener.trigger(Const.SYSTEM_EVENT.MESSAGE_CHANNEL_READY);
 
 	// onready 回调
-	transfer.send({ event: _const.EVENTS.ONREADY });
+	transfer.send({ event: Const.EVENTS.ONREADY });
 }
 
 function _initSDK(){

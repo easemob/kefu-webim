@@ -1,9 +1,9 @@
-var _const = require("../../../common/const");
-var utils = require("../../../common/utils");
-var profile = require("../tools/profile");
-var eventListener = require("../tools/eventListener");
-var apiHelper = require("../apiHelper");
-var channel = require("../channel");
+var Const =			require("@/common/cfg/const");
+var profile =		require("@/common/cfg/profile");
+var utils =			require("@/common/kit/utils");
+var apiHelper =		require("@/common/kit/apiHelper");
+var eventListener =	require("@/common/disp/eventListener");
+var channel =		require("@/app/modules/chat/channel");
 
 var toKefuBtn;
 
@@ -18,12 +18,12 @@ module.exports = function(){
 		channel.sendTransferToKf();
 	});
 
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideTransferToKefuBtn);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, _displayOrHideTransferToKefuBtn);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _displayOrHideTransferToKefuBtn);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideTransferToKefuBtn);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideTransferToKefuBtn);
-	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _displayOrHideTransferToKefuBtn);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideTransferToKefuBtn);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_TRANSFERING, _displayOrHideTransferToKefuBtn);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_TRANSFERED, _displayOrHideTransferToKefuBtn);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideTransferToKefuBtn);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideTransferToKefuBtn);
+	eventListener.add(Const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _displayOrHideTransferToKefuBtn);
 };
 
 function _displayOrHideTransferToKefuBtn(officialAccount){
@@ -33,16 +33,16 @@ function _displayOrHideTransferToKefuBtn(officialAccount){
 	var state = officialAccount.sessionState;
 	var agentType = officialAccount.agentType;
 	var type = officialAccount.type;
-	var isRobotAgent = agentType === _const.AGENT_ROLE.ROBOT;
+	var isRobotAgent = agentType === Const.AGENT_ROLE.ROBOT;
 
 	if(type === "CUSTOM"){
 		// 营销号一律不显示转人工按钮
 		utils.addClass(toKefuBtn, "hide");
 	}
-	else if(state === _const.SESSION_STATE.PROCESSING){
+	else if(state === Const.SESSION_STATE.PROCESSING){
 		utils.toggleClass(toKefuBtn, "hide", !isRobotAgent);
 	}
-	else if(state === _const.SESSION_STATE.WAIT){
+	else if(state === Const.SESSION_STATE.WAIT){
 		// 待接入状态 隐藏按钮
 		utils.addClass(toKefuBtn, "hide");
 	}

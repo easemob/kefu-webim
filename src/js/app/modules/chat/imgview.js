@@ -1,6 +1,6 @@
-var utils = require("../../common/utils");
-var _const = require("../../common/const");
-var profile = require("./tools/profile");
+var Const =		require("@/common/cfg/const");
+var profile =	require("@/common/cfg/profile");
+var utils =		require("@/common/kit/utils");
 
 var img;
 var imgWrapper;
@@ -35,7 +35,7 @@ module.exports = {
 		}
 		else{
 			transfer.send({
-				event: _const.EVENTS.SHOW_IMG,
+				event: Const.EVENTS.SHOW_IMG,
 				data: {
 					imgSrc: url,
 					imgFile: profile.imgFileList.get(url)

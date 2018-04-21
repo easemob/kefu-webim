@@ -1,13 +1,14 @@
-var _const =	require("@/common/const");
-var kefuPath =	require("@/common/kefuPath");
-var profile = require("../tools/profile");
-var eventListener = require("../tools/eventListener");
-var apiHelper = require("../apiHelper");
-var channel = require("../channel");
+var Const =			require("@/common/cfg/const");
+var profile =		require("@/common/cfg/profile");
+var kefuPath =		require("@/common/cfg/kefuPath");
+var apiHelper =		require("@/common/kit/apiHelper");
+var eventListener =	require("@/common/disp/eventListener");
+var channel =		require("@/app/modules/chat/channel");
+
 
 module.exports = function(){
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _getGreetings);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _getGreetings);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_RESTORED, _getGreetings);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_NOT_CREATED, _getGreetings);
 };
 
 function _getGreetings(officialAccount){

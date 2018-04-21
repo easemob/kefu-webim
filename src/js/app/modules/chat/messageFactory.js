@@ -1,11 +1,10 @@
-var utils =		require("@/common/utils");
-var _const =	require("@/common/const");
-var kefuPath =	require("@/common/kefuPath");
+var kefuPath =		require("@/common/cfg/kefuPath");
+var Const =			require("@/common/cfg/const");
+var profile =		require("@/common/cfg/profile");
+var textParser =	require("@/common/kit/textParser");
+var utils =			require("@/common/kit/utils");
 
-var profile = require("../tools/profile");
-var textParser = require("../tools/textParser");
-
-var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
+var LOADING = Modernizr.inlinesvg ? Const.loadingSvg : "<img src=\"static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
 
 function genMsgContent(msg){
 	var type = msg.type;

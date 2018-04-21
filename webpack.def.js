@@ -221,11 +221,11 @@ module.exports = function(envcfg){
 				// 变量注入
 				{
 					test: [
-						path.resolve("src/js/common/kefuPath"),
+						path.resolve("src/js/common/cfg/kefuPath"),
 						path.resolve("src/js/plugin/userAPI"),
 						path.resolve("src/js/plugin/iframe"),
 						path.resolve("src/js/app/modules/init"),
-						path.resolve("src/js/app/modules/channel"),
+						path.resolve("src/js/app/modules/chat/channel"),
 					],
 					use: [
 						"imports-loader",

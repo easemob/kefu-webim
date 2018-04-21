@@ -1,4 +1,4 @@
-var utils = require("@/common/utils");
+var utils = require("@/common/kit/utils");
 
 // plugin only
 var res = {

@@ -1,4 +1,4 @@
-var emajax = require("../../../common/ajax.js");
+var emajax = require("@/common/kit/ajax.js");
 
 module.exports = window.tools = {
 	retryThrottle: retryThrottle,

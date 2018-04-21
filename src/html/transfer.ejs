@@ -1,8 +1,9 @@
 <!doctype html>
 <html>
+	<% var def = htmlWebpackPlugin.options; %>
 	<head>
 		<meta charset="utf-8">
 		<script>if(window.top==window)location.href="/"</script>
-		<script src="static/js/em-transfer.js?v=<%= htmlWebpackPlugin.options.version %>"></script>
+		<script src="static/js/em-transfer.js?v=<%= def.version %>"></script>
 	</head>
 </html>

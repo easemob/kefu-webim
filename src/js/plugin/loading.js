@@ -1,11 +1,11 @@
-var utils = require("../common/utils");
-var _const = require("../common/const");
+var utils = require("@/common/kit/utils");
+var Const = require("@/common/cfg/const");
 
 var loadingDom;
 var loadingHtml = [
 	"<div class=\"easemobim-prompt-wrapper\">",
 	"<div class=\"loading\">",
-	_const.loadingSvg,
+	Const.loadingSvg,
 	"</div>",
 	"</div>"
 ].join("");

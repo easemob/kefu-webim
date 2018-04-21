@@ -1,5 +1,4 @@
-
-var utils = require("../common/utils");
+var utils = require("@/common/kit/utils");
 var isInitialized = false;
 var imgWrapper;
 var imgDom;

@@ -1,12 +1,12 @@
-var utils =		require("@/common/utils");
-var _const =	require("@/common/const");
-var kefuPath =	require("@/common/kefuPath");
+var _const =	require("@/common/cfg/const");
+var profile =	require("@/common/cfg/profile");
+var kefuPath =	require("@/common/cfg/kefuPath");
+var utils =		require("@/common/kit/utils");
+var apiHelper = require("@/common/kit/apiHelper");
+var List =		require("@/common/uikit/list");
 
-var apiHelper = require("../apiHelper");
-var profile = require("../tools/profile");
-var channel = require("../channel");
-var List = require("../tools/List");
-var template = require("../../../../template/emojiPanel.html");
+var channel =	require("@/app/modules/chat/channel");
+var template =	require("@/../template/emojiPanel.html");
 
 var HEIGHT_OF_TOP_NAVIGATOR = 43;
 var MAGIC_EMOJI_COUNT_PER_LINE = 6;

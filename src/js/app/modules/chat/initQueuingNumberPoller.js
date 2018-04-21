@@ -1,8 +1,8 @@
-var _const = require("../../../common/const");
-var utils = require("../../../common/utils");
-var profile = require("../tools/profile");
-var eventListener = require("../tools/eventListener");
-var apiHelper = require("../apiHelper");
+var Const =			require("@/common/cfg/const");
+var profile =		require("@/common/cfg/profile");
+var utils =			require("@/common/kit/utils");
+var apiHelper =		require("@/common/kit/apiHelper");
+var eventListener =	require("@/common/disp/eventListener");
 
 var preventTimestamp = 0;
 var $queuingNumberStatus;
@@ -20,12 +20,12 @@ module.exports = function(){
 		_getQueuingNumber(officialAccount);
 	}, 1000);
 
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _getQueuingNumber);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _getQueuingNumber);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _getQueuingNumber);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_CREATED, _getQueuingNumber);
-	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _getQueuingNumber);
-	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _getQueuingNumber);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_OPENED, _getQueuingNumber);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_CLOSED, _getQueuingNumber);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_TRANSFERED, _getQueuingNumber);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_CREATED, _getQueuingNumber);
+	eventListener.add(Const.SYSTEM_EVENT.SESSION_RESTORED, _getQueuingNumber);
+	eventListener.add(Const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _getQueuingNumber);
 };
 
 function _getQueuingNumber(officialAccount){
@@ -41,7 +41,7 @@ function _getQueuingNumber(officialAccount){
 	var sessionId = officialAccount.sessionId;
 	var officialAccountId = officialAccount.official_account_id;
 
-	if(state === _const.SESSION_STATE.WAIT && sessionId){
+	if(state === Const.SESSION_STATE.WAIT && sessionId){
 		if(queueId){
 			apiHelper.getWaitListNumber(sessionId, queueId).then(function(entity){
 				var waitingNumber = entity.visitorUserWaitingNumber;

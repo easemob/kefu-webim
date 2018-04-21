@@ -1,9 +1,9 @@
-var utils = require("../../common/utils");
-var _const = require("../../common/const");
-var apiHelper = require("./apiHelper");
-var profile = require("./tools/profile");
-var Poller = require("./tools/Poller");
-var createCtaDialog = require("./uikit/createCtaDialog");
+var _const =			require("@/common/cfg/const");
+var profile =			require("@/common/cfg/profile");
+var utils =				require("@/common/kit/utils");
+var apiHelper =			require("@/common/kit/apiHelper");
+var Poller =			require("@/common/disp/poller");
+var createCtaDialog =	require("@/app/modules/cta/createCtaDialog");
 
 var POLLING_INTERVAL = 5000;
 
@@ -33,7 +33,7 @@ function _reportData(userType, userId){
 		_hasCtaInvite = !!message;
 
 		switch(type){
-			// 没有坐席呼叫，什么都不做
+		// 没有坐席呼叫，什么都不做
 		case "OK":
 			break;
 			// 有坐席呼叫

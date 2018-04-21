@@ -1,11 +1,12 @@
-var utils = require("../../common/utils");
-var _const = require("../../common/const");
-var uikit = require("./uikit");
-var apiHelper = require("./apiHelper");
-var channel = require("./channel");
-var profile = require("./tools/profile");
-var eventListener = require("./tools/eventListener");
-var loading = require("./uikit/loading");
+var Const =			require("@/common/cfg/const");
+var profile =		require("@/common/cfg/profile");
+var utils =			require("@/common/kit/utils");
+var apiHelper =		require("@/common/kit/apiHelper");
+var uikit =			require("@/common/uikit/uikit");
+var loading =		require("@/common/uikit/loading");
+var eventListener =	require("@/common/disp/eventListener");
+
+var channel =		require("@/app/modules/chat/channel");
 
 var dom;
 var starsUl;
@@ -174,7 +175,7 @@ function show(inviteId, serviceSessionId){
 
 function init(){
 	eventListener.add(
-		_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
+		Const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
 		function(officialAccount, inviteId, serviceSessionId){
 			if(officialAccount !== profile.currentOfficialAccount) return;
 			show(inviteId, serviceSessionId);

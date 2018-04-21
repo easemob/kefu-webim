@@ -1,8 +1,8 @@
-var utils = require("../../common/utils");
-var uikit = require("./uikit");
-var profile = require("./tools/profile");
-var apiHelper = require("./apiHelper");
-var Selector = require("./uikit/selector");
+var profile =	require("@/common/cfg/profile");
+var utils =		require("@/common/kit/utils");
+var apiHelper =	require("@/common/kit/apiHelper");
+var uikit =		require("@/common/uikit/uikit");
+var Selector =	require("@/common/uikit/selector");
 
 var isSending = false;
 

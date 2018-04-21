@@ -1,5 +1,5 @@
-var utils = require("../../../common/utils");
-var TimerLabel = require("./TimerLabel");
+var utils =			require("@/common/cfg/utils");
+var TimerLabel =	require("@/common/uikit/timerLabel");
 
 var wrapperDom;
 var timerBarDom;
