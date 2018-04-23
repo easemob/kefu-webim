@@ -1,6 +1,7 @@
 var Const =		require("@/common/cfg/const");
 var profile =	require("@/common/cfg/profile");
 var utils =		require("@/common/kit/utils");
+var domUtils =	require("@/common/kit/domUtils");
 
 var img;
 var imgWrapper;
@@ -12,10 +13,10 @@ var _init = _.once(function(){
 	img = imgWrapper.querySelector("img");
 	iosLoadTip = imgWrapper.querySelector("span.ios-load");
 	androidLoadTip = imgWrapper.querySelector("a.android-load");
-	utils.isAndroid && utils.removeClass(androidLoadTip, "hide");
-	utils.isIOS && utils.removeClass(iosLoadTip, "hide");
+	utils.isAndroid && domUtils.removeClass(androidLoadTip, "hide");
+	utils.isIOS && domUtils.removeClass(iosLoadTip, "hide");
 	utils.on(imgWrapper, "click", function(){
-		utils.addClass(imgWrapper, "hide");
+		domUtils.addClass(imgWrapper, "hide");
 	}, false);
 	!("download" in document.createElement("a")) && utils.on(androidLoadTip, "click", function(){
 		window.location = imgSrc;
@@ -31,7 +32,7 @@ module.exports = {
 		if(utils.isTop || utils.isMobile){
 			img.src = url;
 			androidLoadTip.href = url;
-			utils.removeClass(imgWrapper, "hide");
+			domUtils.removeClass(imgWrapper, "hide");
 		}
 		else{
 			transfer.send({

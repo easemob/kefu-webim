@@ -15,7 +15,8 @@ var Const =			require("@/common/cfg/const");
 var profile =		require("@/common/cfg/profile");
 var uikit =			require("@/common/uikit/dialog");
 var utils =			require("@/common/kit/utils");
-var tools =			require("@/common/kit/tools");
+var domUtils =		require("@/common/kit/domUtils");
+var ajaxWrapper =	require("@/common/kit/ajaxWrapper");
 var Dispatcher =	require("@/common/disp/dispatcher");
 var eventListener =	require("@/common/disp/eventListener");
 
@@ -41,7 +42,7 @@ module.exports = {
 function _init(){
 	if(videoWidget) return;
 	// init dom
-	videoWidget = utils.createElementFromHTML(_.template(videoChatTemplate)());
+	videoWidget = domUtils.createElementFromHTML(_.template(videoChatTemplate)());
 
 	parentContainer.appendChild(videoWidget);
 
@@ -164,15 +165,15 @@ function init(option){
 	eMediaSdkPath = "static/js/lib/EMedia_sdk.min.js?v=1.1.2";
 
 	// todo: resolve promise sequentially
-	tools.loadScript(adapterPath)
+	ajaxWrapper.loadScript(adapterPath)
 	.then(function(){
-		return tools.loadScript(eMediaSdkPath);
+		return ajaxWrapper.loadScript(eMediaSdkPath);
 	})
 	.then(function(){
 		eventListener.add(Const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, _reveiveTicket);
 
 		// 显示视频邀请按钮，并绑定事件
-		utils.removeClass(triggerButton, "hide");
+		domUtils.removeClass(triggerButton, "hide");
 		utils.on(triggerButton, "click", function(){
 			_initOnce();
 			dialog.show();

@@ -1,6 +1,7 @@
 var Const =			require("@/common/cfg/const");
 var profile =		require("@/common/cfg/profile");
 var utils =			require("@/common/kit/utils");
+var domUtils =		require("@/common/kit/domUtils");
 var apiHelper =		require("@/common/kit/apiHelper");
 var eventListener =	require("@/common/disp/eventListener");
 
@@ -56,11 +57,11 @@ function _update(officialAccount){
 			// 为了先发送的请求后回来的异步问题，仅处理时间戳比当前大的response
 			if(currentTimestamp > preventTimestamp){
 				preventTimestamp = currentTimestamp;
-				utils.toggleClass(inputState, "hide", !ifDisplayTypingState);
+				domUtils.toggleClass(inputState, "hide", !ifDisplayTypingState);
 			}
 		});
 	}
 	else{
-		utils.addClass(inputState, "hide");
+		domUtils.addClass(inputState, "hide");
 	}
 }

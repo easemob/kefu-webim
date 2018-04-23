@@ -1,6 +1,7 @@
 var Const =			require("@/common/cfg/const");
 var profile =		require("@/common/cfg/profile");
 var utils =			require("@/common/kit/utils");
+var domUtils =		require("@/common/kit/domUtils");
 var apiHelper =		require("@/common/kit/apiHelper");
 var eventListener =	require("@/common/disp/eventListener");
 
@@ -67,10 +68,10 @@ function _getQueuingNumber(officialAccount){
 function _update(waitingNumber){
 	// 没有人排队会返回 no
 	if(!waitingNumber || waitingNumber === "no"){
-		utils.addClass($queuingNumberStatus, "hide");
+		domUtils.addClass($queuingNumberStatus, "hide");
 	}
 	else{
-		utils.removeClass($queuingNumberStatus, "hide");
+		domUtils.removeClass($queuingNumberStatus, "hide");
 		$queuingNumberLabel.innerHTML = waitingNumber;
 	}
 }

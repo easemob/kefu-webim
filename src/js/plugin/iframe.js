@@ -1,6 +1,7 @@
 var Const =		require("@/common/cfg/const");
 var resPath =	require("@/common/cfg/resPath");
 var utils =		require("@/common/kit/utils");
+var domUtils =	require("@/common/kit/domUtils");
 var Transfer =	require("@/common/disp/transfer");
 
 var loading =		require("@/plugin/loading");
@@ -66,8 +67,8 @@ function _moveend(){
 	shadow.style.top = "auto";
 	shadow.style.right = me.position.x + "px";
 	shadow.style.bottom = me.position.y + "px";
-	utils.removeClass(shadow, "easemobim-dragging");
-	utils.removeClass(iframe, "easemobim-dragging");
+	domUtils.removeClass(shadow, "easemobim-dragging");
+	domUtils.removeClass(iframe, "easemobim-dragging");
 }
 
 function _bindResizeHandler(me){
@@ -197,8 +198,8 @@ function _ready(){
 			_startPosition.x = +data.x || 0;
 			_startPosition.y = +data.y || 0;
 
-			utils.addClass(me.iframe, "easemobim-dragging");
-			utils.addClass(me.shadow, "easemobim-dragging");
+			domUtils.addClass(me.iframe, "easemobim-dragging");
+			domUtils.addClass(me.shadow, "easemobim-dragging");
 
 			utils.on(document, "mousemove", me._onMouseMove);
 			break;
@@ -222,10 +223,10 @@ function _ready(){
 			me._updatePosition();
 			break;
 		case Const.EVENTS.ADD_PROMPT:
-			utils.addClass(me.iframe, "easemobim-has-prompt");
+			domUtils.addClass(me.iframe, "easemobim-has-prompt");
 			break;
 		case Const.EVENTS.REMOVE_PROMPT:
-			utils.removeClass(me.iframe, "easemobim-has-prompt");
+			domUtils.removeClass(me.iframe, "easemobim-has-prompt");
 			break;
 		case Const.EVENTS.SCROLL_TO_BOTTOM:
 			document.body.scrollTop = 9999;
@@ -319,7 +320,7 @@ Iframe.prototype.set = function(config, callback){
 		height: +this.config.dialogHeight.slice(0, -2)
 	};
 	this._updatePosition();
-	utils.toggleClass(this.iframe, "easemobim-hide", this.config.hide);
+	domUtils.toggleClass(this.iframe, "easemobim-hide", this.config.hide);
 
 	// 资源加载都要相对 html 路径进行加载
 	this.iframe.src = resPath.getRes().imCachedHtml + "?v=" + __WEBIM_PLUGIN_VERSION__;
@@ -355,12 +356,12 @@ Iframe.prototype.open = function(){
 
 	// 移动端，禁止宿主页面滚动
 	if(utils.isMobile){
-		utils.addClass(document.body, "easemobim-mobile-body");
-		utils.addClass(document.documentElement, "easemobim-mobile-html");
+		domUtils.addClass(document.body, "easemobim-mobile-body");
+		domUtils.addClass(document.documentElement, "easemobim-mobile-html");
 	}
 
-	utils.removeClass(iframe, "easemobim-minimized");
-	utils.removeClass(iframe, "easemobim-hide");
+	domUtils.removeClass(iframe, "easemobim-minimized");
+	domUtils.removeClass(iframe, "easemobim-hide");
 
 	this.message && this.message.send({ event: Const.EVENTS.SHOW });
 
@@ -374,12 +375,12 @@ Iframe.prototype.close = function(){
 	clearTimeout(_st);
 	// 恢复宿主页面滚动
 	if(utils.isMobile){
-		utils.removeClass(document.body, "easemobim-mobile-body");
-		utils.removeClass(document.documentElement, "easemobim-mobile-html");
+		domUtils.removeClass(document.body, "easemobim-mobile-body");
+		domUtils.removeClass(document.documentElement, "easemobim-mobile-html");
 	}
 
-	utils.addClass(this.iframe, "easemobim-minimized");
-	utils.toggleClass(this.iframe, "easemobim-hide", this.config.hide);
+	domUtils.addClass(this.iframe, "easemobim-minimized");
+	domUtils.toggleClass(this.iframe, "easemobim-hide", this.config.hide);
 
 	this.message && this.message.send({ event: Const.EVENTS.CLOSE });
 	return this;

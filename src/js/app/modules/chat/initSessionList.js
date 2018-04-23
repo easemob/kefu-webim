@@ -1,6 +1,7 @@
 var Const =			require("@/common/cfg/const");
 var profile =		require("@/common/cfg/profile");
 var utils =			require("@/common/kit/utils");
+var domUtils =		require("@/common/kit/domUtils");
 var apiHelper =		require("@/common/kit/apiHelper");
 var eventListener =	require("@/common/disp/eventListener");
 
@@ -33,7 +34,7 @@ module.exports = function(){
 
 	eventListener.add(Const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, function(officialAccount){
 		officialAccount.messageView.scrollToBottom();
-		utils.removeClass(statusBar, "hide");
+		domUtils.removeClass(statusBar, "hide");
 		_attemptToGetMarketingTaskInfo(officialAccount);
 		_reportOpened(officialAccount);
 		_clearUnreadCount(officialAccount);
@@ -53,7 +54,7 @@ module.exports = function(){
 
 	eventListener.add(Const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, function(){
 		if(profile.ctaEnable){
-			utils.trigger(sessionListBtn, "click");
+			domUtils.trigger(sessionListBtn, "click");
 		}
 	});
 
@@ -86,7 +87,7 @@ function _updateSessionListRedDotStatus(){
 
 	var ifDisplayRedDot = !!sumOfUnreadMessageCount;
 
-	utils.toggleClass(redDotDom, "hide", !ifDisplayRedDot);
+	domUtils.toggleClass(redDotDom, "hide", !ifDisplayRedDot);
 }
 
 function _clearUnreadCount(officialAccount){
@@ -189,13 +190,13 @@ function _newOfficialAccountFound(officialAccount){
 			// 如果有ctaPromptDialog则关闭
 			ctaDialog && ctaDialog.hide();
 			profile.currentOfficialAccount = null;
-			utils.addClass(statusBar, "hide");
+			domUtils.addClass(statusBar, "hide");
 		});
 	}
 	sessionListView.appendItem(officialAccount);
 
 	// 有服务号消息时显示sessionList
 	if(type === "CUSTOM"){
-		utils.removeClass(sessionListBtn, "hide");
+		domUtils.removeClass(sessionListBtn, "hide");
 	}
 }

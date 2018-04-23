@@ -1,12 +1,12 @@
 var profile =	require("@/common/cfg/profile");
-var utils =		require("@/common/kit/utils");
+var domUtils =	require("@/common/kit/domUtils");
 var apiHelper =	require("@/common/kit/apiHelper");
 var uikit =		require("@/common/uikit/dialog");
 var Selector =	require("@/common/uikit/selector");
 
 var isSending = false;
 
-var dom = utils.createElementFromHTML([
+var dom = domUtils.createElementFromHTML([
 	"<div class=\"wrapper\">",
 	"<h3>" + __("ticket.title") + "</h3>",
 	"<input type=\"text\" class=\"name\" placeholder=\"" + __("ticket.name") + "\">",
@@ -69,7 +69,7 @@ var _getCategories = _.once(function(){
 		});
 
 		if(!_.isEmpty(optionList)){
-			utils.removeClass(noteCategory, "hide");
+			domUtils.removeClass(noteCategory, "hide");
 			noteCategoryList.updateList({ list: optionList });
 		}
 	});
@@ -127,6 +127,6 @@ module.exports = function(opt){
 	opt = opt || {};
 	profile.grayList.noteCategory && _getCategories();
 	opt.preData && _writePreDate(opt.preData);
-	opt.hideCloseBtn && utils.addClass(cancelBtn, "hide");
+	opt.hideCloseBtn && domUtils.addClass(cancelBtn, "hide");
 	dialog.show();
 };

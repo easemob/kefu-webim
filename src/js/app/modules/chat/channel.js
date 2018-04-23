@@ -4,11 +4,12 @@ var kefuPath =		require("@/common/cfg/kefuPath");
 var Const =			require("@/common/cfg/const");
 var profile =		require("@/common/cfg/profile");
 var utils =			require("@/common/kit/utils");
+var domUtils =		require("@/common/kit/domUtils");
 var Dict =			require("@/common/kit/dict");
-var tools =			require("@/common/kit/tools");
+var ajaxWrapper =	require("@/common/kit/ajaxWrapper");
 var textParser =	require("@/common/kit/textParser");
 var apiHelper =		require("@/common/kit/apiHelper");
-var List =			require("@/common/uikit/list");
+var List =			require("@/common/kit/list");
 var eventListener =	require("@/common/disp//eventListener");
 
 var isNoAgentOnlineTipShowed;
@@ -26,7 +27,7 @@ var sendMsgDict = new Dict();
 // 收消息队列
 var receiveMsgDict = new Dict();
 
-var _open = tools.retryThrottle(function(){
+var _open = ajaxWrapper.retryThrottle(function(){
 	var op = {
 		user: config.user.username,
 		appKey: config.appKey,
@@ -411,7 +412,7 @@ function _handleMessage(msg, options){
 			// 撤回消息命令
 			var recallMsgId = msg.ext.weichat.recall_msg_id;
 			var dom = document.getElementById(recallMsgId);
-			utils.addClass(dom, "hide");
+			domUtils.addClass(dom, "hide");
 		}
 		break;
 	case "satisfactionEvaluation":
@@ -625,13 +626,13 @@ function _transformMessageFormat(element){
 }
 
 function _showFailed(msgId){
-	utils.addClass(document.getElementById(msgId + "_loading"), "hide");
-	utils.removeClass(document.getElementById(msgId + "_failed"), "hide");
+	domUtils.addClass(document.getElementById(msgId + "_loading"), "hide");
+	domUtils.removeClass(document.getElementById(msgId + "_failed"), "hide");
 }
 
 function _hideFailedAndLoading(msgId){
-	utils.addClass(document.getElementById(msgId + "_loading"), "hide");
-	utils.addClass(document.getElementById(msgId + "_failed"), "hide");
+	domUtils.addClass(document.getElementById(msgId + "_loading"), "hide");
+	domUtils.addClass(document.getElementById(msgId + "_failed"), "hide");
 }
 
 // todo: merge setExt & appendAck

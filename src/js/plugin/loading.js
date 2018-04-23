@@ -1,5 +1,5 @@
-var utils = require("@/common/kit/utils");
-var Const = require("@/common/cfg/const");
+var domUtils =	require("@/common/kit/domUtils");
+var Const =		require("@/common/cfg/const");
 
 var loadingDom;
 var loadingHtml = [
@@ -13,7 +13,7 @@ var loadingHtml = [
 function init(){
 	loadingDom = loadingDom
 		? loadingDom
-		: utils.appendHTMLToBody(loadingHtml);
+		: domUtils.appendHTMLToBody(loadingHtml);
 }
 
 module.exports = {

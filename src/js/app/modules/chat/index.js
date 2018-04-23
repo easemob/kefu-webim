@@ -1,6 +1,7 @@
 var WebIM = require("easemob-websdk");
 
 var utils =			require("@/common/kit/utils");
+var domUtils =		require("@/common/kit/domUtils");
 var Const =			require("@/common/cfg/const");
 var uikit =			require("@/common/uikit/dialog");
 var apiHelper =		require("@/common/kit/apiHelper");
@@ -87,18 +88,18 @@ function _initSystemEventListener(){
 }
 
 function _initUI(){
-	(utils.isTop || !config.minimum) && utils.removeClass(doms.imChat, "hide");
+	(utils.isTop || !config.minimum) && domUtils.removeClass(doms.imChat, "hide");
 
 	// 设置联系客服按钮文字
 	document.querySelector(".em-widget-pop-bar").innerText = config.buttonText;
 
 	// 添加移动端样式类
-	utils.isMobile && utils.addClass(document.body, "em-mobile");
+	utils.isMobile && domUtils.addClass(document.body, "em-mobile");
 
 	// 最小化按钮
 	config.minimum
 		&& !utils.isTop
-		&& utils.removeClass(doms.minifyBtn, "hide");
+		&& domUtils.removeClass(doms.minifyBtn, "hide");
 
 	// h5title设置
 	if(config.ui.H5Title.enabled){
@@ -109,27 +110,27 @@ function _initUI(){
 	window.HTMLAudioElement
 		&& !utils.isMobile
 		&& config.soundReminder
-		&& utils.removeClass(doms.audioBtn, "hide");
+		&& domUtils.removeClass(doms.audioBtn, "hide");
 
 	// 输入框位置开关
 	utils.isMobile
 		&& !config.hideKeyboard
-		&& utils.removeClass(doms.switchKeyboardBtn, "hide");
+		&& domUtils.removeClass(doms.switchKeyboardBtn, "hide");
 }
 
 function _initToolbar(){
 	// 低版本浏览器不支持上传文件/图片
 	if(WebIM.utils.isCanUploadFileAsync){
-		utils.removeClass(doms.sendImgBtn, "hide");
-		utils.removeClass(doms.sendFileBtn, "hide");
+		domUtils.removeClass(doms.sendImgBtn, "hide");
+		domUtils.removeClass(doms.sendFileBtn, "hide");
 	}
 
 	// 留言按钮
-	config.ticket && utils.removeClass(doms.noteBtn, "hide");
+	config.ticket && domUtils.removeClass(doms.noteBtn, "hide");
 
 	// 满意度评价按钮
 	config.satisfaction
-		&& utils.removeClass(doms.satisfaction, "hide");
+		&& domUtils.removeClass(doms.satisfaction, "hide");
 }
 
 function _initSoundReminder(){
@@ -148,8 +149,8 @@ function _initSoundReminder(){
 	// 音频按钮静音
 	utils.on(slienceSwitch, "click", function(){
 		isSlienceEnable = !isSlienceEnable;
-		utils.toggleClass(slienceSwitch, "icon-slience", isSlienceEnable);
-		utils.toggleClass(slienceSwitch, "icon-bell", !isSlienceEnable);
+		domUtils.toggleClass(slienceSwitch, "icon-slience", isSlienceEnable);
+		domUtils.toggleClass(slienceSwitch, "icon-bell", !isSlienceEnable);
 	});
 
 	eventListener.add(Const.SYSTEM_EVENT.MESSAGE_PROMPT, function(){
@@ -162,7 +163,7 @@ function _setLogo(){
 	var logoImgWapper = document.querySelector(".em-widget-tenant-logo");
 	var logoImg = logoImgWapper.querySelector("img");
 
-	utils.removeClass(logoImgWapper, "hide");
+	domUtils.removeClass(logoImgWapper, "hide");
 	logoImg.src = config.logo.url;
 }
 
@@ -177,12 +178,12 @@ function _setNotice(){
 		// 设置信息栏内容
 		noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
 		// 显示信息栏
-		utils.addClass(doms.imChat, "has-tip");
+		domUtils.addClass(doms.imChat, "has-tip");
 
 		// 隐藏信息栏按钮
-		utils.on(noticeCloseBtn, utils.click, function(){
+		utils.on(noticeCloseBtn, domUtils.CLICK, function(){
 			// 隐藏信息栏
-			utils.removeClass(doms.imChat, "has-tip");
+			domUtils.removeClass(doms.imChat, "has-tip");
 		});
 	});
 }
@@ -191,8 +192,8 @@ function _setOffline(){
 	switch(config.offDutyType){
 	case "none":
 		// 下班禁止留言、禁止接入会话
-		var modelDom = utils.createElementFromHTML("<div class=\"em-model\"></div>");
-		var offDutyPromptDom = utils.createElementFromHTML([
+		var modelDom = domUtils.createElementFromHTML("<div class=\"em-model\"></div>");
+		var offDutyPromptDom = domUtils.createElementFromHTML([
 			"<div class=\"em-dialog off-duty-prompt\">",
 			"<div class=\"bg-color header\">" + __("common.tip") + "</div>",
 			"<div class=\"body\">",
@@ -225,12 +226,12 @@ function _initAutoGrow(){
 
 	// 键盘上下切换按钮
 	utils.on(doms.switchKeyboardBtn, "click", function(){
-		var status = utils.hasClass(this, "icon-keyboard-down");
+		var status = domUtils.hasClass(this, "icon-keyboard-down");
 		var height = doms.editorView.getBoundingClientRect().height;
 		inputBoxPosition = status ? "down" : "up";
 
-		utils.toggleClass(this, "icon-keyboard-up", status);
-		utils.toggleClass(this, "icon-keyboard-down", !status);
+		domUtils.toggleClass(this, "icon-keyboard-up", status);
+		domUtils.toggleClass(this, "icon-keyboard-down", !status);
 
 		emojiPanel.move(inputBoxPosition, height);
 		switch(inputBoxPosition){
@@ -359,8 +360,8 @@ function _bindEvents(){
 		var type = this.getAttribute("data-type");
 
 		channel.reSend(type, id);
-		utils.addClass(this, "hide");
-		utils.removeClass(document.getElementById(id + "_loading"), "hide");
+		domUtils.addClass(this, "hide");
+		domUtils.removeClass(document.getElementById(id + "_loading"), "hide");
 	});
 
 	utils.live("button.js_robotTransferBtn", "click", function(){
@@ -425,7 +426,7 @@ function _bindEvents(){
 	utils.live("#em-article-close .icon-back", "click", function(){
 		var articleContainer = document.getElementById("em-article-container");
 		var iframe = articleContainer.querySelector("iframe");
-		iframe && utils.removeDom(iframe);
+		iframe && domUtils.removeDom(iframe);
 		articleContainer.style.display = "none";
 	});
 
@@ -436,7 +437,7 @@ function _bindEvents(){
 		url = utils.sameProtocol(url);
 		if(utils.isTop){
 			articleContainer = document.getElementById("em-article-container");
-			myIframe = utils.createElementFromHTML(
+			myIframe = domUtils.createElementFromHTML(
 				"<iframe class=\"em-article-iframe\" src=\"\" id=\"em-article-iframe\"></iframe>"
 			);
 			articleContainer.querySelector(".em-article-body").appendChild(myIframe);
@@ -469,7 +470,7 @@ function _bindEvents(){
 	function handleSendBtn(){
 		var isEmpty = !doms.textInput.value.trim();
 
-		utils.toggleClass(
+		domUtils.toggleClass(
 			doms.sendBtn,
 			"disabled", !isMessageChannelReady || isEmpty
 		);
@@ -589,7 +590,7 @@ function _bindEvents(){
 			if(evt.preventDefault){
 				evt.preventDefault();
 			}
-			utils.trigger(doms.sendBtn, "click");
+			domUtils.trigger(doms.sendBtn, "click");
 		}
 	});
 
@@ -597,7 +598,7 @@ function _bindEvents(){
 	utils.on(doms.sendBtn, "click", function(){
 		var textMsg = doms.textInput.value;
 
-		if(utils.hasClass(this, "disabled")){
+		if(domUtils.hasClass(this, "disabled")){
 			// 禁止发送
 		}
 		else if(textMsg.length > Const.MAX_TEXT_MESSAGE_LENGTH){
@@ -606,20 +607,20 @@ function _bindEvents(){
 		else{
 			channel.sendText(textMsg);
 			doms.textInput.value = "";
-			utils.trigger(doms.textInput, "change");
+			domUtils.trigger(doms.textInput, "change");
 		}
 	});
 }
 
 function setArticleIframeScrolling(enable){
 	if(enable){
-		utils.addClass(
+		domUtils.addClass(
 			document.body.querySelector("#em-article-container .em-article-body"),
 			"ios-scroll"
 		);
 	}
 	else{
-		utils.removeClass(
+		domUtils.removeClass(
 			document.body.querySelector("#em-article-container .em-article-body"),
 			"ios-scroll"
 		);
@@ -630,8 +631,8 @@ function _close(){
 	profile.isChatWindowOpen = false;
 
 	if(!config.hide){
-		utils.addClass(doms.imChat, "hide");
-		utils.removeClass(doms.imBtn, "hide");
+		domUtils.addClass(doms.imChat, "hide");
+		domUtils.removeClass(doms.imBtn, "hide");
 	}
 
 	eventListener.excuteCallbacks(Const.SYSTEM_EVENT.CHAT_WINDOW_CLOSED, []);
@@ -639,8 +640,8 @@ function _close(){
 
 function _show(){
 	profile.isChatWindowOpen = true;
-	utils.addClass(doms.imBtn, "hide");
-	utils.removeClass(doms.imChat, "hide");
+	domUtils.addClass(doms.imBtn, "hide");
+	domUtils.removeClass(doms.imChat, "hide");
 	_scrollToBottom();
 	if(
 		profile.isInOfficeHours
@@ -662,7 +663,7 @@ function _onReady(){
 	isMessageChannelReady = true;
 
 	doms.sendBtn.innerHTML = __("chat.send");
-	utils.trigger(doms.textInput, "change");
+	domUtils.trigger(doms.textInput, "change");
 
 	// todo: discard this
 	// bug fix:

@@ -1,16 +1,9 @@
 var emajax = require("@/common/kit/ajax.js");
 
-module.exports = window.tools = {
+module.exports = {
 	retryThrottle: retryThrottle,
-	DOMEval: DOMEval,
 	loadScript: loadScript,
-	resolvePromiseSequentially: resolvePromiseSequentially,
 };
-
-// todo: implemnet this
-function resolvePromiseSequentially(list){
-
-}
 
 function loadScript(path){
 	return new Promise(function(resolve, reject){
@@ -21,14 +14,11 @@ function loadScript(path){
 			disableTimeStampInGet: true,
 		});
 	})
-	.then(DOMEval);
-}
-
-function DOMEval(code){
-	var script = document.createElement("script");
-
-	script.text = code;
-	document.head.appendChild(script).parentNode.removeChild(script);
+	.then(function(code){
+		var script = document.createElement("script");
+		script.text = code;
+		document.head.appendChild(script).parentNode.removeChild(script);
+	});
 }
 
 // 限制一段时间内的重试次数，以及每次调用的时间间隔
@@ -56,6 +46,5 @@ function retryThrottle(fn, options){
 			retryCount = 1;
 			throttledFn();
 		}
-
 	};
 }

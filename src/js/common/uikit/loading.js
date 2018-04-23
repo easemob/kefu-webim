@@ -1,4 +1,4 @@
-var utils =		require("@/common/kit/utils");
+var domUtils =	require("@/common/kit/domUtils");
 var Const =		require("@/common/cfg/const");
 var uikit =		require("@/common/uikit/dialog");
 
@@ -8,7 +8,7 @@ var dialog;
 var showLoadingObj = {};
 
 var _init = _.once(function(){
-	var dom = utils.createElementFromHTML("<div class=\"wrapper\">" + LOADING + "</div>");
+	var dom = domUtils.createElementFromHTML("<div class=\"wrapper\">" + LOADING + "</div>");
 	dialog = uikit.createDialog({
 		contentDom: dom,
 		className: "loading"

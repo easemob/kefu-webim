@@ -2,8 +2,9 @@ var _const =	require("@/common/cfg/const");
 var profile =	require("@/common/cfg/profile");
 var kefuPath =	require("@/common/cfg/kefuPath");
 var utils =		require("@/common/kit/utils");
+var domUtils =	require("@/common/kit/domUtils");
 var apiHelper = require("@/common/kit/apiHelper");
-var List =		require("@/common/uikit/list");
+var List =		require("@/common/kit/list");
 
 var channel =	require("@/app/modules/chat/channel");
 var template =	require("@/../template/emojiPanel.html");
@@ -33,14 +34,14 @@ function init(option){
 
 	if(dom) throw new Error("emoji panel has already initialized.");
 
-	dom = utils.createElementFromHTML(template);
+	dom = domUtils.createElementFromHTML(template);
 	systemEmojiContainer = dom.querySelector(".emoji-container.system");
 
 	container.appendChild(dom);
 
-	utils.on(toggleButton, utils.click, function(){
+	utils.on(toggleButton, domUtils.CLICK, function(){
 		textInput.blur();
-		utils.toggleClass(dom, "hide");
+		domUtils.toggleClass(dom, "hide");
 
 		// 懒加载，打开表情面板时才初始化图标
 		if(!isEmojiLoaded){
@@ -51,7 +52,7 @@ function init(option){
 	});
 
 	// 表情的选中
-	utils.live("img.emoji", utils.click, function(ev){
+	utils.live("img.emoji", domUtils.CLICK, function(ev){
 		var event = window.event || ev;
 		var target = event.srcElement || event.target;
 		var type = target.getAttribute("data-type");
@@ -72,19 +73,19 @@ function init(option){
 		else{
 			!utils.isMobile && textInput.focus();
 			textInput.value += target.getAttribute("data-value");
-			utils.trigger(textInput, "change");
+			domUtils.trigger(textInput, "change");
 		}
 	}, dom);
 
 	// todo: kill .e-face to make it more elegant
 	// ie8 does not support stopPropagation -_-||
 	// 点击别处时隐藏表情面板
-	utils.on(document, utils.click, function(ev){
+	utils.on(document, domUtils.CLICK, function(ev){
 		var e = window.event || ev;
 		var target = e.srcElement || e.target;
 
-		if(!utils.hasClass(target, "e-face")){
-			utils.addClass(dom, "hide");
+		if(!domUtils.hasClass(target, "e-face")){
+			domUtils.addClass(dom, "hide");
 		}
 	});
 }
@@ -127,7 +128,7 @@ function _initCustomMagicEmoji(){
 		// 自定义表情仅创建空的 container，懒加载
 		_.each(customEmojiPackageHtmlList, function(){
 			var tmpHtml = "<div class=\"emoji-container magic hide\"></div>";
-			var tmpDom = utils.createElementFromHTML(tmpHtml);
+			var tmpDom = domUtils.createElementFromHTML(tmpHtml);
 
 			emojiPageContainer.appendChild(tmpDom);
 		});
@@ -190,19 +191,19 @@ function _initNavigator(packageList){
 
 	navigatorItemList = _.toArray(navigatorContainer.querySelectorAll(".navigator-item"));
 
-	utils.live(".navigator-item", utils.click, function(ev){
+	utils.live(".navigator-item", domUtils.CLICK, function(ev){
 		var event = window.event || ev;
 		var target = event.srcElement || event.target;
 		var targetIndex = +target.getAttribute("data-page-index");
 
-		utils.addClass(target, "selected");
+		domUtils.addClass(target, "selected");
 		_.each(emojiContainerList, function(elem, index){
 			var emojiContainer = elem;
 			var navigatorItem = navigatorItemList[index];
 			var isTargetElement = targetIndex === index;
 
-			utils.toggleClass(emojiContainer, "hide", !isTargetElement);
-			utils.toggleClass(navigatorItem, "selected", isTargetElement);
+			domUtils.toggleClass(emojiContainer, "hide", !isTargetElement);
+			domUtils.toggleClass(navigatorItem, "selected", isTargetElement);
 
 			// 自定义表情面板懒加载
 			if(
@@ -226,10 +227,10 @@ function _initNavigator(packageList){
 	}, 0);
 
 	// 选取第一个item
-	utils.addClass(navigatorContainer.querySelector(".navigator-item"), "selected");
+	domUtils.addClass(navigatorContainer.querySelector(".navigator-item"), "selected");
 
 	// 显示导航栏
-	utils.removeClass(navigatorWrapper, "hide");
+	domUtils.removeClass(navigatorWrapper, "hide");
 }
 
 function _initScroll(domList){
@@ -252,16 +253,16 @@ function _initScroll(domList){
 	if(sumOfAllContentWidth > containerWidth){
 		_updateScrollButtonStatus();
 
-		utils.on(scrollLeftButton, utils.click, _handleScrollButton);
-		utils.on(scrollRightButton, utils.click, _handleScrollButton);
+		utils.on(scrollLeftButton, domUtils.CLICK, _handleScrollButton);
+		utils.on(scrollRightButton, domUtils.CLICK, _handleScrollButton);
 	}
 
 	function _handleScrollButton(ev){
 		var event = window.event || ev;
 		var target = event.srcElement || event.target;
-		var isDisabled = utils.hasClass(target, "disabled");
-		var isLeftButton = utils.hasClass(target, "scroll-left");
-		var isRightButton = utils.hasClass(target, "scroll-right");
+		var isDisabled = domUtils.hasClass(target, "disabled");
+		var isLeftButton = domUtils.hasClass(target, "scroll-left");
+		var isRightButton = domUtils.hasClass(target, "scroll-right");
 
 		if(isDisabled) return;
 
@@ -299,8 +300,8 @@ function _initScroll(domList){
 		var currentLeftOffset = navigatorContainer.getBoundingClientRect().left
 			- navigatorWrapper.getBoundingClientRect().left;
 
-		utils.toggleClass(scrollLeftButton, "disabled", currentLeftOffset === 0);
-		utils.toggleClass(scrollRightButton, "disabled", (-currentLeftOffset + containerWidth) >= sumOfAllContentWidth);
+		domUtils.toggleClass(scrollLeftButton, "disabled", currentLeftOffset === 0);
+		domUtils.toggleClass(scrollRightButton, "disabled", (-currentLeftOffset + containerWidth) >= sumOfAllContentWidth);
 	}
 	function _getElementWidth(elem){
 		var domRect = elem.getBoundingClientRect();

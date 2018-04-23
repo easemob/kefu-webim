@@ -1,4 +1,5 @@
 var utils =			require("@/common/kit/utils");
+var domUtils =		require("@/common/kit/domUtils");
 var Dict =			require("@/common/kit/dict");
 var videoViewer =	require("@/app/modules/video/videoViewer");
 var MiniVideoWin =	require("@/app/modules/video/miniVideoWin");
@@ -31,12 +32,12 @@ function init(option){
 	});
 
 	dispatcher.addEventListener("switchToMiniVideoWindow", function(info){
-		utils.addClass(multiVideoContainer, "hide");
+		domUtils.addClass(multiVideoContainer, "hide");
 		videoViewer.show(info);
 	});
 
 	dispatcher.addEventListener("returnToMultiVideoWindow", function(){
-		utils.removeClass(multiVideoContainer, "hide");
+		domUtils.removeClass(multiVideoContainer, "hide");
 		videoViewer.hide();
 	});
 
@@ -44,11 +45,11 @@ function init(option){
 }
 
 function show(){
-	utils.removeClass(wrapperDom, "hide");
+	domUtils.removeClass(wrapperDom, "hide");
 }
 
 function hide(){
-	utils.addClass(wrapperDom, "hide");
+	domUtils.addClass(wrapperDom, "hide");
 	_reset();
 }
 
@@ -56,7 +57,7 @@ function _reset(){
 	videoWindowList = new Dict();
 	videoViewer.hide();
 	multiVideoContainer.innerHTML = "";
-	utils.removeClass(multiVideoContainer, "hide");
+	domUtils.removeClass(multiVideoContainer, "hide");
 }
 
 function addOrUpdateStream(stream){

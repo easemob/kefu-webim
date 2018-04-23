@@ -1,5 +1,6 @@
-var utils = require("@/common/kit/utils");
-var Const = require("@/common/cfg/const");
+var utils =		require("@/common/kit/utils");
+var domUtils =	require("@/common/kit/domUtils");
+var Const =		require("@/common/cfg/const");
 var independentVideoWindow = require("@/../html/independentVideoWindow.html");
 
 // adapter.js 会劫持这个 api，为了达到预期效果，事先保存
@@ -55,7 +56,7 @@ function init(option){
 			new Blob([independentVideoWindow], { type: "text/html" })
 		);
 
-		utils.removeClass(navigateToNewWindowButtonDom, "hide");
+		domUtils.removeClass(navigateToNewWindowButtonDom, "hide");
 		utils.on(navigateToNewWindowButtonDom, "click", _navigateToNewWindow);
 	}
 
@@ -102,21 +103,21 @@ function _updateButtonStatus(){
 	var isMicroPhoneDisabled;
 	var isCameraDisabled;
 
-	utils.toggleClass(navigateToNewWindowButtonDom, "icon-maximize-window", !isMaximized);
-	utils.toggleClass(navigateToNewWindowButtonDom, "icon-minimize-window", isMaximized);
+	domUtils.toggleClass(navigateToNewWindowButtonDom, "icon-maximize-window", !isMaximized);
+	domUtils.toggleClass(navigateToNewWindowButtonDom, "icon-minimize-window", isMaximized);
 
-	utils.toggleClass(toggleMicroPhoneButtonDom, "hide", !isLocal);
-	utils.toggleClass(toggleCameraButtonDom, "hide", !isLocal);
+	domUtils.toggleClass(toggleMicroPhoneButtonDom, "hide", !isLocal);
+	domUtils.toggleClass(toggleCameraButtonDom, "hide", !isLocal);
 
 	if(isLocal){
 		isMicroPhoneDisabled = !!currentStream.aoff;
 		isCameraDisabled = !!currentStream.voff;
 
-		utils.toggleClass(toggleMicroPhoneButtonDom, "icon-microphone", !isMicroPhoneDisabled);
-		utils.toggleClass(toggleMicroPhoneButtonDom, "icon-disable-microphone", isMicroPhoneDisabled);
+		domUtils.toggleClass(toggleMicroPhoneButtonDom, "icon-microphone", !isMicroPhoneDisabled);
+		domUtils.toggleClass(toggleMicroPhoneButtonDom, "icon-disable-microphone", isMicroPhoneDisabled);
 
-		utils.toggleClass(toggleCameraButtonDom, "icon-camera", !isCameraDisabled);
-		utils.toggleClass(toggleCameraButtonDom, "icon-disable-camera", isCameraDisabled);
+		domUtils.toggleClass(toggleCameraButtonDom, "icon-camera", !isCameraDisabled);
+		domUtils.toggleClass(toggleCameraButtonDom, "icon-disable-camera", isCameraDisabled);
 	}
 }
 
@@ -153,19 +154,19 @@ function show(info){
 	nicknameDom.innerText = "";
 	currentNoAudioStream = null;
 	noAudioVideoDom.src = "";
-	utils.removeClass(videoDom, "hide");
-	utils.addClass(noAudioVideoDom, "hide");
+	domUtils.removeClass(videoDom, "hide");
+	domUtils.addClass(noAudioVideoDom, "hide");
 
 	currentOwnerName = info.ownerName;
 	_.each(info.streams, _addOrUpdateStream);
-	utils.removeClass(wrapperDom, "hide");
+	domUtils.removeClass(wrapperDom, "hide");
 }
 
 function hide(){
 	currentOwnerName = null;
 	_closeSubWindow();
 	_updateButtonStatus();
-	utils.addClass(wrapperDom, "hide");
+	domUtils.addClass(wrapperDom, "hide");
 }
 
 function _addOrUpdateStream(stream){
@@ -190,8 +191,8 @@ function _addOrUpdateStream(stream){
 	case Const.STREAM_TYPE.NO_AUDIO:
 		currentNoAudioStream = stream;
 		noAudioVideoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
-		utils.addClass(videoDom, "hide");
-		utils.removeClass(noAudioVideoDom, "hide");
+		domUtils.addClass(videoDom, "hide");
+		domUtils.removeClass(noAudioVideoDom, "hide");
 		break;
 	default:
 		throw new Error("unexpected stream type.");
@@ -209,8 +210,8 @@ function _removeStream(stream){
 	case Const.STREAM_TYPE.NO_AUDIO:
 		currentNoAudioStream = null;
 		noAudioVideoDom.src = "";
-		utils.removeClass(videoDom, "hide");
-		utils.addClass(noAudioVideoDom, "hide");
+		domUtils.removeClass(videoDom, "hide");
+		domUtils.addClass(noAudioVideoDom, "hide");
 		break;
 	default:
 		throw new Error("unexpected stream type.");

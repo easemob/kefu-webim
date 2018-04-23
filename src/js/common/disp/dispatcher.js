@@ -1,5 +1,5 @@
 var Dict = require("@/common/kit/dict");
-var List = require("@/common/uikit/list");
+var List = require("@/common/kit/list");
 
 var Dispatecher = module.exports = function(){
 	this.eventCallbackDict = new Dict();

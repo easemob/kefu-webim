@@ -1,6 +1,7 @@
 var Const =			require("@/common/cfg/const");
 var profile =		require("@/common/cfg/profile");
 var utils =			require("@/common/kit/utils");
+var domUtils =		require("@/common/kit/domUtils");
 var apiHelper =		require("@/common/kit/apiHelper");
 var uikit =			require("@/common/uikit/dialog");
 var loading =		require("@/common/uikit/loading");
@@ -30,7 +31,7 @@ module.exports = {
 function _init(){
 	loading.show("satisfaction");
 	apiHelper.getSatisfactionTipWord().then(function(tipWord){
-		dom = utils.createElementFromHTML([
+		dom = domUtils.createElementFromHTML([
 			"<div class=\"wrapper\">",
 			"<span class=\"title\">" + tipWord + "</span>",
 			"<ul></ul>",
@@ -49,14 +50,14 @@ function _init(){
 			score = this.getAttribute("data-score");
 
 			level && _.each(starList, function(elem, i){
-				utils.toggleClass(elem, "sel", i < level);
+				domUtils.toggleClass(elem, "sel", i < level);
 			});
 
 			evaluationDegreeId && _createLabel(evaluationDegreeId);
 		}, starsUl);
 
 		utils.live("span.tag", "click", function(){
-			utils.toggleClass(this, "selected");
+			domUtils.toggleClass(this, "selected");
 		}, tagContainer);
 
 		dialog = uikit.createDialog({
@@ -76,7 +77,7 @@ function _clear(){
 	commentDom.value = "";
 	score = null;
 	// clear stars
-	utils.removeClass(starList, "sel");
+	domUtils.removeClass(starList, "sel");
 	// clear label
 	tagContainer.innerHTML = "";
 }
@@ -132,7 +133,7 @@ function _createLabel(evaluateId){
 
 			return "<span data-label-id = \"" + id + "\" class=\"tag\">" + name + "</span>";
 		}).join("");
-		utils.removeClass(tagContainer, "hide");
+		domUtils.removeClass(tagContainer, "hide");
 	});
 }
 

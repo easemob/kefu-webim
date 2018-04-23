@@ -9,7 +9,6 @@ if [ $TRAVIS_TAG ] && [ "$TRAVIS_TAG"x != ""x ]; then
 		# nexus
 		echo ''
 		echo '[is a tag] start packing'
-		npm config set registry https://registry.npm.taobao.org
 
 		npm install
 		TRAVIS=true TAG_NAME=$TRAVIS_TAG npm run build:all || exit 1

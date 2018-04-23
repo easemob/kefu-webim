@@ -1,6 +1,7 @@
 var Const =			require("@/common/cfg/const");
 var profile =		require("@/common/cfg/profile");
 var utils =			require("@/common/kit/utils");
+var domUtils =		require("@/common/kit/domUtils");
 var apiHelper =		require("@/common/kit/apiHelper");
 var eventListener =	require("@/common/disp/eventListener");
 
@@ -11,7 +12,7 @@ var tpl =			require("@/../template/chatContainer.html");
 module.exports = function(opt){
 	var officialAccount = opt.officialAccount;
 	var parentContainer = opt.parentContainer;
-	var el = utils.createElementFromHTML(_.template(tpl)({
+	var el = domUtils.createElementFromHTML(_.template(tpl)({
 		msg_in_loading: __("common.loading"),
 		no_more_msg: __("common.no_more_msg"),
 	}));
@@ -66,7 +67,7 @@ module.exports = function(opt){
 	function _appendEventMsg(msg){
 		_appendDate();
 		// todo: xss defence
-		utils.appendHTMLTo(el, [
+		domUtils.appendHTMLTo(el, [
 			"<div class=\"em-widget-event\">",
 			"<span>" + msg + "</span>",
 			"</div>"
@@ -108,7 +109,7 @@ module.exports = function(opt){
 	}
 
 	function _appendDate(timestamp, isHistory){
-		var dom = utils.createElementFromHTML([
+		var dom = domUtils.createElementFromHTML([
 			"<div class=\"em-widget-date\">",
 			"<span>" + utils.formatDate(timestamp) + "</span>",
 			"</div>"
@@ -131,7 +132,7 @@ module.exports = function(opt){
 
 	function _getHistory(callback){
 		if(noMoreHistoryMessage) return;
-		utils.removeClass(loadingMore, "hide");
+		domUtils.removeClass(loadingMore, "hide");
 		apiHelper.getOfficalAccountMessage(
 			officialAccount.official_account_id,
 			currHistoryMsgSeqId
@@ -139,10 +140,10 @@ module.exports = function(opt){
 			var length = msgList.length;
 			var earliestMsg = msgList[length - 1] || {};
 			var nextMsgSeq = earliestMsg.id;
-			utils.addClass(loadingMore, "hide");
+			domUtils.addClass(loadingMore, "hide");
 			currHistoryMsgSeqId = nextMsgSeq;
 			noMoreHistoryMessage = length < Const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME || nextMsgSeq <= 0;
-			noMoreHistoryMessage && utils.removeClass(noMoreMsg, "hide");
+			noMoreHistoryMessage && domUtils.removeClass(noMoreMsg, "hide");
 			_.each(msgList, channel.handleHistoryMsg);
 			typeof callback === "function" && callback();
 		});
@@ -191,10 +192,10 @@ module.exports = function(opt){
 	}
 
 	function _hide(){
-		utils.addClass(el, "hide");
+		domUtils.addClass(el, "hide");
 	}
 
 	function _show(){
-		utils.removeClass(el, "hide");
+		domUtils.removeClass(el, "hide");
 	}
 };

@@ -4,6 +4,7 @@ require("@/common/cfg/webim.config");
 require("@/../scss/im.scss");
 
 var utils =		require("@/common/kit/utils");
+var domUtils =	require("@/common/kit/domUtils");
 var Const =		require("@/common/cfg/const");
 var kefuPath =	require("@/common/cfg/kefuPath");
 var profile =	require("@/common/cfg/profile");
@@ -37,7 +38,7 @@ utils.on(window, "message", function(e){
 });
 
 function load_html(){
-	utils.appendHTMLToBody(_.template(body_template)({
+	domUtils.appendHTMLToBody(_.template(body_template)({
 		contact_agent: __("common.contact_agent"),
 		close: __("common.close"),
 		video_ended: __("video.video_ended"),
@@ -167,7 +168,7 @@ function chat_window_mode_init(){
 		}
 	}, ["easemob"]);
 
-	utils.removeClass($contactAgentBtn, "hide");
+	domUtils.removeClass($contactAgentBtn, "hide");
 	utils.on($contactAgentBtn, "click", function(){
 		transfer.send({ event: Const.EVENTS.SHOW });
 	});
@@ -233,7 +234,7 @@ function initChat(){
 
 	apiHelper.getTheme().then(function(themeName){
 		var className = Const.themeMap[themeName];
-		className && utils.addClass(document.body, className);
+		className && domUtils.addClass(document.body, className);
 	});
 }
 
@@ -495,7 +496,7 @@ function initChatEntry(targetUserInfo){
 	}, function(err){
 		if(err.statusCode === 503){
 			uikit.createDialog({
-				contentDom: utils.createElementFromHTML([
+				contentDom: domUtils.createElementFromHTML([
 					"<div class=\"wrapper\">",
 					"<span class=\"icon-waiting\"></span>",
 					"<p class=\"tip-word\">" +  __("common.session_over_limit") + "</p>",

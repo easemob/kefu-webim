@@ -1,6 +1,7 @@
 var Const =			require("@/common/cfg/const");
 var profile =		require("@/common/cfg/profile");
 var utils =			require("@/common/kit/utils");
+var domUtils =		require("@/common/kit/domUtils");
 var apiHelper =		require("@/common/kit/apiHelper");
 var eventListener =	require("@/common/disp/eventListener");
 var channel =		require("@/app/modules/chat/channel");
@@ -37,18 +38,18 @@ function _displayOrHideTransferToKefuBtn(officialAccount){
 
 	if(type === "CUSTOM"){
 		// 营销号一律不显示转人工按钮
-		utils.addClass(toKefuBtn, "hide");
+		domUtils.addClass(toKefuBtn, "hide");
 	}
 	else if(state === Const.SESSION_STATE.PROCESSING){
-		utils.toggleClass(toKefuBtn, "hide", !isRobotAgent);
+		domUtils.toggleClass(toKefuBtn, "hide", !isRobotAgent);
 	}
 	else if(state === Const.SESSION_STATE.WAIT){
 		// 待接入状态 隐藏按钮
-		utils.addClass(toKefuBtn, "hide");
+		domUtils.addClass(toKefuBtn, "hide");
 	}
 	else{
 		apiHelper.getRobertIsOpen().then(function(isRobotEnable){
-			utils.toggleClass(toKefuBtn, "hide", !isRobotEnable);
+			domUtils.toggleClass(toKefuBtn, "hide", !isRobotEnable);
 		});
 	}
 }

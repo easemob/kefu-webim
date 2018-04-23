@@ -1,10 +1,11 @@
-var utils = require("@/common/kit/utils");
+var utils =		require("@/common/kit/utils");
+var domUtils =	require("@/common/kit/domUtils");
 var isInitialized = false;
 var imgWrapper;
 var imgDom;
 
 function _init(){
-	imgWrapper = utils.appendHTMLToBody([
+	imgWrapper = domUtils.appendHTMLToBody([
 		"<div class=\"easemobim-pc-img-view\">",
 		// IE8 透明度有问题，需加一层shadow解决
 		"<div class=\"shadow\"></div>",

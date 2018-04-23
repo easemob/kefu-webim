@@ -1,4 +1,5 @@
-var utils = require("@/common/kit/utils");
+var utils =		require("@/common/kit/utils");
+var domUtils =	require("@/common/kit/domUtils");
 
 var EMPTY_FUNCTION = function(){};
 var promptDom;
@@ -44,7 +45,7 @@ function _bindEvents(){
 }
 
 function _hide(){
-	utils.addClass(promptDom, "hide");
+	domUtils.addClass(promptDom, "hide");
 }
 
 function _replyCallback(){
@@ -64,7 +65,7 @@ function _render(options){
 	var content = opt.content || "";
 	var className = opt.className || "";
 
-	return utils.createElementFromHTML([
+	return domUtils.createElementFromHTML([
 		"<div class=\"em-dialog " + className + "\">",
 		"<span class=\"indicator bg-border-bottom-color\"></span>",
 		"<div class=\"bg-color header\">",

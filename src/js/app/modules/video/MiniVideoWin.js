@@ -1,4 +1,5 @@
 var utils =		require("@/common/kit/utils");
+var domUtils =	require("@/common/kit/domUtils");
 var Const =		require("@/common/cfg/const");
 
 var template = _.template([
@@ -29,12 +30,12 @@ module.exports = MiniVideoWin = function(option){
 	this.eventHandler2 = function(e){
 		me.videoDom && me.videoDom.play();
 		me.noAudioVideoDom && me.noAudioVideoDom.play();
-		utils.addClass(me.playButtonDom, "hide");
+		domUtils.addClass(me.playButtonDom, "hide");
 		e.stopPropagation();
 	};
 
 	// 本地视频需要 muted
-	this.dom = utils.createElementFromHTML(template({
+	this.dom = domUtils.createElementFromHTML(template({
 		muted: isLocalStream ? "muted" : ""
 	}));
 	this.nicknameDom = this.dom.querySelector(".nickname");
@@ -76,8 +77,8 @@ MiniVideoWin.prototype.removeStream = function(stream){
 	case Const.STREAM_TYPE.NO_AUDIO:
 		this.noAudioStream = null;
 		this.noAudioVideoDom.src = "";
-		utils.removeClass(this.videoDom, "hide");
-		utils.addClass(this.noAudioVideoDom, "hide");
+		domUtils.removeClass(this.videoDom, "hide");
+		domUtils.addClass(this.noAudioVideoDom, "hide");
 		break;
 	default:
 		throw new Error("unexpected stream type.");
@@ -101,8 +102,8 @@ MiniVideoWin.prototype.updateStream = function(stream){
 	case Const.STREAM_TYPE.NO_AUDIO:
 		this.noAudioStream = stream;
 		this.noAudioVideoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
-		utils.addClass(this.videoDom, "hide");
-		utils.removeClass(this.noAudioVideoDom, "hide");
+		domUtils.addClass(this.videoDom, "hide");
+		domUtils.removeClass(this.noAudioVideoDom, "hide");
 		break;
 	default:
 		throw new Error("unexpected stream type.");
@@ -115,6 +116,6 @@ MiniVideoWin.prototype.updateStream = function(stream){
 		// 别人的共享桌面也要显示按钮
 		|| (this.noAudioStream && this.noAudioStream.paused)
 	)){
-		utils.removeClass(this.playButtonDom, "hide");
+		domUtils.removeClass(this.playButtonDom, "hide");
 	}
 };

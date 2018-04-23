@@ -1,4 +1,5 @@
-var utils = require("@/common/kit/utils");
+var utils =		require("@/common/kit/utils");
+var domUtils =	require("@/common/kit/domUtils");
 
 var Selector = function(opt){
 	opt = opt || {};
@@ -8,7 +9,7 @@ var Selector = function(opt){
 	this.list = opt.list || [];
 	if(!this.containerDom) throw new Error("Invalid containerDom.");
 
-	this.selectDom = utils.createElementFromHTML("<div class=\"em-select " + this.selectClassName + "\"><label class=\"em-select-desc\"></label><span class=\"icon-arrow-up-down em-select-icon\"></span></div>");
+	this.selectDom = domUtils.createElementFromHTML("<div class=\"em-select " + this.selectClassName + "\"><label class=\"em-select-desc\"></label><span class=\"icon-arrow-up-down em-select-icon\"></span></div>");
 
 	this.containerDom.appendChild(this.selectDom);
 
@@ -22,7 +23,7 @@ Selector.prototype.updateList = function(opt){
 
 	this.list = opt.list || [];
 	this.unbindEvents();
-	utils.removeDom(this.popuplist);
+	domUtils.removeDom(this.popuplist);
 	this.popuplist = this._createList();
 	!_.isEmpty(this.list) && this.setSelectedByIndex(opt.selected);
 	document.body.appendChild(this.popuplist);
@@ -46,7 +47,7 @@ Selector.prototype._bindEvents = function(){
 
 	// 点击下拉框头部 展示下拉框
 	utils.on(me.selectDom, "click", this.showList = function(){
-		utils.removeClass(me.popuplist, "hide");
+		domUtils.removeClass(me.popuplist, "hide");
 		me._setOffset();
 	});
 
@@ -55,8 +56,8 @@ Selector.prototype._bindEvents = function(){
 		var e = window.event || ev;
 		var target = e.srcElement || e.target;
 		// if (utils.isMobile) return;
-		if(!utils.hasClass(target, "em-select") && !utils.hasClass(target.parentNode, "em-select")){
-			utils.addClass(me.popuplist, "hide");
+		if(!domUtils.hasClass(target, "em-select") && !domUtils.hasClass(target.parentNode, "em-select")){
+			domUtils.addClass(me.popuplist, "hide");
 		}
 	});
 };
@@ -91,7 +92,7 @@ Selector.prototype._createList = function(){
 		return "<li class=\"itm-select\" data-sign=\"" + item.sign + "\">" + item.desc + "</li>";
 	})).join("");
 	options += "</ul>";
-	return utils.createElementFromHTML(options);
+	return domUtils.createElementFromHTML(options);
 };
 Selector.prototype.unbindEvents = function(){
 

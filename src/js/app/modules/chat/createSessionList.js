@@ -1,5 +1,6 @@
 var profile =	require("@/common/cfg/profile");
 var utils =		require("@/common/kit/utils");
+var domUtils =	require("@/common/kit/domUtils");
 var Dict =		require("@/common/kit/dict");
 var uikit =		require("@/common/uikit/dialog");
 
@@ -50,15 +51,15 @@ function _updateUnreadCount(itemId, unreadCount){
 	var unreadCountDom = itemDom.querySelector(".unread-count");
 
 	if(!unreadCount || typeof unreadCount !== "number"){
-		utils.addClass(unreadCountDom, "hide");
+		domUtils.addClass(unreadCountDom, "hide");
 	}
 	else if(unreadCount > 99){
 		unreadCountDom.innerText = "...";
-		utils.removeClass(unreadCountDom, "hide");
+		domUtils.removeClass(unreadCountDom, "hide");
 	}
 	else{
 		unreadCountDom.innerText = unreadCount;
-		utils.removeClass(unreadCountDom, "hide");
+		domUtils.removeClass(unreadCountDom, "hide");
 	}
 }
 
@@ -85,7 +86,7 @@ function _renderItem(item){
 	// 这个会 block 我们的 dev 服务器
 	/0/.test(item.img) && (item.img = "");
 	var avatar = item.img || profile.defaultAvatar;
-	return utils.createElementFromHTML([
+	return domUtils.createElementFromHTML([
 		"<li class=\"session-item\" data-id=\"" + id + "\">",
 		"<img class=\"avatar\" src=\"" + avatar + "\">",
 		"<span class=\"name\">" + name + "</span>",

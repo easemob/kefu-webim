@@ -52,7 +52,7 @@ if(
 reset();
 function reset(){
 	config = utils.copy(DEFAULT_CONFIG);
-	utils.extend(config, easemobim.config);
+	utils.copy(config, easemobim.config);
 	_config = utils.copy(config);
 
 	var hide = utils.convertFalse(_config.hide) !== "" ? _config.hide : scriptConfig.json.hide;
@@ -141,7 +141,7 @@ easemobim.bind = function(config){
 	else{
 		utils.isMobile && loading.show();
 		reset();
-		utils.extend(_config, config);
+		utils.copy(_config, config);
 
 		if(!_config.tenantId && !_config.configId){
 			console.error("No tenantId is specified.");

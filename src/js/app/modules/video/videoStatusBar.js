@@ -1,4 +1,5 @@
 var utils =			require("@/common/kit/utils");
+var domUtils =		require("@/common/kit/domUtils");
 var TimerLabel =	require("@/common/uikit/timerLabel");
 
 var wrapperDom;
@@ -57,7 +58,7 @@ function setStatusText(text){
 }
 
 function toggleCollapse(state){
-	utils.toggleClass(wrapperDom, "collapsed", state);
+	domUtils.toggleClass(wrapperDom, "collapsed", state);
 }
 
 function startTimer(){
@@ -65,17 +66,17 @@ function startTimer(){
 }
 
 function show(){
-	utils.removeClass(wrapperDom, "hide");
+	domUtils.removeClass(wrapperDom, "hide");
 	startTimer();
 }
 
 function hide(){
-	utils.addClass(wrapperDom, "hide");
+	domUtils.addClass(wrapperDom, "hide");
 }
 
 function showClosing(){
 	toggleCollapse(true);
-	utils.addClass(wrapperDom, "terminated");
+	domUtils.addClass(wrapperDom, "terminated");
 	setStatusText(__("video.video_ended"));
 
 	timerLabel.stop();
@@ -89,13 +90,13 @@ function showClosing(){
 
 function reset(){
 	toggleCollapse(false);
-	utils.removeClass(wrapperDom, "terminated");
-	utils.removeClass(acceptButtonDom, "hide");
+	domUtils.removeClass(wrapperDom, "terminated");
+	domUtils.removeClass(acceptButtonDom, "hide");
 	showClosingTimerHandler = clearTimeout(showClosingTimerHandler);
 	timerLabel.stop();
 	setStatusText(__("video.waiting"));
 }
 
 function hideAcceptButton(){
-	utils.addClass(acceptButtonDom, "hide");
+	domUtils.addClass(acceptButtonDom, "hide");
 }
