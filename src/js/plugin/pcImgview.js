@@ -1,37 +1,37 @@
-var utils =		require("@/common/kit/utils");
-var domUtils =	require("@/common/kit/domUtils");
-var isInitialized = false;
-var imgWrapper;
-var imgDom;
+var classUtils =	require("@/common/kit/classUtils");
+var domUtils =		require("@/common/kit/domUtils");
+var tpl =			require("./template/pcImgTpl.html");
 
-function _init(){
-	imgWrapper = domUtils.appendHTMLToBody([
-		"<div class=\"easemobim-pc-img-view\">",
-		// IE8 透明度有问题，需加一层shadow解决
-		"<div class=\"shadow\"></div>",
-		"<img>",
-		"</div>"
-	].join(""));
-	imgDom = imgWrapper.querySelector("img");
+var ins;
+var ImgView = classUtils.createView({
+	imgDom: null,
+	events: {
+		"click ":	"onClick",
+	},
 
-	utils.on(imgWrapper, "click", function(){
-		imgWrapper.style.display = "none";
-	}, false);
-}
+	init: function(){
+		this.$el = domUtils.appendHTMLToBody(_.template(tpl));
+		this.imgDom = this.$el.querySelector("img");
+	},
+
+	onClick: function(){
+		this.$el.style.display = "none";
+	},
+
+	setSrc: function(url){
+		this.imgDom.src = url;
+	},
+
+	show: function(){
+		ins.$el.style.display = "block";
+	},
+});
 
 module.exports = function(imgData){
 	var imgFile = imgData.imgFile;
-
-	if(!isInitialized){
-		_init();
-		isInitialized = true;
-	}
-
-	if(imgFile){
-		imgDom.src = window.URL.createObjectURL(imgFile);
-	}
-	else{
-		imgDom.src = imgData.imgSrc;
-	}
-	imgWrapper.style.display = "block";
+	ins = ins || new ImgView();
+	imgFile
+		? ins.setSrc(window.URL.createObjectURL(imgFile))
+		: ins.setSrc(imgData.imgSrc);
+	ins.show();
 };

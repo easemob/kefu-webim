@@ -1,73 +1,7 @@
-var utils =		require("@/common/kit/utils");
-var domUtils =	require("@/common/kit/domUtils");
-
-var Selector = function(opt){
-	opt = opt || {};
-	this.selectClassName = opt.selectClassName || "";
-	this.popuplistClassName = opt.popuplistClassName || "";
-	this.containerDom = opt.container;
-	this.list = opt.list || [];
-	if(!this.containerDom) throw new Error("Invalid containerDom.");
-
-	this.selectDom = domUtils.createElementFromHTML("<div class=\"em-select " + this.selectClassName + "\"><label class=\"em-select-desc\"></label><span class=\"icon-arrow-up-down em-select-icon\"></span></div>");
-
-	this.containerDom.appendChild(this.selectDom);
-
-	this.popuplist = this._createList();
-	document.body.appendChild(this.popuplist);
-
-	this._bindEvents();
-	!_.isEmpty(this.list) && this.setSelectedByIndex(opt.selected);
-};
-Selector.prototype.updateList = function(opt){
-
-	this.list = opt.list || [];
-	this.unbindEvents();
-	domUtils.removeDom(this.popuplist);
-	this.popuplist = this._createList();
-	!_.isEmpty(this.list) && this.setSelectedByIndex(opt.selected);
-	document.body.appendChild(this.popuplist);
-	this._bindEvents();
-};
-Selector.prototype.getSelectedValue = function(){
-	return this.selected || "";
-};
-Selector.prototype.setSelectedByIndex = function(index){
-	index = index || 0;
-	this.selected = this.list[index].sign;
-	this.selectDom.querySelector(".em-select-desc").innerText = this.list[index].desc;
-};
-Selector.prototype._bindEvents = function(){
-	var me = this;
-	// 选中itm-select
-	utils.live("li.itm-select", "click", this.select = function(){
-		me.selected = this.getAttribute("data-sign");
-		me.selectDom.querySelector(".em-select-desc").innerText = this.innerText;
-	}, me.popuplist);
-
-	// 点击下拉框头部 展示下拉框
-	utils.on(me.selectDom, "click", this.showList = function(){
-		domUtils.removeClass(me.popuplist, "hide");
-		me._setOffset();
-	});
-
-	// 点击别处及选项时隐藏列表
-	utils.on(document, "click", this.hideList = function(ev){
-		var e = window.event || ev;
-		var target = e.srcElement || e.target;
-		// if (utils.isMobile) return;
-		if(!domUtils.hasClass(target, "em-select") && !domUtils.hasClass(target.parentNode, "em-select")){
-			domUtils.addClass(me.popuplist, "hide");
-		}
-	});
-};
-
-Selector.prototype._setOffset = function(){
-	var	containerOffset = _getOffset(this.containerDom);
-	this.popuplist.style.top = containerOffset.top + 1 + "px";
-	this.popuplist.style.left =  containerOffset.left + 1 + "px";
-	this.popuplist.style.width = containerOffset.width + "px";
-};
+var domUtils =		require("@/common/kit/domUtils");
+var classUtils =	require("@/common/kit/classUtils");
+var PopupList =		require("./popupList");
+var tpl =			require("./template/selectorTpl.html");
 
 function _getOffset(dom){
 	var offsetT = 0;
@@ -86,20 +20,55 @@ function _getOffset(dom){
 	};
 }
 
-Selector.prototype._createList = function(){
-	var options = "<ul class=\"em-popuplist hide " + this.popuplistClassName + "\">";
-	options += (_.map(this.list, function(item){
-		return "<li class=\"itm-select\" data-sign=\"" + item.sign + "\">" + item.desc + "</li>";
-	})).join("");
-	options += "</ul>";
-	return domUtils.createElementFromHTML(options);
-};
-Selector.prototype.unbindEvents = function(){
+// tpl
+// evt
+module.exports = classUtils.createView({
 
-	// 解绑点击下拉框头部 展示下拉框
-	utils.off(this.selectDom, "click", this.showList);
+	containerDom: null,
+	popuplist: null,
 
-	// 解绑点击别处及选项时隐藏列表
-	utils.off(document, "click", this.hideList);
-};
-module.exports = Selector;
+	events: {
+		"click ":	"showList",
+	},
+
+	init: function(opt){
+		opt = opt || {};
+		this.containerDom = opt.container;
+		if(!this.containerDom) throw new Error("Invalid containerDom.");
+
+		this.$el = domUtils.createElementFromHTML(_.template(tpl, {
+			selectClassName: opt.selectClassName || ""
+		}));
+		this.containerDom.appendChild(this.$el);
+		this.updateList(opt);
+	},
+
+	updateList: function(opt){
+		var selectIdx = opt.selected || 0;
+		this.popuplist && this.popuplist.remove();
+		this.popuplist = new PopupList({
+			popuplistClassName: opt.popuplistClassName || "",
+			list: opt.list,
+			reportSelect: this.onSelect.bind(this)
+		});
+		this.popupList.setSelectedByIndex(selectIdx);
+	},
+
+	onSelect: function(selected){
+		this.$el.querySelector(".em-select-desc").innerText = selected.desc;
+	},
+
+	getSelectedValue: function(){
+		return this.popupList.getSelected();
+	},
+
+	showList: function(){
+		var	containerOffset = _getOffset(this.containerDom);
+		this.popupList.show({
+			top: containerOffset.top + 1 + "px",
+			left: containerOffset.left + 1 + "px",
+			width: containerOffset.width + "px"
+		});
+	},
+
+});

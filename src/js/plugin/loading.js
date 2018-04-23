@@ -1,28 +1,30 @@
-var domUtils =	require("@/common/kit/domUtils");
-var Const =		require("@/common/cfg/const");
+var domUtils =		require("@/common/kit/domUtils");
+var classUtils =	require("@/common/kit/classUtils");
+var Const =			require("@/common/cfg/const");
+var tpl =			require("./template/loadingTpl.html");
 
-var loadingDom;
-var loadingHtml = [
-	"<div class=\"easemobim-prompt-wrapper\">",
-	"<div class=\"loading\">",
-	Const.loadingSvg,
-	"</div>",
-	"</div>"
-].join("");
-
-function init(){
-	loadingDom = loadingDom
-		? loadingDom
-		: domUtils.appendHTMLToBody(loadingHtml);
-}
+var ins;
+var Loading = classUtils.createView({
+	init: function(){
+		this.$el = domUtils.appendHTMLToBody(_.template(tpl)({
+			loadingSvg: Const.loadingSvg,
+		}));
+	},
+	show: function(){
+		this.$el.style.display = "block";
+	},
+	hide: function(){
+		this.$el.style.display = "none";
+	}
+});
 
 module.exports = {
 	show: function(){
-		init();
-		loadingDom.style.display = "block";
+		ins = ins || new Loading();
+		ins.show();
 	},
 	hide: function(){
-		init();
-		loadingDom.style.display = "none";
+		ins = ins || new Loading();
+		ins.hide();
 	}
 };

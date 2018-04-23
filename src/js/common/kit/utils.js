@@ -8,6 +8,9 @@ module.exports = {
 	isIOS: /(iPad|iPhone|iPod)/i.test(navigator.userAgent),
 	isSafari: /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent),
 	isMobile: _isMobile,
+	noop: function(){
+
+	},
 	isBrowserMinimized: function(){
 		return document.visibilityState === "hidden" || document.hidden;
 	},
