@@ -8,7 +8,7 @@ var domUtils =	require("@/common/kit/domUtils");
 var Const =		require("@/common/cfg/const");
 var kefuPath =	require("@/common/cfg/kefuPath");
 var profile =	require("@/common/cfg/profile");
-var Transfer =	require("@/common/disp/transfer");
+var getToHost =	require("@/app/misc/appTransfer");
 
 var Dialog =	require("@/common/uikit/dialog");
 var tips =		require("@/common/uikit/tips");
@@ -118,7 +118,7 @@ function h5_mode_init(){
 // iframe 加载 im.html 模式
 function chat_window_mode_init(){
 	var $contactAgentBtn = document.getElementById("em-widgetPopBar");
-	window.transfer = new Transfer(null, "main", true).listen(function(msg){
+	getToHost().listen(function(msg){
 		var event = msg.event;
 		var data = msg.data;
 		var extendMessage;
@@ -159,7 +159,7 @@ function chat_window_mode_init(){
 			profile.currentBrowsingURL = data;
 			break;
 		case Const.EVENTS.INIT_CONFIG:
-			window.transfer.to = data.parentId;
+			getToHost().to = data.parentId;
 			config = data;
 			profile.config = config;
 			initCrossOriginIframe();
@@ -167,11 +167,12 @@ function chat_window_mode_init(){
 		default:
 			break;
 		}
-	}, ["easemob"]);
+		// from host
+	}, ["down2Im"]);
 
 	domUtils.removeClass($contactAgentBtn, "hide");
 	utils.on($contactAgentBtn, "click", function(){
-		transfer.send({ event: Const.EVENTS.SHOW });
+		getToHost().send({ event: Const.EVENTS.SHOW });
 	});
 }
 
@@ -340,7 +341,7 @@ function handleConfig(configJson){
 
 
 	// 重新去设置iframe 的宽高
-	transfer.send({
+	getToHost().send({
 		event: Const.EVENTS.RESET_IFRAME,
 		data: {
 			dialogHeight: config.dialogHeight,
@@ -424,8 +425,8 @@ function initChatEntry(targetUserInfo){
 
 				chat.init();
 				chat.show();
-				transfer.send({ event: Const.EVENTS.SHOW });
-				transfer.send({
+				getToHost().send({ event: Const.EVENTS.SHOW });
+				getToHost().send({
 					event: Const.EVENTS.CACHEUSER,
 					data: {
 						username: targetUserInfo.userName,
@@ -440,7 +441,7 @@ function initChatEntry(targetUserInfo){
 				profile.commandMessageToBeSendList.push({ ext: { weichat: { agentUsername: targetUserInfo.agentUserName } } });
 				chat.init();
 				chat.show();
-				transfer.send({ event: Const.EVENTS.SHOW });
+				getToHost().send({ event: Const.EVENTS.SHOW });
 			}
 			else{
 				apiHelper.getPassword().then(function(password){
@@ -448,7 +449,7 @@ function initChatEntry(targetUserInfo){
 
 					chat.init();
 					chat.show();
-					transfer.send({ event: Const.EVENTS.SHOW });
+					getToHost().send({ event: Const.EVENTS.SHOW });
 				}, function(err){
 					console.error("username is not exist.");
 					throw err;
@@ -531,7 +532,7 @@ function _createVisitor(username){
 			utils.set("root" + (config.configId || (config.tenantId + config.emgroup)), config.user.username);
 		}
 		else{
-			transfer.send({
+			getToHost().send({
 				event: Const.EVENTS.CACHEUSER,
 				data: {
 					key: cacheKeyName,

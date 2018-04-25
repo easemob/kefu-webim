@@ -14,12 +14,12 @@ var cache = {
 	appraiseTags: {}
 };
 var cachedApiCallbackTable = {};
-var apiTransfer;
+var toProxy;
 
 function initApiTransfer(){
-	apiTransfer = new Transfer("cross-origin-iframe", "data", true);
+	toProxy = new Transfer("cross-origin-iframe", "toProxy", true);
 
-	apiTransfer.listen(function(msg){
+	toProxy.listen(function(msg){
 		var apiName = msg.call;
 		var timestamp = msg.timespan;
 		var isSuccess = msg.status === 0;
@@ -42,7 +42,8 @@ function initApiTransfer(){
 				typeof errorCallback === "function" && errorCallback(msg);
 			}
 		}
-	}, ["api"]);
+		// from proxy
+	}, ["up2Im"]);
 }
 
 function api(apiName, data, success, error){
@@ -56,7 +57,7 @@ function api(apiName, data, success, error){
 		error: error
 	};
 
-	apiTransfer.send({
+	toProxy.send({
 		api: apiName,
 		data: data,
 		timespan: uuid,
