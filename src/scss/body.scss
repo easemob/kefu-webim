@@ -183,9 +183,43 @@
 	}
 }
 
+//
+.em-info-popup-tip {
+	position: absolute;
+	z-index: 10;
+	top: 30px;
+	left: 0;
+
+	background-color: #fff;
+	color: #535252;
+	max-width: 30%;
+	min-width: 132px;
+	padding: 0 8px;
+	box-shadow: 0 0 5px rgba(102, 102, 102, 0.3);
+	li {
+		@extend %em-mix-ellipsis;
+		position: relative;
+		text-align: center;
+		line-height: 32px;
+		width: 100%;
+		border-top: 1px solid #ccc;
+		// 这里应该继承 theme 色，但是没设计好，再说
+		a {
+			cursor: pointer;
+			color: #535252;
+		}
+		&:hover {
+			a {
+				color: #009eec;
+			}
+		}
+	}
+	li:nth-child(1) {
+		border-top: 0;
+	}
+}
 
 /* 信息栏 */
-
 .em-widget-tip {
 	display: none;
 	position: absolute;
@@ -212,6 +246,40 @@
 		right: 10px;
 		height: 30px;
 		color: #EBCFB3;
+	}
+
+	// 以下是新版信息栏
+	&.new {
+		z-index: 1;
+		background-color: #fff;
+		box-shadow: 0 2px 2px rgba(102, 102, 102, 0.3);
+		// border-bottom: 1px solid #ccc;
+		font-size: 0;
+		box-sizing: border-box;
+		// 刚好 1 个 child，选中所有
+		.tip-btn:first-child:nth-last-child(1),
+		.tip-btn:first-child:nth-last-child(1) ~ .tip-btn {
+			width: 100%;
+		}
+		.tip-btn:first-child:nth-last-child(2),
+		.tip-btn:first-child:nth-last-child(2) ~ .tip-btn {
+			width: 50%;
+		}
+		.tip-btn:first-child:nth-last-child(3),
+		.tip-btn:first-child:nth-last-child(3) ~ .tip-btn {
+			width: 33%;
+		}
+		.tip-btn {
+			@extend %em-mix-ellipsis;
+			cursor: pointer;
+			text-align: center;
+			font-size: 13px;
+			display: inline-block;
+			line-height: 48px;
+			span {
+				font-size: 15px;
+			}
+		}
 	}
 }
 

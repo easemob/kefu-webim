@@ -44,6 +44,11 @@ i18next.init({
 });
 
 conmmonConfig = {
+	resolve: {
+		alias: {
+			"@": path.resolve("./src/js")
+		},
+	},
 	plugins: [
 		new webpack.optimize.UglifyJsPlugin({
 			compress: {
@@ -60,6 +65,11 @@ conmmonConfig = {
 	devtool: "eval",
 	module: {
 		loaders: [
+			// HtmlWebpackPlugin 需要此 loader
+			{
+				test: /Tpl.html$/,
+				loaders: [ "html-loader" ]
+			},
 			{
 				test: /easemob\.scss$/,
 				loaders: [

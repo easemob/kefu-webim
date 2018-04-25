@@ -102,7 +102,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "getSession":
-	// DEPRECATED!!!
+		// DEPRECATED!!!
 		emitAjax({
 			url: "/v1/webimplugin/visitors/" + params.id
 				+ "/schedule-data?techChannelInfo=" + techChannelInfo
@@ -132,7 +132,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "getGroup":
-	// DEPRECATED!!!
+		// DEPRECATED!!!
 		emitAjax({
 			url: "/v1/webimplugin/visitors/" + params.id
 				+ "/ChatGroupId?techChannelInfo=" + techChannelInfo
@@ -143,7 +143,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "getGroupNew":
-	// DEPRECATED!!!
+		// DEPRECATED!!!
 		emitAjax({
 			url: "/v1/webimplugin/tenant/" + tenantId
 				+ "/visitors/" + params.id +
@@ -155,7 +155,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "getHistory":
-	// DEPRECATED!!!
+		// DEPRECATED!!!
 		emitAjax({
 			url: "/v1/webimplugin/visitors/msgHistory",
 			type: "GET",
@@ -728,6 +728,13 @@ getData.listen(function(msg){
 			url: url,
 			msg: msg,
 			type: "put"
+		});
+		break;
+	case "getArticleJson":
+		emitAjax({
+			url: "/v1/webimplugin/tenants/" + tenantId + "/robot/news/" + params.media_id,
+			type: "GET",
+			msg: msg,
 		});
 		break;
 	default:

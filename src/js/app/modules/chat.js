@@ -21,6 +21,8 @@ var initGetGreetings = require("./chat/initGetGreetings");
 var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
 var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
+var TenantInfo = require("@/app/modules/tenantInfo/index");
+var tenantInfo;
 
 var isMessageChannelReady;
 var config;
@@ -165,21 +167,28 @@ function _setLogo(){
 function _setNotice(){
 	var noticeContent = document.querySelector(".em-widget-tip .content");
 	var noticeCloseBtn = document.querySelector(".em-widget-tip .tip-close");
-
 	apiHelper.getNotice().then(function(notice){
-		if(!notice.enabled) return;
 		var slogan = notice.content;
+		if(!notice.enabled) return;
 
-		// 设置信息栏内容
-		noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
 		// 显示信息栏
 		utils.addClass(doms.imChat, "has-tip");
 
-		// 隐藏信息栏按钮
-		utils.on(noticeCloseBtn, utils.click, function(){
-			// 隐藏信息栏
-			utils.removeClass(doms.imChat, "has-tip");
-		});
+		// 新配置就走新 tenantInfo
+		if(config.isWebChannelConfig){
+			tenantInfo = new TenantInfo();
+		}
+		else{
+			(function(){
+				// 设置信息栏内容
+				noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
+				// 隐藏信息栏按钮
+				utils.on(noticeCloseBtn, utils.click, function(){
+					// 隐藏信息栏
+					utils.removeClass(doms.imChat, "has-tip");
+				});
+			})();
+		}
 	});
 }
 
@@ -423,6 +432,7 @@ function _bindEvents(){
 		var iframe = articleContainer.querySelector("iframe");
 		iframe && utils.removeDom(iframe);
 		articleContainer.style.display = "none";
+		tenantInfo && tenantInfo.show();
 	});
 
 	utils.live(".article-link", "click", function(e){
@@ -444,6 +454,9 @@ function _bindEvents(){
 		else{
 			window.open(url);
 		}
+
+		// 隐藏整个 tenantInfo
+		tenantInfo && tenantInfo.hide();
 	});
 
 	var messagePredict = _.throttle(function(msg){

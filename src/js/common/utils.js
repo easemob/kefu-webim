@@ -107,6 +107,7 @@ module.exports = {
 	isIOS: /(iPad|iPhone|iPod)/i.test(navigator.userAgent),
 	isSafari: /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent),
 	isMobile: _isMobile,
+	noop: function(){},
 	click: _isMobile && ("ontouchstart" in window) ? "touchstart" : "click",
 	isBrowserMinimized: function(){
 		return document.visibilityState === "hidden" || document.hidden;
@@ -293,7 +294,9 @@ module.exports = {
 		// 全清理
 		url = url.replace(/^http[s]?:/, "");
 		url = url.replace(/^\/\//, "");
-		url = "//" + url;
+		if(!/^\//.test(url)){
+			url = "//" + url;
+		}
 		return url;
 	},
 	setStore: function(key, value){
