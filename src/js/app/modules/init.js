@@ -10,7 +10,8 @@ var kefuPath =	require("@/common/cfg/kefuPath");
 var profile =	require("@/common/cfg/profile");
 var Transfer =	require("@/common/disp/transfer");
 
-var uikit =		require("@/common/uikit/dialog");
+var Dialog =	require("@/common/uikit/dialog");
+var tips =		require("@/common/uikit/tips");
 var apiHelper =	require("@/common/kit/apiHelper");
 
 var chat =					require("@/app/modules/chat");
@@ -495,7 +496,7 @@ function initChatEntry(targetUserInfo){
 		}
 	}, function(err){
 		if(err.statusCode === 503){
-			uikit.createDialog({
+			new Dialog({
 				contentDom: domUtils.createElementFromHTML([
 					"<div class=\"wrapper\">",
 					"<span class=\"icon-waiting\"></span>",
@@ -503,12 +504,13 @@ function initChatEntry(targetUserInfo){
 					"</div>"
 				].join("")),
 				className: "session-over-limit"
-			}).show();
+			})
+			.show();
 		}
 		else{
 		// chat.show()针对移动端，在pc端不是必要的逻辑
 			chat.show();
-			uikit.prompt(err);
+			tips.prompt(err);
 			throw err;
 		}
 	});

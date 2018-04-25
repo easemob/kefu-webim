@@ -1,5 +1,5 @@
 var utils =		require("@/common/kit/utils");
-var uikit =		require("@/common/uikit/dialog");
+var Dialog =	require("@/common/uikit/dialog");
 var channel =	require("@/app/modules/chat/channel");
 
 var blob;
@@ -9,10 +9,11 @@ var dialog;
 
 function _init(){
 	imgDom = document.createElement("img");
-	dialog = uikit.createDialog({
+	dialog = new Dialog({
 		contentDom: imgDom,
 		className: "mini paste-image"
-	}).addButton({
+	})
+	.addButton({
 		confirmText: __("chat.paste_image_submit"),
 		confirm: function(){
 			channel.sendImg({ data: blob, url: dataURL });

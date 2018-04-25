@@ -2,9 +2,8 @@ var profile =	require("@/common/cfg/profile");
 var utils =		require("@/common/kit/utils");
 var domUtils =	require("@/common/kit/domUtils");
 var Dict =		require("@/common/kit/dict");
-var uikit =		require("@/common/uikit/dialog");
+var Dialog =	require("@/common/uikit/dialog");
 
-var EMPTY_FUNCTION = function(){};
 var dialog;
 var listDom;
 var itemHashTable = new Dict();
@@ -12,9 +11,9 @@ var itemOnClickCallback;
 
 module.exports = function(options){
 	var opt = options || {};
-	itemOnClickCallback = opt.itemOnClickCallback || EMPTY_FUNCTION;
+	itemOnClickCallback = opt.itemOnClickCallback || utils.noop;
 
-	dialog = uikit.createDialog({
+	dialog = new Dialog({
 		className: "session-list",
 		contentDom:  "<ul></ul>"
 	});

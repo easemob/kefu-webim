@@ -3,7 +3,9 @@ var profile =		require("@/common/cfg/profile");
 var utils =			require("@/common/kit/utils");
 var domUtils =		require("@/common/kit/domUtils");
 var apiHelper =		require("@/common/kit/apiHelper");
-var uikit =			require("@/common/uikit/dialog");
+var Dialog =		require("@/common/uikit/dialog");
+var tips =			require("@/common/uikit/tips");
+var congrets =		require("@/common/uikit/congrets");
 var loading =		require("@/common/uikit/loading");
 var eventListener =	require("@/common/disp/eventListener");
 
@@ -60,10 +62,11 @@ function _init(){
 			domUtils.toggleClass(this, "selected");
 		}, tagContainer);
 
-		dialog = uikit.createDialog({
+		dialog = new Dialog({
 			contentDom: dom,
 			className: "satisfaction"
-		}).addButton({
+		})
+		.addButton({
 			confirmText: __("common.submit"),
 			confirm: _confirm,
 		});
@@ -150,19 +153,19 @@ function _confirm(){
 
 	// 必须选择星级
 	if(!score){
-		uikit.tip(__("evaluation.select_level_please"));
+		tips.tip(__("evaluation.select_level_please"));
 		// 防止对话框关闭
 		return false;
 	}
 	// 若有标签则至少选择一个
 	else if(tagNodeList.length > 0 && selectedTagNodeList.length === 0){
-		uikit.tip(__("evaluation.select_tag_please"));
+		tips.tip(__("evaluation.select_tag_please"));
 		// 防止对话框关闭
 		return false;
 	}
 
 	_sendSatisfaction(score, content, session, invite, appraiseTags, evaluationDegreeId);
-	uikit.showSuccess(__("evaluation.submit_success"));
+	congrets.show(__("evaluation.submit_success"));
 	_clear();
 }
 

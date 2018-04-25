@@ -1,7 +1,9 @@
 var profile =	require("@/common/cfg/profile");
 var domUtils =	require("@/common/kit/domUtils");
 var apiHelper =	require("@/common/kit/apiHelper");
-var uikit =		require("@/common/uikit/dialog");
+var Dialog =	require("@/common/uikit/dialog");
+var tips =		require("@/common/uikit/tips");
+var congrets =	require("@/common/uikit/congrets");
 var Selector =	require("@/common/uikit/selector");
 
 var isSending = false;
@@ -27,26 +29,27 @@ var noteCategoryList = new Selector({
 });
 
 // todo: lazy load dialog
-var dialog = uikit.createDialog({
+var dialog = new Dialog({
 	contentDom: dom,
 	className: "ticket"
-}).addButton({
+})
+.addButton({
 	confirmText: __("common.ticket"),
 	confirm: function(){
 		if(isSending){
-			uikit.tip(__("ticket.is_sending"));
+			tips.tip(__("ticket.is_sending"));
 		}
 		else if(!name.value || name.value.length > 140){
-			uikit.tip(__("ticket.invalid_name"));
+			tips.tip(__("ticket.invalid_name"));
 		}
 		else if(!phone.value || phone.value.length > 24){
-			uikit.tip(__("ticket.invalid_phone"));
+			tips.tip(__("ticket.invalid_phone"));
 		}
 		else if(!mail.value || mail.value.length > 127){
-			uikit.tip(__("ticket.invalid_email"));
+			tips.tip(__("ticket.invalid_email"));
 		}
 		else if(!content.value || content.value.length > 1500){
-			uikit.tip(__("ticket.invalid_content"));
+			tips.tip(__("ticket.invalid_content"));
 		}
 		else{
 			isSending = true;
@@ -95,17 +98,17 @@ function _createTicket(){
 			session_id: sessionId,
 		}).then(function(){
 			isSending = false;
-			uikit.showSuccess(__("ticket.send_success"));
+			congrets.show(__("ticket.send_success"));
 
 			_clearInput();
 		}, function(err){
 			isSending = false;
-			uikit.tip(__("ticket.send_failed_retry"));
+			tips.tip(__("ticket.send_failed_retry"));
 			console.error(err);
 		});
 	})
 	["catch"](function(err){
-		uikit.tip(__("ticket.send_failed_invalid_token"));
+		tips.tip(__("ticket.send_failed_invalid_token"));
 		console.error(err);
 	});
 }

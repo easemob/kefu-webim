@@ -4,6 +4,7 @@ var utils =			require("@/common/kit/utils");
 var domUtils =		require("@/common/kit/domUtils");
 var Const =			require("@/common/cfg/const");
 var uikit =			require("@/common/uikit/dialog");
+var tips =			require("@/common/uikit/tips");
 var apiHelper =		require("@/common/kit/apiHelper");
 var eventListener =	require("@/common/disp/eventListener");
 var profile =		require("@/common/cfg/profile");
@@ -503,7 +504,7 @@ function _bindEvents(){
 			// 未选择文件
 		}
 		else if(filesize > Const.UPLOAD_FILESIZE_LIMIT){
-			uikit.tip(__("prompt._10_mb_file_limit"));
+			tips.tip(__("prompt._10_mb_file_limit"));
 			fileInput.value = "";
 		}
 		else{
@@ -528,11 +529,11 @@ function _bindEvents(){
 		}
 		// 某些浏览器不能获取到正确的文件名，所以放弃文件类型检测
 		// else if (!/\.(png|jpg|jpeg|gif)$/i.test(fileInput.value)) {
-		// uikit.tip('unsupported picture format');
+		// tips.tip('unsupported picture format');
 		// }
 		// 某些浏览器无法获取文件大小, 忽略
 		else if(filesize > Const.UPLOAD_FILESIZE_LIMIT){
-			uikit.tip(__("prompt._10_mb_file_limit"));
+			tips.tip(__("prompt._10_mb_file_limit"));
 			fileInput.value = "";
 		}
 		else{
@@ -602,7 +603,7 @@ function _bindEvents(){
 			// 禁止发送
 		}
 		else if(textMsg.length > Const.MAX_TEXT_MESSAGE_LENGTH){
-			uikit.tip(__("prompt.too_many_words"));
+			tips.tip(__("prompt.too_many_words"));
 		}
 		else{
 			channel.sendText(textMsg);

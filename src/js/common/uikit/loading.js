@@ -1,30 +1,40 @@
-var domUtils =	require("@/common/kit/domUtils");
-var Const =		require("@/common/cfg/const");
-var uikit =		require("@/common/uikit/dialog");
+var domUtils =		require("@/common/kit/domUtils");
+var classUtils =	require("@/common/kit/classUtils");
+var Const =			require("@/common/cfg/const");
+var Dialog =		require("@/common/uikit/dialog");
+var tpl =			require("./template/loadingTpl.html");
+var rtpl =			require("./template/regularLoadingTpl.html");
+var LOADING = Modernizr.inlinesvg ? Const.loadingSvg : rtpl;
 
-var LOADING = Modernizr.inlinesvg ? Const.loadingSvg : "<img src=\"static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
+var Loading = classUtils.createView({
+	dialog: null,
+	init: function(){
+		this.$el = domUtils.createElementFromHTML(_.template(tpl)({
+			loadingContent: LOADING
+		}));
+		this.dialog = new Dialog({
+			contentDom: this.$el,
+			className: "loading"
+		});
+	},
+	show: function(){
+		this.dialog.show();
+	},
+	hide: function(){
 
-var dialog;
-var showLoadingObj = {};
-
-var _init = _.once(function(){
-	var dom = domUtils.createElementFromHTML("<div class=\"wrapper\">" + LOADING + "</div>");
-	dialog = uikit.createDialog({
-		contentDom: dom,
-		className: "loading"
-	});
+	},
 });
 
+var loading = new Loading();
+var showLoadingObj = {};
 function _show(secret){
-	_init();
-	showLoadingObj[secret] = true;
-	dialog.show();
+	showLoadingObj[secret] = 1;
+	loading.show();
 }
-
 function _hide(secret){
 	delete showLoadingObj[secret];
 	if(_.isEmpty(showLoadingObj)){
-		dialog.hide();
+		loading.hide();
 	}
 }
 

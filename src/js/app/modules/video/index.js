@@ -13,7 +13,8 @@
 
 var Const =			require("@/common/cfg/const");
 var profile =		require("@/common/cfg/profile");
-var uikit =			require("@/common/uikit/dialog");
+var Dialog =		require("@/common/uikit/dialog");
+var tips =			require("@/common/uikit/tips");
 var utils =			require("@/common/kit/utils");
 var domUtils =		require("@/common/kit/domUtils");
 var ajaxWrapper =	require("@/common/kit/ajaxWrapper");
@@ -102,12 +103,12 @@ function _init(){
 				if(evt instanceof window.emedia.event.PushSuccess){}
 				// 接听 打开本地摄像头 推流失败
 				else if(evt instanceof window.emedia.event.PushFail){
-					uikit.tip(__("video.can_not_connected"));
+					tips.tip(__("video.can_not_connected"));
 					service.exit();
 				}
 				// 接听 打开摄像头失败
 				else if(evt instanceof window.emedia.event.OpenMediaError){
-					uikit.tip(__("video.can_not_open_camera"));
+					tips.tip(__("video.can_not_open_camera"));
 					service.exit();
 				}
 				else{}
@@ -115,14 +116,17 @@ function _init(){
 		}
 	});
 
-	dialog = uikit.createDialog({
+	dialog = new Dialog({
 		contentDom: [
 			"<p class=\"prompt\">",
 			__("video.confirm_prompt"),
 			"</p>"
 		].join(""),
 		className: "rtc-video-confirm",
-	}).addButton({ confirm: _onConfirm });
+	})
+	.addButton({
+		confirm: _onConfirm
+	});
 
 	statusBar.init({
 		wrapperDom: videoWidget.querySelector(".status-bar"),
