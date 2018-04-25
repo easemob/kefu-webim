@@ -15,46 +15,6 @@ module.exports = function(){
 	apiHelper.getNotice()
 	.then(function(notice){
 		if(!notice.enabled) return;
-
-
-
-		// test
-		// notice.content = [
-		// 	{
-		// 		name: "菜单",
-		// 		sub_button: [
-		// 			{
-		// 				type: "view",
-		// 				name: "搜索2666",
-		// 				url: "http://www.soso.com/"
-		// 			}
-		// 		]
-		// 	},
-		// 	{
-		// 		name: "222",
-		// 		sub_button: [
-		// 			{
-		// 				type: "media_id",
-		// 				name: "111",
-		// 				media_id: "75cffa4b-e462-40e8-a517-0ff807db29a6"
-		// 			},
-		// 			{
-		// 				type: "media_id",
-		// 				name: "香格里拉",
-		// 				media_id: "4150c891-9917-4482-909c-ab7c9954110a"
-		// 			}
-		// 		]
-		// 	},
-		// 	{
-		// 		type: "media_id",
-		// 		name: "333",
-		// 		media_id: "75cffa4b-e462-40e8-a517-0ff807db29a6"
-		// 	}
-		// ];
-
-
-
-
 		menuArr = notice.content;
 		container.innerHTML = _.template(tpl)({
 			menu: menuArr,

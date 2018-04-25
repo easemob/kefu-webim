@@ -168,6 +168,42 @@ function _setNotice(){
 	var noticeContent = document.querySelector(".em-widget-tip .content");
 	var noticeCloseBtn = document.querySelector(".em-widget-tip .tip-close");
 	apiHelper.getNotice().then(function(notice){
+
+		// test
+		// notice.content = [
+		// 	{
+		// 		name: "菜单",
+		// 		sub_button: [
+		// 			{
+		// 				type: "view",
+		// 				name: "搜索2666",
+		// 				url: "http://www.soso.com/"
+		// 			}
+		// 		]
+		// 	},
+		// 	{
+		// 		name: "222",
+		// 		sub_button: [
+		// 			{
+		// 				type: "media_id",
+		// 				name: "111",
+		// 				media_id: "75cffa4b-e462-40e8-a517-0ff807db29a6"
+		// 			},
+		// 			{
+		// 				type: "media_id",
+		// 				name: "香格里拉",
+		// 				media_id: "4150c891-9917-4482-909c-ab7c9954110a"
+		// 			}
+		// 		]
+		// 	},
+		// 	{
+		// 		type: "media_id",
+		// 		name: "333",
+		// 		media_id: "75cffa4b-e462-40e8-a517-0ff807db29a6"
+		// 	}
+		// ];
+
+
 		var slogan = notice.content;
 		if(!notice.enabled) return;
 
@@ -176,18 +212,25 @@ function _setNotice(){
 
 		// 新配置就走新 tenantInfo
 		if(config.isWebChannelConfig){
-			tenantInfo = new TenantInfo();
+			if(typeof slogan == "string"){
+				renderSlogan();
+			}
+			else{
+				tenantInfo = new TenantInfo();
+			}
 		}
 		else{
-			(function(){
-				// 设置信息栏内容
-				noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
-				// 隐藏信息栏按钮
-				utils.on(noticeCloseBtn, utils.click, function(){
-					// 隐藏信息栏
-					utils.removeClass(doms.imChat, "has-tip");
-				});
-			})();
+			renderSlogan();
+		}
+
+		function renderSlogan(){
+			// 设置信息栏内容
+			noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
+			// 隐藏信息栏按钮
+			utils.on(noticeCloseBtn, utils.click, function(){
+				// 隐藏信息栏
+				utils.removeClass(doms.imChat, "has-tip");
+			});
 		}
 	});
 }
