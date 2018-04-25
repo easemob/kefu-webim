@@ -3,6 +3,7 @@ var utils = require("@/common/kit/utils");
 // plugin only
 var res = {
 	dragImg: "static/img/drag.png",
+	loadingImg: "static/img/loading.gif",
 	imCachedHtml: "im_cached.html",
 };
 

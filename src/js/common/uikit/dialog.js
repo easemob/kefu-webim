@@ -1,6 +1,6 @@
-var utils =			require("@/common/utils");
-var domUtils =		require("@/common/domUtils");
-var classUtils =	require("@/common/classUtils");
+var utils =			require("@/common/kit/utils");
+var domUtils =		require("@/common/kit/domUtils");
+var classUtils =	require("@/common/kit/classUtils");
 var tpl =			require("./template/dialogTpl.html");
 
 module.exports = classUtils.createView({
