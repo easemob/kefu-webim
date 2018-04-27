@@ -9,6 +9,7 @@
   "devDependencies": {
     "autoprefixer": "^6.5.3",
     "cssnano": "^3.8.0",
+    "express": "^4.16.3",
     "gulp": "^3.9.1",
     "gulp-clean": "",
     "gulp-concat": "",
@@ -22,6 +23,7 @@
     "gulp-template": "",
     "gulp-uglify": "~0.2.0",
     "gulp-watch": "",
-    "gulp-webserver": ""
+    "gulp-webserver": "",
+    "http-proxy": "^1.17.0"
   }
 }
