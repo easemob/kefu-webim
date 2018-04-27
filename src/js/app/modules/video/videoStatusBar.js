@@ -1,102 +1,87 @@
 var utils =			require("@/common/kit/utils");
 var domUtils =		require("@/common/kit/domUtils");
+var classUtils =	require("@/common/kit/classUtils");
 var TimerLabel =	require("@/common/uikit/timerLabel");
+var tpl =			require("@/app/modules/video/template/statusBarTpl.html");
+var showClosingTimerHandler = 0;
 
-var wrapperDom;
-var timerBarDom;
-var statusTextDom;
-var acceptButtonDom;
-var endButtonDom;
-var collapseToggleButton;
+module.exports = classUtils.createView({
 
-var timerLabel;
-var showClosingTimerHandler;
+	statusTextDom: null,
+	acceptButtonDom: null,
+	endButtonDom: null,
+	collapseToggleButton: null,
+	timerLabel: null,
 
-var acceptCallback;
-var endCallback;
+	acceptCallback: utils.noop,
+	endCallback: utils.noop,
 
-var nopFunction = function(){};
+	events: {
+		"click .accept-button": "onAccept",
+		"click .end-button": "endCallback",
+		"click .collapse-toggle-button": "toggleCollapse",
+	},
 
-module.exports = {
-	init: init,
-	startTimer: startTimer,
-	show: show,
-	hide: hide,
-	toggleCollapse: toggleCollapse,
-	showClosing: showClosing,
-	reset: reset,
-	hideAcceptButton: hideAcceptButton,
-	setStatusText: setStatusText,
-};
+	init: function(option){
+		var opt = option || {};
+		this.acceptCallback = opt.acceptCallback || this.acceptCallback;
+		this.endCallback = opt.endCallback || this.endCallback;
 
-function init(option){
-	var opt = option || {};
+		this.$el = utils.createElementFromHTML(tpl);
+		this.statusTextDom = this.$el.querySelector(".status-text");
+		this.acceptButtonDom = this.$el.querySelector(".accept-button");
+		this.endButtonDom = this.$el.querySelector(".end-button");
+		this.collapseToggleButton = this.$el.querySelector(".collapse-toggle-button");
 
-	if(wrapperDom) throw new Error("statusBar has been already initialized.");
+		this.timerLabel = new TimerLabel(this.$el.querySelector(".time-escape"));
+	},
 
-	wrapperDom = opt.wrapperDom;
-	acceptCallback = opt.acceptCallback || nopFunction;
-	endCallback = opt.endCallback || nopFunction;
+	onAccept: function(){
+		domUtils.addClass(this.acceptButtonDom, "hide");
+		this.timerLabel.start();
+		this.setStatusText(__("video.connecting"));
+		this.acceptCallback();
+	},
 
-	timerBarDom = wrapperDom.querySelector(".time-escape");
-	statusTextDom = wrapperDom.querySelector(".status-text");
-	acceptButtonDom = wrapperDom.querySelector(".accept-button");
-	endButtonDom = wrapperDom.querySelector(".end-button");
-	collapseToggleButton = wrapperDom.querySelector(".collapse-toggle-button");
+	setStatusText: function(text){
+		this.statusTextDom.innerText = text;
+	},
 
-	timerLabel = new TimerLabel(timerBarDom);
+	toggleCollapse: function(state){
+		domUtils.toggleClass(this.$el, "collapsed", state);
+	},
 
-	utils.on(acceptButtonDom, "click", acceptCallback);
-	utils.on(endButtonDom, "click", endCallback);
-	utils.on(collapseToggleButton, "click", function(){
-		toggleCollapse();
-	});
-}
+	show: function(){
+		domUtils.removeClass(this.$el, "hide");
+		this.timerLabel.start();
+	},
 
-function setStatusText(text){
-	statusTextDom.innerText = text;
-}
+	hide: function(){
+		domUtils.addClass(this.$el, "hide");
+	},
 
-function toggleCollapse(state){
-	domUtils.toggleClass(wrapperDom, "collapsed", state);
-}
+	showClosing: function(){
+		this.toggleCollapse(true);
+		domUtils.addClass(this.$el, "terminated");
+		this.setStatusText(__("video.video_ended"));
 
-function startTimer(){
-	timerLabel.start();
-}
+		this.timerLabel.stop();
+		clearTimeout(showClosingTimerHandler);
+		showClosingTimerHandler = setTimeout(this.closing.bind(this), 3000);
+	},
 
-function show(){
-	domUtils.removeClass(wrapperDom, "hide");
-	startTimer();
-}
+	closing: function(){
+		this.hide();
+		this.reset();
+	},
 
-function hide(){
-	domUtils.addClass(wrapperDom, "hide");
-}
+	reset: function(){
+		this.toggleCollapse(false);
+		domUtils.removeClass(this.$el, "terminated");
+		domUtils.removeClass(this.acceptButtonDom, "hide");
+		clearTimeout(showClosingTimerHandler);
+		this.timerLabel.stop();
+		this.setStatusText(__("video.waiting"));
+	},
 
-function showClosing(){
-	toggleCollapse(true);
-	domUtils.addClass(wrapperDom, "terminated");
-	setStatusText(__("video.video_ended"));
-
-	timerLabel.stop();
-
-	clearTimeout(showClosingTimerHandler);
-	showClosingTimerHandler = setTimeout(function(){
-		hide();
-		reset();
-	}, 3000);
-}
-
-function reset(){
-	toggleCollapse(false);
-	domUtils.removeClass(wrapperDom, "terminated");
-	domUtils.removeClass(acceptButtonDom, "hide");
-	showClosingTimerHandler = clearTimeout(showClosingTimerHandler);
-	timerLabel.stop();
-	setStatusText(__("video.waiting"));
-}
-
-function hideAcceptButton(){
-	domUtils.addClass(acceptButtonDom, "hide");
-}
+});

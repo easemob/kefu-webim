@@ -1,226 +1,210 @@
-var utils =		require("@/common/kit/utils");
-var domUtils =	require("@/common/kit/domUtils");
-var Const =		require("@/common/cfg/const");
-var independentVideoWindow = require("@/../html/independentVideoWindow.html");
-
+var utils =			require("@/common/kit/utils");
+var domUtils =		require("@/common/kit/domUtils");
+var classUtils =	require("@/common/kit/classUtils");
+var Const =			require("@/common/cfg/const");
+var videoWindowTpl =	require("@/app/modules/video/template/videoWindowTpl.html");
+var tpl =				require("@/app/modules/video/template/videoViewerTpl.html");
 // adapter.js 会劫持这个 api，为了达到预期效果，事先保存
 var nativeCreateObjectURL = URL && URL.createObjectURL;
-var wrapperDom;
-var videoDom;
-var noAudioVideoDom;
-var nicknameDom;
-var returnButtonDom;
-var toggleMicroPhoneButtonDom;
-var toggleCameraButtonDom;
-var navigateToNewWindowButtonDom;
+function getStreamName(stream){
+	return stream.located()
+		? __("video.me")
+		: utils.getDataByPath(stream, "owner.ext.nickname");
+}
 
-var dispatcher;
-var service;
-var nickname;
-var currentStream;
-var currentNoAudioStream;
-var currentOwnerName;
+module.exports = classUtils.createView({
 
-var subWindowHandler;
-var independentVideoWindowPageBlobUrl;
+	dispatcher: null,
+	service: null,
+	videoDom: null,
+	noAudioVideoDom: null,
+	nicknameDom: null,
+	returnButtonDom: null,
+	toggleCameraButtonDom: null,
+	navigateToNewWindowButtonDom: null,
 
-module.exports = {
-	init: init,
-	show: show,
-	hide: hide,
-};
+	subWindowHandler: null,
+	currentStream: null,
+	currentNoAudioStream: null,
+	currentOwnerName: null,
 
-function init(option){
-	var opt = option || {};
+	events: {
+		"click .return-to-multi-video": "returnToMultivideo",
+		"click .toggle-microphone-btn": "toggleMicroPhone",
+		"click .toggle-carema-btn": "toggleCarema",
+	},
 
-	if(wrapperDom) throw new Error("video viewer has been already initialized.");
+	init: function(option){
+		var opt = option || {};
+		this.service = opt.service;
+		this.dispatcher = opt.dispatcher;
 
-	wrapperDom = opt.wrapperDom;
-	service = opt.service;
-	dispatcher = opt.dispatcher;
+		this.$el = domUtils.createElementFromHTML(tpl);
+		this.videoDom = this.$el.querySelector(".main-video");
+		this.noAudioVideoDom = this.$el.querySelector(".no-audio-video");
+		this.nicknameDom = this.$el.querySelector(".nickname");
+		this.returnButtonDom = this.$el.querySelector(".return-to-multi-video");
+		this.toggleMicroPhoneButtonDom = this.$el.querySelector(".toggle-microphone-btn");
+		this.toggleCameraButtonDom = this.$el.querySelector(".toggle-carema-btn");
+		this.navigateToNewWindowButtonDom = this.$el.querySelector(".navigate-to-independent-window-btn");
 
-	videoDom = wrapperDom.querySelector(".main-video");
-	noAudioVideoDom = wrapperDom.querySelector(".no-audio-video");
-	nicknameDom = wrapperDom.querySelector(".nickname");
-	returnButtonDom = wrapperDom.querySelector(".return-to-multi-video");
-	toggleMicroPhoneButtonDom = wrapperDom.querySelector(".toggle-microphone-btn");
-	toggleCameraButtonDom = wrapperDom.querySelector(".toggle-carema-btn");
-	navigateToNewWindowButtonDom = wrapperDom.querySelector(".navigate-to-independent-window-btn");
+		this.dispatcher.addEventListener("addOrUpdateStream", this.addOrUpdateStream);
+		this.dispatcher.addEventListener("removeStream", this.removeStream);
 
-	dispatcher.addEventListener("addOrUpdateStream", _addOrUpdateStream);
-	dispatcher.addEventListener("removeStream", _removeStream);
+		// 移动端不显示在新窗口查看视频的按钮
+		if(!utils.isMobile){
+			domUtils.removeClass(this.navigateToNewWindowButtonDom, "hide");
+			this.events["click .navigate-to-independent-window-btn"] = "navigateToNewWindow";
+		}
+	},
 
-	// 移动端不显示在新窗口查看视频的按钮
-	if(!utils.isMobile){
-		independentVideoWindowPageBlobUrl = URL.createObjectURL(
-			new Blob([independentVideoWindow], { type: "text/html" })
+	returnToMultivideo: function(){
+		this.dispatcher.trigger("returnToMultiVideoWindow");
+	},
+
+	toggleMicroPhone: function(){
+		this.service.aoff(this.currentStream, !this.currentStream.aoff);
+		this.updateButtonStatus();
+	},
+
+	toggleCarema: function(){
+		this.service.voff(this.currentStream, !this.currentStream.voff);
+		this.updateButtonStatus();
+	},
+
+	navigateToNewWindow: function(){
+		if(this.subWindowHandler){
+			this.closeSubWindow();
+			this.updateButtonStatus();
+			return;
+		}
+		this.subWindowHandler = window.open(
+			URL.createObjectURL(
+				new Blob([videoWindowTpl], { type: "text/html" })
+			),
+			"easemob_kefu_webim_webrtc_independent_video_window",
+			"width=640,height=480,resizable,scrollbars,status"
 		);
+		this.watchDom(window, "message", this.eventHandler);
+		this.updateButtonStatus();
+	},
 
-		domUtils.removeClass(navigateToNewWindowButtonDom, "hide");
-		utils.on(navigateToNewWindowButtonDom, "click", _navigateToNewWindow);
-	}
+	updateButtonStatus: function(){
+		var isMaximized = !!this.subWindowHandler;
+		var isLocal = this.currentStream && this.currentStream.located();
+		var isMicroPhoneDisabled;
+		var isCameraDisabled;
+		domUtils.toggleClass(this.navigateToNewWindowButtonDom, "icon-maximize-window", !isMaximized);
+		domUtils.toggleClass(this.navigateToNewWindowButtonDom, "icon-minimize-window", isMaximized);
+		domUtils.toggleClass(this.toggleMicroPhoneButtonDom, "hide", !isLocal);
+		domUtils.toggleClass(this.toggleCameraButtonDom, "hide", !isLocal);
+		if(isLocal){
+			isMicroPhoneDisabled = !!this.currentStream.aoff;
+			isCameraDisabled = !!this.currentStream.voff;
+			domUtils.toggleClass(this.toggleMicroPhoneButtonDom, "icon-microphone", !isMicroPhoneDisabled);
+			domUtils.toggleClass(this.toggleMicroPhoneButtonDom, "icon-disable-microphone", isMicroPhoneDisabled);
+			domUtils.toggleClass(this.toggleCameraButtonDom, "icon-camera", !isCameraDisabled);
+			domUtils.toggleClass(this.toggleCameraButtonDom, "icon-disable-camera", isCameraDisabled);
+		}
+	},
 
-	utils.on(returnButtonDom, "click", _returnToMultivideo);
-	utils.on(toggleMicroPhoneButtonDom, "click", _toggleMicroPhone);
-	utils.on(toggleCameraButtonDom, "click", _toggleCarema);
-}
+	closeSubWindow: function(){
+		if(this.subWindowHandler){
+			this.unWatchDom(window, "message", this.eventHandler);
+			this.subWindowHandler.close();
+			this.subWindowHandler = null;
+		}
+	},
 
-function _returnToMultivideo(){
-	dispatcher.trigger("returnToMultiVideoWindow");
-}
+	eventHandler: function(e){
+		var message = e.data;
+		var mediaStream;
+		var stream = this.currentNoAudioStream || this.currentStream;
+		mediaStream = stream.getMediaStream();
+		if(message === "independentVidowSubWindowLoaded"){
+			this.subWindowHandler && this.subWindowHandler.postMessage({
+				type: "updateVideoBlobSrcUrl",
+				info: {
+					// 只有这里要避免被 hack nativeCreateObjectURL
+					blobVideoUrl: nativeCreateObjectURL(mediaStream),
+					// 直接取的 window.nickname，不对？
+					nickname: getStreamName(stream),
+				},
+			}, "*");
+		}
+	},
 
-function _toggleMicroPhone(){
-	service.aoff(currentStream, !currentStream.aoff);
-	_updateButtonStatus();
-}
+	show: function(info){
+		// reset video dom
+		this.currentStream = null;
+		this.videoDom.src = "";
+		this.nicknameDom.innerText = "";
+		this.currentNoAudioStream = null;
+		this.noAudioVideoDom.src = "";
+		domUtils.removeClass(this.videoDom, "hide");
+		domUtils.addClass(this.noAudioVideoDom, "hide");
 
-function _toggleCarema(){
-	service.voff(currentStream, !currentStream.voff);
-	_updateButtonStatus();
-}
+		this.currentOwnerName = info.ownerName;
+		_.each(info.streams, this.addOrUpdateStream);
+		domUtils.removeClass(this.$el, "hide");
+	},
 
-function _navigateToNewWindow(){
-	if(subWindowHandler){
-		_closeSubWindow();
-		_updateButtonStatus();
-		return;
-	}
+	hide: function(){
+		this.currentOwnerName = null;
+		this.closeSubWindow();
+		this.updateButtonStatus();
+		domUtils.addClass(this.$el, "hide");
+	},
 
-	subWindowHandler = window.open(
-		independentVideoWindowPageBlobUrl,
-		"easemob_kefu_webim_webrtc_independent_video_window",
-		"width=640,height=480,resizable,scrollbars,status"
-	);
+	addOrUpdateStream: function(stream){
+		var mediaStream;
+		var ownerName = utils.getDataByPath(stream, "owner.name");
+		var isLocalStream = stream.located();
 
-	window.addEventListener("message", _eventHandler);
+		if(ownerName !== this.currentOwnerName) return;
+		mediaStream = stream.getMediaStream();
 
-	_updateButtonStatus();
-}
+		switch(stream.type){
+		case Const.STREAM_TYPE.NORMAL:
+			this.currentStream = stream;
+			this.videoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
+			// 本地视频需要 muted
+			this.videoDom.muted = isLocalStream;
+			this.nicknameDom.innerText = getStreamName(stream);
+			break;
+		case Const.STREAM_TYPE.NO_AUDIO:
+			this.currentNoAudioStream = stream;
+			this.noAudioVideoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
+			domUtils.addClass(this.videoDom, "hide");
+			domUtils.removeClass(this.noAudioVideoDom, "hide");
+			break;
+		default:
+			throw new Error("unexpected stream type.");
+		}
+		this.updateButtonStatus();
+	},
 
-function _updateButtonStatus(){
-	var isMaximized = !!subWindowHandler;
-	var isLocal = currentStream && currentStream.located();
-	var isMicroPhoneDisabled;
-	var isCameraDisabled;
+	removeStream: function(stream){
+		switch(stream.type){
+		case Const.STREAM_TYPE.NORMAL:
+			this.currentStream = null;
+			this.videoDom.src = "";
+			this.nicknameDom.innerText = "";
+			break;
+		case Const.STREAM_TYPE.NO_AUDIO:
+			this.currentNoAudioStream = null;
+			this.noAudioVideoDom.src = "";
+			domUtils.removeClass(this.videoDom, "hide");
+			domUtils.addClass(this.noAudioVideoDom, "hide");
+			break;
+		default:
+			throw new Error("unexpected stream type.");
+		}
+		this.updateButtonStatus();
+		// exit single viewer mode when all streams removed
+		if(!this.currentStream && !this.currentNoAudioStream){
+			this.dispatcher.trigger("returnToMultiVideoWindow");
+		}
+	},
 
-	domUtils.toggleClass(navigateToNewWindowButtonDom, "icon-maximize-window", !isMaximized);
-	domUtils.toggleClass(navigateToNewWindowButtonDom, "icon-minimize-window", isMaximized);
-
-	domUtils.toggleClass(toggleMicroPhoneButtonDom, "hide", !isLocal);
-	domUtils.toggleClass(toggleCameraButtonDom, "hide", !isLocal);
-
-	if(isLocal){
-		isMicroPhoneDisabled = !!currentStream.aoff;
-		isCameraDisabled = !!currentStream.voff;
-
-		domUtils.toggleClass(toggleMicroPhoneButtonDom, "icon-microphone", !isMicroPhoneDisabled);
-		domUtils.toggleClass(toggleMicroPhoneButtonDom, "icon-disable-microphone", isMicroPhoneDisabled);
-
-		domUtils.toggleClass(toggleCameraButtonDom, "icon-camera", !isCameraDisabled);
-		domUtils.toggleClass(toggleCameraButtonDom, "icon-disable-camera", isCameraDisabled);
-	}
-}
-
-function _closeSubWindow(){
-	if(subWindowHandler){
-		window.removeEventListener("message", _eventHandler);
-		subWindowHandler.close();
-		subWindowHandler = null;
-	}
-}
-
-function _eventHandler(e){
-	var message = e.data;
-	var mediaStream;
-	var stream = currentNoAudioStream || currentStream;
-
-	mediaStream = stream.getMediaStream();
-
-	if(message === "independentVidowSubWindowLoaded"){
-		subWindowHandler && subWindowHandler.postMessage({
-			type: "updateVideoBlobSrcUrl",
-			info: {
-				blobVideoUrl: nativeCreateObjectURL(mediaStream),
-				nickname: nickname,
-			},
-		}, "*");
-	}
-}
-
-function show(info){
-	// reset video dom
-	currentStream = null;
-	videoDom.src = "";
-	nicknameDom.innerText = "";
-	currentNoAudioStream = null;
-	noAudioVideoDom.src = "";
-	domUtils.removeClass(videoDom, "hide");
-	domUtils.addClass(noAudioVideoDom, "hide");
-
-	currentOwnerName = info.ownerName;
-	_.each(info.streams, _addOrUpdateStream);
-	domUtils.removeClass(wrapperDom, "hide");
-}
-
-function hide(){
-	currentOwnerName = null;
-	_closeSubWindow();
-	_updateButtonStatus();
-	domUtils.addClass(wrapperDom, "hide");
-}
-
-function _addOrUpdateStream(stream){
-	var ownerName = utils.getDataByPath(stream, "owner.name");
-	var isLocalStream = stream.located();
-	var mediaStream;
-
-	if(ownerName !== currentOwnerName) return;
-
-	mediaStream = stream.getMediaStream();
-
-	switch(stream.type){
-	case Const.STREAM_TYPE.NORMAL:
-		currentStream = stream;
-		videoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
-		// 本地视频需要 muted
-		videoDom.muted = isLocalStream;
-		nicknameDom.innerText = isLocalStream
-			? __("video.me")
-			: utils.getDataByPath(stream, "owner.ext.nickname");
-		break;
-	case Const.STREAM_TYPE.NO_AUDIO:
-		currentNoAudioStream = stream;
-		noAudioVideoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
-		domUtils.addClass(videoDom, "hide");
-		domUtils.removeClass(noAudioVideoDom, "hide");
-		break;
-	default:
-		throw new Error("unexpected stream type.");
-	}
-	_updateButtonStatus();
-}
-
-function _removeStream(stream){
-	switch(stream.type){
-	case Const.STREAM_TYPE.NORMAL:
-		currentStream = null;
-		videoDom.src = "";
-		nicknameDom.innerText = "";
-		break;
-	case Const.STREAM_TYPE.NO_AUDIO:
-		currentNoAudioStream = null;
-		noAudioVideoDom.src = "";
-		domUtils.removeClass(videoDom, "hide");
-		domUtils.addClass(noAudioVideoDom, "hide");
-		break;
-	default:
-		throw new Error("unexpected stream type.");
-	}
-
-	_updateButtonStatus();
-
-	// exit single viewer mode when all streams removed
-	if(!currentStream && !currentNoAudioStream){
-		dispatcher.trigger("returnToMultiVideoWindow");
-	}
-}
+});

@@ -1,94 +1,85 @@
 var utils =			require("@/common/kit/utils");
 var domUtils =		require("@/common/kit/domUtils");
-var Dict =			require("@/common/kit/dict");
-var videoViewer =	require("@/app/modules/video/videoViewer");
+var classUtils =	require("@/common/kit/classUtils");
+
+var VideoViewer =	require("@/app/modules/video/videoViewer");
 var MiniVideoWin =	require("@/app/modules/video/miniVideoWin");
+var tpl =			require("@/app/modules/video/template/videoPanelTpl.html");
 
-var wrapperDom;
-var multiVideoContainer;
-var singleVideoContainer;
+module.exports = classUtils.createView({
 
-var videoWindowList;
-var dispatcher;
+	videoViewer: null,
+	dispatcher: null,
+	multiVideoContainer: null,
+	videoWindowList: null,
 
-module.exports = {
-	init: init,
-	show: show,
-	hide: hide,
-	addOrUpdateStream: addOrUpdateStream,
-	removeStream: removeStream,
-};
+	init: function(option){
+		var me = this;
+		var opt = option || {};
+		this.dispatcher = opt.dispatcher;
 
-function init(option){
-	var opt = option || {};
-	wrapperDom = opt.wrapperDom;
-	dispatcher = opt.dispatcher;
-	multiVideoContainer = wrapperDom.querySelector(".multi-video-container");
-	singleVideoContainer = wrapperDom.querySelector(".single-video-container");
-	videoViewer.init({
-		wrapperDom: singleVideoContainer,
-		service: opt.service,
-		dispatcher: dispatcher,
-	});
+		this.$el = domUtils.createElementFromHTML(tpl);
+		this.multiVideoContainer = this.$el.querySelector(".multi-video-container");
+		this.videoViewer = new VideoViewer({
+			dispatcher: this.dispatcher,
+			service: opt.service,
+		});
+		this.$el.appendChild(this.videoViewer.$el);
 
-	dispatcher.addEventListener("switchToMiniVideoWindow", function(info){
-		domUtils.addClass(multiVideoContainer, "hide");
-		videoViewer.show(info);
-	});
+		this.dispatcher.addEventListener("switchToMiniVideoWindow", function(info){
+			domUtils.addClass(me.multiVideoContainer, "hide");
+			me.videoViewer.show(info);
+		});
+		this.dispatcher.addEventListener("returnToMultiVideoWindow", function(){
+			domUtils.removeClass(me.multiVideoContainer, "hide");
+			me.videoViewer.hide();
+		});
 
-	dispatcher.addEventListener("returnToMultiVideoWindow", function(){
-		domUtils.removeClass(multiVideoContainer, "hide");
-		videoViewer.hide();
-	});
+		this.reset();
+	},
 
-	_reset();
-}
+	show: function(){
+		domUtils.removeClass(this.$el, "hide");
+	},
 
-function show(){
-	domUtils.removeClass(wrapperDom, "hide");
-}
+	hide: function(){
+		domUtils.addClass(this.$el, "hide");
+		this.reset();
+	},
 
-function hide(){
-	domUtils.addClass(wrapperDom, "hide");
-	_reset();
-}
+	reset: function(){
+		this.videoWindowList = {};
+		this.videoViewer.hide();
+		this.multiVideoContainer.innerHTML = "";
+		domUtils.removeClass(this.multiVideoContainer, "hide");
+	},
 
-function _reset(){
-	videoWindowList = new Dict();
-	videoViewer.hide();
-	multiVideoContainer.innerHTML = "";
-	domUtils.removeClass(multiVideoContainer, "hide");
-}
+	addOrUpdateStream: function(stream){
+		var streamOwnerName = utils.getDataByPath(stream, "owner.name");
+		var targetMiniVideoWindow = this.videoWindowList[streamOwnerName];
+		if(targetMiniVideoWindow){
+			targetMiniVideoWindow.updateStream(stream);
+		}
+		else{
+			this.videoWindowList[streamOwnerName] = new MiniVideoWin({
+				parentContainer: this.multiVideoContainer,
+				stream: stream,
+				dispatcher: this.dispatcher,
+			});
+		}
+		this.dispatcher.trigger("addOrUpdateStream", stream);
+	},
 
-function addOrUpdateStream(stream){
-	var streamOwnerName = utils.getDataByPath(stream, "owner.name");
-	var targetMiniVideoWindow = videoWindowList.get(streamOwnerName);
+	removeStream: function(stream){
+		var streamOwnerName = utils.getDataByPath(stream, "owner.name");
+		var targetMiniVideoWindow = this.videoWindowList[streamOwnerName];
+		if(!targetMiniVideoWindow) throw new Error("no such object.");
+		targetMiniVideoWindow.removeStream(stream);
+		if(targetMiniVideoWindow.isEmpty()){
+			targetMiniVideoWindow.remove();
+			delete this.videoWindowList[streamOwnerName];
+		}
+		this.dispatcher.trigger("removeStream", stream);
+	},
 
-	if(targetMiniVideoWindow){
-		targetMiniVideoWindow.updateStream(stream);
-	}
-	else{
-		videoWindowList.set(streamOwnerName, new MiniVideoWin({
-			parentContainer: multiVideoContainer,
-			stream: stream,
-			dispatcher: dispatcher,
-		}));
-	}
-
-	dispatcher.trigger("addOrUpdateStream", stream);
-}
-
-function removeStream(stream){
-	var streamOwnerName = utils.getDataByPath(stream, "owner.name");
-	var targetMiniVideoWindow = videoWindowList.get(streamOwnerName);
-
-	if(!targetMiniVideoWindow) throw new Error("no such object.");
-
-	targetMiniVideoWindow.removeStream(stream);
-	if(targetMiniVideoWindow.isEmpty()){
-		targetMiniVideoWindow.destroy();
-		videoWindowList.remove(streamOwnerName);
-	}
-
-	dispatcher.trigger("removeStream", stream);
-}
+});
