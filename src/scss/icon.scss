@@ -347,4 +347,15 @@
 	@extend .icon-base;
 	content: "\e9"
 }
-
+.icon-intro:before {
+	@extend .icon-base;
+	content: "\a002"
+}
+.icon-guide:before {
+	@extend .icon-base;
+	content: "\a003"
+}
+.icon-try:before {
+	@extend .icon-base;
+	content: "\a001"
+}

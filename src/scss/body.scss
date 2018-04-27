@@ -193,7 +193,8 @@
 	background-color: #fff;
 	color: #535252;
 	max-width: 30%;
-	min-width: 132px;
+	min-width: 92px;	// (132 iphone/3 - 16 padding = 116) * 0.8 = 92
+	box-sizing: border-box;
 	padding: 0 8px;
 	box-shadow: 0 0 5px rgba(102, 102, 102, 0.3);
 	li {
@@ -267,7 +268,7 @@
 		}
 		.tip-btn:first-child:nth-last-child(3),
 		.tip-btn:first-child:nth-last-child(3) ~ .tip-btn {
-			width: 33%;
+			width: 33.3%;
 		}
 		.tip-btn {
 			@extend %em-mix-ellipsis;

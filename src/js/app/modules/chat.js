@@ -172,7 +172,7 @@ function _setNotice(){
 		// test
 		// notice.content = [
 		// 	{
-		// 		name: "菜单",
+		// 		name: "自考介绍",
 		// 		sub_button: [
 		// 			{
 		// 				type: "view",
@@ -182,7 +182,12 @@ function _setNotice(){
 		// 		]
 		// 	},
 		// 	{
-		// 		name: "222",
+		// 		type: "media_id",
+		// 		name: "报考指南",
+		// 		media_id: "75cffa4b-e462-40e8-a517-0ff807db29a6"
+		// 	},
+		// 	{
+		// 		name: "课程试听",
 		// 		sub_button: [
 		// 			{
 		// 				type: "media_id",
@@ -195,11 +200,6 @@ function _setNotice(){
 		// 				media_id: "4150c891-9917-4482-909c-ab7c9954110a"
 		// 			}
 		// 		]
-		// 	},
-		// 	{
-		// 		type: "media_id",
-		// 		name: "333",
-		// 		media_id: "75cffa4b-e462-40e8-a517-0ff807db29a6"
 		// 	}
 		// ];
 

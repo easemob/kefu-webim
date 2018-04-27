@@ -18,6 +18,7 @@ module.exports = function(){
 		menuArr = notice.content;
 		container.innerHTML = _.template(tpl)({
 			menu: menuArr,
+			icons: ["icon-intro", "icon-guide", "icon-try"]
 		});
 		createMenu();
 		utils.live(".tip-btn", "click", onMenuClick, container);
@@ -91,8 +92,8 @@ module.exports = function(){
 					title: article.title,
 					digest: article.digest,
 					description: article.digest,
-					// url: "/v1/webimplugin/tenants/" + article.tenantId + "/robot/article/html/" + article.articleId,
-					url: "/v1/Tenants/" + article.tenantId + "/robot/article/html/" + article.articleId,
+					url: "/v1/webimplugin/tenants/" + article.tenantId + "/robot/article/html/" + article.articleId,
+					// url: "/v1/Tenants/" + article.tenantId + "/robot/article/html/" + article.articleId,
 					thumbUrl: "/v1/Tenant/" + article.tenantId + "/MediaFiles/" + article.thumb_media_id,
 					picurl: "/v1/Tenant/" + article.tenantId + "/MediaFiles/" + article.thumb_media_id,
 					prop: article.prop,
