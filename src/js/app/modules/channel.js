@@ -347,6 +347,11 @@ function _handleMessage(msg, options){
 	officialAccount && _attemptToAppendOfficialAccount(officialAccount);
 	targetOfficialAccount = _getOfficialAccountById(officialAccountId);
 
+
+	// ===========
+	// 消息类型预取
+	// ===========
+
 	// 满意度评价
 	if(utils.getDataByPath(msg, "ext.weichat.ctrlType") === "inviteEnquiry"){
 		type = "satisfactionEvaluation";
@@ -370,6 +375,14 @@ function _handleMessage(msg, options){
 	else if(utils.getDataByPath(msg, "ext.msgtype.articles")){
 		type = "article";
 	}
+	// track 消息在访客端不与处理
+	else if(utils.getDataByPath(msg, "ext.msgtype.track")){
+		type = "track";
+	}
+	// order 消息在访客端不与处理
+	else if(utils.getDataByPath(msg, "ext.msgtype.order")){
+		type = "order";
+	}
 	else if(utils.getDataByPath(msg, "ext.type") === "html/form"){
 		type = "html-form";
 	}
@@ -380,7 +393,14 @@ function _handleMessage(msg, options){
 	else if(customMagicEmoji){
 		type = "customMagicEmoji";
 	}
-	else{}
+	else{
+
+	}
+
+
+	// ===========
+	// 消息类型重写
+	// ===========
 
 	switch(type){
 	case "txt":
@@ -436,8 +456,10 @@ function _handleMessage(msg, options){
 		);
 		break;
 	case "article":
+	case "track":
+	case "order":
 		message = msg;
-		message.type = "article";
+		message.type = type;
 		break;
 	case "robotList":
 		message = msg;
@@ -530,13 +552,13 @@ function _handleMessage(msg, options){
 		marketingTaskId
 			&& type === "txt"
 			&& eventListener.excuteCallbacks(
-			_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
-			[
-				targetOfficialAccount,
-				marketingTaskId,
-				msg
-			]
-		);
+				_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
+				[
+					targetOfficialAccount,
+					marketingTaskId,
+					msg
+				]
+			);
 
 		if(eventName){
 			_handleSystemEvent(eventName, eventObj, msg);
@@ -552,6 +574,11 @@ function _handleMessage(msg, options){
 		}
 	}
 
+
+	// ===========
+	// 消息类型上屏
+	// ===========
+
 	if(
 		!message
 		// 空文本消息不上屏
@@ -560,6 +587,8 @@ function _handleMessage(msg, options){
 		|| (type === "article" && _.isEmpty(utils.getDataByPath(msg, "ext.msgtype.articles")))
 		// 视频邀请不上屏
 		|| (type === "rtcVideoTicket")
+		// 订单轨迹不上屏
+		|| (type === "track" || type === "order")
 	) return;
 
 	// 给收到的消息加id，用于撤回消息
@@ -959,4 +988,3 @@ function _messagePrompt(message, officialAccount){
 		});
 	}
 }
-

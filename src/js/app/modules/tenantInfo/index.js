@@ -99,19 +99,26 @@ module.exports = function(){
 					prop: article.prop,
 				};
 			});
-			channel.handleMessage(
-				{
-					ext: {
-						msgtype: {
-							articles: articles,
-						}
-					},
+			channel.sendText("", {
+				ext: {
+					msgtype: {
+						articles: articles,
+					}
 				},
-				{
-					type: "article",
-					noPrompt: true
-				}
-			);
+			});
+			// channel.handleMessage(
+			// 	{
+			// 		ext: {
+			// 			msgtype: {
+			// 				articles: articles,
+			// 			}
+			// 		},
+			// 	},
+			// 	{
+			// 		type: "article",
+			// 		noPrompt: true
+			// 	}
+			// );
 		});
 	}
 

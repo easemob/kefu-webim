@@ -162,6 +162,7 @@ function chat_window_mode_init(){
 }
 
 function updateCustomerInfo(e){
+	var trackMsg;
 	var temp;
 	var data = e.data;
 	if(typeof data === "string"){
@@ -169,11 +170,8 @@ function updateCustomerInfo(e){
 	}
 	temp = utils.getDataByPath(data, "easemob.kefu.cta");
 	if(temp){
-		var trackMsg = {
+		trackMsg = {
 			ext: {
-				// imageName: "mallImage3.png",
-				// // custom代表自定义消息，无需修改
-				// type: "custom",
 				msgtype: {
 					track: {
 						// 消息标题
