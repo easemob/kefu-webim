@@ -493,13 +493,13 @@ function _bindEvents(){
 			setArticleIframeScrolling(true);
 			myIframe.src = url;
 			// myIframe.src = "http://kefu.webim.com:8081/pages/robot/article.html";
+
+			// 隐藏整个 tenantInfo
+			tenantInfo && tenantInfo.hide();
 		}
 		else{
 			window.open(url);
 		}
-
-		// 隐藏整个 tenantInfo
-		tenantInfo && tenantInfo.hide();
 	});
 
 	var messagePredict = _.throttle(function(msg){

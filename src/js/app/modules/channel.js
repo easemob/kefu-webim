@@ -631,9 +631,9 @@ function _transformMessageFormat(element){
 		fileLength = msg.file_length;
 	}
 
-	// 给图片消息或附件消息的url拼上hostname
+	// 给图片消息或附件消息的 url 拼上 hostname
 	if(url && !/^https?/.test(url)){
-		url = location.protocol + config.domain + url;
+		url = config.domain + url;
 	}
 
 	return {
