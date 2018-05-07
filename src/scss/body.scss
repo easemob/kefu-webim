@@ -201,11 +201,12 @@
 		@extend %em-mix-ellipsis;
 		position: relative;
 		text-align: center;
-		line-height: 32px;
+		line-height: 44px;
 		width: 100%;
 		border-top: 1px solid #ccc;
 		// 这里应该继承 theme 色，但是没设计好，再说
 		a {
+			font-size: 15px;
 			cursor: pointer;
 			color: #535252;
 		}

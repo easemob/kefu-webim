@@ -175,13 +175,11 @@ function updateCustomerInfo(e){
 				msgtype: {
 					track: {
 						// 消息标题
-						title: "我正在看",
-						// 商品价格
-						price: "",
+						title: "从\"" + temp.title + "\"提交的手机号码：",
 						// 商品描述
-						desc: temp.title,
+						desc: temp.phone,
 						// 商品图片链接
-						img_url: "/images/robot/article_image.png",
+						// img_url: "/images/robot/article_image.png",
 						// 商品页面链接
 						item_url: temp.item_url
 					}
