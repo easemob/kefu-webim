@@ -605,11 +605,10 @@ function _handleMessage(msg, options){
 
 	if(!isHistory){
 		!noPrompt && _messagePrompt(message, targetOfficialAccount);
-
 		// 兼容旧的消息格式
 		message.value = message.data;
 		// 收消息回调
-		transfer.send({
+		isReceived && transfer.send({
 			event: _const.EVENTS.ONMESSAGE,
 			data: {
 				from: msg.from,
