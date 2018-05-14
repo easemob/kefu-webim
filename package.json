@@ -31,10 +31,10 @@
   },
   "scripts": {
     "build": "webpack --production",
+	"build_en": "webpack --production --lang en-US",
+	"build_all": "npm run build; npm run build_en",
     "dev": "webpack --watch --development",
-    "server": "DEBUG=webim* node server/app",
-    "build_en": "webpack --lang en-US",
-    "build_all": "webpack; webpack --lang en-US"
+    "server": "DEBUG=webim* node server/app"
   },
   "dependencies": {
     "easemob-websdk": "=1.4.6",
