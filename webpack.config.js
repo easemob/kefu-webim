@@ -4,8 +4,6 @@
 	/static/js/em-open.js
 	/static/js/em-transfer.js
 */
-// todo: 优化构建速度
-// todo: 减少重复构建
 
 const path = require("path");
 const webpack = require("webpack");
@@ -62,7 +60,6 @@ conmmonConfig = {
 			},
 		}),
 	],
-	devtool: "eval",
 	module: {
 		loaders: [
 			// HtmlWebpackPlugin 需要此 loader
@@ -153,6 +150,9 @@ conmmonConfig = {
 		],
 	},
 };
+if(!argv.production){
+	conmmonConfig.devtool = "eval";
+}
 
 transfer = Object.assign({}, conmmonConfig, {
 	name: "transfer",
@@ -199,7 +199,6 @@ app = Object.assign({}, conmmonConfig, {
 appPageCached = Object.assign({}, conmmonConfig, {
 	name: "appCached",
 	entry: "./src/html/im.html",
-	devtool: false,
 	output: {
 		filename: "appPageCached.js",
 		path: path.resolve(__dirname, distPath, "."),
