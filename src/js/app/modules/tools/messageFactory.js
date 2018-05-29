@@ -4,7 +4,7 @@ var profile = require("../tools/profile");
 var textParser = require("../tools/textParser");
 var moment = require("moment");
 
-var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com/webim/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
+var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com/__WEBIM_KEY_PATH__/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
 
 function genMsgContent(msg){
 	var type = msg.type;
@@ -117,21 +117,21 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		else{
 			articleNode = "<div class=\"article-msg-outer more-articles\">"
 					+ _.map(msgArticles, function(item, index){
-					var str = "";
-					if(index === 0){
-						str = "<div class=\"article-item first-item\">" +
+						var str = "";
+						if(index === 0){
+							str = "<div class=\"article-item first-item\">" +
 							"<h3 class=\"title\">" + item.title + "</h3>";
-					}
-					else{
-						str = "<div class=\"article-item rest-item\">" +
+						}
+						else{
+							str = "<div class=\"article-item rest-item\">" +
 							"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
 						}
 						str += "<img class=\"cover-img\" src=\"" + item.thumbUrl + "\"/>" +
 							// "<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
 							"<div class=\"article-link\"><span>" + item.url + "</span></div>" +
 							"</div>";
-					return str;
-				}).join("") || ""
+						return str;
+					}).join("") || ""
 				+ "</div>";
 		}
 		dom.className = "article-message-wrapper";

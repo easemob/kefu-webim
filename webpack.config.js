@@ -15,6 +15,7 @@ const argv = require("yargs").argv;
 const lang = argv.lang || "zh-CN";
 const tmpVersion = "local_" + (Math.floor(Math.random() * 1e6)).toString();
 const VERSION = process.env.TAG_NAME || tmpVersion;
+const KEY_PATH = process.env.KEY_PATH;		// 默认 "webim"
 
 var distPath = lang === "zh-CN" ? "" : lang;
 var staticPath = lang === "zh-CN" ? "static" : "../static";
@@ -129,6 +130,21 @@ conmmonConfig = {
 				query: {
 					search: "__WEBIM_PLUGIN_VERSION__",
 					replace: VERSION,
+					flags: "g",
+				},
+			},
+			//
+			{
+				test: [
+					/init\.js$/,
+					/userAPI\.js$/,
+					/uikit\/loading\.js$/,
+					/tools\/messageFactory\.js$/,
+				],
+				loader: "string-replace-loader",
+				query: {
+					search: "__WEBIM_KEY_PATH__",
+					replace: KEY_PATH,
 					flags: "g",
 				},
 			},

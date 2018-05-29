@@ -79,8 +79,8 @@ function reset(){
 	_config.resources = utils.convertFalse(resources);
 	_config.satisfaction = utils.convertFalse(sat);
 	_config.domain = _config.domain || baseConfig.domain;
-	_config.path = _config.path || (baseConfig.domain + "/webim");
-	_config.staticPath = _config.staticPath || (baseConfig.domain + "/webim/static");
+	_config.path = _config.path || (baseConfig.domain + "/__WEBIM_KEY_PATH__");
+	_config.staticPath = _config.staticPath || (baseConfig.domain + "/__WEBIM_KEY_PATH__/static");
 }
 // get config from current script
 function getConfig(){

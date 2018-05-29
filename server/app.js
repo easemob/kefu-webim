@@ -11,10 +11,12 @@ const DEFAULT_PORT = 8008;
 const DEFAULT_DOMAIN = "sandbox.kefu.easemob.com";
 const DEFAULT_SERVER = `http://${DEFAULT_DOMAIN}`;
 const PROXY_REGEX = /^\/(v1)/i;
+const KEY_PATH = process.env.KEY_PATH;		// 默认 "webim"
 
 const logProxy = debug("webim:proxy");
 const logBypass = debug("webim:bypass");
 const logErr = debug("webim:error");
+
 
 program
 .version("0.0.2")
@@ -35,7 +37,7 @@ const wwwRoot = path.resolve(currentPath, "..");
 
 const app = express();
 
-app.use("/webim", express["static"](wwwRoot));
+app.use("/" + KEY_PATH, express["static"](wwwRoot));
 
 const proxy = httpProxy.createProxyServer();
 proxy.on("error", e => logErr(e));
@@ -56,8 +58,8 @@ console.log(`backend: ${target}`);
 
 // http server
 http.createServer(app).listen(port, () => console.log(`
-webim http SERVER running @:
-http://localhost:${port}/webim/
+http SERVER running @:
+http://localhost:${port}/${KEY_PATH}/demo.html
 `));
 
 // https server
@@ -66,6 +68,6 @@ https.createServer({
 	cert: fs.readFileSync(currentPath + "/ssl.crt"),
 }, app)
 .listen(port + 1, () => console.log(`
-webim https SERVER running @:
-https://localhost:${port + 1}/webim/
+https SERVER running @:
+https://localhost:${port + 1}/${KEY_PATH}/demo.html
 `));
