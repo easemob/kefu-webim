@@ -10,13 +10,17 @@ const debug = require("debug");
 const DEFAULT_PORT = 8008;
 const DEFAULT_DOMAIN = "sandbox.kefu.easemob.com";
 const DEFAULT_SERVER = `http://${DEFAULT_DOMAIN}`;
-const PROXY_REGEX = /^\/(v1)/i;
+
+// package 中的 KEY_PATH 必须填，当活文档
 const KEY_PATH = process.env.KEY_PATH;		// 默认 "webim"
+const SLASH_KEY_PATH = KEY_PATH == "webim" ? "" : ("/" + KEY_PATH);
+const PROXY_REGEX = [
+	new RegExp(SLASH_KEY_PATH + "/v1", "i")
+];
 
 const logProxy = debug("webim:proxy");
 const logBypass = debug("webim:bypass");
 const logErr = debug("webim:error");
-
 
 program
 .version("0.0.2")
@@ -37,16 +41,21 @@ const wwwRoot = path.resolve(currentPath, "..");
 
 const app = express();
 
-app.use("/" + KEY_PATH, express["static"](wwwRoot));
+app.use(SLASH_KEY_PATH + "/webim", express["static"](wwwRoot));
 
 const proxy = httpProxy.createProxyServer();
 proxy.on("error", e => logErr(e));
 
 app.use((req, res, next) => {
 	var pathname = req.path;
-
-	if(PROXY_REGEX.test(pathname)){
+	if(
+		PROXY_REGEX.reduce(
+			(pre, cur) => (pre || cur.test(pathname)),
+			PROXY_REGEX[0].test(pathname)
+		)
+	){
 		logProxy(pathname);
+		req.url = req.url.replace(SLASH_KEY_PATH, "");
 		proxy.web(req, res, { target }, next);
 	}
 	else{
@@ -57,9 +66,10 @@ app.use((req, res, next) => {
 console.log(`backend: ${target}`);
 
 // http server
-http.createServer(app).listen(port, () => console.log(`
+http.createServer(app)
+.listen(port, () => console.log(`
 http SERVER running @:
-http://localhost:${port}/${KEY_PATH}/demo.html
+http://localhost:${port}${SLASH_KEY_PATH}/webim/demo.html
 `));
 
 // https server
@@ -69,5 +79,5 @@ https.createServer({
 }, app)
 .listen(port + 1, () => console.log(`
 https SERVER running @:
-https://localhost:${port + 1}/${KEY_PATH}/demo.html
+https://localhost:${port}${SLASH_KEY_PATH}/webim/demo.html
 `));

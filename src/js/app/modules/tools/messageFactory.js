@@ -4,7 +4,7 @@ var profile = require("../tools/profile");
 var textParser = require("../tools/textParser");
 var moment = require("moment");
 
-var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com/__WEBIM_KEY_PATH__/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
+var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com__WEBIM_SLASH_KEY_PATH__/webim/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
 
 function genMsgContent(msg){
 	var type = msg.type;

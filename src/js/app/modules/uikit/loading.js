@@ -2,7 +2,7 @@ var utils = require("../../../common/utils");
 var uikit = require("../uikit");
 var _const = require("../../../common/const");
 
-var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com/__WEBIM_KEY_PATH__/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
+var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com__WEBIM_SLASH_KEY_PATH__/webim/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
 
 var dialog;
 var showLoadingObj = {};

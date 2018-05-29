@@ -73,7 +73,7 @@ getData.listen(function(msg){
 	switch(apiName){
 	case "getRelevanceList":
 		emitAjax({
-			url: "/v1/webimplugin/targetChannels",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/targetChannels",
 			type: "GET",
 			msg: msg
 		});
@@ -81,14 +81,14 @@ getData.listen(function(msg){
 	case "getDutyStatus":
 	// DEPRECATED!!!
 		emitAjax({
-			url: "/v1/webimplugin/showMessage",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/showMessage",
 			type: "GET",
 			msg: msg
 		});
 		break;
 	case "getWechatVisitor":
 		emitAjax({
-			url: "/v1/webimplugin/visitors/wechat/" + params.openid
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitors/wechat/" + params.openid
 				+ "?tenantId=" + tenantId,
 			msg: msg,
 			type: "POST"
@@ -96,7 +96,7 @@ getData.listen(function(msg){
 		break;
 	case "createVisitor":
 		emitAjax({
-			url: "/v1/webimplugin/visitors?tenantId=" + tenantId,
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitors?tenantId=" + tenantId,
 			msg: msg,
 			type: "POST"
 		});
@@ -104,7 +104,7 @@ getData.listen(function(msg){
 	case "getSession":
 		// DEPRECATED!!!
 		emitAjax({
-			url: "/v1/webimplugin/visitors/" + params.id
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitors/" + params.id
 				+ "/schedule-data?techChannelInfo=" + techChannelInfo
 				+ "&tenantId=" + tenantId,
 			msg: msg,
@@ -115,7 +115,7 @@ getData.listen(function(msg){
 	case "getExSession":
 	// DEPRECATED!!!
 		emitAjax({
-			url: "/v1/webimplugin/visitors/" + params.id
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitors/" + params.id
 				+ "/schedule-data-ex?techChannelInfo=" + techChannelInfo
 				+ "&tenantId=" + tenantId,
 			msg: msg,
@@ -126,7 +126,7 @@ getData.listen(function(msg){
 	case "getPassword":
 	// DEPRECATED!!!
 		emitAjax({
-			url: "/v1/webimplugin/visitors/password",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitors/password",
 			type: "GET",
 			msg: msg
 		});
@@ -134,7 +134,7 @@ getData.listen(function(msg){
 	case "getGroup":
 		// DEPRECATED!!!
 		emitAjax({
-			url: "/v1/webimplugin/visitors/" + params.id
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitors/" + params.id
 				+ "/ChatGroupId?techChannelInfo=" + techChannelInfo
 				+ "&tenantId=" + tenantId,
 			msg: msg,
@@ -145,7 +145,7 @@ getData.listen(function(msg){
 	case "getGroupNew":
 		// DEPRECATED!!!
 		emitAjax({
-			url: "/v1/webimplugin/tenant/" + tenantId
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenant/" + tenantId
 				+ "/visitors/" + params.id +
 				"/ChatGroupId?techChannelInfo=" + techChannelInfo
 				+ "&tenantId=" + tenantId,
@@ -157,28 +157,28 @@ getData.listen(function(msg){
 	case "getHistory":
 		// DEPRECATED!!!
 		emitAjax({
-			url: "/v1/webimplugin/visitors/msgHistory",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitors/msgHistory",
 			type: "GET",
 			msg: msg
 		});
 		break;
 	case "getSlogan":
 		emitAjax({
-			url: "/v1/webimplugin/notice/options",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/notice/options",
 			type: "GET",
 			msg: msg
 		});
 		break;
 	case "getTheme":
 		emitAjax({
-			url: "/v1/webimplugin/theme/options",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/theme/options",
 			type: "GET",
 			msg: msg
 		});
 		break;
 	case "getSystemGreeting":
 		emitAjax({
-			url: "/v1/webimplugin/welcome",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/welcome",
 			type: "GET",
 			msg: msg
 		});
@@ -186,7 +186,7 @@ getData.listen(function(msg){
 	case "getRobertGreeting":
 	// DEPRECATED!!!
 		emitAjax({
-			url: "/v1/Tenants/"
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/Tenants/"
 				+ tenantId
 				+ "/robots/visitor/greetings/"
 				+ params.originType
@@ -199,7 +199,7 @@ getData.listen(function(msg){
 	case "sendVisitorInfo":
 	// DEPRECATED!!!
 		emitAjax({
-			url: "/v1/webimplugin/tenants/" + tenantId
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId
 				+ "/visitors/" + params.visitorId +
 				"/attributes?tenantId=" + tenantId,
 			msg: msg,
@@ -208,14 +208,14 @@ getData.listen(function(msg){
 		break;
 	case "getProject":
 		emitAjax({
-			url: "/tenants/" + tenantId + "/projects",
+			url: "__WEBIM_SLASH_KEY_PATH__/tenants/" + tenantId + "/projects",
 			type: "GET",
 			msg: msg
 		});
 		break;
 	case "createTicket":
 		emitAjax({
-			url: "/tenants/" + tenantId
+			url: "__WEBIM_SLASH_KEY_PATH__/tenants/" + tenantId
 				+ "/projects/" + params.projectId
 				+ "/tickets?tenantId=" + tenantId
 				+ "&easemob-target-username=" + params["easemob-target-username"]
@@ -227,7 +227,7 @@ getData.listen(function(msg){
 		break;
 	case "getNoteCategories":
 		emitAjax({
-			url: "/tenants/" + tenantId
+			url: "__WEBIM_SLASH_KEY_PATH__/tenants/" + tenantId
 				+ "/projects/" + params.projectId
 				+ "/categories?tenantId=" + tenantId
 				+ "&easemob-target-username=" + params["easemob-target-username"]
@@ -240,14 +240,14 @@ getData.listen(function(msg){
 		break;
 	case "receiveMsgChannel":
 		emitAjax({
-			url: "/v1/imgateway/messages",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/imgateway/messages",
 			type: "GET",
 			msg: msg
 		});
 		break;
 	case "sendMsgChannel":
 		emitAjax({
-			url: "/v1/imgateway/messages?tenantId=" + tenantId,
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/imgateway/messages?tenantId=" + tenantId,
 			msg: msg,
 			type: "POST"
 		});
@@ -259,7 +259,7 @@ getData.listen(function(msg){
 			return;
 		}
 		emitAjax({
-			url: "/v1/tenants/" + tenantId
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/tenants/" + tenantId
 				+ "/agents/" + params.agentUserId + "/agentstate",
 			type: "GET",
 			msg: msg
@@ -267,7 +267,7 @@ getData.listen(function(msg){
 		break;
 	case "getNickNameOption":
 		emitAjax({
-			url: "/v1/webimplugin/agentnicename/options?tenantId=" + tenantId,
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/agentnicename/options?tenantId=" + tenantId,
 			msg: msg,
 			type: "GET",
 			excludeData: true
@@ -276,21 +276,21 @@ getData.listen(function(msg){
 		// 此接口使用的是单独的微服务，无需限流
 	case "reportEvent":
 		emitAjax({
-			url: "/v1/event_collector/events",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/event_collector/events",
 			msg: msg,
 			type: "POST"
 		});
 		break;
 	case "deleteEvent":
 		emitAjax({
-			url: "/v1/event_collector/event/" + encodeURIComponent(params.userId),
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/event_collector/event/" + encodeURIComponent(params.userId),
 			msg: msg,
 			type: "DELETE",
 			excludeData: true
 		});
 		break;
 	case "mediaStreamUpdateStatus":
-		url = "/v1/rtcmedia/media_streams/" + params.streamId;
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/rtcmedia/media_streams/" + params.streamId;
 		delete params.streamId;
 
 		emitAjax({
@@ -302,7 +302,7 @@ getData.listen(function(msg){
 	case "graylist":
 	// DEPRECATED!!!
 		emitAjax({
-			url: "/management/graylist",
+			url: "__WEBIM_SLASH_KEY_PATH__/management/graylist",
 			msg: msg,
 			type: "GET",
 			excludeData: true
@@ -310,7 +310,7 @@ getData.listen(function(msg){
 		break;
 	case "getCurrentServiceSession":
 		emitAjax({
-			url: "/v1/webimplugin/tenant/"
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenant/"
 				+ tenantId
 				+ "/visitors/"
 				+ params.id
@@ -324,7 +324,7 @@ getData.listen(function(msg){
 		break;
 	case "messagePredict":
 	// DEPRECATED!!!
-		url = "/v1/webimplugin/agents/" + params.agentId
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/agents/" + params.agentId
 			+ "/messagePredict"
 			+ "?tenantId=" + params.tenantId;
 
@@ -340,7 +340,7 @@ getData.listen(function(msg){
 		break;
 	case "getSessionQueueId":
 	// DEPRECATED!!!
-		url = "/v1/visitors/" + params.visitorUsername + "/waitings/sessions";
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/visitors/" + params.visitorUsername + "/waitings/sessions";
 
 		delete params.visitorUsername;
 
@@ -352,28 +352,28 @@ getData.listen(function(msg){
 		break;
 	case "getWaitListNumber":
 		emitAjax({
-			url: "/v1/visitors/waitings/data",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/visitors/waitings/data",
 			msg: msg,
 			type: "GET"
 		});
 		break;
 	case "getDutyStatus_2":
 		emitAjax({
-			url: "/v1/webimplugin/tenants/show-message",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/show-message",
 			type: "GET",
 			msg: msg
 		});
 		break;
 	case "getRobertGreeting_2":
 		emitAjax({
-			url: "/v1/webimplugin/tenants/robots/welcome",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/robots/welcome",
 			type: "GET",
 			msg: msg
 		});
 		break;
 	case "getSkillgroupMenu":
 		emitAjax({
-			url: "/v1/webimplugin/tenants/" + tenantId + "/skillgroup-menu",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/skillgroup-menu",
 			type: "GET",
 			msg: msg,
 			excludeData: true
@@ -381,7 +381,7 @@ getData.listen(function(msg){
 		break;
 	case "getAgentInputState":
 		emitAjax({
-			url: "/v1/webimplugin/sessions/" + params.serviceSessionId
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/sessions/" + params.serviceSessionId
 			+ "/agent-input-state?tenantId=" + tenantId
 			+ "&orgName=" + params.orgName + "&appName=" + params.appName
 			+ "&userName=" + params.username + "&token=" + params.token,
@@ -391,7 +391,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "closeServiceSession":
-		url = "/webimplugin/tenants/" + tenantId
+		url = "__WEBIM_SLASH_KEY_PATH__/webimplugin/tenants/" + tenantId
 			+ "/visitors/" + params.userName
 			+ "/servicesessions/" + params.serviceSessionId
 			+ "/stop?tenantId=" + tenantId;
@@ -404,7 +404,7 @@ getData.listen(function(msg){
 		break;
 	case "uploadImgMsgChannel":
 		emitAjax({
-			url: "/v1/Tenant/" + tenantId
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/Tenant/" + tenantId
 				+ "/" + params.orgName + "/" + params.appName
 				+ "/" + params.userName + "/MediaFiles",
 			msg: msg,
@@ -414,7 +414,7 @@ getData.listen(function(msg){
 		break;
 	case "getVisitorInfo":
 		emitAjax({
-			url: "/v1/webimplugin/tenants/" + tenantId
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId
 				+ "/visitors?orgName=" + params.orgName
 				+ "&appName=" + params.appName
 				+ "&userName=" + params.userName
@@ -427,7 +427,7 @@ getData.listen(function(msg){
 		break;
 	case "getOfficalAccounts":
 		emitAjax({
-			url: "/v1/webimplugin/tenants/" + tenantId
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId
 				+ "/visitors/" + params.visitorId
 				+ "/official-accounts?page=0&size=100"
 				+ "&orgName=" + params.orgName
@@ -441,7 +441,7 @@ getData.listen(function(msg){
 		break;
 	case "getOfficalAccountMessage":
 		emitAjax({
-			url: "/v1/webimplugin/tenants/" + tenantId
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId
 				+ "/visitors/" + params.visitorId
 				+ "/official-accounts/" + params.officialAccountId
 				+ "/messages"
@@ -460,7 +460,7 @@ getData.listen(function(msg){
 		break;
 	case "getConfig":
 		emitAjax({
-			url: "/v1/webimplugin/settings/visitors/configs/" + params.configId,
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/visitors/configs/" + params.configId,
 			msg: msg,
 			type: "GET",
 			excludeData: true
@@ -469,14 +469,14 @@ getData.listen(function(msg){
 	// 会话创建前 获取该会话  是否将于机器人进行
 	case "getRobertIsOpen":
 		emitAjax({
-			url: "/v1/webimplugin/tenants/robot-ready",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/robot-ready",
 			type: "GET",
 			msg: msg
 		});
 		break;
 	case "getExSession_2":
 		emitAjax({
-			url: "/v1/webimplugin/visitors/" + params.username
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitors/" + params.username
 				+ "/schedule-data-ex2"
 				+ "?techChannelInfo=" + techChannelInfo
 				+ "&channelType=" + params.channelType
@@ -492,7 +492,7 @@ getData.listen(function(msg){
 		break;
 	case "getLastSession":
 		emitAjax({
-			url: "/v1/webimplugin/tenants/" + tenantId
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId
 				+ "/visitors/" + params.visitorId
 				+ "/official-accounts/" + params.officialAccountId
 				+ "/latest-session"
@@ -507,7 +507,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "reportVisitorAttributes":
-		url = "/v1/webimplugin/tenants/" + tenantId
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId
 			+ "/sessions/" + params.sessionId
 			+ "/attributes"
 			+ "?orgName=" + params.orgName
@@ -532,7 +532,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "messagePredict_2":
-		url = "/v1/webimplugin/servicesessions/" + params.sessionId
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/servicesessions/" + params.sessionId
 			+ "/messagePredict"
 			+ "?orgName=" + params.orgName
 			+ "&appName=" + params.appName
@@ -555,7 +555,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "reportMarketingTaskDelivered":
-		url = "/v1/webimplugin/tenants/" + tenantId
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId
 			+ "/marketing-tasks/" + params.marketingTaskId
 			+ "/delivered"
 			+ "?orgName=" + params.orgName
@@ -578,7 +578,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "reportMarketingTaskOpened":
-		url = "/v1/webimplugin/tenants/" + tenantId
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId
 			+ "/marketing-tasks/" + params.marketingTaskId
 			+ "/opened"
 			+ "?orgName=" + params.orgName
@@ -601,7 +601,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "reportMarketingTaskReplied":
-		url = "/v1/webimplugin/tenants/" + tenantId
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId
 			+ "/marketing-tasks/" + params.marketingTaskId
 			+ "/replied"
 			+ "?orgName=" + params.orgName
@@ -625,7 +625,7 @@ getData.listen(function(msg){
 		break;
 	case "getLatestMarketingTask":
 		emitAjax({
-			url: "/v1/webimplugin/tenants/" + tenantId
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId
 				+ "/official-accounts/" + params.officialAccountId
 				+ "/marketing-tasks"
 				+ "?orgName=" + params.orgName
@@ -639,7 +639,7 @@ getData.listen(function(msg){
 		break;
 	case "getEvaluationDegrees":
 		emitAjax({
-			url: "/v1/webimplugin/tenants/"
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/"
 				+ tenantId
 				+ "/evaluationdegrees"
 				+ "?orgName=" + params.orgName
@@ -653,7 +653,7 @@ getData.listen(function(msg){
 		break;
 	case "getAppraiseTags":
 		emitAjax({
-			url: "/v1/webimplugin/tenants/"
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/"
 				+ tenantId
 				+ "/evaluationdegrees/"
 				+ params.evaluateId
@@ -669,7 +669,7 @@ getData.listen(function(msg){
 		break;
 	case "grayScale":
 		emitAjax({
-			url: "/v1/grayscale/tenants/" + tenantId,
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/grayscale/tenants/" + tenantId,
 			msg: msg,
 			type: "GET",
 			excludeData: true,
@@ -677,7 +677,7 @@ getData.listen(function(msg){
 		break;
 	case "getCustomEmojiPackages":
 		emitAjax({
-			url: "/v1/webimplugin/emoj/tenants/" + tenantId + "/packages",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/emoj/tenants/" + tenantId + "/packages",
 			msg: msg,
 			type: "GET",
 			excludeData: true,
@@ -685,7 +685,7 @@ getData.listen(function(msg){
 		break;
 	case "getCustomEmojiFiles":
 		emitAjax({
-			url: "/v1/webimplugin/emoj/tenants/" + tenantId + "/files",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/emoj/tenants/" + tenantId + "/files",
 			msg: msg,
 			type: "GET",
 			excludeData: true,
@@ -693,7 +693,7 @@ getData.listen(function(msg){
 		break;
 	case "getSatisfactionTipWord":
 		emitAjax({
-			url: "/v1/webimplugin/tenants/" + tenantId + "/options/GreetingMsgEnquiryInvite",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/GreetingMsgEnquiryInvite",
 			type: "GET",
 			msg: msg,
 			excludeData: true,
@@ -701,7 +701,7 @@ getData.listen(function(msg){
 		break;
 	case "getPassword2":
 		emitAjax({
-			url: "/v1/webimplugin/visitors/password2"
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitors/password2"
 			+ "?userId=" + params.userId
 			+ "&orgName=" + params.orgName
 			+ "&appName=" + params.appName
@@ -712,7 +712,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "updateCustomerInfo":
-		url = " /v1/tenants/" + tenantId
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/tenants/" + tenantId
 				+ "/visitors/" + params.visitorId + "/customer-info"
 				+ "?orgName=" + params.orgName
 				+ "&appName=" + params.appName
@@ -732,7 +732,7 @@ getData.listen(function(msg){
 		break;
 	case "getArticleJson":
 		emitAjax({
-			url: "/v1/webimplugin/tenants/" + tenantId + "/robot/news/" + params.media_id,
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/robot/news/" + params.media_id,
 			type: "GET",
 			msg: msg,
 		});

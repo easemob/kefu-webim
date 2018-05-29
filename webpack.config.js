@@ -15,7 +15,10 @@ const argv = require("yargs").argv;
 const lang = argv.lang || "zh-CN";
 const tmpVersion = "local_" + (Math.floor(Math.random() * 1e6)).toString();
 const VERSION = process.env.TAG_NAME || tmpVersion;
-const KEY_PATH = process.env.KEY_PATH;		// 默认 "webim"
+
+// package 中的 KEY_PATH 必须填，当活文档
+var KEY_PATH = process.env.KEY_PATH;
+var SLASH_KEY_PATH = KEY_PATH == "webim" ? "" : "/" + KEY_PATH;
 
 var distPath = lang === "zh-CN" ? "" : lang;
 var staticPath = lang === "zh-CN" ? "static" : "../static";
@@ -25,6 +28,7 @@ var easemob;
 var app;
 var appPageCached;
 var taskList;
+
 
 i18next.init({
 	lng: lang,
@@ -140,11 +144,12 @@ conmmonConfig = {
 					/userAPI\.js$/,
 					/uikit\/loading\.js$/,
 					/tools\/messageFactory\.js$/,
+					/transfer\/api.js$/,
 				],
 				loader: "string-replace-loader",
 				query: {
-					search: "__WEBIM_KEY_PATH__",
-					replace: KEY_PATH,
+					search: "__WEBIM_SLASH_KEY_PATH__",
+					replace: SLASH_KEY_PATH,
 					flags: "g",
 				},
 			},
