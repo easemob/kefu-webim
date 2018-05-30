@@ -30,11 +30,11 @@
     "yargs": "^8.0.2"
   },
   "scripts": {
-    "build": "KEY_PATH=onlinehelp webpack --production",
-    "build_en": "KEY_PATH=onlinehelp webpack --production --lang en-US",
+    "build": "KEY_PATH=webim webpack --production",
+    "build_en": "KEY_PATH=webim webpack --production --lang en-US",
     "build_all": "npm run build; npm run build_en",
-    "dev": "KEY_PATH=onlinehelp webpack --watch --development",
-    "server": "KEY_PATH=onlinehelp DEBUG=webim* node server/app"
+    "dev": "KEY_PATH=webim webpack --watch --development",
+    "server": "KEY_PATH=webim DEBUG=webim* node server/app"
   },
   "dependencies": {
     "easemob-websdk": "=1.4.6",
