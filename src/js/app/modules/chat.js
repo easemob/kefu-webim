@@ -511,7 +511,10 @@ function _bindEvents(){
 						// 商品描述
 						desc: curArticleDom.querySelector(".title").innerText,
 						// 商品图片链接
-						img_url: curArticleDom.querySelector(".cover-img").getAttribute("src"),
+						img_url: (
+							curArticleDom.querySelector(".cover")
+							|| curArticleDom.querySelector(".cover-img")
+						).getAttribute("src"),
 						// 商品页面链接
 						item_url: url
 					}
