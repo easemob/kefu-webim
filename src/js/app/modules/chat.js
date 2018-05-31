@@ -477,7 +477,11 @@ function _bindEvents(){
 		articleContainer.style.display = "none";
 		tenantInfo && tenantInfo.show();
 	});
-
+	// 提示有新消息
+	eventListener.add(_const.SYSTEM_EVENT.MESSAGE_APPENDED, function(oa, msg){
+		utils.addClass(document.body.querySelector("#em-article-close .back-chat"), "hide");
+		utils.removeClass(document.body.querySelector("#em-article-close .new-message"), "hide");
+	});
 	utils.live(".article-link", "click", function(e){
 		var curArticleDom = e.target.parentNode;
 		var articleContainer;
@@ -491,6 +495,10 @@ function _bindEvents(){
 			);
 			articleContainer.querySelector(".em-article-body").appendChild(myIframe);
 			articleContainer.style.display = "block";
+			// reset articleContainer
+			utils.removeClass(document.body.querySelector("#em-article-close .back-chat"), "hide");
+			utils.addClass(document.body.querySelector("#em-article-close .new-message"), "hide");
+
 			setArticleIframeScrolling(true);
 			myIframe.src = url;
 			// myIframe.src = "http://kefu.webim.com:8081/pages/robot/article.html";
