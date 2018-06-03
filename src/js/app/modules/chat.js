@@ -475,6 +475,7 @@ function _bindEvents(){
 		var iframe = articleContainer.querySelector("iframe");
 		iframe && utils.removeDom(iframe);
 		articleContainer.style.display = "none";
+		doms.editorView.style.display = "block";
 		tenantInfo && tenantInfo.show();
 	});
 	// 提示有新消息
@@ -487,6 +488,7 @@ function _bindEvents(){
 		var articleContainer;
 		var myIframe;
 		var url = e.target.firstElementChild.innerText;
+		doms.editorView.style.display = "none";
 		url = utils.sameProtocol(url);
 		if(utils.isTop){
 			articleContainer = document.getElementById("em-article-container");
