@@ -17,8 +17,7 @@ module.exports = function(){
 		if(!notice.enabled) return;
 		menuArr = notice.content;
 		container.innerHTML = _.template(tpl)({
-			menu: menuArr,
-			icons: ["icon-intro", "icon-guide", "icon-try"]
+			menu: menuArr
 		});
 		createMenu();
 		utils.live(".tip-btn", "click", onMenuClick, container);

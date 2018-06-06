@@ -1,6 +1,6 @@
 <% _.each(menu, function(itm, menuId){ %>
 <div class="tip-btn" menuId="<%= menuId %>">
-	<i class="<%= icons[menuId] %>"></i>
+	<i class="<%= 'icon-' + itm.icon %>"></i>
 	<span><%= itm.name %></span>
 </div>
 <% }) %>
