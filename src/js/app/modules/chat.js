@@ -488,7 +488,7 @@ function _bindEvents(){
 		var articleContainer;
 		var myIframe;
 		var url = e.target.firstElementChild.innerText;
-		// doms.editorView.style.display = "none";
+		doms.editorView.style.display = "none";
 		url = utils.sameProtocol(url);
 		if(utils.isTop){
 			articleContainer = document.getElementById("em-article-container");
