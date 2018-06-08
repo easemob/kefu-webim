@@ -111,7 +111,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 					"</div>" +
 					"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
 					// "<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
-					"<div class=\"article-link\"><span>" + msgArticles[0].url + "</span></div>" +
+					"<div class=\"article-link\" data-status=\"" + msgArticles[0].sendCustomer + "\"><span>" + msgArticles[0].url + "</span></div>" +
 				"</div>";
 		}
 		else{
