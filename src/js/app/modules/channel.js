@@ -318,6 +318,7 @@ function _handleMessage(msg, options){
 	var marketingTaskId = utils.getDataByPath(msg, "ext.weichat.marketing.marketing_task_id");
 	var officialAccountId = officialAccount && officialAccount.official_account_id;
 	var videoTicket = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.ticket");
+	var videoExtend = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.extend");
 	var customMagicEmoji = utils.getDataByPath(msg, "ext.msgtype.customMagicEmoji");
 	var targetOfficialAccount;
 	var message;
@@ -534,7 +535,7 @@ function _handleMessage(msg, options){
 		message.brief = __("message_brief.unknown");
 		break;
 	case "rtcVideoTicket":
-		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket]);
+		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket, videoExtend]);
 		break;
 	case "customMagicEmoji":
 		message = customMagicEmoji;
