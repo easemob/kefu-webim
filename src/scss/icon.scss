@@ -504,3 +504,8 @@
 		content: "\a024";
 	}
 }
+.icon-sendvideo:before {
+	@extend .icon-base;
+	content: "\a025"
+}
+

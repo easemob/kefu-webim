@@ -95,6 +95,12 @@
 			color: white;
 			text-shadow: -1px 0 0 #e5e5e5;
 		}
+		.em-widget-msg-container {
+			.video-btn{
+				width: 100%;
+				height: 100%;
+			}
+		}
 	}
 }
 
@@ -116,6 +122,10 @@
 		.em-widget-msg-container {
 			background-color: #e3ecfc;
 			float: right;
+			.video-btn{
+				width: 100%;
+				height: 100%;
+			}
 		}
 	}
 }
