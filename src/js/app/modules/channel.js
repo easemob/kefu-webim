@@ -58,6 +58,7 @@ module.exports = {
 	sendText: _sendText,
 	sendImg: _sendImg,
 	sendFile: _sendFile,
+	sendVideo: _sendVideo, // 新增小视频发送类型
 	attemptToAppendOfficialAccount: _attemptToAppendOfficialAccount,
 
 	// todo: move this to message view
@@ -123,6 +124,9 @@ function _initConnection(onReadyCallback){
 		onFileMessage: function(message){
 			_handleMessage(message, { type: "file" });
 		},
+		onVideoMessage: function(message){
+			_handleMessage(message, { type: "video" });
+		}, // 新增小视频类型
 		onCmdMessage: function(message){
 			_handleMessage(message, { type: "cmd" });
 		},
@@ -299,6 +303,38 @@ function _sendFile(fileMsg){
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 }
 
+// 小视频发送
+function _sendVideo(fileMsg){
+	var id = utils.uuid();
+	var msg = new WebIM.message.video(id); // message.video => message.js file格式进行选择
+
+	msg.set({
+		apiUrl: location.protocol + "//" + config.restServer,
+		file: fileMsg,
+		to: config.toUser,
+		success: function(id){
+			// todo: 验证这里是否执行，验证此处id是im msg id 还是 kefu-ack-id
+			_hideFailedAndLoading(id);
+		},
+		fail: function(id){
+			_showFailed(id);
+		},
+	});
+	_setExt(msg); 
+	_appendMsg({
+		id: id,
+		type: "video",
+		url: fileMsg.url,
+		filename: fileMsg.filename,
+		fileLength: fileMsg.data.size,
+	}, {
+		isReceived: false,
+		isHistory: false,
+	});
+	conn.send(msg.body); 
+	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
+}
+
 function _handleMessage(msg, options){
 	var opt = options || {};
 	var type = opt.type || (msg && msg.type);
@@ -400,7 +436,7 @@ function _handleMessage(msg, options){
 
 
 	// ===========
-	// 消息类型重写
+	// 消息类型重写  	接收消息类型判断
 	// ===========
 
 	switch(type){
@@ -419,6 +455,11 @@ function _handleMessage(msg, options){
 		message = msg;
 		message.type = type;
 		message.brief = __("message_brief.file");
+		break;
+	case "video":
+		message = msg;
+		message.type = type;
+		message.brief = __("message_brief.video"); // 页面接收提示视频
 		break;
 	case "cmd":
 		var action = msg.action;

@@ -32,6 +32,7 @@ utils.on(window, "message", function(e){
 	updateCustomerInfo(e);
 });
 
+// body.html 显示词语
 function load_html(){
 	utils.appendHTMLToBody(_.template(body_template)({
 		contact_agent: __("common.contact_agent"),
@@ -49,6 +50,7 @@ function load_html(){
 		evaluate_agent: __("toolbar.evaluate_agent"),
 		transfer_to_kefu: __("toolbar.transfer_to_kefu"),
 		press_save_img: __("common.press_save_img"),
+		send_video: __("toolbar.send_video"),
 	}));
 
 	chat.getDom();
