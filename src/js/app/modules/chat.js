@@ -579,6 +579,22 @@ function _bindEvents(){
 		});
 	}
 
+	// 发送小视频
+	utils.on(doms.videoInput, "change", function(){
+		var fileInput = doms.videoInput;
+		var filesize = utils.getDataByPath(fileInput, "files.0.size");
+		if(!fileInput.value){
+		}
+		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
+			uikit.tip(__("prompt._10_mb_file_limit"));  //("文件大小不能超过10MB");
+			fileInput.value = "";
+		}
+		else{
+			channel.sendVideo(WebIM.utils.getFileUrl(fileInput)); //sendVideo 取自 channel.js 
+			fileInput.value = "";
+		}
+	});
+
 	// 发送文件
 	utils.on(doms.fileInput, "change", function(){
 		var fileInput = doms.fileInput;
@@ -626,11 +642,17 @@ function _bindEvents(){
 		}
 	});
 
-	// 弹出文件选择框
+	// 弹出文件框
 	utils.on(doms.sendFileBtn, "click", function(){
 		doms.fileInput.click();
 	});
 
+	// 弹出小视频框
+	utils.on(doms.sendVideoBtn, "click", function(){
+		doms.videoInput.click();
+	});
+
+	// 弹出图片框
 	utils.on(doms.sendImgBtn, "click", function(){
 		doms.imgInput.click();
 	});
@@ -768,7 +790,7 @@ function _initSDK(){
 		channel.initConnection(resolve);
 	});
 }
-
+// 获取dom
 function _getDom(){
 	topBar = document.querySelector(".em-widget-header");
 	editorView = document.querySelector(".em-widget-send-wrapper");
@@ -783,15 +805,18 @@ function _getDom(){
 		switchKeyboardBtn: topBar.querySelector(".btn-keyboard"),
 
 		emojiToggleButton: editorView.querySelector(".em-bar-emoji"),
+		// 获取文件上传，图片，小视频按钮dom	
 		sendImgBtn: editorView.querySelector(".em-widget-img"),
 		sendFileBtn: editorView.querySelector(".em-widget-file"),
+		sendVideoBtn: editorView.querySelector(".em-widget-video"),
 		sendBtn: editorView.querySelector(".em-widget-send"),
 		satisfaction: editorView.querySelector(".em-widget-satisfaction"),
 		textInput: editorView.querySelector(".em-widget-textarea"),
 		noteBtn: editorView.querySelector(".em-widget-note"),
 		videoInviteButton: editorView.querySelector(".em-video-invite"),
 		queuingNumberStatus: editorView.querySelector(".queuing-number-status"),
-
+		//  图片小视频文件 file框
+		videoInput: document.querySelector(".upload-video-container"),
 		imgInput: document.querySelector(".upload-img-container"),
 		fileInput: document.querySelector(".upload-file-container"),
 		chatWrapper: document.querySelector(".chat-wrapper"),
