@@ -45,6 +45,7 @@ module.exports = {
 		picture: "[图片]",
 		emoji: "[表情]",
 		unknown: "[未知类型]",
+		video: "[视频]",
 	},
 	agent_status: {
 		online: "(空闲)",
@@ -101,7 +102,8 @@ module.exports = {
 		ticket: "留言",
 		video_invite: "视频通话",
 		evaluate_agent: "评价客服",
-		transfer_to_kefu: "转人工",
+		transfer_to_kefu: "转人工",	
+		send_video: "发送小视频",
 	},
 	prompt: {
 		new_message_title_notice: "新消息提醒",
