@@ -306,7 +306,7 @@ function _sendFile(fileMsg){
 // 小视频发送
 function _sendVideo(fileMsg){
 	var id = utils.uuid();
-	var msg = new WebIM.message.video(id); // message.video => message.js file格式进行选择
+	var msg = new Message.video(id); //   new Message.video => 339行  message 格式的转换
 
 	msg.set({
 		apiUrl: location.protocol + "//" + config.restServer,
@@ -334,6 +334,52 @@ function _sendVideo(fileMsg){
 	conn.send(msg.body); 
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 }
+
+// 新增 视频格式发送
+var Message = function (type, id) {
+	if (!this instanceof Message) {
+		return new Message(type);
+	}
+
+	this._msg = {};
+
+	if (typeof Message[type] === 'function') {
+		Message[type].prototype.setGroup = this.setGroup;
+		this._msg = new Message[type](id);
+	}
+	return this._msg;
+}
+
+Message.video = function (id) {
+	this.id = id;
+	this.type = 'video';
+	this.body = {};
+};
+Message.video.prototype.set = function (opt) {
+	opt.file = opt.file || _utils.getFileUrl(opt.fileInputId);
+
+	this.value = opt.file;
+	this.filename = opt.filename || this.value.filename;
+
+	this.body = {
+		id: this.id
+		, file: this.value
+		, filename: this.filename
+		, apiUrl: opt.apiUrl
+		, to: opt.to
+		, type: this.type
+		, ext: opt.ext || {}
+		, roomType: opt.roomType
+		, onFileUploadError: opt.onFileUploadError
+		, onFileUploadComplete: opt.onFileUploadComplete
+		, success: opt.success
+		, fail: opt.fail
+		, flashUpload: opt.flashUpload
+		, body: opt.body
+	};
+	!opt.roomType && delete this.body.roomType;
+};
+
 
 function _handleMessage(msg, options){
 	var opt = options || {};
