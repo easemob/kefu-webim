@@ -74,6 +74,7 @@ module.exports = function(opt){
 		_scrollToBottom();
 	}
 
+    // 页面每次进入进这个函数
 	function _appendMsg(msg, options){
 		var opt = options || {};
 		var isReceived = opt.isReceived;

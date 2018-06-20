@@ -50,6 +50,14 @@ function genMsgContent(msg){
 			+ "\" class=\"icon-download container-icon-download\" title=\""
 			+ msg.filename + "\" download=\"" + msg.filename + "\"></a>";
 		break;
+		// 小视频类型
+		case "video":
+		html = "<video class=\"video-btn\"  controls src=\""+msg.url +" \">"
+				+ "<source  src=\""+msg.url +" \" type=\"video/mp4\"></source>"
+				+ "<source  src=\""+msg.url +" \" type=\"video/webm\"></source>"
+				+ "<source  src=\""+msg.url +" \" type=\"video/ogg\"></source>"
+			   + "</video>"
+		break;
 	case "html-form":
 		msgContent = msg.ext.msgtype.html;
 		html = "<a class=\"form-url\" target=\"_blank\" href=" + msgContent.url + "></a>"
