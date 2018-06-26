@@ -737,6 +737,21 @@ getData.listen(function(msg){
 			msg: msg,
 		});
 		break;
+	case "getGuessList":
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + params.tenantId 
+		+ "/servicesessions/" 
+		+ params.sessionId 
+		+ "/standard_suggestion/questions?input="+ params.inputValue + "&robotId="+ params.robotId;
+		delete params.tenantId;
+		delete params.sessionId;
+		delete params.inputValue;
+		delete params.robotId;
+		emitAjax({
+			url: url,
+			type: "GET",
+			msg: msg
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;
