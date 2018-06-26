@@ -1232,6 +1232,21 @@ function getArticleJson(data){
 		});
 	});
 }
+// 猜你想说 接口列表
+function getGuessList(data){
+	var officialAccount = profile.currentOfficialAccount;
+		if(!officialAccount) return;
+	return new Promise(function(resolve, reject){
+		api("getGuessList", {
+			tenantId: config.tenantId,
+			sessionId: officialAccount.sessionId,
+			robotId: officialAccount.agentId,
+			inputValue: data
+		}, function(msg){
+			resolve(msg);
+		});
+	});
+}
 
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
@@ -1282,6 +1297,7 @@ module.exports = {
 	getSatisfactionTipWord: getSatisfactionTipWord,
 	updateCustomerInfo: updateCustomerInfo,
 	getArticleJson: getArticleJson,
+	getGuessList: getGuessList,
 
 	initApiTransfer: initApiTransfer,
 	api: api,
