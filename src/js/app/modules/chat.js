@@ -11,6 +11,7 @@ var imgView = require("./imgview");
 var leaveMessage = require("./leaveMessage");
 var initPasteImage = require("./paste");
 var videoChat = require("./videoChat");
+var guessInfo = require("./guess/guessInfo");
 
 var initAgentInputStatePoller = require("./chat/initAgentInputStatePoller");
 var initAgentStatusPoller = require("./chat/initAgentStatusPoller");
@@ -715,79 +716,10 @@ function _bindEvents(){
 			channel.sendText(textMsg);
 			doms.textInput.value = "";
 			utils.trigger(doms.textInput, "change");
-			doms.guessArea.style.display = "none";
-			doms.chatWrapper.style.bottom = 140 + "px";
-			doms.editorView.style.height = 140 + "px";
-			document.getElementById('guessList').innerHTML = "";
-			doms.guessTips.innerText = "guess you say";
-			doms.loading.style.display = "block";
+			// 清除猜你想说 功能 并 重置样式
+			guessInfo.resetStyle();
 		}
 	});
-
-	// 文本框检索猜你想说内容
-	utils.on(doms.textInput, "keyup", function(){
-		doms.guessArea.style.display = "block";
-		var value = this.value;
-		// 根据当前文本框输入内容 是否发起请求
-		if(value != ""){
-			apiHelper.getGuessList(value).then(function(res){
-				if(res && res.data && res.data.entities){
-					doms.guessTips.innerText = "guess you say";
-					doms.loading.style.display = "none";
-					// 创建模板
-					createTemplate(res.data.entities);
-					// 设置聊天框内容样式
-					doms.chatWrapper.style.bottom = 230 + "px";
-					doms.editorView.style.height = 230 + "px";
-					doms.guessBtn = document.querySelectorAll('.guess-list li');
-					// 点击猜你想说按钮上屏
-					utils.on(doms.guessBtn, "click", function(){
-						var curText = this.innerText;
-						channel.sendText(curText);
-						doms.textInput.value = "";
-						utils.trigger(doms.textInput, "change");
-						// 恢复默认样式
-						doms.guessArea.style.display = "none";
-						doms.chatWrapper.style.bottom = 140 + "px";
-						doms.editorView.style.height = 140 + "px";
-						document.getElementById('guessList').innerHTML = "";
-					});
-				}else{
-					// 检索不到值时恢复 默认样式
-					doms.guessTips.innerText = "暂无查询结果";
-					doms.loading.style.display = "block";
-					document.getElementById('guessList').innerHTML = "";
-					doms.chatWrapper.style.bottom = 140 + "px";
-					doms.editorView.style.height = 140 + "px";
-				}
-			});
-		}
-		else{
-			// 文本框内容清空时 重置样式
-			doms.guessArea.style.display = "none";
-			doms.chatWrapper.style.bottom = 140 + "px";
-			doms.editorView.style.height = 140 + "px";
-		}
-	});
-
-	// 点击猜你想说关闭按钮 恢复样式
-	utils.on(doms.closeBtn, "click", function(){
-		doms.guessArea.style.display = "none";
-		doms.chatWrapper.style.bottom = 140 + "px";
-		doms.editorView.style.height = 140 + "px";
-		doms.guessTips.innerText = "guess you say";
-		doms.loading.style.display = "block";
-	});
-
-}
-
-// 根据`猜你想问`接口返回拼接模板
-function createTemplate(data){
-		var html="";
-		for(var i=0; i<data.length; i++){
-			html+='<li>' + data[i] + '</li>';
-			document.getElementById('guessList').innerHTML = html;
-		}
 }
 
 function setArticleIframeScrolling(enable){
@@ -866,6 +798,10 @@ function _getDom(){
 	topBar = document.querySelector(".em-widget-header");
 	editorView = document.querySelector(".em-widget-send-wrapper");
 
+	var toolBar = editorView.querySelector(".toolbar");
+	// 将猜你想说 dom 插入的指定元素之前
+	toolBar.parentNode.insertBefore(guessInfo.loadHtml().dom, toolBar);
+
 	doms = {
 		imBtn: document.getElementById("em-widgetPopBar"),
 		imChat: document.getElementById("em-kefu-webim-chat"),
@@ -874,13 +810,6 @@ function _getDom(){
 		minifyBtn: topBar.querySelector(".btn-min"),
 		audioBtn: topBar.querySelector(".btn-audio"),
 		switchKeyboardBtn: topBar.querySelector(".btn-keyboard"),
-
-		guessTips: editorView.querySelector(".guess-tips"),
-		guessArea: editorView.querySelector(".guess-area"),
-		closeBtn: editorView.querySelector(".close-btn"),
-		guessBtn: editorView.querySelectorAll(".guess-area li"),
-		guessList: editorView.querySelector(".guess-list"),
-		loading: editorView.querySelector(".loading"),
 
 		emojiToggleButton: editorView.querySelector(".em-bar-emoji"),
 		// 获取文件上传，图片，小视频按钮dom	
@@ -905,6 +834,10 @@ function _getDom(){
 }
 
 function _init(){
+	// 根据灰度设置 是否添加猜你想问功能
+	if(profile.grayList.guessUSay){
+		guessInfo.addEvents();
+	}
 	config = profile.config;
 
 	channel.init();
@@ -1005,3 +938,4 @@ function _initSession(){
 		}
 	});
 }
+
