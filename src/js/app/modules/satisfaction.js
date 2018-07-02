@@ -66,6 +66,7 @@ function _init(){
 			confirm: _confirm,
 		});
 		loading.hide("satisfaction");
+		_setSatisfaction();
 		dialog.show();
 	});
 }
@@ -168,8 +169,6 @@ function show(inviteId, serviceSessionId){
 	_initOnce();
 	session = serviceSessionId;
 	invite = inviteId;
-	_setSatisfaction();
-	dialog && dialog.show();
 }
 
 function init(){
