@@ -122,6 +122,7 @@ function _initToolbar(){
 	if(WebIM.utils.isCanUploadFileAsync){
 		utils.removeClass(doms.sendImgBtn, "hide");
 		utils.removeClass(doms.sendFileBtn, "hide");
+		utils.removeClass(doms.sendVideoBtn, "hide");
 	}
 
 	// 留言按钮
@@ -566,12 +567,12 @@ function _bindEvents(){
 			&& messagePredict(doms.textInput.value);
 	}
 
-	if(Modernizr.oninput){
-		utils.on(doms.textInput, "input change", handleSendBtn);
-	}
-	else{
-		utils.on(doms.textInput, "keyup change", handleSendBtn);
-	}
+	// if(Modernizr.oninput){
+	// 	utils.on(doms.textInput, "input change", handleSendBtn);
+	// }
+	// else{
+	// 	utils.on(doms.textInput, "keyup change", handleSendBtn);
+	// }
 
 	if(utils.isMobile){
 		utils.on(doms.textInput, "focus touchstart", function(){
