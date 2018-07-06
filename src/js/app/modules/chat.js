@@ -567,12 +567,12 @@ function _bindEvents(){
 			&& messagePredict(doms.textInput.value);
 	}
 
-	// if(Modernizr.oninput){
-	// 	utils.on(doms.textInput, "input change", handleSendBtn);
-	// }
-	// else{
-	// 	utils.on(doms.textInput, "keyup change", handleSendBtn);
-	// }
+	if(Modernizr.oninput){
+		utils.on(doms.textInput, "input change", handleSendBtn);
+	}
+	else{
+		utils.on(doms.textInput, "keyup change", handleSendBtn);
+	}
 
 	if(utils.isMobile){
 		utils.on(doms.textInput, "focus touchstart", function(){
