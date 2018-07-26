@@ -717,8 +717,10 @@ function _bindEvents(){
 			channel.sendText(textMsg);
 			doms.textInput.value = "";
 			utils.trigger(doms.textInput, "change");
-			// 清除猜你想说 功能 并 重置样式
-			guessInfo.resetStyle();
+			// 清除猜你想说 功能 并 重置样式(根据是否有灰度)
+			if(profile.grayList.guessUSay){
+				guessInfo.resetStyle();
+			}
 		}
 	});
 }
