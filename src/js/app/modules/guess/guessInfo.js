@@ -30,7 +30,10 @@ function loadHtml(){
 }
 
 function _addEvents(){
-    var doms = loadHtml().doms;
+	var doms = loadHtml().doms;
+	var oldValue = "";
+	var newValue = "";
+
     // 点击猜你想说按钮上屏
 	utils.live("li", "click",function(e){
 		var curText = this.innerText;
@@ -63,8 +66,10 @@ function _addEvents(){
 		doms.editorView.style.height = 160 + "px";
 
 		var value = this.value;
-		// 根据当前文本框输入内容 是否发起请求
-		if(value != ""){
+		newValue = value;
+
+		// 根据当前文本框输入内容是否发生变化 发起请求
+		if(value && oldValue !== newValue){
 				apiHelper.getGuessList(value).then(function(res){
 					if(res && res.data && res.data.entities){
 						doms.guessTips.innerText = "猜你想问";
@@ -84,14 +89,23 @@ function _addEvents(){
 							doms.chatWrapper.style.bottom = 140 + "px";
 							doms.editorView.style.height = 140 + "px";
 						}, 1000);
+						console.log("请求了");
 					}
 				});
+			oldValue = newValue;
 		}
-		else{
+		// 当值不变时 不触发搜索状态
+		else if(oldValue == newValue){
+			doms.guessArea.style.display = "none";
+			doms.chatWrapper.style.bottom = 140 + "px";
+			doms.editorView.style.height = 140 + "px";
+		}
+		else if(!value){
 			// 文本框内容清空时 重置样式
 			doms.guessArea.style.display = "none";
 			doms.chatWrapper.style.bottom = 140 + "px";
 			doms.editorView.style.height = 140 + "px";
+			oldValue = "";
 		}
 	});
 
