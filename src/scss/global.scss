@@ -72,3 +72,10 @@ body {
 .hide {
 	display: none!important;
 }
+
+// 
+%em-mix-ellipsis {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}

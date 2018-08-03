@@ -45,6 +45,7 @@ module.exports = {
 		picture: "[Image]",
 		emoji: "[Emoticon]",
 		unknown: "[Unknown]",
+		video: "[Video]",
 	},
 	agent_status: {
 		online: "(Online)",
@@ -103,6 +104,7 @@ module.exports = {
 		video_invite: "Video call",
 		evaluate_agent: "Satisfaction",
 		transfer_to_kefu: "Chat with agent",
+		send_video: "SendVideo",
 	},
 	prompt: {
 		new_message_title_notice: "New message",

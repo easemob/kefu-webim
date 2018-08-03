@@ -11,6 +11,7 @@ var imgView = require("./imgview");
 var leaveMessage = require("./leaveMessage");
 var initPasteImage = require("./paste");
 var videoChat = require("./videoChat");
+var guessInfo = require("./guess/guessInfo");
 
 var initAgentInputStatePoller = require("./chat/initAgentInputStatePoller");
 var initAgentStatusPoller = require("./chat/initAgentStatusPoller");
@@ -21,6 +22,8 @@ var initGetGreetings = require("./chat/initGetGreetings");
 var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
 var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
+var TenantInfo = require("@/app/modules/tenantInfo/index");
+var tenantInfo;
 
 var isMessageChannelReady;
 var config;
@@ -66,6 +69,7 @@ module.exports = {
 	close: _close,
 	show: _show,
 	getDom: _getDom,
+	setArticleIframeScrolling: setArticleIframeScrolling,
 };
 
 function _initSystemEventListener(){
@@ -118,6 +122,7 @@ function _initToolbar(){
 	if(WebIM.utils.isCanUploadFileAsync){
 		utils.removeClass(doms.sendImgBtn, "hide");
 		utils.removeClass(doms.sendFileBtn, "hide");
+		utils.removeClass(doms.sendVideoBtn, "hide");
 	}
 
 	// 留言按钮
@@ -164,21 +169,70 @@ function _setLogo(){
 function _setNotice(){
 	var noticeContent = document.querySelector(".em-widget-tip .content");
 	var noticeCloseBtn = document.querySelector(".em-widget-tip .tip-close");
-
 	apiHelper.getNotice().then(function(notice){
-		if(!notice.enabled) return;
-		var slogan = notice.content;
+		// test
+		// notice.content = [
+		// 	{
+		// 		name: "自考介绍",
+		// 		sub_button: [
+		// 			{
+		// 				type: "view",
+		// 				name: "搜索2666",
+		// 				url: "http://www.soso.com/"
+		// 			}
+		// 		]
+		// 	},
+		// 	{
+		// 		type: "media_id",
+		// 		name: "报考指南",
+		// 		media_id: "75cffa4b-e462-40e8-a517-0ff807db29a6"
+		// 	},
+		// 	{
+		// 		name: "课程试听",
+		// 		sub_button: [
+		// 			{
+		// 				type: "media_id",
+		// 				name: "111",
+		// 				media_id: "75cffa4b-e462-40e8-a517-0ff807db29a6"
+		// 			},
+		// 			{
+		// 				type: "media_id",
+		// 				name: "香格里拉",
+		// 				media_id: "4150c891-9917-4482-909c-ab7c9954110a"
+		// 			}
+		// 		]
+		// 	}
+		// ];
 
-		// 设置信息栏内容
-		noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
+
+		var slogan = notice.content;
+		if(!notice.enabled) return;
+
 		// 显示信息栏
 		utils.addClass(doms.imChat, "has-tip");
 
-		// 隐藏信息栏按钮
-		utils.on(noticeCloseBtn, utils.click, function(){
-			// 隐藏信息栏
-			utils.removeClass(doms.imChat, "has-tip");
-		});
+		// 新配置就走新 tenantInfo
+		if(config.isWebChannelConfig){
+			if(typeof slogan == "string"){
+				renderSlogan();
+			}
+			else{
+				tenantInfo = new TenantInfo();
+			}
+		}
+		else{
+			renderSlogan();
+		}
+
+		function renderSlogan(){
+			// 设置信息栏内容
+			noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
+			// 隐藏信息栏按钮
+			utils.on(noticeCloseBtn, utils.click, function(){
+				// 隐藏信息栏
+				utils.removeClass(doms.imChat, "has-tip");
+			});
+		}
 	});
 }
 
@@ -417,6 +471,73 @@ function _bindEvents(){
 		satisfaction.show(inviteId, serviceSessionId);
 	});
 
+	utils.live("#em-article-close .icon-back", "click", function(){
+		var articleContainer = document.getElementById("em-article-container");
+		var iframe = articleContainer.querySelector("iframe");
+		iframe && utils.removeDom(iframe);
+		articleContainer.style.display = "none";
+		doms.editorView.style.display = "block";
+		tenantInfo && tenantInfo.show();
+	});
+	// 提示有新消息
+	eventListener.add(_const.SYSTEM_EVENT.MESSAGE_APPENDED, function(oa, msg){
+		utils.addClass(document.body.querySelector("#em-article-close .back-chat"), "hide");
+		utils.removeClass(document.body.querySelector("#em-article-close .new-message"), "hide");
+	});
+	utils.live(".article-link", "click", function(e){
+		var sendStatus = e.target.dataset.status;
+		var curArticleDom = e.target.parentNode;
+		var articleContainer;
+		var myIframe;
+		var url = e.target.firstElementChild.innerText;
+		doms.editorView.style.display = "none";
+		url = utils.sameProtocol(url);
+		if(utils.isTop){
+			articleContainer = document.getElementById("em-article-container");
+			myIframe = utils.createElementFromHTML(
+				"<iframe class=\"em-article-iframe\" src=\"\" id=\"em-article-iframe\"></iframe>"
+			);
+			articleContainer.querySelector(".em-article-body").appendChild(myIframe);
+			articleContainer.style.display = "block";
+			// reset articleContainer
+			utils.removeClass(document.body.querySelector("#em-article-close .back-chat"), "hide");
+			utils.addClass(document.body.querySelector("#em-article-close .new-message"), "hide");
+
+			setArticleIframeScrolling(true);
+			myIframe.src = url;
+			// myIframe.src = "http://kefu.webim.com:8081/pages/robot/article.html";
+
+			// 隐藏整个 tenantInfo
+			tenantInfo && tenantInfo.hide();
+		}
+		else{
+			window.open(url);
+		}
+		// 根据sendStatus状态判断是否应该显示‘我正在看’状态
+		if(sendStatus == "false"){
+			// 发送一条图文
+			channel.sendText("", {
+				ext: {
+					msgtype: {
+						track: {
+							// 消息标题
+							title: "我正在看：",
+							// 商品描述
+							desc: curArticleDom.querySelector(".title").innerText,
+							// 商品图片链接
+							img_url: (
+								curArticleDom.querySelector(".cover")
+								|| curArticleDom.querySelector(".cover-img")
+							).getAttribute("src"),
+							// 商品页面链接
+							item_url: url
+						}
+					}
+				}
+			});
+		}
+	});
+
 	var messagePredict = _.throttle(function(msg){
 		var officialAccount = profile.currentOfficialAccount || {};
 		var sessionId = officialAccount.sessionId;
@@ -459,6 +580,22 @@ function _bindEvents(){
 			_scrollToBottom();
 		});
 	}
+
+	// 发送小视频
+	utils.on(doms.videoInput, "change", function(){
+		var fileInput = doms.videoInput;
+		var filesize = utils.getDataByPath(fileInput, "files.0.size");
+		if(!fileInput.value){
+		}
+		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
+			uikit.tip(__("prompt._10_mb_file_limit"));  //("文件大小不能超过10MB");
+			fileInput.value = "";
+		}
+		else{
+			channel.sendVideo(WebIM.utils.getFileUrl(fileInput)); //sendVideo 取自 channel.js 
+			fileInput.value = "";
+		}
+	});
 
 	// 发送文件
 	utils.on(doms.fileInput, "change", function(){
@@ -507,11 +644,17 @@ function _bindEvents(){
 		}
 	});
 
-	// 弹出文件选择框
+	// 弹出文件框
 	utils.on(doms.sendFileBtn, "click", function(){
 		doms.fileInput.click();
 	});
 
+	// 弹出小视频框
+	utils.on(doms.sendVideoBtn, "click", function(){
+		doms.videoInput.click();
+	});
+
+	// 弹出图片框
 	utils.on(doms.sendImgBtn, "click", function(){
 		doms.imgInput.click();
 	});
@@ -574,8 +717,27 @@ function _bindEvents(){
 			channel.sendText(textMsg);
 			doms.textInput.value = "";
 			utils.trigger(doms.textInput, "change");
+			// 清除猜你想说 功能 并 重置样式(根据是否有灰度)
+			if(profile.grayList.guessUSay){
+				guessInfo.resetStyle();
+			}
 		}
 	});
+}
+
+function setArticleIframeScrolling(enable){
+	if(enable){
+		utils.addClass(
+			document.body.querySelector("#em-article-container .em-article-body"),
+			"ios-scroll"
+		);
+	}
+	else{
+		utils.removeClass(
+			document.body.querySelector("#em-article-container .em-article-body"),
+			"ios-scroll"
+		);
+	}
 }
 
 function _close(){
@@ -634,10 +796,14 @@ function _initSDK(){
 		channel.initConnection(resolve);
 	});
 }
-
+// 获取dom
 function _getDom(){
 	topBar = document.querySelector(".em-widget-header");
 	editorView = document.querySelector(".em-widget-send-wrapper");
+
+	var toolBar = editorView.querySelector(".toolbar");
+	// 将猜你想说 dom 插入的指定元素之前
+	toolBar.parentNode.insertBefore(guessInfo.loadHtml().dom, toolBar);
 
 	doms = {
 		imBtn: document.getElementById("em-widgetPopBar"),
@@ -649,15 +815,18 @@ function _getDom(){
 		switchKeyboardBtn: topBar.querySelector(".btn-keyboard"),
 
 		emojiToggleButton: editorView.querySelector(".em-bar-emoji"),
+		// 获取文件上传，图片，小视频按钮dom	
 		sendImgBtn: editorView.querySelector(".em-widget-img"),
 		sendFileBtn: editorView.querySelector(".em-widget-file"),
+		sendVideoBtn: editorView.querySelector(".em-widget-video"),
 		sendBtn: editorView.querySelector(".em-widget-send"),
 		satisfaction: editorView.querySelector(".em-widget-satisfaction"),
 		textInput: editorView.querySelector(".em-widget-textarea"),
 		noteBtn: editorView.querySelector(".em-widget-note"),
 		videoInviteButton: editorView.querySelector(".em-video-invite"),
 		queuingNumberStatus: editorView.querySelector(".queuing-number-status"),
-
+		//  图片小视频文件 file框
+		videoInput: document.querySelector(".upload-video-container"),
 		imgInput: document.querySelector(".upload-img-container"),
 		fileInput: document.querySelector(".upload-file-container"),
 		chatWrapper: document.querySelector(".chat-wrapper"),
@@ -668,6 +837,10 @@ function _getDom(){
 }
 
 function _init(){
+	// 根据灰度设置 是否添加猜你想问功能
+	if(profile.grayList.guessUSay){
+		guessInfo.addEvents();
+	}
 	config = profile.config;
 
 	channel.init();
@@ -768,3 +941,4 @@ function _initSession(){
 		}
 	});
 }
+

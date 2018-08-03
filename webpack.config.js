@@ -4,8 +4,6 @@
 	/static/js/em-open.js
 	/static/js/em-transfer.js
 */
-// todo: 优化构建速度
-// todo: 减少重复构建
 
 const path = require("path");
 const webpack = require("webpack");
@@ -16,7 +14,11 @@ const _en_us_map_ = require("./src/i18n/en-US");
 const argv = require("yargs").argv;
 const lang = argv.lang || "zh-CN";
 const tmpVersion = "local_" + (Math.floor(Math.random() * 1e6)).toString();
-const VERSION = argv["tag-name"] || tmpVersion;
+const VERSION = process.env.TAG_NAME || tmpVersion;
+
+// package 中的 KEY_PATH 必须填，当活文档
+var KEY_PATH = process.env.KEY_PATH;
+var SLASH_KEY_PATH = KEY_PATH == "webim" ? "" : "/" + KEY_PATH;
 
 var distPath = lang === "zh-CN" ? "" : lang;
 var staticPath = lang === "zh-CN" ? "static" : "../static";
@@ -26,6 +28,7 @@ var easemob;
 var app;
 var appPageCached;
 var taskList;
+
 
 i18next.init({
 	lng: lang,
@@ -44,6 +47,11 @@ i18next.init({
 });
 
 conmmonConfig = {
+	resolve: {
+		alias: {
+			"@": path.resolve("./src/js")
+		},
+	},
 	plugins: [
 		new webpack.optimize.UglifyJsPlugin({
 			compress: {
@@ -57,9 +65,13 @@ conmmonConfig = {
 			},
 		}),
 	],
-	devtool: "eval",
 	module: {
 		loaders: [
+			// HtmlWebpackPlugin 需要此 loader
+			{
+				test: /Tpl.html$/,
+				loaders: [ "html-loader" ]
+			},
 			{
 				test: /easemob\.scss$/,
 				loaders: [
@@ -125,6 +137,22 @@ conmmonConfig = {
 					flags: "g",
 				},
 			},
+			//
+			{
+				test: [
+					/init\.js$/,
+					/userAPI\.js$/,
+					/uikit\/loading\.js$/,
+					/tools\/messageFactory\.js$/,
+					/transfer\/api.js$/,
+				],
+				loader: "string-replace-loader",
+				query: {
+					search: "__WEBIM_SLASH_KEY_PATH__",
+					replace: SLASH_KEY_PATH,
+					flags: "g",
+				},
+			},
 			{
 				test: /\.js$/,
 				loader: "i18next-loader",
@@ -143,6 +171,9 @@ conmmonConfig = {
 		],
 	},
 };
+if(!argv.production){
+	conmmonConfig.devtool = "eval";
+}
 
 transfer = Object.assign({}, conmmonConfig, {
 	name: "transfer",
@@ -189,7 +220,6 @@ app = Object.assign({}, conmmonConfig, {
 appPageCached = Object.assign({}, conmmonConfig, {
 	name: "appCached",
 	entry: "./src/html/im.html",
-	devtool: false,
 	output: {
 		filename: "appPageCached.js",
 		path: path.resolve(__dirname, distPath, "."),

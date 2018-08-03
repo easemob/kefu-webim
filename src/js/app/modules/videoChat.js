@@ -187,7 +187,7 @@ function _pushStream(){
 	});
 }
 
-function _reveiveTicket(ticketInfo){
+function _reveiveTicket(ticketInfo, ticketExtend){
 	// 有可能收到客服的主动邀请，此时需要初始化
 	_initOnce();
 
@@ -196,6 +196,7 @@ function _reveiveTicket(ticketInfo){
 		identity: "visitor",
 		nickname: config.visitor.trueName || config.user.username,
 		avatarUrl: "",
+		extend: ticketExtend
 	});
 
 	service.join(function(/* _memId */){

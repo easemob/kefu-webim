@@ -4,7 +4,7 @@ var profile = require("../tools/profile");
 var textParser = require("../tools/textParser");
 var moment = require("moment");
 
-var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com/webim/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
+var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com__WEBIM_SLASH_KEY_PATH__/webim/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
 
 function genMsgContent(msg){
 	var type = msg.type;
@@ -49,6 +49,14 @@ function genMsgContent(msg){
 			+ "<a target=\"_blank\" href=\"" + msg.url
 			+ "\" class=\"icon-download container-icon-download\" title=\""
 			+ msg.filename + "\" download=\"" + msg.filename + "\"></a>";
+		break;
+		// 小视频类型
+		case "video":
+		html = "<video class=\"video-btn\"  controls src=\""+msg.url +" \">"
+				+ "<source  src=\""+msg.url +" \" type=\"video/mp4\"></source>"
+				+ "<source  src=\""+msg.url +" \" type=\"video/webm\"></source>"
+				+ "<source  src=\""+msg.url +" \" type=\"video/ogg\"></source>"
+			   + "</video>"
 		break;
 	case "html-form":
 		msgContent = msg.ext.msgtype.html;
@@ -106,30 +114,32 @@ function genDomFromMsg(msg, isReceived, isHistory){
 					"<div class=\"body\">" +
 						"<h3 class=\"title\">" + msgArticles[0].title + "</h3>" +
 						"<p class=\"create-time\">" + date + "</p>" +
-						"<div class=\"cover\"><img src=\"" + msgArticles[0].picurl + "\"/></div>" +
+						"<img class=\"cover\" src=\"" + msgArticles[0].picurl + "\"/>" +
 						"<div class=\"desc\"><p>" + msgArticles[0].description + "</p></div>" +
 					"</div>" +
 					"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
-					"<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
+					// "<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
+					"<div class=\"article-link\" data-status=\"" + msgArticles[0].sendCustomer + "\"><span>" + msgArticles[0].url + "</span></div>" +
 				"</div>";
 		}
 		else{
 			articleNode = "<div class=\"article-msg-outer more-articles\">"
 					+ _.map(msgArticles, function(item, index){
-					var str = "";
-					if(index === 0){
-						str = "<div class=\"article-item first-item\">" +
+						var str = "";
+						if(index === 0){
+							str = "<div class=\"article-item first-item\">" +
 							"<h3 class=\"title\">" + item.title + "</h3>";
-					}
-					else{
-						str = "<div class=\"article-item rest-item\">" +
+						}
+						else{
+							str = "<div class=\"article-item rest-item\">" +
 							"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
-					}
-					str += "<img class=\"cover-img\" src=\"" + item.thumbUrl + "\"/>" +
-							"<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
+						}
+						str += "<img class=\"cover-img\" src=\"" + item.thumbUrl + "\"/>" +
+							// "<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
+							"<div class=\"article-link\"><span>" + item.url + "</span></div>" +
 							"</div>";
-					return str;
-				}).join("") || ""
+						return str;
+					}).join("") || ""
 				+ "</div>";
 		}
 		dom.className = "article-message-wrapper";

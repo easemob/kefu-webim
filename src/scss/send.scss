@@ -18,7 +18,74 @@
 		color: rgb(76, 76, 76);
 		background-color: rgba(223, 233, 252, .7);
 	}
-
+	//猜你想说
+	.guess-area{
+		display: none;
+		position: relative;
+		width: 100%;
+		.loading-wrap{
+			overflow: hidden;
+			height: 20px;
+			line-height: 24px;
+		}
+		.guess-tips{
+			float: left;
+			padding-left: 15px;
+			color: #747474;
+		}
+		.guess-list{
+			padding-left: 10px;
+			margin-top: 5px;
+			li{
+				display: table;
+				padding: 3px;
+				margin: 0 6px 3px 0;
+				border-radius: 5px;
+				color: #fff;
+				cursor: pointer;
+				background: rgb(45,115,209);
+			}
+		}
+		.close-btn{
+			position: absolute;
+			top: 0;
+			right: 5px;
+			cursor: pointer;
+			color: #747474;
+		}
+		.ball-beat{
+			float: left;
+			margin-left: 5px;
+		}
+		.ball-beat > div:nth-child(2n-1) {
+			-webkit-animation-delay: 0.35s !important;
+			animation-delay: 0.35s !important;
+		}
+		.ball-beat > div {
+			background-color: #6a6a6a;
+			width: 5px;
+			height: 5px;
+			border-radius: 100%;
+			-webkit-animation-fill-mode: both;
+			animation-fill-mode: both;
+			display: inline-block;
+			-webkit-animation: ball-beat 0.7s 0s infinite linear;
+			animation: ball-beat 0.7s 0s infinite linear;
+		}
+		@keyframes ball-beat {
+			50% {
+			  opacity: 0.2;
+			  -webkit-transform: scale(0.75);
+					  transform: scale(0.75); 
+				}
+		  
+			100% {
+			  opacity: 1;
+			  -webkit-transform: scale(1);
+					  transform: scale(1); 
+				}
+		}
+	}
 	// 工具栏
 	.toolbar {
 		padding: 0 5px;
@@ -65,7 +132,8 @@
 
 	// 文件输入
 	.upload-file-container,
-	.upload-img-container {
+	.upload-img-container,
+	.upload-video-container {
 		position: absolute;
 		left: -9999px;
 	}

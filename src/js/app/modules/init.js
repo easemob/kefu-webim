@@ -28,6 +28,11 @@ else{
 	chat_window_mode_init();
 }
 
+utils.on(window, "message", function(e){
+	updateCustomerInfo(e);
+});
+
+// body.html 显示词语
 function load_html(){
 	utils.appendHTMLToBody(_.template(body_template)({
 		contact_agent: __("common.contact_agent"),
@@ -45,6 +50,7 @@ function load_html(){
 		evaluate_agent: __("toolbar.evaluate_agent"),
 		transfer_to_kefu: __("toolbar.transfer_to_kefu"),
 		press_save_img: __("common.press_save_img"),
+		send_video: __("toolbar.send_video"),
 	}));
 
 	chat.getDom();
@@ -94,6 +100,7 @@ function h5_mode_init(){
 	window.transfer = {
 		send: function(){}
 	};
+
 	initCrossOriginIframe();
 }
 
@@ -154,6 +161,42 @@ function chat_window_mode_init(){
 	utils.on($contactAgentBtn, "click", function(){
 		transfer.send({ event: _const.EVENTS.SHOW });
 	});
+}
+
+function updateCustomerInfo(e){
+	var trackMsg;
+	var temp;
+	var data = e.data;
+	if(typeof data === "string"){
+		data = JSON.parse(data);
+	}
+	temp = utils.getDataByPath(data, "easemob.kefu.cta");
+	if(temp){
+		trackMsg = {
+			ext: {
+				msgtype: {
+					track: {
+						// 消息标题
+						title: "从\"" + temp.title + "\"提交的手机号码：",
+						// 商品描述
+						desc: temp.phone,
+						// 商品图片链接
+						// img_url: "/images/robot/article_image.png",
+						// 商品页面链接
+						item_url: temp.item_url
+					}
+				}
+			}
+		};
+		apiHelper.updateCustomerInfo({
+			phone: temp.phone
+		});
+		channel.sendText("转人工客服", trackMsg);
+	}
+	temp = utils.getDataByPath(data, "easemob.kefu.iframe.scroll");
+	if(temp){
+		chat.setArticleIframeScrolling(temp.enable);
+	}
 }
 
 function initChat(){
@@ -297,8 +340,7 @@ function handleConfig(configJson){
 
 function initCrossOriginIframe(){
 	var iframe = document.getElementById("cross-origin-iframe");
-
-	iframe.src = config.domain + "/webim/transfer.html?v=__WEBIM_PLUGIN_VERSION__";
+	iframe.src = config.domain + "__WEBIM_SLASH_KEY_PATH__/webim/transfer.html?v=__WEBIM_PLUGIN_VERSION__";
 	utils.on(iframe, "load", function(){
 		apiHelper.initApiTransfer();
 		handleMsgData();

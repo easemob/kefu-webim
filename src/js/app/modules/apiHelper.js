@@ -175,8 +175,6 @@ function getConfig(configId){
 		}, function(err){
 			reject(err);
 		});
-
-
 	});
 }
 function getProjectId(){
@@ -1112,12 +1110,12 @@ function createWechatImUser(openId){
 		emajax({
 			url: "/v1/webimplugin/visitors/wechat/"
 				+ [
-				config.tenantId,
-				config.orgName,
-				config.appName,
-				config.toUser,
-				openId,
-			].join("_")
+					config.tenantId,
+					config.orgName,
+					config.appName,
+					config.toUser,
+					openId,
+				].join("_")
 				+ "?tenantId=" + config.tenantId,
 			data: {
 				orgName: config.orgName,
@@ -1196,6 +1194,60 @@ function getSatisfactionTipWord(){
 	});
 }
 
+function updateCustomerInfo(data){
+	return new Promise(function(resolve, reject){
+		Promise.all([
+			getVisitorId(),
+			getToken()
+		]).then(function(result){
+			var visitorId = result[0];
+			var token = result[1];
+			data.visitorId = visitorId;
+			data.tenantId = config.tenantId;
+			data.orgName = config.orgName;
+			data.appName = config.appName;
+			data.userName = config.user.username;
+			data.token = token;
+			api("updateCustomerInfo", data, function(msg){
+				// resolve(msg.data);
+			}, function(err){
+				// reject(err);
+			});
+		});
+	});
+}
+
+function getArticleJson(data){
+	return new Promise(function(resolve, reject){
+		api("getArticleJson", {
+			media_id: data.media_id,
+			tenantId: config.tenantId,
+			userId: config.user.userName,
+			orgName: config.orgName,
+			appName: config.appName,
+			token: 0,
+		}, function(ret){
+			var articles = utils.getDataByPath(ret, "data.entity.articles");
+			resolve(articles);
+		});
+	});
+}
+// 猜你想说 接口列表
+function getGuessList(data){
+	var officialAccount = profile.currentOfficialAccount;
+		if(!officialAccount) return;
+	return new Promise(function(resolve, reject){
+		api("getGuessList", {
+			tenantId: config.tenantId,
+			sessionId: officialAccount.sessionId,
+			robotId: officialAccount.agentId,
+			inputValue: data
+		}, function(msg){
+			resolve(msg);
+		});
+	});
+}
+
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
 	getToken: getToken,
@@ -1243,6 +1295,9 @@ module.exports = {
 	getCustomEmojiPackages: getCustomEmojiPackages,
 	getCustomEmojiFiles: getCustomEmojiFiles,
 	getSatisfactionTipWord: getSatisfactionTipWord,
+	updateCustomerInfo: updateCustomerInfo,
+	getArticleJson: getArticleJson,
+	getGuessList: getGuessList,
 
 	initApiTransfer: initApiTransfer,
 	api: api,

@@ -107,6 +107,7 @@ module.exports = {
 	isIOS: /(iPad|iPhone|iPod)/i.test(navigator.userAgent),
 	isSafari: /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent),
 	isMobile: _isMobile,
+	noop: function(){},
 	click: _isMobile && ("ontouchstart" in window) ? "touchstart" : "click",
 	isBrowserMinimized: function(){
 		return document.visibilityState === "hidden" || document.hidden;
@@ -288,6 +289,16 @@ module.exports = {
 		var matches = reg.exec(location.search);
 		return matches ? matches[1] : "";
 	},
+	sameProtocol: function(url){
+		url = url || "";
+		// 全清理
+		url = url.replace(/^http[s]?:/, "");
+		url = url.replace(/^\/\//, "");
+		if(!/^\//.test(url)){
+			url = "//" + url;
+		}
+		return url;
+	},
 	setStore: function(key, value){
 		try{
 			localStorage.setItem(key, value);
@@ -323,19 +334,22 @@ module.exports = {
 		var matches = document.cookie.match("(^|;) ?" + encodeURIComponent(key) + "=([^;]*)(;|$)");
 		return matches ? decodeURIComponent(matches[2]) : "";
 	},
+	// case1: /v1/tenants/5323/mediafiles/08d3d9bf-5507-4115-a6e6-1b50b0585f99MTAzZWQ2ZjUxNjczZmM2MjY2YmE4MGMyNDNhMGI1OWMucG5n/cutout?arg=114_0_305_305_300_300
 	getAvatarsFullPath: function(url, domain){
-		// 以前头像上传到阿里云的oss，那时阿里云的oss不支持https
-		// 此处的逻辑是检测到阿里云的地址如果没有使用ossimages代理则加个代理
-		// todo: 现在已经不使用这种逻辑了，但是为了兼容老数据所以没删除
-		// 让运维洗一下数据，这部分逻辑就可以去掉了
-
-		if(!url) return;
-
-		url = url.replace(/^(https?:)?\/\/?/, "");
+		// 阿里云的 oss 不支持 https，需要使用 ossimages 代理
+		// 现在已经不使用这种逻辑了，但是为了兼容老数据所以没删除
+		if(!url) return "";
+		var hasProtocol = /^(https?:)?\/\//.test(url);
 		var isKefuAvatar = ~url.indexOf("img-cn");
 		var ossImg = ~url.indexOf("ossimages");
-
-		return isKefuAvatar && !ossImg ? domain + "/ossimages/" + url : "//" + url;
+		url = url.replace(/^(https?:)?\/\/?/, "");
+		if(isKefuAvatar && !ossImg){
+			return domain + "/ossimages/" + url;
+		}
+		else if(!hasProtocol){
+			return domain + "/" + url;
+		}
+		return "//" + url;
 	},
 	copy: function(obj){
 		// todo：移到，easemob.js 里边

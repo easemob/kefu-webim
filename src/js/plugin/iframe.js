@@ -6,7 +6,7 @@ var Transfer = require("../common/transfer");
 var loading = require("./loading");
 var notify = require("./notify");
 var titleSlide = require("./titleSlide");
-var pcImgView = require("./pcImgView");
+var pcImgView = require("./pcImgview");
 
 var _st = 0;
 var _startPosition = {
@@ -293,7 +293,7 @@ var Iframe = function(config){
 };
 
 Iframe.prototype.set = function(config, callback){
-	var shadowBackgroundImage = location.protocol + this.config.staticPath + "/img/drag.png";
+	var shadowBackgroundImage = this.config.staticPath + "/img/drag.png";
 
 	this.config = utils.copy(config || this.config);
 
@@ -322,7 +322,7 @@ Iframe.prototype.set = function(config, callback){
 
 	utils.toggleClass(this.iframe, "easemobim-hide", this.config.hide);
 
-	this.iframe.src = location.protocol + config.path + __("config.im_html_path") + "?v=__WEBIM_PLUGIN_VERSION__";
+	this.iframe.src = config.path + __("config.im_html_path") + "?v=__WEBIM_PLUGIN_VERSION__";
 	this.shadow && (this.shadow.style.backgroundImage = "url(" + shadowBackgroundImage + ")");
 
 	this.ready = callback;

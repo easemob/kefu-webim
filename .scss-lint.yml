@@ -1,0 +1,324 @@
+# https://github.com/brigade/scss-lint/blob/master/lib/scss_lint/linter/README.md
+
+linters:
+
+  # 感叹号的前后空格
+  BangFormat:
+    enabled: true
+    space_before_bang: true
+    space_after_bang: false
+
+  # 期待 borrder: 0
+  BorderZero:
+    enabled: true
+    convention: zero # or `none`
+
+  # 报告 @debug 存在
+  DebugStatement:
+    enabled: true
+
+  # 强制 @extend / @include without inner @content / @include with inner @content 顺序
+  DeclarationOrder:
+    enabled: true
+
+  # 警告重复属性
+  DuplicateProperty:
+    enabled: true
+
+  # @else 格式
+  ElsePlacement:
+    enabled: true
+    style: new_line # or 'same_line'
+
+  # 文件末强制空行
+  FinalNewline:
+    enabled: true
+    present: true
+
+  # 校验颜色值合法
+  HexValidation:
+    enabled: true
+
+  # 禁止 css 中使用 id 选择器
+  IdSelector:
+    enabled: true
+
+  # 强制 import 下划线
+  ImportPath:
+    enabled: true
+    leading_underscore: true
+    filename_extension: false
+
+  # 缩进控制
+  Indentation:
+    enabled: true
+    allow_non_nested_indentation: false
+    character: tab # or 'space'
+    width: 1
+
+  # 浮点格式必须带 0
+  LeadingZero:
+    enabled: true
+    style: include_zero # or 'exclude_zero'
+
+  # 报告可合并的 class
+  MergeableSelector:
+    enabled: true
+    force_nesting: true
+
+  # 命名规范
+  NameFormat:
+    enabled: true
+    allow_leading_underscore: true
+    convention: hyphenated_lowercase # or 'camel_case', or 'snake_case', or a regex pattern
+
+  # 强制 @extend %name
+  PlaceholderInExtend:
+    enabled: true
+
+  # 拼写检查
+  PropertySpelling:
+    enabled: true
+    extra_properties: []
+    disabled_properties: []
+
+  # 伪元素 ::
+  PseudoElement:
+    enabled: true
+
+  # 禁止使用 div[attr] 或者 div.class 这种模式
+  QualifyingElement:
+    enabled: true
+    allow_element_with_attribute: false
+    allow_element_with_class: false
+    allow_element_with_id: false
+
+  # 选择器命名规范
+  SelectorFormat:
+    enabled: true
+    convention: hyphenated_lowercase # or 'strict_BEM', or 'hyphenated_BEM', or 'snake_case', or 'camel_case', or a regex pattern
+
+  # 允许单行块
+  SingleLinePerProperty:
+    enabled: true
+    allow_single_line_rule_sets: true
+
+  # 强制选择器断行
+  SingleLinePerSelector:
+    enabled: true
+
+  # 强制逗号后空格
+  SpaceAfterComma:
+    enabled: true
+    style: one_space # or 'no_space', or 'at_least_one_space'
+
+  # 强制注释前空格
+  SpaceAfterComment:
+    enabled: true
+    style: one_space # or 'no_space', or 'at_least_one_space'
+    allow_empty_comments: true
+
+  # 强制冒号后空格
+  SpaceAfterPropertyColon:
+    enabled: true
+    style: one_space # or 'no_space', or 'at_least_one_space', or 'aligned'
+
+  # 同上
+  SpaceAfterPropertyName:
+    enabled: true
+
+  # 变量名的冒号后空格
+  SpaceAfterVariableColon:
+    enabled: false
+    style: one_space # or 'no_space', 'at_least_one_space' or 'one_space_or_newline'
+
+  # 同上
+  SpaceAfterVariableName:
+    enabled: true
+
+  # 运算符前后空格
+  SpaceAroundOperator:
+    enabled: true
+    style: one_space # or 'at_least_one_space', or 'no_space'
+
+  # 大括号前空格
+  SpaceBeforeBrace:
+    enabled: true
+    style: space # or 'new_line'
+    allow_single_line_padding: false
+
+  # 强制双引号
+  StringQuotes:
+    enabled: true
+    style: double_quotes # or single_quotes
+
+  # 分号禁止空格
+  TrailingSemicolon:
+    enabled: true
+
+  # 同上
+  TrailingWhitespace:
+    enabled: true
+
+  # 报告没有意义的尾部 0
+  TrailingZero:
+    enabled: true
+
+  # 报告没有意义的浮点
+  UnnecessaryMantissa:
+    enabled: true
+
+  # 禁止使用 transition all
+  TransitionAll:
+    enabled: true
+
+  # 报告没有意义的父级 & 引用
+  UnnecessaryParentReference:
+    enabled: true
+
+  # 报告 URL 使用了域名
+  UrlFormat:
+    enabled: true
+
+  # URL 需要引号
+  UrlQuotes:
+    enabled: true
+
+  # 禁止编写 vendor
+  VendorPrefix:
+    enabled: true
+    identifier_list: base
+    additional_identifiers: []
+    excluded_identifiers: []
+
+  # 0 不应该有单位
+  ZeroUnit:
+    enabled: true
+
+
+
+
+
+
+
+
+
+
+
+  BemDepth:
+    enabled: false
+    max_elements: 1
+
+  # 禁止 .a.b {} class 链接
+  ChainedClasses:
+    enabled: false
+
+  # 强制注释格式
+  Comment:
+    enabled: false
+    style: silent
+
+  # 强制颜色变量
+  ColorVariable:
+    enabled: false
+
+  # 允许颜色关键字
+  ColorKeyword:
+    enabled: false
+
+  # 颜色变量格式 - 大小写
+  HexNotation:
+    enabled: false
+    style: uppercase # or 'lowercase'
+
+  # 强制注释描述 disable 项
+  DisableLinterReason:
+    enabled: false
+
+  # 允许空白块
+  EmptyRule:
+    enabled: false
+
+  # 不强制块间空格
+  EmptyLineBetweenBlocks:
+    enabled: false
+    ignore_single_line_blocks: true
+
+  # 禁止 @extend
+  ExtendDirective:
+    enabled: false
+
+  # 颜色变量格式 - 长度
+  HexLength:
+    enabled: false
+    style: short # or 'long'
+
+  # 允许使用 !important
+  ImportantRule:
+    enabled: false
+
+  # 强制单位变量化
+  LengthVariable:
+    enabled: false
+
+  # 缩进层数限制
+  NestingDepth:
+    enabled: false
+    max_depth: 3
+    ignore_parent_selectors: false
+
+  # 强制下划线命名
+  PrivateNamingConvention:
+    enabled: false
+    prefix: _
+
+  # 限制属性数量
+  PropertyCount:
+    enabled: false
+    include_nested: false
+    max_properties: 10
+
+  # 强制属性排序
+  PropertySortOrder:
+    enabled: false
+    ignore_unspecified: false
+    min_properties: 2
+    separate_groups: false
+
+  # 单位检查
+  PropertyUnits:
+    enabled: false
+    global: [
+      'ch', 'em', 'ex', 'rem',                 # Font-relative lengths
+      'cm', 'in', 'mm', 'pc', 'pt', 'px', 'q', # Absolute lengths
+      'vh', 'vw', 'vmin', 'vmax',              # Viewport-percentage lengths
+      'deg', 'grad', 'rad', 'turn',            # Angle
+      'ms', 's',                               # Duration
+      'Hz', 'kHz',                             # Frequency
+      'dpi', 'dpcm', 'dppx',                   # Resolution
+      '%']                                     # Other
+    properties: {}
+
+  # 强制 margin 类的值，简写
+  Shorthand:
+    enabled: false
+    allowed_shorthands: [1, 2, 3, 4]
+
+  # 强制 color 和 font 的值变量化
+  VariableForProperty:
+    enabled: false
+    properties: []
+
+  # compass ？？
+  Compass::*:
+    enabled: false
+
+  # 选择器长度
+  SelectorDepth:
+    enabled: false
+    max_depth: 3
+
+  # 小括号内部空格
+  SpaceBetweenParens:
+    enabled: false
+    spaces: 1

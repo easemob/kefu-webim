@@ -1,22 +1,20 @@
 .easemobim-mobile-html {
-	position: static !important;
+	position: relative !important;
 	width: 100% !important;
 	height: 100% !important;
 	padding: 0 !important;
 	margin: 0 !important;
 }
+
 .easemobim-mobile-body {
-	position: fixed !important;
+	position: absolute;
 	top: 0 !important;
-	right: 0 !important;
-	bottom: 0 !important;
 	left: 0 !important;
 	width: 100% !important;
 	height: 100% !important;
 	overflow: hidden !important;
 	padding: 0 !important;
 	margin: 0 !important;
-
 	> * {
 		display: none !important;
 	}
@@ -26,11 +24,9 @@
 }
 
 .easemobim-chat-panel {
-	z-index: 16777269;
+	z-index: 1000;
 	overflow: hidden;
 	position: fixed;
-	bottom: 10px;
-	right: -5px;
 	border: none;
 	width: 0;
 	height: 0;
@@ -38,10 +34,6 @@
 	box-shadow: 0 4px 8px rgba(0,0,0,.2);
 	border-radius: 4px;
 	&.easemobim-minimized {
-		left: auto;
-		top: auto;
-		right: -5px;
-		bottom: 10px;
 		border: none;
 		box-shadow: none;
 		height: 37px!important;
@@ -52,12 +44,11 @@
 		}
 	}
 	&.easemobim-mobile {
+		position: absolute!important;
 		width: 100%!important;
 		height: 100%!important;
 		left: 0!important;
 		top: 0!important;
-		right: auto!important;
-		bottom: auto!important;
 		border-radius: 0;
 		box-shadow: none;
 		&.easemobim-minimized {

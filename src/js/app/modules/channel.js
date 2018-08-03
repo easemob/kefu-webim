@@ -58,6 +58,7 @@ module.exports = {
 	sendText: _sendText,
 	sendImg: _sendImg,
 	sendFile: _sendFile,
+	sendVideo: _sendVideo, // 新增小视频发送类型
 	attemptToAppendOfficialAccount: _attemptToAppendOfficialAccount,
 
 	// todo: move this to message view
@@ -123,6 +124,9 @@ function _initConnection(onReadyCallback){
 		onFileMessage: function(message){
 			_handleMessage(message, { type: "file" });
 		},
+		onVideoMessage: function(message){
+			_handleMessage(message, { type: "video" });
+		}, // 新增小视频类型
 		onCmdMessage: function(message){
 			_handleMessage(message, { type: "cmd" });
 		},
@@ -299,6 +303,84 @@ function _sendFile(fileMsg){
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 }
 
+// 小视频发送
+function _sendVideo(fileMsg){
+	var id = utils.uuid();
+	var msg = new Message.video(id); //   new Message.video => 339行  message 格式的转换
+
+	msg.set({
+		apiUrl: location.protocol + "//" + config.restServer,
+		file: fileMsg,
+		to: config.toUser,
+		success: function(id){
+			// todo: 验证这里是否执行，验证此处id是im msg id 还是 kefu-ack-id
+			_hideFailedAndLoading(id);
+		},
+		fail: function(id){
+			_showFailed(id);
+		},
+	});
+	_setExt(msg); 
+	_appendMsg({
+		id: id,
+		type: "video",
+		url: fileMsg.url,
+		filename: fileMsg.filename,
+		fileLength: fileMsg.data.size,
+	}, {
+		isReceived: false,
+		isHistory: false,
+	});
+	conn.send(msg.body); 
+	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
+}
+
+// 新增 视频格式发送
+var Message = function (type, id) {
+	if (!this instanceof Message) {
+		return new Message(type);
+	}
+
+	this._msg = {};
+
+	if (typeof Message[type] === 'function') {
+		Message[type].prototype.setGroup = this.setGroup;
+		this._msg = new Message[type](id);
+	}
+	return this._msg;
+}
+
+Message.video = function (id) {
+	this.id = id;
+	this.type = 'video';
+	this.body = {};
+};
+Message.video.prototype.set = function (opt) {
+	opt.file = opt.file || _utils.getFileUrl(opt.fileInputId);
+
+	this.value = opt.file;
+	this.filename = opt.filename || this.value.filename;
+
+	this.body = {
+		id: this.id
+		, file: this.value
+		, filename: this.filename
+		, apiUrl: opt.apiUrl
+		, to: opt.to
+		, type: this.type
+		, ext: opt.ext || {}
+		, roomType: opt.roomType
+		, onFileUploadError: opt.onFileUploadError
+		, onFileUploadComplete: opt.onFileUploadComplete
+		, success: opt.success
+		, fail: opt.fail
+		, flashUpload: opt.flashUpload
+		, body: opt.body
+	};
+	!opt.roomType && delete this.body.roomType;
+};
+
+
 function _handleMessage(msg, options){
 	var opt = options || {};
 	var type = opt.type || (msg && msg.type);
@@ -318,6 +400,7 @@ function _handleMessage(msg, options){
 	var marketingTaskId = utils.getDataByPath(msg, "ext.weichat.marketing.marketing_task_id");
 	var officialAccountId = officialAccount && officialAccount.official_account_id;
 	var videoTicket = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.ticket");
+	var videoExtend = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.extend");
 	var customMagicEmoji = utils.getDataByPath(msg, "ext.msgtype.customMagicEmoji");
 	var targetOfficialAccount;
 	var message;
@@ -347,6 +430,11 @@ function _handleMessage(msg, options){
 	officialAccount && _attemptToAppendOfficialAccount(officialAccount);
 	targetOfficialAccount = _getOfficialAccountById(officialAccountId);
 
+
+	// ===========
+	// 消息类型预取
+	// ===========
+
 	// 满意度评价
 	if(utils.getDataByPath(msg, "ext.weichat.ctrlType") === "inviteEnquiry"){
 		type = "satisfactionEvaluation";
@@ -370,6 +458,14 @@ function _handleMessage(msg, options){
 	else if(utils.getDataByPath(msg, "ext.msgtype.articles")){
 		type = "article";
 	}
+	// track 消息在访客端不与处理
+	else if(utils.getDataByPath(msg, "ext.msgtype.track")){
+		type = "track";
+	}
+	// order 消息在访客端不与处理
+	else if(utils.getDataByPath(msg, "ext.msgtype.order")){
+		type = "order";
+	}
 	else if(utils.getDataByPath(msg, "ext.type") === "html/form"){
 		type = "html-form";
 	}
@@ -380,7 +476,14 @@ function _handleMessage(msg, options){
 	else if(customMagicEmoji){
 		type = "customMagicEmoji";
 	}
-	else{}
+	else{
+
+	}
+
+
+	// ===========
+	// 消息类型重写  	接收消息类型判断
+	// ===========
 
 	switch(type){
 	case "txt":
@@ -398,6 +501,11 @@ function _handleMessage(msg, options){
 		message = msg;
 		message.type = type;
 		message.brief = __("message_brief.file");
+		break;
+	case "video":
+		message = msg;
+		message.type = type;
+		message.brief = __("message_brief.video"); // 页面接收提示视频
 		break;
 	case "cmd":
 		var action = msg.action;
@@ -436,8 +544,10 @@ function _handleMessage(msg, options){
 		);
 		break;
 	case "article":
+	case "track":
+	case "order":
 		message = msg;
-		message.type = "article";
+		message.type = type;
 		break;
 	case "robotList":
 		message = msg;
@@ -512,7 +622,7 @@ function _handleMessage(msg, options){
 		message.brief = __("message_brief.unknown");
 		break;
 	case "rtcVideoTicket":
-		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket]);
+		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket, videoExtend]);
 		break;
 	case "customMagicEmoji":
 		message = customMagicEmoji;
@@ -530,13 +640,13 @@ function _handleMessage(msg, options){
 		marketingTaskId
 			&& type === "txt"
 			&& eventListener.excuteCallbacks(
-			_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
-			[
-				targetOfficialAccount,
-				marketingTaskId,
-				msg
-			]
-		);
+				_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
+				[
+					targetOfficialAccount,
+					marketingTaskId,
+					msg
+				]
+			);
 
 		if(eventName){
 			_handleSystemEvent(eventName, eventObj, msg);
@@ -552,6 +662,11 @@ function _handleMessage(msg, options){
 		}
 	}
 
+
+	// ===========
+	// 消息类型上屏
+	// ===========
+
 	if(
 		!message
 		// 空文本消息不上屏
@@ -560,6 +675,8 @@ function _handleMessage(msg, options){
 		|| (type === "article" && _.isEmpty(utils.getDataByPath(msg, "ext.msgtype.articles")))
 		// 视频邀请不上屏
 		|| (type === "rtcVideoTicket")
+		// 订单轨迹不上屏
+		|| (type === "track" || type === "order")
 	) return;
 
 	// 给收到的消息加id，用于撤回消息
@@ -576,11 +693,10 @@ function _handleMessage(msg, options){
 
 	if(!isHistory){
 		!noPrompt && _messagePrompt(message, targetOfficialAccount);
-
 		// 兼容旧的消息格式
 		message.value = message.data;
 		// 收消息回调
-		transfer.send({
+		isReceived && transfer.send({
 			event: _const.EVENTS.ONMESSAGE,
 			data: {
 				from: msg.from,
@@ -602,9 +718,9 @@ function _transformMessageFormat(element){
 		fileLength = msg.file_length;
 	}
 
-	// 给图片消息或附件消息的url拼上hostname
+	// 给图片消息或附件消息的 url 拼上 hostname
 	if(url && !/^https?/.test(url)){
-		url = location.protocol + config.domain + url;
+		url = config.domain + url;
 	}
 
 	return {
@@ -644,11 +760,17 @@ function _setExt(msg){
 	var bindAgentUsername = officialAccount.bindAgentUsername;
 	var bindSkillGroupName = officialAccount.bindSkillGroupName;
 	var language = __("config.language");
+	var customExtendMessage = profile.config.customExtendMessage;
 
 	msg.body.ext = msg.body.ext || {};
 	msg.body.ext.weichat = msg.body.ext.weichat || {};
 
 	msg.body.ext.weichat.language = language;
+
+	// 对接百度机器人，增加消息扩展
+	if(typeof customExtendMessage === "object"){
+		_.assign(msg.body.ext, customExtendMessage);
+	}
 
 	// bind skill group
 	if(bindSkillGroupName){
@@ -953,4 +1075,3 @@ function _messagePrompt(message, officialAccount){
 		});
 	}
 }
-

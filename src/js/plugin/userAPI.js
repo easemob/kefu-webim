@@ -79,8 +79,8 @@ function reset(){
 	_config.resources = utils.convertFalse(resources);
 	_config.satisfaction = utils.convertFalse(sat);
 	_config.domain = _config.domain || baseConfig.domain;
-	_config.path = _config.path || (baseConfig.domain + "/webim");
-	_config.staticPath = _config.staticPath || (baseConfig.domain + "/webim/static");
+	_config.path = _config.path || (baseConfig.domain + "__WEBIM_SLASH_KEY_PATH__/webim");
+	_config.staticPath = _config.staticPath || (baseConfig.domain + "__WEBIM_SLASH_KEY_PATH__/webim/static");
 }
 // get config from current script
 function getConfig(){
@@ -91,6 +91,7 @@ function getConfig(){
 
 	for(s = 0, l = scripts.length; s < l; s++){
 		if(~scripts[s].src.indexOf("easemob.js")){
+			// src 会被强制加上域名
 			src = scripts[s].src;
 			break;
 		}
@@ -103,7 +104,7 @@ function getConfig(){
 	var tmp;
 	var idx = src.indexOf("?");
 	var sIdx = ~src.indexOf("//") ? src.indexOf("//") : 0;
-	var domain = src.slice(sIdx, src.indexOf("/", sIdx + 2));
+	var domain = src.slice(0, src.indexOf("/", sIdx + 2));
 	var arr = src.slice(idx + 1).split("&");
 
 	for(i = 0, len = arr.length; i < len; i++){
