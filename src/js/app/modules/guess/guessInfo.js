@@ -89,7 +89,6 @@ function _addEvents(){
 							doms.chatWrapper.style.bottom = 140 + "px";
 							doms.editorView.style.height = 140 + "px";
 						}, 1000);
-						console.log("请求了");
 					}
 				});
 			oldValue = newValue;
