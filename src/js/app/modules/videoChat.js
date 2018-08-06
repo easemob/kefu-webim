@@ -112,6 +112,13 @@ function _init(){
 			},
 		}
 	});
+	// 远程控制
+	emedia.ctrl.support(service, function onHasRemoteControl(stream, controler, controlRequest){ //被控端 收到 主控端 控制申请
+			videoPanel.onHasRemoteControl(stream, controler, controlRequest);
+		}, function onRemoteFreeControl(stream, controler, cId) { // 被控端 收到 主控端释放远程控制
+			videoPanel.onRemoteFreeControl(stream, controler, cId);
+		}
+	);	
 
 	dialog = uikit.createDialog({
 		contentDom: [
@@ -160,7 +167,8 @@ function init(option){
 	parentContainer = opt.parentContainer;
 
 	adapterPath = __("config.static_path") + "/js/lib/adapter.min.js?v=unknown-000";
-	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk.min.js?v=1.1.2";
+	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk.min.js?v=1.1.2";
+	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-dev.js"; //新版sdk 远程 
 
 	// todo: resolve promise sequentially
 	tools.loadScript(adapterPath)
