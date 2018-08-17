@@ -62,8 +62,8 @@ function _addEvents(){
     // 文本框检索猜你想说内容
 	utils.on(doms.textInput, "keyup", function(){
 		doms.guessArea.style.display = "block";
-		doms.chatWrapper.style.bottom = 160 + "px";
-		doms.editorView.style.height = 160 + "px";
+		// doms.chatWrapper.style.bottom = 160 + "px";
+		// doms.editorView.style.height = 160 + "px";
 
 		var value = this.value;
 		newValue = value;
@@ -72,6 +72,7 @@ function _addEvents(){
 		if(value && oldValue !== newValue){
 				apiHelper.getGuessList(value).then(function(res){
 					if(res && res.data && res.data.entities){
+						doms.guessArea.style.display = "block";
 						doms.guessTips.innerText = "猜你想问";
 						doms.loading.style.display = "none";
 						// 创建模板
@@ -80,15 +81,11 @@ function _addEvents(){
 						doms.chatWrapper.style.bottom = 300 + "px";
 						doms.editorView.style.height = 300 + "px";
 					}else{
-						setTimeout(function(){
 							// 检索不到值时恢复 默认样式
 							doms.guessArea.style.display = "none";
-							// doms.guessTips.innerText = "";
-							// doms.loading.style.display = "block";
 							doms.guessList.innerHTML = "";
 							doms.chatWrapper.style.bottom = 140 + "px";
 							doms.editorView.style.height = 140 + "px";
-						}, 1000);
 					}
 				});
 			oldValue = newValue;
