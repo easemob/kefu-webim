@@ -262,6 +262,7 @@ var Iframe = function(config){
 	iframe.allowTransparency = "true";
 	iframe.id = id;
 	iframe.className = className;
+	iframe.allow = "microphone; camera";
 	document.body.appendChild(iframe);
 
 	utils.on(iframe, "load", function(){
