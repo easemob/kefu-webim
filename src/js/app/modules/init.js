@@ -51,6 +51,7 @@ function load_html(){
 		transfer_to_kefu: __("toolbar.transfer_to_kefu"),
 		press_save_img: __("common.press_save_img"),
 		send_video: __("toolbar.send_video"),
+		send_loneRange: __("toolbar.send_loneRange"),
 	}));
 
 	chat.getDom();

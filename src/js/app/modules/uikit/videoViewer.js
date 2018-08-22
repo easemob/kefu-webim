@@ -181,7 +181,8 @@ function _addOrUpdateStream(stream){
 	switch(stream.type){
 	case _const.STREAM_TYPE.NORMAL:
 		currentStream = stream;
-		videoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
+		//videoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
+		attachMediaStream(videoDom, mediaStream);
 		// 本地视频需要 muted
 		videoDom.muted = isLocalStream;
 		nicknameDom.innerText = isLocalStream
@@ -190,7 +191,8 @@ function _addOrUpdateStream(stream){
 		break;
 	case _const.STREAM_TYPE.NO_AUDIO:
 		currentNoAudioStream = stream;
-		noAudioVideoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
+		//noAudioVideoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
+		attachMediaStream(noAudioVideoDom, mediaStream);
 		utils.addClass(videoDom, "hide");
 		utils.removeClass(noAudioVideoDom, "hide");
 		break;

@@ -89,7 +89,9 @@ module.exports = {
 		me: "我",
 		video_ended: "视频已结束",
 		confirm_prompt: "您要邀请客服为您进行实时视频服务么？点击确认发送邀请，等待客服接受后即可体验实时视频服务。",
+		confirmloneRange: "您要邀请客服为您进行实时远程服务么？点击确认发送邀请，等待客服接受后即可体验实时远程服务。",
 		invite_agent_video: "邀请客服进行实时视频",
+		invite_agent_loneRange: "邀请客服进行实时远程",
 		connecting: "视频通话中",
 		waiting_confirm: "视频连接请求，等待你的确认",
 		can_not_connected: "视频无法接通，请重试",
@@ -104,6 +106,7 @@ module.exports = {
 		evaluate_agent: "评价客服",
 		transfer_to_kefu: "转人工",	
 		send_video: "发送小视频",
+		send_loneRange: "远程协助",
 	},
 	prompt: {
 		new_message_title_notice: "新消息提醒",
