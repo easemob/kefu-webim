@@ -1,5 +1,14 @@
 node_modules
-*.map
 package-lock.json
-appPageCached.js
+*.map
+
 en-US/static/css/im.css
+static/css
+static/js/em-transfer.js
+static/js/main.js
+
+appPageCached.js
+easemob.js
+im.html
+im_cached.html
+transfer.html
