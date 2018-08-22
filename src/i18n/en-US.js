@@ -89,7 +89,9 @@ module.exports = {
 		me: "Me",
 		video_ended: "Video call ended",
 		confirm_prompt: "Invite the agent to a video call? Send the invite and wait for the agent to join the video call.",
+		confirmloneRange: "Invite the agent to a remote call? Send the invite and wait for the agent to join the remote call.",
 		invite_agent_video: "Invite the agent to a video call",
+		invite_agent_loneRange: "Invite the agent to a remote call",
 		// 这个文案待确认
 		connecting: "Recording",
 		waiting_confirm: "Video call request. Waiting for your confirmation",

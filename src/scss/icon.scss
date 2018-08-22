@@ -510,3 +510,9 @@
 		content: "\a025";
 	}
 }
+.icon-longRange {
+	&:before {
+		@extend .icon-base;
+		content: "\3b3";
+	}
+}
