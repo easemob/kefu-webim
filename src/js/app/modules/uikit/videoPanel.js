@@ -90,24 +90,24 @@ function onHasRemoteControl(stream, controler, controlRequest){
 		//被控端 实现
 		var KeyboardTrack = emedia.pannel.KeyboardTrack.extend({
 			onKeyDown: function (btn) {
-				console.info("CTRL Down ", btn);
+				// console.info("CTRL Down ", btn);
 			},
 
 			onKeyUp: function (btn) {
-				console.info("CTRL Up ", btn);
+				// console.info("CTRL Up ", btn);
 			}
 		});
 
 		var DrawMouseTrack = emedia.pannel.MouseTrack.extend({
 			
 			onMouseTrack: function (position, lastPosition, lastTrigger) {
-				console.log("CTRL Mouse move", position);
+				// console.log("CTRL Mouse move", position);
 			},
 			onMouseTrigger: function (trigger, _lastTrigger) {
-				console.log("CTRL OK?", trigger);
+				// console.log("CTRL OK?", trigger);
 			},
 			onReleaseTrigger: function (_lastTrigger) {
-				console.log('CTRL releaseTrigger');
+				// console.log('CTRL releaseTrigger');
 			}
 		});
 		controlRequest.accept(mainVideo, new DrawMouseTrack({ // 被控端同意 控制申请
