@@ -23,6 +23,11 @@ var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
 var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
 var TenantInfo = require("@/app/modules/tenantInfo/index");
+var videoChatTemplate = require("raw-loader!../../../template/videoChat.html");
+var Dispatcher = require("./tools/Dispatcher");
+var videoPanel = require("./uikit/videoPanel");
+var statusBar = require("./uikit/videoStatusBar");
+var tools = require("./tools/tools");
 var tenantInfo;
 
 var isMessageChannelReady;
@@ -32,6 +37,123 @@ var inputBoxPosition = "down";
 var topBar;
 var editorView;
 var doms;
+var loneRangeDialog;
+var loneRangeflag = true;
+var loneRangeDOMclose;
+var loneRangeDOMLeft;
+var loneRangeDOMRight;
+var dialog;
+var videoWidget;
+var parentContainer;
+var service;
+var _initOnce = _.once(_initloneRange);
+
+function _initloneRange(){
+	if(videoWidget) return;
+	// init dom
+	videoWidget = utils.createElementFromHTML(_.template(videoChatTemplate)());
+
+	doms.imChat.appendChild(videoWidget);
+
+	config = profile.config;
+
+	// init emedia config
+	// window.emedia.config({ autoSub: false });
+
+	// disable emedia log
+	window.emedia.LOG_LEVEL = 5;
+
+	dispatcher = new Dispatcher();
+
+	service = new window.emedia.Service({
+		// 这个目前没有定义，前段可写 web
+		resource: "web",
+		// 这个人的昵称，可以不写。比如 jid 中的name
+		nickName: config.user.username,
+
+		// 以下监听，this object == me == service.current
+		listeners: {
+			// 退出，服务端强制退出，进入会议失败，sdk重连失败等 均会调用到此处
+			onMeExit: function(errorCode){
+				// var errorMessage = _const.E_MEDIA_SDK_ERROR_CODE_MAP[errorCode] || "unknown error code.";
+
+				statusBar.showClosing();
+				videoPanel.hide();
+
+				// if(errorCode !== 0) throw new Error(errorMessage);
+			},
+			// 某人进入会议
+			onAddMember: function(member){
+				console.info({
+					type: "memberEnter",
+					memberId: member.id,
+					memberNickname: member.nickName,
+				});
+			},
+			// 某人退出会议
+			onRemoveMember: function(member){
+				console.info({
+					type: "memberExit",
+					memberId: member.id,
+					memberNickname: member.nickName,
+				});
+			},
+			// 某人 发布 一个流 （音视频流，共享桌面等）（包含本地流）
+			onAddStream: videoPanel.addOrUpdateStream,
+			// 某人 取消 一个流 （音视频流，共享桌面等）（包含本地流）
+			onRemoveStream: videoPanel.removeStream,
+			// 更新 一个流 （音视频流，共享桌面等）。
+			// 可能是 断网后，重新获取到远端媒体流，或者对方静音或关闭摄像头
+			onUpdateStream: videoPanel.addOrUpdateStream,
+			// 这个事件比较多，以后业务拓展时，根据需要再给开放一些回调，目前忽略
+			onNotifyEvent: function(evt){
+				// 接听 打开本地摄像头 并成功推流
+				if(evt instanceof window.emedia.event.PushSuccess){}
+				// 接听 打开本地摄像头 推流失败
+				else if(evt instanceof window.emedia.event.PushFail){
+					uikit.tip(__("video.can_not_connected"));
+					service.exit();
+				}
+				// 接听 打开摄像头失败
+				else if(evt instanceof window.emedia.event.OpenMediaError){
+					uikit.tip(__("video.can_not_open_camera"));
+					service.exit();
+				}
+				else{}
+			},
+		}
+	});
+
+	dialog = uikit.createDialog({
+		contentDom: [
+			"<p class=\"prompt\">",
+			__("video.confirmloneRange"),
+			"</p>"
+		].join(""),
+		className: "rtc-video-confirm",
+	})
+	.addButton({ confirm: _onConfirm });
+
+	statusBar.init({
+		wrapperDom: videoWidget.querySelector(".status-bar"),
+		acceptCallback: function(){
+			videoPanel.show();
+			statusBar.hideAcceptButton();
+			statusBar.startTimer();
+			statusBar.setStatusText(__("video.connecting"));
+			_pushStream();
+		},
+		endCallback: function(){
+			service && service.exit();
+		},
+	});
+
+	videoPanel.init({
+		wrapperDom: videoWidget.querySelector(".video-panel"),
+		service: service,
+		dispatcher: dispatcher,
+	});
+}
 
 var _reCreateImUser = _.once(function(){
 	console.warn("user not found in current appKey, attempt to recreate user.");
@@ -670,6 +792,49 @@ function _bindEvents(){
 		satisfaction.show();
 	});
 
+	// 远程
+	utils.on(doms.longRangeBtn, "click", function(){
+	adapterPath = __("config.static_path") + "/js/lib/adapter.min.js?v=unknown-000";
+	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk.min.js?v=1.1.2";
+	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-dev.js"; //新版sdk 远程 
+	// todo: resolve promise sequentially
+	tools.loadScript(adapterPath)
+	.then(function(){
+		return tools.loadScript(eMediaSdkPath);
+	})
+	.then(function(){
+		eventListener.add(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, _reveiveTicket);	
+	});
+		_initOnce();
+		dialog.show();
+	});
+
+	function _reveiveTicket(ticketInfo){
+		utils.addClass(videoWidget, "hide");
+		 if(loneRangeflag){
+			loneRangeflag=false;
+			var contentDom = utils.createElementFromHTML([
+				"<div class=\"loneRange-div\" >",
+				"<i class=\"loneRange-close\">X</i>",
+				"<span class=\"loneRange-text\">请选择执行方式：</span>",
+				"<div class=\"loneRang-f\" >",
+				"<a href=\'easemobprotocol:"+ticketInfo+" \' class=\"loneRange-left\">打开远程exe</a>",
+				"<a class=\"loneRange-right\">下载远程exe</a>",
+				"</div>",
+				"</div>"
+			].join(""));
+			loneRangeDialog =uikit.createDialog({
+				contentDom: contentDom,
+				className: "mini loneRange"
+			}).show();
+			loneRangeDOMclose = document.querySelector(".loneRange-close"); // 获取关闭按钮
+			loneRangeDOMLeft = document.querySelector(".loneRange-left");	// 获取打开EXE按钮
+			loneRangeDOMRight = document.querySelector(".loneRange-right"); // 获取下载EXE按钮
+			loneRangeDOM();
+		}
+
+}
+	
 	// ios patch: scroll page when keyboard is visible ones
 	if(utils.isIOS){
 		utils.on(doms.textInput, "focus", function(){
@@ -721,6 +886,27 @@ function _bindEvents(){
 			guessInfo.resetStyle();
 		}
 	});
+}
+// 远程操作事件
+function loneRangeDOM(){
+	// 关闭窗口
+	utils.on(loneRangeDOMclose, "click", function(){
+		loneRangeflag=true;
+		loneRangeDialog.destroy()
+	});	
+
+	// 打开EXE
+	utils.on(loneRangeDOMLeft, "click", function(){	
+		loneRangeflag=true;
+		loneRangeDialog.destroy()
+	});	
+	// 下载EXE
+	utils.on(loneRangeDOMRight, "click", function(){
+		loneRangeflag=true;
+		window.open ("https://kefu.iflytek.com/download/remotecontrol/easemob-telecontrol.1.0.0.win.setup.exe","_self"); // 当前页面下载exe 
+		loneRangeDialog.destroy()
+	});	
+
 }
 
 function setArticleIframeScrolling(enable){
@@ -823,6 +1009,7 @@ function _getDom(){
 		noteBtn: editorView.querySelector(".em-widget-note"),
 		videoInviteButton: editorView.querySelector(".em-video-invite"),
 		queuingNumberStatus: editorView.querySelector(".queuing-number-status"),
+		longRangeBtn: editorView.querySelector(".em-long-range"), // 远程按钮dom
 		//  图片小视频文件 file框
 		videoInput: document.querySelector(".upload-video-container"),
 		imgInput: document.querySelector(".upload-img-container"),
@@ -940,3 +1127,24 @@ function _initSession(){
 	});
 }
 
+function _onConfirm(){
+	channel.sendText(__("video.invite_agent_loneRange"), {
+		ext: {
+			type: "rtcmedia/video",
+			msgtype: {				
+				liveStreamInvitation: {
+					msg: __("video.invite_agent_loneRange"),
+					orgName: config.orgName,
+					appName: config.appName,
+					userName: config.user.username,
+					imServiceNumber: config.toUser,
+					restServer: config.restServer,
+					xmppServer: config.xmppServer,
+					resource: "webim",
+					isNewInvitation: true,
+					userAgent: navigator.userAgent,
+				},
+			},
+		},
+	});
+}
