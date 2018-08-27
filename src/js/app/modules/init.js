@@ -27,6 +27,10 @@ if(utils.isTop){
 else{
 	chat_window_mode_init();
 }
+if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+	var longRangedom = document.getElementsByClassName("em-long-range")[0];
+	utils.addClass(longRangedom, "hide");
+}
 
 utils.on(window, "message", function(e){
 	updateCustomerInfo(e);
