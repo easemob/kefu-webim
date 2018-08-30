@@ -170,11 +170,14 @@ function wrapAttachMediaStream() {
         return element;
     }
 
-    if(window.attachMediaStream){
+    if(window.attachMediaStream && window.attachMediaStream._wrapped !== true){
         window.__attachMediaStream = window.attachMediaStream;
     }
 
     window.attachMediaStream = easemobAttachMediaStream;
+    window.attachMediaStream._wrapped = true;
+
+    console && typeof console.warn === "function" && console.warn("wrap attachMediaStream");
 }
 
 

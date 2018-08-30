@@ -23,7 +23,6 @@ var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
 var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
 var TenantInfo = require("@/app/modules/tenantInfo/index");
-var videoChatTemplate = require("raw-loader!../../../template/videoChat.html");
 var Dispatcher = require("./tools/Dispatcher");
 var videoPanel = require("./uikit/videoPanel");
 var statusBar = require("./uikit/videoStatusBar");
@@ -42,7 +41,7 @@ var loneRangeflag = true;
 var loneRangeDOMclose;
 var loneRangeDOMLeft;
 var loneRangeDOMRight;
-var dialog;
+var SendloneRangedialog
 var videoWidget;
 var parentContainer;
 var service;
@@ -51,12 +50,7 @@ var _initOnce = _.once(_initloneRange);
 function _initloneRange(){
 	if(videoWidget) return;
 	// init dom
-	videoWidget = utils.createElementFromHTML(_.template(videoChatTemplate)());
-
-	doms.imChat.appendChild(videoWidget);
-
 	config = profile.config;
-
 	// init emedia config
 	// window.emedia.config({ autoSub: false });
 
@@ -124,7 +118,7 @@ function _initloneRange(){
 		}
 	});
 
-	dialog = uikit.createDialog({
+	SendloneRangedialog = uikit.createDialog({
 		contentDom: [
 			"<p class=\"prompt\">",
 			__("video.confirmloneRange"),
@@ -133,26 +127,6 @@ function _initloneRange(){
 		className: "rtc-video-confirm",
 	})
 	.addButton({ confirm: _onConfirm });
-
-	statusBar.init({
-		wrapperDom: videoWidget.querySelector(".status-bar"),
-		acceptCallback: function(){
-			videoPanel.show();
-			statusBar.hideAcceptButton();
-			statusBar.startTimer();
-			statusBar.setStatusText(__("video.connecting"));
-			_pushStream();
-		},
-		endCallback: function(){
-			service && service.exit();
-		},
-	});
-
-	videoPanel.init({
-		wrapperDom: videoWidget.querySelector(".video-panel"),
-		service: service,
-		dispatcher: dispatcher,
-	});
 }
 
 var _reCreateImUser = _.once(function(){
@@ -803,15 +777,14 @@ function _bindEvents(){
 		return tools.loadScript(eMediaSdkPath);
 	})
 	.then(function(){
-		eventListener.add(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, _reveiveTicket);	
+		eventListener.add(_const.SYSTEM_EVENT.VIDEO_TICKET_CHAT, Ticket);	
 	});
 		_initOnce();
-		dialog.show();
+		SendloneRangedialog.show();
 	});
 
-	function _reveiveTicket(ticketInfo){
-		utils.addClass(videoWidget, "hide");
-		 if(loneRangeflag){
+	function Ticket(ticketInfo){
+		if(loneRangeflag){
 			loneRangeflag=false;
 			var contentDom = utils.createElementFromHTML([
 				"<div class=\"loneRange-div\" >",
@@ -831,8 +804,7 @@ function _bindEvents(){
 			loneRangeDOMLeft = document.querySelector(".loneRange-left");	// 获取打开EXE按钮
 			loneRangeDOMRight = document.querySelector(".loneRange-right"); // 获取下载EXE按钮
 			loneRangeDOM();
-		}
-
+		}	
 }
 	
 	// ios patch: scroll page when keyboard is visible ones
@@ -1133,6 +1105,7 @@ function _onConfirm(){
 	channel.sendText(__("video.invite_agent_loneRange"), {
 		ext: {
 			type: "rtcmedia/video",
+			ty: "remote", // 发送的类型为远程
 			msgtype: {				
 				liveStreamInvitation: {
 					msg: __("video.invite_agent_loneRange"),
