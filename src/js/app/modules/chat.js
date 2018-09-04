@@ -23,7 +23,6 @@ var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
 var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
 var TenantInfo = require("@/app/modules/tenantInfo/index");
-var Dispatcher = require("./tools/Dispatcher");
 var videoPanel = require("./uikit/videoPanel");
 var statusBar = require("./uikit/videoStatusBar");
 var tools = require("./tools/tools");
@@ -56,8 +55,6 @@ function _initloneRange(){
 
 	// disable emedia log
 	window.emedia.LOG_LEVEL = 5;
-
-	dispatcher = new Dispatcher();
 
 	service = new window.emedia.Service({
 		// 这个目前没有定义，前段可写 web
@@ -777,13 +774,14 @@ function _bindEvents(){
 		return tools.loadScript(eMediaSdkPath);
 	})
 	.then(function(){
-		eventListener.add(_const.SYSTEM_EVENT.VIDEO_TICKET_CHAT, Ticket);	
-	});
+		eventListener.add(_const.SYSTEM_EVENT.VIDEO_TICKET_CHAT, Ticket);
 		_initOnce();
-		SendloneRangedialog.show();
+		SendloneRangedialog.show();	
+		});
 	});
 
 	function Ticket(ticketInfo){
+		_initOnce();
 		if(loneRangeflag){
 			loneRangeflag=false;
 			var contentDom = utils.createElementFromHTML([
@@ -806,7 +804,12 @@ function _bindEvents(){
 			loneRangeDOM();
 		}	
 }
-	
+
+	//  坐席发来远程
+	eventListener.add(_const.SYSTEM_EVENT.MESSAGE_CHANNEL_REMOTE, function(){
+		eventListener.add(_const.SYSTEM_EVENT.VIDEO_TICKET_CHAT, Ticket);
+	});
+		
 	// ios patch: scroll page when keyboard is visible ones
 	if(utils.isIOS){
 		utils.on(doms.textInput, "focus", function(){

@@ -630,6 +630,7 @@ function _handleMessage(msg, options){
 		break;
 	case "rtcVideoChat":
 		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_CHAT, [videoChat, videoExtend]);
+		eventListener.trigger(_const.SYSTEM_EVENT.MESSAGE_CHANNEL_REMOTE);
 		break;
 	case "customMagicEmoji":
 		message = customMagicEmoji;
