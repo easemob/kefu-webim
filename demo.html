@@ -27,7 +27,6 @@
 	<br>
 	<br>
 	<h1>测试</h1>
-	<button onclick="testCMD()">测试CMD</button>
 	<div><input id="testvalue" type="text" placeholder="请输入您的tenantId，点击测试按钮"/></div>
 	<button onclick="test()">测试</button>
 	<button onclick="deleteCurrentCookies()">Clear Current Cookie</button>
@@ -107,78 +106,7 @@ function resizeChatWindow(){
 	};
 </script>
 
-<script src="easemob.js?configId=fd96c356-f721-4780-9686-3e8f347b5539"></script>
+<script src="easemob.js?configId=2722cf2a-8ca0-4236-8142-0551589b7adf"></script>
 
-<script src="./strophe-1.2.8.min.js"></script>
-<script src="./websdk-1.4.6.js"></script>
-<script>
-	function  testCMD() {
-		WebIM.config = {}
-	conn = new WebIM.connection({
-		url: 'im-api.easemob.com',
-	});
-
-	var sendInterval;
-	conn.listen({
-		onOpened: function(info){
-			console.log('open live')
-			sendInterval && clearInterval(sendInterval)
-			sendInterval = setInterval(function () {
-				// onReadyCallback(info);
-				var msg = new WebIM.message.cmd('15f8518e-b151-43e9-8a83-db0993e73ca7');
-				msg.set({
-					to: '117590',
-					action: "tttt",
-				});
-				// _appendAck(msg, id);
-				conn.send(msg.body);
-			}, 5000)
-		},
-		onTextMessage: function(message){
-			// _handleMessage(message, { type: "txt" });
-			console.log('txt')
-		},
-		onCmdMessage: function(message){
-			// _handleMessage(message, { type: "cmd" });
-			console.log('onCmdMessage')
-		},
-		onOnline: function(){
-			// utils.isMobile && _open();
-			console.log('onOnline')
-		},
-		onOffline: function(){
-			// utils.isMobile && conn.close();
-
-			// eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFLINE, []);
-			console.log('onOffline')
-		},
-		onError: function(e){
-			console.log(e)
-			// if(e.reconnect){
-			//   _open();
-			// }
-			// else if(e.type === _const.IM.WEBIM_CONNCTION_AUTH_ERROR){
-			//   _open();
-			// }
-			// // im sdk 会捕获回调中的异常，需要把出错信息打出来
-			// else if(e.type === _const.IM.WEBIM_CONNCTION_CALLBACK_INNER_ERROR){
-			//   console.error(e.data);
-			// }
-			// else{
-			//   console.error(e);
-			// }
-		}
-	});
-
-	var op = {
-		user: 'webim-visitor-G79EJ6RT4Q4EKJHFB2B2',
-		appKey: '123zj#kefusandbox',
-		apiUrl: 'http://a1.easemob.com',
-		pwd: 'EMC8M87GYR'
-	};
-
-	conn.open(op)
-	}
-</script>
 </body>
 </html>
