@@ -100,7 +100,7 @@ function _initConnection(onReadyCallback){
 	if(profile.imRestDown){
 		onReadyCallback();
 	}
-	var sendCMDInterval;
+
 	conn.listen({
 		onOpened: function(info){
 			// discard this
@@ -109,18 +109,6 @@ function _initConnection(onReadyCallback){
 			}
 			// 连接未超时，清除timer，暂不开启api通道发送消息
 			clearTimeout(firstTS);
-
-			// 广东电网CMD消息发送
-			sendCMDInterval && clearInterval(sendCMDInterval)
-			sendCMDInterval = setInterval(function () {
-				var msg = new WebIM.message.cmd('15f8518e-b151-43e9-8a83-db0993e73ca7');
-				msg.set({
-					to: '117590',
-					action: "tttt",
-				});
-				// _appendAck(msg, id);
-				conn.send(msg.body);
-			}, 5000)
 
 			conn.setPresence();
 
