@@ -1,12 +1,12 @@
 window.app = {};
 
-app.Dict = (function () {
-	var Dict = function () {
+app.Dict = (function(){
+	var Dict = function(){
 		this.list = {};
 	};
 
-	Dict.prototype.set = function (key, value) {
-		if (typeof this.list[key] === 'undefined') {
+	Dict.prototype.set = function(key, value){
+		if(typeof this.list[key] === "undefined"){
 			this.list[key] = value;
 		}
 	};
@@ -15,13 +15,13 @@ app.Dict = (function () {
 		if (this.list.hasOwnProperty(key)) {
 			return this.list[key];
 		}
-		else {
+		
 			return null;
-		}
+		
 	};
 
-	Dict.prototype.remove = function (key) {
-		if (typeof this.list[key] !== 'undefined') {
+	Dict.prototype.remove = function(key){
+		if(typeof this.list[key] !== "undefined"){
 			delete this.list[key];
 		}
 	};
@@ -30,62 +30,62 @@ app.Dict = (function () {
 }());
 
 app.List = (function(){
-	var List = function (){
+	var List = function(){
 		this.list = [];
 	};
 
-	List.prototype.add = function (value){
-		if (!~this.list.indexOf(value)){
+	List.prototype.add = function(value){
+		if(!~this.list.indexOf(value)){
 			this.list.push(value);
 		}
 	};
 
-	List.prototype.remove = function (value){
+	List.prototype.remove = function(value){
 		var index = this.list.indexOf(value);
-		if (index >= 0){
+		if(index >= 0){
 			this.list.splice(index, 1);
 		}
 	};
 
-	List.prototype.getAll = function (){
+	List.prototype.getAll = function(){
 		return this.list;
 	};
 
-	List.prototype.getLength = function (){
+	List.prototype.getLength = function(){
 		return this.list.length;
 	};
 
-	List.prototype.removeAll = function (){
+	List.prototype.removeAll = function(){
 		this.list.length = 0;
 	};
 
 	return List;
 }());
 
-app.Poller = (function () {
-	var Poller = function (fn, interval) {
+app.Poller = (function(){
+	var Poller = function(fn, interval){
 		this.fn = fn;
 		this.isStarted = false;
 		this.timerHandler = null;
 		this.interval = interval;
 	};
 
-	Poller.prototype.start = function () {
-		if (!this.isStarted) {
+	Poller.prototype.start = function(){
+		if(!this.isStarted){
 			this.isStarted = true;
 			setTimeout(this.fn, 0);
 			this.timerHandler = setInterval(this.fn, this.interval);
 		}
 	};
 
-	Poller.prototype.stop = function () {
-		if (this.isStarted) {
+	Poller.prototype.stop = function(){
+		if(this.isStarted){
 			this.isStarted = false;
 			clearInterval(this.timerHandler);
 		}
 	};
 
-	Poller.prototype.isStarted = function () {
+	Poller.prototype.isStarted = function(){
 		return this.isStarted;
 	};
 
@@ -93,8 +93,8 @@ app.Poller = (function () {
 }());
 
 // 限制一段时间内的重试次数，以及每次调用的时间间隔
-app.retryThrottle = function (fn, options){
-	if (typeof fn !== 'function') throw 'unexpect type of fn.';
+app.retryThrottle = function(fn, options){
+	if(typeof fn !== "function") throw "unexpect type of fn.";
 
 	var opt = options || {};
 	var lastResetTimestamp = _.now();
@@ -104,17 +104,17 @@ app.retryThrottle = function (fn, options){
 	var retryCount = 0;
 	var throttledFn = _.throttle(fn, waitTime);
 
-	return function (){
-		if (_.now() - lastResetTimestamp < resetTime){
-			if (retryCount < retryLimit){
+	return function(){
+		if(_.now() - lastResetTimestamp < resetTime){
+			if(retryCount < retryLimit){
 				retryCount++;
 				throttledFn();
 			}
-			else {
+			else{
 				// 达到重试次数，忽略
 			}
 		}
-		else {
+		else{
 			lastResetTimestamp = _.now();
 			retryCount = 1;
 			throttledFn();
@@ -132,7 +132,7 @@ app.eventListener = (function(){
 	};
 
 	function _add(event, callback){
-		if (!eventCallbackTable[event]) eventCallbackTable[event] = [];
+		if(!eventCallbackTable[event]) eventCallbackTable[event] = [];
 		eventCallbackTable[event].push(callback);
 	}
 
@@ -146,7 +146,7 @@ app.eventListener = (function(){
 }());
 
 app.profile = {
-	version: '<%=WEBIM_PLUGIN_VERSION%>',
+	version: "<%=WEBIM_PLUGIN_VERSION%>",
 	ctaEnable: false,
 	systemAgentAvatar: null,
 	isChatWindowOpen: null,
