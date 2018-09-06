@@ -16,18 +16,18 @@ window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
  *  Returns:
  *	The index of elt in the array or -1 if not found.
  */
-if (!Array.prototype.indexOf) {
-	Array.prototype.indexOf = function (elt /*, from*/ ) {
+if(!Array.prototype.indexOf){
+	Array.prototype.indexOf = function(elt /* , from*/){
 		var len = this.length;
 
 		var from = Number(arguments[1]) || 0;
 		from = (from < 0) ? Math.ceil(from) : Math.floor(from);
-		if (from < 0) {
+		if(from < 0){
 			from += len;
 		}
 
-		for (; from < len; from++) {
-			if (from in this && this[from] === elt) {
+		for(; from < len; from++){
+			if(from in this && this[from] === elt){
 				return from;
 			}
 		}
@@ -37,22 +37,22 @@ if (!Array.prototype.indexOf) {
 }
 
 /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim */
-if (!String.prototype.trim) {
-	String.prototype.trim = function () {
-		return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+if(!String.prototype.trim){
+	String.prototype.trim = function(){
+		return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, "");
 	};
 }
 
 // Production steps of ECMA-262, Edition 5, 15.4.4.18
 // Reference: http://es5.github.io/#x15.4.4.18
-if (!Array.prototype.forEach) {
+if(!Array.prototype.forEach){
 
-	Array.prototype.forEach = function (callback, thisArg) {
+	Array.prototype.forEach = function(callback, thisArg){
 
 		var T, k;
 
-		if (this === null) {
-			throw new TypeError('this is null or not defined');
+		if(this === null){
+			throw new TypeError("this is null or not defined");
 		}
 
 		// 1. Let O be the result of calling toObject() passing the
@@ -66,13 +66,13 @@ if (!Array.prototype.forEach) {
 
 		// 4. If isCallable(callback) is false, throw a TypeError exception. 
 		// See: http://es5.github.com/#x9.11
-		if (typeof callback !== 'function') {
-			throw new TypeError(callback + ' is not a function');
+		if(typeof callback !== "function"){
+			throw new TypeError(callback + " is not a function");
 		}
 
 		// 5. If thisArg was supplied, let T be thisArg; else let
 		// T be undefined.
-		if (arguments.length > 1) {
+		if(arguments.length > 1){
 			T = thisArg;
 		}
 
@@ -80,7 +80,7 @@ if (!Array.prototype.forEach) {
 		k = 0;
 
 		// 7. Repeat, while k < len
-		while (k < len) {
+		while(k < len){
 
 			var kValue;
 
@@ -90,7 +90,7 @@ if (!Array.prototype.forEach) {
 			//    internal method of O with argument Pk.
 			//    This step can be combined with c
 			// c. If kPresent is true, then
-			if (k in O) {
+			if(k in O){
 
 				// i. Let kValue be the result of calling the Get internal
 				// method of O with argument Pk.
@@ -111,21 +111,21 @@ if (!Array.prototype.forEach) {
 // Console-polyfill. MIT license.
 // https://github.com/paulmillr/console-polyfill
 // Make it safe to do console.log() always.
-(function(global) {
-	'use strict';
-	if (!global.console) {
+(function(global){
+	"use strict";
+	if(!global.console){
 		global.console = {};
 	}
 	var con = global.console;
 	var prop, method;
-	var dummy = function() {};
-	var properties = ['memory'];
-	var methods = ('assert,clear,count,debug,dir,dirxml,error,exception,group,' +
-		 'groupCollapsed,groupEnd,info,log,markTimeline,profile,profiles,profileEnd,' +
-		 'show,table,time,timeEnd,timeline,timelineEnd,timeStamp,trace,warn').split(',');
-	while (prop = properties.pop()) if (!con[prop]) con[prop] = {};
-	while (method = methods.pop()) if (!con[method]) con[method] = dummy;
+	var dummy = function(){};
+	var properties = ["memory"];
+	var methods = ("assert,clear,count,debug,dir,dirxml,error,exception,group," +
+		 "groupCollapsed,groupEnd,info,log,markTimeline,profile,profiles,profileEnd," +
+		 "show,table,time,timeEnd,timeline,timelineEnd,timeStamp,trace,warn").split(",");
+	while(prop = properties.pop()) if(!con[prop]) con[prop] = {};
+	while(method = methods.pop())if (!con[method]) con[method] = dummy;
 	// Using `this` for web workers & supports Browserify / Webpack.
-})(typeof window === 'undefined' ? this : window);
+})(typeof window === "undefined" ? this : window);
 
 /* jshint ignore:end */

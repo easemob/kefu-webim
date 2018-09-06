@@ -1,26 +1,26 @@
-var utils = require('../../common/utils');
-var uikit = require('./uikit');
-var apiHelper = require('./apiHelper');
-var channel = require('./channel');
+var utils = require("../../common/utils");
+var uikit = require("./uikit");
+var apiHelper = require("./apiHelper");
+var channel = require("./channel");
 var profile = require("./tools/profile");
 
 var dom = utils.createElementFromHTML([
-	'<div class="wrapper">',
-	'<span class="title">请对我的服务做出评价</span>',
-	'<ul></ul>',
-	'<div class="tag-container"></div>',
-	'<textarea spellcheck="false" placeholder="请输入评价内容"></textarea>',
-	'</div>'
-].join(''));
-var starsUl = dom.querySelector('ul');
+	"<div class=\"wrapper\">",
+	"<span class=\"title\">请对我的服务做出评价</span>",
+	"<ul></ul>",
+	"<div class=\"tag-container\"></div>",
+	"<textarea spellcheck=\"false\" placeholder=\"请输入评价内容\"></textarea>",
+	"</div>"
+].join(""));
+var starsUl = dom.querySelector("ul");
 var starList;
-var commentDom = dom.querySelector('textarea');
+var commentDom = dom.querySelector("textarea");
 var tagContainer = dom.querySelector(".tag-container");
 var dialog = uikit.createDialog({
 	contentDom: dom,
-	className: 'satisfaction'
+	className: "satisfaction"
 }).addButton({
-	confirmText: '提交',
+	confirmText: "提交",
 	confirm: function () {
 		var selectedTagNodeList = tagContainer.querySelectorAll('.selected');
 		var tagNodeList = tagContainer.querySelectorAll('.tag');
@@ -44,11 +44,11 @@ var dialog = uikit.createDialog({
 			// 防止对话框关闭
 			return false;
 		}
-		else {
+		
 			_sendSatisfaction(score, content, session, invite, appraiseTags, evaluationDegreeId);
 			uikit.showSuccess('提交成功');
 			_clear();
-		}
+		
 	}
 });
 
@@ -57,38 +57,38 @@ var invite;
 var score;
 var evaluationDegreeId;
 
-utils.live('li', 'click', function(e){
-	var level = +this.getAttribute('data-level');
+utils.live("li", "click", function(e){
+	var level = +this.getAttribute("data-level");
 
 	evaluationDegreeId = this.getAttribute("data-evaluate-id");
-	score = this.getAttribute('data-score');
+	score = this.getAttribute("data-score");
 
-	level && _.each(starList, function (elem, i) {
-		utils.toggleClass(elem, 'sel', i < level);
+	level && _.each(starList, function(elem, i){
+		utils.toggleClass(elem, "sel", i < level);
 	});
 
 	evaluationDegreeId && _createLabel(evaluationDegreeId);
 }, starsUl);
 
-utils.live('span.tag', 'click', function(e){
-	utils.toggleClass(this, 'selected');
+utils.live("span.tag", "click", function(e){
+	utils.toggleClass(this, "selected");
 }, tagContainer);
 
 function _clear(){
 	commentDom.blur();
-	commentDom.value = '';
+	commentDom.value = "";
 	score = null;
 	// clear stars
-	utils.removeClass(starList, 'sel');
-	//clear label
-	tagContainer.innerHTML='';
+	utils.removeClass(starList, "sel");
+	// clear label
+	tagContainer.innerHTML = "";
 }
 
-function _sendSatisfaction(score, content, session, invite, appraiseTags, evaluationDegreeId) {
-	channel.sendText('', {
+function _sendSatisfaction(score, content, session, invite, appraiseTags, evaluationDegreeId){
+	channel.sendText("", {
 		ext: {
 			weichat: {
-				ctrlType: 'enquiry',
+				ctrlType: "enquiry",
 				ctrlArgs: {
 					// 后端类型要求，inviteId必须传数字
 					inviteId: invite || 0,
@@ -104,37 +104,37 @@ function _sendSatisfaction(score, content, session, invite, appraiseTags, evalua
 }
 
 function _setSatisfaction(){
-	apiHelper.getEvaluationDegrees().then(function (entities){
+	apiHelper.getEvaluationDegrees().then(function(entities){
 		starsUl.innerHTML = _.chain(entities)
-		.sortBy('level')
-		.map(function (elem, index){
+		.sortBy("level")
+		.map(function(elem, index){
 			// stat level 1-based
 			var level = index + 1;
 			var name = elem.name;
 			var id = elem.id;
 			var score = elem.score;
 
-			return '<li data-level="' + level
-				+ '" title="' + name
-				+ '" data-evaluate-id="' + id
-				+ '" data-score="' + score
-				+ '">H</li>';
+			return "<li data-level=\"" + level
+				+ "\" title=\"" + name
+				+ "\" data-evaluate-id=\"" + id
+				+ "\" data-score=\"" + score
+				+ "\">H</li>";
 		})
 		.value()
-		.join('');
+		.join("");
 
 		starList = starsUl.querySelectorAll("li");
 	});
 }
 
 function _createLabel(evaluateId){
-	apiHelper.getAppraiseTags(evaluateId).then(function (entities){
-		tagContainer.innerHTML = _.map(entities, function (elem){
+	apiHelper.getAppraiseTags(evaluateId).then(function(entities){
+		tagContainer.innerHTML = _.map(entities, function(elem){
 			var name = elem.name;
 			var id = elem.id;
 
-			return '<span data-label-id = "' + id + '" class="tag">' + name + '</span>';
-		}).join('');
+			return "<span data-label-id = \"" + id + "\" class=\"tag\">" + name + "</span>";
+		}).join("");
 		utils.removeClass(tagContainer, "hide");
 	});
 }
