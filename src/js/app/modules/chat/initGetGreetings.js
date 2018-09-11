@@ -14,20 +14,29 @@ function _getGreetings(officialAccount){
 	if(officialAccount.isSessionOpen) return;
 	Promise.all([
 		apiHelper.getSystemGreeting(),
-		apiHelper.getRobertGreeting(),
-		apiHelper.getSkillgroupMenu()
+		apiHelper.getSkillgroupMenu(),
 	]).then(function(result){
 		var systemGreetingText = result[0];
-		var robotGreetingObj = result[1];
-		var groupMenus = result[2];
-		var greetingTextType = robotGreetingObj.greetingTextType;
-		var greetingText = robotGreetingObj.greetingText;
-		var greetingObj = {};
+		var groupMenus = result[1];
 
 		// 系统欢迎语
 		systemGreetingText && channel.handleMessage({
 			data: systemGreetingText,
 		}, { type: "txt", noPrompt: true });
+
+		// 技能组列表
+		groupMenus && channel.handleMessage({
+			data: groupMenus,
+		}, { type: "skillgroupMenu", noPrompt: true });
+	}).catch(function(reason){});
+
+	Promise.all([
+		apiHelper.getRobertGreeting(),
+	]).then(function(result){
+		var robotGreetingObj = result[0];
+		var greetingTextType = robotGreetingObj.greetingTextType;
+		var greetingText = robotGreetingObj.greetingText;
+		var greetingObj = {};
 
 		// 机器人欢迎语
 		switch(greetingTextType){
@@ -61,10 +70,6 @@ function _getGreetings(officialAccount){
 			console.error("unknown robot greeting type.");
 			break;
 		}
+	}).catch(function(reason){});
 
-		// 技能组列表
-		groupMenus && channel.handleMessage({
-			data: groupMenus,
-		}, { type: "skillgroupMenu", noPrompt: true });
-	});
 }
