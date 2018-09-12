@@ -1,4 +1,3 @@
-
 var utils = require("../common/utils");
 var isInitialized = false;
 var imgWrapper;

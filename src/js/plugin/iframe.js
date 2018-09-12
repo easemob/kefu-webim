@@ -1,5 +1,3 @@
-
-
 var utils = require("../common/utils");
 var _const = require("../common/const");
 var Transfer = require("../common/transfer");
@@ -15,45 +13,43 @@ var _startPosition = {
 };
 var emptyFunc = function(){};
 
-function _move(me, ev){
+function _move(ctx, ev){
 	var e = window.event || ev;
 	var _width = document.documentElement.clientWidth;
 	var _height = document.documentElement.clientHeight;
-	var _x = _width - e.clientX - me.rect.width + _startPosition.x;
-	var _y = _height - e.clientY - me.rect.height + _startPosition.y;
+	var _x = _width - e.clientX - ctx.rect.width + _startPosition.x;
+	var _y = _height - e.clientY - ctx.rect.height + _startPosition.y;
 
 	if(e.clientX - _startPosition.x <= 0){ // left
-		_x = _width - me.rect.width;
+		_x = _width - ctx.rect.width;
 	}
-	else if(e.clientX + me.rect.width - _startPosition.x >= _width){ // right
+	else if(e.clientX + ctx.rect.width - _startPosition.x >= _width){ // right
 		_x = 0;
 	}
 	if(e.clientY - _startPosition.y <= 0){ // top
-		_y = _height - me.rect.height;
+		_y = _height - ctx.rect.height;
 	}
-	else if(e.clientY + me.rect.height - _startPosition.y >= _height){ // bottom
+	else if(e.clientY + ctx.rect.height - _startPosition.y >= _height){ // bottom
 		_y = 0;
 	}
-	me.shadow.style.left = "auto";
-	me.shadow.style.top = "auto";
-	me.shadow.style.right = _x + "px";
-	me.shadow.style.bottom = _y + "px";
+	ctx.shadow.style.left = "auto";
+	ctx.shadow.style.top = "auto";
+	ctx.shadow.style.right = _x + "px";
+	ctx.shadow.style.bottom = _y + "px";
 
-	me.position = {
+	ctx.position = {
 		x: _x,
 		y: _y
 	};
 
 	clearTimeout(_st);
 	_st = setTimeout(function(){
-		_moveend.call(me);
+		_moveend.call(ctx);
 	}, 500);
 }
 
 function _moveend(){
-/* jshint ignore:start */
 	var me = this;
-	/* jshint ignore:end */
 	var iframe = me.iframe;
 	var shadow = me.shadow;
 
@@ -70,52 +66,52 @@ function _moveend(){
 	utils.removeClass(iframe, "easemobim-dragging");
 }
 
-function _bindResizeHandler(me){
+function _bindResizeHandler(ctx){
 	utils.on(window, "resize", function(){
-		if(!me.rect || !me.rect.width) return;
+		if(!ctx.rect || !ctx.rect.width){
+			return;
+		}
 
 		var _width = document.documentElement.clientWidth;
 		var _height = document.documentElement.clientHeight;
-		var _right = +me.iframe.style.right.slice(0, -2);
-		var _bottom = +me.iframe.style.bottom.slice(0, -2);
+		var _right = +ctx.iframe.style.right.slice(0, -2);
+		var _bottom = +ctx.iframe.style.bottom.slice(0, -2);
 
 		// width
-		if(_width < me.rect.width){
-			me.iframe.style.left = "auto";
-			me.iframe.style.right = 0;
-			me.shadow.style.left = "auto";
-			me.shadow.style.right = 0;
+		if(_width < ctx.rect.width){
+			ctx.iframe.style.left = "auto";
+			ctx.iframe.style.right = 0;
+			ctx.shadow.style.left = "auto";
+			ctx.shadow.style.right = 0;
 		}
-		else if(_width - _right < me.rect.width){
-			me.iframe.style.right = _width - me.rect.width + "px";
-			me.iframe.style.left = 0;
-			me.shadow.style.right = _width - me.rect.width + "px";
-			me.shadow.style.left = 0;
+		else if(_width - _right < ctx.rect.width){
+			ctx.iframe.style.right = _width - ctx.rect.width + "px";
+			ctx.iframe.style.left = 0;
+			ctx.shadow.style.right = _width - ctx.rect.width + "px";
+			ctx.shadow.style.left = 0;
 		}
 		else{
-			me.iframe.style.left = "auto";
-			me.shadow.style.left = "auto";
+			ctx.iframe.style.left = "auto";
+			ctx.shadow.style.left = "auto";
 		}
 
 		// height
-		if(_height < me.rect.height){
-			me.iframe.style.top = "auto";
-			me.iframe.style.bottom = 0;
+		if(_height < ctx.rect.height){
+			ctx.iframe.style.top = "auto";
+			ctx.iframe.style.bottom = 0;
 		}
-		else if(_height - _bottom < me.rect.height){
-			me.iframe.style.bottom = _height - me.rect.height + "px";
-			me.iframe.style.top = 0;
+		else if(_height - _bottom < ctx.rect.height){
+			ctx.iframe.style.bottom = _height - ctx.rect.height + "px";
+			ctx.iframe.style.top = 0;
 		}
 		else{
-			me.iframe.style.top = "auto";
+			ctx.iframe.style.top = "auto";
 		}
 	});
 }
 
 function _ready(){
-/* jshint ignore:start */
 	var me = this;
-	/* jshint ignore:end */
 	var i, l;
 
 	(me.config.dragenable && !utils.isMobile) && _bindResizeHandler(me);
@@ -139,10 +135,12 @@ function _ready(){
 	me.message
 	.send({ event: _const.EVENTS.INIT_CONFIG, data: me.config })
 	.listen(function(msg){
-		if(msg.to !== me.iframe.id) return;
-
 		var event = msg.event;
 		var data = msg.data;
+
+		if(msg.to !== me.iframe.id){
+			return;
+		}
 
 		switch(event){
 		case _const.EVENTS.ONREADY:
@@ -248,14 +246,16 @@ function _ready(){
 
 
 
-var Iframe = function(config){
-	if(!(this instanceof Iframe)) return new Iframe(config);
-
+function Iframe(config){
 	var me = this;
 	var id = "easemob-iframe-" + utils.uuid();
 	var className = "easemobim-chat-panel easemobim-hide easemobim-minimized";
 	var iframe = document.createElement("iframe");
 	var shadow;
+
+	if(!(this instanceof Iframe)){
+		return new Iframe(config);
+	}
 	utils.isMobile && (className += " easemobim-mobile");
 
 	iframe.frameBorder = 0;
@@ -291,7 +291,7 @@ var Iframe = function(config){
 	Iframe.iframe = me;
 
 	return me;
-};
+}
 
 Iframe.prototype.set = function(config, callback){
 	var shadowBackgroundImage = this.config.staticPath + "/img/drag.png";
@@ -352,7 +352,7 @@ Iframe.prototype._updatePosition = function(){
 Iframe.prototype.open = function(){
 	var iframe = this.iframe;
 
-	if(this.show) return;
+	if(this.show) return this;
 	this.show = true;
 
 	// 移动端，禁止宿主页面滚动
@@ -370,7 +370,7 @@ Iframe.prototype.open = function(){
 };
 
 Iframe.prototype.close = function(){
-	if(this.show === false) return;
+	if(this.show === false) return this;
 	this.show = false;
 
 	clearTimeout(_st);

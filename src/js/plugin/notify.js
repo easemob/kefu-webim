@@ -2,6 +2,7 @@ var titleSlide = require("./titleSlide");
 var st = 0;
 
 module.exports = function(img, title, content){
+	var notification;
 	if(st !== 0){
 		return;
 	}
@@ -10,8 +11,9 @@ module.exports = function(img, title, content){
 	}, 3000);
 	if(window.Notification){
 		if(Notification.permission === "granted"){
-			var notification = new Notification(
-				title || "", {
+			notification = new Notification(
+				title || "",
+				{
 					icon: img || "",
 					body: content || ""
 				}
