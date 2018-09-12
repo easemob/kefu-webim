@@ -327,6 +327,9 @@ function _handleMessage(msg, msgType, isHistory){
 	var isReceived = !msg.from || (msg.from.toLowerCase() !== config.user.username.toLowerCase());
 	var officialAccount = utils.getDataByPath(msg, "ext.weichat.official_account");
 	var marketingTaskId = utils.getDataByPath(msg, "ext.weichat.marketing.marketing_task_id");
+	var satisfactionCommentInvitation = utils.getDataByPath(msg, "ext.weichat.extRobot.satisfactionCommentInvitation");
+	var satisfactionCommentInfo = utils.getDataByPath(msg, "ext.weichat.extRobot.satisfactionCommentInfo");
+	var agentId = utils.getDataByPath(msg, "ext.weichat.agent.userId");
 	var officialAccountId = officialAccount && officialAccount.official_account_id;
 	var targetOfficialAccount;
 
@@ -558,6 +561,18 @@ function _handleMessage(msg, msgType, isHistory){
 		officialAccount: targetOfficialAccount,
 		timestamp: msg.timestamp
 	});
+
+	// 是否发送解决未解决msg.ext.extRobot.satisfactionCommentInvitation
+	if(satisfactionCommentInvitation && !isHistory){
+		_appendMsg({
+			data: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
+			type: "txtLink",
+		}, {
+			isReceived: true,
+			isHistory: false
+		});
+	}
+	
 
 	if(!isHistory){
 		if(!msg.noprompt){
