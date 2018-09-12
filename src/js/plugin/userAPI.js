@@ -1,4 +1,3 @@
-
 var utils = require("../common/utils");
 var loading = require("./loading");
 var Iframe = require("./iframe");
@@ -44,6 +43,7 @@ DEFAULT_CONFIG = {
 	dragenable: true,
 	minimum: true,
 	soundReminder: true,
+	titleSlide: true,
 	dialogPosition: { x: "10px", y: "10px" },
 	user: {
 		username: "",
@@ -59,7 +59,7 @@ config = utils.copy(DEFAULT_CONFIG);
 reset();
 
 // growing io user id
-// 由于存在cookie跨域问题，所以从配置传过去
+// 由于存在 cookie 跨域问题，所以从配置传过去
 config.grUserId = utils.get("gr_user_id");
 
 

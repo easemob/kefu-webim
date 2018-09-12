@@ -5,13 +5,15 @@ var tempArr = (originTitle + newTitle).split("");
 var word;
 
 module.exports = {
+	enable: true,
 	stop: function(){
+		if(!this.enable) return;
 		clearInterval(titleST);
 		titleST = 0;
 		document.title = originTitle;
 	},
 	start: function(){
-		if(titleST){
+		if(!this.enable || titleST){
 			return;
 		}
 		titleST = setInterval(function(){

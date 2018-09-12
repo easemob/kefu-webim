@@ -327,6 +327,7 @@ Iframe.prototype.set = function(config, callback){
 	this.shadow && (this.shadow.style.backgroundImage = "url(" + shadowBackgroundImage + ")");
 
 	this.ready = callback;
+	titleSlide.enable = config.titleSlide;
 
 	return this;
 };
@@ -387,7 +388,7 @@ Iframe.prototype.close = function(){
 	return this;
 };
 
-// 发ext消息
+// 发 ext 消息
 Iframe.prototype.send = function(extMsg){
 	if(this.message){
 		this.message.send({ event: _const.EVENTS.EXT, data: extMsg });
