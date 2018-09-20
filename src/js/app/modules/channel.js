@@ -310,10 +310,18 @@ function _handleMessage(msg, options){
 		// 这是自己发出去的消息的 msgId，此为临时修改，在完成 messageBuilder 之后应该就可以去掉了
 		|| utils.getDataByPath(msg, "ext.weichat.msg_id_for_ack");
 
-		// from 不存在默认认为是收到的消息
-		var isReceived = typeof opt.isReceived === "boolean"
-		? opt.isReceived : msg.fromUser.user_type.toLowerCase() !== 'visitor'
-		// : (!msg.from || (msg.from.toLowerCase() !== config.user.username.toLowerCase()));
+	// from 不存在默认认为是收到的消息
+	// var isReceived = typeof opt.isReceived === "boolean"
+	// ? opt.isReceived : msg.fromUser.user_type.toLowerCase() !== 'visitor'
+	//// : (!msg.from || (msg.from.toLowerCase() !== config.user.username.toLowerCase()));
+	var isReceived;
+	if(typeof opt.isReceived === "boolean"){
+		isReceived = opt.isReceived;
+	}else if(msg.fromUser && msg.fromUser.user_type){
+		isReceived = (msg.fromUser.user_type.toLowerCase() !== 'visitor');
+	}else {
+		isReceived = (!msg.from || (msg.from.toLowerCase() !== config.user.username.toLowerCase()));
+	}
 		
 	var officialAccount = utils.getDataByPath(msg, "ext.weichat.official_account");
 	var marketingTaskId = utils.getDataByPath(msg, "ext.weichat.marketing.marketing_task_id");
