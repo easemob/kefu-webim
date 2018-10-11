@@ -19,6 +19,7 @@ var session;
 var invite;
 var score;
 var evaluationDegreeId;
+var isSingleTag;
 var _initOnce = _.once(_init);
 
 module.exports = {
@@ -46,7 +47,6 @@ function _init(){
 
 			evaluationDegreeId = this.getAttribute("data-evaluate-id");
 			score = this.getAttribute("data-score");
-
 			level && _.each(starList, function(elem, i){
 				utils.toggleClass(elem, "sel", i < level);
 			});
@@ -55,7 +55,16 @@ function _init(){
 		}, starsUl);
 
 		utils.live("span.tag", "click", function(){
-			utils.toggleClass(this, "selected");
+			var selectedTagNodeList = tagContainer.querySelectorAll(".selected");
+			isSingleTag = this.getAttribute("data-isSingleTag");
+			if(isSingleTag){
+				utils.removeClass(selectedTagNodeList, "selected");
+				utils.toggleClass(this, "selected");
+			}
+			else{
+				utils.toggleClass(this, "selected");
+			}
+
 		}, tagContainer);
 
 		dialog = uikit.createDialog({
@@ -109,11 +118,13 @@ function _setSatisfaction(){
 			var name = elem.name;
 			var id = elem.id;
 			var score = elem.score;
+			var isSingleTag = elem.isSingleTag;
 
 			return "<li data-level=\"" + level
 				+ "\" title=\"" + name
 				+ "\" data-evaluate-id=\"" + id
 				+ "\" data-score=\"" + score
+				+ "\" data-isSingleTag=\"" + isSingleTag
 				+ "\">H</li>";
 		})
 		.value()
