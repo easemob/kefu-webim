@@ -64,16 +64,16 @@ module.exports = {
 	},
 
 	themeMap: {
-		天空之城: "theme-1",
-		丛林物语: "theme-2",
-		红瓦洋房: "theme-3",
-		鲜美橙汁: "theme-4",
-		青草田间: "theme-5",
-		湖光山色: "theme-6",
-		冷峻山峰: "theme-7",
-		月色池塘: "theme-8",
-		天籁湖光: "theme-9",
-		商务风格: "theme-10"
+		theme_sky: "theme-1",
+		theme_tree: "theme-2",
+		theme_house: "theme-3",
+		theme_orange: "theme-4",
+		theme_grass: "theme-5",
+		theme_sea: "theme-6",
+		theme_mountion: "theme-7",
+		theme_moon: "theme-8",
+		theme_lake: "theme-9",
+		theme_business: "theme-10"
 	},
 
 	IM: {
