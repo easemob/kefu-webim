@@ -73,7 +73,27 @@ module.exports = {
 		theme_mountion: "theme-7",
 		theme_moon: "theme-8",
 		theme_lake: "theme-9",
-		theme_business: "theme-10"
+		theme_business: "theme-10",
+		天空之城: "theme-1",
+		丛林物语: "theme-2",
+		红瓦洋房: "theme-3",
+		鲜美橙汁: "theme-4",
+		青草田间: "theme-5",
+		湖光山色: "theme-6",
+		冷峻山峰: "theme-7",
+		月色池塘: "theme-8",
+		天籁湖光: "theme-9",
+		商务风格: "theme-10",
+		Sky: "theme-1",
+		Tree: "theme-2",
+		House: "theme-3",
+		Orange: "theme-4",
+		Grass: "theme-5",
+		Sea: "theme-6",
+		Mountain: "theme-7",
+		Moon: "theme-8",
+		Lake: "theme-9",
+		Business: "theme-10"
 	},
 
 	IM: {
