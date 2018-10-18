@@ -26,7 +26,7 @@ function _getGreetings(officialAccount){
 
 		// 技能组列表
 		groupMenus && channel.handleMessage({
-			data: groupMenus,
+			data: groupMenus
 		}, { type: "skillgroupMenu", noPrompt: true });
 	}).catch(function(reason){});
 
