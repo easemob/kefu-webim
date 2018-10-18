@@ -47,6 +47,7 @@ function _init(){
 
 			evaluationDegreeId = this.getAttribute("data-evaluate-id");
 			score = this.getAttribute("data-score");
+			isSingleTag = this.getAttribute("data-isSingleTag");
 			level && _.each(starList, function(elem, i){
 				utils.toggleClass(elem, "sel", i < level);
 			});
@@ -56,7 +57,6 @@ function _init(){
 
 		utils.live("span.tag", "click", function(){
 			var selectedTagNodeList = tagContainer.querySelectorAll(".selected");
-			isSingleTag = this.getAttribute("data-isSingleTag");
 			if(isSingleTag){
 				utils.removeClass(selectedTagNodeList, "selected");
 				utils.toggleClass(this, "selected");
@@ -140,7 +140,7 @@ function _createLabel(evaluateId){
 			var name = elem.name;
 			var id = elem.id;
 
-			return "<span data-label-id = \"" + id + "\" class=\"tag\">" + name + "</span>";
+			return "<span data-label-id = \"" + id + "\"  class=\"tag\">" + name + "</span>";
 		}).join("");
 		utils.removeClass(tagContainer, "hide");
 	});
