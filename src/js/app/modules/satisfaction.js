@@ -57,7 +57,7 @@ function _init(){
 
 		utils.live("span.tag", "click", function(){
 			var selectedTagNodeList = tagContainer.querySelectorAll(".selected");
-			if(isSingleTag){
+			if(isSingleTag == "true"){
 				utils.removeClass(selectedTagNodeList, "selected");
 				utils.toggleClass(this, "selected");
 			}
