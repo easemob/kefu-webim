@@ -176,6 +176,14 @@ function init(option){
 			_initOnce();
 			dialog.show();
 		});
+		// 不显示视频邀请按钮，直接发起音视频请求
+		var videoOpenBtn = document.querySelector("#em-kefu-webim-chat-video .em-widget-video");
+		utils.on(videoOpenBtn, "video-open", function(){
+			_initOnce();
+			_onConfirm();
+		});
+		// 模拟 点击发起音视频通话按钮 请求
+		utils.trigger(document.querySelector("#em-kefu-webim-chat-video .em-widget-video"), "click");
 	});
 }
 
@@ -201,31 +209,177 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 
 	service.join(function(/* _memId */){
 		statusBar.reset();
-		statusBar.show();
+		// statusBar.show();
+		_videoHandle();
 	}, function(evt){
 		service.exit();
 		throw new Error("failed to join conference: " + evt.message());
 	});
 }
 
+// 接通 或 挂断音视频
+function _videoHandle(){
+	var parentBtn = document.querySelector("#em-kefu-webim-chat-video");
+	var closeBtn = document.querySelector(".video-chat-wrapper .status-bar .control-panel .end-button");
+	var acceptBtn = document.querySelector(".video-chat-wrapper .status-bar .control-panel .accept-button");
+
+	if(window.VIDEO_ACCEPT){
+		// 隐藏UI, 显示视频
+		!utils.hasClass(parentBtn, "hide") && utils.addClass(parentBtn, "hide");
+
+		utils.trigger(acceptBtn, "video-accept");
+	}else {
+		utils.trigger(closeBtn, "video-close")
+	}
+}
+// 解析 URL 参数
+function _getParams(url){
+	var params = {};
+
+	var num = url.indexOf("?");
+	var str = url.substr(num + 1);
+	var arr = str.split("&");
+
+	var name, value, i, key;
+	for (i = 0; i < arr.length; i++) {
+		num = arr[i].indexOf("=");
+		if (num > 0) {
+			name = arr[i].substring(0, num);
+			value = arr[i].substr(num + 1);
+			params[name] = value;
+		}
+	}
+	return params;
+}
+// 验证 URL 参数是否合法
+function _isCorrectParams(params){
+	var paramsKeys = [
+		"tenantId", 			// 租户 ID
+		"custCardNo", 			// 证件号码
+		"custId", 				// 用户 ID
+		"custSource", 			// 用户来源/接入渠道（枚举值：柜面、微信H5、APP、移动GPS）
+		"businessType", 		// 办理业务(枚举值：柜员、客户认证、贷款)
+		"newNumber", 			// 新批单号, length = 45
+		"oldNumber",			// 老批单号, length = 45
+		"cardNoCheckResult", 	// 身份证号码检查结果
+		"nameCheckResult", 		// 姓名检查结果
+		"faceSemblance", 		// 人脸识别相似值
+		"organId", 				// 分公司机构代码
+		"middleOrganId",		// 中支机构代码
+	];
+	// 必填参数 验证
+	var missingParams = _.difference(paramsKeys, _.keys(params));
+	if(missingParams.length){
+		return { status: false, msg: "Lack of necessary parameters" };
+	}
+	// tenantId 验证
+	if(!/^\d+$/.test(params.tenantId)){
+		return { status: false, msg: "Invalid value for tenantId" };
+	}
+	// 新批单号 验证
+	if(params.newNumber.length !== 45){
+		return { status: false, msg: "Invalid value for newNumber" };
+	}
+	// 老批单号 验证
+	if(params.oldNumber.length !== 45){
+		return { status: false, msg: "Invalid value for oldNumber" };
+	}
+	var custSourceEnum = [
+		{ value: "001", name: "柜面机器人" },
+		{ value: "002", name: "微信 H5" },
+		{ value: "003", name: "寿险 APP(超级 APP)" },
+		{ value: "004", name: "移动 GPS" },
+		{ value: "005", name: "神行太保" },
+	];
+	// 用户来源/接入渠道[枚举] 验证
+	if(_.pluck(custSourceEnum, "value").indexOf(params.custSource) == -1 ){
+		return { status: false, msg: "Invalid value for custSource" };
+	}
+	var businessTypeEnum = [
+		{ value: "001", name: "柜员" },
+		{ value: "002", name: "客户认证" },
+		{ value: "003", name: "贷款" },
+	];
+	// 办理业务[枚举] 验证
+	if(_.pluck(businessTypeEnum, "value").indexOf(params.businessType) == -1 ){
+		return { status: false, msg: "Invalid value for businessType" };
+	}
+	return { status: true, msg: "" };
+}
+// 过滤 tenantId 参数
+function _getInfo(params){
+	var info = {};
+	try {
+		info = JSON.parse(JSON.stringify(params));
+		if(_.has(info, "tenantId") ){
+			delete info.tenantId;
+		}
+	} catch (error) {
+		info = params;
+	}
+	return info;
+}
+
 function _onConfirm(){
-	channel.sendText(__("video.invite_agent_video"), {
-		ext: {
-			type: "rtcmedia/video",
-			msgtype: {
-				liveStreamInvitation: {
-					msg: __("video.invite_agent_video"),
-					orgName: config.orgName,
-					appName: config.appName,
-					userName: config.user.username,
-					imServiceNumber: config.toUser,
-					restServer: config.restServer,
-					xmppServer: config.xmppServer,
-					resource: "webim",
-					isNewInvitation: true,
-					userAgent: navigator.userAgent,
+	// var url = location.href + "&" + 
+	// 	"custCardNo=custCardNo&" +
+	// 	"custId=custCardNo&" +
+	// 	"custSource=001&" +
+	// 	"businessType=001&" +
+	// 	"newNumber=1                                           2&" +
+	// 	"oldNumber=1                                           2&" +
+	// 	"cardNoCheckResult=cardNoCheckResult&" +
+	// 	"nameCheckResult=nameCheckResult&" +
+	// 	"faceSemblance=faceSemblance&" +
+	// 	"organId=organId&" +
+	// 	"middleOrganId=middleOrganId";
+	// var params = _getParams(url);
+
+	var params = _getParams(location.href);
+	var correct = _isCorrectParams(params);
+	if(correct.status){
+		channel.sendCmd(__("video.invite_agent_video"), {
+			ext: {
+				type: "rtcmedia/video",
+				taibao_ext: _getInfo(params),
+				msgtype: {
+					liveStreamInvitation: {
+						msg: __("video.invite_agent_video"),
+						orgName: config.orgName,
+						appName: config.appName,
+						userName: config.user.username,
+						imServiceNumber: config.toUser,
+						restServer: config.restServer,
+						xmppServer: config.xmppServer,
+						resource: "webim",
+						isNewInvitation: true,
+						userAgent: navigator.userAgent,
+					},
 				},
 			},
-		},
-	});
+		});
+	}
+	else {
+		throw new Error(correct.msg || "Invalid parameters");
+	}
+
+	// channel.sendText(__("video.invite_agent_video"), {
+	// 	ext: {
+	// 		type: "rtcmedia/video",
+	// 		msgtype: {
+	// 			liveStreamInvitation: {
+	// 				msg: __("video.invite_agent_video"),
+	// 				orgName: config.orgName,
+	// 				appName: config.appName,
+	// 				userName: config.user.username,
+	// 				imServiceNumber: config.toUser,
+	// 				restServer: config.restServer,
+	// 				xmppServer: config.xmppServer,
+	// 				resource: "webim",
+	// 				isNewInvitation: true,
+	// 				userAgent: navigator.userAgent,
+	// 			},
+	// 		},
+	// 	},
+	// });
 }

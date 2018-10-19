@@ -14,9 +14,17 @@
 
 <!-- UI -->
 <div id="em-kefu-webim-chat" class="em-widget-wrapper hide">
-
+	<!-- 音视频 -->
+	<div id="em-kefu-webim-chat-video" class="em-widget-wrapper-video hide">
+		<div class="em-widget-wrapper-video-title"></div>
+		<div class="em-widget-wrapper-video-middle"></div>
+		<div class="em-widget-wrapper-video-icon">
+			<i class="icon-video em-widget-video hide"></i>
+			<i class="icon-decline em-widget-decline hide"></i>
+		</div>
+	</div>
 	<!-- 标题栏 -->
-	<div class="em-widget-header bg-color border-color">
+	<div class="em-widget-header bg-color border-color hide">
 		<!-- 用于拖动的浮层 -->
 		<p class="drag-bar"></p>
 
@@ -53,7 +61,7 @@
 	</div>
 
 	<!-- 消息容器 -->
-	<div class="chat-wrapper">
+	<div class="chat-wrapper hide">
 		<!-- 广告条 -->
 		<div class="em-widget-tenant-logo hide">
 			<img>
@@ -62,7 +70,7 @@
 	</div>
 
 	<!-- 输入框 -->
-	<div class="em-widget-send-wrapper">
+	<div class="em-widget-send-wrapper hide">
 
 		<!-- 待接入人数状态 -->
 		<div class="queuing-number-status hide"><%=current_queue_number%><label></label></div>

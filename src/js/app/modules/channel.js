@@ -56,6 +56,7 @@ module.exports = {
 	reSend: _reSend,
 	sendTransferToKf: _sendTransferToKf,
 	sendText: _sendText,
+	sendCmd: _sendCmd,
 	sendImg: _sendImg,
 	sendFile: _sendFile,
 	attemptToAppendOfficialAccount: _attemptToAppendOfficialAccount,
@@ -168,6 +169,25 @@ function _reSend(type, id){
 		conn.send(id);
 		break;
 	}
+}
+
+// 发送 CMD 命令, 目前用于传递第三方参数
+function _sendCmd(message, ext){
+	var id = utils.uuid();
+	var msg = new WebIM.message.cmd(id);
+	msg.set({
+		msg: message,
+		to: config.toUser,
+		// 此回调用于确认im server收到消息, 有别于kefu ack
+		success: function(/* id */){},
+		fail: function(/* id */){}
+	});
+
+	if(ext){
+		_.extend(msg.body, ext);
+	}
+	_setExt(msg);
+	conn.send(msg.body);
 }
 
 function _sendText(message, ext){

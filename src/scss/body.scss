@@ -149,7 +149,7 @@
 			.mini-video-window {
 				display: inline-block;
 				position: relative;
-				width: 33%;
+				width: 100%;
 				.nickname {
 					background: linear-gradient(to bottom, rgba(0,0,0,0), black, black);
 					box-sizing: border-box;
@@ -178,6 +178,62 @@
 					display: block;
 					width: 100%;
 				}
+			}
+			div:nth-child(1) {
+				background: black;
+				position: absolute;
+				top: 0;
+				left: 0;
+				video{
+					width: 100vw;
+					height: 100vh;
+					object-fit: fill;
+				}
+				.nickname {
+					background: linear-gradient(to bottom, rgba(0,0,0,0), black, black);
+					box-sizing: border-box;
+					line-height: 32px;
+					position: absolute;
+					bottom: 0;
+					width: 100%;
+					padding-left: 10px;
+				}
+			}
+			div:nth-child(2) {
+				position: absolute;
+				right: 0px;
+				video {
+					width: 30vw;
+					height: 21vh;
+					position: absolute;
+					right: -2vw;
+					top: 20px;
+				}
+				.nickname {
+					background: linear-gradient(to bottom, rgba(0,0,0,0), black, black);
+					box-sizing: border-box;
+					line-height: 20px;
+					position: absolute;
+					top: 0;
+					right: 0;
+					width: 26vw;
+					padding-left: 10px;
+				}
+			}
+		}
+		#video-close {
+			.time-escape {
+				color: white;
+				position: absolute;
+				left: 48vw;
+				top: 80vh;
+			}
+			.icon-decline {
+				color: red;
+				cursor: pointer;
+				position: absolute;
+				left: 48vw;
+				top: 83vh;
 			}
 		}
 	}

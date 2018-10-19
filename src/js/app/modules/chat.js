@@ -21,6 +21,7 @@ var initGetGreetings = require("./chat/initGetGreetings");
 var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
 var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
+var initVideo = require("./chat/initVideo");
 var TenantInfo = require("@/app/modules/tenantInfo/index");
 var tenantInfo;
 
@@ -727,6 +728,7 @@ function _show(){
 	profile.isChatWindowOpen = true;
 	utils.addClass(doms.imBtn, "hide");
 	utils.removeClass(doms.imChat, "hide");
+	utils.hasClass(doms.videoChat, "hide") && utils.removeClass(doms.videoChat, "hide");
 	_scrollToBottom();
 	if(
 		profile.isInOfficeHours
@@ -774,30 +776,33 @@ function _getDom(){
 	editorView = document.querySelector(".em-widget-send-wrapper");
 
 	doms = {
-		imBtn: document.getElementById("em-widgetPopBar"),
-		imChat: document.getElementById("em-kefu-webim-chat"),
-		agentStatusText: topBar.querySelector(".em-header-status-text"),
-		dragBar: topBar.querySelector(".drag-bar"),
-		minifyBtn: topBar.querySelector(".btn-min"),
-		audioBtn: topBar.querySelector(".btn-audio"),
-		switchKeyboardBtn: topBar.querySelector(".btn-keyboard"),
+		imBtn: 			document.getElementById("em-widgetPopBar"), // 最小化时显示的按钮
+		imChat: 		document.getElementById("em-kefu-webim-chat"), // chat UI
+		videoChat: 		document.getElementById("em-kefu-webim-chat-video"), // video UI
 
-		emojiToggleButton: editorView.querySelector(".em-bar-emoji"),
-		sendImgBtn: editorView.querySelector(".em-widget-img"),
-		sendFileBtn: editorView.querySelector(".em-widget-file"),
-		sendBtn: editorView.querySelector(".em-widget-send"),
-		satisfaction: editorView.querySelector(".em-widget-satisfaction"),
-		textInput: editorView.querySelector(".em-widget-textarea"),
-		noteBtn: editorView.querySelector(".em-widget-note"),
-		videoInviteButton: editorView.querySelector(".em-video-invite"),
-		queuingNumberStatus: editorView.querySelector(".queuing-number-status"),
+		imgInput: 		document.querySelector(".upload-img-container"), // 图片输入
+		fileInput: 		document.querySelector(".upload-file-container"), // 文件输入
+		chatWrapper: 	document.querySelector(".chat-wrapper"), // 消息容器
 
-		imgInput: document.querySelector(".upload-img-container"),
-		fileInput: document.querySelector(".upload-file-container"),
-		chatWrapper: document.querySelector(".chat-wrapper"),
+		agentStatusText: 	topBar.querySelector(".em-header-status-text"), // 坐席状态
+		dragBar: 			topBar.querySelector(".drag-bar"), // 拖动的浮层
+		minifyBtn: 			topBar.querySelector(".btn-min"), // 最小化按钮
+		audioBtn: 			topBar.querySelector(".btn-audio"), // 静音开关
+		switchKeyboardBtn: 	topBar.querySelector(".btn-keyboard"), // 输入框位置切换按钮
 
-		topBar: topBar,
-		editorView: editorView,
+		// 工具栏图标按钮
+		emojiToggleButton: 		editorView.querySelector(".em-bar-emoji"), // 表情
+		sendImgBtn: 			editorView.querySelector(".em-widget-img"), // 图片
+		sendFileBtn: 			editorView.querySelector(".em-widget-file"), // 附件
+		sendBtn: 				editorView.querySelector(".em-widget-send"),
+		satisfaction: 			editorView.querySelector(".em-widget-satisfaction"), // 评价客服
+		textInput: 				editorView.querySelector(".em-widget-textarea"),
+		noteBtn: 				editorView.querySelector(".em-widget-note"), // 留言
+		videoInviteButton: 		editorView.querySelector(".em-video-invite"), // 视频通话
+		queuingNumberStatus: 	editorView.querySelector(".queuing-number-status"), // 待接入人数状态
+
+		topBar: topBar, // 标题栏
+		editorView: editorView, // 输入框
 	};
 }
 
@@ -821,7 +826,7 @@ function _init(){
 
 function _initSession(){
 	Promise.all([
-		apiHelper.getDutyStatus(),
+		apiHelper.getDutyStatus(), // 获取上下班状态
 		apiHelper.getToken(),
 	]).then(function(result){
 		var dutyStatus = result[0];
@@ -830,6 +835,9 @@ function _initSession(){
 		profile.isInOfficeHours = dutyStatus || config.offDutyType === "chat";
 
 		if(profile.isInOfficeHours){
+			// 初始化 音视频 UI
+			initVideo.init();
+
 			emojiPanel.init({
 				container: doms.imChat,
 				toggleButton: doms.emojiToggleButton,

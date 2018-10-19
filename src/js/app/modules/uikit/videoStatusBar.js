@@ -9,6 +9,7 @@ var endButtonDom;
 var collapseToggleButton;
 
 var timerLabel;
+var timerLabelVideo;
 var showClosingTimerHandler;
 
 var acceptCallback;
@@ -42,11 +43,19 @@ function init(option){
 	acceptButtonDom = wrapperDom.querySelector(".accept-button");
 	endButtonDom = wrapperDom.querySelector(".end-button");
 	collapseToggleButton = wrapperDom.querySelector(".collapse-toggle-button");
-
+	
 	timerLabel = new TimerLabel(timerBarDom);
+	// 音视频通话 计时器
+	timerVideoBarDom = document.querySelector("#video-close .time-escape");
+	timerLabelVideo = new TimerLabel(timerVideoBarDom);
 
 	utils.on(acceptButtonDom, "click", acceptCallback);
 	utils.on(endButtonDom, "click", endCallback);
+
+	// 坐席 接受音视频通话，访客 点击同意或挂断按钮 事件
+	utils.on(acceptButtonDom, "video-accept", acceptCallback);
+	utils.on(endButtonDom, "video-close", endCallback);
+
 	utils.on(collapseToggleButton, "click", function(){
 		toggleCollapse();
 	});
@@ -62,6 +71,7 @@ function toggleCollapse(state){
 
 function startTimer(){
 	timerLabel.start();
+	timerLabelVideo.start();
 }
 
 function show(){
@@ -79,12 +89,16 @@ function showClosing(){
 	setStatusText(__("video.video_ended"));
 
 	timerLabel.stop();
+	timerLabelVideo.stop();
 
 	clearTimeout(showClosingTimerHandler);
 	showClosingTimerHandler = setTimeout(function(){
 		hide();
 		reset();
 	}, 3000);
+
+	var closeBtn = document.querySelector("#em-kefu-webim-chat-video .em-widget-decline");
+	utils.trigger(closeBtn, "click");
 }
 
 function reset(){
@@ -93,6 +107,7 @@ function reset(){
 	utils.removeClass(acceptButtonDom, "hide");
 	showClosingTimerHandler = clearTimeout(showClosingTimerHandler);
 	timerLabel.stop();
+	timerLabelVideo.stop();
 	setStatusText(__("video.waiting"));
 }
 

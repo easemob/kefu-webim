@@ -3,7 +3,7 @@ var _const = require("../../../common/const");
 
 var template = _.template([
 	"<div class=\"mini-video-window\">",
-	"<p class=\"nickname\"></p>",
+	"<p class=\"nickname hide\"></p>",
 	"<video <%= muted %> autoplay playsinline webkit-playsinline class=\"main-video\"></video>",
 	"<video muted autoplay playsinline webkit-playsinline class=\"no-audio-video hide\"></video>",
 	"<span class=\"play-button hide\"><i class=\"button-icon icon-star\"></i></span>",
@@ -50,6 +50,13 @@ module.exports = MiniVideoWin = function(option){
 
 	utils.on(this.dom, "click", this.eventHandler);
 	utils.on(this.playButtonDom, "click", this.eventHandler2);
+
+	// 访客 主动挂断 音视频 按钮
+	var videoCloseDiv = document.getElementById("video-close");
+	utils.on(videoCloseDiv, "click", function(){
+		var closeBtn = document.querySelector("#em-kefu-webim-chat-video .em-widget-decline");
+		utils.trigger(closeBtn, "click");
+    });
 };
 
 MiniVideoWin.prototype.destroy = function(){
