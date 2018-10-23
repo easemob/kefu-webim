@@ -128,6 +128,13 @@ module.exports = {
 	formatDate: function(date){
 		return moment(date || _.now()).format(__("config.message_timestamp_format"));
 	},
+
+	formatProtocol: function(val){
+		return val.replace(/(http:|https:)?(\/\/)?(.+)/, function(match, $1, $2, $3){
+			return "//" + $3;
+		});
+	},
+
 	filesizeFormat: function(filesize){
 		var UNIT_ARRAY = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB"];
 		var exponent;
