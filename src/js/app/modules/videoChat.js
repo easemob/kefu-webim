@@ -246,6 +246,9 @@ function _getParams(url){
 		if (num > 0) {
 			name = arr[i].substring(0, num);
 			value = arr[i].substr(num + 1);
+			if(name == 'newNumber' || name == 'oldNumber'){
+				value = unescape(value); // %20 转 “ ”
+			}
 			params[name] = value;
 		}
 	}
@@ -270,7 +273,7 @@ function _isCorrectParams(params){
 	// 必填参数 验证
 	var missingParams = _.difference(paramsKeys, _.keys(params));
 	if(missingParams.length){
-		return { status: false, msg: "Lack of necessary parameters" };
+		return { status: false, msg: "Lack of necessary parameters: " + missingParams[0]};
 	}
 	// tenantId 验证
 	if(!/^\d+$/.test(params.tenantId)){
@@ -321,20 +324,6 @@ function _getInfo(params){
 }
 
 function _onConfirm(){
-	// var url = location.href + "&" + 
-	// 	"custCardNo=custCardNo&" +
-	// 	"custId=custCardNo&" +
-	// 	"custSource=001&" +
-	// 	"businessType=001&" +
-	// 	"newNumber=1                                           2&" +
-	// 	"oldNumber=1                                           2&" +
-	// 	"cardNoCheckResult=cardNoCheckResult&" +
-	// 	"nameCheckResult=nameCheckResult&" +
-	// 	"faceSemblance=faceSemblance&" +
-	// 	"organId=organId&" +
-	// 	"middleOrganId=middleOrganId";
-	// var params = _getParams(url);
-
 	var params = _getParams(location.href);
 	var correct = _isCorrectParams(params);
 	if(correct.status){
