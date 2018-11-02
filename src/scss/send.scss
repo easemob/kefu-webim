@@ -21,8 +21,11 @@
 	//猜你想说
 	.guess-area{
 		display: none;
-		position: relative;
+		position: absolute;
+		left: 0;
+		bottom:140px;
 		width: 100%;
+		background: #fff;
 		.loading-wrap{
 			overflow: hidden;
 			height: 20px;

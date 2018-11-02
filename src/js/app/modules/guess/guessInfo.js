@@ -43,7 +43,6 @@ function _addEvents(){
 		// 恢复默认样式
 		doms.guessArea.style.display = "none";
 		doms.chatWrapper.style.bottom = 140 + "px";
-		doms.editorView.style.height = 140 + "px";
 	    doms.guessList.innerHTML = "";
     }, doms.guessList);
 
@@ -52,7 +51,6 @@ function _addEvents(){
 	utils.on(doms.closeBtn, "click", function(){
 		doms.guessArea.style.display = "none";
 		doms.chatWrapper.style.bottom = 140 + "px";
-		doms.editorView.style.height = 140 + "px";
 		doms.guessTips.innerText = "猜你想问";
 		doms.loading.style.display = "block";
 		doms.guessList.innerHTML = "";
@@ -62,8 +60,6 @@ function _addEvents(){
     // 文本框检索猜你想说内容
 	utils.on(doms.textInput, "keyup", function(){
 		doms.guessArea.style.display = "block";
-		// doms.chatWrapper.style.bottom = 160 + "px";
-		// doms.editorView.style.height = 160 + "px";
 
 		var value = this.value;
 		newValue = value;
@@ -79,13 +75,11 @@ function _addEvents(){
 						createTemplate(res.data.entities);
 						// 设置聊天框内容样式
 						doms.chatWrapper.style.bottom = 300 + "px";
-						doms.editorView.style.height = 300 + "px";
 					}else{
 							// 检索不到值时恢复 默认样式
 							doms.guessArea.style.display = "none";
 							doms.guessList.innerHTML = "";
 							doms.chatWrapper.style.bottom = 140 + "px";
-							doms.editorView.style.height = 140 + "px";
 					}
 				});
 			oldValue = newValue;
@@ -94,13 +88,11 @@ function _addEvents(){
 		else if(oldValue == newValue){
 			doms.guessArea.style.display = "none";
 			doms.chatWrapper.style.bottom = 140 + "px";
-			doms.editorView.style.height = 140 + "px";
 		}
 		else if(!value){
 			// 文本框内容清空时 重置样式
 			doms.guessArea.style.display = "none";
 			doms.chatWrapper.style.bottom = 140 + "px";
-			doms.editorView.style.height = 140 + "px";
 			oldValue = "";
 		}
 	});
@@ -122,7 +114,6 @@ function resetStyle(){
     var doms = loadHtml().doms;
     doms.guessArea.style.display = "none";
 	doms.chatWrapper.style.bottom = 140 + "px";
-	doms.editorView.style.height = 140 + "px";
 	doms.guessList.innerHTML = "";
 	doms.guessTips.innerText = "猜你想问";
 	doms.loading.style.display = "block";
