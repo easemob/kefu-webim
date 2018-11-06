@@ -57,8 +57,9 @@ function _addEvents(){
     });
     
 
-    // 文本框检索猜你想说内容
-	utils.on(doms.textInput, "keyup", function(){
+	// 文本框检索猜你想说内容
+	// keyup在ios手机原生的输入法是不支持的，但是在ios端第三方的输入法搜狗输入法是支持的，为了兼容性，不能使用keyup事件
+	utils.on(doms.textInput, "input propertychange", function(){
 		doms.guessArea.style.display = "block";
 
 		var value = this.value;
