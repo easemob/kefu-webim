@@ -830,6 +830,7 @@ function _getDom(){
 		imgInput: document.querySelector(".upload-img-container"),
 		fileInput: document.querySelector(".upload-file-container"),
 		chatWrapper: document.querySelector(".chat-wrapper"),
+		poweredByLink: document.querySelector(".powered-by-link"),
 
 		topBar: topBar,
 		editorView: editorView,
@@ -856,6 +857,8 @@ function _init(){
 	initSessionList();
 
 	_initSession();
+
+	_isAppendDom();
 }
 
 function _initSession(){
@@ -938,6 +941,26 @@ function _initSession(){
 		}
 		else{
 			throw err;
+		}
+	});
+}
+
+function _isAppendDom(){
+	apiHelper.getServiceLevel().then(function(res){
+		if(res && res.data && res.data.entity && res.data.entity.serviceLevel){
+			var serviceLevel = res.data.entity.serviceLevel;
+			if(serviceLevel == "T1"){
+				doms.poweredByLink.style.display = "block";
+				doms.textInput.style.height = 50 + "px";
+				doms.sendBtn.style.bottom = 25 + "px";
+				// 移动端适配并覆盖 mobile.scss样式
+				if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+					doms.poweredByLink.style.display = "block";
+					doms.textInput.style.height = 34 + "px";
+					doms.textInput.style.marginBottom = 17 + "px";
+					doms.sendBtn.style.bottom = 25 + "px";
+				}
+			}
 		}
 	});
 }

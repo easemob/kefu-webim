@@ -752,6 +752,15 @@ getData.listen(function(msg){
 			msg: msg
 		});
 		break;
+	case "getServiceLevel":
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/"+ params.tenantId +"/info"
+		delete params.tenantId;
+		emitAjax({
+			url: url,
+			type: "GET",
+			msg: msg
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;

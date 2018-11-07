@@ -93,6 +93,20 @@
 			line-height: 33px;
 			font-size: 15px;
 		}
+
+		.powered-by-link{
+			display: none;
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			height: 23px;
+			line-height: 23px;
+			font-size: 12px;
+			text-decoration: none;
+			text-align: center;
+			color: #ccc;
+			background: #f9f9f9;
+		}
 	}
 
 	.em-dialog {
