@@ -37,6 +37,7 @@ function genMsgContent(msg){
 		value = textParser.parse(value);
 		value = _.map(value, function(fragment){ return fragment.value; }).join("");
 		html = "<p>" + value + "</p>" + msg.list;
+		html = html.replace(/(&lt;\s?br\s?\/?\s?&gt;)|(\\v)|(\\t)|(\\n)|(\\r)/g, "<br>");
 		break;
 	case "file":
 		// 历史会话中 filesize = 0
