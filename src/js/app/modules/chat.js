@@ -385,7 +385,9 @@
 						channelId: config.channelId,
 						tenantId: config.tenantId,
 						agentUsername: config.agentName,
-						queueName: config.emgroup
+						queueName: config.emgroup,
+						query: config.query || utils.query('query'),
+						size: config.size || utils.query('size'),
 					}, function (msg) {
 						var greetingTextType = utils.getDataByPath(msg, 'data.entity.greetingTextType');
 						var greetingText = utils.getDataByPath(msg, 'data.entity.greetingText');
