@@ -3,6 +3,28 @@
 	padding: 24px 0 20px;
 	overflow: hidden;
 	position: relative;
+	&.paddingTo48{
+		padding-top: 48px;
+	}
+	.easemob-copyright{
+		position: absolute;
+		top: 10px;
+		text-align: right;
+		width: 100%;
+		>a{
+			// background-color: #c9ced3;
+			border-radius: 4px;
+			padding: 1px 3px;
+			color: #666;
+			text-decoration: none;
+			margin-right: 16px;
+			>span{
+				>span{
+					font-weight: bold;
+				}
+			}
+		}
+	}
 
 	.em-widget-date,
 	.em-widget-event {
@@ -44,6 +66,9 @@
 		top: 5px;
 		text-align: center;
 		width: 100%;
+		&.top34{
+			top: 34px;
+		}
 		>span {
 			background-color: #c9ced3;
 			border-radius: 4px;
