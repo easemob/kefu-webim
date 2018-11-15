@@ -17,7 +17,7 @@ function genMsgContent(msg){
 		value = textParser.parse(value);
 		// 历史消息以及收到的实时消息
 		html = "<span class=\"text\">" + _.map(value, function(fragment){ return fragment.value; }).join("") + "</span>";
-		html = html.replace(/(&lt;\s?br\s?\/?\s?&gt;)|(\\v)|(\\t)|(\\n)|(\\r)|(↵)/g, "<br>");
+		html = html.replace(/(&lt;\s?br\s?\/?\s?&gt;)|(\\n)|(\\r)|(↵)|(\n)|(\r)/g, "<br>");
 		break;
 	case "img":
 		// todo: remove a
@@ -37,7 +37,7 @@ function genMsgContent(msg){
 		value = textParser.parse(value);
 		value = _.map(value, function(fragment){ return fragment.value; }).join("");
 		html = "<p>" + value + "</p>" + msg.list;
-		html = html.replace(/(&lt;\s?br\s?\/?\s?&gt;)|(\\v)|(\\t)|(\\n)|(\\r)|(↵)/g, "<br>");
+		html = html.replace(/(&lt;\s?br\s?\/?\s?&gt;)|(\\n)|(\\r)|(↵)|(\n)|(\r)/g, "<br>");
 		break;
 	case "file":
 		// 历史会话中 filesize = 0
