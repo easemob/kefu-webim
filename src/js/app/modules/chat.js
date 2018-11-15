@@ -213,9 +213,12 @@ function _initUI(){
 function _initToolbar(){
 	// 低版本浏览器不支持上传文件/图片
 	if(WebIM.utils.isCanUploadFileAsync){
+		//移动端隐藏视频和附件图标
+		if(!/Android|webOS|iPhone|iPod|BlackBerry|SymbianOS|Windows Phone|iPad/i.test(navigator.userAgent)) {
+			utils.removeClass(doms.sendFileBtn, "hide");
+			utils.removeClass(doms.sendVideoBtn, "hide");
+		}
 		utils.removeClass(doms.sendImgBtn, "hide");
-		utils.removeClass(doms.sendFileBtn, "hide");
-		utils.removeClass(doms.sendVideoBtn, "hide");
 	}
 
 	// 留言按钮
