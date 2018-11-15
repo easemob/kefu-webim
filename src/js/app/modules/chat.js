@@ -386,8 +386,8 @@
 						tenantId: config.tenantId,
 						agentUsername: config.agentName,
 						queueName: config.emgroup,
-						query: config.query || utils.query('query'),
-						size: config.size || utils.query('size'),
+						query: decodeURIComponent(utils.query('query')),
+						size: decodeURIComponent(utils.query('size')),
 					}, function (msg) {
 						var greetingTextType = utils.getDataByPath(msg, 'data.entity.greetingTextType');
 						var greetingText = utils.getDataByPath(msg, 'data.entity.greetingText');

@@ -43,6 +43,7 @@ easemobim.channel = function (config) {
 
 		sendSatisfaction: function (level, content, session, invite) {
 			_obj.sendText('', false, {ext: {
+				orgtype: decodeURIComponent(utils.query('orgtype')),
 				weichat: {
 					ctrlType: 'enquiry',
 					ctrlArgs: {
@@ -69,7 +70,7 @@ easemobim.channel = function (config) {
 			if (ext) {
 				_.extend(msg.body, ext);
 			}
-
+			msg.body.ext && (msg.body.ext.orgtype = decodeURIComponent(utils.query('orgtype')));
 			if (!isHistory) {
 				// 开启倒计时
 				_detectSendMsgByApi(id);
@@ -97,6 +98,7 @@ easemobim.channel = function (config) {
 				to: config.toUser,
 				action: 'TransferToKf',
 				ext: {
+					orgtype: decodeURIComponent(utils.query('orgtype')),
 					weichat: {
 						ctrlArgs: {
 							id: tid,
@@ -144,6 +146,7 @@ easemobim.channel = function (config) {
 					fileInput && (fileInput.value = '');
 				}
 			});
+			msg.body.ext && (msg.body.ext.orgtype = decodeURIComponent(utils.query('orgtype')));
 			if (!isHistory) {
 				me.setExt(msg);
 				me.conn.send(msg.body);
@@ -184,6 +187,7 @@ easemobim.channel = function (config) {
 					fileInput && (fileInput.value = '');
 				}
 			});
+			msg.body.ext && (msg.body.ext.orgtype = decodeURIComponent(utils.query('orgtype')));
 			if (!isHistory) {
 				me.setExt(msg);
 				me.conn.send(msg.body);
