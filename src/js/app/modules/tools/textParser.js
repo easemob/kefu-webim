@@ -6,6 +6,7 @@ var URL_RE = /(https?:\/\/|www\.)([a-zA-Z0-9-]+(\.[a-zA-Z0-9]+)+)(:[0-9]{2,4})?\
 
 module.exports = {
 	parse: parse,
+	parseWithoutLink: parseWithoutLink,
 	unescape: _unescape,
 	getTextMessageBrief: getTextMessageBrief,
 };
@@ -54,6 +55,21 @@ function parse(text){
 		_emojiParser,
 		_customLinkParser,
 		_linkParser,
+		_encodeParser,
+	], function(result, parser){
+		return _parseMap(result, parser);
+	}, [{
+		type: "UNPARSED",
+		value: text,
+		baseIndex: 0,
+	}]);
+}
+function parseWithoutLink(text){
+	if(typeof text !== "string") return "";
+
+	return _.reduce([
+		_emojiParser,
+		_customLinkParser,
 		_encodeParser,
 	], function(result, parser){
 		return _parseMap(result, parser);

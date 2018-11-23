@@ -11,10 +11,15 @@ function genMsgContent(msg){
 	var value = msg.data;
 	var html = "";
 	var msgContent;
+	var linkText = profile.config.ui.linkText;
+	var textParseFunc = textParser.parseWithoutLink;
+	if(!!linkText){
+		textParseFunc = textParser.parse;
+	}
 
 	switch(type){
 	case "txt":
-		value = textParser.parse(value);
+		value = textParseFunc(value);
 		// 历史消息以及收到的实时消息
 		html = "<span class=\"text\">" + _.map(value, function(fragment){ return fragment.value; }).join("") + "</span>";
 		html = html.replace(/(&lt;\s?br\s?\/?\s?&gt;)|(\\n)|(\\r)|(↵)|(\n)|(\r)/g, "<br>");
@@ -35,7 +40,7 @@ function genMsgContent(msg){
 			+ msg.url + "\"/></a>";
 		break;
 	case "list":
-		value = textParser.parse(value);
+		value = textParseFunc(value);
 		value = _.map(value, function(fragment){ return fragment.value; }).join("");
 		html = "<p>" + value + "</p>" + msg.list;
 		html = html.replace(/(&lt;\s?br\s?\/?\s?&gt;)|(\\n)|(\\r)|(↵)|(\n)|(\r)/g, "<br>");
