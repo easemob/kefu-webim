@@ -33,6 +33,7 @@ function _init(){
 			"<div class=\"wrapper\">",
 			"<span class=\"title\">" + tipWord + "</span>",
 			"<ul></ul>",
+			"<div class=\"tip-container\">" + __("evaluation.tip") + "</div>",
 			"<div class=\"tag-container\"></div>",
 			"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
 			"</div>"
@@ -114,9 +115,10 @@ function _setSatisfaction(){
 				+ "\" title=\"" + name
 				+ "\" data-evaluate-id=\"" + id
 				+ "\" data-score=\"" + score
-				+ "\">H</li>";
+				+ "\"><input type=\"radio\" name=\"evaluate\">&emsp;"+ name +"</li>";
 		})
 		.value()
+		.reverse()
 		.join("");
 
 		starList = starsUl.querySelectorAll("li");

@@ -197,25 +197,35 @@
 			ul {
 				width: 100%;
 				margin: 15px 0;
-				text-align: center;
-				li {
-					// fake: IE8 满意度评价会有兼容问题，修改图标需替换字符
-					font-family: 'easemobim' !important;
-					display: inline-block;
-					color: #ccc;
-					position: relative;
-					width: 55px;
-					height: 55px;
-					line-height: 55px;
-					cursor: pointer;
-					font-size: 60px;
-					width: 80px\9;
-					height: 80px\9;
-					zoom: 50%\9;
-					&.sel {
-						color: #ffb31a;
-					}
+				
+				input {
+					appearance: radio;
 				}
+				// text-align: center;
+				// li {
+				// 	// fake: IE8 满意度评价会有兼容问题，修改图标需替换字符
+				// 	font-family: 'easemobim' !important;
+				// 	display: inline-block;
+				// 	color: #ccc;
+				// 	position: relative;
+				// 	width: 55px;
+				// 	height: 55px;
+				// 	line-height: 55px;
+				// 	cursor: pointer;
+				// 	font-size: 60px;
+				// 	width: 80px\9;
+				// 	height: 80px\9;
+				// 	zoom: 50%\9;
+				// 	&.sel {
+				// 		color: #ffb31a;
+				// 	}
+				// }
+			}
+			.tip-container{
+				padding: 5px 10px;
+				border: 1px solid #FF7F05;
+				color: #FF7F05;
+				border-radius: 6px;
 			}
 			.tag-container{
 				margin: 0 auto;
