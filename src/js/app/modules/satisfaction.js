@@ -132,6 +132,8 @@ function _createLabel(evaluateId){
 
 			return "<span data-label-id = \"" + id + "\" class=\"tag\">" + name + "</span>";
 		}).join("");
+		var tag = tagContainer.querySelectorAll("span");
+		tag[0] && tag[0].click()
 		utils.removeClass(tagContainer, "hide");
 	});
 }
