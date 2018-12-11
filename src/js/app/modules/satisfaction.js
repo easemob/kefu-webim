@@ -33,7 +33,6 @@ function _init(){
 			"<div class=\"wrapper\">",
 			"<span class=\"title\">" + tipWord + "</span>",
 			"<ul></ul>",
-			"<div class=\"tip-container\">" + __("evaluation.tip") + "</div>",
 			"<div class=\"tag-container\"></div>",
 			"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
 			"</div>"
@@ -44,7 +43,7 @@ function _init(){
 
 		utils.live("li", "click", function(){
 			var level = +this.getAttribute("data-level");
-
+			this.querySelector("input").click()
 			evaluationDegreeId = this.getAttribute("data-evaluate-id");
 			score = this.getAttribute("data-score");
 
