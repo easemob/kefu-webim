@@ -65,6 +65,7 @@ module.exports = {
 	evaluation: {
 		rate_my_service: "请对我的服务做出评价",
 		review: "请输入评价内容",
+		tip: "我们会继续改进工作",
 		select_level_please: "请先选择星级",
 		select_tag_please: "请先选择标签",
 		submit_success: "提交成功",
