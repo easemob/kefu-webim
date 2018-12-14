@@ -11,7 +11,7 @@
 	getConfig();
 
 	function getConfig() {
-		if (utils.isTop) {
+		if (true) {
 			var tenantId = utils.query('tenantId');
 			config = {};
 			//get config from referrer's config
