@@ -85,7 +85,7 @@
 	}
 
 	easemobim.utils = {
-		isTop: window.top === window.self,
+		isTop: true,
 		isNodeList: _isNodeList,
 		formatDate: function(d, format){
 			var date = d ? new Date(d) : new Date();
