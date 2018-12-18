@@ -168,6 +168,10 @@ conmmonConfig = {
 					name: "../css/font/[name]-[hash:6].[ext]",
 				},
 			},
+			{
+		        test:/\.(png|jpg|gif)$/,
+		        loader:"url-loader",
+		    }
 		],
 	},
 };

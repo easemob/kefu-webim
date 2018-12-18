@@ -1,9 +1,12 @@
 /* 消息窗 */
-
-.chat-wrapper {
-	position: absolute;
+.chatBox{
 	top: 41px;
-	bottom: 140px;
+}
+.chat-wrapper {
+	/*position: absolute;
+	top: 0px;
+	bottom: 140px;*/
+	height: 370px;
 	background-color: #F4F7FA;
 	width: 100%;
 	border-bottom: 1px solid #E5E9F3;
@@ -225,7 +228,7 @@
 .em-widget-tip {
 	display: none;
 	position: absolute;
-	top: 41px;
+	top: 0;
 	width: 100%;
 	height: 48px;
 	color: #535252;
@@ -289,11 +292,14 @@
 .em-widget-wrapper.has-tip {
 	/* 有信息栏时 消息窗 下移 */
 	.chat-wrapper {
-		top: 89px;
+		/*top: 48px;*/
+		margin-top: 48px;
+		height: 322px;
 	}
 	/* 显示信息栏 */
 	.em-widget-tip {
 		display: block;
+		z-index: 9;
 	}
 }
 

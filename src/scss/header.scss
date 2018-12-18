@@ -38,6 +38,8 @@
 	position: relative;
 	padding-left: 10px;
 	color: white;
+	background:url("./img/top.png") no-repeat;
+	background-size:100% 100%;
 
 	.drag-bar {
 		position: absolute;
@@ -111,4 +113,9 @@
 			color: rgba(255, 255, 255, 0.5);
 		}
 	}
+}
+
+.isMobile{
+	background:url("./img/topSmall.png") no-repeat;
+	background-size:100% 100%;
 }

@@ -13,10 +13,19 @@
 </div>
 
 <!-- UI -->
+
+<!-- 是否展示广告位 -->
+<% if(isMobile){ %>
+<% var showAdv = 'none'; %>
+<% var showMobile = 'isMobile'; %>
+<% var advWidth = '0px';} else{%>
+<% var showAdv = 'block'; %>
+<% var showMobile = ''; %>
+<% var advWidth = '190px'}%>
 <div id="em-kefu-webim-chat" class="em-widget-wrapper hide">
 
 	<!-- 标题栏 -->
-	<div class="em-widget-header bg-color border-color">
+	<div class="em-widget-header <%=showMobile%> bg-color border-color">
 		<!-- 用于拖动的浮层 -->
 		<p class="drag-bar"></p>
 
@@ -27,7 +36,7 @@
 			</span>
 
 			<!-- 坐席昵称 -->
-			<span class="em-widget-header-nickname"></span>
+			<!-- <span class="em-widget-header-nickname"></span> -->
 
 			<!-- 坐席状态 -->
 			<span class="em-header-status-text"></span>
@@ -45,52 +54,77 @@
 		<!-- 输入框位置切换按钮 -->
 		<i class="btn-keyboard icon-keyboard-up hide"></i>
 	</div>
-
-	<!-- 信息栏 -->
-	<div class="em-widget-tip">
-		<span class="content"></span>
-		<i class="icon-close tip-close"></i>
-	</div>
-
-	<!-- 消息容器 -->
-	<div class="chat-wrapper">
-		<!-- 广告条 -->
-		<div class="em-widget-tenant-logo hide">
-			<img>
+	
+	<!-- 发消息部分 -->
+	<div class="chatBox" style="width: calc(100% - <%=advWidth%>); height: calc(100% - 41px); position: absolute;">
+		<!-- 信息栏 -->
+		<div class="em-widget-tip">
+			<span class="content"></span>
+			<i class="icon-close tip-close"></i>
 		</div>
-		<!-- <div class="chat-container"></div> -->
-	</div>
-
-	<!-- 输入框 -->
-	<div class="em-widget-send-wrapper">
-
-		<!-- 待接入人数状态 -->
-		<div class="queuing-number-status hide"><%=current_queue_number%><label></label></div>
-
-		<!-- 工具栏 -->
-		<div class="toolbar">
-			<i class="em-bar-emoji icon-face e-face fg-hover-color" title="<%=emoji%>"></i>
-			<i class="em-widget-img icon-picture fg-hover-color hide" title="<%=picture%>"></i>
-			<i class="em-widget-file icon-attachment fg-hover-color hide" title="<%=attachment%>"></i>
-			<!-- 发送视频按钮 --> 
-			<i class="em-widget-video icon-sendvideo fg-hover-color hide" title="<%=send_video%>"></i>
-			<i class="em-widget-note icon-note fg-hover-color hide" title="<%=ticket%>"></i>
-			
-			<i class="icon-video fg-hover-color em-video-invite hide" title="<%=video_invite%>"></i>
-			<i class="icon-flower fg-hover-color em-widget-satisfaction hide" title="<%=evaluate_agent%>"></i>
-			<i class="icon-headset fg-hover-color em-widget-to-kefu hide" title="<%=transfer_to_kefu%>"></i>
+		<!-- 消息容器 -->
+		<div class="chat-wrapper">
+			<!-- 广告条 -->
+			<div class="em-widget-tenant-logo hide">
+				<img>
+			</div>
+			<!-- <div class="chat-container"></div> -->
 		</div>
 
-		<!-- 文件输入 -->
-		<input type="file" class="upload-file-container">
-		<!-- 图片输入 -->
-		<input type="file" class="upload-img-container" accept="image/jpg,image/gif,image/jpeg,image/png">
-		<!-- 小视频输入 -->
-		<input type="file" class="upload-video-container" accept="video/mp4,video/m4v">		
+		<!-- 输入框 -->
+		<div class="em-widget-send-wrapper">
 
-		<textarea class="em-widget-textarea" spellcheck="false" placeholder="<%=input_placeholder%>"></textarea>
-		<span class="em-widget-send bg-color disabled"><%=connecting%></span>
-		<a href="http://www.easemob.com/product/cs?utm_source=csw"  target="_blank" class="powered-by-link">Powered by 环信</a>
+			<!-- 待接入人数状态 -->
+			<div class="queuing-number-status hide"><%=current_queue_number%><label></label></div>
+
+			<!-- 工具栏 -->
+			<div class="toolbar">
+				<i class="em-bar-emoji icon-face e-face fg-hover-color" title="<%=emoji%>"></i>
+				<i class="em-widget-img icon-picture fg-hover-color hide" title="<%=picture%>"></i>
+				<i class="em-widget-file icon-attachment fg-hover-color hide" title="<%=attachment%>"></i>
+				<!-- 发送视频按钮 --> 
+				<i class="em-widget-video icon-sendvideo fg-hover-color hide" title="<%=send_video%>"></i>
+				<i class="em-widget-note icon-note fg-hover-color hide" title="<%=ticket%>"></i>
+				
+				<i class="icon-video fg-hover-color em-video-invite hide" title="<%=video_invite%>"></i>
+				<i class="icon-flower fg-hover-color em-widget-satisfaction hide" title="<%=evaluate_agent%>"></i>
+				<i class="icon-headset fg-hover-color em-widget-to-kefu hide" title="<%=transfer_to_kefu%>"></i>
+			</div>
+
+			<!-- 文件输入 -->
+			<input type="file" class="upload-file-container">
+			<!-- 图片输入 -->
+			<input type="file" class="upload-img-container" accept="image/jpg,image/gif,image/jpeg,image/png">
+			<!-- 小视频输入 -->
+			<input type="file" class="upload-video-container" accept="video/mp4,video/m4v">		
+
+			<textarea class="em-widget-textarea" spellcheck="false" placeholder="<%=input_placeholder%>"></textarea>
+			<span class="em-widget-send bg-color disabled"><%=connecting%></span>
+			<!-- <a href="http://www.easemob.com/product/cs?utm_source=csw"  target="_blank" class="powered-by-link">Powered by 环信</a> -->
+		</div>
+	</div>
+	
+	<!-- 广告部分 -->
+	<div class='advBox' style="display: <%=showAdv%>;">
+		<div class="adv"></div>
+		<div class="queryContainer">
+			<p><a href="http://www.zking.com:9080/QueryCarPolicy/" target="_blank">
+				<span class="icon-chexian icon"></span>
+				<span>车险承保理赔查询</span>
+			</a></p>
+			<p><a href="http://www.zking.com:9080/QueryNonCarPolicy/" target="_blank">
+				<span class="icon-feichexian icon"></span>
+				<span>非车险承保理赔查询</span>
+			</a</p>
+			<p><a href="http://www.zking.com:9080/QueryAgriPolicy/" target="_blank">
+				<span class="icon-nongxian icon"></span>
+				<span>农险承保理赔查询</span>
+			</a</p>
+			<p><a href="http://www.zking.com:9080/QueryEPolicy/" target="_blank">
+				<span class="icon-feinongxian icon"></span>
+				<span>意健险承保理赔查询</span>
+			</a</p>
+		</div>	
 	</div>
 
 	<!-- 信息提示框 -->

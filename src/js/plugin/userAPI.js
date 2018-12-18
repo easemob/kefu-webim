@@ -10,6 +10,7 @@ var cacheKeyName;
 var baseConfig = getConfig();
 var _config = {};
 var iframe;
+var dialogWidth;
 
 window.easemobim = window.easemobim || {};
 window.easemobim.config = window.easemobim.config || {};
@@ -28,6 +29,12 @@ if(
 
 require("../../plugin-scss/easemob.scss");
 
+if (utils.isMobile) { //移动端
+    dialogWidth = '360px';
+} else {
+	dialogWidth = '550px';
+}
+
 DEFAULT_CONFIG = {
 	tenantId: "",
 	to: "",
@@ -38,7 +45,7 @@ DEFAULT_CONFIG = {
 	ticket: true,
 	staticPath: "",
 	buttonText: __("common.contact_agent"),
-	dialogWidth: "360px",
+	dialogWidth: dialogWidth,
 	dialogHeight: "550px",
 	dragenable: true,
 	minimum: true,
