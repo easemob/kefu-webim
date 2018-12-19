@@ -1,64 +1,78 @@
-.adv{
-	width: 190px;
-	height: 190px;
-	background: url('./img/adv.png') no-repeat;
-	background-size: contain;
-}
-.queryContainer{
-	background: #fff;
-	height: 318px;
-  	flex-direction: column;
-  	display: flex;
-  	justify-content: center;
-	p {
-		height: 48px;
-		line-height: 48px;
-		border: 2px solid #a21a9a;
-		border-radius: 6px;
-		margin: 10px 6px;
-		text-align: center;
-		a {
-			text-decoration: none;
-			out-line: none;
-			color: #1a1a1a;
-		}
-		span{
-			height: 48px;
-			line-height: 48px;
-			float: left;
-			display: inline-block;
-		}
-		.icon {
-			display: inline-block;
-			width: 30px;
-			height: 30px;
-			margin: 9px 5px;
-		}
-		.icon-chexian{
-			background: url('./img/2.png') no-repeat;
-			background-size: contain;
-		}
-		.icon-feichexian{
-			background: url('./img/3.png') no-repeat;
-			background-size: contain;
-		}
-		.icon-nongxian{
-			background: url('./img/4.png') no-repeat;
-			background-size: contain;
-		}
-		.icon-feinongxian{
-			background: url('./img/1.png') no-repeat;
-			background-size: contain;
-		}
 
-	}
-}
-
-.advBox{
-	width: 190px;
+.zijin-pc-advBox{
+	width: 20%;
 	float: right; 
-	background: #e5e9f3; 
+	background: #fff; 
 	position: absolute;
     right: 0;
     top: 41px;
+    display: block;
+    .adv{
+		width: 190px;
+		height: 190px;
+		background: url('./img/adv.png') no-repeat;
+		background-size: contain;
+		margin: 20px auto;
+	}
+	.queryContainer{
+		background: #fff;
+	  	margin-top: 20%;
+		p {
+			height: 48px;
+			line-height: 48px;
+			border: 2px solid #a21a9a;
+			border-radius: 6px;
+			margin: 10% 6px;
+			text-align: center;
+			overflow: hidden;
+			padding-left: 5px;
+			a {
+				text-decoration: none;
+				out-line: none;
+				color: #1a1a1a;
+				span {
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap; 
+				}
+			}
+			span{
+				height: 48px;
+				line-height: 48px;
+				float: left;
+				display: inline-block;
+			}
+			.icon {
+				display: inline-block;
+				width: 30px;
+				height: 30px;
+				margin: 9px 5px;
+			}
+			.icon-chexian{
+				background: url('./img/2.png') no-repeat;
+				background-size: contain;
+			}
+			.icon-feichexian{
+				background: url('./img/3.png') no-repeat;
+				background-size: contain;
+			}
+			.icon-nongxian{
+				background: url('./img/4.png') no-repeat;
+				background-size: contain;
+			}
+			.icon-feinongxian{
+				background: url('./img/1.png') no-repeat;
+				background-size: contain;
+			}
+
+		}
+	}
 }
+
+.zijin-topBar-chatBox{
+	width: 80%; 
+	height: 100%; 
+	position: absolute;
+}
+
+

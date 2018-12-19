@@ -9,7 +9,7 @@
 		max-width: 55%;
 	}
 	.chat-wrapper {
-		bottom: 77px;
+		bottom: 120px;
 	}
 	.em-widget-tip span {
 		font-size: 14px;
@@ -135,5 +135,14 @@
 		font-size: 15px;
 	}
 }
-
+.em-mobile-hideAdv{
+	display: none !important;
+}
+.em-mobile-chatBox{
+	width: 100% !important;
+}
+.em-mobile-topBar{
+	background:url("./img/topSmall.png") no-repeat;
+	background-size:100% 100%;
+}
 @media (-webkit-min-device-pixel-ratio: 2) {}

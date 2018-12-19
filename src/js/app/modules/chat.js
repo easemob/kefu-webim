@@ -94,7 +94,10 @@ function _initUI(){
 
 	// 添加移动端样式类
 	utils.isMobile && utils.addClass(document.body, "em-mobile");
-
+	utils.isMobile && utils.addClass(doms.advSection, "em-mobile-hideAdv");
+	utils.isMobile && utils.addClass(doms.chatBox, "em-mobile-chatBox");
+	utils.isMobile && utils.addClass(topBar, "em-mobile-topBar");
+	
 	// 最小化按钮
 	config.minimum
 		&& !utils.isTop
@@ -286,15 +289,17 @@ function _initAutoGrow(){
 		case "up":
 			doms.editorView.style.bottom = "auto";
 			doms.editorView.style.zIndex = "3";
-			doms.editorView.style.top = "43px";
-			doms.chatWrapper.style.bottom = "0";
+			doms.editorView.style.top = "0";
+			doms.chatWrapper.style.bottom = "41px";
+			doms.chatWrapper.style.top = height + "px";
 			doms.queuingNumberStatus.style.top = height + "px";
 			break;
 		case "down":
-			doms.editorView.style.bottom = "0";
+			doms.editorView.style.bottom = "41px";
 			doms.editorView.style.zIndex = "3";
 			doms.editorView.style.top = "auto";
-			doms.chatWrapper.style.bottom = height + "px";
+			doms.chatWrapper.style.bottom = height + 41 + "px";
+			doms.chatWrapper.style.top = "0";
 			doms.queuingNumberStatus.style.top = "-26px";
 			_scrollToBottom();
 			break;
@@ -319,7 +324,7 @@ function _initAutoGrow(){
 			doms.queuingNumberStatus.style.top = height + "px";
 		}
 		else{
-			doms.chatWrapper.style.bottom = height + "px";
+			doms.chatWrapper.style.bottom = height + 41 + "px";
 		}
 		emojiPanel.move(inputBoxPosition, height);
 		_scrollToBottom();
@@ -834,6 +839,8 @@ function _getDom(){
 
 		topBar: topBar,
 		editorView: editorView,
+		advSection: document.querySelector(".zijin-pc-advBox"),
+		chatBox: document.querySelector(".zijin-topBar-chatBox"),
 	};
 }
 

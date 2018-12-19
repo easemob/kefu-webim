@@ -15,17 +15,10 @@
 <!-- UI -->
 
 <!-- 是否展示广告位 -->
-<% if(isMobile){ %>
-<% var showAdv = 'none'; %>
-<% var showMobile = 'isMobile'; %>
-<% var advWidth = '0px';} else{%>
-<% var showAdv = 'block'; %>
-<% var showMobile = ''; %>
-<% var advWidth = '190px'}%>
 <div id="em-kefu-webim-chat" class="em-widget-wrapper hide">
 
 	<!-- 标题栏 -->
-	<div class="em-widget-header <%=showMobile%> bg-color border-color">
+	<div class="em-widget-header bg-color border-color">
 		<!-- 用于拖动的浮层 -->
 		<p class="drag-bar"></p>
 
@@ -56,7 +49,7 @@
 	</div>
 	
 	<!-- 发消息部分 -->
-	<div class="chatBox" style="width: calc(100% - <%=advWidth%>); height: calc(100% - 41px); position: absolute;">
+	<div class="zijin-topBar-chatBox">
 		<!-- 信息栏 -->
 		<div class="em-widget-tip">
 			<span class="content"></span>
@@ -105,7 +98,7 @@
 	</div>
 	
 	<!-- 广告部分 -->
-	<div class='advBox' style="display: <%=showAdv%>;">
+	<div class='zijin-pc-advBox'>
 		<div class="adv"></div>
 		<div class="queryContainer">
 			<p><a href="http://www.zking.com:9080/QueryCarPolicy/" target="_blank">

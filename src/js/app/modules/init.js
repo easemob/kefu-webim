@@ -53,7 +53,6 @@ function load_html(){
 		send_video: __("toolbar.send_video"),
 		isMobile: utils.isMobile
 	}));
-
 	chat.getDom();
 }
 
