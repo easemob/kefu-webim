@@ -32,7 +32,7 @@ require("../../plugin-scss/easemob.scss");
 if (utils.isMobile) { //移动端
     dialogWidth = '360px';
 } else {
-	dialogWidth = '550px';
+	dialogWidth = '960px';
 }
 
 DEFAULT_CONFIG = {
@@ -46,7 +46,7 @@ DEFAULT_CONFIG = {
 	staticPath: "",
 	buttonText: __("common.contact_agent"),
 	dialogWidth: dialogWidth,
-	dialogHeight: "550px",
+	dialogHeight: "600px",
 	dragenable: true,
 	minimum: true,
 	soundReminder: true,
