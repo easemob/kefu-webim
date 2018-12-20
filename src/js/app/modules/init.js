@@ -385,8 +385,18 @@ function initChatEntry(targetUserInfo){
 
 		// 获取企业头像和名称
 		// todo: rename to tenantName
-		profile.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, config.domain);
-		profile.defaultAgentName = targetItem.tenantName;
+		if (profile.config.chat.logo.enabled) {
+			profile.tenantAvatar = utils.getAvatarsFullPath(profile.config.chat.logo.url, config.domain);
+		} else {
+			profile.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, config.domain);
+		}
+
+		if (profile.config.chat.nickname.enabled) {
+			profile.defaultAgentName = profile.config.chat.nickname.content
+		} else {
+			profile.defaultAgentName = targetItem.tenantName;
+		}
+
 		config.logo = config.logo || { enabled: !!targetItem.tenantLogo, url: targetItem.tenantLogo };
 		config.toUser = targetItem.imServiceNumber;
 		config.orgName = targetItem.orgName;
