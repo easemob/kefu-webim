@@ -284,6 +284,7 @@ function handleMsgData(){
 	else if(config.configId){
 		apiHelper.getConfig(config.configId).then(function(entity){
 			config.tenantId = entity.tenantId;
+			config.isgetConfigFlag = true
 			handleConfig(entity.configJson);
 			initChat();
 		});
@@ -385,16 +386,16 @@ function initChatEntry(targetUserInfo){
 
 		// 获取企业头像和名称
 		// todo: rename to tenantName
-		if (profile.config.chat.logo.enabled) {
-			profile.tenantAvatar = utils.getAvatarsFullPath(profile.config.chat.logo.url, config.domain);
-		} else {
-			profile.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, config.domain);
-		}
+		profile.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, config.domain);
+		profile.defaultAgentName = targetItem.tenantName;
 
-		if (profile.config.chat.nickname.enabled) {
-			profile.defaultAgentName = profile.config.chat.nickname.content
-		} else {
-			profile.defaultAgentName = targetItem.tenantName;
+		if (profile.config.isgetConfigFlag) {
+			if (profile.config.chat.logo.enabled){
+				profile.tenantAvatar = utils.getAvatarsFullPath(profile.config.chat.logo.url, config.domain);
+			}
+			if (profile.config.chat.nickname.enabled) {
+				profile.defaultAgentName = profile.config.chat.nickname.content
+			}
 		}
 
 		config.logo = config.logo || { enabled: !!targetItem.tenantLogo, url: targetItem.tenantLogo };
@@ -526,7 +527,7 @@ function _createVisitor(username){
 		if(entity.userPassword === ""){
 			profile.imRestDown = true;
 		}
-		if(utils.isTop){
+		if(utils.isTop){   
 			utils.set("root" + (config.configId || (config.tenantId + config.emgroup)), config.user.username);
 		}
 		else{

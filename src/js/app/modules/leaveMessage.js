@@ -61,6 +61,9 @@ var cancelBtn = dialog.el.querySelector(".cancel-btn");
 
 var _getCategories = _.once(function(){
 	apiHelper.getNoteCategories().then(function(list){
+		if (profile.config.isgetConfigFlag) {
+			list = profile.config.toolbar.ticket_category
+		}
 		var optionList = _.map(list, function(item){
 			return {
 				sign: item.id,

@@ -17,7 +17,7 @@ function _getGreetings(officialAccount){
 		apiHelper.getRobertGreeting(),
 		apiHelper.getSkillgroupMenu()
 	]).then(function(result){
-		var systemGreetingText = profile.config.chat.welcome.enabled ? profile.config.chat.welcome.content : result[0];
+		var systemGreetingText = (profile.config.isgetConfigFlag && profile.config.chat.welcome.enabled) ? profile.config.chat.welcome.content : result[0];
 		var robotGreetingObj = result[1];
 		var groupMenus = result[2];
 		var greetingTextType = robotGreetingObj.greetingTextType;
