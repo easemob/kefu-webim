@@ -98,6 +98,7 @@ function _createTicket(){
 			uikit.showSuccess(__("ticket.send_success"));
 
 			_clearInput();
+			dialog.hide();
 		}, function(err){
 			isSending = false;
 			uikit.tip(__("ticket.send_failed_retry"));
