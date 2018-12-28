@@ -193,10 +193,6 @@ function updateCustomerInfo(e){
 		});
 		channel.sendText("转人工客服", trackMsg);
 	}
-	temp = utils.getDataByPath(data, "easemob.kefu.iframe.scroll");
-	if(temp){
-		chat.setArticleIframeScrolling(temp.enable);
-	}
 }
 
 function initChat(){

@@ -69,7 +69,6 @@ module.exports = {
 	close: _close,
 	show: _show,
 	getDom: _getDom,
-	setArticleIframeScrolling: setArticleIframeScrolling,
 };
 
 function _initSystemEventListener(){
@@ -487,32 +486,9 @@ function _bindEvents(){
 	utils.live(".article-link", "click", function(e){
 		var sendStatus = e.target.dataset.status;
 		var curArticleDom = e.target.parentNode;
-		var articleContainer;
-		var myIframe;
 		var url = e.target.firstElementChild.innerText;
-		doms.editorView.style.display = "none";
 		url = utils.sameProtocol(url);
-		if(utils.isTop){
-			articleContainer = document.getElementById("em-article-container");
-			myIframe = utils.createElementFromHTML(
-				"<iframe class=\"em-article-iframe\" src=\"\" id=\"em-article-iframe\"></iframe>"
-			);
-			articleContainer.querySelector(".em-article-body").appendChild(myIframe);
-			articleContainer.style.display = "block";
-			// reset articleContainer
-			utils.removeClass(document.body.querySelector("#em-article-close .back-chat"), "hide");
-			utils.addClass(document.body.querySelector("#em-article-close .new-message"), "hide");
-
-			setArticleIframeScrolling(true);
-			myIframe.src = url;
-			// myIframe.src = "http://kefu.webim.com:8081/pages/robot/article.html";
-
-			// 隐藏整个 tenantInfo
-			tenantInfo && tenantInfo.hide();
-		}
-		else{
-			window.open(url);
-		}
+		window.open(url);
 		// 根据sendStatus状态判断是否应该显示‘我正在看’状态
 		if(sendStatus == "false"){
 			// 发送一条图文
@@ -588,11 +564,11 @@ function _bindEvents(){
 		if(!fileInput.value){
 		}
 		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
-			uikit.tip(__("prompt._10_mb_file_limit"));  //("文件大小不能超过10MB");
+			uikit.tip(__("prompt._10_mb_file_limit"));  // ("文件大小不能超过10MB");
 			fileInput.value = "";
 		}
 		else{
-			channel.sendVideo(WebIM.utils.getFileUrl(fileInput)); //sendVideo 取自 channel.js 
+			channel.sendVideo(WebIM.utils.getFileUrl(fileInput)); // sendVideo 取自 channel.js
 			fileInput.value = "";
 		}
 	});
@@ -725,21 +701,6 @@ function _bindEvents(){
 	});
 }
 
-function setArticleIframeScrolling(enable){
-	if(enable){
-		utils.addClass(
-			document.body.querySelector("#em-article-container .em-article-body"),
-			"ios-scroll"
-		);
-	}
-	else{
-		utils.removeClass(
-			document.body.querySelector("#em-article-container .em-article-body"),
-			"ios-scroll"
-		);
-	}
-}
-
 function _close(){
 	profile.isChatWindowOpen = false;
 
@@ -815,7 +776,7 @@ function _getDom(){
 		switchKeyboardBtn: topBar.querySelector(".btn-keyboard"),
 
 		emojiToggleButton: editorView.querySelector(".em-bar-emoji"),
-		// 获取文件上传，图片，小视频按钮dom	
+		// 获取文件上传，图片，小视频按钮dom
 		sendImgBtn: editorView.querySelector(".em-widget-img"),
 		sendFileBtn: editorView.querySelector(".em-widget-file"),
 		sendVideoBtn: editorView.querySelector(".em-widget-video"),
@@ -954,7 +915,7 @@ function _isAppendDom(){
 				doms.textInput.style.height = 50 + "px";
 				doms.sendBtn.style.bottom = 25 + "px";
 				// 移动端适配并覆盖 mobile.scss样式
-				if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+				if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){
 					doms.poweredByLink.style.display = "block";
 					doms.textInput.style.height = 34 + "px";
 					doms.textInput.style.marginBottom = 17 + "px";
@@ -964,4 +925,3 @@ function _isAppendDom(){
 		}
 	});
 }
-
