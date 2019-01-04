@@ -386,7 +386,15 @@ function _bindEvents(){
 
 	utils.live("img.em-widget-imgview", "click", function(){
 		var imgSrc = this.getAttribute("src");
-		imgView.show(imgSrc);
+		if (typeof window.WeixinJSBridge == "undefined") {
+		    imgView.show(imgSrc);
+		} else {
+			//在微信中打开
+          	WeixinJSBridge.invoke("imagePreview",{
+               	"urls": [window.location.protocol + imgSrc],
+               	"current": window.location.protocol + imgSrc
+          	});
+		}
 	});
 
 	if(config.dragenable && !utils.isTop && !utils.isMobile){
