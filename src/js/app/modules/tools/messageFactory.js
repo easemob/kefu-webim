@@ -32,6 +32,12 @@ function genMsgContent(msg){
 		html = "<a href=\"javascript:;\"><img class=\"em-widget-imgview\" src=\""
 			+ msg.url + "\"/></a>";
 		break;
+	case "txtLink":
+		// 历史消息表情未经过im sdk 解析，所以类型为txt
+		// fake:  todo: remove this
+		html = value;
+		break;
+
 	case "list":
 		value = textParser.parse(value);
 		value = _.map(value, function(fragment){ return fragment.value; }).join("");
