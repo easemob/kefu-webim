@@ -48,12 +48,6 @@ proxy.on("error", e => logErr(e));
 
 app.use((req, res, next) => {
 	var pathname = req.path;
-	console.log('-------');
-	console.log(pathname);
-	console.log(PROXY_REGEX.reduce(
-		(pre, cur) => (pre || cur.test(pathname)),
-		PROXY_REGEX[0].test(pathname)
-	));
 	if(
 		PROXY_REGEX.reduce(
 			(pre, cur) => (pre || cur.test(pathname)),
