@@ -1248,17 +1248,6 @@ function getGuessList(data){
 	});
 }
 
-// 获取serviceLevel 字段
-function getServiceLevel(){
-	return new Promise(function(resolve, reject){
-		api("getServiceLevel", {
-			tenantId: config.tenantId,
-		}, function(msg){
-			resolve(msg);
-		});
-	});
-}
-
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
 	getToken: getToken,
@@ -1309,7 +1298,6 @@ module.exports = {
 	updateCustomerInfo: updateCustomerInfo,
 	getArticleJson: getArticleJson,
 	getGuessList: getGuessList,
-	getServiceLevel: getServiceLevel,
 
 	initApiTransfer: initApiTransfer,
 	api: api,
