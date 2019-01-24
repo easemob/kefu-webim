@@ -120,6 +120,7 @@ function showSuccess(msg){
 		"<div>",
 		"<i class=\"icon-circle\"><i class=\"icon-good\"></i></i>",
 		"<p></p>",
+		"<div>感谢您的评价</div>",
 		"</div>"
 	].join(""));
 	contentDom.querySelector("p").innerText = msg;
