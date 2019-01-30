@@ -169,8 +169,8 @@ conmmonConfig = {
 				},
 			},
 			{
-		        test:/\.(png|jpg|gif)$/,
-		        loader:"url-loader",
+		        test: /\.(png|jpg|gif)$/,
+		        loader: "url-loader?limit=100000",
 		    }
 		],
 	},
