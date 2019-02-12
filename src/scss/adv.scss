@@ -1,8 +1,8 @@
 
 .zijin-pc-advBox{
 	width: 20%;
-	float: right; 
-	background: #fff; 
+	float: right;
+	background: #fff;
 	position: absolute;
     right: 0;
     top: 41px;
@@ -10,7 +10,7 @@
     .adv{
 		width: 190px;
 		height: 190px;
-		background: url('./img/adv.png') no-repeat;
+		background: url('./img/adv-zip.png') no-repeat;
 		background-size: contain;
 		margin: 20px auto;
 	}
@@ -33,7 +33,7 @@
 				span {
 					overflow: hidden;
 					text-overflow: ellipsis;
-					white-space: nowrap; 
+					white-space: nowrap;
 				}
 			}
 			span{
@@ -70,9 +70,7 @@
 }
 
 .zijin-topBar-chatBox{
-	width: 80%; 
-	height: 100%; 
+	width: 80%;
+	height: 100%;
 	position: absolute;
 }
-
-
