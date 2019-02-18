@@ -432,7 +432,7 @@
 
 .chat-main{
 	position: absolute;
-	width: 360px;
+	width:calc(100% - 75px);
 	height: 100%;
 	right: 0;
 	.em-widget-header{
