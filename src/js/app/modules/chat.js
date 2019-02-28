@@ -470,6 +470,37 @@ function _bindEvents(){
 		satisfaction.show(inviteId, serviceSessionId);
 	});
 
+	// 解决
+	utils.live("a.statisfyYes", "click", function(){
+		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
+		var robotAgentId = this.getAttribute("data-agentId");
+		apiHelper.getStatisfyYes(robotAgentId, satisfactionCommentKey).then(function(data){
+			uikit.tip("谢谢");
+		}, function(err){
+			if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
+				uikit.tip("已评价");
+			}
+		});
+	});
+
+	// 未解决
+	utils.live("a.statisfyNo", "click", function(){
+		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
+		var robotAgentId = this.getAttribute("data-agentId");
+
+		// this.tagSelector.show(msgId, multiTurnDialogueId);
+		
+		apiHelper.getStatisfyNo(robotAgentId, satisfactionCommentKey).then(function(data){
+			uikit.tip("谢谢");
+		}, function(err){
+			if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
+				uikit.tip("已评价");
+			}
+		});
+
+		// this.tagSelector.show(msgId, multiTurnDialogueId);
+	});
+
 	utils.live("#em-article-close .icon-back", "click", function(){
 		var articleContainer = document.getElementById("em-article-container");
 		var iframe = articleContainer.querySelector("iframe");

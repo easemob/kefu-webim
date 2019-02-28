@@ -18,6 +18,9 @@ function genMsgContent(msg){
 		// 历史消息以及收到的实时消息
 		html = "<span class=\"text\">" + _.map(value, function(fragment){ return fragment.value; }).join("") + "</span>";
 		break;
+	case "txtLink":
+		html = value;
+		break;
 	case "img":
 		// todo: remove a
 		html = "<a href=\"javascript:;\"><img class=\"em-widget-imgview\" src=\""

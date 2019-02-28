@@ -1248,6 +1248,67 @@ function getGuessList(data){
 	});
 }
 
+function getStatisfyYes(robotAgentId, satisfactionCommentKey){
+	return new Promise(function(resolve, reject){
+		emajax({
+			url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
+			data: {
+				satisfactionCommentKey: satisfactionCommentKey,
+				type: 1
+			},
+			type: "POST",
+			success: function(resp){
+				var parsed;
+
+				try{
+					parsed = JSON.parse(resp);
+				}
+				catch(e){}
+
+				if((parsed && parsed.status) === "OK"){
+					resolve(parsed.entity);
+				}
+				else{
+					reject(parsed);
+				}
+			},
+			error: function(e){
+				reject(e);
+			}
+		});
+	});
+}
+function getStatisfyNo(robotAgentId, satisfactionCommentKey){
+	return new Promise(function(resolve, reject){
+		emajax({
+			url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
+			data: {
+				satisfactionCommentKey: satisfactionCommentKey,
+				type: 2
+			},
+			type: "POST",
+			success: function(resp){
+				var parsed;
+
+				try{
+					parsed = JSON.parse(resp);
+				}
+				catch(e){}
+
+				if((parsed && parsed.status) === "OK"){
+					resolve(parsed.entity);
+				}
+				else{
+					reject(parsed);
+				}
+			},
+			error: function(e){
+				reject(e);
+			}
+		});
+	});
+}
+
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
 	getToken: getToken,
@@ -1300,6 +1361,8 @@ module.exports = {
 	getGuessList: getGuessList,
 
 	initApiTransfer: initApiTransfer,
+	getStatisfyYes: getStatisfyYes,
+	getStatisfyNo: getStatisfyNo,
 	api: api,
 	setCacheItem: function(key, value){
 		cache[key] = value;
