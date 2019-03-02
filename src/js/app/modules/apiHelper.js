@@ -1235,7 +1235,7 @@ function getArticleJson(data){
 // 猜你想说 接口列表
 function getGuessList(data){
 	var officialAccount = profile.currentOfficialAccount;
-		if(!officialAccount) return;
+	if(!officialAccount) return;
 	return new Promise(function(resolve, reject){
 		api("getGuessList", {
 			tenantId: config.tenantId,
@@ -1286,6 +1286,59 @@ function getStatisfyNo(robotAgentId, satisfactionCommentKey){
 				satisfactionCommentKey: satisfactionCommentKey,
 				type: 2
 			},
+			type: "POST",
+			success: function(resp){
+				var parsed;
+
+				try{
+					parsed = JSON.parse(resp);
+				}
+				catch(e){}
+
+				if((parsed && parsed.status) === "OK"){
+					resolve(parsed.entity);
+				}
+				else{
+					reject(parsed);
+				}
+			},
+			error: function(e){
+				reject(e);
+			}
+		});
+	});
+}
+
+function getSatisfactionCommentTags(robotAgentId){
+	return new Promise(function(resolve, reject){
+		api("getSatisfactionCommentTags", {
+			tenantId: config.tenantId,
+			robotAgentId: robotAgentId
+		}, function(msg){
+			var status = utils.getDataByPath(msg, "data.status");
+			var entities = utils.getDataByPath(msg, "data.entities");
+			if(status === "OK"){
+				resolve(entities);
+			}
+			else{
+				reject(msg.data);
+			}
+		}, function(error){
+			reject(error);
+		});
+	});
+}
+function confirmSatisfaction(robotAgentId, satisfactionCommentKey, selected){
+	var data = {
+		satisfactionCommentKey: satisfactionCommentKey,
+		type: 2,
+	};
+	selected && (data.reasonTag = selected);
+
+	return new Promise(function(resolve, reject){
+		emajax({
+			url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
+			data: data,
 			type: "POST",
 			success: function(resp){
 				var parsed;
@@ -1364,6 +1417,9 @@ module.exports = {
 	getStatisfyYes: getStatisfyYes,
 	getStatisfyNo: getStatisfyNo,
 	api: api,
+	getSatisfactionCommentTags: getSatisfactionCommentTags,
+	confirmSatisfaction: confirmSatisfaction,
+
 	setCacheItem: function(key, value){
 		cache[key] = value;
 	},

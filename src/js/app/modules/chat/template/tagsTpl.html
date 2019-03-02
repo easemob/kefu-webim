@@ -1,0 +1,6 @@
+<p>未解决原因：</p>
+<ul class="em-taglist">
+	<% _.each(tags, function(tag){ %>
+	<li class="em-tag" tagId="<%= tag.id %>"><%= tag.name %></li>
+	<% }) %>
+</ul>

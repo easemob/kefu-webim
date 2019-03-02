@@ -13,6 +13,7 @@ var initPasteImage = require("./paste");
 var videoChat = require("./videoChat");
 var guessInfo = require("./guess/guessInfo");
 
+var TagSelector = require("./chat/tagSelector");
 var initAgentInputStatePoller = require("./chat/initAgentInputStatePoller");
 var initAgentStatusPoller = require("./chat/initAgentStatusPoller");
 var initQueuingNumberPoller = require("./chat/initQueuingNumberPoller");
@@ -24,6 +25,7 @@ var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
 var TenantInfo = require("@/app/modules/tenantInfo/index");
 var tenantInfo;
+var tagSelector = new TagSelector();
 
 var isMessageChannelReady;
 var config;
@@ -488,17 +490,23 @@ function _bindEvents(){
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
 
-		// this.tagSelector.show(msgId, multiTurnDialogueId);
-		
-		apiHelper.getStatisfyNo(robotAgentId, satisfactionCommentKey).then(function(data){
-			uikit.tip("谢谢");
-		}, function(err){
-			if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
-				uikit.tip("已评价");
+		apiHelper.getSatisfactionCommentTags(robotAgentId, satisfactionCommentKey)
+		.then(function(dat){
+			if(dat.length > 0){
+				// tagSelector = new TagSelector(dat, robotAgentId, satisfactionCommentKey);
+				tagSelector.show(dat, robotAgentId, satisfactionCommentKey);
+			}
+			else{
+				apiHelper.confirmSatisfaction(robotAgentId, satisfactionCommentKey)
+				.then(function(){
+					uikit.tip("谢谢");
+				}, function(err){
+					if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
+						uikit.tip("已评价");
+					}
+				});
 			}
 		});
-
-		// this.tagSelector.show(msgId, multiTurnDialogueId);
 	});
 
 	utils.live("#em-article-close .icon-back", "click", function(){
