@@ -738,10 +738,10 @@ getData.listen(function(msg){
 		});
 		break;
 	case "getGuessList":
-		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + params.tenantId 
-		+ "/servicesessions/" 
-		+ params.sessionId 
-		+ "/standard_suggestion/questions?input="+ params.inputValue + "&robotId="+ params.robotId;
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + params.tenantId
+		+ "/servicesessions/"
+		+ params.sessionId
+		+ "/standard_suggestion/questions?input=" + params.inputValue + "&robotId=" + params.robotId;
 		delete params.tenantId;
 		delete params.sessionId;
 		delete params.inputValue;
@@ -750,6 +750,14 @@ getData.listen(function(msg){
 			url: url,
 			type: "GET",
 			msg: msg
+		});
+		break;
+	case "getSatisfactionCommentTags":
+		emitAjax({
+			url: "/v1/webimplugin/tenants/" + tenantId + "/robot-agents/" + params.robotAgentId + "/satisfaction-comment/tags",
+			msg: msg,
+			type: "GET",
+			excludeData: true,
 		});
 		break;
 	default:

@@ -1,3 +1,37 @@
+%em-dialog-tag-selector {
+	&.tag-selector {
+		color: #000;
+		p {
+			padding: 10px;
+			font-size: 16px;
+		}
+		ul {
+			padding: 0 10px;
+			font-size: 0;
+			li {
+				max-width: 100%;
+				// 100% 是固定的，parent 的 content width
+				// 区别是否包含自己的 border 在内
+				box-sizing: border-box;
+				@extend %em-mix-ellipsis;
+				font-size: 14px;
+				padding: 0 5px;
+				margin: 0 8px 8px 0;
+				border: 1px solid #ccc;
+				border-radius: 5px;
+				cursor: pointer;
+				line-height: 25px;
+				display: inline-block;
+				&:hover,
+				&.selected {
+					background-color: #42b8f4;
+					border: 1px solid #42b8f4;
+					color: #fff;
+				}
+			}
+		}
+	}
+}
 .em-widget-error-prompt {
 	z-index: 3000;
 	font-size: 13px;
@@ -86,30 +120,6 @@
 	textarea {
 		height: 100px;
 		resize: none;
-	}
-	> div.footer{
-		width: 90%;
-		margin: 15px auto;
-		bottom: 0;
-		text-align: center;
-		> button {
-			width: 40%;
-			padding: 0;
-			height: 30px;
-			line-height: 30px;
-			border-radius: 4px;
-			color: white;
-			border: none;
-			font-size: 13px;
-			cursor: pointer;
-			float: right;
-			&.cancel-btn {
-				background-color: white;
-				color: #A6A6A6;
-				border: 1px solid #E4E4E4;
-				float: left;
-			}
-		}
 	}
 	&.mini {
 		text-align: center;
@@ -550,6 +560,34 @@
 			}
 		}
 	}
+	> div.footer{
+		position: absolute;
+		box-sizing: border-box;
+		font-size: 0;	// 消除 button 间隔
+		bottom: 0;
+		width: 100%;
+		margin: 15px 0;
+		padding: 0 15px;
+		> button {
+			width: 40%;
+			padding: 0;
+			height: 30px;
+			line-height: 30px;
+			border-radius: 4px;
+			color: white;
+			border: none;
+			font-size: 13px;
+			cursor: pointer;
+			&.cancel-btn {
+				margin-right: 20%;
+				background-color: white;
+				color: #A6A6A6;
+				border: 1px solid #E4E4E4;
+			}
+		}
+	}
+	// tag 选择器
+	@extend %em-dialog-tag-selector;
 }
 .em-select {
 	height: 34px;
