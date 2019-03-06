@@ -11,7 +11,7 @@ todo: delete file_download.png
 
 var debug = false;
 const TEMPLATE_DATA = {
-	WEBIM_PLUGIN_VERSION: 'citic.43.15.12'
+	WEBIM_PLUGIN_VERSION: 'citic.43.15.13'
 };
 
 const gulp = require('gulp');
