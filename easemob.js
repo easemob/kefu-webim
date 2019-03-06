@@ -1306,7 +1306,7 @@ easemobim.titleSlide = function () {
 	'use strict';
 	var utils = easemobim.utils;
 	easemobim.config = easemobim.config || {};
-	easemobim.version = 'citic.43.15.11';
+	easemobim.version = 'citic.43.15.12';
 	easemobim.tenants = {};
 
 	var DEFAULT_CONFIG = {

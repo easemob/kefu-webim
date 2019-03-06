@@ -12029,6 +12029,11 @@ easemobIM.Transfer = easemobim.Transfer = (function () {
 			value = _encode(_decode(value));
 			html = '<pre>' + parseLink(parseEmoji(value)) + '</pre>';
 			break;
+		case "txtLink":
+			// 历史消息表情未经过im sdk 解析，所以类型为txt
+			// fake:  todo: remove this
+			html = value;
+			break;
 		case 'img':
 			if (value) {
 				// todo: remove a
@@ -12715,6 +12720,9 @@ easemobim.channel = function (config) {
 			var str;
 			var message;
 			var msgId = msg.msgId || utils.getDataByPath(msg, 'ext.weichat.msgId');
+			var satisfactionCommentInvitation = utils.getDataByPath(msg, "ext.weichat.extRobot.satisfactionCommentInvitation");
+			var satisfactionCommentInfo = utils.getDataByPath(msg, "ext.weichat.extRobot.satisfactionCommentInfo");
+			var agentId = utils.getDataByPath(msg, "ext.weichat.agent.userId");
 
 			if (receiveMsgSite.get(msgId)) {
 				// 重复消息不处理
@@ -12746,6 +12754,15 @@ easemobim.channel = function (config) {
 				type = 'robotTransfer';
 			}
 			else {}
+
+			// 是否发送解决未解决msg.ext.extRobot.satisfactionCommentInvitation
+			if(satisfactionCommentInvitation && !isHistory){
+				me.appendMsg(msg.from, msg.to, {
+					value: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
+					type: "txtLink",
+				}, false);
+				return 
+			}
 
 			switch (type) {
 			case 'txt':
@@ -14425,6 +14442,94 @@ easemobim.videoChat = (function (dialog) {
 					});
 				});
 
+				function getStatisfyYes(robotAgentId, satisfactionCommentKey){
+					return new Promise(function(resolve, reject){
+						easemobim.emajax({
+							url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
+							data: {
+								satisfactionCommentKey: satisfactionCommentKey,
+								type: 1
+							},
+							type: "POST",
+							success: function(resp){
+								var parsed;
+
+								try{
+									parsed = JSON.parse(resp);
+								}
+								catch(e){}
+
+								if((parsed && parsed.status) === "OK"){
+									resolve(parsed.entity);
+								}
+								else{
+									reject(parsed);
+								}
+							},
+							error: function(e){
+								reject(e);
+							}
+						});
+					});
+				}
+
+				function getStatisfyNo(robotAgentId, satisfactionCommentKey){
+					return new Promise(function(resolve, reject){
+						easemobim.emajax({
+							url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
+							data: {
+								satisfactionCommentKey: satisfactionCommentKey,
+								type: 2
+							},
+							type: "POST",
+							success: function(resp){
+								var parsed;
+
+								try{
+									parsed = JSON.parse(resp);
+								}
+								catch(e){}
+
+								if((parsed && parsed.status) === "OK"){
+									resolve(parsed.entity);
+								}
+								else{
+									reject(parsed);
+								}
+							},
+							error: function(e){
+								reject(e);
+							}
+						});
+					});
+				}
+
+				// 解决
+				utils.live("a.statisfyYes", "click", function(){
+					var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
+					var robotAgentId = this.getAttribute("data-agentId");
+					apiHelper.getStatisfyYes(robotAgentId, satisfactionCommentKey).then(function(data){
+						uikit.tip("谢谢");
+					}, function(err){
+						if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
+							uikit.tip("已评价");
+						}
+					});
+				});
+
+				// 未解决
+				utils.live("a.statisfyNo", "click", function(){
+					var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
+					var robotAgentId = this.getAttribute("data-agentId");
+					apiHelper.getStatisfyNo(robotAgentId, satisfactionCommentKey).then(function(data){
+						uikit.tip("谢谢");
+					}, function(err){
+						if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
+							uikit.tip("已评价");
+						}
+					});
+				});
+
 				var messagePredict = _.throttle(function (msg) {
 					config.agentUserId
 						&& config.visitorUserId
@@ -15124,7 +15229,7 @@ easemobim.videoChat = (function (dialog) {
 	function initUI(config, callback) {
 		var iframe = document.getElementById('cross-origin-iframe');
 
-		iframe.src = config.domain + '/webim/transfer.html?v=citic.43.15.11';
+		iframe.src = config.domain + '/webim/transfer.html?v=citic.43.15.12';
 		utils.on(iframe, 'load', function () {
 			easemobim.getData = new easemobim.Transfer('cross-origin-iframe', 'data');
 			callback(config);
