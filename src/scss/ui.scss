@@ -30,6 +30,32 @@
 				}
 			}
 		}
+		> div.footer{
+			position: absolute;
+			box-sizing: border-box;
+			font-size: 0;	// 消除 button 间隔
+			bottom: 0;
+			width: 100%;
+			margin: 15px 0;
+			padding: 0 15px;
+			> button {
+				width: 40%;
+				padding: 0;
+				height: 30px;
+				line-height: 30px;
+				border-radius: 4px;
+				color: white;
+				border: none;
+				font-size: 13px;
+				cursor: pointer;
+				&.cancel-btn {
+					margin-right: 20%;
+					background-color: white;
+					color: #A6A6A6;
+					border: 1px solid #E4E4E4;
+				}
+			}
+		}
 	}
 }
 .em-widget-error-prompt {
@@ -120,6 +146,30 @@
 	textarea {
 		height: 100px;
 		resize: none;
+	}
+	> div.footer{
+		width: 90%;
+		margin: 15px auto;
+		bottom: 0;
+		text-align: center;
+		> button {
+			width: 40%;
+			padding: 0;
+			height: 30px;
+			line-height: 30px;
+			border-radius: 4px;
+			color: white;
+			border: none;
+			font-size: 13px;
+			cursor: pointer;
+			float: right;
+			&.cancel-btn {
+				background-color: white;
+				color: #A6A6A6;
+				border: 1px solid #E4E4E4;
+				float: left;
+			}
+		}
 	}
 	&.mini {
 		text-align: center;
@@ -557,32 +607,6 @@
 			color: #666;
 			.tip-word{
 				margin-top: 10px;
-			}
-		}
-	}
-	> div.footer{
-		position: absolute;
-		box-sizing: border-box;
-		font-size: 0;	// 消除 button 间隔
-		bottom: 0;
-		width: 100%;
-		margin: 15px 0;
-		padding: 0 15px;
-		> button {
-			width: 40%;
-			padding: 0;
-			height: 30px;
-			line-height: 30px;
-			border-radius: 4px;
-			color: white;
-			border: none;
-			font-size: 13px;
-			cursor: pointer;
-			&.cancel-btn {
-				margin-right: 20%;
-				background-color: white;
-				color: #A6A6A6;
-				border: 1px solid #E4E4E4;
 			}
 		}
 	}
