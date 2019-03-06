@@ -47,6 +47,11 @@
 			value = _encode(_decode(value));
 			html = '<pre>' + parseLink(parseEmoji(value)) + '</pre>';
 			break;
+		case "txtLink":
+			// 历史消息表情未经过im sdk 解析，所以类型为txt
+			// fake:  todo: remove this
+			html = value;
+			break;
 		case 'img':
 			if (value) {
 				// todo: remove a

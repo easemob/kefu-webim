@@ -942,6 +942,94 @@
 					});
 				});
 
+				function getStatisfyYes(robotAgentId, satisfactionCommentKey){
+					return new Promise(function(resolve, reject){
+						easemobim.emajax({
+							url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
+							data: {
+								satisfactionCommentKey: satisfactionCommentKey,
+								type: 1
+							},
+							type: "POST",
+							success: function(resp){
+								var parsed;
+
+								try{
+									parsed = JSON.parse(resp);
+								}
+								catch(e){}
+
+								if((parsed && parsed.status) === "OK"){
+									resolve(parsed.entity);
+								}
+								else{
+									reject(parsed);
+								}
+							},
+							error: function(e){
+								reject(e);
+							}
+						});
+					});
+				}
+
+				function getStatisfyNo(robotAgentId, satisfactionCommentKey){
+					return new Promise(function(resolve, reject){
+						easemobim.emajax({
+							url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
+							data: {
+								satisfactionCommentKey: satisfactionCommentKey,
+								type: 2
+							},
+							type: "POST",
+							success: function(resp){
+								var parsed;
+
+								try{
+									parsed = JSON.parse(resp);
+								}
+								catch(e){}
+
+								if((parsed && parsed.status) === "OK"){
+									resolve(parsed.entity);
+								}
+								else{
+									reject(parsed);
+								}
+							},
+							error: function(e){
+								reject(e);
+							}
+						});
+					});
+				}
+
+				// 解决
+				utils.live("a.statisfyYes", "click", function(){
+					var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
+					var robotAgentId = this.getAttribute("data-agentId");
+					apiHelper.getStatisfyYes(robotAgentId, satisfactionCommentKey).then(function(data){
+						uikit.tip("谢谢");
+					}, function(err){
+						if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
+							uikit.tip("已评价");
+						}
+					});
+				});
+
+				// 未解决
+				utils.live("a.statisfyNo", "click", function(){
+					var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
+					var robotAgentId = this.getAttribute("data-agentId");
+					apiHelper.getStatisfyNo(robotAgentId, satisfactionCommentKey).then(function(data){
+						uikit.tip("谢谢");
+					}, function(err){
+						if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
+							uikit.tip("已评价");
+						}
+					});
+				});
+
 				var messagePredict = _.throttle(function (msg) {
 					config.agentUserId
 						&& config.visitorUserId

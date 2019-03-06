@@ -203,6 +203,9 @@ easemobim.channel = function (config) {
 			var str;
 			var message;
 			var msgId = msg.msgId || utils.getDataByPath(msg, 'ext.weichat.msgId');
+			var satisfactionCommentInvitation = utils.getDataByPath(msg, "ext.weichat.extRobot.satisfactionCommentInvitation");
+			var satisfactionCommentInfo = utils.getDataByPath(msg, "ext.weichat.extRobot.satisfactionCommentInfo");
+			var agentId = utils.getDataByPath(msg, "ext.weichat.agent.userId");
 
 			if (receiveMsgSite.get(msgId)) {
 				// 重复消息不处理
@@ -234,6 +237,15 @@ easemobim.channel = function (config) {
 				type = 'robotTransfer';
 			}
 			else {}
+
+			// 是否发送解决未解决msg.ext.extRobot.satisfactionCommentInvitation
+			if(satisfactionCommentInvitation && !isHistory){
+				me.appendMsg(msg.from, msg.to, {
+					value: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
+					type: "txtLink",
+				}, false);
+				return 
+			}
 
 			switch (type) {
 			case 'txt':
