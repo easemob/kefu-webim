@@ -238,15 +238,6 @@ easemobim.channel = function (config) {
 			}
 			else {}
 
-			// 是否发送解决未解决msg.ext.extRobot.satisfactionCommentInvitation
-			if(satisfactionCommentInvitation && !isHistory){
-				me.appendMsg(msg.from, msg.to, {
-					value: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
-					type: "txtLink",
-				}, false);
-				return 
-			}
-
 			switch (type) {
 			case 'txt':
 			case 'emoji':
@@ -444,6 +435,16 @@ easemobim.channel = function (config) {
 				// 	给收到的消息加id，用于撤回消息
 				message.id = msgId;
 				me.appendMsg(msg.from, msg.to, message);
+
+				// 是否发送解决未解决msg.ext.extRobot.satisfactionCommentInvitation
+				if(satisfactionCommentInvitation){
+					me.appendMsg(msg.from, msg.to, {
+						value: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
+						type: "txtLink",
+					}, false);
+
+				}
+
 				me.scrollBottom(50);
 
 				// 收消息回调

@@ -1008,11 +1008,11 @@
 				utils.live("a.statisfyYes", "click", function(){
 					var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 					var robotAgentId = this.getAttribute("data-agentId");
-					apiHelper.getStatisfyYes(robotAgentId, satisfactionCommentKey).then(function(data){
-						uikit.tip("谢谢");
+					getStatisfyYes(robotAgentId, satisfactionCommentKey).then(function(data){
+						me.errorPrompt("谢谢");
 					}, function(err){
 						if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
-							uikit.tip("已评价");
+							me.errorPrompt("已评价");
 						}
 					});
 				});
@@ -1021,11 +1021,11 @@
 				utils.live("a.statisfyNo", "click", function(){
 					var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 					var robotAgentId = this.getAttribute("data-agentId");
-					apiHelper.getStatisfyNo(robotAgentId, satisfactionCommentKey).then(function(data){
-						uikit.tip("谢谢");
+					getStatisfyNo(robotAgentId, satisfactionCommentKey).then(function(data){
+						me.errorPrompt("谢谢");
 					}, function(err){
 						if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
-							uikit.tip("已评价");
+							me.errorPrompt("已评价");
 						}
 					});
 				});
