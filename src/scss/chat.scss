@@ -250,7 +250,7 @@
 		display: inline-block;
 		border-radius: 6px;
 		padding: 10px;
-		max-width: 98%;
+		// max-width: 98%; ie8浏览器下解决方案
 		min-width: 20px;
 		min-height: 20px;
 		vertical-align: middle;
