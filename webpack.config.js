@@ -111,7 +111,7 @@ conmmonConfig = {
 				],
 			},
 			{
-				test: require.resolve("./src/js/app/sdk/webim.config.js"),
+				test: require.resolve("./src/js/app/libs/sdk/webim.config.js"),
 				loader: "expose-loader?WebIM"
 			},
 			{
@@ -119,7 +119,7 @@ conmmonConfig = {
 				loader: "expose-loader?_"
 			},
 			{
-				test: require.resolve("./src/js/app/lib/modernizr.js"),
+				test: require.resolve("./src/js/app/libs/modernizr.js"),
 				loader: "expose-loader?Modernizr"
 			},
 			{
@@ -207,7 +207,7 @@ easemob = Object.assign({}, conmmonConfig, {
 app = Object.assign({}, conmmonConfig, {
 	name: "app",
 	entry: [
-		"./src/js/app/modules/init.js",
+		"./src/js/app/pages/main/init.js",
 		"./src/scss/im.scss",
 		"./src/html/im.html",
 	],
