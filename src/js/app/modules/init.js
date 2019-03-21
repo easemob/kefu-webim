@@ -347,7 +347,7 @@ function initCrossOriginIframe(){
 function initChatEntry(targetUserInfo){
 	if(hasChatEntryInitialized) return;
 	hasChatEntryInitialized = true;
-	// 获取关联信息
+	// 获取关联信息（targetChannel）
 	apiHelper.getRelevanceList().then(function(relevanceList){
 		var targetItem;
 		var appKey = config.appKey;
