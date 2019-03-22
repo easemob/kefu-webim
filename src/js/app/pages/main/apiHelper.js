@@ -1361,6 +1361,65 @@ function confirmSatisfaction(robotAgentId, satisfactionCommentKey, selected){
 		});
 	});
 }
+function getFaqList(configId){
+	return new Promise(function(resolve, reject){
+		api("getFaqList", {
+			tenantId: config.tenantId,
+			configId: configId
+		}, function(msg){
+			var status = utils.getDataByPath(msg, "data.status");
+			var entities = utils.getDataByPath(msg, "data.entities");
+			if(status === "OK"){
+				resolve(entities);
+			}
+			else{
+				reject(msg.data);
+			}
+		}, function(error){
+			reject(error);
+		});
+	});
+}
+function getSelfServiceList(configId){
+	return new Promise(function(resolve, reject){
+		api("getSelfServiceList", {
+			tenantId: config.tenantId,
+			configId: configId
+		}, function(msg){
+			var status = utils.getDataByPath(msg, "data.status");
+			var entities = utils.getDataByPath(msg, "data.entities");
+			if(status === "OK"){
+				resolve(entities);
+			}
+			else{
+				reject(msg.data);
+			}
+		}, function(error){
+			reject(error);
+		});
+	});
+}
+
+function getFaqOrSelfServiceStatus(configId, type){
+	return new Promise(function(resolve, reject){
+		api("getFaqOrSelfServiceStatus", {
+			tenantId: config.tenantId,
+			configId: configId,
+			type: type
+		}, function(msg){
+			var status = utils.getDataByPath(msg, "data.status");
+			var entity = utils.getDataByPath(msg, "data.entity");
+			if(status === "OK"){
+				resolve(entity);
+			}
+			else{
+				reject(msg.data);
+			}
+		}, function(error){
+			reject(error);
+		});
+	});
+}
 
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
@@ -1419,6 +1478,9 @@ module.exports = {
 	api: api,
 	getSatisfactionCommentTags: getSatisfactionCommentTags,
 	confirmSatisfaction: confirmSatisfaction,
+	getFaqList: getFaqList,
+	getSelfServiceList: getSelfServiceList,
+	getFaqOrSelfServiceStatus: getFaqOrSelfServiceStatus,
 
 	setCacheItem: function(key, value){
 		cache[key] = value;

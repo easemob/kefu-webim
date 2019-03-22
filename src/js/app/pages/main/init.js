@@ -20,17 +20,24 @@ var body_template = require("raw-loader!../../../../template/body.html");
 var config;
 var hasChatEntryInitialized;
 
-load_html();
-if(utils.isTop){
-	h5_mode_init();
-}
-else{
-	chat_window_mode_init();
-}
 
-utils.on(window, "message", function(e){
-	updateCustomerInfo(e);
-});
+module.exports = {
+	init: init,
+};
+
+function init(){
+	load_html();
+	if(utils.isTop){
+		h5_mode_init();
+	}
+	else{
+		chat_window_mode_init();
+	}
+
+	utils.on(window, "message", function(e){
+		updateCustomerInfo(e);
+	});
+}
 
 // body.html 显示词语
 function load_html(){
