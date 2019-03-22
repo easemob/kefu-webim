@@ -207,7 +207,7 @@ easemob = Object.assign({}, conmmonConfig, {
 app = Object.assign({}, conmmonConfig, {
 	name: "app",
 	entry: [
-		"./src/js/app/pages/main/init.js",
+		"./src/js/app/index.js",
 		"./src/scss/im.scss",
 		"./src/html/im.html",
 	],

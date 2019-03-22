@@ -760,6 +760,27 @@ getData.listen(function(msg){
 			excludeData: true,
 		});
 		break;
+	case "getFaqList":
+		emitAjax({
+			url: "/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/information/issues?page=0&size=1000",
+			msg: msg,
+			type: "GET",
+		});
+		break;
+	case "getSelfServiceList":
+		emitAjax({
+			url: "/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/information/self-service?page=0&size=8",
+			msg: msg,
+			type: "GET",
+		});
+		break;
+	case "getFaqOrSelfServiceStatus":
+		emitAjax({
+			url: "/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/visitors/options/" + params.type + "/status",
+			msg: msg,
+			type: "GET",
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;
