@@ -84,6 +84,9 @@
 			color: #1a1a1a;
 			box-shadow: 0 1px 3px rgba(0, 0, 0, .2) inset;
 		}
+		.em-widget-textarea::-webkit-scrollbar {
+			display: none;
+		}
 		.em-widget-send {
 			width: 64px;
 			right: 8px;
