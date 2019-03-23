@@ -33,7 +33,12 @@ function genMsgContent(msg){
 	case "customMagicEmoji":
 		// 给图片消息或附件消息的url拼上hostname
 		if(msg.url && !/^https?/.test(msg.url)){
-			msg.url = location.protocol + profile.config.domain + msg.url;
+			if (!/^http?/.test(location.protocol)) {
+				msg.url = location.protocol + profile.config.domain + msg.url;
+			} else {
+				msg.url = profile.config.domain + msg.url;
+			}
+			
 		}
 		// todo: remove a
 		html = "<a href=\"javascript:;\"><img class=\"em-widget-imgview\" src=\""
