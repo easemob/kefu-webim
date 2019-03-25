@@ -19,7 +19,10 @@ var body_template = require("raw-loader!../../../template/body.html");
 
 var config;
 var hasChatEntryInitialized;
-
+var configIdData = {
+	testId:   "79001cad-1be7-458c-a7d9-5437198ec691",
+	onlineId: "8aef20a0-b5a3-47f0-9a6b-3ecc23042eeb"
+}
 load_html();
 if(utils.isTop){
 	h5_mode_init();
@@ -32,10 +35,10 @@ if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
 	utils.addClass(longRangedom, "hide");
 }
 
-function hideTenantId(e){
+function hideConfigId(e){
 	var header = document.getElementsByClassName("em-widget-header")[0];
 	var chatWrapper = document.getElementsByClassName("chat-wrapper")[0];
-	if (e == 28601 || e == 28290) {
+	if (e == configIdData.testId || e == configIdData.onlineId) {
 		utils.addClass(header, "hide");
 		chatWrapper.style.top = 0 + "px";
 	}
@@ -294,7 +297,7 @@ function handleMsgData(){
 		apiHelper.getConfig(config.configId).then(function(entity){
 			config.tenantId = entity.tenantId;
 			if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
-				hideTenantId(config.tenantId);
+				hideConfigId(config.configId);
 			}
 			config.isgetConfigFlag = true
 			handleConfig(entity.configJson);
