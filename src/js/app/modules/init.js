@@ -31,8 +31,9 @@ if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
 	var longRangedom = document.getElementsByClassName("em-long-range")[0];
 	var header = document.getElementsByClassName("em-widget-header")[0];
 	var chatWrapper = document.getElementsByClassName("chat-wrapper")[0];
-	utils.addClass(longRangedom, "hide");
 	var tenantId = utils.query("tenantId");
+	console.log("tenantId:" + tenantId);
+	utils.addClass(longRangedom, "hide");
 	if (tenantId == 28601 || tenantId == 28290) {
 		utils.addClass(header, "hide");
 		chatWrapper.style.top = 0 + 'px';
