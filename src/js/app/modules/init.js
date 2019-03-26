@@ -20,7 +20,7 @@ var body_template = require("raw-loader!../../../template/body.html");
 var config;
 var hasChatEntryInitialized;
 var configIdData = {
-	testId:   "79001cad-1be7-458c-a7d9-5437198ec691",
+	testId:   "edadd3df-da9b-4dc6-a0d2-ce00e8f3b51c",
 	onlineId: "8aef20a0-b5a3-47f0-9a6b-3ecc23042eeb"
 }
 load_html();
