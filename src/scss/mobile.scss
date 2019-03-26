@@ -1,5 +1,16 @@
 .em-mobile {
 	border-radius: 0;
+	&.big-window{
+		.em-widget-wrapper,
+		.em-widget-send-wrapper{
+			width: 100%;
+		}
+	}
+	.em-widget-wrapper,
+	.em-self-wrapper,
+	.em-widget-send-wrapper{
+		width: 100%;
+	}
 	.em-widget-header-nickname,
 	.em-header-status-text,
 	{
@@ -10,6 +21,7 @@
 	}
 	.chat-wrapper {
 		bottom: 77px;
+		border-right: none;
 	}
 	.em-widget-tip span {
 		font-size: 14px;
@@ -70,6 +82,7 @@
 		box-sizing: border-box;
 		background-color: white;
 		box-shadow: 0 -1px 0 #e5e5e5;
+		border-right: none;
 		.em-widget-textarea {
 			height: 34px;
 			max-height: 88px;

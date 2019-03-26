@@ -4,6 +4,8 @@
 	width: 100%;
 	bottom: 0;
 	background-color: white;
+	border-right: 1px solid #e5e9f3;
+	box-sizing: border-box;
 	-webkit-backface-visibility: hidden;
 
 	.queuing-number-status {
@@ -79,13 +81,13 @@
 			50% {
 			  opacity: 0.2;
 			  -webkit-transform: scale(0.75);
-					  transform: scale(0.75); 
+					  transform: scale(0.75);
 				}
-		  
+
 			100% {
 			  opacity: 1;
 			  -webkit-transform: scale(1);
-					  transform: scale(1); 
+					  transform: scale(1);
 				}
 		}
 	}

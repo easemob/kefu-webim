@@ -1,3 +1,19 @@
+
+body.big-window{
+	.em-widget-wrapper,
+	.em-widget-send-wrapper{
+		width: 50%;
+	}
+	.em-self-wrapper{
+		display: block;
+	}
+	.em-dialog{
+		width: 50%;
+		box-sizing: border-box;
+		box-shadow: none;
+	}
+}
+
 /* 消息窗 */
 
 .chat-wrapper {
@@ -7,6 +23,8 @@
 	background-color: #F4F7FA;
 	width: 100%;
 	border-bottom: 1px solid #E5E9F3;
+	border-right: 1px solid #E5E9F3;
+	box-sizing: border-box;
 	color: #1a1a1a;
 	overflow-x: hidden;
 	overflow-y: auto;

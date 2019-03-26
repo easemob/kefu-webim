@@ -65,6 +65,9 @@
 	&.easemobim-dragging {
 		display: none;
 	}
+	&.easemobim-big{
+		width: 720px;
+	}
 }
 .easemobim-iframe-shadow {
 	left: auto;

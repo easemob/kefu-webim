@@ -19,12 +19,27 @@
 }
 
 .em-widget-wrapper {
+	float: left;
 	position: relative;
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
 	background-color: white;
 	border-radius: 4px;
+}
+
+.em-self-wrapper {
+	position: relative;
+	display: none;
+	float: right;
+	width: 50%;
+	height: 100%;
+	overflow: hidden;
+	background-color: white;
+	border-radius: 4px;
+	overflow-y: auto;
+	padding: 0 1.5em 3em;
+	box-sizing: border-box;
 }
 
 /*header*/
