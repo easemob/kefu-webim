@@ -68,8 +68,9 @@ conmmonConfig = {
 	module: {
 		loaders: [
 			// HtmlWebpackPlugin 需要此 loader
+			// 此 loader 优先级最低
 			{
-				test: /Tpl.html$/,
+				test: /\.html$/,
 				loaders: [ "html-loader" ]
 			},
 			{

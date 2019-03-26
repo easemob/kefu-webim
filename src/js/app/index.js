@@ -10,7 +10,7 @@ require("underscore");
 
 var utils = require("@/common/utils");
 var chat = require("./pages/main/chat");
-var body_template = require("raw-loader!../../template/body.html");
+var body_template = require("../../template/body.html");
 var main = require("./pages/main/init");
 var functionView = require("./pages/q&a");
 var commonConfig = require("@/common/config");
