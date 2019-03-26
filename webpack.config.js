@@ -140,6 +140,7 @@ conmmonConfig = {
 			//
 			{
 				test: [
+					/app\/index\.js$/,
 					/init\.js$/,
 					/userAPI\.js$/,
 					/uikit\/loading\.js$/,

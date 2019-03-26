@@ -24,6 +24,8 @@ module.exports = {
 		no_more_msg: "no more messages",
 		press_save_img: "Press to save the picture",
 		session_over_limit: "All agents are busy now. Please try again later…",
+		faq: "FAQs",
+		consult_agent: "Consult agent"
 	},
 	chat: {
 		agent_is_typing: "Agent is typing...",
