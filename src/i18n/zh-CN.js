@@ -24,6 +24,8 @@ module.exports = {
 		no_more_msg: "没有更多消息",
 		press_save_img: "长按图片保存到本地",
 		session_over_limit: "目前咨询人数较多，请稍候再试~~~",
+		faq: "常见问题",
+		consult_agent: "点此咨询客服"
 	},
 	chat: {
 		agent_is_typing: "正在输入...",
@@ -102,7 +104,7 @@ module.exports = {
 		ticket: "留言",
 		video_invite: "视频通话",
 		evaluate_agent: "评价客服",
-		transfer_to_kefu: "转人工",	
+		transfer_to_kefu: "转人工",
 		send_video: "发送小视频",
 	},
 	prompt: {

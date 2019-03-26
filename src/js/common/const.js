@@ -241,5 +241,5 @@ module.exports = {
 		"[(D)]": "ee_35.png",
 	},
 
+	SELFSERVICE_PATH: __("config.language") === "zh-CN" ? "static/img/selfServiceIcon/" : "../static/img/selfServiceIcon/",
 };
-
