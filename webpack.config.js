@@ -125,7 +125,7 @@ conmmonConfig = {
 			{
 				test: [
 					/init\.js$/,
-					/userAPI\.js$/,
+					/plugin\/index\/\.js$/,
 					/im\.html/,
 					/iframe\.js/,
 					/transfer\.html/,
@@ -142,7 +142,7 @@ conmmonConfig = {
 				test: [
 					/app\/index\.js$/,
 					/init\.js$/,
-					/userAPI\.js$/,
+					/plugin\/index\/\.js$/,
 					/uikit\/loading\.js$/,
 					/tools\/messageFactory\.js$/,
 					/transfer\/api.js$/,
@@ -192,7 +192,7 @@ easemob = Object.assign({}, conmmonConfig, {
 	name: "easemob",
 	entry: [
 		"./src/js/common/polyfill",
-		"./src/js/plugin/userAPI.js",
+		"./src/js/plugin/index.js",
 	],
 	output: {
 		filename: "easemob.js",
