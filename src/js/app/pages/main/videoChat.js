@@ -22,7 +22,7 @@ var Dispatcher = require("@/app/tools/Dispatcher");
 
 var statusBar = require("./uikit/videoStatusBar");
 var videoPanel = require("./uikit/videoPanel");
-var videoChatTemplate = require("raw-loader!../../../../template/videoChat.html");
+var videoChatTemplate = require("../../../../template/videoChat.html");
 
 var _initOnce = _.once(_init);
 var parentContainer;

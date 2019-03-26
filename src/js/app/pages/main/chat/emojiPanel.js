@@ -1,4 +1,4 @@
-var template = require("raw-loader!../../../../../template/emojiPanel.html");
+var template = require("../../../../../template/emojiPanel.html");
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
 var apiHelper = require("../apiHelper");
