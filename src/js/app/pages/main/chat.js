@@ -1,6 +1,7 @@
 var WebIM = require("easemob-websdk");
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
+var commonConfig = require("@/common/config");
 var uikit = require("./uikit");
 var apiHelper = require("./apiHelper");
 var eventListener = require("@/app/tools/eventListener");
@@ -88,13 +89,10 @@ function _initSystemEventListener(){
 }
 
 function _initUI(){
-	(utils.isTop || !config.minimum) && utils.removeClass(doms.imChat, "hide");
+	((utils.isTop && !utils.isMobile) || !config.minimum) && utils.removeClass(doms.imChat, "hide");
 
 	// 设置联系客服按钮文字
 	document.querySelector(".em-widget-pop-bar").innerText = config.buttonText;
-
-	// 添加移动端样式类
-	utils.isMobile && utils.addClass(document.body, "em-mobile");
 
 	// 最小化按钮
 	config.minimum
@@ -841,7 +839,7 @@ function _init(){
 	if(profile.grayList.guessUSay){
 		guessInfo.addEvents();
 	}
-	config = profile.config;
+	config = commonConfig.getConfig();
 
 	channel.init();
 
