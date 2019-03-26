@@ -3,13 +3,13 @@ var _const = require("@/common/const");
 var emajax = require("@/common/ajax");
 var Transfer = require("@/common/transfer");
 var profile = require("@/app/tools/profile");
+var commonConfig = require("@/common/config");
 
 // 以下调用会缓存参数
 // getVisitorId
 // getProjectId
 // getToken
 
-var config;
 var cache = {
 	appraiseTags: {}
 };
@@ -66,6 +66,7 @@ function api(apiName, data, success, error){
 }
 
 function getCurrentServiceSession(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getCurrentServiceSession", {
 			tenantId: config.tenantId,
@@ -82,6 +83,7 @@ function getCurrentServiceSession(){
 }
 
 function getToken(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		var token = profile.imToken;
 
@@ -128,6 +130,7 @@ function getToken(){
 	});
 }
 function getNotice(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		if(config.isWebChannelConfig){
 			resolve(config.notice);
@@ -149,6 +152,7 @@ function getNotice(){
 	});
 }
 function getTheme(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		if(config.isWebChannelConfig){
 			resolve(config.themeName);
@@ -178,6 +182,7 @@ function getConfig(configId){
 	});
 }
 function getProjectId(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		if(cache.projectId){
 			resolve(cache.projectId);
@@ -209,6 +214,7 @@ function getProjectId(){
 }
 
 function getNoteCategories(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		Promise.all([
 			getToken(),
@@ -236,6 +242,7 @@ function getNoteCategories(){
 }
 
 function createTicket(opt){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("createTicket", {
 			tenantId: config.tenantId,
@@ -275,6 +282,7 @@ function createTicket(opt){
 }
 
 function getVisitorId(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		if(cache.visitorId){
 			resolve(cache.visitorId);
@@ -307,6 +315,7 @@ function getVisitorId(){
 }
 
 function getOfficalAccounts(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		Promise.all([
 			getVisitorId(),
@@ -343,6 +352,7 @@ function getOfficalAccounts(){
 }
 
 function getOfficalAccountMessage(officialAccountId, startId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		Promise.all([
 			getVisitorId(),
@@ -382,6 +392,7 @@ function getOfficalAccountMessage(officialAccountId, startId){
 
 // 获取上下班状态，false 代表上班，true 代表下班
 function getDutyStatus(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve/* , reject */){
 		api("getDutyStatus_2", {
 			channelType: "easemob",
@@ -402,6 +413,7 @@ function getDutyStatus(){
 }
 
 function getGrayList(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve/* , reject */){
 		api("grayScale", {
 			tenantId: config.tenantId,
@@ -428,6 +440,7 @@ function getGrayList(){
 }
 
 function getRobertGreeting(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getRobertGreeting_2", {
 			channelType: "easemob",
@@ -445,6 +458,7 @@ function getRobertGreeting(){
 }
 
 function getRobertIsOpen(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		if(typeof cache.isRobotOpen === "boolean"){
 			resolve(cache.isRobotOpen);
@@ -470,6 +484,7 @@ function getRobertIsOpen(){
 }
 
 function getSystemGreeting(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getSystemGreeting", {
 			tenantId: config.tenantId
@@ -482,6 +497,7 @@ function getSystemGreeting(){
 }
 
 function getExSession(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getExSession_2", {
 			username: config.user.username,
@@ -509,6 +525,7 @@ function getExSession(){
 }
 
 function getAgentStatus(agentUserId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		// todo: discard this
 		// 没有token 不发送请求 也不报错
@@ -534,6 +551,7 @@ function getAgentStatus(agentUserId){
 }
 
 function getLastSession(officialAccountId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		Promise.all([
 			getVisitorId(),
@@ -571,6 +589,7 @@ function getLastSession(officialAccountId){
 }
 
 function getSkillgroupMenu(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getSkillgroupMenu", {
 			tenantId: config.tenantId
@@ -583,6 +602,7 @@ function getSkillgroupMenu(){
 }
 
 function reportVisitorAttributes(sessionId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		getToken().then(function(token){
 			api("reportVisitorAttributes", {
@@ -604,6 +624,7 @@ function reportVisitorAttributes(sessionId){
 }
 
 function reportPredictMessage(sessionId, content){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		Promise.all([
 			getVisitorId(),
@@ -632,6 +653,7 @@ function reportPredictMessage(sessionId, content){
 }
 
 function getAgentInputState(sessionId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		getToken().then(function(token){
 			api("getAgentInputState", {
@@ -651,6 +673,7 @@ function getAgentInputState(sessionId){
 }
 
 function getWaitListNumber(sessionId, queueId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getWaitListNumber", {
 			tenantId: config.tenantId,
@@ -665,6 +688,7 @@ function getWaitListNumber(sessionId, queueId){
 }
 
 function getNickNameOption(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getNickNameOption", {
 			tenantId: config.tenantId
@@ -678,6 +702,7 @@ function getNickNameOption(){
 }
 
 function closeServiceSession(sessionId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		getToken().then(function(token){
 			api("closeServiceSession", {
@@ -697,6 +722,7 @@ function closeServiceSession(sessionId){
 }
 
 function createVisitor(specifiedUserName){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("createVisitor", {
 			orgName: config.orgName,
@@ -720,6 +746,7 @@ function createVisitor(specifiedUserName){
 }
 
 function getPassword(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getPassword2", {
 			userId: config.user.username,
@@ -757,6 +784,7 @@ function getPassword(){
 }
 
 function getRelevanceList(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getRelevanceList", {
 			tenantId: config.tenantId
@@ -788,6 +816,7 @@ function deleteEvent(gid){
 }
 
 function reportEvent(url, userType, userId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("reportEvent", {
 			type: "VISIT_URL",
@@ -814,6 +843,7 @@ function reportEvent(url, userType, userId){
 }
 
 function receiveMsgChannel(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("receiveMsgChannel", {
 			orgName: config.orgName,
@@ -838,6 +868,7 @@ function receiveMsgChannel(){
 }
 
 function sendMsgChannel(body, ext){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("sendMsgChannel", {
 			from: config.user.username,
@@ -857,6 +888,7 @@ function sendMsgChannel(body, ext){
 }
 
 function uploadImgMsgChannel(file){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		getToken().then(function(token){
 			api("uploadImgMsgChannel", {
@@ -876,6 +908,7 @@ function uploadImgMsgChannel(file){
 }
 
 function reportMarketingTaskDelivered(marketingTaskId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		Promise.all([
 			getVisitorId(),
@@ -910,6 +943,7 @@ function reportMarketingTaskDelivered(marketingTaskId){
 }
 
 function reportMarketingTaskOpened(marketingTaskId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		Promise.all([
 			getVisitorId(),
@@ -944,6 +978,7 @@ function reportMarketingTaskOpened(marketingTaskId){
 }
 
 function reportMarketingTaskReplied(marketingTaskId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		Promise.all([
 			getVisitorId(),
@@ -978,6 +1013,7 @@ function reportMarketingTaskReplied(marketingTaskId){
 }
 
 function getLatestMarketingTask(officialAccountId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		getToken().then(function(token){
 			api("getLatestMarketingTask", {
@@ -998,6 +1034,7 @@ function getLatestMarketingTask(officialAccountId){
 }
 
 function getEvaluationDegrees(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		if(cache.evaluationDegrees){
 			resolve(cache.evaluationDegrees);
@@ -1028,6 +1065,7 @@ function getEvaluationDegrees(){
 }
 
 function getAppraiseTags(evaluateId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		if(cache.appraiseTags[evaluateId]){
 			resolve(cache.appraiseTags[evaluateId]);
@@ -1106,6 +1144,7 @@ function getWechatProfile(tenantId, appId, code){
 }
 
 function createWechatImUser(openId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		emajax({
 			url: "/v1/webimplugin/visitors/wechat/"
@@ -1146,6 +1185,7 @@ function createWechatImUser(openId){
 }
 
 function getCustomEmojiPackages(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getCustomEmojiPackages", { tenantId: config.tenantId }, function(msg){
 			var entities = utils.getDataByPath(msg, "data.entities");
@@ -1163,6 +1203,7 @@ function getCustomEmojiPackages(){
 }
 
 function getCustomEmojiFiles(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getCustomEmojiFiles", { tenantId: config.tenantId }, function(msg){
 			var entities = utils.getDataByPath(msg, "data.entities");
@@ -1180,6 +1221,7 @@ function getCustomEmojiFiles(){
 }
 
 function getSatisfactionTipWord(){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getSatisfactionTipWord", {
 			tenantId: config.tenantId
@@ -1195,6 +1237,7 @@ function getSatisfactionTipWord(){
 }
 
 function updateCustomerInfo(data){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		Promise.all([
 			getVisitorId(),
@@ -1218,6 +1261,7 @@ function updateCustomerInfo(data){
 }
 
 function getArticleJson(data){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getArticleJson", {
 			media_id: data.media_id,
@@ -1234,6 +1278,7 @@ function getArticleJson(data){
 }
 // 猜你想说 接口列表
 function getGuessList(data){
+	var config = commonConfig.getConfig();
 	var officialAccount = profile.currentOfficialAccount;
 	if(!officialAccount) return;
 	return new Promise(function(resolve, reject){
@@ -1249,6 +1294,7 @@ function getGuessList(data){
 }
 
 function getStatisfyYes(robotAgentId, satisfactionCommentKey){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		emajax({
 			url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
@@ -1279,6 +1325,7 @@ function getStatisfyYes(robotAgentId, satisfactionCommentKey){
 	});
 }
 function getStatisfyNo(robotAgentId, satisfactionCommentKey){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		emajax({
 			url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
@@ -1310,6 +1357,7 @@ function getStatisfyNo(robotAgentId, satisfactionCommentKey){
 }
 
 function getSatisfactionCommentTags(robotAgentId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getSatisfactionCommentTags", {
 			tenantId: config.tenantId,
@@ -1329,6 +1377,7 @@ function getSatisfactionCommentTags(robotAgentId){
 	});
 }
 function confirmSatisfaction(robotAgentId, satisfactionCommentKey, selected){
+	var config = commonConfig.getConfig();
 	var data = {
 		satisfactionCommentKey: satisfactionCommentKey,
 		type: 2,
@@ -1362,6 +1411,7 @@ function confirmSatisfaction(robotAgentId, satisfactionCommentKey, selected){
 	});
 }
 function getFaqList(configId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getFaqList", {
 			tenantId: config.tenantId,
@@ -1381,6 +1431,7 @@ function getFaqList(configId){
 	});
 }
 function getSelfServiceList(configId){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getSelfServiceList", {
 			tenantId: config.tenantId,
@@ -1401,6 +1452,7 @@ function getSelfServiceList(configId){
 }
 
 function getFaqOrSelfServiceStatus(configId, type){
+	var config = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("getFaqOrSelfServiceStatus", {
 			tenantId: config.tenantId,
@@ -1487,8 +1539,5 @@ module.exports = {
 	},
 	clearCacheItem: function(key){
 		cache[key] = null;
-	},
-	init: function(cfg){
-		config = cfg;
 	}
 };
