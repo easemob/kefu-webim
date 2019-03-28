@@ -213,11 +213,7 @@ function _ready(){
 			pcImgView(data);
 			break;
 		case _const.EVENTS.RESET_IFRAME:
-			me.config.dialogWidth = data.dialogWidth;
-			me.config.dialogHeight = data.dialogHeight;
-			me.config.dialogPosition = data.dialogPosition;
-
-			me._updatePosition();
+			me._updatePosition(data);
 			break;
 		case _const.EVENTS.ADD_PROMPT:
 			utils.addClass(me.iframe, "easemobim-has-prompt");
@@ -278,7 +274,7 @@ function Iframe(config){
 		});
 	}
 
-	me.config = utils.copy(config);
+	me.config = config;
 	me.iframe = iframe;
 	me.shadow = shadow;
 	me.show = false;
@@ -297,18 +293,6 @@ Iframe.prototype.set = function(config, callback){
 	var shadowBackgroundImage = this.config.staticPath + "/img/drag.png";
 
 	this.config = utils.copy(config || this.config);
-
-	if(!this.config.user.username){
-		// 从cookie里取用户名
-		// keyName = [to + ] tenantId [ + emgroup]
-		this.config.isUsernameFromCookie = true;
-		this.config.user.username = utils.get(
-			config.configId || ((this.config.to || "") + this.config.tenantId + (this.config.emgroup || ""))
-		);
-	}
-
-	// 这个是别人种的cookie
-	this.config.guestId = utils.getStore("guestId");
 
 	this.position = {
 		x: this.config.dialogPosition.x.slice(0, -2),
@@ -332,10 +316,10 @@ Iframe.prototype.set = function(config, callback){
 	return this;
 };
 
-Iframe.prototype._updatePosition = function(){
+Iframe.prototype._updatePosition = function(newData){
 	var iframe = this.iframe;
 	var shadow = this.shadow;
-	var config = this.config;
+	var config = newData || this.config;
 
 	iframe.style.width = config.dialogWidth;
 	iframe.style.height = config.dialogHeight;

@@ -317,6 +317,10 @@ function handleMsgData(){
 
 
 function handleSettingIframeSize(params){
+	// 把 iframe 里收到 _const.EVENTS.RESET_IFRAME 事件时设置 config 参数移到这里了
+	if(params){
+		commonConfig.setConfig(params);
+	}
 	params = params || {};
 	// 重新去设置iframe 的宽高
 	transfer.send({
