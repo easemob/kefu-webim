@@ -2,6 +2,7 @@ var _const = require("@/common/const");
 var utils = require("@/common/utils");
 var profile = require("@/app/tools/profile");
 var eventListener = require("@/app/tools/eventListener");
+var commonConfig = require("@/common/config").getConfig();
 
 var $agentNickname;
 
@@ -33,7 +34,7 @@ function _updateAgentNickname(officialAccount){
 	// fake: update system agent avatar
 	if(officialAccountType === "SYSTEM"){
 		profile.systemAgentAvatar = isSessionOpen
-			? utils.getAvatarsFullPath(agentAvatar, profile.config.domain)
+			? utils.getAvatarsFullPath(agentAvatar, commonConfig.domain)
 			: null;
 	}
 

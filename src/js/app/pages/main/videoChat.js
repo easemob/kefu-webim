@@ -19,6 +19,7 @@ var eventListener = require("@/app/tools/eventListener");
 var utils = require("@/common/utils");
 var tools = require("@/app/tools/tools");
 var Dispatcher = require("@/app/tools/Dispatcher");
+var commonConfig = require("@/common/config").getConfig();
 
 var statusBar = require("./uikit/videoStatusBar");
 var videoPanel = require("./uikit/videoPanel");
@@ -44,7 +45,7 @@ function _init(){
 
 	parentContainer.appendChild(videoWidget);
 
-	config = profile.config;
+	config = commonConfig;
 
 	// init emedia config
 	// window.emedia.config({ autoSub: false });

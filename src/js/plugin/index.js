@@ -88,7 +88,7 @@ function setConfig(configExt){
 	_config = _.extend({}, _config, configExt);
 }
 
-function getConig(){
+function getConfig(){
 	return JSON.parse(JSON.stringify(_config));
 }
 
@@ -167,26 +167,26 @@ easemobim.bind = function(config){
 			return;
 		}
 
-		iframe = Iframe(getConig());
+		iframe = Iframe(getConfig());
 		tenantList[cacheKeyName] = iframe;
 
-		if(!getConig().user.username){
+		if(!getConfig().user.username){
 			// 从cookie里取用户名
 			// keyName = [to + ] tenantId [ + emgroup]
 			setConfig({
 				isUsernameFromCookie: true,
 				user: _.extend(
 					{},
-					getConig().user,
+					getConfig().user,
 					{
 						username: utils.get(
-						getConig().configId || ((getConig().to || "") + getConig().tenantId + (getConig().emgroup || ""))
+						getConfig().configId || ((getConfig().to || "") + getConfig().tenantId + (getConfig().emgroup || ""))
 						)
 					})
 			});
 		}
 
-		iframe.set(getConig(), iframe.open);
+		iframe.set(getConfig(), iframe.open);
 	}
 
 };

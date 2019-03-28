@@ -9,6 +9,7 @@ var eventListener = require("@/app/tools/eventListener");
 var textParser = require("@/app/tools/textParser");
 var apiHelper = require("@/app/common/apiHelper");
 var moment = require("moment");
+var commonConfig = require("@/common/config");
 
 var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;
@@ -50,7 +51,7 @@ var _open = tools.retryThrottle(function(){
 module.exports = {
 	// todo: discard this
 	init: function(){
-		config = profile.config;
+		config = commonConfig.getConfig();
 	},
 	initConnection: _initConnection,
 	reSend: _reSend,
@@ -775,7 +776,7 @@ function _setExt(msg){
 	var bindAgentUsername = officialAccount.bindAgentUsername;
 	var bindSkillGroupName = officialAccount.bindSkillGroupName;
 	var language = __("config.language");
-	var customExtendMessage = profile.config.customExtendMessage;
+	var customExtendMessage = commonConfig.customExtendMessage;
 
 	msg.body.ext = msg.body.ext || {};
 	msg.body.ext.weichat = msg.body.ext.weichat || {};

@@ -43,7 +43,6 @@ else{
 		case _const.EVENTS.INIT_CONFIG:
 			window.transfer.to = data.parentId;
 			commonConfig.setConfig(data);
-			profile.config = commonConfig.getConfig();
 			initCrossOriginIframe();
 			break;
 		default:
@@ -263,12 +262,12 @@ function handleMsgData(){
 	commonConfig.setConfig({
 		user: commonConfig.getConfig().user || {},
 		visitor: commonConfig.getConfig().visitor || {},
-		channel: {},
-		ui: {
+		channel: commonConfig.getConfig().channel || {},
+		ui: commonConfig.getConfig().ui || {
 			H5Title: {}
 		},
-		toolbar: {},
-		chat: {}
+		toolbar: commonConfig.getConfig().toolbar || {},
+		chat: commonConfig.getConfig().chat || {}
 	});
 
 	profile.defaultAvatar = commonConfig.getConfig().staticPath + "/img/default_avatar.png";
