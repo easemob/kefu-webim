@@ -1,3 +1,4 @@
+require("underscore");
 var utils = require("../common/utils");
 var loading = require("./loading");
 var Iframe = require("./iframe");
@@ -7,7 +8,7 @@ var config;
 var cacheKeyName;
 
 // get parameters from easemob.js
-var baseConfig = getConfig();
+var baseConfig = getScriptConfig();
 var _config = {};
 var iframe;
 
@@ -53,37 +54,46 @@ DEFAULT_CONFIG = {
 };
 config = utils.copy(DEFAULT_CONFIG);
 
-
-
-
 reset();
-
-// growing io user id
-// 由于存在 cookie 跨域问题，所以从配置传过去
-config.grUserId = utils.get("gr_user_id");
-
 
 // init _config & concat config and global easemobim.config
 function reset(){
-	config = utils.copy(DEFAULT_CONFIG);
-	utils.extend(config, easemobim.config);
-	_config = utils.copy(config);
+	var hide;
+	var resources;
+	var sat;
+	// growing io user id
+	// 由于存在 cookie 跨域问题，所以从配置传过去
+	var configData = _.extend({}, DEFAULT_CONFIG, { grUserId: utils.get("gr_user_id") });
+	configData = _.extend({}, configData, easemobim.config);
 
-	var hide = utils.convertFalse(_config.hide) !== "" ? _config.hide : baseConfig.json.hide;
-	var resources = utils.convertFalse(_config.resources) !== "" ? _config.resources : baseConfig.json.resources;
-	var sat = utils.convertFalse(_config.satisfaction) !== "" ? _config.satisfaction : baseConfig.json.sat;
+	hide = utils.convertFalse(configData.hide) !== "" ? configData.hide : baseConfig.json.hide;
+	resources = utils.convertFalse(_config.resources) !== "" ? configData.resources : baseConfig.json.resources;
+	sat = utils.convertFalse(configData.satisfaction) !== "" ? configData.satisfaction : baseConfig.json.sat;
 
-	_config.tenantId = _config.tenantId || baseConfig.json.tenantId;
-	_config.configId = _config.configId || baseConfig.json.configId;
-	_config.hide = utils.convertFalse(hide);
-	_config.resources = utils.convertFalse(resources);
-	_config.satisfaction = utils.convertFalse(sat);
-	_config.domain = _config.domain || baseConfig.domain;
-	_config.path = _config.path || (baseConfig.domain + "__WEBIM_SLASH_KEY_PATH__/webim");
-	_config.staticPath = _config.staticPath || (baseConfig.domain + "__WEBIM_SLASH_KEY_PATH__/webim/static");
+	configData = _.extend({}, configData, {
+		tenantId: configData.tenantId || baseConfig.json.tenantId,
+		configId: configData.configId || baseConfig.json.configId,
+		hide: utils.convertFalse(hide),
+		resources: utils.convertFalse(resources),
+		satisfaction: utils.convertFalse(sat),
+		domain: configData.domain || baseConfig.domain,
+		path: configData.path || (baseConfig.domain + "__WEBIM_SLASH_KEY_PATH__/webim"),
+		staticPath: configData.staticPath || (baseConfig.domain + "__WEBIM_SLASH_KEY_PATH__/webim/static"),
+		guestId: utils.getStore("guestId") // 这个是别人种的cookie
+	});
+	setConfig(configData);
 }
+
+function setConfig(configExt){
+	_config = _.extend({}, _config, configExt);
+}
+
+function getConig(){
+	return JSON.parse(JSON.stringify(_config));
+}
+
 // get config from current script
-function getConfig(){
+function getScriptConfig(){
 	var src;
 	var obj = {};
 	var scripts = document.scripts;
@@ -150,16 +160,33 @@ easemobim.bind = function(config){
 	else{
 		utils.isMobile && loading.show();
 		reset();
-		utils.extend(_config, config);
+		setConfig(config);
 
 		if(!_config.tenantId && !_config.configId){
 			console.error("No tenantId is specified.");
 			return;
 		}
 
-		iframe = Iframe(_config);
+		iframe = Iframe(getConig());
 		tenantList[cacheKeyName] = iframe;
-		iframe.set(_config, iframe.open);
+
+		if(!getConig().user.username){
+			// 从cookie里取用户名
+			// keyName = [to + ] tenantId [ + emgroup]
+			setConfig({
+				isUsernameFromCookie: true,
+				user: _.extend(
+					{},
+					getConig().user,
+					{
+						username: utils.get(
+						getConig().configId || ((getConig().to || "") + getConig().tenantId + (getConig().emgroup || ""))
+						)
+					})
+			});
+		}
+
+		iframe.set(getConig(), iframe.open);
 	}
 
 };
