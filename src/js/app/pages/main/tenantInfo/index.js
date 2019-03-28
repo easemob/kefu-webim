@@ -1,4 +1,4 @@
-var apiHelper = require("@/app/pages/main/apiHelper");
+var apiHelper = require("@/app/common/apiHelper");
 var PopupList = require("@/app/pages/main/uikit/popupList");
 var utils = require("@/common/utils");
 var channel = require("@/app/pages/main/channel");

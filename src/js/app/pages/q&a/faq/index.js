@@ -1,4 +1,4 @@
-var apiHelper = require("@/app/pages/main/apiHelper");
+var apiHelper = require("@/app/common/apiHelper");
 var commonConfig = require("@/common/config");
 var utils = require("@/common/utils");
 var tpl = require("./indexTpl.html");

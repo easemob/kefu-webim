@@ -8,7 +8,7 @@ var utils = require("@/common/utils");
 var _const = require("@/common/const");
 
 var uikit = require("./uikit");
-var apiHelper = require("./apiHelper");
+var apiHelper = require("@/app/common/apiHelper");
 var eventCollector = require("./eventCollector");
 var chat = require("./chat");
 var channel = require("./channel");

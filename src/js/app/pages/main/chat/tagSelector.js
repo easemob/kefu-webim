@@ -5,7 +5,7 @@ var tips =			require("@/common/uikit/tips");
 var uikit = require("../uikit");
 
 // var profile =		require("@/app/tools/profile");
-var apiHelper =		require("../apiHelper");
+var apiHelper =		require("@/app/common/apiHelper");
 var tpl =			require("./template/tagsTpl.html");
 
 var TagSelector = classUtils.createView({

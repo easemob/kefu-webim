@@ -9,7 +9,7 @@
 // 7. exec success callback
 
 var utils = require("@/common/utils");
-var apiHelper = require("./apiHelper");
+var apiHelper = require("@/app/common/apiHelper");
 var profile = require("@/app/tools/profile");
 
 var isWechatBrowser = /MicroMessenger/.test(navigator.userAgent);
