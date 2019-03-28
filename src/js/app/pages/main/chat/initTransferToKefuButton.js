@@ -4,11 +4,12 @@ var profile = require("@/app/tools/profile");
 var eventListener = require("@/app/tools/eventListener");
 var apiHelper = require("@/app/common/apiHelper");
 var channel = require("../channel");
+var commonConfig = require("@/common/config");
 
 var toKefuBtn;
 
 module.exports = function(){
-	if(!profile.config.toolbar.transferToKefu) return;
+	if(!commonConfig.getConfig().toolbar.transferToKefu) return;
 
 	var editorView = document.querySelector(".em-widget-send-wrapper");
 	toKefuBtn = editorView.querySelector(".em-widget-to-kefu");

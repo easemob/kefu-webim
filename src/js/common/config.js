@@ -41,7 +41,6 @@ function h5_mode_init(){
 	}
 	else{}
 
-	profile.config = config;
 	// fake transfer
 	window.transfer = {
 		send: function(){}
@@ -88,16 +87,14 @@ function handleConfig(configJson){
 	config.hideStatus = configJson.chat.hideStatus;
 	config.timeScheduleId = configJson.chat.timeScheduleId || 0;
 
-	profile.config = config;
 }
 
 function setConfig(extendConfig){
 	config = _.extend({}, config, extendConfig);
-	profile.config = config;
 }
 
 function getConfig(){
-	return config;
+	return JSON.parse(JSON.stringify(config));
 }
 
 module.exports = {

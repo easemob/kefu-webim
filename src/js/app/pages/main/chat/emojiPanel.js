@@ -5,6 +5,7 @@ var apiHelper = require("@/app/common/apiHelper");
 var profile = require("@/app/tools/profile");
 var channel = require("../channel");
 var List = require("@/app/tools/List");
+var commonConfig = require("@/common/config").getConfig();
 
 var HEIGHT_OF_TOP_NAVIGATOR = 43;
 var MAGIC_EMOJI_COUNT_PER_LINE = 6;
@@ -144,7 +145,7 @@ function _genEmojiPackageHtmlList(packageList, fileList){
 		var currentPageHtml =  _.chain(filesInCurrentPackage)
 		// 生成图标html
 		.map(function(item){
-			var thumbnailUrl = utils.formatProtocol(profile.config.domain) + item.thumbnailUrl;
+			var thumbnailUrl = utils.formatProtocol(commonConfig.domain) + item.thumbnailUrl;
 			var originUrl = item.originUrl;
 
 			return "<div class=\"emoji-bg e-face\">"

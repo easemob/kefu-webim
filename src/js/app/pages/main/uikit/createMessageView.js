@@ -5,6 +5,7 @@ var genDomFromMsg = require("@/app/tools/messageFactory");
 var eventListener = require("@/app/tools/eventListener");
 var apiHelper = require("@/app/common/apiHelper");
 var channel = require("../channel");
+var commonConfig = require("@/common/config").getConfig();
 
 var tpl = require("../../../../../template/chatContainer.html");
 
@@ -26,7 +27,7 @@ module.exports = function(opt){
 	if(profile.grayList.poweredByEasemob){
 		utils.addClass(el, "paddingTo48");
 		utils.addClass(noMoreMsg, "top34");
-		url = "http://www.easemob.com/product/cs?utm_source=csw&tenantid=" + profile.config.tenantId;
+		url = "http://www.easemob.com/product/cs?utm_source=csw&tenantid=" + commonConfig.tenantId;
 		utils.appendHTMLTo(el, "<div class=\"easemob-copyright\"><a target=\"_blank\" href=" + url + "><span>即时聊天基于<i class=\"icon-easemob\"></i><span>环信</span></span></a></div>");
 	}
 
