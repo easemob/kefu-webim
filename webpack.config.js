@@ -126,7 +126,7 @@ conmmonConfig = {
 			{
 				test: [
 					/init\.js$/,
-					/plugin\/index\/\.js$/,
+					/plugin\/index\.js$/,
 					/im\.html/,
 					/iframe\.js/,
 					/transfer\.html/,
@@ -143,7 +143,7 @@ conmmonConfig = {
 				test: [
 					/app\/index\.js$/,
 					/init\.js$/,
-					/plugin\/index\/\.js$/,
+					/plugin\/index\.js$/,
 					/uikit\/loading\.js$/,
 					/tools\/messageFactory\.js$/,
 					/transfer\/api.js$/,
