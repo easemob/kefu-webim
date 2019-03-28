@@ -7,7 +7,7 @@ var profile = require("@/app/tools/profile");
 var tools = require("@/app/tools/tools");
 var eventListener = require("@/app/tools/eventListener");
 var textParser = require("@/app/tools/textParser");
-var apiHelper = require("./apiHelper");
+var apiHelper = require("@/app/common/apiHelper");
 var moment = require("moment");
 
 var isNoAgentOnlineTipShowed;

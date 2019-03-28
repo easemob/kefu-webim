@@ -3,7 +3,7 @@ var _const = require("@/common/const");
 var profile = require("@/app/tools/profile");
 var genDomFromMsg = require("@/app/tools/messageFactory");
 var eventListener = require("@/app/tools/eventListener");
-var apiHelper = require("../apiHelper");
+var apiHelper = require("@/app/common/apiHelper");
 var channel = require("../channel");
 
 var tpl = require("../../../../../template/chatContainer.html");

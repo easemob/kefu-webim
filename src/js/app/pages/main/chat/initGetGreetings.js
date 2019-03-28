@@ -1,7 +1,7 @@
 var _const = require("@/common/const");
 var profile = require("@/app/tools/profile");
 var eventListener = require("@/app/tools/eventListener");
-var apiHelper = require("../apiHelper");
+var apiHelper = require("@/app/common/apiHelper");
 var channel = require("../channel");
 
 module.exports = function(){

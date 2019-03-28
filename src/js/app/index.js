@@ -14,11 +14,11 @@ var body_template = require("../../template/body.html");
 var main = require("./pages/main/init");
 var functionView = require("./pages/q&a");
 var commonConfig = require("@/common/config");
-var apiHelper = require("./pages/main/apiHelper");
+var apiHelper = require("@/app/common/apiHelper");
 var _const = require("@/common/const");
 var profile = require("@/app/tools/profile");
 var handleConfig = commonConfig.handleConfig;
-var doWechatAuth = require("./pages/main/wechat");
+var doWechatAuth = require("@/app/common/wechat");
 
 var selfWrapper = document.querySelector(".em-self-wrapper");
 var widgetWapper = document.querySelector(".em-widget-wrapper");

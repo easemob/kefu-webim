@@ -2,7 +2,7 @@ var _const = require("@/common/const");
 var utils = require("@/common/utils");
 var profile = require("@/app/tools/profile");
 var eventListener = require("@/app/tools/eventListener");
-var apiHelper = require("../apiHelper");
+var apiHelper = require("@/app/common/apiHelper");
 
 var preventTimestamp = 0;
 var inputState;
