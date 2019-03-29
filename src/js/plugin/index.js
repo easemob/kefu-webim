@@ -4,13 +4,12 @@ var loading = require("./loading");
 var Iframe = require("./iframe");
 var tenantList = {};
 var DEFAULT_CONFIG;
-var config;
-var cacheKeyName;
 
 // get parameters from easemob.js
 var baseConfig = getScriptConfig();
 var _config = {};
 var iframe;
+var bind;
 
 window.easemobim = window.easemobim || {};
 window.easemobim.config = window.easemobim.config || {};
@@ -52,9 +51,8 @@ DEFAULT_CONFIG = {
 		token: ""
 	}
 };
-config = utils.copy(DEFAULT_CONFIG);
 
-reset();
+
 
 // init _config & concat config and global easemobim.config
 function reset(){
@@ -86,10 +84,6 @@ function reset(){
 
 function setConfig(configExt){
 	_config = _.extend({}, _config, configExt);
-}
-
-function getConfig(){
-	return JSON.parse(JSON.stringify(_config));
 }
 
 // get config from current script
@@ -138,56 +132,72 @@ window.easemobIMS = function(tenantId, group){
 /*
  * @param: {Object} config
  */
-easemobim.bind = function(config){
+
+bind = function(config, autoLoad){
+	var cacheKeyName;
 	var i;
-	// 防止空参数调用异常
-	config = config || {};
-	config.emgroup = config.emgroup || easemobim.config.emgroup || "";
+	reset();
+	// 自动加载的
+	// 后续把此 if else 消除掉
+	if(autoLoad){
+		if(
+			(!_config.hide || _config.autoConnect || _config.eventCollector)
+			&& (_config.tenantId || _config.configId) && !utils.isMobile
+		){
+			cacheKeyName = _config.configId || (_config.tenantId + (_config.emgroup || ""));
 
-	var cacheKeyName = config.configId || (config.tenantId + config.emgroup);
-
-	for(i in tenantList){
-		if(Object.prototype.hasOwnProperty.call(tenantList, i)){
-			tenantList[i].close();
+			iframe = tenantList[cacheKeyName] || Iframe(_config);
+			tenantList[cacheKeyName] = iframe;
+			iframe.set(_config, iframe.close);
+			// 访客上报用后失效
+			easemobim.config.eventCollector = false;
 		}
 	}
-
-	iframe = tenantList[cacheKeyName];
-
-	if(iframe){
-		iframe.open();
-	}
+	// 用户点击的
 	else{
-		utils.isMobile && loading.show();
-		reset();
-		setConfig(config);
+		// 防止空参数调用异常
+		config = config || {};
+		config.emgroup = config.emgroup || easemobim.config.emgroup || "";
 
-		if(!_config.tenantId && !_config.configId){
-			console.error("No tenantId is specified.");
-			return;
+		cacheKeyName = config.configId || (config.tenantId + config.emgroup);
+
+		for(i in tenantList){
+			if(Object.prototype.hasOwnProperty.call(tenantList, i)){
+				tenantList[i].close();
+			}
 		}
 
-		iframe = Iframe(getConfig());
-		tenantList[cacheKeyName] = iframe;
+		iframe = tenantList[cacheKeyName];
 
-		if(!getConfig().user.username){
-			// 从cookie里取用户名
-			// keyName = [to + ] tenantId [ + emgroup]
-			setConfig({
-				isUsernameFromCookie: true,
-				user: _.extend(
-					{},
-					getConfig().user,
-					{
-						username: utils.get(
-						getConfig().configId || ((getConfig().to || "") + getConfig().tenantId + (getConfig().emgroup || ""))
-						)
-					})
-			});
+		if(iframe){
+			iframe.open();
 		}
+		else{
+			utils.isMobile && loading.show();
+			if(!_config.user.username){
+				// 从cookie里取用户名
+				// keyName = [to + ] tenantId [ + emgroup]
+				config.isUsernameFromCookie = true;
+				config.user = {
+					username: utils.get(
+					config.configId || ((config.to || "") + config.tenantId + (config.emgroup || ""))
+					)
+				};
+			}
+			setConfig(config);
 
-		iframe.set(getConfig(), iframe.open);
+			if(!_config.tenantId && !_config.configId){
+				console.error("No tenantId is specified.");
+				return;
+			}
+
+			iframe = Iframe(_config);
+			tenantList[cacheKeyName] = iframe;
+
+			iframe.set(_config, iframe.open);
+		}
 	}
+
 
 };
 
@@ -221,19 +231,15 @@ easemobim.sendText = function(msg){
 	}
 };
 
-// auto load
-if(
-	(!_config.hide || _config.autoConnect || _config.eventCollector)
-	&& (_config.tenantId || _config.configId) && !utils.isMobile
-){
-	cacheKeyName = _config.configId || (config.tenantId + (config.emgroup || ""));
 
-	iframe = tenantList[cacheKeyName] || Iframe(_config);
-	tenantList[cacheKeyName] = iframe;
-	iframe.set(_config, iframe.close);
-	// 访客上报用后失效
-	easemobim.config.eventCollector = false;
-}
+// user click
+window.easemobim.bind = function(config){
+	bind(config, false);
+};
+
+// auto load
+bind({}, true);
+
 
 // support cmd & amd
 if(typeof module === "object" && typeof module.exports === "object"){
