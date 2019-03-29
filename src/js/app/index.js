@@ -127,35 +127,9 @@ function setUserInfo(targetUserInfo){
 	return Promise.resolve();
 }
 
-function PromiseFactory(num){
-	var resolvers = [];
-	var promises = [];
-	var i;
-	for(i = 0; i < num; i++){
-		promises.push(new Promise(function(resolve){
-			resolvers.push(resolve);
-		}));
-	}
-	return {
-		promises: promises,
-		nextResovler: function(){
-			return resolvers.pop()();
-		}
-	};
-}
-// 必须提前知道总数，以保证 all 不报错、
-let prmsApi = new PromiseFactory(2);
-
-var api = {
-	isDone(){
-		return Promise.all(prmsApi.promises);
-	}
-};
-
 function initConfig(){
 	apiHelper.getConfig(commonConfig.getConfig().configId)
 	.then(function(entity){
-		prmsApi.nextResovler();
 		commonConfig.setConfig({ tenantId: entity.tenantId });
 		handleConfig(entity.configJson);
 		handleSettingIframeSize();
@@ -166,7 +140,6 @@ function initConfig(){
 		apiHelper.getRelevanceList()
 		.then(function(relevanceList){
 			var targetItem;
-			prmsApi.nextResovler();
 			var appKey = commonConfig.getConfig().appKey;
 			var splited = appKey.split("#");
 			var orgName = splited[0];

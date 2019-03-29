@@ -6,6 +6,8 @@ var notify = require("./notify");
 var titleSlide = require("./titleSlide");
 var pcImgView = require("./pcImgview");
 
+var IM_HTML_PATH = __("config.language") === "zh-CN" ? "/im_cached.html" : "/en-US/im_cached.html";
+
 var _st = 0;
 var _startPosition = {
 	x: 0,
@@ -307,7 +309,7 @@ Iframe.prototype.set = function(config, callback){
 
 	utils.toggleClass(this.iframe, "easemobim-hide", this.config.hide);
 
-	this.iframe.src = config.path + __("config.im_html_path") + "?v=__WEBIM_PLUGIN_VERSION__";
+	this.iframe.src = config.path + IM_HTML_PATH + "?v=__WEBIM_PLUGIN_VERSION__";
 	this.shadow && (this.shadow.style.backgroundImage = "url(" + shadowBackgroundImage + ")");
 
 	this.ready = callback;
