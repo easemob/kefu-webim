@@ -34,6 +34,8 @@ var config;
 var dialog;
 var service;
 
+var STATIC_PATH = __("config.language") === "zh-CN" ? "static" : "../static";
+
 module.exports = {
 	init: init,
 };
@@ -160,8 +162,8 @@ function init(option){
 	triggerButton = opt.triggerButton;
 	parentContainer = opt.parentContainer;
 
-	adapterPath = __("config.static_path") + "/js/lib/adapter.min.js?v=unknown-000";
-	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk.min.js?v=1.1.2";
+	adapterPath = STATIC_PATH + "/js/lib/adapter.min.js?v=unknown-000";
+	eMediaSdkPath = STATIC_PATH + "/js/lib/EMedia_sdk.min.js?v=1.1.2";
 
 	// todo: resolve promise sequentially
 	tools.loadScript(adapterPath)
