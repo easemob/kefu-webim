@@ -17,7 +17,6 @@ var commonConfig = require("@/common/config");
 var Transfer = require("@/common/transfer");
 var hasChatEntryInitialized;
 var extendMessageSender = require("./chat/extendMessageSender");
-var container = require("@/app/index");
 
 
 module.exports = {
