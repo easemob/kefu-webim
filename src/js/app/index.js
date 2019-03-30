@@ -19,9 +19,8 @@ var _const = require("@/common/const");
 var profile = require("@/app/tools/profile");
 var handleConfig = commonConfig.handleConfig;
 var doWechatAuth = require("@/app/common/wechat");
-
-var selfWrapper = document.querySelector(".em-self-wrapper");
-var widgetWapper = document.querySelector(".em-widget-wrapper");
+var configTypeIsH5 = false;
+var fromUserClick = false;
 
 load_html();
 if(utils.isTop){
@@ -34,8 +33,9 @@ else{
 		var event = msg.event;
 		var data = msg.data;
 		switch(event){
+		// 用户点击联系客服时收到
 		case _const.EVENTS.SHOW:
-			functionView.show();
+			fromUserClick = true;
 			break;
 		case _const.EVENTS.CLOSE:
 			functionView.close();
@@ -130,95 +130,89 @@ function setUserInfo(targetUserInfo){
 function initConfig(){
 	apiHelper.getConfig(commonConfig.getConfig().configId)
 	.then(function(entity){
-		commonConfig.setConfig({ tenantId: entity.tenantId });
+		entity.configJson.tenantId = entity.tenantId;
 		handleConfig(entity.configJson);
+		configTypeIsH5 = entity.configType === "H5";
 		handleSettingIframeSize();
-
-		// apiHelper.init(commonConfig.getConfig());
-
-		// 获取关联信息（targetChannel）
-		apiHelper.getRelevanceList()
-		.then(function(relevanceList){
-			var targetItem;
-			var appKey = commonConfig.getConfig().appKey;
-			var splited = appKey.split("#");
-			var orgName = splited[0];
-			var appName = splited[1];
-			var toUser = commonConfig.getConfig().toUser || commonConfig.getConfig().to;
-
-			// toUser 转为字符串， todo: move it to handle config
-			typeof toUser === "number" && (toUser = toUser.toString());
-
-			if(appKey && toUser){
-				// appKey，imServiceNumber 都指定了
-				targetItem = _.where(relevanceList, {
-					orgName: orgName,
-					appName: appName,
-					imServiceNumber: toUser
-				})[0];
-			}
-
-			// 未指定appKey, toUser时，或未找到符合条件的关联时，默认使用关联列表中的第一项
-			if(!targetItem){
-				targetItem = targetItem || relevanceList[0];
-				console.log("mismatched channel, use default.");
-			}
-
-			// 获取企业头像和名称
-			// todo: rename to tenantName
-			profile.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, commonConfig.getConfig().domain);
-			profile.defaultAgentName = targetItem.tenantName;
-			commonConfig.setConfig({
-				logo: commonConfig.getConfig().logo || { enabled: !!targetItem.tenantLogo, url: targetItem.tenantLogo },
-				toUser: targetItem.imServiceNumber,
-				orgName: targetItem.orgName,
-				appName: targetItem.appName,
-				channelId: targetItem.channelId,
-				appKey: targetItem.orgName + "#" + targetItem.appName,
-				restServer: commonConfig.getConfig().restServer || targetItem.restDomain,
-				xmppServer: commonConfig.getConfig().xmppServer || targetItem.xmppServer,
-			});
-
-			handleMsgData();
-
-
-		}, function(err){
-			main.getRelevanceError(err);
-		});
-
-
+		initRelevanceList();
 	});
-
 }
 
+function initRelevanceList(){
+	// 获取关联信息（targetChannel）
+	apiHelper.getRelevanceList()
+	.then(function(relevanceList){
+		handleCfgData(relevanceList);
+
+	}, function(err){
+		main.initRelevanceError(err);
+	});
+}
 
 if(utils.isMobile){
-	// 添加移动端样式类
-	utils.addClass(document.body, "em-mobile");
-	utils.live(".contact-customer-service", "click", onContactClick, selfWrapper);
+
 }
 
-
-
-
 // todo: rename this function
-function handleMsgData(){
+function handleCfgData(relevanceList){
 	var defaultStaticPath = __("config.language") === "zh-CN" ? "static" : "../static";
 	// default value
 
+	var targetItem;
+	var appKey = commonConfig.getConfig().appKey;
+	var splited = appKey.split("#");
+	var orgName = splited[0];
+	var appName = splited[1];
+	var toUser = commonConfig.getConfig().toUser || commonConfig.getConfig().to;
+
+	// toUser 转为字符串， todo: move it to handle config
+	typeof toUser === "number" && (toUser = toUser.toString());
+
+	if(appKey && toUser){
+		// appKey，imServiceNumber 都指定了
+		targetItem = _.where(relevanceList, {
+			orgName: orgName,
+			appName: appName,
+			imServiceNumber: toUser
+		})[0];
+	}
+
+	// 未指定appKey, toUser时，或未找到符合条件的关联时，默认使用关联列表中的第一项
+	if(!targetItem){
+		targetItem = targetItem || relevanceList[0];
+		console.log("mismatched channel, use default.");
+	}
+
 	commonConfig.setConfig({
+		logo: commonConfig.getConfig().logo || { enabled: !!targetItem.tenantLogo, url: targetItem.tenantLogo },
+		toUser: targetItem.imServiceNumber,
+		orgName: targetItem.orgName,
+		appName: targetItem.appName,
+		channelId: targetItem.channelId,
+		appKey: targetItem.orgName + "#" + targetItem.appName,
+		restServer: commonConfig.getConfig().restServer || targetItem.restDomain,
+		xmppServer: commonConfig.getConfig().xmppServer || targetItem.xmppServer,
 		staticPath: commonConfig.getConfig().staticPath || defaultStaticPath,
 		offDutyWord: commonConfig.getConfig().offDutyWord || __("prompt.default_off_duty_word"),
 		emgroup: commonConfig.getConfig().emgroup || "",
-		timeScheduleId: commonConfig.getConfig().timeScheduleId || 0
-	});
+		timeScheduleId: commonConfig.getConfig().timeScheduleId || 0,
 
-	main.handleMsgData();
+		user: commonConfig.getConfig().user || {},
+		visitor: commonConfig.getConfig().visitor || {},
+		channel: commonConfig.getConfig().channel || {},
+		ui: commonConfig.getConfig().ui || {
+			H5Title: {}
+		},
+		toolbar: commonConfig.getConfig().toolbar || {},
+		chat: commonConfig.getConfig().chat || {}
+	});
 
 	// fake patch: 老版本配置的字符串需要decode
 	if(commonConfig.getConfig().offDutyWord){
 		try{
-			commonConfig.getConfig().offDutyWord = decodeURIComponent(commonConfig.getConfig().offDutyWord);
+			commonConfig.setConfig({
+				offDutyWord: decodeURIComponent(commonConfig.getConfig().offDutyWord)
+			});
 		}
 		catch(e){}
 	}
@@ -232,19 +226,16 @@ function handleMsgData(){
 		catch(e){}
 	}
 
-	commonConfig.setConfig({
-		user: commonConfig.getConfig().user || {},
-		visitor: commonConfig.getConfig().visitor || {},
-		channel: commonConfig.getConfig().channel || {},
-		ui: commonConfig.getConfig().ui || {
-			H5Title: {}
-		},
-		toolbar: commonConfig.getConfig().toolbar || {},
-		chat: commonConfig.getConfig().chat || {}
-	});
-
+	// 获取企业头像和名称
+	// todo: rename to tenantName
+	profile.tenantAvatar = utils.getAvatarsFullPath(targetItem.tenantAvatar, commonConfig.getConfig().domain);
+	profile.defaultAgentName = targetItem.tenantName;
 	profile.defaultAvatar = commonConfig.getConfig().staticPath + "/img/default_avatar.png";
 
+	renderUI();
+}
+
+function renderUI(){
 	// 用于预览模式
 	if(commonConfig.getConfig().previewObj){
 		handleConfig(commonConfig.getConfig().previewObj);
@@ -253,38 +244,31 @@ function handleMsgData(){
 	}
 	else if(commonConfig.getConfig().configId){
 
-		!utils.isMobile && main.initChat();
+		if(utils.isTop || fromUserClick){
+			functionView.init({
+				mainInitChat: main.initChat,
+				configTypeIsH5: configTypeIsH5
+			});
 
-		Promise.all([
-			apiHelper.getFaqOrSelfServiceStatus(commonConfig.getConfig().configId, "issue"),
-			apiHelper.getFaqOrSelfServiceStatus(commonConfig.getConfig().configId, "self-service")
-		])
-		.then(function(resultStatus){
-			// h5 模式 常见问题和自助服务开关都关闭时显示 chat 页面
-			if(utils.isTop && !resultStatus[0] && !resultStatus[1]){
-				utils.removeClass(widgetWapper, "hide");
+			if(configTypeIsH5){
+				// 添加移动端样式类
+				utils.addClass(document.body, "em-mobile");
+			}
+			else{
 				main.initChat();
-			}
-			else if(resultStatus[0] || resultStatus[1]){
 				utils.addClass(document.body, "big-window");
-				functionView.init({ faqStatus: resultStatus[0], selfServiceStatus: resultStatus[1] });
-				handleSettingIframeSize({ width: "720px" });
 			}
+		}
 
-			// H5 模式有一个功能开关打开就显示，iframe 的形式不需要直接显示，当点击联系客服按钮的时候显示
-			if(utils.isTop && (resultStatus[0] || resultStatus[1])){
-				functionView.show();
-			}
-		});
-
-		apiHelper.getTheme().then(function(themeName){
-			var className = _const.themeMap[themeName];
-			className && utils.addClass(document.body, className);
-		});
 	}
 	else{
 		main.initChat();
 	}
+
+	apiHelper.getTheme().then(function(themeName){
+		var className = _const.themeMap[themeName];
+		className && utils.addClass(document.body, className);
+	});
 }
 
 
@@ -304,21 +288,14 @@ function handleSettingIframeSize(params){
 		}
 	});
 }
-// 点击咨询客服
-function onContactClick(e){
-	utils.removeClass(widgetWapper, "hide");
-	utils.addClass(selfWrapper, "hide");
-	main.initChat();
-	e.stopPropagation();
-	return false;
-}
 
 function initCrossOriginIframe(){
 	var iframe = document.getElementById("cross-origin-iframe");
 	iframe.src = commonConfig.getConfig().domain + "__WEBIM_SLASH_KEY_PATH__/webim/transfer.html?v=__WEBIM_PLUGIN_VERSION__";
 	utils.on(iframe, "load", function(){
 		apiHelper.initApiTransfer();
-		initConfig();
+		// 有 configId 需要先去获取 config 信息
+		commonConfig.getConfig().configId ? initConfig() : initRelevanceList();
 	});
 }
 

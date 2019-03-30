@@ -1,14 +1,13 @@
 var apiHelper = require("@/app/common/apiHelper");
-var commonConfig = require("@/common/config");
 var utils = require("@/common/utils");
 var tpl = require("./indexTpl.html");
 
 module.exports = function(){
 	var container = document.querySelector(".em-self-wrapper .faq-list-content");
-	var configId = commonConfig.getConfig().configId;
+
 	container.innerHTML = "";
 
-	apiHelper.getFaqList(configId)
+	apiHelper.getFaqList()
 	.then(function(data){
 		container.innerHTML = _.template(tpl)({
 			faq: data

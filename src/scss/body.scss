@@ -1,5 +1,6 @@
 
 body.big-window{
+	min-width: 600px;
 	.em-widget-wrapper,
 	.em-widget-send-wrapper{
 		width: 50%;
@@ -11,6 +12,9 @@ body.big-window{
 		width: 50%;
 		box-sizing: border-box;
 		box-shadow: none;
+	}
+	.em-widget-send-wrapper{
+		min-width: 300px;
 	}
 }
 

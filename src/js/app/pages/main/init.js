@@ -18,16 +18,15 @@ var Transfer = require("@/common/transfer");
 var hasChatEntryInitialized;
 var extendMessageSender = require("./chat/extendMessageSender");
 
+var setConfig;
 
 module.exports = {
 	init: init,
 	initChat: initChat,
 	chat_window_mode_init: chat_window_mode_init,
-	getRelevanceError: getRelevanceError,
-	handleMsgData: handleMsgData
+	initRelevanceError: initRelevanceError,
 };
 
-var setConfig;
 function init(obj){
 	setConfig = obj;
 	utils.on(window, "message", function(e){
@@ -68,6 +67,8 @@ function updateCustomerInfo(e){
 }
 
 function initChat(){
+	handleMsgData();
+	utils.removeClass(document.querySelector(".em-widget-wrapper"), "hide");
 	apiHelper.getGrayList().then(function(grayList){
 		// 灰度列表
 		profile.grayList = grayList;
@@ -122,7 +123,7 @@ function chat_window_mode_init(){
 			}
 
 			// 显示聊天窗口
-			chat.show();
+			// chat.show();
 			break;
 		case _const.EVENTS.CLOSE:
 			chat.close();
@@ -148,7 +149,7 @@ function chat_window_mode_init(){
 	});
 }
 
-function getRelevanceError(err){
+function initRelevanceError(err){
 	if(err.statusCode === 503){
 		uikit.createDialog({
 			contentDom: utils.createElementFromHTML([
