@@ -1,10 +1,9 @@
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
 
-var independentVideoWindow = require("../../../../../html/independentVideoWindow.html");
-
 // adapter.js 会劫持这个 api，为了达到预期效果，事先保存
-var nativeCreateObjectURL = URL && URL.createObjectURL;
+// var nativeCreateObjectURL = URL && URL.createObjectURL;
+
 var wrapperDom;
 var videoDom;
 var noAudioVideoDom;
@@ -12,16 +11,12 @@ var nicknameDom;
 var returnButtonDom;
 var toggleMicroPhoneButtonDom;
 var toggleCameraButtonDom;
-var navigateToNewWindowButtonDom;
 
 var dispatcher;
 var service;
-var nickname;
 var currentStream;
 var currentNoAudioStream;
 var currentOwnerName;
-
-var subWindowHandler;
 
 module.exports = {
 	init: init,
@@ -31,8 +26,9 @@ module.exports = {
 
 function init(option){
 	var opt = option || {};
-
-	if(wrapperDom) throw new Error("video viewer has been already initialized.");
+	if(wrapperDom){
+		throw new Error("video viewer has been already initialized.");
+	}
 
 	wrapperDom = opt.wrapperDom;
 	service = opt.service;
@@ -68,13 +64,9 @@ function _toggleCarema(){
 }
 
 function _updateButtonStatus(){
-	var isMaximized = !!subWindowHandler;
 	var isLocal = currentStream && currentStream.located();
 	var isMicroPhoneDisabled;
 	var isCameraDisabled;
-
-	utils.toggleClass(navigateToNewWindowButtonDom, "icon-maximize-window", !isMaximized);
-	utils.toggleClass(navigateToNewWindowButtonDom, "icon-minimize-window", isMaximized);
 
 	utils.toggleClass(toggleMicroPhoneButtonDom, "hide", !isLocal);
 	utils.toggleClass(toggleCameraButtonDom, "hide", !isLocal);
@@ -88,32 +80,6 @@ function _updateButtonStatus(){
 
 		utils.toggleClass(toggleCameraButtonDom, "icon-camera", !isCameraDisabled);
 		utils.toggleClass(toggleCameraButtonDom, "icon-disable-camera", isCameraDisabled);
-	}
-}
-
-function _closeSubWindow(){
-	if(subWindowHandler){
-		window.removeEventListener("message", _eventHandler);
-		subWindowHandler.close();
-		subWindowHandler = null;
-	}
-}
-
-function _eventHandler(e){
-	var message = e.data;
-	var mediaStream;
-	var stream = currentNoAudioStream || currentStream;
-
-	mediaStream = stream.getMediaStream();
-
-	if(message === "independentVidowSubWindowLoaded"){
-		subWindowHandler && subWindowHandler.postMessage({
-			type: "updateVideoBlobSrcUrl",
-			info: {
-				blobVideoUrl: nativeCreateObjectURL(mediaStream),
-				nickname: nickname,
-			},
-		}, "*");
 	}
 }
 
@@ -134,7 +100,6 @@ function show(info){
 
 function hide(){
 	currentOwnerName = null;
-	_closeSubWindow();
 	_updateButtonStatus();
 	utils.addClass(wrapperDom, "hide");
 }
