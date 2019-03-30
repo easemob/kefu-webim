@@ -22,7 +22,6 @@ var currentNoAudioStream;
 var currentOwnerName;
 
 var subWindowHandler;
-var independentVideoWindowPageBlobUrl;
 
 module.exports = {
 	init: init,
@@ -45,20 +44,9 @@ function init(option){
 	returnButtonDom = wrapperDom.querySelector(".return-to-multi-video");
 	toggleMicroPhoneButtonDom = wrapperDom.querySelector(".toggle-microphone-btn");
 	toggleCameraButtonDom = wrapperDom.querySelector(".toggle-carema-btn");
-	navigateToNewWindowButtonDom = wrapperDom.querySelector(".navigate-to-independent-window-btn");
 
 	dispatcher.addEventListener("addOrUpdateStream", _addOrUpdateStream);
 	dispatcher.addEventListener("removeStream", _removeStream);
-
-	// 移动端不显示在新窗口查看视频的按钮
-	if(!utils.isMobile){
-		independentVideoWindowPageBlobUrl = URL.createObjectURL(
-			new Blob([independentVideoWindow], { type: "text/html" })
-		);
-
-		utils.removeClass(navigateToNewWindowButtonDom, "hide");
-		utils.on(navigateToNewWindowButtonDom, "click", _navigateToNewWindow);
-	}
 
 	utils.on(returnButtonDom, "click", _returnToMultivideo);
 	utils.on(toggleMicroPhoneButtonDom, "click", _toggleMicroPhone);
@@ -76,24 +64,6 @@ function _toggleMicroPhone(){
 
 function _toggleCarema(){
 	service.voff(currentStream, !currentStream.voff);
-	_updateButtonStatus();
-}
-
-function _navigateToNewWindow(){
-	if(subWindowHandler){
-		_closeSubWindow();
-		_updateButtonStatus();
-		return;
-	}
-
-	subWindowHandler = window.open(
-		independentVideoWindowPageBlobUrl,
-		"easemob_kefu_webim_webrtc_independent_video_window",
-		"width=640,height=480,resizable,scrollbars,status"
-	);
-
-	window.addEventListener("message", _eventHandler);
-
 	_updateButtonStatus();
 }
 
