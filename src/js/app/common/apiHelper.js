@@ -1263,6 +1263,65 @@ function confirmSatisfaction(robotAgentId, satisfactionCommentKey, selected){
 		});
 	});
 }
+function getFaqList(){
+	return new Promise(function(resolve, reject){
+		api("getFaqList", {
+			tenantId: config.tenantId,
+			configId: config.configId
+		}, function(msg){
+			var status = utils.getDataByPath(msg, "data.status");
+			var entities = utils.getDataByPath(msg, "data.entities");
+			if(status === "OK"){
+				resolve(entities);
+			}
+			else{
+				reject(msg.data);
+			}
+		}, function(error){
+			reject(error);
+		});
+	});
+}
+function getSelfServiceList(){
+	return new Promise(function(resolve, reject){
+		api("getSelfServiceList", {
+			tenantId: config.tenantId,
+			configId: config.configId
+		}, function(msg){
+			var status = utils.getDataByPath(msg, "data.status");
+			var entities = utils.getDataByPath(msg, "data.entities");
+			if(status === "OK"){
+				resolve(entities);
+			}
+			else{
+				reject(msg.data);
+			}
+		}, function(error){
+			reject(error);
+		});
+	});
+}
+
+function getFaqOrSelfServiceStatus(type){
+	return new Promise(function(resolve, reject){
+		api("getFaqOrSelfServiceStatus", {
+			tenantId: config.tenantId,
+			configId: config.configId,
+			type: type
+		}, function(msg){
+			var status = utils.getDataByPath(msg, "data.status");
+			var entity = utils.getDataByPath(msg, "data.entity");
+			if(status === "OK"){
+				resolve(entity);
+			}
+			else{
+				reject(msg.data);
+			}
+		}, function(error){
+			reject(error);
+		});
+	});
+}
 
 
 // 以下几个接口是 config 还没初始化完时调用的，需要从 config 中获取值
@@ -1365,69 +1424,6 @@ function getRelevanceList(){
 			}
 		}, function(err){
 			reject(err);
-		});
-	});
-}
-
-function getFaqList(configId){
-	var cfg = commonConfig.getConfig();
-	return new Promise(function(resolve, reject){
-		api("getFaqList", {
-			tenantId: cfg.tenantId,
-			configId: configId
-		}, function(msg){
-			var status = utils.getDataByPath(msg, "data.status");
-			var entities = utils.getDataByPath(msg, "data.entities");
-			if(status === "OK"){
-				resolve(entities);
-			}
-			else{
-				reject(msg.data);
-			}
-		}, function(error){
-			reject(error);
-		});
-	});
-}
-function getSelfServiceList(configId){
-	var cfg = commonConfig.getConfig();
-	return new Promise(function(resolve, reject){
-		api("getSelfServiceList", {
-			tenantId: cfg.tenantId,
-			configId: configId
-		}, function(msg){
-			var status = utils.getDataByPath(msg, "data.status");
-			var entities = utils.getDataByPath(msg, "data.entities");
-			if(status === "OK"){
-				resolve(entities);
-			}
-			else{
-				reject(msg.data);
-			}
-		}, function(error){
-			reject(error);
-		});
-	});
-}
-
-function getFaqOrSelfServiceStatus(configId, type){
-	var cfg = commonConfig.getConfig();
-	return new Promise(function(resolve, reject){
-		api("getFaqOrSelfServiceStatus", {
-			tenantId: cfg.tenantId,
-			configId: configId,
-			type: type
-		}, function(msg){
-			var status = utils.getDataByPath(msg, "data.status");
-			var entity = utils.getDataByPath(msg, "data.entity");
-			if(status === "OK"){
-				resolve(entity);
-			}
-			else{
-				reject(msg.data);
-			}
-		}, function(error){
-			reject(error);
 		});
 	});
 }

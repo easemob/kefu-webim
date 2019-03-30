@@ -1,15 +1,13 @@
 var apiHelper = require("@/app/common/apiHelper");
-var commonConfig = require("@/common/config");
 var _const = require("@/common/const");
 var tpl = require("./indexTpl.html");
 var SELFSERVICE_PATH = _const.SELFSERVICE_PATH;
 
 module.exports = function(){
 	var container = document.querySelector(".em-self-wrapper .self-service-list");
-	var configId = commonConfig.getConfig().configId;
 	container.innerHTML = "";
 
-	apiHelper.getSelfServiceList(configId)
+	apiHelper.getSelfServiceList()
 	.then(function(data){
 		_.each(data, function(item){
 			if(item.iconType == "system"){
