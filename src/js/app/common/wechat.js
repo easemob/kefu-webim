@@ -10,14 +10,15 @@
 
 var utils = require("@/common/utils");
 var apiHelper = require("@/app/common/apiHelper");
-var commonConfig = require("@/common/config").getConfig();
+var commonConfig = require("@/common/config");
 
 var isWechatBrowser = /MicroMessenger/.test(navigator.userAgent);
 var appid = utils.query("appid");
 var code = utils.query("code");
 
 module.exports = function(success, fail){
-	var tenantId = commonConfig.tenantId;
+	var config = commonConfig.getConfig();
+	var tenantId = config.tenantId;
 	if(!isWechatBrowser || !tenantId || !appid){
 		fail();
 		return;
@@ -42,7 +43,7 @@ module.exports = function(success, fail){
 	else{
 		apiHelper.getWechatProfile(tenantId, appid, code).then(function(info){
 			// cache wechat nickname
-			commonConfig.visitor.userNickname = info.nickname;
+			config.visitor.userNickname = info.nickname;
 
 			apiHelper.createWechatImUser(info.openid).then(function(entity){
 				success(entity);

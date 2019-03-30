@@ -1,6 +1,6 @@
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
-var commonConfig = require("@/common/config").getConfig();
+var commonConfig = require("@/common/config");
 var profile = require("./profile");
 var textParser = require("./textParser");
 var moment = require("moment");
@@ -30,7 +30,7 @@ function genMsgContent(msg){
 	case "customMagicEmoji":
 		// 给图片消息或附件消息的url拼上hostname
 		if(msg.url && !/^https?/.test(msg.url)){
-			msg.url = location.protocol + commonConfig.domain + msg.url;
+			msg.url = location.protocol + commonConfig.getConfig().domain + msg.url;
 		}
 		// todo: remove a
 		html = "<a href=\"javascript:;\"><img class=\"em-widget-imgview\" src=\""

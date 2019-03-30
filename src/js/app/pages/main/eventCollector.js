@@ -4,7 +4,7 @@ var apiHelper = require("@/app/common/apiHelper");
 var profile = require("@/app/tools/profile");
 var Poller = require("@/app/tools/Poller");
 var createCtaDialog = require("./uikit/createCtaDialog");
-var commonConfig = require("@/common/config").getConfig();
+var commonConfig = require("@/common/config");
 
 var POLLING_INTERVAL = 5000;
 
@@ -82,7 +82,7 @@ function _reportData(userType, userId){
 
 function _startToReoprt(callback){
 	_callback || (_callback = callback);
-	_config || (_config = commonConfig);
+	_config || (_config = commonConfig.getConfig());
 
 	// h5 方式屏蔽访客回呼功能
 	if(utils.isTop) return;

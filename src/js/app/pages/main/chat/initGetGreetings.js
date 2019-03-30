@@ -3,7 +3,7 @@ var profile = require("@/app/tools/profile");
 var eventListener = require("@/app/tools/eventListener");
 var apiHelper = require("@/app/common/apiHelper");
 var channel = require("../channel");
-var commonConfig = require("@/common/config").getConfig();
+var commonConfig = require("@/common/config");
 
 module.exports = function(){
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _getGreetings);
@@ -51,7 +51,7 @@ function _getGreetings(officialAccount){
 			// 图片消息
 			// 适配后端有转义两次／三次的情况
 			greetingObj = JSON.parse(greetingText.replace(/&amp;amp;quot;|&amp;quot;/g, "\""));
-			greetingObj.url = commonConfig.domain + greetingObj.urlPath;
+			greetingObj.url = commonConfig.getConfig().domain + greetingObj.urlPath;
 
 			channel.handleMessage(greetingObj, { type: "img", noPrompt: true });
 			break;
