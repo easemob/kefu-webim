@@ -10,6 +10,7 @@ var textParser = require("@/app/tools/textParser");
 var apiHelper = require("@/app/common/apiHelper");
 var moment = require("moment");
 var commonConfig = require("@/common/config");
+var transfer = require("@/app/common/transfer");
 
 var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;

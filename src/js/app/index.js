@@ -19,6 +19,7 @@ var _const = require("@/common/const");
 var profile = require("@/app/tools/profile");
 var handleConfig = commonConfig.handleConfig;
 var doWechatAuth = require("@/app/common/wechat");
+var transfer = require("@/app/common/transfer");
 var configTypeIsH5 = false;
 var fromUserClick = false;
 
@@ -29,7 +30,7 @@ if(utils.isTop){
 }
 else{
 	main.chat_window_mode_init();
-	window.transfer.listen(function(msg){
+	transfer.listen(function(msg){
 		var event = msg.event;
 		var data = msg.data;
 		switch(event){
@@ -41,7 +42,7 @@ else{
 			functionView.close();
 			break;
 		case _const.EVENTS.INIT_CONFIG:
-			window.transfer.to = data.parentId;
+			transfer.to = data.parentId;
 			commonConfig.setConfig(data);
 			initCrossOriginIframe();
 			break;
@@ -258,6 +259,10 @@ function renderUI(){
 				main.initChat();
 				utils.addClass(document.body, "big-window");
 			}
+		}
+
+		if(!utils.isTop && configTypeIsH5){
+			utils.addClass(document.querySelector(".em-widget-wrapper"), "hide");
 		}
 
 	}
