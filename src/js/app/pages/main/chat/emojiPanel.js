@@ -5,7 +5,7 @@ var apiHelper = require("@/app/common/apiHelper");
 var profile = require("@/app/tools/profile");
 var channel = require("../channel");
 var List = require("@/app/tools/List");
-var commonConfig = require("@/common/config").getConfig();
+var commonConfig = require("@/common/config");
 
 var HEIGHT_OF_TOP_NAVIGATOR = 43;
 var MAGIC_EMOJI_COUNT_PER_LINE = 6;
@@ -17,6 +17,7 @@ var systemEmojiContainer;
 var emojiContainerList;
 var loadedEmojiPageIndexList = new List();
 var customEmojiPackageHtmlList;
+var config;
 
 module.exports = {
 	init: init,
@@ -29,6 +30,7 @@ function init(option){
 	var container = params.container;
 	var toggleButton = params.toggleButton;
 	var textInput = params.textInput;
+	config = commonConfig.getConfig();
 
 	if(dom) throw new Error("emoji panel has already initialized.");
 
@@ -145,7 +147,7 @@ function _genEmojiPackageHtmlList(packageList, fileList){
 		var currentPageHtml =  _.chain(filesInCurrentPackage)
 		// 生成图标html
 		.map(function(item){
-			var thumbnailUrl = utils.formatProtocol(commonConfig.domain) + item.thumbnailUrl;
+			var thumbnailUrl = utils.formatProtocol(config.domain) + item.thumbnailUrl;
 			var originUrl = item.originUrl;
 
 			return "<div class=\"emoji-bg e-face\">"
