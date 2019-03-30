@@ -1,6 +1,7 @@
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
 var profile = require("@/app/tools/profile");
+var transfer = require("@/app/common/transfer");
 
 var img;
 var imgWrapper;

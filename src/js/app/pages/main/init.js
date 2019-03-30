@@ -14,7 +14,7 @@ var chat = require("./chat");
 var channel = require("./channel");
 var profile = require("@/app/tools/profile");
 var commonConfig = require("@/common/config");
-var Transfer = require("@/common/transfer");
+var transfer = require("@/app/common/transfer");
 var hasChatEntryInitialized;
 var extendMessageSender = require("./chat/extendMessageSender");
 
@@ -99,7 +99,7 @@ function handleMsgData(){
 
 function chat_window_mode_init(){
 	var $contactAgentBtn = document.getElementById("em-widgetPopBar");
-	window.transfer = new Transfer(null, "main", true).listen(function(msg){
+	transfer.listen(function(msg){
 		var event = msg.event;
 		var data = msg.data;
 		var extendMessage;
@@ -123,7 +123,7 @@ function chat_window_mode_init(){
 			}
 
 			// 显示聊天窗口
-			// chat.show();
+			chat.show();
 			break;
 		case _const.EVENTS.CLOSE:
 			chat.close();
@@ -143,7 +143,8 @@ function chat_window_mode_init(){
 		}
 	}, ["easemob"]);
 
-	utils.removeClass($contactAgentBtn, "hide");
+	// 由 iframe.open 统一控制联系客服按钮隐藏
+	// utils.removeClass($contactAgentBtn, "hide");
 	utils.on($contactAgentBtn, "click", function(){
 		transfer.send({ event: _const.EVENTS.SHOW });
 	});

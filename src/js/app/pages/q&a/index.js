@@ -5,6 +5,7 @@ var utils = require("../../../common/utils");
 var apiHelper = require("@/app/common/apiHelper");
 var commonConfig = require("@/common/config");
 var _const = require("@/common/const");
+var transfer = require("@/app/common/transfer");
 
 var mainInitChat;
 var configTypeIsH5;

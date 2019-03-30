@@ -25,6 +25,7 @@ var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
 var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
 var TenantInfo = require("@/app/pages/main/tenantInfo/index");
+var transfer = require("@/app/common/transfer");
 var tenantInfo;
 var tagSelector = new TagSelector();
 
@@ -741,7 +742,7 @@ function _bindEvents(){
 function _close(){
 	profile.isChatWindowOpen = false;
 
-	if(!config.hide){
+	if(config && !config.hide){
 		utils.addClass(doms.imChat, "hide");
 		utils.removeClass(doms.imBtn, "hide");
 	}
