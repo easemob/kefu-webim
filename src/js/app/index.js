@@ -244,8 +244,9 @@ function handleCfgData(relevanceList, status){
 
 	renderUI(status);
 }
-
 function renderUI(resultStatus){
+	var isNotAutoLoad = utils.isTop || fromUserClick;
+
 	// 用于预览模式
 	if(commonConfig.getConfig().previewObj){
 		handleConfig(commonConfig.getConfig().previewObj);
@@ -255,7 +256,7 @@ function renderUI(resultStatus){
 	else if(commonConfig.getConfig().configId){
 		// 添加移动端样式类
 		configTypeIsH5 && utils.addClass(document.body, "em-mobile");
-		if(utils.isTop || fromUserClick){
+		if(isNotAutoLoad){
 			// 全部渲染
 			if(!configTypeIsH5 && (resultStatus[0] || resultStatus[1])){
 				main.initChat();
@@ -278,11 +279,11 @@ function renderUI(resultStatus){
 				});
 			}
 		}
-
+		// autoload 时 fix 不该出现的容器
+		// 后续需要找到根源？？？
 		if(!utils.isTop && configTypeIsH5){
 			utils.addClass(document.querySelector(".em-widget-wrapper"), "hide");
 		}
-
 	}
 	else{
 		main.initChat();
