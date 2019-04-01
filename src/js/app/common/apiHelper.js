@@ -8,9 +8,6 @@ var commonConfig = require("@/common/config");
 // getProjectId
 // getToken
 var config;
-var cache = {
-	appraiseTags: {}
-};
 var cachedApiCallbackTable = {};
 var apiTransfer;
 
@@ -163,12 +160,6 @@ module.exports = {
 	api: api,
 	getConfig: getConfig,
 
-	setCacheItem: function(key, value){
-		cache[key] = value;
-	},
-	clearCacheItem: function(key){
-		cache[key] = null;
-	},
 	update: function(cfg){
 		config = cfg;
 	}
