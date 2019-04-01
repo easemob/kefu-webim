@@ -20,6 +20,7 @@ var profile = require("@/app/tools/profile");
 var handleConfig = commonConfig.handleConfig;
 var doWechatAuth = require("@/app/common/wechat");
 var transfer = require("@/app/common/transfer");
+var eventListener = require("@/app/tools/eventListener");
 var configTypeIsH5 = false;
 var fromUserClick = false;
 
@@ -38,9 +39,6 @@ else{
 		case _const.EVENTS.SHOW:
 			fromUserClick = true;
 			break;
-		case _const.EVENTS.CLOSE:
-			functionView.close();
-			break;
 		case _const.EVENTS.INIT_CONFIG:
 			transfer.to = data.parentId;
 			commonConfig.setConfig(data);
@@ -52,6 +50,9 @@ else{
 	}, ["easemob"]);
 }
 main.init(setUserInfo);
+
+// 监听点击咨询客服收到的通知
+eventListener.add(_const.SYSTEM_EVENT.CONSULT_AGENT, main.initChat);
 
 function setUserInfo(targetUserInfo){
 	if(targetUserInfo){
@@ -143,19 +144,27 @@ function initRelevanceList(){
 	// 获取关联信息（targetChannel）
 	apiHelper.getRelevanceList()
 	.then(function(relevanceList){
-		handleCfgData(relevanceList);
+		initFunctionStatus(relevanceList);
 
 	}, function(err){
 		main.initRelevanceError(err);
 	});
 }
 
-if(utils.isMobile){
-
+function initFunctionStatus(relevanceList){
+	Promise.all([
+		apiHelper.getFaqOrSelfServiceStatus("issue"),
+		apiHelper.getFaqOrSelfServiceStatus("self-service")
+	])
+	.then(function(result){
+		handleCfgData(relevanceList, result);
+	}, function(){
+		handleCfgData(relevanceList, []);
+	});
 }
 
 // todo: rename this function
-function handleCfgData(relevanceList){
+function handleCfgData(relevanceList, status){
 	var defaultStaticPath = __("config.language") === "zh-CN" ? "static" : "../static";
 	// default value
 
@@ -233,10 +242,10 @@ function handleCfgData(relevanceList){
 	profile.defaultAgentName = targetItem.tenantName;
 	profile.defaultAvatar = commonConfig.getConfig().staticPath + "/img/default_avatar.png";
 
-	renderUI();
+	renderUI(status);
 }
 
-function renderUI(){
+function renderUI(resultStatus){
 	// 用于预览模式
 	if(commonConfig.getConfig().previewObj){
 		handleConfig(commonConfig.getConfig().previewObj);
@@ -244,20 +253,29 @@ function renderUI(){
 		main.initChat();
 	}
 	else if(commonConfig.getConfig().configId){
-
+		// 添加移动端样式类
+		configTypeIsH5 && utils.addClass(document.body, "em-mobile");
 		if(utils.isTop || fromUserClick){
-			functionView.init({
-				mainInitChat: main.initChat,
-				configTypeIsH5: configTypeIsH5
-			});
-
-			if(configTypeIsH5){
-				// 添加移动端样式类
-				utils.addClass(document.body, "em-mobile");
+			// 全部渲染
+			if(!configTypeIsH5 && (resultStatus[0] || resultStatus[1])){
+				main.initChat();
+				functionView.init({
+					configTypeIsH5: configTypeIsH5,
+					resultStatus: resultStatus
+				});
+				utils.addClass(document.body, "big-window");
+				!utils.isTop && handleSettingIframeSize({ width: "720px" });
+			}
+			// 常见问题和自助服务开关都关闭时
+			else if(!resultStatus[0] && !resultStatus[1]){
+				main.initChat();
+				!configTypeIsH5 && utils.removeClass(document.body, "big-window");
 			}
 			else{
-				main.initChat();
-				utils.addClass(document.body, "big-window");
+				functionView.init({
+					configTypeIsH5: configTypeIsH5,
+					resultStatus: resultStatus
+				});
 			}
 		}
 

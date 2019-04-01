@@ -61,6 +61,8 @@ module.exports = {
 
 		VIDEO_TICKET_RECEIVED: "video.ticket.received",
 		MESSAGE_CHANNEL_READY: "message.channel.ready",
+
+		CONSULT_AGENT: "consult.agent",
 	},
 
 	themeMap: {
