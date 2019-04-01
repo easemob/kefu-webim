@@ -8,7 +8,7 @@ var utils = require("@/common/utils");
 var _const = require("@/common/const");
 
 var uikit = require("./uikit");
-var apiHelper = require("@/app/common/apiHelper");
+var apiHelper = require("./apis");
 var eventCollector = require("./eventCollector");
 var chat = require("./chat");
 var channel = require("./channel");
@@ -69,7 +69,7 @@ function updateCustomerInfo(e){
 function initChat(){
 	handleMsgData();
 	utils.removeClass(document.querySelector(".em-widget-wrapper"), "hide");
-	apiHelper.getGrayList().then(function(grayList){
+	apiHelper.getGrayList(commonConfig.getConfig().tenantId).then(function(grayList){
 		// 灰度列表
 		profile.grayList = grayList;
 

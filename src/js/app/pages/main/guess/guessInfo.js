@@ -1,5 +1,5 @@
 var utils = require("@/common/utils");
-var apiHelper = require("@/app/common/apiHelper");
+var apiHelper = require("../apis");
 var channel = require("../channel");
 var guess_template = require("./guessInfo.html");
 

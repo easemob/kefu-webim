@@ -2,7 +2,7 @@
 var SelfService = require("./selfService");
 var Faq = require("./faq");
 var utils = require("../../../common/utils");
-var apiHelper = require("@/app/common/apiHelper");
+var apis = require("./apis");
 var commonConfig = require("@/common/config");
 var _const = require("@/common/const");
 var transfer = require("@/app/common/transfer");
@@ -20,14 +20,14 @@ function init(obj){
 	var selfService;
 	var domFaqList = document.querySelector(".faq-list");
 
-	apiHelper.update(commonConfig.getConfig());
+	apis.update(commonConfig.getConfig());
 
 	mainInitChat = obj.mainInitChat;
 	configTypeIsH5 = obj.configTypeIsH5;
 
 	Promise.all([
-		apiHelper.getFaqOrSelfServiceStatus("issue"),
-		apiHelper.getFaqOrSelfServiceStatus("self-service")
+		apis.getFaqOrSelfServiceStatus("issue"),
+		apis.getFaqOrSelfServiceStatus("self-service")
 	])
 	.then(function(resultStatus){
 		// h5 模式 常见问题和自助服务开关都关闭时显示 chat 页面
