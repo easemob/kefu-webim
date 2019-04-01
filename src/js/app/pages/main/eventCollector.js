@@ -1,6 +1,6 @@
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
-var apiHelper = require("@/app/common/apiHelper");
+var apiHelper = require("./apis");
 var profile = require("@/app/tools/profile");
 var Poller = require("@/app/tools/Poller");
 var createCtaDialog = require("./uikit/createCtaDialog");

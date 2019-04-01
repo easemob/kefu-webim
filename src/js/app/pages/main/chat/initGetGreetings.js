@@ -1,7 +1,7 @@
 var _const = require("@/common/const");
 var profile = require("@/app/tools/profile");
 var eventListener = require("@/app/tools/eventListener");
-var apiHelper = require("@/app/common/apiHelper");
+var apiHelper = require("../apis");
 var channel = require("../channel");
 var commonConfig = require("@/common/config");
 

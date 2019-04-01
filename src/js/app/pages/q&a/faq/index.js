@@ -1,4 +1,4 @@
-var apiHelper = require("@/app/common/apiHelper");
+var apis = require("../apis");
 var utils = require("@/common/utils");
 var tpl = require("./indexTpl.html");
 
@@ -7,7 +7,7 @@ module.exports = function(){
 
 	container.innerHTML = "";
 
-	apiHelper.getFaqList()
+	apis.getFaqList()
 	.then(function(data){
 		container.innerHTML = _.template(tpl)({
 			faq: data

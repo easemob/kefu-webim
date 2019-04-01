@@ -1,4 +1,4 @@
-var apiHelper = require("@/app/common/apiHelper");
+var apis = require("../apis");
 var _const = require("@/common/const");
 var tpl = require("./indexTpl.html");
 var SELFSERVICE_PATH = _const.SELFSERVICE_PATH;
@@ -7,7 +7,7 @@ module.exports = function(){
 	var container = document.querySelector(".em-self-wrapper .self-service-list");
 	container.innerHTML = "";
 
-	apiHelper.getSelfServiceList()
+	apis.getSelfServiceList()
 	.then(function(data){
 		_.each(data, function(item){
 			if(item.iconType == "system"){
