@@ -48,31 +48,9 @@ function getSelfServiceList(){
 	});
 }
 
-function getFaqOrSelfServiceStatus(type){
-	return new Promise(function(resolve, reject){
-		api("getFaqOrSelfServiceStatus", {
-			tenantId: config.tenantId,
-			configId: config.configId,
-			type: type
-		}, function(msg){
-			var status = utils.getDataByPath(msg, "data.status");
-			var entity = utils.getDataByPath(msg, "data.entity");
-			if(status === "OK"){
-				resolve(entity);
-			}
-			else{
-				reject(msg.data);
-			}
-		}, function(error){
-			reject(error);
-		});
-	});
-}
-
 module.exports = {
 	getFaqList: getFaqList,
 	getSelfServiceList: getSelfServiceList,
-	getFaqOrSelfServiceStatus: getFaqOrSelfServiceStatus,
 	update: function(cfg){
 		config = cfg;
 	}
