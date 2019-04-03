@@ -102,7 +102,9 @@ function setUserInfo(targetUserInfo){
 				});
 				resolve("wechatAuth");
 			}, function(){
-				resolve("noWechatAuth");
+				createVisitor().then(function(){
+					resolve("noWechatAuth");
+				});
 			});
 		});
 	}
@@ -117,16 +119,34 @@ function setUserInfo(targetUserInfo){
 				resolve("widthPassword");
 			}, function(){
 				if(profile.grayList.autoCreateAppointedVisitor){
-					resolve("autoCreateAppointedVisitor");
+					createVisitor(commonConfig.getConfig().user.username).then(function(){
+						resolve("autoCreateAppointedVisitor");
+					});
 				}
 				else{
-					resolve("noAutoCreateAppointedVisitor");
+					createVisitor().then(function(){
+						resolve("noAutoCreateAppointedVisitor");
+					});
 				}
 			});
 		});
 	}
-	// default
-	return Promise.resolve();
+
+	return createVisitor().then(function(){
+		return Promise.resolve();
+	});
+}
+
+function createVisitor(username){
+	return apiHelper.createVisitor(username).then(function(entity){
+		commonConfig.setConfig({
+			user: _.extend({}, commonConfig.getConfig().user, {
+				username: entity.userId,
+				password: entity.userPassword
+			})
+		});
+		return Promise.resolve();
+	});
 }
 
 function initConfig(){

@@ -207,9 +207,6 @@ function initChatEntry(targetUserInfo){
 			break;
 
 		case "autoCreateAppointedVisitor":
-			_createAppointedVisitor();
-			break;
-
 		case "noWechatAuth":
 		case "noAutoCreateAppointedVisitor":
 		default:
@@ -287,35 +284,23 @@ function userNameAndTokenEntry(){
 
 
 
+function _createVisitor(){
+	var cacheKeyName = (commonConfig.getConfig().configId || (commonConfig.getConfig().to + commonConfig.getConfig().tenantId + commonConfig.getConfig().emgroup));
 
-function _createAppointedVisitor(){
-	_createVisitor(commonConfig.getConfig().user.username);
-}
-function _createVisitor(username){
-	apiHelper.createVisitor(username).then(function(entity){
-		var cacheKeyName = (commonConfig.getConfig().configId || (commonConfig.getConfig().to + commonConfig.getConfig().tenantId + commonConfig.getConfig().emgroup));
-		commonConfig.setConfig({
-			user: _.extend({}, commonConfig.getConfig().user, {
-				username: entity.userId,
-				password: entity.userPassword
-			})
+	if(commonConfig.getConfig().user.password === ""){
+		profile.imRestDown = true;
+	}
+	if(utils.isTop){
+		utils.set("root" + (commonConfig.getConfig().configId || (commonConfig.getConfig().tenantId + commonConfig.getConfig().emgroup)), commonConfig.getConfig().user.username);
+	}
+	else{
+		transfer.send({
+			event: _const.EVENTS.CACHEUSER,
+			data: {
+				key: cacheKeyName,
+				value: commonConfig.getConfig().user.username,
+			}
 		});
-
-		if(entity.userPassword === ""){
-			profile.imRestDown = true;
-		}
-		if(utils.isTop){
-			utils.set("root" + (commonConfig.getConfig().configId || (commonConfig.getConfig().tenantId + commonConfig.getConfig().emgroup)), commonConfig.getConfig().user.username);
-		}
-		else{
-			transfer.send({
-				event: _const.EVENTS.CACHEUSER,
-				data: {
-					key: cacheKeyName,
-					value: commonConfig.getConfig().user.username,
-				}
-			});
-		}
-		chat.init();
-	});
+	}
+	chat.init();
 }

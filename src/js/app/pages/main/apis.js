@@ -618,29 +618,6 @@ function closeServiceSession(sessionId){
 	});
 }
 
-function createVisitor(specifiedUserName){
-	return new Promise(function(resolve, reject){
-		api("createVisitor", {
-			orgName: config.orgName,
-			appName: config.appName,
-			imServiceNumber: config.toUser,
-			tenantId: config.tenantId,
-			specifiedUserName: specifiedUserName || ""
-		}, function(msg){
-			var entity = msg.data;
-
-			if(entity){
-				resolve(msg.data);
-			}
-			else{
-				reject(new Error("error when attempt to create webim visitor"));
-			}
-		}, function(err){
-			reject(err);
-		});
-	});
-}
-
 function deleteEvent(gid){
 	return new Promise(function(resolve, reject){
 		api("deleteEvent", {
@@ -1253,7 +1230,6 @@ module.exports = {
 	getWaitListNumber: getWaitListNumber,
 	getNickNameOption: getNickNameOption,
 	closeServiceSession: closeServiceSession,
-	createVisitor: createVisitor,
 	deleteEvent: deleteEvent,
 	reportEvent: reportEvent,
 	receiveMsgChannel: receiveMsgChannel,

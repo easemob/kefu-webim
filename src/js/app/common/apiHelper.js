@@ -174,6 +174,30 @@ function getFaqOrSelfServiceStatus(type){
 	});
 }
 
+function createVisitor(){
+	var cfg = commonConfig.getConfig();
+	return new Promise(function(resolve, reject){
+		api("createVisitor", {
+			orgName: cfg.orgName,
+			appName: cfg.appName,
+			imServiceNumber: cfg.toUser,
+			tenantId: cfg.tenantId,
+			specifiedUserName: cfg.specifiedUserName || ""
+		}, function(msg){
+			var entity = msg.data;
+
+			if(entity){
+				resolve(msg.data);
+			}
+			else{
+				reject(new Error("error when attempt to create webim visitor"));
+			}
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getTheme: getTheme,
 	getPassword: getPassword,
@@ -182,6 +206,7 @@ module.exports = {
 	api: api,
 	getConfig: getConfig,
 	getFaqOrSelfServiceStatus: getFaqOrSelfServiceStatus,
+	createVisitor: createVisitor,
 
 	update: function(cfg){
 		config = cfg;
