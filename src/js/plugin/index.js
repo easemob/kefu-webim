@@ -10,6 +10,7 @@ var baseConfig = getScriptConfig();
 var _config = {};
 var iframe;
 var bind;
+var urlParams = utils.parseUrlSearch(window.location.href);
 
 window.easemobim = window.easemobim || {};
 window.easemobim.config = window.easemobim.config || {};
@@ -29,7 +30,8 @@ if(
 require("../../plugin-scss/easemob.scss");
 
 DEFAULT_CONFIG = {
-	tenantId: "",
+	tenantId: urlParams.tenantId || "",
+	configId: urlParams.configId || "",
 	to: "",
 	agentName: "",
 	appKey: "",
@@ -142,11 +144,12 @@ bind = function(config, autoLoad){
 	if(autoLoad){
 		if(
 			(!_config.hide || _config.autoConnect || _config.eventCollector)
-			&& (_config.tenantId || _config.configId) && !utils.isMobile
+			&& (_config.tenantId || _config.configId)
+			&& !utils.isMobile
 		){
 			cacheKeyName = _config.configId || (_config.tenantId + (_config.emgroup || ""));
 
-			iframe = tenantList[cacheKeyName] || Iframe(_config);
+			iframe = tenantList[cacheKeyName] || new Iframe(_config);
 			tenantList[cacheKeyName] = iframe;
 			iframe.set(_config, iframe.close);
 			// 访客上报用后失效
@@ -191,7 +194,7 @@ bind = function(config, autoLoad){
 				return;
 			}
 
-			iframe = Iframe(_config);
+			iframe = new Iframe(_config);
 			tenantList[cacheKeyName] = iframe;
 
 			iframe.set(_config, iframe.open);

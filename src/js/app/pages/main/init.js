@@ -143,8 +143,7 @@ function chat_window_mode_init(){
 		}
 	}, ["easemob"]);
 
-	// 由 iframe.open 统一控制联系客服按钮隐藏
-	// utils.removeClass($contactAgentBtn, "hide");
+	utils.removeClass($contactAgentBtn, "hide");
 	utils.on($contactAgentBtn, "click", function(){
 		transfer.send({ event: _const.EVENTS.SHOW });
 	});

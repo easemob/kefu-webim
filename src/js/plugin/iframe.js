@@ -250,10 +250,7 @@ function Iframe(config){
 	var className = "easemobim-chat-panel easemobim-hide easemobim-minimized";
 	var iframe = document.createElement("iframe");
 	var shadow;
-
-	if(!(this instanceof Iframe)){
-		return new Iframe(config);
-	}
+	
 	utils.isMobile && (className += " easemobim-mobile");
 
 	iframe.frameBorder = 0;

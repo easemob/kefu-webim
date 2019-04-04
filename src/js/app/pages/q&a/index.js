@@ -10,6 +10,7 @@ var eventListener = require("@/app/tools/eventListener");
 module.exports = {
 	init: init,
 	show: show,
+	close: close
 };
 
 function init(obj){
