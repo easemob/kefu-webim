@@ -23,6 +23,7 @@ var transfer = require("@/app/common/transfer");
 var eventListener = require("@/app/tools/eventListener");
 var configTypeIsH5 = false;
 var fromUserClick = false;
+var functionSwitcherAllClose = false;
 
 load_html();
 if(utils.isTop){
@@ -38,6 +39,15 @@ else{
 		// 用户点击联系客服时收到
 		case _const.EVENTS.SHOW:
 			fromUserClick = true;
+			if(!utils.isTop && configTypeIsH5){
+				utils.addClass(document.querySelector(".em-widget-wrapper"), "hide");
+			}
+			functionSwitcherAllClose
+				? utils.removeClass(document.querySelector(".em-widget-wrapper"), "hide")
+				: functionView.show();
+			break;
+		case _const.EVENTS.CLOSE:
+			functionView.close();
 			break;
 		case _const.EVENTS.INIT_CONFIG:
 			transfer.to = data.parentId;
@@ -276,37 +286,42 @@ function renderUI(resultStatus){
 	else if(commonConfig.getConfig().configId){
 		// 添加移动端样式类
 		configTypeIsH5 && utils.addClass(document.body, "em-mobile");
-		if(isNotAutoLoad){
 			// 全部渲染
-			if(!configTypeIsH5 && (resultStatus[0] || resultStatus[1])){
-				main.initChat();
-				functionView.init({
-					configTypeIsH5: configTypeIsH5,
-					resultStatus: resultStatus
-				});
-				utils.addClass(document.body, "big-window");
-				!utils.isTop && handleSettingIframeSize({ width: "720px" });
-			}
-			// 常见问题和自助服务开关都关闭时
-			else if(!resultStatus[0] && !resultStatus[1]){
-				main.initChat();
-				!configTypeIsH5 && utils.removeClass(document.body, "big-window");
-			}
-			else{
-				functionView.init({
-					configTypeIsH5: configTypeIsH5,
-					resultStatus: resultStatus
-				});
-			}
+		if(!configTypeIsH5 && (resultStatus[0] || resultStatus[1])){
+			main.initChat();
+			functionView.init({
+				configTypeIsH5: configTypeIsH5,
+				resultStatus: resultStatus
+			});
+			utils.addClass(document.body, "big-window");
+			!utils.isTop && handleSettingIframeSize({ width: "720px" });
 		}
+			// 常见问题和自助服务开关都关闭时
+		else if(!resultStatus[0] && !resultStatus[1]){
+			main.initChat();
+			functionSwitcherAllClose = true;
+			!configTypeIsH5 && utils.removeClass(document.body, "big-window");
+		}
+		else{
+			functionView.init({
+				configTypeIsH5: configTypeIsH5,
+				resultStatus: resultStatus
+			});
+		}
+
 		// autoload 时 fix 不该出现的容器
 		// 后续需要找到根源？？？
-		if(!utils.isTop && configTypeIsH5){
+		if((!utils.isTop && configTypeIsH5) || !isNotAutoLoad){
 			utils.addClass(document.querySelector(".em-widget-wrapper"), "hide");
 		}
+		if(!isNotAutoLoad){
+			functionView.close();
+		}
+
 	}
 	else{
 		main.initChat();
+		!fromUserClick && utils.addClass(document.querySelector(".em-widget-wrapper"), "hide");
 	}
 
 	apiHelper.getTheme().then(function(themeName){
