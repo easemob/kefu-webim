@@ -25,7 +25,17 @@ module.exports = {
 	initChat: initChat,
 	chat_window_mode_init: chat_window_mode_init,
 	initRelevanceError: initRelevanceError,
+	show: show,
+	close: close,
 };
+
+function show(){
+	utils.removeClass(document.querySelector(".em-widget-wrapper"), "hide");
+}
+
+function close(){
+	utils.addClass(document.querySelector(".em-widget-wrapper"), "hide");
+}
 
 function init(obj){
 	setConfig = obj;

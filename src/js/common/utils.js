@@ -362,22 +362,6 @@ module.exports = {
 		// todo：移到，easemob.js 里边
 		return this.extend({}, obj);
 	},
-	parseUrlSearch: function(url){
-		var result = {};
-		var kv = url ? (url.split("?")[1] || "") : window.location.search;
-		kv = kv.replace("?", "");
-
-		var tmp;
-		var i;
-		if(kv){
-			kv = kv.split("&");
-			for(i = 0; i < kv.length; i++){
-				tmp = kv[i].split("=");
-				result[tmp[0]] = (tmp[1] ? decodeURIComponent(tmp[1]) : null);
-			}
-		}
-		return result;
-	}
 };
 
 function getDataByPath(obj, path){

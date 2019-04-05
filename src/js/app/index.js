@@ -23,7 +23,6 @@ var transfer = require("@/app/common/transfer");
 var eventListener = require("@/app/tools/eventListener");
 var configTypeIsH5 = false;
 var fromUserClick = false;
-var functionSwitcherAllClose = false;
 
 load_html();
 if(utils.isTop){
@@ -40,11 +39,14 @@ else{
 		case _const.EVENTS.SHOW:
 			fromUserClick = true;
 			if(!utils.isTop && configTypeIsH5){
-				utils.addClass(document.querySelector(".em-widget-wrapper"), "hide");
+				main.close();
 			}
-			functionSwitcherAllClose
-				? utils.removeClass(document.querySelector(".em-widget-wrapper"), "hide")
-				: functionView.show();
+			initFunctionStatus()
+			.then(function(result){
+				result[0] || result[1]
+					? functionView.show()
+					: main.show();
+			});
 			break;
 		case _const.EVENTS.CLOSE:
 			functionView.close();
@@ -172,25 +174,26 @@ function initConfig(){
 
 function initRelevanceList(){
 	// 获取关联信息（targetChannel）
+	var relevanceList;
 	apiHelper.getRelevanceList()
-	.then(function(relevanceList){
-		initFunctionStatus(relevanceList);
-
+	.then(function(_relevanceList){
+		relevanceList = _relevanceList;
+		return initFunctionStatus();
 	}, function(err){
 		main.initRelevanceError(err);
-	});
-}
-
-function initFunctionStatus(relevanceList){
-	Promise.all([
-		apiHelper.getFaqOrSelfServiceStatus("issue"),
-		apiHelper.getFaqOrSelfServiceStatus("self-service")
-	])
-	.then(function(result){
-		handleCfgData(relevanceList, result);
+	})
+	.then(function(results){
+		handleCfgData(relevanceList, results);
 	}, function(){
 		handleCfgData(relevanceList, []);
 	});
+}
+
+function initFunctionStatus(){
+	return arguments.callee.cache = arguments.callee.cache || Promise.all([
+		apiHelper.getFaqOrSelfServiceStatus("issue"),
+		apiHelper.getFaqOrSelfServiceStatus("self-service")
+	]);
 }
 
 // todo: rename this function
@@ -299,7 +302,6 @@ function renderUI(resultStatus){
 			// 常见问题和自助服务开关都关闭时
 		else if(!resultStatus[0] && !resultStatus[1]){
 			main.initChat();
-			functionSwitcherAllClose = true;
 			!configTypeIsH5 && utils.removeClass(document.body, "big-window");
 		}
 		else{
@@ -312,7 +314,7 @@ function renderUI(resultStatus){
 		// autoload 时 fix 不该出现的容器
 		// 后续需要找到根源？？？
 		if((!utils.isTop && configTypeIsH5) || !isNotAutoLoad){
-			utils.addClass(document.querySelector(".em-widget-wrapper"), "hide");
+			main.close();
 		}
 		if(!isNotAutoLoad){
 			functionView.close();
@@ -321,7 +323,7 @@ function renderUI(resultStatus){
 	}
 	else{
 		main.initChat();
-		!fromUserClick && utils.addClass(document.querySelector(".em-widget-wrapper"), "hide");
+		!fromUserClick && main.close();
 	}
 
 	apiHelper.getTheme().then(function(themeName){

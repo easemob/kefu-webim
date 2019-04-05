@@ -77,6 +77,11 @@ function resizeChatWindow(){
 }
 </script>
 <script>
+function query(key){
+	var reg = new RegExp("[?&]" + key + "=([^&]*)(?=&|$)");
+	var matches = reg.exec(location.search);
+	return matches ? matches[1] : "";
+}
 window.easemobim = window.easemobim || {};
 
 window.easemobim.config = {
@@ -99,11 +104,12 @@ window.easemobim.config = {
 	// 访客自动上报
 	// eventCollector: true,
 	satisfaction: true,
-	// hide: false,
+	// autoConnect: true,
+	// hide: true,
 	// minimum: false,
-	// tenantId: "11885",
+	tenantId: query("tenantId") || "",
+	configId: query("configId") || "",
 	unused: "",
-	// configId: "d316910b-7846-42ea-b5be-5df1a95cf9a7"
 };
 </script>
 

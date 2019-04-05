@@ -10,7 +10,6 @@ var baseConfig = getScriptConfig();
 var _config = {};
 var iframe;
 var bind;
-var urlParams = utils.parseUrlSearch(window.location.href);
 
 window.easemobim = window.easemobim || {};
 window.easemobim.config = window.easemobim.config || {};
@@ -30,8 +29,7 @@ if(
 require("../../plugin-scss/easemob.scss");
 
 DEFAULT_CONFIG = {
-	tenantId: urlParams.tenantId || "",
-	configId: urlParams.configId || "",
+	tenantId: "",
 	to: "",
 	agentName: "",
 	appKey: "",
