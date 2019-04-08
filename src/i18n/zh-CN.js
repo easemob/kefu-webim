@@ -57,8 +57,8 @@ module.exports = {
 		no_agent_online: "当前暂无客服在线，请您留下联系方式，稍后我们将主动联系您",
 		session_created: "会话创建成功",
 		session_opened: "会话已被客服接起",
-		sessing_transfering: "会话转接中，请稍候",
-		session_transfered: "会话已被转接至其他客服",
+		sessing_transfering: "",//会话转接中，请稍候
+		session_transfered: "",//会话已被转接至其他客服
 		sessing_closed: "会话已结束",
 	},
 	evaluation: {

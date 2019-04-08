@@ -25,7 +25,12 @@ var noteCategoryList = new Selector({
 	list: [],
 	container: noteCategory,
 });
-
+phone.addEventListener("blur",function () {
+	numberReg();
+})
+mail.addEventListener("blur",function () {
+	mailReg();
+})
 // todo: lazy load dialog
 var dialog = uikit.createDialog({
 	contentDom: dom,
@@ -122,7 +127,18 @@ function _writePreDate(preData){
 	phone.value = preData.phone || "";
 	mail.value = preData.mail || "";
 }
-
+function numberReg() {// 验证手机正则
+	if(!(/^1[34578]\d{9}$/.test(phone.value))){ 
+        uikit.tip(__("ticket.invalid_phone"));
+        return false; 
+    }  
+}
+function mailReg() {// 验证邮箱正则
+	if(!(/^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/.test(mail.value))) {
+		uikit.tip(__("ticket.invalid_email"));
+        return false; 
+	}
+}
 module.exports = function(opt){
 	opt = opt || {};
 	profile.grayList.noteCategory && _getCategories();
