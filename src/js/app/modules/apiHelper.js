@@ -1362,6 +1362,28 @@ function confirmSatisfaction(robotAgentId, satisfactionCommentKey, selected){
 	});
 }
 
+function getGradeType(){
+	return new Promise(function(resolve, reject){
+		emajax({
+			url: "/v1/webimplugin/tenants/" + config.tenantId + "/info",
+			type: "GET",
+			success: function(resp){
+				var parsed;
+				if(resp){
+					parsed = JSON.parse(resp);
+					resolve(parsed);
+				}
+				else{
+					reject(new Error("unexpected response value."));
+				}
+			},
+			error: function(err){
+				reject(err);
+			}
+		});
+	});
+}
+
 module.exports = {
 	getCurrentServiceSession: getCurrentServiceSession,
 	getToken: getToken,
@@ -1419,6 +1441,7 @@ module.exports = {
 	api: api,
 	getSatisfactionCommentTags: getSatisfactionCommentTags,
 	confirmSatisfaction: confirmSatisfaction,
+	getGradeType: getGradeType,
 
 	setCacheItem: function(key, value){
 		cache[key] = value;
