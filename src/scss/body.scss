@@ -17,7 +17,30 @@ body.big-window{
 		min-width: 300px;
 	}
 }
-
+.em-widget-risk-warning{
+	position:fixed;
+	top:41px;
+	left:0;
+	height:40px;
+	background:#FFF2E6;
+	z-index:1;
+	padding: 5px;
+    color: #5d5d5d;
+	font-size:13px;
+	display:none;
+	span{
+		display: inline-block;
+		width:95%;
+	}
+	i{
+		position: absolute;
+		right: 0px;
+		cursor:pointer;
+		&:before {
+			color:#999;
+		}
+	}
+}
 /* 消息窗 */
 
 .chat-wrapper {
