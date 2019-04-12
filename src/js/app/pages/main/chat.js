@@ -269,6 +269,20 @@ function _scrollToBottom(){
 	typeof scrollToBottom === "function" && scrollToBottom();
 }
 
+function _checkGradeType(){
+	var riskWarning = document.querySelector(".em-widget-risk-warning");
+	apiHelper.getGradeType().then(function(data){
+		var entity = data.entity;
+		var grade = entity.grade;
+		if(grade == "TRIAL"){
+			riskWarning.style.display = "block";
+		}
+		else{
+			riskWarning.style.display = "none";
+		}
+	});
+}
+
 function _initAutoGrow(){
 	var originHeight = doms.textInput.clientHeight;
 
@@ -515,6 +529,12 @@ function _bindEvents(){
 		articleContainer.style.display = "none";
 		doms.editorView.style.display = "block";
 		tenantInfo && tenantInfo.show();
+	});
+
+	// 交易风险提醒
+	utils.live("#em-kefu-webim-chat .em-widget-risk-warning .icon-close", "click", function(){
+		var riskWarning = document.querySelector(".em-widget-risk-warning");
+		riskWarning.style.display = "none";
 	});
 	// 提示有新消息
 	eventListener.add(_const.SYSTEM_EVENT.MESSAGE_APPENDED, function(oa, msg){
@@ -920,6 +940,9 @@ function _initSession(){
 			_setNotice();
 
 			_initToolbar();
+
+			// 检测租户版本是否是试用期
+			_checkGradeType();
 
 			// 移动端输入框自动增长
 			utils.isMobile && _initAutoGrow();
