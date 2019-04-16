@@ -118,10 +118,10 @@ function _initUI(){
 
 function _initToolbar(){
 	// 低版本浏览器不支持上传文件/图片
-	if(WebIM.utils.isCanUploadFileAsync){
-		utils.removeClass(doms.sendImgBtn, "hide");
-		// utils.removeClass(doms.sendFileBtn, "hide");// 广东电网需要去掉上传附件功能
-	}
+	// if(WebIM.utils.isCanUploadFileAsync){
+	// 	utils.removeClass(doms.sendImgBtn, "hide");
+	// 	utils.removeClass(doms.sendFileBtn, "hide");
+	// } //广东电网需要去掉上传附件功能
 
 	// 留言按钮
 	config.ticket && utils.removeClass(doms.noteBtn, "hide");
@@ -609,15 +609,15 @@ function _bindEvents(){
 			fileInput.value = "";
 		}
 	});
-
+	//广东电网需要去掉上传附件功能
 	// 弹出文件选择框
-	utils.on(doms.sendFileBtn, "click", function(){
-		doms.fileInput.click();
-	});
+	// utils.on(doms.sendFileBtn, "click", function(){
+	// 	doms.fileInput.click();
+	// });
 
-	utils.on(doms.sendImgBtn, "click", function(){
-		doms.imgInput.click();
-	});
+	// utils.on(doms.sendImgBtn, "click", function(){
+	// 	doms.imgInput.click();
+	// });
 
 	// 显示留言页面
 	utils.on(doms.noteBtn, "click", function(){
@@ -767,8 +767,8 @@ function _getDom(){
 		switchKeyboardBtn: topBar.querySelector(".btn-keyboard"),
 
 		emojiToggleButton: editorView.querySelector(".em-bar-emoji"),
-		sendImgBtn: editorView.querySelector(".em-widget-img"),
-		// sendFileBtn: editorView.querySelector(".em-widget-file"), //广东电网需要去掉上传附件功能
+		// sendImgBtn: editorView.querySelector(".em-widget-img"),
+		// sendFileBtn: editorView.querySelector(".em-widget-file"),//广东电网需要去掉上传附件功能
 		sendBtn: editorView.querySelector(".em-widget-send"),
 		satisfaction: editorView.querySelector(".em-widget-satisfaction"),
 		textInput: editorView.querySelector(".em-widget-textarea"),
