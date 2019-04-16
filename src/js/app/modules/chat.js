@@ -120,7 +120,7 @@ function _initToolbar(){
 	// 低版本浏览器不支持上传文件/图片
 	if(WebIM.utils.isCanUploadFileAsync){
 		utils.removeClass(doms.sendImgBtn, "hide");
-		utils.removeClass(doms.sendFileBtn, "hide");
+		// utils.removeClass(doms.sendFileBtn, "hide");// 广东电网需要去掉上传附件功能
 	}
 
 	// 留言按钮
@@ -768,7 +768,7 @@ function _getDom(){
 
 		emojiToggleButton: editorView.querySelector(".em-bar-emoji"),
 		sendImgBtn: editorView.querySelector(".em-widget-img"),
-		sendFileBtn: editorView.querySelector(".em-widget-file"),
+		// sendFileBtn: editorView.querySelector(".em-widget-file"), //广东电网需要去掉上传附件功能
 		sendBtn: editorView.querySelector(".em-widget-send"),
 		satisfaction: editorView.querySelector(".em-widget-satisfaction"),
 		textInput: editorView.querySelector(".em-widget-textarea"),
