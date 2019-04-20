@@ -1062,21 +1062,32 @@
 				}
 
 				if (utils.isMobile) {
+					var u = navigator.userAgent, app = navigator.appVersion
+					var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
 					var handleFocus = function () {
 						easemobim.textarea.style.overflowY = 'auto';
 						me.scrollBottom(800);
-						// todo: kill focusText
-						clearInterval(me.focusText);
-						me.focusText = setInterval(function () {
-							document.body.scrollTop = 10000;
-						}, 100);
+						// todo: kill focusText 
+						// 注释原因在中信会出现闪屏现象
+						// clearInterval(me.focusText);
+						// me.focusText = setInterval(function () {
+						// 	document.body.scrollTop = 10000;
+						// }, 100);
 					};
+					var blurAdjust = function () {
+						var data = {
+							dataType: "CLOSESINPUT"
+						}
+						parent.postMessage(JSON.stringify(data), "*");
+					}
 					utils.on(easemobim.textarea, 'focus', handleFocus);
 					utils.one(easemobim.textarea, 'touchstart', handleFocus);
 					utils.on(easemobim.textarea, 'blur', function () {
-						clearInterval(me.focusText);
+						// clearInterval(me.focusText); // 注释原因在中信会出现闪屏现象
+						if (isIOS) {
+							blurAdjust();
+						}
 					});
-
 					// 键盘上下切换按钮
 					utils.on(
 						document.querySelector('.em-widgetHeader-keyboard'),
