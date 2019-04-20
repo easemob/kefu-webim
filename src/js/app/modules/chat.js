@@ -1067,7 +1067,13 @@
 					var handleFocus = function () {
 						easemobim.textarea.style.overflowY = 'auto';
 						me.scrollBottom(800);
-						// todo: kill focusText 
+						// todo: kill focusText
+						if (!isIOS) { 
+							clearInterval(me.focusText);
+							me.focusText = setInterval(function () {
+								document.body.scrollTop = 10000;
+							}, 100);
+						}
 						// 注释原因在中信会出现闪屏现象
 						// clearInterval(me.focusText);
 						// me.focusText = setInterval(function () {
@@ -1086,6 +1092,8 @@
 						// clearInterval(me.focusText); // 注释原因在中信会出现闪屏现象
 						if (isIOS) {
 							blurAdjust();
+						} else {
+							clearInterval(me.focusText);
 						}
 					});
 					// 键盘上下切换按钮
