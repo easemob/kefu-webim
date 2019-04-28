@@ -572,7 +572,7 @@ function _handleMessage(msg, options){
 				var className = "js_robotbtn ";
 				if(item.id === "TransferToKf"){
 					// 为以后转人工按钮样式调整做准备
-					className += "bg-hover-color";
+					className += "bg-hover-color bg-color border-color white";
 				}
 				else{
 					className += "bg-hover-color";
