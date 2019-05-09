@@ -83,8 +83,7 @@ body.big-window{
 	color: white;
 	.status-bar {
 		box-sizing: border-box;
-		position: absolute;
-		width:100%;
+		position: relative;
 		height: 88px;
 		background-color: rgba(0,0,0,.8);
 		.status-text {
