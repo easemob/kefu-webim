@@ -39,7 +39,7 @@
 	padding-left: 10px;
 	color: white;
 	background:url("./img/topLarge-zip.png") no-repeat;
-	background-size:100% 100%;
+	background-size:contain;
 
 	.drag-bar {
 		position: absolute;
