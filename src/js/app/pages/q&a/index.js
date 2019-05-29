@@ -36,7 +36,7 @@ function init(obj){
 
 
 	// 移动网站 config 显示 “点击联系客服”
-	obj.configTypeIsH5 && utils.removeClass(document.querySelector(".em-self-wrapper .contact-customer-service"), "hide");
+	utils.isMobile && utils.removeClass(document.querySelector(".em-self-wrapper .contact-customer-service"), "hide");
 	utils.live(".contact-customer-service", "click", onContactClick, document.querySelector(".em-self-wrapper"));
 
 }
