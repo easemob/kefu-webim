@@ -153,12 +153,13 @@ function _emojiParser(text){
 	for(key in EMOJI_MAP){
 		if(Object.prototype.hasOwnProperty.call(EMOJI_MAP, key)){
 			value = EMOJI_MAP[key];
-			index = text.indexOf(key);
+			var expressCode = value.expressCode;
+			index = text.indexOf(expressCode);
 			if(~index){
 				return {
 					index: index,
-					oldStr: key,
-					newStr: "<img class=\"emoji\" src=\"" + EMOJI_PATH + value + "\">",
+					oldStr: expressCode,
+					newStr: "<img class=\"emoji\" src=\"" + EMOJI_PATH + value.url + "\">",
 					type: "EMOJI",
 				};
 			}

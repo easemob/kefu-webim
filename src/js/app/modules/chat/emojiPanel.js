@@ -69,7 +69,7 @@ function init(option){
 		}
 		else{
 			!utils.isMobile && textInput.focus();
-			textInput.value += target.getAttribute("data-value");
+			textInput.value += _const.EMOJI_MAP[target.getAttribute("data-value")].expressCode;
 			utils.trigger(textInput, "change");
 		}
 	}, dom);
@@ -317,8 +317,8 @@ function _loadSystemEmojiPackage(){
 	.map(function(value, key){
 		return "<div class=\"emoji-bg e-face\">"
 				+ "<img class=\"e-face emoji\" src=\""
-				+ path + value
-				+ "\" data-value=" + key + " />"
+				+ path + value.url
+				+ "\" data-value=" + value.url + " />"
 				+ "</div>";
 	})
 	// 按照下标分组
