@@ -155,7 +155,7 @@ function _emojiParser(text){
 			value = EMOJI_MAP[key];
 			var expressCode = value.expressCode;
 			index = text.indexOf(expressCode);
-			if(~index){
+			if (~index) {
 				return {
 					index: index,
 					oldStr: expressCode,
