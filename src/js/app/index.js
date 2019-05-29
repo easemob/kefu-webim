@@ -21,7 +21,6 @@ var handleConfig = commonConfig.handleConfig;
 var doWechatAuth = require("@/app/common/wechat");
 var transfer = require("@/app/common/transfer");
 var eventListener = require("@/app/tools/eventListener");
-var configTypeIsH5 = false;
 var fromUserClick = false;
 
 load_html();
@@ -38,7 +37,7 @@ else{
 		// 用户点击联系客服时收到
 		case _const.EVENTS.SHOW:
 			fromUserClick = true;
-			if(!utils.isTop && configTypeIsH5){
+			if(utils.isMobile){
 				main.close();
 			}
 			initFunctionStatus()
@@ -166,7 +165,6 @@ function initConfig(){
 	.then(function(entity){
 		entity.configJson.tenantId = entity.tenantId;
 		handleConfig(entity.configJson);
-		configTypeIsH5 = entity.configType === "H5";
 		handleSettingIframeSize();
 		initRelevanceList();
 	});
@@ -185,15 +183,18 @@ function initRelevanceList(){
 	.then(function(results){
 		handleCfgData(relevanceList, results);
 	}, function(){
-		handleCfgData(relevanceList, []);
+		handleCfgData(relevanceList || [], []);
 	});
 }
 
 function initFunctionStatus(){
-	return arguments.callee.cache = arguments.callee.cache || Promise.all([
-		apiHelper.getFaqOrSelfServiceStatus("issue"),
-		apiHelper.getFaqOrSelfServiceStatus("self-service")
-	]);
+	if(commonConfig.getConfig().configId){
+		return arguments.callee.cache = arguments.callee.cache || Promise.all([
+			apiHelper.getFaqOrSelfServiceStatus("issue"),
+			apiHelper.getFaqOrSelfServiceStatus("self-service")
+		]);
+	}
+	return Promise.resolve([]);
 }
 
 // todo: rename this function
@@ -278,8 +279,6 @@ function handleCfgData(relevanceList, status){
 	renderUI(status);
 }
 function renderUI(resultStatus){
-	var isNotAutoLoad = utils.isTop || fromUserClick;
-
 	// 用于预览模式
 	if(commonConfig.getConfig().previewObj){
 		handleConfig(commonConfig.getConfig().previewObj);
@@ -288,38 +287,30 @@ function renderUI(resultStatus){
 	}
 	else if(commonConfig.getConfig().configId){
 		// 添加移动端样式类
-		configTypeIsH5 && utils.addClass(document.body, "em-mobile");
-			// 全部渲染
-		if(!configTypeIsH5 && (resultStatus[0] || resultStatus[1])){
+		if(utils.isMobile){
+			utils.addClass(document.body, "em-mobile");
+		}
+		else{
+			utils.addClass(document.body, "big-window");
+		}
+		// 全部渲染
+		if(!utils.isMobile && (resultStatus[0] || resultStatus[1])){
 			main.initChat();
 			functionView.init({
-				configTypeIsH5: configTypeIsH5,
 				resultStatus: resultStatus
 			});
-			utils.addClass(document.body, "big-window");
-			!utils.isTop && handleSettingIframeSize({ width: "720px" });
+			utils.isMobile && handleSettingIframeSize({ width: "720px" });
 		}
-			// 常见问题和自助服务开关都关闭时
+		// 常见问题和自助服务开关都关闭时
 		else if(!resultStatus[0] && !resultStatus[1]){
 			main.initChat();
-			!configTypeIsH5 && utils.removeClass(document.body, "big-window");
+			!utils.isMobile && utils.removeClass(document.body, "big-window");
 		}
 		else{
 			functionView.init({
-				configTypeIsH5: configTypeIsH5,
 				resultStatus: resultStatus
 			});
 		}
-
-		// autoload 时 fix 不该出现的容器
-		// 后续需要找到根源？？？
-		if((!utils.isTop && configTypeIsH5) || !isNotAutoLoad){
-			main.close();
-		}
-		if(!isNotAutoLoad){
-			functionView.close();
-		}
-
 	}
 	else{
 		main.initChat();
