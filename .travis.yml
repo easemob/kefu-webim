@@ -14,7 +14,7 @@ jobs:
     - stage: "step1"
       name: "packing"
       script: ./travis/pack.sh
-      if: tag =~ /^plugin_\d+\.\d+\.\d+\_final$/
+      if: tag =~ /^webim.\d+\.\d+\.\d+\.\d+\.[a-zA-Z]+\.final$/
       deploy:
         skip_cleanup: true
         provider: script
