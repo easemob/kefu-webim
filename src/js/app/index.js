@@ -27,7 +27,7 @@ load_html();
 if(utils.isTop){
 	commonConfig.h5_mode_init();
 	initCrossOriginIframe();
-	utils.removeClass(document.querySelector(".em-widget-box"), "hide");
+	widgetBoxShow();
 }
 else{
 	main.chat_window_mode_init();
@@ -38,10 +38,10 @@ else{
 		// 用户点击联系客服时收到
 		case _const.EVENTS.SHOW:
 			fromUserClick = true;
-			utils.removeClass(document.querySelector(".em-widget-box"), "hide");
+			widgetBoxShow();
 			break;
 		case _const.EVENTS.CLOSE:
-			utils.addClass(document.querySelector(".em-widget-box"), "hide");
+			widgetBoxHide();
 			break;
 		case _const.EVENTS.INIT_CONFIG:
 			transfer.to = data.parentId;
@@ -58,6 +58,12 @@ main.init(setUserInfo);
 // 监听点击咨询客服收到的通知
 eventListener.add(_const.SYSTEM_EVENT.CONSULT_AGENT, main.initChat);
 
+function widgetBoxShow(){
+	utils.removeClass(document.querySelector(".em-widget-box"), "hide");
+}
+function widgetBoxHide(){
+	utils.addClass(document.querySelector(".em-widget-box"), "hide");
+}
 function setUserInfo(targetUserInfo){
 	if(targetUserInfo){
 		// 游客

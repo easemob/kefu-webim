@@ -133,7 +133,7 @@ function chat_window_mode_init(){
 			}
 
 			// 显示聊天窗口
-			!utils.isMobile && chat.show();
+			chat.show();
 			break;
 		case _const.EVENTS.CLOSE:
 			chat.close();
