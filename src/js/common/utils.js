@@ -2,6 +2,18 @@
 var moment = require("moment");
 var _isMobile = /mobile/i.test(navigator.userAgent);
 // var _isIE8 = /Trident\/4\.0/.test(navigator.userAgent);
+var protocol = /(((ftp|https?):)?\/\/)?/;
+var auth = /([-._0-9a-zA-Z]+(:[-._0-9a-zA-Z]+)?@)?/;
+var host = /((\d+\.\d+\.\d+\.\d+)|(([-_0-9a-zA-Z_]+\.)+[a-zA-Z]+))/;
+var port = /(:\d+)?/;
+var path = /(\/[^ ?\n]*)*/;
+var query = /(\?([-+._%0-9a-zA-Z]+=[^ &#'"\n]*&)*([-+._%0-9a-zA-Z]+=[^ &#'"\n]*))?/;
+var hash = /(#[-+._%0-9a-zA-Z/]*)?/;
+var reg = new RegExp(getString(protocol) + getString(auth) + getString(host) + getString(port) + getString(path) + getString(query) + getString(hash), "gi");
+
+function getString(reg){
+	return reg.toString().replace(/^\/(.*)\/$/, "$1");
+}
 
 function _isNodeList(nodes){
 	var stringRepr = Object.prototype.toString.call(nodes);
@@ -362,6 +374,19 @@ module.exports = {
 		// todo：移到，easemob.js 里边
 		return this.extend({}, obj);
 	},
+	encode: function(str){
+		var s;
+		if(!str) return "";
+		s = str || "";
+		if(str.length == 0) return "";
+		s = s.replace(/[<]/g, "&lt;");
+		s = s.replace(/[>]/g, "&gt;");
+		s = s.replace(/[']/g, "&#39;");
+		s = s.replace(/["]/g, "&quot;");
+		s = s.replace(/\n/g, "<br>");
+		return s;
+	},
+	parseUrl: parseUrl,
 };
 
 function getDataByPath(obj, path){
@@ -386,4 +411,24 @@ function getDataByPath(obj, path){
 		// 没有找到path，返回undefined
 		return undefined;
 	}
+}
+function addProtocol(url){
+	if(!url.match(/^(https?)|(ftp):\/\//i)){
+		url = "http://" + url;
+	}
+	return url;
+}
+function parseUrl(txt){
+	txt = String(txt);
+	// 可能有坑， 转义字符问题
+	txt = txt.replace(/&amp;/g, "&");
+	txt = txt.replace(/<br>/gi, "\n");
+	txt = txt.replace(reg, function(match, a){
+		// 判断是否为有效 url
+		if(match){
+			return "<a class=\"link\" href=\"" + addProtocol(match) + "\" target=\"_blank\">" + match + "</a>";
+		}
+		return match;
+	});
+	return txt.replace(/\n/g, "<br>");
 }

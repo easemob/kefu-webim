@@ -17,11 +17,17 @@ body.big-window{
 		min-width: 300px;
 	}
 }
+.em-widget-box{
+	height: 100%;
+	.em-widget-content-box{
+		height: calc(100% - 41px);
+	}
+}
 .em-widget-risk-warning{
 	width:100%;
 	box-sizing: border-box;
 	position:absolute;
-	top:41px;
+	top:0;
 	left:0;
 	background:#FFF2E6;
 	z-index:1;
@@ -50,7 +56,7 @@ body.big-window{
 
 .chat-wrapper {
 	position: absolute;
-	top: 41px;
+	top: 0;
 	bottom: 140px;
 	background-color: #F4F7FA;
 	width: 100%;

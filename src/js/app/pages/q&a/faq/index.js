@@ -9,6 +9,11 @@ module.exports = function(){
 
 	apis.getFaqList()
 	.then(function(data){
+		// 处理格式
+		_.each(data, function(itm){
+			itm.content = utils.encode(itm.content);
+			itm.content = utils.parseUrl(itm.content);
+		});
 		container.innerHTML = _.template(tpl)({
 			faq: data
 		});

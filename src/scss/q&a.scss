@@ -31,7 +31,6 @@
 	}
 	.faq-item{
 		margin: 5px 0;
-		user-select: none;
 		cursor: pointer;
 		>p{
 			border: 1px solid #e5e5e5;
@@ -39,8 +38,12 @@
 			padding: 0.5em 1em;
 			background: #fff;
 		}
+		.question{
+			font-weight: 400;
+		}
 		.answer {
 			border-top: none;
+			padding: 0.5em 2em;
 		}
 		&.hide-answer{
 			.answer{

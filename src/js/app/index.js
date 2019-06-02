@@ -27,6 +27,7 @@ load_html();
 if(utils.isTop){
 	commonConfig.h5_mode_init();
 	initCrossOriginIframe();
+	utils.removeClass(document.querySelector(".em-widget-box"), "hide");
 }
 else{
 	main.chat_window_mode_init();
@@ -37,18 +38,10 @@ else{
 		// 用户点击联系客服时收到
 		case _const.EVENTS.SHOW:
 			fromUserClick = true;
-			if(utils.isMobile){
-				main.close();
-			}
-			initFunctionStatus()
-			.then(function(result){
-				result[0] || result[1]
-					? functionView.show()
-					: main.show();
-			});
+			utils.removeClass(document.querySelector(".em-widget-box"), "hide");
 			break;
 		case _const.EVENTS.CLOSE:
-			functionView.close();
+			utils.addClass(document.querySelector(".em-widget-box"), "hide");
 			break;
 		case _const.EVENTS.INIT_CONFIG:
 			transfer.to = data.parentId;
@@ -299,7 +292,7 @@ function renderUI(resultStatus){
 			functionView.init({
 				resultStatus: resultStatus
 			});
-			utils.isMobile && handleSettingIframeSize({ width: "720px" });
+			handleSettingIframeSize({ width: "720px" });
 		}
 		// 常见问题和自助服务开关都关闭时
 		else if(!resultStatus[0] && !resultStatus[1]){
