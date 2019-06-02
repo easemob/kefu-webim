@@ -12,12 +12,7 @@
 	<a class="em-widget-pop-bar bg-color icon-easemob" href="javascript:;"><%=contact_agent%></a>
 </div>
 
-<!-- UI -->
-<div id="em-kefu-webim-chat" class="em-widget-wrapper hide">
-	<div class="em-widget-risk-warning">
-		<span>交易风险提醒：该系统是测试环境，尚未开通正式业务，涉及付款等交易请谨慎！</span>
-		<i class="icon-close btn-audio"></i>
-	</div>
+<div class="em-widget-box hide">
 	<!-- 标题栏 -->
 	<div class="em-widget-header bg-color border-color">
 		<!-- 用于拖动的浮层 -->
@@ -49,78 +44,88 @@
 		<i class="btn-keyboard icon-keyboard-up hide"></i>
 	</div>
 
-	<!-- 信息栏 -->
-	<div class="em-widget-tip">
-		<span class="content"></span>
-		<i class="icon-close tip-close"></i>
-	</div>
+	<div class="em-widget-content-box">
+		<!-- UI -->
+		<div id="em-kefu-webim-chat" class="em-widget-wrapper hide">
+			<div class="em-widget-risk-warning">
+				<span>交易风险提醒：该系统是测试环境，尚未开通正式业务，涉及付款等交易请谨慎！</span>
+				<i class="icon-close btn-audio"></i>
+			</div>
 
-	<!-- 消息容器 -->
-	<div class="chat-wrapper">
-		<!-- 广告条 -->
-		<div class="em-widget-tenant-logo hide">
-			<img>
+			<!-- 信息栏 -->
+			<div class="em-widget-tip">
+				<span class="content"></span>
+				<i class="icon-close tip-close"></i>
+			</div>
+
+			<!-- 消息容器 -->
+			<div class="chat-wrapper">
+				<!-- 广告条 -->
+				<div class="em-widget-tenant-logo hide">
+					<img>
+				</div>
+
+				<!-- <div class="chat-container"></div> -->
+			</div>
+
+			<!-- 输入框 -->
+			<div class="em-widget-send-wrapper">
+
+				<!-- 待接入人数状态 -->
+				<div class="queuing-number-status hide"><%=current_queue_number%><label></label></div>
+
+				<!-- 工具栏 -->
+				<div class="toolbar">
+					<i class="em-bar-emoji icon-face e-face fg-hover-color" title="<%=emoji%>"></i>
+					<i class="em-widget-img icon-picture fg-hover-color hide" title="<%=picture%>"></i>
+					<i class="em-widget-file icon-attachment fg-hover-color hide" title="<%=attachment%>"></i>
+					<!-- 发送视频按钮 -->
+					<i class="em-widget-video icon-sendvideo fg-hover-color hide" title="<%=send_video%>"></i>
+					<i class="em-widget-note icon-note fg-hover-color hide" title="<%=ticket%>"></i>
+
+					<i class="icon-video fg-hover-color em-video-invite hide" title="<%=video_invite%>"></i>
+					<i class="icon-flower fg-hover-color em-widget-satisfaction hide" title="<%=evaluate_agent%>"></i>
+					<i class="icon-headset fg-hover-color em-widget-to-kefu hide" title="<%=transfer_to_kefu%>"></i>
+				</div>
+
+				<!-- 文件输入 -->
+				<input type="file" class="upload-file-container">
+				<!-- 图片输入 -->
+				<input type="file" class="upload-img-container" accept="image/jpg,image/gif,image/jpeg,image/png">
+				<!-- 小视频输入 -->
+				<input type="file" class="upload-video-container" accept="video/mp4,video/m4v">
+
+				<textarea class="em-widget-textarea" spellcheck="false" placeholder="<%=input_placeholder%>"></textarea>
+				<span class="em-widget-send bg-color disabled"><%=connecting%></span>
+			</div>
+
+			<!-- 信息提示框 -->
+			<div class="em-widget-error-prompt hide">
+				<span></span>
+			</div>
+
+			<!-- 图片查看 -->
+			<div class="img-view hide">
+				<img>
+				<span class="ios-load hide"><span><%=press_save_img%></span></span>
+				<a class="android-load hide" download><span class="icon-download"></span></a>
+
+			</div>
 		</div>
 
-		<!-- <div class="chat-container"></div> -->
-	</div>
+		<div id="em-kefu-webim-self" class="em-self-wrapper hide">
+			<div class="self-service-list">
 
-	<!-- 输入框 -->
-	<div class="em-widget-send-wrapper">
+			</div>
+			<div class="faq-list">
+				<p><%=faq%></p>
+				<div class="faq-list-content">
 
-		<!-- 待接入人数状态 -->
-		<div class="queuing-number-status hide"><%=current_queue_number%><label></label></div>
-
-		<!-- 工具栏 -->
-		<div class="toolbar">
-			<i class="em-bar-emoji icon-face e-face fg-hover-color" title="<%=emoji%>"></i>
-			<i class="em-widget-img icon-picture fg-hover-color hide" title="<%=picture%>"></i>
-			<i class="em-widget-file icon-attachment fg-hover-color hide" title="<%=attachment%>"></i>
-			<!-- 发送视频按钮 -->
-			<i class="em-widget-video icon-sendvideo fg-hover-color hide" title="<%=send_video%>"></i>
-			<i class="em-widget-note icon-note fg-hover-color hide" title="<%=ticket%>"></i>
-
-			<i class="icon-video fg-hover-color em-video-invite hide" title="<%=video_invite%>"></i>
-			<i class="icon-flower fg-hover-color em-widget-satisfaction hide" title="<%=evaluate_agent%>"></i>
-			<i class="icon-headset fg-hover-color em-widget-to-kefu hide" title="<%=transfer_to_kefu%>"></i>
+				</div>
+			</div>
+			<div class="contact-customer-service bg-color hide">
+				<%=consult_agent%>
+			</div>
 		</div>
-
-		<!-- 文件输入 -->
-		<input type="file" class="upload-file-container">
-		<!-- 图片输入 -->
-		<input type="file" class="upload-img-container" accept="image/jpg,image/gif,image/jpeg,image/png">
-		<!-- 小视频输入 -->
-		<input type="file" class="upload-video-container" accept="video/mp4,video/m4v">
-
-		<textarea class="em-widget-textarea" spellcheck="false" placeholder="<%=input_placeholder%>"></textarea>
-		<span class="em-widget-send bg-color disabled"><%=connecting%></span>
-	</div>
-
-	<!-- 信息提示框 -->
-	<div class="em-widget-error-prompt hide">
-		<span></span>
-	</div>
-
-	<!-- 图片查看 -->
-	<div class="img-view hide">
-		<img>
-		<span class="ios-load hide"><span><%=press_save_img%></span></span>
-		<a class="android-load hide" download><span class="icon-download"></span></a>
-
-	</div>
-</div>
-
-<div id="em-kefu-webim-self" class="em-self-wrapper hide">
-	<div class="self-service-list">
-
-	</div>
-	<div class="faq-list">
-		<p><%=faq%></p>
-		<div class="faq-list-content">
-
-		</div>
-	</div>
-	<div class="contact-customer-service bg-color hide">
-		<%=consult_agent%>
 	</div>
 </div>
