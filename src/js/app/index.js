@@ -278,6 +278,10 @@ function handleCfgData(relevanceList, status){
 	renderUI(status);
 }
 function renderUI(resultStatus){
+	// 添加移动端样式类
+	if(utils.isMobile){
+		utils.addClass(document.body, "em-mobile");
+	}
 	// 用于预览模式
 	if(commonConfig.getConfig().previewObj){
 		handleConfig(commonConfig.getConfig().previewObj);
@@ -285,11 +289,7 @@ function renderUI(resultStatus){
 		main.initChat();
 	}
 	else if(commonConfig.getConfig().configId){
-		// 添加移动端样式类
-		if(utils.isMobile){
-			utils.addClass(document.body, "em-mobile");
-		}
-		else{
+		if(!utils.isMobile){
 			utils.addClass(document.body, "big-window");
 		}
 		// 全部渲染
@@ -309,6 +309,7 @@ function renderUI(resultStatus){
 			functionView.init({
 				resultStatus: resultStatus
 			});
+			main.close();
 		}
 	}
 	else{
