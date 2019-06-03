@@ -281,7 +281,7 @@ body.big-window{
 .em-widget-tip {
 	display: none;
 	position: absolute;
-	top: 41px;
+	top: 0;
 	width: 100%;
 	height: 48px;
 	color: #535252;
@@ -345,7 +345,7 @@ body.big-window{
 .em-widget-wrapper.has-tip {
 	/* 有信息栏时 消息窗 下移 */
 	.chat-wrapper {
-		top: 89px;
+		top: 48px;
 	}
 	/* 显示信息栏 */
 	.em-widget-tip {

@@ -457,7 +457,7 @@
 	&.off-duty-prompt {
 		width: 300px;
 		height: 190px;
-		position: fixed;
+		position: absolute;
 		top: 0;
 		bottom: 0;
 		left: 0;
@@ -653,11 +653,11 @@
 }
 
 .em-model {
-    position: fixed;
+    position: absolute;
     width: 100%;
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
     background-color: rgba(0,0,0,.3);
-    top: 40px;
+    top: 0;
     bottom: 0;
     z-index: 999;
 }
