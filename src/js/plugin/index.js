@@ -146,7 +146,16 @@ bind = function(config, autoLoad){
 			&& !utils.isMobile
 		){
 			cacheKeyName = _config.configId || (_config.tenantId + (_config.emgroup || ""));
-
+			if(!_config.user.username){
+				// 从cookie里取用户名
+				// keyName = [to + ] tenantId [ + emgroup]
+				_config.isUsernameFromCookie = true;
+				_config.user = {
+					username: utils.get(
+						_config.configId || ((_config.to || "") + _config.tenantId + (_config.emgroup || ""))
+					)
+				};
+			}
 			iframe = tenantList[cacheKeyName] || new Iframe(_config);
 			tenantList[cacheKeyName] = iframe;
 			iframe.set(_config, iframe.close);
@@ -181,7 +190,7 @@ bind = function(config, autoLoad){
 				config.isUsernameFromCookie = true;
 				config.user = {
 					username: utils.get(
-					config.configId || ((config.to || "") + config.tenantId + (config.emgroup || ""))
+						config.configId || ((config.to || "") + config.tenantId + (config.emgroup || ""))
 					)
 				};
 			}
