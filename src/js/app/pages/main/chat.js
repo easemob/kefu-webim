@@ -300,7 +300,7 @@ function _initAutoGrow(){
 		case "up":
 			doms.editorView.style.bottom = "auto";
 			doms.editorView.style.zIndex = "3";
-			doms.editorView.style.top = "43px";
+			doms.editorView.style.top = "0";
 			doms.chatWrapper.style.bottom = "0";
 			doms.queuingNumberStatus.style.top = height + "px";
 			break;
