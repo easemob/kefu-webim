@@ -1,10 +1,12 @@
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
-var apiHelper = require("./apis");
+var api = require("./apis");
+var apiHelper = require("@/app/common/apiHelper");
 var profile = require("@/app/tools/profile");
 var Poller = require("@/app/tools/Poller");
 var createCtaDialog = require("./uikit/createCtaDialog");
 var commonConfig = require("@/common/config");
+var transfer = require("@/app/common/transfer");
 
 var POLLING_INTERVAL = 5000;
 
@@ -159,7 +161,7 @@ function _reportVisitor(username){
 
 function _stopReporting(){
 	_polling && _polling.stop();
-	_gid && apiHelper.deleteEvent(_gid);
+	_gid && api.deleteEvent(_gid);
 }
 
 function _isStarted(){

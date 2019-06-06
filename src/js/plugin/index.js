@@ -55,14 +55,15 @@ DEFAULT_CONFIG = {
 
 
 // init _config & concat config and global easemobim.config
-function reset(){
+function reset(config){
 	var hide;
 	var resources;
 	var sat;
 	// growing io user id
 	// 由于存在 cookie 跨域问题，所以从配置传过去
 	var configData = _.extend({}, DEFAULT_CONFIG, { grUserId: utils.get("gr_user_id") });
-	configData = _.extend({}, configData, easemobim.config);
+	config = config || {};
+	configData = _.extend({}, configData, easemobim.config, config);
 
 	hide = utils.convertFalse(configData.hide) !== "" ? configData.hide : baseConfig.json.hide;
 	resources = utils.convertFalse(_config.resources) !== "" ? configData.resources : baseConfig.json.resources;
@@ -79,6 +80,10 @@ function reset(){
 		staticPath: configData.staticPath || (baseConfig.domain + "__WEBIM_SLASH_KEY_PATH__/webim/static"),
 		guestId: utils.getStore("guestId") // 这个是别人种的cookie
 	});
+	// demo 页面点击联系客服带着 tenantId, 就删除 config 中的 configId, 否则 configId 存在就会用 configId 去渲染页面
+	if(config.tenantId){
+		configData.configId = "";
+	}
 	setConfig(configData);
 }
 
@@ -136,7 +141,7 @@ window.easemobIMS = function(tenantId, group){
 bind = function(config, autoLoad){
 	var cacheKeyName;
 	var i;
-	reset();
+	reset(config);
 	// 自动加载的
 	// 后续把此 if else 消除掉
 	if(autoLoad){
