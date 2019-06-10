@@ -276,9 +276,11 @@ function _checkGradeType(){
 		var grade = entity.grade;
 		if(grade == "TRIAL"){
 			riskWarning.style.display = "block";
+			utils.addClass(doms.imChat, "has-risk-tip");
 		}
 		else{
 			riskWarning.style.display = "none";
+			utils.removeClass(doms.imChat, "has-risk-tip");
 		}
 	});
 }
@@ -535,6 +537,7 @@ function _bindEvents(){
 	utils.live("#em-kefu-webim-chat .em-widget-risk-warning .icon-close", "click", function(){
 		var riskWarning = document.querySelector(".em-widget-risk-warning");
 		riskWarning.style.display = "none";
+		utils.removeClass(doms.imChat, "has-risk-tip");
 	});
 	// 提示有新消息
 	eventListener.add(_const.SYSTEM_EVENT.MESSAGE_APPENDED, function(oa, msg){

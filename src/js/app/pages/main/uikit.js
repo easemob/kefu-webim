@@ -45,6 +45,7 @@ function _createDialog(options){
 	var confirmBtn;
 	var cancel;
 	var confirm;
+	var widgetWrapper = document.querySelector(".em-widget-wrapper");
 
 	className && utils.addClass(el, className);
 	if(typeof contentDom === "string"){
@@ -52,7 +53,7 @@ function _createDialog(options){
 	}
 
 	contentDom && el.appendChild(contentDom);
-	document.body.appendChild(el);
+	widgetWrapper && widgetWrapper.appendChild(el);
 
 	function _hide(){
 		utils.addClass(el, "hide");

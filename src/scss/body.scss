@@ -8,11 +8,6 @@ body.big-window{
 	.em-self-wrapper{
 		display: block;
 	}
-	.em-dialog{
-		width: 50%;
-		box-sizing: border-box;
-		box-shadow: none;
-	}
 	.em-widget-send-wrapper{
 		min-width: 300px;
 	}
@@ -35,6 +30,8 @@ body.big-window{
     color: #5d5d5d;
 	font-size:13px;
 	display:none;
+	height: 48px;
+	box-sizing: border-box;
 	span{
 		display: inline-block;
 		width:95%;
@@ -350,6 +347,12 @@ body.big-window{
 	/* 显示信息栏 */
 	.em-widget-tip {
 		display: block;
+	}
+}
+.em-widget-wrapper.has-risk-tip {
+	/* 有信息栏时 消息窗 下移 */
+	.chat-wrapper {
+		top: 48px;
 	}
 }
 

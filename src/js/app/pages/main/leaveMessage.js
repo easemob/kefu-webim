@@ -25,39 +25,7 @@ var noteCategoryList = new Selector({
 	list: [],
 	container: noteCategory,
 });
-
-// todo: lazy load dialog
-var dialog = uikit.createDialog({
-	contentDom: dom,
-	className: "ticket"
-}).addButton({
-	confirmText: __("common.ticket"),
-	confirm: function(){
-		if(isSending){
-			uikit.tip(__("ticket.is_sending"));
-		}
-		else if(!name.value || name.value.length > 140){
-			uikit.tip(__("ticket.invalid_name"));
-		}
-		else if(!phone.value || phone.value.length > 24){
-			uikit.tip(__("ticket.invalid_phone"));
-		}
-		else if(!mail.value || mail.value.length > 127){
-			uikit.tip(__("ticket.invalid_email"));
-		}
-		else if(!content.value || content.value.length > 1500){
-			uikit.tip(__("ticket.invalid_content"));
-		}
-		else{
-			isSending = true;
-			setTimeout(function(){ isSending = false; }, 10000);
-			_createTicket();
-		}
-		// 阻止对话框关闭
-		return false;
-	}
-});
-var cancelBtn = dialog.el.querySelector(".cancel-btn");
+var dialog;
 
 var _getCategories = _.once(function(){
 	apiHelper.getNoteCategories().then(function(list){
@@ -124,9 +92,48 @@ function _writePreDate(preData){
 }
 
 module.exports = function(opt){
+	var cancelBtn;
 	opt = opt || {};
 	profile.grayList.noteCategory && _getCategories();
 	opt.preData && _writePreDate(opt.preData);
-	opt.hideCloseBtn && utils.addClass(cancelBtn, "hide");
-	dialog.show();
+	// todo: lazy load dialog
+	if(dialog){
+		dialog.show();
+	}
+	else{
+		dialog = uikit.createDialog({
+			contentDom: dom,
+			className: "ticket"
+		}).addButton({
+			confirmText: __("common.ticket"),
+			confirm: function(){
+				if(isSending){
+					uikit.tip(__("ticket.is_sending"));
+				}
+				else if(!name.value || name.value.length > 140){
+					uikit.tip(__("ticket.invalid_name"));
+				}
+				else if(!phone.value || phone.value.length > 24){
+					uikit.tip(__("ticket.invalid_phone"));
+				}
+				else if(!mail.value || mail.value.length > 127){
+					uikit.tip(__("ticket.invalid_email"));
+				}
+				else if(!content.value || content.value.length > 1500){
+					uikit.tip(__("ticket.invalid_content"));
+				}
+				else{
+					isSending = true;
+					setTimeout(function(){ isSending = false; }, 10000);
+					_createTicket();
+				}
+				// 阻止对话框关闭
+				return false;
+			}
+		});
+		cancelBtn = dialog.el.querySelector(".cancel-btn");
+		opt.hideCloseBtn && utils.addClass(cancelBtn, "hide");
+
+		dialog.show();
+	}
 };

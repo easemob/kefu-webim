@@ -195,7 +195,7 @@ bind = function(config, autoLoad){
 				config.isUsernameFromCookie = true;
 				config.user = {
 					username: utils.get(
-						config.configId || ((config.to || "") + config.tenantId + (config.emgroup || ""))
+						_config.configId || ((_config.to || "") + _config.tenantId + (_config.emgroup || ""))
 					)
 				};
 			}

@@ -31,5 +31,6 @@ var Tips = classUtils.createView({
 });
 
 var tips = new Tips();
-document.body.appendChild(tips.$el);
+var widgetWrapper = document.querySelector(".em-widget-wrapper");
+widgetWrapper && widgetWrapper.appendChild(tips.$el);
 module.exports = tips;

@@ -137,12 +137,13 @@
 	width: 100%;
 	bottom: 0;
 	position: absolute;
-	top: 40px;
+	top: 0px;
 	background-color: white;
 	box-shadow: 0 10px 20px rgba(0, 0, 0, .3);
 	border-radius: 5px;
 	overflow: hidden;
 	border: 1px solid #efefef;
+	box-sizing: border-box;
 	textarea {
 		height: 100px;
 		resize: none;
@@ -318,13 +319,13 @@
 	}
 	// 视频确认对话框
 	&.rtc-video-confirm {
-		position: fixed;
-		width: 220px;
-		height: 100px;
+		position: absolute;
+		width: 50%;
+		height: auto;
 		padding: 20px 10px;
 		margin: auto;
-		top: 0;
-		bottom: 0;
+		top: calc(50% - 80px);
+		bottom: auto;
 		left: 0;
 		right: 0;
 		color: white;
@@ -332,6 +333,7 @@
 		border-radius: 4px;
 		box-shadow: 5px 5px 5px rgba(0, 0, 0, .5);
 		border: none;
+		box-sizing: content-box;
 		.footer {
 			display: flex;
 			flex-flow: row nowrap;
