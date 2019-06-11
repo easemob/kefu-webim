@@ -130,6 +130,7 @@ conmmonConfig = {
 					/im\.html/,
 					/iframe\.js/,
 					/transfer\.html/,
+					/app\/index\.js$/,
 				],
 				loader: "string-replace-loader",
 				query: {

@@ -320,9 +320,9 @@
 	// 视频确认对话框
 	&.rtc-video-confirm {
 		position: absolute;
-		width: 50%;
+		width: 220px;
 		height: auto;
-		padding: 20px 10px;
+		padding: 20px 10px 15px;
 		margin: auto;
 		top: calc(50% - 80px);
 		bottom: auto;
@@ -333,7 +333,6 @@
 		border-radius: 4px;
 		box-shadow: 5px 5px 5px rgba(0, 0, 0, .5);
 		border: none;
-		box-sizing: content-box;
 		.footer {
 			display: flex;
 			flex-flow: row nowrap;
