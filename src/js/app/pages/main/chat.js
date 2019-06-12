@@ -41,9 +41,13 @@ var _reCreateImUser = _.once(function(){
 	console.warn("user not found in current appKey, attempt to recreate user.");
 	apiHelper.createVisitor().then(function(entity){
 		var cacheKeyName = (config.configId || (config.to + config.tenantId + config.emgroup));
-
-		config.user.username = entity.userId;
-		config.user.password = entity.userPassword;
+		commonConfig.setConfig({
+			user: _.extend(
+				{},
+				commonConfig.getConfig().user,
+				{ username: entity.userId, password: entity.userPassword }
+			)
+		});
 
 		if(entity.userPassword === ""){
 			profile.imRestDown = true;
@@ -53,7 +57,7 @@ var _reCreateImUser = _.once(function(){
 
 		if(utils.isTop){
 
-			utils.set("root" + (config.configId || (config.tenantId + config.emgroup)), config.user.username);
+			utils.set("root" + (config.configId || (config.tenantId + config.emgroup)), entity.userId);
 		}
 		else{
 
@@ -61,7 +65,7 @@ var _reCreateImUser = _.once(function(){
 				event: _const.EVENTS.CACHEUSER,
 				data: {
 					key: cacheKeyName,
-					value: config.user.username,
+					value: entity.userId,
 				}
 			});
 		}
