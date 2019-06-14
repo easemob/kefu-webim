@@ -543,7 +543,7 @@ function _handleMessage(msg, options){
 		];
 		message.brief = __("message_brief.menu");
 
-		!isHistory && eventListener.excuteCallbacks(
+		!isHistory && config.ui.enquiryShowMode === "popup" && eventListener.excuteCallbacks(
 			_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
 			[targetOfficialAccount, inviteId, serviceSessionId]
 		);
@@ -645,13 +645,13 @@ function _handleMessage(msg, options){
 		marketingTaskId
 			&& type === "txt"
 			&& eventListener.excuteCallbacks(
-				_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
-				[
-					targetOfficialAccount,
-					marketingTaskId,
-					msg
-				]
-			);
+			_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
+			[
+				targetOfficialAccount,
+				marketingTaskId,
+				msg
+			]
+		);
 
 		if(eventName){
 			_handleSystemEvent(eventName, eventObj, msg);
