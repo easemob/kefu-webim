@@ -394,7 +394,7 @@ getData.listen(function(msg){
 		url = "__WEBIM_SLASH_KEY_PATH__/webimplugin/tenants/" + tenantId
 			+ "/visitors/" + params.userName
 			+ "/servicesessions/" + params.serviceSessionId
-			+ "/stop?tenantId=" + tenantId;
+			+ "/stop-wait-session?tenantId=" + tenantId;
 		delete params.serviceSessionId;
 		emitAjax({
 			url: url,
