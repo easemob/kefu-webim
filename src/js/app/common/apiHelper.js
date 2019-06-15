@@ -267,7 +267,7 @@ function getFaqOrSelfServiceStatus(type){
 	});
 }
 
-function createVisitor(){
+function createVisitor(specifiedUserName){
 	var cfg = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){
 		api("createVisitor", {
@@ -275,7 +275,7 @@ function createVisitor(){
 			appName: cfg.appName,
 			imServiceNumber: cfg.toUser,
 			tenantId: cfg.tenantId,
-			specifiedUserName: cfg.specifiedUserName || ""
+			specifiedUserName: specifiedUserName || ""
 		}, function(msg){
 			var entity = msg.data;
 
