@@ -393,7 +393,6 @@ function _handleMessage(msg, options){
 	var msgId = utils.getDataByPath(msg, "ext.weichat.msgId")
 		// 这是自己发出去的消息的 msgId，此为临时修改，在完成 messageBuilder 之后应该就可以去掉了
 		|| utils.getDataByPath(msg, "ext.weichat.msg_id_for_ack");
-
 	var isReceived = typeof opt.isReceived === "boolean"
 		? opt.isReceived
 		// from 不存在默认认为是收到的消息
@@ -412,34 +411,35 @@ function _handleMessage(msg, options){
 	var inviteId;
 	var serviceSessionId;
 
+	// 重复消息不处理
 	if(receiveMsgDict.get(msgId)){
-		// 重复消息不处理
 		return;
 	}
+	// 消息加入去重列表
 	else if(msgId){
-		// 消息加入去重列表
 		receiveMsgDict.set(msgId, msg);
 	}
+	// 没有 msgId 忽略，继续处理（KEFU-ACK 消息没有 msgId）
 	else{
-		// 没有msgId忽略，继续处理（KEFU-ACK消息没有msgId）
 	}
-
 	// 绑定访客的情况有可能会收到多关联的消息，不是自己的不收
 	if(!isHistory && msg.from && msg.from.toLowerCase() != config.toUser.toLowerCase() && !noPrompt){
 		return;
 	}
-
 	// 撤回的消息不处理
-	if(utils.getDataByPath(msg, "ext.weichat.recall_flag") === 1) return;
-
-	officialAccount && _attemptToAppendOfficialAccount(officialAccount);
+	if(utils.getDataByPath(msg, "ext.weichat.recall_flag") === 1){
+		return;
+	}
+	// 尝试
+	if(officialAccount){
+		_attemptToAppendOfficialAccount(officialAccount);
+	}
 	targetOfficialAccount = _getOfficialAccountById(officialAccountId);
 
 
 	// ===========
-	// 消息类型预取
+	// 消息类型判断
 	// ===========
-
 	// 满意度评价
 	if(utils.getDataByPath(msg, "ext.weichat.ctrlType") === "inviteEnquiry"){
 		type = "satisfactionEvaluation";
@@ -474,7 +474,7 @@ function _handleMessage(msg, options){
 	else if(utils.getDataByPath(msg, "ext.type") === "html/form"){
 		type = "html-form";
 	}
-	// 视频ticket
+	// 视频 ticket
 	else if(videoTicket){
 		type = "rtcVideoTicket";
 	}
@@ -487,9 +487,8 @@ function _handleMessage(msg, options){
 
 
 	// ===========
-	// 消息类型重写  	接收消息类型判断
+	// 消息结构构造
 	// ===========
-
 	switch(type){
 	case "txt":
 		message = msg;
@@ -510,12 +509,12 @@ function _handleMessage(msg, options){
 	case "video":
 		message = msg;
 		message.type = type;
-		message.brief = __("message_brief.video"); // 页面接收提示视频
+		message.brief = __("message_brief.video");	// 页面接收提示视频
 		break;
 	case "cmd":
 		var action = msg.action;
 		if(action === "KF-ACK"){
-			// 清除ack对应的site item
+			// 清除 ack 对应的 site item
 			_clearTS(msg.ext.weichat.ack_for_msg_id);
 			return;
 		}
@@ -641,7 +640,6 @@ function _handleMessage(msg, options){
 
 	if(!isHistory){
 		// 实时消息需要处理系统事件
-
 		marketingTaskId
 			&& type === "txt"
 			&& eventListener.excuteCallbacks(
@@ -661,17 +659,14 @@ function _handleMessage(msg, options){
 			if(agentInfo){
 				targetOfficialAccount.agentNickname = agentInfo.userNickname;
 				targetOfficialAccount.agentAvatar = agentInfo.avatar;
-
 				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.AGENT_INFO_UPDATE, [targetOfficialAccount]);
 			}
 		}
 	}
 
-
 	// ===========
 	// 消息类型上屏
 	// ===========
-
 	if(
 		!message
 		// 空文本消息不上屏
@@ -681,10 +676,12 @@ function _handleMessage(msg, options){
 		// 视频邀请不上屏
 		|| (type === "rtcVideoTicket")
 		// 订单轨迹不上屏
-		|| (type === "track" || type === "order")
-	) return;
+		// || (type === "track" || type === "order")
+	){
+		return;
+	}
 
-	// 给收到的消息加id，用于撤回消息
+	// 给收到的消息加 id，用于撤回消息
 	message.id = msgId;
 
 	// 消息上屏
@@ -696,7 +693,7 @@ function _handleMessage(msg, options){
 		noPrompt: noPrompt,
 	});
 
-	// 是否发送解决未解决msg.ext.extRobot.satisfactionCommentInvitation
+	// 是否发送解决未解决 msg.ext.extRobot.satisfactionCommentInvitation
 	if(satisfactionCommentInvitation && !isHistory){
 		_appendMsg({
 			data: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
@@ -706,7 +703,6 @@ function _handleMessage(msg, options){
 			isHistory: false
 		});
 	}
-
 
 	if(!isHistory){
 		!noPrompt && _messagePrompt(message, targetOfficialAccount);
@@ -907,19 +903,20 @@ function _handleSystemEvent(event, eventObj, msg){
 
 // 系统事件消息上屏
 function _appendEventMsg(text, msg){
-	// 如果设置了hideStatus, 不显示此类提示
-	if(config.hideStatus) return;
-
+	// 如果设置了 hideStatus, 不显示此类提示
+	if(config.hideStatus){
+		return;
+	}
 	var officialAccountId = utils.getDataByPath(msg, "ext.weichat.official_account.official_account_id");
 	var targetOfficialAccount = _getOfficialAccountById(officialAccountId);
-
 	targetOfficialAccount.messageView.appendEventMsg(text);
 }
 
 function _getOfficialAccountById(id){
 	// 默认返回系统服务号
-	if(!id) return profile.systemOfficialAccount;
-
+	if(!id){
+		return profile.systemOfficialAccount;
+	}
 	return _.findWhere(profile.officialAccountList, { official_account_id: id });
 }
 

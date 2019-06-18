@@ -33,7 +33,8 @@
     "build_en": "KEY_PATH=webim webpack --production --lang en-US",
     "build_all": "npm run build; npm run build_en",
     "dev": "KEY_PATH=webim webpack --watch --development",
-    "server": "KEY_PATH=webim DEBUG=webim* node server/app"
+    "server": "KEY_PATH=webim DEBUG=webim* node server/app",
+    "server:online": "KEY_PATH=webim DEBUG=webim* node server/app -t kefu.easemob.com"
   },
   "dependencies": {
     "easemob-websdk": "=1.4.6",
