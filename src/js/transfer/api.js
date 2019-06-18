@@ -273,7 +273,16 @@ getData.listen(function(msg){
 			excludeData: true
 		});
 		break;
-		// 此接口使用的是单独的微服务，无需限流
+	// 本接口是一个通用的专供 webim 获取坐席 options 的接口
+	case "getOptForShowTrackMsg":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/showTrackMsg",
+			msg: msg,	// cfg
+			type: "GET",
+			excludeData: true
+		});
+		break;
+	// 此接口使用的是单独的微服务，无需限流
 	case "reportEvent":
 		emitAjax({
 			url: "__WEBIM_SLASH_KEY_PATH__/v1/event_collector/events",
@@ -292,15 +301,14 @@ getData.listen(function(msg){
 	case "mediaStreamUpdateStatus":
 		url = "__WEBIM_SLASH_KEY_PATH__/v1/rtcmedia/media_streams/" + params.streamId;
 		delete params.streamId;
-
 		emitAjax({
 			url: url,
 			msg: msg,
 			type: "PUT"
 		});
 		break;
-	case "graylist":
 	// DEPRECATED!!!
+	case "graylist":
 		emitAjax({
 			url: "__WEBIM_SLASH_KEY_PATH__/management/graylist",
 			msg: msg,

@@ -7,6 +7,7 @@ var moment = require("moment");
 
 var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com__WEBIM_SLASH_KEY_PATH__/webim/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
 
+// channel.js 放着消息列表的构建，是不对的
 function genMsgContent(msg){
 	var type = msg.type;
 	var value = msg.data;
@@ -72,12 +73,22 @@ function genMsgContent(msg){
 			+ "<div class=\"form-aside\">"
 			+ "<i class=\"icon-form\"></i>"
 			+ "</div>";
-
+		break;
+	case "track":
+	case "order":
+		msgContent = msg.ext.msgtype.track || msg.ext.msgtype.order;
+		html = [
+			msgContent.title ? "<h1>" + msgContent.title + "</h1>" : "",
+			msgContent.order_title ? "<h2>" + msgContent.order_title + "</h2>" : "",
+			msgContent.img_url ? "<div><img src='" + msgContent.img_url + "'/></div>" : "",
+			msgContent.desc ? "<p>" + msgContent.desc + "</p>" : "",
+			msgContent.price ? "<span>" + msgContent.price + "</span>" : "",
+			msgContent.item_url ? "<a target='_blank' href='" + msgContent.item_url + "'></a>" : "",
+		].join("");
 		break;
 	default:
 		throw new Error("unexpected value type.");
 	}
-
 	return html;
 }
 
@@ -202,7 +213,6 @@ function genDomFromMsg(msg, isReceived, isHistory){
 			+ "data-id=\"" + ctrlArgs.id + "\">" + ctrlArgs.label + "</button>"
 		+ "</div>";
 	}
-
 
 	// wrapper结尾
 	html += "</div>";

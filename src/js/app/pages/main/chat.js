@@ -868,19 +868,12 @@ function _init(){
 		guessInfo.addEvents();
 	}
 	config = commonConfig.getConfig();
-
 	channel.init();
-
 	profile.isChatWindowOpen = true;
-
 	_initSoundReminder();
-
 	_initUI();
-
 	_bindEvents();
-
 	initSessionList();
-
 	_initSession();
 }
 
@@ -890,40 +883,43 @@ function _initSession(){
 		apiHelper.getToken(),
 	]).then(function(result){
 		var dutyStatus = result[0];
-
 		// 当配置为下班进会话时执行与上班相同的逻辑
 		profile.isInOfficeHours = dutyStatus || config.offDutyType === "chat";
-
 		if(profile.isInOfficeHours){
 			emojiPanel.init({
 				container: doms.imChat,
 				toggleButton: doms.emojiToggleButton,
 				textInput: doms.textInput,
 			});
-
 			videoChat.init({
 				triggerButton: doms.videoInviteButton,
 				parentContainer: doms.imChat,
 			});
-
 			extendMessageSender.init();
-
+			
 			Promise.all([
-				_initOfficialAccount(),
-				_initSDK()
-			]).then(_onReady);
+				// 查询是否开启机器人
+				apiHelper.getRobertIsOpen().then(function(isRobotEnable){
+					profile.hasRobotAgentOnline = isRobotEnable;
+				}),
+				// 获取坐席昵称设置
+				apiHelper.getNickNameOption().then(function(displayNickname){
+					profile.isAgentNicknameEnable = displayNickname;
+				}),
+				// 获取是否显示 track msg
+				apiHelper.getOptForShowTrackMsg().then(function(yes){
+					profile.isShowTrackMsg = yes;
+				})
+			])
+			.then(function(){
+				return Promise.all([
+					_initOfficialAccount(),
+					_initSDK()
+				]);
+			})
+			.then(_onReady);
 
-			// 查询是否开启机器人
-			// todo: move this to prompt no agent online if needed
-			apiHelper.getRobertIsOpen().then(function(isRobotEnable){
-				profile.hasRobotAgentOnline = isRobotEnable;
-			});
 
-			// 获取坐席昵称设置
-			// todo: move this to init Agent status poller
-			apiHelper.getNickNameOption().then(function(displayNickname){
-				profile.isAgentNicknameEnable = displayNickname;
-			});
 
 			_initSystemEventListener();
 			satisfaction.init();
@@ -936,21 +932,15 @@ function _initSession(){
 
 			// 第二通道收消息初始化
 			channel.initSecondChannle();
-
 			// todo: move to handle ready
 			initPasteImage();
-
 			// 显示广告条
 			_setLogo();
-
 			// 设置信息栏
 			_setNotice();
-
 			_initToolbar();
-
 			// 检测租户版本是否是试用期
 			_checkGradeType();
-
 			// 移动端输入框自动增长
 			utils.isMobile && _initAutoGrow();
 		}

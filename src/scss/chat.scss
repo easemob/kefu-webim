@@ -274,78 +274,132 @@
 			word-break: break-word;
 			white-space: pre-wrap;
 		}
-		// 文件消息
-		&.em-widget-msg-file {
-			position: relative;
-			padding: 0;
-			max-width: initial;
-			width: 200px;
+	}
+	.em-widget-msg-order, .em-widget-msg-track {
+		position: relative;
+		> h1 {
+			font-size: 14px;
+			line-height: 20px;
+			margin: 0 0 8px 0;
+			word-break: break-all;
+		}
+		> h2 {
+			font-size: 14px;
+			line-height: 20px;
+			margin: 8px 0;
+			word-break: break-all;
+		}
+		> div {
+			display: inline-block;
+			width: 60px;
 			height: 60px;
+			float: left;
 			overflow: hidden;
-			.container-icon-attachment {
-				display: inline-block;
-				width: 52px;
-				height: 52px;
-				text-align: center;
-				float: left;
-				background-color: rgb(58, 164, 221);
-				border-radius: 2px;
-				margin: 4px;
-				color: #fff;
-				&:before {
-					font-size: 50px;
-					line-height: 50px;
-				}
+			border-radius: 5px;
+			margin-right: 8px;
+			> img {
+				width: 60px;
 			}
-			.file-info {
-				display: inline-block;
+		}
+		> p {
+			font-size: 14px;
+			line-height: 20px;
+			word-break: break-all;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			text-align: left;
+			// IE10+
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+		}
+		> span {
+			display: inline-block;
+			font-size: 14px;
+			width: calc(100% - 70px);	// ??
+			color: #ff661a;
+			text-align: left;
+		}
+		// 蒙层
+		a {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+	}
+	// 文件消息
+	.em-widget-msg-file {
+		position: relative;
+		padding: 0;
+		max-width: initial;
+		width: 200px;
+		height: 60px;
+		overflow: hidden;
+		.container-icon-attachment {
+			display: inline-block;
+			width: 52px;
+			height: 52px;
+			text-align: center;
+			float: left;
+			background-color: rgb(58, 164, 221);
+			border-radius: 2px;
+			margin: 4px;
+			color: #fff;
+			&:before {
+				font-size: 50px;
+				line-height: 50px;
+			}
+		}
+		.file-info {
+			display: inline-block;
+			overflow: hidden;
+			float: left;
+			width: 80px;
+			margin: 10px;
+			font-family: Arial, Helvetica, sans-serif;
+			p {
+				vertical-align: middle;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				width: 100%;
 				overflow: hidden;
-				float: left;
-				width: 80px;
-				margin: 10px;
-				font-family: Arial, Helvetica, sans-serif;
-				p {
-					vertical-align: middle;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					width: 100%;
-					overflow: hidden;
-					&.filename {
-						color: rgb(0, 0, 0);
-						font-size: 14px;
-					}
-					&.filesize {
-						line-height: 20px;
-						color: rgb(165, 165, 165);
-						font-size: 12px;
-					}
+				&.filename {
+					color: rgb(0, 0, 0);
+					font-size: 14px;
 				}
-			}
-			.container-icon-download {
-				color: rgb(165, 165, 165);
-				display: inline-block;
-				text-decoration: none;
-				float: right;
-				text-align: center;
-				cursor: pointer;
-				line-height: 20px;
-				margin-top: 15px;
-				margin-right: 10px;
-				&:before {
-					font-size: 20px;
+				&.filesize {
+					line-height: 20px;
+					color: rgb(165, 165, 165);
+					font-size: 12px;
 				}
 			}
 		}
-		// 菜单消息
-		&.em-widget-msg-list {
-			overflow: hidden;
-			min-width: 190px;
-			padding: 0;
-			background-color: rgb(251, 251, 251);
-			>p {
-				padding: 10px;
-				background-color: white;
+		.container-icon-download {
+			color: rgb(165, 165, 165);
+			display: inline-block;
+			text-decoration: none;
+			float: right;
+			text-align: center;
+			cursor: pointer;
+			line-height: 20px;
+			margin-top: 15px;
+			margin-right: 10px;
+			&:before {
+				font-size: 20px;
 			}
+		}
+	}
+	// 菜单消息
+	.em-widget-msg-list {
+		overflow: hidden;
+		min-width: 190px;
+		padding: 0;
+		background-color: rgb(251, 251, 251);
+		>p {
+			padding: 10px;
+			background-color: white;
 		}
 	}
 	.em-widget-msg-html-form{

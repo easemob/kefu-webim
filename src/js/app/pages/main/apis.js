@@ -1093,6 +1093,27 @@ function getGradeType(){
 	});
 }
 
+function getOptForShowTrackMsg(){
+	return new Promise(function(resolve, reject){
+		api("getOptForShowTrackMsg", {
+			tenantId: config.tenantId,
+		}, function(res){
+			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
+			if(typeof val === "string"){
+				if(val == (false + "")){
+					val = false;
+				}
+				else if(val == (true + "")){
+					val = true;
+				}
+			}
+			resolve(val);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getGrayList: getGrayList,
 	getToken: getToken,
@@ -1139,6 +1160,10 @@ module.exports = {
 	getSatisfactionCommentTags: getSatisfactionCommentTags,
 	confirmSatisfaction: confirmSatisfaction,
 	getGradeType: getGradeType,
+
+	// opts
+	getOptForShowTrackMsg: getOptForShowTrackMsg,
+
 
 	update: function(cfg){
 		config = cfg;

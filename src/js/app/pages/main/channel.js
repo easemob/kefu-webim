@@ -675,8 +675,8 @@ function _handleMessage(msg, options){
 		|| (type === "article" && _.isEmpty(utils.getDataByPath(msg, "ext.msgtype.articles")))
 		// 视频邀请不上屏
 		|| (type === "rtcVideoTicket")
-		// 订单轨迹不上屏
-		// || (type === "track" || type === "order")
+		// 订单轨迹按条件上屏
+		|| ((type === "track" || type === "order") && !profile.isShowTrackMsg)
 	){
 		return;
 	}

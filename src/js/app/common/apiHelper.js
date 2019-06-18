@@ -43,15 +43,12 @@ function initApiTransfer(){
 
 function api(apiName, data, success, error){
 	var uuid = utils.uuid();
-
 	// cache
 	cachedApiCallbackTable[apiName] = cachedApiCallbackTable[apiName] || {};
-
 	cachedApiCallbackTable[apiName][uuid] = {
 		success: success,
 		error: error
 	};
-
 	apiTransfer.send({
 		api: apiName,
 		data: data,
