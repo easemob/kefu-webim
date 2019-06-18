@@ -737,6 +737,13 @@ getData.listen(function(msg){
 			msg: msg,
 		});
 		break;
+	case "getInfo":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/info",
+			type: "GET",
+			msg: msg,
+		});
+		break;
 	case "getGuessList":
 		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + params.tenantId
 		+ "/servicesessions/"
