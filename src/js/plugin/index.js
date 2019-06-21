@@ -49,7 +49,8 @@ DEFAULT_CONFIG = {
 		username: "",
 		password: "",
 		token: ""
-	}
+	},
+	fromUrl: window.location.href
 };
 
 

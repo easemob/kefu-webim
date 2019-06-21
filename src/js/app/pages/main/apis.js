@@ -499,7 +499,8 @@ function reportVisitorAttributes(sessionId){
 				sessionId: sessionId,
 				userName: config.user.username,
 				referer: document.referrer,
-				token: token
+				token: token,
+				fromUrl: config.fromUrl
 			}, function(){
 				resolve();
 			}, function(err){
