@@ -14,8 +14,13 @@ body.big-window{
 }
 .em-widget-box{
 	height: 100%;
+	position: relative;
 	.em-widget-content-box{
-		height: calc(100% - 41px);
+		position: absolute;
+		top: 41px;
+		left: 0;
+		right: 0;
+		bottom: 0;
 	}
 }
 .em-widget-risk-warning{
