@@ -397,6 +397,15 @@ module.exports = {
 		return s;
 	},
 	parseUrl: parseUrl,
+	stopPropagation: function(e){
+		e = window.event || e;
+		if(document.all){  // 只有ie识别
+			e.cancelBubble = true;
+		}
+		else{
+			e.stopPropagation();
+		}
+	}
 };
 
 function getDataByPath(obj, path){

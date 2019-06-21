@@ -45,7 +45,7 @@ function init(obj){
 function onContactClick(e){
 	close();
 	eventListener.trigger(_const.SYSTEM_EVENT.CONSULT_AGENT);
-	e.stopPropagation();
+	utils.stopPropagation();
 	return false;
 }
 

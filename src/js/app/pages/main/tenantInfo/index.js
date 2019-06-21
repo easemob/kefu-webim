@@ -43,7 +43,7 @@ module.exports = function(){
 		});
 		// ie8
 		// 使得 popupList 可以自动关闭
-		e.stopPropagation();
+		utils.stopPropagation();
 		return false;
 	}
 

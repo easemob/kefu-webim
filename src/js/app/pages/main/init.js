@@ -48,7 +48,7 @@ function updateCustomerInfo(e){
 	var trackMsg;
 	var temp;
 	var data = e.data;
-	if(typeof data === "string"){
+	if(typeof data === "string" && data != "undefined"){
 		data = JSON.parse(data);
 	}
 	temp = utils.getDataByPath(data, "easemob.kefu.cta");

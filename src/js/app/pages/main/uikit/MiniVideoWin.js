@@ -30,7 +30,7 @@ module.exports = MiniVideoWin = function(option){
 		me.videoDom && me.videoDom.play();
 		me.noAudioVideoDom && me.noAudioVideoDom.play();
 		utils.addClass(me.playButtonDom, "hide");
-		e.stopPropagation();
+		utils.stopPropagation();
 	};
 
 	// 本地视频需要 muted

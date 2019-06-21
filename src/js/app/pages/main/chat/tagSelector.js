@@ -3,6 +3,7 @@ var classUtils =	require("@/common/classUtils");
 var Dialog =		require("@/common/uikit/dialog");
 var tips =			require("@/common/uikit/tips");
 var uikit = require("../uikit");
+var utils = require("@/common/utils");
 
 // var profile =		require("@/app/tools/profile");
 var apiHelper =		require("../apis");
@@ -44,7 +45,7 @@ var TagSelector = classUtils.createView({
 	onTagClick: function(e){
 		var targetDom = e.target;
 		domUtils.toggleClass(targetDom, "selected");
-		e.stopPropagation();
+		utils.stopPropagation();
 	},
 
 	show: function(dat, robotAgentId, satisfactionCommentKey){

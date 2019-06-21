@@ -24,7 +24,7 @@ module.exports = function(){
 	function onMenuClick(e){
 		var target = e.srcElement || e.target;
 		utils.toggleClass(target.parentNode, "hide-answer");
-		e.stopPropagation();
+		utils.stopPropagation();
 		return false;
 	}
 };
