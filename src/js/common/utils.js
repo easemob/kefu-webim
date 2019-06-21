@@ -386,6 +386,16 @@ module.exports = {
 		s = s.replace(/\n/g, "<br>");
 		return s;
 	},
+	decode: function(str){
+		var s;
+		if(!str) return "";
+		s = str || "";
+		if(str.length == 0) return "";
+		s = s.replace(/&lt;/g, "<");
+		s = s.replace(/&gt;/g, ">");
+		s = s.replace(/&amp;/g, "&");
+		return s;
+	},
 	parseUrl: parseUrl,
 };
 

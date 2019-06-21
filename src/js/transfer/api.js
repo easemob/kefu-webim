@@ -1,5 +1,6 @@
 var emajax = require("../common/ajax");
 var Transfer = require("../common/transfer");
+var utils = require("@/common/utils");
 // 此文件用于跨域请求api，故为了兼容老版本，接口不能删
 // 新增接口一律写在后边，按照时间顺序
 // 主要入口的url上附加tenantId，用于限流
@@ -59,6 +60,30 @@ function emitAjax(options){
 	});
 }
 
+function parseReferer(ref){
+	var i;
+	var len;
+	var idx;
+	var tmp = [];
+	var referer = {};
+	var arr;
+	var elementA;
+	if(!ref){
+		return {};
+	}
+	ref = utils.decode(ref);
+	elementA = document.createElement("a");
+	elementA.href = ref;
+	idx = ref.indexOf("?");
+	referer.domain = elementA.origin;
+	arr = ref.slice(idx + 1).split("&");
+	for(i = 0, len = arr.length; i < len; i++){
+		tmp = arr[i].split("=");
+		referer[tmp[0]] = tmp.length > 1 ? tmp[1] : "";
+	}
+	return referer;
+}
+
 getData.listen(function(msg){
 	var apiName = msg.api;
 	var params = msg.data || {};
@@ -67,6 +92,7 @@ getData.listen(function(msg){
 		+ "%23" + params.appName
 		+ "%23" + params.imServiceNumber;
 	var url;
+	var referer;
 
 	getData.targetOrigin = msg.origin;
 
@@ -515,6 +541,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "reportVisitorAttributes":
+		referer = parseReferer(params.referer);
 		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId
 			+ "/sessions/" + params.sessionId
 			+ "/attributes"
@@ -532,6 +559,10 @@ getData.listen(function(msg){
 		delete params.userName;
 		delete params.token;
 		delete params.imServiceNumber;
+		msg.data.searchType = referer.domain || "直接访问";
+		msg.data.keyword = referer.word || referer.wd;
+		msg.data.keyword = msg.data.keyword ? decodeURIComponent(msg.data.keyword) : "";
+		msg.data.accessUrl = params.fromUrl;
 
 		emitAjax({
 			url: url,
