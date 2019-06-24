@@ -500,7 +500,8 @@ function reportVisitorAttributes(sessionId){
 				userName: config.user.username,
 				referer: document.referrer,
 				token: token,
-				fromUrl: config.fromUrl
+				fromUrl: config.fromUrl,
+				docReferer: config.referer
 			}, function(){
 				resolve();
 			}, function(err){

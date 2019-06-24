@@ -50,7 +50,8 @@ DEFAULT_CONFIG = {
 		password: "",
 		token: ""
 	},
-	fromUrl: window.location.href
+	fromUrl: window.location.href,
+	referer: document.referrer
 };
 
 

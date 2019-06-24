@@ -541,7 +541,7 @@ getData.listen(function(msg){
 		});
 		break;
 	case "reportVisitorAttributes":
-		referer = parseReferer(params.referer);
+		referer = parseReferer(params.docReferer);
 		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId
 			+ "/sessions/" + params.sessionId
 			+ "/attributes"
@@ -551,6 +551,11 @@ getData.listen(function(msg){
 			+ "&token=" + params.token
 			+ "&techChannelInfo=" + techChannelInfo;
 
+		msg.data.searchType = referer.domain || "直接访问";
+		msg.data.keyword = referer.word || referer.wd;
+		msg.data.keyword = msg.data.keyword ? decodeURIComponent(msg.data.keyword) : "";
+		msg.data.accessUrl = params.fromUrl;
+		
 		delete params.tenantId;
 		delete params.sessionId;
 
@@ -559,10 +564,8 @@ getData.listen(function(msg){
 		delete params.userName;
 		delete params.token;
 		delete params.imServiceNumber;
-		msg.data.searchType = referer.domain || "直接访问";
-		msg.data.keyword = referer.word || referer.wd;
-		msg.data.keyword = msg.data.keyword ? decodeURIComponent(msg.data.keyword) : "";
-		msg.data.accessUrl = params.fromUrl;
+		delete params.fromUrl;
+		delete params.docReferer;
 
 		emitAjax({
 			url: url,
