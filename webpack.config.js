@@ -125,12 +125,11 @@ conmmonConfig = {
 			},
 			{
 				test: [
-					/init\.js$/,
-					/plugin\/index\.js$/,
-					/im\.html/,
-					/iframe\.js/,
-					/transfer\.html/,
-					/app\/index\.js$/,
+					/plugin(\\|\/)+index\.js$/,
+					/im\.html$/,
+					/iframe\.js$/,
+					/transfer\.html$/,
+					/app(\\|\/)+index\.js$/,
 				],
 				loader: "string-replace-loader",
 				query: {
@@ -139,15 +138,14 @@ conmmonConfig = {
 					flags: "g",
 				},
 			},
-			//
+			// (\\|\/)+ 兼容 windows
 			{
 				test: [
-					/app\/index\.js$/,
-					/init\.js$/,
-					/plugin\/index\.js$/,
-					/uikit\/loading\.js$/,
-					/tools\/messageFactory\.js$/,
-					/transfer\/api.js$/,
+					/app(\\|\/)+index\.js$/,
+					/plugin(\\|\/)+index\.js$/,
+					/uikit(\\|\/)+loading\.js$/,
+					/tools(\\|\/)+messageFactory\.js$/,
+					/transfer(\\|\/)+api\.js$/,
 				],
 				loader: "string-replace-loader",
 				query: {
