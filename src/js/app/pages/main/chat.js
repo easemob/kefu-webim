@@ -718,11 +718,8 @@ function _bindEvents(){
 				if(
 					document.activeElement === doms.textInput
 					&& inputBoxPosition !== "up"
-					// ios 11.1/11.2/11.3 给scrollTop赋值，会使scrollTop值为0
-					&& !/(OS 11_1|OS 11_2|OS 11_3)/i.test(navigator.userAgent)
 				){
 					document.body.scrollTop = 9999;
-					transfer.send({ event: _const.EVENTS.SCROLL_TO_BOTTOM });
 				}
 			}, 500);
 		});
@@ -763,6 +760,13 @@ function _bindEvents(){
 				guessInfo.resetStyle();
 			}
 		}
+	});
+
+	// CLOUD-15103 解决 ios 部分手机点击输入框失焦后输入框不能自动收回问题
+	utils.on(doms.textInput, "blur", function(){
+		setTimeout(function(){
+			document.body.scrollTop = 9999;
+		}, 0);
 	});
 }
 
