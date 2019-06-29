@@ -28,7 +28,10 @@ function _getGreetings(officialAccount){
 		// 系统欢迎语
 		systemGreetingText && channel.handleMessage({
 			data: systemGreetingText,
-		}, { type: "txt", noPrompt: true });
+		}, {
+			type: "txt",
+			noPrompt: true
+		});
 
 		// 机器人欢迎语
 		switch(greetingTextType){
@@ -36,23 +39,27 @@ function _getGreetings(officialAccount){
 			// 文本消息
 			channel.handleMessage({
 				data: greetingText,
-			}, { type: "txt", noPrompt: true });
+			}, {
+				type: "txt",
+				noPrompt: true
+			});
 			break;
 		case 1:
 			// 菜单消息
 			// 适配后端有转义两次／三次的情况
 			greetingObj = JSON.parse(greetingText.replace(/&amp;amp;quot;|&amp;quot;/g, "\""));
-
 			greetingObj.ext && channel.handleMessage({
 				ext: greetingObj.ext,
-			}, { type: "txt", noPrompt: true });
+			}, {
+				type: "txt",
+				noPrompt: true
+			});
 			break;
 		case 2:
 			// 图片消息
 			// 适配后端有转义两次／三次的情况
 			greetingObj = JSON.parse(greetingText.replace(/&amp;amp;quot;|&amp;quot;/g, "\""));
 			greetingObj.url = commonConfig.getConfig().domain + greetingObj.urlPath;
-
 			channel.handleMessage(greetingObj, { type: "img", noPrompt: true });
 			break;
 		case undefined:
@@ -63,9 +70,14 @@ function _getGreetings(officialAccount){
 			break;
 		}
 
-		// 技能组列表
-		groupMenus && channel.handleMessage({
-			data: groupMenus,
-		}, { type: "skillgroupMenu", noPrompt: true });
+		// 技能组列表（机器人菜单）
+		if(groupMenus){
+			channel.handleMessage({
+				data: groupMenus,
+			}, {
+				type: "skillgroupMenu",
+				noPrompt: true
+			});
+		}
 	});
 }
