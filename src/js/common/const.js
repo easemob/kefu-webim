@@ -63,6 +63,7 @@ module.exports = {
 		MESSAGE_CHANNEL_READY: "message.channel.ready",
 
 		CONSULT_AGENT: "consult.agent",
+		ACCEPT_INVITATION: "accept_invitation"
 	},
 
 	themeMap: {
@@ -130,6 +131,7 @@ module.exports = {
 		ADD_PROMPT: "add.prompt",
 		REMOVE_PROMPT: "remove.prompt",
 		SCROLL_TO_BOTTOM: "scroll.to.bottom",
+		INVITATION_INIT: "invitation_init"
 	},
 
 	ERROR_MSG: {

@@ -329,6 +329,21 @@ function createWechatImUser(openId){
 	});
 }
 
+function getInviteInfo(){
+	var cfg = commonConfig.getConfig();
+	return new Promise(function(resolve, reject){
+		api("getInviteInfo", {
+			tenantId: cfg.tenantId,
+			configId: cfg.configId
+		}, function(msg){
+			var entity = utils.getDataByPath(msg, "data.entity");
+			resolve(entity);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getTheme: getTheme,
 	getPassword: getPassword,
@@ -343,6 +358,7 @@ module.exports = {
 	getWechatComponentId: getWechatComponentId,
 	getWechatProfile: getWechatProfile,
 	createWechatImUser: createWechatImUser,
+	getInviteInfo: getInviteInfo,
 
 	update: function(cfg){
 		config = cfg;
