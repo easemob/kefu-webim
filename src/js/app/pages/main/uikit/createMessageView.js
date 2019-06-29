@@ -10,6 +10,7 @@ var commonConfig = require("@/common/config");
 var tpl = require("../../../../../template/chatContainer.html");
 
 module.exports = function(opt){
+	// 当下全部都是 profile.systemOfficialAccount
 	var officialAccount = opt.officialAccount;
 	var parentContainer = opt.parentContainer;
 	var el = utils.createElementFromHTML(_.template(tpl)({
@@ -34,12 +35,7 @@ module.exports = function(opt){
 	parentContainer.appendChild(el);
 	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, function(){
 		var id = officialAccount.official_account_id;
-		// 拉取历史消息
-		_getHistory(_scrollToBottom);
-
-		// 初始化历史消息拉取
-		_initHistoryPuller();
-
+		// 获取当前 session 信息
 		apiHelper.getLastSession(id).then(function(entity){
 			officialAccount.agentId = entity.agent_id;
 			officialAccount.sessionId = entity.session_id;
@@ -50,7 +46,10 @@ module.exports = function(opt){
 				entity.state === _const.SESSION_STATE.PROCESSING
 				|| entity.state === _const.SESSION_STATE.WAIT
 			);
-
+			// 拉取历史消息
+			_getHistory(_scrollToBottom);
+			// 初始化滚动拉取历史消息
+			_initHistoryPuller();
 			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);
 		}, function(err){
 			if(err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){

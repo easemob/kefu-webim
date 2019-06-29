@@ -410,6 +410,10 @@ function _handleMessage(msg, options){
 	var message;
 	var inviteId;
 	var serviceSessionId;
+	
+	// 禁止 robotList 操作相关
+	var isCurSSOpen;
+	var isSameSSID;
 
 	// 重复消息不处理
 	if(receiveMsgDict.get(msgId)){
@@ -444,7 +448,8 @@ function _handleMessage(msg, options){
 	if(utils.getDataByPath(msg, "ext.weichat.ctrlType") === "inviteEnquiry"){
 		type = "satisfactionEvaluation";
 	}
-	// 机器人自定义菜单，仅收到的此类消息显示为菜单，（发出的渲染为文本消息）
+	// 机器人自定义菜单
+	// 需要判断：收到的 choice 显示为菜单，发出的 choice 渲染为文本消息
 	else if(
 		isReceived
 		&& utils.getDataByPath(msg, "ext.msgtype.choice.title")
@@ -554,21 +559,26 @@ function _handleMessage(msg, options){
 		message.type = type;
 		break;
 	case "robotList":
+		isCurSSOpen = profile.systemOfficialAccount.isSessionOpen;
+		isSameSSID = profile.systemOfficialAccount.sessionId === msg.ext.weichat.service_session.serviceSessionId;
 		message = msg;
 		message.type = "list";
 		message.list = "<div class=\"em-btn-list\">"
 			+ _.map(msg.ext.msgtype.choice.items, function(item){
-				var id = item.id;
-				var label = item.name;
-				var className = "js_robotbtn ";
-				if(item.id === "TransferToKf"){
-					// 为以后转人工按钮样式调整做准备
-					className += "bg-hover-color";
-				}
-				else{
-					className += "bg-hover-color";
-				}
-				return "<button class=\"" + className + "\" data-id=\"" + id + "\">" + label + "</button>";
+				// var id = item.id;
+				// var label = item.name;
+				// var className = "js_robotbtn ";
+				// // 为以后转人工按钮样式调整做准备
+				// if(item.id === "TransferToKf"){
+				// 	className += "bg-hover-color";
+				// }
+				// else{
+				// 	className += "bg-hover-color";
+				// }
+				return "<button "
+				+ "class=\"js_robotbtn bg-hover-color " + (isCurSSOpen && isSameSSID ? "" : "disabled") + "\" "
+				+ "data-id=\"" + item.id + "\" "
+				+ ">" + item.name + "</button>";
 			}).join("") || ""
 			+ "</div>";
 		message.data = msg.ext.msgtype.choice.title;
@@ -851,7 +861,10 @@ function _handleSystemEvent(event, eventObj, msg){
 	var officialAccountId = utils.getDataByPath(msg, "ext.weichat.official_account.official_account_id");
 	var officialAccount = _getOfficialAccountById(officialAccountId);
 
-	eventMessageText && _appendEventMsg(eventMessageText, msg);
+	// 系统消息上屏
+	if(eventMessageText){
+		_appendEventMsg(eventMessageText, msg);
+	}
 
 	switch(event){
 	case _const.SYSTEM_EVENT.SESSION_TRANSFERED:
@@ -875,7 +888,7 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.skillGroupId = null;
 		officialAccount.isSessionOpen = false;
 		officialAccount.hasReportedAttributes = false;
-
+		// to topLayer
 		transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
 		break;
 	case _const.SYSTEM_EVENT.SESSION_OPENED:
@@ -895,9 +908,7 @@ function _handleSystemEvent(event, eventObj, msg){
 	default:
 		break;
 	}
-
 	eventListener.excuteCallbacks(event, [officialAccount]);
-
 	_promptNoAgentOnlineIfNeeded({ officialAccountId: officialAccountId });
 }
 
@@ -975,6 +986,7 @@ function _attemptToAppendOfficialAccount(officialAccountInfo){
 			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SYSTEM_OFFICIAL_ACCOUNT_UPDATED, []);
 		}
 	}
+	// 没有使用（无用户）
 	else if(type === "CUSTOM"){
 		profile.ctaEnable = true;
 		profile.officialAccountList.push(officialAccount);

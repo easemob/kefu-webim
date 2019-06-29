@@ -198,6 +198,14 @@
 			&.white {
 				color: #fff;
 			}
+			&.disabled {
+				cursor: default;
+				color: silver;
+				&:hover {
+					background-color: white!important;
+					color: silver;
+				}
+			}
 		}
 	}
 	.em-widget-msg-loading {

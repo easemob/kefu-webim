@@ -48,7 +48,6 @@ var _reCreateImUser = _.once(function(){
 				{ username: entity.userId, password: entity.userPassword }
 			)
 		});
-
 		if(entity.userPassword === ""){
 			profile.imRestDown = true;
 		}
@@ -56,11 +55,9 @@ var _reCreateImUser = _.once(function(){
 		_initSession();
 
 		if(utils.isTop){
-
 			utils.set("root" + (config.configId || (config.tenantId + config.emgroup)), entity.userId);
 		}
 		else{
-
 			transfer.send({
 				event: _const.EVENTS.CACHEUSER,
 				data: {
@@ -86,10 +83,18 @@ function _initSystemEventListener(){
 	], function(officialAccount){
 		var sessionId = officialAccount.sessionId;
 		var isSessionOpen = officialAccount.isSessionOpen;
-
 		if(isSessionOpen && sessionId){
 			apiHelper.reportVisitorAttributes(sessionId);
 		}
+	});
+	// 禁止所有容器中 robotList 消息可操作
+	eventListener.add([
+		_const.SYSTEM_EVENT.SESSION_CLOSED,
+	], function(officialAccount){
+		var allRobotListBtn = document.querySelectorAll(".chat-container .em-btn-list button");
+		_.each(_.toArray(allRobotListBtn), function(robotBtn){
+			utils.addClass(robotBtn, "disabled");
+		});
 	});
 }
 
@@ -461,16 +466,18 @@ function _bindEvents(){
 	});
 
 	// 机器人列表
-	utils.live("button.js_robotbtn", "click", function(){
-		channel.sendText(this.innerText, {
-			ext: {
-				msgtype: {
-					choice: {
-						menuid: this.getAttribute("data-id")
+	utils.live("button.js_robotbtn", "click", function(e){
+		if(!utils.hasClass(e.target, "disabled")){
+			channel.sendText(this.innerText, {
+				ext: {
+					msgtype: {
+						choice: {
+							menuid: this.getAttribute("data-id")
+						}
 					}
 				}
-			}
-		});
+			});
+		}
 	});
 
 	// 根据菜单项选择指定的技能组
