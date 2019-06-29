@@ -5,11 +5,9 @@ var loading = require("./loading");
 var notify = require("./notify");
 var titleSlide = require("./titleSlide");
 var pcImgView = require("./pcImgview");
-var InviteBox = require("./inviteView");
-var eventListener = require("@/app/tools/eventListener");
 
 var IM_HTML_PATH = __("config.language") === "zh-CN" ? "/im_cached.html" : "/en-US/im_cached.html";
-var me = this;
+
 var _st = 0;
 var _startPosition = {
 	x: 0,
@@ -141,7 +139,6 @@ function _ready(){
 	.listen(function(msg){
 		var event = msg.event;
 		var data = msg.data;
-		var inviteBox;
 
 		if(msg.to !== me.iframe.id){
 			return;
@@ -229,9 +226,6 @@ function _ready(){
 		case _const.EVENTS.SCROLL_TO_BOTTOM:
 			document.body.scrollTop = 9999;
 			break;
-		case _const.EVENTS.INVITATION_INIT:
-			inviteBox = new InviteBox(data);
-			break;
 		default:
 			break;
 		}
@@ -246,11 +240,9 @@ function _ready(){
 	}
 
 	typeof me.ready === "function" && me.ready();
-
-	eventListener.add(_const.SYSTEM_EVENT.ACCEPT_INVITATION, function(){
-		me.message.send({ event: _const.EVENTS.SHOW });
-	});
 }
+
+
 
 function Iframe(config){
 	var me = this;

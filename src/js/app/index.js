@@ -166,19 +166,6 @@ function initConfig(){
 		handleConfig(entity.configJson);
 		handleSettingIframeSize();
 		initRelevanceList();
-		initInvite();
-	});
-}
-
-function initInvite(){
-	apiHelper.getInviteInfo(commonConfig.getConfig().tenantId, commonConfig.getConfig().configId)
-	.then(function(res){
-		if(res.status){
-			transfer.send({
-				event: _const.EVENTS.INVITATION_INIT,
-				data: res
-			});
-		}
 	});
 }
 
