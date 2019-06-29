@@ -830,13 +830,6 @@ getData.listen(function(msg){
 			type: "GET",
 		});
 		break;
-	case "getInviteInfo":
-		emitAjax({
-			url: "/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/information/invitations/",
-			msg: msg,
-			type: "GET",
-		});
-		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;
