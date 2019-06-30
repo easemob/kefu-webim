@@ -116,6 +116,7 @@ function _bindResizeHandler(ctx){
 
 function _ready(){
 	var me = this;
+	var inviteBox;
 	var i, l;
 
 	(me.config.dragenable && !utils.isMobile) && _bindResizeHandler(me);
@@ -141,7 +142,6 @@ function _ready(){
 	.listen(function(msg){
 		var event = msg.event;
 		var data = msg.data;
-		var inviteBox;
 
 		if(msg.to !== me.iframe.id){
 			return;
@@ -154,6 +154,7 @@ function _ready(){
 			me.onreadySt = setTimeout(function(){
 				me.callbackApi.onready();
 			}, 500);
+			inviteBox && inviteBox.clearInvitation();
 			break;
 		case _const.EVENTS.ON_OFFDUTY:
 			loading.hide();

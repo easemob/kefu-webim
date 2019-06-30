@@ -105,4 +105,12 @@ module.exports = function(info){
 	function hide(){
 		inviteBox.style.display = "none";
 	}
+	
+	return {
+		clearInvitation: function(){
+			hide();
+			clearTimeout(timer);
+			clearTimeout(dayTimer);
+		},
+	};
 };
