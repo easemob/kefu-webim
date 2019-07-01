@@ -772,7 +772,8 @@ function _bindEvents(){
 	// CLOUD-15103 解决 ios 部分手机点击输入框失焦后输入框不能自动收回问题
 	utils.on(doms.textInput, "blur", function(){
 		setTimeout(function(){
-			document.body.scrollTop = 9999;
+			// document.body.scrollTop = 9999;		// 在 iframe 下会有问题
+			document.body.scrollIntoView(false);	// 元素的底端将和其所在滚动区的可视区域的底端对齐
 		}, 0);
 	});
 }
