@@ -201,6 +201,8 @@
 			&.disabled {
 				cursor: default;
 				color: silver;
+				background-color: white!important;
+				border-color: #e5e5e5!important;
 				&:hover {
 					background-color: white!important;
 					color: silver;
@@ -258,7 +260,7 @@
 		display: inline-block;
 		border-radius: 6px;
 		padding: 10px;
-		max-width: 98%;
+		// max-width: 98%;		// 这种数字不要再用了
 		min-width: 20px;
 		min-height: 20px;
 		vertical-align: middle;

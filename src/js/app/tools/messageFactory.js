@@ -18,7 +18,9 @@ function genMsgContent(msg){
 	case "txt":
 		value = textParser.parse(value);
 		// 历史消息以及收到的实时消息
-		html = "<span class=\"text\">" + _.map(value, function(fragment){ return fragment.value; }).join("") + "</span>";
+		html = "<span class=\"text\">" + _.map(value, function(fragment){
+			return fragment.value;
+		}).join("") + "</span>";
 		break;
 	case "txtLink":
 		html = value;
@@ -37,6 +39,7 @@ function genMsgContent(msg){
 		html = "<a href=\"javascript:;\"><img class=\"em-widget-imgview\" src=\""
 			+ msg.url + "\"/></a>";
 		break;
+	// 这个消息类型包含了很多子类型
 	case "list":
 		value = textParser.parse(value);
 		value = _.map(value, function(fragment){ return fragment.value; }).join("");
@@ -139,22 +142,22 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		}
 		else{
 			articleNode = "<div class=\"article-msg-outer more-articles\">"
-					+ _.map(msgArticles, function(item, index){
-						var str = "";
-						if(index === 0){
-							str = "<div class=\"article-item first-item\">" +
-							"<h3 class=\"title\">" + item.title + "</h3>";
-						}
-						else{
-							str = "<div class=\"article-item rest-item\">" +
-							"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
-						}
-						str += "<img class=\"cover-img\" src=\"" + item.thumbUrl + "\"/>" +
-							// "<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
-							"<div class=\"article-link\"><span>" + item.url + "</span></div>" +
-							"</div>";
-						return str;
-					}).join("") || ""
+				+ _.map(msgArticles, function(item, index){
+					var str = "";
+					if(index === 0){
+						str = "<div class=\"article-item first-item\">" +
+						"<h3 class=\"title\">" + item.title + "</h3>";
+					}
+					else{
+						str = "<div class=\"article-item rest-item\">" +
+						"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
+					}
+					str += "<img class=\"cover-img\" src=\"" + item.thumbUrl + "\"/>" +
+						// "<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
+						"<div class=\"article-link\"><span>" + item.url + "</span></div>" +
+						"</div>";
+					return str;
+				}).join("") || ""
 				+ "</div>";
 		}
 		dom.className = "article-message-wrapper";
@@ -176,8 +179,8 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		html += "<img class=\"avatar\" src=\"" + _getAvatar(msg) + "\">";
 	}
 
-	// wrapper开始
-	html += "<div class=\"em-widget-msg-wrapper\">";
+	// wrapper 开始
+	html += "<div class=\"em-widget-msg-wrapper msgtype-" + (msg.subtype || type) + "\">";
 
 	// 设置消息气泡的突起位置
 	// .icon-corner-right, .icon-corner-left used here
@@ -185,15 +188,14 @@ function genDomFromMsg(msg, isReceived, isHistory){
 
 	// 发出的消息增加状态显示
 	if(!isReceived && !isHistory && id){
-		// todo: 只拼一遍id
-		// todo: 去掉type
+		// todo: 只拼一遍 id
+		// todo: 去掉 type
 		html += "<div id=\"" + id
 			+ "_failed\" data-type=\"" + type + "\" class=\"em-widget-msg-status hide\">"
 			+ "<span>" + __("common.send_failed") + "</span><i class=\"icon-circle\"><i class=\"icon-exclamation\"></i></i></div>"
 			+ "<div id=\"" + id
 			+ "_loading\" class=\"em-widget-msg-loading\">" + LOADING + "</div>";
 	}
-
 
 	// todo: simplify the class name em-widget-msg
 	// container 开始
@@ -205,16 +207,20 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	// container 结束
 	html += "</div>";
 
+	// 单独的转人工按钮（txt、）
 	if(!utils.getDataByPath(msg, "ext.msgtype.choice") && utils.getDataByPath(msg, "ext.weichat.ctrlType") === "TransferToKfHint"){
 		var ctrlArgs = msg.ext.weichat.ctrlArgs;
+		var disabledClass = profile.shouldMsgActivated(ctrlArgs.serviceSessionId) ? "" : "disabled";
 		html += "<div class=\"em-btn-list\">"
-			+ "<button class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn\" "
-			+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
-			+ "data-id=\"" + ctrlArgs.id + "\">" + ctrlArgs.label + "</button>"
+			+ "<button "
+				+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
+				+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
+				+ "data-id=\"" + ctrlArgs.id + "\" "
+			+ ">" + ctrlArgs.label + "</button>"
 		+ "</div>";
 	}
 
-	// wrapper结尾
+	// wrapper 结尾
 	html += "</div>";
 
 	dom.innerHTML = html;

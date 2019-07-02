@@ -91,8 +91,14 @@ function _initSystemEventListener(){
 	eventListener.add([
 		_const.SYSTEM_EVENT.SESSION_CLOSED,
 	], function(officialAccount){
-		var allRobotListBtn = document.querySelectorAll(".chat-container .em-btn-list button");
-		_.each(_.toArray(allRobotListBtn), function(robotBtn){
+		// 所有的 list 子类消息
+		var allListBtn1 = document.querySelectorAll(".msgtype-robotList .em-btn-list button");
+		var allListBtn2 = document.querySelectorAll(".msgtype-txt .em-btn-list button");
+		var allListBtn3 = document.querySelectorAll(".msgtype-img .em-btn-list button");
+		var all = _.toArray(allListBtn1)
+			.concat(_.toArray(allListBtn2))
+			.concat(_.toArray(allListBtn3));
+		_.each(all, function(robotBtn){
 			utils.addClass(robotBtn, "disabled");
 		});
 	});
@@ -437,25 +443,26 @@ function _bindEvents(){
 		utils.removeClass(document.getElementById(id + "_loading"), "hide");
 	});
 
-	utils.live("button.js_robotTransferBtn", "click", function(){
+	utils.live("button.js_robotTransferBtn", "click", function(e){
 		var id = this.getAttribute("data-id");
 		var ssid = this.getAttribute("data-sessionid");
-
+		// 只能点击一次
 		if(!this.clicked){
 			this.clicked = true;
-			channel.sendTransferToKf(id, ssid);
+			if(!utils.hasClass(e.target, "disabled")){
+				channel.sendTransferToKf(id, ssid);
+			}
 		}
 	});
 
 	utils.live("button.js-transfer-to-ticket", "click", function(){
 		var officialAccount = profile.currentOfficialAccount;
-		if(!officialAccount) return;
-
+		if(!officialAccount){
+			return;
+		}
 		var isSessionOpen = officialAccount.isSessionOpen;
 		var sessionId = officialAccount.sessionId;
-
 		isSessionOpen && apiHelper.closeServiceSession(sessionId);
-
 		leaveMessage({
 			preData: {
 				name: config.visitor.trueName,

@@ -410,10 +410,6 @@ function _handleMessage(msg, options){
 	var message;
 	var inviteId;
 	var serviceSessionId;
-	
-	// 禁止 robotList 操作相关
-	var isCurSSOpen;
-	var isSameSSID;
 
 	// 重复消息不处理
 	if(receiveMsgDict.get(msgId)){
@@ -516,6 +512,27 @@ function _handleMessage(msg, options){
 		message.type = type;
 		message.brief = __("message_brief.video");	// 页面接收提示视频
 		break;
+	case "article":
+	case "track":
+	case "order":
+		message = msg;
+		message.type = type;
+		break;
+	case "customMagicEmoji":
+		message = customMagicEmoji;
+		message.type = type;
+		message.brief = __("message_brief.emoji");
+		break;
+	case "html-form":
+			message = msg;
+			message.type = type;
+			message.brief = __("message_brief.unknown");
+			break;
+
+
+
+
+
 	case "cmd":
 		var action = msg.action;
 		if(action === "KF-ACK"){
@@ -530,12 +547,20 @@ function _handleMessage(msg, options){
 			utils.addClass(dom, "hide");
 		}
 		break;
+	case "rtcVideoTicket":
+		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket, videoExtend]);
+		break;
+	
+	
+	
+	
+	
 	case "satisfactionEvaluation":
 		inviteId = msg.ext.weichat.ctrlArgs.inviteId;
 		serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
-
 		message = msg;
 		message.type = "list";
+		message.subtype = type;
 		message.data = __("chat.evaluate_agent_title");
 		message.list = [
 			"<div class=\"em-btn-list\">"
@@ -546,23 +571,16 @@ function _handleMessage(msg, options){
 			+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
 		];
 		message.brief = __("message_brief.menu");
-
 		!isHistory && config.ui.enquiryShowMode === "popup" && eventListener.excuteCallbacks(
 			_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
 			[targetOfficialAccount, inviteId, serviceSessionId]
 		);
 		break;
-	case "article":
-	case "track":
-	case "order":
-		message = msg;
-		message.type = type;
-		break;
 	case "robotList":
-		isCurSSOpen = profile.systemOfficialAccount.isSessionOpen;
-		isSameSSID = profile.systemOfficialAccount.sessionId === msg.ext.weichat.service_session.serviceSessionId;
+		serviceSessionId = msg.ext.weichat.service_session.serviceSessionId;
 		message = msg;
 		message.type = "list";
+		message.subtype = type;
 		message.list = "<div class=\"em-btn-list\">"
 			+ _.map(msg.ext.msgtype.choice.items, function(item){
 				// var id = item.id;
@@ -576,7 +594,7 @@ function _handleMessage(msg, options){
 				// 	className += "bg-hover-color";
 				// }
 				return "<button "
-				+ "class=\"js_robotbtn bg-hover-color " + (isCurSSOpen && isSameSSID ? "" : "disabled") + "\" "
+				+ "class=\"js_robotbtn bg-hover-color " + (profile.shouldMsgActivated(serviceSessionId) ? "" : "disabled") + "\" "
 				+ "data-id=\"" + item.id + "\" "
 				+ ">" + item.name + "</button>";
 			}).join("") || ""
@@ -587,6 +605,7 @@ function _handleMessage(msg, options){
 	case "skillgroupMenu":
 		message = msg;
 		message.type = "list";
+		message.subtype = type;
 		message.list = "<div class=\"em-btn-list\">"
 			+ _.map(msg.data.children, function(item){
 				var queueName = item.queueName;
@@ -603,12 +622,11 @@ function _handleMessage(msg, options){
 		var ctrlArgs = msg.ext.weichat.ctrlArgs;
 		message = msg;
 		message.type = "list";
+		message.subtype = type;
 		message.data = message.data || utils.getDataByPath(msg, "ext.weichat.ctrlArgs.label");
-		/*
-			msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
-			此处修改为了修复取出历史消息时，转人工评价标题改变的bug
-			还有待测试其他带有转人工的情况
-		*/
+		// msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
+		// 此处修改为了修复取出历史消息时，转人工评价标题改变的 bug
+		// 还有待测试其他带有转人工的情况
 		message.list = [
 			"<div class=\"em-btn-list\">",
 			"<button class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn\" ",
@@ -621,6 +639,7 @@ function _handleMessage(msg, options){
 	case "transferToTicket":
 		message = msg;
 		message.type = "list";
+		message.subtype = type;
 		message.list = [
 			"<div class=\"em-btn-list\">",
 			"<button class=\"white bg-color border-color bg-hover-color-dark js-transfer-to-ticket\">",
@@ -630,19 +649,12 @@ function _handleMessage(msg, options){
 		].join("");
 		message.brief = __("message_brief.menu");
 		break;
-	case "html-form":
-		message = msg;
-		message.type = "html-form";
-		message.brief = __("message_brief.unknown");
-		break;
-	case "rtcVideoTicket":
-		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket, videoExtend]);
-		break;
-	case "customMagicEmoji":
-		message = customMagicEmoji;
-		message.type = "customMagicEmoji";
-		message.brief = __("message_brief.emoji");
-		break;
+	
+	
+	
+	
+	
+	
 	default:
 		console.error("unexpected msg type");
 		break;

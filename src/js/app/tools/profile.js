@@ -18,6 +18,12 @@ var profile = {
 	defaultAvatar: null,
 	currentOfficialAccount: {},
 	systemOfficialAccount: {},
+	// systemOfficialAccount 相关方法
+	shouldMsgActivated: function(curSSID){
+		var isCurSSOpen = this.systemOfficialAccount.isSessionOpen;
+		var isSameSSID = this.systemOfficialAccount.sessionId === curSSID;
+		return isCurSSOpen && isSameSSID;
+	},
 };
 
 module.exports = profile;
