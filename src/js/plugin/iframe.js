@@ -16,6 +16,7 @@ var _startPosition = {
 	y: 0
 };
 var emptyFunc = function(){};
+var inviteBox;
 
 function _move(ctx, ev){
 	var e = window.event || ev;
@@ -116,7 +117,6 @@ function _bindResizeHandler(ctx){
 
 function _ready(){
 	var me = this;
-	var inviteBox;
 	var i, l;
 
 	(me.config.dragenable && !utils.isMobile) && _bindResizeHandler(me);
@@ -154,7 +154,6 @@ function _ready(){
 			me.onreadySt = setTimeout(function(){
 				me.callbackApi.onready();
 			}, 500);
-			inviteBox && inviteBox.clearInvitation();
 			break;
 		case _const.EVENTS.ON_OFFDUTY:
 			loading.hide();
@@ -250,6 +249,7 @@ function _ready(){
 
 	eventListener.add(_const.SYSTEM_EVENT.ACCEPT_INVITATION, function(){
 		me.message.send({ event: _const.EVENTS.SHOW });
+		me.open();
 	});
 }
 
@@ -344,6 +344,7 @@ Iframe.prototype._updatePosition = function(newData){
 
 Iframe.prototype.open = function(){
 	var iframe = this.iframe;
+	inviteBox && inviteBox.clearInvitation();
 
 	if(this.show) return this;
 	this.show = true;
