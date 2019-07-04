@@ -20,7 +20,9 @@ module.exports = function(info){
 	if(info.style.icon === "auto_invite_logo.png"){
 		info.style.icon = _const.IMG_PATH + info.style.icon;
 	}
-	inviteBox.className = "easemob-invite-box";
+	inviteBox.className = utils.isMobile
+		? "easemob-invite-box easemob-mobile-invite-box"
+		: "easemob-invite-box";
 	inviteBox.innerHTML = "<div class=\"invite-logo\">" +
 						"<img class=\"invite-img\" src=\"" + info.style.icon + "\"/></div>" +
 					"<span class=\"invite-cancel\">×</span>" +
@@ -33,8 +35,7 @@ module.exports = function(info){
 	document.body.appendChild(inviteBox);
 	setLocalStorage("visitTime", info.rule.visitTime);
 	encryptMaxInvitation = setLocalStorage("maxInvitation", info.rule.maxInvitation);
-	startTimer(info.rule.visitTime);
-	startDayTimer();
+	
 
 	utils.live(".invite-cancel", "click", onCancelClick, inviteBox);
 	utils.live(".invite-accept", "click", onAcceptClick, inviteBox);
@@ -45,7 +46,7 @@ module.exports = function(info){
 		if(maxInvitation > 1){
 			setLocalStorage("maxInvitation", maxInvitation - 1);
 			// intervalTime 不填则拒绝后不再邀请
-			info.rule.intervalTime && startTimer(info.rule.intervalTime);
+			info.rule.intervalTime >= 0 && startTimer(info.rule.intervalTime);
 		}
 		else{
 			clearTimer();
@@ -61,6 +62,11 @@ module.exports = function(info){
 
 	function clearTimer(){
 		clearTimeout(timer);
+	}
+
+	function beginStartTimer(){
+		startTimer(info.rule.visitTime);
+		startDayTimer();
 	}
 
 	// 开启单日最大邀请次数的计时
@@ -110,6 +116,7 @@ module.exports = function(info){
 	}
 	
 	return {
+		beginStartTimer: beginStartTimer,
 		clearInvitation: function(){
 			hide();
 			clearTimeout(timer);

@@ -217,4 +217,29 @@
 		cursor: pointer;
 		font-size: 20px;
 	}
+	&.easemob-mobile-invite-box{
+		width: 280px;
+		height: 140px;
+		margin-left: -140px;
+		margin-top: -70px;
+		.invite-logo{
+			margin-top: 20px;
+			height: 35px;
+			>img{
+				max-width: 35px;
+				max-height: 35px;
+			}
+		}
+		.invite-text{
+			margin: 0 5px;
+			color: gray;
+			font-size: 12px;
+			height: 45px;
+			line-height: 45px;
+		}
+		>div.button{
+			height: 35px;
+			line-height: 35px;
+		}
+	}
 }

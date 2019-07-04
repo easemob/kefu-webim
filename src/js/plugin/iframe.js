@@ -17,6 +17,7 @@ var _startPosition = {
 };
 var emptyFunc = function(){};
 var inviteBox;
+var isOpened = false;
 
 function _move(ctx, ev){
 	var e = window.event || ev;
@@ -231,6 +232,8 @@ function _ready(){
 			break;
 		case _const.EVENTS.INVITATION_INIT:
 			inviteBox = new InviteBox(data);
+			// CLOUD-15301 【dev47.35】网页插件：bind按钮集成方式，如果已经加载打开聊天窗口，则处理不自动弹出邀请弹窗
+			!isOpened && inviteBox.beginStartTimer();
 			break;
 		default:
 			break;
@@ -248,7 +251,6 @@ function _ready(){
 	typeof me.ready === "function" && me.ready();
 
 	eventListener.add(_const.SYSTEM_EVENT.ACCEPT_INVITATION, function(){
-		me.message.send({ event: _const.EVENTS.SHOW });
 		me.open();
 	});
 }
@@ -345,6 +347,7 @@ Iframe.prototype._updatePosition = function(newData){
 Iframe.prototype.open = function(){
 	var iframe = this.iframe;
 	inviteBox && inviteBox.clearInvitation();
+	isOpened = true;
 
 	if(this.show) return this;
 	this.show = true;

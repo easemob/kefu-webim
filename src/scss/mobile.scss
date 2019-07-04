@@ -11,6 +11,10 @@
 	.em-widget-send-wrapper{
 		width: 100%;
 	}
+	.em-self-wrapper,
+	.em-widget-wrapper{
+		position: absolute;
+	}
 	.em-widget-header-nickname,
 	.em-header-status-text {
 		overflow: hidden;

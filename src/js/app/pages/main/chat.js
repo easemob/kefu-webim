@@ -96,8 +96,8 @@ function _initSystemEventListener(){
 		var allListBtn2 = document.querySelectorAll(".msgtype-txt .em-btn-list button");
 		var allListBtn3 = document.querySelectorAll(".msgtype-img .em-btn-list button");
 		var all = _.toArray(allListBtn1)
-			.concat(_.toArray(allListBtn2))
-			.concat(_.toArray(allListBtn3));
+		.concat(_.toArray(allListBtn2))
+		.concat(_.toArray(allListBtn3));
 		_.each(all, function(robotBtn){
 			utils.addClass(robotBtn, "disabled");
 		});
@@ -301,7 +301,7 @@ function _checkGradeType(){
 }
 
 function _initAutoGrow(){
-	var originHeight = doms.textInput.clientHeight;
+	var originHeight = doms.textInput.clientHeight || 34;
 
 	// 键盘上下切换按钮
 	utils.on(doms.switchKeyboardBtn, "click", function(){
@@ -345,7 +345,7 @@ function _initAutoGrow(){
 	}
 
 	function callback(){
-		var height = doms.editorView.getBoundingClientRect().height;
+		var height = doms.editorView.getBoundingClientRect().height || 76;
 		if(inputBoxPosition === "up"){
 			doms.queuingNumberStatus.style.top = height + "px";
 		}

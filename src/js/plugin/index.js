@@ -150,7 +150,8 @@ bind = function(config, autoLoad){
 		if(
 			(!_config.hide || _config.autoConnect || _config.eventCollector)
 			&& (_config.tenantId || _config.configId)
-			&& !utils.isMobile
+			// CLOUD-15297 【dev47.35】网页插件：手机端不弹出自动邀请弹窗
+			// && !utils.isMobile
 		){
 			cacheKeyName = _config.configId || (_config.tenantId + (_config.emgroup || ""));
 			if(!_config.user.username){
