@@ -17,6 +17,9 @@ module.exports = function(info){
 	var inviteBox = document.createElement("div");
 	var secret = "AUTOINVITATION"; // 加密解密密钥
 	var encryptMaxInvitation;
+	if(info.style.icon === "auto_invite_logo.png"){
+		info.style.icon = _const.IMG_PATH + info.style.icon;
+	}
 	inviteBox.className = "easemob-invite-box";
 	inviteBox.innerHTML = "<div class=\"invite-logo\">" +
 						"<img class=\"invite-img\" src=\"" + info.style.icon + "\"/></div>" +

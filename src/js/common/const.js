@@ -246,4 +246,6 @@ module.exports = {
 	},
 
 	SELFSERVICE_PATH: __("config.language") === "zh-CN" ? "static/img/selfServiceIcon/" : "../static/img/selfServiceIcon/",
+
+	IMG_PATH: __("config.language") === "zh-CN" ? "static/img/" : "../static/img/",
 };
