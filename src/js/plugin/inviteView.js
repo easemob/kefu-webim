@@ -18,7 +18,7 @@ module.exports = function(info, config){
 	var secret = "AUTOINVITATION"; // 加密解密密钥
 	var encryptMaxInvitation;
 	if(info.style.icon === "auto_invite_logo.png"){
-		info.style.icon = config.domain + "/webim/" + _const.IMG_PATH + info.style.icon;
+		info.style.icon = config.domain + "/webim/static/img/" + info.style.icon;
 	}
 	inviteBox.className = utils.isMobile
 		? "easemob-invite-box easemob-mobile-invite-box"
