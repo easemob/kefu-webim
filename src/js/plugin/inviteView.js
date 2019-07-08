@@ -46,7 +46,7 @@ module.exports = function(info, config){
 		if(maxInvitation > 1){
 			setLocalStorage("maxInvitation", maxInvitation - 1);
 			// intervalTime 不填则拒绝后不再邀请
-			info.rule.intervalTime >= 0 && startTimer(info.rule.intervalTime);
+			(info.rule.intervalTime != "" && info.rule.intervalTime >= 0) && startTimer(info.rule.intervalTime);
 		}
 		else{
 			clearTimer();
