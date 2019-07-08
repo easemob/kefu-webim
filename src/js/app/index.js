@@ -297,7 +297,6 @@ function renderUI(resultStatus){
 	}
 	// 用于预览模式
 	if(commonConfig.getConfig().previewObj){
-		handleConfig(commonConfig.getConfig().previewObj);
 		handleSettingIframeSize();
 		main.initChat();
 	}
