@@ -10,7 +10,7 @@ var _const = require("@/common/const");
 var moment = require("moment");
 var cr = require("@/common/crypto");
 
-module.exports = function(info, config){
+module.exports = function(info){
 	var timer;
 	var dayTimer;
 	var endDaySecond;
@@ -18,7 +18,10 @@ module.exports = function(info, config){
 	var secret = "AUTOINVITATION"; // 加密解密密钥
 	var encryptMaxInvitation;
 	if(info.style.icon === "auto_invite_logo.png"){
-		info.style.icon = config.domain + "/webim/static/img/" + info.style.icon;
+		info.style.icon = "//webim.sandbox.kefu.easemob.com/webim/static/img/" + info.style.icon;
+	}
+	else{
+		info.style.icon = "//webim.sandbox.kefu.easemob.com" + info.style.icon;
 	}
 	inviteBox.className = utils.isMobile
 		? "easemob-invite-box easemob-mobile-invite-box"

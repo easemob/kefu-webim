@@ -231,7 +231,7 @@ function _ready(){
 			document.body.scrollTop = 9999;
 			break;
 		case _const.EVENTS.INVITATION_INIT:
-			inviteBox = new InviteBox(data, me.config);
+			inviteBox = new InviteBox(data);
 			// CLOUD-15301 【dev47.35】网页插件：bind按钮集成方式，如果已经加载打开聊天窗口，则处理不自动弹出邀请弹窗
 			!isOpened && inviteBox.beginStartTimer();
 			break;
