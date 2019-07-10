@@ -20,6 +20,9 @@ var profile = {
 	systemOfficialAccount: {},
 	// systemOfficialAccount 相关方法
 	shouldMsgActivated: function(curSSID){
+		if(typeof curSSID !== "string"){
+			return true;
+		}
 		var isCurSSOpen = this.systemOfficialAccount.isSessionOpen;
 		var isSameSSID = this.systemOfficialAccount.sessionId === curSSID;
 		return isCurSSOpen && isSameSSID;

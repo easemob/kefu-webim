@@ -577,7 +577,9 @@ function _handleMessage(msg, options){
 		);
 		break;
 	case "robotList":
-		serviceSessionId = msg.ext.weichat.service_session.serviceSessionId;
+		// 如果取不到，就默认 true 打开菜单
+		// 这个 service_session 对象，对于欢迎语类的消息，是没有的
+		serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
 		message = msg;
 		message.type = "list";
 		message.subtype = type;
