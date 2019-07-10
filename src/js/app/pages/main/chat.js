@@ -781,7 +781,8 @@ function _bindEvents(){
 		setTimeout(function(){
 			// document.body.scrollTop = 9999;		// 在 iframe 下会有问题
 			document.body.scrollIntoView(false);	// 元素的底端将和其所在滚动区的可视区域的底端对齐
-		}, 250);
+			alert("123");
+		}, 500);
 	});
 }
 
