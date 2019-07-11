@@ -741,8 +741,8 @@ function _bindEvents(){
 		utils.on(doms.textInput, "blur", function(){
 			setTimeout(function(){
 				// document.body.scrollTop = 9999;		// 在 iframe 下会有问题
-				doms.chatWrapper.scrollIntoView(false);	// 元素的底端将和其所在滚动区的可视区域的底端对齐
-				alert("134");
+				document.body.scrollIntoView(false);	// 元素的底端将和其所在滚动区的可视区域的底端对齐
+				alert("test");
 			}, 500);
 		});
 	}

@@ -1,0 +1,160 @@
+
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	<style>
+		body { background-color: #eee;color: #555; }
+		button, a { display: block;margin: 20px 0;background: #00CEB9;border: none;color: #fff;line-height: 40px;width: 200px;cursor: pointer;outline: none;text-align: center; }
+		button:hover, a:hover { box-shadow: 0 0 5px #33CEB9; }
+		button:active, a:active { background: #fff;color: #00CEB9; }
+		input { height: 40px;outline: none;width: 300px;text-align: center;font-size: 16px;color: #00CEB9; float: left;border: 1px solid #fff; }
+	</style>
+</head>
+
+<body>
+
+	<h1>Demo</h1>
+	<a target='_blank' href='http://docs.easemob.com/cs/300visitoraccess/20webplugin'>集成文档</a>
+	<h1>测试</h1>
+	<br>
+	<div>
+		<input id='testvalue' type='text' placeholder='请输入您的tenantId'/><br><br>
+		
+		<a id='test'>联系客服</a>
+	</div>
+
+	<button onclick="launchWebim()" class="custom-button">启动网页插件并发送订单消息</button>
+	<button onclick="launchConfigId()" class="custom-button">启动configId网页插件配置</button>
+	<button onclick="sendCrmExtendMessage()" class="custom-button">主动发送crm扩展消息</button>
+	<button onclick="sendOrderExtendMessage()" class="custom-button">主动发送订单消息</button>
+	<button onclick="sendTraceExtendMessage()" class="custom-button">主动发送轨迹消息</button>
+
+
+
+
+<script>
+	var v = document.getElementById('testvalue');
+	v.value = localStorage.getItem('easemobtest') || '';
+	document.getElementById('test').onclick = function () {
+		if (/\d+/.test(v.value)) {
+			localStorage.setItem('easemobtest', v.value);
+			easemobim.bind({ tenantId: v.value.replace(/\s/g, '') })
+		}
+	};
+</script>
+<script>
+	window.easemobim = window.easemobim || {};
+
+	easemobim.config = {
+		// tenantId: '11884',
+		// configId:'917a24a9-4e78-444b-b563-7533cb2e0755',
+		// configId: 'a9b466b3-03c9-4467-8a28-a342035e6d42',
+		// configId: "d316910b-7846-42ea-b5be-5df1a95cf9a7",
+		// configId: "ea5aa579-1080-43b9-8ec3-f163db1170d0",
+		// domain: '//kefu.easemob.com',
+		// emgroup:'根据首次接待匹配会话分配策略',
+		// domain: '//grey.sandbox.kefu.easemob.com',
+		// path: '//172.17.2.128:8008/webim',											//im.html的本机服务器路径,	path: '//XXX/webim'
+		// staticPath: '//172.17.2.128:8008/webim/static',										//访客插件static的路径,		staticPath: '//XXX/webim/static'
+		domain: '//sandbox.kefu.easemob.com',
+		// visitor: {
+		// 	tags:["vip1"]
+		// },
+		// 隐藏默认的联系客服按钮，使用自定义按钮
+	// 	hide: false,
+		titleSlide: false,
+		// emgroup: 'shouqian',
+		// eventCollector: true,
+	// 	user: {
+	// 		username: '分分钟',										//集成时必填,vip5:414vip5visitor_01   vip1:414test1visitor_01,02,03
+	// 		// password: '1',										//password验证方式
+	// 		//token: 'YWMtl2twnEm0EeahzLvd5EXZoAAAAVceHgVoTXLfbOBQ-TzykmQIuhQUYaampMg'											//token验证方式
+	// },
+
+	};
+</script>
+
+
+<script>
+function launchWebim(){
+	easemobim.bind();
+	sendOrderExtendMessage();
+}
+
+function launchConfigId(){
+	easemobim.bind({ 
+		configId: "d316910b-7846-42ea-b5be-5df1a95cf9a7"
+	});
+}
+
+function sendCrmExtendMessage(){
+	easemobim.sendExt({
+		ext: {
+			cmd: {
+				updateVisitorInfoSrc: {
+					params: {
+						customUserId: "6666",
+						name: "李继鹏",
+						age: "18",
+						sex: "女"
+					}
+				}
+			}
+		}
+	});
+}
+
+function sendOrderExtendMessage(){
+	easemobim.sendExt({
+		ext: {
+			imageName: "mallImage3.png",
+			type: "custom",
+			msgtype: {
+				order: {
+					title: "我现在正在看：这个商品",
+					price: "¥: 199.00",
+					desc: "其他商品",
+					order_title: "pc订单号：123456789012345678901234567890",
+					img_url: "http://sandbox.kefu.easemob.com/images/uikit/default_agent.png",
+					item_url: "http://sandbox.kefu.easemob.com/v1/Tenants/11699/robot/article/html/99eda4eb-5b36-42bf-9cba-579166b396ae"
+				}
+			}
+		}
+	});
+}
+
+function sendTraceExtendMessage(){
+	easemobim.sendExt({
+		ext: {
+			imageName: "mallImage3.png",
+			type: "custom",
+			msgtype: {
+				track: {
+					title: "我正在看：",
+					price: "¥: 235.00",
+					desc: "女装小香风气质蕾丝假两件短袖",
+					img_url: "http://sandbox.kefu.easemob.com/images/uikit/default_agent.png",
+					item_url: "http://sandbox.kefu.easemob.com/v1/Tenants/11699/robot/article/html/99eda4eb-5b36-42bf-9cba-579166b396ae"
+				}
+			}
+		}
+	});
+}
+
+
+</script>
+
+
+<!-- <script src='//kefu.easemob.com/webim/easemob.js'></script> -->
+<!-- <script src='//sandbox.kefu.easemob.com/webim/en-US/easemob.js'></script> -->
+<!-- <script src='//grey.sandbox.kefu.easemob.com/webim/easemob.js'></script> -->
+<script src='//sandbox.kefu.easemob.com/webim/easemob.js'></script>
+<!-- <script src="easemob.js"></script> -->
+<!-- <script src='//172.17.2.128:8008/webim/easemob.js'></script> -->
+
+</body>
+</html>
