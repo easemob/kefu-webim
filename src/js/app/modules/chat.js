@@ -590,7 +590,10 @@ function _bindEvents(){
 		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
 			uikit.tip(__("prompt._10_mb_file_limit"));
 			fileInput.value = "";
-		}
+        }
+        else if(fileInput.value.match(/.asp|.jsp|.exe|.vbs|.com/i)){
+            return false;
+        }
 		else{
 			channel.sendFile(WebIM.utils.getFileUrl(fileInput));
 			fileInput.value = "";
