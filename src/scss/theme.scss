@@ -76,4 +76,8 @@ body {
 	&.theme-10 {
 		@include theme(#000000, #1a1a1a, #333333);
 	}
+	// 烂漫樱花
+	&.theme-11 {
+		@include theme(#FFA0BE, #FF91B4, #FFAFC9);
+	}
 }

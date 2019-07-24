@@ -77,6 +77,7 @@ module.exports = {
 		theme_moon: "theme-8",
 		theme_lake: "theme-9",
 		theme_business: "theme-10",
+		theme_cherry: "theme-11",
 		天空之城: "theme-1",
 		丛林物语: "theme-2",
 		红瓦洋房: "theme-3",
@@ -87,6 +88,7 @@ module.exports = {
 		月色池塘: "theme-8",
 		天籁湖光: "theme-9",
 		商务风格: "theme-10",
+		烂漫樱花: "theme-11",
 		Sky: "theme-1",
 		Tree: "theme-2",
 		House: "theme-3",
@@ -96,7 +98,8 @@ module.exports = {
 		Mountain: "theme-7",
 		Moon: "theme-8",
 		Lake: "theme-9",
-		Business: "theme-10"
+		Business: "theme-10",
+		Cherry: "theme-11",
 	},
 
 	IM: {
