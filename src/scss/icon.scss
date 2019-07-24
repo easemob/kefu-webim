@@ -347,15 +347,160 @@
 	@extend .icon-base;
 	content: "\e9"
 }
-.icon-intro:before {
-	@extend .icon-base;
-	content: "\a002"
+// .icon-intro:before {
+// 	@extend .icon-base;
+// 	content: "\a002"
+// }
+// .icon-guide:before {
+// 	@extend .icon-base;
+// 	content: "\a003"
+// }
+// .icon-try:before {
+// 	@extend .icon-base;
+// 	content: "\a001"
+// }
+// 网页插件菜单一级菜单图标设置
+.icon-try {
+	&:before {
+		@extend .icon-base;
+		content: "\a001";
+	}
 }
-.icon-guide:before {
-	@extend .icon-base;
-	content: "\a003"
+.icon-intro {
+	&:before {
+		@extend .icon-base;
+		content: "\a002";
+	}
 }
-.icon-try:before {
-	@extend .icon-base;
-	content: "\a001"
+.icon-guide {
+	&:before {
+		@extend .icon-base;
+		content: "\a003";
+	}
+}
+.icon-lianjie {
+	&:before {
+		@extend .icon-base;
+		content: "\a004";
+	}
+}
+.icon-zixunfuwu {
+	&:before {
+		@extend .icon-base;
+		content: "\a005";
+	}
+}
+.icon-xiaoyouxi {
+	&:before {
+		@extend .icon-base;
+		content: "\a006";
+	}
+}
+.icon-star {
+	&:before {
+		@extend .icon-base;
+		content: "\a007";
+	}
+}
+.icon-yinlexianxing {
+	&:before {
+		@extend .icon-base;
+		content: "\a008";
+	}
+}
+.icon-weixin {
+	&:before {
+		@extend .icon-base;
+		content: "\a009";
+	}
+}
+.icon-address {
+	&:before {
+		@extend .icon-base;
+		content: "\a010";
+	}
+}
+.icon-dianhua {
+	&:before {
+		@extend .icon-base;
+		content: "\a011";
+	}
+}
+.icon-gengduo {
+	&:before {
+		@extend .icon-base;
+		content: "\a012";
+	}
+}
+.icon-renzheng {
+	&:before {
+		@extend .icon-base;
+		content: "\a013";
+	}
+}
+.icon-caidan {
+	&:before {
+		@extend .icon-base;
+		content: "\a014";
+	}
+}
+.icon-dizhi {
+	&:before {
+		@extend .icon-base;
+		content: "\a015";
+	}
+}
+.icon-yuyin {
+	&:before {
+		@extend .icon-base;
+		content: "\a016";
+	}
+}
+.icon-gerensvg {
+	&:before {
+		@extend .icon-base;
+		content: "\a017";
+	}
+}
+.icon-shipin1 {
+	&:before {
+		@extend .icon-base;
+		content: "\a018";
+	}
+}
+.icon-biaodan {
+	&:before {
+		@extend .icon-base;
+		content: "\a019";
+	}
+}
+.icon-zhuye {
+	&:before {
+		@extend .icon-base;
+		content: "\a020";
+	}
+}
+.icon-sousuo {
+	&:before {
+		@extend .icon-base;
+		content: "\a021";
+	}
+}
+.icon-shapecopy {
+	&:before {
+		@extend .icon-base;
+		content: "\a022";
+	}
+}
+.icon-erweima {
+	&:before {
+		@extend .icon-base;
+		content: "\a023";
+	}
+}
+.icon-youhui {
+	&:before {
+		@extend .icon-base;
+		content: "\a024";
+	}
 }

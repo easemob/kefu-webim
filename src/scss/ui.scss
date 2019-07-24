@@ -188,7 +188,7 @@
 						color: rgb(242,145,0);
 					}
 				}
-				
+
 			}
 		}
 		textarea {
@@ -640,6 +640,22 @@
 				&:before {
 					color: #000;
 				}
+			}
+
+			.new-message {
+				position: relative;
+				.news {
+					position: absolute;
+					top: 13px;
+					width: 8px;
+					height: 8px;
+					background: red;
+					border-radius: 50%;
+				}
+			}
+
+			.hide {
+				display: none;
 			}
 		}
 

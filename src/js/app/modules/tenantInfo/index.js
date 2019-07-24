@@ -17,8 +17,7 @@ module.exports = function(){
 		if(!notice.enabled) return;
 		menuArr = notice.content;
 		container.innerHTML = _.template(tpl)({
-			menu: menuArr,
-			icons: ["icon-intro", "icon-guide", "icon-try"]
+			menu: menuArr
 		});
 		createMenu();
 		utils.live(".tip-btn", "click", onMenuClick, container);
@@ -97,28 +96,35 @@ module.exports = function(){
 					thumbUrl: "/v1/Tenant/" + article.tenantId + "/MediaFiles/" + article.thumb_media_id,
 					picurl: "/v1/Tenant/" + article.tenantId + "/MediaFiles/" + article.thumb_media_id,
 					prop: article.prop,
+					sendCustomer: menuDat.send_by_customer
 				};
 			});
-			channel.sendText("", {
-				ext: {
-					msgtype: {
-						articles: articles,
+			// 根据send_by_customer值判断是否在客服上上屏
+			// send_by_customer 为true 客服模式下的会话 不上屏，只在当前demo中上屏
+			if(menuDat.send_by_customer){
+				channel.handleMessage(
+					{
+						ext: {
+							msgtype: {
+								articles: articles,
+							}
+						},
+					},
+					{
+						type: "article",
+						noPrompt: true
 					}
-				},
-			});
-			// channel.handleMessage(
-			// 	{
-			// 		ext: {
-			// 			msgtype: {
-			// 				articles: articles,
-			// 			}
-			// 		},
-			// 	},
-			// 	{
-			// 		type: "article",
-			// 		noPrompt: true
-			// 	}
-			// );
+				);
+			}
+			else{
+				channel.sendText("", {
+					ext: {
+						msgtype: {
+							articles: articles,
+						}
+					},
+				});
+			}
 		});
 	}
 

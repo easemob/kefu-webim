@@ -168,7 +168,6 @@ function _setNotice(){
 	var noticeContent = document.querySelector(".em-widget-tip .content");
 	var noticeCloseBtn = document.querySelector(".em-widget-tip .tip-close");
 	apiHelper.getNotice().then(function(notice){
-
 		// test
 		// notice.content = [
 		// 	{
@@ -475,14 +474,21 @@ function _bindEvents(){
 		var iframe = articleContainer.querySelector("iframe");
 		iframe && utils.removeDom(iframe);
 		articleContainer.style.display = "none";
+		doms.editorView.style.display = "block";
 		tenantInfo && tenantInfo.show();
 	});
-
+	// 提示有新消息
+	eventListener.add(_const.SYSTEM_EVENT.MESSAGE_APPENDED, function(oa, msg){
+		utils.addClass(document.body.querySelector("#em-article-close .back-chat"), "hide");
+		utils.removeClass(document.body.querySelector("#em-article-close .new-message"), "hide");
+	});
 	utils.live(".article-link", "click", function(e){
+		var sendStatus = e.target.dataset.status;
 		var curArticleDom = e.target.parentNode;
 		var articleContainer;
 		var myIframe;
 		var url = e.target.firstElementChild.innerText;
+		doms.editorView.style.display = "none";
 		url = utils.sameProtocol(url);
 		if(utils.isTop){
 			articleContainer = document.getElementById("em-article-container");
@@ -491,6 +497,10 @@ function _bindEvents(){
 			);
 			articleContainer.querySelector(".em-article-body").appendChild(myIframe);
 			articleContainer.style.display = "block";
+			// reset articleContainer
+			utils.removeClass(document.body.querySelector("#em-article-close .back-chat"), "hide");
+			utils.addClass(document.body.querySelector("#em-article-close .new-message"), "hide");
+
 			setArticleIframeScrolling(true);
 			myIframe.src = url;
 			// myIframe.src = "http://kefu.webim.com:8081/pages/robot/article.html";
@@ -501,23 +511,29 @@ function _bindEvents(){
 		else{
 			window.open(url);
 		}
-		// 发送一条图文
-		channel.sendText("", {
-			ext: {
-				msgtype: {
-					track: {
-						// 消息标题
-						title: "我正在看：",
-						// 商品描述
-						desc: curArticleDom.querySelector(".title").innerText,
-						// 商品图片链接
-						img_url: curArticleDom.querySelector(".cover-img").getAttribute("src"),
-						// 商品页面链接
-						item_url: url
+		// 根据sendStatus状态判断是否应该显示‘我正在看’状态
+		if(sendStatus == "false"){
+			// 发送一条图文
+			channel.sendText("", {
+				ext: {
+					msgtype: {
+						track: {
+							// 消息标题
+							title: "我正在看：",
+							// 商品描述
+							desc: curArticleDom.querySelector(".title").innerText,
+							// 商品图片链接
+							img_url: (
+								curArticleDom.querySelector(".cover")
+								|| curArticleDom.querySelector(".cover-img")
+							).getAttribute("src"),
+							// 商品页面链接
+							item_url: url
+						}
 					}
 				}
-			}
-		});
+			});
+		}
 	});
 
 	var messagePredict = _.throttle(function(msg){
