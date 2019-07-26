@@ -136,8 +136,11 @@ function _initToolbar(){
 	// 低版本浏览器不支持上传文件/图片
 	if(WebIM.utils.isCanUploadFileAsync){
 		utils.removeClass(doms.sendImgBtn, "hide");
-		utils.removeClass(doms.sendFileBtn, "hide");
 		utils.removeClass(doms.sendVideoBtn, "hide");
+	}
+	// 上传附件按钮
+	if(WebIM.utils.isCanUploadFileAsync && config.toolbar.sendAttachment){
+		utils.removeClass(doms.sendFileBtn, "hide");
 	}
 
 	// 留言按钮
@@ -146,6 +149,7 @@ function _initToolbar(){
 	// 满意度评价按钮
 	config.satisfaction
 		&& utils.removeClass(doms.satisfaction, "hide");
+
 }
 
 function _initSoundReminder(){
