@@ -179,7 +179,8 @@ function init(option){
 		eventListener.add(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, _reveiveTicket);
 
 		// 显示视频邀请按钮，并绑定事件
-		utils.removeClass(triggerButton, "hide");
+		//隐藏HTTPS中的vide图标
+		// utils.removeClass(triggerButton, "hide");
 		utils.on(triggerButton, "click", function(){
 			_initOnce();
 			dialog.show();
