@@ -259,7 +259,9 @@ function handleCfgData(relevanceList, status){
 		ui: commonConfig.getConfig().ui || {
 			H5Title: {}
 		},
-		toolbar: commonConfig.getConfig().toolbar || {},
+		toolbar: commonConfig.getConfig().toolbar || {
+			sendAttachment: true
+		},
 		chat: commonConfig.getConfig().chat || {}
 	});
 
