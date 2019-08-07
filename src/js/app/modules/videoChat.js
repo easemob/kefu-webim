@@ -32,9 +32,19 @@ var dispatcher;
 var config;
 var dialog;
 var service;
+var pubAVP;
+var hasInited = false;
 
 module.exports = {
 	init: init,
+	isInited: function(){
+		return hasInited;
+	},
+	startVideo: function(){
+		console.log("start video call");
+		_initOnce();
+		_onConfirm();
+	}
 };
 
 function _init(){
@@ -65,10 +75,10 @@ function _init(){
 			// 退出，服务端强制退出，进入会议失败，sdk重连失败等 均会调用到此处
 			onMeExit: function(errorCode){
 				// var errorMessage = _const.E_MEDIA_SDK_ERROR_CODE_MAP[errorCode] || "unknown error code.";
-
-				statusBar.showClosing();
+				service.closePubstream(pubAVP);
+				window.transfer.send({ event: _const.EVENTS.CLOSE });
 				videoPanel.hide();
-
+				document.querySelector(".video-chat-wrapper").style.display = "none";
 				// if(errorCode !== 0) throw new Error(errorMessage);
 			},
 			// 某人进入会议
@@ -125,14 +135,20 @@ function _init(){
 	statusBar.init({
 		wrapperDom: videoWidget.querySelector(".status-bar"),
 		acceptCallback: function(){
-			videoPanel.show();
 			statusBar.hideAcceptButton();
 			statusBar.startTimer();
 			statusBar.setStatusText(__("video.connecting"));
 			_pushStream();
 		},
 		endCallback: function(){
+			window.transfer.send({ event: _const.EVENTS.CLOSE });
 			service && service.exit();
+			if(pubAVP && service){
+				service.closePubstream(pubAVP);
+				statusBar.hide();
+				videoPanel.hide();
+				document.querySelector(".video-chat-wrapper").style.display = "none";
+			}
 		},
 	});
 
@@ -148,6 +164,7 @@ function init(option){
 	var triggerButton;
 	var adapterPath;
 	var eMediaSdkPath;
+	hasInited = true;
 
 	if(
 		window.location.protocol !== "https:"
@@ -180,16 +197,19 @@ function init(option){
 }
 
 function _pushStream(){
-	var myStream = new service.AVPubstream({ voff: 0, aoff: 0, name: "video" });
+	// var myStream = new service.AVPubstream({ voff: 0, aoff: 0, name: "video" });
 
-	service.openUserMedia(myStream).then(function(){
-		service.push(myStream);
-	});
+	// service.openUserMedia(myStream).then(function(){
+	// 	service.push(myStream);
+	// });
+	service.push(pubAVP);
 }
 
-function _reveiveTicket(ticketInfo, ticketExtend){
+function _reveiveTicket(ticketInfo, ticketExtend, agentName){
 	// 有可能收到客服的主动邀请，此时需要初始化
 	_initOnce();
+
+	console.log(ticketInfo, ticketExtend);
 
 	// 加入会议
 	service.setup(ticketInfo, {
@@ -200,8 +220,12 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 	});
 
 	service.join(function(/* _memId */){
-		statusBar.reset();
+		window.transfer.send({ event: _const.EVENTS.SHOW });
 		statusBar.show();
+		statusBar.setCallStatus("in");
+		statusBar.setStatusText(agentName + " 进线中");
+		document.querySelector(".video-chat-wrapper").style.display = "block";
+		openUserMedia();
 	}, function(evt){
 		service.exit();
 		throw new Error("failed to join conference: " + evt.message());
@@ -228,4 +252,33 @@ function _onConfirm(){
 			},
 		},
 	});
+	document.querySelector(".video-chat-wrapper").style.display = "block";
+	statusBar.show();
+	statusBar.setStatusText("等待对方接听");
+	statusBar.setCallStatus("out");
+	openUserMedia();
+}
+
+function openUserMedia(){
+	var pubS = pubAVP || new service.AVPubstream({
+		constaints: {
+			audio: true,
+			video: 1,
+		},
+		voff: 0,
+		aoff: 0,
+		name: "video",
+		ext: ""
+	});
+	pubAVP = pubS;
+	videoPanel.show();
+	service.openUserMedia(pubS).then(
+		function success(_user, stream){
+			document.querySelector(".stream-local video").srcObject = stream;
+		},
+		function fail(evt){
+		// 设备可能不支持，比如 没有摄像头，或 被禁止访问摄像头
+			console.warn("请检查摄像头", evt);
+		}
+	);
 }

@@ -352,7 +352,6 @@ Iframe.prototype.open = function(){
 	var iframe = this.iframe;
 
 	if(this.show) return;
-	this.show = true;
 
 	// 移动端，禁止宿主页面滚动
 	if(utils.isMobile){
@@ -360,11 +359,13 @@ Iframe.prototype.open = function(){
 		utils.addClass(document.documentElement, "easemobim-mobile-html");
 	}
 
-	utils.removeClass(iframe, "easemobim-minimized");
-	utils.removeClass(iframe, "easemobim-hide");
-
-	this.message && this.message.send({ event: _const.EVENTS.SHOW });
-
+	if(easemobim.config.kefuReady){
+		this.show = true;
+		utils.removeClass(iframe, "easemobim-minimized");
+		utils.removeClass(iframe, "easemobim-hide");
+		this.message && this.message.send({ event: _const.EVENTS.SHOW });
+	}
+	
 	return this;
 };
 

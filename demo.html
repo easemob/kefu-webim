@@ -7,8 +7,8 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
 	<style>
 		body { background-color: #eee;color: #555; }
-		button, a { display: block;margin: 20px 0;background: #00CEB9;border: none;color: #fff;line-height: 40px;width: 200px;cursor: pointer;outline: none;text-align: center; }
-		button:hover, a:hover { box-shadow: 0 0 5px #33CEB9; }
+		button, a { cursor:pointer;display: block;margin: 20px auto 0;background: #00CEB9;border: none;color: #fff;line-height: 40px;width: 200px;cursor: pointer;outline: none;text-align: center; }
+		button:hover, a:hover { box-shadow: 0 0 5px #33CEB9; cursor:pointer;}
 		button:active, a:active { background: #fff;color: #00CEB9; }
 		input { height: 40px;outline: none;width: 300px;text-align: center;font-size: 16px;color: #00CEB9; float: left;border: 1px solid #fff; }
 	</style>
@@ -16,32 +16,18 @@
 
 <body>
 
-	<h1>Demo</h1>
-	<a target="_blank" href="http://docs.easemob.com/cs/300visitoraccess/web-widget">集成文档</a>
-	<a target="_blank" href="demos/custom-launch-button.html">自定义按钮样式demo</a>
-	<a target="_blank" href="demos/send-extend-message.html">发送扩展消息</a>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<br>
-	<h1>测试</h1>
-	<div><input id="testvalue" type="text" placeholder="请输入您的tenantId，点击测试按钮"/></div>
-	<button onclick="test()">测试</button>
-	<button onclick="deleteCurrentCookies()">Clear Current Cookie</button>
-	<button onclick="bindSkillGroup()">绑定技能组</button>
-	<button onclick="resizeChatWindow()">窗口加宽</button>
-	<br>
-	<br>
-	<br>
+
+	<button id="voiceButton">音频</button>
+	<button id="videoButton">视频</button>
+	<button id="IMButton">IM</button>
+	<button id="singleVideoButton">单向视频</button>
 
 <script>
-var tenantIdInput = document.getElementById("testvalue");
-tenantIdInput.value = (window.localStorage && localStorage.getItem("easemobtest")) || "";
+//var tenantIdInput = document.getElementById("testvalue");
+//tenantIdInput.value = (window.localStorage && localStorage.getItem("easemobtest")) || "";
 
 function test(){
-	window.easemobim.bind({ tenantId: getTenantId() });
+	window.easemobim.bind({ tenantId: 2 });
 }
 
 function getTenantId(){
@@ -77,36 +63,88 @@ function resizeChatWindow(){
 }
 </script>
 <script>
-window.easemobim = window.easemobim || {};
 
+var kefuReady = false
+var onReadyHandle = function(){}
+window.easemobim = window.easemobim || {};
 window.easemobim.config = {
 	// domain: "https://kefu.webim.com:8009",
-	// domain: "//kefu.easemob.com",
+	domain: "//kefu-pingantest.easecdn.com",
 
 	// 每条消息都会在扩展中带这些内容
-	// customExtendMessage: {
-	// 	robot: {
-	// 		userId: "123456",
-	// 		channel: "微信01", // FAQ的渠道管理命名一致
-	// 		context: {
-	// 			// 根据需要自定义内容，透传给机器人的context
-	// 			name: "xxx",
-	// 			// 其他字段
-	// 		},
-	// 	},
-	// },
+	customExtendMessage: {
+		robot: {
+			userId: "123456",
+			channel: "微信01", // FAQ的渠道管理命名一致
+			context: {
+				// 根据需要自定义内容，透传给机器人的context
+				name: "xxx",
+				// 其他字段
+			},
+		},
+	},
 
 	// 访客自动上报
 	// eventCollector: true,
 	satisfaction: true,
 	// hide: false,
 	// minimum: false,
-	// tenantId: "11885",
-	unused: ""
+	tenantId: "2",
+	unused: "",
+	hide: true,
+	kefuReady: false,
+	onready: function(){
+		kefuReady = true
+		window.easemobim.config.kefuReady = true
+		onReadyHandle()
+	}
 };
 </script>
 
 <!-- <script src="https://static.webim.com:8009/webim/easemob.js?configId=2722cf2a-8ca0-4236-8142-0551589b7adf"></script> -->
-<script src="easemob.js?configId=2722cf2a-8ca0-4236-8142-0551589b7adf"></script>
+<script src="easemob.js?configId=5f22045c-823b-4dd2-b65c-b357e2f82525"></script>
+
+<script>
+	//window.easemobIM();
+
+	function sendMsg(msg){
+		if(kefuReady){
+			easemobim.sendExt(msg)
+		}else{
+			onReadyHandle = function(){
+				sendMsg(msg)
+			}
+		}
+		window.easemobIM();
+	}
+
+	window.easemobIM()
+
+	document.querySelector('#voiceButton').addEventListener('click', function(){
+		sendMsg({
+			event: 'voiceCall'
+		})
+	})
+
+	document.querySelector('#videoButton').addEventListener('click', function(){
+		sendMsg({
+			event: 'videoCall'
+		})
+	})
+
+	document.querySelector('#IMButton').addEventListener('click', function(){
+		sendMsg({
+			event: 'textChat'
+		})
+	})
+
+	document.querySelector('#singleVideoButton').addEventListener('click', function(){
+		sendMsg({
+			event: 'singleVideo'
+		})
+	})
+
+</script>
+
 </body>
 </html>

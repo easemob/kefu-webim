@@ -835,7 +835,7 @@ function _initSession(){
 				toggleButton: doms.emojiToggleButton,
 				textInput: doms.textInput,
 			});
-
+			
 			videoChat.init({
 				triggerButton: doms.videoInviteButton,
 				parentContainer: doms.imChat,
@@ -889,6 +889,7 @@ function _initSession(){
 		else{
 			// 设置下班时间展示的页面
 			_setOffline();
+			transfer.send({ event: _const.EVENTS.ONREADY });
 		}
 	}, function(err){
 		if(

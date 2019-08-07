@@ -25,6 +25,7 @@ module.exports = {
 	showClosing: showClosing,
 	reset: reset,
 	hideAcceptButton: hideAcceptButton,
+	setCallStatus: setCallStatus,
 	setStatusText: setStatusText,
 };
 
@@ -69,8 +70,20 @@ function show(){
 	startTimer();
 }
 
+function setCallStatus(type){
+	if(type === "in"){
+		acceptButtonDom.style.display = "inline-block";
+		endButtonDom.style.display = "inline-block";
+	}
+	else if(type === "out"){
+		acceptButtonDom.style.display = "none";
+		endButtonDom.style.display = "inline-block";
+	}
+}
+
 function hide(){
 	utils.addClass(wrapperDom, "hide");
+	timerLabel.stop();
 }
 
 function showClosing(){
@@ -97,5 +110,5 @@ function reset(){
 }
 
 function hideAcceptButton(){
-	utils.addClass(acceptButtonDom, "hide");
+	acceptButtonDom.style.display = "none";
 }

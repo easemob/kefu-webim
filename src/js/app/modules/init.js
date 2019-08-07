@@ -11,6 +11,7 @@ var uikit = require("./uikit");
 var apiHelper = require("./apiHelper");
 var eventCollector = require("./eventCollector");
 var chat = require("./chat");
+var videoChat = require("./videoChat");
 var channel = require("./channel");
 var profile = require("./tools/profile");
 var doWechatAuth = require("./wechat");
@@ -109,7 +110,6 @@ function chat_window_mode_init(){
 		var data = msg.data;
 		var extendMessage;
 		var textMessage;
-
 		switch(event){
 		case _const.EVENTS.SHOW:
 			// 在访客点击联系客服后停止上报访客
@@ -136,6 +136,16 @@ function chat_window_mode_init(){
 			break;
 		case _const.EVENTS.EXT:
 			extendMessage = data.ext;
+			if(extendMessage.event){
+				console.log(extendMessage.event, videoChat);
+				if(extendMessage.event === "videoCall"){
+					videoChat.isInited() && videoChat.startVideo();
+				}
+				else if(extendMessage.event === "voiceCall"){
+					videoChat.isInited() && videoChat.startVoiceCall();
+				}
+				return;
+			}
 			extendMessageSender.push(extendMessage.ext);
 			break;
 		case _const.EVENTS.TEXTMSG:
@@ -166,7 +176,12 @@ function updateCustomerInfo(e){
 	var temp;
 	var data = e.data;
 	if(typeof data === "string"){
-		data = JSON.parse(data);
+		try{
+			data = JSON.parse(data);
+		}
+		catch(e){
+			data = {};
+		}
 	}
 	temp = utils.getDataByPath(data, "easemob.kefu.cta");
 	if(temp){

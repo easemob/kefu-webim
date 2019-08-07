@@ -23,12 +23,12 @@ function init(option){
 	wrapperDom = opt.wrapperDom;
 	dispatcher = opt.dispatcher;
 	multiVideoContainer = wrapperDom.querySelector(".multi-video-container");
-	singleVideoContainer = wrapperDom.querySelector(".single-video-container");
-	videoViewer.init({
-		wrapperDom: singleVideoContainer,
-		service: opt.service,
-		dispatcher: dispatcher,
-	});
+	// singleVideoContainer = wrapperDom.querySelector(".single-video-container");
+	// videoViewer.init({
+	// 	wrapperDom: singleVideoContainer,
+	// 	service: opt.service,
+	// 	dispatcher: dispatcher,
+	// });
 
 	dispatcher.addEventListener("switchToMiniVideoWindow", function(info){
 		utils.addClass(multiVideoContainer, "hide");
@@ -54,15 +54,16 @@ function hide(){
 
 function _reset(){
 	videoWindowList = new Dict();
-	videoViewer.hide();
+	// videoViewer.hide();
 	multiVideoContainer.innerHTML = "";
-	utils.removeClass(multiVideoContainer, "hide");
+	// utils.removeClass(multiVideoContainer, "hide");
 }
 
 function addOrUpdateStream(stream){
+	
 	var streamOwnerName = utils.getDataByPath(stream, "owner.name");
 	var targetMiniVideoWindow = videoWindowList.get(streamOwnerName);
-
+	console.log("addstream", stream);
 	if(targetMiniVideoWindow){
 		targetMiniVideoWindow.updateStream(stream);
 	}
@@ -74,20 +75,20 @@ function addOrUpdateStream(stream){
 		}));
 	}
 
-	dispatcher.trigger("addOrUpdateStream", stream);
+	// dispatcher.trigger("addOrUpdateStream", stream);
 }
 
 function removeStream(stream){
 	var streamOwnerName = utils.getDataByPath(stream, "owner.name");
-	var targetMiniVideoWindow = videoWindowList.get(streamOwnerName);
+	// var targetMiniVideoWindow = videoWindowList.get(streamOwnerName);
 
-	if(!targetMiniVideoWindow) throw new Error("no such object.");
+	// if(!targetMiniVideoWindow) throw new Error("no such object.");
 
-	targetMiniVideoWindow.removeStream(stream);
-	if(targetMiniVideoWindow.isEmpty()){
-		targetMiniVideoWindow.destroy();
-		videoWindowList.remove(streamOwnerName);
-	}
+	// targetMiniVideoWindow.removeStream(stream);
+	// if(targetMiniVideoWindow.isEmpty()){
+	// 	targetMiniVideoWindow.destroy();
+	// 	videoWindowList.remove(streamOwnerName);
+	// }
 
-	dispatcher.trigger("removeStream", stream);
+	// dispatcher.trigger("removeStream", stream);
 }

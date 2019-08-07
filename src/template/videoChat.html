@@ -1,14 +1,24 @@
 <div class="video-chat-wrapper">
 	<div class="status-bar hide">
+			<p class="time-escape"></p>
 		<p class="status-text"></p>
-		<p class="time-escape"></p>
+		<div class="toolbar">
+			<span>静音</span>
+			<span>关闭摄像头</span>
+			<span>切换摄像头</span>
+		</div>
 		<div class="control-panel">
 			<i class="accept-button icon-answer"></i>
 			<i class="end-button icon-decline"></i>
 		</div>
-		<i class="collapse-toggle-button icon-arrow-right"></i>
 	</div>
 	<div class="video-panel hide">
+		<div class="active-userinfo">
+			<p>当前成员信息</p>
+		</div>
+		<div class="stream-local">
+			<video muted autoplay playsinline></video>
+		</div>
 		<div class="multi-video-container"></div>
 		<div class="single-video-container hide">
 			<video autoplay playsinline class="main-video"></video>

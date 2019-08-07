@@ -21,10 +21,10 @@ module.exports = MiniVideoWin = function(option){
 	this.parentContainer = opt.parentContainer;
 	this.dispatcher = opt.dispatcher;
 	this.eventHandler = function(){
-		me.dispatcher.trigger("switchToMiniVideoWindow", {
-			ownerName: me.ownerName,
-			streams: _.compact([me.stream, me.noAudioStream]),
-		});
+		// me.dispatcher.trigger("switchToMiniVideoWindow", {
+		// 	ownerName: me.ownerName,
+		// 	streams: _.compact([me.stream, me.noAudioStream]),
+		// });
 	};
 	this.eventHandler2 = function(e){
 		me.videoDom && me.videoDom.play();

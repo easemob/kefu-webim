@@ -535,7 +535,8 @@ function _handleMessage(msg, options){
 		message.brief = __("message_brief.unknown");
 		break;
 	case "rtcVideoTicket":
-		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket, videoExtend]);
+		var agentNickname = utils.getDataByPath(msg, "ext.weichat.agent.userNickname") || "坐席";
+		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket, videoExtend, agentNickname]);
 		break;
 	case "customMagicEmoji":
 		message = customMagicEmoji;
@@ -973,6 +974,12 @@ function _messagePrompt(message, officialAccount){
 	var avatar = officialAccountType === "CUSTOM"
 		? officialAccount.img
 		: profile.systemAgentAvatar || profile.tenantAvatar || profile.defaultAvatar;
+
+
+	// 这几条消息就别提示了
+	if(["视频通话已结束", "会话已结束。", "邀请客服进行实时视频", "邀请访客进行视频"].indexOf(message.data) > -1){
+		return;
+	}
 
 	if(utils.isBrowserMinimized() || !profile.isChatWindowOpen){
 		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_PROMPT, []);

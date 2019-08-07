@@ -162,6 +162,8 @@ easemobim.bind = function(config){
 		iframe.set(_config, iframe.open);
 	}
 
+	window.__iframe = iframe;
+
 };
 
 // open api1: send custom extend message

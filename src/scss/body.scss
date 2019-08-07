@@ -29,40 +29,49 @@
 }
 
 .video-chat-wrapper {
-	position: relative;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left:0;
+	top: 0;
+	background:rgba(0,0,0,.8);
 	color: white;
 	.status-bar {
-		box-sizing: border-box;
-		position: relative;
-		height: 88px;
-		background-color: rgba(0,0,0,.8);
+		position: absolute;
+		left:50%;
+		bottom:10%;
+		width: 200px;
+		margin-left:-100px;
+		height: 100px;
+		z-index:110;
+		text-align: center;
 		.status-text {
-			padding: 10px;
 			font-size: 12px;
+			padding-bottom:6px;
 		}
 		.time-escape {
-			padding-left: 10px;
 			font-size: 18px;
+			padding-bottom:6px;
+		}
+		.toolbar{
+			display: none;
 		}
 		.control-panel {
-			position: absolute;
-			bottom: 8px;
-			right: 8px;
 			i {
 				display: inline-block;
-				width: 32px;
-				height: 32px;
-				font-size: 24px;
+				width: 42px;
+				height: 42px;
+				font-size: 28px;
 				cursor: pointer;
 				border-radius: 50%;
 				&:before {
-					font-size: 24px;
+					font-size: 28px;
 					position: relative;
-					left: 4px;
+					line-height: 42px;
 				}
 				&.accept-button {
 					background-color: #70ba26;
-					margin-right: 8px;
+					margin-right: 20px;
 				}
 				&.end-button {
 					background-color: #db2400;
@@ -105,9 +114,37 @@
 	}
 	.video-panel {
 		background-color: black;
+		width:100%;
+		height:100%;
+
+		.active-userinfo{
+			position: absolute;
+			left:0;
+			top:0;
+			padding: 10px;
+		}
+
+		.member-list{
+			position: absolute;
+			top:0;
+			right:0;
+			width: 200px;
+		}
+
+		.member-list li{
+			width:50px;
+			height: 70px;
+			display: inline-block;
+			border: 1px solid green;
+			margin: 10px 5px;
+			float: right;
+		}
+
 		.single-video-container {
 			height: 270px;
-			position: relative;
+			top: 0;
+			position: absolute;
+			z-index: 122;
 			.nickname {
 				background: linear-gradient(to top, rgba(0,0,0,0), black, black);
 				box-sizing: border-box;
@@ -143,13 +180,17 @@
 			}
 		}
 		.multi-video-container {
-			max-width: 800px;
+			width: 66.6%;
 			margin: 0 auto;
-			position: relative;
+			position: absolute;
+			right:0;
+			top:0;
 			.mini-video-window {
 				display: inline-block;
 				position: relative;
-				width: 33%;
+				width: 75px;
+				height: 100px;
+				border: 1px solid seagreen;
 				.nickname {
 					background: linear-gradient(to bottom, rgba(0,0,0,0), black, black);
 					box-sizing: border-box;
