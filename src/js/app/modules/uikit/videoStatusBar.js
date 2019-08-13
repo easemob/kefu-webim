@@ -19,6 +19,7 @@ var nopFunction = function(){};
 module.exports = {
 	init: init,
 	startTimer: startTimer,
+	stopTimer: stopTimer,
 	show: show,
 	hide: hide,
 	toggleCollapse: toggleCollapse,
@@ -54,6 +55,10 @@ function init(option){
 }
 
 function setStatusText(text){
+	if(!text){
+		statusTextDom.style.display = "none;";
+	}
+	statusTextDom.style.display = "block";
 	statusTextDom.innerText = text;
 }
 
@@ -62,7 +67,13 @@ function toggleCollapse(state){
 }
 
 function startTimer(){
+	timerLabel.displayDom.style.display = "block";
 	timerLabel.start();
+}
+
+function stopTimer(){
+	timerLabel.stop();
+	timerLabel.displayDom.style.display = "none";
 }
 
 function show(){

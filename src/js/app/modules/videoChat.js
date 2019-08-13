@@ -23,7 +23,7 @@ var Dispatcher = require("./tools/Dispatcher");
 var statusBar = require("./uikit/videoStatusBar");
 var videoPanel = require("./uikit/videoPanel");
 var videoChatTemplate = require("raw-loader!../../../template/videoChat.html");
-
+var TimerLabel = require("./uikit/TimerLabel");
 var _initOnce = _.once(_init);
 var parentContainer;
 var videoWidget;
@@ -34,6 +34,7 @@ var dialog;
 var service;
 var pubAVP;
 var hasInited = false;
+var timerLeftTop;
 
 module.exports = {
 	init: init,
@@ -51,7 +52,7 @@ function _init(){
 	if(videoWidget) return;
 	// init dom
 	videoWidget = utils.createElementFromHTML(_.template(videoChatTemplate)());
-
+	timerLeftTop = new TimerLabel(videoWidget.querySelector(".timer-box"));
 	parentContainer.appendChild(videoWidget);
 
 	config = profile.config;
@@ -79,6 +80,9 @@ function _init(){
 				window.transfer.send({ event: _const.EVENTS.CLOSE });
 				videoPanel.hide();
 				document.querySelector(".video-chat-wrapper").style.display = "none";
+				videoWidget.querySelector(".toolbar").style.display = "none";
+				videoWidget.querySelector(".active-userinfo").style.display = "none";
+				timerLeftTop.stop();
 				// if(errorCode !== 0) throw new Error(errorMessage);
 			},
 			// 某人进入会议
@@ -136,12 +140,20 @@ function _init(){
 		wrapperDom: videoWidget.querySelector(".status-bar"),
 		acceptCallback: function(){
 			statusBar.hideAcceptButton();
-			statusBar.startTimer();
-			statusBar.setStatusText(__("video.connecting"));
+			statusBar.stopTimer();
+			statusBar.setStatusText("");
 			_pushStream();
+			videoWidget.querySelector(".toolbar").style.display = "block";
+			videoWidget.querySelector(".active-userinfo").style.display = "block";
+			videoWidget.querySelector(".active-username").innerText = config.visitor.trueName || config.user.username;
+			timerLeftTop.start();
+			utils.removeClass(videoWidget.querySelector(".multi-video-container"), "hide");
 		},
 		endCallback: function(){
 			window.transfer.send({ event: _const.EVENTS.CLOSE });
+			videoWidget.querySelector(".toolbar").style.display = "none";
+			videoWidget.querySelector(".active-userinfo").style.display = "none";
+			timerLeftTop.stop();
 			service && service.exit();
 			if(pubAVP && service){
 				service.closePubstream(pubAVP);
@@ -177,7 +189,7 @@ function init(option){
 	parentContainer = opt.parentContainer;
 
 	adapterPath = __("config.static_path") + "/js/lib/adapter.min.js?v=unknown-000";
-	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk.min.js?v=1.1.2";
+	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-2.1.1.29f2187.js?v=1.x.x";
 
 	// todo: resolve promise sequentially
 	tools.loadScript(adapterPath)
@@ -275,6 +287,7 @@ function openUserMedia(){
 	service.openUserMedia(pubS).then(
 		function success(_user, stream){
 			document.querySelector(".stream-local video").srcObject = stream;
+			service._localMediaStream = stream;
 		},
 		function fail(evt){
 		// 设备可能不支持，比如 没有摄像头，或 被禁止访问摄像头

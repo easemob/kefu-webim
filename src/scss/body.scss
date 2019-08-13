@@ -55,6 +55,12 @@
 		}
 		.toolbar{
 			display: none;
+			padding-bottom:8px;
+			span{
+				display: inline-block;
+				width: 35px;
+				height:35px;
+			}
 		}
 		.control-panel {
 			i {
@@ -124,6 +130,14 @@
 			padding: 10px;
 		}
 
+		.active-username{
+			width: 120px;
+			height: 22px;
+			overflow: hidden;
+			text-overflow:ellipsis;
+			white-space: nowrap;
+		}
+
 		.member-list{
 			position: absolute;
 			top:0;
@@ -185,12 +199,15 @@
 			position: absolute;
 			right:0;
 			top:0;
+			text-align: right;
 			.mini-video-window {
 				display: inline-block;
 				position: relative;
-				width: 75px;
-				height: 100px;
-				border: 1px solid seagreen;
+				width: 65px;
+				height: 80px;
+				margin: 15px 8px;
+				border: 1px solid #70ba26;
+				background: #fff;
 				.nickname {
 					background: linear-gradient(to bottom, rgba(0,0,0,0), black, black);
 					box-sizing: border-box;
@@ -199,6 +216,7 @@
 					bottom: 0;
 					width: 100%;
 					padding-left: 10px;
+					text-align: center;
 				}
 				.play-button {
 					position: absolute;

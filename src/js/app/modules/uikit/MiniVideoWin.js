@@ -70,12 +70,12 @@ MiniVideoWin.prototype.removeStream = function(stream){
 	switch(stream.type){
 	case _const.STREAM_TYPE.NORMAL:
 		this.stream = null;
-		this.videoDom.src = "";
+		this.videoDom.removeAttribute("srcObject");
 		this.nicknameDom.innerText = "";
 		break;
 	case _const.STREAM_TYPE.NO_AUDIO:
 		this.noAudioStream = null;
-		this.noAudioVideoDom.src = "";
+		this.noAudioVideoDom.removeAttribute("srcObject");
 		utils.removeClass(this.videoDom, "hide");
 		utils.addClass(this.noAudioVideoDom, "hide");
 		break;
@@ -93,14 +93,14 @@ MiniVideoWin.prototype.updateStream = function(stream){
 	switch(stream.type){
 	case _const.STREAM_TYPE.NORMAL:
 		this.stream = stream;
-		this.videoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
+		this.videoDom.srcObject = mediaStream;
 		this.nicknameDom.innerText = isLocalStream
 			? __("video.me")
 			: utils.getDataByPath(stream, "owner.ext.nickname");
 		break;
 	case _const.STREAM_TYPE.NO_AUDIO:
 		this.noAudioStream = stream;
-		this.noAudioVideoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
+		this.noAudioVideoDom.srcObject = mediaStream;
 		utils.addClass(this.videoDom, "hide");
 		utils.removeClass(this.noAudioVideoDom, "hide");
 		break;

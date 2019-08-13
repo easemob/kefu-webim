@@ -93,6 +93,9 @@ window.easemobim.config = {
 	unused: "",
 	hide: true,
 	kefuReady: false,
+	onmessage: function(){
+		console.log('new message from kefu-im')
+	},
 	onready: function(){
 		kefuReady = true
 		window.easemobim.config.kefuReady = true

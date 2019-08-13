@@ -1,11 +1,11 @@
 <div class="video-chat-wrapper">
 	<div class="status-bar hide">
-			<p class="time-escape"></p>
+		<p class="time-escape"></p>
 		<p class="status-text"></p>
 		<div class="toolbar">
-			<span>静音</span>
-			<span>关闭摄像头</span>
-			<span>切换摄像头</span>
+			<span id="selfMuted">静音</span>
+			<span id="closeCamera">关闭摄像头</span>
+			<span id="changeCamera">切换摄像头</span>
 		</div>
 		<div class="control-panel">
 			<i class="accept-button icon-answer"></i>
@@ -13,14 +13,15 @@
 		</div>
 	</div>
 	<div class="video-panel hide">
-		<div class="active-userinfo">
-			<p>当前成员信息</p>
+		<div class="active-userinfo" style="display:none">
+			<p class="active-username">当前成员信息</p>
+			<p class="timer-box">00：00</p>
 		</div>
 		<div class="stream-local">
 			<video muted autoplay playsinline></video>
 		</div>
 		<div class="multi-video-container"></div>
-		<div class="single-video-container hide">
+		<!-- <div class="single-video-container hide">
 			<video autoplay playsinline class="main-video"></video>
 			<video autoplay playsinline class="no-audio-video hide"></video>
 			<p class="nickname"></p>
@@ -31,6 +32,6 @@
 				<i class="toggle-microphone-btn icon-microphone"></i>
 				<i class="toggle-carema-btn icon-camera"></i>
 			</div>
-		</div>
+		</div> -->
 	</div>
 </div>
