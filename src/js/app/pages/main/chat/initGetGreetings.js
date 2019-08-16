@@ -82,7 +82,7 @@ function _getGreetings(officialAccount){
 		}
 
 		// 询前引导
-		if(!greetingTextType && !greetingText && profile.grayList.transfermanualmenuguide){
+		if(!greetingTextType && !greetingText && profile.grayList.transfermanualmenuguide && profile.isManualMenuGuide){
 			apiHelper.getTransferManualMenu().then(function(result){
 				channel.handleMessage({
 					data: result,
