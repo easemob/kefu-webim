@@ -1,6 +1,6 @@
 
 var moment = require("moment");
-var _isMobile = /mobile/i.test(navigator.userAgent);
+var _isMobile = /mobile/i.test(navigator.userAgent) && !(/iPad/i.test(navigator.userAgent));
 // var _isIE8 = /Trident\/4\.0/.test(navigator.userAgent);
 var protocol = /(((ftp|https?):)?\/\/)?/;
 var auth = /([-._0-9a-zA-Z]+(:[-._0-9a-zA-Z]+)?@)?/;
