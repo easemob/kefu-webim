@@ -984,6 +984,10 @@ function _initSession(){
 				// 获取是否显示 track msg
 				apiHelper.getOptForShowTrackMsg().then(function(yes){
 					profile.isShowTrackMsg = yes;
+				}),
+
+				apiHelper.getOptForManualMenuGuide().then(function(yes){
+					profile.isManualMenuGuide = yes;
 				})
 			])
 			.then(function(){

@@ -1137,6 +1137,27 @@ function getOptForShowTrackMsg(){
 	});
 }
 
+function getOptForManualMenuGuide(){
+	return new Promise(function(resolve, reject){
+		api("getOptForManualMenuGuide", {
+			tenantId: config.tenantId,
+		}, function(res){
+			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
+			if(typeof val === "string"){
+				if(val == (false + "")){
+					val = false;
+				}
+				else if(val == (true + "")){
+					val = true;
+				}
+			}
+			resolve(val);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getGrayList: getGrayList,
 	getToken: getToken,
@@ -1187,6 +1208,7 @@ module.exports = {
 
 	// opts
 	getOptForShowTrackMsg: getOptForShowTrackMsg,
+	getOptForManualMenuGuide: getOptForManualMenuGuide,
 
 
 	update: function(cfg){

@@ -315,6 +315,14 @@ getData.listen(function(msg){
 			excludeData: true
 		});
 		break;
+	case "getOptForManualMenuGuide":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/transferManualMenuGuideEnable",
+			msg: msg,	// cfg
+			type: "GET",
+			excludeData: true
+		});
+		break;
 	// 此接口使用的是单独的微服务，无需限流
 	case "reportEvent":
 		emitAjax({
