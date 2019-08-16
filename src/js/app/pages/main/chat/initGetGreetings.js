@@ -16,11 +16,12 @@ function _getGreetings(officialAccount){
 	Promise.all([
 		apiHelper.getSystemGreeting(),
 		apiHelper.getRobertGreeting(),
-		apiHelper.getSkillgroupMenu()
+		apiHelper.getSkillgroupMenu(),
 	]).then(function(result){
 		var systemGreetingText = result[0];
 		var robotGreetingObj = result[1];
 		var groupMenus = result[2];
+
 		var greetingTextType = robotGreetingObj.greetingTextType;
 		var greetingText = robotGreetingObj.greetingText;
 		var greetingObj = {};
@@ -79,5 +80,18 @@ function _getGreetings(officialAccount){
 				noPrompt: true
 			});
 		}
+
+		// 询前引导
+		if(!greetingTextType && !greetingText && profile.grayList.transfermanualmenuguide){
+			apiHelper.getTransferManualMenu().then(function(result){
+				channel.handleMessage({
+					data: result,
+				}, {
+					type: "transferManualMenu",
+					noPrompt: true
+				});
+			});
+		}
+
 	});
 }

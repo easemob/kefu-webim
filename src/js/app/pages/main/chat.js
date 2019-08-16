@@ -502,6 +502,57 @@ function _bindEvents(){
 		});
 	});
 
+	// 转人工————根据询前引导菜单选择指定的一项
+	utils.live("button.js_transferManualbtn", "click", function(){
+		if(this.getAttribute("data-queue-type") == "txt"){
+			channel.sendText(this.innerText, {
+				ext: {
+					msgtype: {
+						mode: "transferManualGuide",
+						choice: {
+							menuid: this.getAttribute("data-id"),
+							queueId: this.getAttribute("data-queue-id"),
+							queueType: "txt"
+						}
+					}
+				}
+			});
+		}
+		else if(this.getAttribute("data-queue-type") == "video"){
+			doms.videoInviteButton.click();
+		}
+		else if(this.getAttribute("data-queue-type") == "transfer"){
+			leaveMessage();
+		}
+		else{
+
+		}
+
+	});
+	// 入口指定————询前引导
+	utils.live("button.js_transferManualEntrybtn", "click", function(){
+		if(this.getAttribute("data-queue-type") == "txt"){
+			channel.sendText(this.innerText, {
+				ext: {
+					weichat: {
+						queueName: this.getAttribute("data-queue-name")
+					}
+				}
+			});
+		}
+		else if(this.getAttribute("data-queue-type") == "video"){
+			doms.videoInviteButton.click();
+		}
+		else if(this.getAttribute("data-queue-type") == "transfer"){
+			leaveMessage();
+		}
+		else{
+
+		}
+
+	});
+
+
 	// 满意度评价
 	utils.live("button.js_satisfybtn", "click", function(){
 		var serviceSessionId = this.getAttribute("data-servicesessionid");
@@ -920,7 +971,7 @@ function _initSession(){
 				parentContainer: doms.imChat,
 			});
 			extendMessageSender.init();
-			
+
 			Promise.all([
 				// 查询是否开启机器人
 				apiHelper.getRobertIsOpen().then(function(isRobotEnable){

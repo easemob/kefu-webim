@@ -387,6 +387,27 @@ function getSystemGreeting(){
 	});
 }
 
+function getTransferManualMenu(){
+	return new Promise(function(resolve, reject){
+		api("getTransferManualMenu", {
+			tenantId: config.tenantId,
+			channelId: config.channelId,
+			channelType: "easemob"
+		}, function(msg){
+			var entity = utils.getDataByPath(msg, "data.entity");
+			if(entity){
+				resolve(entity);
+			}
+			else{
+				reject(new Error("unexpected data format."));
+			}
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
+
 function getExSession(){
 	return new Promise(function(resolve, reject){
 		api("getExSession_2", {
@@ -1162,6 +1183,7 @@ module.exports = {
 	getSatisfactionCommentTags: getSatisfactionCommentTags,
 	confirmSatisfaction: confirmSatisfaction,
 	getGradeType: getGradeType,
+	getTransferManualMenu: getTransferManualMenu,
 
 	// opts
 	getOptForShowTrackMsg: getOptForShowTrackMsg,

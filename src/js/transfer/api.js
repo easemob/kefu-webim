@@ -209,6 +209,13 @@ getData.listen(function(msg){
 			msg: msg
 		});
 		break;
+	case "getTransferManualMenu":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/welcome/transfer-manual-menu",
+			type: "GET",
+			msg: msg
+		});
+		break;
 	case "getRobertGreeting":
 	// DEPRECATED!!!
 		emitAjax({
@@ -555,7 +562,7 @@ getData.listen(function(msg){
 		msg.data.keyword = referer.word || referer.wd;
 		msg.data.keyword = msg.data.keyword ? decodeURIComponent(msg.data.keyword) : "";
 		msg.data.accessUrl = params.fromUrl;
-		
+
 		delete params.tenantId;
 		delete params.sessionId;
 
