@@ -450,6 +450,7 @@ function _handleMessage(msg, options){
 		isReceived
 		&& utils.getDataByPath(msg, "ext.msgtype.choice.title")
 		&& utils.getDataByPath(msg, "ext.msgtype.choice.items")
+		&& !utils.getDataByPath(msg, "ext.msgtype.choice.mode")
 	){
 		type = "robotList";
 	}
@@ -481,6 +482,12 @@ function _handleMessage(msg, options){
 	}
 	else if(customMagicEmoji){
 		type = "customMagicEmoji";
+	}
+	else if(
+		isReceived
+		&& utils.getDataByPath(msg, "ext.msgtype.choice.mode") == "transferManualGuide"
+	){
+		type = "transferManualGuide";
 	}
 	else{
 
@@ -524,10 +531,10 @@ function _handleMessage(msg, options){
 		message.brief = __("message_brief.emoji");
 		break;
 	case "html-form":
-			message = msg;
-			message.type = type;
-			message.brief = __("message_brief.unknown");
-			break;
+		message = msg;
+		message.type = type;
+		message.brief = __("message_brief.unknown");
+		break;
 
 
 
@@ -550,11 +557,11 @@ function _handleMessage(msg, options){
 	case "rtcVideoTicket":
 		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket, videoExtend]);
 		break;
-	
-	
-	
-	
-	
+
+
+
+
+
 	case "satisfactionEvaluation":
 		inviteId = msg.ext.weichat.ctrlArgs.inviteId;
 		serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
@@ -604,6 +611,37 @@ function _handleMessage(msg, options){
 		message.data = msg.ext.msgtype.choice.title;
 		message.brief = __("message_brief.menu");
 		break;
+	case "transferManualGuide":
+		serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
+		message = msg;
+		message.type = "list";
+		message.subtype = type;
+		message.list = "<div class=\"em-btn-list\">"
+			+ _.map(msg.ext.msgtype.choice.items, function(item){
+				if(item.queueType == "video"){
+					if(
+						window.location.protocol !== "https:"
+						|| !Modernizr.peerconnection
+						|| !profile.grayList.audioVideo
+					){
+						return "";
+					}
+				}
+				if(item.id == "hasTransferNote"){
+					item.queueType = "transfer";
+				}
+
+				return "<button "
+				+ "class=\"js_transferManualbtn bg-hover-color " + (profile.shouldMsgActivated(serviceSessionId) ? "" : "disabled") + "\" "
+				+ "data-id=\"" + item.id + "\" "
+				+ "data-queue-id=\"" + item.queueId + "\" "
+				+ "data-queue-type=\"" + item.queueType + "\" "
+				+ ">" + item.name + "</button>";
+			}).join("") || ""
+			+ "</div>";
+		message.data = msg.ext.msgtype.choice.title;
+		message.brief = __("message_brief.menu");
+		break;
 	case "skillgroupMenu":
 		message = msg;
 		message.type = "list";
@@ -618,6 +656,44 @@ function _handleMessage(msg, options){
 			}).join("") || ""
 			+ "</div>";
 		message.data = msg.data.menuName;
+		message.brief = __("message_brief.menu");
+		break;
+	// 入口指定
+	case "transferManualMenu":
+		message = msg;
+		message.type = "list";
+		message.subtype = type;
+		var array = msg.data.children;
+		if(msg.data.hasTransferNote){
+			var transferChild = {
+				queueName: "hasTransferNote",
+				itemName: "转留言",
+				queueType: "transfer"
+			};
+			array.push(transferChild);
+		}
+		// 判断没有视频功能时，隐藏type为video的item
+
+		message.list = "<div class=\"em-btn-list\">"
+			+ _.map(array, function(item){
+				var queueName = item.queueName;
+				var label = item.itemName;
+				var queueType = item.queueType;
+				var className = "js_transferManualEntrybtn bg-hover-color";
+				if(item.queueType == "video"){
+					if(
+						window.location.protocol !== "https:"
+						|| !Modernizr.peerconnection
+						|| !profile.grayList.audioVideo
+					){
+						return "";
+					}
+				}
+
+				return "<button class=\"" + className + "\" data-queue-name=\"" + queueName + "\" data-queue-type=\"" + queueType + "\">" + label + "</button>";
+			}).join("") || ""
+			+ "</div>";
+		message.data = msg.data.title;
 		message.brief = __("message_brief.menu");
 		break;
 	case "robotTransfer":
@@ -651,12 +727,12 @@ function _handleMessage(msg, options){
 		].join("");
 		message.brief = __("message_brief.menu");
 		break;
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	default:
 		console.error("unexpected msg type");
 		break;
@@ -667,13 +743,13 @@ function _handleMessage(msg, options){
 		marketingTaskId
 			&& type === "txt"
 			&& eventListener.excuteCallbacks(
-			_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
-			[
-				targetOfficialAccount,
-				marketingTaskId,
-				msg
-			]
-		);
+				_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
+				[
+					targetOfficialAccount,
+					marketingTaskId,
+					msg
+				]
+			);
 
 		if(eventName){
 			_handleSystemEvent(eventName, eventObj, msg);
@@ -874,11 +950,13 @@ function _handleSystemEvent(event, eventObj, msg){
 	var eventMessageText = _const.SYSTEM_EVENT_MSG_TEXT[event];
 	var officialAccountId = utils.getDataByPath(msg, "ext.weichat.official_account.official_account_id");
 	var officialAccount = _getOfficialAccountById(officialAccountId);
+	var agentType = utils.getDataByPath(msg, "ext.weichat.event.eventObj.agentType");
 
 	// 系统消息上屏
 	if(eventMessageText){
 		_appendEventMsg(eventMessageText, msg);
 	}
+
 
 	switch(event){
 	case _const.SYSTEM_EVENT.SESSION_TRANSFERED:
