@@ -87,13 +87,25 @@ module.exports = function(opt){
 		var isReceived = opt.isReceived;
 		var isHistory = opt.isHistory;
 		var date = opt.timestamp || _.now();
-		var dom = genDomFromMsg(msg, isReceived, isHistory);
+		var satisfactionOption = opt.satisfactionOption;
+		var dom = genDomFromMsg(msg, isReceived, isHistory, satisfactionOption);
 		var img = dom.querySelector(".em-widget-imgview");
+		var map = dom.querySelector(".map");
 
 		if(isHistory){
 			el.insertBefore(dom, el.firstChild);
 			// 历史消息是向前插入，所以时间戳应在消息之后上屏
 			_appendDate(date, isHistory);
+
+			var mapSpan = document.body.querySelectorAll(".map");
+			mapSpan.forEach(function(item){
+				item.style.color = "#c9ced3";
+			});
+			utils.off(mapSpan, "click", function(){
+				var mapPage = document.getElementById("mapPage");
+				
+				mapPage.style.display = "block";
+			});
 		}
 		else{
 			// 时间戳上屏
@@ -111,6 +123,12 @@ module.exports = function(opt){
 				// 非图片消息直接滚到底
 				el.appendChild(dom);
 				_scrollToBottom();
+
+				utils.one(map, "click", function(){
+					var mapPage = document.getElementById("mapPage");
+					
+					mapPage.style.display = "block";
+				});
 			}
 		}
 	}

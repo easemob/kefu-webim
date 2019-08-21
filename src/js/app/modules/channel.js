@@ -320,7 +320,7 @@ function _sendVideo(fileMsg){
 			_showFailed(id);
 		},
 	});
-	_setExt(msg); 
+	_setExt(msg);
 	_appendMsg({
 		id: id,
 		type: "video",
@@ -331,31 +331,31 @@ function _sendVideo(fileMsg){
 		isReceived: false,
 		isHistory: false,
 	});
-	conn.send(msg.body); 
+	conn.send(msg.body);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 }
 
 // 新增 视频格式发送
-var Message = function (type, id) {
-	if (!this instanceof Message) {
+var Message = function(type, id){
+	if(!(this instanceof Message)){
 		return new Message(type);
 	}
 
 	this._msg = {};
 
-	if (typeof Message[type] === 'function') {
+	if(typeof Message[type] === "function"){
 		Message[type].prototype.setGroup = this.setGroup;
 		this._msg = new Message[type](id);
 	}
 	return this._msg;
-}
+};
 
-Message.video = function (id) {
+Message.video = function(id){
 	this.id = id;
-	this.type = 'video';
+	this.type = "video";
 	this.body = {};
 };
-Message.video.prototype.set = function (opt) {
+Message.video.prototype.set = function(opt){
 	opt.file = opt.file || _utils.getFileUrl(opt.fileInputId);
 
 	this.value = opt.file;
@@ -493,6 +493,7 @@ function _handleMessage(msg, options){
 		message = msg;
 		message.type = type;
 		message.data = (msg && msg.data) || "";
+		
 		message.brief = textParser.getTextMessageBrief(message.data);
 		break;
 	case "img":
@@ -685,6 +686,11 @@ function _handleMessage(msg, options){
 	// 给收到的消息加id，用于撤回消息
 	message.id = msgId;
 
+	var satisfactionOption = {
+		satisfactionCommentInvitation: satisfactionCommentInvitation,
+		satisfactionCommentInfo: satisfactionCommentInfo,
+		agentId: agentId
+	};
 	// 消息上屏
 	_appendMsg(message, {
 		isReceived: isReceived,
@@ -692,18 +698,19 @@ function _handleMessage(msg, options){
 		officialAccount: targetOfficialAccount,
 		timestamp: msg.timestamp,
 		noPrompt: noPrompt,
+		satisfactionOption: satisfactionOption
 	});
 
 	// 是否发送解决未解决msg.ext.extRobot.satisfactionCommentInvitation
-	if(satisfactionCommentInvitation && !isHistory){
-		_appendMsg({
-			data: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
-			type: "txtLink",
-		}, {
-			isReceived: true,
-			isHistory: false
-		});
-	}
+	// if(satisfactionCommentInvitation && !isHistory){
+	// 	_appendMsg({
+	// 		data: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
+	// 		type: "txtLink",
+	// 	}, {
+	// 		isReceived: true,
+	// 		isHistory: false
+	// 	});
+	// }
 	
 
 	if(!isHistory){
@@ -926,6 +933,7 @@ function _appendMsg(msg, options){
 	var isReceived = opt.isReceived;
 	var isHistory = opt.isHistory;
 	var noPrompt = opt.noPrompt;
+	var satisfactionCommentInvitation = opt.satisfactionCommentInvitation;
 	var officialAccount = opt.officialAccount || profile.currentOfficialAccount || profile.systemOfficialAccount;
 
 	officialAccount.messageView.appendMsg(msg, opt);

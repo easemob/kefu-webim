@@ -386,13 +386,14 @@ function _bindEvents(){
 
 	utils.live("img.em-widget-imgview", "click", function(){
 		var imgSrc = this.getAttribute("src");
-		if (typeof window.WeixinJSBridge == "undefined") {
+		if(typeof window.WeixinJSBridge == "undefined"){
 		    imgView.show(imgSrc);
-		} else {
-			//在微信中打开
-          	WeixinJSBridge.invoke("imagePreview",{
-               	"urls": [window.location.protocol + imgSrc],
-               	"current": window.location.protocol + imgSrc
+		}
+		else{
+			// 在微信中打开
+          	WeixinJSBridge.invoke("imagePreview", {
+               	urls: [window.location.protocol + imgSrc],
+               	current: window.location.protocol + imgSrc
           	});
 		}
 	});
@@ -492,6 +493,28 @@ function _bindEvents(){
 		doms.editorView.style.display = "block";
 		tenantInfo && tenantInfo.show();
 	});
+
+	// 显示选择地图
+	// var mapSpan = document.body.querySelectorAll(".map");
+
+	utils.one(".map", "click", function(){
+		var mapPage = document.getElementById("mapPage");
+		
+		mapPage.style.display = "block";
+	});
+
+	// 点击查看详情，显示保单详情
+	utils.live(".itemKindData", "click", function(){
+		var itemKindData = document.getElementById("itemKindData");
+		
+		itemKindData.style.display = "block";
+	});
+	utils.live(".closeItemKindData", "click", function(){
+		var itemKindData = document.getElementById("itemKindData");
+		
+		itemKindData.style.display = "none";
+	});
+
 	// 提示有新消息
 	eventListener.add(_const.SYSTEM_EVENT.MESSAGE_APPENDED, function(oa, msg){
 		utils.addClass(document.body.querySelector("#em-article-close .back-chat"), "hide");
@@ -552,7 +575,8 @@ function _bindEvents(){
 	});
 
 	// 解决
-	utils.live("a.statisfyYes", "click", function(){
+	utils.live(".statisfyYes", "click", function(e){
+		utils.addClass(e.target.parentNode, "statisfyYesShow");
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
 		apiHelper.getStatisfyYes(robotAgentId, satisfactionCommentKey).then(function(data){
@@ -565,7 +589,8 @@ function _bindEvents(){
 	});
 
 	// 未解决
-	utils.live("a.statisfyNo", "click", function(){
+	utils.live(".statisfyNo", "click", function(e){
+		utils.addClass(e.target.parentNode, "statisfyNoShow");
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
 		apiHelper.getStatisfyNo(robotAgentId, satisfactionCommentKey).then(function(data){
@@ -575,7 +600,7 @@ function _bindEvents(){
 				uikit.tip("已评价");
 			}
 		});
-	});	
+	});
 
 	var messagePredict = _.throttle(function(msg){
 		var officialAccount = profile.currentOfficialAccount || {};
@@ -627,11 +652,11 @@ function _bindEvents(){
 		if(!fileInput.value){
 		}
 		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
-			uikit.tip(__("prompt._10_mb_file_limit"));  //("文件大小不能超过10MB");
+			uikit.tip(__("prompt._10_mb_file_limit"));  // ("文件大小不能超过10MB");
 			fileInput.value = "";
 		}
 		else{
-			channel.sendVideo(WebIM.utils.getFileUrl(fileInput)); //sendVideo 取自 channel.js 
+			channel.sendVideo(WebIM.utils.getFileUrl(fileInput)); // sendVideo 取自 channel.js
 			fileInput.value = "";
 		}
 	});
@@ -854,7 +879,7 @@ function _getDom(){
 		switchKeyboardBtn: topBar.querySelector(".btn-keyboard"),
 
 		emojiToggleButton: editorView.querySelector(".em-bar-emoji"),
-		// 获取文件上传，图片，小视频按钮dom	
+		// 获取文件上传，图片，小视频按钮dom
 		sendImgBtn: editorView.querySelector(".em-widget-img"),
 		sendFileBtn: editorView.querySelector(".em-widget-file"),
 		sendVideoBtn: editorView.querySelector(".em-widget-video"),
@@ -995,7 +1020,7 @@ function _isAppendDom(){
 				doms.textInput.style.height = 50 + "px";
 				doms.sendBtn.style.bottom = 25 + "px";
 				// 移动端适配并覆盖 mobile.scss样式
-				if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+				if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)){
 					doms.poweredByLink.style.display = "block";
 					doms.textInput.style.height = 34 + "px";
 					doms.textInput.style.marginBottom = 17 + "px";

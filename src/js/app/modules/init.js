@@ -197,6 +197,18 @@ function updateCustomerInfo(e){
 	if(temp){
 		chat.setArticleIframeScrolling(temp.enable);
 	}
+
+	if(data.cityname){
+		var mapPage = document.getElementById("mapPage");
+		mapPage.style.display = "none";
+		channel.sendText(data.poiaddress, { isReceived: false, isHistory: false, type: "txt" });
+
+		var mapSpan = document.body.querySelectorAll(".map");
+
+		mapSpan.forEach(function(item){
+			item.style.color = "#c9ced3";
+		});
+	}
 }
 
 function initChat(){

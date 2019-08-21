@@ -14,9 +14,48 @@ function genMsgContent(msg){
 
 	switch(type){
 	case "txt":
-		value = textParser.parse(value);
-		// 历史消息以及收到的实时消息
-		html = "<span class=\"text\">" + _.map(value, function(fragment){ return fragment.value; }).join("") + "</span>";
+		
+		if(isJsonString(value)){
+			value = JSON.parse(value);
+		}
+		else{
+			value = textParser.parse(value);
+		}
+		// 紫金处理 调用地图和保单详情两种情况，operateType:query(详情)，operateType:help(调用地图)
+
+		
+		// value = JSON.parse("{\"operateType\":\"help\",\"context\":{\"policyBasePart\":{\"daolujiuyuanFlag\":\"不享有免费道路救援\",\"endDate\":\"2019-07-03\",\"endDateCI\":\"2019-07-03\",\"policyNo\":\"20501913000018000215\",\"policyNoCI\":\"20590913000018000231\",\"riskCode\":\"0501\",\"riskCodeCI\":\"0590\",\"startDate\":\"2018-07-04\",\"startDateCI\":\"2018-07-04\",\"sumPremium\":\"3956\",\"sumPremiumCI\":\"950\",\"underWriteFlag\":\"1\",\"underWriteFlagCI\":\"1\"},\"itemKindDataList\":[{\"amount\":\"122000\",\"kindName\":\"机动车交通事故责任强制保险\",\"premium\":\"950\"},{\"amount\":\"51875.2\",\"kindName\":\"车辆损失保险\",\"premium\":\"2305.25\"},{\"amount\":\"300000\",\"kindName\":\"第三者责任保险\",\"premium\":\"1134.75\"},{\"amount\":\"0\",\"kindName\":\"车损不计免赔\",\"premium\":\"345.79\"},{\"amount\":\"0\",\"kindName\":\"三者不计免赔\",\"premium\":\"170.21\"}]}}");
+		
+		if(value.operateType && value.operateType === "query"){
+		// 紫金处理 调用地图和保单详情两种情况，operateType:query(详情)，operateType:help(调用地图)
+			var context = value.context;
+			html = "<p style='margin-bottom: 10px;'>尊敬的紫金客户：</p><div style='font-size: 15px;'><span>以下是您的保单信息</span><br/><span style='font-weight: bold'>" + context.policyBasePart.riskNameCI + "</span><br/><span>保单号：" + context.policyBasePart.policyNoCI + "</span><br/><span>保险期限：" + showTime(context.policyBasePart.startDateCI) + "~" + showTime(context.policyBasePart.endDateCI) + "</span><br/><span>保险费：￥" + dealNumber(context.policyBasePart.sumPremiumCI) + "</span><br/><span>保险状态：" + underWriteFlag(context.policyBasePart.underWriteFlagCI) + "</span><br/></div>";
+			
+			if(context.policyBasePart.riskName){
+				html += "<div style='font-size: 15px;margin-top: 10px;'><span>以下是您的保单信息</span><br/><span style='font-weight: bold'>" + context.policyBasePart.riskName + "</span><br/><span>保单号：" + context.policyBasePart.policyNo + "</span><br/><span>保险期限：" + showTime(context.policyBasePart.startDate) + "~" + showTime(context.policyBasePart.endDate) + "</span><br/><span>保险费：￥" + dealNumber(context.policyBasePart.sumPremium) + "</span><br/><span>保险状态：" + underWriteFlag(context.policyBasePart.underWriteFlag) + "</span><br/></div>";
+			}
+
+			html += "<div class='itemKindData' style='border-top: 1px solid #d0d0d0;margin: 0 -10px;height: 28px;line-height: 28px;font-size:15px;padding: 6px 10px 0 10px;margin-top: 10px;cursor: pointer;'><span>查看详情</span><span style='float: right;'>&gt</span></div>";
+		
+			var policyListHtml = "";
+			var allNum = 0;
+			context.itemKindDataList.forEach(function(item){
+				policyListHtml = policyListHtml + "<div style='border-bottom: 1px solid #e5e5e5;padding:10px'><p>" + item.kindName + "</p><span>保额：" + dealNumber(item.amount) + "</span><span style='float: right;'>保费：" + dealNumber(item.premium) + "</span></div>";
+				allNum += Number(item.premium);
+			});
+
+			var policyHtml = "<div class=''><div style='border-bottom: 1px solid #e5e5e5;height: 40px;line-height: 40px;padding: 0 10px;'>查看保单明细 <span class='icon-close closeItemKindData' style='float: right'></span></div>" + policyListHtml + "</div><div style='height: 40px;line-height: 40px;padding: 0 10px;'><span style='float: right;'>保费合计：" + dealNumber(allNum) + "元</span></div>";
+			var itemKindData = document.getElementById("itemKindData");
+			
+			itemKindData.innerHTML = policyHtml;
+		}
+		else if(value.operateType && value.operateType === "help"){
+			html = "<span class='map' style='color:#009eec;cursor: pointer'>  <i class='icon-location'></i> 选择位置</span><span  class=\"text\"></span>";
+		}
+		else{
+			// 历史消息以及收到的实时消息
+			html = "<span  class=\"text\">" + _.map(value, function(fragment){ return fragment.value; }).join("") + "</span>";
+		}
 		break;
 	case "img":
 		// todo: remove a
@@ -57,12 +96,12 @@ function genMsgContent(msg){
 			+ msg.filename + "\" download=\"" + msg.filename + "\"></a>";
 		break;
 		// 小视频类型
-		case "video":
-		html = "<video class=\"video-btn\"  controls src=\""+msg.url +" \">"
-				+ "<source  src=\""+msg.url +" \" type=\"video/mp4\"></source>"
-				+ "<source  src=\""+msg.url +" \" type=\"video/webm\"></source>"
-				+ "<source  src=\""+msg.url +" \" type=\"video/ogg\"></source>"
-			   + "</video>"
+	case "video":
+		html = "<video class=\"video-btn\"  controls src=\"" + msg.url + " \">"
+				+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"
+				+ "<source  src=\"" + msg.url + " \" type=\"video/webm\"></source>"
+				+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
+			   + "</video>";
 		break;
 	case "html-form":
 		msgContent = msg.ext.msgtype.html;
@@ -81,6 +120,35 @@ function genMsgContent(msg){
 	}
 
 	return html;
+}
+
+function underWriteFlag(flag){
+	if(flag == "1"){
+		return "保单已生效";
+	}
+	else if(flag == "4"){
+		return "审核通过代缴费";
+	}
+	else if(flag == "9"){
+		return "待核保";
+	}
+}
+
+function showTime(date){
+	var timeDate = new Date(date);
+	date = timeDate.getFullYear() + "年" + (timeDate.getMonth() + 1) + "月" + timeDate.getDate() + "日";
+	return date;
+}
+
+function isJsonString(str){
+	try{
+		if(typeof JSON.parse(str) == "object"){
+			return true;
+		}
+	}
+	catch(e){
+	}
+	return false;
 }
 
 function _getAvatar(msg){
@@ -103,7 +171,7 @@ function _getAvatar(msg){
 	return avatar || profile.tenantAvatar || profile.defaultAvatar;
 }
 
-function genDomFromMsg(msg, isReceived, isHistory){
+function genDomFromMsg(msg, isReceived, isHistory, satisfactionOption){
 	var id = msg.id;
 	var type = msg.type;
 	var html = "";
@@ -205,12 +273,32 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		+ "</div>";
 	}
 
+	if(satisfactionOption.satisfactionCommentInvitation && !isHistory){
+		html += "<div class=\"satisfactionItem\"><span class='statisfyYes iconfont' data-satisfactionCommentInfo='" + satisfactionOption.satisfactionCommentInfo + "' data-agentId='" + satisfactionOption.agentId + "'>&#xe600;</span><span class='statisfyNo iconfont' data-satisfactionCommentInfo='" + satisfactionOption.satisfactionCommentInfo + "' data-agentId='" + satisfactionOption.agentId + "'>&#xe606;</span></div>";
+	}
 
 	// wrapper结尾
 	html += "</div>";
+	
+	
 
 	dom.innerHTML = html;
 	return dom;
+}
+
+function dealNumber(money){
+	if(money && money != null){
+		money = String(money);
+		var left = money.split(".")[0], right = money.split(".")[1];
+		right = right ? (right.length >= 2 ? "." + right.substr(0, 2) : "." + right + "0") : ".00";
+		var temp = left.split("").reverse().join("").match(/(\d{1,3})/g);
+		return (Number(money) < 0 ? "-" : "") + temp.join(",").split("").reverse().join("") + right;
+	}
+	else if(money === 0){   // 注意===在这里的使用，如果传入的money为0,if中会将其判定为boolean类型，故而要另外做===判断
+		return "0.00";
+	}
+	return "";
+    
 }
 
 module.exports = genDomFromMsg;
