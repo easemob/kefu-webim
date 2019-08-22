@@ -54,6 +54,11 @@ function _init(){
 
 	dispatcher = new Dispatcher();
 
+	emedia.convertWebsocketURLOfTicket = function(url){
+		var replacedURL = "wss://10.64.90.37:13005" + url.substring(url.indexOf("/", 5));
+		return  replacedURL;
+	};
+	
 	service = new window.emedia.Service({
 		// 这个目前没有定义，前段可写 web
 		resource: "web",
