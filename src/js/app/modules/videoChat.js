@@ -54,10 +54,10 @@ function _init(){
 
 	dispatcher = new Dispatcher();
 
-	// emedia.convertWebsocketURLOfTicket = function(url){
-	// 	var replacedURL = "wss://10.64.90.37:13005" + url.substring(url.indexOf("/", 5));
-	// 	return  replacedURL;
-	// };
+	emedia.convertWebsocketURLOfTicket = function(url){
+		var replacedURL = "wss://10.64.90.37:13005" + url.substring(url.indexOf("/", 5));
+		return  replacedURL;
+	};
 	
 	service = new window.emedia.Service({
 		// 这个目前没有定义，前段可写 web
@@ -170,9 +170,9 @@ function init(option){
 
 	adapterPath = __("config.static_path") + "/js/lib/adapter.min.js?v=unknown-000";
 	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk.min.js?v=1.1.2";
-	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-2.1.1.29f2187.js?v=1.1.6";
+	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-2.1.1.29f2187.js?v=1.1.6";
 	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_x1v1.js?v=1.1.4";
-	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-2.1.1.4338998.js?v=1.1.5";
+	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-2.1.1.4338998.js?v=1.1.5";
 	
 
 	// todo: resolve promise sequentially
