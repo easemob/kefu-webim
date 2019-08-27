@@ -54,10 +54,10 @@ function _init(){
 
 	dispatcher = new Dispatcher();
 
-	emedia.convertWebsocketURLOfTicket = function(url){
-		var replacedURL = "wss://10.64.90.37:13005" + url.substring(url.indexOf("/", 5));
-		return  replacedURL;
-	};
+	// emedia.convertWebsocketURLOfTicket = function(url){
+	// 	var replacedURL = "wss://10.64.90.37:13005" + url.substring(url.indexOf("/", 5));
+	// 	return  replacedURL;
+	// };
 	
 	service = new window.emedia.Service({
 		// 这个目前没有定义，前段可写 web
@@ -93,12 +93,16 @@ function _init(){
 				});
 			},
 			// 某人 发布 一个流 （音视频流，共享桌面等）（包含本地流）
-			onAddStream: videoPanel.addOrUpdateStream,
+			onAddStream: function(stream){
+				videoPanel.addOrUpdateStream(stream, "isADDDDD");
+			},
 			// 某人 取消 一个流 （音视频流，共享桌面等）（包含本地流）
 			onRemoveStream: videoPanel.removeStream,
 			// 更新 一个流 （音视频流，共享桌面等）。
 			// 可能是 断网后，重新获取到远端媒体流，或者对方静音或关闭摄像头
-			onUpdateStream: videoPanel.addOrUpdateStream,
+			onUpdateStream: function(stream){
+				videoPanel.addOrUpdateStream(stream, "isUPPPPP");
+			},
 			// 这个事件比较多，以后业务拓展时，根据需要再给开放一些回调，目前忽略
 			onNotifyEvent: function(evt){
 				// 接听 打开本地摄像头 并成功推流
@@ -166,9 +170,9 @@ function init(option){
 
 	adapterPath = __("config.static_path") + "/js/lib/adapter.min.js?v=unknown-000";
 	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk.min.js?v=1.1.2";
-	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-2.1.1.29f2187.js?v=1.1.6";
+	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-2.1.1.29f2187.js?v=1.1.6";
 	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_x1v1.js?v=1.1.4";
-	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-2.1.1.4338998.js?v=1.1.5";
+	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-2.1.1.4338998.js?v=1.1.5";
 	
 
 	// todo: resolve promise sequentially

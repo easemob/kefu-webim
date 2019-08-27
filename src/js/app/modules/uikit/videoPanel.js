@@ -59,7 +59,8 @@ function _reset(){
 	utils.removeClass(multiVideoContainer, "hide");
 }
 
-function addOrUpdateStream(stream){
+function addOrUpdateStream(stream, type){
+	console.log(stream, stream.getMediaStream(), type);
 	var streamOwnerName = utils.getDataByPath(stream, "owner.name");
 	var targetMiniVideoWindow = videoWindowList.get(streamOwnerName);
 
