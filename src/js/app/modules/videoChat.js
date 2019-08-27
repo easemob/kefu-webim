@@ -166,8 +166,8 @@ function init(option){
 
 	adapterPath = __("config.static_path") + "/js/lib/adapter.min.js?v=unknown-000";
 	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk.min.js?v=1.1.2";
-	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-2.1.1.29f2187.js?v=1.1.6";
-	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_x1v1.js?v=1.1.4";
+	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-2.1.1.29f2187.js?v=1.1.6";
+	eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_x1v1.js?v=1.1.4";
 	// eMediaSdkPath = __("config.static_path") + "/js/lib/EMedia_sdk-2.1.1.4338998.js?v=1.1.5";
 	
 
