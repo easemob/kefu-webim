@@ -693,7 +693,7 @@ function _handleMessage(msg, options){
 				return "<button class=\"" + className + "\" data-queue-name=\"" + queueName + "\" data-queue-type=\"" + queueType + "\">" + label + "</button>";
 			}).join("") || ""
 			+ "</div>";
-		message.data = msg.data.title;
+		message.data = msg.data.itemName;
 		message.brief = __("message_brief.menu");
 		break;
 	case "robotTransfer":
