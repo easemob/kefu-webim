@@ -968,6 +968,12 @@ function _init(){
 	_bindEvents();
 	initSessionList();
 	_initSession();
+	// 查询是否开启询前引导开关
+	if(profile.grayList.transfermanualmenuguide){
+		apiHelper.getOptForManualMenuGuide().then(function(yes){
+			profile.isManualMenuGuide = yes;
+		});
+	}
 }
 
 function _initSession(){
@@ -1004,9 +1010,6 @@ function _initSession(){
 					profile.isShowTrackMsg = yes;
 				}),
 
-				apiHelper.getOptForManualMenuGuide().then(function(yes){
-					profile.isManualMenuGuide = yes;
-				})
 			])
 			.then(function(){
 				return Promise.all([
