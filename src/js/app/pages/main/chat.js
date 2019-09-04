@@ -504,7 +504,10 @@ function _bindEvents(){
 
 	// 转人工————根据询前引导菜单选择指定的一项
 	utils.live("button.js_transferManualbtn", "click", function(){
-		if(this.getAttribute("data-queue-type") == "txt"){
+		if(utils.hasClass(this, "disabled")){
+			// 禁止发送
+		}
+		else if(this.getAttribute("data-queue-type") == "txt"){
 			channel.sendText(this.innerText, {
 				ext: {
 					msgtype: {
@@ -519,7 +522,18 @@ function _bindEvents(){
 			});
 		}
 		else if(this.getAttribute("data-queue-type") == "video"){
-			doms.videoInviteButton.click();
+			channel.sendText(this.innerText, {
+				ext: {
+					msgtype: {
+						mode: "transferManualGuide",
+						choice: {
+							menuid: this.getAttribute("data-id"),
+							queueId: this.getAttribute("data-queue-id"),
+							queueType: "video"
+						}
+					}
+				}
+			});
 		}
 		else if(this.getAttribute("data-queue-type") == "transfer"){
 			leaveMessage();
@@ -528,10 +542,14 @@ function _bindEvents(){
 
 		}
 
+
 	});
 	// 入口指定————询前引导
 	utils.live("button.js_transferManualEntrybtn", "click", function(){
-		if(this.getAttribute("data-queue-type") == "txt"){
+		if(utils.hasClass(this, "disabled")){
+			// 禁止发送
+		}
+		else if(this.getAttribute("data-queue-type") == "txt"){
 			channel.sendText(this.innerText, {
 				ext: {
 					weichat: {
