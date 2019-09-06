@@ -54,6 +54,7 @@ function handleConfig(configJson){
 	// 用于config标记是否是来自于坐席端网页配置
 	config.isWebChannelConfig = true;
 
+	config.configName = configJson.configName;
 	config.channel = configJson.channel;
 	config.ui = configJson.ui;
 	config.toolbar = configJson.toolbar;

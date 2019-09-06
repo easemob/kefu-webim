@@ -253,7 +253,9 @@ getData.listen(function(msg){
 				+ "/tickets?tenantId=" + tenantId
 				+ "&easemob-target-username=" + params["easemob-target-username"]
 				+ "&easemob-appkey=" + params["easemob-appkey"]
-				+ "&easemob-username=" + params["easemob-username"],
+				+ "&easemob-username=" + params["easemob-username"]
+				+ "&config_id=" + params.config_id
+				+ "&config_name=" + params.config_name,
 			msg: msg,
 			type: "POST"
 		});

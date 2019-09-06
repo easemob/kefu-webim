@@ -163,6 +163,7 @@ function initConfig(){
 	apiHelper.getConfig(commonConfig.getConfig().configId)
 	.then(function(entity){
 		entity.configJson.tenantId = entity.tenantId;
+		entity.configJson.configName = entity.configName;
 		handleConfig(entity.configJson);
 		handleSettingIframeSize();
 		initRelevanceList();

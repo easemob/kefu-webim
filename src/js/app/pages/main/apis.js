@@ -174,6 +174,8 @@ function createTicket(opt){
 			"easemob-target-username": config.toUser,
 			"easemob-appkey": config.appKey.replace("#", "%23"),
 			"easemob-username": config.user.username,
+			config_id: config.configId,
+			config_name: config.configName,
 			origin_type: "webim",
 			headers: { Authorization: "Easemob IM " + opt.token },
 			projectId: opt.projectId,
