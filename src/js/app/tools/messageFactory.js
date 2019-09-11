@@ -126,7 +126,8 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		var msgArticles = utils.getDataByPath(msg, "ext.msgtype.articles");
 		var articleNode;
 		if(msgArticles.length === 1){
-			var date = moment(msgArticles[0].createdTime).format(__("config.article_timestamp_format"));
+			var date = msgArticles[0].createdTime ? moment(msgArticles[0].createdTime).format(__("config.article_timestamp_format"))
+				: moment(msgArticles[0].date).format(__("config.article_timestamp_format"));
 			articleNode = "" +
 				"<div class=\"article-msg-outer article-item only-one-article\">" +
 					"<div class=\"body\">" +
