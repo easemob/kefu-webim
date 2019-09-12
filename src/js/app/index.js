@@ -167,14 +167,15 @@ function initConfig(){
 		handleConfig(entity.configJson);
 		handleSettingIframeSize();
 		initRelevanceList();
-		initInvite();
+		initInvite({ themeName: entity.configJson.ui.themeName });
 	});
 }
 
-function initInvite(){
+function initInvite(opt){
 	apiHelper.getInviteInfo(commonConfig.getConfig().tenantId, commonConfig.getConfig().configId)
 	.then(function(res){
 		if(res.status){
+			res.themeName = opt.themeName;
 			transfer.send({
 				event: _const.EVENTS.INVITATION_INIT,
 				data: res

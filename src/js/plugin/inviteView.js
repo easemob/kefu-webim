@@ -35,7 +35,7 @@ module.exports = function(info, config){
 					"<div class=\"invite-text\"><span>" +
 						info.style.guide +
 					"</span></div>" +
-					"<div class=\"ui-cmp-icontxtbtn blue button invite-accept\">" +
+					"<div class=\"ui-cmp-icontxtbtn blue button invite-accept " + info.themeName + "\">" +
 						info.style.button;
 	"</div>";
 	document.body.appendChild(inviteBox);

@@ -194,7 +194,7 @@
 			vertical-align: middle;
 		}
 	}
-	>div.button{
+	.button{
 		position: absolute;
 		bottom: 0;
 		width: 100%;
@@ -204,10 +204,8 @@
 		margin: 0;
 		text-align: center;
 		cursor: pointer;
-		&.blue{
-			color: #fff;
-			background-color: #1ba8ed;
-		}
+		color: #fff;
+		background-color: #1ba8ed;
 	}
 	>span{
 		position: absolute;
@@ -216,6 +214,39 @@
 		color: gray;
 		cursor: pointer;
 		font-size: 20px;
+	}
+	.theme_sky{
+		background-color:#42b8f4;
+	}
+	.theme_tree{
+		background-color: #00b45f;
+	}
+	.theme_house{
+		background-color: #b50e03;
+	}
+	.theme_cherry{
+		background-color: #FFA0BE;
+	}
+	.theme_orange{
+		background-color: #f49300;
+	}
+	.theme_grass{
+		background-color: #9ec100;
+	}
+	.theme_sea{
+		background-color: #00cccd;
+	}
+	.theme_mountion{
+		background-color: #5b799a;
+	}
+	.theme_moon{
+		background-color: #3977cf;
+	}
+	.theme_business{
+		background-color: #000000;
+	}
+	.theme_lake{
+		background-color: #06a89c;
 	}
 	&.easemob-mobile-invite-box{
 		width: 280px;
