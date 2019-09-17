@@ -77,7 +77,7 @@ module.exports = {
 					_handleMessage(_transformMessageFormat({ body: elem }), { isHistory: false });
 				});
 			});
-		}, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
+		}, 1000);
 	},
 	handleMessage: _handleMessage
 };
@@ -85,74 +85,76 @@ module.exports = {
 function _initConnection(onReadyCallback){
 	// xmpp连接超时则改为可发送消息状态
 	// todo: 自动切换通道状态
-	var firstTS = setTimeout(function(){
-		onReadyCallback();
-	}, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
+	// var firstTS = setTimeout(function(){
+	// 	onReadyCallback();
+	// }, _const.FIRST_CHANNEL_CONNECTION_TIMEOUT);
 
+	// 开启第二通道通信
+	onReadyCallback();
 	// init connection
-	conn = new WebIM.connection({
-		url: config.xmppServer,
-		retry: true,
-		isMultiLoginSessions: config.resources,
-		heartBeatWait: _const.HEART_BEAT_INTERVAL
-	});
+	// conn = new WebIM.connection({
+	// 	url: config.xmppServer,
+	// 	retry: true,
+	// 	isMultiLoginSessions: config.resources,
+	// 	heartBeatWait: _const.HEART_BEAT_INTERVAL
+	// });
 
 	if(profile.imRestDown){
 		onReadyCallback();
 	}
+	// 暂时关闭 websocket连接，现在采用http发送
+	// conn.listen({
+	// 	onOpened: function(info){
+	// 		// discard this
+	// 		if(info && info.accessToken && (profile.imToken === null)){
+	// 			profile.imToken = info.accessToken;
+	// 		}
+	// 		// 连接未超时，清除timer，暂不开启api通道发送消息
+	// 		clearTimeout(firstTS);
 
-	conn.listen({
-		onOpened: function(info){
-			// discard this
-			if(info && info.accessToken && (profile.imToken === null)){
-				profile.imToken = info.accessToken;
-			}
-			// 连接未超时，清除timer，暂不开启api通道发送消息
-			clearTimeout(firstTS);
+	// 		conn.setPresence();
 
-			conn.setPresence();
+	// 		onReadyCallback(info);
+	// 	},
+	// 	onTextMessage: function(message){
+	// 		_handleMessage(message, { type: "txt" });
+	// 	},
+	// 	onPictureMessage: function(message){
+	// 		_handleMessage(message, { type: "img" });
+	// 	},
+	// 	onFileMessage: function(message){
+	// 		_handleMessage(message, { type: "file" });
+	// 	},
+	// 	onCmdMessage: function(message){
+	// 		_handleMessage(message, { type: "cmd" });
+	// 	},
+	// 	onOnline: function(){
+	// 		utils.isMobile && _open();
+	// 	},
+	// 	onOffline: function(){
+	// 		utils.isMobile && conn.close();
 
-			onReadyCallback(info);
-		},
-		onTextMessage: function(message){
-			_handleMessage(message, { type: "txt" });
-		},
-		onPictureMessage: function(message){
-			_handleMessage(message, { type: "img" });
-		},
-		onFileMessage: function(message){
-			_handleMessage(message, { type: "file" });
-		},
-		onCmdMessage: function(message){
-			_handleMessage(message, { type: "cmd" });
-		},
-		onOnline: function(){
-			utils.isMobile && _open();
-		},
-		onOffline: function(){
-			utils.isMobile && conn.close();
-
-			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFLINE, []);
-		},
-		onError: function(e){
-			if(e.reconnect){
-				_open();
-			}
-			else if(e.type === _const.IM.WEBIM_CONNCTION_AUTH_ERROR){
-				_open();
-			}
-			// im sdk 会捕获回调中的异常，需要把出错信息打出来
-			else if(e.type === _const.IM.WEBIM_CONNCTION_CALLBACK_INNER_ERROR){
-				console.error(e.data);
-			}
-			else{
-				console.error(e);
-			}
-		}
-	});
+	// 		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFLINE, []);
+	// 	},
+	// 	onError: function(e){
+	// 		if(e.reconnect){
+	// 			_open();
+	// 		}
+	// 		else if(e.type === _const.IM.WEBIM_CONNCTION_AUTH_ERROR){
+	// 			_open();
+	// 		}
+	// 		// im sdk 会捕获回调中的异常，需要把出错信息打出来
+	// 		else if(e.type === _const.IM.WEBIM_CONNCTION_CALLBACK_INNER_ERROR){
+	// 			console.error(e.data);
+	// 		}
+	// 		else{
+	// 			console.error(e);
+	// 		}
+	// 	}
+	// });
 
 	// open connection
-	_open();
+	// _open();
 }
 
 function _reSend(type, id){
@@ -176,7 +178,7 @@ function _sendText(message, ext){
 	msg.set({
 		msg: message,
 		to: config.toUser,
-		// 此回调用于确认im server收到消息, 有别于kefu ack
+		// 此回调用于确认im server收到消息, 有别于kefu ack 
 		success: function(/* id */){},
 		fail: function(/* id */){}
 	});
@@ -186,7 +188,15 @@ function _sendText(message, ext){
 	}
 	_setExt(msg);
 	_appendAck(msg, id);
-	conn.send(msg.body);
+	// conn.send(msg.body);
+	_appendMsg({
+		id: id,
+		type: "txt",
+		data: message
+	}, {
+		isReceived: false,
+		isHistory: false,
+	});
 	sendMsgDict.set(id, msg);
 	_detectSendTextMsgByApi(id);
 
@@ -225,7 +235,7 @@ function _sendTransferToKf(tid, sessionId){
 		}
 	});
 	_appendAck(msg, id);
-	conn.send(msg.body);
+	// conn.send(msg.body);
 	sendMsgDict.set(id, msg);
 	_detectSendTextMsgByApi(id);
 
@@ -259,7 +269,7 @@ function _sendImg(fileMsg){
 		isReceived: false,
 		isHistory: false,
 	});
-	conn.send(msg.body);
+	// conn.send(msg.body);
 	sendMsgDict.set(id, msg);
 	_detectUploadImgMsgByApi(id, fileMsg.data);
 
@@ -285,6 +295,7 @@ function _sendFile(fileMsg){
 		},
 	});
 	_setExt(msg);
+	_appendAck(msg, id);
 	_appendMsg({
 		id: id,
 		type: "file",
@@ -295,7 +306,15 @@ function _sendFile(fileMsg){
 		isReceived: false,
 		isHistory: false,
 	});
-	conn.send(msg.body);
+	// conn.send(msg.body);
+	sendMsgDict.set(id, msg);
+	var msg = sendMsgDict.get(id);
+	var count = typeof retryCount === "number"
+		? retryCount
+		: _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
+
+	_detectUploadFileMsgByApi(id, fileMsg.data);
+
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 }
 
@@ -891,9 +910,18 @@ function _attemptToAppendOfficialAccount(officialAccountInfo){
 }
 
 // 第二通道发消息
-function _sendMsgChannle(id, retryCount){
+function _sendMsgChannle(id, retryCount, turn){
 	var msg = sendMsgDict.get(id);
-	var body = utils.getDataByPath(msg, "body.body");
+	var body; 
+	if(msg.type == "txt"){
+		body = {
+			type: "txt",
+			msg: msg.value
+		}
+	}
+	if(turn){
+		body = utils.getDataByPath(msg, "body.body");
+	}
 	var ext = utils.getDataByPath(msg, "body.ext");
 	var count = typeof retryCount === "number"
 		? retryCount
@@ -905,7 +933,7 @@ function _sendMsgChannle(id, retryCount){
 	}, function(){
 		// 失败继续重试
 		if(count > 0){
-			_sendMsgChannle(id, --count);
+			_sendMsgChannle(id, --count, true);
 		}
 		else{
 			_showFailed(id);
@@ -927,7 +955,7 @@ function _uploadImgMsgChannle(id, file, retryCount){
 			type: "img",
 			url: resp.url
 		};
-		_sendMsgChannle(id, 0);
+		_sendMsgChannle(id, 0, true);
 	}, function(){
 		if(count > 0){
 			_uploadImgMsgChannle(msg, file, --count);
@@ -938,6 +966,29 @@ function _uploadImgMsgChannle(id, file, retryCount){
 	});
 }
 
+function _uploadFlieMsgChannle(id, file, retryCount){
+	var msg = sendMsgDict.get(id);
+	var count = typeof retryCount === "number"
+		? retryCount
+		: _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
+
+
+	apiHelper.uploadImgMsgChannel(file).then(function(resp){
+		msg.body.body = {
+			filename: resp.fileName,
+			type: "file",
+			url: resp.url
+		};
+		_sendMsgChannle(id, 0, true);
+	}, function(){
+		if(count > 0){
+			_uploadFlieMsgChannle(msg, file, --count);
+		}
+		else{
+			_showFailed(id);
+		}
+	});
+}
 // 消息发送成功，清除timer
 function _clearTS(id){
 	clearTimeout(ackTimerDict.get(id));
@@ -946,14 +997,14 @@ function _clearTS(id){
 	_hideFailedAndLoading(id);
 	sendMsgDict.remove(id);
 }
-
+// 采用时间间隔两秒钟发送
 // 监听ack，超时则开启api通道, 发文本消息时调用
 function _detectSendTextMsgByApi(id){
 	ackTimerDict.set(
 		id,
 		setTimeout(function(){
 			_sendMsgChannle(id);
-		}, _const.FIRST_CHANNEL_MESSAGE_TIMEOUT)
+		}, _const.FIRST_CHANNEL_MIN_TIMEOUT)
 	);
 }
 
@@ -963,7 +1014,16 @@ function _detectUploadImgMsgByApi(id, file){
 		id,
 		setTimeout(function(){
 			_uploadImgMsgChannle(id, file);
-		}, _const.FIRST_CHANNEL_IMG_MESSAGE_TIMEOUT)
+		}, _const.FIRST_CHANNEL_MIN_TIMEOUT)
+	);
+}
+// 监听ack，超时则开启api通道, 上传附件消息时调用
+function _detectUploadFileMsgByApi(id, file){
+	ackTimerDict.set(
+		id,
+		setTimeout(function(){
+			_uploadFlieMsgChannle(id, file);
+		}, _const.FIRST_CHANNEL_MIN_TIMEOUT)
 	);
 }
 

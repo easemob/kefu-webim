@@ -31,6 +31,7 @@ var inputBoxPosition = "down";
 var topBar;
 var editorView;
 var doms;
+var intervalTime = new Date().getTime();
 
 var _reCreateImUser = _.once(function(){
 	console.warn("user not found in current appKey, attempt to recreate user.");
@@ -682,8 +683,9 @@ function _bindEvents(){
 
 	utils.on(doms.sendBtn, "click", function(){
 		var textMsg = doms.textInput.value;
+		var newIntervalTime = new Date().getTime();
 
-		if(utils.hasClass(this, "disabled")){
+		if(utils.hasClass(this, "disabled") || newIntervalTime - intervalTime < 100){
 			// 禁止发送
 		}
 		else if(textMsg.length > _const.MAX_TEXT_MESSAGE_LENGTH){
@@ -693,6 +695,7 @@ function _bindEvents(){
 			channel.sendText(textMsg);
 			doms.textInput.value = "";
 			utils.trigger(doms.textInput, "change");
+			intervalTime = new Date().getTime();
 		}
 	});
 }

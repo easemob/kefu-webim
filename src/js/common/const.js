@@ -137,6 +137,9 @@ module.exports = {
 	// 上传文件大小限制
 	UPLOAD_FILESIZE_LIMIT: 1024 * 1024 * 10,
 
+	// 第二通道最短延迟时间
+	FIRST_CHANNEL_MIN_TIMEOUT: 100,
+
 	// 超时未收到 kefu-ack 启用第二通道发消息
 	FIRST_CHANNEL_MESSAGE_TIMEOUT: 10000,
 
