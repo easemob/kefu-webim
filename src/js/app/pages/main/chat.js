@@ -491,6 +491,27 @@ function _bindEvents(){
 		}
 	});
 
+	// 机器人关联规则列表
+	utils.live("button.js_robotRelateListbtn", "click", function(e){
+		var menuData;
+		if(!utils.hasClass(e.target, "disabled")){
+			menuData = {
+				ruleId: this.getAttribute("data-ruleId"),
+				answerId: this.getAttribute("data-answerId"),
+				relatedRuleId: this.getAttribute("data-relatedRuleId")
+			};
+			channel.sendText(this.innerText, {
+				ext: {
+					msgtype: {
+						choice: {
+							relatedRuleClickActionData: JSON.stringify(menuData)
+						}
+					}
+				}
+			});
+		}
+	});
+
 	// 根据菜单项选择指定的技能组
 	utils.live("button.js_skillgroupbtn", "click", function(){
 		channel.sendText(this.innerText, {
