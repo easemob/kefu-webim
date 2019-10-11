@@ -46,6 +46,10 @@
 		&.em-widget-msg-html-form {
 			padding: 0;
 		}
+		&.em-widget-msg-list{
+			width: 100%;
+			box-sizing: border-box;
+		}
 	}
 	.emoji-panel {
 		width: 100%;
