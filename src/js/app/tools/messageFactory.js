@@ -11,8 +11,12 @@ var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easem
 function genMsgContent(msg){
 	var type = msg.type;
 	var value = msg.data;
+	var relatedRules;
 	var html = "";
 	var msgContent;
+	var ruleId;
+	var answerId;
+	var relatedRuleIds;
 
 	switch(type){
 	case "txt":
@@ -92,6 +96,15 @@ function genMsgContent(msg){
 	default:
 		throw new Error("unexpected value type.");
 	}
+
+	if(msg.ext &&  msg.ext.relatedRules){
+		relatedRules = msg.ext.relatedRules;
+		ruleId = relatedRules.ruleId;
+		answerId = relatedRules.answerId;
+		relatedRuleIds = relatedRules.relatedRuleIds;
+		html += "<div class=\"em-btn-list\">" + _.map(msg.ext.relatedRules.questions, function(question, index){ return "<button class=\"js_robotRelateListbtn bg-hover-color\" data-ruleId=" + ruleId + " data-answerId=" + answerId + " data-relatedRuleId=" + relatedRuleIds[index] + ">" + question + "</button>";}).join("") || "";
+	}
+	
 	return html;
 }
 
