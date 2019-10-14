@@ -247,15 +247,18 @@ getData.listen(function(msg){
 		});
 		break;
 	case "createTicket":
+		url = "__WEBIM_SLASH_KEY_PATH__/tenants/" + tenantId
+		+ "/projects/" + params.projectId
+		+ "/tickets?tenantId=" + tenantId
+		+ "&easemob-target-username=" + params["easemob-target-username"]
+		+ "&easemob-appkey=" + params["easemob-appkey"]
+		+ "&easemob-username=" + params["easemob-username"]
+		+ "&config_id=" + params.config_id;
+		if(params.config_name){
+			url += "&config_name=" + params.config_name;
+		}
 		emitAjax({
-			url: "__WEBIM_SLASH_KEY_PATH__/tenants/" + tenantId
-				+ "/projects/" + params.projectId
-				+ "/tickets?tenantId=" + tenantId
-				+ "&easemob-target-username=" + params["easemob-target-username"]
-				+ "&easemob-appkey=" + params["easemob-appkey"]
-				+ "&easemob-username=" + params["easemob-username"]
-				+ "&config_id=" + params.config_id
-				+ "&config_name=" + params.config_name,
+			url: url,
 			msg: msg,
 			type: "POST"
 		});
