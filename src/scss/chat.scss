@@ -125,6 +125,10 @@
 				width: 100%;
 				height: 100%;
 			}
+			&.em-widget-msg-list{
+				width: 100%;
+				box-sizing: border-box;
+			}
 		}
 	}
 }

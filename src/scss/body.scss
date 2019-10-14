@@ -1,14 +1,14 @@
 
 body.big-window{
 	min-width: 600px;
-	.em-widget-wrapper,
-	.em-widget-send-wrapper{
+	.em-widget-wrapper{
 		width: 50%;
 	}
 	.em-self-wrapper{
 		display: block;
 	}
 	.em-widget-send-wrapper{
+		width: 100%;
 		min-width: 300px;
 	}
 }
