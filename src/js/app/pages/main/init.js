@@ -84,7 +84,9 @@ function initChat(){
 		profile.grayList = grayList;
 
 		// 访客回呼功能
-		if(!utils.isMobile && commonConfig.getConfig().eventCollector && !eventCollector.isStarted()){
+		// CLOUD-15395 在config中配置eventCollector:true, 在手机端浏览器会自动打开聊天窗口
+		// !utils.isMobile && commonConfig.getConfig().eventCollector && !eventCollector.isStarted()
+		if(commonConfig.getConfig().eventCollector && !eventCollector.isStarted()){
 			eventCollector.startToReport(function(targetUserInfo){
 				initChatEntry(targetUserInfo);
 			});
