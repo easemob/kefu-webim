@@ -784,7 +784,9 @@ function _setExt(msg){
 	if(!_.isEmpty(config.visitor)){
 		msg.body.ext.weichat.visitor = config.visitor;
 	}
-
+	if(config.newVisitor){
+		msg.body.ext.weichat.newVisitor = config.newVisitor
+	}
 	// bind agent username
 	if(bindAgentUsername){
 		msg.body.ext.weichat.agentUsername = bindAgentUsername;

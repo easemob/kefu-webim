@@ -94,6 +94,122 @@ function h5_mode_init(){
 		config.isUsernameFromCookie = true;
 	}
 	else{}
+	//河北航空新加字段
+	config.newVisitor = {
+		"usrId": utils.query("usrId"),// 用户主键,  *
+		"usrInfo": {//用户信息  *
+			"rctlyLandTm": utils.query("rctlyLandTm"), // 最后登录时间,  *
+			"usrTpCd": utils.query("usrTpCd"), // 用户类型,  *
+			"usrId": utils.query("usrId") // 用户主键  *
+		},
+		"usrBaseInfo": {//用户基本信息
+			"usrId": utils.query("usrId"), // 用户主键,  *
+			"chNm": utils.query("chNm"), // 中文姓名,  *
+			"enNm": utils.query("enNm"), // 英文名,  *
+			"enSurnm": utils.query("enSurnm"), // 英文姓,  *
+			"salut": utils.query("salut"), // 称谓,  *
+			"brthDt": utils.query("brthDt"), // 出生日期,  *
+			"gndCd": utils.query("gndCd") // 性别代码  *
+		},
+		"usrCrdtInfo": [//用户证件信息
+			{
+				"usrId": utils.query("usrId"), // 用户主键,  *
+				"usrCrdtSN": utils.query("usrCrdtSN"), // 用户证件序号,  *
+				"usrCrdtTpCd": utils.query("usrCrdtTpCd"), // 用户证件类型代码,  *
+				"usrCrdtNo": utils.query("usrCrdtNo"), // 用户证件号码,  *
+				"crdtEfDt": utils.query("crdtEfDt"), // 证件生效日期,  *
+				"crdtExDat": utils.query("crdtExDat"), // 证件到期日期,  *
+				"crdtIssuCtfDt": utils.query("crdtIssuCtfDt"), // 证件发证日期,  *
+				"issuCtfAhrNm": utils.query("issuCtfAhrNm"), // 发证机关名称,  *
+				"issuCtyCd": utils.query("issuCtyCd"), // 发行国家代码,  *
+				"natCd": utils.query("natCd") // 国籍代码  *
+			}
+		],
+		"ffpmbifInfo": { //常旅会员信息
+			"usrId": utils.query("usrId"), // 用户主键,
+			"mbshCardNo": utils.query("mbshCardNo"), // 会员卡号,  *
+			"aplyDt": utils.query("aplyDt"), // 申请日期,
+			"inptDeptID": utils.query("inptDeptID"), // 录入部门编号,
+			"srcChnlCd": utils.query("srcChnlCd"), // 入会渠道代码,
+			"mbshLvlCd": utils.query("mbshLvlCd"), // 会员级别代码,
+			"mbshCtCd": utils.query("mbshCtCd"), // 会员种类代码,
+			"rcmmPsnCardNo": utils.query("rcmmPsnCardNo"), // 推荐人卡号,
+			"rmrk": utils.query("rmrk"), // 备注,
+			"stkUsrInd": utils.query("stkUsrInd"), // 存量用户标志,
+			"vipMagaInd": utils.query("vipMagaInd"), // 贵宾杂志标志,
+			"opnOlBsnInd": utils.query("opnOlBsnInd"), // 开通在线业务标志 ,
+			"apntNum": utils.query("apntNum"), // 总积分,  *
+			"indAuth": utils.query("indAuth") // 身份认证标识  *
+		},
+		"rgstUsrInfo": { //注册用户信息
+			"usrId": utils.query("usrId"), // 用户主键,
+			"blngLglPsnId": utils.query("blngLglPsnId"), // 所属法人编号,
+			"usrNkNm": utils.query("usrNkNm"), // 用户昵称,
+			"usrNm": utils.query("usrNm"), // 用户名称,
+			"fileStCd": utils.query("fileStCd"), // 档案状态代码
+		},
+		"trdPtUsrInfo":[//第三方用户信息
+			{
+				"usrId": utils.query("usrId"), // 用户主键,  *
+				"trdPtUsrId": utils.query("trdPtUsrId"), // 第三方用户ID（unionid),  *
+				"trdPtUsrTpCd": utils.query("trdPtUsrTpCd"), // 第三方用户类型代码,  *
+				"trdPtUsrImg": utils.query("trdPtUsrImg"), // 第三方用户头像,
+				"trdPtUSRNm": utils.query("trdPtUSRNm"), // 第三方用户昵称,  *
+				"tusrId": utils.query("tusrId") // 第三方用户usrID  *
+			}
+		],
+		"usrElcAdrInfo": [//用户电子地址
+			{
+				"usrId": utils.query("usrId"), // 用户主键,
+				"usrElcAdrSN": utils.query("usrElcAdrSN"), // 用户电子地址序号,
+				"usrElcAdrTpCd": utils.query("usrElcAdrTpCd"), // 用户电子地址类型代码,
+				"usrElcAdr": utils.query("usrElcAdr"), // 用户电子地址,
+				"bndg_Ind": utils.query("bndg_Ind") // 绑定标志
+			}
+		],
+		"usrPrefInfo": [//用户偏好信息
+			{
+				"usrId": utils.query("usrId"), // 用户主键,
+				"prefCtCd": utils.query("prefCtCd"), // 偏好种类代码,
+				"prefTpCd": utils.query("prefTpCd"), // 偏好类型代码,
+				"prefDsc": utils.query("prefDsc") // 偏好描述
+			}
+		],
+		"usrPstAdrInfo": [//用户邮政地址
+			{
+				"usrId": utils.query("usrId"), // 用户主键,  *
+				"usrPstAdrSN": utils.query("usrPstAdrSN"), // 用户邮政地址序号,
+				"usrPstAdrTpCd": utils.query("usrPstAdrTpCd"), // 用户邮政地址类型代码,
+				"ctyRgonCd": utils.query("ctyRgonCd"), // 国家地区,  *
+				"provCd": utils.query("provCd"), // 省份,  *
+				"cityCd": utils.query("cityCd"), // 城市,  *
+				"cntyAndDstcCd": utils.query("cntyAndDstcCd"), // 区县,  *
+				"dtlAdr": utils.query("dtlAdr"), // 详细地址描述,  *
+				"zipECD": utils.query("zipECD"), // 邮政编码,  *
+				"mailInd": utils.query("mailInd"), // 邮寄标志,  *
+				"ctcTelNo": utils.query("ctcTelNo"), // 联系电话号码,  *
+				"fax": utils.query("fax") // 传真
+			}
+		],
+		"usrTelNoInfo": [//用户联系电话
+			{
+				"usrId": utils.query("usrId"), // 用户主键,  *
+				"usrTelSN": utils.query("usrTelSN"), // 用户电话序号,  *
+				"usrTelTpCd": utils.query("usrTelTpCd"), // 用户电话类型代码,  *
+				"telNo": utils.query("telNo"), // 电话号码,  *
+				"bndgInd": utils.query("bndgInd"), // 绑定标志  *
+			}
+		],
+		"usrWorkInfo": [//用户工作信息
+			{
+				"usrId": utils.query("usrId"), // 用户主键,  *
+				"usrWrkInfSN": utils.query("usrWrkInfSN"), // 用户工作信息序号,
+				"wrkUnitNm": utils.query("wrkUnitNm"), // 工作单位名称,  *
+				"postDsc": utils.query("postDsc"), // 职务描述,  *
+				"kaId": utils.query("kaId"), // 大客户编号
+			}
+		]
+	}
 
 	profile.config = config;
 	// fake transfer
