@@ -95,7 +95,7 @@ function h5_mode_init(){
 	}
 	else{}
 	//河北航空新加字段
-	config.newVisitor = {
+	config.onlineUsrInfo = {
 		"usrId": utils.query("usrId"),// 用户主键,  *
 		"usrInfo": {//用户信息  *
 			"rctlyLandTm": utils.query("rctlyLandTm"), // 最后登录时间,  *

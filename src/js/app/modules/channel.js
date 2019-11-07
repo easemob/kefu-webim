@@ -784,8 +784,32 @@ function _setExt(msg){
 	if(!_.isEmpty(config.visitor)){
 		msg.body.ext.weichat.visitor = config.visitor;
 	}
-	if(config.newVisitor){
-		msg.body.ext.weichat.newVisitor = config.newVisitor
+	if(config.onlineUsrInfo){
+		// console.log('[onlineUsrInfo]',config.onlineUsrInfo);
+		// var i = 1;
+		// var str = "";
+		// var arr = [];
+		// function aa(obj){
+		// 	for (var key in obj) {
+		// 		var ele = obj[key];
+		// 		if(ele instanceof Array){
+		// 			ele.forEach(function(element,index){
+		// 				aa(element)
+		// 			})
+		// 		}else if(ele instanceof Object){
+		// 			aa(ele)
+		// 		} else{
+		// 			if(!(str.indexOf(key) > -1)){
+		// 				str= str + '&'+key+'=' + i
+		// 				i++;
+		// 				arr.push(str)
+		// 			}
+		// 		}	
+		// 	}
+		// }
+		// aa(config.onlineUsrInfo);
+		// console.log(str);
+		msg.body.ext.weichat.onlineUsrInfo = config.onlineUsrInfo
 	}
 	// bind agent username
 	if(bindAgentUsername){
