@@ -314,7 +314,7 @@ function renderUI(resultStatus){
 			functionView.init({
 				resultStatus: resultStatus
 			});
-			handleSettingIframeSize({ width: "720px" });
+			handleSettingIframeSize({ width: commonConfig.getConfig().dialogWidth });
 		}
 		// 常见问题和自助服务开关都关闭时
 		else if(!resultStatus[0] && !resultStatus[1]){
