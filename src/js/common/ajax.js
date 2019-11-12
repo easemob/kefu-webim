@@ -57,12 +57,12 @@ module.exports = function(options){
 	if(type.toLowerCase() === "get"){
 		for(o in data){
 			if(Object.prototype.hasOwnProperty.call(data, o)){
-				tempData += o + "=" + data[o] + "&";
+				tempData += o + "=" + encodeURIComponent(data[o]) + "&";
 			}
 		}
 		// todo: use Array.prototype.join
 		tempData = tempData ? tempData.slice(0, -1) : tempData;
-		options.url += (options.url.indexOf("?") > 0 ? "&" : "?")
+		options.url += (~options.url.indexOf("?") ? "&" : "?")
 			+ (tempData ? tempData + "&" : tempData)
 			// 在需要读取缓存资源时不加时间戳
 			+ (disableTimeStampInGet ? "" : "_v=" + new Date().getTime());
