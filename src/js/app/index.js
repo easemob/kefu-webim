@@ -392,3 +392,12 @@ function load_html(){
 
 	chat.getDom();
 }
+
+
+// CLOUD-8166 网页插件提供最小化窗口的接口
+window.minimize = function(){
+	widgetBoxHide();
+};
+window.restore = function(){
+	widgetBoxShow();
+};

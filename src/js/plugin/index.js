@@ -249,6 +249,17 @@ easemobim.sendText = function(msg){
 	}
 };
 
+easemobim.minimize = function(){
+	if(iframe){
+		iframe.close();
+	}
+};
+easemobim.restore = function(){
+	if(iframe){
+		iframe.open();
+	}
+};
+
 
 // user click
 window.easemobim.bind = function(config){
