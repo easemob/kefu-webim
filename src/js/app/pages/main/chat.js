@@ -827,18 +827,21 @@ function _bindEvents(){
 					document.activeElement === doms.textInput
 					&& inputBoxPosition !== "up"
 				){
-					document.body.scrollTop = 9999;
+					// utils.removeClass(document.body, "em-mobile-translate");
 				}
-			}, 500);
-			utils.removeClass(document.body, "em-mobile-translate");
+			}, 300);
+
 		});
 		// CLOUD-15103 解决 ios 部分手机点击输入框失焦后输入框不能自动收回问题
-		utils.on(doms.textInput, "blur", function(){
+		utils.on(doms.textInput, "blur", function(e){
 			setTimeout(function(){
-				// document.body.scrollTop = 9999;		// 在 iframe 下会有问题
-				// document.body.scrollIntoView(false);	// 元素的底端将和其所在滚动区的可视区域的底端对齐 加载 iframe 的页面和 easemob.js 不在同一个域会出现问题。原因未知
-				utils.addClass(document.body, "em-mobile-translate");
-			}, 0);
+				// document.body.scrollBottom = 0;		// 在 iframe 下会有问题
+				document.body.scrollIntoView(false);	// 元素的底端将和其所在滚动区的可视区域的底端对齐 加载 iframe 的页面和 easemob.js 不在同一个域会出现问题。原因未知
+				// utils.addClass(document.body, "em-mobile-translate");
+				// window.scrollTo(0, Math.max(document.body.clientHeight, document.documentElement.clientHeight));
+				// window.document.body.scrollTop = window.document.body.scrollHeight;
+				// window.document.documentElement.scrollTop = window.document.body.scrollHeight;
+			}, 300);
 		});
 	}
 
