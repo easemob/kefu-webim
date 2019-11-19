@@ -9,17 +9,12 @@ env:
 
 install:
   - npm install
-
-branches:
-  only:
-  - /master(_[0-9a-z_]+)?/
-
 jobs:
   include:
     - stage: "step1"
       name: "packing"
       script: ./travis/pack.sh
-      if: tag =~ /^plugin_\d+\.\d+\.\d+\_(final|snapshot)$/
+      if: tag =~ /^plugin_\d+\.\d+\.\d+\_final$/
       deploy:
         skip_cleanup: true
         provider: script
