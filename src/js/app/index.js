@@ -317,8 +317,8 @@ function renderUI(resultStatus){
 			if(utils.isTop){
 				utils.addClass(document.body, "big-window-h5");
 			}
-			// iframe形式 常见问题和自主服务，固定宽度 360px
-			if(!utils.isTop){
+			else{
+				// iframe形式 常见问题和自主服务，固定宽度 360px
 				let dialogWidth = (Math.floor(commonConfig.getConfig().dialogWidth.slice(0, -2)) + Math.floor(360)) + "px";
 				handleSettingIframeSize({ width: dialogWidth });
 			}
