@@ -307,9 +307,6 @@ function renderUI(resultStatus){
 	else if(commonConfig.getConfig().configId){
 		if(!utils.isMobile){
 			utils.addClass(document.body, "big-window");
-			if(utils.isTop){
-				utils.addClass(document.body, "big-window-h5");
-			}
 		}
 		// 全部渲染
 		if(!utils.isMobile && (resultStatus[0] || resultStatus[1])){
@@ -317,6 +314,9 @@ function renderUI(resultStatus){
 			functionView.init({
 				resultStatus: resultStatus
 			});
+			if(utils.isTop){
+				utils.addClass(document.body, "big-window-h5");
+			}
 			// iframe形式 常见问题和自主服务，固定宽度 360px
 			if(!utils.isTop){
 				let dialogWidth = (Math.floor(commonConfig.getConfig().dialogWidth.slice(0, -2)) + Math.floor(360)) + "px";
