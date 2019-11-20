@@ -1,10 +1,12 @@
 
 body.big-window{
-	min-width: 600px;
+	min-width: 720px;
 	.em-widget-wrapper{
-		width: 50%;
+		width: calc(100% - 360px);
+		min-width: 360px;
 	}
 	.em-self-wrapper{
+		width: 360px;
 		display: block;
 	}
 	.em-widget-send-wrapper{

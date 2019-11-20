@@ -314,7 +314,9 @@ function renderUI(resultStatus){
 			functionView.init({
 				resultStatus: resultStatus
 			});
-			handleSettingIframeSize({ width: commonConfig.getConfig().dialogWidth });
+			// 常见问题和自主服务，固定宽度 360px
+			let dialogWidth = (Math.floor(commonConfig.getConfig().dialogWidth.slice(0, -2)) + Math.floor(360)) + "px";
+			handleSettingIframeSize({ width: dialogWidth });
 		}
 		// 常见问题和自助服务开关都关闭时
 		else if(!resultStatus[0] && !resultStatus[1]){
@@ -393,11 +395,3 @@ function load_html(){
 	chat.getDom();
 }
 
-
-// CLOUD-8166 网页插件提供最小化窗口的接口
-window.minimize = function(){
-	widgetBoxHide();
-};
-window.restore = function(){
-	widgetBoxShow();
-};
