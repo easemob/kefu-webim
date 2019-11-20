@@ -14,6 +14,16 @@ body.big-window{
 		min-width: 300px;
 	}
 }
+body.big-window-h5{
+	.em-widget-wrapper{
+		width: 50%;
+		min-width: 360px;
+	}
+	.em-self-wrapper{
+		width: 50%;
+		display: block;
+	}
+}
 .em-widget-box{
 	height: 100%;
 	position: relative;
