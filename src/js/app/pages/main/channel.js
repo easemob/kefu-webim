@@ -230,6 +230,7 @@ function _sendTransferToKf(tid, sessionId){
 			}
 		}
 	});
+	_setExt(msg);
 	_appendAck(msg, id);
 	conn.send(msg.body);
 	sendMsgDict.set(id, msg);
@@ -358,7 +359,7 @@ Message.video = function(id){
 	this.body = {};
 };
 Message.video.prototype.set = function(opt){
-	opt.file = opt.file || _utils.getFileUrl(opt.fileInputId);
+	opt.file = opt.file;
 
 	this.value = opt.file;
 	this.filename = opt.filename || this.value.filename;
@@ -743,13 +744,13 @@ function _handleMessage(msg, options){
 		marketingTaskId
 			&& type === "txt"
 			&& eventListener.excuteCallbacks(
-				_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
-				[
-					targetOfficialAccount,
-					marketingTaskId,
-					msg
-				]
-			);
+			_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
+			[
+				targetOfficialAccount,
+				marketingTaskId,
+				msg
+			]
+		);
 
 		if(eventName){
 			_handleSystemEvent(eventName, eventObj, msg);
