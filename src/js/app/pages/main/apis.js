@@ -119,7 +119,7 @@ function getProjectId(){
 				api("getProject", {
 					tenantId: config.tenantId,
 					"easemob-target-username": config.toUser,
-					"easemob-appkey": config.appKey.replace("#", "%23"),
+					"easemob-appkey": config.appKey,
 					"easemob-username": config.user.username,
 					headers: { Authorization: "Easemob IM " + token }
 				}, function(msg){
@@ -152,7 +152,7 @@ function getNoteCategories(){
 			api("getNoteCategories", {
 				tenantId: config.tenantId,
 				"easemob-target-username": config.toUser,
-				"easemob-appkey": config.appKey.replace("#", "%23"),
+				"easemob-appkey": config.appKey,
 				"easemob-username": config.user.username,
 				headers: { Authorization: "Easemob IM " + token },
 				projectId: projectId,
@@ -172,7 +172,7 @@ function createTicket(opt){
 		api("createTicket", {
 			tenantId: config.tenantId,
 			"easemob-target-username": config.toUser,
-			"easemob-appkey": config.appKey.replace("#", "%23"),
+			"easemob-appkey": config.appKey,
 			"easemob-username": config.user.username,
 			config_id: config.configId,
 			config_name: config.configName,
