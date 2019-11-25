@@ -57,7 +57,13 @@ module.exports = function(options){
 	if(type.toLowerCase() === "get"){
 		for(o in data){
 			if(Object.prototype.hasOwnProperty.call(data, o)){
-				tempData += o + "=" + encodeURI(data[o]) + "&";
+				let reg = new RegExp(/[^\x00-\xff]+/);
+				if(reg.test(data[o])){
+					tempData += o + "=" + encodeURIComponent(data[o]) + "&";
+				}
+				else{
+					tempData += o + "=" + data[o] + "&";
+				}
 			}
 		}
 		// todo: use Array.prototype.join
