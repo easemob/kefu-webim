@@ -821,33 +821,35 @@ function _bindEvents(){
 
 	// ios patch: scroll page when keyboard is visible ones
 	if(utils.isIOS){
-		let iosVersion = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/)[1];
-		if(!utils.isTop){
-			// 重新去设置iframe 的宽高
-			transfer.send({
-				event: _const.EVENTS.RESET_IFRAME,
-				data: {
-					dialogHeight: "100%"
-				}
-			});
-		}
+		// let iosVersion = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/)[1];
+		// if(!utils.isTop){
+		// 	// 重新去设置iframe 的宽高
+		// 	transfer.send({
+		// 		event: _const.EVENTS.RESET_IFRAME,
+		// 		data: {
+		// 			dialogHeight: "100%"
+		// 		}
+		// 	});
+		// }
 		utils.on(doms.textInput, "focus", function(){
 			if(
 				document.activeElement === doms.textInput
 				&& inputBoxPosition !== "up"
 			){
-				if(utils.isTop || iosVersion <= 12){
-					utils.removeClass(document.body, "em-mobile-translate");
-				}
-				else{
-					// 重新去设置iframe 的宽高
-					transfer.send({
-						event: _const.EVENTS.RESET_IFRAME,
-						data: {
-							dialogHeight: "100%"
-						}
-					});
-				}
+				// if(utils.isTop || iosVersion <= 12){
+				// 	utils.removeClass(document.body, "em-mobile-translate");
+				// }
+				// else{
+				// 	// 重新去设置iframe 的宽高
+				// 	transfer.send({
+				// 		event: _const.EVENTS.RESET_IFRAME,
+				// 		data: {
+				// 			dialogHeight: (Number(commonConfig.getConfig().dialogHeight.slice(0, -2)) - 5) + "px"
+				// 		}
+				// 	});
+				// }
+
+				utils.removeClass(document.body, "em-mobile-translate");
 			}
 			
 		});
@@ -858,19 +860,22 @@ function _bindEvents(){
 				// document.body.scrollIntoView(false);	// 元素的底端将和其所在滚动区的可视区域的底端对齐 加载 iframe 的页面和 easemob.js 不在同一个域会出现问题。原因未知
 				// window.scrollTo(0, Math.max(document.body.clientHeight, document.documentElement.clientHeight));
 				// window.document.body.scrollTop = window.document.body.scrollHeight;
-				if(utils.isTop || iosVersion <= 12){
-					utils.addClass(document.body, "em-mobile-translate");
-				}
-				else{
-				// ios13 版本以上的，需要重新去设置iframe 的宽高
-					transfer.send({
-						event: _const.EVENTS.RESET_IFRAME,
-						data: {
-							dialogHeight: (Number(commonConfig.getConfig().dialogHeight.slice(0, -2)) + 5) + "px"
-						}
-					});
-				}
-			}, 200);
+				utils.addClass(document.body, "em-mobile-translate");
+				doms.textInput.scrollIntoView();
+				
+				// if(utils.isTop || iosVersion <= 12){
+				// 	utils.addClass(document.body, "em-mobile-translate");
+				// }
+				// else{
+				// // ios13 版本以上的，需要重新去设置iframe 的宽高
+				// 	transfer.send({
+				// 		event: _const.EVENTS.RESET_IFRAME,
+				// 		data: {
+				// 			dialogHeight: (Number(commonConfig.getConfig().dialogHeight.slice(0, -2)) + 5) + "px"
+				// 		}
+				// 	});
+				// }
+			}, 100);
 
 		});
 	}

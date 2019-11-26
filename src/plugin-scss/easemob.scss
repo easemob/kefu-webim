@@ -44,10 +44,10 @@
 		}
 	}
 	&.easemobim-mobile {
-		position: absolute!important;
+		position: fixed!important;
 		width: 100%!important;
-		// height: 100%!important;
-		height: 100%;
+		height: 100%!important;
+		// height: 100%;
 		left: 0!important;
 		top: 0!important;
 		border-radius: 0;
