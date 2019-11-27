@@ -821,60 +821,30 @@ function _bindEvents(){
 
 	// ios patch: scroll page when keyboard is visible ones
 	if(utils.isIOS){
-		// let iosVersion = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/)[1];
-		// if(!utils.isTop){
-		// 	// 重新去设置iframe 的宽高
-		// 	transfer.send({
-		// 		event: _const.EVENTS.RESET_IFRAME,
-		// 		data: {
-		// 			dialogHeight: "100%"
-		// 		}
-		// 	});
-		// }
 		utils.on(doms.textInput, "focus", function(){
-			if(
-				document.activeElement === doms.textInput
-				&& inputBoxPosition !== "up"
-			){
-				// if(utils.isTop || iosVersion <= 12){
-				// 	utils.removeClass(document.body, "em-mobile-translate");
-				// }
-				// else{
-				// 	// 重新去设置iframe 的宽高
-				// 	transfer.send({
-				// 		event: _const.EVENTS.RESET_IFRAME,
-				// 		data: {
-				// 			dialogHeight: (Number(commonConfig.getConfig().dialogHeight.slice(0, -2)) - 5) + "px"
-				// 		}
-				// 	});
-				// }
-
+			if(utils.isTop){
 				utils.removeClass(document.body, "em-mobile-translate");
 			}
-			
 		});
 		// CLOUD-15103 解决 ios 部分手机点击输入框失焦后输入框不能自动收回问题
 		utils.on(doms.textInput, "blur", function(e){
 			setTimeout(function(){
-				// document.body.scrollBottom = 0;		// 在 iframe 下会有问题
-				// document.body.scrollIntoView(false);	// 元素的底端将和其所在滚动区的可视区域的底端对齐 加载 iframe 的页面和 easemob.js 不在同一个域会出现问题。原因未知
-				// window.scrollTo(0, Math.max(document.body.clientHeight, document.documentElement.clientHeight));
-				// window.document.body.scrollTop = window.document.body.scrollHeight;
-				utils.addClass(document.body, "em-mobile-translate");
-				doms.textInput.scrollIntoView();
+				// 曾经试过的方法
+				// 1. 重新去设置iframe 的宽高
+				// 2. document.body.scrollBottom = 0;		// 在 iframe 下会有问题
+				// 3. document.body.scrollIntoView(false);	// 元素的底端将和其所在滚动区的可视区域的底端对齐 加载 iframe 的页面和 easemob.js 不在同一个域会出现问题。原因未知
+				// 4. window.scrollTo(0, Math.max(document.body.clientHeight, document.documentElement.clientHeight));
+				// 5. window.document.body.scrollTop = window.document.body.scrollHeight;
+
+				if(utils.isTop){
+					utils.addClass(document.body, "em-mobile-translate");
+				}
+				else{
+					transfer.send({
+						event: _const.EVENTS.SCROLL_TO_BOTTOM,
+					});
+				}
 				
-				// if(utils.isTop || iosVersion <= 12){
-				// 	utils.addClass(document.body, "em-mobile-translate");
-				// }
-				// else{
-				// // ios13 版本以上的，需要重新去设置iframe 的宽高
-				// 	transfer.send({
-				// 		event: _const.EVENTS.RESET_IFRAME,
-				// 		data: {
-				// 			dialogHeight: (Number(commonConfig.getConfig().dialogHeight.slice(0, -2)) + 5) + "px"
-				// 		}
-				// 	});
-				// }
 			}, 100);
 
 		});

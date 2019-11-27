@@ -228,7 +228,7 @@ function _ready(){
 			utils.removeClass(me.iframe, "easemobim-has-prompt");
 			break;
 		case _const.EVENTS.SCROLL_TO_BOTTOM:
-			document.body.scrollTop = 9999;
+			me.iframe.scrollIntoView(false);
 			break;
 		case _const.EVENTS.INVITATION_INIT:
 			inviteBox = new InviteBox(data, me.config);
