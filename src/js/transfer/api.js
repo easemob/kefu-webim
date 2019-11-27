@@ -89,8 +89,9 @@ getData.listen(function(msg){
 	var params = msg.data || {};
 	var tenantId = params.tenantId;
 	var techChannelInfo = params.orgName
-		+ "#" + params.appName
-		+ "#" + params.imServiceNumber;
+		+ "%23" + params.appName
+		+ "%23" + params.imServiceNumber;
+
 	var url;
 	var referer;
 
