@@ -46,7 +46,7 @@ if(!default_branch_family_reg.test(BRANCH_NAME)){
 }
 // 获取 tag 中间名
 let tagPostFix = tag.replace(/^v[0-9]+\.[0-9]+\.[0-9]+(\.([a-z0-9]+(_[a-z]+[a-z0-9]*)*))?\.(final|snapshot)$/, function(match, $1, $2){
-	return $2;
+	return $2 || "";
 });
 let branchPostFix = BRANCH_NAME.replace(default_branch_family_reg, function(match, $1){
 	if($1){
