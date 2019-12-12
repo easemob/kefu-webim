@@ -3,6 +3,8 @@ var colors = require("colors/safe");
 var BRANCH_NAME = process.env.BRANCH_NAME;
 var TAG_INFO = process.env.TAG_INFO;
 var DEFAULT_BRANCH = "dev";
+let default_branch_family_reg = new RegExp("^" + DEFAULT_BRANCH + "(_[a-z]+[0-9a-z]*)*$");
+
 console.log("BRANCH_NAME", colors.cyan(BRANCH_NAME));
 console.log("TAG_INFO", colors.cyan(TAG_INFO.replace(/\n/g, " / ")));
 
@@ -32,17 +34,8 @@ else{
 	process.exit(1);
 }
 
-// 获取 tag 中间名
-let tagPostFix = tag.replace(/^v[0-9]+\.[0-9]+\.[0-9]+(\.([a-z0-9]+(_[a-z]+[a-z0-9]*)*))?\.(final|snapshot)$/, function(match, $1, $2){
-	return $2;
-});
-let default_branch_family_reg = new RegExp("^" + DEFAULT_BRANCH + "(_[a-z]+[0-9a-z]*)*$");
-let branchPostFix = BRANCH_NAME.replace(default_branch_family_reg, function(match, $1){
-	return $1.slice(1);
-});
 
-console.log("tagPostFix", colors.cyan(tagPostFix));
-console.log("branchPostFix", colors.cyan(branchPostFix));
+
 if(!BRANCH_NAME){
 	console.log(colors.red("[ERROR] 请在根目录创建 release_branch 文件，在内填写分支名"));
 	process.exit(1);
@@ -51,6 +44,18 @@ if(!default_branch_family_reg.test(BRANCH_NAME)){
 	console.log(colors.red("[ERROR] " + DEFAULT_BRANCH + " 分支必须"));
 	process.exit(1);
 }
+// 获取 tag 中间名
+let tagPostFix = tag.replace(/^v[0-9]+\.[0-9]+\.[0-9]+(\.([a-z0-9]+(_[a-z]+[a-z0-9]*)*))?\.(final|snapshot)$/, function(match, $1, $2){
+	return $2;
+});
+let branchPostFix = BRANCH_NAME.replace(default_branch_family_reg, function(match, $1){
+	if($1){
+		return $1.slice(1);
+	}
+	return "";
+});
+console.log("tagPostFix", colors.cyan(tagPostFix));
+console.log("branchPostFix", colors.cyan(branchPostFix));
 if(tagPostFix != branchPostFix){
 	console.log(colors.red("[ERROR] 后缀不匹配"));
 	process.exit(1);
