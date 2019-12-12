@@ -33,10 +33,10 @@ else{
 }
 
 // 获取 tag 中间名
-let tagPostFix = tag.replace(/^v[0-9]+\.[0-9]+\.[0-9]+(\.([a-z0-9]+(_[a-z0-9]+)*))?\.(final|snapshot)$/, function(match, $1, $2){
+let tagPostFix = tag.replace(/^v[0-9]+\.[0-9]+\.[0-9]+(\.([a-z0-9]+(_[a-z]+[a-z0-9]*)*))?\.(final|snapshot)$/, function(match, $1, $2){
 	return $2;
 });
-let default_branch_family_reg = new RegExp("^" + DEFAULT_BRANCH + "(_[0-9a-z]+)*$");
+let default_branch_family_reg = new RegExp("^" + DEFAULT_BRANCH + "(_[a-z]+[0-9a-z]*)*$");
 let branchPostFix = BRANCH_NAME.replace(default_branch_family_reg, function(match, $1){
 	return $1.slice(1);
 });
