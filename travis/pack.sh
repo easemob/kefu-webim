@@ -1,5 +1,3 @@
 set -ev
-echo git tag: $TRAVIS_TAG
-
-echo -e "\n[is a tag] start packing\n"
-TAG_NAME=$TRAVIS_TAG npm run build_all
+BRANCH_NAME=`cat ./release_branch` TAG_INFO=`git tag --contains` node ./travis/valid/valid.js
+npm run build_all

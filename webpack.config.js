@@ -6,6 +6,7 @@
 */
 
 const path = require("path");
+const fs = require("fs");
 const webpack = require("webpack");
 const i18next = require("i18next");
 const _zh_cn_map_ = require("./src/i18n/zh-CN");
@@ -13,8 +14,10 @@ const _en_us_map_ = require("./src/i18n/en-US");
 
 const argv = require("yargs").argv;
 const lang = argv.lang || "zh-CN";
+const isDev = argv.development || false;
 const tmpVersion = "local_" + (Math.floor(Math.random() * 1e6)).toString();
-const VERSION = process.env.TAG_NAME || tmpVersion;
+var TAG_NAME = fs.readFileSync("release_tag", "utf-8");
+const VERSION = isDev ? tmpVersion : TAG_NAME;
 
 // package 中的 KEY_PATH 必须填，当活文档
 var KEY_PATH = process.env.KEY_PATH;
