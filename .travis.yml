@@ -1,6 +1,7 @@
 dist: trusty
 language: node_js
 node_js: node
+
 env:
   global:
     - secure: zP5Surp70BQR4JIwVG8jujlImRqHUErf4S6Ub3ZLCI7PC/1F5mzGANhCkoPIheYpGJ+fu/Tj3Fyjyqh9pAQzXXjGCnJUKtYngkyVgPBAdx3+zbWk2xSllOntjn2Q2Vze41UiEv2XIxRiJ1paWU/rT8R3RTyQlx+5NQL5sT4ZGLYUse0aEszOokRG9bNOezGzh/qtBqwG12+kSIlTK8il/cFftj7YKNzlG9cLLvJ2I/2CU+QtWnhJRLB/IM3OC5WIN5Cvj22ayw7ULf4JgVzWnLCGe1Y6oTUckOXjDFlVB9qVkK3215NVgEYJpQfumBjFRR9wrpGlJEbgqUa8D/Vd8ZX83JJBGUni9/ukSbZr9Ts8nOzD60if4ZbUnI9vqzFvMroNZZ999ZxOlx5eiLNB0eJCMPpa4AtrtqCUMRNKWFem71Rq7wz9DrnbFCEYx/RNVPdGAaWjCPPemaWswvD6aTbVa040bvRGBB+P7+Axp15QqZkxFtn80xUzon8kC1T3zbUcx+tt7My3JrM+l6hZgn9IkMGR0FrtfU2LT1+usxhB439QgmoFaL/olbECwtCY0Qzav+WW/GMSaRhlD9pvshsnlIFiOaMBCh/U8PVDwjj/V3XaMu8UJu3JjkLvwkW3XWvzKnQtxmtkI6BxPOHR/NfGTZR6WXDgmlL/ZNqwL4I=
@@ -15,7 +16,7 @@ jobs:
     - stage: "step1"
       name: "packing"
       script: ./travis/pack.sh
-      if: tag =~ ^v\d+\.\d+\.\d+(\.[a-z0-9_]+)?\.(final|snapshot)$
+      if: commit_message =~ ^v\d+\.\d+\.\d+(\.([a-z0-9]+(_[a-z]+[a-z0-9]*)*))?\.(final|snapshot)$
       deploy:
         skip_cleanup: true
         provider: script

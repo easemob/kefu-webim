@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "autoprefixer": "=7.1.2",
-    "commander": "=2.9.0",
+    "commander": "^2.9.0",
     "cross-env": "^5.2.0",
     "css-loader": "=0.28.4",
     "cssnano": "=3.10.0",
@@ -36,7 +36,8 @@
     "dev": "cross-env KEY_PATH=webim webpack --watch --development",
     "server": "cross-env KEY_PATH=webim DEBUG=webim* node server/app",
     "server:online": "cross-env KEY_PATH=webim DEBUG=webim* node server/app -t kefu.easemob.com",
-    "dev:debug": "cross-env KEY_PATH=webim node --inspect-brk ./node_modules/webpack/bin/webpack.js --watch --development"
+    "dev:debug": "cross-env KEY_PATH=webim node --inspect-brk ./node_modules/webpack/bin/webpack.js --watch --development",
+    "release": "travis/release.sh"
   },
   "dependencies": {
     "easemob-websdk": "=1.4.6",
