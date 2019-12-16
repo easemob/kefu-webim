@@ -92,6 +92,7 @@ function getLastReleaseTag(){
 
 function release(tag){
 	console.log(colors.cyan("tag...ok"));
+	console.log(colors.cyan("执行中，请稍后"));
 	fs.writeFileSync("release_tag", tag, {
 		encoding: "utf8",
 		flag: "w"
