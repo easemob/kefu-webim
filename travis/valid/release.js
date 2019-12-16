@@ -92,11 +92,16 @@ function getLastReleaseTag(){
 
 function release(tag){
 	console.log(colors.cyan("tag...ok"));
-	console.log(colors.cyan("执行中，请稍后"));
-	fs.writeFileSync("release_tag", tag, {
-		encoding: "utf8",
-		flag: "w"
-	});
-	child_process.execSync(`git commit -m ${tag} release_tag`);
-	child_process.execSync(`git push`);
+	console.log(colors.green("执行中，请稍后"));
+	try{
+		fs.writeFileSync("./release_tag", tag, {
+			encoding: "utf8",
+			flag: "w"
+		});
+		child_process.execSync(`git add ./release_tag`);
+		child_process.execSync(`git commit -m ${tag} ./release_tag`);
+		child_process.execSync(`git push`);
+	}
+	catch(error){
+	}
 }

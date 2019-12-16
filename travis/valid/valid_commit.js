@@ -21,8 +21,12 @@ if(tagPostFix != branchPostFix){
 
 console.log(colors.cyan("tag...ok"));
 console.log(colors.cyan("[is a tag] start packing"));
-fs.writeFileSync("release_tag", COMMIT_MESSAGE, {
-	encoding: "utf8",
-	flag: "w"
-});
-
+try{
+	fs.writeFileSync("release_tag", COMMIT_MESSAGE, {
+		encoding: "utf8",
+		flag: "w"
+	});
+}
+catch(error){
+	process.exit(1);
+}
