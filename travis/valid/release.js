@@ -6,7 +6,7 @@ var utils = require("./utils");
 var DEFAULT_BRANCH = "dev";
 var BRANCH_NAME = process.env.BRANCH_NAME;
 var COMMIT_MESSAGE = process.env.COMMIT_MESSAGE.trim();
-var tag_split_reg = /^v\d+\.(\d+)\.(\d+)(\.([a-z0-9]+(_[a-z]+[a-z0-9]*)*))?\.(final|snapshot)$/;
+var tag_split_reg = /^(v\d+)\.(\d+)\.(\d+)(\.([a-z0-9]+(_[a-z]+[a-z0-9]*)*))?\.(final|snapshot)$/;
 
 params
 .option("-m, --middle", "middle version")
@@ -49,8 +49,17 @@ function specMode(tag_info){
 function middleMode(){
 	// 查询上一个版本
 	let lastReleaseTag = getLastReleaseTag();
-	let newReleaseTag = lastReleaseTag.replace(tag_split_reg, function(match, $1, $2){
-		return match.replace($1, $1 * 1 + 1).replace($2, "0");
+	// v47.0.003.test_5.final
+	// $1 = v47
+	// $2 = 0
+	// $3 = 003
+	// $4 = .test_s5
+	// $5 = test_s5
+	// $6 = _s5
+	// $7 = final
+	let newReleaseTag = lastReleaseTag.replace(tag_split_reg, function(match, $1, $2, $3, $4, $5, $6, $7){
+		// 不能走 match.replace($1)，v1.1.1 这类情况会替换错位
+		return $1 + "." + ($2 * 1 + 1) + ".0." + $5 + "." + $7;
 	});
 	console.log("new TAG", colors.cyan(newReleaseTag));
 	release(newReleaseTag);
@@ -61,8 +70,8 @@ function tailMode(){
 	// 查询上一个版本
 	let lastReleaseTag = getLastReleaseTag();
 	// 版本号尾部 + 1
-	let newReleaseTag = lastReleaseTag.replace(tag_split_reg, function(match, $1, $2){
-		return match.replace($2, $2 * 1 + 1);
+	let newReleaseTag = lastReleaseTag.replace(tag_split_reg, function(match, $1, $2, $3, $4, $5, $6, $7){
+		return $1 + "." + $2 + "." + ($3 * 1 + 1) + "." + $5 + "." + $7;
 	});
 	console.log("new TAG", colors.cyan(newReleaseTag));
 	release(newReleaseTag);
