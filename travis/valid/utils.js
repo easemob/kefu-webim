@@ -1,24 +1,24 @@
 var colors = require("colors/safe");
 
-function extract_keyword(DEFAULT_BRANCH, BRANCH_NAME, COMMIT_MSG){
-	let default_branch_family_reg = new RegExp("^" + DEFAULT_BRANCH + "(_[a-z]+[0-9a-z]*)*$");
+function extract_keyword(releaseBranchPrefix, branchName, commitMsg){
+	// releaseBranchPrefix		发布分支的统一前缀
+	// branchName				当前分支名
+	// commitMsg				任一 commit msg 内容
+	let default_branch_family_reg = new RegExp("^" + releaseBranchPrefix + "(_[a-z]+[0-9a-z]*)*$");
 	let tag_split_reg = /^v\d+\.\d+\.\d+(\.([a-z0-9]+(_[a-z]+[a-z0-9]*)*))?\.(final|snapshot)$/;
 
-	console.log("BRANCH_NAME", colors.cyan(BRANCH_NAME));
-	console.log("COMMIT_MSG", colors.cyan(COMMIT_MSG));
-
-	if(!BRANCH_NAME){
-		console.log(colors.red("[ERROR] 请在 /release_branch 文件中填写分支名"));
+	if(!branchName){
+		console.log(colors.red("[ERROR] 请在 /release_branch 文件中填写分支名\n"));
 		return false;
 	}
-	if(!default_branch_family_reg.test(BRANCH_NAME)){
-		console.log(colors.red("[ERROR] " + DEFAULT_BRANCH + " 分支必须"));
+	if(!default_branch_family_reg.test(branchName)){
+		console.log(colors.red("[ERROR] 请检查分支名 " + branchName + " !\n"));
 		return false;
 	}
-	let tagPostFix = COMMIT_MSG.replace(tag_split_reg, function(match, $1, $2){
+	let tagPostFix = commitMsg.replace(tag_split_reg, function(match, $1, $2){
 		return $2 || "";
 	});
-	let branchPostFix = BRANCH_NAME.replace(default_branch_family_reg, function(match, $1){
+	let branchPostFix = branchName.replace(default_branch_family_reg, function(match, $1){
 		if($1){
 			return $1.slice(1);
 		}

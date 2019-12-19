@@ -1,11 +1,12 @@
-var fs = require("fs");
+// travis 执行的，验证当前 commit 的逻辑
 var colors = require("colors/safe");
 var utils = require("./utils");
-var BRANCH_NAME = process.env.BRANCH_NAME;
-var COMMIT_MESSAGE = process.env.COMMIT_MESSAGE.trim();
 
-var DEFAULT_BRANCH = "dev";
-var keyword = utils.extract_keyword(DEFAULT_BRANCH, BRANCH_NAME, COMMIT_MESSAGE);
+var DEFAULT_BRANCH = require("./config").DEFAULT_BRANCH;
+var BRANCH_NAME = process.env.BRANCH_NAME;
+var CUR_COMMIT_MSG = process.env.CUR_COMMIT_MSG.trim();
+
+var keyword = utils.extract_keyword(DEFAULT_BRANCH, BRANCH_NAME, CUR_COMMIT_MSG);
 if(!keyword){
 	process.exit(1);
 }
@@ -15,18 +16,8 @@ let branchPostFix = keyword.branchPostFix;
 console.log("tagPostFix", colors.cyan(tagPostFix));
 console.log("branchPostFix", colors.cyan(branchPostFix));
 if(tagPostFix != branchPostFix){
-	console.log(colors.red("[ERROR] tag/branch 命名后缀不匹配"));
+	console.log(colors.red("[ERROR] commit_msg 与 branch 后缀不匹配"));
+	console.log(colors.red(CUR_COMMIT_MSG));
 	process.exit(1);
 }
-
 console.log(colors.cyan("tag...ok"));
-console.log(colors.cyan("[is a tag] start packing"));
-try{
-	fs.writeFileSync("release_tag", COMMIT_MESSAGE, {
-		encoding: "utf8",
-		flag: "w"
-	});
-}
-catch(error){
-	process.exit(1);
-}
