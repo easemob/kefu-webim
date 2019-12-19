@@ -21,6 +21,8 @@ jobs:
         skip_cleanup: true
         provider: script
         script: ./travis/upload.sh
+        on:
+          all_branches: true
 
 cache:
   directories:
