@@ -6,7 +6,7 @@ var profile = require("@/app/tools/profile");
 var Poller = require("@/app/tools/Poller");
 var createCtaDialog = require("./uikit/createCtaDialog");
 var commonConfig = require("@/common/config");
-var transfer = require("@/app/common/transfer");
+var getToHost = require("@/app/common/transfer");
 
 var POLLING_INTERVAL = 5000;
 
@@ -21,7 +21,7 @@ var _ctaPrompt;
 function _reportData(userType, userId){
 	var url = profile.currentBrowsingURL;
 
-	transfer.send({ event: _const.EVENTS.REQUIRE_URL });
+	getToHost.send({ event: _const.EVENTS.REQUIRE_URL });
 
 	url && apiHelper.reportEvent(url, userType, userId).then(function(resp){
 		var type = resp.type;
@@ -53,7 +53,7 @@ function _reportData(userType, userId){
 				_stopReporting();
 
 				if(_hasCtaInvite){
-					transfer.send({ event: _const.EVENTS.ADD_PROMPT });
+					getToHost.send({ event: _const.EVENTS.ADD_PROMPT });
 					_ctaPrompt = createCtaDialog({
 						title: agentNickname,
 						content: message,
@@ -61,10 +61,10 @@ function _reportData(userType, userId){
 						className: "cta-prompt bottom",
 						replyCallback: function(){
 							_callback(resp);
-							transfer.send({ event: _const.EVENTS.REMOVE_PROMPT });
+							getToHost.send({ event: _const.EVENTS.REMOVE_PROMPT });
 						},
 						closeCallback: function(){
-							transfer.send({ event: _const.EVENTS.REMOVE_PROMPT });
+							getToHost.send({ event: _const.EVENTS.REMOVE_PROMPT });
 						}
 					});
 				}
@@ -90,7 +90,7 @@ function _startToReoprt(callback){
 	if(utils.isTop) return;
 
 	// 要求外部页面更新URL
-	transfer.send({ event: _const.EVENTS.REQUIRE_URL });
+	getToHost.send({ event: _const.EVENTS.REQUIRE_URL });
 
 	// 用户点击联系客服弹出的窗口，结束会话后调用的startToReport没有传入参数
 	if(!_config){
@@ -111,7 +111,7 @@ function _reportGuest(){
 	var guestId = _config.guestId || utils.uuid();
 
 	// 缓存guestId
-	transfer.send({
+	getToHost.send({
 		event: _const.EVENTS.SET_ITEM,
 		data: {
 			key: "guestId",
@@ -179,7 +179,7 @@ module.exports = {
 	},
 	hideCtaPrompt: function _hideCtaPrompt(){
 		_ctaPrompt && _ctaPrompt.hide();
-		transfer.send({ event: _const.EVENTS.REMOVE_PROMPT });
+		getToHost.send({ event: _const.EVENTS.REMOVE_PROMPT });
 	},
 	isStarted: _isStarted
 };

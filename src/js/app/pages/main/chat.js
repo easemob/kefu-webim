@@ -25,7 +25,7 @@ var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
 var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
 var TenantInfo = require("@/app/pages/main/tenantInfo/index");
-var transfer = require("@/app/common/transfer");
+var getToHost = require("@/app/common/transfer");
 var tenantInfo;
 var tagSelector = new TagSelector();
 
@@ -58,7 +58,7 @@ var _reCreateImUser = _.once(function(){
 			utils.set("root" + (config.configId || (config.tenantId + config.emgroup)), entity.userId);
 		}
 		else{
-			transfer.send({
+			getToHost.send({
 				event: _const.EVENTS.CACHEUSER,
 				data: {
 					key: cacheKeyName,
@@ -278,7 +278,7 @@ function _setOffline(){
 		break;
 	}
 
-	transfer.send({ event: _const.EVENTS.ON_OFFDUTY });
+	getToHost.send({ event: _const.EVENTS.ON_OFFDUTY });
 }
 
 function _scrollToBottom(){
@@ -402,11 +402,11 @@ function _bindEvents(){
 	if(!utils.isTop){
 		// 最小化按钮
 		utils.on(doms.minifyBtn, "click", function(){
-			transfer.send({ event: _const.EVENTS.CLOSE });
+			getToHost.send({ event: _const.EVENTS.CLOSE });
 		});
 
 		utils.on(document, "mouseover", function(){
-			transfer.send({ event: _const.EVENTS.RECOVERY });
+			getToHost.send({ event: _const.EVENTS.RECOVERY });
 		});
 	}
 
@@ -426,7 +426,7 @@ function _bindEvents(){
 		utils.on(doms.dragBar, "mousedown", function(ev){
 			var e = window.event || ev;
 			doms.textInput.blur(); // ie a  ie...
-			transfer.send({
+			getToHost.send({
 				event: _const.EVENTS.DRAGREADY,
 				data: {
 					x: e.clientX,
@@ -840,7 +840,7 @@ function _bindEvents(){
 					utils.addClass(document.body, "em-mobile-translate");
 				}
 				else{
-					transfer.send({
+					getToHost.send({
 						event: _const.EVENTS.SCROLL_TO_BOTTOM,
 					});
 				}
@@ -913,7 +913,7 @@ function _show(){
 		doms.textInput.focus();
 	}
 
-	transfer.send({ event: _const.EVENTS.RECOVERY });
+	getToHost.send({ event: _const.EVENTS.RECOVERY });
 
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CHAT_WINDOW_OPENED, []);
 }
@@ -930,13 +930,13 @@ function _onReady(){
 	// bug fix:
 	// minimum = fales 时, 或者 访客回呼模式 调用easemobim.bind时显示问题
 	if(config.minimum === false || config.eventCollector === true){
-		transfer.send({ event: _const.EVENTS.SHOW });
+		getToHost.send({ event: _const.EVENTS.SHOW });
 	}
 
 	eventListener.trigger(_const.SYSTEM_EVENT.MESSAGE_CHANNEL_READY);
 
 	// onready 回调
-	transfer.send({ event: _const.EVENTS.ONREADY });
+	getToHost.send({ event: _const.EVENTS.ONREADY });
 }
 
 function _initSDK(){

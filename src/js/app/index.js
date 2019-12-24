@@ -19,7 +19,7 @@ var _const = require("@/common/const");
 var profile = require("@/app/tools/profile");
 var handleConfig = commonConfig.handleConfig;
 var doWechatAuth = require("@/app/common/wechat");
-var transfer = require("@/app/common/transfer");
+var getToHost = require("@/app/common/transfer");
 var eventListener = require("@/app/tools/eventListener");
 var fromUserClick = false;
 
@@ -31,7 +31,7 @@ if(utils.isTop){
 }
 else{
 	main.chat_window_mode_init();
-	transfer.listen(function(msg){
+	getToHost.listen(function(msg){
 		var event = msg.event;
 		var data = msg.data;
 		switch(event){
@@ -44,14 +44,14 @@ else{
 			widgetBoxHide();
 			break;
 		case _const.EVENTS.INIT_CONFIG:
-			transfer.to = data.parentId;
+			getToHost.to = data.parentId;
 			commonConfig.setConfig(data);
 			initCrossOriginIframe();
 			break;
 		default:
 			break;
 		}
-	}, ["easemob"]);
+	}, ["down2Im"]);
 }
 main.init(setUserInfo);
 
@@ -176,7 +176,7 @@ function initInvite(opt){
 	.then(function(res){
 		if(res.status){
 			res.themeName = opt.themeName;
-			transfer.send({
+			getToHost.send({
 				event: _const.EVENTS.INVITATION_INIT,
 				data: res
 			});
@@ -354,7 +354,7 @@ function handleSettingIframeSize(params){
 	}
 	params = params || {};
 	// 重新去设置iframe 的宽高
-	transfer.send({
+	getToHost.send({
 		event: _const.EVENTS.RESET_IFRAME,
 		data: {
 			dialogHeight: commonConfig.getConfig().dialogHeight,

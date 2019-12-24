@@ -14,7 +14,7 @@ var chat = require("./chat");
 var channel = require("./channel");
 var profile = require("@/app/tools/profile");
 var commonConfig = require("@/common/config");
-var transfer = require("@/app/common/transfer");
+var getToHost = require("@/app/common/transfer");
 var hasChatEntryInitialized;
 var extendMessageSender = require("./chat/extendMessageSender");
 
@@ -111,7 +111,7 @@ function handleMsgData(){
 
 function chat_window_mode_init(){
 	var $contactAgentBtn = document.getElementById("em-widgetPopBar");
-	transfer.listen(function(msg){
+	getToHost.listen(function(msg){
 		var event = msg.event;
 		var data = msg.data;
 		var extendMessage;
@@ -153,11 +153,11 @@ function chat_window_mode_init(){
 		default:
 			break;
 		}
-	}, ["easemob"]);
+	}, ["down2Im"]);
 
 	utils.removeClass($contactAgentBtn, "hide");
 	utils.on($contactAgentBtn, "click", function(){
-		transfer.send({ event: _const.EVENTS.SHOW });
+		getToHost.send({ event: _const.EVENTS.SHOW });
 	});
 }
 
@@ -231,10 +231,10 @@ function initChatEntry(targetUserInfo){
 function userEntry(targetUserInfo){
 	chat.init();
 	chat.show();
-	transfer.send({
+	getToHost.send({
 		event: _const.EVENTS.SHOW
 	});
-	transfer.send({
+	getToHost.send({
 		event: _const.EVENTS.CACHEUSER,
 		data: {
 			username: targetUserInfo.userName,
@@ -261,7 +261,7 @@ function userTokenEntry(targetUserInfo){
 	});
 	chat.init();
 	chat.show();
-	transfer.send({
+	getToHost.send({
 		event: _const.EVENTS.SHOW
 	});
 	// 发送指定坐席的ext消息，延迟发送
@@ -275,7 +275,7 @@ function userTokenEntry(targetUserInfo){
 function userWithPasswordEntry(targetUserInfo){
 	chat.init();
 	chat.show();
-	transfer.send({
+	getToHost.send({
 		event: _const.EVENTS.SHOW
 	});
 	// 发送指定坐席的ext消息，延迟发送
@@ -305,7 +305,7 @@ function _createVisitor(){
 		utils.set("root" + (commonConfig.getConfig().configId || (commonConfig.getConfig().tenantId + commonConfig.getConfig().emgroup)), commonConfig.getConfig().user.username);
 	}
 	else{
-		transfer.send({
+		getToHost.send({
 			event: _const.EVENTS.CACHEUSER,
 			data: {
 				key: cacheKeyName,

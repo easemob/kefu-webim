@@ -1,3 +1,3 @@
 var Transfer = require("@/common/transfer");
 
-module.exports = new Transfer(null, "main", true);
+module.exports = new Transfer(null, "toHost", true);
