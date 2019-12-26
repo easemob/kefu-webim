@@ -113,7 +113,7 @@ module.exports = function(opt){
 				else if(!name.value || name.value.length > 140){
 					uikit.tip(__("ticket.invalid_name"));
 				}
-				else if(!phone.value || phone.value.length > 24){
+				else if(!phone.value || !(/^1[3456789]\d{9}$/.test(phone.value))){
 					uikit.tip(__("ticket.invalid_phone"));
 				}
 				else if(!mail.value || mail.value.length > 127){
