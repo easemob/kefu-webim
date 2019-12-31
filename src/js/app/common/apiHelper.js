@@ -10,12 +10,12 @@ var emajax = require("@/common/ajax");
 // getToken
 var config;
 var cachedApiCallbackTable = {};
-var toProxy;
+var apiTransfer;
 
 function initApiTransfer(){
-	toProxy = new Transfer("cross-origin-iframe", "toProxy", true);
+	apiTransfer = new Transfer("cross-origin-iframe", "data", true);
 
-	toProxy.listen(function(msg){
+	apiTransfer.listen(function(msg){
 		var apiName = msg.call;
 		var timestamp = msg.timespan;
 		var isSuccess = msg.status === 0;
@@ -38,7 +38,7 @@ function initApiTransfer(){
 				typeof errorCallback === "function" && errorCallback(msg);
 			}
 		}
-	}, ["up2Im"]);
+	}, ["api"]);
 }
 
 function api(apiName, data, success, error){
@@ -49,7 +49,7 @@ function api(apiName, data, success, error){
 		success: success,
 		error: error
 	};
-	toProxy.send({
+	apiTransfer.send({
 		api: apiName,
 		data: data,
 		timespan: uuid,

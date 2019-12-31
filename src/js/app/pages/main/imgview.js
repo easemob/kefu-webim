@@ -1,7 +1,7 @@
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
 var profile = require("@/app/tools/profile");
-var getToHost = require("@/app/common/transfer");
+var transfer = require("@/app/common/transfer");
 
 var img;
 var imgWrapper;
@@ -35,7 +35,7 @@ module.exports = {
 			utils.removeClass(imgWrapper, "hide");
 		}
 		else{
-			getToHost.send({
+			transfer.send({
 				event: _const.EVENTS.SHOW_IMG,
 				data: {
 					imgSrc: url,

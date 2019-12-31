@@ -10,7 +10,7 @@ var textParser = require("@/app/tools/textParser");
 var apiHelper = require("./apis");
 var moment = require("moment");
 var commonConfig = require("@/common/config");
-var getToHost = require("@/app/common/transfer");
+var transfer = require("@/app/common/transfer");
 
 var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;
@@ -810,7 +810,7 @@ function _handleMessage(msg, options){
 		// 兼容旧的消息格式
 		message.value = message.data;
 		// 收消息回调
-		isReceived && getToHost.send({
+		isReceived && transfer.send({
 			event: _const.EVENTS.ONMESSAGE,
 			data: {
 				from: msg.from,
@@ -982,7 +982,7 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.isSessionOpen = false;
 		officialAccount.hasReportedAttributes = false;
 		// to topLayer
-		getToHost.send({ event: _const.EVENTS.ONSESSIONCLOSED });
+		transfer.send({ event: _const.EVENTS.ONSESSIONCLOSED });
 		break;
 	case _const.SYSTEM_EVENT.SESSION_OPENED:
 		officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
@@ -1183,8 +1183,8 @@ function _messagePrompt(message, officialAccount){
 	if(utils.isBrowserMinimized() || !profile.isChatWindowOpen){
 		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_PROMPT, []);
 
-		getToHost.send({ event: _const.EVENTS.SLIDE });
-		getToHost.send({
+		transfer.send({ event: _const.EVENTS.SLIDE });
+		transfer.send({
 			event: _const.EVENTS.NOTIFY,
 			data: {
 				avatar: avatar,

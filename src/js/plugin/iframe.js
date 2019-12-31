@@ -122,7 +122,7 @@ function _ready(){
 
 	(me.config.dragenable && !utils.isMobile) && _bindResizeHandler(me);
 
-	me.down2Im = new Transfer(me.iframe.id, "down2Im", true);
+	me.message = new Transfer(me.iframe.id, "easemob", true);
 
 	me.onsessionclosedSt = 0;
 	me.onreadySt = 0;
@@ -138,7 +138,7 @@ function _ready(){
 	delete me.config.onmessage;
 	delete me.config.onsessionclosed;
 
-	me.down2Im
+	me.message
 	.send({ event: _const.EVENTS.INIT_CONFIG, data: me.config })
 	.listen(function(msg){
 		var event = msg.event;
@@ -213,7 +213,7 @@ function _ready(){
 			utils.setStore(msg.data.key, msg.data.value);
 			break;
 		case _const.EVENTS.REQUIRE_URL:
-			me.down2Im.send({ event: _const.EVENTS.UPDATE_URL, data: location.href });
+			me.message.send({ event: _const.EVENTS.UPDATE_URL, data: location.href });
 			break;
 		case _const.EVENTS.SHOW_IMG:
 			pcImgView(data);
@@ -238,14 +238,14 @@ function _ready(){
 		default:
 			break;
 		}
-	}, ["toHost"]);
+	}, ["main"]);
 
 	// 发送ready前缓存的消息
 	for(i = 0, l = me.extendMessageList.length; i < l; i++){
-		me.down2Im.send({ event: _const.EVENTS.EXT, data: me.extendMessageList[i] });
+		me.message.send({ event: _const.EVENTS.EXT, data: me.extendMessageList[i] });
 	}
 	for(i = 0, l = me.textMessageList.length; i < l; i++){
-		me.down2Im.send({ event: _const.EVENTS.TEXTMSG, data: me.textMessageList[i] });
+		me.message.send({ event: _const.EVENTS.TEXTMSG, data: me.textMessageList[i] });
 	}
 
 	typeof me.ready === "function" && me.ready();
@@ -361,7 +361,7 @@ Iframe.prototype.open = function(){
 	utils.removeClass(iframe, "easemobim-minimized");
 	utils.removeClass(iframe, "easemobim-hide");
 
-	this.down2Im && this.down2Im.send({ event: _const.EVENTS.SHOW });
+	this.message && this.message.send({ event: _const.EVENTS.SHOW });
 
 	return this;
 };
@@ -380,14 +380,14 @@ Iframe.prototype.close = function(){
 	utils.addClass(this.iframe, "easemobim-minimized");
 	utils.toggleClass(this.iframe, "easemobim-hide", this.config.hide);
 
-	this.down2Im && this.down2Im.send({ event: _const.EVENTS.CLOSE });
+	this.message && this.message.send({ event: _const.EVENTS.CLOSE });
 	return this;
 };
 
 // 发 ext 消息
 Iframe.prototype.send = function(extMsg){
-	if(this.down2Im){
-		this.down2Im.send({ event: _const.EVENTS.EXT, data: extMsg });
+	if(this.message){
+		this.message.send({ event: _const.EVENTS.EXT, data: extMsg });
 	}
 	else{
 		// 没有初始化前缓存消息，等ready 后发送
@@ -397,8 +397,8 @@ Iframe.prototype.send = function(extMsg){
 
 // 发文本消息
 Iframe.prototype.sendText = function(msg){
-	if(this.down2Im){
-		this.down2Im.send({ event: _const.EVENTS.TEXTMSG, data: msg });
+	if(this.message){
+		this.message.send({ event: _const.EVENTS.TEXTMSG, data: msg });
 	}
 	else{
 		this.textMessageList.push(msg);
