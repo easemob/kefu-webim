@@ -509,3 +509,19 @@ body.big-window-h5{
 	width: 24px;
 	height: 24px;
 }
+
+.easemobim-note-panel{
+	position: absolute;
+	width: calc(100% - 1px);
+	height: 100%;
+	left: 0;
+	top: 0;
+	z-index: 10;
+	&.hide{
+		display: none;
+	}
+}
+.note-wrapper{
+	height: 100%;
+	background: #fff;
+}

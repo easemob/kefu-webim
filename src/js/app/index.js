@@ -295,6 +295,7 @@ function handleCfgData(relevanceList, status){
 	renderUI(status);
 }
 function renderUI(resultStatus){
+	var dialogWidth;
 	// 添加移动端样式类
 	if(utils.isMobile){
 		utils.addClass(document.body, "em-mobile");
@@ -319,7 +320,7 @@ function renderUI(resultStatus){
 			}
 			else{
 				// iframe形式 常见问题和自主服务，固定宽度 360px
-				let dialogWidth = (Math.floor(commonConfig.getConfig().dialogWidth.slice(0, -2)) + Math.floor(360)) + "px";
+				dialogWidth = (Math.floor(commonConfig.getConfig().dialogWidth.slice(0, -2)) + Math.floor(360)) + "px";
 				handleSettingIframeSize({ width: dialogWidth });
 			}
 		}

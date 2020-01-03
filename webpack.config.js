@@ -26,6 +26,7 @@ var conmmonConfig;
 var transfer;
 var easemob;
 var app;
+var note;
 var appPageCached;
 var taskList;
 
@@ -94,6 +95,18 @@ conmmonConfig = {
 				],
 			},
 			{
+				test: /note\.html$/,
+				loaders: [
+					"file-loader?name=../../[name].[ext]",
+					"extract-loader",
+					"html-loader",
+					"string-replace-loader"
+						+ "?search=__STATIC_PATH__"
+						+ "&replace=" + staticPath
+						+ "&flags=g",
+				],
+			},
+			{
 				test: /transfer\.html$/,
 				loaders: [
 					"file-loader?name=../../[name].[ext]",
@@ -130,6 +143,7 @@ conmmonConfig = {
 					/iframe\.js$/,
 					/transfer\.html$/,
 					/app(\\|\/)+index\.js$/,
+					/note\.html$/,
 				],
 				loader: "string-replace-loader",
 				query: {
@@ -146,6 +160,8 @@ conmmonConfig = {
 					/uikit(\\|\/)+loading\.js$/,
 					/tools(\\|\/)+messageFactory\.js$/,
 					/transfer(\\|\/)+api\.js$/,
+					/app(\\|\/)+note(\\|\/)+iframe\.js$/,
+					/app(\\|\/)+note(\\|\/)+api\.js$/,
 				],
 				loader: "string-replace-loader",
 				query: {
@@ -218,6 +234,19 @@ app = Object.assign({}, conmmonConfig, {
 	},
 });
 
+note = Object.assign({}, conmmonConfig, {
+	name: "note",
+	entry: [
+		"./src/js/app/note/index.js",
+		"./src/scss/im.scss",
+		"./src/html/note.html",
+	],
+	output: {
+		filename: "note.js",
+		path: path.resolve(__dirname, distPath, "static/js"),
+	},
+});
+
 appPageCached = Object.assign({}, conmmonConfig, {
 	name: "appCached",
 	entry: "./src/html/im.html",
@@ -251,6 +280,7 @@ taskList = [
 	transfer,
 	easemob,
 	app,
+	note,
 	appPageCached,
 ];
 

@@ -9,7 +9,7 @@ var channel = require("./channel");
 var profile = require("@/app/tools/profile");
 var satisfaction = require("./satisfaction");
 var imgView = require("./imgview");
-var leaveMessage = require("./leaveMessage");
+var NoteIframe = require("../../note/iframe");
 var initPasteImage = require("./paste");
 var videoChat = require("./videoChat");
 var guessInfo = require("./guess/guessInfo");
@@ -36,6 +36,7 @@ var inputBoxPosition = "down";
 var topBar;
 var editorView;
 var doms;
+var noteIframe;
 
 var _reCreateImUser = _.once(function(){
 	console.warn("user not found in current appKey, attempt to recreate user.");
@@ -274,7 +275,7 @@ function _setOffline(){
 		break;
 	default:
 		// 只允许留言此时无法关闭留言页面
-		leaveMessage({ hideCloseBtn: true });
+		noteIframe.open({ hideCloseBtn: true });
 		break;
 	}
 
@@ -467,7 +468,7 @@ function _bindEvents(){
 		var isSessionOpen = officialAccount.isSessionOpen;
 		var sessionId = officialAccount.sessionId;
 		isSessionOpen && apiHelper.closeServiceSession(sessionId);
-		leaveMessage({
+		noteIframe.open({
 			preData: {
 				name: config.visitor.trueName,
 				phone: config.visitor.phone,
@@ -557,7 +558,7 @@ function _bindEvents(){
 			});
 		}
 		else if(this.getAttribute("data-queue-type") == "transfer"){
-			leaveMessage();
+			noteIframe.open();
 		}
 		else{
 
@@ -583,7 +584,7 @@ function _bindEvents(){
 			doms.videoInviteButton.click();
 		}
 		else if(this.getAttribute("data-queue-type") == "transfer"){
-			leaveMessage();
+			noteIframe.open();
 		}
 		else{
 
@@ -810,7 +811,7 @@ function _bindEvents(){
 
 	// 显示留言页面
 	utils.on(doms.noteBtn, "click", function(){
-		leaveMessage();
+		noteIframe.open();
 	});
 
 	// 满意度评价
@@ -994,6 +995,8 @@ function _init(){
 	profile.isChatWindowOpen = true;
 	_initSoundReminder();
 	_initUI();
+	// 初始化留言
+	_initNote();
 	_bindEvents();
 	initSessionList();
 	_initSession();
@@ -1002,6 +1005,30 @@ function _init(){
 		apiHelper.getOptForManualMenuGuide().then(function(yes){
 			profile.isManualMenuGuide = yes;
 		});
+	}
+	
+}
+
+function _initNote(){
+	var data;
+	noteIframe = new NoteIframe(config);
+	if(window.addEventListener){
+		window.addEventListener("message", function(e){
+			closeNoteIframe(e);
+		}, false);
+	}
+	else if(window.attachEvent){
+		window.attachEvent("onmessage", function(e){
+			closeNoteIframe(e);
+		});
+	}
+
+	function closeNoteIframe(e){
+		data = e.data;
+		if(typeof data === "string" && data != "undefined"){
+			data = JSON.parse(data);
+		}
+		data.closeNote && noteIframe.close();
 	}
 }
 
