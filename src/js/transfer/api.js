@@ -8,7 +8,7 @@ var utils = require("@/common/utils");
 
 
 // 此处由于要兼容老版本，所以在实例化对象时不能指定 useObject = true，而是依据 options.msg.useObject 来判断
-var getData = new Transfer(null, "api");
+var up2Im = new Transfer(null, "up2Im");
 
 function emitAjax(options){
 	var headers = null;
@@ -34,7 +34,7 @@ function emitAjax(options){
 				resp = JSON.parse(resp);
 			}
 			catch(e){}
-			getData.send({
+			up2Im.send({
 				call: api,
 				timespan: timestamp,
 				status: 0,
@@ -48,7 +48,7 @@ function emitAjax(options){
 				resp = JSON.parse(resp);
 			}
 			catch(e){}
-			getData.send({
+			up2Im.send({
 				call: api,
 				timespan: timestamp,
 				status: 1,
@@ -84,7 +84,7 @@ function parseReferer(ref){
 	return referer;
 }
 
-getData.listen(function(msg){
+up2Im.listen(function(msg){
 	var apiName = msg.api;
 	var params = msg.data || {};
 	var tenantId = params.tenantId;
@@ -95,7 +95,7 @@ getData.listen(function(msg){
 	var url;
 	var referer;
 
-	getData.targetOrigin = msg.origin;
+	up2Im.targetOrigin = msg.origin;
 
 	switch(apiName){
 	case "getRelevanceList":
@@ -862,4 +862,5 @@ getData.listen(function(msg){
 		console.error("unexpect api name: " + apiName);
 		break;
 	}
-}, ["data"]);
+	// from Im
+}, ["toProxy"]);

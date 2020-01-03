@@ -1,4 +1,9 @@
+// [HOST]
+// [IM]
+// [PROXY] [NOTE]
 
+// [HOST] -down2Im-> [IM] <-up2Im- [TRANS]
+// [HOST] <-toHost- [IM] -toProxy-> [TRANS]
 
 var isPostMessageSupportObj = (function(){
 	var supportObject = true;
