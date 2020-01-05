@@ -6,10 +6,12 @@ en-US/static
 en-US/easemob.js
 en-US/im_cached.html
 en-US/im.html
+en-US/note.html
 
 static/css
 static/js/em-transfer.js
 static/js/main.js
+static/js/note.js
 
 /appPageCached.js
 /easemob.js
