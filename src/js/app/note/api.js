@@ -97,7 +97,7 @@ function createTicket(opt){
 	return new Promise(function(resolve, reject){
 		emajax({
 			url: "__WEBIM_SLASH_KEY_PATH__/tenants/" + config.tenantId
-			+ "/projects/" + config.projectId
+			+ "/projects/" + opt.projectId
 			+ "/tickets?tenantId=" + config.tenantId
 			+ "&easemob-target-username=" + config.toUser
 			+ "&easemob-appkey=" + config.appKey.replace("#", "%23")
@@ -132,7 +132,7 @@ function createTicket(opt){
 				attachments: null
 			},
 			headers: { Authorization: "Easemob IM " + opt.token },
-			type: "GET",
+			type: "POST",
 			success: function(msg){
 				if(msg.id){
 					resolve();
