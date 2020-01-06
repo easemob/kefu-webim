@@ -74,7 +74,7 @@ function getProjectId(){
 					headers: { Authorization: "Easemob IM " + token },
 					type: "GET",
 					success: function(msg){
-						var projectId = utils.getDataByPath(msg, "data.entities.0.id");
+						var projectId = utils.getDataByPath(msg, "entities.0.id");
 						if(projectId){
 							// cache projectId
 							cache.projectId = projectId;
@@ -134,7 +134,7 @@ function createTicket(opt){
 			headers: { Authorization: "Easemob IM " + opt.token },
 			type: "GET",
 			success: function(msg){
-				if(utils.getDataByPath(msg, "data.id")){
+				if(msg.id){
 					resolve();
 				}
 				else{
