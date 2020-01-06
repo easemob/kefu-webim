@@ -99,10 +99,10 @@ function createTicket(opt){
 			url: "__WEBIM_SLASH_KEY_PATH__/tenants/" + config.tenantId
 			+ "/projects/" + config.projectId
 			+ "/tickets?tenantId=" + config.tenantId
-			+ "&easemob-target-username=" + config["easemob-target-username"]
-			+ "&easemob-appkey=" + config["easemob-appkey"]
-			+ "&easemob-username=" + config["easemob-username"]
-			+ "&config_id=" + config.config_id,
+			+ "&easemob-target-username=" + config.toUser
+			+ "&easemob-appkey=" + config.appKey.replace("#", "%23")
+			+ "&easemob-username=" + config.user.username
+			+ "&config_id=" + config.configId,
 			useXDomainRequestInIE: true,
 			dataType: "json",
 			data: {
