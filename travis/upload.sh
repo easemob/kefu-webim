@@ -1,4 +1,5 @@
 set -ev
+TAG_NAME=`git log --pretty='%s' -1`
 echo git tag: $TAG_NAME
 echo nexus_user: ${nexus_user}
 echo nexus_password: ${nexus_password}
