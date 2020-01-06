@@ -1,6 +1,6 @@
 var utils = require("../../common/utils");
 
-var IM_HTML_PATH = __("config.language") === "zh-CN" ? "/note.html" : "/en-US/im_cached.html";
+var IM_HTML_PATH = __("config.language") === "zh-CN" ? "/note.html" : "/en-US/note.html";
 
 function Iframe(config){
 	var me = this;
@@ -38,7 +38,9 @@ Iframe.prototype.open = function(config){
 	base64 = window.btoa
 		? window.btoa(encodeURIComponent(JSON.stringify(config)))
 		: encodeURIComponent(JSON.stringify(config));
-	this.iframe.src = config.domain + "__WEBIM_SLASH_KEY_PATH__/webim" + IM_HTML_PATH + "?config=" + base64;
+	this.iframe.src = config.noteSrc
+		? config.noteSrc + "?config=" + base64
+		: config.domain + "__WEBIM_SLASH_KEY_PATH__/webim" + IM_HTML_PATH + "?config=" + base64;
 
 	return this;
 };
