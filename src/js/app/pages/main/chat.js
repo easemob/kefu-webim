@@ -1011,6 +1011,7 @@ function _init(){
 
 function _initNote(){
 	var data;
+	var closeNoteBtn = document.querySelector(".em-kefu-webim-note .note-top");
 	noteIframe = new NoteIframe(config);
 	if(window.addEventListener){
 		window.addEventListener("message", function(e){
@@ -1022,6 +1023,10 @@ function _initNote(){
 			closeNoteIframe(e);
 		});
 	}
+
+	utils.on(closeNoteBtn, "click", function(){
+		noteIframe.close();
+	});
 
 	function closeNoteIframe(e){
 		data = e.data;

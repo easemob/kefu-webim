@@ -510,18 +510,33 @@ body.big-window-h5{
 	height: 24px;
 }
 
-.easemobim-note-panel{
+.em-kefu-webim-note{
+	width: 100%;
+	height: 100%;
 	position: absolute;
-	width: calc(100% - 1px);
-	height: 100%;
-	left: 0;
-	top: 0;
-	z-index: 10;
-	&.hide{
-		display: none;
+	z-index: 100;
+	.note-top{
+		height: 35px;
+		background: #fff;
+		width: 100%;
+		border-right: 1px solid #efefef;
+		box-sizing: border-box;
+		>i{
+			cursor: pointer;
+			position: absolute;
+			right: 10px;
+			top: 3px;
+		}
 	}
-}
-.note-wrapper{
-	height: 100%;
-	background: #fff;
+	.easemobim-note-panel{
+		width: calc(100% - 1px);
+		height: 100%;
+		&.hide{
+			display: none;
+		}
+	}
+	.note-wrapper{
+		height: 100%;
+		background: #fff;
+	}
 }

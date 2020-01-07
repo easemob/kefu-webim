@@ -5,7 +5,7 @@ var IM_HTML_PATH = __("config.language") === "zh-CN" ? "/note.html" : "/en-US/no
 function Iframe(config){
 	var me = this;
 	var id = "easemob-iframe-note";
-	var className = "easemobim-note-panel hide";
+	var className = "easemobim-note-panel";
 	var iframe = document.createElement("iframe");
 	this.config = config;
 	
@@ -14,7 +14,7 @@ function Iframe(config){
 	iframe.id = id;
 	iframe.className = className;
 	iframe.allow = "microphone; camera";
-	document.getElementById("em-kefu-webim-chat").appendChild(iframe);
+	document.querySelector(".em-kefu-webim-note").appendChild(iframe);
 
 	me.iframe = iframe;
 	me.show = false;
@@ -25,16 +25,19 @@ function Iframe(config){
 
 
 Iframe.prototype.open = function(config){
-	var me = this;
+	var noteWrapper = document.querySelector(".em-kefu-webim-note");
 	var base64;
 	if(this.show) return this;
 	this.show = true;
-
+	config = _.extend({}, this.config, config);
+	if(config.hideCloseBtn){
+		utils.addClass(noteWrapper.querySelector(".note-top"), "hide");
+	}
+	
 	utils.on(this.iframe, "load", function(){
-		utils.removeClass(me.iframe, "hide");
+		utils.removeClass(noteWrapper, "hide");
 	});
 	
-	config = _.extend({}, this.config, config);
 	base64 = window.btoa
 		? window.btoa(encodeURIComponent(JSON.stringify(config)))
 		: encodeURIComponent(JSON.stringify(config));
@@ -46,10 +49,11 @@ Iframe.prototype.open = function(config){
 };
 
 Iframe.prototype.close = function(){
+	var noteWrapper = document.querySelector(".em-kefu-webim-note");
 	if(this.show === false) return this;
 	this.show = false;
 
-	utils.addClass(this.iframe, "hide");
+	utils.addClass(noteWrapper, "hide");
 
 	return this;
 };
