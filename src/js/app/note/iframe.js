@@ -26,11 +26,14 @@ function Iframe(config){
 
 Iframe.prototype.open = function(config){
 	var noteWrapper = document.querySelector(".em-kefu-webim-note");
+	var me = this;
 	var base64;
+	var iframeSrc = "";
 	if(this.show) return this;
 	this.show = true;
 	config = _.extend({}, this.config, config);
-	if(config.hideCloseBtn){
+	if(config.hideCloseBtn || !config.noteSrc){
+		me.iframe.style.height = "100%";
 		utils.addClass(noteWrapper.querySelector(".note-top"), "hide");
 	}
 	
@@ -41,9 +44,19 @@ Iframe.prototype.open = function(config){
 	base64 = window.btoa
 		? window.btoa(encodeURIComponent(JSON.stringify(config)))
 		: encodeURIComponent(JSON.stringify(config));
-	this.iframe.src = config.noteSrc
-		? config.noteSrc + "?config=" + base64
-		: config.domain + "__WEBIM_SLASH_KEY_PATH__/webim" + IM_HTML_PATH + "?config=" + base64;
+	
+	if(config.noteSrc){
+		if(config.noteSrc.indexOf("?") > -1){
+			iframeSrc = config.noteSrc + "&config=" + base64;
+		}
+		else{
+			iframeSrc = config.noteSrc + "?config=" + base64;
+		}
+	}
+	else{
+		iframeSrc = config.domain + "__WEBIM_SLASH_KEY_PATH__/webim" + IM_HTML_PATH + "?config=" + base64;
+	}
+	this.iframe.src = iframeSrc;
 
 	return this;
 };

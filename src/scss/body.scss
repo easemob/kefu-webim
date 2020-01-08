@@ -530,7 +530,7 @@ body.big-window-h5{
 	}
 	.easemobim-note-panel{
 		width: calc(100% - 1px);
-		height: 100%;
+		height: calc(100% - 35px);
 		&.hide{
 			display: none;
 		}
