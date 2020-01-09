@@ -8,7 +8,9 @@ var utils = require("@/common/utils");
 
 
 // 此处由于要兼容老版本，所以在实例化对象时不能指定 useObject = true，而是依据 options.msg.useObject 来判断
-var up2Im = new Transfer(null, "up2Im");
+var up2Im = new Transfer(null, "api");
+
+
 
 function emitAjax(options){
 	var headers = null;

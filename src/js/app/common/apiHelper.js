@@ -38,7 +38,7 @@ function initApiTransfer(){
 				typeof errorCallback === "function" && errorCallback(msg);
 			}
 		}
-	}, ["up2Im"]);
+	}, ["api"]);
 }
 
 function api(apiName, data, success, error){
