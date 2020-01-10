@@ -1,3 +1,4 @@
+// 此文件只可新增不可修改！！！ 否则会影响定制开发版本
 var emajax = require("../common/ajax");
 var Transfer = require("../common/transfer");
 var utils = require("@/common/utils");

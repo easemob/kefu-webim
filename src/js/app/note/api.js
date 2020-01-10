@@ -68,7 +68,7 @@ function getProjectId(){
 					data: {
 						tenantId: config.tenantId,
 						"easemob-target-username": config.toUser,
-						"easemob-appkey": config.appKey,
+						"easemob-appkey": config.appKey.replace("#", "%23"),
 						"easemob-username": config.user.username,
 					},
 					headers: { Authorization: "Easemob IM " + token },

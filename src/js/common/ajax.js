@@ -57,7 +57,7 @@ module.exports = function(options){
 	if(type.toLowerCase() === "get"){
 		for(o in data){
 			if(Object.prototype.hasOwnProperty.call(data, o)){
-				tempData += o + "=" + encodeURIComponent(data[o]) + "&";
+				tempData += o + "=" + data[o] + "&";
 			}
 		}
 		// todo: use Array.prototype.join

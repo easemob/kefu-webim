@@ -119,7 +119,7 @@ function getProjectId(){
 				api("getProject", {
 					tenantId: config.tenantId,
 					"easemob-target-username": config.toUser,
-					"easemob-appkey": config.appKey,
+					"easemob-appkey": config.appKey.replace("#", "%23"),
 					"easemob-username": config.user.username,
 					headers: { Authorization: "Easemob IM " + token }
 				}, function(msg){
@@ -322,7 +322,7 @@ function getDutyStatus(){
 			originType: "webim",
 			channelId: config.channelId,
 			tenantId: config.tenantId,
-			queueName: config.emgroup,
+			queueName: encodeURIComponent(config.emgroup),
 			agentUsername: config.agentName,
 			timeScheduleId: config.timeScheduleId,
 		}, function(msg){
@@ -343,7 +343,7 @@ function getRobertGreeting(){
 			channelId: config.channelId,
 			tenantId: config.tenantId,
 			agentUsername: config.agentName,
-			queueName: config.emgroup
+			queueName: encodeURIComponent(config.emgroup)
 		}, function(msg){
 			resolve(msg.data.entity || {});
 		}, function(err){
@@ -364,7 +364,7 @@ function getRobertIsOpen(){
 				channelId: config.channelId,
 				tenantId: config.tenantId,
 				agentUsername: config.agentName,
-				queueName: config.emgroup
+				queueName: encodeURIComponent(config.emgroup)
 			}, function(msg){
 				var entity = msg.data.entity;
 
@@ -420,7 +420,7 @@ function getExSession(){
 			channelType: "easemob",
 			originType: "webim",
 			channelId: config.channelId,
-			queueName: config.emgroup,
+			queueName: encodeURIComponent(config.emgroup),
 			agentUsername: config.agentName,
 			tenantId: config.tenantId
 		}, function(msg){
