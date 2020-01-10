@@ -13,7 +13,8 @@ var cachedApiCallbackTable = {};
 var toProxy;
 
 function initApiTransfer(){
-	toProxy = new Transfer("cross-origin-iframe", "toProxy", true);
+
+	toProxy = new Transfer("cross-origin-iframe", "data", true);
 
 	toProxy.listen(function(msg){
 		var apiName = msg.call;

@@ -8,6 +8,7 @@ var utils = require("@/common/utils");
 
 
 // 此处由于要兼容老版本，所以在实例化对象时不能指定 useObject = true，而是依据 options.msg.useObject 来判断
+// 这个通信的名字应该是 up2Im, 因为定制开发客户的代码改不了，所以还用以前的 "api"
 var up2Im = new Transfer(null, "api");
 
 
@@ -865,4 +866,4 @@ up2Im.listen(function(msg){
 		break;
 	}
 	// from Im
-}, ["toProxy"]);
+}, ["data"]);
