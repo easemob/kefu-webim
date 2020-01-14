@@ -237,6 +237,7 @@ app = Object.assign({}, commonConfig, {
 note = Object.assign({}, commonConfig, {
 	name: "note",
 	entry: [
+		"./src/js/common/polyfill",
 		"./src/js/app/note/index.js",
 		"./src/scss/im.scss",
 		"./src/html/note.html",
