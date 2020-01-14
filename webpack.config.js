@@ -22,7 +22,7 @@ var SLASH_KEY_PATH = KEY_PATH == "webim" ? "" : "/" + KEY_PATH;
 
 var distPath = lang === "zh-CN" ? "" : lang;
 var staticPath = lang === "zh-CN" ? "static" : "../static";
-var conmmonConfig;
+var commonConfig;
 var transfer;
 var easemob;
 var app;
@@ -47,7 +47,7 @@ i18next.init({
 	},
 });
 
-conmmonConfig = {
+commonConfig = {
 	resolve: {
 		alias: {
 			"@": path.resolve("./src/js")
@@ -140,7 +140,7 @@ conmmonConfig = {
 				test: [
 					/plugin(\\|\/)+index\.js$/,
 					/im\.html$/,
-					/iframe\.js$/,
+					/noteIframe\.js$/,
 					/transfer\.html$/,
 					/app(\\|\/)+index\.js$/,
 					/note\.html$/,
@@ -160,7 +160,7 @@ conmmonConfig = {
 					/uikit(\\|\/)+loading\.js$/,
 					/tools(\\|\/)+messageFactory\.js$/,
 					/transfer(\\|\/)+api\.js$/,
-					/app(\\|\/)+note(\\|\/)+iframe\.js$/,
+					/app(\\|\/)+pages(\\|\/)+main(\\|\/)+noteIframe\.js$/,
 					/app(\\|\/)+note(\\|\/)+api\.js$/,
 				],
 				loader: "string-replace-loader",
@@ -189,10 +189,10 @@ conmmonConfig = {
 	},
 };
 if(!argv.production){
-	conmmonConfig.devtool = "eval";
+	commonConfig.devtool = "source-map";
 }
 
-transfer = Object.assign({}, conmmonConfig, {
+transfer = Object.assign({}, commonConfig, {
 	name: "transfer",
 	entry: [
 		"./src/js/transfer/api.js",
@@ -204,7 +204,7 @@ transfer = Object.assign({}, conmmonConfig, {
 	},
 });
 
-easemob = Object.assign({}, conmmonConfig, {
+easemob = Object.assign({}, commonConfig, {
 	name: "easemob",
 	entry: [
 		"./src/js/common/polyfill",
@@ -221,7 +221,7 @@ easemob = Object.assign({}, conmmonConfig, {
 	},
 });
 
-app = Object.assign({}, conmmonConfig, {
+app = Object.assign({}, commonConfig, {
 	name: "app",
 	entry: [
 		"./src/js/app/index.js",
@@ -234,7 +234,7 @@ app = Object.assign({}, conmmonConfig, {
 	},
 });
 
-note = Object.assign({}, conmmonConfig, {
+note = Object.assign({}, commonConfig, {
 	name: "note",
 	entry: [
 		"./src/js/app/note/index.js",
@@ -247,7 +247,7 @@ note = Object.assign({}, conmmonConfig, {
 	},
 });
 
-appPageCached = Object.assign({}, conmmonConfig, {
+appPageCached = Object.assign({}, commonConfig, {
 	name: "appCached",
 	entry: "./src/html/im.html",
 	output: {
