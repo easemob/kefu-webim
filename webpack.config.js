@@ -140,6 +140,7 @@ commonConfig = {
 				test: [
 					/plugin(\\|\/)+index\.js$/,
 					/im\.html$/,
+					/plugin(\\|\/)+iframe\.js$/,
 					/noteIframe\.js$/,
 					/transfer\.html$/,
 					/app(\\|\/)+index\.js$/,
@@ -237,7 +238,6 @@ app = Object.assign({}, commonConfig, {
 note = Object.assign({}, commonConfig, {
 	name: "note",
 	entry: [
-		"./src/js/common/polyfill",
 		"./src/js/app/note/index.js",
 		"./src/scss/im.scss",
 		"./src/html/note.html",

@@ -1,4 +1,6 @@
 require("underscore");
+require("es6-promise").polyfill();
+require("@/common/polyfill");
 
 var utils = require("@/common/utils");
 var uikit = require("../pages/main/uikit");
