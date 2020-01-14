@@ -63,7 +63,6 @@ function getProjectId(){
 			getToken().then(function(token){
 				emajax({
 					url: "__WEBIM_SLASH_KEY_PATH__/tenants/" + config.tenantId + "/projects",
-					useXDomainRequestInIE: true,
 					dataType: "json",
 					data: {
 						tenantId: config.tenantId,
@@ -105,7 +104,6 @@ function getNoteCategories(){
 				url: "__WEBIM_SLASH_KEY_PATH__/tenants/" + config.tenantId
 				+ "/projects/" + projectId
 				+ "/categories",
-				useXDomainRequestInIE: true,
 				dataType: "json",
 				data: {
 					tenantId: config.tenantId,
