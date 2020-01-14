@@ -135,7 +135,6 @@ function createTicket(opt){
 			+ "&easemob-appkey=" + config.appKey.replace("#", "%23")
 			+ "&easemob-username=" + config.user.username
 			+ "&config_id=" + config.configId,
-			useXDomainRequestInIE: true,
 			dataType: "json",
 			data: {
 				tenantId: config.tenantId,
