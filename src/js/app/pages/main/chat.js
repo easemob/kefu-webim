@@ -9,7 +9,7 @@ var channel = require("./channel");
 var profile = require("@/app/tools/profile");
 var satisfaction = require("./satisfaction");
 var imgView = require("./imgview");
-var NoteIframe = require("../../note/iframe");
+var NoteIframe = require("./noteIframe");
 var initPasteImage = require("./paste");
 var videoChat = require("./videoChat");
 var guessInfo = require("./guess/guessInfo");
@@ -922,6 +922,9 @@ function _show(){
 function _onReady(){
 	if(isMessageChannelReady) return;
 
+	// 初始化留言,在这可以获取到 profile 参数
+	_initNote();
+
 	isMessageChannelReady = true;
 
 	doms.sendBtn.innerHTML = __("chat.send");
@@ -995,8 +998,6 @@ function _init(){
 	profile.isChatWindowOpen = true;
 	_initSoundReminder();
 	_initUI();
-	// 初始化留言
-	_initNote();
 	_bindEvents();
 	initSessionList();
 	_initSession();
@@ -1012,7 +1013,7 @@ function _init(){
 function _initNote(){
 	var data;
 	var closeNoteBtn = document.querySelector(".em-kefu-webim-note .note-top");
-	noteIframe = new NoteIframe(config);
+	noteIframe = new NoteIframe(config, profile);
 	if(window.addEventListener){
 		window.addEventListener("message", function(e){
 			closeNoteIframe(e);

@@ -93,6 +93,40 @@ function getProjectId(){
 	});
 }
 
+function getNoteCategories(){
+	return new Promise(function(resolve, reject){
+		Promise.all([
+			getToken(),
+			getProjectId()
+		]).then(function(result){
+			var token = result[0];
+			var projectId = result[1];
+			emajax({
+				url: "__WEBIM_SLASH_KEY_PATH__/tenants/" + config.tenantId
+				+ "/projects/" + projectId
+				+ "/categories",
+				useXDomainRequestInIE: true,
+				dataType: "json",
+				data: {
+					tenantId: config.tenantId,
+					"easemob-target-username": config.toUser,
+					"easemob-appkey": config.appKey.replace("#", "%23"),
+					"easemob-username": config.user.username,
+				},
+				headers: { Authorization: "Easemob IM " + token },
+				type: "GET",
+				success: function(msg){
+					var list = utils.getDataByPath(msg, "entities");
+					resolve(list);
+				},
+				error: function(err){
+					reject(err);
+				}
+			});
+		});
+	});
+}
+
 function createTicket(opt){
 	return new Promise(function(resolve, reject){
 		emajax({
@@ -152,6 +186,7 @@ module.exports = {
 	getToken: getToken,
 	getProjectId: getProjectId,
 	createTicket: createTicket,
+	getNoteCategories: getNoteCategories,
 
 	update: function(cfg){
 		config = cfg;

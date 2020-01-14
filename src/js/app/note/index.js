@@ -2,7 +2,6 @@ require("underscore");
 
 var utils = require("@/common/utils");
 var uikit = require("../pages/main/uikit");
-var profile = require("@/app/tools/profile");
 var api = require("./api");
 var Selector = require("../pages/main/uikit/selector");
 
@@ -86,7 +85,7 @@ function _createTicket(){
 	]).then(function(result){
 		var token = result[0];
 		var projectId = result[1];
-		var sessionId = profile.currentOfficialAccount.sessionId || "";
+		var sessionId = config.sessionId || "";
 
 		api.createTicket({
 			token: token,
@@ -127,7 +126,7 @@ function _writePreDate(preData){
 	mail.value = preData.mail || "";
 }
 
-utils.getDataByPath(profile, "grayList.noteCategory") && _getCategories();
+config.grayNoteCategory && _getCategories();
 config.preData && _writePreDate(config.preData);
 // 留言
 utils.on(confirmBtn, "click", function(){
