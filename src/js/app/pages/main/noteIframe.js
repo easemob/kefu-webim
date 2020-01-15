@@ -1,8 +1,9 @@
 var utils = require("@/common/utils");
+var profile = require("@/app/tools/profile");
 
 var NOTE_HTML_PATH = __("config.language") === "zh-CN" ? "/note.html" : "/en-US/note.html";
 
-function Iframe(config, profile){
+function Iframe(config){
 	var id = "easemob-iframe-note";
 	var className = "easemobim-note-panel";
 	var iframe = document.createElement("iframe");
@@ -19,8 +20,9 @@ function Iframe(config, profile){
 		user: config.user,
 		toUser: config.toUser,
 		appKey: config.appKey,
-		grayNoteCategory: utils.getDataByPath(profile, "grayList.noteCategory"),
-		sessionId: utils.getDataByPath(profile, "currentOfficialAccount.sessionId")
+		grayNoteCategory: false,
+		sessionId: "",
+		hideCloseBtn: false
 	};
 	
 	iframe.frameBorder = 0;
@@ -45,6 +47,10 @@ Iframe.prototype.open = function(config){
 	var iframeSrc = "";
 	if(this.show) return this;
 	this.show = true;
+	this.noteConfig = _.extend({}, this.noteConfig, {
+		grayNoteCategory: utils.getDataByPath(profile, "grayList.noteCategory"),
+		sessionId: utils.getDataByPath(profile, "currentOfficialAccount.sessionId")
+	});
 	config = _.extend({}, this.noteConfig, config);
 	if(config.hideCloseBtn || !this.globalConfig.noteSrc){
 		me.iframe.style.height = "100%";
@@ -54,7 +60,6 @@ Iframe.prototype.open = function(config){
 	utils.on(this.iframe, "load", function(){
 		utils.removeClass(me.noteWrapper, "hide");
 	});
-	
 	base64 = encodeURIComponent(JSON.stringify(config));
 	base64 = window.btoa
 		? window.btoa(base64)

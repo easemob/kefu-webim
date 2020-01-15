@@ -922,9 +922,6 @@ function _show(){
 function _onReady(){
 	if(isMessageChannelReady) return;
 
-	// 初始化留言,在这可以获取到 profile 参数
-	_initNote();
-
 	isMessageChannelReady = true;
 
 	doms.sendBtn.innerHTML = __("chat.send");
@@ -998,6 +995,8 @@ function _init(){
 	profile.isChatWindowOpen = true;
 	_initSoundReminder();
 	_initUI();
+	// 初始化留言
+	_initNote();
 	_bindEvents();
 	initSessionList();
 	_initSession();
@@ -1013,7 +1012,7 @@ function _init(){
 function _initNote(){
 	var data;
 	var closeNoteBtn = document.querySelector(".em-kefu-webim-note .note-top");
-	noteIframe = new NoteIframe(config, profile);
+	noteIframe = new NoteIframe(config);
 	if(window.addEventListener){
 		window.addEventListener("message", function(e){
 			closeNoteIframe(e);
