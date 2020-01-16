@@ -1160,6 +1160,14 @@ function getOptForManualMenuGuide(){
 	});
 }
 
+function getlaiyeHtml(url){
+	return emajax({
+		url: url,
+		type: "GET",
+		async: false
+	});
+}
+
 module.exports = {
 	getGrayList: getGrayList,
 	getToken: getToken,
@@ -1211,7 +1219,7 @@ module.exports = {
 	// opts
 	getOptForShowTrackMsg: getOptForShowTrackMsg,
 	getOptForManualMenuGuide: getOptForManualMenuGuide,
-
+	getlaiyeHtml: getlaiyeHtml,
 
 	update: function(cfg){
 		config = cfg;

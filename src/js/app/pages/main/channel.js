@@ -66,9 +66,13 @@ module.exports = {
 	// todo: move this to message view
 	handleHistoryMsg: function(element){
 		var textMessage = utils.getDataByPath(element, "body.bodies.0.msg");
+		var titleMessage = utils.getDataByPath(element, "body.ext.msgtype.choice.title");
 		// 后端历史消息转义2次，需要处理
 		if(typeof textMessage === "string"){
 			element.body.bodies[0].msg = textParser.unescape(textParser.unescape(textMessage));
+		}
+		if(typeof titleMessage === "string"){
+			element.body.ext.msgtype.choice.title = textParser.unescape(textParser.unescape(titleMessage));
 		}
 		_handleMessage(_transformMessageFormat(element), { isHistory: true });
 	},
@@ -391,7 +395,8 @@ function _handleMessage(msg, options){
 	var isHistory = opt.isHistory;
 	var eventName = utils.getDataByPath(msg, "ext.weichat.event.eventName");
 	var eventObj = utils.getDataByPath(msg, "ext.weichat.event.eventObj");
-	var msgId = utils.getDataByPath(msg, "ext.weichat.msgId")
+	var msgId = utils.getDataByPath(msg, "ext.weichat.msgId");
+	var laiye = opt.laiye || utils.getDataByPath(msg, "ext.weichat.extRobot.laiye")
 		// 这是自己发出去的消息的 msgId，此为临时修改，在完成 messageBuilder 之后应该就可以去掉了
 		|| utils.getDataByPath(msg, "ext.weichat.msg_id_for_ack");
 	var isReceived = typeof opt.isReceived === "boolean"
@@ -745,11 +750,11 @@ function _handleMessage(msg, options){
 			&& type === "txt"
 			&& eventListener.excuteCallbacks(
 			_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
-			[
-				targetOfficialAccount,
-				marketingTaskId,
-				msg
-			]
+				[
+					targetOfficialAccount,
+					marketingTaskId,
+					msg
+				]
 		);
 
 		if(eventName){
@@ -786,6 +791,8 @@ function _handleMessage(msg, options){
 	message.id = msgId;
 
 	// 消息上屏
+	
+	message.laiye = laiye;
 	_appendMsg(message, {
 		isReceived: isReceived,
 		isHistory: isHistory,
