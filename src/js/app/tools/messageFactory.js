@@ -4,6 +4,7 @@ var commonConfig = require("@/common/config");
 var profile = require("./profile");
 var textParser = require("./textParser");
 var moment = require("moment");
+var apiHelper = require("../pages/main/apis");
 
 var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com__WEBIM_SLASH_KEY_PATH__/webim/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
 
@@ -11,6 +12,7 @@ var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easem
 function genMsgContent(msg){
 	var type = msg.type;
 	var value = msg.data;
+	var laiye = msg.laiye;
 	var relatedRules;
 	var html = "";
 	var msgContent;
@@ -20,12 +22,20 @@ function genMsgContent(msg){
 
 	switch(type){
 	case "txt":
-		value = textParser.parse(value);
-		// 历史消息以及收到的实时消息
-		html = "<span class=\"text\">" + _.map(value, function(fragment){
-			return fragment.value;
-		}).join("") + "</span>";
-		break;
+
+		if(laiye){
+			html = "<span class=\"text\">" + value + "</span>";
+			break;
+		}
+		else{
+			value = textParser.parse(value);
+			// 历史消息以及收到的实时消息
+			html = "<span class=\"text\">" + _.map(value, function(fragment){
+				return fragment.value;
+			}).join("") + "</span>";
+			break;
+		}
+		
 	case "txtLink":
 		html = value;
 		break;
@@ -45,10 +55,19 @@ function genMsgContent(msg){
 		break;
 	// 这个消息类型包含了很多子类型
 	case "list":
-		value = textParser.parse(value);
-		value = _.map(value, function(fragment){ return fragment.value; }).join("");
-		html = "<p>" + value + "</p>" + msg.list;
-		break;
+
+		if(laiye){
+			html = "<p>" + value + "</p>" + msg.list;
+			break;
+		}
+		else{
+			value = textParser.parse(value);
+			value = _.map(value, function(fragment){ return fragment.value; }).join("");
+			html = "<p>" + value + "</p>" + msg.list;
+			break;
+		}
+
+		
 	case "file":
 		// 历史会话中 filesize = 0
 		// 访客端发文件消息 filesize = undefined
@@ -216,7 +235,46 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	// .em-widget-msg-* used here
 	html += "<div class=\"em-widget-msg-container em-widget-msg-" + type + "\">";
 	// 消息内容
-	html += genMsgContent(msg);
+
+
+	var data = msg.data;
+	var laiye = msg.laiye;
+	var laiyeType;
+	if(laiye && isJsonString(data) && (msg.type == "txt" || msg.type == "list")){
+		data = JSON.parse(data);
+		laiyeType = msg.type;
+		data.forEach(function(item){
+			msg.data = item.content;
+			if(item.type == "text"){
+				msg.type = "txt";
+			}
+			else if(item.type == "image"){
+				msg.type = "img";
+				msg.url = item.content;
+			}
+			else if(item.type == "richtext"){
+		
+				var articleDom = apiHelper.getlaiyeHtml(item.content);
+				msg.data = articleDom.response;
+				msg.type = "txt";
+			}
+			else{
+				msg.type = item.type;
+			}
+
+			msg.laiye = laiye;
+
+			html += genMsgContent(msg);
+		});
+
+		if(laiyeType == "list"){
+			html += msg.list;
+		}
+	}
+	else{
+		html += genMsgContent(msg);
+	}
+	
 
 	// container 结束
 	html += "</div>";
@@ -239,6 +297,17 @@ function genDomFromMsg(msg, isReceived, isHistory){
 
 	dom.innerHTML = html;
 	return dom;
+}
+
+function isJsonString(str){
+	try{
+		if(typeof JSON.parse(str) == "object"){
+			return true;
+		}
+	}
+	catch(e){
+	}
+	return false;
 }
 
 module.exports = genDomFromMsg;

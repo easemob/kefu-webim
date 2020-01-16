@@ -285,6 +285,8 @@
 		}
 		// 文本消息
 		span.text {
+			display: inline-block;
+			padding: 10px;
 			word-break: break-word;
 			white-space: pre-wrap;
 		}
@@ -405,6 +407,11 @@
 			}
 		}
 	}
+	.em-widget-msg-txt{
+		span.text{
+			padding: 0;
+		}
+	}
 	// 菜单消息
 	.em-widget-msg-list {
 		overflow: hidden;
@@ -414,6 +421,11 @@
 		>p {
 			padding: 10px;
 			background-color: white;
+			word-break: break-word; 
+			white-space: pre-wrap;
+		}
+		span.text{
+			background: #fff;
 		}
 	}
 	.em-widget-msg-html-form{

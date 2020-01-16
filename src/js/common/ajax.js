@@ -24,6 +24,7 @@ module.exports = function(options){
 	var xhr = _createStandardXHR() || _createActiveXHR();
 	var type = options.type || "GET";
 	var data = options.data || {};
+	var async = options.async;
 	var tempData = "";
 	var headers = options.headers || {};
 	var isFileUpload = options.isFileUpload;
@@ -79,7 +80,8 @@ module.exports = function(options){
 	else{
 		data = JSON.stringify(data);
 	}
-	xhr.open(type, options.url);
+	
+	xhr.open(type, options.url, async);
 	if(xhr.setRequestHeader){
 		headers["Content-Type"] = headers["Content-Type"] || "application/json";
 

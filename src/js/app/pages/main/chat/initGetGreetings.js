@@ -24,6 +24,7 @@ function _getGreetings(officialAccount){
 
 		var greetingTextType = robotGreetingObj.greetingTextType;
 		var greetingText = robotGreetingObj.greetingText;
+		var laiye = robotGreetingObj.laiye;
 		var greetingObj = {};
 
 		// 系统欢迎语
@@ -33,7 +34,6 @@ function _getGreetings(officialAccount){
 			type: "txt",
 			noPrompt: true
 		});
-
 		// 机器人欢迎语
 		switch(greetingTextType){
 		case 0:
@@ -42,7 +42,8 @@ function _getGreetings(officialAccount){
 				data: greetingText,
 			}, {
 				type: "txt",
-				noPrompt: true
+				noPrompt: true,
+				laiye: laiye
 			});
 			break;
 		case 1:
@@ -53,7 +54,8 @@ function _getGreetings(officialAccount){
 				ext: greetingObj.ext,
 			}, {
 				type: "txt",
-				noPrompt: true
+				noPrompt: true,
+				laiye: laiye
 			});
 			break;
 		case 2:
@@ -61,7 +63,7 @@ function _getGreetings(officialAccount){
 			// 适配后端有转义两次／三次的情况
 			greetingObj = JSON.parse(greetingText.replace(/&amp;amp;quot;|&amp;quot;/g, "\""));
 			greetingObj.url = commonConfig.getConfig().domain + greetingObj.urlPath;
-			channel.handleMessage(greetingObj, { type: "img", noPrompt: true });
+			channel.handleMessage(greetingObj, { type: "img", noPrompt: true, laiye: laiye });
 			break;
 		case undefined:
 			// 未设置机器人欢迎语
