@@ -395,8 +395,8 @@ function _handleMessage(msg, options){
 	var isHistory = opt.isHistory;
 	var eventName = utils.getDataByPath(msg, "ext.weichat.event.eventName");
 	var eventObj = utils.getDataByPath(msg, "ext.weichat.event.eventObj");
-	var msgId = utils.getDataByPath(msg, "ext.weichat.msgId");
-	var laiye = opt.laiye || utils.getDataByPath(msg, "ext.weichat.extRobot.laiye")
+	var laiye = opt.laiye || utils.getDataByPath(msg, "ext.weichat.extRobot.laiye");
+	var msgId = utils.getDataByPath(msg, "ext.weichat.msgId")
 		// 这是自己发出去的消息的 msgId，此为临时修改，在完成 messageBuilder 之后应该就可以去掉了
 		|| utils.getDataByPath(msg, "ext.weichat.msg_id_for_ack");
 	var isReceived = typeof opt.isReceived === "boolean"
