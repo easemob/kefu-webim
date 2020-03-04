@@ -17,7 +17,6 @@ var service;
 var currentStream;
 var currentNoAudioStream;
 var currentOwnerName;
-var fullScreenButtonDom;
 
 module.exports = {
 	init: init,
@@ -39,8 +38,6 @@ function init(option){
 	noAudioVideoDom = wrapperDom.querySelector(".no-audio-video");
 	nicknameDom = wrapperDom.querySelector(".nickname");
 	returnButtonDom = wrapperDom.querySelector(".return-to-multi-video");
-	fullScreenButtonDom = wrapperDom.querySelector(".full-screen-multi-video");
-
 	toggleMicroPhoneButtonDom = wrapperDom.querySelector(".toggle-microphone-btn");
 	toggleCameraButtonDom = wrapperDom.querySelector(".toggle-carema-btn");
 
@@ -48,17 +45,12 @@ function init(option){
 	dispatcher.addEventListener("removeStream", _removeStream);
 
 	utils.on(returnButtonDom, "click", _returnToMultivideo);
-	utils.on(fullScreenButtonDom, "click", _fullScreenButtonDom);
 	utils.on(toggleMicroPhoneButtonDom, "click", _toggleMicroPhone);
 	utils.on(toggleCameraButtonDom, "click", _toggleCarema);
 }
 
 function _returnToMultivideo(){
 	dispatcher.trigger("returnToMultiVideoWindow");
-}
-
-function _fullScreenButtonDom(){
-	dispatcher.trigger("fullScreenMultiVideoWindow");
 }
 
 function _toggleMicroPhone(){

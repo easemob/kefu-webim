@@ -40,12 +40,6 @@ function init(option){
 		videoViewer.hide();
 	});
 
-	dispatcher.addEventListener("fullScreenMultiVideoWindow", function(){
-		var h = document.body.clientHeight;
-		utils.addClass(singleVideoContainer, "fullScreen");
-		singleVideoContainer.style.height = h - 129 + "px";
-	});
-
 	_reset();
 }
 
