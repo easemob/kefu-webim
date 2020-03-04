@@ -23,6 +23,8 @@ function _move(ctx, ev){
 	var e = window.event || ev;
 	var _width = document.documentElement.clientWidth;
 	var _height = document.documentElement.clientHeight;
+	ctx.rect.width = parseInt(ctx.iframe.style.width.slice(0, -2));
+	ctx.rect.height = parseInt(ctx.iframe.style.height.slice(0, -2));
 	var _x = _width - e.clientX - ctx.rect.width + _startPosition.x;
 	var _y = _height - e.clientY - ctx.rect.height + _startPosition.y;
 
@@ -301,7 +303,8 @@ function Iframe(config){
 }
 
 Iframe.prototype.set = function(config, callback){
-	var shadowBackgroundImage = this.config.staticPath + "/img/drag.png";
+	var shadowBackgroundColor = "rgba(255,255,255,.4)";
+
 
 	this.config = utils.copy(config || this.config);
 
@@ -319,7 +322,7 @@ Iframe.prototype.set = function(config, callback){
 	utils.toggleClass(this.iframe, "easemobim-hide", this.config.hide);
 
 	this.iframe.src = config.path + IM_HTML_PATH + "?v=__WEBIM_PLUGIN_VERSION__";
-	this.shadow && (this.shadow.style.backgroundImage = "url(" + shadowBackgroundImage + ")");
+	this.shadow && (this.shadow.style.backgroundColor = shadowBackgroundColor);
 
 	this.ready = callback;
 	titleSlide.enable = config.titleSlide;
