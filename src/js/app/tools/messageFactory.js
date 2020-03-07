@@ -185,7 +185,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 						str = "<div class=\"article-item rest-item\">" +
 						"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
 					}
-					str += "<img class=\"cover-img\" src=\"" + item.thumbUrl + "\"/>" +
+					str += "<img class=\"cover-img\" src=\"" + item.picurl + "\"/>" +
 						// "<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
 						"<div class=\"article-link\"><span>" + item.url + "</span></div>" +
 						"</div>";
