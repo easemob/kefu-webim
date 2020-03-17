@@ -749,13 +749,13 @@ function _handleMessage(msg, options){
 		marketingTaskId
 			&& type === "txt"
 			&& eventListener.excuteCallbacks(
-			_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
+				_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
 				[
 					targetOfficialAccount,
 					marketingTaskId,
 					msg
 				]
-		);
+			);
 
 		if(eventName){
 			_handleSystemEvent(eventName, eventObj, msg);
@@ -791,15 +791,61 @@ function _handleMessage(msg, options){
 	message.id = msgId;
 
 	// 消息上屏
-	
+
 	message.laiye = laiye;
-	_appendMsg(message, {
-		isReceived: isReceived,
-		isHistory: isHistory,
-		officialAccount: targetOfficialAccount,
-		timestamp: msg.timestamp,
-		noPrompt: noPrompt,
-	});
+	var tenantId = config.tenantId;
+	var data = message.data;
+	// 51talk 单独判断 来也机器人多条消息逐条展示
+	if(tenantId == "6437" && laiye && message.type == "list"){
+		data = JSON.parse(data);
+		// data = [{
+		// 	type: "text",
+		// 	content: "测试1"
+		// }, {
+		// 	type: "text",
+		// 	content: "测试2"
+		// }, {
+		// 	type: "text",
+		// 	content: "测试3"
+		// }];
+		data.forEach(function(item){
+			var arr = [item];
+			message.data = JSON.stringify(arr);
+
+			if(item.type == "text"){
+				message.type = "txt";
+			}
+			else if(item.type == "image"){
+				message.type = "img";
+				message.url = item.content;
+			}
+			else if(item.type == "richtext"){
+				var articleDom = apiHelper.getlaiyeHtml(item.content);
+				message.data = articleDom.response;
+				message.type = "txt";
+			}
+			else{
+				message.type = item.type;
+			}
+
+			_appendMsg(message, {
+				isReceived: isReceived,
+				isHistory: isHistory,
+				officialAccount: targetOfficialAccount,
+				timestamp: msg.timestamp,
+				noPrompt: noPrompt,
+			});
+		});
+	}
+	else{
+		_appendMsg(message, {
+			isReceived: isReceived,
+			isHistory: isHistory,
+			officialAccount: targetOfficialAccount,
+			timestamp: msg.timestamp,
+			noPrompt: noPrompt,
+		});
+	}
 
 	// 是否发送解决未解决 msg.ext.extRobot.satisfactionCommentInvitation
 	if(satisfactionCommentInvitation && !isHistory){
