@@ -336,6 +336,8 @@ function getDutyStatus(){
 }
 
 function getRobertGreeting(){
+	var referer = parseReferer(document.referrer);
+	var keyword = referer.word || referer.wd;
 	return new Promise(function(resolve, reject){
 		api("getRobertGreeting_2", {
 			channelType: "easemob",
@@ -343,7 +345,8 @@ function getRobertGreeting(){
 			channelId: config.channelId,
 			tenantId: config.tenantId,
 			agentUsername: config.agentName,
-			queueName: encodeURIComponent(config.emgroup)
+			queueName: encodeURIComponent(config.emgroup),
+			keyword: keyword || ""
 		}, function(msg){
 			resolve(msg.data.entity || {});
 		}, function(err){
@@ -1166,6 +1169,30 @@ function getlaiyeHtml(url){
 		type: "GET",
 		async: false
 	});
+}
+
+function parseReferer(ref){
+	var i;
+	var len;
+	var idx;
+	var tmp = [];
+	var referer = {};
+	var arr;
+	var elementA;
+	if(!ref){
+		return {};
+	}
+	ref = utils.decode(ref);
+	elementA = document.createElement("a");
+	elementA.href = ref;
+	idx = ref.indexOf("?");
+	referer.domain = elementA.origin;
+	arr = ref.slice(idx + 1).split("&");
+	for(i = 0, len = arr.length; i < len; i++){
+		tmp = arr[i].split("=");
+		referer[tmp[0]] = tmp.length > 1 ? tmp[1] : "";
+	}
+	return referer;
 }
 
 module.exports = {
