@@ -793,25 +793,24 @@ function _handleMessage(msg, options){
 	// 消息上屏
 
 	message.laiye = laiye;
-	var tenantId = config.tenantId;
 	var data = message.data;
-	// 51talk 单独判断 来也机器人多条消息逐条展示
-	if(tenantId == "6437" && laiye && message.type == "list"){
+	// 来也机器人多条消息逐条展示
+	if(profile.grayList.multipleMsgOneByOne && laiye){
 		data = JSON.parse(data);
 		// data = [{
 		// 	type: "text",
 		// 	content: "测试1"
 		// }, {
-		// 	type: "text",
+		// 	type: "image",
 		// 	content: "测试2"
 		// }, {
-		// 	type: "text",
+		// 	type: "richtext",
 		// 	content: "测试3"
 		// }];
-		data.forEach(function(item){
+		console.log(data);
+		data.forEach(function(item, index){
 			var arr = [item];
 			message.data = JSON.stringify(arr);
-
 			if(item.type == "text"){
 				message.type = "txt";
 			}
@@ -826,6 +825,10 @@ function _handleMessage(msg, options){
 			}
 			else{
 				message.type = item.type;
+			}
+			// 如果有菜单
+			if(message.list){
+				message.multipleMsgOneByOne = true;
 			}
 
 			_appendMsg(message, {

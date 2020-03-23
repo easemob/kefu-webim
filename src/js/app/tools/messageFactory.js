@@ -293,7 +293,9 @@ function genDomFromMsg(msg, isReceived, isHistory){
 
 			html += genMsgContent(msg);
 		});
-
+		if(msg.multipleMsgOneByOne){
+			html += msg.list;
+		}
 		if(laiyeType == "list"){
 			html += msg.list;
 		}
