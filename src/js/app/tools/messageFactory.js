@@ -13,6 +13,7 @@ function genMsgContent(msg){
 	var type = msg.type;
 	var value = msg.data;
 	var laiye = msg.laiye;
+	var rulai = msg.rulai;
 	var relatedRules;
 	var html = "";
 	var msgContent;
@@ -22,8 +23,13 @@ function genMsgContent(msg){
 
 	switch(type){
 	case "txt":
-
-		if(laiye){
+		if(profile.grayList.rulaiRobotRichText && rulai){
+			html = "<span class=\"text\">";
+			html += value;
+			html += "</span>";
+			break;
+		}
+		else if(laiye){
 			html = "<span class=\"text\">" + value + "</span>";
 			break;
 		}
@@ -35,7 +41,7 @@ function genMsgContent(msg){
 			}).join("") + "</span>";
 			break;
 		}
-		
+
 	case "txtLink":
 		html = value;
 		break;
@@ -55,8 +61,14 @@ function genMsgContent(msg){
 		break;
 	// 这个消息类型包含了很多子类型
 	case "list":
-
-		if(laiye){
+		if(profile.grayList.rulaiRobotRichText && rulai){
+			html = "<span class=\"text\">";
+			html += value;
+			html += "</span>";
+			html += msg.list;
+			break;
+		}
+		else if(laiye){
 			html = "<p>" + value + "</p>" + msg.list;
 			break;
 		}
@@ -67,7 +79,7 @@ function genMsgContent(msg){
 			break;
 		}
 
-		
+
 	case "file":
 		// 历史会话中 filesize = 0
 		// 访客端发文件消息 filesize = undefined
@@ -123,7 +135,7 @@ function genMsgContent(msg){
 		relatedRuleIds = relatedRules.relatedRuleIds;
 		html += "<div class=\"em-btn-list\">" + _.map(msg.ext.relatedRules.questions, function(question, index){ return "<button class=\"js_robotRelateListbtn bg-hover-color\" data-ruleId=" + ruleId + " data-answerId=" + answerId + " data-relatedRuleId=" + relatedRuleIds[index] + ">" + question + "</button>";}).join("") || "";
 	}
-	
+
 	return html;
 }
 
@@ -145,6 +157,10 @@ function _getAvatar(msg){
 	}
 
 	return avatar || profile.tenantAvatar || profile.defaultAvatar;
+}
+// "For <strong><em>account </em></strong>related issues, choose one of these topics, or briefly describe what you need."
+function _getRulaiHtml(content){
+
 }
 
 function genDomFromMsg(msg, isReceived, isHistory){
@@ -240,7 +256,18 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	var data = msg.data;
 	var laiye = msg.laiye;
 	var laiyeType;
-	if(laiye && isJsonString(data) && (msg.type == "txt" || msg.type == "list")){
+	// 如来机器人，支持富文本展示
+	if(profile.grayList.rulaiRobotRichText && isJsonString(data)){
+		data = JSON.parse(data);
+		data.forEach(function(item){
+			if(item.type == "richText"){
+				msg.data = item.content;
+				msg.rulai = true;
+				html += genMsgContent(msg);
+			}
+		});
+	}
+	else if(laiye && isJsonString(data) && (msg.type == "txt" || msg.type == "list")){
 		data = JSON.parse(data);
 		laiyeType = msg.type;
 		data.forEach(function(item){
@@ -253,7 +280,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 				msg.url = item.content;
 			}
 			else if(item.type == "richtext"){
-		
+
 				var articleDom = apiHelper.getlaiyeHtml(item.content);
 				msg.data = articleDom.response;
 				msg.type = "txt";
@@ -274,7 +301,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	else{
 		html += genMsgContent(msg);
 	}
-	
+
 
 	// container 结束
 	html += "</div>";

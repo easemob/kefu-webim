@@ -1078,6 +1078,16 @@ function _getOfficialAccountById(id){
 }
 
 function _appendMsg(msg, options){
+	// 灰度打开时，访客收到菜单消息后，如果访客又发送了新消息，则菜单置灰不可再点选
+	if(profile.grayList.rulaiRobotRichText){
+		// 所有的 list 子类消息
+		var allListBtn1 = document.querySelectorAll(".msgtype-robotList .em-btn-list button");
+		var all = _.toArray(allListBtn1);
+		_.each(all, function(robotBtn){
+			utils.addClass(robotBtn, "disabled");
+		});
+	}
+
 	var opt = options || {};
 	var isReceived = opt.isReceived;
 	var isHistory = opt.isHistory;
