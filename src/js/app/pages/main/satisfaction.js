@@ -21,6 +21,9 @@ var invite;
 var score;
 var evaluationDegreeId;
 var isSingleTag;
+var resolvedDom;
+var resolveTip;
+var resolvedId = 1;
 var _initOnce = _.once(_init);
 
 module.exports = {
@@ -30,10 +33,13 @@ module.exports = {
 
 function _init(){
 	loading.show("satisfaction");
+	apiHelper.getEvaluteSolveWord().then(function(tip){
+		resolveTip = tip;
+	});
 	apiHelper.getSatisfactionTipWord().then(function(tipWord){
 		dom = utils.createElementFromHTML([
 			"<div class=\"wrapper\">",
-			"<div class=\"resolveCon\"><span class=\"title\">问题解决评价引导语？</span>",
+			"<div class=\"resolveCon\"><span class=\"title\">" + resolveTip + "</span>",
 			"<div><span class=\"resolve-btn selected resolved\" data-num = \"1\"><i class=\"icon-resolved\"></i>已解决</span>",
 			"<span class=\"resolve-btn unresolved\" data-num = \"2\"><i class=\"icon-unresolved\"></i>未解决</span></div></div>",
 			"<span class=\"title\">" + tipWord + "</span>",
@@ -46,11 +52,12 @@ function _init(){
 		commentDom = dom.querySelector("textarea");
 		tagContainer = dom.querySelector(".tag-container");
 		resolvedBtn = dom.querySelectorAll(".resolve-btn");
+		resolvedDom = dom.querySelector(".resolved");
 
 		utils.live(".resolve-btn", "click", function(){
 			utils.removeClass(resolvedBtn, "selected");
 			utils.addClass(this, "selected");
-			console.log(this.dataset.num);
+			resolvedId = this.dataset.num;
 		});
 
 		utils.live("li", "click", function(){
@@ -98,9 +105,14 @@ function _clear(){
 	utils.removeClass(starList, "sel");
 	// clear label
 	tagContainer.innerHTML = "";
+	// clear resolvedBtn
+	utils.removeClass(resolvedBtn, "selected");
+	utils.addClass(resolvedDom, "selected");
+	resolvedId = 1;
+
 }
 
-function _sendSatisfaction(score, content, session, invite, appraiseTags, evaluationDegreeId){
+function _sendSatisfaction(score, content, session, invite, appraiseTags, resolutionParam, evaluationDegreeId){
 	channel.sendText("", {
 		ext: {
 			weichat: {
@@ -112,6 +124,7 @@ function _sendSatisfaction(score, content, session, invite, appraiseTags, evalua
 					detail: content,
 					summary: score,
 					appraiseTags: appraiseTags,
+					resolutionParam: resolutionParam,
 					evaluationDegreeId: evaluationDegreeId,
 				}
 			}
@@ -167,6 +180,12 @@ function _confirm(){
 			name: elem.innerText
 		};
 	});
+	var resolutionParam = [{
+		id: resolvedId,
+		name: resolvedId == 1 ? "已解决" : "未解决",
+		score: resolvedId,
+		resolutionParamTags: []
+	}];
 
 	// 必须选择星级
 	if(!score){
@@ -181,7 +200,7 @@ function _confirm(){
 		return false;
 	}
 
-	_sendSatisfaction(score, content, session, invite, appraiseTags, evaluationDegreeId);
+	_sendSatisfaction(score, content, session, invite, appraiseTags, resolutionParam, evaluationDegreeId);
 	uikit.showSuccess(__("evaluation.submit_success"));
 	_clear();
 }
