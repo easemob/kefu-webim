@@ -802,30 +802,14 @@ function _handleMessage(msg, options){
 		// 	content: "测试1"
 		// }, {
 		// 	type: "image",
-		// 	content: "测试2"
+		// 	content: "http://www.163.com/hello.png"
 		// }, {
 		// 	type: "richtext",
-		// 	content: "测试3"
+		// 	content: "http://www.laiye.com/demo.html"
 		// }];
-		console.log(data);
-		data.forEach(function(item, index){
+		data.forEach(function(item){
 			var arr = [item];
 			message.data = JSON.stringify(arr);
-			if(item.type == "text"){
-				message.type = "txt";
-			}
-			else if(item.type == "image"){
-				message.type = "img";
-				message.url = item.content;
-			}
-			else if(item.type == "richtext"){
-				var articleDom = apiHelper.getlaiyeHtml(item.content);
-				message.data = articleDom.response;
-				message.type = "txt";
-			}
-			else{
-				message.type = item.type;
-			}
 			// 如果有菜单
 			if(message.list){
 				message.multipleMsgOneByOne = true;
