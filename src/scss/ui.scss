@@ -200,54 +200,6 @@
 			width: 95%;
 			max-width: 400px;
 			margin: auto;
-			.resolveCon{
-				margin-bottom:15px;
-				>div{
-					width: 305px;
-					margin: 0 auto;
-				}
-				.title{
-					margin-bottom:15px;
-				}
-				.resolved{
-    				margin-right: 40px;
-					i{
-						margin-right: 8px;
-					    position: relative;
-					    top: -2px;
-					}
-				}
-				.unresolved{
-					i{
-						margin-right: 8px;
-						position: relative;
-						top:1px;
-					}
-				}
-				.resolved,.unresolved{
-					text-align: center;
-				    display: inline-block;
-				    width: 130px;
-				    height: 40px;
-				    line-height: 40px;
-				    font-size: 15px;
-				    border-radius: 5px;
-					border:1px solid #ccc;
-					cursor:pointer;
-					i{color:#666}
-				}
-				.selected{
-					background: #1ba8ed;
-					border:1px solid #1ba8ed;
-				    color: #fff;
-					i{color:#fff}
-				}
-				i{
-					margin-right: 8px;
-				    position: relative;
-				    top: -2px;
-				}
-			}
 			.title{
 				font-size: 14px;
 				display: inline-block;
