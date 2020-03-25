@@ -289,16 +289,17 @@ function genDomFromMsg(msg, isReceived, isHistory){
 			}
 			msg.laiye = laiye;
 			html += genMsgContent(msg);
-			if(item.multipleMsgOneByOne){
-				html += msg.list;
-			}
+			
 		});
-		if(laiyeType == "list" && !msg.multipleMsgOneByOne){
+		if(laiyeType == "list" || msg.multipleMsgOneByOne){
 			html += msg.list;
 		}
 	}
 	else{
 		html += genMsgContent(msg);
+		if(msg.multipleMsgOneByOne){
+			html += msg.list;
+		}
 	}
 
 
