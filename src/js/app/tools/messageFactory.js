@@ -280,7 +280,6 @@ function genDomFromMsg(msg, isReceived, isHistory){
 				msg.url = item.content;
 			}
 			else if(item.type == "richtext"){
-
 				var articleDom = apiHelper.getlaiyeHtml(item.content);
 				msg.data = articleDom.response;
 				msg.type = "txt";
@@ -288,15 +287,13 @@ function genDomFromMsg(msg, isReceived, isHistory){
 			else{
 				msg.type = item.type;
 			}
-
 			msg.laiye = laiye;
-
 			html += genMsgContent(msg);
+			if(item.multipleMsgOneByOne){
+				html += msg.list;
+			}
 		});
-		if(msg.multipleMsgOneByOne){
-			html += msg.list;
-		}
-		if(laiyeType == "list"){
+		if(laiyeType == "list" && !msg.multipleMsgOneByOne){
 			html += msg.list;
 		}
 	}

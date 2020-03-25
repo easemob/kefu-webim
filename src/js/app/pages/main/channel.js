@@ -797,24 +797,18 @@ function _handleMessage(msg, options){
 	// 来也机器人多条消息逐条展示
 	if(profile.grayList.multipleMsgOneByOne && laiye){
 		data = JSON.parse(data);
-		// data = [{
-		// 	type: "text",
-		// 	content: "测试1"
-		// }, {
-		// 	type: "image",
-		// 	content: "http://www.163.com/hello.png"
-		// }, {
-		// 	type: "richtext",
-		// 	content: "http://www.laiye.com/demo.html"
-		// }];
-		data.forEach(function(item){
+		var length = data.length;
+		data.forEach(function(item, index){
+			// 如果有菜单
+			if(message.list && index == (length - 1)){
+				item.multipleMsgOneByOne = true;
+			}
+			else{
+				item.multipleMsgOneByOne = false;
+			}
 			var arr = [item];
 			message.data = JSON.stringify(arr);
-			// 如果有菜单
-			if(message.list){
-				message.multipleMsgOneByOne = true;
-			}
-
+			message.multipleMsgOneByOne = true;
 			_appendMsg(message, {
 				isReceived: isReceived,
 				isHistory: isHistory,
@@ -1066,7 +1060,8 @@ function _getOfficialAccountById(id){
 
 function _appendMsg(msg, options){
 	// 灰度打开时，访客收到菜单消息后，如果访客又发送了新消息，则菜单置灰不可再点选
-	if(profile.grayList.rulaiRobotRichText){
+	var msgType = utils.getDataByPath(msg, "ext.weichat.official_account.type");
+	if(profile.grayList.rulaiRobotRichText && msgType !== "SYSTEM"){
 		// 所有的 list 子类消息
 		var allListBtn1 = document.querySelectorAll(".msgtype-robotList .em-btn-list button");
 		var all = _.toArray(allListBtn1);
