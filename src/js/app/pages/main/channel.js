@@ -797,11 +797,34 @@ function _handleMessage(msg, options){
 	// 来也机器人多条消息逐条展示
 	if(profile.grayList.multipleMsgOneByOne && laiye){
 		data = JSON.parse(data);
-		
+		// data = [{
+		// 	type: "text",
+		// 	content: "测试1"
+		// }, {
+		// 	type: "text",
+		// 	content: "测试2"
+		// }, {
+		// 	type: "image",
+		// 	content: "https://laiye-im-saas.oss-cn-beijing.aliyuncs.com/richText/df2f5d2e-8f4c-42b6-8fd9-70ab8115fc8f"
+		// }, {
+		// 	type: "richtext",
+		// 	content: "https://laiye-im-saas.oss-cn-beijing.aliyuncs.com/richText/f3df8576-c335-4f93-a4aa-7199c0f5c166.html"
+		// }];
 		var length = data.length;
+		var arr = [];
+		data.forEach(function(item, index){
+			if(item.type == "text" || item.type == "txt"){
+				item.textNum = index;
+				arr.push(index);
+			}
+		});
+		arr.sort(function(a, b){
+			return a - b;
+		});
+		var max = arr[arr.length - 1];
 		data.forEach(function(item, index){
 			// 如果有菜单
-			if(message.list && index == (length - 1)){
+			if(message.list && index == max){
 				item.multipleMsgOneByOne = true;
 			}
 			else{
