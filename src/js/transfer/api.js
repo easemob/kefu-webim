@@ -766,14 +766,6 @@ up2Im.listen(function(msg){
 			excludeData: true,
 		});
 		break;
-	case "getEvaluteSolveWord":
-		emitAjax({
-			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/evaluteSolveWord",
-			type: "GET",
-			msg: msg,
-			excludeData: true,
-		});
-		break;
 	case "getPassword2":
 		emitAjax({
 			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitors/password2"
