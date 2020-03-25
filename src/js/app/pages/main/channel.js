@@ -797,6 +797,7 @@ function _handleMessage(msg, options){
 	// 来也机器人多条消息逐条展示
 	if(profile.grayList.multipleMsgOneByOne && laiye){
 		data = JSON.parse(data);
+		
 		var length = data.length;
 		data.forEach(function(item, index){
 			// 如果有菜单
@@ -808,6 +809,21 @@ function _handleMessage(msg, options){
 			}
 			var arr = [item];
 			message.data = JSON.stringify(arr);
+			if(item.type == "text"){
+				message.type = "txt";
+			}
+			else if(item.type == "image"){
+				message.type = "img";
+				message.url = item.content;
+			}
+			else if(item.type == "richtext"){
+				var articleDom = apiHelper.getlaiyeHtml(item.content);
+				message.data = articleDom.response;
+				message.type = "txt";
+			}
+			else{
+				message.type = item.type;
+			}
 			message.multipleMsgOneByOne = true;
 			_appendMsg(message, {
 				isReceived: isReceived,
