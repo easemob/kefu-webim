@@ -412,7 +412,9 @@ function _bindEvents(){
 			var officialAccount = profile.currentOfficialAccount;
 			var sessionId = officialAccount.sessionId;
 			apiHelper.closeChatDialog({ serviceSessionId: sessionId });
-	
+
+			// 弹出评价邀请框
+			satisfaction.show(null, sessionId, "system");
 		});
 
 		// 最小化按钮
