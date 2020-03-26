@@ -57,10 +57,18 @@
 		position: absolute;
 		left: 40px;
 		top: 0;
-		right: 80px;
+		right: 120px;
 		width: auto;
 		height: 100%;
 	}
+
+	.btn-close{
+		float: right;
+		&:hover {
+			cursor: pointer;
+		}
+	}
+
 	.btn-min {
 		position: relative;
 		float: right;
