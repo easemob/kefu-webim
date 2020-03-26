@@ -130,6 +130,16 @@ function _writePreDate(preData){
 
 config.grayNoteCategory && _getCategories();
 config.preData && _writePreDate(config.preData);
+
+
+// 海外用户，不验证手机号格式
+function overseasTest(){
+	if(config.tenantId == "76141"){
+		return !phone.value;
+	}
+	return !phone.value || !(/^1[3456789]\d{9}$/.test(phone.value));
+}
+
 // 留言
 utils.on(confirmBtn, "click", function(){
 	if(isSending){
@@ -138,7 +148,7 @@ utils.on(confirmBtn, "click", function(){
 	else if(!name.value || name.value.length > 140){
 		uikit.tip(__("ticket.invalid_name"));
 	}
-	else if(!phone.value || !(/^1[3456789]\d{9}$/.test(phone.value))){
+	else if(overseasTest()){
 		uikit.tip(__("ticket.invalid_phone"));
 	}
 	else if(!mail.value || mail.value.length > 127){
@@ -158,4 +168,3 @@ utils.on(confirmBtn, "click", function(){
 utils.on(cancelBtn, "click", function(){
 	window.parent.postMessage({ closeNote: true }, "*");
 });
-
