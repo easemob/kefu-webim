@@ -111,11 +111,6 @@ function _initUI(){
 	// 设置联系客服按钮文字
 	document.querySelector(".em-widget-pop-bar").innerText = config.buttonText;
 
-	// 判断灰度 关闭会话框按钮
-	profile.grayList.visitorLeave
-		&& !utils.isTop
-		&& utils.removeClass(doms.closeBtn, "hide");
-
 	// 最小化按钮
 	config.minimum
 		&& !utils.isTop
@@ -406,15 +401,6 @@ function _initOfficialAccount(){
 
 function _bindEvents(){
 	if(!utils.isTop){
-		// 关闭会话框按钮
-		utils.on(doms.closeBtn, "click", function(){
-			// 调用关闭会话框接口记录访客离开
-			var officialAccount = profile.currentOfficialAccount;
-			var sessionId = officialAccount.sessionId;
-			apiHelper.closeChatDialog({ serviceSessionId: sessionId });
-	
-		});
-
 		// 最小化按钮
 		utils.on(doms.minifyBtn, "click", function(){
 			getToHost.send({ event: _const.EVENTS.CLOSE });
@@ -973,7 +959,6 @@ function _getDom(){
 		imChat: document.getElementById("em-kefu-webim-chat"),
 		agentStatusText: topBar.querySelector(".em-header-status-text"),
 		dragBar: topBar.querySelector(".drag-bar"),
-		closeBtn: topBar.querySelector(".btn-close"),
 		minifyBtn: topBar.querySelector(".btn-min"),
 		audioBtn: topBar.querySelector(".btn-audio"),
 		switchKeyboardBtn: topBar.querySelector(".btn-keyboard"),
