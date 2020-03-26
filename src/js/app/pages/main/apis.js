@@ -1197,6 +1197,40 @@ function parseReferer(ref){
 	return referer;
 }
 
+function startKeep(data){
+	return new Promise(function(resolve, reject){
+		Promise.all([
+			getVisitorId(),
+		]).then(function(result){
+			var visitorId = result[0];
+			data.visitorId = visitorId;
+			data.tenantId = config.tenantId;
+			api("startKeep", data, function(msg){
+				// resolve(msg.data);
+			}, function(err){
+				// reject(err);
+			});
+		});
+	});
+}
+
+function closeChatDialog(data){
+	return new Promise(function(resolve, reject){
+		Promise.all([
+			getVisitorId(),
+		]).then(function(result){
+			var visitorId = result[0];
+			data.visitorId = visitorId;
+			data.tenantId = config.tenantId;
+			api("closeChatDialog", data, function(msg){
+				// resolve(msg.data);
+			}, function(err){
+				// reject(err);
+			});
+		});
+	});
+}
+
 module.exports = {
 	getGrayList: getGrayList,
 	getToken: getToken,
@@ -1249,6 +1283,9 @@ module.exports = {
 	getOptForShowTrackMsg: getOptForShowTrackMsg,
 	getOptForManualMenuGuide: getOptForManualMenuGuide,
 	getlaiyeHtml: getlaiyeHtml,
+
+	startKeep: startKeep,
+	closeChatDialog: closeChatDialog,
 
 	update: function(cfg){
 		config = cfg;
