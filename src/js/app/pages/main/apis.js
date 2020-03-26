@@ -14,9 +14,6 @@ var cache = {
 };
 var api = apiHelper.api;
 
-var referer = parseReferer(document.referrer);
-var keyword = referer.word || referer.wd;
-
 function getGrayList(tenantId){
 	return new Promise(function(resolve/* , reject */){
 		api("grayScale", {
@@ -339,7 +336,8 @@ function getDutyStatus(){
 }
 
 function getRobertGreeting(){
-
+	var referer = parseReferer(config.referer);
+	var keyword = referer.word || referer.wd;
 	return new Promise(function(resolve, reject){
 		api("getRobertGreeting_2", {
 			channelType: "easemob",
