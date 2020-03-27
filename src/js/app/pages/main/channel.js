@@ -16,7 +16,6 @@ var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;
 var config;
 var conn;
-var visitorOnlineTimer;
 
 
 // 监听ack的timer, 每条消息启动一个
@@ -750,13 +749,13 @@ function _handleMessage(msg, options){
 		marketingTaskId
 			&& type === "txt"
 			&& eventListener.excuteCallbacks(
-			_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
-			[
-				targetOfficialAccount,
-				marketingTaskId,
-				msg
-			]
-		);
+				_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
+				[
+					targetOfficialAccount,
+					marketingTaskId,
+					msg
+				]
+			);
 
 		if(eventName){
 			_handleSystemEvent(eventName, eventObj, msg);
@@ -1036,7 +1035,6 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.hasReportedAttributes = false;
 		// to topLayer
 		getToHost.send({ event: _const.EVENTS.ONSESSIONCLOSED });
-		profile.grayList.visitorLeave && clearInterval(visitorOnlineTimer);
 		break;
 	case _const.SYSTEM_EVENT.SESSION_OPENED:
 		officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
@@ -1046,14 +1044,6 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.agentAvatar = eventObj.avatar;
 		officialAccount.agentNickname = eventObj.agentUserNiceName;
 		officialAccount.isSessionOpen = true;
-		// 被客服接起
-		// 开启轮询接口
-		if(officialAccount.agentType == "1" && profile.grayList.visitorLeave){
-			clearInterval(visitorOnlineTimer);
-			visitorOnlineTimer = setInterval(function(){
-				apiHelper.startKeep({ serviceSessionId: eventObj.sessionId });
-			}, 3000);
-		}
 		break;
 	case _const.SYSTEM_EVENT.SESSION_CREATED:
 		officialAccount.sessionState = _const.SESSION_STATE.WAIT;
