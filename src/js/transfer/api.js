@@ -870,6 +870,20 @@ up2Im.listen(function(msg){
 			type: "GET",
 		});
 		break;
+	case "startKeep":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/visitors/" + params.visitorId + "/servicesessions/" + params.serviceSessionId + "/keepalive",
+			msg: msg,
+			type: "POST"
+		});
+		break;
+	case "closeChatDialog":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/visitors/" + params.visitorId + "/servicesessions/" + params.serviceSessionId + "/closechat",
+			msg: msg,
+			type: "POST"
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;
