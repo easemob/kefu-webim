@@ -6,7 +6,6 @@ var channel = require("./channel");
 var profile = require("@/app/tools/profile");
 var eventListener = require("@/app/tools/eventListener");
 var loading = require("./uikit/loading");
-var getToHost = require("@/app/common/transfer");
 
 var dom;
 var starsUl;
@@ -26,7 +25,6 @@ var resolvedDom;
 var resolveTip;
 var resolvedId = 1;
 var _initOnce = _.once(_init);
-var evaluateType; // 评价方式
 
 module.exports = {
 	init: init,
@@ -128,8 +126,6 @@ function _sendSatisfaction(score, content, session, invite, appraiseTags, resolu
 					appraiseTags: appraiseTags,
 					resolutionParam: resolutionParam,
 					evaluationDegreeId: evaluationDegreeId,
-					// 评价方式，由前端传入：visitor - 访客主动评价; agent - 坐席邀请; system - 强制邀请,访客点击关闭窗口或会话结束
-					evaluateWay: evaluateType
 				}
 			}
 		}
@@ -206,18 +202,13 @@ function _confirm(){
 
 	_sendSatisfaction(score, content, session, invite, appraiseTags, resolutionParam, evaluationDegreeId);
 	uikit.showSuccess(__("evaluation.submit_success"));
-	// 强制评价点击确定关闭会话框
-	setTimeout(function(){
-		evaluateType === "system" && getToHost.send({ event: _const.EVENTS.CLOSE });
-	}, 2000);
 	_clear();
 }
 
-function show(inviteId, serviceSessionId, evaluateWay){
+function show(inviteId, serviceSessionId){
 	_initOnce();
 	session = serviceSessionId;
 	invite = inviteId;
-	evaluateType = evaluateWay;
 	_setSatisfaction();
 	dialog && dialog.show();
 }
