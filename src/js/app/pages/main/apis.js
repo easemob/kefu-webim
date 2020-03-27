@@ -936,21 +936,6 @@ function getSatisfactionTipWord(){
 	});
 }
 
-function getEvaluteSolveWord(){
-	return new Promise(function(resolve, reject){
-		api("getEvaluteSolveWord", {
-			tenantId: config.tenantId
-		}, function(msg){
-			var tipWord = utils.getDataByPath(msg, "data.entities.0.optionValue") || __("evaluation.rate_my_evalute");
-			resolve(tipWord);
-		}, function(){
-			// 异常时，问题解决评价引导语为默认提示语，无reject
-			var tipWord = __("evaluation.rate_my_evalute");
-			resolve(tipWord);
-		});
-	});
-}
-
 function updateCustomerInfo(data){
 	return new Promise(function(resolve, reject){
 		Promise.all([
@@ -1262,7 +1247,6 @@ module.exports = {
 	getOptForShowTrackMsg: getOptForShowTrackMsg,
 	getOptForManualMenuGuide: getOptForManualMenuGuide,
 	getlaiyeHtml: getlaiyeHtml,
-	getEvaluteSolveWord: getEvaluteSolveWord,
 
 	update: function(cfg){
 		config = cfg;
