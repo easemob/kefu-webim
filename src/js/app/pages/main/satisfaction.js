@@ -9,6 +9,7 @@ var loading = require("./uikit/loading");
 
 var dom;
 var starsUl;
+var resolvedBtn;
 var commentDom;
 var tagContainer;
 var dialog;
@@ -32,6 +33,9 @@ function _init(){
 	apiHelper.getSatisfactionTipWord().then(function(tipWord){
 		dom = utils.createElementFromHTML([
 			"<div class=\"wrapper\">",
+			"<div class=\"resolveCon\"><span class=\"title\">问题解决评价引导语？</span>",
+			"<div><span class=\"resolve-btn selected resolved\" data-num = \"1\"><i class=\"icon-resolved\"></i>已解决</span>",
+			"<span class=\"resolve-btn unresolved\" data-num = \"2\"><i class=\"icon-unresolved\"></i>未解决</span></div></div>",
 			"<span class=\"title\">" + tipWord + "</span>",
 			"<ul></ul>",
 			"<div class=\"tag-container\"></div>",
@@ -41,6 +45,13 @@ function _init(){
 		starsUl = dom.querySelector("ul");
 		commentDom = dom.querySelector("textarea");
 		tagContainer = dom.querySelector(".tag-container");
+		resolvedBtn = dom.querySelectorAll(".resolve-btn");
+
+		utils.live(".resolve-btn", "click", function(){
+			utils.removeClass(resolvedBtn, "selected");
+			utils.addClass(this, "selected");
+			console.log(this.dataset.num);
+		});
 
 		utils.live("li", "click", function(){
 			var level = +this.getAttribute("data-level");
