@@ -510,15 +510,3 @@
 		content: "\a025";
 	}
 }
-.icon-resolved{
-	&:before {
-		@extend .icon-base;
-		content: "\e661";
-	}
-}
-.icon-unresolved{
-	&:before {
-		@extend .icon-base;
-		content: "\e621";
-	}
-}
