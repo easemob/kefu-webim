@@ -227,7 +227,7 @@ function init(){
 		_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
 		function(officialAccount, inviteId, serviceSessionId){
 			if(officialAccount !== profile.currentOfficialAccount) return;
-			show(inviteId, serviceSessionId);
+			show(inviteId, serviceSessionId, "agent");
 		}
 	);
 }

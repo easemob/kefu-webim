@@ -613,7 +613,7 @@ function _bindEvents(){
 	utils.live("button.js_satisfybtn", "click", function(){
 		var serviceSessionId = this.getAttribute("data-servicesessionid");
 		var inviteId = this.getAttribute("data-inviteid");
-		satisfaction.show(inviteId, serviceSessionId);
+		satisfaction.show(inviteId, serviceSessionId, "agent");
 	});
 
 	// 解决
@@ -833,7 +833,8 @@ function _bindEvents(){
 	// 满意度评价
 	utils.on(doms.satisfaction, "click", function(){
 		doms.textInput.blur();
-		satisfaction.show();
+		// 访客主动评价
+		satisfaction.show(null, null, "visitor");
 	});
 
 	// ios patch: scroll page when keyboard is visible ones
