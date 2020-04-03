@@ -22,6 +22,8 @@ module.exports = function(){
 
 	// 菜单点击
 	function onMenuClick(e){
+		var issueId = e.target.getAttribute("data-id");
+		issueId && apis.recordFaqClick(issueId);	// 统计
 		var target = e.srcElement || e.target;
 		utils.toggleClass(target.parentNode, "hide-answer");
 		utils.stopPropagation();

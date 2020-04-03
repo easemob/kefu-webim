@@ -849,6 +849,17 @@ up2Im.listen(function(msg){
 			type: "GET",
 		});
 		break;
+	case "recordFaqClick":
+		emitAjax({
+			url: "/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/information/issues/" + params.issueId + "/increase",
+			msg: {
+				data: {
+					counts:1
+				}
+			},
+			type: "PUT",
+		});
+		break;
 	case "getSelfServiceList":
 		emitAjax({
 			url: "/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/information/self-service?page=0&size=8",

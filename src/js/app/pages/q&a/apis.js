@@ -28,6 +28,24 @@ function getFaqList(){
 		});
 	});
 }
+function recordFaqClick(issueId){
+	return new Promise(function(resolve, reject){
+		api("recordFaqClick", {
+			tenantId: config.tenantId,
+			configId: config.configId,
+			issueId: issueId,
+		}, function(msg){
+			if(status === "OK"){
+				resolve();
+			}
+			else{
+				reject(msg.data);
+			}
+		}, function(error){
+			reject(error);
+		});
+	});
+}
 function getSelfServiceList(){
 	return new Promise(function(resolve, reject){
 		api("getSelfServiceList", {
@@ -51,6 +69,7 @@ function getSelfServiceList(){
 module.exports = {
 	getFaqList: getFaqList,
 	getSelfServiceList: getSelfServiceList,
+	recordFaqClick: recordFaqClick,
 	update: function(cfg){
 		config = cfg;
 	}
