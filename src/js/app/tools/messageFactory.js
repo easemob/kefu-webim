@@ -289,9 +289,9 @@ function genDomFromMsg(msg, isReceived, isHistory){
 			}
 			msg.laiye = laiye;
 			html += genMsgContent(msg);
-			
+
 		});
-		if(laiyeType == "list" || msg.multipleMsgOneByOne){
+		if(laiyeType == "list" || (msg.multipleMsgOneByOne && msg.list)){
 			html += msg.list;
 		}
 	}

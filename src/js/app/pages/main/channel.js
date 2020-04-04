@@ -750,13 +750,13 @@ function _handleMessage(msg, options){
 		marketingTaskId
 			&& type === "txt"
 			&& eventListener.excuteCallbacks(
-			_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
-			[
-				targetOfficialAccount,
-				marketingTaskId,
-				msg
-			]
-		);
+				_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
+				[
+					targetOfficialAccount,
+					marketingTaskId,
+					msg
+				]
+			);
 
 		if(eventName){
 			_handleSystemEvent(eventName, eventObj, msg);
@@ -794,22 +794,14 @@ function _handleMessage(msg, options){
 	// 消息上屏
 
 	message.laiye = laiye;
-	var data = message.data;
+	var dat = message.data;
 	// 来也机器人多条消息逐条展示
-	if(profile.grayList.multipleMsgOneByOne && laiye){
-		data = JSON.parse(data);
-		// data = [{
-		// 	type: "text",
-		// 	content: "测试1"
-		// }, {
-		// 	type: "image",
-		// 	content: "https://laiye-im-saas.oss-cn-beijing.aliyuncs.com/richText/df2f5d2e-8f4c-42b6-8fd9-70ab8115fc8f"
-		// }, {
-		// 	type: "richtext",
-		// 	content: "https://laiye-im-saas.oss-cn-beijing.aliyuncs.com/richText/f3df8576-c335-4f93-a4aa-7199c0f5c166.html"
-		// }];
-		var length = data.length;
-		data.forEach(function(item, index){
+	if(laiye && !isJsonString(dat)){
+		console.log(dat);
+	}
+	if(profile.grayList.multipleMsgOneByOne && laiye && isJsonString(dat)){
+		dat = JSON.parse(dat);
+		dat.forEach(function(item, index){
 			var arr = [item];
 			message.data = JSON.stringify(arr);
 			if(item.type == "text"){
@@ -873,7 +865,16 @@ function _handleMessage(msg, options){
 		});
 	}
 }
-
+function isJsonString(str){
+	try{
+		if(typeof JSON.parse(str) == "object"){
+			return true;
+		}
+	}
+	catch(e){
+	}
+	return false;
+}
 function _transformMessageFormat(element){
 	var msgBody = element.body || {};
 	var msg = utils.getDataByPath(msgBody, "bodies.0") || {};
