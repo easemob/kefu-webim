@@ -796,10 +796,10 @@ function _handleMessage(msg, options){
 	var dat = message.data;
 	// 来也机器人多条消息逐条展示
 	if(laiye && !isJsonString(dat)){
-		console.log(dat);
+		dat = dat.replace(/&amp;amp;quot;|&amp;quot;/g, "\"");
 	}
 	if(profile.grayList.multipleMsgOneByOne && laiye && isJsonString(dat)){
-		dat = JSON.parse(dat.replace(/&amp;amp;quot;|&amp;quot;/g, "\""));
+		dat = JSON.parse(dat);
 		dat.forEach(function(item, index){
 			var arr = [item];
 			message.data = JSON.stringify(arr);
