@@ -63,7 +63,11 @@ module.exports = {
 		MESSAGE_CHANNEL_READY: "message.channel.ready",
 
 		CONSULT_AGENT: "consult.agent",
-		ACCEPT_INVITATION: "accept_invitation"
+		ACCEPT_INVITATION: "accept_invitation",
+
+		// 关闭 会话聊天框
+		CHAT_CLOSED: "chat.closed"
+
 	},
 
 	themeMap: {

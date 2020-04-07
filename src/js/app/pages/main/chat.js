@@ -17,6 +17,7 @@ var guessInfo = require("./guess/guessInfo");
 var TagSelector = require("./chat/tagSelector");
 var initAgentInputStatePoller = require("./chat/initAgentInputStatePoller");
 var initAgentStatusPoller = require("./chat/initAgentStatusPoller");
+var initVisitorStatusPoller = require("./chat/initVisitorStatusPoller");
 var initQueuingNumberPoller = require("./chat/initQueuingNumberPoller");
 var initTransferToKefuButton = require("./chat/initTransferToKefuButton");
 var initSessionList = require("./chat/initSessionList");
@@ -411,7 +412,6 @@ function _bindEvents(){
 			// 调用关闭会话框接口记录访客离开
 			var officialAccount = profile.currentOfficialAccount;
 			var sessionId = officialAccount.sessionId;
-			apiHelper.closeChatDialog({ serviceSessionId: sessionId });
 
 			// 弹出评价邀请框
 			satisfaction.show(null, sessionId, "system");
@@ -1104,6 +1104,7 @@ function _initSession(){
 			satisfaction.init();
 			initAgentInputStatePoller();
 			initAgentStatusPoller();
+			initVisitorStatusPoller();
 			initQueuingNumberPoller();
 			initTransferToKefuButton();
 			initAgentNicknameUpdate();

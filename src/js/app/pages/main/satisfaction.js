@@ -208,7 +208,13 @@ function _confirm(){
 	uikit.showSuccess(__("evaluation.submit_success"));
 	// 强制评价点击确定关闭会话框
 	setTimeout(function(){
-		evaluateType === "system" && getToHost.send({ event: _const.EVENTS.CLOSE });
+		// 关闭会话
+		if(evaluateType === "system"){
+			// 取消轮询接口
+			eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
+			profile.currentOfficialAccount.sessionId && apiHelper.closeChatDialog({ serviceSessionId: profile.currentOfficialAccount.sessionId });
+			getToHost.send({ event: _const.EVENTS.CLOSE });
+		}
 	}, 2000);
 	_clear();
 }
@@ -227,7 +233,7 @@ function init(){
 		_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
 		function(officialAccount, inviteId, serviceSessionId){
 			if(officialAccount !== profile.currentOfficialAccount) return;
-			show(inviteId, serviceSessionId, "agent");
+			show(inviteId, serviceSessionId, "system");
 		}
 	);
 }
