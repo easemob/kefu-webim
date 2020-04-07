@@ -27,6 +27,7 @@ var resolveTip;
 var resolvedId = 1;
 var _initOnce = _.once(_init);
 var evaluateType; // 评价方式
+var sessionResolved;// 问题解决评价
 
 module.exports = {
 	init: init,
@@ -38,8 +39,12 @@ function _init(){
 	apiHelper.getEvaluteSolveWord().then(function(tip){
 		resolveTip = tip;
 	});
+	apiHelper.getServiceSessionResolved()
+	.then(function(resp){
+		sessionResolved = resp;
+	});
 	apiHelper.getSatisfactionTipWord().then(function(tipWord){
-		dom = utils.createElementFromHTML([
+		dom = sessionResolved ? utils.createElementFromHTML([
 			"<div class=\"wrapper\">",
 			"<div class=\"resolveCon\"><span class=\"title\">" + resolveTip + "</span>",
 			"<div><span class=\"resolve-btn selected resolved\" data-num = \"1\"><i class=\"icon-resolved\"></i>已解决</span>",
@@ -49,7 +54,16 @@ function _init(){
 			"<div class=\"tag-container\"></div>",
 			"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
 			"</div>"
-		].join(""));
+		].join(""))
+			:
+			utils.createElementFromHTML([
+				"<div class=\"wrapper\">",
+				"<span class=\"title\">" + tipWord + "</span>",
+				"<ul></ul>",
+				"<div class=\"tag-container\"></div>",
+				"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
+				"</div>"
+			].join(""));
 		starsUl = dom.querySelector("ul");
 		commentDom = dom.querySelector("textarea");
 		tagContainer = dom.querySelector(".tag-container");

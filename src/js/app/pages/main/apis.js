@@ -951,6 +951,25 @@ function getEvaluteSolveWord(){
 	});
 }
 
+function getServiceSessionResolved(){
+	return new Promise(function(resolve, reject){
+		var webim = false;
+		api("getServiceSessionResolved", { tenantId: config.tenantId }, function(res){
+			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
+			if(typeof val === "string"){
+				val = val.replace(/&quot;/g, "\"");
+				val = JSON.parse(val);
+				if(val.webim){
+					webim = true;
+				}
+			}
+			resolve(webim);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 function updateCustomerInfo(data){
 	return new Promise(function(resolve, reject){
 		Promise.all([
@@ -1297,6 +1316,7 @@ module.exports = {
 	getOptForManualMenuGuide: getOptForManualMenuGuide,
 	getlaiyeHtml: getlaiyeHtml,
 	getEvaluteSolveWord: getEvaluteSolveWord,
+	getServiceSessionResolved: getServiceSessionResolved,
 
 	startKeep: startKeep,
 	closeChatDialog: closeChatDialog,

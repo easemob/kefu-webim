@@ -766,6 +766,15 @@ up2Im.listen(function(msg){
 			excludeData: true,
 		});
 		break;
+	case "getServiceSessionResolved":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/problemSolvingOnServiceSessionResolved",
+			type: "GET",
+			msg: msg,
+			excludeData: true,
+		});
+		break;
+
 	case "getEvaluteSolveWord":
 		emitAjax({
 			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/evaluteSolveWord",
@@ -854,7 +863,7 @@ up2Im.listen(function(msg){
 			url: "/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/information/issues/" + params.issueId + "/increase",
 			msg: {
 				data: {
-					counts:1
+					counts: 1
 				}
 			},
 			type: "PUT",
