@@ -297,7 +297,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	}
 	else{
 		html += genMsgContent(msg);
-		if(msg.multipleMsgOneByOne){
+		if(msg.multipleMsgOneByOne && msg.list){
 			html += msg.list;
 		}
 	}

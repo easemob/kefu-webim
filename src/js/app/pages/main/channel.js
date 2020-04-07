@@ -799,7 +799,7 @@ function _handleMessage(msg, options){
 		console.log(dat);
 	}
 	if(profile.grayList.multipleMsgOneByOne && laiye && isJsonString(dat)){
-		dat = JSON.parse(dat);
+		dat = JSON.parse(dat.replace(/&amp;amp;quot;|&amp;quot;/g, "\""));
 		dat.forEach(function(item, index){
 			var arr = [item];
 			message.data = JSON.stringify(arr);
