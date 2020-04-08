@@ -7,6 +7,7 @@ require("@/common/polyfill");
 require("./libs/modernizr");
 require("./libs/sdk/webim.config");
 require("underscore");
+var $ = require("jquery");
 
 var utils = require("@/common/utils");
 var chat = require("./pages/main/chat");
@@ -22,6 +23,7 @@ var doWechatAuth = require("@/app/common/wechat");
 var getToHost = require("@/app/common/transfer");
 var eventListener = require("@/app/tools/eventListener");
 var fromUserClick = false;
+var Tab = require("@/common/uikit/tab");
 
 load_html();
 if(utils.isTop){
@@ -323,6 +325,17 @@ function renderUI(resultStatus){
 				dialogWidth = (Math.floor(commonConfig.getConfig().dialogWidth.slice(0, -2)) + Math.floor(360)) + "px";
 				handleSettingIframeSize({ width: dialogWidth });
 			}
+			var tab = new Tab({
+				$pa: $("body").find(".em-self-wrapper"),
+				tabList: [{
+					sign: "faq",
+					text: "常见问题"
+				}, {
+					sign: "service",
+					text: "自助服务"
+				}]
+			});
+			tab.setSelect("faq");
 		}
 		// 常见问题和自助服务开关都关闭时
 		else if(!resultStatus[0] && !resultStatus[1]){

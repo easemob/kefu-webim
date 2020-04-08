@@ -771,3 +771,65 @@
 		}
 	}
 }
+
+.ui-cmp-tab {
+	$c_border: #e6eaf2;
+
+	position: relative;
+	display: inline-block;
+	border: 1px solid;
+	border-color: $c_border;
+	width: 100%;
+
+	> ul {
+		position: relative;
+		width: 100%;
+		border-bottom: 1px solid;
+		border-color: $c_border;
+		overflow: hidden;
+
+		> li {
+			width: 100%;
+			text-align: center;
+
+			float: left;
+
+			border-right: 1px solid;
+			border-color: $c_border;
+
+			cursor: pointer;
+
+			height: 50px;
+			line-height: 50px;
+			background-color: #f5f7fa;
+			overflow: hidden;
+			> span {
+				font-size: 14px;
+				padding: 0 10px;
+				display: inline-block;
+				text-align: center;
+				width: 100%;
+				box-sizing: border-box;
+			}
+			&:last-of-type {
+				border: 0;
+			}
+
+			&.selected {
+				background-color: white;
+			}
+		}
+	}
+	> div {
+		position: relative;
+		background-color: white;
+	}
+
+	&.round {
+		border: 0;
+		border-bottom: 1px solid;
+		border-color: #cfd2d9;
+		border-radius: 5px;
+		overflow: hidden;
+	}
+}
