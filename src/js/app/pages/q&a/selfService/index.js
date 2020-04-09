@@ -5,7 +5,7 @@ var item_tpl = require("./itemTpl.html");
 var SELFSERVICE_PATH = _const.SELFSERVICE_PATH;
 
 module.exports = function(){
-	var container = $(_.template(container_tpl));
+	var container = $(_.template(container_tpl)());
 	this.$el = container;
 
 	apis.getSelfServiceList()

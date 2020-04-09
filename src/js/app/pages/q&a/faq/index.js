@@ -4,7 +4,7 @@ var container_tpl = require("./indexTpl.html");
 var item_tpl = require("./itemTpl.html");
 
 module.exports = function(){
-	var container = $(_.template(container_tpl));
+	var container = $(_.template(container_tpl)());
 	this.$el = container;
 
 	apis.getFaqList()

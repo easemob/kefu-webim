@@ -1,4 +1,3 @@
-
 var SelfService = require("./selfService");
 var Faq = require("./faq");
 var utils = require("../../../common/utils");
@@ -7,38 +6,40 @@ var commonConfig = require("@/common/config");
 var _const = require("@/common/const");
 var eventListener = require("@/app/tools/eventListener");
 
-module.exports = {
-	init: init,
-	show: show,
-	close: close
-};
+var btn_tpl = require("./btnTpl.html");
 
 function init(obj){
 	var faq;
 	var selfService;
+
 	var domFaqList = document.querySelector(".faq-list");
 	var resultStatus = obj.resultStatus;
-
 	apis.update(commonConfig.getConfig());
 
+	// 外部已经处理了是否显示
 	if(resultStatus[0]){
-		utils.removeClass(domFaqList, "hide");
 		faq = new Faq();
+		faq.$el;
 	}
-	else{
-		utils.addClass(domFaqList, "hide");
-	}
-
 	if(resultStatus[1]){
 		selfService = new SelfService();
+		selfService.$el;
 	}
 	show();
 
-
 	// 移动网站 config 显示 “点击联系客服”
-	utils.isMobile && utils.removeClass(document.querySelector(".em-self-wrapper .contact-customer-service"), "hide");
-	utils.live(".contact-customer-service", "click", onContactClick, document.querySelector(".em-self-wrapper"));
+	if(utils.isMobile){
+		utils.removeClass(document.querySelector(".em-self-wrapper .contact-customer-service"), "hide");
+		utils.live(".contact-customer-service", "click", onContactClick, document.querySelector(".em-self-wrapper"));
+	}
 
+	return {
+		faq: faq.$el,
+		ss: selfService.$el,
+		btn: _.template(btn_tpl)({
+			consult_agent: __("common.consult_agent")
+		}),
+	};
 }
 
 // 点击咨询客服
@@ -58,3 +59,10 @@ function show(){
 	var domSelfWrapper = document.querySelector(".em-self-wrapper");
 	utils.removeClass(domSelfWrapper, "hide");
 }
+
+
+module.exports = {
+	init: init,
+	show: show,
+	close: close,
+};
