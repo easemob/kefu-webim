@@ -18,19 +18,18 @@ function Tab(opt){
 	opt.className && this.$el.addClass(opt.className);
 
 	this.head = this.$el.find(".head");
-	var headWidth = this.head.width();
 	var tabList = opt.tabList;
-	var liWith = headWidth;
+	var liWith = "100%";
 
 	if(_.isArray(tabList) && tabList.length){
-		liWith = parseInt(headWidth / tabList.length) - 1;
+		liWith = (100 / tabList.length) + "%";
 	}
 	else{
 		throw new Error("Tab: opt.tabList expected a Array");
 	}
 
 	tabList.forEach(function(item){
-		headItemTmp = $("<li sign=\"" + item.sign + "\" style=\"width:50%;\">" + item.text + "</li>");
+		headItemTmp = $("<li sign=\"" + item.sign + "\" style=\"width:" + liWith + "\">" + item.text + "</li>");
 		me.head.append(headItemTmp);
 
 		utils.on(headItemTmp, "click", function(e){

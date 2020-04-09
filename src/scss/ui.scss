@@ -820,10 +820,13 @@
 		}
 	}
 	> div {
-		position: relative;
+		position: absolute;
 		background-color: white;
-		height: calc(100% - 51px);
 		overflow-y: auto;
+		top: 51px;
+		bottom: 0;
+		left: 0;
+		right: 0;
 	}
 
 	&.round {
