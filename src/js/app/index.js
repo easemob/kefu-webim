@@ -7,7 +7,7 @@ require("@/common/polyfill");
 require("./libs/modernizr");
 require("./libs/sdk/webim.config");
 require("underscore");
-var $ = require("jquery");
+require("jquery");
 
 var utils = require("@/common/utils");
 var chat = require("./pages/main/chat");
@@ -203,11 +203,17 @@ function initRelevanceList(){
 	});
 }
 
+
+
+
+
 function initFunctionStatus(){
 	if(commonConfig.getConfig().configId){
 		return arguments.callee.cache = arguments.callee.cache || Promise.all([
 			apiHelper.getFaqOrSelfServiceStatus("issue"),
-			apiHelper.getFaqOrSelfServiceStatus("self-service")
+			apiHelper.getFaqOrSelfServiceStatus("self-service"),
+			// apiHelper.getIframeEnable(),
+			// apiHelper.getIframeSetting(),
 		]);
 	}
 	return Promise.resolve([]);
@@ -312,41 +318,50 @@ function renderUI(resultStatus){
 			utils.addClass(document.body, "big-window");
 		}
 		// 全部渲染
+		// 不是移动端，且打开了常见问题或者自助服务的话
 		if(!utils.isMobile && (resultStatus[0] || resultStatus[1])){
 			main.initChat();
-			// functionView.init({
-			// 	resultStatus: resultStatus
-			// });
 			if(utils.isTop){
 				utils.addClass(document.body, "big-window-h5");
 			}
 			else{
-				// iframe形式 常见问题和自主服务，固定宽度 360px
+				// iframe 形式 常见问题和自主服务，固定宽度 360px
 				dialogWidth = (Math.floor(commonConfig.getConfig().dialogWidth.slice(0, -2)) + Math.floor(360)) + "px";
 				handleSettingIframeSize({ width: dialogWidth });
 			}
-			var tab = new Tab({
-				$pa: $("body").find(".tab-wrapper"),
-				tabList: [{
-					sign: "faq",
-					text: "常见问题"
-				}, {
-					sign: "service",
-					text: "自助服务"
-				}]
-			});
-			tab.setSelect("faq");
+			initSidePage(resultStatus);
 		}
 		// 常见问题和自助服务开关都关闭时
 		else if(!resultStatus[0] && !resultStatus[1]){
 			main.initChat();
-			!utils.isMobile && utils.removeClass(document.body, "big-window");
+			if(!utils.isMobile){
+				utils.removeClass(document.body, "big-window");
+			}
 		}
 		else{
-			// functionView.init({
-			// 	resultStatus: resultStatus
-			// });
+			initSidePage(resultStatus);
 			main.close();
+		}
+
+		function initSidePage(resultStatus){
+			var side_page_doms = functionView.init({
+				resultStatus: resultStatus
+			});
+			var tab = new Tab({
+				tabList: [{
+					sign: "faq",
+					text: "常见问题"
+				}, {
+					sign: "iframe",
+					text: "iframe"
+				}],
+			});
+			tab.bodies["faq"].append(side_page_doms.ss);
+			tab.bodies["faq"].append(side_page_doms.faq);
+			tab.bodies["faq"].append(side_page_doms.btn);
+			tab.bodies["iframe"].append(side_page_doms.iframe);
+			tab.setSelect("faq");
+			$("#em-kefu-webim-self").append(tab.$el);
 		}
 	}
 	else{
@@ -407,8 +422,6 @@ function load_html(){
 		transfer_to_kefu: __("toolbar.transfer_to_kefu"),
 		press_save_img: __("common.press_save_img"),
 		send_video: __("toolbar.send_video"),
-		faq: __("common.faq"),
-		consult_agent: __("common.consult_agent")
 	}));
 
 	chat.getDom();
