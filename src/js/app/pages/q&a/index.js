@@ -1,5 +1,7 @@
 var SelfService = require("./selfService");
 var Faq = require("./faq");
+var FaqIframe = require("./iframe");
+
 var utils = require("../../../common/utils");
 var apis = require("./apis");
 var commonConfig = require("@/common/config");
@@ -11,20 +13,21 @@ var btn_tpl = require("./btnTpl.html");
 function init(obj){
 	var faq;
 	var selfService;
+	var iframe;
 
-	var domFaqList = document.querySelector(".faq-list");
 	var resultStatus = obj.resultStatus;
 	apis.update(commonConfig.getConfig());
 
 	// 外部已经处理了是否显示
 	if(resultStatus[0]){
 		faq = new Faq();
-		faq.$el;
 	}
 	if(resultStatus[1]){
 		selfService = new SelfService();
-		selfService.$el;
 	}
+	iframe = new FaqIframe({
+		url: "http://baidu.com"
+	});
 	show();
 
 	// 移动网站 config 显示 “点击联系客服”
@@ -34,6 +37,7 @@ function init(obj){
 	}
 
 	return {
+		iframe: iframe.$el,
 		faq: faq.$el,
 		ss: selfService.$el,
 		btn: _.template(btn_tpl)({
