@@ -133,6 +133,10 @@ commonConfig = {
 				loader: "expose-loader?_"
 			},
 			{
+				test: require.resolve("jquery"),
+				loader: "expose-loader?$"
+			},
+			{
 				test: require.resolve("./src/js/app/libs/modernizr.js"),
 				loader: "expose-loader?Modernizr"
 			},
