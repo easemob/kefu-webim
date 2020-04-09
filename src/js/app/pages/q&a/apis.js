@@ -66,36 +66,10 @@ function getSelfServiceList(){
 	});
 }
 
-function getIframeEnable(){
-	return new Promise(function(resolve, reject){
-		api("getIframeEnable", {
-			tenantId: config.tenantId,
-			configId: config.configId
-		}, function(dat){
-			resolve(entities);
-		}, function(err){
-			reject(err);
-		});
-	});
-}
-function getIframeSetting(){
-	return new Promise(function(resolve, reject){
-		api("getIframeSetting", {
-			tenantId: config.tenantId,
-			configId: config.configId
-		}, function(dat){
-			resolve(entities);
-		}, function(err){
-			reject(err);
-		});
-	});
-}
 
 
 
 module.exports = {
-	getIframeEnable: getIframeEnable,
-	getIframeSetting: getIframeSetting,
 	getFaqList: getFaqList,
 	getSelfServiceList: getSelfServiceList,
 	recordFaqClick: recordFaqClick,

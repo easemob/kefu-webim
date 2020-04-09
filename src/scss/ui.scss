@@ -781,6 +781,15 @@
 	width: 100%;
 	height: 100%;
 
+	&.headless {
+		> ul {
+			display: none;
+		}
+		> div {
+			height: 100%;
+		}
+	}
+
 	> ul {
 		position: relative;
 		width: 100%;

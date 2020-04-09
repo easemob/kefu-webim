@@ -212,8 +212,8 @@ function initFunctionStatus(){
 		return arguments.callee.cache = arguments.callee.cache || Promise.all([
 			apiHelper.getFaqOrSelfServiceStatus("issue"),
 			apiHelper.getFaqOrSelfServiceStatus("self-service"),
-			// apiHelper.getIframeEnable(),
-			// apiHelper.getIframeSetting(),
+			apiHelper.getIframeEnable(),
+			apiHelper.getIframeSetting(),
 		]);
 	}
 	return Promise.resolve([]);
@@ -344,22 +344,25 @@ function renderUI(resultStatus){
 		}
 
 		function initSidePage(resultStatus){
-			var side_page_doms = functionView.init({
+			var iframeEnable = resultStatus[2];
+			var iframeSettings = resultStatus[3][0];	// 只取第一个
+			var side_page = functionView.init({
 				resultStatus: resultStatus
 			});
-			var tab = new Tab({
-				tabList: [{
-					sign: "faq",
-					text: "常见问题"
-				}, {
-					sign: "iframe",
-					text: "iframe"
-				}],
+			var tab = new Tab();
+			tab.addTab({
+				sign: "faq",
+				text: "常见问题",
+				ins: [side_page.ss, side_page.faq],
 			});
-			tab.bodies["faq"].append(side_page_doms.ss);
-			tab.bodies["faq"].append(side_page_doms.faq);
-			tab.bodies["faq"].append(side_page_doms.btn);
-			tab.bodies["iframe"].append(side_page_doms.iframe);
+			// 开关开启并且信息完备时，addTab IFRAME！
+			if(iframeEnable && iframeSettings.url){
+				tab.addTab({
+					sign: "iframe",
+					text: iframeSettings.name,
+					ins: [side_page.iframe],
+				});
+			}
 			tab.setSelect("faq");
 			$("#em-kefu-webim-self").append(tab.$el);
 		}

@@ -6,7 +6,6 @@ var SELFSERVICE_PATH = _const.SELFSERVICE_PATH;
 
 module.exports = function(){
 	var container = $(_.template(container_tpl)());
-	this.$el = container;
 
 	apis.getSelfServiceList()
 	.then(function(data){
@@ -20,4 +19,10 @@ module.exports = function(){
 			selfService: data
 		}));
 	});
+
+	// APIs
+	this.$el = container;
+	this.show = function(){
+		
+	};
 };

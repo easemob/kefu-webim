@@ -264,6 +264,32 @@ function getFaqOrSelfServiceStatus(type){
 		});
 	});
 }
+function getIframeEnable(){
+	var cfg = commonConfig.getConfig();
+	return new Promise(function(resolve, reject){
+		api("getIframeEnable", {
+			tenantId: cfg.tenantId,
+			configId: cfg.configId
+		}, function(dat){
+			resolve(dat.data.entity);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+function getIframeSetting(){
+	var cfg = commonConfig.getConfig();
+	return new Promise(function(resolve, reject){
+		api("getIframeSetting", {
+			tenantId: cfg.tenantId,
+			configId: cfg.configId
+		}, function(dat){
+			resolve(dat.data.entities);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
 
 function createVisitor(specifiedUserName){
 	var cfg = commonConfig.getConfig();
@@ -360,6 +386,8 @@ module.exports = {
 	getWechatProfile: getWechatProfile,
 	createWechatImUser: createWechatImUser,
 	getInviteInfo: getInviteInfo,
+	getIframeEnable: getIframeEnable,
+	getIframeSetting: getIframeSetting,
 
 	update: function(cfg){
 		config = cfg;
