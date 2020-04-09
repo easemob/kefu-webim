@@ -1,0 +1,6 @@
+<% _.each(faq, function(itm, idx){ %>
+	<div class="faq-item hide-answer">
+		<p class="question" data-id="<%= itm.id %>"><%= itm.title %></p>
+		<p class="answer"><%= itm.content %></p>
+	</div>
+<% }) %>

@@ -1,31 +1,29 @@
 var apis = require("../apis");
 var utils = require("@/common/utils");
-var tpl = require("./indexTpl.html");
+var container_tpl = require("./indexTpl.html");
+var item_tpl = require("./itemTpl.html");
 
 module.exports = function(){
-	var container = document.querySelector(".em-self-wrapper .faq-list-content");
-
-	container.innerHTML = "";
+	var container = $(_.template(container_tpl));
+	this.$el = container;
 
 	apis.getFaqList()
 	.then(function(data){
-		// 处理格式
 		_.each(data, function(itm){
 			itm.content = utils.encode(itm.content);
 			itm.content = utils.parseUrl(itm.content);
 		});
-		container.innerHTML = _.template(tpl)({
+		container.find("p").append(_.template(item_tpl)({
 			faq: data
-		});
-		utils.live(".question", "click", onMenuClick, container);
+		}));
+		container.delegate(".question", "click", onMenuClick);
 	});
 
 	// 菜单点击
 	function onMenuClick(e){
 		var issueId = e.target.getAttribute("data-id");
 		issueId && apis.recordFaqClick(issueId);	// 统计
-		var target = e.srcElement || e.target;
-		utils.toggleClass(target.parentNode, "hide-answer");
+		utils.toggleClass(e.target.parentNode, "hide-answer");
 		utils.stopPropagation();
 		return false;
 	}

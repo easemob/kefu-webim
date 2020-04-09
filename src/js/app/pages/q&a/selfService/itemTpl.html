@@ -1,0 +1,9 @@
+<% _.each(selfService, function(itm, idx){ %>
+<a href="<%= itm.link %>" target="_blank">
+	<img src="<%= itm.icon %>" />
+	<span><%= itm.name %></span>
+</a>
+<%if(idx == 3){%>
+	<br />
+<%}%>
+<% }) %>

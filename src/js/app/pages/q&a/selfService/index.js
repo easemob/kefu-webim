@@ -1,11 +1,12 @@
 var apis = require("../apis");
 var _const = require("@/common/const");
-var tpl = require("./indexTpl.html");
+var container_tpl = require("./indexTpl.html");
+var item_tpl = require("./itemTpl.html");
 var SELFSERVICE_PATH = _const.SELFSERVICE_PATH;
 
 module.exports = function(){
-	var container = document.querySelector(".em-self-wrapper .self-service-list");
-	container.innerHTML = "";
+	var container = $(_.template(container_tpl));
+	this.$el = container;
 
 	apis.getSelfServiceList()
 	.then(function(data){
@@ -14,10 +15,8 @@ module.exports = function(){
 				item.icon = SELFSERVICE_PATH + item.icon;
 			}
 		});
-		container.innerHTML = _.template(tpl)({
+		container.innerHTML = _.template(item_tpl)({
 			selfService: data
 		});
 	});
-
-
 };
