@@ -16,7 +16,6 @@ function Tab(opt){
 
 	this.$el = $(_.template(tpl)());
 	opt.className && this.$el.addClass(opt.className);
-	opt.$pa.append(this.$el);
 
 	this.head = this.$el.find(".head");
 	var headWidth = this.head.width();
@@ -31,7 +30,7 @@ function Tab(opt){
 	}
 
 	tabList.forEach(function(item){
-		headItemTmp = $("<li sign=" + item.sign + " style=width:" + liWith + "px >" + item.text + "</li>");
+		headItemTmp = $("<li sign=\"" + item.sign + "\" style=\"width:50%;\">" + item.text + "</li>");
 		me.head.append(headItemTmp);
 
 		utils.on(headItemTmp, "click", function(e){
