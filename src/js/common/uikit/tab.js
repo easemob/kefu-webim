@@ -12,7 +12,9 @@ function Tab(opt){
 	this.$head = this.$el.find(".head");
 }
 Tab.prototype.addTab = function(tabInfo){
-	var $headItemTmp = $("<li sign=\"" + tabInfo.sign + "\" style=\"width:50%;\">" + tabInfo.text + "</li>");
+	var liWith;
+	var $headItemTmp = $("<li sign=\"" + tabInfo.sign + "\">" + tabInfo.text + "</li>");
+
 	var $bodyItemTmp = $("<div class='hide' sign=" + tabInfo.sign + ">");
 	// frame append
 	this.$head.append($headItemTmp);
@@ -27,6 +29,11 @@ Tab.prototype.addTab = function(tabInfo){
 	if(this.instCount >= 2){
 		this.$el.removeClass("headless");
 	}
+	// 平均分配 li 的宽度
+	liWith = (100 / (this.instCount)) + "%";
+	_.each(this.$all, function(item){
+		item.style = "width:" + liWith;
+	});
 	// [API] this.$el
 	_.each(tabInfo.ins, function(ins){
 		$bodyItemTmp.append(ins.$el);
