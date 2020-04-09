@@ -416,7 +416,7 @@ function _bindEvents(){
 			// 查询会话是否已经评价，评价了就不弹出评价邀请框了
 			apiHelper.getSessionEnquires(sessionId)
 			.then(function(res){
-				if(res.length){
+				if(!res.length){
 					// 弹出评价邀请框
 					satisfaction.show(null, sessionId, "system");
 				}
