@@ -15,6 +15,7 @@ module.exports = function(){
 				item.icon = SELFSERVICE_PATH + item.icon;
 			}
 		});
+		container.removeClass("hide");
 		container.innerHTML = _.template(item_tpl)({
 			selfService: data
 		});

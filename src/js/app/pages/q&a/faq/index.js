@@ -13,6 +13,7 @@ module.exports = function(){
 			itm.content = utils.encode(itm.content);
 			itm.content = utils.parseUrl(itm.content);
 		});
+		container.removeClass("hide");
 		container.find("p").append(_.template(item_tpl)({
 			faq: data
 		}));
