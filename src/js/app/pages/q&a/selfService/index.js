@@ -16,8 +16,8 @@ module.exports = function(){
 			}
 		});
 		container.removeClass("hide");
-		container.innerHTML = _.template(item_tpl)({
+		container.append(_.template(item_tpl)({
 			selfService: data
-		});
+		}));
 	});
 };

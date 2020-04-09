@@ -4,7 +4,9 @@ var container_tpl = require("./indexTpl.html");
 var item_tpl = require("./itemTpl.html");
 
 module.exports = function(){
-	var container = $(_.template(container_tpl)());
+	var container = $(_.template(container_tpl)({
+		faq: __("common.faq"),
+	}));
 	this.$el = container;
 
 	apis.getFaqList()
@@ -14,8 +16,8 @@ module.exports = function(){
 			itm.content = utils.parseUrl(itm.content);
 		});
 		container.removeClass("hide");
-		container.find("p").append(_.template(item_tpl)({
-			faq: data
+		container.find(".faq-list-content").append(_.template(item_tpl)({
+			faq: data,
 		}));
 		container.delegate(".question", "click", onMenuClick);
 	});
