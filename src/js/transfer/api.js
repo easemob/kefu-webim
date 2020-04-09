@@ -851,6 +851,20 @@ up2Im.listen(function(msg){
 			excludeData: true,
 		});
 		break;
+	case "getIframeSetting":
+		emitAjax({
+			url: "/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/information/menu",
+			msg: msg,
+			type: "GET",
+		});
+		break;
+	case "getIframeEnable":
+		emitAjax({
+			url: "/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/visitors/options/webim-menu/status",
+			msg: msg,
+			type: "GET",
+		});
+		break;
 	case "getFaqList":
 		emitAjax({
 			url: "/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/information/issues?page=0&size=1000",
