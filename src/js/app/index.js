@@ -356,7 +356,7 @@ function renderUI(resultStatus){
 				ins: [side_page.ss, side_page.faq],
 			});
 			// 开关开启并且信息完备时，addTab IFRAME！
-			if(iframeEnable && iframeSettings.url){
+			if(!utils.isMobile && iframeEnable && iframeSettings.url){
 				tab.addTab({
 					sign: "iframe",
 					text: iframeSettings.name,
