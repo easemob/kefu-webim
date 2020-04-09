@@ -918,6 +918,13 @@ up2Im.listen(function(msg){
 			type: "POST"
 		});
 		break;
+	case "getSessionEnquires":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/servicesessions/" + params.serviceSessionId + "/enquiries",
+			msg: msg,
+			type: "GET"
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;

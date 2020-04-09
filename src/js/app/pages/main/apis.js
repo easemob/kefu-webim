@@ -1263,6 +1263,20 @@ function closeChatDialog(data){
 	});
 }
 
+function getSessionEnquires(serviceSessionId){
+	return new Promise(function(resolve, reject){
+		api("getSessionEnquires", {
+			tenantId: config.tenantId,
+			serviceSessionId: serviceSessionId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data.entities");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getGrayList: getGrayList,
 	getToken: getToken,
@@ -1320,6 +1334,7 @@ module.exports = {
 
 	startKeep: startKeep,
 	closeChatDialog: closeChatDialog,
+	getSessionEnquires: getSessionEnquires,
 
 	update: function(cfg){
 		config = cfg;
