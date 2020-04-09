@@ -37,8 +37,10 @@
 	background-color: white;
 	// border-radius: 4px;
 	overflow-y: auto;
-	padding: 0 1.5em 4em;
 	box-sizing: border-box;
+	>.tab-wrapper{
+		height: 100%;
+	}
 }
 
 /*header*/

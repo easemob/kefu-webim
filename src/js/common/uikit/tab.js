@@ -43,6 +43,7 @@ function Tab(opt){
 		me.$el.append(bodyItemTmp);
 	});
 	this.$all = this.$el.find("> ul > li");
+	this.$allContent = this.$el.find("> div");
 	return this;
 
 }
@@ -56,6 +57,12 @@ Tab.prototype.selectItem = function(targ, silent){
 	var sign = targ.attr("sign");
 	this.clearSelected();
 	targ.addClass("selected");
+	$.each(this.$allContent, function(k, v){
+		v = $(v);
+		if(v.attr("sign") == sign){
+			v.removeClass("hide");
+		}
+	});
 	!silent && eventListener.trigger("ui.tab.click", sign);
 	this.selected = sign;
 };
@@ -75,6 +82,7 @@ Tab.prototype.getSelect = function(){
 };
 Tab.prototype.clearSelected = function(){
 	this.$all.removeClass("selected");
+	this.$allContent.addClass("hide");
 };
 
 

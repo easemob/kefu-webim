@@ -777,13 +777,15 @@
 
 	position: relative;
 	display: inline-block;
-	border: 1px solid;
+	border-bottom: 1px solid;
 	border-color: $c_border;
 	width: 100%;
+	height: 100%;
 
 	> ul {
 		position: relative;
 		width: 100%;
+		height: 50px;
 		border-bottom: 1px solid;
 		border-color: $c_border;
 		overflow: hidden;
@@ -794,9 +796,7 @@
 
 			float: left;
 
-			border-right: 1px solid;
-			border-color: $c_border;
-
+			border-right: 1px solid #e6eaf2;
 			cursor: pointer;
 
 			height: 50px;
@@ -823,6 +823,7 @@
 	> div {
 		position: relative;
 		background-color: white;
+		height: calc(100% - 51px);
 	}
 
 	&.round {

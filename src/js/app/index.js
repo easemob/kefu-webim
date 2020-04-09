@@ -314,9 +314,9 @@ function renderUI(resultStatus){
 		// 全部渲染
 		if(!utils.isMobile && (resultStatus[0] || resultStatus[1])){
 			main.initChat();
-			functionView.init({
-				resultStatus: resultStatus
-			});
+			// functionView.init({
+			// 	resultStatus: resultStatus
+			// });
 			if(utils.isTop){
 				utils.addClass(document.body, "big-window-h5");
 			}
@@ -326,7 +326,7 @@ function renderUI(resultStatus){
 				handleSettingIframeSize({ width: dialogWidth });
 			}
 			var tab = new Tab({
-				$pa: $("body").find(".em-self-wrapper"),
+				$pa: $("body").find(".tab-wrapper"),
 				tabList: [{
 					sign: "faq",
 					text: "常见问题"
@@ -343,9 +343,9 @@ function renderUI(resultStatus){
 			!utils.isMobile && utils.removeClass(document.body, "big-window");
 		}
 		else{
-			functionView.init({
-				resultStatus: resultStatus
-			});
+			// functionView.init({
+			// 	resultStatus: resultStatus
+			// });
 			main.close();
 		}
 	}
