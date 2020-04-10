@@ -303,79 +303,114 @@ function handleCfgData(relevanceList, status){
 	renderUI(status);
 }
 function renderUI(resultStatus){
-	var dialogWidth;
 	// 添加移动端样式类
 	if(utils.isMobile){
 		utils.addClass(document.body, "em-mobile");
 	}
+
+	var commonIssueEnable;
+	var selfServiceEnable;
+	var iframeEnable;
 	// 用于预览模式
 	if(commonConfig.getConfig().previewObj){
 		handleSettingIframeSize();
 		main.initChat();
 	}
+	// configId
 	else if(commonConfig.getConfig().configId){
+		commonIssueEnable = resultStatus[0];
+		selfServiceEnable = resultStatus[1];
+		iframeEnable = resultStatus[2];
+		// pc 端判断三个开关
 		if(!utils.isMobile){
 			utils.addClass(document.body, "big-window");
+			// 任意一个打开
+			if(commonIssueEnable || selfServiceEnable || iframeEnable){ pcAnyEnable(); }
+			else{ allDisable(); }	// 全关
 		}
-		// 全部渲染
-		// 不是移动端，且打开了常见问题或者自助服务的话
-		if(!utils.isMobile && (resultStatus[0] || resultStatus[1])){
-			main.initChat();
-			if(utils.isTop){
-				utils.addClass(document.body, "big-window-h5");
-			}
-			else{
-				// iframe 形式 常见问题和自主服务，固定宽度 360px
-				dialogWidth = (Math.floor(commonConfig.getConfig().dialogWidth.slice(0, -2)) + Math.floor(360)) + "px";
-				handleSettingIframeSize({ width: dialogWidth });
-			}
-			initSidePage(resultStatus);
-		}
-		// 常见问题和自助服务开关都关闭时
-		else if(!resultStatus[0] && !resultStatus[1]){
-			main.initChat();
-			if(!utils.isMobile){
-				utils.removeClass(document.body, "big-window");
-			}
-		}
+		// 移动端不判断 iframe 开关
 		else{
-			initSidePage(resultStatus);
-			main.close();
-		}
-
-		function initSidePage(resultStatus){
-			var iframeEnable = resultStatus[2];
-			var iframeSettings = resultStatus[3][0];	// 只取第一个
-			var side_page = functionView.init({
-				resultStatus: resultStatus
-			});
-			var tab = new Tab();
-			tab.addTab({
-				sign: "faq",
-				text: "常见问题",
-				ins: [side_page.ss, side_page.faq],
-			});
-			// 开关开启并且信息完备时，addTab IFRAME！
-			if(!utils.isMobile && iframeEnable && iframeSettings.url){
-				tab.addTab({
-					sign: "iframe",
-					text: iframeSettings.name,
-					ins: [side_page.iframe],
-				});
-			}
-			tab.setSelect("faq");
-			$("#em-kefu-webim-self").append(tab.$el);
+			if(!commonIssueEnable && !selfServiceEnable){ allDisable(); }	// 全关
+			else{ mobileAnyEnable(); }	// 任意一个打开（包括 iframeEnable）
 		}
 	}
+	// tenantId
 	else{
 		main.initChat();
-		!fromUserClick && main.close();
+		if(!fromUserClick){
+			main.close();
+		}
 	}
 
 	apiHelper.getTheme().then(function(themeName){
 		var className = _const.themeMap[themeName];
 		className && utils.addClass(document.body, className);
 	});
+
+	function initSidePage(resultStatus){
+		var commonIssueEnable = resultStatus[0];
+		var selfServiceEnable = resultStatus[1];
+		var iframeEnable = resultStatus[2];
+		var iframeSettings = resultStatus[3][0];	// 只取第一个
+		var side_page = functionView.init({
+			resultStatus: resultStatus
+		});
+		var tab = new Tab();
+		if(commonIssueEnable || selfServiceEnable){
+			var faqInsArr = [];
+			if(selfServiceEnable){
+				faqInsArr.push(side_page.ss);
+				faqTxt = "自助服务";
+			}
+			if(commonIssueEnable){
+				faqInsArr.push(side_page.faq);
+				faqTxt = "常见问题";
+			}
+			tab.addTab({
+				sign: "faq",
+				text: faqTxt,
+				ins: faqInsArr,
+			});
+		}
+		// 开关开启并且信息完备时，addTab IFRAME！
+		if(!utils.isMobile && iframeEnable && iframeSettings.url){
+			tab.addTab({
+				sign: "iframe",
+				text: iframeSettings.name,
+				ins: [side_page.iframe],
+			});
+		}
+		// 优先第一个
+		if(tab.selectFirstTab()){
+			$("#em-kefu-webim-self").append(tab.$el);
+		}
+	}
+	function allDisable(){
+		console.log("all disable");
+		main.initChat();
+		if(!utils.isMobile){
+			utils.removeClass(document.body, "big-window");
+		}
+	}
+	function mobileAnyEnable(){
+		console.log("mobile any enable");
+		initSidePage(resultStatus);
+		main.close();
+	}
+	function pcAnyEnable(){
+		console.log("pc any enable");
+		main.initChat();
+		if(utils.isTop){
+			utils.addClass(document.body, "big-window-h5");
+		}
+		else{
+			handleSettingIframeSize({
+				// iframe 常见问题和自主服务，固定宽度 360px
+				width: (Math.floor(commonConfig.getConfig().dialogWidth.slice(0, -2)) + Math.floor(360)) + "px"
+			});
+		}
+		initSidePage(resultStatus);
+	}
 }
 
 

@@ -6,20 +6,24 @@ function Tab(opt){
 	opt = opt || {};
 	this.inst = {};
 	this.bodies = {};
+	this.tabs = [];
 	this.instCount = 0;
 	this.$el = $(_.template(tpl)());
 	opt.className && this.$el.addClass(opt.className);
 	this.$head = this.$el.find(".head");
 }
 Tab.prototype.addTab = function(tabInfo){
+	if(!_.reduce(tabInfo.ins, function(result, cur){ return result && cur; }, true)){
+		throw new Error("不允许空实例");
+	};
 	var liWith;
 	var $headItemTmp = $("<li sign=\"" + tabInfo.sign + "\">" + tabInfo.text + "</li>");
-
 	var $bodyItemTmp = $("<div class='hide' sign=" + tabInfo.sign + ">");
 	// frame append
 	this.$head.append($headItemTmp);
 	this.$el.append($bodyItemTmp);
 	// update
+	this.tabs.push(tabInfo);
 	this.bodies[tabInfo.sign] = $bodyItemTmp;
 	this.inst[tabInfo.sign] = tabInfo.ins;		// arr
 	this.$allContent = this.$el.find("> div");
@@ -53,6 +57,14 @@ Tab.prototype.onTabClick = function(e){
 Tab.prototype.clearSelected = function(){
 	this.$all.removeClass("selected");
 	this.$allContent.addClass("hide");
+};
+Tab.prototype.selectFirstTab = function(silent){
+	var firstTab = this.tabs[0];
+	if(firstTab){
+		this.setSelect(firstTab.sign, silent);
+		return true;
+	}
+	return false;
 };
 Tab.prototype.selectTab = function($tab, silent){
 	var sign = $tab.attr("sign");
