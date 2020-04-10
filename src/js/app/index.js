@@ -323,15 +323,41 @@ function renderUI(resultStatus){
 		iframeEnable = resultStatus[2];
 		// pc 端判断三个开关
 		if(!utils.isMobile){
-			utils.addClass(document.body, "big-window");
 			// 任意一个打开
-			if(commonIssueEnable || selfServiceEnable || iframeEnable){ pcAnyEnable(); }
-			else{ allDisable(); }	// 全关
+			if(commonIssueEnable || selfServiceEnable || iframeEnable){
+				utils.addClass(document.body, "big-window");
+				// iframe 没有 url 时，初始化 tab 条件满足，但是没有内容！
+				if(!pcAnyEnable()){
+					utils.removeClass(document.body, "big-window");
+				}
+				// 初始化成功 - 1
+				else if(utils.isTop){
+					utils.addClass(document.body, "big-window-h5");
+				}
+				// 初始化成功 - 2
+				else{
+					handleSettingIframeSize({
+						// iframe 常见问题和自主服务，固定宽度 360px
+						width: (Math.floor(commonConfig.getConfig().dialogWidth.slice(0, -2)) + Math.floor(360)) + "px"
+					});
+				}
+			}
+			// 全关
+			else{
+				utils.removeClass(document.body, "big-window");
+				allDisable();
+			}
 		}
 		// 移动端不判断 iframe 开关
 		else{
-			if(!commonIssueEnable && !selfServiceEnable){ allDisable(); }	// 全关
-			else{ mobileAnyEnable(); }	// 任意一个打开（包括 iframeEnable）
+			// 全关
+			if(!commonIssueEnable && !selfServiceEnable){
+				allDisable();
+			}
+			// 任意一个打开（包括 iframeEnable）
+			else{
+				mobileAnyEnable();
+			}
 		}
 	}
 	// tenantId
@@ -347,6 +373,20 @@ function renderUI(resultStatus){
 		className && utils.addClass(document.body, className);
 	});
 
+	function allDisable(){
+		console.log("全关");
+		main.initChat();
+	}
+	function mobileAnyEnable(){
+		console.log("mob 任一");
+		main.close();
+		return initSidePage(resultStatus);
+	}
+	function pcAnyEnable(){
+		console.log("pc 任一");
+		main.initChat();
+		return initSidePage(resultStatus);
+	}
 	function initSidePage(resultStatus){
 		var commonIssueEnable = resultStatus[0];
 		var selfServiceEnable = resultStatus[1];
@@ -372,8 +412,8 @@ function renderUI(resultStatus){
 				ins: faqInsArr,
 			});
 		}
-		// 开关开启并且信息完备时，addTab IFRAME！
-		if(!utils.isMobile && iframeEnable && iframeSettings.url){
+		// iframe 开关开启并且信息完备时
+		if(!utils.isMobile && iframeEnable && iframeSettings && iframeSettings.url){
 			tab.addTab({
 				sign: "iframe",
 				text: iframeSettings.name,
@@ -383,33 +423,9 @@ function renderUI(resultStatus){
 		// 优先第一个
 		if(tab.selectFirstTab()){
 			$("#em-kefu-webim-self").append(tab.$el);
+			return true;
 		}
-	}
-	function allDisable(){
-		console.log("all disable");
-		main.initChat();
-		if(!utils.isMobile){
-			utils.removeClass(document.body, "big-window");
-		}
-	}
-	function mobileAnyEnable(){
-		console.log("mobile any enable");
-		initSidePage(resultStatus);
-		main.close();
-	}
-	function pcAnyEnable(){
-		console.log("pc any enable");
-		main.initChat();
-		if(utils.isTop){
-			utils.addClass(document.body, "big-window-h5");
-		}
-		else{
-			handleSettingIframeSize({
-				// iframe 常见问题和自主服务，固定宽度 360px
-				width: (Math.floor(commonConfig.getConfig().dialogWidth.slice(0, -2)) + Math.floor(360)) + "px"
-			});
-		}
-		initSidePage(resultStatus);
+		return false;
 	}
 }
 
