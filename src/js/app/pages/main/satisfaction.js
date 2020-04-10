@@ -129,7 +129,7 @@ function _clear(){
 }
 
 function _sendSatisfaction(score, content, session, invite, appraiseTags, resolutionParam, evaluationDegreeId){
-	channel.sendText("", {
+	var data = {
 		ext: {
 			weichat: {
 				ctrlType: "enquiry",
@@ -147,7 +147,11 @@ function _sendSatisfaction(score, content, session, invite, appraiseTags, resolu
 				}
 			}
 		}
-	});
+	};
+	if(!sessionResolved){
+		delete data.ext.weichat.ctrlArgs.resolutionParam;
+	}
+	channel.sendText("", data);
 }
 
 function _setSatisfaction(){
