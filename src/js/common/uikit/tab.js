@@ -7,7 +7,6 @@ function Tab(opt){
 	this.inst = {};
 	this.bodies = {};
 	this.tabs = [];
-	this.instCount = 0;
 	this.$el = $(_.template(tpl)());
 	opt.className && this.$el.addClass(opt.className);
 	this.$head = this.$el.find(".head");
@@ -16,7 +15,7 @@ Tab.prototype.addTab = function(tabInfo){
 	if(!_.reduce(tabInfo.ins, function(result, cur){ return result && cur; }, true)){
 		throw new Error("不允许空实例");
 	};
-	var liWith;
+	var liWidth;
 	var $headItemTmp = $("<li sign=\"" + tabInfo.sign + "\">" + tabInfo.text + "</li>");
 	var $bodyItemTmp = $("<div class='hide' sign=" + tabInfo.sign + ">");
 	// frame append
@@ -27,16 +26,15 @@ Tab.prototype.addTab = function(tabInfo){
 	this.bodies[tabInfo.sign] = $bodyItemTmp;
 	this.inst[tabInfo.sign] = tabInfo.ins;		// arr
 	this.$allContent = this.$el.find("> div");
-	this.$all = this.$el.find("> ul > li");
+	this.$allTab = this.$el.find("> ul > li");
 	// 超过一个 tab 才显示头
-	this.instCount += 1;
-	if(this.instCount >= 2){
+	if(this.tabs.length >= 2){
 		this.$el.removeClass("headless");
 	}
 	// 平均分配 li 的宽度
-	liWith = (100 / (this.instCount)) + "%";
-	_.each(this.$all, function(item){
-		item.style = "width:" + liWith;
+	liWidth = (100 / (this.tabs.length)) + "%";
+	_.each(this.$allTab, function(tab){
+		tab.style = "width:" + liWidth;
 	});
 	// [API] this.$el
 	_.each(tabInfo.ins, function(ins){
@@ -55,7 +53,7 @@ Tab.prototype.onTabClick = function(e){
 	}
 };
 Tab.prototype.clearSelected = function(){
-	this.$all.removeClass("selected");
+	this.$allTab.removeClass("selected");
 	this.$allContent.addClass("hide");
 };
 Tab.prototype.selectFirstTab = function(silent){
@@ -81,7 +79,7 @@ Tab.prototype.selectTab = function($tab, silent){
 };
 Tab.prototype.setSelect = function(sign, silent){
 	var me = this;
-	$.each(this.$all, function(k, v){
+	$.each(this.$allTab, function(k, v){
 		var $v = $(v);
 		if($v.attr("sign") == sign){
 			me.selectTab($v, silent);

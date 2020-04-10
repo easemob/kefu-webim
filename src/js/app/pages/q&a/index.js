@@ -1,6 +1,7 @@
 var SelfService = require("./selfService");
 var Faq = require("./faq");
 var FaqIframe = require("./iframe");
+var ContactBtn = require("./contact");
 
 var utils = require("../../../common/utils");
 var apis = require("./apis");
@@ -32,6 +33,7 @@ function init(obj){
 		faq: faq,
 		ss: selfService,
 		iframe: iframe,
+		contact: new ContactBtn(),
 	};
 }
 

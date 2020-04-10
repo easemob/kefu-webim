@@ -407,6 +407,9 @@ function renderUI(resultStatus){
 				faqInsArr.push(side_page.faq);
 				faqTxt = "常见问题";
 			}
+			if(utils.isMobile){
+				faqInsArr.push(side_page.contact);
+			}
 			tab.addTab({
 				sign: "faq",
 				text: faqTxt,
