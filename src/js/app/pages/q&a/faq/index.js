@@ -37,8 +37,7 @@ module.exports = function(){
 
 	// 点击咨询客服
 	function onContactClick(e){
-		var domSelfWrapper = document.querySelector(".em-self-wrapper");
-		utils.addClass(domSelfWrapper, "hide");
+		$(".em-self-wrapper").addClass("hide");
 		eventListener.trigger(_const.SYSTEM_EVENT.CONSULT_AGENT);
 		e.stopPropagation();
 		return false;

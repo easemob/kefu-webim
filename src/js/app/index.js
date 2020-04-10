@@ -330,11 +330,11 @@ function renderUI(resultStatus){
 				if(!pcAnyEnable()){
 					utils.removeClass(document.body, "big-window");
 				}
-				// 初始化成功 - 1
+				// 初始化成功 - 1 - im.html
 				else if(utils.isTop){
 					utils.addClass(document.body, "big-window-h5");
 				}
-				// 初始化成功 - 2
+				// 初始化成功 - 2 - demo.html
 				else{
 					handleSettingIframeSize({
 						// iframe 常见问题和自主服务，固定宽度 360px
@@ -374,16 +374,17 @@ function renderUI(resultStatus){
 	});
 
 	function allDisable(){
-		console.log("全关");
+		// console.log("全关");
+		$(".em-self-wrapper").addClass("hide");
 		main.initChat();
 	}
 	function mobileAnyEnable(){
-		console.log("mob 任一");
+		// console.log("移动任一");
 		main.close();
 		return initSidePage(resultStatus);
 	}
 	function pcAnyEnable(){
-		console.log("pc 任一");
+		// console.log("电脑任一");
 		main.initChat();
 		return initSidePage(resultStatus);
 	}
