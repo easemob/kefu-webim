@@ -58,7 +58,10 @@ else{
 main.init(setUserInfo);
 
 // 监听点击咨询客服收到的通知
-eventListener.add(_const.SYSTEM_EVENT.CONSULT_AGENT, main.initChat);
+eventListener.add(_const.SYSTEM_EVENT.CONSULT_AGENT, function(){
+	$(".em-self-wrapper").addClass("hide");
+	main.initChat();
+});
 
 function widgetBoxShow(){
 	utils.removeClass(document.querySelector(".em-widget-box"), "hide");
@@ -314,7 +317,7 @@ function renderUI(resultStatus){
 	// 用于预览模式
 	if(commonConfig.getConfig().previewObj){
 		handleSettingIframeSize();
-		main.initChat();
+		allDisable();	// 相当于全关
 	}
 	// configId
 	else if(commonConfig.getConfig().configId){
@@ -362,7 +365,7 @@ function renderUI(resultStatus){
 	}
 	// tenantId
 	else{
-		main.initChat();
+		allDisable();	// 相当于全关
 		if(!fromUserClick){
 			main.close();
 		}

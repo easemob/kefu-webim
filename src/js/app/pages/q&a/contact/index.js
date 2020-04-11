@@ -8,7 +8,6 @@ module.exports = function(){
 	}));
 	container.removeClass("hide");
 	container.on("click", function(e){
-		$(".em-self-wrapper").addClass("hide");
 		eventListener.trigger(_const.SYSTEM_EVENT.CONSULT_AGENT);
 		e.stopPropagation();
 		return false;
