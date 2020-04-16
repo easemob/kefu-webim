@@ -196,6 +196,7 @@
 	// 满意度评价
 	&.satisfaction {
 		font-size: 13px;
+		overflow-y:auto;
 		.wrapper {
 			width: 95%;
 			max-width: 400px;
