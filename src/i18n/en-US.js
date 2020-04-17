@@ -64,7 +64,7 @@ module.exports = {
 	},
 	evaluation: {
 		rate_my_service: "Rate my service",
-		rate_my_evalute: "Has agent solved your problem?",
+		rate_my_evalute: "Has your problem been resolved?",
 		review: "Review",
 		select_level_please: "Select a star",
 		select_tag_please: "Select a label",
