@@ -69,6 +69,8 @@ module.exports = {
 		select_level_please: "请先选择星级",
 		select_tag_please: "请先选择标签",
 		submit_success: "提交成功",
+		resolved: "已解决",
+		unsolved: "未解决",
 	},
 	ticket: {
 		title: "请填写以下内容以方便我们及时联系您",

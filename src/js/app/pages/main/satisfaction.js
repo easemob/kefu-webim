@@ -47,8 +47,8 @@ function _init(){
 		dom = sessionResolved ? utils.createElementFromHTML([
 			"<div class=\"wrapper\">",
 			"<div class=\"resolveCon\"><span class=\"title\">" + resolveTip + "</span>",
-			"<div><span class=\"resolve-btn selected resolved\" data-num = \"1\"><i class=\"icon-resolved\"></i>已解决</span>",
-			"<span class=\"resolve-btn unresolved\" data-num = \"2\"><i class=\"icon-unresolved\"></i>未解决</span></div></div>",
+			"<div><span class=\"resolve-btn selected resolved\" data-num = \"1\"><i class=\"icon-resolved\"></i><span>" + __("evaluation.resolved") + "</span></span>",
+			"<span class=\"resolve-btn unresolved\" data-num = \"2\"><i class=\"icon-unresolved\"></i><span>" + __("evaluation.unsolved") + "</span></span></div></div>",
 			"<span class=\"title\">" + tipWord + "</span>",
 			"<ul></ul>",
 			"<div class=\"tag-container\"></div>",

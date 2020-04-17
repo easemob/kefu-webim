@@ -64,11 +64,13 @@ module.exports = {
 	},
 	evaluation: {
 		rate_my_service: "Rate my service",
-		rate_my_evalute: "请问客服是否解决了您的问题?",
+		rate_my_evalute: "Has agent solved your problem?",
 		review: "Review",
 		select_level_please: "Select a star",
 		select_tag_please: "Select a label",
 		submit_success: "Submit successfully",
+		resolved: "Resolved",
+		unsolved: "Unsolved",
 	},
 	ticket: {
 		title: "Please fill in your contact info.",
