@@ -928,6 +928,7 @@ function _setExt(msg){
 	var bindSkillGroupName = officialAccount.bindSkillGroupName;
 	var language = __("config.language");
 	var customExtendMessage = commonConfig.customExtendMessage;
+	var rulaiExtendMessage = commonConfig.getConfig().rulaiExtendMessage;
 
 	msg.body.ext = msg.body.ext || {};
 	msg.body.ext.weichat = msg.body.ext.weichat || {};
@@ -937,6 +938,11 @@ function _setExt(msg){
 	// 对接百度机器人，增加消息扩展
 	if(typeof customExtendMessage === "object"){
 		_.assign(msg.body.ext, customExtendMessage);
+	}
+
+	// 对接敦煌网(如来机器人)，增加消息扩展
+	if(typeof rulaiExtendMessage === "object"){
+		_.assign(msg.body.ext, rulaiExtendMessage);
 	}
 
 	// bind skill group
