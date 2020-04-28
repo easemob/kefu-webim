@@ -139,6 +139,15 @@ function overseasTest(){
 	}
 	return !phone.value || !(/^1[3456789]\d{9}$/.test(phone.value));
 }
+// 添加邮箱的校验
+function checkEmail(){
+	var check = /^[0-9a-z]([_.0-9a-z-]{0,30}[0-9a-z])?@([0-9a-z][0-9a-z-]{0,30}[.]){1,3}[a-z]{2,4}$/i;
+	if(check.test(mail.value)){
+		return true
+	}else{
+		return false
+	}
+}
 
 // 留言
 utils.on(confirmBtn, "click", function(){
@@ -151,7 +160,7 @@ utils.on(confirmBtn, "click", function(){
 	else if(overseasTest()){
 		uikit.tip(__("ticket.invalid_phone"));
 	}
-	else if(!mail.value || mail.value.length > 127){
+	else if(!checkEmail()){
 		uikit.tip(__("ticket.invalid_email"));
 	}
 	else if(!content.value || content.value.length > 1500){
