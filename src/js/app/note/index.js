@@ -132,9 +132,12 @@ config.grayNoteCategory && _getCategories();
 config.preData && _writePreDate(config.preData);
 
 
-// 海外用户，不验证手机号格式
+// 海外用户，不验证手机号格式 新增敦煌用户不校验格式2020-05-06
 function overseasTest(){
 	if(config.tenantId == "76141"){
+		return !phone.value;
+	}
+	if(config.tenantId == "78882"){
 		return !phone.value;
 	}
 	return !phone.value || !(/^1[3456789]\d{9}$/.test(phone.value));
