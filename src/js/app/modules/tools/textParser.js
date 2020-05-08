@@ -144,6 +144,7 @@ function _customLinkParser(text){
 		aDom
 		&& aDom.tagName === "A"
 		&& URL_RE.test(href = aDom.href)
+		&& false
 	){
 		cloneADom = document.createElement("a");
 		cloneADom.href = href;
