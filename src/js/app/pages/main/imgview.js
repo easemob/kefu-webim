@@ -18,8 +18,8 @@ var _init = _.once(function(){
 	utils.on(imgWrapper, "click", function(){
 		utils.addClass(imgWrapper, "hide");
 	}, false);
-	!("download" in document.createElement("a")) && utils.on(androidLoadTip, "click", function(){
-		window.location = imgSrc + '?timestamp='+((new Date()).getTime()+Math.random());
+	("download" in document.createElement("a")) && utils.on(androidLoadTip, "click", function(){
+		window.location = imgSrc; 
 		return false;
 	});
 
@@ -31,7 +31,7 @@ module.exports = {
 		_init();
 		if(utils.isTop || utils.isMobile){
 			img.src = url;
-			androidLoadTip.href = url;
+			// androidLoadTip.href = url;
 			utils.removeClass(imgWrapper, "hide");
 		}
 		else{
