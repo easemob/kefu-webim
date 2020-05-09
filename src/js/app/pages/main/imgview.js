@@ -19,7 +19,7 @@ var _init = _.once(function(){
 		utils.addClass(imgWrapper, "hide");
 	}, false);
 	!("download" in document.createElement("a")) && utils.on(androidLoadTip, "click", function(){
-		window.location = imgSrc;
+		window.location = imgSrc + '?timestamp='+((new Date()).getTime()+Math.random());
 		return false;
 	});
 
