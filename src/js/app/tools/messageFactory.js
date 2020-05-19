@@ -310,6 +310,24 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	if(!utils.getDataByPath(msg, "ext.msgtype.choice") && utils.getDataByPath(msg, "ext.weichat.ctrlType") === "TransferToKfHint"){
 		var ctrlArgs = msg.ext.weichat.ctrlArgs;
 		var disabledClass = profile.shouldMsgActivated(ctrlArgs.serviceSessionId) ? "" : "disabled";
+		// 判断英文状态开关是否打开状态，打开改变label的字段
+		var resRoobot;
+		try{
+			resRoobot = JSON.parse(apiHelper.getRobotNotReachableENEnable().response);
+		}
+		catch(e){
+			console.log(e)
+		}
+		if(resRoobot.status == "OK" ){
+			if(resRoobot.entities.length != 0 && resRoobot.entities[0].optionValue){
+				ctrlArgs.label = "Chat with agent"
+			}else{
+				ctrlArgs.label
+			}
+		}else{
+			console.log("unexpected response value.");
+		}
+		
 		html += "<div class=\"em-btn-list\">"
 			+ "<button "
 				+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
