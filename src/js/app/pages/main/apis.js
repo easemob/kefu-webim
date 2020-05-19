@@ -1277,6 +1277,16 @@ function getSessionEnquires(serviceSessionId){
 	});
 }
 
+function getRobotNotReachableENEnable(){
+		return emajax({
+			url: "/v1/webimplugin/tenants/"
+				+ config.tenantId
+				+ "/options/robotNotReachableENEnable",
+			type: "GET",
+			async:false,
+		});
+}
+
 module.exports = {
 	getGrayList: getGrayList,
 	getToken: getToken,
@@ -1335,6 +1345,8 @@ module.exports = {
 	startKeep: startKeep,
 	closeChatDialog: closeChatDialog,
 	getSessionEnquires: getSessionEnquires,
+
+	getRobotNotReachableENEnable: getRobotNotReachableENEnable, // 获取机器人英文开关状态
 
 	update: function(cfg){
 		config = cfg;
