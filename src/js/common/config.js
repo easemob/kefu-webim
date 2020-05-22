@@ -83,6 +83,7 @@ function handleConfig(configJson){
 	config.popupOnInitialized = configJson.toolbar.popupOnInitialized;
 	config.satisfaction = configJson.toolbar.satisfaction;
 	config.soundReminder = configJson.toolbar.soundReminder;
+	config.sendSmallVideo = configJson.toolbar.sendSmallVideo;
 	config.ticket = configJson.toolbar.ticket;
 
 	config.resources = configJson.chat.resources;
