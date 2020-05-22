@@ -145,6 +145,13 @@ function _initToolbar(){
 		utils.removeClass(doms.sendImgBtn, "hide");
 		utils.removeClass(doms.sendVideoBtn, "hide");
 	}
+	// 小视频按钮
+	if(config.sendSmallVideo){
+		utils.removeClass(doms.sendVideoBtn, "hide");
+	}
+	else{
+		utils.addClass(doms.sendVideoBtn, "hide");
+	}
 	// 上传附件按钮
 	if(WebIM.utils.isCanUploadFileAsync && config.toolbar.sendAttachment){
 		utils.removeClass(doms.sendFileBtn, "hide");
