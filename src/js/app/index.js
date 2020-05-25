@@ -273,7 +273,8 @@ function handleCfgData(relevanceList, status){
 			H5Title: {}
 		},
 		toolbar: commonConfig.getConfig().toolbar || {
-			sendAttachment: true
+			sendAttachment: true,
+			sendSmallVideo:commonConfig.getConfig().configId ? false : true,
 		},
 		chat: commonConfig.getConfig().chat || {}
 	});
