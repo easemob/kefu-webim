@@ -140,6 +140,30 @@ function _initUI(){
 }
 
 function _initToolbar(){
+	apiHelper.getVisitorSendMsgConfig().then(function(res){
+		console.log('[chenggong2]',res )
+		var video = utils.getDataByPath(res,"video");
+		var appendix = utils.getDataByPath(res,"appendix");
+		var picture = utils.getDataByPath(res,"picture");
+		var face = utils.getDataByPath(res,"face");
+		var text = utils.getDataByPath(res,"text")
+		if(video === true){
+			utils.removeClass(doms.sendVideoBtn, "hide");
+		}else if(video === false){
+			utils.addClass(doms.sendVideoBtn, "hide");
+		}
+		if(appendix === true){
+			utils.removeClass(doms.sendFileBtn, "hide");
+		}else if(appendix === false){
+			utils.addClass(doms.sendFileBtn, "hide");
+		}
+		if(picture === true){
+			utils.removeClass(doms.sendImgBtn, "hide");
+		}else if(picture === false){
+			utils.addClass(doms.sendImgBtn, "hide");
+		}
+
+	})
 	// 低版本浏览器不支持上传文件/图片
 	if(WebIM.utils.isCanUploadFileAsync){
 		utils.removeClass(doms.sendImgBtn, "hide");

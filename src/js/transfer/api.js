@@ -316,6 +316,14 @@ up2Im.listen(function(msg){
 			excludeData: true
 		});
 		break;
+	case "getVisitorSendMsgConfig":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/visitorSendMsgConfig",
+			msg: msg,
+			type: "GET",
+			excludeData: true
+		});
+		break;
 	// 本接口是一个通用的专供 webim 获取坐席 options 的接口
 	case "getOptForShowTrackMsg":
 		emitAjax({

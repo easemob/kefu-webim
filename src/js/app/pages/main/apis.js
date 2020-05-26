@@ -610,7 +610,22 @@ function getNickNameOption(){
 		});
 	});
 }
-
+function getVisitorSendMsgConfig(){
+	return new Promise(function(resolve, reject){
+		api("getVisitorSendMsgConfig", {
+			tenantId: config.tenantId
+		}, function(res){
+			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
+			if(typeof val === "string"){
+				val = val.replace(/&quot;/g, "\"");
+				val = JSON.parse(val);
+			}
+			resolve(val);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
 function closeServiceSession(sessionId){
 	return new Promise(function(resolve, reject){
 		getToken().then(function(token){
@@ -1300,6 +1315,7 @@ module.exports = {
 	getAgentInputState: getAgentInputState,
 	getWaitListNumber: getWaitListNumber,
 	getNickNameOption: getNickNameOption,
+	getVisitorSendMsgConfig: getVisitorSendMsgConfig,
 	closeServiceSession: closeServiceSession,
 	deleteEvent: deleteEvent,
 	receiveMsgChannel: receiveMsgChannel,
