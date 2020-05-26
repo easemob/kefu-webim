@@ -7,6 +7,7 @@ function h5_mode_init(){
 	config.tenantId = utils.query("tenantId");
 	config.configId = utils.query("configId");
 	config.offDutyType = utils.query("offDutyType");
+	config.openNote = utils.query("openNote");
 	config.grUserId = utils.query("grUserId");
 	config.domain = utils.query("domain") ? "//" + utils.query("domain") : "";
 
@@ -80,6 +81,7 @@ function handleConfig(configJson){
 	config.minimum = configJson.toolbar.minimum;
 	config.offDutyWord = configJson.toolbar.offDutyWord;
 	config.offDutyType = configJson.toolbar.offDutyType;
+	config.openNote = configJson.toolbar.openNote;
 	config.popupOnInitialized = configJson.toolbar.popupOnInitialized;
 	config.satisfaction = configJson.toolbar.satisfaction;
 	config.soundReminder = configJson.toolbar.soundReminder;

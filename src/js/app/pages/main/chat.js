@@ -141,7 +141,6 @@ function _initUI(){
 
 function _initToolbar(){
 	apiHelper.getVisitorSendMsgConfig().then(function(res){
-		console.log('[chenggong2]',res )
 		var video = utils.getDataByPath(res,"video");
 		var appendix = utils.getDataByPath(res,"appendix");
 		var picture = utils.getDataByPath(res,"picture");
@@ -865,7 +864,9 @@ function _bindEvents(){
 	utils.on(doms.noteBtn, "click", function(){
 		noteIframe.open();
 	});
-
+	utils.on(doms.newNoteBtn, "click", function(){
+		noteIframe.open();
+	});
 	// 满意度评价
 	utils.on(doms.satisfaction, "click", function(){
 		doms.textInput.blur();
@@ -1008,6 +1009,7 @@ function _getDom(){
 	toolBar.parentNode.insertBefore(guessInfo.loadHtml().dom, toolBar);
 
 	doms = {
+		toolBar:editorView.querySelector(".toolbar"),
 		imBtn: document.getElementById("em-widgetPopBar"),
 		imChat: document.getElementById("em-kefu-webim-chat"),
 		agentStatusText: topBar.querySelector(".em-header-status-text"),
@@ -1023,6 +1025,7 @@ function _getDom(){
 		sendFileBtn: editorView.querySelector(".em-widget-file"),
 		sendVideoBtn: editorView.querySelector(".em-widget-video"),
 		sendBtn: editorView.querySelector(".em-widget-send"),
+		newNoteBtn: editorView.querySelector(".em-widget-note-btn"),
 		satisfaction: editorView.querySelector(".em-widget-satisfaction"),
 		textInput: editorView.querySelector(".em-widget-textarea"),
 		noteBtn: editorView.querySelector(".em-widget-note"),
@@ -1098,13 +1101,27 @@ function _initSession(){
 	]).then(function(result){
 		var dutyStatus = result[0];
 		// 当配置为下班进会话时执行与上班相同的逻辑
-		profile.isInOfficeHours = dutyStatus || config.offDutyType === "chat";
+		// var openNote = config.offDutyType;
+		var openNote = true;
+		// var isHistoryType = config.offDutyType === "history"
+		var isHistoryType = true
+		profile.isInOfficeHours = dutyStatus || config.offDutyType === "chat" || isHistoryType;
 		if(profile.isInOfficeHours){
-			emojiPanel.init({
-				container: doms.imChat,
-				toggleButton: doms.emojiToggleButton,
-				textInput: doms.textInput,
-			});
+			if(isHistoryType){
+				utils.addClass(doms.toolBar, "hide");
+				utils.addClass(doms.sendBtn, "hide");
+				doms.textInput.disabled = true;
+				doms.textInput.value = "现在非工作时间，您可以上翻查阅历史沟通内容~"
+				if(openNote){
+					utils.removeClass(doms.newNoteBtn, "hide");
+				}
+			} else{
+				emojiPanel.init({
+					container: doms.imChat,
+					toggleButton: doms.emojiToggleButton,
+					textInput: doms.textInput,
+				});
+			}
 			videoChat.init({
 				triggerButton: doms.videoInviteButton,
 				parentContainer: doms.imChat,
