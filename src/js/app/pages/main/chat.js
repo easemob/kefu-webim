@@ -1101,10 +1101,10 @@ function _initSession(){
 	]).then(function(result){
 		var dutyStatus = result[0];
 		// 当配置为下班进会话时执行与上班相同的逻辑
-		// var openNote = config.offDutyType;
-		var openNote = true;
-		// var isHistoryType = config.offDutyType === "history"
-		var isHistoryType = true
+		var openNote = config.openNote;
+		// var openNote = true;
+		var isHistoryType = config.offDutyType === "history"
+		// var isHistoryType = true
 		profile.isInOfficeHours = dutyStatus || config.offDutyType === "chat" || isHistoryType;
 		if(profile.isInOfficeHours){
 			if(isHistoryType){
