@@ -970,6 +970,23 @@ function getServiceSessionResolved(){
 	});
 }
 
+function getDefaultFiveStarEnable(){
+	return new Promise(function(resolve, reject){
+		var webim = false;
+		api("getDefaultFiveStarEnable", { tenantId: config.tenantId }, function(res){
+			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
+			if(typeof val === "string"){
+				if(val == "true"){
+					webim = true;
+				}
+			}
+			resolve(webim);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 function updateCustomerInfo(data){
 	return new Promise(function(resolve, reject){
 		Promise.all([
@@ -1347,6 +1364,7 @@ module.exports = {
 	getSessionEnquires: getSessionEnquires,
 
 	getRobotNotReachableENEnable: getRobotNotReachableENEnable, // 获取机器人英文开关状态
+	getDefaultFiveStarEnable:getDefaultFiveStarEnable,  //获取默认五星评价的开关
 
 	update: function(cfg){
 		config = cfg;

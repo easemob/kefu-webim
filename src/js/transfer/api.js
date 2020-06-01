@@ -925,6 +925,14 @@ up2Im.listen(function(msg){
 			type: "GET"
 		});
 		break;
+	case "getDefaultFiveStarEnable":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/defaultFiveStarEnable",
+			type: "GET",
+			msg: msg,
+			excludeData: true,
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;
