@@ -28,6 +28,7 @@ var resolvedId = 1;
 var _initOnce = _.once(_init);
 var evaluateType; // 评价方式
 var sessionResolved;// 问题解决评价
+var fiveStarState;//默认五星评价
 
 module.exports = {
 	init: init,
@@ -42,6 +43,11 @@ function _init(){
 	apiHelper.getServiceSessionResolved()
 	.then(function(resp){
 		sessionResolved = resp;
+	});
+	//默认五星评价的开关
+	apiHelper.getDefaultFiveStarEnable()
+	.then(function(resp){
+		fiveStarState = resp;
 	});
 	apiHelper.getSatisfactionTipWord().then(function(tipWord){
 		dom = sessionResolved ? utils.createElementFromHTML([
@@ -74,6 +80,12 @@ function _init(){
 			utils.removeClass(resolvedBtn, "selected");
 			utils.addClass(this, "selected");
 			resolvedId = this.dataset.num;
+			if(resolvedId == 1){
+				utils.addClass(starList, "sel");
+			}
+			else{
+				utils.removeClass(starList, "sel");
+			}
 		});
 
 		utils.live("li", "click", function(){
@@ -156,6 +168,7 @@ function _sendSatisfaction(score, content, session, invite, appraiseTags, resolu
 
 function _setSatisfaction(){
 	apiHelper.getEvaluationDegrees().then(function(entities){
+		var labelID;
 		starsUl.innerHTML = _.chain(entities)
 		.sortBy("level")
 		.map(function(elem, index){
@@ -165,6 +178,7 @@ function _setSatisfaction(){
 			var id = elem.id;
 			var score = elem.score;
 			var isSingleTag = elem.isSingleTag;
+			labelID = id;
 
 			return "<li data-level=\"" + level
 				+ "\" title=\"" + name
@@ -177,6 +191,14 @@ function _setSatisfaction(){
 		.join("");
 
 		starList = starsUl.querySelectorAll("li");
+		if(resolvedId == 1){
+			utils.addClass(starList, "sel");
+		}
+		else{
+			utils.removeClass(starList, "sel");
+		}
+		//创建评价标签
+		_createLabel(labelID);
 	});
 }
 
