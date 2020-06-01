@@ -141,6 +141,7 @@ function _initUI(){
 
 function _initToolbar(){
 	apiHelper.getVisitorSendMsgConfig().then(function(res){
+		console.log('[resssss]',res)
 		var video = utils.getDataByPath(res,"video");
 		var appendix = utils.getDataByPath(res,"appendix");
 		var picture = utils.getDataByPath(res,"picture");
@@ -148,17 +149,20 @@ function _initToolbar(){
 		var text = utils.getDataByPath(res,"text")
 		if(video === true){
 			utils.removeClass(doms.sendVideoBtn, "hide");
-		}else if(video === false){
+		// }else if(video === false){
+		}else {
 			utils.addClass(doms.sendVideoBtn, "hide");
 		}
 		if(appendix === true){
 			utils.removeClass(doms.sendFileBtn, "hide");
-		}else if(appendix === false){
+		// }else if(appendix === false){
+		}else{
 			utils.addClass(doms.sendFileBtn, "hide");
 		}
 		if(picture === true){
 			utils.removeClass(doms.sendImgBtn, "hide");
-		}else if(picture === false){
+		// }else if(picture === false){
+		}else{
 			utils.addClass(doms.sendImgBtn, "hide");
 		}
 
