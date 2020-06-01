@@ -1109,8 +1109,70 @@ function _initSession(){
 		// var openNote = true;
 		var isHistoryType = config.offDutyType === "history"
 		// var isHistoryType = true
-		profile.isInOfficeHours = dutyStatus || config.offDutyType === "chat" || isHistoryType;
+		console.log("dutyStatus",dutyStatus, config.offDutyType, openNote)
+		profile.isInOfficeHours = dutyStatus || config.offDutyType === "chat";
 		if(profile.isInOfficeHours){
+			emojiPanel.init({
+				container: doms.imChat,
+				toggleButton: doms.emojiToggleButton,
+				textInput: doms.textInput,
+			});
+			videoChat.init({
+				triggerButton: doms.videoInviteButton,
+				parentContainer: doms.imChat,
+			});
+			extendMessageSender.init();
+
+			Promise.all([
+				// 查询是否开启机器人
+				apiHelper.getRobertIsOpen().then(function(isRobotEnable){
+					profile.hasRobotAgentOnline = isRobotEnable;
+				}),
+				// 获取坐席昵称设置
+				apiHelper.getNickNameOption().then(function(displayNickname){
+					profile.isAgentNicknameEnable = displayNickname;
+				}),
+				// 获取是否显示 track msg
+				apiHelper.getOptForShowTrackMsg().then(function(yes){
+					profile.isShowTrackMsg = yes;
+				}),
+
+			])
+			.then(function(){
+				return Promise.all([
+					_initOfficialAccount(),
+					_initSDK()
+				]);
+			})
+			.then(_onReady);
+
+
+
+			_initSystemEventListener();
+			satisfaction.init();
+			initAgentInputStatePoller();
+			initAgentStatusPoller();
+			initVisitorStatusPoller();
+			initQueuingNumberPoller();
+			initTransferToKefuButton();
+			initAgentNicknameUpdate();
+			initGetGreetings();
+
+			// 第二通道收消息初始化
+			channel.initSecondChannle();
+			// todo: move to handle ready
+			initPasteImage();
+			// 显示广告条
+			_setLogo();
+			// 设置信息栏
+			_setNotice();
+			_initToolbar();
+			// 检测租户版本是否是试用期
+			_checkGradeType();
+			// 移动端输入框自动增长
+			utils.isMobile && _initAutoGrow();
+		}
+		else if(!dutyStatus && isHistoryType){
 			if(isHistoryType){
 				utils.addClass(doms.toolBar, "hide");
 				utils.addClass(doms.sendBtn, "hide");
