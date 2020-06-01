@@ -27,7 +27,12 @@ var _init = _.once(function(){
 
 module.exports = {
 	show: function(url){
-		url = url + '?origin-file=true';
+		if(url.indexOf("blob:") == 0){
+			url = url
+		}
+		else{
+			url = url + '?origin-file=true';
+		}
 		imgSrc = url;
 		_init();
 		if(utils.isTop || utils.isMobile){
