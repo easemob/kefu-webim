@@ -30,6 +30,10 @@ function genMsgContent(msg){
 			break;
 		}
 		else if(laiye){
+			var tmpDiv = document.createElement("div");
+			tmpDiv.innerHTML = value;
+			utils.addClass(tmpDiv.getElementsByTagName("img"), "em-widget-imgview");
+			value = tmpDiv.innerHTML;
 			html = "<span class=\"text\">" + value + "</span>";
 			break;
 		}
@@ -329,7 +333,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		// }
 
 		// 英文状态开关可能会有问题，这里用语言状态来判断
-		ctrlArgs.label = __("config.language") === "zh-CN" ? ctrlArgs.label : "Chat with agent"
+		ctrlArgs.label = __("config.language") === "zh-CN" ? ctrlArgs.label : "Chat with agent";
 		html += "<div class=\"em-btn-list\">"
 			+ "<button "
 				+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
