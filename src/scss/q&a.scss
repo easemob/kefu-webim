@@ -37,6 +37,7 @@
 	.faq-item{
 		margin-bottom: 1em;
 		cursor: pointer;
+		word-break:break-all;
 		>p{
 			border: 1px solid #e5e5e5;
 			line-height: 24px;
@@ -50,6 +51,7 @@
 		.answer {
 			border-top: none;
 			padding: 0.5em 2em;
+			overflow-x: auto;
 		}
 		&.hide-answer{
 			.answer{
