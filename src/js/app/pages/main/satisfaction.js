@@ -29,6 +29,7 @@ var _initOnce = _.once(_init);
 var evaluateType; // 评价方式
 var sessionResolved;// 问题解决评价
 var fiveStarState;//默认五星评价
+var defaultScore;
 
 module.exports = {
 	init: init,
@@ -83,9 +84,11 @@ function _init(){
 			if(fiveStarState){
 				if(resolvedId == 1){
 					utils.addClass(starList, "sel");
+					score = defaultScore;
 				}
 				else{
 					utils.removeClass(starList, "sel");
+					score = false;
 				}
 			}
 		});
@@ -195,15 +198,17 @@ function _setSatisfaction(){
 		.join("");
 
 		starList = starsUl.querySelectorAll("li");
+		defaultScore = lastScore
 		if(fiveStarState){
 			if(resolvedId == 1){
 				utils.addClass(starList, "sel");
 				//创建评价标签
 				_createLabel(labelID);
-				score = lastScore;
+				score = defaultScore;
 			}
 			else{
 				utils.removeClass(starList, "sel");
+				score = false;
 			}
 		}
 		

@@ -304,10 +304,12 @@ body.big-window-h5{
 	color: #535252;
 	background-color: #FFECD5;
 	line-height: 44px;
+	max-height: 48px;
+    overflow-y: auto;
 	.content {
 		width: 87%;
 		vertical-align: middle;
-		line-height: 18px;
+		line-height: 16px;
 		margin-left: 10px;
 		word-break: break-word;
 		overflow: hidden;
