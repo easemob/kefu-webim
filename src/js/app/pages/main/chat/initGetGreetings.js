@@ -38,6 +38,8 @@ function _getGreetings(officialAccount){
 		switch(greetingTextType){
 		case 0:
 			// 文本消息
+			// 适配后端有转义两次／三次的情况
+			greetingText = greetingText.replace(/&amp;amp;amp;#39;|&amp;amp;#39;|＆amp;#39;/g, "'"); 
 			channel.handleMessage({
 				data: greetingText,
 			}, {
@@ -49,7 +51,9 @@ function _getGreetings(officialAccount){
 		case 1:
 			// 菜单消息
 			// 适配后端有转义两次／三次的情况
+			greetingText = greetingText.replace(/&amp;amp;amp;#39;|&amp;amp;#39;|＆amp;#39;/g, "'");
 			greetingObj = JSON.parse(greetingText.replace(/&amp;amp;quot;|&amp;quot;/g, "\""));
+			
 			greetingObj.ext && channel.handleMessage({
 				ext: greetingObj.ext,
 			}, {
