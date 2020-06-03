@@ -80,11 +80,13 @@ function _init(){
 			utils.removeClass(resolvedBtn, "selected");
 			utils.addClass(this, "selected");
 			resolvedId = this.dataset.num;
-			if(resolvedId == 1){
-				utils.addClass(starList, "sel");
-			}
-			else{
-				utils.removeClass(starList, "sel");
+			if(fiveStarState){
+				if(resolvedId == 1){
+					utils.addClass(starList, "sel");
+				}
+				else{
+					utils.removeClass(starList, "sel");
+				}
 			}
 		});
 
@@ -193,15 +195,18 @@ function _setSatisfaction(){
 		.join("");
 
 		starList = starsUl.querySelectorAll("li");
-		if(resolvedId == 1){
-			utils.addClass(starList, "sel");
+		if(fiveStarState){
+			if(resolvedId == 1){
+				utils.addClass(starList, "sel");
+				//创建评价标签
+				_createLabel(labelID);
+				score = lastScore;
+			}
+			else{
+				utils.removeClass(starList, "sel");
+			}
 		}
-		else{
-			utils.removeClass(starList, "sel");
-		}
-		//创建评价标签
-		_createLabel(labelID);
-		score = lastScore;
+		
 	});
 }
 
