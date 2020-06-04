@@ -55,10 +55,11 @@ function _getGreetings(officialAccount){
 			noPrompt: true
 		});
 		// 机器人欢迎语
-		greetingText = htmlDecodeByRegExp2(greetingText);
+		
 		switch(greetingTextType){
 		case 0:
 			// 文本消息
+			greetingText = htmlDecodeByRegExp2(greetingText);
 			channel.handleMessage({
 				data: greetingText,
 			}, {
@@ -70,6 +71,7 @@ function _getGreetings(officialAccount){
 		case 1:
 			// 菜单消息
 			// 适配后端有转义两次／三次的情况
+			greetingText = htmlDecodeByRegExp2(greetingText);
 			greetingObj = JSON.parse(greetingText.replace(/&amp;amp;quot;|&amp;quot;/g, "\""));
 			
 			greetingObj.ext && channel.handleMessage({
