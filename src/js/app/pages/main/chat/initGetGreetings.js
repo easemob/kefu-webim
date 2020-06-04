@@ -98,7 +98,7 @@ function _getGreetings(officialAccount){
 		// 技能组列表（机器人菜单）
 		if(groupMenus){
 			groupMenus.menuName = htmlDecodeByRegExp(groupMenus.menuName);
-			if(groupMenus.children.length){
+			if(groupMenus.children && groupMenus.children.length){
 				var childs = groupMenus.children;
 				_.map(childs, function(item){
 					item.menuName = htmlDecodeByRegExp(item.menuName);
