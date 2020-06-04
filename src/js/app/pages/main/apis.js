@@ -337,7 +337,10 @@ function getDutyStatus(){
 
 function getRobertGreeting(){
 	var referer = parseReferer(config.referer);
-	var keyword = referer.word || referer.wd;
+	var keyword1 = referer.word || referer.wd; //百度
+	var keyword2 = referer.q; //360/神马
+	var keyword3 = referer.query || referer.keyword; //搜狗
+	var keyword = keyword1 || keyword2 || keyword3;
 	return new Promise(function(resolve, reject){
 		api("getRobertGreeting_2", {
 			channelType: "easemob",
