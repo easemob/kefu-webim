@@ -15,10 +15,10 @@ module.exports = function(){
 	$queuingNumberStatus = editorView.querySelector(".queuing-number-status");
 	$queuingNumberLabel = $queuingNumberStatus.querySelector("label");
 
-	// 海外集群10秒轮询一次，海外集群的tenantid是100000开始的
+	// 海外集群10秒轮询一次，海外集群的tenantid是1000000开始的
 	var config = commonConfig.getConfig();
 	var t = 1000;
-	if(config.tenantId >= 100000){
+	if(config.tenantId >= 1000000){
 		t = 10000;
 	}
 	else{
