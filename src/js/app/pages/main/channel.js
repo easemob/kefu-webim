@@ -57,7 +57,6 @@ module.exports = {
 			apiHelper.getDutyStatus(),
 		]).then(function(result){
 			isSkillGroupBtnDisabled = result[0] ? "" : "disabled"
-			console.log("[dutyStatus]",result[0])
 		})
 	},
 	initConnection: _initConnection,
@@ -663,8 +662,7 @@ function _handleMessage(msg, options){
 				var queueName = item.queueName;
 				var label = item.menuName;
 				var className = "js_skillgroupbtn bg-hover-color";
-
-				return "<button"+ isSkillGroupBtnDisabled +" class=\"" + className + "\" data-queue-name=\"" + queueName + "\">" + label + "</button>";
+				return "<button "+ isSkillGroupBtnDisabled +" class=\"" + className + "\" data-queue-name=\"" + queueName + "\">" + label + "</button>";
 			}).join("") || ""
 			+ "</div>";
 		message.data = msg.data.menuName;
