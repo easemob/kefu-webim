@@ -58,7 +58,6 @@ app.use((req, res, next) => {
 	){
 		logProxy(pathname);
 		req.url = req.url.replace(SLASH_KEY_PATH, "");
-		console.log("aa",req)
 		// req.headers.host = DEFAULT_DOMAIN
 		proxy.web(req, res, { target }, next);
 	}
