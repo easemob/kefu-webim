@@ -16,7 +16,7 @@ var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;
 var config;
 var conn;
-
+var isSkillGroupBtnDisabled;
 
 // 监听ack的timer, 每条消息启动一个
 var ackTimerDict = new Dict();
@@ -53,6 +53,12 @@ module.exports = {
 	// todo: discard this
 	init: function(){
 		config = commonConfig.getConfig();
+		Promise.all([
+			apiHelper.getDutyStatus(),
+		]).then(function(result){
+			isSkillGroupBtnDisabled = result[0] ? "" : "disabled"
+			console.log("[dutyStatus]",result[0])
+		})
 	},
 	initConnection: _initConnection,
 	reSend: _reSend,
@@ -658,7 +664,7 @@ function _handleMessage(msg, options){
 				var label = item.menuName;
 				var className = "js_skillgroupbtn bg-hover-color";
 
-				return "<button class=\"" + className + "\" data-queue-name=\"" + queueName + "\">" + label + "</button>";
+				return "<button"+ isSkillGroupBtnDisabled +" class=\"" + className + "\" data-queue-name=\"" + queueName + "\">" + label + "</button>";
 			}).join("") || ""
 			+ "</div>";
 		message.data = msg.data.menuName;
