@@ -140,6 +140,9 @@ function overseasTest(){
 	if(config.tenantId == "78882"){
 		return !phone.value;
 	}
+	if(config.tenantId == "6437"){
+        return !phone.value;
+    }
 	return !phone.value || !(/^1[3456789]\d{9}$/.test(phone.value));
 }
 // 添加邮箱的校验
