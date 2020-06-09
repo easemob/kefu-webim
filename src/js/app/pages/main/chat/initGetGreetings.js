@@ -17,12 +17,10 @@ function _getGreetings(officialAccount){
 		apiHelper.getSystemGreeting(),
 		apiHelper.getRobertGreeting(),
 		apiHelper.getSkillgroupMenu(),
-		apiHelper.getDutyStatus(),
 	]).then(function(result){
 		var systemGreetingText = result[0];
 		var robotGreetingObj = result[1];
 		var groupMenus = result[2];
-		var dutyStatus = result[3];
 
 		var greetingTextType = robotGreetingObj.greetingTextType;
 		var greetingText = robotGreetingObj.greetingText;
@@ -76,7 +74,7 @@ function _getGreetings(officialAccount){
 		}
 
 		// 技能组列表（机器人菜单）
-		if(dutyStatus && groupMenus){
+		if(groupMenus){
 			channel.handleMessage({
 				data: groupMenus,
 			}, {
