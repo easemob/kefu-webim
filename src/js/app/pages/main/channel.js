@@ -98,10 +98,17 @@ function _initConnection(onReadyCallback){
 
 	// init connection
 	conn = new WebIM.connection({
-		url: config.xmppServer,
-		retry: true,
+		appKey: config.appkey,
+		isHttpDNS: true, 
 		isMultiLoginSessions: config.resources,
-		heartBeatWait: _const.HEART_BEAT_INTERVAL
+		host: "easemob.com", 
+		https: true,
+		url: (window.location.protocol === "https:" ? "https:" : "http:") + "//im-api-v2.easemob.com/ws",
+		apiUrl: (window.location.protocol === "https:" ? "https:" : "http:") + "//a1.easemob.com",
+		isAutoLogin: false,
+		heartBeatWait: _const.HEART_BEAT_INTERVAL,
+		autoReconnectNumMax: 5,
+		delivery: false  
 	});
 
 	if(profile.imRestDown){
