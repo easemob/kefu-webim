@@ -35,7 +35,8 @@
 
 body {
 	// 默认主题（天空之城）
-	@include theme(#42b8f4, #00a0e7, #7dcdf7);
+	@include theme(#fff, #fff, #fff);
+	// @include theme(#42b8f4, #00a0e7, #7dcdf7);
 	// 天空之城
 	&.theme-1 {
 		@include theme(#42b8f4, #00a0e7, #7dcdf7);
