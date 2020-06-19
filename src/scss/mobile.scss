@@ -15,6 +15,11 @@
 	.em-widget-wrapper{
 		position: absolute;
 	}
+	.em-self-wrapper {
+		top: 0;
+		bottom: 60px;
+		height: calc(100% - 60px);
+	}
 	.em-widget-header-nickname,
 	.em-header-status-text {
 		overflow: hidden;
