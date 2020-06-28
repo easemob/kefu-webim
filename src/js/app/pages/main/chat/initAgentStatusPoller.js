@@ -58,6 +58,10 @@ function _setAgentStatus(officialAccount){
 }
 
 function _update(status){
-	var agentStatusText = _const.agentStatusText[status || "Other"];
-	$agentStatusText.innerText = agentStatusText;
+    var agentStatusText = _const.agentStatusText[status || "Other"];
+    if (profile.isHideCustomerStatus) {
+        $agentStatusText.innerText === '';
+    } else {
+        $agentStatusText.innerText = agentStatusText;
+    }
 }

@@ -1307,6 +1307,27 @@ function getRobotNotReachableENEnable(){
 		});
 }
 
+function getOnlineCustomerStatus(){
+    return new Promise(function(resolve, reject){
+        api("getOnlineCustomerStatus", {
+            tenantId: config.tenantId,
+        }, function(res){
+            var val = utils.getDataByPath(res, "data.entities.0.optionValue");
+            if(typeof val === "string"){
+                if(val == (false + "")){
+                    val = false;
+                }
+                else if(val == (true + "")){
+                    val = true;
+                }
+            }
+            resolve(val);
+        }, function(err){
+            reject(err);
+        });
+    });
+}
+
 module.exports = {
 	getGrayList: getGrayList,
 	getToken: getToken,
@@ -1368,7 +1389,8 @@ module.exports = {
 
 	getRobotNotReachableENEnable: getRobotNotReachableENEnable, // 获取机器人英文开关状态
 	getDefaultFiveStarEnable:getDefaultFiveStarEnable,  //获取默认五星评价的开关
-
+	// opt获取是否隐藏状态
+	getOnlineCustomerStatus: getOnlineCustomerStatus,
 	update: function(cfg){
 		config = cfg;
 	}
