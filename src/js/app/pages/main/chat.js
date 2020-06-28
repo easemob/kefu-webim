@@ -1110,7 +1110,10 @@ function _initSession(){
 				apiHelper.getOptForShowTrackMsg().then(function(yes){
 					profile.isShowTrackMsg = yes;
 				}),
-
+				// 获取是否显示 客服状态
+				apiHelper.getOnlineCustomerStatus().then(function(yes){
+					profile.isHideCustomerStatus = yes;
+				}),
 			])
 			.then(function(){
 				return Promise.all([
