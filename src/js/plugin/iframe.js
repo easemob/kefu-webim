@@ -134,11 +134,15 @@ function _ready(){
 	me.callbackApi = {
 		onready: me.config.onready || emptyFunc,
 		onmessage: me.config.onmessage || emptyFunc,
-		onsessionclosed: me.config.onsessionclosed || emptyFunc
+		onsessionclosed: me.config.onsessionclosed || emptyFunc,
+		onclose: me.config.onclose || emptyFunc, //聊天窗口关闭回调（包括关闭与最小化）
+		onreopen: me.config.onreopen || emptyFunc, //聊天窗口关闭后再打开回调
 	};
 	delete me.config.onready;
 	delete me.config.onmessage;
 	delete me.config.onsessionclosed;
+	delete me.config.onclose;
+	delete me.config.onreopen;
 
 	me.down2Im
 	.send({ event: _const.EVENTS.INIT_CONFIG, data: me.config })
@@ -164,10 +168,12 @@ function _ready(){
 		case _const.EVENTS.SHOW:
 			// 显示聊天窗口
 			me.open();
+			me.callbackApi.onreopen();
 			break;
 		case _const.EVENTS.CLOSE:
 			// 最小化聊天窗口
 			me.close();
+			me.callbackApi.onclose();
 			break;
 		case _const.EVENTS.NOTIFY:
 			// 显示浏览器通知
