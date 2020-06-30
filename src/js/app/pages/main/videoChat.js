@@ -231,4 +231,38 @@ function _onConfirm(){
 			},
 		},
 	});
+	// 开启视频通话添加取消按钮
+	var el = utils.createElementFromHTML("<span class=\"em-widget-exit-video\">取消视频通话</span>");
+	var editor = document.querySelector(".toolbar");
+	editor.appendChild(el);
+	$(".em-widget-exit-video").on("click",_onConfirmExitvideo)
+
+}
+
+function _onConfirmExitvideo(){
+	// channel.sendText(__("video.invite_exit_video"), {
+	channel.sendText("访客取消实时视频", {
+		ext: {
+			type: "rtcmedia/video",
+			msgtype: {
+				liveStreamInvitation: {
+					// msg: __("video.invite_exit_video"),
+					msg: "访客取消实时视频",
+					orgName: config.orgName,
+					appName: config.appName,
+					userName: config.user.username,
+					imServiceNumber: config.toUser,
+					restServer: config.restServer,
+					xmppServer: config.xmppServer,
+					resource: "mobile",
+					isNewInvitation: true,
+					userAgent: navigator.userAgent,
+				},
+			},
+		},
+	});
+	// 取消通话移除按钮
+	var editor = document.querySelector(".toolbar");
+	var ele = document.querySelector(".em-widget-exit-video");
+	editor.removeChild(ele)
 }
