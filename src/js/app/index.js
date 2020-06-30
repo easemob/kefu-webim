@@ -374,7 +374,6 @@ function renderUI(resultStatus){
 
 	apiHelper.getTheme().then(function(themeName){
 		var className = _const.themeMap[themeName];
-		className = className || "theme-1";
 		className && utils.addClass(document.body, className);
 	});
 
