@@ -880,6 +880,7 @@ function _transformMessageFormat(element){
 	var url = msg.url;
 	var timestamp = moment(element.created_at, "YYYY-MM-DDTHH:mm:ss.SSSZZ").valueOf();
 	var fileLength;
+	var thumb;
 	// 只有坐席发出的消息里边的file_length是准确的
 	if(msgBody.from !== config.user.username){
 		fileLength = msg.file_length;
@@ -889,7 +890,13 @@ function _transformMessageFormat(element){
 	if(url && !/^https?/.test(url)){
 		url = config.domain + url;
 	}
-
+	// 消息处理时候添加缩略图属性
+	if(msg.type == "video"){
+		thumb = msg.thumb
+	}
+	else{
+		thumb = ''
+	}
 	return {
 		data: msg.msg || "",
 		url: url,
@@ -902,7 +909,8 @@ function _transformMessageFormat(element){
 		fileLength: fileLength,
 		ext: msgBody.ext,
 		to: msgBody.to,
-		from: msgBody.from
+		from: msgBody.from,
+		thumb: thumb
 	};
 }
 
