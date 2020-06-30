@@ -10,6 +10,7 @@ var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easem
 
 // channel.js 放着消息列表的构建，是不对的
 function genMsgContent(msg){
+	// console.log(msg)
 	var type = msg.type;
 	var value = msg.data;
 	var laiye = msg.laiye;
@@ -99,7 +100,14 @@ function genMsgContent(msg){
 		break;
 		// 小视频类型
 	case "video":
-		html = "<video class=\"video-btn\"  controls src=\"" + msg.url + " \">"
+		// html = "<video class=\"video-btn\"  controls src=\"" + msg.url + " \">"
+		// 		+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"
+		// 		+ "<source  src=\"" + msg.url + " \" type=\"video/webm\"></source>"
+		// 		+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
+		// 	   + "</video>";
+		// break;
+		// 
+		html = "<video poster=\""+ msg.thumb + "\" class=\"video-btn\"  controls src=\"" + msg.url + " \">"
 				+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"
 				+ "<source  src=\"" + msg.url + " \" type=\"video/webm\"></source>"
 				+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
@@ -168,6 +176,7 @@ function _getRulaiHtml(content){
 }
 
 function genDomFromMsg(msg, isReceived, isHistory){
+	// console.log(msg)
 	var id = msg.id;
 	var type = msg.type;
 	var html = "";
