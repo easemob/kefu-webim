@@ -952,7 +952,9 @@ function _show(){
 	){
 		doms.textInput.focus();
 	}
-
+	if(isMessageChannelReady){
+		getToHost.send({ event: _const.EVENTS.REOPEN });
+	}
 	getToHost.send({ event: _const.EVENTS.RECOVERY });
 
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CHAT_WINDOW_OPENED, []);

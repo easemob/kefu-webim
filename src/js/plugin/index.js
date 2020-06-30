@@ -181,12 +181,15 @@ bind = function(config, autoLoad){
 
 		for(i in tenantList){
 			if(Object.prototype.hasOwnProperty.call(tenantList, i)){
+				if(tenantList[i].show){
+					return false
+				}
 				tenantList[i].close();
 			}
 		}
 
 		iframe = tenantList[cacheKeyName];
-
+		
 		if(iframe){
 			iframe.open();
 		}

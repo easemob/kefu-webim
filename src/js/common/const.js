@@ -138,7 +138,8 @@ module.exports = {
 		ADD_PROMPT: "add.prompt",
 		REMOVE_PROMPT: "remove.prompt",
 		SCROLL_TO_BOTTOM: "scroll.to.bottom",
-		INVITATION_INIT: "invitation_init"
+		INVITATION_INIT: "invitation_init",
+		REOPEN: "reopen"
 	},
 
 	ERROR_MSG: {

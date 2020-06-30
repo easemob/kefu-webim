@@ -136,13 +136,13 @@ function _ready(){
 		onmessage: me.config.onmessage || emptyFunc,
 		onsessionclosed: me.config.onsessionclosed || emptyFunc,
 		onclose: me.config.onclose || emptyFunc, //聊天窗口关闭回调（包括关闭与最小化）
-		onreopen: me.config.onreopen || emptyFunc, //聊天窗口关闭后再打开回调
+		onopen: me.config.onopen || emptyFunc, //聊天窗口关闭后再打开回调
 	};
 	delete me.config.onready;
 	delete me.config.onmessage;
 	delete me.config.onsessionclosed;
 	delete me.config.onclose;
-	delete me.config.onreopen;
+	delete me.config.onopen;
 
 	me.down2Im
 	.send({ event: _const.EVENTS.INIT_CONFIG, data: me.config })
@@ -168,7 +168,6 @@ function _ready(){
 		case _const.EVENTS.SHOW:
 			// 显示聊天窗口
 			me.open();
-			me.callbackApi.onreopen();
 			break;
 		case _const.EVENTS.CLOSE:
 			// 最小化聊天窗口
@@ -242,6 +241,10 @@ function _ready(){
 			inviteBox = new InviteBox(data, me.config);
 			// CLOUD-15301 【dev47.35】网页插件：bind按钮集成方式，如果已经加载打开聊天窗口，则处理不自动弹出邀请弹窗
 			!isOpened && inviteBox.beginStartTimer();
+			break;
+		case _const.EVENTS.REOPEN:
+			// 再次打开聊天窗口
+			me.callbackApi.onopen();
 			break;
 		default:
 			break;
