@@ -88,36 +88,18 @@ function genMsgContent(msg){
 		// 历史会话中 filesize = 0
 		// 访客端发文件消息 filesize = undefined
 		// 需要过滤这两种情况，暂时只显示坐席发过来的文件大小
-
-		// html = "<i class=\"icon-attachment container-icon-attachment\"></i>"
-		// 	+ "<span class=\"file-info\">"
-		// 	+ "<p class=\"filename\">" + msg.filename + "</p>"
-		// 	+ "<p class=\"filesize\">" + utils.filesizeFormat(msg.fileLength) + "</p>"
-		// 	+ "</span>"
-		// 	+ "<a target=\"_blank\" href=\"" + msg.url
-		// 	+ "\" class=\"icon-download container-icon-download\" title=\""
-		// 	+ msg.filename + "\" download=\"" + msg.filename + "\"></a>";
-		// break;
-		// 替换原来的下载方式
 		html = "<i class=\"icon-attachment container-icon-attachment\"></i>"
 			+ "<span class=\"file-info\">"
 			+ "<p class=\"filename\">" + msg.filename + "</p>"
 			+ "<p class=\"filesize\">" + utils.filesizeFormat(msg.fileLength) + "</p>"
 			+ "</span>"
-			+ "<a  href=\"javascript:;"  + "\"   hrefreplace=\"" + msg.url
-			+ "\" class=\"icon-download container-icon-download replace_download\" title=\""
+			+ "<a target=\"_blank\" href=\"" + msg.url
+			+ "\" class=\"icon-download container-icon-download\" title=\""
 			+ msg.filename + "\" download=\"" + msg.filename + "\"></a>";
 		break;
 		// 小视频类型
 	case "video":
-		// html = "<video class=\"video-btn\"  controls src=\"" + msg.url + " \">"
-		// 		+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"
-		// 		+ "<source  src=\"" + msg.url + " \" type=\"video/webm\"></source>"
-		// 		+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
-		// 	   + "</video>";
-		// break;
-		// 增加preload属性
-		html = "<video class=\"video-btn\" preload=\"auto\"  controls src=\"" + msg.url + " \">"
+		html = "<video class=\"video-btn\"  controls src=\"" + msg.url + " \">"
 				+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"
 				+ "<source  src=\"" + msg.url + " \" type=\"video/webm\"></source>"
 				+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
@@ -157,7 +139,7 @@ function genMsgContent(msg){
 		relatedRuleIds = relatedRules.relatedRuleIds;
 		html += "<div class=\"em-btn-list\">" + _.map(msg.ext.relatedRules.questions, function(question, index){ return "<button class=\"js_robotRelateListbtn bg-hover-color\" data-ruleId=" + ruleId + " data-answerId=" + answerId + " data-relatedRuleId=" + relatedRuleIds[index] + ">" + question + "</button>";}).join("") || "";
 	}
-	
+
 	return html;
 }
 
@@ -363,12 +345,8 @@ function genDomFromMsg(msg, isReceived, isHistory){
 
 	// wrapper 结尾
 	html += "</div>";
-	
+
 	dom.innerHTML = html;
-	$(".em-widget-msg-file>.replace_download").bind("click",function(){
-		var srcList = $(".em-widget-msg-file>.replace_download").attr("hrefreplace")
-		window.location.href = srcList
-	});
 	return dom;
 }
 
