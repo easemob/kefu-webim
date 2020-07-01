@@ -24,6 +24,7 @@ var commonConfig = require("@/common/config");
 var statusBar = require("./uikit/videoStatusBar");
 var videoPanel = require("./uikit/videoPanel");
 var videoChatTemplate = require("../../../../template/videoChat.html");
+var apiHelper = require("./apis");
 
 var _initOnce = _.once(_init);
 var parentContainer;
@@ -240,29 +241,37 @@ function _onConfirm(){
 }
 
 function _onConfirmExitvideo(){
-	// channel.sendText(__("video.invite_exit_video"), {
-	channel.sendText("访客取消实时视频", {
-		ext: {
-			type: "rtcmedia/video",
-			msgtype: {
-				liveStreamInvitation: {
-					// msg: __("video.invite_exit_video"),
-					msg: "访客取消实时视频",
-					orgName: config.orgName,
-					appName: config.appName,
-					userName: config.user.username,
-					imServiceNumber: config.toUser,
-					restServer: config.restServer,
-					xmppServer: config.xmppServer,
-					resource: "mobile",
-					isNewInvitation: true,
-					userAgent: navigator.userAgent,
+	var serviceSessionId = profile.currentOfficialAccount.sessionId;
+	apiHelper.deleteVideoInvitation(serviceSessionId)
+	.then(function(res){
+			// channel.sendText(__("video.invite_exit_video"), {
+			channel.sendText("访客取消实时视频", {
+				ext: {
+					type: "rtcmedia/video",
+					msgtype: {
+						visitorCancelInvitation: {
+							// msg: __("video.invite_exit_video"),
+							msg: "访客取消实时视频",
+							orgName: config.orgName,
+							appName: config.appName,
+							userName: config.user.username,
+							imServiceNumber: config.toUser,
+							restServer: config.restServer,
+							xmppServer: config.xmppServer,
+							resource: "webim",
+							// isNewInvitation: true,
+							userAgent: navigator.userAgent,
+						},
+					},
 				},
-			},
-		},
+			});
+			// 取消通话移除按钮
+			var editor = document.querySelector(".toolbar");
+			var ele = document.querySelector(".em-widget-exit-video");
+			editor.removeChild(ele)
 	});
-	// 取消通话移除按钮
-	var editor = document.querySelector(".toolbar");
-	var ele = document.querySelector(".em-widget-exit-video");
-	editor.removeChild(ele)
+	// return false;
+
+
+
 }

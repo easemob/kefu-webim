@@ -1328,6 +1328,18 @@ function getOnlineCustomerStatus(){
     });
 }
 
+function deleteVideoInvitation(serviceSessionId){
+	return new Promise(function(resolve, reject){
+		api("deleteVideoInvitation", {
+			serviceSessionId: serviceSessionId,
+		}, function(){
+			resolve();
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getGrayList: getGrayList,
 	getToken: getToken,
@@ -1391,6 +1403,7 @@ module.exports = {
 	getDefaultFiveStarEnable:getDefaultFiveStarEnable,  //获取默认五星评价的开关
 	// opt获取是否隐藏状态
 	getOnlineCustomerStatus: getOnlineCustomerStatus,
+	deleteVideoInvitation: deleteVideoInvitation, // 取消视频邀请
 	update: function(cfg){
 		config = cfg;
 	}

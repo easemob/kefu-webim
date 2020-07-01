@@ -942,6 +942,13 @@ up2Im.listen(function(msg){
 			excludeData: true,
 		});
 		break;
+	case "deleteVideoInvitation":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/rtcmedia/serviceSession/" + params.serviceSessionId + "/conferences",
+			type: "DELETE",
+			msg: msg,
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;
