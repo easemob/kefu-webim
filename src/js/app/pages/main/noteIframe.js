@@ -1,9 +1,11 @@
 var utils = require("@/common/utils");
+var _const = require("@/common/const");
 var profile = require("@/app/tools/profile");
 
 var NOTE_HTML_PATH = __("config.language") === "zh-CN" ? "/note.html" : "/en-US/note.html";
 
 function Iframe(config){
+	var themeClassName = _const.themeMap[config.themeName];
 	var id = "easemob-iframe-note";
 	var className = "easemobim-note-panel";
 	var iframe = document.createElement("iframe");
@@ -22,7 +24,8 @@ function Iframe(config){
 		appKey: config.appKey,
 		grayNoteCategory: false,
 		sessionId: "",
-		hideCloseBtn: false
+		hideCloseBtn: false,
+		themeClassName: themeClassName
 	};
 	
 	iframe.frameBorder = 0;
@@ -32,6 +35,7 @@ function Iframe(config){
 	iframe.allow = "microphone; camera";
 	this.noteWrapper = document.querySelector(".em-kefu-webim-note");
 	this.noteWrapper.appendChild(iframe);
+
 	this.iframe = iframe;
 
 	this.show = false;
@@ -77,7 +81,6 @@ Iframe.prototype.open = function(config){
 		iframeSrc = this.globalConfig.domain + "__WEBIM_SLASH_KEY_PATH__/webim" + NOTE_HTML_PATH + "?config=" + base64;
 	}
 	this.iframe.src = iframeSrc;
-
 	return this;
 };
 

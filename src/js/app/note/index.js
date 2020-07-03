@@ -26,6 +26,7 @@ var dom = utils.createElementFromHTML([
 	"</div>"
 ].join(""));
 document.body.appendChild(dom);
+
 var content = document.querySelector("textarea");
 var name = document.querySelector(".name");
 var phone = document.querySelector(".phone");
@@ -40,7 +41,7 @@ var confirmBtn = document.querySelector(".confirm-btn");
 // url 传递的参数
 var config = getNoteConfig().config || {};
 api.update(config);
-
+utils.addClass(document.body, config.themeClassName);
 // 根据配置隐藏取消按钮
 config.hideCloseBtn && utils.addClass(cancelBtn, "hide");
 
