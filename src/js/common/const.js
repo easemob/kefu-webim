@@ -139,7 +139,8 @@ module.exports = {
 		REMOVE_PROMPT: "remove.prompt",
 		SCROLL_TO_BOTTOM: "scroll.to.bottom",
 		INVITATION_INIT: "invitation_init",
-		REOPEN: "reopen"
+		REOPEN: "reopen",
+		LEAVEMSG: "leave_msg"
 	},
 
 	ERROR_MSG: {
