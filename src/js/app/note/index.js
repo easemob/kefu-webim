@@ -41,7 +41,7 @@ var confirmBtn = document.querySelector(".confirm-btn");
 // url 传递的参数
 var config = getNoteConfig().config || {};
 api.update(config);
-utils.addClass(document.body, config.themeClassName);
+utils.addClass(document.body, config.themeClassName || "theme-1");
 // 根据配置隐藏取消按钮
 config.hideCloseBtn && utils.addClass(cancelBtn, "hide");
 
