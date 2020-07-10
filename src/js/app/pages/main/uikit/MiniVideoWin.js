@@ -97,6 +97,9 @@ MiniVideoWin.prototype.updateStream = function(stream){
 		this.nicknameDom.innerText = isLocalStream
 			? __("video.me")
 			: utils.getDataByPath(stream, "owner.ext.nickname");
+
+		isLocalStream && utils.addClass(this.videoDom, "me-video"); 
+		
 		break;
 	case _const.STREAM_TYPE.NO_AUDIO:
 		this.noAudioStream = stream;
