@@ -106,8 +106,8 @@ function genMsgContent(msg){
 		// 		+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
 		// 	   + "</video>";
 		// break;
-		// 
-		html = "<video poster=\""+ msg.thumb + "\" class=\"video-btn\"  controls src=\"" + msg.url + " \">"
+		//
+		html = "<video poster=\"" + msg.thumb + "\" class=\"video-btn\"  controls src=\"" + msg.url + " \">"
 				+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"
 				+ "<source  src=\"" + msg.url + " \" type=\"video/webm\"></source>"
 				+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
@@ -322,6 +322,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	// 单独的转人工按钮（txt、）
 	if(!utils.getDataByPath(msg, "ext.msgtype.choice") && utils.getDataByPath(msg, "ext.weichat.ctrlType") === "TransferToKfHint"){
 		var ctrlArgs = msg.ext.weichat.ctrlArgs;
+		var transferToHumanButtonInfo = msg.ext.weichat.transferToHumanButtonInfo;
 		var disabledClass = profile.shouldMsgActivated(ctrlArgs.serviceSessionId) ? "" : "disabled";
 		// // 判断英文状态开关是否打开状态，打开改变label的字段
 		// var resRoobot;
@@ -342,14 +343,27 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		// }
 
 		// 英文状态开关可能会有问题，这里用语言状态来判断
-		ctrlArgs.label = __("config.language") === "zh-CN" ? ctrlArgs.label : "Chat with agent";
-		html += "<div class=\"em-btn-list\">"
+		if(laiye){
+			ctrlArgs.label = __("config.language") === "zh-CN" ? ctrlArgs.label : "Chat with agent";
+			html += "<div class=\"em-btn-list\">"
+				+ "<button "
+					+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
+					+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
+					+ "data-id=\"" + ctrlArgs.id + "\" "
+				+ ">" + ctrlArgs.label + "</button>"
+			+ "</div>";
+		}
+		else{
+			html += "<div class=\"em-btn-list\">"
 			+ "<button "
 				+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
 				+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
 				+ "data-id=\"" + ctrlArgs.id + "\" "
-			+ ">" + ctrlArgs.label + "</button>"
+				+ "data-transferToHumanId=\"" + transferToHumanButtonInfo.transferToHumanId + "\" "
+			+ ">" + transferToHumanButtonInfo.suggestionTransferToHumanLabel + "</button>"
 		+ "</div>";
+		}
+		
 	}
 
 	// wrapper 结尾

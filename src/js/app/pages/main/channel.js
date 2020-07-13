@@ -101,7 +101,7 @@ function _initConnection(onReadyCallback){
 		url: config.xmppServer,
 		retry: true,
 		isMultiLoginSessions: config.resources,
-		heartBeatWait: _const.HEART_BEAT_INTERVAL 
+		heartBeatWait: _const.HEART_BEAT_INTERVAL
 	});
 
 	if(profile.imRestDown){
@@ -219,12 +219,12 @@ function _transfromImMessage(msg){
 	};
 }
 
-function _sendTransferToKf(tid, sessionId){
+function _sendTransferToKf(tid, sessionId, transferToHumanId){
 	var id = utils.uuid();
 	var msg = new WebIM.message.cmd(id);
 	msg.set({
 		to: config.toUser,
-		action: "TransferToKf",
+		action: transferToHumanId,
 		ext: {
 			weichat: {
 				ctrlArgs: {
@@ -892,10 +892,10 @@ function _transformMessageFormat(element){
 	}
 	// 消息处理时候添加缩略图属性
 	if(msg.type == "video"){
-		thumb = msg.thumb
+		thumb = msg.thumb;
 	}
 	else{
-		thumb = ''
+		thumb = "";
 	}
 	return {
 		data: msg.msg || "",
