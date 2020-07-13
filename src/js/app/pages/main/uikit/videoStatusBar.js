@@ -94,6 +94,10 @@ function reset(){
 	showClosingTimerHandler = clearTimeout(showClosingTimerHandler);
 	timerLabel.stop();
 	setStatusText(__("video.waiting"));
+	// 移除取消通话按钮
+	var editor = document.querySelector(".toolbar");
+	var ele = document.querySelector(".em-widget-exit-video");
+	editor.removeChild(ele)
 }
 
 function hideAcceptButton(){
