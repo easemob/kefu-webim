@@ -146,14 +146,14 @@ function _initToolbar(){
 		utils.removeClass(doms.sendVideoBtn, "hide");
 	}
 	// 小视频按钮
-	if(config.sendSmallVideo ){
+	if(config.sendSmallVideo){
 		utils.removeClass(doms.sendVideoBtn, "hide");
-	}else{
-		if(config.toolbar.sendSmallVideo){
-			utils.removeClass(doms.sendVideoBtn, "hide");
-		}else{
-			utils.addClass(doms.sendVideoBtn, "hide");
-		}
+	}
+	else if(config.toolbar.sendSmallVideo){
+		utils.removeClass(doms.sendVideoBtn, "hide");
+	}
+	else{
+		utils.addClass(doms.sendVideoBtn, "hide");
 	}
 	// 上传附件按钮
 	if(WebIM.utils.isCanUploadFileAsync && config.toolbar.sendAttachment){
@@ -489,11 +489,12 @@ function _bindEvents(){
 	utils.live("button.js_robotTransferBtn", "click", function(e){
 		var id = this.getAttribute("data-id");
 		var ssid = this.getAttribute("data-sessionid");
+		var transferToHumanId = this.getAttribute("data-transferToHumanId");
 		// 只能点击一次
 		if(!this.clicked){
 			this.clicked = true;
 			if(!utils.hasClass(e.target, "disabled")){
-				channel.sendTransferToKf(id, ssid);
+				channel.sendTransferToKf(id, ssid, transferToHumanId);
 			}
 		}
 	});
@@ -952,7 +953,7 @@ function _show(){
 	){
 		doms.textInput.focus();
 	}
-	getToHost.send({ event: _const.EVENTS.REOPEN }); //不管是否ready，都send
+	getToHost.send({ event: _const.EVENTS.REOPEN }); // 不管是否ready，都send
 	getToHost.send({ event: _const.EVENTS.RECOVERY });
 
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CHAT_WINDOW_OPENED, []);
