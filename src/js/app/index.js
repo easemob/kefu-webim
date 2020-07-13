@@ -24,6 +24,7 @@ var getToHost = require("@/app/common/transfer");
 var eventListener = require("@/app/tools/eventListener");
 var fromUserClick = false;
 var Tab = require("@/common/uikit/tab");
+var toolbar = require("@/common/utils");
 
 load_html();
 if(utils.isTop){
@@ -432,6 +433,16 @@ function renderUI(resultStatus){
 		// 优先第一个
 		if(tab.selectFirstTab()){
 			$("#em-kefu-webim-self").append(tab.$el);
+			var topBar = document.querySelector(".em-widget-header")
+			var minifyBtn = topBar.querySelector(".btn-min");
+			if (commonConfig.getConfig().minimum) {
+				// 增加该页面的最小化功能，同chat里面的最小化一样
+				utils.removeClass(minifyBtn, "hide");
+				// 最小化按钮
+				utils.on(minifyBtn, "click", function(){
+					getToHost.send({ event: _const.EVENTS.CLOSE });
+				});
+			}
 			return true;
 		}
 		return false;
