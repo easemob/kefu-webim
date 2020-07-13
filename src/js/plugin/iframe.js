@@ -248,8 +248,8 @@ function _ready(){
 			// 再次打开聊天窗口
 			me.callbackApi.onopen();
 			break;
-		case _const.EVENTS.LEAVEMSG:
-			// 留言成功
+		case _const.EVENTS.EVALUATIONSUBMIT:
+			// 提交评价成功
 			me.callbackApi.onEvaluationsubmit();
 			break;
 		default:

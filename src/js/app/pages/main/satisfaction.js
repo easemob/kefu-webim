@@ -259,7 +259,7 @@ function _confirm(){
 
 	_sendSatisfaction(score, content, session, invite, appraiseTags, resolutionParam, evaluationDegreeId);
 	uikit.showSuccess(__("evaluation.submit_success"));
-	getToHost.send({ event: _const.EVENTS.LEAVEMSG });
+	getToHost.send({ event: _const.EVENTS.EVALUATIONSUBMIT });
 	// 强制评价点击确定关闭会话框
 	setTimeout(function(){
 		// 关闭会话

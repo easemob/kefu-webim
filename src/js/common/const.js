@@ -140,7 +140,7 @@ module.exports = {
 		SCROLL_TO_BOTTOM: "scroll.to.bottom",
 		INVITATION_INIT: "invitation_init",
 		REOPEN: "reopen",
-		LEAVEMSG: "leave_msg"
+		EVALUATIONSUBMIT: "evaluation_submit"
 	},
 
 	ERROR_MSG: {
