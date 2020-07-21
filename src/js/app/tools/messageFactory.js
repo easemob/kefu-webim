@@ -342,18 +342,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		// 	console.log("unexpected response value.");
 		// }
 
-		// 英文状态开关可能会有问题，这里用语言状态来判断
-		if(laiye){
-			ctrlArgs.label = __("config.language") === "zh-CN" ? ctrlArgs.label : "Chat with agent";
-			html += "<div class=\"em-btn-list\">"
-				+ "<button "
-					+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
-					+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
-					+ "data-id=\"" + ctrlArgs.id + "\" "
-				+ ">" + ctrlArgs.label + "</button>"
-			+ "</div>";
-		}
-		else{
+		if(transferToHumanButtonInfo && transferToHumanButtonInfo.suggestionTransferToHumanLabel != null){
 			html += "<div class=\"em-btn-list\">"
 			+ "<button "
 				+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
@@ -363,7 +352,17 @@ function genDomFromMsg(msg, isReceived, isHistory){
 			+ ">" + transferToHumanButtonInfo.suggestionTransferToHumanLabel + "</button>"
 		+ "</div>";
 		}
-		
+		// 英文状态开关可能会有问题，这里用语言状态来判断
+		else{
+			ctrlArgs.label = __("config.language") === "zh-CN" ? ctrlArgs.label : "Chat with agent";
+			html += "<div class=\"em-btn-list\">"
+				+ "<button "
+					+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
+					+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
+					+ "data-id=\"" + ctrlArgs.id + "\" "
+				+ ">" + ctrlArgs.label + "</button>"
+			+ "</div>";
+		}
 	}
 
 	// wrapper 结尾
