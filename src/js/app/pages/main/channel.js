@@ -222,9 +222,10 @@ function _transfromImMessage(msg){
 function _sendTransferToKf(tid, sessionId, transferToHumanId){
 	var id = utils.uuid();
 	var msg = new WebIM.message.cmd(id);
+	var msgAction = transferToHumanId ? transferToHumanId : "TransferToKf";
 	msg.set({
 		to: config.toUser,
-		action: transferToHumanId,
+		action: msgAction,
 		ext: {
 			weichat: {
 				ctrlArgs: {
