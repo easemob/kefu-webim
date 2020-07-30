@@ -49,6 +49,9 @@ function h5_mode_init(){
 
 
 function handleConfig(configJson){
+	if(!configJson.options){
+		configJson.options = {};
+	}
 	config.tenantId = configJson.tenantId;
 	// todo: 把配置转换为新的
 	// 用于config标记是否是来自于坐席端网页配置
