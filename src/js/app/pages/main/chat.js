@@ -439,9 +439,9 @@ function _bindEvents(){
 			});
 
 			// 关闭并且结束会话
-			if(profile.grayList.visitorLeave && config.closeSessionWhenCloseWindow == "true"){
+			if(officialAccount.isSessionOpen && profile.grayList.visitorLeave && config.closeSessionWhenCloseWindow == "true"){
 				sessionId && apiHelper.visitorCloseSession({serviceSessionId: sessionId});
-				getToHost.send({ event: _const.EVENTS.CLOSE });
+				getToHost.send({ event: _const.EVENTS.CLOSE }); 
 			}
 			
 		});
