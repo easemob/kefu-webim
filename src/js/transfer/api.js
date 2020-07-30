@@ -949,6 +949,16 @@ up2Im.listen(function(msg){
 			msg: msg,
 		});
 		break;
+	case "visitorCloseSession":
+		url = "__WEBIM_SLASH_KEY_PATH__/webimplugin/tenants/" + tenantId + "/visitors/" + params.visitorId + "/servicesessions/" + params.serviceSessionId + "/stop";
+		delete msg.data;
+		emitAjax({
+			url: url,
+			msg: msg,
+			type: "POST"
+		});
+		break;
+
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;

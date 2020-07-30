@@ -164,9 +164,9 @@ function _initToolbar(){
 	config.ticket && utils.removeClass(doms.noteBtn, "hide");
 
 	// 满意度评价按钮
-	config.satisfaction
-		&& utils.removeClass(doms.satisfaction, "hide");
-
+	if(config.satisfaction && config.options.showEnquiryButtonInAllTime == "true"){
+		utils.removeClass(doms.satisfaction, "hide");
+	}
 }
 
 function _initSoundReminder(){
@@ -437,6 +437,13 @@ function _bindEvents(){
 					getToHost.send({ event: _const.EVENTS.CLOSE });
 				}
 			});
+
+			// 关闭并且结束会话
+			if(profile.grayList.visitorLeave && config.options.closeSessionWhenCloseWindow == "true"){
+				sessionId && apiHelper.visitorCloseSession({serviceSessionId: sessionId});
+				getToHost.send({ event: _const.EVENTS.CLOSE });
+			}
+			
 		});
 
 		// 最小化按钮
@@ -978,6 +985,14 @@ function _onReady(){
 
 	// onready 回调
 	getToHost.send({ event: _const.EVENTS.ONREADY });
+
+	// //  满意度评价按钮
+	// if(config.satisfaction 
+	// 	&& config.options.showEnquiryButtonInAllTime == "false"
+	// 	&& profile.isAgentStateOnline
+	// ){
+	// 	utils.removeClass(doms.satisfaction, "hide");
+	// }
 }
 
 function _initSDK(){
@@ -1048,6 +1063,38 @@ function _init(){
 		});
 	}
 	
+}
+
+function _initSatisfactionButton(){
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideSatisfactionBtn);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, _displayOrHideSatisfactionBtn);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _displayOrHideSatisfactionBtn);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideSatisfactionBtn);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideSatisfactionBtn);
+	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _displayOrHideSatisfactionBtn);
+}
+
+function _displayOrHideSatisfactionBtn(officialAccount){
+	// 忽略非当前服务号的事件
+	if(profile.currentOfficialAccount !== officialAccount) return;
+
+	var state = officialAccount.sessionState;
+	var agentType = officialAccount.agentType;
+	var type = officialAccount.type;
+	var isRobotAgent = agentType === _const.AGENT_ROLE.ROBOT;
+
+	if(state === _const.SESSION_STATE.PROCESSING){
+		utils.toggleClass(doms.satisfaction, "hide", isRobotAgent); 
+	}
+	else if(state === _const.SESSION_STATE.WAIT){
+		// 待接入状态 隐藏按钮
+		utils.addClass(doms.satisfaction, "hide");
+	}
+	else{
+		if(profile.isAgentStateOnline){
+			utils.removeClass(doms.satisfaction, "hide");
+		}
+	}
 }
 
 function _initNote(){
@@ -1133,6 +1180,10 @@ function _initSession(){
 			initVisitorStatusPoller();
 			initQueuingNumberPoller();
 			initTransferToKefuButton();
+			if(config.satisfaction && config.options.showEnquiryButtonInAllTime == "false"){
+				_initSatisfactionButton();
+			}
+			
 			initAgentNicknameUpdate();
 			initGetGreetings();
 

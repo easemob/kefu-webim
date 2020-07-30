@@ -1340,6 +1340,23 @@ function deleteVideoInvitation(serviceSessionId){
 	});
 }
 
+function visitorCloseSession(data){
+	return new Promise(function(resolve, reject){
+		Promise.all([
+			getVisitorId(),
+		]).then(function(result){
+			var visitorId = result[0];
+			data.visitorId = visitorId;
+			data.tenantId = config.tenantId;
+			api("visitorCloseSession", data, function(msg){
+				// resolve(msg.data);
+			}, function(err){
+				// reject(err);
+			});
+		});
+	});
+}
+
 module.exports = {
 	getGrayList: getGrayList,
 	getToken: getToken,
@@ -1397,6 +1414,7 @@ module.exports = {
 
 	startKeep: startKeep,
 	closeChatDialog: closeChatDialog,
+	visitorCloseSession: visitorCloseSession,
 	getSessionEnquires: getSessionEnquires,
 
 	getRobotNotReachableENEnable: getRobotNotReachableENEnable, // 获取机器人英文开关状态

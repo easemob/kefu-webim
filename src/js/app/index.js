@@ -276,7 +276,11 @@ function handleCfgData(relevanceList, status){
 			sendAttachment: true,
 			sendSmallVideo:commonConfig.getConfig().configId ? false : true,
 		},
-		chat: commonConfig.getConfig().chat || {}
+		chat: commonConfig.getConfig().chat || {},
+		options: commonConfig.getConfig().options || {
+			showEnquiryButtonInAllTime: "false", //是否在所有时间段显示主动评价按钮,默认不会传该值，默认值为"false"，即只在坐席接待时显示主动评价按钮
+			closeSessionWhenCloseWindow: "false" // 是否在关闭聊窗的时候关闭会话，默认不会传该值，默认值为"false"
+		}
 	});
 
 	// fake patch: 老版本配置的字符串需要decode

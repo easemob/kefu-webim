@@ -443,7 +443,9 @@ function _handleMessage(msg, options){
 	}
 	targetOfficialAccount = _getOfficialAccountById(officialAccountId);
 
-
+	if(targetOfficialAccount.agentState == "Online"){
+		profile.isAgentStateOnline = true;
+	}
 	// ===========
 	// 消息类型判断
 	// ===========
