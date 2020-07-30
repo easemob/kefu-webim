@@ -164,7 +164,7 @@ function _initToolbar(){
 	config.ticket && utils.removeClass(doms.noteBtn, "hide");
 
 	// 满意度评价按钮
-	if(config.satisfaction && config.options.showEnquiryButtonInAllTime == "true"){
+	if(config.satisfaction && config.showEnquiryButtonInAllTime == "true"){
 		utils.removeClass(doms.satisfaction, "hide");
 	}
 }
@@ -439,7 +439,7 @@ function _bindEvents(){
 			});
 
 			// 关闭并且结束会话
-			if(profile.grayList.visitorLeave && config.options.closeSessionWhenCloseWindow == "true"){
+			if(profile.grayList.visitorLeave && config.closeSessionWhenCloseWindow == "true"){
 				sessionId && apiHelper.visitorCloseSession({serviceSessionId: sessionId});
 				getToHost.send({ event: _const.EVENTS.CLOSE });
 			}
@@ -985,14 +985,6 @@ function _onReady(){
 
 	// onready 回调
 	getToHost.send({ event: _const.EVENTS.ONREADY });
-
-	// //  满意度评价按钮
-	// if(config.satisfaction 
-	// 	&& config.options.showEnquiryButtonInAllTime == "false"
-	// 	&& profile.isAgentStateOnline
-	// ){
-	// 	utils.removeClass(doms.satisfaction, "hide");
-	// }
 }
 
 function _initSDK(){
@@ -1180,7 +1172,7 @@ function _initSession(){
 			initVisitorStatusPoller();
 			initQueuingNumberPoller();
 			initTransferToKefuButton();
-			if(config.satisfaction && config.options.showEnquiryButtonInAllTime == "false"){
+			if(config.satisfaction && config.showEnquiryButtonInAllTime == "false"){
 				_initSatisfactionButton();
 			}
 			
