@@ -41,7 +41,8 @@
     "release": "travis/release.sh"
   },
   "dependencies": {
-    "easemob-websdk": "=1.4.6",
+    "crypto-js": "^3.1.9-1",
+    "easemob-websdk": "=1.11.1",
     "es6-promise": "=4.1.1",
     "jquery": "^1.12.4",
     "moment": "=2.18.1",

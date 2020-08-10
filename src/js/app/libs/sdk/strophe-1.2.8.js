@@ -2403,6 +2403,16 @@
 				this.paused = true;
 			},
 
+			setJid: function (jid) {
+				this.jid = jid;
+				this.authzid = Strophe.getBareJidFromJid(this.jid);
+				this.authcid = Strophe.getNodeFromJid(this.jid);
+			  },
+			  
+			  getJid: function () {
+				return this.jid;
+			  },
+
             /** Function: resume
              *  Resume the request manager.
              *
