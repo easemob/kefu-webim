@@ -280,6 +280,16 @@ appPageCached = Object.assign({}, commonConfig, {
 		],
 	},
 });
+// 重新压缩strophe-1.2.8
+// test = Object.assign({}, commonConfig, {
+// 	entry: {
+// 		"strophe-1.2.8": "./src/js/app/libs/sdk/strophe-1.2.8.js",
+// 	},
+// 	output: {
+// 		filename: "[name].min.js",
+// 		path: path.resolve(__dirname, distPath, "static/js/lib"),
+// 	},
+// });
 
 taskList = [
 	transfer,
@@ -287,6 +297,7 @@ taskList = [
 	app,
 	note,
 	appPageCached,
+	// test
 ];
 
 module.exports = taskList;
