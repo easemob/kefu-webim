@@ -101,7 +101,8 @@ function _initConnection(onReadyCallback){
 		url: config.xmppServer,
 		retry: true,
 		isMultiLoginSessions: config.resources,
-		heartBeatWait: _const.HEART_BEAT_INTERVAL
+		heartBeatWait: _const.HEART_BEAT_INTERVAL,
+		https: true
 	});
 
 	if(profile.imRestDown){
