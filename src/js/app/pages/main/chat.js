@@ -439,7 +439,10 @@ function _bindEvents(){
 			});
 
 			// 关闭并且结束会话 
-			if(officialAccount.isSessionOpen && profile.grayList.visitorLeave && config.closeSessionWhenCloseWindow == "true"){
+			var agentType = officialAccount.agentType;
+			var isRobotAgent = agentType === _const.AGENT_ROLE.ROBOT;
+			// 仅机器人接待时关闭会话
+			if(isRobotAgent && officialAccount.isSessionOpen && profile.grayList.visitorLeave && config.closeSessionWhenCloseWindow == "true"){
 				sessionId && apiHelper.visitorCloseSession({serviceSessionId: sessionId});
 			}
 			

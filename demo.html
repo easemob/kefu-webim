@@ -41,7 +41,23 @@ var tenantIdInput = document.getElementById("testvalue");
 tenantIdInput.value = (window.localStorage && localStorage.getItem("easemobtest")) || "";
 
 function test(){
-	window.easemobim.bind({ tenantId: getTenantId() });
+	window.easemobim.bind({ 
+		// tenantId: getTenantId(),
+		resources: true,
+		configId: 'f112bee8-73c7-4d0f-9f82-2e89d92c4e0d',
+		onready: function(){
+			console.log("onready")
+		},
+		onclose: function(){
+			console.log("onclose")
+		},
+		onopen: function(){
+			console.log("onopen")
+		},
+		onEvaluationsubmit: function(){
+			console.log("onEvaluationsubmit")
+		}
+	});
 }
 
 function getTenantId(){
@@ -84,32 +100,22 @@ function query(key){
 }
 window.easemobim = window.easemobim || {};
 
-window.easemobim.config = {
-	// domain: "https://kefu.webim.com:8009",
-	// domain: "//kefu.easemob.com",
-
-	// 每条消息都会在扩展中带这些内容
-	// customExtendMessage: {
-	// 	robot: {
-	// 		userId: "123456",
-	// 		channel: "微信01", // FAQ的渠道管理命名一致
-	// 		context: {
-	// 			// 根据需要自定义内容，透传给机器人的context
-	// 			name: "xxx",
-	// 			// 其他字段
-	// 		},
-	// 	},
-	// },
-
-	// 访客自动上报
-	// eventCollector: true,
-	satisfaction: true,
-	// autoConnect: true,
-	// hide: true,
-	// minimum: false,
-	tenantId: query("tenantId") || "",
-	configId: query("configId") || "",
-	unused: "",
+easemobim.config = {
+	// configId: 'f112bee8-73c7-4d0f-9f82-2e89d92c4e0d',
+	domain: '//sandbox.kefu.easemob.com',
+    visitor: {         
+        trueName: 'lixiaoleng3',
+        qq: 'lxl@qq.com',
+        phone: '13311111111',
+        companyName: 'easemob',
+        userNickname: 'lixiaoleng3',
+        description: 'suibian',
+        email: '123456@qq.com', 
+        tags:[  
+          'vip1',
+          'vip2'
+        ]
+    }
 };
 </script>
 
