@@ -10,6 +10,8 @@ var androidLoadTip;
 var imgSrc;
 var _init = _.once(function(){
 	imgWrapper = document.querySelector("div.img-view");
+	var coverHtml = "<div class=\"cover-floor\"></div>"
+	$(".img-view").append(coverHtml)
 	img = imgWrapper.querySelector("img");
 	iosLoadTip = imgWrapper.querySelector("span.ios-load");
 	androidLoadTip = imgWrapper.querySelector("a.android-load");
