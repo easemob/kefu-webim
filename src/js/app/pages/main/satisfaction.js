@@ -38,13 +38,6 @@ module.exports = {
 
 function _init(){
 	loading.show("satisfaction");
-	apiHelper.getEvaluteSolveWord().then(function(tip){
-		resolveTip = tip;
-	});
-	apiHelper.getServiceSessionResolved()
-	.then(function(resp){
-		sessionResolved = resp;
-	});
 	//默认五星评价的开关
 	apiHelper.getDefaultFiveStarEnable()
 	.then(function(resp){
@@ -127,6 +120,9 @@ function _init(){
 		});
 		loading.hide("satisfaction");
 		dialog.show();
+
+		// 火狐浏览器 _setSatisfaction时找不到starsUl，所以必须先执行完init
+		_setSatisfaction();
 	});
 }
 
@@ -186,7 +182,7 @@ function _setSatisfaction(){
 			var isSingleTag = elem.isSingleTag;
 			labelID = id;
 			lastScore = score;
-
+			 
 			return "<li data-level=\"" + level
 				+ "\" title=\"" + name
 				+ "\" data-evaluate-id=\"" + id
@@ -274,11 +270,20 @@ function _confirm(){
 }
 
 function show(inviteId, serviceSessionId, evaluateWay){
-	_initOnce();
+
+	apiHelper.getEvaluteSolveWord().then(function(tip){
+		resolveTip = tip;
+	});
+	apiHelper.getServiceSessionResolved()
+	.then(function(resp){
+		sessionResolved = resp;
+		_initOnce();
+	});
+	
 	session = serviceSessionId;
 	invite = inviteId;
 	evaluateType = evaluateWay;
-	_setSatisfaction();
+	
 	dialog && dialog.show();
 }
 
