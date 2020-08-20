@@ -15,10 +15,12 @@ function _init(){
 
 	utils.on(imgWrapper, "click", function(){
 		imgWrapper.style.display = "none";
+		document.getElementsByTagName("html")[0].style.overflow = "visible"
 	}, false);
 }
 
 module.exports = function(imgData){
+	document.getElementsByTagName("html")[0].style.overflow= "hidden";
 	var imgFile = imgData.imgFile;
 
 	if(!isInitialized){

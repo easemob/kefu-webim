@@ -20,10 +20,20 @@ var _init = _.once(function(){
 	utils.on(imgWrapper, "click", function(){
 		utils.addClass(imgWrapper, "hide");
 	}, false);
+	// 解决ios端打开图片还能滑动屏幕的bug
+	utils.on(imgWrapper, "touchmove", function(event){
+		event.preventDefault();
+	});
+	utils.off(imgWrapper, "touchmove", function(event){
+		event.preventDefault();
+	});
 	("download" in document.createElement("a")) && utils.on(androidLoadTip, "click", function(){
 		window.location = imgSrc; 
 		return false;
 	});
+	function preventDefaultFn(event){
+		event.preventDefault();
+	}
 
 });
 

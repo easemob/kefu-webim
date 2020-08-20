@@ -42,9 +42,9 @@ tenantIdInput.value = (window.localStorage && localStorage.getItem("easemobtest"
 
 function test(){
 	window.easemobim.bind({ 
-		// tenantId: getTenantId(),
+		tenantId: getTenantId(),
 		resources: true,
-		configId: 'f112bee8-73c7-4d0f-9f82-2e89d92c4e0d',
+		// configId: 'f112bee8-73c7-4d0f-9f82-2e89d92c4e0d',
 		onready: function(){
 			console.log("onready")
 		},
