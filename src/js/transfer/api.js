@@ -933,6 +933,14 @@ up2Im.listen(function(msg){
 			excludeData: true,
 		});
 		break;
+	case "getEvaluatePrescription":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/evaluatePrescription",
+			type: "GET",
+			msg: msg,
+			excludeData: true,
+		});
+		break;
 	// 本接口是一个通用的专供 webim 获取坐席 options 的接口，用于确定是否需要隐藏在线状态
 	case "getOnlineCustomerStatus":
 		emitAjax({

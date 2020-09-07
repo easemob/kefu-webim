@@ -34,6 +34,7 @@ module.exports = {
 		click_to_ticket: "Note",
 		evaluate_agent_title: "Please rate my service",
 		click_to_evaluate: "Rate",
+		invalid:"Invalid",
 		paste_image_submit: "Send",
 		read_full_version: "Read all",
 		default_emoji: "default",

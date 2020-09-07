@@ -502,327 +502,376 @@ function _handleMessage(msg, options){
 	else{
 
 	}
+	// 增加满意度评价时效的判断，只有res是新参数，其他参数都是之前函数里存在的变量
+	apiHelper.getEvaluatePrescription().then(function(res){
+		extractMessage(res,type,msg,isHistory,
+			marketingTaskId,satisfactionCommentInvitation,satisfactionCommentInfo,
+			agentId,videoExtend,message,inviteId,serviceSessionId,
+			msgId,eventName,laiye,isReceived,targetOfficialAccount,
+			noPrompt)
+	});
+}
+// 把处理消息的逻辑提取出来
+function extractMessage(invalid,type,msg,isHistory,
+		marketingTaskId,satisfactionCommentInvitation,satisfactionCommentInfo,
+		agentId,videoExtend,message,inviteId,serviceSessionId,
+		msgId,eventName,laiye,isReceived,targetOfficialAccount,
+		noPrompt){
 
 
 	// ===========
 	// 消息结构构造
 	// ===========
 	switch(type){
-	case "txt":
-		message = msg;
-		message.type = type;
-		message.data = (msg && msg.data) || "";
-		message.brief = textParser.getTextMessageBrief(message.data);
-		break;
-	case "img":
-		message = msg;
-		message.type = type;
-		message.brief = __("message_brief.picture");
-		break;
-	case "file":
-		message = msg;
-		message.type = type;
-		message.brief = __("message_brief.file");
-		break;
-	case "video":
-		message = msg;
-		message.type = type;
-		message.brief = __("message_brief.video");	// 页面接收提示视频
-		break;
-	case "article":
-	case "track":
-	case "order":
-		message = msg;
-		message.type = type;
-		break;
-	case "customMagicEmoji":
-		message = customMagicEmoji;
-		message.type = type;
-		message.brief = __("message_brief.emoji");
-		break;
-	case "html-form":
-		message = msg;
-		message.type = type;
-		message.brief = __("message_brief.unknown");
-		break;
-
-
-
-
-
-	case "cmd":
-		var action = msg.action;
-		if(action === "KF-ACK"){
-			// 清除 ack 对应的 site item
-			_clearTS(msg.ext.weichat.ack_for_msg_id);
-			return;
-		}
-		else if(action === "KEFU_MESSAGE_RECALL"){
-			// 撤回消息命令
-			var recallMsgId = msg.ext.weichat.recall_msg_id;
-			var dom = document.getElementById(recallMsgId);
-			utils.addClass(dom, "hide");
-		}
-		break;
-	case "rtcVideoTicket":
-		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket, videoExtend]);
-		break;
-
-
-
-
-
-	case "satisfactionEvaluation":
-		inviteId = msg.ext.weichat.ctrlArgs.inviteId;
-		serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
-		message = msg;
-		message.type = "list";
-		message.subtype = type;
-		message.data = __("chat.evaluate_agent_title");
-		message.list = [
-			"<div class=\"em-btn-list\">"
-			+ "<button class=\"bg-hover-color js_satisfybtn\" data-inviteid=\""
-			+ inviteId
-			+ "\" data-servicesessionid=\""
-			+ serviceSessionId
-			+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
-		];
-		message.brief = __("message_brief.menu");
-		!isHistory && config.ui.enquiryShowMode === "popup" && eventListener.excuteCallbacks(
-			_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
-			[targetOfficialAccount, inviteId, serviceSessionId]
-		);
-		break;
-	case "robotList":
-		// 如果取不到，就默认 true 打开菜单
-		// 这个 service_session 对象，对于欢迎语类的消息，是没有的
-		serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
-		message = msg;
-		message.type = "list";
-		message.subtype = type;
-		message.list = "<div class=\"em-btn-list\">"
-			+ _.map(msg.ext.msgtype.choice.items, function(item){
-				// var id = item.id;
-				// var label = item.name;
-				// var className = "js_robotbtn ";
-				// // 为以后转人工按钮样式调整做准备
-				// if(item.id === "TransferToKf"){
-				// 	className += "bg-hover-color";
-				// }
-				// else{
-				// 	className += "bg-hover-color";
-				// }
-				return "<button "
-				+ "class=\"js_robotbtn bg-hover-color " + (profile.shouldMsgActivated(serviceSessionId) ? "" : "disabled") + "\" "
-				+ "data-id=\"" + item.id + "\" "
-				+ ">" + item.name + "</button>";
-			}).join("") || ""
-			+ "</div>";
-		message.data = msg.ext.msgtype.choice.title;
-		message.brief = __("message_brief.menu");
-		break;
-	case "transferManualGuide":
-		serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
-		message = msg;
-		message.type = "list";
-		message.subtype = type;
-		message.list = "<div class=\"em-btn-list\">"
-			+ _.map(msg.ext.msgtype.choice.items, function(item){
-				if(item.queueType == "video"){
-					if(
-						window.location.protocol !== "https:"
-						|| !Modernizr.peerconnection
-						|| !profile.grayList.audioVideo
-					){
-						return "";
-					}
-				}
-				if(item.id == "hasTransferNote"){
-					item.queueType = "transfer";
-				}
-
-				return "<button "
-				+ "class=\"js_transferManualbtn bg-hover-color " + (profile.shouldMsgActivated(serviceSessionId) ? "" : "disabled") + "\" "
-				+ "data-id=\"" + item.id + "\" "
-				+ "data-queue-id=\"" + item.queueId + "\" "
-				+ "data-queue-type=\"" + item.queueType + "\" "
-				+ ">" + item.name + "</button>";
-			}).join("") || ""
-			+ "</div>";
-		message.data = msg.ext.msgtype.choice.title;
-		message.brief = __("message_brief.menu");
-		break;
-	case "skillgroupMenu":
-		message = msg;
-		message.type = "list";
-		message.subtype = type;
-		message.list = "<div class=\"em-btn-list\">"
-			+ _.map(msg.data.children, function(item){
-				var queueName = item.queueName;
-				var label = item.menuName;
-				var className = "js_skillgroupbtn bg-hover-color";
-
-				return "<button class=\"" + className + "\" data-queue-name=\"" + queueName + "\">" + label + "</button>";
-			}).join("") || ""
-			+ "</div>";
-		message.data = msg.data.menuName;
-		message.brief = __("message_brief.menu");
-		break;
-	// 入口指定
-	case "transferManualMenu":
-		message = msg;
-		message.type = "list";
-		message.subtype = type;
-		var array = msg.data.children;
-		if(msg.data.hasTransferNote){
-			var transferChild = {
-				queueName: "hasTransferNote",
-				itemName: "转留言",
-				queueType: "transfer"
-			};
-			array.push(transferChild);
-		}
-		// 判断没有视频功能时，隐藏type为video的item
-
-		message.list = "<div class=\"em-btn-list\">"
-			+ _.map(array, function(item){
-				var queueName = item.queueName;
-				var label = item.itemName;
-				var queueType = item.queueType;
-				var className = "js_transferManualEntrybtn bg-hover-color";
-				if(item.queueType == "video"){
-					if(
-						window.location.protocol !== "https:"
-						|| !Modernizr.peerconnection
-						|| !profile.grayList.audioVideo
-					){
-						return "";
-					}
-				}
-
-				return "<button class=\"" + className + "\" data-queue-name=\"" + queueName + "\" data-queue-type=\"" + queueType + "\">" + label + "</button>";
-			}).join("") || ""
-			+ "</div>";
-		message.data = msg.data.itemName;
-		message.brief = __("message_brief.menu");
-		break;
-	case "robotTransfer":
-		var ctrlArgs = msg.ext.weichat.ctrlArgs;
-		message = msg;
-		message.type = "list";
-		message.subtype = type;
-		message.data = message.data || utils.getDataByPath(msg, "ext.weichat.ctrlArgs.label");
-		// msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
-		// 此处修改为了修复取出历史消息时，转人工评价标题改变的 bug
-		// 还有待测试其他带有转人工的情况
-		message.list = [
-			"<div class=\"em-btn-list\">",
-			"<button class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn\" ",
-			"data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" ",
-			"data-id=\"" + ctrlArgs.id + "\">" + ctrlArgs.label + "</button>",
-			"</div>"
-		].join("");
-		message.brief = __("message_brief.menu");
-		break;
-	case "transferToTicket":
-		message = msg;
-		message.type = "list";
-		message.subtype = type;
-		message.list = [
-			"<div class=\"em-btn-list\">",
-			"<button class=\"white bg-color border-color bg-hover-color-dark js-transfer-to-ticket\">",
-			__("chat.click_to_ticket"),
-			"</button>",
-			"</div>"
-		].join("");
-		message.brief = __("message_brief.menu");
-		break;
-
-
-
-
-
-
-	default:
-		console.error("unexpected msg type");
-		break;
-	}
-
-	if(!isHistory){
-		// 实时消息需要处理系统事件
-		marketingTaskId
-			&& type === "txt"
-			&& eventListener.excuteCallbacks(
-				_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
-				[
-					targetOfficialAccount,
-					marketingTaskId,
-					msg
-				]
-			);
-
-		if(eventName){
-			_handleSystemEvent(eventName, eventObj, msg);
-		}
-		else{
-			var agentInfo = utils.getDataByPath(msg, "ext.weichat.agent");
-			if(agentInfo){
-				targetOfficialAccount.agentNickname = agentInfo.userNickname;
-				targetOfficialAccount.agentAvatar = agentInfo.avatar;
-				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.AGENT_INFO_UPDATE, [targetOfficialAccount]);
+		case "txt":
+			message = msg;
+			message.type = type;
+			message.data = (msg && msg.data) || "";
+			message.brief = textParser.getTextMessageBrief(message.data);
+			break;
+		case "img":
+			message = msg;
+			message.type = type;
+			message.brief = __("message_brief.picture");
+			break;
+		case "file":
+			message = msg;
+			message.type = type;
+			message.brief = __("message_brief.file");
+			break;
+		case "video":
+			message = msg;
+			message.type = type;
+			message.brief = __("message_brief.video");	// 页面接收提示视频
+			break;
+		case "article":
+		case "track":
+		case "order":
+			message = msg;
+			message.type = type;
+			break;
+		case "customMagicEmoji":
+			message = customMagicEmoji;
+			message.type = type;
+			message.brief = __("message_brief.emoji");
+			break;
+		case "html-form":
+			message = msg;
+			message.type = type;
+			message.brief = __("message_brief.unknown");
+			break;
+	
+	
+	
+	
+	
+		case "cmd":
+			var action = msg.action;
+			if(action === "KF-ACK"){
+				// 清除 ack 对应的 site item
+				_clearTS(msg.ext.weichat.ack_for_msg_id);
+				return;
 			}
-		}
-	}
-
-	// ===========
-	// 消息类型上屏
-	// ===========
-	if(
-		!message
-		// 空文本消息不上屏
-		|| (type === "txt" && !message.data)
-		// 空文章不上屏
-		|| (type === "article" && _.isEmpty(utils.getDataByPath(msg, "ext.msgtype.articles")))
-		// 视频邀请不上屏
-		|| (type === "rtcVideoTicket")
-		// 订单轨迹按条件上屏
-		|| ((type === "track" || type === "order") && !profile.isShowTrackMsg)
-	){
-		return;
-	}
-
-	// 给收到的消息加 id，用于撤回消息
-	message.id = msgId;
-
-	// 消息上屏
-
-	message.laiye = laiye;
-	var dat = message.data;
-	// 来也机器人多条消息逐条展示
-	if(laiye && !isJsonString(dat)){
-		dat = dat.replace(/&amp;amp;quot;|&amp;quot;/g, "\"");
-	}
-	if(profile.grayList.multipleMsgOneByOne && laiye && isJsonString(dat)){
-		dat = JSON.parse(dat);
-		dat.forEach(function(item, index){
-			var arr = [item];
-			message.data = JSON.stringify(arr);
-			if(item.type == "text"){
-				message.type = "txt";
+			else if(action === "KEFU_MESSAGE_RECALL"){
+				// 撤回消息命令
+				var recallMsgId = msg.ext.weichat.recall_msg_id;
+				var dom = document.getElementById(recallMsgId);
+				utils.addClass(dom, "hide");
 			}
-			else if(item.type == "image"){
-				message.type = "img";
-				message.url = item.content;
-			}
-			else if(item.type == "richtext"){
-				var articleDom = apiHelper.getlaiyeHtml(item.content);
-				message.data = articleDom.response;
-				message.type = "txt";
+			break;
+		case "rtcVideoTicket":
+			!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket, videoExtend]);
+			break;
+	
+	
+	
+	
+	
+		case "satisfactionEvaluation":
+			var isInvalid = new Date().getTime() - msg.timestamp
+			if(invalid*1000 > isInvalid){
+				inviteId = msg.ext.weichat.ctrlArgs.inviteId;
+				serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
+				message = msg;
+				message.type = "list";
+				message.subtype = type;
+				message.data = __("chat.evaluate_agent_title");
+				message.list = [
+					"<div class=\"em-btn-list\">"
+					+ "<button class=\"bg-hover-color js_satisfybtn\" data-inviteid=\""
+					+ inviteId
+					+ "\" data-servicesessionid=\""
+					+ serviceSessionId
+					+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
+				];
+				message.brief = __("message_brief.menu");
+				!isHistory && config.ui.enquiryShowMode === "popup" && eventListener.excuteCallbacks(
+					_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
+					[targetOfficialAccount, inviteId, serviceSessionId]
+				);
 			}
 			else{
-				message.type = item.type;
+				inviteId = msg.ext.weichat.ctrlArgs.inviteId;
+				serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
+				message = msg;
+				message.type = "list";
+				message.subtype = type;
+				message.data = __("chat.evaluate_agent_title");
+				message.list = [
+					"<div class=\"em-btn-list\">"
+					+ "<button class=\"invalid-btn\" data-inviteid=\""
+					+ inviteId
+					+ "\" data-servicesessionid=\""
+					+ serviceSessionId
+					+ "\">" + __("chat.invalid") + "</button></div>"
+				];
+				message.brief = __("message_brief.menu");
+				!isHistory && config.ui.enquiryShowMode === "popup" && eventListener.excuteCallbacks(
+					_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
+					[targetOfficialAccount, inviteId, serviceSessionId]
+				);
 			}
-			message.multipleMsgOneByOne = true;
+			break;
+		case "robotList":
+			// 如果取不到，就默认 true 打开菜单
+			// 这个 service_session 对象，对于欢迎语类的消息，是没有的
+			serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
+			message = msg;
+			message.type = "list";
+			message.subtype = type;
+			message.list = "<div class=\"em-btn-list\">"
+				+ _.map(msg.ext.msgtype.choice.items, function(item){
+					// var id = item.id;
+					// var label = item.name;
+					// var className = "js_robotbtn ";
+					// // 为以后转人工按钮样式调整做准备
+					// if(item.id === "TransferToKf"){
+					// 	className += "bg-hover-color";
+					// }
+					// else{
+					// 	className += "bg-hover-color";
+					// }
+					return "<button "
+					+ "class=\"js_robotbtn bg-hover-color " + (profile.shouldMsgActivated(serviceSessionId) ? "" : "disabled") + "\" "
+					+ "data-id=\"" + item.id + "\" "
+					+ ">" + item.name + "</button>";
+				}).join("") || ""
+				+ "</div>";
+			message.data = msg.ext.msgtype.choice.title;
+			message.brief = __("message_brief.menu");
+			break;
+		case "transferManualGuide":
+			serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
+			message = msg;
+			message.type = "list";
+			message.subtype = type;
+			message.list = "<div class=\"em-btn-list\">"
+				+ _.map(msg.ext.msgtype.choice.items, function(item){
+					if(item.queueType == "video"){
+						if(
+							window.location.protocol !== "https:"
+							|| !Modernizr.peerconnection
+							|| !profile.grayList.audioVideo
+						){
+							return "";
+						}
+					}
+					if(item.id == "hasTransferNote"){
+						item.queueType = "transfer";
+					}
+	
+					return "<button "
+					+ "class=\"js_transferManualbtn bg-hover-color " + (profile.shouldMsgActivated(serviceSessionId) ? "" : "disabled") + "\" "
+					+ "data-id=\"" + item.id + "\" "
+					+ "data-queue-id=\"" + item.queueId + "\" "
+					+ "data-queue-type=\"" + item.queueType + "\" "
+					+ ">" + item.name + "</button>";
+				}).join("") || ""
+				+ "</div>";
+			message.data = msg.ext.msgtype.choice.title;
+			message.brief = __("message_brief.menu");
+			break;
+		case "skillgroupMenu":
+			message = msg;
+			message.type = "list";
+			message.subtype = type;
+			message.list = "<div class=\"em-btn-list\">"
+				+ _.map(msg.data.children, function(item){
+					var queueName = item.queueName;
+					var label = item.menuName;
+					var className = "js_skillgroupbtn bg-hover-color";
+	
+					return "<button class=\"" + className + "\" data-queue-name=\"" + queueName + "\">" + label + "</button>";
+				}).join("") || ""
+				+ "</div>";
+			message.data = msg.data.menuName;
+			message.brief = __("message_brief.menu");
+			break;
+		// 入口指定
+		case "transferManualMenu":
+			message = msg;
+			message.type = "list";
+			message.subtype = type;
+			var array = msg.data.children;
+			if(msg.data.hasTransferNote){
+				var transferChild = {
+					queueName: "hasTransferNote",
+					itemName: "转留言",
+					queueType: "transfer"
+				};
+				array.push(transferChild);
+			}
+			// 判断没有视频功能时，隐藏type为video的item
+	
+			message.list = "<div class=\"em-btn-list\">"
+				+ _.map(array, function(item){
+					var queueName = item.queueName;
+					var label = item.itemName;
+					var queueType = item.queueType;
+					var className = "js_transferManualEntrybtn bg-hover-color";
+					if(item.queueType == "video"){
+						if(
+							window.location.protocol !== "https:"
+							|| !Modernizr.peerconnection
+							|| !profile.grayList.audioVideo
+						){
+							return "";
+						}
+					}
+	
+					return "<button class=\"" + className + "\" data-queue-name=\"" + queueName + "\" data-queue-type=\"" + queueType + "\">" + label + "</button>";
+				}).join("") || ""
+				+ "</div>";
+			message.data = msg.data.itemName;
+			message.brief = __("message_brief.menu");
+			break;
+		case "robotTransfer":
+			var ctrlArgs = msg.ext.weichat.ctrlArgs;
+			message = msg;
+			message.type = "list";
+			message.subtype = type;
+			message.data = message.data || utils.getDataByPath(msg, "ext.weichat.ctrlArgs.label");
+			// msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
+			// 此处修改为了修复取出历史消息时，转人工评价标题改变的 bug
+			// 还有待测试其他带有转人工的情况
+			message.list = [
+				"<div class=\"em-btn-list\">",
+				"<button class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn\" ",
+				"data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" ",
+				"data-id=\"" + ctrlArgs.id + "\">" + ctrlArgs.label + "</button>",
+				"</div>"
+			].join("");
+			message.brief = __("message_brief.menu");
+			break;
+		case "transferToTicket":
+			message = msg;
+			message.type = "list";
+			message.subtype = type;
+			message.list = [
+				"<div class=\"em-btn-list\">",
+				"<button class=\"white bg-color border-color bg-hover-color-dark js-transfer-to-ticket\">",
+				__("chat.click_to_ticket"),
+				"</button>",
+				"</div>"
+			].join("");
+			message.brief = __("message_brief.menu");
+			break;
+	
+	
+	
+	
+	
+	
+		default:
+			console.error("unexpected msg type");
+			break;
+		}
+	
+		if(!isHistory){
+			// 实时消息需要处理系统事件
+			marketingTaskId
+				&& type === "txt"
+				&& eventListener.excuteCallbacks(
+					_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
+					[
+						targetOfficialAccount,
+						marketingTaskId,
+						msg
+					]
+				);
+	
+			if(eventName){
+				_handleSystemEvent(eventName, eventObj, msg);
+			}
+			else{
+				var agentInfo = utils.getDataByPath(msg, "ext.weichat.agent");
+				if(agentInfo){
+					targetOfficialAccount.agentNickname = agentInfo.userNickname;
+					targetOfficialAccount.agentAvatar = agentInfo.avatar;
+					eventListener.excuteCallbacks(_const.SYSTEM_EVENT.AGENT_INFO_UPDATE, [targetOfficialAccount]);
+				}
+			}
+		}
+	
+		// ===========
+		// 消息类型上屏
+		// ===========
+		if(
+			!message
+			// 空文本消息不上屏
+			|| (type === "txt" && !message.data)
+			// 空文章不上屏
+			|| (type === "article" && _.isEmpty(utils.getDataByPath(msg, "ext.msgtype.articles")))
+			// 视频邀请不上屏
+			|| (type === "rtcVideoTicket")
+			// 订单轨迹按条件上屏
+			|| ((type === "track" || type === "order") && !profile.isShowTrackMsg)
+		){
+			return;
+		}
+	
+		// 给收到的消息加 id，用于撤回消息
+		message.id = msgId;
+	
+		// 消息上屏
+	
+		message.laiye = laiye;
+		var dat = message.data;
+		// 来也机器人多条消息逐条展示
+		if(laiye && !isJsonString(dat)){
+			dat = dat.replace(/&amp;amp;quot;|&amp;quot;/g, "\"");
+		}
+		if(profile.grayList.multipleMsgOneByOne && laiye && isJsonString(dat)){
+			dat = JSON.parse(dat);
+			dat.forEach(function(item, index){
+				var arr = [item];
+				message.data = JSON.stringify(arr);
+				if(item.type == "text"){
+					message.type = "txt";
+				}
+				else if(item.type == "image"){
+					message.type = "img";
+					message.url = item.content;
+				}
+				else if(item.type == "richtext"){
+					var articleDom = apiHelper.getlaiyeHtml(item.content);
+					message.data = articleDom.response;
+					message.type = "txt";
+				}
+				else{
+					message.type = item.type;
+				}
+				message.multipleMsgOneByOne = true;
+				_appendMsg(message, {
+					isReceived: isReceived,
+					isHistory: isHistory,
+					officialAccount: targetOfficialAccount,
+					timestamp: msg.timestamp,
+					noPrompt: noPrompt,
+				});
+			});
+		}
+		else{
 			_appendMsg(message, {
 				isReceived: isReceived,
 				isHistory: isHistory,
@@ -830,43 +879,33 @@ function _handleMessage(msg, options){
 				timestamp: msg.timestamp,
 				noPrompt: noPrompt,
 			});
-		});
-	}
-	else{
-		_appendMsg(message, {
-			isReceived: isReceived,
-			isHistory: isHistory,
-			officialAccount: targetOfficialAccount,
-			timestamp: msg.timestamp,
-			noPrompt: noPrompt,
-		});
-	}
-
-	// 是否发送解决未解决 msg.ext.extRobot.satisfactionCommentInvitation
-	if(satisfactionCommentInvitation && !isHistory){
-		_appendMsg({
-			data: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
-			type: "txtLink",
-		}, {
-			isReceived: true,
-			isHistory: false
-		});
-	}
-
-	if(!isHistory){
-		!noPrompt && _messagePrompt(message, targetOfficialAccount);
-		// 兼容旧的消息格式
-		message.value = message.data;
-		// 收消息回调
-		isReceived && getToHost.send({
-			event: _const.EVENTS.ONMESSAGE,
-			data: {
-				from: msg.from,
-				to: msg.to,
-				message: message
-			}
-		});
-	}
+		}
+	
+		// 是否发送解决未解决 msg.ext.extRobot.satisfactionCommentInvitation
+		if(satisfactionCommentInvitation && !isHistory){
+			_appendMsg({
+				data: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
+				type: "txtLink",
+			}, {
+				isReceived: true,
+				isHistory: false
+			});
+		}
+	
+		if(!isHistory){
+			!noPrompt && _messagePrompt(message, targetOfficialAccount);
+			// 兼容旧的消息格式
+			message.value = message.data;
+			// 收消息回调
+			isReceived && getToHost.send({
+				event: _const.EVENTS.ONMESSAGE,
+				data: {
+					from: msg.from,
+					to: msg.to,
+					message: message
+				}
+			});
+		}
 }
 function isJsonString(str){
 	try{

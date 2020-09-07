@@ -171,6 +171,15 @@
 	> p {
 		border-bottom:1px solid #e5e5e5;
 	}
+	.invalid-btn{
+		background-color: #e4e4e4 !important;
+		text-align: center !important;
+	}
+	.invalid-btn:hover{
+		background-color: #e4e4e4;
+		text-align: center;
+		color: black !important;
+	}
 	.em-btn-list {
 		min-width: 190px;
 		position: relative;
