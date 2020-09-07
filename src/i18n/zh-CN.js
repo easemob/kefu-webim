@@ -34,6 +34,7 @@ module.exports = {
 		click_to_ticket: "留言",
 		evaluate_agent_title: "请对我的服务做出评价",
 		click_to_evaluate: "立即评价",
+		invalid:"已失效",
 		paste_image_submit: "发送",
 		read_full_version: "阅读全文",
 		default_emoji: "默认",
