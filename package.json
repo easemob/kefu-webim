@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "crypto-js": "^3.1.9-1",
-    "easemob-websdk": "=1.11.1",
+    "easemob-kefu-webim": "^1.1.0",
     "es6-promise": "=4.1.1",
     "jquery": "^1.12.4",
     "moment": "=2.18.1",

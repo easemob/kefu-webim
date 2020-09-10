@@ -1,4 +1,4 @@
-var WebIM = require("easemob-websdk");
+var WebIM = require("easemob-kefu-webim"); 
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
 var Dict = require("@/app/tools/Dict");
@@ -508,7 +508,7 @@ function _handleMessage(msg, options){
 			marketingTaskId,satisfactionCommentInvitation,satisfactionCommentInfo,
 			agentId,videoExtend,message,inviteId,serviceSessionId,
 			msgId,eventName,eventObj,laiye,isReceived,targetOfficialAccount,
-			noPrompt)
+			noPrompt,videoTicket)
 	});
 }
 // 把处理消息的逻辑提取出来
@@ -516,7 +516,7 @@ function extractMessage(invalid,type,msg,isHistory,
 		marketingTaskId,satisfactionCommentInvitation,satisfactionCommentInfo,
 		agentId,videoExtend,message,inviteId,serviceSessionId,
 		msgId,eventName,eventObj,laiye,isReceived,targetOfficialAccount,
-		noPrompt){
+		noPrompt,videoTicket){
 
 
 	// ===========

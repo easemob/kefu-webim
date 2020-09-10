@@ -1,4 +1,4 @@
-var WebIM = require("easemob-websdk");
+var WebIM = require("easemob-kefu-webim");
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
 var commonConfig = require("@/common/config");
