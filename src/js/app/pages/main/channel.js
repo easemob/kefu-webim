@@ -507,7 +507,7 @@ function _handleMessage(msg, options){
 		extractMessage(res,type,msg,isHistory,
 			marketingTaskId,satisfactionCommentInvitation,satisfactionCommentInfo,
 			agentId,videoExtend,message,inviteId,serviceSessionId,
-			msgId,eventName,laiye,isReceived,targetOfficialAccount,
+			msgId,eventName,eventObj,laiye,isReceived,targetOfficialAccount,
 			noPrompt)
 	});
 }
@@ -515,7 +515,7 @@ function _handleMessage(msg, options){
 function extractMessage(invalid,type,msg,isHistory,
 		marketingTaskId,satisfactionCommentInvitation,satisfactionCommentInfo,
 		agentId,videoExtend,message,inviteId,serviceSessionId,
-		msgId,eventName,laiye,isReceived,targetOfficialAccount,
+		msgId,eventName,eventObj,laiye,isReceived,targetOfficialAccount,
 		noPrompt){
 
 
@@ -800,7 +800,7 @@ function extractMessage(invalid,type,msg,isHistory,
 					]
 				);
 	
-			if(eventName){
+			if(eventName){ 
 				_handleSystemEvent(eventName, eventObj, msg);
 			}
 			else{
