@@ -1,4 +1,4 @@
-var WebIM = require("easemob-kefu-webim"); 
+var WebIM = require("easemob-kefu-webim");
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
 var Dict = require("@/app/tools/Dict");
