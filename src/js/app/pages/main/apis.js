@@ -990,17 +990,6 @@ function getDefaultFiveStarEnable(){
 	});
 }
 
-function getEvaluatePrescription(){
-	return new Promise(function(resolve, reject){
-		api("getEvaluatePrescription", { tenantId: config.tenantId }, function(res){
-			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
-			resolve(val);
-		}, function(err){
-			reject(err);
-		});
-	});
-}
-
 function updateCustomerInfo(data){
 	return new Promise(function(resolve, reject){
 		Promise.all([
@@ -1430,7 +1419,6 @@ module.exports = {
 
 	getRobotNotReachableENEnable: getRobotNotReachableENEnable, // 获取机器人英文开关状态
 	getDefaultFiveStarEnable:getDefaultFiveStarEnable,  //获取默认五星评价的开关
-	getEvaluatePrescription:getEvaluatePrescription,   // 满意度评价时效开关
 	// opt获取是否隐藏状态
 	getOnlineCustomerStatus: getOnlineCustomerStatus,
 	deleteVideoInvitation: deleteVideoInvitation, // 取消视频邀请
