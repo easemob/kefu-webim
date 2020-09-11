@@ -149,10 +149,15 @@ function overseasTest(){
 // 添加邮箱的校验
 function checkEmail(){
 	var check = /^[0-9a-z]([_.0-9a-z-]{0,30}[0-9a-z])?@([0-9a-z][0-9a-z-]{0,30}[.]){1,3}[a-z]{2,4}$/i;
-	if(check.test(mail.value)){
+	if(mail.value){
+		if(check.test(mail.value)){
+			return true
+		}else{
+			return false
+		}
+	}
+	else{
 		return true
-	}else{
-		return false
 	}
 }
 
