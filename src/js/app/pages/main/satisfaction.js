@@ -283,27 +283,9 @@ function show(inviteId, serviceSessionId, evaluateWay){
 	session = serviceSessionId;
 	invite = inviteId;
 	evaluateType = evaluateWay;
-	_setDefaultScore();
+	
 	dialog && dialog.show();
 }
-
-function _setDefaultScore(){ 
-	if(!starsUl){
-		return false;
-	} 
-	starList = starsUl.querySelectorAll("li");
-	if(fiveStarState){
-		if(resolvedId == 1){
-			utils.addClass(starList, "sel");
-			score = defaultScore;
-		}
-		else{
-			utils.removeClass(starList, "sel");
-			score = false;
-		}
-	}
-}
-
 
 function init(){
 	eventListener.add(
