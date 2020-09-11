@@ -151,6 +151,20 @@ module.exports = function(opt){
 			currHistoryMsgSeqId = nextMsgSeq;
 			noMoreHistoryMessage = length < _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME || nextMsgSeq <= 0;
 			noMoreHistoryMessage && utils.removeClass(noMoreMsg, "hide");
+			var closDate = []
+			//存储满意度评价时效的结束时间
+			_.each(msgList, function(itm){
+				if(itm.body.ext.weichat.event){
+					if(itm.body.ext.weichat.event.eventName === "ServiceSessionClosedEvent"){
+						var obj = {
+							id:itm.body.ext.weichat.service_session.serviceSessionId,
+							timp:itm.body.timestamp
+						}
+						closDate.push(obj)
+					}
+				}
+			});
+			utils.setStore("closDate",JSON.stringify(closDate));
 			_.each(msgList, channel.handleHistoryMsg);
 			typeof callback === "function" && callback();
 		});
