@@ -291,17 +291,7 @@ function _setDefaultScore(){
 	if(!starsUl){
 		return false;
 	} 
-	starList = starsUl.querySelectorAll("li");
-	if(fiveStarState){
-		if(resolvedId == 1){
-			utils.addClass(starList, "sel");
-			score = defaultScore;
-		}
-		else{
-			utils.removeClass(starList, "sel");
-			score = false;
-		}
-	}
+	_setSatisfaction();
 }
 
 
