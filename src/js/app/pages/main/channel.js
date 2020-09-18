@@ -962,6 +962,25 @@ function _setExt(msg){
 		msg.body.ext.weichat.visitor = config.visitor;
 	}
 
+	if(!_.isEmpty(config.channelName)){
+		msg.body.ext.channelName = config.channelName;
+	}
+	if(!_.isEmpty(config.tsrNumber)){
+		msg.body.ext.tsrNumber = config.tsrNumber;
+	}
+	if(!_.isEmpty(config.csrNumber)){
+		msg.body.ext.csrNumber = config.csrNumber;
+	}
+	if(!_.isEmpty(config.pageCode)){
+		msg.body.ext.pageCode = config.pageCode;
+	}
+	if(!_.isEmpty(config.customerId)){
+		msg.body.ext.customerId = config.customerId;
+	}
+	if(!_.isEmpty(config.isVipTsr)){
+		msg.body.ext.isVipTsr = config.isVipTsr;
+	}
+	console.log('[msg]',msg)
 	// bind agent username
 	if(bindAgentUsername){
 		msg.body.ext.weichat.agentUsername = bindAgentUsername;

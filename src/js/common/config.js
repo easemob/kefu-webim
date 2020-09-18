@@ -4,6 +4,12 @@ var config = {};
 
 function h5_mode_init(){
 	config = {};
+	config.channelName = utils.query("channelName");
+	config.tsrNumber = utils.query("tsrNumber");
+	config.csrNumber = utils.query("csrNumber");
+	config.pageCode = utils.query("pageCode");
+	config.customerId = utils.query("customerId");
+	config.isVipTsr = utils.query("isVipTsr");
 	config.tenantId = utils.query("tenantId");
 	config.configId = utils.query("configId");
 	config.offDutyType = utils.query("offDutyType");
