@@ -182,45 +182,79 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	var html = "";
 	var dom = document.createElement("div");
 	var direction = isReceived ? "left" : "right";
+	var articleDom;
 
 	if(type === "article"){
 		var msgArticles = utils.getDataByPath(msg, "ext.msgtype.articles");
 		var articleNode;
-		if(msgArticles.length === 1){
+		var showDirectly = msgArticles.some(function(item){
+			return item.show_directly === true;
+		});
+		if(showDirectly){
+			if(msgArticles.length === 1){
+				articleDom = apiHelper.getArticleHtml(msgArticles[1].url);
+				articleNode = "" +
+					"<div class=\"article-msg-outer article-item only-one-article\">" +
+					articleDom +
+					"</div>";
+			}
+			else{
+				articleNode = ""
+					+ _.map(msgArticles, function(item, index){
+						var str = "";
+						if(item.show_directly){
+							articleDom = apiHelper.getArticleHtml(msgArticles[1].url);
+							
+							str =  "<div class=\"article-msg-outer more-articles specialArticle\" style=\"margin-bottom:6px;\">" + "<div>" + articleDom.responseText + "</div></div>";
+						}
+						else{
+
+							str =  "<div class=\"article-msg-outer more-articles\" style=\"margin-bottom:6px;\">" + "<div class=\"article-item rest-item\">" +
+							"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
+							str += "<img class=\"cover-img\" src=\"" + item.picurl + "\"/>" +
+							"<div class=\"article-link\" style=\"cursor: pointer\"><span>" + item.url + "</span></div>" +
+							"</div></div>";
+						}
+						
+						return str;
+					}).join("") || "";
+			}
+		}
+		else if(msgArticles.length === 1){
 			var date = msgArticles[0].createdTime ? moment(msgArticles[0].createdTime).format(__("config.article_timestamp_format"))
-				: moment(msgArticles[0].date).format(__("config.article_timestamp_format"));
+						: moment(msgArticles[0].date).format(__("config.article_timestamp_format"));
 			articleNode = "" +
-				"<div class=\"article-msg-outer article-item only-one-article\">" +
-					"<div class=\"body\">" +
-						"<h3 class=\"title\">" + msgArticles[0].title + "</h3>" +
-						"<p class=\"create-time\">" + date + "</p>" +
-						"<img class=\"cover\" src=\"" + msgArticles[0].picurl + "\"/>" +
-						"<div class=\"desc\"><p>" + msgArticles[0].description + "</p></div>" +
-					"</div>" +
-					"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
-					// "<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
-					"<div class=\"article-link\" data-status=\"" + msgArticles[0].sendCustomer + "\"><span>" + msgArticles[0].url + "</span></div>" +
-				"</div>";
+						"<div class=\"article-msg-outer article-item only-one-article\">" +
+							"<div class=\"body\">" +
+								"<h3 class=\"title\">" + msgArticles[0].title + "</h3>" +
+								"<p class=\"create-time\">" + date + "</p>" +
+								"<img class=\"cover\" src=\"" + msgArticles[0].picurl + "\"/>" +
+								"<div class=\"desc\"><p>" + msgArticles[0].description + "</p></div>" +
+							"</div>" +
+							"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
+							// "<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
+							"<div class=\"article-link\" data-status=\"" + msgArticles[0].sendCustomer + "\"><span>" + msgArticles[0].url + "</span></div>" +
+						"</div>";
 		}
 		else{
 			articleNode = "<div class=\"article-msg-outer more-articles\">"
-				+ _.map(msgArticles, function(item, index){
-					var str = "";
-					if(index === 0){
-						str = "<div class=\"article-item first-item\">" +
-						"<h3 class=\"title\">" + item.title + "</h3>";
-					}
-					else{
-						str = "<div class=\"article-item rest-item\">" +
-						"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
-					}
-					str += "<img class=\"cover-img\" src=\"" + item.picurl + "\"/>" +
-						// "<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
-						"<div class=\"article-link\"><span>" + item.url + "</span></div>" +
-						"</div>";
-					return str;
-				}).join("") || ""
-				+ "</div>";
+						+ _.map(msgArticles, function(item, index){
+							var str = "";
+							if(index === 0){
+								str = "<div class=\"article-item first-item\">" +
+								"<h3 class=\"title\">" + item.title + "</h3>";
+							}
+							else{
+								str = "<div class=\"article-item rest-item\">" +
+								"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
+							}
+							str += "<img class=\"cover-img\" src=\"" + item.picurl + "\"/>" +
+								// "<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
+								"<div class=\"article-link\"><span>" + item.url + "</span></div>" +
+								"</div>";
+							return str;
+						}).join("") || ""
+						+ "</div>";
 		}
 		dom.className = "article-message-wrapper";
 		dom.innerHTML = articleNode;
