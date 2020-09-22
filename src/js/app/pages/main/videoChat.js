@@ -129,11 +129,16 @@ function _init(){
 	statusBar.init({
 		wrapperDom: videoWidget.querySelector(".status-bar"),
 		acceptCallback: function(){
-			videoPanel.show();
-			statusBar.hideAcceptButton();
-			statusBar.startTimer();
-			statusBar.setStatusText(__("video.connecting"));
-			_pushStream();
+			service.join(function(/* _memId */){
+				videoPanel.show();
+				statusBar.hideAcceptButton();
+				statusBar.startTimer();
+				statusBar.setStatusText(__("video.connecting"));
+				_pushStream();
+			}, function(evt){
+				service.exit();
+				throw new Error("failed to join conference: " + evt.message());
+			});
 		},
 		endCallback: function(){
 			service && service.exit();
@@ -202,14 +207,8 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 		avatarUrl: "",
 		extend: ticketExtend
 	});
-
-	service.join(function(/* _memId */){
-		statusBar.reset();
-		statusBar.show();
-	}, function(evt){
-		service.exit();
-		throw new Error("failed to join conference: " + evt.message());
-	});
+	statusBar.reset();
+	statusBar.show();
 }
 
 function _onConfirm(){
