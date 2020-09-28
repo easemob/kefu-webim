@@ -50,8 +50,8 @@ function _init(){
 
 	config = commonConfig.getConfig();
 
-	// 	质量监控
-	// window.emedia.config({ uploadStats: false });
+	// init emedia config
+	// window.emedia.config({ autoSub: false });
 
 	// disable emedia log
 	window.emedia.LOG_LEVEL = 5;

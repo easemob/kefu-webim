@@ -280,10 +280,10 @@ appPageCached = Object.assign({}, commonConfig, {
 		],
 	},
 });
-// 重新压缩
+// 重新压缩strophe-1.2.8
 // test = Object.assign({}, commonConfig, {
 // 	entry: {
-// 		"EMedia_sdk": "./src/js/app/libs/sdk/EMedia_sdk-dev.js",
+// 		"strophe-1.2.8": "./src/js/app/libs/sdk/strophe-1.2.8.js",
 // 	},
 // 	output: {
 // 		filename: "[name].min.js",
