@@ -81,4 +81,10 @@ body {
 	&.theme-11 {
 		@include theme(#FFA0BE, #FF91B4, #FFAFC9);
 	}
+	
+	&.theme_custom{
+		@include theme(#42b8f4, #00a0e7, #7dcdf7);
+	}
 }
+
+

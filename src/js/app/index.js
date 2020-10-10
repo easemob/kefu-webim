@@ -377,9 +377,41 @@ function renderUI(resultStatus){
 	}
 
 	apiHelper.getTheme().then(function(themeName){
-		var className = _const.themeMap[themeName];
+		var color;
+		var className;
+		if(themeName.indexOf("theme_custom") > -1){ 
+			var arr = themeName.split("theme_custom");
+			color = arr[1];
+			className = "theme_custom";
+		}
+		else{
+			className = _const.themeMap[themeName];
+		}
 		className = className || "theme-1";
-		className && utils.addClass(document.body, className);
+		className && utils.addClass(document.body, className); 
+
+		// 自定义主题色
+		
+		if(themeName.indexOf("theme_custom") > -1){
+			var fgColor = $(".theme_custom .fg-hover-color").css("color");
+			$(".theme_custom").find(".fg-color").css("cssText","color: " + color + " !important"); 
+			$(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important"); 
+			$(".theme_custom .fg-hover-color").hover(function(){
+			　　　$(this).css("cssText","color: " + color + " !important"); 
+			},function(){
+				$(this).css("cssText","color: " + fgColor + " !important");
+			})
+			// $(".theme_custom .bg-hover-color").hover(function(){
+			// 	　　$(this).css("cssText","background-color: " + color + " !important"); 
+			// },function(){
+			// 		$(this).css("cssText","color: " + color + " !important");
+			// })
+
+			// $(".theme_custom").find(".border-color").css("cssText","border-color: " + color + " !important");
+			// $(".theme_custom").find(".bg-border-bottom-color").css("cssText","border-bottom-color: " + color + " !important");
+			
+		} 
+		 
 	});
 
 	function allDisable(){
@@ -492,5 +524,6 @@ function load_html(){
 	}));
 
 	chat.getDom();
+	
 }
 

@@ -1221,6 +1221,18 @@ function _appendMsg(msg, options){
 			[officialAccount, msg]
 		);
 	}
+	// 设置list主题色
+	var themeName = config.ui.themeName;
+	if(themeName.indexOf("theme_custom") > -1){
+		var arr = themeName.split("theme_custom");
+		var color = arr[1];
+		var bgColor = $(".theme_custom .bg-hover-color").css("background");
+		$(".theme_custom .bg-hover-color").hover(function(){
+		　　　$(this).css("cssText","background-color: " + color + " !important"); 
+		},function(){
+			$(this).css("cssText","background-color: " + bgColor + " !important");
+		})
+	}
 }
 
 function _attemptToAppendOfficialAccount(officialAccountInfo){
