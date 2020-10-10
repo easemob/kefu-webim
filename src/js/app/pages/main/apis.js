@@ -337,9 +337,9 @@ function getDutyStatus(){
 
 function getRobertGreeting(){
 	var referer = parseReferer(config.referer);
-	var keyword1 = referer.word || referer.wd; // 百度
-	var keyword2 = referer.q; // 360/神马
-	var keyword3 = referer.query || referer.keyword; // 搜狗
+	var keyword1 = referer.word || referer.wd; //百度
+	var keyword2 = referer.q; //360/神马
+	var keyword3 = referer.query || referer.keyword; //搜狗
 	var keyword = keyword1 || keyword2 || keyword3;
 	return new Promise(function(resolve, reject){
 		api("getRobertGreeting_2", {
@@ -543,7 +543,7 @@ function reportVisitorAttributes(sessionId){
 function reportPredictMessage(sessionId, content){
 	return new Promise(function(resolve, reject){
 		Promise.all([
-			getVisitorId(), // 获取访客信息
+			getVisitorId(),
 			getToken()
 		]).then(function(result){
 			var visitorId = result[0];
@@ -1235,13 +1235,6 @@ function getlaiyeHtml(url){
 		async: false
 	});
 }
-function getArticleHtml(url){
-	return emajax({
-		url: url,
-		type: "GET",
-		async: false
-	});
-}
 
 function parseReferer(ref){
 	var i;
@@ -1316,34 +1309,34 @@ function getSessionEnquires(serviceSessionId){
 }
 
 function getRobotNotReachableENEnable(){
-	return emajax({
-		url: "/v1/webimplugin/tenants/"
+		return emajax({
+			url: "/v1/webimplugin/tenants/"
 				+ config.tenantId
 				+ "/options/robotNotReachableENEnable",
-		type: "GET",
-		async: false,
-	});
+			type: "GET",
+			async:false,
+		});
 }
 
 function getOnlineCustomerStatus(){
-	return new Promise(function(resolve, reject){
-		api("getOnlineCustomerStatus", {
-			tenantId: config.tenantId,
-		}, function(res){
-			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
-			if(typeof val === "string"){
-				if(val == (false + "")){
-					val = false;
-				}
-				else if(val == (true + "")){
-					val = true;
-				}
-			}
-			resolve(val);
-		}, function(err){
-			reject(err);
-		});
-	});
+    return new Promise(function(resolve, reject){
+        api("getOnlineCustomerStatus", {
+            tenantId: config.tenantId,
+        }, function(res){
+            var val = utils.getDataByPath(res, "data.entities.0.optionValue");
+            if(typeof val === "string"){
+                if(val == (false + "")){
+                    val = false;
+                }
+                else if(val == (true + "")){
+                    val = true;
+                }
+            }
+            resolve(val);
+        }, function(err){
+            reject(err);
+        });
+    });
 }
 
 function deleteVideoInvitation(serviceSessionId){
@@ -1427,7 +1420,6 @@ module.exports = {
 	getOptForShowTrackMsg: getOptForShowTrackMsg,
 	getOptForManualMenuGuide: getOptForManualMenuGuide,
 	getlaiyeHtml: getlaiyeHtml,
-	getArticleHtml: getArticleHtml,
 	getEvaluteSolveWord: getEvaluteSolveWord,
 	getServiceSessionResolved: getServiceSessionResolved,
 
@@ -1437,8 +1429,8 @@ module.exports = {
 	getSessionEnquires: getSessionEnquires,
 
 	getRobotNotReachableENEnable: getRobotNotReachableENEnable, // 获取机器人英文开关状态
-	getDefaultFiveStarEnable: getDefaultFiveStarEnable,  // 获取默认五星评价的开关
-	getEvaluatePrescription: getEvaluatePrescription,   // 满意度评价时效开关
+	getDefaultFiveStarEnable:getDefaultFiveStarEnable,  //获取默认五星评价的开关
+	getEvaluatePrescription:getEvaluatePrescription,   // 满意度评价时效开关
 	// opt获取是否隐藏状态
 	getOnlineCustomerStatus: getOnlineCustomerStatus,
 	deleteVideoInvitation: deleteVideoInvitation, // 取消视频邀请

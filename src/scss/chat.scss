@@ -586,7 +586,7 @@
 			.cover-img {
 				display: block;
 				width: 40px;
-				height: 40px!important;
+				height: 40px;
 				position: absolute;
 				top: 10px;
 				right: 0px;
@@ -630,12 +630,4 @@
 }
 .statisfyNo {
 	cursor: pointer;
-}
-
-.specialArticle{
-	>div{
-		>div{
-			width: 100%;
-		}
-	}
 }
