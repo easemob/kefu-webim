@@ -16,6 +16,8 @@ var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;
 var config;
 var conn;
+var evaluateTime;
+var evaluateFlag = false;
 
 
 // 监听ack的timer, 每条消息启动一个
@@ -164,8 +166,16 @@ function _initConnection(onReadyCallback){
 
 	// open connection
 	_open();
+	// 在刚开始执行的时候获取满意度时效的值
+	apiHelper.getEvaluatePrescription().then(function(res){
+		if(res){
+			evaluateTime = res
+		}
+		else{
+			evaluateTime = 8*3600
+		}
+	});
 }
-
 function _reSend(type, id){
 	if(!id) return;
 
@@ -502,14 +512,12 @@ function _handleMessage(msg, options){
 	else{
 
 	}
-	// 增加满意度评价时效的判断，只有res是新参数，其他参数都是之前函数里存在的变量
-	apiHelper.getEvaluatePrescription().then(function(res){
-		extractMessage(res,type,msg,isHistory,
+	// 满意度时效设置需要在初始化消息前边处理，evaluateTime是处理后的值
+		extractMessage(evaluateTime,type,msg,isHistory,
 			marketingTaskId,satisfactionCommentInvitation,satisfactionCommentInfo,
 			agentId,videoExtend,message,inviteId,serviceSessionId,
 			msgId,eventName,eventObj,laiye,isReceived,targetOfficialAccount,
 			noPrompt,videoTicket)
-	});
 }
 // 把处理消息的逻辑提取出来
 function extractMessage(invalid,type,msg,isHistory,
@@ -588,9 +596,11 @@ function extractMessage(invalid,type,msg,isHistory,
 	
 	
 		case "satisfactionEvaluation":
+			if(!invalid){
+				invalid = 8*3600
+			}
 			var time;
 			var closeArrDate = JSON.parse(utils.getStore("closDate")) 
-			console.log(closeArrDate)
 			serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
 			var closid = [];
 			// 处理历史消息
@@ -605,11 +615,10 @@ function extractMessage(invalid,type,msg,isHistory,
 			else{
 				time = new Date().getTime()
 			}
-			// 过来的即时消息
+			// 过来的即时消息不计算过期时间，在结束时候计算
 			if(closid.indexOf(serviceSessionId) < 0){
 				time = new Date().getTime()
 			}
-			console.log(serviceSessionId)
 			var isInvalid = new Date().getTime() - time;
 			if(invalid*1000 > isInvalid){
 				inviteId = msg.ext.weichat.ctrlArgs.inviteId;
@@ -633,13 +642,17 @@ function extractMessage(invalid,type,msg,isHistory,
 				);
 				// isInvalid 本轮会话结束时间距离这条消息刚创建的时间（是否超过设置的评价失效时间）
 				// invalid 客服系统设置的评价超时的时间
-				setTimeout(function () {
-					var btn = $(".em-btn-list>button[data-servicesessionid=" + serviceSessionId + "]")
-					btn.removeClass("bg-hover-color")
-					btn.removeClass("js_satisfybtn")
-					btn.text(__("chat.invalid"))
-					btn.addClass("invalid-btn")
-				}, invalid*1000 - isInvalid);
+				// 判断是否是过来的即时评价消息，是的话不失效，在结束会话时候处理（即时评价消息有主动邀请和结束会话两种）
+				if(!(closid.indexOf(serviceSessionId) < 0) || evaluateFlag){
+					setTimeout(function () {
+						var btn = $(".em-btn-list>button[data-servicesessionid=" + serviceSessionId + "]")
+						btn.removeClass("bg-hover-color")
+						btn.removeClass("js_satisfybtn")
+						btn.text(__("chat.invalid"))
+						btn.addClass("invalid-btn")
+						evaluateFlag = false
+					}, invalid*1000 - isInvalid);
+				}
 			}
 			else{
 				inviteId = msg.ext.weichat.ctrlArgs.inviteId;
@@ -1115,6 +1128,23 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.skillGroupId = null;
 		break;
 	case _const.SYSTEM_EVENT.SESSION_CLOSED:
+		// 如果在会话结束前已经发起了满意度评价，在结束时开始计算失效时间
+		evaluateFlag = true
+		var serviceId = msg.ext.weichat.service_session.serviceSessionId;
+		var btnInvalid = $(".em-btn-list>button[data-servicesessionid=" + serviceId + "]")
+		if(btnInvalid){
+			apiHelper.getEvaluatePrescription().then(function(res){
+				if(!res){
+					res = 8*3600
+				}
+				setTimeout(function () {
+					btnInvalid.removeClass("bg-hover-color")
+					btnInvalid.removeClass("js_satisfybtn")
+					btnInvalid.text(__("chat.invalid"))
+					btnInvalid.addClass("invalid-btn")
+				}, res*1000);
+			});
+		}
 		officialAccount.sessionState = _const.SESSION_STATE.ABORT;
 		officialAccount.agentId = null;
 		// 发起满意度评价需要回传sessionId，所以不能清空
