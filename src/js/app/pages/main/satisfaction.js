@@ -7,6 +7,7 @@ var profile = require("@/app/tools/profile");
 var eventListener = require("@/app/tools/eventListener");
 var loading = require("./uikit/loading");
 var getToHost = require("@/app/common/transfer");
+var commonConfig = require("@/common/config");
 
 var dom;
 var starsUl;
@@ -37,6 +38,14 @@ module.exports = {
 };
 
 function _init(){
+	// 自定义主题色
+	var config = commonConfig.getConfig();
+	var themeName = config.ui.themeName;
+	if(themeName && themeName.indexOf("theme_custom") > -1){
+		var arr = themeName.split("theme_custom");
+		var color = arr[1];
+	} 
+
 	loading.show("satisfaction");
 	//默认五星评价的开关
 	apiHelper.getDefaultFiveStarEnable()
@@ -47,7 +56,7 @@ function _init(){
 		dom = sessionResolved ? utils.createElementFromHTML([
 			"<div class=\"wrapper\">",
 			"<div class=\"resolveCon\"><span class=\"title\">" + resolveTip + "</span>",
-			"<div><span class=\"resolve-btn selected resolved\" data-num = \"1\"><i class=\"icon-resolved\"></i><span>" + __("evaluation.resolved") + "</span></span>",
+			"<div><span class=\"resolve-btn selected bg-color resolved\" data-num = \"1\"><i class=\"icon-resolved\"></i><span>" + __("evaluation.resolved") + "</span></span>",
 			"<span class=\"resolve-btn unresolved\" data-num = \"2\"><i class=\"icon-unresolved\"></i><span>" + __("evaluation.unsolved") + "</span></span></div></div>",
 			"<span class=\"title\">" + tipWord + "</span>",
 			"<ul></ul>",
@@ -71,8 +80,12 @@ function _init(){
 		resolvedDom = dom.querySelector(".resolved");
 
 		utils.live(".resolve-btn", "click", function(){
-			utils.removeClass(resolvedBtn, "selected");
-			utils.addClass(this, "selected");
+			utils.removeClass(resolvedBtn, "selected bg-color");
+			utils.addClass(this, "selected bg-color");
+			if(color){
+				$(".resolve-btn").css("cssText","background-color: #fff !important"); 
+				$(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important");
+			}
 			resolvedId = this.dataset.num;
 			if(fiveStarState){
 				if(resolvedId == 1){
@@ -123,6 +136,9 @@ function _init(){
 
 		// 火狐浏览器 _setSatisfaction时找不到starsUl，所以必须先执行完init
 		_setSatisfaction();
+
+		// 自定义主题色
+		color && $(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important"); 
 	});
 }
 
@@ -135,8 +151,10 @@ function _clear(){
 	// clear label
 	tagContainer.innerHTML = "";
 	// clear resolvedBtn
-	utils.removeClass(resolvedBtn, "selected");
-	utils.addClass(resolvedDom, "selected");
+	utils.removeClass(resolvedBtn, "selected bg-color");
+	utils.addClass(resolvedDom, "selected bg-color");
+	resolvedBtn.css("cssText","background-color: #fff !important"); 
+
 	resolvedId = 1;
 
 }

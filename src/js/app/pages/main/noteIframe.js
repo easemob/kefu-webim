@@ -1,11 +1,25 @@
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
 var profile = require("@/app/tools/profile");
+var commonConfig = require("@/common/config");
 
 var NOTE_HTML_PATH = __("config.language") === "zh-CN" ? "/note.html" : "/en-US/note.html";
 
 function Iframe(config){
-	var themeClassName = _const.themeMap[config.themeName];
+	// 自定义主题色
+	var color = "";
+	var themeClassName;
+	var config = commonConfig.getConfig();
+	var themeName = config.ui.themeName;
+	if(themeName && themeName.indexOf("theme_custom") > -1){
+		var arr = themeName.split("theme_custom");
+		color = arr[1];
+		themeClassName = "theme_custom";
+	}
+	else{
+		themeClassName = _const.themeMap[config.themeName];
+	}
+
 	var id = "easemob-iframe-note";
 	var className = "easemobim-note-panel";
 	var iframe = document.createElement("iframe");
@@ -25,7 +39,8 @@ function Iframe(config){
 		grayNoteCategory: false,
 		sessionId: "",
 		hideCloseBtn: false,
-		themeClassName: themeClassName
+		themeClassName: themeClassName,
+		themeColor: color
 	};
 	
 	iframe.frameBorder = 0;

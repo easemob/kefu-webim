@@ -1,8 +1,10 @@
 require("underscore");
 require("es6-promise").polyfill();
 require("@/common/polyfill");
+require("jquery");
 
 var utils = require("@/common/utils");
+var commonConfig = require("@/common/config");
 var uikit = require("../pages/main/uikit");
 var api = require("./api");
 var Selector = require("../pages/main/uikit/selector");
@@ -44,6 +46,12 @@ api.update(config);
 utils.addClass(document.body, config.themeClassName || "theme-1");
 // 根据配置隐藏取消按钮
 config.hideCloseBtn && utils.addClass(cancelBtn, "hide");
+
+var themeName = config.themeClassName;
+if(themeName && themeName.indexOf("theme_custom") > -1){
+	color = config.themeColor;
+	$(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important");
+}
 
 var _getCategories = _.once(function(){
 	api.getNoteCategories().then(function(list){
