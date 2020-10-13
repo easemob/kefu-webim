@@ -8,6 +8,7 @@ var channel = require("../channel");
 var commonConfig = require("@/common/config");
 
 var tpl = require("../../../../../template/chatContainer.html");
+var closDate = []
 
 module.exports = function(opt){
 	// 当下全部都是 profile.systemOfficialAccount
@@ -151,11 +152,12 @@ module.exports = function(opt){
 			currHistoryMsgSeqId = nextMsgSeq;
 			noMoreHistoryMessage = length < _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME || nextMsgSeq <= 0;
 			noMoreHistoryMessage && utils.removeClass(noMoreMsg, "hide");
-			var closDate = []
+			// var closDate = []
 			//存储满意度评价时效的结束时间
 			_.each(msgList, function(itm){
 				if(itm.body.ext.weichat.event){
-					if(itm.body.ext.weichat.event.eventName === "ServiceSessionClosedEvent"){
+					if(itm.body.ext.weichat.event.eventName === "ServiceSessionClosedEvent" || 
+					itm.body.ext.weichat.event.eventName === "ServiceSessionAbortedEvent" ){
 						var obj = {
 							id:itm.body.ext.weichat.service_session.serviceSessionId,
 							timp:itm.body.timestamp
@@ -206,6 +208,8 @@ module.exports = function(opt){
 				}
 			});
 		}
+		// 初始化拉取历史消息清空存储的结束时间
+		utils.clearStore("closDate");
 	}
 
 	function _scrollToBottom(){
