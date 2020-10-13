@@ -619,6 +619,13 @@ function extractMessage(invalid,type,msg,isHistory,
 			if(closid.indexOf(serviceSessionId) < 0){
 				time = new Date().getTime()
 			}
+			var SessionId = profile.currentOfficialAccount.sessionId;
+			// evaluateFlag是个标志位，处理会话结束后发来的邀请评价
+			if((closid.indexOf(serviceSessionId) < 0) && !evaluateFlag&& serviceSessionId != SessionId){
+				// 此处的时间：历史消息获取是10条一组，会话结束的事件跟评价可能不在同一组，这里无法取到，取当前消息的时间
+				time = msg.timestamp
+			}
+
 			var isInvalid = new Date().getTime() - time;
 			if(invalid*1000 > isInvalid){
 				inviteId = msg.ext.weichat.ctrlArgs.inviteId;
