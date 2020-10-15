@@ -935,7 +935,7 @@ up2Im.listen(function(msg){
 		break;
 	case "getEvaluatePrescription":
 		emitAjax({
-			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/evaluatePrescription",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/SatisfactionEvaluationTime",
 			type: "GET",
 			msg: msg,
 			excludeData: true,
