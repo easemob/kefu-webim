@@ -512,19 +512,6 @@ function _handleMessage(msg, options){
 	else{
 
 	}
-	// 满意度时效设置需要在初始化消息前边处理，evaluateTime是处理后的值
-		extractMessage(evaluateTime,type,msg,isHistory,
-			marketingTaskId,satisfactionCommentInvitation,satisfactionCommentInfo,
-			agentId,videoExtend,message,inviteId,serviceSessionId,
-			msgId,eventName,eventObj,laiye,isReceived,targetOfficialAccount,
-			noPrompt,videoTicket)
-}
-// 把处理消息的逻辑提取出来
-function extractMessage(invalid,type,msg,isHistory,
-		marketingTaskId,satisfactionCommentInvitation,satisfactionCommentInfo,
-		agentId,videoExtend,message,inviteId,serviceSessionId,
-		msgId,eventName,eventObj,laiye,isReceived,targetOfficialAccount,
-		noPrompt,videoTicket){
 
 
 	// ===========
@@ -596,8 +583,8 @@ function extractMessage(invalid,type,msg,isHistory,
 	
 	
 		case "satisfactionEvaluation":
-			if(!invalid){
-				invalid = 8*3600
+			if(!evaluateTime){
+				evaluateTime = 8*3600
 			}
 			var time;
 			var closeArrDate = JSON.parse(utils.getStore("closDate")) 
@@ -633,7 +620,7 @@ function extractMessage(invalid,type,msg,isHistory,
 			}
 
 			var isInvalid = new Date().getTime() - time;
-			if(invalid*1000 > isInvalid){
+			if(evaluateTime*1000 > isInvalid){
 				inviteId = msg.ext.weichat.ctrlArgs.inviteId;
 				// serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
 				message = msg;
@@ -654,7 +641,7 @@ function extractMessage(invalid,type,msg,isHistory,
 					[targetOfficialAccount, inviteId, serviceSessionId]
 				);
 				// isInvalid 本轮会话结束时间距离这条消息刚创建的时间（是否超过设置的评价失效时间）
-				// invalid 客服系统设置的评价超时的时间
+				// evaluateTime 客服系统设置的评价超时的时间
 				// 判断是否是过来的即时评价消息，是的话不失效，在结束会话时候处理（即时评价消息有主动邀请和结束会话两种）
 				if(!(closid.indexOf(serviceSessionId) < 0) || evaluateFlag){
 					setTimeout(function () {
@@ -664,7 +651,7 @@ function extractMessage(invalid,type,msg,isHistory,
 						btn.text(__("chat.invalid"))
 						btn.addClass("invalid-btn")
 						evaluateFlag = false
-					}, invalid*1000 - isInvalid);
+					}, evaluateTime*1000 - isInvalid);
 				}
 			}
 			else{
