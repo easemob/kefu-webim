@@ -604,17 +604,23 @@ function extractMessage(invalid,type,msg,isHistory,
 			serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
 			var closid = [];
 			// 处理历史消息
-			if(closeArrDate.length!= 0){
-				for(var i=0;i<closeArrDate.length;i++){
-					if(serviceSessionId === closeArrDate[i].id){
-						time = closeArrDate[i].timp
+			if(closeArrDate){
+				if(closeArrDate.length!= 0 ){
+					for(var i=0;i<closeArrDate.length;i++){
+						if(serviceSessionId === closeArrDate[i].id){
+							time = closeArrDate[i].timp
+						}
+						closid.push(closeArrDate[i].id)
 					}
-					closid.push(closeArrDate[i].id)
+				}
+				else{
+					time = new Date().getTime()
 				}
 			}
 			else{
 				time = new Date().getTime()
 			}
+			
 			// 过来的即时消息不计算过期时间，在结束时候计算
 			if(closid.indexOf(serviceSessionId) < 0){
 				time = new Date().getTime()
