@@ -22,7 +22,7 @@
     "http-proxy": "=1.14.0",
     "i18next-loader": "=0.0.6",
     "ie8-style-loader": "=0.0.1",
-    "node-sass": "^4.12.0",
+    "node-sass": "4.13.0",
     "postcss-loader": "=2.0.6",
     "prompt": "^1.0.0",
     "sass-loader": "=4.1.1",
