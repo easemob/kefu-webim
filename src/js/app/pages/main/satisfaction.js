@@ -153,7 +153,6 @@ function _clear(){
 	// clear resolvedBtn
 	utils.removeClass(resolvedBtn, "selected bg-color");
 	utils.addClass(resolvedDom, "selected bg-color");
-	resolvedBtn.css("cssText","background-color: #fff !important"); 
 
 	resolvedId = 1;
 
