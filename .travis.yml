@@ -1,7 +1,7 @@
 dist: trusty
 language: node_js
 node_js:
-  - "14.14.0"
+  - "14"
 
 env:
   global:
