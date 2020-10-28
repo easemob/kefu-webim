@@ -234,6 +234,7 @@
 					}
 				}
 				.resolved,.unresolved{
+					box-sizing: border-box;
 					text-align: center;
 				    display: inline-block;
 				    width: 130px;
@@ -247,7 +248,7 @@
 				}
 				.selected{
 					background: #1ba8ed;
-					border:1px solid transparent;
+					border:none;
 				    color: #fff;
 					i{color:#fff}
 				}
