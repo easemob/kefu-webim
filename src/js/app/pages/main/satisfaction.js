@@ -31,6 +31,7 @@ var evaluateType; // 评价方式
 var sessionResolved;// 问题解决评价
 var fiveStarState;//默认五星评价
 var defaultScore;
+var defaultEvaluationDegreeId;
 
 module.exports = {
 	init: init,
@@ -91,6 +92,7 @@ function _init(){
 				if(resolvedId == 1){
 					utils.addClass(starList, "sel");
 					score = defaultScore;
+					evaluationDegreeId = defaultEvaluationDegreeId;
 				}
 				else{
 					utils.removeClass(starList, "sel");
@@ -188,6 +190,7 @@ function _setSatisfaction(){
 	apiHelper.getEvaluationDegrees().then(function(entities){
 		var labelID;
 		var lastScore;
+		var lastEvaluationDegreeId;
 		starsUl.innerHTML = _.chain(entities)
 		.sortBy("level")
 		.map(function(elem, index){
@@ -199,6 +202,7 @@ function _setSatisfaction(){
 			var isSingleTag = elem.isSingleTag;
 			labelID = id;
 			lastScore = score;
+			lastEvaluationDegreeId = id;
 			 
 			return "<li data-level=\"" + level
 				+ "\" title=\"" + name
@@ -211,13 +215,15 @@ function _setSatisfaction(){
 		.join("");
 
 		starList = starsUl.querySelectorAll("li");
-		defaultScore = lastScore
+		defaultScore = lastScore;
+		defaultEvaluationDegreeId = lastEvaluationDegreeId;
 		if(fiveStarState){
 			if(resolvedId == 1){
 				utils.addClass(starList, "sel");
 				//创建评价标签
 				_createLabel(labelID);
 				score = defaultScore;
+				evaluationDegreeId = defaultEvaluationDegreeId;
 			}
 			else{
 				utils.removeClass(starList, "sel");
