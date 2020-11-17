@@ -26,12 +26,12 @@ module.exports = function(opt){
 	var msgTimeSpanBegin = new Date(2099, 0).getTime();
 	var msgTimeSpanEnd = new Date(1970, 0).getTime();
 	var url;
-	if(profile.grayList.poweredByEasemob){
-		utils.addClass(el, "paddingTo48");
-		utils.addClass(noMoreMsg, "top34");
-		url = "http://www.easemob.com/product/cs?utm_source=csw&tenantid=" + commonConfig.getConfig().tenantId;
-		utils.appendHTMLTo(el, "<div class=\"easemob-copyright\"><a target=\"_blank\" href=" + url + "><span>即时聊天基于<i class=\"icon-easemob\"></i><span>环信</span></span></a></div>");
-	}
+	// if(profile.grayList.poweredByEasemob){
+	// 	utils.addClass(el, "paddingTo48");
+	// 	utils.addClass(noMoreMsg, "top34");
+	// 	url = "http://www.easemob.com/product/cs?utm_source=csw&tenantid=" + commonConfig.getConfig().tenantId;
+	// 	utils.appendHTMLTo(el, "<div class=\"easemob-copyright\"><a target=\"_blank\" href=" + url + "><span>即时聊天基于<i class=\"icon-easemob\"></i><span>环信</span></span></a></div>");
+	// }
 
 	parentContainer.appendChild(el);
 	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, function(){

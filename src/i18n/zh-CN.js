@@ -38,6 +38,7 @@ module.exports = {
 		paste_image_submit: "发送",
 		read_full_version: "阅读全文",
 		default_emoji: "默认",
+		powered_by_easemob: "环信提供技术支持"
 	},
 	message_brief: {
 		link: "[链接]",

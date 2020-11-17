@@ -12,16 +12,18 @@
 		text-align: right;
 		width: 100%;
 		>a{
-			// background-color: #c9ced3;
 			border-radius: 4px;
 			padding: 1px 3px;
-			color: #666;
+			// color: #666;
 			text-decoration: none;
 			margin-right: 16px;
 			>span{
 				>span{
 					font-weight: bold;
 				}
+			}
+			span:hover{
+				color: black;
 			}
 		}
 	}
@@ -83,6 +85,40 @@
 		clear: both;
 		zoom: 1;
 		overflow: hidden;
+	}
+}
+
+.easemob-copyright{
+	// position: absolute;
+	top: 10px;
+	text-align: center;
+	width: 100%;
+	margin-top: 10px;
+	background-color: #fbfbfb;
+	font-size: 12px;
+	opacity: 0.7;
+	>a{
+		border-radius: 4px;
+		padding: 1px 3px;
+		// color: #666;
+		color: #b7b5b6;
+		text-decoration: none;
+		margin-right: 16px;
+		opacity: 0.8;
+		>span{
+			>span{
+				font-weight: bold;
+			}
+		}
+		span:hover{
+			color: black;
+		}
+	}
+	i{
+		vertical-align: middle;
+	}
+	.icon-easemob:before {
+		font-size: 28px !important;
 	}
 }
 

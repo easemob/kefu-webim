@@ -38,6 +38,7 @@ module.exports = {
 		paste_image_submit: "Send",
 		read_full_version: "Read all",
 		default_emoji: "default",
+		powered_by_easemob: "powered by easemob"
 	},
 	message_brief: {
 		link: "[Link]",
