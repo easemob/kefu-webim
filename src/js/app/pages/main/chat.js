@@ -1056,6 +1056,15 @@ function _init(){
 			profile.isManualMenuGuide = yes;
 		});
 	}
+	var url;
+    if(profile.grayList.poweredByEasemob){
+        // utils.addClass(el, "paddingTo48");
+        // utils.addClass(noMoreMsg, "top34");
+        url = "http://www.easemob.com/product/cs?utm_source=csw&tenantid=" + commonConfig.getConfig().tenantId;
+		if(!utils.isMobile){
+			utils.appendHTMLTo(editorView, "<div class=\"easemob-copyright\"><a target=\"_blank\" href=" + url + "><span><i class=\"icon-easemob\"></i>"+ __("chat.powered_by_easemob") +"</a></div>");
+		}
+	}
 	
 }
 
