@@ -654,6 +654,27 @@ function _bindEvents(){
 		var inviteId = this.getAttribute("data-inviteid");
 		satisfaction.show(inviteId, serviceSessionId, "agent");
 	});
+	// 产品推荐
+	utils.live(".js_productdetail", "click", function(){
+		var href = this.getAttribute("data-redirecturl");
+		console.log(111,href)
+		if(href){
+			// window.location.href = href;
+			window.open(href, "_blank");
+
+
+		}
+	});	
+	utils.live(".js_authllink", "click", function(){
+		var href = this.getAttribute("data-redirecturl");
+		console.log(111,href)
+		if(href){
+			// window.location.href = href;
+			window.open(href, "_blank");
+
+
+		}
+	});	
 
 	// 解决
 	utils.live("a.statisfyYes", "click", function(){

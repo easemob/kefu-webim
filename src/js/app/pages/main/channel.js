@@ -563,6 +563,45 @@ function _handleMessage(msg, options){
 			var recallMsgId = msg.ext.weichat.recall_msg_id;
 			var dom = document.getElementById(recallMsgId);
 			utils.addClass(dom, "hide");
+
+		}else if(action === "product_detail"){
+			var detail = utils.getDataByPath(msg, "ext.entity");
+			console.log(detail,33333)
+			if(detail){
+				_appendMsg({
+					data:[
+						
+						'<div data-redirecturl="' + detail.redirectUrl + '" class="js_productdetail" >',
+							'<div className="body" style="display:flex;justify-content: space-between;border-bottom: 1px solid hsl(223deg 37% 93%);padding-bottom: 3px;">',
+								'<div style=";line-height:50px;width: 100px;	overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">' + detail.productName + '</div>',
+								'<img style="width:50px;height="50px" src="' + (detail.productName || 'static/img/default_avatar.png') + '" />',
+							'</div>',
+							'<div className="footer" style="font-size:14px">大都会推荐</div>',
+						'</div>'
+					].join(""),
+					type: "txtLink",
+				}, {
+					isReceived: true,
+					isHistory: false
+				});
+			}
+		}else if(action === "authlink"){
+			var detail = utils.getDataByPath(msg, "ext.entity");
+			console.log(detail,4444)
+			if(detail){
+				_appendMsg({
+					data:[
+						
+						'<div data-redirecturl="' + detail.redirectUrl + '" class="js_authllink" >',
+							'<div className="footer" style="font-size:14px;color:#00b6fb"><span style="color:#00b6fb">认证链接：</span>' + detail.redirectUrl + '</div>',
+						'</div>'
+					].join(""),
+					type: "txtLink",
+				}, {
+					isReceived: true,
+					isHistory: false
+				});
+			}
 		}
 		break;
 	case "rtcVideoTicket":
