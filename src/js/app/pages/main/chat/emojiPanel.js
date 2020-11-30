@@ -42,6 +42,11 @@ function init(option){
 	utils.on(toggleButton, utils.click, function(){
 		textInput.blur();
 		utils.toggleClass(dom, "hide");
+		if(profile.grayList.poweredByEasemob){
+			if(!utils.isMobile){
+				utils.addClass(document.querySelector(".emoji-panel"), "emoji-bottom160");
+			}
+		}
 
 		// 懒加载，打开表情面板时才初始化图标
 		if(!isEmojiLoaded){
