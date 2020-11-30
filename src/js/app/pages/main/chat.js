@@ -1065,6 +1065,7 @@ function _init(){
 			utils.appendHTMLTo(editorView, "<div class=\"easemob-copyright\"><a target=\"_blank\" href=" + url + "><span><i class=\"icon-easemob\"></i>"+ __("chat.powered_by_easemob") +"</a></div>");
 			utils.addClass(editorView, "height-160");
 			utils.addClass($(editorView).find(".em-widget-send"), "bottom-30");
+			utils.addClass(document.querySelector(".chat-wrapper"), "chat-padding-40");
 		}
 	}
 	

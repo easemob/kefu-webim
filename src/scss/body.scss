@@ -100,6 +100,12 @@ body.big-window-h5{
 		}
 	}
 }
+.chat-padding-40{
+	// bottom: 160px;
+	>.chat-container{
+		padding: 20px 0 40px;
+	}
+}
 
 .video-chat-wrapper {
 	position: relative;
@@ -380,7 +386,9 @@ body.big-window-h5{
 		top: 48px;
 	}
 }
-
+.emoji-bottom160{
+	bottom: 164px !important;
+}
 .emoji-panel {
 	position: absolute;
 	z-index: 10;
