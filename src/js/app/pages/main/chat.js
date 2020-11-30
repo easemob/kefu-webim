@@ -1063,6 +1063,8 @@ function _init(){
         url = "http://www.easemob.com/product/cs?utm_source=csw&tenantid=" + commonConfig.getConfig().tenantId;
 		if(!utils.isMobile){
 			utils.appendHTMLTo(editorView, "<div class=\"easemob-copyright\"><a target=\"_blank\" href=" + url + "><span><i class=\"icon-easemob\"></i>"+ __("chat.powered_by_easemob") +"</a></div>");
+			utils.addClass(editorView, "height-160");
+			utils.addClass($(editorView).find(".em-widget-send"), "bottom-30");
 		}
 	}
 	

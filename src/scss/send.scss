@@ -139,7 +139,7 @@
 	.em-widget-send {
 		position: absolute;
 		right: 10px;
-		bottom: 30px;
+		bottom: 10px;
 		width: 100px;
 		border-radius: 4px;
 		height: 30px;
@@ -152,6 +152,9 @@
 			cursor: default;
 		}
 	}
+	.bottom-30{
+		bottom: 30px;
+	}
 
 	// 文件输入
 	.upload-file-container,
@@ -160,4 +163,7 @@
 		position: absolute;
 		left: -9999px;
 	}
+}
+.height-160{
+	height: 160px;
 }
