@@ -24,6 +24,7 @@ var getToHost = require("@/app/common/transfer");
 var eventListener = require("@/app/tools/eventListener");
 var fromUserClick = false;
 var Tab = require("@/common/uikit/tab");
+var statusFn = require("./pages/main/apis").getQualificationStatus;
 
 load_html();
 if(utils.isTop){
@@ -56,6 +57,7 @@ else{
 	}, ["down2Im"]);
 }
 main.init(setUserInfo);
+getStatus();
 
 // 监听点击咨询客服收到的通知
 eventListener.add(_const.SYSTEM_EVENT.CONSULT_AGENT, function(){
@@ -518,3 +520,24 @@ function load_html(){
 	
 }
 
+function getStatus() {
+	statusFn().then(function(res) {
+		if(res) {
+			widgetBoxHide();
+			var str = "";
+			if(res === 1) {
+				str = "未进行认证，";
+			} else if(res === 2){
+				str = "认证未通过，";
+			}
+			if(utils.isMobile) {
+				document.querySelector(".auth-box-H5 >div span.is-auth").innerHTML = str;
+				utils.removeClass(document.querySelector(".auth-box-H5"), "hide");
+			} else {
+				str += "咨询通道暂不可用";
+				document.querySelector(".auth-box-PC >div span").innerHTML = str;
+				utils.removeClass(document.querySelector(".auth-box-PC"), "hide");
+			}
+		}
+	})
+}

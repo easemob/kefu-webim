@@ -966,6 +966,15 @@ up2Im.listen(function(msg){
 			type: "POST"
 		});
 		break;
+	case "getQualificationStatus":
+		url = "__WEBIM_SLASH_KEY_PATH__/webimplugin/tenants/" + tenantId + "/qualification/status";
+		emitAjax({
+			url: url,
+			msg: msg,
+			excludeData: true,
+			type: "GET"
+		});
+		break;
 
 	default:
 		console.error("unexpect api name: " + apiName);
