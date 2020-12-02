@@ -1376,6 +1376,24 @@ function visitorCloseSession(data){
 	});
 }
 
+function getQualificationStatus() {
+	return new Promise(function(resolve, reject){
+		var isAuth = false;
+		api("getQualificationStatus", { tenantId: config.tenantId }, function(res){
+			if(res.isQualification !== null) {
+				if(res.verifyStatus === null) {
+					isAuth = 1;
+				} else if(res.verifyStatus === 2) {
+					isAuth = 2;
+				}
+			}
+			resolve(isAuth);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getGrayList: getGrayList,
 	getToken: getToken,
@@ -1443,6 +1461,7 @@ module.exports = {
 	// opt获取是否隐藏状态
 	getOnlineCustomerStatus: getOnlineCustomerStatus,
 	deleteVideoInvitation: deleteVideoInvitation, // 取消视频邀请
+	getQualificationStatus: getQualificationStatus, // 获取审批状态
 	update: function(cfg){
 		config = cfg;
 	}
