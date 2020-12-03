@@ -421,6 +421,8 @@ function _handleMessage(msg, options){
 	var message;
 	var inviteId;
 	var serviceSessionId;
+	var extMsg
+	var redirectUrl
 
 	// 重复消息不处理
 	if(receiveMsgDict.get(msgId)){
@@ -514,6 +516,30 @@ function _handleMessage(msg, options){
 		message.type = type;
 		message.data = (msg && msg.data) || "";
 		message.brief = textParser.getTextMessageBrief(message.data);
+		extMsg = utils.getDataByPath(msg, "ext.msgtype");
+		redirectUrl = utils.getDataByPath(msg, "ext.msgtype.redirectUrl");
+		if(redirectUrl){
+			// var detail = utils.getDataByPath(msg, "ext.entity");
+			console.log(detail,33333)
+			if(extMsg){
+				_appendMsg({
+					data:[
+						'<div >',
+							'<div data-redirecturl="' + extMsg.redirectUrl + '" class="js_productdetail"  className="body" style="cursor:pointer;display:flex;justify-content: space-between;border-bottom: 1px solid hsl(223deg 37% 93%);padding-bottom: 3px;">',
+								'<div style=";line-height:50px;width: 100px;	overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">' + extMsg.productName + '</div>',
+								'<img style="width:50px;height="50px" src="' + (extMsg.imageUrl || 'static/img/default_avatar.png') + '" />',
+							'</div>',
+							'<div data-redirecturl="' + extMsg.redirectUrl + '" class="js_productdetail"  className="footer" style="font-size:14px">大都会推荐</div>',
+						'</div>'
+					].join(""),
+					type: "txtLink",
+				}, {
+					isReceived: true,
+					isHistory: false
+				});
+			}
+			return
+		}
 		break;
 	case "img":
 		message = msg;
@@ -565,25 +591,25 @@ function _handleMessage(msg, options){
 			utils.addClass(dom, "hide");
 
 		}else if(action === "product_detail"){
-			var detail = utils.getDataByPath(msg, "ext.entity");
-			console.log(detail,33333)
-			if(detail){
-				_appendMsg({
-					data:[
-						'<div >',
-							'<div data-redirecturl="' + detail.redirectUrl + '" class="js_productdetail"  className="body" style="cursor:pointer;display:flex;justify-content: space-between;border-bottom: 1px solid hsl(223deg 37% 93%);padding-bottom: 3px;">',
-								'<div style=";line-height:50px;width: 100px;	overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">' + detail.productName + '</div>',
-								'<img style="width:50px;height="50px" src="' + (detail.imageUrl || 'static/img/default_avatar.png') + '" />',
-							'</div>',
-							'<div data-redirecturl="' + detail.redirectUrl + '" class="js_productdetail"  className="footer" style="font-size:14px">大都会推荐</div>',
-						'</div>'
-					].join(""),
-					type: "txtLink",
-				}, {
-					isReceived: true,
-					isHistory: false
-				});
-			}
+			// var detail = utils.getDataByPath(msg, "ext.entity");
+			// console.log(detail,33333)
+			// if(detail){
+			// 	_appendMsg({
+			// 		data:[
+			// 			'<div >',
+			// 				'<div data-redirecturl="' + detail.redirectUrl + '" class="js_productdetail"  className="body" style="cursor:pointer;display:flex;justify-content: space-between;border-bottom: 1px solid hsl(223deg 37% 93%);padding-bottom: 3px;">',
+			// 					'<div style=";line-height:50px;width: 100px;	overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">' + detail.productName + '</div>',
+			// 					'<img style="width:50px;height="50px" src="' + (detail.imageUrl || 'static/img/default_avatar.png') + '" />',
+			// 				'</div>',
+			// 				'<div data-redirecturl="' + detail.redirectUrl + '" class="js_productdetail"  className="footer" style="font-size:14px">大都会推荐</div>',
+			// 			'</div>'
+			// 		].join(""),
+			// 		type: "txtLink",
+			// 	}, {
+			// 		isReceived: true,
+			// 		isHistory: false
+			// 	});
+			// }
 		}else if(action === "authlink"){
 			var detail = utils.getDataByPath(msg, "ext.entity");
 			console.log(detail,4444)
