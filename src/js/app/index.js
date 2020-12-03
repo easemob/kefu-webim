@@ -165,35 +165,35 @@ function createVisitor(username){
 }
 
 function initConfig(){
-	apiHelper.getQualificationStatus(utils.query("tenantId")).then(function(res) {
-		if(res) {
-			widgetBoxHide();
-			var str = "";
-			if(res === 1) {
-				str = "未进行认证，";
-			} else if(res === 2){
-				str = "认证未通过，";
-			}
-			if(utils.isMobile) {
-				document.querySelector(".auth-box-H5 >div span.is-auth").innerHTML = str;
-				utils.removeClass(document.querySelector(".auth-box-H5"), "hide");
-			} else {
-				str += "咨询通道暂不可用";
-				document.querySelector(".auth-box-PC >div span").innerHTML = str;
-				utils.removeClass(document.querySelector(".auth-box-PC"), "hide");
-			}
-		}
-		apiHelper.getConfig(commonConfig.getConfig().configId)
-		.then(function(entity){
-			entity.configJson.tenantId = entity.tenantId;
-			entity.configJson.configName = entity.configName;
-			handleConfig(entity.configJson);
-			handleSettingIframeSize();
-			initRelevanceList();
-			initInvite({ themeName: entity.configJson.ui.themeName });
-		});
-	})
+	apiHelper.getConfig(commonConfig.getConfig().configId)
+	.then(function(entity){
+		entity.configJson.tenantId = entity.tenantId;
+		entity.configJson.configName = entity.configName;
+		handleConfig(entity.configJson);
+		handleSettingIframeSize();
+		initRelevanceList(entity.tenantId);
+		initInvite({ themeName: entity.configJson.ui.themeName });
 
+		apiHelper.getQualificationStatus(entity.tenantId).then(function(res) {
+			if(res) {
+				widgetBoxHide();
+				var str = "";
+				if(res === 1) {
+					str = "未进行认证，";
+				} else if(res === 2){
+					str = "认证未通过，";
+				}
+				if(utils.isMobile) {
+					document.querySelector(".auth-box-H5 >div span.is-auth").innerHTML = str;
+					utils.removeClass(document.querySelector(".auth-box-H5"), "hide");
+				} else {
+					str += "咨询通道暂不可用";
+					document.querySelector(".auth-box-PC >div span").innerHTML = str;
+					utils.removeClass(document.querySelector(".auth-box-PC"), "hide");
+				}
+			}
+		})
+	});
 }
 
 function initInvite(opt){
@@ -209,10 +209,10 @@ function initInvite(opt){
 	});
 }
 
-function initRelevanceList(){
+function initRelevanceList(tenantId){
 	// 获取关联信息（targetChannel）
 	var relevanceList;
-	apiHelper.getQualificationStatus(utils.query("tenantId")).then(function(res) {
+	apiHelper.getQualificationStatus(tenantId).then(function(res) {
 		if(res) {
 			widgetBoxHide();
 			var str = "";
