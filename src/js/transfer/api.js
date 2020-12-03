@@ -967,7 +967,7 @@ up2Im.listen(function(msg){
 		});
 		break;
 	case "getQualificationStatus":
-		url = "__WEBIM_SLASH_KEY_PATH__/webimplugin/tenants/" + tenantId + "/qualification/status";
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/qualification/status";
 		emitAjax({
 			url: url,
 			msg: msg,
