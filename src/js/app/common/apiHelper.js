@@ -371,6 +371,25 @@ function getInviteInfo(){
 	});
 }
 
+function getQualificationStatus(tenantId) {
+	return new Promise(function(resolve, reject){
+		var isAuth = false;
+		api("getQualificationStatus", { tenantId: tenantId }, function(res){
+			var obj = res.data.entity;
+			if(obj.isQualification !== null) {
+				if(obj.verifyStatus === null) {
+					isAuth = 1;
+				} else if(obj.verifyStatus === 2) {
+					isAuth = 2;
+				}
+			}
+			resolve(isAuth);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getTheme: getTheme,
 	getPassword: getPassword,
@@ -388,6 +407,7 @@ module.exports = {
 	getInviteInfo: getInviteInfo,
 	getIframeEnable: getIframeEnable,
 	getIframeSetting: getIframeSetting,
+	getQualificationStatus: getQualificationStatus,
 
 	update: function(cfg){
 		config = cfg;
