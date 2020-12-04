@@ -212,7 +212,7 @@ function initInvite(opt){
 function initRelevanceList(tenantId){
 	// 获取关联信息（targetChannel）
 	var relevanceList;
-	apiHelper.getQualificationStatus(tenantId).then(function(res) {
+	apiHelper.getQualificationStatus(tenantId || utils.query("tenantId")).then(function(res) {
 		if(res) {
 			widgetBoxHide();
 			var str = "";
