@@ -212,25 +212,35 @@ function initInvite(opt){
 function initRelevanceList(tenantId){
 	// 获取关联信息（targetChannel）
 	var relevanceList;
-	var tId = tenantId || utils.query("tenantId") || commonConfig.getConfig().tenantId;
-	apiHelper.getQualificationStatus(tId).then(function(res) {
-		if(res) {
-			widgetBoxHide();
-			var str = "";
-			if(res === 1) {
-				str = "未进行认证，";
-			} else if(res === 2){
-				str = "认证未通过，";
+	var tId = tenantId || utils.query("tenantId");
+	if(tId){
+		apiHelper.getQualificationStatus(tId).then(function(res) { 
+			if(res) {
+				widgetBoxHide();
+				var str = "";
+				if(res === 1) {
+					str = "未进行认证，";
+				} else if(res === 2){
+					str = "认证未通过，";
+				}
+				if(utils.isMobile) {
+					document.querySelector(".auth-box-H5 >div span.is-auth").innerHTML = str;
+					utils.removeClass(document.querySelector(".auth-box-H5"), "hide");
+				} else {
+					str += "咨询通道暂不可用";
+					document.querySelector(".auth-box-PC >div span").innerHTML = str;
+					utils.removeClass(document.querySelector(".auth-box-PC"), "hide");
+				}
 			}
-			if(utils.isMobile) {
-				document.querySelector(".auth-box-H5 >div span.is-auth").innerHTML = str;
-				utils.removeClass(document.querySelector(".auth-box-H5"), "hide");
-			} else {
-				str += "咨询通道暂不可用";
-				document.querySelector(".auth-box-PC >div span").innerHTML = str;
-				utils.removeClass(document.querySelector(".auth-box-PC"), "hide");
-			}
-		}
+			getRelevanceList();
+		})
+	}
+	else{
+		getRelevanceList();
+	}
+	
+
+	function getRelevanceList(){
 		apiHelper.getRelevanceList()
 		.then(function(_relevanceList){
 			relevanceList = _relevanceList;
@@ -243,7 +253,7 @@ function initRelevanceList(tenantId){
 		}, function(){
 			handleCfgData(relevanceList || [], []);
 		});
-	})
+	}
 }
 
 
