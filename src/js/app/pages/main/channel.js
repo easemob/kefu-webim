@@ -412,6 +412,7 @@ function _handleMessage(msg, options){
 	var marketingTaskId = utils.getDataByPath(msg, "ext.weichat.marketing.marketing_task_id");
 	var satisfactionCommentInvitation = utils.getDataByPath(msg, "ext.weichat.extRobot.satisfactionCommentInvitation");
 	var satisfactionCommentInfo = utils.getDataByPath(msg, "ext.weichat.extRobot.satisfactionCommentInfo");
+	var origintype = utils.getDataByPath(msg, "ext.weichat.originType");
 	var agentId = utils.getDataByPath(msg, "ext.weichat.agent.userId");
 	var officialAccountId = officialAccount && officialAccount.official_account_id;
 	var videoTicket = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.ticket");
@@ -909,7 +910,7 @@ function _handleMessage(msg, options){
 	// 是否发送解决未解决 msg.ext.extRobot.satisfactionCommentInvitation
 	if(satisfactionCommentInvitation && !isHistory){
 		_appendMsg({
-			data: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
+			data: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-origintype='" + origintype + "' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo'  data-origintype='" + origintype + "'  data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
 			type: "txtLink",
 		}, {
 			isReceived: true,

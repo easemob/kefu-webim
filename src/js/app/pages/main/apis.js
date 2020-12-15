@@ -1039,6 +1039,42 @@ function getGuessList(data){
 	});
 }
 
+function newStatisfy(para){
+	return new Promise(function(resolve, reject){
+		Promise.all([
+			getVisitorId(),
+		]).then(function(result){
+			var visitorId = result[0];
+			// data.visitorId = visitorId;
+			// data.tenantId = config.tenantId;
+			// api("closeChatDialog", data, function(msg){
+			// 	// resolve(msg.data);
+			// }, function(err){
+			// 	// reject(err);
+			// });
+			emajax({
+				url: "/v1/robot/integration/tenants/"+ config.tenantId +"/visitors/"+ visitorId +"/satisfactionComments/callback",
+				// url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
+				data: para,
+				type: "GET",
+				success: function(resp){
+					var parsed;
+	
+					try{
+						parsed = JSON.parse(resp);
+					}
+					catch(e){}
+					var entity = utils.getDataByPath(parsed, "entity");
+					resolve(entity);
+				},
+				error: function(e){
+					reject(e);
+				}
+			});
+		});
+	});
+}
+
 function getStatisfyYes(robotAgentId, satisfactionCommentKey){
 	return new Promise(function(resolve, reject){
 		emajax({
@@ -1336,6 +1372,7 @@ module.exports = {
 
 	getStatisfyYes: getStatisfyYes,
 	getStatisfyNo: getStatisfyNo,
+	newStatisfy: newStatisfy,
 	getSatisfactionCommentTags: getSatisfactionCommentTags,
 	confirmSatisfaction: confirmSatisfaction,
 	getGradeType: getGradeType,

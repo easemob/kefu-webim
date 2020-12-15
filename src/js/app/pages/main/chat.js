@@ -680,37 +680,58 @@ function _bindEvents(){
 	utils.live("a.statisfyYes", "click", function(){
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
-		apiHelper.getStatisfyYes(robotAgentId, satisfactionCommentKey).then(function(data){
-			uikit.tip("谢谢");
-		}, function(err){
-			if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
-				uikit.tip("已评价");
+		var origintype = this.getAttribute("data-origintype");
+		var para = {
+			comenttype:'1',
+			origintype: origintype,
+			faqvote: satisfactionCommentKey,
+		}
+		apiHelper.newStatisfy(para).then(function(resp){
+			if(resp){
+				uikit.tip(resp);
 			}
-		});
+		}).catch(function(e){console.log(e)})
+		// apiHelper.getStatisfyYes(robotAgentId, satisfactionCommentKey).then(function(data){
+		// 	uikit.tip("谢谢");
+		// }, function(err){
+		// 	if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
+		// 		uikit.tip("已评价");
+		// 	}
+		// });
 	});
 
 	// 未解决
 	utils.live("a.statisfyNo", "click", function(){
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
-
-		apiHelper.getSatisfactionCommentTags(robotAgentId, satisfactionCommentKey)
-		.then(function(dat){
-			if(dat.length > 0){
-				// tagSelector = new TagSelector(dat, robotAgentId, satisfactionCommentKey);
-				tagSelector.show(dat, robotAgentId, satisfactionCommentKey);
+		var origintype = this.getAttribute("data-origintype");
+		var para = {
+			comenttype:'0',
+			origintype: origintype,
+			faqvote: satisfactionCommentKey,
+		}
+		apiHelper.newStatisfy(para).then(function(resp){
+			if(resp){
+				uikit.tip(resp);
 			}
-			else{
-				apiHelper.confirmSatisfaction(robotAgentId, satisfactionCommentKey)
-				.then(function(){
-					uikit.tip("谢谢");
-				}, function(err){
-					if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
-						uikit.tip("已评价");
-					}
-				});
-			}
-		});
+		}).catch(function(e){console.log(e)})
+		// apiHelper.getSatisfactionCommentTags(robotAgentId, satisfactionCommentKey)
+		// .then(function(dat){
+		// 	if(dat.length > 0){
+		// 		// tagSelector = new TagSelector(dat, robotAgentId, satisfactionCommentKey);
+		// 		tagSelector.show(dat, robotAgentId, satisfactionCommentKey);
+		// 	}
+		// 	else{
+		// 		apiHelper.confirmSatisfaction(robotAgentId, satisfactionCommentKey)
+		// 		.then(function(){
+		// 			uikit.tip("谢谢");
+		// 		}, function(err){
+		// 			if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
+		// 				uikit.tip("已评价");
+		// 			}
+		// 		});
+		// 	}
+		// });
 	});
 
 	utils.live("#em-article-close .icon-back", "click", function(){
