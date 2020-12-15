@@ -1056,7 +1056,7 @@ function newStatisfy(para){
 				url: "/v1/robot/integration/tenants/"+ config.tenantId +"/visitors/"+ visitorId +"/satisfactionComments/callback",
 				// url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
 				data: para,
-				type: "GET",
+				type: "POST",
 				success: function(resp){
 					var parsed;
 	
