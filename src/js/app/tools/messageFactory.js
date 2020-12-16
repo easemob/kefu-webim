@@ -195,7 +195,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 				articleDom = apiHelper.getArticleHtml(msgArticles[0].url);
 				articleNode = "" +
 					"<div class=\"article-msg-outer article-item only-one-article only-one-specialArticle\">" +
-					articleDom.responseText +
+							articleDom.responseText +
 					"</div>";
 			}
 			else{
@@ -257,6 +257,37 @@ function genDomFromMsg(msg, isReceived, isHistory){
 						+ "</div>";
 		}
 		dom.className = "article-message-wrapper";
+
+		// 单独的转人工按钮（txt、）
+		if(!utils.getDataByPath(msg, "ext.msgtype.choice") && utils.getDataByPath(msg, "ext.weichat.ctrlType") === "TransferToKfHint"){
+			var articleTransferNode;
+			var ctrlArgs = msg.ext.weichat.ctrlArgs;
+			var transferToHumanButtonInfo = msg.ext.weichat.transferToHumanButtonInfo;
+			var disabledClass = profile.shouldMsgActivated(ctrlArgs.serviceSessionId) ? "" : "disabled";
+
+			if(transferToHumanButtonInfo && transferToHumanButtonInfo.suggestionTransferToHumanLabel != null){
+				articleNode += "<div class=\"em-btn-list\" style=\"max-width: 360px;margin: 0 auto;\">"
+				+ "<button "
+					+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
+					+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
+					+ "data-id=\"" + ctrlArgs.id + "\" "
+					+ "data-transferToHumanId=\"" + transferToHumanButtonInfo.transferToHumanId + "\" "
+				+ ">" + transferToHumanButtonInfo.suggestionTransferToHumanLabel + "</button>"
+			+ "</div>";
+			}
+			// 英文状态开关可能会有问题，这里用语言状态来判断
+			else{
+				ctrlArgs.label = __("config.language") === "zh-CN" ? ctrlArgs.label : "Chat with agent";
+				articleNode += "<div class=\"em-btn-list\" style=\"max-width: 360px;margin: 0 auto;\">"
+					+ "<button "
+						+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
+						+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
+						+ "data-id=\"" + ctrlArgs.id + "\" "
+					+ ">" + ctrlArgs.label + "</button>"
+				+ "</div>";
+			}
+		}
+
 		dom.innerHTML = articleNode;
 		return dom;
 	}
