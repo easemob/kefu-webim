@@ -282,7 +282,7 @@ function _confirm(){
 	// 强制评价点击确定关闭会话框
 	setTimeout(function(){
 		// 关闭会话
-		if(evaluateType === "system"){
+		if(evaluateType === "system" && profile.grayList.visitorLeave){
 			// 取消轮询接口
 			eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
 			profile.currentOfficialAccount.sessionId && apiHelper.closeChatDialog({ serviceSessionId: profile.currentOfficialAccount.sessionId });
