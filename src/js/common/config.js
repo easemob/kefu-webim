@@ -4,6 +4,8 @@ var config = {};
 
 function h5_mode_init(){
 	config = {};
+	config.menutype = utils.query("menutype");
+	config.queueName = utils.query("queueName");
 	config.channelName = utils.query("channelName");
 	config.tsrNumber = utils.query("tsrNumber");
 	config.csrNumber = utils.query("csrNumber");

@@ -1027,6 +1027,12 @@ function _setExt(msg){
 		msg.body.ext.weichat.visitor = config.visitor;
 	}
 
+	if(!_.isEmpty(config.menutype)){
+		msg.body.ext.menutype = config.menutype;
+	}
+	if(!_.isEmpty(config.queueName)){
+		msg.body.ext.weichat.queueName = config.queueName;
+	}
 	if(!_.isEmpty(config.channelName)){
 		msg.body.ext.channelName = config.channelName;
 	}
@@ -1066,6 +1072,7 @@ function _setExt(msg){
 			official_account_id: officialAccountId
 		};
 	}
+	console.log('[msg]', msg)
 }
 
 function _promptNoAgentOnlineIfNeeded(opt){

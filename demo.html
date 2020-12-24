@@ -43,8 +43,8 @@ tenantIdInput.value = (window.localStorage && localStorage.getItem("easemobtest"
 function test(){
 	// window.easemobim.bind({ tenantId: getTenantId() });
 	// 电销
-	window.easemobim.bind({ configId: 'f245d16e-5037-4aac-9994-4e4395dad805' });
-	// 新契约
+	// window.easemobim.bind({ configId: 'f245d16e-5037-4aac-9994-4e4395dad805' });
+	//新契约
 	window.easemobim.bind({ configId: 'df20ae15-6904-4cdd-b9a8-2bc7e5ae9228' });
 }
 
@@ -114,6 +114,8 @@ window.easemobim.config = {
 	tenantId: query("tenantId") || "",
 	configId: query("configId") || "",
 	unused: "",
+	menutype: 'wode',
+	queueName: 'tade'
 };
 </script>
 
