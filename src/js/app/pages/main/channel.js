@@ -1031,7 +1031,7 @@ function _setExt(msg){
 		msg.body.ext.menutype = config.menutype;
 	}
 	if(!_.isEmpty(config.queueName)){
-		msg.body.ext.weichat.queueName = config.queueName;
+		msg.body.ext.weichat.queueName = window.decodeURI(config.queueName);
 	}
 	if(!_.isEmpty(config.channelName)){
 		msg.body.ext.channelName = config.channelName;
