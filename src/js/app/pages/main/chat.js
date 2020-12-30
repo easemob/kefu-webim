@@ -164,7 +164,7 @@ function _initToolbar(){
 	config.ticket && utils.removeClass(doms.noteBtn, "hide");
 
 	// 满意度评价按钮
-	if(config.satisfaction && config.showEnquiryButtonInAllTime == "true"){
+	if(config.satisfaction && config.options.showEnquiryButtonInAllTime == "true"){
 		utils.removeClass(doms.satisfaction, "hide");
 	}
 }
@@ -442,7 +442,7 @@ function _bindEvents(){
 			var agentType = officialAccount.agentType;
 			var isRobotAgent = agentType === _const.AGENT_ROLE.ROBOT;
 			// 仅机器人接待时关闭会话
-			if(isRobotAgent && officialAccount.isSessionOpen && profile.grayList.visitorLeave && config.closeSessionWhenCloseWindow == "true"){
+			if(isRobotAgent && officialAccount.isSessionOpen && profile.grayList.visitorLeave && config.options.closeSessionWhenCloseWindow == "true"){
 				sessionId && apiHelper.visitorCloseSession({serviceSessionId: sessionId});
 			}
 			
@@ -1186,7 +1186,7 @@ function _initSession(){
 			initVisitorStatusPoller();
 			initQueuingNumberPoller();
 			initTransferToKefuButton();
-			if(config.satisfaction && config.showEnquiryButtonInAllTime == "false"){
+			if(config.satisfaction && config.options.showEnquiryButtonInAllTime == "false"){
 				_initSatisfactionButton();
 			}
 			
