@@ -301,7 +301,7 @@ function handleCfgData(relevanceList, status){
 		targetItem = targetItem || relevanceList[0];
 		console.log("mismatched channel, use default.");
 	}
-
+	console.log(commonConfig.getConfig())
 	commonConfig.setConfig({
 		logo: commonConfig.getConfig().logo || { enabled: !!targetItem.tenantLogo, url: targetItem.tenantLogo },
 		toUser: targetItem.imServiceNumber,

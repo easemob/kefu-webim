@@ -92,8 +92,7 @@ function handleConfig(configJson){
 	config.resources = configJson.chat.resources;
 	config.hideStatus = configJson.chat.hideStatus;
 	config.timeScheduleId = configJson.chat.timeScheduleId || 0;
-	config.closeSessionWhenCloseWindow = configJson.options.closeSessionWhenCloseWindow || "false";
-	config.showEnquiryButtonInAllTime = configJson.options.showEnquiryButtonInAllTime || "false";
+	config.options = configJson.options;
 
 }
 
