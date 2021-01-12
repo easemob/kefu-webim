@@ -91,7 +91,8 @@ module.exports = {
 			});
 		}, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
 	},
-	handleMessage: _handleMessage
+	handleMessage: _handleMessage,
+	appendMsg: _appendMsg,
 };
 
 function _initConnection(onReadyCallback){

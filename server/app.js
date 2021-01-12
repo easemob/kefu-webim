@@ -10,7 +10,8 @@ const debug = require("debug");
 const DEFAULT_PORT = 8008;
 // const DEFAULT_DOMAIN = "sandbox.kefu.easemob.com";
 // const DEFAULT_DOMAIN = "metlife-kefuim.easemob.com";
-const DEFAULT_DOMAIN = "kefuim-uat.metlife.com.cn";
+// const DEFAULT_DOMAIN = "kefuim-uat.metlife.com.cn";
+const DEFAULT_DOMAIN = "opsim-uat.metlife.com.cn";
 const DEFAULT_SERVER = `http://${DEFAULT_DOMAIN}`;
 
 // package 中的 KEY_PATH 必须填，当活文档

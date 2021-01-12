@@ -701,6 +701,9 @@ function _bindEvents(){
 	});
 
 	// 未解决
+	utils.live("button.js_transfertokefu", "click", function(){
+		channel.sendText('转人工');
+	});
 	utils.live("a.statisfyNo", "click", function(){
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
@@ -711,7 +714,18 @@ function _bindEvents(){
 			faqvote: satisfactionCommentKey,
 		}
 		apiHelper.newStatisfy(para).then(function(resp){
-			if(resp){
+			if("请问您是否需要转接人工服务？"== resp){
+				channel.appendMsg({
+					data: '<p>请问您是否需要转接人工服务？</p>'+
+					'<div class="em-btn-list">'+
+						'<button class="js_transfertokefu bg-hover-color">转人工</button>' +
+					'</div>',
+					type: "txtLink",
+				}, {
+					isReceived: true,
+					isHistory: false
+				});
+			}else{
 				uikit.tip(resp);
 			}
 		}).catch(function(e){console.log(e)})
