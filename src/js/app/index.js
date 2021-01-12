@@ -25,6 +25,7 @@ var eventListener = require("@/app/tools/eventListener");
 var fromUserClick = false;
 var Tab = require("@/common/uikit/tab");
 
+var ISIFRAME = false; //网页插件为true
 load_html();
 if(utils.isTop){
 	commonConfig.h5_mode_init();
@@ -49,6 +50,7 @@ else{
 			getToHost.to = data.parentId;
 			commonConfig.setConfig(data);
 			initCrossOriginIframe();
+			ISIFRAME = true;
 			break;
 		default:
 			break;
@@ -173,26 +175,27 @@ function initConfig(){
 		handleSettingIframeSize();
 		initRelevanceList(entity.tenantId);
 		initInvite({ themeName: entity.configJson.ui.themeName });
-
-		apiHelper.getQualificationStatus(entity.tenantId).then(function(res) {
-			if(res) {
-				widgetBoxHide();
-				var str = "";
-				if(res === 1) {
-					str = "未进行认证，";
-				} else if(res === 2){
-					str = "认证未通过，";
+		if(!ISIFRAME){
+			apiHelper.getQualificationStatus(entity.tenantId).then(function(res) {
+				if(res) {
+					widgetBoxHide();
+					var str = "";
+					if(res === 1) {
+						str = "未进行认证，";
+					} else if(res === 2){
+						str = "认证未通过，";
+					}
+					if(utils.isMobile) {
+						document.querySelector(".auth-box-H5 >div span.is-auth").innerHTML = str;
+						utils.removeClass(document.querySelector(".auth-box-H5"), "hide");
+					} else {
+						str += "咨询通道暂不可用";
+						document.querySelector(".auth-box-PC >div span").innerHTML = str;
+						utils.removeClass(document.querySelector(".auth-box-PC"), "hide");
+					}
 				}
-				if(utils.isMobile) {
-					document.querySelector(".auth-box-H5 >div span.is-auth").innerHTML = str;
-					utils.removeClass(document.querySelector(".auth-box-H5"), "hide");
-				} else {
-					str += "咨询通道暂不可用";
-					document.querySelector(".auth-box-PC >div span").innerHTML = str;
-					utils.removeClass(document.querySelector(".auth-box-PC"), "hide");
-				}
-			}
-		})
+			})
+		}
 	});
 }
 
@@ -213,7 +216,7 @@ function initRelevanceList(tenantId){
 	// 获取关联信息（targetChannel）
 	var relevanceList;
 	var tId = tenantId || utils.query("tenantId");
-	if(tId){
+	if(!ISIFRAME){
 		apiHelper.getQualificationStatus(tId).then(function(res) { 
 			if(res) {
 				widgetBoxHide();
