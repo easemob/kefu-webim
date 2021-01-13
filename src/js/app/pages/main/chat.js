@@ -714,7 +714,8 @@ function _bindEvents(){
 			faqvote: satisfactionCommentKey,
 		}
 		apiHelper.newStatisfy(para).then(function(resp){
-			if("请问您是否需要转接人工服务？"== resp){
+			var istransfer = resp.indexOf('[acs]转人工[/acs]') != -1;
+			if(istransfer){
 				channel.appendMsg({
 					data: '<p>请问您是否需要转接人工服务？</p>'+
 					'<div class="em-btn-list">'+
