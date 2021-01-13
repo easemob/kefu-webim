@@ -15,9 +15,12 @@ module.exports = function(){
 	toKefuBtn = editorView.querySelector(".em-widget-to-kefu");
 
 	// 人工客服接起会话
-	utils.on(toKefuBtn, "click", function(){
+
+	utils.on(toKefuBtn, "click", _.throttle(function(){
 		channel.sendTransferToKf();
-	});
+	},8000, {trailing: false}));
+
+
 
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideTransferToKefuBtn);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, _displayOrHideTransferToKefuBtn);
