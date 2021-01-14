@@ -16,7 +16,7 @@ Tab.prototype.addTab = function(tabInfo){
 		throw new Error("不允许空实例");
 	};
 	var liWidth;
-	var $headItemTmp = $("<li sign=\"" + tabInfo.sign + "\">" + tabInfo.text + "</li>");
+	var $headItemTmp = $("<li sign=\"" + tabInfo.sign + "\"><span>" + tabInfo.text + "</span></li>");
 	var $bodyItemTmp = $("<div class='hide' sign=" + tabInfo.sign + ">");
 	// frame append
 	this.$head.append($headItemTmp);
@@ -32,10 +32,10 @@ Tab.prototype.addTab = function(tabInfo){
 		this.$el.removeClass("headless");
 	}
 	// 平均分配 li 的宽度
-	liWidth = (100 / (this.tabs.length)) + "%";
-	_.each(this.$allTab, function(tab){
-		tab.style = "width:" + liWidth;
-	});
+	// liWidth = (100 / (this.tabs.length)) + "%";
+	// _.each(this.$allTab, function(tab){
+	// 	tab.style = "width:" + liWidth;
+	// });
 	// [API] this.$el
 	_.each(tabInfo.ins, function(ins){
 		$bodyItemTmp.append(ins.$el);
@@ -54,6 +54,7 @@ Tab.prototype.onTabClick = function(e){
 };
 Tab.prototype.clearSelected = function(){
 	this.$allTab.removeClass("selected");
+	this.$allTab.find("span").removeClass("border-color fg-color");
 	this.$allContent.addClass("hide");
 };
 Tab.prototype.selectFirstTab = function(silent){
@@ -68,6 +69,7 @@ Tab.prototype.selectTab = function($tab, silent){
 	var sign = $tab.attr("sign");
 	this.clearSelected();
 	$tab.addClass("selected");
+	$tab.find("span").addClass("border-color fg-color");
 	this.bodies[sign].removeClass("hide");
 	// [API] this.show()
 	_.each(this.inst[sign], function(ins){

@@ -144,7 +144,7 @@
 		left: 50px;
 		top: -30px;
 		background: #fff;
-		border: 1px solid #e5e5e5;
+		// border: 1px solid #e5e5e5;
 		.icon-corner-left {
 			position: absolute;
 			top: 5px;
@@ -152,7 +152,7 @@
 			width: 30px;
 			height: 30px;
 			color: white;
-			text-shadow: -1px 0 0 #e5e5e5;
+			// text-shadow: -1px 0 0 #e5e5e5;
 		}
 		.em-widget-msg-container {
 			.video-btn{
@@ -172,7 +172,7 @@
 		float: right;
 		margin-right: 12px;
 		background: #e3ecfc;
-		border: 1px solid #c3cbd9;
+		// border: 1px solid #c3cbd9;
 		.icon-corner-right {
 			position: absolute;
 			top: 5px;
@@ -180,7 +180,7 @@
 			width: 30px;
 			height: 30px;
 			color: #e3ecfc;
-			text-shadow: 1px 0 0 #c3cbd9;
+			// text-shadow: 1px 0 0 #c3cbd9;
 		}
 		.em-widget-msg-container {
 			background-color: #e3ecfc;
@@ -235,7 +235,7 @@
 			color: #000;
 			background-color: white;
 			border-radius: 2px;
-			border: 1px solid #e5e5e5;
+			border: 1px solid #fff;
 			cursor: pointer;
 			word-break: break-word;
 			white-space: pre-wrap;
@@ -539,7 +539,7 @@
 		width: 90%;
 		background: #fff;
 		border-radius: 4px;
-		border: solid 1px #BFBFBF;
+		// border: solid 1px #BFBFBF;
 		font-size: 12px;
 	}
 	.only-one-article {

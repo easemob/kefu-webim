@@ -783,7 +783,7 @@
 }
 
 .ui-cmp-tab {
-	$c_border: #e6eaf2;
+	$c_border: #e6eaf2; 
 
 	position: relative;
 	display: inline-block;
@@ -805,37 +805,36 @@
 		position: relative;
 		width: 100%;
 		height: 50px;
-		border-bottom: 1px solid;
-		border-color: $c_border;
 		overflow: hidden;
 
 		> li {
-			width: 100%;
+			min-width: 100px;
 			text-align: center;
 			box-sizing: border-box;
-
 			float: left;
-
-			border-right: 1px solid #e6eaf2;
 			cursor: pointer;
-
 			height: 50px;
-			line-height: 50px;
-			background-color: #f5f7fa;
+			line-height: 35px;
 			overflow: hidden;
 			> span {
 				font-size: 14px;
-				padding: 0 10px;
+				padding: 0 5px;
 				display: inline-block;
 				text-align: center;
-				width: 100%;
+				margin-top:10px;
 				box-sizing: border-box;
+				border-bottom: 2px solid #fff;
+				color:#444;
 			}
 			&:last-of-type {
 				border: 0;
 			}
 			&.selected {
-				background-color: white;
+				>span{
+					border-color:#3399ff;
+					color:#3399ff;
+					font-weight:500;
+				}
 			}
 		}
 	}

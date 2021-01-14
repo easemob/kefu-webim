@@ -1,12 +1,14 @@
-
+body{
+	background: #eee;
+}
 body.big-window{
 	min-width: 720px;
 	.em-widget-wrapper{
-		width: calc(100% - 360px);
+		width: calc(100% - 300px);
 		min-width: 360px;
 	}
 	.em-self-wrapper{
-		width: 360px;
+		width: 300px;
 		display: block;
 	}
 	.em-widget-send-wrapper{
@@ -16,17 +18,23 @@ body.big-window{
 }
 body.big-window-h5{
 	.em-widget-wrapper{
-		width: 50%;
-		min-width: 360px;
+		width: calc(100% - 300px);
+		min-width: 300px;
 	}
 	.em-self-wrapper{
-		width: 50%;
+		// width: 50%;
 		display: block;
 	}
 }
 .em-widget-box{
-	height: 100%;
-	position: relative;
+	height: 726px;
+	width: 938px;
+	margin: auto;
+	position: absolute;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
 	.em-widget-content-box{
 		position: absolute;
 		top: 41px;
@@ -100,16 +108,18 @@ body.big-window-h5{
 	transform: translateY(1px);
 }
 .em-widget-risk-warning{
-	width:100%;
+	// width:100%;
 	box-sizing: border-box;
 	position:absolute;
 	top:0;
 	left:0;
-	background:#FFF2E6;
+	background:#FFEEC0;
 	z-index:1;
 	padding: 8px;
-    color: #5d5d5d;
-	font-size:13px;
+	margin:5px;
+	border-radius:4px;
+    color: #757575;
+	font-size:12px;
 	display:none;
 	height: 48px;
 	box-sizing: border-box;
@@ -139,7 +149,7 @@ body.big-window-h5{
 	background-color: #F4F7FA;
 	width: 100%;
 	border-bottom: 1px solid #E5E9F3;
-	border-right: 1px solid #E5E9F3;
+	// border-right: 1px solid #E5E9F3;
 	box-sizing: border-box;
 	color: #1a1a1a;
 	overflow-x: hidden;
@@ -367,15 +377,21 @@ body.big-window-h5{
 /* 信息栏 */
 .em-widget-tip {
 	display: none;
+	width:100%;
 	position: absolute;
 	top: 0;
-	width: 100%;
 	height: 48px;
-	color: #535252;
-	background-color: #FFECD5;
+	color: #666;
 	line-height: 44px;
 	max-height: 48px;
-    overflow-y: auto;
+	overflow-y: auto;
+	padding: 6px;
+	background:#f4f7fa;
+	>div{
+		width: calc(100% - 12px);
+		background-color: #FFEEC0;
+		border-radius:3px;
+	}
 	.content {
 		width: 87%;
 		vertical-align: middle;
@@ -387,12 +403,14 @@ body.big-window-h5{
 		display: inline-block;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
+		font-size:12px;
 	}
 	.tip-close {
 		position: absolute;
-		right: 10px;
+		right: 15px;
 		height: 30px;
 		color: #EBCFB3;
+		cursor:pointer;
 	}
 
 	// 以下是新版信息栏
@@ -613,4 +631,7 @@ body.big-window-h5{
 		height: 100%;
 		background: #fff;
 	}
+}
+#em-kefu-webim-self{
+	border-left: 1px solid #efefef;
 }

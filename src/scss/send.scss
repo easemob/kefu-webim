@@ -4,7 +4,7 @@
 	width: 100%;
 	bottom: 0;
 	background-color: white;
-	border-right: 1px solid #e5e9f3;
+	// border-right: 1px solid #e5e9f3;
 	box-sizing: border-box;
 	-webkit-backface-visibility: hidden;
 
@@ -99,9 +99,12 @@
 			top: 5px;
 			left: 5px;
 			position: relative;
-			color: #4d4d4d;
+			color: #919191;
 			&:hover {
 				cursor: pointer;
+			}
+			&:before{
+				font-size:25px;
 			}
 		}
 		.em-widget-to-kefu{
@@ -109,6 +112,7 @@
 			position: absolute;
 			top: 10px;
 			right: 5%;
+			font-weight:800;
 		}
 		.em-widget-exit-video{
 			cursor: pointer;

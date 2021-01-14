@@ -1,13 +1,15 @@
 .self-service-list{
-	text-align: center;
+	// text-align: center;
+	padding:0 8px;
 	margin-top: 1em;
 	>a{
 		display: inline-block;
 		margin: 2% 0;
-		width: 23%;
+		width: 23.8%;
 		text-decoration: none;
+		text-align: center;
 		img {
-			width: 60%;
+			width: 40%;
 			max-width: 65px;
 		}
 		>span{
@@ -18,6 +20,7 @@
 			width: 100%;
 			white-space: nowrap;
 			overflow: hidden;
+			font-size:12px;
 		}
 	}
 }
@@ -30,28 +33,38 @@
 	>p{
 		font-weight: 500;
 		line-height: 24px;
-		background: #f5f5f5;
 		padding: 0.5em 1em;
 		margin-bottom: 1em;
+		position: relative;
+	}
+	.gray-line{
+		width:50%;
+		height:1px;
+		margin-left: 5px;
+		display: inline-block;
+		border-bottom:1px dashed #999;
+		position:absolute;
+		top: 50%;
 	}
 	.faq-item{
-		margin-bottom: 1em;
 		cursor: pointer;
 		word-break:break-all;
+		text-align: justify;
+		margin-bottom: 5px;
 		>p{
-			border: 1px solid #e5e5e5;
 			line-height: 24px;
-			padding: 0.5em 1em;
+			// padding: 0.5em 0;
 			margin: 0 1em;
 			background: #fff;
 		}
 		.question{
-			font-weight: 400;
+			font-weight: 500;
 		}
 		.answer {
 			border-top: none;
-			padding: 0.5em 2em;
+			// padding: 0.5em 0;
 			overflow-x: auto;
+			color:#444;
 		}
 		&.hide-answer{
 			.answer{
