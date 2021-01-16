@@ -311,6 +311,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 
 	// 设置消息气泡的突起位置
 	// .icon-corner-right, .icon-corner-left used here
+	
 	html += "<i class=\"icon-corner-" + direction + "\"></i>";
 
 	// 发出的消息增加状态显示

@@ -24,7 +24,7 @@
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
-	background-color: white;
+	background-color: #f4f7fa;
 	// border-radius: 4px;
 }
 
@@ -34,7 +34,7 @@
 	// width: 50%;
 	height: 100%;
 	overflow: hidden;
-	background-color: white;
+	background-color: #f4f7fa;
 	// border-radius: 4px;
 	box-sizing: border-box;
 }
@@ -50,6 +50,9 @@
 	position: relative;
 	padding-left: 10px;
 	color: white;
+	.em-widget-header-nickname{
+		font-size:14px;
+	}
 
 	.drag-bar {
 		position: absolute;

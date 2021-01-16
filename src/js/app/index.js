@@ -492,6 +492,9 @@ function renderUI(resultStatus){
 				faqInsArr.push(side_page.faq);
 				faqTxt = "常见问题";
 			}
+			if(selfServiceEnable && commonIssueEnable){
+				faqTxt = "自助服务";
+			}
 			if(utils.isMobile){
 				faqInsArr.push(side_page.contact);
 			}
@@ -500,6 +503,10 @@ function renderUI(resultStatus){
 				text: faqTxt,
 				ins: faqInsArr,
 			});
+
+			if(commonIssueEnable && !selfServiceEnable){
+				tab.$el.find(".faq-list > p").hide()
+			}
 		}
 		// iframe 开关开启并且信息完备时
 		if(!utils.isMobile && iframeEnable && iframeSettings && iframeSettings.url){

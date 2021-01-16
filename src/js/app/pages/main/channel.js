@@ -629,7 +629,7 @@ function _handleMessage(msg, options){
 				message.data = __("chat.evaluate_agent_title");
 				message.list = [
 					"<div class=\"em-btn-list\">"
-					+ "<button class=\"bg-hover-color js_satisfybtn\" data-inviteid=\""
+					+ "<button class=\"bg-hover-color js_satisfybtn fg-color\" data-inviteid=\""
 					+ inviteId
 					+ "\" data-servicesessionid=\""
 					+ serviceSessionId
@@ -696,7 +696,7 @@ function _handleMessage(msg, options){
 					// 	className += "bg-hover-color";
 					// }
 					return "<button "
-					+ "class=\"js_robotbtn bg-hover-color " + (profile.shouldMsgActivated(serviceSessionId) ? "" : "disabled") + "\" "
+					+ "class=\"js_robotbtn " + (profile.shouldMsgActivated(serviceSessionId) ? "fg-color bg-hover-color" : "disabled") + "\" "
 					+ "data-id=\"" + item.id + "\" "
 					+ ">" + item.name + "</button>";
 				}).join("") || ""
@@ -725,7 +725,7 @@ function _handleMessage(msg, options){
 					}
 	
 					return "<button "
-					+ "class=\"js_transferManualbtn bg-hover-color " + (profile.shouldMsgActivated(serviceSessionId) ? "" : "disabled") + "\" "
+					+ "class=\"js_transferManualbtn bg-hover-color fg-color" + (profile.shouldMsgActivated(serviceSessionId) ? "" : "disabled") + "\" "
 					+ "data-id=\"" + item.id + "\" "
 					+ "data-queue-id=\"" + item.queueId + "\" "
 					+ "data-queue-type=\"" + item.queueType + "\" "
@@ -743,7 +743,7 @@ function _handleMessage(msg, options){
 				+ _.map(msg.data.children, function(item){
 					var queueName = item.queueName;
 					var label = item.menuName;
-					var className = "js_skillgroupbtn bg-hover-color";
+					var className = "js_skillgroupbtn bg-hover-color fg-color";
 	
 					return "<button class=\"" + className + "\" data-queue-name=\"" + queueName + "\">" + label + "</button>";
 				}).join("") || ""
@@ -772,7 +772,7 @@ function _handleMessage(msg, options){
 					var queueName = item.queueName;
 					var label = item.itemName;
 					var queueType = item.queueType;
-					var className = "js_transferManualEntrybtn bg-hover-color";
+					var className = "js_transferManualEntrybtn bg-hover-color fg-color";
 					if(item.queueType == "video"){
 						if(
 							window.location.protocol !== "https:"

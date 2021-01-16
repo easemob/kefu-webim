@@ -15,9 +15,11 @@
 	.fg-hover-color:hover {
 		color: $theme-color!important;
 	}
+
 	.bg-color,
 	.bg-hover-color:hover {
 		background-color: $theme-color!important;
+		color:#fff!important;
 	}
 	.border-color {
 		border-color: $dark-color!important;

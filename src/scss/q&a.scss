@@ -2,6 +2,7 @@
 	// text-align: center;
 	padding:0 8px;
 	margin-top: 1em;
+	margin-bottom:10px;
 	>a{
 		display: inline-block;
 		margin: 2% 0;
@@ -14,7 +15,7 @@
 		}
 		>span{
 			display: block;
-			color: #1a1a1a;
+			color: #4a4a4a;
 			text-align: center;
 			text-overflow: ellipsis;
 			width: 100%;
@@ -30,12 +31,17 @@
 	width: 100%;
 }
 .faq-list{
+	margin-top:20px;
+	.faq-list-content{
+		padding: 0 0.5em;
+	}
 	>p{
-		font-weight: 500;
+		// font-weight: 500;
 		line-height: 24px;
-		padding: 0.5em 1em;
-		margin-bottom: 1em;
+		padding: 0.5em 1.5em;
+		margin-bottom: 0.5em;
 		position: relative;
+		font-size: 14px;
 	}
 	.gray-line{
 		width:50%;
@@ -58,13 +64,16 @@
 			background: #fff;
 		}
 		.question{
-			font-weight: 500;
+			color:#101010;
+			// font-weight: 500;
 		}
 		.answer {
 			border-top: none;
 			// padding: 0.5em 0;
 			overflow-x: auto;
-			color:#444;
+			color:#4a4a4a;
+			margin-top: 3px;
+   			text-indent: 2em;
 		}
 		&.hide-answer{
 			.answer{
