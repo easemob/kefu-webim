@@ -717,9 +717,9 @@ function _bindEvents(){
 			var istransfer = resp.indexOf('[acs]转人工[/acs]') != -1;
 			if(istransfer){
 				channel.appendMsg({
-					data: '<p>请问您是否需要转接人工服务？</p>'+
+					data: '<p>本次会话即将结束，是否需要接通专家咨询？</p>'+
 					'<div class="em-btn-list">'+
-						'<button class="js_transfertokefu bg-hover-color">转人工</button>' +
+						'<button class="js_transfertokefu bg-hover-color">转接人工</button>' +
 					'</div>',
 					type: "txtLink",
 				}, {
