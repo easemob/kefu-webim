@@ -4,10 +4,7 @@ body{
 body.big-window{
 	min-width: 720px;
 	background: #eee;
-	.em-widget-box{
-		height: 726px;
-		width: 938px;
-	}
+	
 	.em-widget-wrapper{
 		width: calc(100% - 300px);
 		min-width: 360px;
@@ -29,6 +26,10 @@ body.big-window-h5{
 	.em-self-wrapper{
 		// width: 50%;
 		display: block;
+	}
+	.em-widget-box{
+		height: 726px;
+		width: 938px;
 	}
 }
 .em-widget-box{
