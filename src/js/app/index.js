@@ -384,6 +384,7 @@ function renderUI(resultStatus){
 		iframeEnable = resultStatus[2];
 		// pc 端判断三个开关
 		if(!utils.isMobile){
+			utils.addClass(document.body, "window-pc");
 			// 任意一个打开
 			if(commonIssueEnable || selfServiceEnable || iframeEnable){
 				utils.addClass(document.body, "big-window");
