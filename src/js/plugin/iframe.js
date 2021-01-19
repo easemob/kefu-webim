@@ -128,15 +128,21 @@ function _ready(){
 
 	me.onsessionclosedSt = 0;
 	me.onreadySt = 0;
+	me.onopenSt = 0;
+	me.oncloseSt = 0;
 	me.config.parentId = me.iframe.id;
 
 	// 从config中剔除不能clone的内容
 	me.callbackApi = {
 		onready: me.config.onready || emptyFunc,
+		onopen: me.config.onopen || emptyFunc,
+		onclose: me.config.onclose || emptyFunc,
 		onmessage: me.config.onmessage || emptyFunc,
 		onsessionclosed: me.config.onsessionclosed || emptyFunc
 	};
 	delete me.config.onready;
+	delete me.config.onopen;
+	delete me.config.onclose;
 	delete me.config.onmessage;
 	delete me.config.onsessionclosed;
 
@@ -164,10 +170,18 @@ function _ready(){
 		case _const.EVENTS.SHOW:
 			// 显示聊天窗口
 			me.open();
+			// clearTimeout(me.onopenSt);
+			// me.onopenSt = setTimeout(function(){
+				me.callbackApi.onopen();
+			// }, 500);
 			break;
 		case _const.EVENTS.CLOSE:
 			// 最小化聊天窗口
 			me.close();
+			// clearTimeout(me.onopenSt);
+			// me.onopenSt = setTimeout(function(){
+				me.callbackApi.onclose();
+			// }, 500);
 			break;
 		case _const.EVENTS.NOTIFY:
 			// 显示浏览器通知

@@ -47,7 +47,19 @@ function test(){
 	//新契约
 	// window.easemobim.bind({ configId: 'df20ae15-6904-4cdd-b9a8-2bc7e5ae9228' });
 	// 生产
-	window.easemobim.bind({ configId: '6b3b9442-a44a-4bba-aae4-e4b2e250700f' });
+	window.easemobim.bind({ 
+		configId: '6b3b9442-a44a-4bba-aae4-e4b2e250700f',
+			onready: function(){
+				console.log("--------测试消息");
+			},
+			onopen: function(){
+				console.log("--------onopen");
+			},
+			onclose: function(){
+				console.log("--------onclose");
+			},
+			
+	});
 	// https://opsim-uat.metlife.com.cn/webim/im.html?configId=6b3b9442-a44a-4bba-aae4-e4b2e250700f&menutype=2
 }
 
