@@ -1,16 +1,16 @@
 body.window-pc{
+	background: #f7f7f7;
 	.em-widget-box{
 		height: 726px;
 		width: 938px;
-		max-height:100%;
-		max-width:100%;
+		max-height:calc(100% - 20px);
+		max-width:calc(100% - 20px);
 		box-shadow: 0px 10px 20px 0 rgba(0, 0, 0, 0.3);
+		
 	}
 }
 body.big-window{
 	// min-width: 720px;
-	background: #eee;
-	
 	.em-widget-wrapper{
 		width: calc(100% - 300px);
 		min-width: 360px;
