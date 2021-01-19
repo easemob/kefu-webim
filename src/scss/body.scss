@@ -6,17 +6,16 @@ body.window-pc{
 		max-height:calc(100% - 20px);
 		max-width:calc(100% - 20px);
 		box-shadow: 0px 10px 20px 0 rgba(0, 0, 0, 0.3);
-		
 	}
 }
 body.big-window{
 	// min-width: 720px;
 	.em-widget-wrapper{
-		width: calc(100% - 300px);
+		width: calc(100% - 240px);
 		min-width: 360px;
 	}
 	.em-self-wrapper{
-		width: 300px;
+		width: 240px;
 		display: block;
 	}
 	.em-widget-send-wrapper{
@@ -31,7 +30,15 @@ body.big-window-h5{
 	}
 	.em-self-wrapper{
 		// width: 50%;
+		width: 300px;
 		display: block;
+	}
+	.em-widget-box{
+		height: 726px;
+		width: 938px;
+		max-height:calc(100% - 20px);
+		max-width:calc(100% - 20px);
+		box-shadow: 0px 10px 20px 0 rgba(0, 0, 0, 0.3);
 	}
 	
 }
@@ -121,26 +128,48 @@ body.big-window-h5{
 	top:0;
 	left:0;
 	right:0;
-	background:#FFEEC0;
+	background:#f4f7fa;
 	z-index:1;
-	padding: 8px;
-	margin:5px;
 	border-radius:4px;
     color: #757575;
 	font-size:12px;
 	display:none;
-	height: 48px;
-	line-height:32px;
+	height: 55px;
 	box-sizing: border-box;
-	>img{
-		width: 23px;
-		margin-left: 5px;
-		margin-top: 5px;
-		float: left;
+	padding:5px;
+	>div{
+		width: 100%;
+		background-color: #fff3bf;
+		border-radius:3px;
+		padding:6px 0;
+		height:100%;
+		box-sizing: border-box;
+
 	}
-	span{
+	.contentDom{
+		width: 100%;
+		height: 100%;
+		overflow-y: auto;
+		box-sizing: border-box;
+		display:flex;
+		align-items:center;
+		img{
+			width: 23px;
+			position:absolute;
+		}
+	}
+	.content {
+		width: 80%;
+		// vertical-align: middle;
+		line-height: 16px;
+		margin-left: 30px;
+		word-break: break-word;
+		overflow: hidden;
+		text-overflow: ellipsis;
 		display: inline-block;
-		width:85%;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		font-size:12px;
 	}
 	i{
 		position: absolute;
@@ -227,7 +256,7 @@ body.big-window-h5{
 				}
 				&.accept-button {
 					background-color: #70ba26;
-					margin-right: 20px;
+					margin-right: 8px;
 				}
 				&.end-button {
 					background-color: #db2400;
@@ -357,7 +386,6 @@ body.big-window-h5{
 	z-index: 10;
 	top: 30px;
 	left: 0;
-
 	background-color: #fff;
 	color: #535252;
 	max-width: 30%;
@@ -369,12 +397,12 @@ body.big-window-h5{
 		@extend %em-mix-ellipsis;
 		position: relative;
 		text-align: center;
-		line-height: 44px;
+		line-height: 36px;
 		width: 100%;
 		border-top: 1px solid #ccc;
 		// 这里应该继承 theme 色，但是没设计好，再说
 		a {
-			font-size: 15px;
+			font-size: 13px;
 			cursor: pointer;
 			color: #535252;
 		}
@@ -408,24 +436,25 @@ body.big-window-h5{
 		border-radius:3px;
 		height: 100%;
 		padding:6px 0;
+		box-sizing: border-box;
 	}
 	.contentDom{
 		width: 100%;
-		height: calc(100% - 12px);
+		height: 100%;
 		overflow-y: auto;
 		box-sizing: border-box;
 		display:flex;
 		align-items:center;
 		img{
 			width: 23px;
-			margin-left: 5px;
+			position:absolute;
 		}
 	}
 	.content {
-		width: 87%;
+		width: 80%;
 		// vertical-align: middle;
 		line-height: 16px;
-		margin-left: 5px;
+		margin-left: 30px;
 		word-break: break-word;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -445,12 +474,16 @@ body.big-window-h5{
 
 	// 以下是新版信息栏
 	&.new {
+		height: 40px;
+		line-height: 40px;
+		max-height: 40px;
 		z-index: 1;
 		background-color: #fff;
 		box-shadow: 0 2px 2px rgba(102, 102, 102, 0.3);
 		// border-bottom: 1px solid #ccc;
 		font-size: 0;
 		box-sizing: border-box;
+		padding:0;
 		// 刚好 1 个 child，选中所有
 		.tip-btn:first-child:nth-last-child(1),
 		.tip-btn:first-child:nth-last-child(1) ~ .tip-btn {
@@ -470,11 +503,19 @@ body.big-window-h5{
 			text-align: center;
 			font-size: 13px;
 			display: inline-block;
-			line-height: 48px;
+			line-height: 28px;
+			border-right: 1px solid #eee;
+			background:#fff;
 			span {
-				font-size: 15px;
+				font-size: 14px;
 				vertical-align: middle;
 			}
+			i::before{
+				font-size:25px;
+			}
+		}
+		.tip-btn:last-child{
+			border-right:none;
 		}
 	}
 }

@@ -368,6 +368,14 @@ function renderUI(resultStatus){
 	if(utils.isMobile){
 		utils.addClass(document.body, "em-mobile");
 	}
+	else{
+		if(!utils.isTop){
+			utils.addClass(document.body, "window-demo");
+		}
+		else{
+			utils.addClass(document.body, "window-pc");
+		}
+	}
 
 	var commonIssueEnable;
 	var selfServiceEnable;
@@ -384,7 +392,6 @@ function renderUI(resultStatus){
 		iframeEnable = resultStatus[2];
 		// pc 端判断三个开关
 		if(!utils.isMobile){
-			utils.addClass(document.body, "window-pc");
 			// 任意一个打开
 			if(commonIssueEnable || selfServiceEnable || iframeEnable){
 				utils.addClass(document.body, "big-window");
@@ -462,6 +469,7 @@ function renderUI(resultStatus){
 	function allDisable(){
 		// console.log("全关");
 		$(".em-self-wrapper").addClass("hide");
+		!utils.isMobile && $(".em-widget-box").css("width", "735px");
 		main.initChat();
 	}
 	function mobileAnyEnable(){

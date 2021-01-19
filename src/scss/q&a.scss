@@ -6,7 +6,7 @@
 	>a{
 		display: inline-block;
 		margin: 2% 0;
-		width: 23.8%;
+		width: 23.5%;
 		text-decoration: none;
 		text-align: center;
 		img {
@@ -73,7 +73,8 @@
 			overflow-x: auto;
 			color:#4a4a4a;
 			margin-top: 3px;
-   			text-indent: 2em;
+			   text-indent: 2em;
+			   line-height:20px;
 		}
 		&.hide-answer{
 			.answer{
