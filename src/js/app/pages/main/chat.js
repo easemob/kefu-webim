@@ -645,7 +645,9 @@ function _bindEvents(){
 	utils.live("button.js_satisfybtn", "click", function(){
 		var serviceSessionId = this.getAttribute("data-servicesessionid");
 		var inviteId = this.getAttribute("data-inviteid");
-		satisfaction.show(inviteId, serviceSessionId, "agent");
+		// 过期时间
+		var expirationTime = this.getAttribute("data-expirationTime");
+		satisfaction.show(inviteId, serviceSessionId, "agent",expirationTime);
 	});
 
 	// 解决
@@ -864,9 +866,34 @@ function _bindEvents(){
 
 	// 满意度评价
 	utils.on(doms.satisfaction, "click", function(){
+		var evaluateTime;
 		doms.textInput.blur();
 		// 访客主动评价
-		satisfaction.show(null, null, "visitor");
+		var officialAccount = profile.currentOfficialAccount;
+		var sessionId = officialAccount.sessionId;
+		var expirationTimeEl = $("button[data-servicesessionid='" + sessionId + "']");
+		var expirationTime;
+		apiHelper.getEvaluatePrescription().then(function (res) {
+			if (res) {
+				evaluateTime = res
+			}
+			else {
+				evaluateTime = 8 * 3600
+			}
+			// 没有满意度邀请评价的按钮
+			if (!expirationTimeEl.length) {
+				var txtEl = $("span[data-id='" + sessionId + "']");
+				expirationTime = $(txtEl).attr("data-expirationtime");
+				var curentTime = new Date().getTime();
+				var overTime = curentTime - expirationTime
+				expirationTime = evaluateTime*1000 - overTime;
+			}
+			else {
+				expirationTime = expirationTimeEl.getAttribute("data-expirationTime");
+			}
+			satisfaction.show(null, null, "visitor",expirationTime);
+		});
+		// satisfaction.show(null, null, "visitor",expirationTime);
 	});
 
 	// ios patch: scroll page when keyboard is visible ones
