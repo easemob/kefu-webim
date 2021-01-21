@@ -10,6 +10,7 @@
 			width: 100%;
 		}
 	}
+	
 	.em-widget-wrapper,
 	.em-self-wrapper,
 	.em-widget-send-wrapper{
@@ -44,12 +45,12 @@
 		box-shadow: none;
 	}
 	.em-btn-list button {
-		font-size: 17px;
+		font-size: 14px;
 		line-height: 30px;
 		box-shadow: none;
 	}
 	.em-widget-msg-container {
-		font-size: 17px;
+		font-size: 14px;
 		padding: 8px 10px;
 		&.em-widget-msg-file,
 		&.em-widget-msg-html-form {
@@ -93,16 +94,56 @@
 	.em-widget-send-wrapper {
 		position: absolute;
 		height: auto;
-		padding: 3px 86px 3px 0;
+		padding: 3px 3px 3px 0;
 		padding-bottom: unquote('max(3px, env(safe-area-inset-bottom))');
 		box-sizing: border-box;
 		background-color: white;
 		box-shadow: 0 -1px 0 #e5e5e5;
 		border-right: none;
+		.toolbar-pc{
+			display:none;
+		}
+		.toolbar-mobile{
+			height:130px;
+			padding: 0 5px;
+			>div{
+				width:24%;
+				text-align: center;
+				display: inline-block;
+				margin-top:10px;
+				>span{
+					display:block;
+				}
+				> i {
+					position: relative;
+					&:hover {
+						cursor: pointer;
+					}
+					&:before{
+						font-size:25px;
+					}
+				}
+			}
+		}
+		.input-box{
+			position:relative;
+			width:100%;
+			display:flex;
+			align-items:center;
+			height: 40px;
+			.em-bar-emoji{
+				position: absolute;
+				right: 30px;
+				top:7px;
+			}
+		}
+		.em-widget-to-kefu{
+			margin-left:5px;
+		}
 		.em-widget-textarea {
+			max-width:calc(100% - 35px);
 			height: 34px;
 			max-height: 88px;
-			top: 0;
 			margin: 4px 0 1px 6px;
 			border-radius: 4px;
 			padding: 9px;
@@ -110,18 +151,27 @@
 			overflow: hidden;
 			user-select: text!important;
 			line-height: 17px;
-			font-size: 17px;
+			font-size: 14px;
 			color: #1a1a1a;
 			box-shadow: 0 1px 3px rgba(0, 0, 0, .2) inset;
 		}
 		.em-widget-send {
+			position:absolute;
 			width: 64px;
-			right: 8px;
-			top: 37px;
+			right: 5px;
+			top: 5px;
 			bottom: 8px;
 			height: 33px;
 			line-height: 33px;
 			font-size: 15px;
+			&.disabled{
+				display:none;
+			}
+		}
+		.em-widget-add{
+			position:absolute;
+			right:5px;
+			font-size:20px;
 		}
 	}
 

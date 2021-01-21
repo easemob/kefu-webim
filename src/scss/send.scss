@@ -7,6 +7,7 @@
 	// border-right: 1px solid #e5e9f3;
 	box-sizing: border-box;
 	-webkit-backface-visibility: hidden;
+	
 
 	.queuing-number-status {
 		width: 100%;
@@ -93,6 +94,7 @@
 	}
 	// 工具栏
 	.toolbar {
+		height:30px;
 		padding: 0 5px;
 		> i {
 			float: left;

@@ -755,6 +755,7 @@ function _bindEvents(){
 	}, 1000);
 
 	function handleSendBtn(){
+		var toKefuBtn = document.querySelector(".em-widget-to-kefu");
 		var isEmpty = !doms.textInput.value.trim();
 
 		utils.toggleClass(
@@ -765,6 +766,29 @@ function _bindEvents(){
 			&& !isEmpty
 			&& isMessageChannelReady
 			&& messagePredict(doms.textInput.value);
+
+		if(utils.hasClass(doms.sendBtn, "disabled")){
+			utils.removeClass(doms.addBtn, "hide");
+			if(utils.hasClass(toKefuBtn, "hide")){
+				doms.textInput.style.maxWidth = "calc(100% - 35px)";
+				doms.emojiToggleButton.style.right = "30px";
+			}
+			else{
+				doms.textInput.style.maxWidth = "calc(100% - 80px)";
+				doms.emojiToggleButton.style.right = "30px";
+			}
+
+		}else{
+			utils.addClass(doms.addBtn, "hide");
+			if(utils.hasClass(toKefuBtn, "hide")){
+				doms.textInput.style.maxWidth = "calc(100% - 80px)";
+				doms.emojiToggleButton.style.right = "75px";
+			}
+			else{
+				doms.textInput.style.maxWidth = "calc(100% - 125px)";
+				doms.emojiToggleButton.style.right = "75px";
+			}
+		}
 	}
 
 	if(Modernizr.oninput){
@@ -963,6 +987,17 @@ function _bindEvents(){
 			}
 		}
 	});
+
+	utils.on(doms.addBtn, "click", function(){
+		utils.toggleClass(doms.toolBar, "hide");
+		if(utils.hasClass(doms.toolBar, "hide")){
+			doms.chatWrapper.style.bottom = "48px"
+		}
+		else{
+			doms.chatWrapper.style.bottom = "177px"
+		}
+		
+	})
 }
 
 function _close(){
@@ -1025,8 +1060,9 @@ function _initSDK(){
 function _getDom(){
 	topBar = document.querySelector(".em-widget-header");
 	editorView = document.querySelector(".em-widget-send-wrapper");
+	var inputBox = editorView.querySelector(".input-box");
 
-	var toolBar = editorView.querySelector(".toolbar");
+	var toolBar = utils.isMobile ? editorView.querySelector(".toolbar-mobile") : editorView.querySelector(".toolbar-pc");
 	// 将猜你想说 dom 插入的指定元素之前
 	toolBar.parentNode.insertBefore(guessInfo.loadHtml().dom, toolBar);
 
@@ -1040,23 +1076,25 @@ function _getDom(){
 		audioBtn: topBar.querySelector(".btn-audio"),
 		switchKeyboardBtn: topBar.querySelector(".btn-keyboard"),
 
-		emojiToggleButton: editorView.querySelector(".em-bar-emoji"),
+		emojiToggleButton: utils.isMobile ? inputBox.querySelector(".em-bar-emoji") : toolBar.querySelector(".em-bar-emoji"),
 		// 获取文件上传，图片，小视频按钮dom
-		sendImgBtn: editorView.querySelector(".em-widget-img"),
-		sendFileBtn: editorView.querySelector(".em-widget-file"),
-		sendVideoBtn: editorView.querySelector(".em-widget-video"),
+		sendImgBtn: toolBar.querySelector(".em-widget-img"),
+		sendFileBtn: toolBar.querySelector(".em-widget-file"),
+		sendVideoBtn: toolBar.querySelector(".em-widget-video"),
 		sendBtn: editorView.querySelector(".em-widget-send"),
-		satisfaction: editorView.querySelector(".em-widget-satisfaction"),
+		satisfaction: toolBar.querySelector(".em-widget-satisfaction"),
 		textInput: editorView.querySelector(".em-widget-textarea"),
-		noteBtn: editorView.querySelector(".em-widget-note"),
-		videoInviteButton: editorView.querySelector(".em-video-invite"),
+		noteBtn: toolBar.querySelector(".em-widget-note"),
+		videoInviteButton: toolBar.querySelector(".em-video-invite"),
 		queuingNumberStatus: editorView.querySelector(".queuing-number-status"),
 		//  图片小视频文件 file框
 		videoInput: document.querySelector(".upload-video-container"),
 		imgInput: document.querySelector(".upload-img-container"),
 		fileInput: document.querySelector(".upload-file-container"),
 		chatWrapper: document.querySelector(".chat-wrapper"),
-
+		addBtn: editorView.querySelector(".em-widget-add"),
+		
+		toolBar: toolBar,
 		topBar: topBar,
 		editorView: editorView,
 	};

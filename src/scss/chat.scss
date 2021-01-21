@@ -217,9 +217,9 @@
 	.em-btn-list {
 		min-width: 190px;
 		position: relative;
-		// margin: 4px;
 		text-align: left;
 		clear: both;
+		background:#fff;
 		&:after {
 			content: '';
 			clear: both;
@@ -231,14 +231,12 @@
 			padding: 0px 10px;
 			min-height: 26px;
 			text-align: left;
-			// margin: 4px 0;
 			color: #1ba8ed;
-			background-color: white;
-			border-radius: 2px;
-			border: 1px solid #fff;
+			border: none;
 			cursor: pointer;
 			word-break: break-word;
 			white-space: pre-wrap;
+			background:#fff;
 			&:hover {
 				color: white;
 			}
@@ -254,6 +252,12 @@
 					background-color: white!important;
 					color: silver;
 				}
+			}
+			&::after{
+				border:none;
+			}
+			&::before{
+				border:none;
 			}
 		}
 	}
@@ -461,11 +465,12 @@
 		min-width: 190px;
 		padding: 0;
 		background-color: rgb(251, 251, 251);
-		>p {
+		> .list-title { 
 			padding: 10px;
 			background-color: white;
 			word-break: break-word; 
 			white-space: pre-wrap;
+			font-size:14px;
 		}
 		span.text{
 			background: #fff;
@@ -643,9 +648,9 @@
 	.em-btn-list {
 		min-width: 190px;
 		position: relative;
-		// margin: 4px;
 		text-align: left;
 		clear: both;
+		background:#fff;
 		&:after {
 			content: '';
 			clear: both;
@@ -660,8 +665,7 @@
 			margin: 4px 0;
 			color: #000;
 			background-color: white;
-			border-radius: 2px;
-			border: 1px solid #e5e5e5;
+			border: none;
 			cursor: pointer;
 			word-break: break-word;
 			white-space: pre-wrap;
@@ -680,6 +684,12 @@
 					background-color: white!important;
 					color: silver;
 				}
+			}
+			&::after{
+				border:none;
+			}
+			&::before{
+				border:none;
 			}
 		}
 	}

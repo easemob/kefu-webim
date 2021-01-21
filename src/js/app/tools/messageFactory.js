@@ -74,13 +74,13 @@ function genMsgContent(msg){
 			break;
 		}
 		else if(laiye){
-			html = "<p>" + value + "</p>" + msg.list;
+			html = "<div class='list-title'>" + value + "</div>" + msg.list;
 			break;
 		}
 		else{
 			value = textParser.parse(value);
 			value = _.map(value, function(fragment){ return fragment.value; }).join("");
-			html = "<p>" + value + "</p>" + msg.list;
+			html = "<div class='list-title'>" + value + "</div>" + msg.list;
 			break;
 		}
 

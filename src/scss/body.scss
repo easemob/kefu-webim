@@ -7,6 +7,19 @@ body.window-pc{
 		max-width:calc(100% - 20px);
 		box-shadow: 0px 10px 20px 0 rgba(0, 0, 0, 0.3);
 	}
+	.em-widget-to-kefu{
+		float: right;
+		margin-right: 10px;
+		margin-top: -20px;
+	}
+	.em-widget-add,.toolbar-mobile{
+		display:none;
+	}
+	.input-box{
+		.em-bar-emoji{
+			display:none;
+		}
+	}
 }
 body.big-window{
 	// min-width: 720px;

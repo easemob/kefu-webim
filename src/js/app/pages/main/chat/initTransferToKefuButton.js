@@ -13,6 +13,7 @@ module.exports = function(){
 
 	var editorView = document.querySelector(".em-widget-send-wrapper");
 	toKefuBtn = editorView.querySelector(".em-widget-to-kefu");
+	textareaBtn = editorView.querySelector(".em-widget-textarea");
 
 	// 人工客服接起会话
 
@@ -56,4 +57,12 @@ function _displayOrHideTransferToKefuBtn(officialAccount){
 			utils.toggleClass(toKefuBtn, "hide", !isRobotEnable);
 		});
 	}
+
+	if(utils.hasClass(toKefuBtn, "hide")){
+		textareaBtn.style.maxWidth = "calc(100% - 35px)";
+	}
+	else{
+		textareaBtn.style.maxWidth = "calc(100% - 80px)";
+	}
+	
 }
