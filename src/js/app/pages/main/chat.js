@@ -935,7 +935,7 @@ function _bindEvents(){
 				expirationTime = evaluateTime*1000 - overTime;
 			}
 			else {
-				expirationTime = expirationTimeEl.getAttribute("data-expirationTime");
+				expirationTime = $(expirationTimeEl).attr("data-expirationTime");
 			}
 			satisfaction.show(null, null, "visitor",expirationTime);
 		});
