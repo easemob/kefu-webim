@@ -1156,6 +1156,7 @@ function _handleSystemEvent(event, eventObj, msg){
 					btnInvalid.removeClass("js_satisfybtn")
 					btnInvalid.text(__("chat.invalid"))
 					btnInvalid.addClass("invalid-btn")
+					evaluateFlag = false
 				}, res*1000);
 			});
 		}
