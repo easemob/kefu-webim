@@ -463,14 +463,24 @@ function _bindEvents(){
 		// toolbar-mobile 隐藏
 		if(utils.isMobile && !utils.hasClass(doms.toolBar, "hide")){
 			utils.addClass(doms.toolBar, "hide");
-			doms.chatWrapper.style.bottom = "48px";
+			var height = doms.editorView.getBoundingClientRect().height;
+			if(inputBoxPosition === "up"){
+				doms.chatWrapper.style.bottom = "0";
+			}else{
+				doms.chatWrapper.style.bottom = height + "px";
+			}
 		}
 	});
 	utils.on(doms.chatWrapper, "touchmove", function(){
 		// toolbar-mobile 隐藏
 		if(utils.isMobile && !utils.hasClass(doms.toolBar, "hide")){
 			utils.addClass(doms.toolBar, "hide");
-			doms.chatWrapper.style.bottom = "48px";
+			var height = doms.editorView.getBoundingClientRect().height; 
+			if(inputBoxPosition === "up"){
+				doms.chatWrapper.style.bottom = "0";
+			}else{
+				doms.chatWrapper.style.bottom = height + "px";
+			}
 		}
 	});
 
@@ -1002,13 +1012,12 @@ function _bindEvents(){
 
 	utils.on(doms.addBtn, "click", function(){
 		utils.toggleClass(doms.toolBar, "hide");
-		if(utils.hasClass(doms.toolBar, "hide")){
-			doms.chatWrapper.style.bottom = "48px"
+		var height = doms.editorView.getBoundingClientRect().height;
+		if(inputBoxPosition === "up"){
+			doms.chatWrapper.style.bottom = "0";
+		}else{
+			doms.chatWrapper.style.bottom = height + "px";
 		}
-		else{
-			doms.chatWrapper.style.bottom = "177px"
-		}
-		
 	})
 }
 

@@ -37,20 +37,20 @@
 		border-right: none;
 	}
 	.em-widget-tip span {
-		font-size: 14px;
+		font-size: 1rem;
 	}
 	.em-widget-header {
-		font-size: 16px;
+		font-size: 1.1rem;
 		border-radius: 0;
 		box-shadow: none;
 	}
 	.em-btn-list button {
-		font-size: 14px;
+		font-size: 1rem;
 		line-height: 30px;
 		box-shadow: none;
 	}
 	.em-widget-msg-container {
-		font-size: 14px;
+		font-size: 1rem;
 		padding: 8px 10px;
 		&.em-widget-msg-file,
 		&.em-widget-msg-html-form {
@@ -111,6 +111,8 @@
 				text-align: center;
 				display: inline-block;
 				margin-top:10px;
+				font-size:1rem;
+				color: #4e4e4e;
 				>span{
 					display:block;
 				}
@@ -130,7 +132,7 @@
 			width:100%;
 			display:flex;
 			align-items:center;
-			height: 40px;
+			// height: 40px;
 			.em-bar-emoji{
 				position: absolute;
 				right: 40px;
@@ -158,7 +160,7 @@
 			overflow: hidden;
 			user-select: text!important;
 			line-height: 17px;
-			font-size: 14px;
+			font-size: 1rem;
 			color: #1a1a1a;
 			box-shadow: 0 1px 3px rgba(0, 0, 0, .2) inset;
 		}
@@ -170,7 +172,7 @@
 			bottom: 8px;
 			height: 33px;
 			line-height: 33px;
-			font-size: 15px;
+			font-size: 1rem;
 			&.disabled{
 				display:none;
 			}
@@ -181,7 +183,6 @@
 			position:absolute;
 			top:4px;
 			right:0px;
-			font-size:20px;
 		}
 	}
 
@@ -189,14 +190,14 @@
 		> div.footer button {
 			height: 40px;
 			line-height: 40px;
-			font-size: 16px;
+			font-size: 1rem;
 		}
 		&.satisfaction {
 			.title{
-				font-size: 17px;
+				font-size: 1.1rem;
 			}
 			textarea {
-				font-size: 16px;
+				font-size: 1rem;
 			}
 			width: 100%;
 			height: 100%;
@@ -204,12 +205,12 @@
 			left: 0;
 			margin: 0;
 			border-radius: 0;
-			font-size: 15px;
+			font-size: 1rem;
 			overflow-y:auto;
 		}
 	}
 	.em-widget-error-prompt {
-		font-size: 15px;
+		font-size: 1rem;
 	}
 }
 
