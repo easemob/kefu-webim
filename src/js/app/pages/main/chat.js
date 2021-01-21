@@ -460,6 +460,18 @@ function _bindEvents(){
 
 	utils.on(doms.chatWrapper, "click", function(){
 		doms.textInput.blur();
+		// toolbar-mobile 隐藏
+		if(utils.isMobile && !utils.hasClass(doms.toolBar, "hide")){
+			utils.addClass(doms.toolBar, "hide");
+			doms.chatWrapper.style.bottom = "48px";
+		}
+	});
+	utils.on(doms.chatWrapper, "touchmove", function(){
+		// toolbar-mobile 隐藏
+		if(utils.isMobile && !utils.hasClass(doms.toolBar, "hide")){
+			utils.addClass(doms.toolBar, "hide");
+			doms.chatWrapper.style.bottom = "48px";
+		}
 	});
 
 	utils.live("img.em-widget-imgview", "click", function(){
@@ -767,28 +779,28 @@ function _bindEvents(){
 			&& isMessageChannelReady
 			&& messagePredict(doms.textInput.value);
 
-		if(utils.hasClass(doms.sendBtn, "disabled")){
-			utils.removeClass(doms.addBtn, "hide");
-			if(utils.hasClass(toKefuBtn, "hide")){
-				doms.textInput.style.maxWidth = "calc(100% - 35px)";
-				doms.emojiToggleButton.style.right = "30px";
-			}
-			else{
-				doms.textInput.style.maxWidth = "calc(100% - 80px)";
-				doms.emojiToggleButton.style.right = "30px";
-			}
-
-		}else{
-			utils.addClass(doms.addBtn, "hide");
-			if(utils.hasClass(toKefuBtn, "hide")){
-				doms.textInput.style.maxWidth = "calc(100% - 80px)";
+		if(utils.isMobile){
+			if(utils.hasClass(doms.sendBtn, "disabled")){
+				utils.removeClass(doms.addBtn, "hide");
+				if(utils.hasClass(toKefuBtn, "hide")){
+					doms.textInput.style.maxWidth = "calc(100% - 45px)";
+				}
+				else{
+					doms.textInput.style.maxWidth = "calc(100% - 90px)";
+				}
+				doms.emojiToggleButton.style.right = "40px";
+	
+			}else{
+				utils.addClass(doms.addBtn, "hide");
+				if(utils.hasClass(toKefuBtn, "hide")){
+					doms.textInput.style.maxWidth = "calc(100% - 80px)";
+				}
+				else{
+					doms.textInput.style.maxWidth = "calc(100% - 125px)";
+				}
 				doms.emojiToggleButton.style.right = "75px";
 			}
-			else{
-				doms.textInput.style.maxWidth = "calc(100% - 125px)";
-				doms.emojiToggleButton.style.right = "75px";
-			}
-		}
+		}	
 	}
 
 	if(Modernizr.oninput){

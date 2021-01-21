@@ -11,6 +11,9 @@ body.window-pc{
 		float: right;
 		margin-right: 10px;
 		margin-top: -20px;
+		>i{
+			display:none;
+		}
 	}
 	.em-widget-add,.toolbar-mobile{
 		display:none;

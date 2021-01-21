@@ -803,7 +803,7 @@ function _handleMessage(msg, options){
 			// 还有待测试其他带有转人工的情况
 			message.list = [
 				"<div class=\"em-btn-list\">",
-				"<button class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn\" ",
+				"<button class=\"white fg-color bg-hover-color js_robotTransferBtn\" ",
 				"data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" ",
 				"data-id=\"" + ctrlArgs.id + "\">" + ctrlArgs.label + "</button>",
 				"</div>"
@@ -816,7 +816,7 @@ function _handleMessage(msg, options){
 			message.subtype = type;
 			message.list = [
 				"<div class=\"em-btn-list\">",
-				"<button class=\"white bg-color border-color bg-hover-color-dark js-transfer-to-ticket\">",
+				"<button class=\"white fg-color bg-hover-color js-transfer-to-ticket\">", 
 				__("chat.click_to_ticket"),
 				"</button>",
 				"</div>"

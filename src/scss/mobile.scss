@@ -133,18 +133,25 @@
 			height: 40px;
 			.em-bar-emoji{
 				position: absolute;
-				right: 30px;
-				top:7px;
+				right: 40px;
+				top:5px;
 			}
 		}
 		.em-widget-to-kefu{
+			width:40px;
 			margin-left:5px;
+			text-align: center;
+			span{
+				display:block;
+				font-size:12px;
+				margin-top: -6px;
+			}
 		}
 		.em-widget-textarea {
-			max-width:calc(100% - 35px);
+			max-width:calc(100% - 45px);
 			height: 34px;
 			max-height: 88px;
-			margin: 4px 0 1px 6px;
+			margin: 0px 0 3px 6px;
 			border-radius: 4px;
 			padding: 9px;
 			padding-right: 36px;
@@ -159,7 +166,7 @@
 			position:absolute;
 			width: 64px;
 			right: 5px;
-			top: 5px;
+			top: 3px;
 			bottom: 8px;
 			height: 33px;
 			line-height: 33px;
@@ -169,8 +176,11 @@
 			}
 		}
 		.em-widget-add{
+			width:36px;
+			text-align:center;
 			position:absolute;
-			right:5px;
+			top:4px;
+			right:0px;
 			font-size:20px;
 		}
 	}

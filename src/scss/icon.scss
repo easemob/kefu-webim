@@ -522,3 +522,15 @@
 		content: "\e621";
 	}
 }
+.icon-add:before {
+	@extend .icon-base;
+	content: "\e60f";
+}
+.icon-transform:before {
+	@extend .icon-base;
+	content: "\e610";
+}
+.icon-transform1:before {
+	@extend .icon-base;
+	content: "\e668";
+}

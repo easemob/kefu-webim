@@ -58,11 +58,14 @@ function _displayOrHideTransferToKefuBtn(officialAccount){
 		});
 	}
 
-	if(utils.hasClass(toKefuBtn, "hide")){
-		textareaBtn.style.maxWidth = "calc(100% - 35px)";
+	if(utils.isMobile){
+		if(utils.hasClass(toKefuBtn, "hide")){
+			textareaBtn.style.maxWidth = "calc(100% - 45px)";
+		}
+		else{
+			textareaBtn.style.maxWidth = "calc(100% - 90px)";
+		}
 	}
-	else{
-		textareaBtn.style.maxWidth = "calc(100% - 80px)";
-	}
+	
 	
 }
