@@ -341,6 +341,7 @@ function _initAutoGrow(){
 			doms.editorView.style.top = "0";
 			doms.chatWrapper.style.bottom = "0";
 			doms.queuingNumberStatus.style.top = height + "px";
+			doms.editorView.style.paddingBottom = "0";
 			break;
 		case "down":
 			doms.editorView.style.bottom = "0";
@@ -348,6 +349,7 @@ function _initAutoGrow(){
 			doms.editorView.style.top = "auto";
 			doms.chatWrapper.style.bottom = height + "px";
 			doms.queuingNumberStatus.style.top = "-26px";
+			doms.editorView.style.paddingBottom = "max(3px,env(safe-area-inset-bottom))";
 			_scrollToBottom();
 			break;
 		default:
@@ -466,9 +468,11 @@ function _bindEvents(){
 			var height = doms.editorView.getBoundingClientRect().height;
 			if(inputBoxPosition === "up"){
 				doms.chatWrapper.style.bottom = "0";
+				doms.queuingNumberStatus.style.top = height + "px";
 			}else{
 				doms.chatWrapper.style.bottom = height + "px";
 			}
+
 		}
 	});
 	utils.on(doms.chatWrapper, "touchmove", function(){
@@ -478,6 +482,7 @@ function _bindEvents(){
 			var height = doms.editorView.getBoundingClientRect().height; 
 			if(inputBoxPosition === "up"){
 				doms.chatWrapper.style.bottom = "0";
+				doms.queuingNumberStatus.style.top = height + "px";
 			}else{
 				doms.chatWrapper.style.bottom = height + "px";
 			}
@@ -1015,6 +1020,8 @@ function _bindEvents(){
 		var height = doms.editorView.getBoundingClientRect().height;
 		if(inputBoxPosition === "up"){
 			doms.chatWrapper.style.bottom = "0";
+			doms.queuingNumberStatus.style.top = height + "px";
+			
 		}else{
 			doms.chatWrapper.style.bottom = height + "px";
 		}

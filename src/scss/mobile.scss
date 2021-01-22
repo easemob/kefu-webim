@@ -95,7 +95,7 @@
 		position: absolute;
 		height: auto;
 		padding: 3px 3px 3px 0;
-		padding-bottom: unquote('max(3px, env(safe-area-inset-bottom))');
+		padding-bottom: unquote('max(3px, env(safe-area-inset-bottom))');//iOS 底下圆弧的高度
 		box-sizing: border-box;
 		background-color: white;
 		box-shadow: 0 -1px 0 #e5e5e5;
