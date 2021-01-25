@@ -11,6 +11,7 @@ var apiHelper = require("./apis");
 var moment = require("moment");
 var commonConfig = require("@/common/config");
 var getToHost = require("@/app/common/transfer");
+var uikit = require("./uikit");
 
 var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;
@@ -861,7 +862,21 @@ function _handleMessage(msg, options){
 	message.id = msgId;
 
 	// 消息上屏
-
+	var transferData = utils.getDataByPath(message, "brief") || ''
+	var istransfer = transferData.indexOf('[acs]转人工[/acs]') != -1;
+	if(istransfer){
+		_appendMsg({
+			data: '<p>本次会话即将结束，是否需要接通专家咨询？</p>'+
+			'<div class="em-btn-list">'+
+				'<button class="js_transfertokefu bg-hover-color">转接人工</button>' +
+			'</div>',
+			type: "txtLink",
+		}, {
+			isReceived: true,
+			isHistory: false
+		});
+		return
+	}
 	message.laiye = laiye;
 	var dat = message.data;
 	// 来也机器人多条消息逐条展示
