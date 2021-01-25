@@ -24,6 +24,24 @@ body.window-pc{
 		}
 	}
 }
+body.window-demo{
+	.em-widget-to-kefu{
+		float: right;
+		margin-right: 10px;
+		margin-top: -20px;
+		>i{
+			display:none;
+		}
+	}
+	.em-widget-add,.toolbar-mobile{
+		display:none;
+	}
+	.input-box{
+		.em-bar-emoji{
+			display:none;
+		}
+	}
+}
 body.big-window{
 	// min-width: 720px;
 	.em-widget-wrapper{

@@ -469,7 +469,9 @@ function renderUI(resultStatus){
 	function allDisable(){
 		// console.log("全关");
 		$(".em-self-wrapper").addClass("hide");
-		!utils.isMobile && $(".em-widget-box").css("width", "735px");
+		if(!$("body").hasClass("window-demo") && !utils.isMobile){
+			$(".em-widget-box").css("width", "735px"); 
+		}
 		main.initChat();
 	}
 	function mobileAnyEnable(){
