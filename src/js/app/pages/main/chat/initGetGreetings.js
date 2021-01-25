@@ -27,7 +27,8 @@ function htmlDecodeByRegExp2(str){
 	temp = temp.replace(/&amp;amp;lt;/g, "<");
 	temp = temp.replace(/&amp;amp;gt;/g, ">");
 	temp = temp.replace(/&amp;amp;amp;#39;|&amp;amp;#39;|＆amp;#39;/g, "'");
-	temp = temp.replace(/&amp;amp;quot;/g, "\"");
+	temp = temp.replace(/&amp;amp;quot;|&amp;quot;/g, "\"");
+
 	return temp;
 }
 function _getGreetings(officialAccount){
