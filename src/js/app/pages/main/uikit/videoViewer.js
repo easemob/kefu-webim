@@ -33,6 +33,7 @@ function init(option){
 	wrapperDom = opt.wrapperDom;
 	service = opt.service;
 	dispatcher = opt.dispatcher;
+	parentContainer = opt.parentContainer;
 
 	videoDom = wrapperDom.querySelector(".main-video");
 	noAudioVideoDom = wrapperDom.querySelector(".no-audio-video");
@@ -40,6 +41,7 @@ function init(option){
 	returnButtonDom = wrapperDom.querySelector(".return-to-multi-video");
 	toggleMicroPhoneButtonDom = wrapperDom.querySelector(".toggle-microphone-btn");
 	toggleCameraButtonDom = wrapperDom.querySelector(".toggle-carema-btn");
+	toggleFullScreenButtonDom = wrapperDom.querySelector(".toggle-full-screen-btn");
 
 	dispatcher.addEventListener("addOrUpdateStream", _addOrUpdateStream);
 	dispatcher.addEventListener("removeStream", _removeStream);
@@ -47,10 +49,19 @@ function init(option){
 	utils.on(returnButtonDom, "click", _returnToMultivideo);
 	utils.on(toggleMicroPhoneButtonDom, "click", _toggleMicroPhone);
 	utils.on(toggleCameraButtonDom, "click", _toggleCarema);
+	utils.on(toggleFullScreenButtonDom, "click", _toggleFullScreen);
+
+	if(utils.isMobile){
+		utils.removeClass(toggleFullScreenButtonDom, "hide");
+	}
 }
 
 function _returnToMultivideo(){
 	dispatcher.trigger("returnToMultiVideoWindow");
+
+	$(".video-chat-wrapper").css("height","auto");
+	parentContainer.style.height = "auto";
+	wrapperDom.style.height = "auto";
 }
 
 function _toggleMicroPhone(){
@@ -61,6 +72,20 @@ function _toggleMicroPhone(){
 function _toggleCarema(){
 	service.voff(currentStream, !currentStream.voff);
 	_updateButtonStatus();
+}
+
+function _toggleFullScreen(){
+	utils.toggleClass(wrapperDom, "big");
+	if(utils.hasClass(wrapperDom, "big")){
+		$(".video-chat-wrapper").css("height","100%");
+		parentContainer.style.height = "100%";
+		wrapperDom.style.height = "calc(100% - 88px)";
+	}
+	else{
+		$(".video-chat-wrapper").css("height","auto");
+		parentContainer.style.height = "auto";
+		wrapperDom.style.height = "auto";
+	}
 }
 
 function _updateButtonStatus(){

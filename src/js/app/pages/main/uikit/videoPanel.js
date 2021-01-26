@@ -28,6 +28,7 @@ function init(option){
 		wrapperDom: singleVideoContainer,
 		service: opt.service,
 		dispatcher: dispatcher,
+		parentContainer: wrapperDom
 	});
 
 	dispatcher.addEventListener("switchToMiniVideoWindow", function(info){
