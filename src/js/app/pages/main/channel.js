@@ -1183,6 +1183,7 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.sessionState = _const.SESSION_STATE.WAIT;
 		officialAccount.sessionId = eventObj.sessionId;
 		officialAccount.isSessionOpen = true;
+		getToHost.send({ event: _const.EVENTS.ONSESSIONCREAT });
 		break;
 	default:
 		break;

@@ -138,6 +138,7 @@ function _ready(){
 		onclose: me.config.onclose || emptyFunc, //聊天窗口关闭回调（包括关闭与最小化）
 		onopen: me.config.onopen || emptyFunc, //聊天窗口关闭后再打开回调
 		onEvaluationsubmit: me.config.onEvaluationsubmit || emptyFunc,
+		onsessioncreat: me.config.onsessioncreat || emptyFunc
 	};
 	delete me.config.onready;
 	delete me.config.onmessage;
@@ -145,6 +146,7 @@ function _ready(){
 	delete me.config.onclose;
 	delete me.config.onopen;
 	delete me.config.onEvaluationsubmit;
+	delete me.config.onsessioncreat;
 
 	me.down2Im
 	.send({ event: _const.EVENTS.INIT_CONFIG, data: me.config })
@@ -198,6 +200,9 @@ function _ready(){
 			me.onsessionclosedSt = setTimeout(function(){
 				me.callbackApi.onsessionclosed();
 			}, 500);
+			break;
+		case _const.EVENTS.ONSESSIONCREAT:
+			me.callbackApi.onsessioncreat(data);
 			break;
 		case _const.EVENTS.CACHEUSER:
 			// 缓存im username

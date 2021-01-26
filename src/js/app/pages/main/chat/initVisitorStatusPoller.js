@@ -10,7 +10,7 @@ module.exports = function(){
 	_init();
 
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, function(){
-		console.log("_const.SYSTEM_EVENT.SESSION_RESTORED");
+		// console.log("_const.SYSTEM_EVENT.SESSION_RESTORED");
 	});
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _init);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _clearTimer);

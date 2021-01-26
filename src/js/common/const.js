@@ -128,6 +128,7 @@ module.exports = {
 		SLIDE: "titleSlide",
 		ONMESSAGE: "onMessage",
 		ONSESSIONCLOSED: "onSessionClosed",
+		ONSESSIONCREAT: "ONSESSIONCREAT",
 		EXT: "ext",
 		TEXTMSG: "textmsg",
 		ONREADY: "onready",
