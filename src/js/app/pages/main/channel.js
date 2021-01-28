@@ -1119,12 +1119,13 @@ function _promptNoAgentOnlineIfNeeded(opt){
 
 function _handleSystemEvent(event, eventObj, msg){
 	var eventMessageText = _const.SYSTEM_EVENT_MSG_TEXT[event];
+	var isSessionOpenEvent = _const.SYSTEM_EVENT.SESSION_OPENED == event
 	var officialAccountId = utils.getDataByPath(msg, "ext.weichat.official_account.official_account_id");
 	var officialAccount = _getOfficialAccountById(officialAccountId);
 	var agentType = utils.getDataByPath(msg, "ext.weichat.event.eventObj.agentType");
 
 	// 系统消息上屏
-	if(eventMessageText){
+	if(eventMessageText && !isSessionOpenEvent){
 		_appendEventMsg(eventMessageText, msg);
 	}
 
