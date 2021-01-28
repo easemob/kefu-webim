@@ -534,3 +534,17 @@
 	@extend .icon-base;
 	content: "\e668";
 }
+// 半屏
+.icon-hrefscreen {
+	&:before {
+		@extend .icon-base;
+		content: "\e649";
+	}
+}
+// 全屏
+.icon-fullscreen {
+	&:before {
+		@extend .icon-base;
+		content: "\e611";
+	}
+}

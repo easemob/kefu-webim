@@ -80,11 +80,15 @@ function _toggleFullScreen(){
 		$(".video-chat-wrapper").css("height","100%");
 		parentContainer.style.height = "100%";
 		wrapperDom.style.height = "calc(100% - 88px)";
+		utils.removeClass(toggleFullScreenButtonDom, "icon-fullscreen");
+		utils.addClass(toggleFullScreenButtonDom, "icon-hrefscreen");
 	}
 	else{
 		$(".video-chat-wrapper").css("height","auto");
 		parentContainer.style.height = "auto";
 		wrapperDom.style.height = "auto";
+		utils.addClass(toggleFullScreenButtonDom, "icon-fullscreen");
+		utils.removeClass(toggleFullScreenButtonDom, "icon-hrefscreen");
 	}
 }
 
