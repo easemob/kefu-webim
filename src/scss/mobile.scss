@@ -37,7 +37,7 @@
 		border-right: none;
 	}
 	.em-widget-tip span {
-		font-size: 1rem;
+		font-size: 1.1rem;
 	}
 	.em-widget-header {
 		font-size: 1.1rem;
@@ -45,13 +45,16 @@
 		box-shadow: none;
 	}
 	.em-btn-list button {
-		font-size: 1rem;
-		line-height: 30px;
+		font-size: 1.1rem;
+		line-height: 26px;
 		box-shadow: none;
 	}
 	.em-widget-msg-container {
-		font-size: 1rem;
-		padding: 8px 10px;
+		font-size: 1.1rem;
+		padding: 6px;
+		.list-title{
+			font-size:1.1rem;
+		}
 		&.em-widget-msg-file,
 		&.em-widget-msg-html-form {
 			padding: 0;
@@ -94,12 +97,15 @@
 	.em-widget-send-wrapper {
 		position: absolute;
 		height: auto;
-		padding: 3px 3px 3px 0;
+		padding: 6px 3px 15px 0;
 		padding-bottom: unquote('max(3px, env(safe-area-inset-bottom))');//iOS 底下圆弧的高度
 		box-sizing: border-box;
 		background-color: white;
-		box-shadow: 0 -1px 0 #e5e5e5;
+		// box-shadow: 0 -1px 0 #e5e5e5;
 		border-right: none;
+		.queuing-number-status{
+			font-size:1rem;
+		}
 		.toolbar-pc{
 			display:none;
 		}
@@ -110,7 +116,7 @@
 				width:24%;
 				text-align: center;
 				display: inline-block;
-				margin-top:10px;
+				margin-bottom:10px;
 				font-size:1rem;
 				color: #4e4e4e;
 				>span{
@@ -136,13 +142,15 @@
 			.em-bar-emoji{
 				position: absolute;
 				right: 40px;
-				top:5px;
+				top:3px;
 			}
 		}
 		.em-widget-to-kefu{
 			width:40px;
 			margin-left:5px;
 			text-align: center;
+			position: relative;
+    		top: -10px;
 			span{
 				display:block;
 				font-size:12px;
@@ -151,18 +159,19 @@
 		}
 		.em-widget-textarea {
 			max-width:calc(100% - 45px);
-			height: 34px;
+			height: 36px;
 			max-height: 88px;
-			margin: 0px 0 3px 6px;
-			border-radius: 4px;
+			margin: 0px 0 15px 8px;
+			border-radius: 16px;
 			padding: 9px;
 			padding-right: 36px;
 			overflow: hidden;
 			user-select: text!important;
-			line-height: 17px;
-			font-size: 1rem;
+			line-height: 18px;
+			font-size: 1.1rem;
 			color: #1a1a1a;
-			box-shadow: 0 1px 3px rgba(0, 0, 0, .2) inset;
+			background: #f4f7fa;
+			// box-shadow: 0 1px 3px rgba(0, 0, 0, .2) inset;
 		}
 		.em-widget-send {
 			position:absolute;
@@ -181,7 +190,7 @@
 			width:36px;
 			text-align:center;
 			position:absolute;
-			top:4px;
+			top:3px;
 			right:0px;
 		}
 	}
@@ -190,14 +199,14 @@
 		> div.footer button {
 			height: 40px;
 			line-height: 40px;
-			font-size: 1rem;
+			font-size: 1.1rem;
 		}
 		&.satisfaction {
 			.title{
-				font-size: 1.1rem;
+				font-size: 1.2rem;
 			}
 			textarea {
-				font-size: 1rem;
+				font-size: 1.1rem;
 			}
 			width: 100%;
 			height: 100%;
@@ -211,6 +220,32 @@
 	}
 	.em-widget-error-prompt {
 		font-size: 1rem;
+	}
+	.self-service-list{
+		span{
+			font-size:1rem;
+		}
+	}
+	.faq-list{
+		>p{
+			font-size:1.2rem;
+		}
+		.question{
+			font-size:1.1rem;
+		}
+		.answer{
+			font-size:1rem;
+		}
+	}
+	.contact-customer-service{
+		font-size:1.1rem;
+	}
+	.ticket{
+		.wrapper{
+			h3{
+				font-size:1.2rem;
+			}
+		}
 	}
 }
 
