@@ -41,9 +41,19 @@ function genMsgContent(msg){
 		else{
 			value = textParser.parse(value);
 			// 历史消息以及收到的实时消息
-			html = "<span class=\"text\">" + _.map(value, function(fragment){
-				return fragment.value;
-			}).join("") + "</span>";
+			if(utils.isMobile){
+				html = "<span class=\"text\">";
+				html += _.map(value, function(fragment){
+					// 识别号码
+					return validatePhoneInTxt(fragment.value);
+				})
+				html += "</span>";
+			}else{
+				// 历史消息以及收到的实时消息
+				html = "<span class=\"text\">" + _.map(value, function(fragment){
+					return fragment.value;
+				}).join("") + "</span>";
+			}
 			break;
 		}
 
@@ -176,6 +186,7 @@ function _getRulaiHtml(content){
 }
 
 function genDomFromMsg(msg, isReceived, isHistory){
+	
 	// console.log(msg)
 	var id = msg.id;
 	var type = msg.type;
@@ -447,6 +458,31 @@ function isJsonString(str){
 	catch(e){
 	}
 	return false;
+}
+
+function validatePhoneInTxt(val){
+	var txt = val;
+	var phoneList = [];
+	var arr = val.split(/[^0-9/?-]/);
+	_.map(arr, function(item){
+		if(isPhone(item)){
+			phoneList.push(item)
+		}
+	})
+	if(phoneList.length){
+		_.map(phoneList, function(item){
+			var reg = new RegExp(item, "g");
+			var newStr = txt.replace(reg, "<a href='tel:" + item + "'>" + item + "</a>");
+			txt = newStr;
+		})
+	}
+	return txt
+}
+
+function isPhone(num){
+	var varisPhone = /^((0\d{2,3})-)?(\d{5,8})(-(\d{3,}))?$/.test(num);
+	var varisMobile = /^1[3456789]\d{9}$/.test(num);
+	return (varisPhone || varisMobile)
 }
 
 module.exports = genDomFromMsg;
