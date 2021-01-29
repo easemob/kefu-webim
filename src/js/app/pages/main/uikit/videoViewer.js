@@ -61,7 +61,9 @@ function _returnToMultivideo(){
 
 	$(".video-chat-wrapper").css("height","auto");
 	parentContainer.style.height = "auto";
-	wrapperDom.style.height = "auto";
+	wrapperDom.style.height = "270px";
+	utils.addClass(toggleFullScreenButtonDom, "icon-fullscreen");
+	utils.removeClass(toggleFullScreenButtonDom, "icon-hrefscreen");
 }
 
 function _toggleMicroPhone(){
@@ -86,7 +88,7 @@ function _toggleFullScreen(){
 	else{
 		$(".video-chat-wrapper").css("height","auto");
 		parentContainer.style.height = "auto";
-		wrapperDom.style.height = "auto";
+		wrapperDom.style.height = "270px";
 		utils.addClass(toggleFullScreenButtonDom, "icon-fullscreen");
 		utils.removeClass(toggleFullScreenButtonDom, "icon-hrefscreen");
 	}
