@@ -32,6 +32,9 @@
 		white-space: nowrap;
 		max-width: 55%;
 	}
+	.em-widget-header-nickname{
+		font-size:1.2rem;
+	}
 	.chat-wrapper {
 		bottom: 77px;
 		border-right: none;
@@ -104,7 +107,7 @@
 		// box-shadow: 0 -1px 0 #e5e5e5;
 		border-right: none;
 		.queuing-number-status{
-			font-size:1rem;
+			font-size:1.2rem;
 		}
 		.toolbar-pc{
 			display:none;
@@ -143,6 +146,9 @@
 				position: absolute;
 				right: 40px;
 				top:3px;
+				&:before{
+					font-size:35px;
+				}
 			}
 		}
 		.em-widget-to-kefu{
@@ -192,6 +198,9 @@
 			position:absolute;
 			top:3px;
 			right:0px;
+			i:before{
+				font-size:35px;
+			}
 		}
 	}
 
