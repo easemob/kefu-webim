@@ -510,7 +510,8 @@ function _bindEvents(){
 		if(!this.clicked){
 			this.clicked = true;
 			if(!utils.hasClass(e.target, "disabled")){
-				channel.sendTransferToKf(id, ssid);
+				// channel.sendTransferToKf(id, ssid);
+				channel.sendText('转人工');
 			}
 		}
 	});
