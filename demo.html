@@ -41,12 +41,28 @@ var tenantIdInput = document.getElementById("testvalue");
 tenantIdInput.value = (window.localStorage && localStorage.getItem("easemobtest")) || "";
 
 function test(){
+	// function sendCrmExt(){
+	// 	window.easemobim.sendExt(
+	// 		{
+	// 			ext:{
+	// 				cmd:{
+	// 					updateVisitorInfoSrc:{
+	// 						params:{
+	// 							uid: "cxn111111"
+	// 						}
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 	)
+	// }
 	window.easemobim.bind({ 
 		tenantId: getTenantId(),
 		resources: true,
-		// configId: 'f112bee8-73c7-4d0f-9f82-2e89d92c4e0d',
-		onready: function(){
+		configId: 'f112bee8-73c7-4d0f-9f82-2e89d92c4e0d',
+		onready: function(){ 
 			console.log("onready")
+			// sendCrmExt();
 		},
 		onclose: function(){
 			console.log("onclose")
@@ -56,9 +72,29 @@ function test(){
 		},
 		onEvaluationsubmit: function(){
 			console.log("onEvaluationsubmit")
+		},
+		onmessage: function(){
+			console.log("onmessage")
+		},
+		onsessionclosed: function(){
+			console.log("onsessionclosed")
+		},
+		onsessioncreat: function(){
+			console.log("oncreat")
 		}
+		// extMsg:{
+        //     cmd:{
+        //         updateVisitorInfoSrc:{
+        //             params:{
+        //                 uid: "cxn111111"
+        //             }
+        //         }
+        //     }
+        // },
 	});
 }
+
+
 
 function getTenantId(){
 	var tenantId = tenantIdInput.value;
@@ -100,9 +136,10 @@ function query(key){
 }
 window.easemobim = window.easemobim || {};
 
+
 easemobim.config = {
-	// configId: 'f112bee8-73c7-4d0f-9f82-2e89d92c4e0d',
-	domain: '//sandbox.kefu.easemob.com',
+	configId: 'f112bee8-73c7-4d0f-9f82-2e89d92c4e0d',
+	// domain: '//sandbox.kefu.easemob.com',
     visitor: {         
         trueName: 'lixiaoleng3',
         qq: 'lxl@qq.com',
@@ -115,8 +152,20 @@ easemobim.config = {
           'vip1',
           'vip2'
         ]
-    }
+	},
+	// extMsg:{
+	// 	cmd:{
+	// 		updateVisitorInfoSrc:{
+	// 			params:{
+	// 				uid: "cxn111111"
+	// 			}
+	// 		}
+	// 	}
+	// },
+	
 };
+
+
 </script>
 
 <script src="easemob.js"></script>
