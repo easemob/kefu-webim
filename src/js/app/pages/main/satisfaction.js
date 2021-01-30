@@ -135,19 +135,6 @@ function _init(){
 		});
 		loading.hide("satisfaction");
 		dialog.show();
-		// 结束会话自动邀请评价，弹窗失效时间就是满意度失效时间
-		var evaluateTime;
-		apiHelper.getEvaluatePrescription().then(function(res){
-			if(res){
-				evaluateTime = res
-			}
-			else{
-				evaluateTime = 8*3600
-			}
-			setTimeout(function () {
-				dialog.hide();
-			}, evaluateTime*1000);
-		});
 
 		// 火狐浏览器 _setSatisfaction时找不到starsUl，所以必须先执行完init
 		_setSatisfaction();
@@ -305,7 +292,7 @@ function _confirm(){
 	_clear();
 }
 
-function show(inviteId, serviceSessionId, evaluateWay, expirationTime){
+function show(inviteId, serviceSessionId, evaluateWay){
 
 	apiHelper.getEvaluteSolveWord().then(function(tip){
 		resolveTip = tip;
@@ -321,27 +308,6 @@ function show(inviteId, serviceSessionId, evaluateWay, expirationTime){
 	evaluateType = evaluateWay;
 	_setDefaultScore();
 	dialog && dialog.show();
-	// 点击按钮时的邀请评价，弹窗失效时间需要传递一个失效时间 如果没有就取满意度失效时间
-	if(expirationTime){
-		setTimeout(function () {
-			dialog.hide();
-		}, expirationTime);
-	}
-	else if(evaluateWay!= "visitor"){
-		var evaluateTime;
-		apiHelper.getEvaluatePrescription().then(function(res){
-			if(res){
-				evaluateTime = res
-			}
-			else{
-				evaluateTime = 8*3600
-			}
-			setTimeout(function () {
-				dialog.hide();
-			}, evaluateTime*1000);
-		});
-	}
-
 }
 
 function _setDefaultScore(){ 
