@@ -620,7 +620,6 @@ function _handleMessage(msg, options){
 			}
 
 			var isInvalid = new Date().getTime() - time;
-			var expirationTime = evaluateTime*1000 - isInvalid;
 			if(evaluateTime*1000 > isInvalid){
 				inviteId = msg.ext.weichat.ctrlArgs.inviteId;
 				// serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
@@ -634,8 +633,6 @@ function _handleMessage(msg, options){
 					+ inviteId
 					+ "\" data-servicesessionid=\""
 					+ serviceSessionId
-					+ "\" data-expirationTime=\""
-					+ expirationTime
 					+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
 				];
 				message.brief = __("message_brief.menu");
@@ -927,18 +924,7 @@ function _handleMessage(msg, options){
 				noPrompt: noPrompt,
 			});
 		}
-		//在没有邀请按钮的情况下给结束会话的系统消息添加时间戳和sessioid，以供点击编辑区的按钮调用评价窗口计时来用
-		if(message.type =="txt" && message.data == "会话已结束。"){
-			var txtEl = $("span[class='text']")
-			var txtArr = [];
-			for(var i=0;i<txtEl.length;i++){
-				if(txtEl[i].innerText == "会话已结束。"){
-					txtArr.push(txtEl[i])
-				}
-			}
-			$(txtArr[txtArr.length -1]).attr("data-expirationTime",new Date().getTime())
-			$(txtArr[txtArr.length -1]).attr("data-id",message.ext.weichat.service_session.serviceSessionId)
-		}
+	
 		// 是否发送解决未解决 msg.ext.extRobot.satisfactionCommentInvitation
 		if(satisfactionCommentInvitation && !isHistory){
 			_appendMsg({
@@ -1156,7 +1142,6 @@ function _handleSystemEvent(event, eventObj, msg){
 					btnInvalid.removeClass("js_satisfybtn")
 					btnInvalid.text(__("chat.invalid"))
 					btnInvalid.addClass("invalid-btn")
-					evaluateFlag = false
 				}, res*1000);
 			});
 		}
