@@ -452,20 +452,19 @@ function renderUI(resultStatus){
 		className && utils.addClass(document.body, className); 
 
 		// 自定义主题色
-		
 		if(themeName && themeName.indexOf("theme_custom") > -1){
 			var fgColor = $(".theme_custom .fg-hover-color").css("color");
-			if(utils.isMobile){
-				fgColor = "#000";
+			$(".theme_custom .fg-color").css("cssText","color: " + color + " !important");
+			$(".theme_custom .border-color").css("cssText","border-color: " + color + " !important ; color: " + color + " !important");
+			$(".theme_custom .bg-color").css("cssText","background-color: " + color + " !important"); 
+			
+			if(!utils.isMobile){
+				$(".theme_custom .fg-hover-color").hover(function(){
+					$(this).css("cssText","color: " + color + " !important"); 
+				},function(){
+					$(this).css("cssText","color: " + fgColor + " !important");
+				})
 			}
-			$(".theme_custom").find(".fg-color").css("cssText","color: " + color + " !important"); 
-			$(".theme_custom").find(".border-color").css("cssText","border-color: " + color + " !important"); 
-			$(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important"); 
-			$(".theme_custom .fg-hover-color").hover(function(){
-				this.style.color = color + " !important";
-			},function(){
-				this.style.color = fgColor + " !important";
-			})
 		} 
 		 
 	});

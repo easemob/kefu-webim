@@ -55,6 +55,9 @@ Tab.prototype.onTabClick = function(e){
 Tab.prototype.clearSelected = function(){
 	this.$allTab.removeClass("selected");
 	this.$allTab.find("span").removeClass("border-color fg-color");
+	if($(".theme_custom").length){
+		this.$allTab.find("span").css("cssText","border-color:none; color:none");
+	}
 	this.$allContent.addClass("hide");
 };
 Tab.prototype.selectFirstTab = function(silent){
@@ -67,9 +70,17 @@ Tab.prototype.selectFirstTab = function(silent){
 };
 Tab.prototype.selectTab = function($tab, silent){
 	var sign = $tab.attr("sign");
+	if($(".theme_custom").length){
+		var fgColor = $(".theme_custom .selected .border-color").css("color");
+		this.fgColor = fgColor;
+	}
 	this.clearSelected();
 	$tab.addClass("selected");
 	$tab.find("span").addClass("border-color fg-color");
+	if(this.fgColor){
+		$tab.find("span").css("cssText","border-color: " + this.fgColor + " !important ; color: " + this.fgColor + " !important");
+	}
+	
 	this.bodies[sign].removeClass("hide");
 	// [API] this.show()
 	_.each(this.inst[sign], function(ins){
