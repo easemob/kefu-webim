@@ -247,6 +247,7 @@ function _createLabel(evaluateId){
 }
 
 function _confirm(){
+
 	var selectedTagNodeList = tagContainer.querySelectorAll(".selected");
 	var tagNodeList = tagContainer.querySelectorAll(".tag");
 	var content = commentDom.value;
@@ -275,21 +276,35 @@ function _confirm(){
 		// 防止对话框关闭
 		return false;
 	}
-
-	_sendSatisfaction(score, content, session, invite, appraiseTags, resolutionParam, evaluationDegreeId);
-	uikit.showSuccess(__("evaluation.submit_success"));
-	getToHost.send({ event: _const.EVENTS.EVALUATIONSUBMIT });
-	// 强制评价点击确定关闭会话框
-	setTimeout(function(){
-		// 关闭会话
-		if(evaluateType === "system" && profile.grayList.visitorLeave){
-			// 取消轮询接口
-			eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
-			profile.currentOfficialAccount.sessionId && apiHelper.closeChatDialog({ serviceSessionId: profile.currentOfficialAccount.sessionId });
-			getToHost.send({ event: _const.EVENTS.CLOSE });
+	// 判断评价是否超时
+	apiHelper.getEvaluateVerify(profile.currentOfficialAccount.sessionId)
+	.then(function(resp){
+		if(resp.status == "OK"){
+			_sendSatisfaction(score, content, session, invite, appraiseTags, resolutionParam, evaluationDegreeId);
+			uikit.showSuccess(__("evaluation.submit_success"));
+			getToHost.send({ event: _const.EVENTS.EVALUATIONSUBMIT });
+			// 强制评价点击确定关闭会话框
+			setTimeout(function(){
+				// 关闭会话
+				if(evaluateType === "system" && profile.grayList.visitorLeave){
+					// 取消轮询接口
+					eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
+					profile.currentOfficialAccount.sessionId && apiHelper.closeChatDialog({ serviceSessionId: profile.currentOfficialAccount.sessionId });
+					getToHost.send({ event: _const.EVENTS.CLOSE });
+				}
+			}, 2000);
+			_clear();
 		}
-	}, 2000);
-	_clear();
+		else{	
+			if(resp.errorCode == "WEBIM_338"){
+				uikit.tip(__("evaluation.WEBIM_338"));
+			}else{
+				uikit.tip(__("evaluation.WEBIM_OTHER"));
+			}
+		}
+	});
+
+	
 }
 
 function show(inviteId, serviceSessionId, evaluateWay){

@@ -1376,6 +1376,20 @@ function visitorCloseSession(data){
 	});
 }
 
+function getEvaluateVerify(serviceSessionId){
+	return new Promise(function(resolve, reject){
+		api("getEvaluateVerify", {
+			tenantId: config.tenantId,
+			serviceSessionId: serviceSessionId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getGrayList: getGrayList,
 	getToken: getToken,
@@ -1443,6 +1457,7 @@ module.exports = {
 	// opt获取是否隐藏状态
 	getOnlineCustomerStatus: getOnlineCustomerStatus,
 	deleteVideoInvitation: deleteVideoInvitation, // 取消视频邀请
+	getEvaluateVerify: getEvaluateVerify,
 
 	update: function(cfg){
 		config = cfg;

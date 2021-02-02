@@ -916,8 +916,21 @@ function _bindEvents(){
 	// 满意度评价
 	utils.on(doms.satisfaction, "click", function(){
 		doms.textInput.blur();
-		// 访客主动评价
-		satisfaction.show(null, null, "visitor");
+		// 判断评价是否超时
+		apiHelper.getEvaluateVerify(profile.currentOfficialAccount.sessionId)
+		.then(function(resp){
+			if(resp.status == "OK"){
+				// 访客主动评价
+				satisfaction.show(null, null, "visitor");
+			}
+			else{
+				if(resp.errorCode == "WEBIM_338"){
+					uikit.tip(__("evaluation.WEBIM_338"));
+				}else{
+					uikit.tip(__("evaluation.WEBIM_OTHER"));
+				}
+			}
+		})
 	});
 
 	// ios patch: scroll page when keyboard is visible ones

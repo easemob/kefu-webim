@@ -73,6 +73,8 @@ module.exports = {
 		submit_success: "Submit successfully",
 		resolved: "Resolved",
 		unsolved: "Unsolved",
+		WEBIM_338: "Visitor evaluate timeout",
+		WEBIM_OTHER: "Other errors"
 	},
 	ticket: {
 		title: "Please fill in your contact info.",

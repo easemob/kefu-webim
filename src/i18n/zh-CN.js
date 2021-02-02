@@ -73,6 +73,8 @@ module.exports = {
 		submit_success: "提交成功",
 		resolved: "已解决",
 		unsolved: "未解决",
+		WEBIM_338: "访客评价超时",
+		WEBIM_OTHER: "其他错误"
 	},
 	ticket: {
 		title: "请填写以下内容以方便我们及时联系您",
