@@ -46,7 +46,7 @@ function genMsgContent(msg){
 				html += _.map(value, function(fragment){
 					// 识别号码
 					return validatePhoneInTxt(fragment.value);
-				})
+				}).join("");
 				html += "</span>";
 			}else{
 				// 历史消息以及收到的实时消息

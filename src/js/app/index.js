@@ -455,12 +455,16 @@ function renderUI(resultStatus){
 		
 		if(themeName && themeName.indexOf("theme_custom") > -1){
 			var fgColor = $(".theme_custom .fg-hover-color").css("color");
+			if(utils.isMobile){
+				fgColor = "#000";
+			}
 			$(".theme_custom").find(".fg-color").css("cssText","color: " + color + " !important"); 
+			$(".theme_custom").find(".border-color").css("cssText","border-color: " + color + " !important"); 
 			$(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important"); 
 			$(".theme_custom .fg-hover-color").hover(function(){
-			　　　$(this).css("cssText","color: " + color + " !important"); 
+				this.style.color = color + " !important";
 			},function(){
-				$(this).css("cssText","color: " + fgColor + " !important");
+				this.style.color = fgColor + " !important";
 			})
 		} 
 		 
