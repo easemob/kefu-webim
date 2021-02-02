@@ -41,7 +41,7 @@ function genMsgContent(msg){
 		else{
 			value = textParser.parse(value);
 			// 历史消息以及收到的实时消息
-			if(utils.isMobile){
+			if(utils.isMobile && value[0].type == "ENCODED_TEXT"){
 				html = "<span class=\"text\">";
 				html += _.map(value, function(fragment){
 					// 识别号码
