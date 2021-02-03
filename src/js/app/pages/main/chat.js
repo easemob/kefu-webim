@@ -678,7 +678,12 @@ function _bindEvents(){
 	});	
 
 	// 解决
-	utils.live("a.statisfyYes", "click", function(){
+	utils.live("a.statisfyYes", "click", function(e){
+		if(utils.hasClass(e.target, "disabled")){
+			//禁止发送
+			return
+		}
+		utils.addClass(e.target, "disabled");
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
 		var origintype = this.getAttribute("data-origintype");
@@ -705,7 +710,12 @@ function _bindEvents(){
 	utils.live("button.js_transfertokefu", "click", function(){
 		channel.sendText('转人工');
 	});
-	utils.live("a.statisfyNo", "click", function(){
+	utils.live("a.statisfyNo", "click", function(e){
+		if(utils.hasClass(e.target, "disabled")){
+			//禁止发送
+			return
+		}
+		utils.addClass(e.target, "disabled");
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
 		var origintype = this.getAttribute("data-origintype");

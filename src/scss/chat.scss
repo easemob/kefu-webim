@@ -214,6 +214,18 @@
 			}
 		}
 	}
+	a {
+		&.disabled {
+			cursor: default;
+			color: silver;
+			background-color: white!important;
+			border-color: #e5e5e5!important;
+			&:hover {
+				background-color: white!important;
+				color: silver;
+			}
+		}
+	}
 	.em-widget-msg-loading {
 		z-index: 1;
 		position: absolute;
