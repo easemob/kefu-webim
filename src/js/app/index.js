@@ -455,7 +455,7 @@ function renderUI(resultStatus){
 		if(themeName && themeName.indexOf("theme_custom") > -1){
 			var fgColor = $(".theme_custom .fg-hover-color").css("color");
 			$(".theme_custom .fg-color").css("cssText","color: " + color + " !important");
-			$(".theme_custom .border-color").css("cssText","border-color: " + color + " !important ; color: " + color + " !important");
+			$(".theme_custom .selected .border-color").css("cssText","border-color: " + color + " !important ; color: " + color + " !important");
 			$(".theme_custom .bg-color").css("cssText","background-color: " + color + " !important"); 
 			
 			if(!utils.isMobile){

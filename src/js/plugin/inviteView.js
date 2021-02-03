@@ -26,6 +26,17 @@ module.exports = function(info, config){
 	else{
 		info.style.icon = domain + info.style.icon;
 	}
+
+	var themeName = info.themeName;
+	var color;
+	if(themeName && themeName.indexOf("theme_custom") > -1){
+		var arr = themeName.split("theme_custom");
+		var color = arr[1];
+	} 
+	else{
+		color = "auto";
+	}
+
 	inviteBox.className = utils.isMobile
 		? "easemob-invite-box easemob-mobile-invite-box"
 		: "easemob-invite-box";
@@ -35,12 +46,13 @@ module.exports = function(info, config){
 					"<div class=\"invite-text\"><span>" +
 						info.style.guide +
 					"</span></div>" +
-					"<div class=\"ui-cmp-icontxtbtn blue button invite-accept " + info.themeName + "\">" +
+					"<div class=\"ui-cmp-icontxtbtn blue button invite-accept " + info.themeName + "\" style=\"background-color: " + color + " \">" +
 						info.style.button;
 	"</div>";
 	document.body.appendChild(inviteBox);
 	setLocalStorage("visitTime", info.rule.visitTime);
 	encryptMaxInvitation = setLocalStorage("maxInvitation", info.rule.maxInvitation);
+	
 	
 
 	utils.live(".invite-cancel", "click", onCancelClick, inviteBox);
