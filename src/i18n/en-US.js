@@ -110,7 +110,7 @@ module.exports = {
 		ticket: "Note",
 		video_invite: "Video call",
 		evaluate_agent: "Satisfaction",
-		transfer_to_kefu: "Chat with agent",
+		transfer_to_kefu: "Agent",
 		send_video: "SendVideo",
 	},
 	prompt: {
