@@ -69,6 +69,10 @@
 			width: 100%;
 			box-sizing: border-box;
 		}
+		&.em-widget-msg-video{
+			overflow: hidden;
+			z-index: 1;
+		}
 	}
 	.emoji-panel {
 		width: 100%;
