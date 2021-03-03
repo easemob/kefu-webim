@@ -45,6 +45,11 @@ function _move(ctx, ev){
 	ctx.shadow.style.right = _x + "px";
 	ctx.shadow.style.bottom = _y + "px";
 
+	ctx.iframe.style.left = "auto";
+	ctx.iframe.style.top = "auto";
+	ctx.iframe.style.right = _x + "px";
+	ctx.iframe.style.bottom = _y + "px";
+
 	ctx.position = {
 		x: _x,
 		y: _y
@@ -342,7 +347,7 @@ Iframe.prototype.set = function(config, callback){
 	utils.toggleClass(this.iframe, "easemobim-hide", this.config.hide);
 
 	this.iframe.src = config.path + IM_HTML_PATH + "?v=__WEBIM_PLUGIN_VERSION__";
-	this.shadow && (this.shadow.style.backgroundColor = shadowBackgroundColor);
+	// this.shadow && (this.shadow.style.backgroundColor = shadowBackgroundColor);
 
 	this.ready = callback;
 	titleSlide.enable = config.titleSlide;

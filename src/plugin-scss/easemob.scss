@@ -63,7 +63,8 @@
 		border: none;
 	}
 	&.easemobim-dragging {
-		display: none;
+		box-shadow: 8px 8px 20px rgba(0,0,0,.3);
+		// display: none;
 	}
 	&.easemobim-big{
 		width: 720px;
@@ -78,7 +79,7 @@
 	position: fixed;
 	border: none;
 	border-radius: 4px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, .2);
+	// box-shadow: 0 4px 8px rgba(0, 0, 0, .2);
 	border-radius: 4px;
 	background-size: 100% 100%;
 	background-repeat: no-repeat;
