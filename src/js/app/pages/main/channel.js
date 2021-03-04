@@ -877,6 +877,32 @@ function _handleMessage(msg, options){
 		});
 		return
 	}
+	var busiData = utils.getDataByPath(message, "brief") || ''
+	var isBtnList = busiData.indexOf('[menu]') != -1;
+	if(isBtnList){
+		var dataList = busiData.split(' ')
+		var bussStr = ''
+		dataList.forEach(function(ele,index){
+			var data = '';
+			data = ele.replace('[menu]','')
+			data = data.replace('[/menu]','')
+			if(index == 0){
+				bussStr = '<p>' + data + '</p><div class="em-btn-list">'
+			}else{
+				bussStr +='<button  data-bussi='+ data.split('.')[1] +' class="js_bussibtn bg-hover-color">' + data.split('.')[1] + '</button>'
+			}
+		})
+		bussStr += '</div>'
+		_appendMsg({
+			data: bussStr,
+			type: "txtLink",
+		}, {
+			isReceived: true,
+			isHistory: false
+		});
+		return
+	}
+
 	message.laiye = laiye;
 	var dat = message.data;
 	// 来也机器人多条消息逐条展示

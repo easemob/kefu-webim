@@ -676,6 +676,15 @@ function _bindEvents(){
 
 		}
 	});	
+	utils.live(".js_bussibtn", "click", function(e){
+		// if(utils.hasClass(e.target, "disabled")){
+		// 	//禁止发送
+		// 	return
+		// }
+		// utils.addClass(e.target, "disabled");
+		var text = this.getAttribute("data-bussi");
+		channel.sendText(text);
+	});
 
 	// 解决
 	utils.live("a.statisfyYes", "click", function(e){
