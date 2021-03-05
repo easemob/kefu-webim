@@ -880,21 +880,27 @@ function _handleMessage(msg, options){
 	var busiData = utils.getDataByPath(message, "brief") || ''
 	var isBtnList = busiData.indexOf('[menu]') != -1;
 	if(isBtnList){
+		console.log(busiData)
 		var dataList = busiData.split(' ')
-		var bussStr = ''
+		var sumtittle = '请按照客户的情况依次选择回答以下问题'
+		var title = $('<div></div>');
+		var body = $('<div class="em-btn-list"></div>')
 		dataList.forEach(function(ele,index){
 			var data = '';
-			data = ele.replace('[menu]','')
-			data = data.replace('[/menu]','')
-			if(index == 0){
-				bussStr = '<p>' + data + '</p><div class="em-btn-list">'
+			if(ele.indexOf(sumtittle) != -1){
+				title.append('<p>' + ele + '</p>')
+				return
+			}
+			if(ele.indexOf('menu') != -1){
+				data = ele.replace('[menu]','')
+				data = data.replace('[/menu]','')
+				body.append('<button  data-bussi='+ data.split('.')[1] +' class="js_bussibtn bg-hover-color">' + data.split('.')[1] + '</button>')
 			}else{
-				bussStr +='<button  data-bussi='+ data.split('.')[1] +' class="js_bussibtn bg-hover-color">' + data.split('.')[1] + '</button>'
+				title.append('<p>' + ele + '</p>')
 			}
 		})
-		bussStr += '</div>'
 		_appendMsg({
-			data: bussStr,
+			data: $("<div></div>").append(title,body).html(),
 			type: "txtLink",
 		}, {
 			isReceived: true,
@@ -1074,6 +1080,9 @@ function _setExt(msg){
 	}
 	if(!_.isEmpty(config.queueName)){
 		msg.body.ext.weichat.queueName = window.decodeURI(config.queueName);
+	}
+	if(!_.isEmpty(config.queueId)){
+		msg.body.ext.weichat.queueId = window.decodeURI(config.queueId);
 	}
 	if(!_.isEmpty(config.channelName)){
 		msg.body.ext.channelName = config.channelName;
