@@ -1,5 +1,43 @@
 .em-mobile {
 	border-radius: 0;
+	.em-video-container{
+		position: fixed;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		z-index: 99999;
+		.full-video-box{
+			width: 100%;
+			height: 100%;
+			position:relative;
+			background:#000;
+			video{
+				height: 90%;
+				position: absolute;
+				top: 5%;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				margin: auto;
+			}
+		}
+		.video-container-close{
+			width: 2.375rem;
+    		height: 2.375rem;
+    		line-height: 2.375rem;
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			z-index: 1;
+			.icon-close{
+				color:#fff;
+				&:before{
+					font-size:2.8rem;
+				}
+			}
+		}
+	}
 	.em-widget-box{
 		width: 100%;
 		height: 100%; 
@@ -69,9 +107,52 @@
 			width: 100%;
 			box-sizing: border-box;
 		}
-		&.em-widget-msg-video{
+		&.em-widget-msg-video{ 
+			width: 100%;
+			height: 100%;
+			box-sizing: border-box;
 			overflow: hidden;
-			z-index: 1;
+			position:relative;
+			.video-btn{
+				width:100%;
+				height:100%;
+				z-index:-1;
+			}
+			.video-btn-android{
+				width:auto;
+				height:auto;
+				max-height: 200px;
+				max-width: 150px;
+				min-width: 100px;
+			}
+			.video-button{
+				height: 100%;
+				width: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				text-align: center;
+				background:#fff;
+				opacity: 0.2;
+			}
+			.icon-play-box{
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+    			height: 100%;
+				background: rgba(0,0,0,.4);
+				display: flex;
+				align-items: center;
+				justify-content: space-around;
+				i{
+					color:#fff;
+					&:before{
+						font-size: 3.375rem;
+					}
+				}
+			}
+			
 		}
 	}
 	.emoji-panel {

@@ -10,6 +10,7 @@ var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easem
 
 // channel.js 放着消息列表的构建，是不对的
 function genMsgContent(msg){
+
 	// console.log(msg)
 	var type = msg.type;
 	var value = msg.data;
@@ -117,11 +118,24 @@ function genMsgContent(msg){
 		// 	   + "</video>";
 		// break;
 		//
-		html = "<video poster=\"" + msg.thumb + "\" class=\"video-btn\"  controls src=\"" + msg.url + " \">"
-				+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"
-				+ "<source  src=\"" + msg.url + " \" type=\"video/webm\"></source>"
-				+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
-			   + "</video>";
+		if(utils.isAndroid){
+			// var newUrl = msg.url + "#t=1"; //取第一帧，安卓黑屏
+			html = "<video preload='metadata'  poster=\"" + msg.thumb + "\" data-url=\"" + msg.url + " \" class=\"video-btn video-btn-android\" x5-video-player-type='h5' src=\"" + msg.url + " \">"
+			+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"  
+			+ "<source  src=\"" + msg.url + " \" type=\"video/webm\"></source>"
+			+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
+			+ "</video>"
+			+ "<div class='icon-play-box'><i class='icon-play'></i></div>" 
+		}
+		else{
+			html = "<video controls class=\"video-btn\" src=\"" + msg.url + " \">"
+			+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"  
+			+ "<source  src=\"" + msg.url + " \" type=\"video/webm\"></source>"
+			+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
+			+ "</video>";
+		}
+		
+		
 		break;
 	case "html-form":
 		msgContent = msg.ext.msgtype.html;
@@ -159,6 +173,23 @@ function genMsgContent(msg){
 	}
 
 	return html;
+}
+
+
+
+function _urlToBlob(url){
+	return new Promise(function(resolve, reject){
+		var xhr = new XMLHttpRequest();
+		xhr.open("get", url, true);
+		xhr.responseType = "blob";
+		xhr.onload = function() {
+			if (this.status == 200) {
+				var blob = xhr.response;
+				resolve(URL.createObjectURL(blob))
+			}
+		};
+		xhr.send();
+	})
 }
 
 function _getAvatar(msg){

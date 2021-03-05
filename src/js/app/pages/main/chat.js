@@ -512,6 +512,27 @@ function _bindEvents(){
 		}, false);
 	}
 
+	if(utils.isAndroid){
+		// 全屏播放视频
+		utils.live("div.icon-play-box", "click", function(){
+			var url = this.previousSibling.dataset.url;
+			utils.removeClass(doms.videoPlayContainer, "hide");
+			var html = "<video controls autoplay x5-video-player-fullscreen='false' x5-video-player-type='h5' x5-playsinline='true' data-url=\"" + url + " \" src=\"" + url + " \">"
+				+ "<source  src=\"" + url + " \" type=\"video/mp4\"></source>"  
+				+ "<source  src=\"" + url + " \" type=\"video/webm\"></source>"
+				+ "<source  src=\"" + url + " \" type=\"video/ogg\"></source>"
+				+ "</video>";
+			
+			doms.videoPlayBox.appendChild(utils.createElementFromHTML(html));
+		});
+		// 退出视频全屏
+		utils.on(doms.videoBoxClose, "click", function(){
+			utils.addClass(doms.videoPlayContainer, "hide");
+			doms.videoPlayBox.innerHTML = '';
+		})
+	}
+	
+
 	// resend
 	utils.live("div.em-widget-msg-status", "click", function(){
 		var id = this.getAttribute("id").slice(0, -"_failed".length);
@@ -1107,6 +1128,10 @@ function _getDom(){
 		fileInput: document.querySelector(".upload-file-container"),
 		chatWrapper: document.querySelector(".chat-wrapper"),
 		addBtn: editorView.querySelector(".em-widget-add"),
+
+		videoPlayContainer: document.querySelector(".em-video-container"),
+		videoPlayBox: document.querySelector(".full-video-box"),
+		videoBoxClose: document.querySelector(".video-container-close"),
 		
 		toolBar: toolBar,
 		topBar: topBar,

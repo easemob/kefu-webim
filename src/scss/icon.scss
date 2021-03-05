@@ -548,3 +548,10 @@
 		content: "\e611";
 	}
 }
+// 播放
+.icon-play {
+	&:before {
+		@extend .icon-base;
+		content: "\cc11";
+	}
+}
