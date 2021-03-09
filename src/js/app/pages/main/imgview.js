@@ -2,12 +2,16 @@ var utils = require("@/common/utils");
 var _const = require("@/common/const");
 var profile = require("@/app/tools/profile");
 var getToHost = require("@/app/common/transfer");
+require("@/app/tools/transform");
+var AlloyFinger = 	require("alloyfinger");
 
 var img;
 var imgWrapper;
 var iosLoadTip;
 var androidLoadTip;
 var imgSrc;
+var af;
+var initScale = 1;
 var _init = _.once(function(){
 	imgWrapper = document.querySelector("div.img-view");
 	var coverHtml = "<div class=\"cover-floor\"></div>"
@@ -17,9 +21,13 @@ var _init = _.once(function(){
 	androidLoadTip = imgWrapper.querySelector("a.android-load");
 	utils.isAndroid && utils.removeClass(androidLoadTip, "hide");
 	utils.isIOS && utils.removeClass(iosLoadTip, "hide");
+	
+	startAf();
+
 	utils.on(imgWrapper, "click", function(){
 		utils.addClass(imgWrapper, "hide");
 	}, false);
+
 	// 解决ios端打开图片还能滑动屏幕的bug
 	utils.on(imgWrapper, "touchmove", function(event){
 		event.preventDefault();
@@ -37,6 +45,24 @@ var _init = _.once(function(){
 
 });
 
+function startAf(){
+	if(utils.isMobile){
+		var el = img;
+		Transform(el);
+        af = new AlloyFinger(el, {
+			pinch: function (evt) {
+                el.scaleX = el.scaleY = initScale * evt.zoom;
+			},
+			pressMove: function (evt) {
+                el.translateX += evt.deltaX;
+                el.translateY += evt.deltaY;
+                evt.preventDefault();
+			},
+
+		})
+	}
+}
+
 module.exports = {
 	show: function(url){
 		if(url.indexOf("blob:") == 0){
@@ -49,6 +75,13 @@ module.exports = {
 		_init();
 		if(utils.isTop || utils.isMobile){
 			img.src = url;
+			// 恢复
+			initScale = 1;
+			img.scaleX = 1;
+			img.scaleY = 1;
+			img.translateX = 0;
+			img.translateY = 0;
+
 			// androidLoadTip.href = url;
 			utils.removeClass(imgWrapper, "hide");
 		}

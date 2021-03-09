@@ -7,6 +7,7 @@
     "url": "http://easemob.com/"
   },
   "devDependencies": {
+    "alloyfinger": "^0.1.16",
     "autoprefixer": "=7.1.2",
     "commander": "^2.20.3",
     "cross-env": "^5.2.0",
