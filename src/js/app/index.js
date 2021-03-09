@@ -145,7 +145,7 @@ function setUserInfo(targetUserInfo){
 					});
 				}
 				else{
-					createVisitor().then(function(){
+					createVisitor(commonConfig.getConfig().user.username).then(function(){
 						resolve("noAutoCreateAppointedVisitor");
 					});
 				}
