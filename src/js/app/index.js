@@ -123,7 +123,12 @@ function setUserInfo(targetUserInfo){
 			});
 		});
 	}
-	else if(commonConfig.getConfig().user.username){
+	else if(commonConfig.getConfig().user.username || commonConfig.getConfig().visitor.description){
+		commonConfig.setConfig({
+			user: _.extend({}, commonConfig.getConfig().user, {
+				username: commonConfig.getConfig().visitor.description
+			})
+		});
 		return new Promise(function(resolve){
 			apiHelper.getPassword().then(function(password){
 				commonConfig.setConfig({
@@ -133,6 +138,7 @@ function setUserInfo(targetUserInfo){
 				});
 				resolve("widthPassword");
 			}, function(){
+				console.log('profile.grayList',profile.grayList)
 				if(profile.grayList.autoCreateAppointedVisitor){
 					createVisitor(commonConfig.getConfig().user.username).then(function(){
 						resolve("autoCreateAppointedVisitor");
