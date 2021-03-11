@@ -124,9 +124,10 @@ function setUserInfo(targetUserInfo){
 		});
 	}
 	else if(commonConfig.getConfig().user.username || commonConfig.getConfig().visitor.description){
+		var username = commonConfig.getConfig().user.username || commonConfig.getConfig().visitor.description
 		commonConfig.setConfig({
 			user: _.extend({}, commonConfig.getConfig().user, {
-				username: commonConfig.getConfig().visitor.description
+				username: username
 			})
 		});
 		return new Promise(function(resolve){
