@@ -872,8 +872,8 @@ function _handleMessage(msg, options){
 			'</div>',
 			type: "txtLink",
 		}, {
-			isReceived: true,
-			isHistory: false
+			isReceived: isReceived,
+			isHistory: isHistory
 		});
 		return
 	}
@@ -905,8 +905,8 @@ function _handleMessage(msg, options){
 			data: $("<div></div>").append($title,$body).html(),
 			type: "txtLink",
 		}, {
-			isReceived: true,
-			isHistory: false
+			isReceived: isReceived,
+			isHistory: isHistory
 		});
 		return
 	}
