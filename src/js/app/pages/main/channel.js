@@ -877,30 +877,32 @@ function _handleMessage(msg, options){
 		});
 		return
 	}
-	var busiData = utils.getDataByPath(message, "brief") || ''
-	var isBtnList = busiData.indexOf('[menu]') != -1;
-	if(isBtnList){
-		console.log(busiData)
-		var dataList = busiData.split(' ')
-		var sumtittle = '请按照客户的情况依次选择回答以下问题'
-		var title = $('<div></div>');
-		var body = $('<div class="em-btn-list"></div>')
-		dataList.forEach(function(ele,index){
-			var data = '';
-			if(ele.indexOf(sumtittle) != -1){
-				title.append('<p>' + ele + '</p>')
-				return
-			}
-			if(ele.indexOf('menu') != -1){
-				data = ele.replace('[menu]','')
-				data = data.replace('[/menu]','')
-				body.append('<button  data-bussi='+ data.split('.')[1] +' class="js_bussibtn bg-hover-color">' + data.split('.')[1] + '</button>')
-			}else{
-				title.append('<p>' + ele + '</p>')
+	var busiData = utils.getDataByPath(message, "data") || ''
+	var btnListIndex = busiData.indexOf('[menu]');
+	if(btnListIndex != -1){
+		console.log('message.data',message.data)
+		var title = busiData.substr(0,btnListIndex)
+		var body = busiData.substr(btnListIndex)
+		var bodyArr = []
+		body =body.split('[menu]')
+		body.forEach(function(val, index){
+			var flag = val.indexOf('[/menu]') != -1
+			if(flag){
+				val = val.replace('[/menu]', "")
+				bodyArr.push({
+					value: val.split('&')[0],
+					text: val.split('&')[1]
+				 })
 			}
 		})
+		var $title = $('<div></div>');
+		$title.append("<span class=\"text\">" + title + "</span>")
+		var $body = $('<div class="em-btn-list"></div>')
+		bodyArr.forEach(function(ele,index){
+			$body.append('<button  data-bussi='+ ele.value +' class="js_bussibtn bg-hover-color">' + ele.text + '</button>')
+		})
 		_appendMsg({
-			data: $("<div></div>").append(title,body).html(),
+			data: $("<div></div>").append($title,$body).html(),
 			type: "txtLink",
 		}, {
 			isReceived: true,
