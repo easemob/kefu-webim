@@ -37,10 +37,11 @@
 		color: white;
 		font-size: 13px;
 		> span {
-			// background-color: #c9ced3;
-			color: #a5a6a5;
+			color: #8794A5;
 			border-radius: 4px;
 			padding: 1px 3px;
+			opacity: 0.5;
+			font-size: 12px;
 		}
 	}
 
@@ -133,7 +134,6 @@
 }
 
 .em-widget-left {
-	margin-bottom: -22px;
 	> img.avatar {
 		width: 30px;
 		height: 30px;
@@ -143,10 +143,10 @@
 	}
 	.em-widget-msg-wrapper {
 		clear: both;
-		left: 50px;
-		top: -30px;
+		left: 20px;
 		background: #fff;
-		// border: 1px solid #e5e5e5;
+		color:#566477;
+		border-radius: 0 8px 8px 8px;
 		.icon-corner-left {
 			position: absolute;
 			top: 5px;
@@ -154,6 +154,7 @@
 			width: 30px;
 			height: 30px;
 			color: white;
+			display:none;
 			// text-shadow: -1px 0 0 #e5e5e5;
 		}
 		.em-widget-msg-container {
@@ -172,9 +173,17 @@
 .em-widget-right {
 	.em-widget-msg-wrapper {
 		float: right;
-		margin-right: 12px;
-		background: #e3ecfc;
-		// border: 1px solid #c3cbd9;
+		margin-right: 8px;
+		background: #fff;
+		border-radius: 8px 0 8px 8px;
+		&.no-bg{
+			background:none;
+			overflow: hidden;
+			.em-widget-msg-container{
+				padding: 0px;
+			}
+		}
+		
 		.icon-corner-right {
 			position: absolute;
 			top: 5px;
@@ -182,6 +191,7 @@
 			width: 30px;
 			height: 30px;
 			color: #e3ecfc;
+			display:none;
 			// text-shadow: 1px 0 0 #c3cbd9;
 		}
 		.em-widget-msg-container {
@@ -203,17 +213,13 @@
 
 .em-widget-msg-wrapper {
 	position: relative;
-	float: left;
 	display: inline-block;
-	border-radius: 6px;
 	max-width: 76%;
 	> p {
 		border-bottom:1px solid #e5e5e5;
 	}
 	.invalid-btn{
 		color: silver!important;
-		// background-color: #e4e4e4 !important;
-		// text-align: center !important;
 	}
 	.em-btn-list {
 		min-width: 190px;
@@ -317,7 +323,8 @@
 		min-height: 20px;
 		vertical-align: middle;
 		text-align: left;
-		font-size: 13px;
+		font-size: 14px;
+		line-height: 24px;
 		word-wrap: break-word;
 		white-space : normal;
 		// 图片消息、表情
@@ -337,6 +344,12 @@
 			padding: 10px;
 			word-break: break-word;
 			white-space: pre-wrap;
+		}
+		&.em-widget-msg-video{
+			max-height:300px;
+			video{
+				max-height:300px;
+			}
 		}
 	}
 	.em-widget-msg-order, .em-widget-msg-track {

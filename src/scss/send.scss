@@ -94,8 +94,9 @@
 	}
 	// 工具栏
 	.toolbar {
-		height:30px;
+		height: 36px;
 		padding: 0 5px;
+		background: #FBFBFB;
 		> i {
 			float: left;
 			top: 5px;
@@ -146,16 +147,18 @@
 		position: absolute;
 		right: 10px;
 		bottom: 10px;
-		width: 100px;
-		border-radius: 4px;
+		width: 85px;
+		border-radius: 2px;
 		height: 30px;
 		text-align: center;
 		line-height: 30px;
 		color: white;
 		cursor: pointer;
+		font-size:13px;
 		&.disabled {
-			background-color: #ccc!important;
+			background-color: #E4E6E9 !important;
 			cursor: default;
+			color: #B4B4B4 !important;
 		}
 	}
 	.bottom-30{

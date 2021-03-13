@@ -824,16 +824,15 @@
 				margin-top:10px;
 				box-sizing: border-box;
 				border-bottom: 2px solid #fff;
-				color:#444;
+				color:#65758C;
 			}
 			&:last-of-type {
 				border: 0;
 			}
 			&.selected {
 				>span{
-					border-color:#3399ff;
-					color:#3399ff;
-					font-weight:500;
+					border-color:#009BF2;
+					color:#009BF2;
 				}
 			}
 		}

@@ -69,7 +69,7 @@ function genMsgContent(msg){
 		break;
 	case "customMagicEmoji":
 		// 给图片消息或附件消息的url拼上hostname
-		if(msg.url && !/^https?/.test(msg.url)){
+		if(msg.url && !/^http?/.test(msg.url)){
 			msg.url = location.protocol + commonConfig.getConfig().domain + msg.url;
 		}
 		// todo: remove a
@@ -120,13 +120,20 @@ function genMsgContent(msg){
 		// break;
 		//
 		if(utils.isAndroid){
-			// var newUrl = msg.url + "#t=1"; //取第一帧，安卓黑屏
-			html = "<video preload='metadata'  poster=\"" + msg.thumb + "\" data-url=\"" + msg.url + " \" class=\"video-btn video-btn-android\" x5-video-player-type='h5' src=\"" + msg.url + " \">"
+			//取第一帧，安卓黑屏
+			var newUrl;
+			// if(!utils.isAndroid){
+			// 	newUrl = msg.url + "#t=1";
+			// }
+			// else{
+				newUrl = msg.url;
+			// }
+			html = "<video preload='metadata'  poster=\"" + msg.thumb + "\" data-url=\"" + newUrl + " \" class=\"video-btn video-btn-android\" x5-video-player-type='h5' src=\"" + msg.url + " \">"
 			+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"  
 			+ "<source  src=\"" + msg.url + " \" type=\"video/webm\"></source>"
 			+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
 			+ "</video>"
-			+ "<div class='icon-play-box'><i class='icon-play'></i></div>" 
+			+ "<div class='icon-play-box'><i class='icon-play'></i></div>"  
 		}
 		else{
 			html = "<video controls class=\"video-btn\" src=\"" + msg.url + " \">"
@@ -176,22 +183,6 @@ function genMsgContent(msg){
 	return html;
 }
 
-
-
-function _urlToBlob(url){
-	return new Promise(function(resolve, reject){
-		var xhr = new XMLHttpRequest();
-		xhr.open("get", url, true);
-		xhr.responseType = "blob";
-		xhr.onload = function() {
-			if (this.status == 200) {
-				var blob = xhr.response;
-				resolve(URL.createObjectURL(blob))
-			}
-		};
-		xhr.send();
-	})
-}
 
 function _getAvatar(msg){
 	var officialAccountType = utils.getDataByPath(msg, "ext.weichat.official_account.type");
@@ -365,16 +356,29 @@ function genDomFromMsg(msg, isReceived, isHistory){
 
 	// 坐席消息头像
 	if(direction === "left"){
-		html += "<img class=\"avatar\" src=\"" + _getAvatar(msg) + "\">";
+		// html += "<img class=\"avatar\" src=\"" + _getAvatar(msg) + "\">";
 	}
 
 	// wrapper 开始
-	html += "<div class=\"em-widget-msg-wrapper msgtype-" + (msg.subtype || type) + "\">";
+	if(direction === "left"){
+		html += "<div class=\"em-widget-msg-wrapper msgtype-" + (msg.subtype || type) + "\">";
+		// html += "<i class=\"icon-corner-" + direction + "\"></i>";
+	}else{
+		if(type === "customMagicEmoji" || type === "img" || type === "video"){
+			html += "<div class=\"em-widget-msg-wrapper no-bg msgtype-" + (msg.subtype || type) + "\">";
+		}else if(type === "file"){
+			html += "<div class=\"em-widget-msg-wrapper msgtype-" + (msg.subtype || type) + "\">";
+		}
+		else{
+			html += "<div class=\"em-widget-msg-wrapper bg-color msgtype-" + (msg.subtype || type) + "\">";
+		}
+		// html += "<i class=\"fg-color icon-corner-" + direction + "\"></i>"; 
+	}
 
 	// 设置消息气泡的突起位置
 	// .icon-corner-right, .icon-corner-left used here
 	
-	html += "<i class=\"icon-corner-" + direction + "\"></i>";
+	
 
 	// 发出的消息增加状态显示
 	if(!isReceived && !isHistory && id){

@@ -4,10 +4,11 @@ var profile = require("@/app/tools/profile");
 var eventListener = require("@/app/tools/eventListener");
 var commonConfig = require("@/common/config");
 
-var $agentNickname;
+var $agentNickname, $agentFace;
 
 module.exports = function(){
 	var topBar = document.querySelector(".em-widget-header");
+	$agentFace = topBar.querySelector(".em-agent-face");
 	$agentNickname = topBar.querySelector(".em-widget-header-nickname");
 
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _updateAgentNickname);
@@ -30,6 +31,9 @@ function _updateAgentNickname(officialAccount){
 	var agentAvatar = officialAccount.agentAvatar;
 	var isSessionOpen = officialAccount.isSessionOpen;
 	var officialAccountType = officialAccount.type;
+
+	var defaultAvatar = commonConfig.getConfig().staticPath + "/img/default_avatar.png";
+	$agentFace.src = officialAccount.img || defaultAvatar;
 
 	// fake: update system agent avatar
 	if(officialAccountType === "SYSTEM"){

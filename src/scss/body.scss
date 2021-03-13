@@ -2,7 +2,7 @@ body.window-pc{
 	background: #f7f7f7;
 	.em-widget-box{
 		height: 726px;
-		width: 938px;
+		width: 998px;
 		max-height:calc(100% - 20px);
 		max-width:calc(100% - 20px);
 		box-shadow: 0px 10px 20px 0 rgba(0, 0, 0, 0.3);
@@ -10,7 +10,7 @@ body.window-pc{
 	.em-widget-to-kefu{
 		float: right;
 		margin-right: 10px;
-		margin-top: -20px;
+		margin-top: -27px;
 		>i{
 			display:none;
 		}
@@ -28,7 +28,7 @@ body.window-demo{
 	.em-widget-to-kefu{
 		float: right;
 		margin-right: 10px;
-		margin-top: -20px;
+		margin-top: -27px;
 		>i{
 			display:none;
 		}
@@ -59,17 +59,17 @@ body.big-window{
 }
 body.big-window-h5{
 	.em-widget-wrapper{
-		width: calc(100% - 300px);
+		width: calc(100% - 360px);
 		min-width: 300px;
 	}
 	.em-self-wrapper{
 		// width: 50%;
-		width: 300px;
+		width: 360px;
 		display: block;
 	}
 	.em-widget-box{
 		height: 726px;
-		width: 938px;
+		width: 998px;
 		max-height:calc(100% - 20px);
 		max-width:calc(100% - 20px);
 		box-shadow: 0px 10px 20px 0 rgba(0, 0, 0, 0.3);
@@ -85,7 +85,7 @@ body.big-window-h5{
 	right:0;
 	.em-widget-content-box{
 		position: absolute;
-		top: 41px;
+		top: 60px;
 		left: 0;
 		right: 0;
 		bottom: 0;
@@ -168,9 +168,9 @@ body.big-window-h5{
     color: #757575;
 	font-size:12px;
 	display:none;
-	height: 55px;
+	height: 42px;
 	box-sizing: border-box;
-	padding:5px;
+	// padding:5px;
 	>div{
 		width: 100%;
 		background-color: #fff3bf;
@@ -185,7 +185,7 @@ body.big-window-h5{
 		height: 100%;
 		overflow-y: auto;
 		box-sizing: border-box;
-		display:flex;
+		// display:flex;
 		align-items:center;
 		padding-left:5px;
 		img{
@@ -225,7 +225,7 @@ body.big-window-h5{
 	position: absolute;
 	top: 0;
 	bottom: 140px;
-	background-color: #F4F7FA;
+	background-color: #F5F7FA;
 	width: 100%;
 	// border-bottom: 1px solid #E5E9F3;
 	// border-right: 1px solid #E5E9F3;
@@ -463,11 +463,10 @@ body.big-window-h5{
 	width:100%;
 	position: absolute;
 	top: 0;
-	height: 55px;
-	color: #666;
-	line-height: 55px;
-	max-height: 55px;
-	padding: 5px;
+	height: 42px;
+	color: #65758C;
+	line-height: 42px;
+	// padding: 5px;
 	background:#f4f7fa;
 	box-sizing: border-box;
 	>div{
@@ -483,7 +482,7 @@ body.big-window-h5{
 		height: 100%;
 		overflow-y: auto;
 		box-sizing: border-box;
-		display:flex;
+		// display:flex;
 		align-items:center;
 		padding-left:5px;
 		img{
