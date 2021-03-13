@@ -49,7 +49,8 @@ function genMsgContent(msg){
 					return validatePhoneInTxt(fragment.value);
 				}).join("");
 				html += "</span>";
-			}else{
+			}
+			else{
 				// 历史消息以及收到的实时消息
 				html = "<span class=\"text\">" + _.map(value, function(fragment){
 					return fragment.value;
@@ -229,75 +230,94 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	if(type === "article"){
 		var msgArticles = utils.getDataByPath(msg, "ext.msgtype.articles");
 		var articleNode;
-		var showDirectly = msgArticles.some(function(item){
-			return item.show_directly === true;
-		});
+		var showDirectly = utils.getDataByPath(msg, "ext.msgtype.showDirectly");
+		var cardViewOption = utils.getDataByPath(msg, "ext.msgtype.cardViewOption");
 		if(showDirectly){
-			if(msgArticles.length === 1){
-				articleDom = apiHelper.getArticleHtml(msgArticles[0].url);
-				articleNode = "" +
-					"<div class=\"article-msg-outer article-item only-one-article only-one-specialArticle\">" +
-							articleDom.responseText +
-					"</div>";
+			if(cardViewOption == "SLIDE"){
+				articleNode = "<div class=\"article-msg-outer more-articles specialArticle directly-article-drawer\" style=\"margin-bottom:6px;\">"
+				+ _.map(msgArticles, function(item, index){
+					var str = "";
+					// articleDom = apiHelper.getArticleHtml(msgArticles[index].url);
+					var uuid = utils.uuid();
+					str =  "<div><iframe id=" + uuid + " src=" + msgArticles[index].url + " height=\"500px%\" width=\"100%\" frameborder=\"0\"></iframe></div>";
+					
+					return str;
+				}).join("") || ""
+				+ "<div></div></div>";
 			}
 			else{
 				articleNode = ""
 					+ _.map(msgArticles, function(item, index){
 						var str = "";
-						if(item.show_directly){
-							articleDom = apiHelper.getArticleHtml(msgArticles[index].url);
-							
-							str =  "<div class=\"article-msg-outer more-articles specialArticle\" style=\"margin-bottom:6px;\">" + "<div>" + articleDom.responseText + "</div></div>";
-						}
-						else{
-
-							str =  "<div class=\"article-msg-outer more-articles\" style=\"margin-bottom:6px;\">" + "<div class=\"article-item rest-item\">" +
-							"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
-							str += "<img class=\"cover-img\" src=\"" + item.picurl + "\"/>" +
-							"<div class=\"article-link\" style=\"cursor: pointer\"><span>" + item.url + "</span></div>" +
-							"</div></div>";
-						}
-						
+						articleDom = apiHelper.getArticleHtml(msgArticles[index].url);
+						var uuid = utils.uuid();
+						str =  "<div class=\"article-msg-outer more-articles specialArticle\" style=\"margin-bottom:6px;\">" + "<div><iframe id=" + uuid + " src=" + item.url + " height=\"500px%\" width=\"100%\" frameborder=\"0\"></iframe></div></div>";
 						return str;
 					}).join("") || "";
 			}
+			
+		}
+		else if(cardViewOption == "SLIDE"){
+
+			articleNode = "<div class=\"article-msg-outer more-articles  article-drawer\" >"
+								+ _.map(msgArticles, function(item, index){
+									var date = msgArticles[index].createdTime ? moment(msgArticles[index].createdTime).format(__("config.article_timestamp_format"))
+									: moment(msgArticles[index].date).format(__("config.article_timestamp_format"));
+									var str = "";
+									str = "" +
+										"<div><div class=\"article-msg-outer article-item only-one-article\">" +
+											"<div class=\"body\">" +
+												"<h3 class=\"title\">" + msgArticles[index].title + "</h3>" +
+												"<p class=\"create-time\">" + date + "</p>" +
+												"<img class=\"cover\" src=\"" + msgArticles[index].picurl + "\"/>" +
+												"<div class=\"desc\"><p>" + msgArticles[index].description + "</p></div>" +
+											"</div>" +
+											"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
+											// "<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
+											"<div class=\"article-link\" data-status=\"" + msgArticles[index].sendCustomer + "\"><span>" + msgArticles[index].url + "</span></div>" +
+										"</div></div>";
+									return str;
+
+								}).join("") || ""
+								+ "</div>";
 		}
 		else if(msgArticles.length === 1){
 			var date = msgArticles[0].createdTime ? moment(msgArticles[0].createdTime).format(__("config.article_timestamp_format"))
-						: moment(msgArticles[0].date).format(__("config.article_timestamp_format"));
+								: moment(msgArticles[0].date).format(__("config.article_timestamp_format"));
 			articleNode = "" +
-						"<div class=\"article-msg-outer article-item only-one-article\">" +
-							"<div class=\"body\">" +
-								"<h3 class=\"title\">" + msgArticles[0].title + "</h3>" +
-								"<p class=\"create-time\">" + date + "</p>" +
-								"<img class=\"cover\" src=\"" + msgArticles[0].picurl + "\"/>" +
-								"<div class=\"desc\"><p>" + msgArticles[0].description + "</p></div>" +
-							"</div>" +
-							"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
-							// "<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
-							"<div class=\"article-link\" data-status=\"" + msgArticles[0].sendCustomer + "\"><span>" + msgArticles[0].url + "</span></div>" +
-						"</div>";
+								"<div class=\"article-msg-outer article-item only-one-article\">" +
+									"<div class=\"body\">" +
+										"<h3 class=\"title\">" + msgArticles[0].title + "</h3>" +
+										"<p class=\"create-time\">" + date + "</p>" +
+										"<img class=\"cover\" src=\"" + msgArticles[0].picurl + "\"/>" +
+										"<div class=\"desc\"><p>" + msgArticles[0].description + "</p></div>" +
+									"</div>" +
+									"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
+									// "<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
+									"<div class=\"article-link\" data-status=\"" + msgArticles[0].sendCustomer + "\"><span>" + msgArticles[0].url + "</span></div>" +
+								"</div>";
 		}
 		else{
 			articleNode = "<div class=\"article-msg-outer more-articles\">"
-						+ _.map(msgArticles, function(item, index){
-							var str = "";
-							if(index === 0){
-								str = "<div class=\"article-item first-item\">" +
-								"<h3 class=\"title\">" + item.title + "</h3>";
-							}
-							else{
-								str = "<div class=\"article-item rest-item\">" +
-								"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
-							}
-							str += "<img class=\"cover-img\" src=\"" + item.picurl + "\"/>" +
-								// "<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
-								"<div class=\"article-link\"><span>" + item.url + "</span></div>" +
-								"</div>";
-							return str;
-						}).join("") || ""
-						+ "</div>";
+								+ _.map(msgArticles, function(item, index){
+									var str = "";
+									if(index === 0){
+										str = "<div class=\"article-item first-item\">" +
+										"<h3 class=\"title\">" + item.title + "</h3>";
+									}
+									else{
+										str = "<div class=\"article-item rest-item\">" +
+										"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
+									}
+									str += "<img class=\"cover-img\" src=\"" + item.picurl + "\"/>" +
+										// "<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
+										"<div class=\"article-link\"><span>" + item.url + "</span></div>" +
+										"</div>";
+									return str;
+								}).join("") || ""
+								+ "</div>";
 		}
+		
 		dom.className = "article-message-wrapper";
 
 		// 单独的转人工按钮（txt、）
@@ -497,23 +517,23 @@ function validatePhoneInTxt(val){
 	var arr = val.split(/[^0-9/?-]/);
 	_.map(arr, function(item){
 		if(isPhone(item)){
-			phoneList.push(item)
+			phoneList.push(item);
 		}
-	})
+	});
 	if(phoneList.length){
 		_.map(phoneList, function(item){
 			var reg = new RegExp(item, "g");
 			var newStr = txt.replace(reg, "<a href='tel:" + item + "'>" + item + "</a>");
 			txt = newStr;
-		})
+		});
 	}
-	return txt
+	return txt;
 }
 
 function isPhone(num){
 	var varisPhone = /^((0\d{2,3})-)?(\d{5,8})(-(\d{3,}))?$/.test(num);
 	var varisMobile = /^1[3456789]\d{9}$/.test(num);
-	return (varisPhone || varisMobile)
+	return (varisPhone || varisMobile);
 }
 
 module.exports = genDomFromMsg;
