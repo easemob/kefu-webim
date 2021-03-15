@@ -177,7 +177,7 @@ function genMsgContent(msg){
 		ruleId = relatedRules.ruleId;
 		answerId = relatedRules.answerId;
 		relatedRuleIds = relatedRules.relatedRuleIds;
-		html += "<div class=\"em-btn-list\">" + _.map(msg.ext.relatedRules.questions, function(question, index){ return "<button class=\"js_robotRelateListbtn bg-hover-color\" data-ruleId=" + ruleId + " data-answerId=" + answerId + " data-relatedRuleId=" + relatedRuleIds[index] + ">" + question + "</button>";}).join("") || "";
+		html += "<div class=\"em-btn-list\">" + _.map(msg.ext.relatedRules.questions, function(question, index){ return "<button class=\"js_robotRelateListbtn \" data-ruleId=" + ruleId + " data-answerId=" + answerId + " data-relatedRuleId=" + relatedRuleIds[index] + ">" + question + "</button>";}).join("") || "";
 	}
 
 	return html;
@@ -356,7 +356,9 @@ function genDomFromMsg(msg, isReceived, isHistory){
 
 	// 坐席消息头像
 	if(direction === "left"){
-		// html += "<img class=\"avatar\" src=\"" + _getAvatar(msg) + "\">";
+		if(utils.isMobile){
+			html += "<img class=\"avatar\" src=\"" + _getAvatar(msg) + "\">";
+		}
 	}
 
 	// wrapper 开始
@@ -497,7 +499,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 					+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
 					+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
 					+ "data-id=\"" + ctrlArgs.id + "\" "
-				+ ">" + ctrlArgs.label + "</button>"
+				+ ">" + ctrlArgs.label + "</button>" 
 			+ "</div>";
 		}
 	}

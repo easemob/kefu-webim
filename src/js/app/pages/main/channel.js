@@ -629,7 +629,7 @@ function _handleMessage(msg, options){
 				message.data = __("chat.evaluate_agent_title");
 				message.list = [
 					"<div class=\"em-btn-list\">"
-					+ "<button class=\"bg-hover-color js_satisfybtn fg-color\" data-inviteid=\""
+					+ "<button class=\" js_satisfybtn fg-color\" data-inviteid=\""
 					+ inviteId
 					+ "\" data-servicesessionid=\""
 					+ serviceSessionId
@@ -695,10 +695,10 @@ function _handleMessage(msg, options){
 					// else{
 					// 	className += "bg-hover-color";
 					// }
-					return "<button "
-					+ "class=\"js_robotbtn " + (profile.shouldMsgActivated(serviceSessionId) ? "fg-color bg-hover-color" : "disabled") + "\" "
+					return "<li><button "
+					+ "class=\"js_robotbtn " + (profile.shouldMsgActivated(serviceSessionId) ? "fg-color" : "disabled") + "\" "
 					+ "data-id=\"" + item.id + "\" "
-					+ ">" + item.name + "</button>";
+					+ ">" + item.name + "</button> <i class='icon-arrow-right'></i> </li>";
 				}).join("") || ""
 				+ "</div>";
 			message.data = msg.ext.msgtype.choice.title;
@@ -725,7 +725,7 @@ function _handleMessage(msg, options){
 					}
 	
 					return "<button "
-					+ "class=\"js_transferManualbtn bg-hover-color fg-color" + (profile.shouldMsgActivated(serviceSessionId) ? "" : "disabled") + "\" "
+					+ "class=\"js_transferManualbtn fg-color" + (profile.shouldMsgActivated(serviceSessionId) ? "" : "disabled") + "\" "
 					+ "data-id=\"" + item.id + "\" "
 					+ "data-queue-id=\"" + item.queueId + "\" "
 					+ "data-queue-type=\"" + item.queueType + "\" "
@@ -743,9 +743,9 @@ function _handleMessage(msg, options){
 				+ _.map(msg.data.children, function(item){
 					var queueName = item.queueName;
 					var label = item.menuName;
-					var className = "js_skillgroupbtn bg-hover-color fg-color";
+					var className = "js_skillgroupbtn fg-color";
 	
-					return "<button class=\"" + className + "\" data-queue-name=\"" + queueName + "\">" + label + "</button>";
+					return "<li><button class=\"" + className + "\" data-queue-name=\"" + queueName + "\">" + label + "</button><i class='icon-arrow-right'></i></li>";
 				}).join("") || ""
 				+ "</div>";
 			message.data = msg.data.menuName;
@@ -772,7 +772,7 @@ function _handleMessage(msg, options){
 					var queueName = item.queueName;
 					var label = item.itemName;
 					var queueType = item.queueType;
-					var className = "js_transferManualEntrybtn bg-hover-color fg-color";
+					var className = "js_transferManualEntrybtn fg-color";
 					if(item.queueType == "video"){
 						if(
 							window.location.protocol !== "https:"
@@ -800,7 +800,7 @@ function _handleMessage(msg, options){
 			// 还有待测试其他带有转人工的情况
 			message.list = [
 				"<div class=\"em-btn-list\">",
-				"<button class=\"white fg-color bg-hover-color js_robotTransferBtn\" ",
+				"<button class=\"white fg-color js_robotTransferBtn\" ",
 				"data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" ",
 				"data-id=\"" + ctrlArgs.id + "\">" + ctrlArgs.label + "</button>",
 				"</div>"
@@ -813,7 +813,7 @@ function _handleMessage(msg, options){
 			message.subtype = type;
 			message.list = [
 				"<div class=\"em-btn-list\">",
-				"<button class=\"white fg-color bg-hover-color js-transfer-to-ticket\">", 
+				"<button class=\"white fg-color js-transfer-to-ticket\">", 
 				__("chat.click_to_ticket"),
 				"</button>",
 				"</div>"

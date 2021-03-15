@@ -70,6 +70,7 @@
 			font-size: 13px;
 			
 			.icon-arrow-right{
+				transform: rotate(90deg);
 				display: inline-block;
 				&:before{
 					font-size:20px;
@@ -92,7 +93,7 @@
 				display: none;
 			}
 			.icon-arrow-right{
-				transform: rotate(90deg);
+				transform: rotate(0deg);
 			}
 		}
 	}

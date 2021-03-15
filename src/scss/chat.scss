@@ -175,6 +175,20 @@
 			}
 		}
 	}
+	.em-btn-list{
+		li{
+			position: relative;
+		}
+		.icon-arrow-right{
+			position: absolute;
+			right: -10px;
+			top: 0;
+			color: #999;
+			&:before{
+				font-size:20px;
+			}
+		}
+	}
 }
 
 .em-widget-right {
@@ -229,18 +243,19 @@
 		color: silver!important;
 	}
 	.em-btn-list {
-		min-width: 190px;
+		min-width: 210px;
 		position: relative;
 		text-align: left;
 		clear: both;
 		background:#fff;
 		padding-bottom: 8px; 
+		padding-right: 12px;
 		&:after {
 			content: '';
 			clear: both;
 		}
 		button {
-			font-size: 13px;
+			font-size: 14px;
 			display: block;
 			width: 100%;
 			padding: 0px 10px;
@@ -728,7 +743,7 @@
 			clear: both;
 		}
 		button {
-			font-size: 13px;
+			font-size: 14px;
 			display: block;
 			width: 100%;
 			padding: 5px 10px;

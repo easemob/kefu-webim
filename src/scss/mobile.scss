@@ -364,5 +364,10 @@
 		opacity: 0.8;
 	}
 }
+.em-widget-left{
+	.em-widget-msg-wrapper{
+		left: 10px;
+	}
+}
 
 @media (-webkit-min-device-pixel-ratio: 2) {}

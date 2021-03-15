@@ -96,7 +96,7 @@
 	.toolbar {
 		height: 36px;
 		padding: 0 5px;
-		background: #FBFBFB;
+		background: rgba(251,251,251, 0.5);
 		> i {
 			float: left;
 			top: 5px;
@@ -107,7 +107,7 @@
 				cursor: pointer;
 			}
 			&:before{
-				font-size:25px;
+				font-size:28px;
 			}
 		}
 		.em-widget-to-kefu{
@@ -173,6 +173,6 @@
 		left: -9999px;
 	}
 }
-.height-160{
-	height: 160px;
+.height-170{
+	height: 170px;
 }
