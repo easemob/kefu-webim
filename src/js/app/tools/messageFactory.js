@@ -120,24 +120,24 @@ function genMsgContent(msg){
 		// break;
 		//
 		if(utils.isAndroid){
-			//取第一帧，安卓黑屏
+			// 取第一帧，安卓黑屏
 			var newUrl;
 			// if(!utils.isAndroid){
 			// 	newUrl = msg.url + "#t=1";
 			// }
 			// else{
-				newUrl = msg.url;
+			newUrl = msg.url;
 			// }
 			html = "<video preload='metadata'  poster=\"" + msg.thumb + "\" data-url=\"" + newUrl + " \" class=\"video-btn video-btn-android\" x5-video-player-type='h5' src=\"" + msg.url + " \">"
-			+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"  
+			+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"
 			+ "<source  src=\"" + msg.url + " \" type=\"video/webm\"></source>"
 			+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
 			+ "</video>"
-			+ "<div class='icon-play-box'><i class='icon-play'></i></div>"  
+			+ "<div class='icon-play-box'><i class='icon-play'></i></div>";
 		}
 		else{
 			html = "<video controls class=\"video-btn\" src=\"" + msg.url + " \">"
-			+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"  
+			+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"
 			+ "<source  src=\"" + msg.url + " \" type=\"video/webm\"></source>"
 			+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
 			+ "</video>";
@@ -230,6 +230,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 					var str = "";
 					// articleDom = apiHelper.getArticleHtml(msgArticles[index].url);
 					var uuid = utils.uuid();
+					msgArticles[index].url = msgArticles[index].url.replace("http:", "https:");
 					str =  "<div><iframe id=" + uuid + " src=" + msgArticles[index].url + " height=\"500px%\" width=\"100%\" frameborder=\"0\"></iframe></div>";
 					
 					return str;
@@ -242,6 +243,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 						var str = "";
 						articleDom = apiHelper.getArticleHtml(msgArticles[index].url);
 						var uuid = utils.uuid();
+						item.url = item.url.replace("http:", "https:");
 						str =  "<div class=\"article-msg-outer more-articles specialArticle\" style=\"margin-bottom:6px;\">" + "<div><iframe id=" + uuid + " src=" + item.url + " height=\"500px%\" width=\"100%\" frameborder=\"0\"></iframe></div></div>";
 						return str;
 					}).join("") || "";
@@ -256,7 +258,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 									: moment(msgArticles[index].date).format(__("config.article_timestamp_format"));
 									var str = "";
 									str = "" +
-										"<div><div class=\"article-msg-outer article-item only-one-article\">" +
+										"<div class=\"article-msg-outer article-item only-one-article\">" +
 											"<div class=\"body\">" +
 												"<h3 class=\"title\">" + msgArticles[index].title + "</h3>" +
 												"<p class=\"create-time\">" + date + "</p>" +
@@ -266,7 +268,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 											"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
 											// "<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
 											"<div class=\"article-link\" data-status=\"" + msgArticles[index].sendCustomer + "\"><span>" + msgArticles[index].url + "</span></div>" +
-										"</div></div>";
+										"</div>";
 									return str;
 
 								}).join("") || ""
@@ -365,21 +367,24 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	if(direction === "left"){
 		if(type === "customMagicEmoji" || type === "img" || type === "video"){
 			html += "<div class=\"em-widget-msg-wrapper no-bg msgtype-" + (msg.subtype || type) + "\">";
-		}else{
+		}
+		else{
 			html += "<div class=\"em-widget-msg-wrapper msgtype-" + (msg.subtype || type) + "\">";
 		}
 		
 		// html += "<i class=\"icon-corner-" + direction + "\"></i>";
-	}else{
+	}
+	else{
 		if(type === "customMagicEmoji" || type === "img" || type === "video"){
 			html += "<div class=\"em-widget-msg-wrapper no-bg msgtype-" + (msg.subtype || type) + "\">";
-		}else if(type === "file"){
+		}
+		else if(type === "file"){
 			html += "<div class=\"em-widget-msg-wrapper msgtype-" + (msg.subtype || type) + "\">";
 		}
 		else{
 			html += "<div class=\"em-widget-msg-wrapper bg-color msgtype-" + (msg.subtype || type) + "\">";
 		}
-		// html += "<i class=\"fg-color icon-corner-" + direction + "\"></i>"; 
+		// html += "<i class=\"fg-color icon-corner-" + direction + "\"></i>";
 	}
 
 	// 设置消息气泡的突起位置
