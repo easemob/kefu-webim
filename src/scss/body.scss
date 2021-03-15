@@ -165,7 +165,7 @@ body.big-window-h5{
 	background:#f4f7fa;
 	z-index:1;
 	border-radius:4px;
-    color: #757575;
+    color: #f97373;
 	font-size:12px;
 	display:none;
 	height: 42px;
@@ -175,7 +175,7 @@ body.big-window-h5{
 		width: 100%;
 		background-color: #fff3bf;
 		border-radius:3px;
-		padding:6px 0;
+		padding:4px 0;
 		height:100%;
 		box-sizing: border-box;
 
@@ -194,8 +194,8 @@ body.big-window-h5{
 		}
 	}
 	.content {
-		width: 80%;
-		// vertical-align: middle;
+		width: 83%;
+		text-align: justify;
 		line-height: 16px;
 		margin-left: 30px;
 		word-break: break-word;
@@ -464,7 +464,7 @@ body.big-window-h5{
 	position: absolute;
 	top: 0;
 	height: 42px;
-	color: #65758C;
+	color: #f97373;
 	line-height: 42px;
 	// padding: 5px;
 	background:#f4f7fa;
@@ -474,7 +474,7 @@ body.big-window-h5{
 		background-color: #fff3bf;
 		border-radius:3px;
 		height: 100%;
-		padding:6px 0;
+		padding:4px 0;
 		box-sizing: border-box;
 	}
 	.contentDom{
@@ -482,7 +482,6 @@ body.big-window-h5{
 		height: 100%;
 		overflow-y: auto;
 		box-sizing: border-box;
-		// display:flex;
 		align-items:center;
 		padding-left:5px;
 		img{
@@ -491,9 +490,8 @@ body.big-window-h5{
 		}
 	}
 	.content {
-		width: 80%;
-		// vertical-align: middle;
-		line-height: 16px;
+		width: 83%;
+		line-height: 18px;
 		margin-left: 30px;
 		word-break: break-word;
 		overflow: hidden;
@@ -502,11 +500,12 @@ body.big-window-h5{
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 		font-size:12px;
+		text-align: justify;
 	}
 	.tip-close {
 		position: absolute;
 		top: 0px;
-		right: 10px;
+		right: 5px;
 		height: 30px;
 		color: #c3c3c3;
 		cursor:pointer;

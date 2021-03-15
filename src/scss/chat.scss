@@ -147,6 +147,13 @@
 		background: #fff;
 		color:#566477;
 		border-radius: 0 8px 8px 8px;
+		&.no-bg{
+			background:none;
+			overflow: hidden;
+			.em-widget-msg-container{
+				padding: 0px;
+			}
+		}
 		.icon-corner-left {
 			position: absolute;
 			top: 5px;
@@ -227,6 +234,7 @@
 		text-align: left;
 		clear: both;
 		background:#fff;
+		padding-bottom: 8px; 
 		&:after {
 			content: '';
 			clear: both;
@@ -420,10 +428,10 @@
 			height: 52px;
 			text-align: center;
 			float: left;
-			background-color: rgb(58, 164, 221);
+			background-color: rgba(0,155,242,0.2); 
 			border-radius: 2px;
 			margin: 4px;
-			color: #fff;
+			color: #009BF2;
 			&:before {
 				font-size: 50px;
 				line-height: 50px;
@@ -443,7 +451,7 @@
 				width: 100%;
 				overflow: hidden;
 				&.filename {
-					color: rgb(0, 0, 0);
+					color: #606b7b;
 					font-size: 14px;
 				}
 				&.filesize {
@@ -478,7 +486,7 @@
 		overflow: hidden;
 		min-width: 190px;
 		padding: 0;
-		background-color: rgb(251, 251, 251);
+		// background-color: rgb(251, 251, 251);
 		> .list-title { 
 			padding: 10px;
 			background-color: white;

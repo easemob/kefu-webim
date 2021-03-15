@@ -61,8 +61,8 @@
 	}
 	.em-self-wrapper {
 		top: 0;
-		bottom: 60px;
-		height: calc(100% - 60px);
+		bottom: 80px;
+		height: calc(100% - 80px);
 	}
 	.em-widget-header-nickname,
 	.em-header-status-text {
@@ -79,22 +79,33 @@
 		border-right: none;
 	}
 	.em-widget-tip span {
-		font-size: 1.1rem;
+		font-size: 1rem;
 	}
 	.em-widget-risk-warning .content{
-		font-size: 1.1rem;
+		font-size: 1rem;
 	}
 	.em-widget-header {
+		height: 40px;
+    	line-height: 40px;
 		font-size: 1.1rem;
 		border-radius: 0;
 		box-shadow: none;
+		.em-agent-face{
+			width: 30px;
+			height: 30px;
+			display:none;
+		}
 	}
+	.em-widget-content-box{
+		top: 40px;
+	}
+	
 	.em-btn-list button {
 		font-size: 1.2rem;
 		line-height: 26px;
 		box-shadow: none;
 	}
-	.em-widget-msg-container {
+	.em-widget-msg-container { 
 		font-size: 1.2rem;
 		padding: 8px;
 		.list-title{
@@ -107,6 +118,7 @@
 		&.em-widget-msg-list{
 			width: 100%;
 			box-sizing: border-box;
+			padding:0;
 		}
 		&.em-widget-msg-video{ 
 			width: 100%;
@@ -192,8 +204,7 @@
 		padding: 6px 3px 15px 0;
 		padding-bottom: unquote('max(3px, env(safe-area-inset-bottom))');//iOS 底下圆弧的高度
 		box-sizing: border-box;
-		background-color: white;
-		// box-shadow: 0 -1px 0 #e5e5e5;
+		background-color: #fbfbfb;
 		border-right: none;
 		.queuing-number-status{
 			font-size:1.2rem;
@@ -265,7 +276,7 @@
 			line-height: 18px;
 			font-size: 1.1rem;
 			color: #1a1a1a;
-			background: #f4f7fa;
+			background: #fff;
 			// box-shadow: 0 1px 3px rgba(0, 0, 0, .2) inset;
 		}
 		.em-widget-send {
@@ -337,6 +348,7 @@
 	}
 	.contact-customer-service{
 		font-size:1.1rem;
+		margin: 0 10px 30px 10px;
 	}
 	.ticket{
 		.wrapper{

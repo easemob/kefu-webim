@@ -361,7 +361,12 @@ function genDomFromMsg(msg, isReceived, isHistory){
 
 	// wrapper 开始
 	if(direction === "left"){
-		html += "<div class=\"em-widget-msg-wrapper msgtype-" + (msg.subtype || type) + "\">";
+		if(type === "customMagicEmoji" || type === "img" || type === "video"){
+			html += "<div class=\"em-widget-msg-wrapper no-bg msgtype-" + (msg.subtype || type) + "\">";
+		}else{
+			html += "<div class=\"em-widget-msg-wrapper msgtype-" + (msg.subtype || type) + "\">";
+		}
+		
 		// html += "<i class=\"icon-corner-" + direction + "\"></i>";
 	}else{
 		if(type === "customMagicEmoji" || type === "img" || type === "video"){
