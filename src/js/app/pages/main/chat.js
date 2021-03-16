@@ -514,7 +514,7 @@ function _bindEvents(){
 		}, false);
 	}
 
-	if(utils.isAndroid){
+	if(utils.isMobile){
 		// 全屏播放视频
 		utils.live("div.icon-play-box", "click", function(){
 			var url = this.previousSibling.dataset.url;

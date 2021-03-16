@@ -177,6 +177,7 @@
 			.video-btn{
 				width: 100%;
 				height: 100%;
+				border-radius: 8px 0 8px 8px;
 			}
 			&.em-widget-msg-list{
 				width: 100%;
@@ -230,6 +231,7 @@
 			.video-btn{
 				width: 100%;
 				height: 100%;
+				border-radius: 8px 0 8px 8px;
 			}
 			// >span{
 			// 	color:#fff;
@@ -378,10 +380,7 @@
 			white-space: pre-wrap;
 		}
 		&.em-widget-msg-video{
-			max-height:300px;
-			video{
-				max-height:300px;
-			}
+			
 		}
 	}
 	.em-widget-msg-order, .em-widget-msg-track {

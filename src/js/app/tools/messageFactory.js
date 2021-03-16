@@ -119,7 +119,7 @@ function genMsgContent(msg){
 		// 	   + "</video>";
 		// break;
 		//
-		if(utils.isAndroid){
+		if(utils.isMobile){
 			// 取第一帧，安卓黑屏
 			var newUrl;
 			// if(!utils.isAndroid){
