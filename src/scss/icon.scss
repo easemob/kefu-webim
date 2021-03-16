@@ -555,3 +555,40 @@
 		content: "\cc11";
 	}
 }
+// h5 新图标
+.icon-picture-new {
+	&:before {
+		@extend .icon-base;
+		content: "\e696";
+	}
+}
+.icon-attachment-new {
+	&:before {
+		@extend .icon-base;
+		content: "\e64a";
+	}
+}
+.icon-sendvideo-new {
+	&:before {
+		@extend .icon-base;
+		content: "\e64d";
+	}
+}
+.icon-note-new {
+	&:before {
+		@extend .icon-base;
+		content: "\e623";
+	}
+}
+.icon-video-new {
+	&:before {
+		@extend .icon-base;
+		content: "\e80a";
+	}
+}
+.icon-flower-new {
+	&:before {
+		@extend .icon-base;
+		content: "\e680";
+	}
+}

@@ -8,6 +8,7 @@ body.window-pc{
 		box-shadow: 0px 10px 20px 0 rgba(0, 0, 0, 0.3);
 	}
 	.em-widget-to-kefu{
+		cursor: pointer;
 		float: right;
 		margin-right: 10px;
 		margin-top: -27px;
@@ -27,6 +28,7 @@ body.window-pc{
 body.window-demo{
 	.em-widget-to-kefu{
 		float: right;
+		cursor: pointer;
 		margin-right: 10px;
 		margin-top: -27px;
 		>i{
@@ -165,17 +167,17 @@ body.big-window-h5{
 	background:#f4f7fa;
 	z-index:1;
 	border-radius:4px;
-    color: #f97373;
+    color: #ff7474;
 	font-size:12px;
 	display:none;
-	height: 42px;
+	height: 55px;
 	box-sizing: border-box;
-	// padding:5px;
+	padding:5px;
 	>div{
 		width: 100%;
 		background-color: #fff3bf;
 		border-radius:3px;
-		padding:4px 0;
+		padding:6px 0;
 		height:100%;
 		box-sizing: border-box;
 
@@ -463,10 +465,10 @@ body.big-window-h5{
 	width:100%;
 	position: absolute;
 	top: 0;
-	height: 42px;
-	color: #f97373;
+	height: 55px;
+	color: #ff7474;
 	line-height: 42px;
-	// padding: 5px;
+	padding: 5px;
 	background:#f4f7fa;
 	box-sizing: border-box;
 	>div{
@@ -474,7 +476,7 @@ body.big-window-h5{
 		background-color: #fff3bf;
 		border-radius:3px;
 		height: 100%;
-		padding:4px 0;
+		padding:6px 0;
 		box-sizing: border-box;
 	}
 	.contentDom{

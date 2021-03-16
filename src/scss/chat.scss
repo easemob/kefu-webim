@@ -134,6 +134,15 @@
 }
 
 .em-widget-left {
+	position: relative;
+	margin-bottom: 30px;
+	.userNickname{
+		position: absolute;
+		top: -22px;
+		left: 10px;
+		color: #7B899C;
+		font-size: 12px;
+	}
 	> img.avatar {
 		width: 30px;
 		height: 30px;
@@ -183,7 +192,7 @@
 			position: absolute;
 			right: -10px;
 			top: 0;
-			color: #999;
+			color: #e4e4e4;
 			&:before{
 				font-size:20px;
 			}

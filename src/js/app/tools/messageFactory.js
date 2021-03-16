@@ -361,6 +361,11 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		if(utils.isMobile){
 			html += "<img class=\"avatar\" src=\"" + _getAvatar(msg) + "\">";
 		}
+		else{
+			if(msg.ext && msg.ext.weichat){
+				html += "<span class=\"userNickname\">"+ msg.ext.weichat.agent.userNickname +"</span>";
+			}
+		}
 	}
 
 	// wrapper 开始

@@ -332,8 +332,8 @@ function _initAutoGrow(){
 
 		utils.toggleClass(this, "icon-keyboard-up", status);
 		utils.toggleClass(this, "icon-keyboard-down", !status);
-
 		emojiPanel.move(inputBoxPosition, height);
+
 		switch(inputBoxPosition){
 		case "up":
 			doms.editorView.style.bottom = "auto";
@@ -376,6 +376,7 @@ function _initAutoGrow(){
 			doms.chatWrapper.style.bottom = height + "px";
 		}
 		emojiPanel.move(inputBoxPosition, height);
+		
 		_scrollToBottom();
 	}
 }
@@ -472,7 +473,7 @@ function _bindEvents(){
 			}else{
 				doms.chatWrapper.style.bottom = height + "px";
 			}
-
+			emojiPanel.move(inputBoxPosition, height);
 		}
 	});
 	utils.on(doms.chatWrapper, "touchmove", function(){
@@ -486,6 +487,7 @@ function _bindEvents(){
 			}else{
 				doms.chatWrapper.style.bottom = height + "px";
 			}
+			emojiPanel.move(inputBoxPosition, height);
 		}
 	});
 
@@ -1032,6 +1034,7 @@ function _bindEvents(){
 		}else{
 			doms.chatWrapper.style.bottom = height + "px";
 		}
+		emojiPanel.move(inputBoxPosition, height);
 	})
 }
 

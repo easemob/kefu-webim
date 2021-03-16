@@ -101,12 +101,21 @@ function move(inputBoxPosition, offset){
 
 	switch(inputBoxPosition){
 	case "up":
-		dom.style.top = HEIGHT_OF_TOP_NAVIGATOR + offsetHeight + "px";
+		if(offsetHeight > 60){
+			dom.style.top = "60px";
+		}else{
+			dom.style.top = offsetHeight + "px";
+		}
 		dom.style.bottom = "auto";
 		break;
 	case "down":
 		dom.style.top = "auto";
-		dom.style.bottom = offsetHeight + "px";
+		if(offsetHeight > 60){
+			dom.style.bottom = 0 + "px";
+		}else{
+			dom.style.bottom = offsetHeight + "px";
+		}
+		
 		break;
 	default:
 		throw new Error("unexpect direction.");
