@@ -363,7 +363,8 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		}
 		else{
 			if(msg.ext && msg.ext.weichat){
-				html += "<span class=\"userNickname\">"+ msg.ext.weichat.agent.userNickname +"</span>";
+				var name = msg.ext.weichat.agent.userNickname || msg.ext.weichat.official_account.name;
+				html += "<span class=\"userNickname\">"+ name +"</span>";
 			}
 		}
 	}
