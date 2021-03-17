@@ -31,9 +31,19 @@ function _updateAgentNickname(officialAccount){
 	var agentAvatar = officialAccount.agentAvatar;
 	var isSessionOpen = officialAccount.isSessionOpen;
 	var officialAccountType = officialAccount.type;
-
 	var defaultAvatar = commonConfig.getConfig().staticPath + "/img/default_avatar.png";
-	$agentFace.src = officialAccount.img || defaultAvatar;
+	var faceImg = defaultAvatar;
+	if(agentNickname){
+		faceImg = agentAvatar;
+	}
+	else if(officialAccount.img){
+		faceImg = officialAccount.img
+	}
+	else{
+		faceImg = defaultAvatar;
+	}
+	$agentFace.src = faceImg;
+	utils.removeClass($agentFace, "hide");
 
 	// fake: update system agent avatar
 	if(officialAccountType === "SYSTEM"){
