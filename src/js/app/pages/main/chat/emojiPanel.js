@@ -101,7 +101,7 @@ function move(inputBoxPosition, offset){
 
 	switch(inputBoxPosition){
 	case "up":
-		if(offsetHeight > 60){
+		if(offsetHeight > 200){
 			dom.style.top = "60px";
 		}else{
 			dom.style.top = offsetHeight + "px";
@@ -110,8 +110,8 @@ function move(inputBoxPosition, offset){
 		break;
 	case "down":
 		dom.style.top = "auto";
-		if(offsetHeight > 60){
-			dom.style.bottom = 0 + "px";
+		if(offsetHeight > 200){
+			dom.style.bottom = 3 + "px";
 		}else{
 			dom.style.bottom = offsetHeight + "px";
 		}
