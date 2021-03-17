@@ -33,7 +33,7 @@ function _updateAgentNickname(officialAccount){
 	var officialAccountType = officialAccount.type;
 	var defaultAvatar = commonConfig.getConfig().staticPath + "/img/default_avatar.png";
 	var faceImg = defaultAvatar;
-	if(agentNickname){
+	if(agentNickname && agentAvatar){
 		faceImg = agentAvatar;
 	}
 	else if(officialAccount.img){
