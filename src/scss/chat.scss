@@ -131,11 +131,16 @@
 	width: 98%;
 	text-align: left;
 	margin: 8px 0;
+	.msgtype-video{
+		max-width: 50%;
+	}
 }
 
 .em-widget-left {
 	position: relative;
 	margin-bottom: 30px;
+	margin-top: 20px;
+	left: 8px;
 	.userNickname{
 		position: absolute;
 		top: -22px;
@@ -177,6 +182,7 @@
 			.video-btn{
 				width: 100%;
 				height: 100%;
+				// max-height: 300px;
 				border-radius: 0 8px 8px 8px;
 			}
 			&.em-widget-msg-list{
@@ -202,6 +208,7 @@
 }
 
 .em-widget-right {
+	margin-bottom:20px;
 	.em-widget-msg-wrapper {
 		float: right;
 		margin-right: 8px;
@@ -231,6 +238,7 @@
 			.video-btn{
 				width: 100%;
 				height: 100%;
+				// max-height: 300px;
 				border-radius: 8px 0 8px 8px;
 			}
 			// >span{
@@ -385,6 +393,8 @@
 	}
 	.em-widget-msg-order, .em-widget-msg-track {
 		position: relative;
+		box-shadow: 0 2px 2px 1px rgba(148, 148, 148, 0.1);
+		color: #566477;
 		> h1 {
 			font-size: 14px;
 			line-height: 20px;
@@ -582,15 +592,14 @@
 		}
 	}
 	.article-msg-outer {
-		max-width: 360px;
-		margin: 0 auto;
-		padding: 0 10px;
+		max-width: 190px;
+		padding: 0 8px;
 		box-sizing: border-box;
 		width: 90%;
 		background: #fff;
-		border-radius: 4px;
-		// border: solid 1px #BFBFBF;
+		border-radius: 0 8px 8px 8px;
 		font-size: 12px;
+		left: 18px;
 	}
 	.article-drawer{
 		display: flex;
@@ -645,10 +654,11 @@
 	.only-one-article {
 		.body {
 			padding: 10px 0;
-			border-bottom: 1px solid #E9E9E9;
+			border-bottom: 1px solid #f4f7fa;
 			.title {
 				font-weight: normal;
-				font-size: 14px;
+				font-size: 12px;
+				color: #65758C;
 				line-height: 24px;
 				height: 24px;
 				overflow: hidden;
@@ -663,6 +673,8 @@
 			.cover {
 				width: 100%;
 				margin: 5px 0;
+				box-sizing: border-box;
+    			border: 4px solid rgba(132,145,163,0.10);
 				img {
 					width: 100%;
 				}
@@ -678,14 +690,18 @@
 			}
 		}
 		.footer {
-			font-size: 14px;
-			padding: 10px 0;
+			font-size: 13px;
+			padding: 8px 0;
+			color: #3c3c3c;
 			position: relative;
 			i {
 				position: absolute;
 				top: 5px;
 				color: #dcdcdc;
-				right: -10px;
+				right: -5px;
+				&:before{
+					font-size:20px;
+				}
 			}
 		}
 	}
