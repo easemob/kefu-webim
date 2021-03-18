@@ -124,7 +124,7 @@
 			width: 100%;
 			height: 100%;
 			box-sizing: border-box;
-			// overflow: hidden;
+			font-size: 2.5rem; //很奇怪，设置字体越小，video盒子有灰边
 			position:relative;
 			.video-btn{
 				width:100%;
@@ -132,11 +132,8 @@
 				z-index:-1;
 			}
 			.video-btn-android{
-				width:auto;
+				width:160px;
 				height:auto;
-				max-height: 200px;
-				max-width: 150px;
-				min-width: 100px;
 			}
 			.video-button{
 				height: 100%;
@@ -153,8 +150,9 @@
 				top: 0;
 				left: 0;
 				width: 100%;
-    			height: 100%;
-				background: rgba(0,0,0,.4);
+				height: 98%;
+				border-radius: 8px 0 8px 8px;
+				background: rgba(0,0,0,.3);
 				display: flex;
 				align-items: center;
 				justify-content: space-around;

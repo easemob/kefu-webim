@@ -98,10 +98,10 @@
 	background-color: #fbfbfb;
 	font-size: 12px;
 	opacity: 0.7;
+	overflow: hidden;
 	>a{
 		border-radius: 4px;
-		padding: 1px 3px;
-		// color: #666;
+		margin-top:2px;
 		color: #b7b5b6;
 		text-decoration: none;
 		margin-right: 16px;
@@ -601,7 +601,7 @@
 		left: 18px;
 	}
 	.only-one-article{
-		max-width: 190px;
+		max-width: 240px;
 	}
 	.article-drawer{
 		display: flex;
@@ -655,7 +655,7 @@
 	}
 	.only-one-article {
 		.body {
-			padding: 10px 0;
+			padding: 8px 0;
 			border-bottom: 1px solid #f4f7fa;
 			.title {
 				font-weight: normal;
@@ -670,7 +670,7 @@
 			}
 			.create-time {
 				color: #9B9B9B;
-				line-height: 32px;
+				line-height: 24px;
 			}
 			.cover {
 				width: 100%;
@@ -694,7 +694,7 @@
 		.footer {
 			font-size: 13px;
 			padding: 8px 0;
-			color: #3c3c3c;
+			color: #5a5a5a;
 			position: relative;
 			i {
 				position: absolute;

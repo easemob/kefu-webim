@@ -228,7 +228,7 @@ body.big-window-h5{
 .chat-wrapper {
 	position: absolute;
 	top: 0;
-	bottom: 140px;
+	bottom: 170px;
 	background-color: #F5F7FA;
 	width: 100%;
 	// border-bottom: 1px solid #E5E9F3;
@@ -567,7 +567,7 @@ body.big-window-h5{
 .em-widget-wrapper.has-tip {
 	/* 有信息栏时 消息窗 下移 */
 	.chat-wrapper {
-		top: 48px;
+		top: 52px;
 	}
 	/* 显示信息栏 */
 	.em-widget-tip {
@@ -577,7 +577,7 @@ body.big-window-h5{
 .em-widget-wrapper.has-risk-tip {
 	/* 有信息栏时 消息窗 下移 */
 	.chat-wrapper {
-		top: 48px;
+		top: 52px;
 	}
 }
 .emoji-bottom160{

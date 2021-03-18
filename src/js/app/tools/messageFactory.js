@@ -128,14 +128,9 @@ function genMsgContent(msg){
 		//
 		if(utils.isMobile){
 			// 取第一帧，安卓黑屏
-			var newUrl;
-			if(!utils.isAndroid){
-				newUrl = msg.url + "#t=1";
-			}
-			else{
-				newUrl = msg.url;
-			}
-			html = "<video preload='metadata'  poster=\"" + msg.thumb + "\" data-url=\"" + newUrl + " \" class=\"video-btn video-btn-android\" x5-video-player-type='h5' src=\"" + msg.url + " \">"
+			var newUrl = msg.url + "#t=1"; 
+
+			html = "<video preload='metadata'  poster=\"" + msg.thumb + "\" data-url=\"" + msg.url + " \" class=\"video-btn video-btn-android\" x5-video-player-type='h5' src=\"" + newUrl + " \">"
 			+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"
 			+ "<source  src=\"" + msg.url + " \" type=\"video/webm\"></source>"
 			+ "<source  src=\"" + msg.url + " \" type=\"video/ogg\"></source>"
