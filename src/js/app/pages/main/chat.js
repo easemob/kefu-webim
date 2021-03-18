@@ -310,6 +310,18 @@ function _checkGradeType(){
 	apiHelper.getGradeType().then(function(data){
 		var entity = data.entity;
 		var grade = entity.grade;
+
+		var defaultAvatar = commonConfig.getConfig().staticPath + "/img/default_avatar.png";
+		var avatar = entity.avatar;
+		var topBar = document.querySelector(".em-widget-header");
+		$agentFace = topBar.querySelector(".em-agent-face");
+		if(avatar) { 
+			$agentFace.src = avatar;
+		}else{
+			$agentFace.src = defaultAvatar;
+		}
+		utils.removeClass($agentFace, "hide");
+
 		if(grade == "TRIAL"){
 			riskWarning.style.display = "block";
 			utils.addClass(doms.imChat, "has-risk-tip");
