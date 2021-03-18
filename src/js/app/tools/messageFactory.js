@@ -388,6 +388,12 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		// html += "<i class=\"icon-corner-" + direction + "\"></i>";
 	}
 	else{
+		var myconfig = commonConfig.getConfig();
+		var themeName = myconfig.ui.themeName;
+		if(themeName && themeName.indexOf("theme_custom") > -1){
+			var arr = themeName.split("theme_custom");
+			var color = arr[1];
+		}
 		// 无背景
 		if(type === "customMagicEmoji" || type === "img" || type === "video"){
 			html += "<div class=\"em-widget-msg-wrapper no-bg msgtype-" + (msg.subtype || type) + "\">";
@@ -395,6 +401,9 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		// 原背景
 		else if(type === "file" || type === "order" || type === "track"){
 			html += "<div class=\"em-widget-msg-wrapper msgtype-" + (msg.subtype || type) + "\">";
+		}
+		else if(color){
+			html += "<div class=\"em-widget-msg-wrapper msgtype-" + (msg.subtype || type) + "\" style=\"color:#fff; background: " + color + " \">";
 		}
 		else{
 			html += "<div class=\"em-widget-msg-wrapper bg-color msgtype-" + (msg.subtype || type) + "\">";

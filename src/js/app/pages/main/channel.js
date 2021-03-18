@@ -513,6 +513,12 @@ function _handleMessage(msg, options){
 
 	}
 
+	var myconfig = commonConfig.getConfig();
+	var themeName = myconfig.ui.themeName;
+	if(themeName && themeName.indexOf("theme_custom") > -1){
+		var arr = themeName.split("theme_custom");
+		var color = arr[1];
+	}
 
 	// ===========
 	// 消息结构构造
@@ -695,8 +701,10 @@ function _handleMessage(msg, options){
 					// else{
 					// 	className += "bg-hover-color";
 					// }
+					
 					return "<li><button "
-					+ "class=\"js_robotbtn " + (profile.shouldMsgActivated(serviceSessionId) ? "fg-color" : "disabled") + "\" "
+					+ "class=\"js_robotbtn " + (profile.shouldMsgActivated(serviceSessionId) ? (color ? "" : "fg-color") : "disabled") + "\" "
+					+ "style=\"color: " + color + " \""
 					+ "data-id=\"" + item.id + "\" "
 					+ ">" + item.name + "</button> <i class='icon-arrow-right'></i> </li>";
 				}).join("") || ""
@@ -725,7 +733,8 @@ function _handleMessage(msg, options){
 					}
 	
 					return "<button "
-					+ "class=\"js_transferManualbtn fg-color" + (profile.shouldMsgActivated(serviceSessionId) ? "" : "disabled") + "\" "
+					+ "class=\"js_transferManualbtn" + (profile.shouldMsgActivated(serviceSessionId) ?  (color ? "" : "fg-color") : "disabled") + "\" "
+					+ "style=\"color: " + color + " \""
 					+ "data-id=\"" + item.id + "\" "
 					+ "data-queue-id=\"" + item.queueId + "\" "
 					+ "data-queue-type=\"" + item.queueType + "\" "
@@ -743,9 +752,13 @@ function _handleMessage(msg, options){
 				+ _.map(msg.data.children, function(item){
 					var queueName = item.queueName;
 					var label = item.menuName;
-					var className = "js_skillgroupbtn fg-color";
+					var className = color ? "js_skillgroupbtn" : "js_skillgroupbtn fg-color";
 	
-					return "<li><button class=\"" + className + "\" data-queue-name=\"" + queueName + "\">" + label + "</button><i class='icon-arrow-right'></i></li>";
+					return "<li><button "
+						+ " class=\"" + className + "\""
+						+ "style=\"color: " + color + " \""
+						+ "data-queue-name=\"" + queueName + "\">"
+						+ label + "</button><i class='icon-arrow-right'></i></li>";
 				}).join("") || ""
 				+ "</div>";
 			message.data = msg.data.menuName;
