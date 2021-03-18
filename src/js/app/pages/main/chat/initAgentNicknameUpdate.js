@@ -40,7 +40,7 @@ function _updateAgentNickname(officialAccount){
 		faceImg = officialAccount.img
 	}
 	else{
-		// faceImg = defaultAvatar;
+		faceImg = $agentFace.src;
 	}
 	$agentFace.src = faceImg;
 	// utils.removeClass($agentFace, "hide");
