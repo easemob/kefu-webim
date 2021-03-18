@@ -101,12 +101,19 @@ function genMsgContent(msg){
 		// 历史会话中 filesize = 0
 		// 访客端发文件消息 filesize = undefined
 		// 需要过滤这两种情况，暂时只显示坐席发过来的文件大小
+		var newUrl;
+		if(msg.url.indexOf("blob:") == 0){
+			newUrl = msg.url;
+		}
+		else{
+			newUrl = msg.url.replace("http:", "https:")
+		}
 		html = "<i class=\"icon-attachment container-icon-attachment\"></i>"
 			+ "<span class=\"file-info\">"
 			+ "<p class=\"filename\">" + msg.filename + "</p>"
 			+ "<p class=\"filesize\">" + utils.filesizeFormat(msg.fileLength) + "</p>"
 			+ "</span>"
-			+ "<a target=\"_blank\" href=\"" + msg.url
+			+ "<a target=\"_blank\" href=\"" + newUrl
 			+ "\" class=\"icon-download container-icon-download\" title=\""
 			+ msg.filename + "\" download=\"" + msg.filename + "\"></a>";
 		break;
