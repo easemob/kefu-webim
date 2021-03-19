@@ -70,7 +70,13 @@ function genMsgContent(msg){
 	case "customMagicEmoji":
 		// 给图片消息或附件消息的url拼上hostname
 		if(msg.url && !/^http?/.test(msg.url)){
-			msg.url = location.protocol + commonConfig.getConfig().domain + msg.url;
+			// commonConfig.getConfig().domain 有时有http?有时没有？
+			if(/^http?/.test(commonConfig.getConfig().domain)){
+				msg.url = commonConfig.getConfig().domain + msg.url;
+			}
+			else{
+				msg.url = location.protocol + commonConfig.getConfig().domain + msg.url;
+			}
 		}
 		// todo: remove a
 		html = "<a href=\"javascript:;\"><img class=\"em-widget-imgview\" src=\""
