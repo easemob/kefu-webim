@@ -19,6 +19,9 @@ module.exports = function(){
 			faq: data,
 		}));
 		container.delegate(".question", "click", onMenuClick);
+		container.delegate(".question>i", "click", function(e){
+			e.target.parentNode.click();
+		});
 	});
 
 	// 菜单点击
