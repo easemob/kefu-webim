@@ -175,7 +175,7 @@ module.exports = {
 	UPLOAD_FILESIZE_LIMIT: 1024 * 1024 * 10,
 
 	// 超时未收到 kefu-ack 启用第二通道发消息
-	FIRST_CHANNEL_MESSAGE_TIMEOUT: 10000,
+	FIRST_CHANNEL_MESSAGE_TIMEOUT: 2000,
 
 	// 发送图片时 超时未收到 kefu-ack 启用第二通道发消息
 	FIRST_CHANNEL_IMG_MESSAGE_TIMEOUT: 15000,

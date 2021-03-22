@@ -424,8 +424,8 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		html += "<div id=\"" + id
 			+ "_failed\" data-type=\"" + type + "\" class=\"em-widget-msg-status hide\">"
 			+ "<span>" + __("common.send_failed") + "</span><i class=\"icon-circle\"><i class=\"icon-exclamation\"></i></i></div>"
-			+ "<div id=\"" + id
-			+ "_loading\" class=\"em-widget-msg-loading\">" + LOADING + "</div>";
+			// + "<div id=\"" + id
+			// + "_loading\" class=\"em-widget-msg-loading\">" + LOADING + "</div>";
 	}
 
 	// todo: simplify the class name em-widget-msg
