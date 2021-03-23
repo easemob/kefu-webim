@@ -102,7 +102,7 @@ function _initConnection(onReadyCallback){
 	conn = new WebIM.connection({
 		url: config.xmppServer,
 		retry: true,
-		isMultiLoginSessions: config.resources,
+		isMultiLoginSessions: true,
 		heartBeatWait: _const.HEART_BEAT_INTERVAL,
 		https: true
 	});
