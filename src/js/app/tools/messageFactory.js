@@ -112,7 +112,7 @@ function genMsgContent(msg){
 			newUrl = msg.url;
 		}
 		else{
-			newUrl = msg.url.replace("http:", "https:")
+			newUrl = msg.url.replace("http:", "https:");
 		}
 		html = "<i class=\"icon-attachment container-icon-attachment\"></i>"
 			+ "<span class=\"file-info\">"
@@ -134,7 +134,7 @@ function genMsgContent(msg){
 		//
 		if(utils.isMobile){
 			// 取第一帧，安卓黑屏
-			var newUrl = msg.url + "#t=1"; 
+			var newUrl = msg.url + "#t=1";
 
 			html = "<video preload='metadata'  poster=\"" + msg.thumb + "\" data-url=\"" + msg.url + " \" class=\"video-btn video-btn-android\" x5-video-player-type='h5' src=\"" + newUrl + " \">"
 			+ "<source  src=\"" + msg.url + " \" type=\"video/mp4\"></source>"
@@ -225,6 +225,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	var dom = document.createElement("div");
 	var direction = isReceived ? "left" : "right";
 	var articleDom;
+	var articleTextDom;
 
 	if(type === "article"){
 		var msgArticles = utils.getDataByPath(msg, "ext.msgtype.articles");
@@ -236,10 +237,13 @@ function genDomFromMsg(msg, isReceived, isHistory){
 				articleNode = "<div class=\"article-msg-outer more-articles specialArticle directly-article-drawer\" style=\"margin-bottom:6px;\">"
 				+ _.map(msgArticles, function(item, index){
 					var str = "";
-					// articleDom = apiHelper.getArticleHtml(msgArticles[index].url);
-					var uuid = utils.uuid();
-					msgArticles[index].url = msgArticles[index].url.replace("http:", "https:");
-					str =  "<div><iframe id=" + uuid + " src=" + msgArticles[index].url + " height=\"500px%\" width=\"100%\" frameborder=\"0\"></iframe></div>";
+					articleDom = apiHelper.getArticleHtml(msgArticles[index].url);
+					// var uuid = utils.uuid();
+					articleTextDom = utils.createElementArticleFromHTML(articleDom.responseText);
+					// msgArticles[index].url = msgArticles[index].url.replace("http:", "https:");
+					// str =  "<div><iframe id=" + uuid + " src=" + msgArticles[index].url + " height=\"500px%\" width=\"100%\" frameborder=\"0\"></iframe></div>";
+					utils.addClass(articleTextDom.getElementsByTagName("img"), "em-widget-imgview");
+					str =  "<div>" + articleTextDom.getElementsByTagName("div")[0].innerHTML + "</div>";
 					
 					return str;
 				}).join("") || ""
@@ -250,9 +254,11 @@ function genDomFromMsg(msg, isReceived, isHistory){
 					+ _.map(msgArticles, function(item, index){
 						var str = "";
 						articleDom = apiHelper.getArticleHtml(msgArticles[index].url);
-						var uuid = utils.uuid();
-						item.url = item.url.replace("http:", "https:");
-						str =  "<div class=\"article-msg-outer more-articles specialArticle\" style=\"margin-bottom:6px;\">" + "<div><iframe id=" + uuid + " src=" + item.url + " height=\"500px%\" width=\"100%\" frameborder=\"0\"></iframe></div></div>";
+						articleTextDom = utils.createElementArticleFromHTML(articleDom.responseText);
+						utils.addClass(articleTextDom.getElementsByTagName("img"), "em-widget-imgview");
+						// var uuid = utils.uuid();
+						// item.url = item.url.replace("http:", "https:");
+						str =  "<div class=\"article-msg-outer more-articles specialArticle\" style=\"margin-bottom:6px;\">" + articleTextDom.getElementsByTagName("div")[0].innerHTML + "</div>";
 						return str;
 					}).join("") || "";
 			}
@@ -369,11 +375,9 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		if(utils.isMobile){
 			html += "<img class=\"avatar\" src=\"" + _getAvatar(msg) + "\">";
 		}
-		else{
-			if(msg.ext && msg.ext.weichat){
-				var name = msg.ext.weichat.agent.userNickname || msg.ext.weichat.official_account.name;
-				html += "<span class=\"userNickname\">"+ name +"</span>";
-			}
+		else if(msg.ext && msg.ext.weichat){
+			var name = msg.ext.weichat.agent.userNickname || msg.ext.weichat.official_account.name;
+			html += "<span class=\"userNickname\">" + name + "</span>";
 		}
 	}
 
@@ -423,7 +427,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		// todo: 去掉 type
 		html += "<div id=\"" + id
 			+ "_failed\" data-type=\"" + type + "\" class=\"em-widget-msg-status hide\">"
-			+ "<span>" + __("common.send_failed") + "</span><i class=\"icon-circle\"><i class=\"icon-exclamation\"></i></i></div>"
+			+ "<span>" + __("common.send_failed") + "</span><i class=\"icon-circle\"><i class=\"icon-exclamation\"></i></i></div>";
 			// + "<div id=\"" + id
 			// + "_loading\" class=\"em-widget-msg-loading\">" + LOADING + "</div>";
 	}
@@ -529,7 +533,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 					+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
 					+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
 					+ "data-id=\"" + ctrlArgs.id + "\" "
-				+ ">" + ctrlArgs.label + "</button>" 
+				+ ">" + ctrlArgs.label + "</button>"
 			+ "</div>";
 		}
 	}
