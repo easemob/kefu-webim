@@ -598,7 +598,8 @@
 		background: #fff;
 		border-radius: 0 8px 8px 8px;
 		font-size: 12px;
-		left: 18px;
+		// left: 18px;
+		margin: 0 auto;
 	}
 	.only-one-article{
 		max-width: 240px;
@@ -834,8 +835,10 @@
 
 .specialArticle{
 	>div{
+		max-height: 500px;
+		overflow: auto;
 		>div{
-			width: 100%;
+			// width: 100%;
 		}
 	}
 }

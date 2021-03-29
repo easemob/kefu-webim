@@ -133,6 +133,12 @@ module.exports = {
 		tmpDiv.innerHTML = html;
 		return tmpDiv.childNodes[0];
 	},
+
+	createElementArticleFromHTML: function(html){
+		var tmpDiv = document.createElement("div");
+		tmpDiv.innerHTML = html;
+		return tmpDiv;
+	},
 	getBrief: function(str, length){
 		if(typeof str !== "string") return "";
 		return str.length > length ? str.slice(0, length) + "..." : str;
