@@ -23,7 +23,9 @@ module.exports = {
 		press_save_img: "Press to save the picture",
 		session_over_limit: "All agents are busy now. Please try again later…",
 		faq: "FAQs",
-		consult_agent: "Consult agent"
+		consult_agent: "Consult agent",
+		refresh_tip: "You have initiated a consultation on other pages, and the current consultation is invalid. You can initiate a consultation again",
+		re_consultation:"Re consultation"
 	},
 	chat: {
 		agent_is_typing: "Agent is typing...",

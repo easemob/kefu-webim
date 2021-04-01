@@ -645,14 +645,15 @@ function deleteEvent(gid){
 	});
 }
 
-function receiveMsgChannel(){
+function receiveMsgChannel(tabId){
 	return new Promise(function(resolve, reject){
 		api("receiveMsgChannel", {
 			orgName: config.orgName,
 			appName: config.appName,
 			easemobId: config.toUser,
 			tenantId: config.tenantId,
-			visitorEasemobId: config.user.username
+			visitorEasemobId: config.user.username,
+			tabId:tabId
 		}, function(msg){
 			var status = utils.getDataByPath(msg, "data.status");
 			var entities = utils.getDataByPath(msg, "data.entities");

@@ -191,6 +191,23 @@
 		margin-top: -180px;
 		border-radius: 5px;
 	}
+	&.refresh-dialog {
+		text-align: center;
+		z-index: 2000;
+		width: 320px;
+		height: 280px;
+		top: 50%;
+		left: 50%;
+		margin-left: -160px;
+		margin-top: -180px;
+		border-radius: 5px;
+		>p{
+			height: 170px;
+			line-height: 50px;
+			text-align: left;
+			padding: 20px;
+		}
+	}
 	// 粘贴上传对话框
 	&.paste-image {
 		line-height: 300px;

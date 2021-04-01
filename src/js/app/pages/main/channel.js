@@ -11,6 +11,7 @@ var apiHelper = require("./apis");
 var moment = require("moment");
 var commonConfig = require("@/common/config");
 var getToHost = require("@/app/common/transfer");
+var uikit = require("./uikit");
 
 var isNoAgentOnlineTipShowed;
 var receiveMsgTimer;
@@ -81,7 +82,8 @@ module.exports = {
 	initSecondChannle: function(){
 		receiveMsgTimer = clearInterval(receiveMsgTimer);
 		receiveMsgTimer = setInterval(function(){
-			apiHelper.receiveMsgChannel().then(function(msgList){
+			var tabId = utils.getStore("tabId");
+			apiHelper.receiveMsgChannel(tabId).then(function(msgList){
 				_.each(msgList, function(elem){
 					_handleMessage(_transformMessageFormat({ body: elem }), { isHistory: false });
 				});
@@ -148,6 +150,7 @@ function _initConnection(onReadyCallback){
 			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFLINE, []);
 		},
 		onError: function(e){
+			console.log(e)
 			if(e.reconnect){
 				_open();
 			}
@@ -160,6 +163,11 @@ function _initConnection(onReadyCallback){
 			}
 			else{
 				console.error(e);
+			}
+			// 当多端登录挤掉上一个ws链接的时候给出提示
+			if(e.type === 8){
+				_refreshDialog();
+				clearInterval(receiveMsgTimer);
 			}
 		}
 	});
@@ -175,6 +183,22 @@ function _initConnection(onReadyCallback){
 			evaluateTime = 8*3600
 		}
 	});
+}
+function _refreshDialog(){
+	var dialog = uikit.createDialog({
+		contentDom: [
+			"<p class=\"prompt\">",
+			__("common.refresh_tip"),
+			"</p>"
+		].join(""),
+		className: "refresh-dialog"
+	}).addButton({
+		confirmText: __("common.re_consultation"),
+		confirm: function(){
+			window.location.reload();
+		}
+	});
+	dialog.show()
 }
 function _reSend(type, id){
 	if(!id) return;

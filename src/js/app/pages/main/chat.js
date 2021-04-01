@@ -1081,6 +1081,7 @@ function _show(){
 }
 
 function _onReady(){
+	utils.setStore("tabId",new Date().getTime());
 	if(isMessageChannelReady) return;
 
 	isMessageChannelReady = true;

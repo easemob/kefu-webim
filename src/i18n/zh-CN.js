@@ -23,7 +23,9 @@ module.exports = {
 		press_save_img: "长按图片保存到本地",
 		session_over_limit: "目前咨询人数较多，请稍候再试~~~",
 		faq: "常见问题",
-		consult_agent: "点此咨询客服"
+		consult_agent: "点此咨询客服",
+		refresh_tip: "您已在其他页面发起咨询，当前咨询已失效，您可以重新发起咨询。",
+		re_consultation:"重新咨询"
 	},
 	chat: {
 		agent_is_typing: "正在输入...",
