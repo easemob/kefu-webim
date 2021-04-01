@@ -25,7 +25,7 @@ module.exports = {
 		faq: "FAQs",
 		consult_agent: "Consult agent",
 		refresh_tip: "You have initiated a consultation on other pages, and the current consultation is invalid. You can initiate a consultation again",
-		re_consultation:"Re consultation"
+		re_consultation:"Reconnecting"
 	},
 	chat: {
 		agent_is_typing: "Agent is typing...",
