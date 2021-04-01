@@ -49,6 +49,10 @@ function genMsgContent(msg){
 					return validatePhoneInTxt(fragment.value);
 				}).join("");
 				html += "</span>";
+								// 历史消息以及收到的实时消息
+								// html = "<span class=\"text\">" + _.map(value, function(fragment){
+								// 	return fragment.value;
+								// }).join("") + "</span>";
 			}
 			else{
 				// 历史消息以及收到的实时消息
@@ -559,6 +563,11 @@ function isJsonString(str){
 function validatePhoneInTxt(val){
 	var txt = val;
 	var phoneList = [];
+	// 判断是否有链接，如果有则直接返回链接
+	var reg = /(((https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/ig;
+	if(reg.test(val)){
+		return val;
+	}
 	var arr = val.split(/[^0-9/?-]/);
 	_.map(arr, function(item){
 		if(isPhone(item)){
