@@ -185,6 +185,9 @@ function _initConnection(onReadyCallback){
 	});
 }
 function _refreshDialog(){
+	var modelDom = utils.createElementFromHTML("<div class=\"em-model\"></div>");
+	var chat = document.getElementById("em-kefu-webim-chat");
+	chat.append(modelDom);
 	var dialog = uikit.createDialog({
 		contentDom: [
 			"<p class=\"prompt\">",
@@ -193,6 +196,7 @@ function _refreshDialog(){
 		].join(""),
 		className: "refresh-dialog"
 	}).addButton({
+		hideCancel:true,
 		confirmText: __("common.re_consultation"),
 		confirm: function(){
 			window.location.reload();

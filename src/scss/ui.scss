@@ -195,17 +195,23 @@
 		text-align: center;
 		z-index: 2000;
 		width: 320px;
-		height: 280px;
+		height: 170px;
 		top: 50%;
 		left: 50%;
 		margin-left: -160px;
 		margin-top: -180px;
 		border-radius: 5px;
 		>p{
-			height: 170px;
-			line-height: 50px;
+			// height: 40px;
+			line-height: 30px;
 			text-align: left;
-			padding: 20px;
+			padding: 25px 25px 10px;
+			font-size: 14px;
+		}
+		>.footer{
+			>.confirm-btn{
+				float: none !important;
+			}
 		}
 	}
 	// 粘贴上传对话框
