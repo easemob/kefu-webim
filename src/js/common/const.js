@@ -66,7 +66,12 @@ module.exports = {
 		ACCEPT_INVITATION: "accept_invitation",
 
 		// 关闭 会话聊天框
-		CHAT_CLOSED: "chat.closed"
+		CHAT_CLOSED: "chat.closed",
+
+		//清除agentState定时器
+		CLEAR_AGENTSTATE: "clear.agentstate",
+		//清除agentState定时器
+		CLEAR_AGENTINPUTSTATE: "clear.agentinputstate",
 
 	},
 
