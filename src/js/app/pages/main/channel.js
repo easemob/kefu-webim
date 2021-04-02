@@ -82,8 +82,8 @@ module.exports = {
 	initSecondChannle: function(){
 		receiveMsgTimer = clearInterval(receiveMsgTimer);
 		receiveMsgTimer = setInterval(function(){
-			var tabId = utils.getStore("tabId");
-			apiHelper.receiveMsgChannel(tabId).then(function(msgList){
+			var tab = sessionStorage.getItem("tabIdSession")
+			apiHelper.receiveMsgChannel(tab).then(function(msgList){
 				_.each(msgList, function(elem){
 					_handleMessage(_transformMessageFormat({ body: elem }), { isHistory: false });
 				});
@@ -168,6 +168,9 @@ function _initConnection(onReadyCallback){
 			if(e.type === 8){
 				_refreshDialog();
 				clearInterval(receiveMsgTimer);
+				eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
+				eventListener.trigger(_const.SYSTEM_EVENT.CLEAR_AGENTSTATE);
+				eventListener.trigger(_const.SYSTEM_EVENT.CLEAR_AGENTINPUTSTATE);
 			}
 		}
 	});

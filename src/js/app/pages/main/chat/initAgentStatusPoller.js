@@ -5,13 +5,14 @@ var eventListener = require("@/app/tools/eventListener");
 var apiHelper = require("../apis");
 
 var $agentStatusText;
+var agentStateTimer = null;
 
 module.exports = function(){
 	var topBar = document.querySelector(".em-widget-header");
 	$agentStatusText = topBar.querySelector(".em-header-status-text");
 
 	// 开始轮询坐席状态
-	setInterval(function(){
+	agentStateTimer = setInterval(function(){
 		var officialAccount = profile.currentOfficialAccount;
 		_setAgentStatus(officialAccount);
 	}, 5000);
@@ -24,6 +25,7 @@ module.exports = function(){
 	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, function(officialAccount){
 		_update(officialAccount.status);
 	});
+	eventListener.add(_const.SYSTEM_EVENT.CLEAR_AGENTSTATE, _clearTimer);
 };
 
 function _setAgentStatus(officialAccount){
@@ -64,4 +66,8 @@ function _update(status){
     } else {
         $agentStatusText.innerText = agentStatusText;
     }
+}
+
+function _clearTimer(){
+	clearInterval(agentStateTimer);
 }

@@ -6,6 +6,7 @@ var apiHelper = require("../apis");
 
 var preventTimestamp = 0;
 var inputState;
+var agentInputStateTimer = null;
 
 module.exports = function(){
 	var topBar;
@@ -16,7 +17,7 @@ module.exports = function(){
 	inputState = topBar.querySelector(".em-agent-input-state");
 
 	// start timer
-	setInterval(function(){
+	agentInputStateTimer = setInterval(function(){
 		var officialAccount = profile.currentOfficialAccount;
 		_update(officialAccount);
 	}, _const.AGENT_INPUT_STATE_INTERVAL);
@@ -26,6 +27,7 @@ module.exports = function(){
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _update);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _update);
 	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _update);
+	eventListener.add(_const.SYSTEM_EVENT.CLEAR_AGENTINPUTSTATE, _clearTimer);
 };
 
 function _update(officialAccount){
@@ -63,4 +65,7 @@ function _update(officialAccount){
 	else{
 		utils.addClass(inputState, "hide");
 	}
+}
+function _clearTimer(){
+	clearInterval(agentInputStateTimer);
 }
