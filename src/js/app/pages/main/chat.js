@@ -1081,7 +1081,8 @@ function _show(){
 }
 
 function _onReady(){
-	sessionStorage.setItem("tabIdSession",new Date().getTime())
+	// sessionStorage.setItem("tabIdSession",new Date().getTime());
+	window.sessionStorage.setItem("tabIdSession",new Date().getTime());
 	if(isMessageChannelReady) return;
 
 	isMessageChannelReady = true;

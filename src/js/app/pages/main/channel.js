@@ -82,7 +82,8 @@ module.exports = {
 	initSecondChannle: function(){
 		receiveMsgTimer = clearInterval(receiveMsgTimer);
 		receiveMsgTimer = setInterval(function(){
-			var tab = sessionStorage.getItem("tabIdSession")
+			// var tab = sessionStorage.getItem("tabIdSession")
+			var tab = window.sessionStorage.getItem("tabIdSession");
 			apiHelper.receiveMsgChannel(tab).then(function(msgList){
 				_.each(msgList, function(elem){
 					_handleMessage(_transformMessageFormat({ body: elem }), { isHistory: false });
