@@ -1082,10 +1082,9 @@ function _show(){
 
 function _onReady(){
 	// sessionStorage.setItem("tabIdSession",new Date().getTime());
-	try{
-		window.sessionStorage.setItem("tabIdSession",new Date().getTime());
-	}
-	catch(e){}
+	commonConfig.setConfig({
+		tabIdSession: new Date().getTime(),
+	});
 	if(isMessageChannelReady) return;
 
 	isMessageChannelReady = true;
