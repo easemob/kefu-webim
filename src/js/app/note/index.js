@@ -105,7 +105,7 @@ function _createTicket(){
 			_clearInput();
 		}, function(err){
 			isSending = false;
-			uikit.tip(__("ticket.send_failed_retry"));
+			uikit.tip(__("留言失败，请重试"));
 			console.error(err);
 		});
 	})
@@ -161,10 +161,10 @@ utils.on(confirmBtn, "click", function(){
 		uikit.tip(__("ticket.invalid_name"));
 	}
 	else if(overseasTest()){
-		uikit.tip(__("ticket.invalid_phone"));
+		uikit.tip(__("请正确输入手机号码"));
 	}
 	else if(!checkEmail()){
-		uikit.tip(__("ticket.invalid_email"));
+		uikit.tip(__("请正确输入邮箱"));
 	}
 	else if(!content.value || content.value.length > 1500){
 		uikit.tip(__("ticket.invalid_content"));
