@@ -111,7 +111,8 @@ function _createTicket(){
 	})
 	["catch"](function(err){
 		isSending = false;
-		uikit.tip(__("ticket.send_failed_invalid_token"));
+		uikit.tip(__("留言失败，请重试"));
+		// uikit.tip(__("ticket.send_failed_invalid_token"));
 		console.error(err);
 	});
 }
