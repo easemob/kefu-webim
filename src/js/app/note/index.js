@@ -110,6 +110,7 @@ function _createTicket(){
 		});
 	})
 	["catch"](function(err){
+		isSending = false;
 		uikit.tip(__("ticket.send_failed_invalid_token"));
 		console.error(err);
 	});
