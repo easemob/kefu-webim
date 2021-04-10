@@ -204,7 +204,14 @@ function _refreshDialog(){
 		hideCancel:true,
 		confirmText: __("common.re_consultation"),
 		confirm: function(){
-			window.location.reload();
+			var el = document.getElementsByTagName("body");
+			if($(el).hasClass("window-demo") ){
+				$(modelDom).addClass("hide")
+				_initConnection();
+			}
+			else{
+				window.location.reload();
+			}
 		}
 	});
 	dialog.show()
