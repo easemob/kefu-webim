@@ -168,6 +168,10 @@ function _initConnection(onReadyCallback){
 			}
 			// 当多端登录挤掉上一个ws链接的时候给出提示
 			if(e.type === 8){
+				
+				if(config.tenantId == "66639"){
+					return false;
+				}
 				_refreshDialog();
 				clearInterval(receiveMsgTimer);
 				eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
