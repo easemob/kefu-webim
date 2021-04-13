@@ -154,7 +154,9 @@ function _initConnection(onReadyCallback){
 		onError: function(e){
 			console.log(e)
 			if(e.reconnect){
-				_open();
+				// _open();
+				// 在移动端会触发多次重连，导致自己多次登录，影响多端登录的判断
+				!utils.isMobile && _open();
 			}
 			else if(e.type === _const.IM.WEBIM_CONNCTION_AUTH_ERROR){
 				_open();
