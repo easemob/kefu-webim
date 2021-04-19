@@ -47,10 +47,10 @@ utils.addClass(document.body, config.themeClassName || "theme-1");
 // 根据配置隐藏取消按钮
 config.hideCloseBtn && utils.addClass(cancelBtn, "hide");
 
-var themeName = config.themeClassName;
-if(themeName && themeName.indexOf("theme_custom") > -1){
-	color = config.themeColor;
-	$(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important");
+var themeCustomColor = config.themeCustomColor;
+if(themeCustomColor){
+	// color = config.themeColor;
+	$(".theme_custom").find(".bg-color").css("cssText","background-color: " + themeCustomColor + " !important");
 }
 
 var _getCategories = _.once(function(){

@@ -560,11 +560,8 @@ function _handleMessage(msg, options){
 	}
 
 	var myconfig = commonConfig.getConfig();
-	var themeName = myconfig.ui.themeName;
-	if(themeName && themeName.indexOf("theme_custom") > -1){
-		var arr = themeName.split("theme_custom");
-		var color = arr[1];
-	}
+	var themeCustomColor = myconfig.themeCustomColor;
+	
 
 	// ===========
 	// 消息结构构造
@@ -737,20 +734,20 @@ function _handleMessage(msg, options){
 			message.subtype = type;
 			message.list = "<div class=\"em-btn-list\">"
 				+ _.map(msg.ext.msgtype.choice.items, function(item){
-					// var id = item.id;
-					// var label = item.name;
-					// var className = "js_robotbtn ";
-					// // 为以后转人工按钮样式调整做准备
-					// if(item.id === "TransferToKf"){
-					// 	className += "bg-hover-color";
-					// }
-					// else{
-					// 	className += "bg-hover-color";
-					// }
-					
+					var className = "";
+					var color = ""
+					if(profile.shouldMsgActivated(serviceSessionId)){
+						className = themeCustomColor ? "" : "fg-color";
+						color = themeCustomColor;
+					}
+					else{
+						className = "disabled";
+						color = "";
+					}
+
 					return "<li><button "
-					+ "class=\"js_robotbtn " + (profile.shouldMsgActivated(serviceSessionId) ? (color ? "" : "fg-color") : "disabled") + "\" "
-					+ "style=\"color: " + color + " \""
+					+ "class=\"js_robotbtn " + className + "\" "
+					+ "style=\"color: " + color  + " \""
 					+ "data-id=\"" + item.id + "\" "
 					+ ">" + item.name + "</button> <i class='icon-arrow-right'></i> </li>";
 				}).join("") || ""
@@ -777,9 +774,20 @@ function _handleMessage(msg, options){
 					if(item.id == "hasTransferNote"){
 						item.queueType = "transfer";
 					}
+
+					var className = "";
+					var color = ""
+					if(profile.shouldMsgActivated(serviceSessionId)){
+						className = themeCustomColor ? "" : "fg-color";
+						color = themeCustomColor;
+					}
+					else{
+						className = "disabled";
+						color = "";
+					}
 	
 					return "<button "
-					+ "class=\"js_transferManualbtn" + (profile.shouldMsgActivated(serviceSessionId) ?  (color ? "" : "fg-color") : "disabled") + "\" "
+					+ "class=\"js_transferManualbtn" + className + "\" "
 					+ "style=\"color: " + color + " \""
 					+ "data-id=\"" + item.id + "\" "
 					+ "data-queue-id=\"" + item.queueId + "\" "
@@ -798,11 +806,11 @@ function _handleMessage(msg, options){
 				+ _.map(msg.data.children, function(item){
 					var queueName = item.queueName;
 					var label = item.menuName;
-					var className = color ? "js_skillgroupbtn" : "js_skillgroupbtn fg-color";
+					var className = themeCustomColor ? "js_skillgroupbtn" : "js_skillgroupbtn fg-color";
 	
 					return "<li><button "
 						+ " class=\"" + className + "\""
-						+ "style=\"color: " + color + " \""
+						+ "style=\"color: " + themeCustomColor + " \""
 						+ "data-queue-name=\"" + queueName + "\">"
 						+ label + "</button><i class='icon-arrow-right'></i></li>";
 				}).join("") || ""
@@ -1282,13 +1290,11 @@ function _appendMsg(msg, options){
 		);
 	}
 	// 设置list主题色
-	var themeName = config.ui.themeName;
-	if(themeName && themeName.indexOf("theme_custom") > -1){
-		var arr = themeName.split("theme_custom");
-		var color = arr[1];
+	var themeCustomColor = config.themeCustomColor; 
+	if(themeCustomColor){
 		var bgColor = $(".theme_custom .bg-hover-color").css("background");
 		$(".theme_custom .bg-hover-color").hover(function(){
-		　　　$(this).css("cssText","background-color: " + color + " !important"); 
+		　　　$(this).css("cssText","background-color: " + themeCustomColor + " !important"); 
 		},function(){
 			$(this).css("cssText","background-color: " + bgColor + " !important");
 		})

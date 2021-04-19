@@ -78,6 +78,15 @@ function handleConfig(configJson){
 	config.notice = configJson.ui.notice;
 	config.themeName = configJson.ui.themeName;
 
+	if(config.themeName && config.themeName.indexOf("theme_custom") > -1){
+		var arr = config.themeName.split("theme_custom"); 
+		var color = arr[1];
+		config.themeCustomColor = color;
+	}
+	else{
+		config.themeCustomColor = "";
+	}
+
 	config.autoConnect = configJson.toolbar.autoConnect;
 	// config.hideKeyboard = configJson.toolbar.hideKeyboard;
 	config.minimum = configJson.toolbar.minimum;
