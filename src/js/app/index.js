@@ -226,6 +226,9 @@ function initRelevanceList(tenantId){
 				} else if(res === 2){
 					str = "认证未通过，";
 				}
+				else if(res === 3){
+					str = "认证审核中，";
+				}
 				if(utils.isMobile) {
 					document.querySelector(".auth-box-H5 >div span.is-auth").innerHTML = str;
 					utils.removeClass(document.querySelector(".auth-box-H5"), "hide");

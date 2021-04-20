@@ -376,13 +376,27 @@ function getQualificationStatus(tenantId) {
 		var isAuth = false;
 		api("getQualificationStatus", { tenantId: tenantId }, function(res){
 			var obj = res.data.entity;
+			if(obj.isQualification == true){
+				resolve("");
+				return false
+			}
 			if(obj.isQualification !== null) {
+				// 未提交申请
 				if(obj.verifyStatus === null) {
 					isAuth = 1;
-				} else if(obj.verifyStatus === 2) {
+				} 
+				// 审核失败
+				else if(obj.verifyStatus === 2) {
 					isAuth = 2;
 				}
+				// 审核中
+				else if(obj.verifyStatus === 0){
+					isAuth = 3;
+				}
+			}else{
+				// 老用户
 			}
+			
 			resolve(isAuth);
 		}, function(err){
 			reject(err);
