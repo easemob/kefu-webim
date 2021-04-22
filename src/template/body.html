@@ -13,6 +13,13 @@
 </div>
 
 <div class="em-widget-box hide">
+	<!-- 下部弹窗 -->
+	<div class="em-model chat-pop-em-model hide">
+		<div class="chat-pop">
+			<i class="icon-close tip-close"></i>
+			<iframe id="chat-pop" src="" frameborder="0"></iframe>
+		</div>
+	</div>
 	<!-- 标题栏 -->
 	<div class="em-widget-header bg-color border-color">
 		<!-- 用于拖动的浮层 -->
@@ -80,10 +87,27 @@
 
 				<!-- <div class="chat-container"></div> -->
 			</div>
+			<!-- 输入框上方快捷按钮 -->
+
 
 			<!-- 输入框 -->
 			<div class="em-widget-send-wrapper">
-
+				<div class="em-widget-send-wrapper-top hide">
+					<div class="swiper-button-prev height-btn swiper-button-black"></div>
+					
+					<div class="swiper-container">
+						<div class="swiper-wrapper">
+							<div class="swiper-slide em-widget-exit-video hide">取消视频通话</div>
+							<div class="swiper-slide em-widget-to-kefu-input-button hide"><%=transfer_to_kefu%> </div>
+							<!-- <span class="fg-color em-widget-to-kefu hide">
+								<i class="icon-transform"></i>
+								<span><%=transfer_to_kefu%></span>
+							</span> -->
+						</div>
+					</div>
+					
+					<div class="swiper-button-next height-btn swiper-button-black"></div>
+				</div>
 				<!-- 待接入人数状态 -->
 				<div class="queuing-number-status hide"><%=current_queue_number%><label></label></div>
 
@@ -118,32 +142,40 @@
 				</div>
 				<!-- 工具栏 -->
 				<div class="toolbar toolbar-mobile hide">
-					<div class="em-widget-img hide">
-						<div class="btn-container"><i class="icon-picture-new" title="<%=picture%>"></i></div>
-						<span><%=picture%></span>
+					<div class="swiper-wrapper">
+						<div class="swiper-slide">
+							<div class="em-widget-img hide">
+								<div class="btn-container"><i class="icon-picture-new" title="<%=picture%>"></i></div>
+								<span><%=picture%></span>
+							</div>
+							<div class="em-widget-file hide">
+								<div class="btn-container"><i class="icon-attachment-new" title="<%=attachment%>"></i></div>
+								<span><%=attachment%></span> 
+							</div>
+							<div class="em-widget-video hide ">
+								<div class="btn-container"><i class="icon-sendvideo-new" title="<%=send_video%>"></i></div>
+								<span><%=send_video%></span>
+							</div>
+							<div class="em-widget-note hide ">
+								<div class="btn-container"><i class="icon-note-new" title="<%=ticket%>"></i></div>
+								<span><%=ticket%></span>
+							</div>
+							<div class="em-video-invite hide ">
+								<div class="btn-container"><i class="icon-video-new" title="<%=video_invite%>"></i></div>
+								<span><%=video_invite%></span>
+							</div>
+							<div class="em-widget-satisfaction hide ">
+								<div class="btn-container"><i class="icon-flower-new" title="<%=evaluate_agent%>"></i></div>
+								<span><%=evaluate_agent%></span>  
+							</div>
+						</div>
 					</div>
-					<div class="em-widget-file hide">
-						<div class="btn-container"><i class="icon-attachment-new" title="<%=attachment%>"></i></div>
-						<span><%=attachment%></span> 
-					</div>
-					<div class="em-widget-video hide ">
-						<div class="btn-container"><i class="icon-sendvideo-new" title="<%=send_video%>"></i></div>
-						<span><%=send_video%></span>
-					</div>
-					<div class="em-widget-note hide ">
-						<div class="btn-container"><i class="icon-note-new" title="<%=ticket%>"></i></div>
-						<span><%=ticket%></span>
-					</div>
-					<div class="em-video-invite hide ">
-						<div class="btn-container"><i class="icon-video-new" title="<%=video_invite%>"></i></div>
-						<span><%=video_invite%></span>
-					</div>
-					<div class="em-widget-satisfaction hide ">
-						<div class="btn-container"><i class="icon-flower-new" title="<%=evaluate_agent%>"></i></div>
-						<span><%=evaluate_agent%></span>  
-					</div>
+
+					<div class="swiper-pagination" slot="pagination"></div>
 				</div>
 			</div>
+
+
 
 			<!-- 信息提示框 -->
 			<div class="em-widget-error-prompt hide">
