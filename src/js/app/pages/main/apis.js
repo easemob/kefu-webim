@@ -1391,6 +1391,59 @@ function getEvaluateVerify(serviceSessionId){
 	});
 }
 
+function getInputTopButton(){
+	return new Promise(function(resolve, reject){
+		api("getInputTopButton", {
+			tenantId: config.tenantId,
+			configId: config.configId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+function getInputTopStatus(){
+	return new Promise(function(resolve, reject){
+		api("getInputTopStatus", {
+			tenantId: config.tenantId,
+			configId: config.configId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+function getInputH5Button(){
+	return new Promise(function(resolve, reject){
+		api("getInputH5Button", {
+			tenantId: config.tenantId,
+			configId: config.configId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+function getInputH5Status(){
+	return new Promise(function(resolve, reject){
+		api("getInputH5Status", {
+			tenantId: config.tenantId,
+			configId: config.configId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getGrayList: getGrayList,
 	getToken: getToken,
@@ -1459,7 +1512,11 @@ module.exports = {
 	getOnlineCustomerStatus: getOnlineCustomerStatus,
 	deleteVideoInvitation: deleteVideoInvitation, // 取消视频邀请
 	getEvaluateVerify: getEvaluateVerify,
-
+	getInputTopButton:getInputTopButton,
+	getInputTopStatus:getInputTopStatus,
+	getInputTopButton:getInputTopButton,
+	getInputH5Button:getInputH5Button,
+	getInputH5Status:getInputH5Status,
 	update: function(cfg){
 		config = cfg;
 	}

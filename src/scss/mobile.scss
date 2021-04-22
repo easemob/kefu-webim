@@ -76,7 +76,24 @@
 	}
 	.chat-wrapper {
 		bottom: 77px;
+		// bottom: 100px !important;
 		border-right: none;
+	}
+	.chat-pop{
+		height: 75%;
+		width: 100%;
+		background-color: #fff;
+		position: relative;
+		top: 30%;
+		z-index: 999;
+		border-radius: 10px;
+		iframe{
+			width: 100%;
+			height: 100%;
+		}
+		>i{
+			float: right;
+		}
 	}
 	.em-widget-tip span {
 		font-size: 1rem;
@@ -196,10 +213,21 @@
 			width: 100%;
 		}
 	}
+	.em-widget-send-wrapper-top{
+		top: -40px !important;
+		.swiper-wrapper{
+			height: 31px;
+			.swiper-slide{
+				border-radius: 16px;
+				padding: 2px 12px !important;
+			}
+		}
+	}
 	.em-widget-send-wrapper {
 		position: absolute;
 		height: auto;
-		padding: 6px 0px 15px 0;
+		// padding: 6px 0px 15px 0;
+		padding: 0px 0px 15px 0;
 		padding-bottom: unquote('max(3px, env(safe-area-inset-bottom))');//iOS 底下圆弧的高度
 		box-sizing: border-box;
 		background-color: #fbfbfb;
@@ -213,38 +241,59 @@
 		.toolbar-mobile{ 
 			height: 205px;
 			padding: 0 5px;
-			>div{
-				width:24%;
-				text-align: center;
-				display: inline-block;
-				margin-bottom:10px;
-				margin-top:10px;
-				font-size:1rem;
-				color: #4e4e4e;
+			.swiper-pagination{
+				height: 5%;
+				width: 100%;
 				>span{
-					display:block;
-					color: #999;
-					margin-top: 5px;
-					font-size:12px;
+					outline: none;
 				}
-				> i {
-					position: relative;
-					&:hover {
-						cursor: pointer;
+			}
+			.swiper-wrapper{
+				height: 95%;
+				// height: 205px;
+				.swiper-slide{
+					>div{
+						width:24%;
+						text-align: center;
+						display: inline-block;
+						margin-bottom:10px;
+						margin-top:10px;
+						font-size:1rem;
+						color: #4e4e4e;
+						>span{
+							display:block;
+							color: #999;
+							margin-top: 5px;
+							font-size:12px;
+
+							text-overflow: ellipsis;
+							overflow: hidden;
+							white-space: nowrap;
+						}
+						> i {
+							position: relative;
+							&:hover {
+								cursor: pointer;
+							}
+							&:before{
+								font-size:25px;
+							}
+						}
+						.btn-container{
+							width: 50px;
+							height: 50px;
+							display: flex;
+							align-items: center;
+							justify-content: space-around;
+							background: #fff;
+							margin: 0 auto;
+							border-radius: 4px;
+							>img{
+								width: 100%;
+								height: 100%;
+							}
+						}
 					}
-					&:before{
-						font-size:25px;
-					}
-				}
-				.btn-container{
-					width: 50px;
-					height: 50px;
-					display: flex;
-					align-items: center;
-					justify-content: space-around;
-					background: #fff;
-					margin: 0 auto;
-					border-radius: 4px;
 				}
 			}
 		}

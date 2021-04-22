@@ -23,6 +23,8 @@ var initTransferToKefuButton = require("./chat/initTransferToKefuButton");
 var initSessionList = require("./chat/initSessionList");
 var initGetGreetings = require("./chat/initGetGreetings");
 var initAgentNicknameUpdate = require("./chat/initAgentNicknameUpdate");
+var initInputTopButton = require("./chat/initInputTopButton");
+var initInputH5Button = require("./chat/initInputH5Button");
 var emojiPanel = require("./chat/emojiPanel");
 var extendMessageSender = require("./chat/extendMessageSender");
 var TenantInfo = require("@/app/pages/main/tenantInfo/index");
@@ -484,6 +486,7 @@ function _bindEvents(){
 				doms.queuingNumberStatus.style.top = height + "px";
 			}else{
 				doms.chatWrapper.style.bottom = height + "px";
+
 			}
 			emojiPanel.move(inputBoxPosition, height);
 		}
@@ -1047,6 +1050,33 @@ function _bindEvents(){
 			doms.chatWrapper.style.bottom = height + "px";
 		}
 		emojiPanel.move(inputBoxPosition, height);
+		// 由于移动端时候轮播图的元素没有家在无法获取到 所以需要在加载完成以后改变主题色
+		if(utils.isMobile) {
+			// 获取主题色
+			var color = "";
+			var themeClassName;
+			var config = commonConfig.getConfig();
+			var themeName = config.ui.themeName;
+			if(themeName && themeName.indexOf("theme_custom") > -1){
+				var arr = themeName.split("theme_custom");
+				color = arr[1];
+				themeClassName = "theme_custom";
+			}
+			else{
+				themeClassName = _const.themeMap[config.themeName];
+			}
+			var hoverColor = $("body."+ themeClassName +" .border-color").css("borderColor")
+			// 设置主题色
+			setTimeout(function(){
+				var el = document.querySelector(".swiper-pagination-bullet-active")
+				if(color){
+					$(el).css("backgroundColor",color)
+				}
+				else{
+					$(el).css("backgroundColor",hoverColor)
+				}
+			},300)
+		}
 	})
 }
 
@@ -1155,6 +1185,7 @@ function _getDom(){
 		toolBar: toolBar,
 		topBar: topBar,
 		editorView: editorView,
+		// inputTopButton:document.querySelector(".em-widget-send-wrapper-top>.input-top-btn"),
 	};
 }
 
@@ -1191,7 +1222,7 @@ function _init(){
 			utils.addClass(document.querySelector(".chat-wrapper"), "chat-padding-40");
 		}
 	}
-	
+
 }
 
 function _initSatisfactionButton(){
@@ -1311,6 +1342,10 @@ function _initSession(){
 			initTransferToKefuButton();
 			if(config.satisfaction && config.options.showEnquiryButtonInAllTime == "false"){
 				_initSatisfactionButton();
+				_InitH5AndInputTop(true);
+			}
+			else{
+				_InitH5AndInputTop(false);
 			}
 			
 			initAgentNicknameUpdate();
@@ -1345,4 +1380,41 @@ function _initSession(){
 			throw err;
 		}
 	});
+}
+function _InitH5AndInputTop(isShowSatis){
+	// em-widget-send-wrapper-top
+	apiHelper.getInputTopStatus().then(function(res){
+		//如果开关打开渲染输入框上边的快捷操作按钮
+		if(res.entity){
+			apiHelper.getInputTopButton().then(function(res){
+				if(res.entities.length !=0){
+					initInputTopButton(res.entities);
+				}
+			})
+		}
+		else{
+			$(".em-widget-send-wrapper-top").addClass("hide");
+		}
+	})
+
+	if(utils.isMobile) {
+		// document.querySelector(".em-widget-send-wrapper-top").style.bottom = "60" + "px";
+		// $(".em-widget-send-wrapper-top").addClass("hide");
+		apiHelper.getInputH5Status().then(function(res){
+			//如果开关打开渲染输入框上边的快捷操作按钮
+			if(res.entity){
+				apiHelper.getInputH5Button().then(function(res){
+					if(res.entities.length !=0){
+						initInputH5Button(res.entities,isShowSatis);
+					}
+				})
+			}
+			else{
+				// $(".em-widget-send-wrapper-top").addClass("hide");
+			}
+
+		})
+	} else {
+
+	}
 }

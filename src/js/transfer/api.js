@@ -984,8 +984,46 @@ up2Im.listen(function(msg){
 			type: "GET"
 		});
 		break;
-		
-
+	// 获取输入框上边的快捷按钮信息
+	case "getInputTopButton":
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/"+ tenantId +"/configs/"+params.configId+"/information/shortcut",
+		emitAjax({
+			url: url,
+			msg: msg,
+			excludeData: true,
+			type: "GET"
+		});
+		break;
+	// 获取输入框上边的快捷按钮的开关
+	case "getInputTopStatus":
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/"+ tenantId +"/configs/"+params.configId+"/visitors/options/shortcut/status",
+		emitAjax({
+			url: url,
+			msg: msg,
+			excludeData: true,
+			type: "GET"
+		});
+		break;	
+	// 获取H5扩展的开关
+	case "getInputH5Status":
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/"+ tenantId +"/configs/"+params.configId+"/visitors/options/toolbar-expand/status",
+		emitAjax({
+			url: url,
+			msg: msg,
+			excludeData: true,
+			type: "GET"
+		});
+		break;	
+	// 获取H5扩展按钮信息
+	case "getInputH5Button":
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/"+ tenantId +"/configs/"+params.configId+"/information/toolbar-expand",
+		emitAjax({
+			url: url,
+			msg: msg,
+			excludeData: true,
+			type: "GET"
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;

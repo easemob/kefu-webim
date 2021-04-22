@@ -1,6 +1,6 @@
 .em-widget-send-wrapper {
 	position: absolute;
-	height: 140px;
+	height: 183px;
 	width: 100%;
 	bottom: 0;
 	background-color: white;
@@ -15,11 +15,13 @@
 		font-size: 12px;
 		line-height: 26px;
 		padding: 0 8px;
-		position: absolute;
+		// position: absolute;
+		// position: fixed;
 		box-sizing: border-box;
 		top: -26px;
 		color: rgb(76, 76, 76);
 		background-color: rgba(223, 233, 252, .7);
+		// top: 50%;
 	}
 	//猜你想说
 	.guess-area{
@@ -176,4 +178,114 @@
 }
 .height-170{
 	height: 170px;
+}
+.em-widget-send-wrapper-top{
+	width: 100%;
+	// bottom: 145px;
+	background-color: white;
+	// border-right: 1px solid #e5e9f3;
+	box-sizing: border-box;
+	-webkit-backface-visibility: hidden;
+	line-height: 30px;
+	background-color: #f5f7fa;
+	// padding: 10px 30px;
+	padding: 3px 0px;
+	position: absolute;
+	top: -35px;
+	background-color: rgba(255,255,255,0);
+	// margin-bottom: 5px;
+	.swiper-button-prev.swiper-button-black{
+		opacity: 0.6;
+	}
+	.swiper-button-next.swiper-button-black{
+		opacity: 0.6;
+	}
+	.swiper-button-prev.swiper-button-disabled{
+		opacity: 0.2;
+	}
+	.swiper-button-next.swiper-button-disabled{
+		opacity: 0.2;
+	}
+	.swiper-button-prev{
+		margin-left: -4px;
+	}
+	.swiper-button-next{
+		margin-right: -4px;
+	}
+
+	.swiper-container {
+		width: 95%;
+		height: 100%;
+		display: flex;
+	} 
+	.swiper-wrapper{
+		height: 30px;
+		margin-bottom: 4px;
+		>.swiper-slide{
+			width: auto!important;
+			line-height: 30px;
+			height: 25px;
+			line-height: 25px;
+			// border: 1px solid #d7d7d7;
+			border: 1px solid #E6E6E6;
+			// max-width: 100px;
+			float: left;
+			// margin-right: 10px;
+			// margin-left: 10px;
+			// margin-top: 4px;
+			padding: 0 12px;
+			border-radius: 12px;
+			background-color: white;
+			text-overflow:ellipsis;
+			overflow:hidden;
+			white-space:nowrap;
+			cursor: pointer;
+			color: #566477;
+		}
+		.input-top-btn{
+			height: 25px;
+			line-height: 25px;
+			// border: 1px solid #d7d7d7;
+			border: 1px solid #E6E6E6;
+			// max-width: 100px;
+			float: left;
+			margin-right: 10px;
+			margin-left: 5px;
+			margin-top: 4px;
+			padding: 0 12px;
+			border-radius: 12px;
+			background-color: white;
+			text-overflow:ellipsis;
+			overflow:hidden;
+			white-space:nowrap;
+			cursor: pointer;
+			color: #566477;
+		}
+		.em-widget-exit-video{
+			background-color: #fae1c7;
+			color: red;
+		}
+	}
+	.height-btn{
+		height: 11px;
+		margin-top: -6px;
+		outline: none;
+		width: 14px;
+		background-size: 24px 21px;
+	}
+
+	.prevbtn{
+		position: absolute;
+		left:0;
+		top:20px
+	}
+	.nextbtn{
+		position: absolute;
+		right:0;
+		top:20px
+	}
+	// >div:hover{
+	// 	background-color: $theme-color!important;
+	// 	color:#fff!important;
+	// }
 }

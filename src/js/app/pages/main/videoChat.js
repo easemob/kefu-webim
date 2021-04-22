@@ -212,6 +212,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 }
 
 function _onConfirm(){
+	eventListener.trigger("video.conform");
 	channel.sendText(__("video.invite_agent_video"), {
 		ext: {
 			type: "rtcmedia/video",
@@ -232,14 +233,16 @@ function _onConfirm(){
 		},
 	});
 	// 开启视频通话添加取消按钮
-	var el = utils.createElementFromHTML("<span class=\"em-widget-exit-video\">取消视频通话</span>");
-	var editor = document.querySelector(".toolbar");
-	editor.appendChild(el);
+	// var el = utils.createElementFromHTML("<span class=\"em-widget-exit-video\">取消视频通话</span>");
+	// var editor = document.querySelector(".toolbar");
+	// editor.appendChild(el);
+	// var el = utils.createElementFromHTML("<div class=\"swiper-slide em-widget-exit-video\">取消视频通话</div>");
 	$(".em-widget-exit-video").on("click",_onConfirmExitvideo)
 
 }
 
 function _onConfirmExitvideo(){
+	eventListener.trigger("video.cancel");
 	var serviceSessionId = profile.currentOfficialAccount.sessionId;
 	apiHelper.deleteVideoInvitation(serviceSessionId)
 	.then(function(res){
@@ -264,10 +267,10 @@ function _onConfirmExitvideo(){
 					},
 				},
 			});
-			// 取消通话移除按钮
-			var editor = document.querySelector(".toolbar");
-			var ele = document.querySelector(".em-widget-exit-video");
-			editor.removeChild(ele)
+			// // 取消通话移除按钮
+			// var editor = document.querySelector(".toolbar");
+			// var ele = document.querySelector(".em-widget-exit-video");
+			// editor.removeChild(ele)
 	});
 	// return false;
 
