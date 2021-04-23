@@ -123,6 +123,13 @@ module.exports = function(data){
 			freeMode: true,
 			mousewheel: true,
 		})
+		var prevPc = document.querySelector(".swiper-button-prev");
+		var nextPc = document.querySelector(".swiper-button-next");
+		console.log($(nextPc).hasClass("swiper-button-disabled"))
+		if($(nextPc).hasClass("swiper-button-disabled")){
+			$(prevPc).addClass("hide");
+			$(nextPc).addClass("hide");
+		}
 	}
 	// <div class=\"swiper-slide\"></div>
 	// utils.createElementFromHTML("<div content=\""+ item[i].content +"\" type=\""+ item[i].operateType +"\" title=\""+ item[i].name +"\" id=\"" + item[i].id+ "\" class=\"input-top-btn  "+themeClassName+"\">"+ item[i].name +"</div>");
