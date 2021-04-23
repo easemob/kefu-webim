@@ -125,7 +125,6 @@ module.exports = function(data){
 		})
 		var prevPc = document.querySelector(".swiper-button-prev");
 		var nextPc = document.querySelector(".swiper-button-next");
-		console.log($(nextPc).hasClass("swiper-button-disabled"))
 		if($(nextPc).hasClass("swiper-button-disabled")){
 			$(prevPc).addClass("hide");
 			$(nextPc).addClass("hide");
