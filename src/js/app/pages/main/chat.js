@@ -1050,6 +1050,7 @@ function _bindEvents(){
 			doms.chatWrapper.style.bottom = height + "px";
 		}
 		emojiPanel.move(inputBoxPosition, height);
+		_scrollToBottom();
 		// 由于移动端时候轮播图的元素没有家在无法获取到 所以需要在加载完成以后改变主题色
 		if(utils.isMobile) {
 			// 获取主题色
