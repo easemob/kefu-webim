@@ -1383,19 +1383,13 @@ function _initSession(){
 	});
 }
 function _InitH5AndInputTop(isShowSatis){
-	// em-widget-send-wrapper-top
 	apiHelper.getInputTopStatus().then(function(res){
-		//如果开关打开渲染输入框上边的快捷操作按钮
-		if(res.entity){
-			apiHelper.getInputTopButton().then(function(res){
-				if(res.entities.length !=0){
-					initInputTopButton(res.entities);
-				}
-			})
-		}
-		else{
-			$(".em-widget-send-wrapper-top").addClass("hide");
-		}
+		var isOpen = res.entity;
+		apiHelper.getInputTopButton().then(function(res){
+			if(res.entities.length !=0){
+				initInputTopButton(res.entities,isOpen);
+			}
+		})
 	})
 
 	if(utils.isMobile) {

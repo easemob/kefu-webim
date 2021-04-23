@@ -8,7 +8,10 @@ var commonConfig = require("@/common/config");
 
 var toKefuBtn;
 
-module.exports = function(data){
+module.exports = function(data,isOpen){
+	if(!isOpen){
+		data = []
+	}
 	$(".em-widget-send-wrapper-top").removeClass("hide")
 		// 自定义主题色
 		var color = "";
@@ -26,39 +29,7 @@ module.exports = function(data){
 
 	toKefuBtn = document.querySelector(".em-widget-to-kefu-input-button");
 
-	// 获取开关状态判断是否展示按钮
-	// TODO 未处理开关状态
-
-	// 获取按钮数量渲染按钮
 	var topButtonBox = document.querySelector(".em-widget-send-wrapper-top>.swiper-container>.swiper-wrapper");
-	// 获取总宽度
-	var width =  document.querySelector(".em-widget-send-wrapper-top>.swiper-container>.swiper-wrapper").offsetWidth;
-	var newData2 = [];
-	var newW = width;
-	var num = 0;
-	// 计算每个轮播图能放下多少个按钮
-	for(var i = 0;i<data.length;i++){
-		// 一个汉字13px
-		var btnWidth = data[i].name.length * 13 + 30;
-		width = width - btnWidth;
-		if(width - btnWidth<0){
-			width = newW;
-			newData2.push(data.slice(num,i));
-			num = i;
-			i = i-1;
-		}
-		if((data.length - 1) === i){
-			newData2.push(data.slice(num,i+1));
-		}
-	}
-	// newData2.forEach(function(item, index){
-	// 	slideBox = utils.createElementFromHTML("<div class=\"swiper-slide\"></div>");
-	// 	for(var i=0;i<item.length;i++){
-	// 		slidContent = utils.createElementFromHTML("<div content=\""+ item[i].content +"\" type=\""+ item[i].operateType +"\" title=\""+ item[i].name +"\" id=\"" + item[i].id+ "\" class=\"input-top-btn  "+themeClassName+"\">"+ item[i].name +"</div>");
-	// 		slideBox.append(slidContent)
-	// 	}
-	// 	topButtonBox.append(slideBox)
-	// })
 	for(var i=0;i<data.length;i++){
 		var el = utils.createElementFromHTML("<div class=\"swiper-slide\"  content=\""+ data[i].content +"\" type=\""+ data[i].operateType +"\" title=\""+ data[i].name +"\" id=\"" + data[i].id+ "\" class=\"input-top-btn  "+themeClassName+"\">"+ data[i].name +" </div>");
 		// mySwiper.appendSlide(el);
@@ -67,7 +38,6 @@ module.exports = function(data){
 
 
 
-	// $(".em-widget-send-wrapper-top>.swiper-wrapper .input-top-btn").hover(function(){
 	$(".em-widget-send-wrapper-top>.swiper-container>.swiper-wrapper .swiper-slide").hover(function(){
 		var hoverColor = $("body."+ themeClassName +" .border-color").css("borderColor")
 		if($(this).hasClass("em-widget-exit-video")){
@@ -130,17 +100,6 @@ module.exports = function(data){
 			$(nextPc).addClass("hide");
 		}
 	}
-	// <div class=\"swiper-slide\"></div>
-	// utils.createElementFromHTML("<div content=\""+ item[i].content +"\" type=\""+ item[i].operateType +"\" title=\""+ item[i].name +"\" id=\"" + item[i].id+ "\" class=\"input-top-btn  "+themeClassName+"\">"+ item[i].name +"</div>");
-
-	// for(var i=0;i<data.length;i++){
-	// 	var el = utils.createElementFromHTML("<div class=\"swiper-slide\"  content=\""+ data[i].content +"\" type=\""+ data[i].operateType +"\" title=\""+ data[i].name +"\" id=\"" + data[i].id+ "\" class=\"input-top-btn  "+themeClassName+"\">"+ data[i].name +" </div>");
-	// 	mySwiper.appendSlide(el);
-	// }
-
-	// mySwiper.appendSlide('<div class="swiper-slide">Slide ' + (++appendNumber) + '</div>');
-
-
 	// 输入框上方的按钮
 	// utils.on(document.getElementsByClassName("input-top-btn"), "click", function(e){
 	utils.on(document.getElementsByClassName("swiper-slide"), "click", function(e){
