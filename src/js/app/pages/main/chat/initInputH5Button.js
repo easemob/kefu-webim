@@ -85,6 +85,11 @@ module.exports = function(data,isShowSatis){
 			},
 		}
 	})
+	var slidNum = H5ButtonBox.getElementsByClassName("swiper-slide").length;
+	if(slidNum<2){
+		$(document.querySelector(".swiper-pagination")).addClass("hide")
+	}
+	// swiper-slide
 
 	// H5按钮
 	// 输入框上方的按钮
