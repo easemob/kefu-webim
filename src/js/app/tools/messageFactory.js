@@ -89,8 +89,16 @@ function genMsgContent(msg){
 	// 这个消息类型包含了很多子类型
 	case "list":
 		if(profile.grayList.rulaiRobotRichText && rulai){
+			var newValue;
+			if(value.indexOf("<img") > -1){
+				var reg = new RegExp("<img", "g");
+				newValue = value.replace(reg, "<img class='em-widget-imgview' ");
+			}
+			else{
+				newValue = value;
+			}
 			html = "<span class=\"text\">";
-			html += value;
+			html += newValue;
 			html += "</span>";
 			html += msg.list;
 			break;
