@@ -79,21 +79,23 @@ module.exports = {
 		}
 		_handleMessage(_transformMessageFormat(element), { isHistory: true });
 	},
-	initSecondChannle: function(){
-		receiveMsgTimer = clearInterval(receiveMsgTimer);
-		receiveMsgTimer = setInterval(function(){
-			// var tab = sessionStorage.getItem("tabIdSession")
-			var tab = null;
-			tab = commonConfig.getConfig().tabIdSession;
-			apiHelper.receiveMsgChannel(tab).then(function(msgList){
-				_.each(msgList, function(elem){
-					_handleMessage(_transformMessageFormat({ body: elem }), { isHistory: false });
-				});
-			});
-		}, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
-	},
+	initSecondChannle: _initSecondChannle,
 	handleMessage: _handleMessage
 };
+// 把初始化第二通道的方法提取出来，供外部方法调用
+function _initSecondChannle(){
+	receiveMsgTimer = clearInterval(receiveMsgTimer);
+	receiveMsgTimer = setInterval(function(){
+		// var tab = sessionStorage.getItem("tabIdSession")
+		var tab = null;
+		tab = commonConfig.getConfig().tabIdSession;
+		apiHelper.receiveMsgChannel(tab).then(function(msgList){
+			_.each(msgList, function(elem){
+				_handleMessage(_transformMessageFormat({ body: elem }), { isHistory: false });
+			});
+		});
+	}, _const.SECOND_CHANNEL_MESSAGE_RECEIVE_INTERVAL);
+}
 
 function _initConnection(onReadyCallback){
 	// xmpp连接超时则改为可发送消息状态
@@ -214,6 +216,7 @@ function _refreshDialog(){
 			if($(el).hasClass("window-demo") ){
 				$(modelDom).addClass("hide")
 				_initConnection();
+				_initSecondChannle();
 			}
 			else{
 				window.location.reload();
