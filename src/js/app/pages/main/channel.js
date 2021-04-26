@@ -48,7 +48,7 @@ var _open = tools.retryThrottle(function(){
 }, {
 	resetTime: 10 * 60 * 1000,
 	waitTime: 2000,
-	retryLimit: 3
+	retryLimit: 100 //重连次数改为100次
 });
 
 
