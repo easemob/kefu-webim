@@ -217,6 +217,7 @@ function _refreshDialog(){
 				$(modelDom).addClass("hide")
 				_initConnection();
 				_initSecondChannle();
+				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, []);
 			}
 			else{
 				window.location.reload();
