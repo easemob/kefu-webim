@@ -34,7 +34,10 @@ module.exports = function(opt){
 	// }
 
 	parentContainer.appendChild(el);
-	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, function(){
+	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, function(reinit){
+		if(reinit === "reinit"){
+			currHistoryMsgSeqId = 0;
+		}
 		var id = officialAccount.official_account_id;
 		// 获取当前 session 信息
 		apiHelper.getLastSession(id).then(function(entity){
