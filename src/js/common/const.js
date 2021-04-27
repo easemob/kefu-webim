@@ -72,6 +72,8 @@ module.exports = {
 		CLEAR_AGENTSTATE: "clear.agentstate",
 		//清除agentState定时器
 		CLEAR_AGENTINPUTSTATE: "clear.agentinputstate",
+		// 判断是否调用历史消息
+		IS_PULL_HISTORY: "is.pull.history"
 
 	},
 

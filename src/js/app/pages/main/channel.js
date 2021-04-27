@@ -19,6 +19,7 @@ var config;
 var conn;
 var evaluateTime;
 var evaluateFlag = false;
+// var isPullHistory = false;
 
 
 // 监听ack的timer, 每条消息启动一个
@@ -48,7 +49,7 @@ var _open = tools.retryThrottle(function(){
 }, {
 	resetTime: 10 * 60 * 1000,
 	waitTime: 2000,
-	retryLimit: 3
+	retryLimit: 100 //重连次数改为100次
 });
 
 
@@ -181,6 +182,7 @@ function _initConnection(onReadyCallback){
 				eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
 				eventListener.trigger(_const.SYSTEM_EVENT.CLEAR_AGENTSTATE);
 				eventListener.trigger(_const.SYSTEM_EVENT.CLEAR_AGENTINPUTSTATE);
+				eventListener.trigger(_const.SYSTEM_EVENT.IS_PULL_HISTORY);
 			}
 		}
 	});
@@ -196,6 +198,10 @@ function _initConnection(onReadyCallback){
 			evaluateTime = 8*3600
 		}
 	});
+	// 添加一个监听事件判断是否调用历史消息
+	eventListener.add(_const.SYSTEM_EVENT.IS_PULL_HISTORY, function(){
+		receiveMsgDict = new Dict();
+	})
 }
 function _refreshDialog(){
 	var modelDom = utils.createElementFromHTML("<div class=\"em-model\"></div>");
@@ -214,9 +220,12 @@ function _refreshDialog(){
 		confirm: function(){
 			var el = document.getElementsByTagName("body");
 			if($(el).hasClass("window-demo") ){
+				var chatBox = document.querySelector(".chat-container");
+				$(chatBox).empty();
 				$(modelDom).addClass("hide")
 				_initConnection();
 				_initSecondChannle();
+				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, ["reinit"]);
 			}
 			else{
 				window.location.reload();
