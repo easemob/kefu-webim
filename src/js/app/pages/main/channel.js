@@ -214,10 +214,12 @@ function _refreshDialog(){
 		confirm: function(){
 			var el = document.getElementsByTagName("body");
 			if($(el).hasClass("window-demo") ){
+				var chatBox = document.querySelector(".chat-container");
+				$(chatBox).empty();
 				$(modelDom).addClass("hide")
 				_initConnection();
 				_initSecondChannle();
-				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, []);
+				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, ["reinit"]);
 			}
 			else{
 				window.location.reload();
