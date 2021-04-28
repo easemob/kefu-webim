@@ -818,7 +818,8 @@ function _bindEvents(){
 	}, 1000);
 
 	function handleSendBtn(){
-		var toKefuBtn = document.querySelector(".em-widget-to-kefu");
+		// var toKefuBtn = document.querySelector(".em-widget-to-kefu");
+		var toKefuBtn = document.querySelector(".em-widget-to-kefu-input-button");
 		var isEmpty = !doms.textInput.value.trim();
 
 		utils.toggleClass(

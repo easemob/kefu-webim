@@ -147,6 +147,8 @@ module.exports = function(data,isOpen){
 	}
 
 	function _displayOrHideTransferToKefuBtn(officialAccount){
+		// 如果转人工开关没有打开不走此逻辑
+		if(!commonConfig.getConfig().toolbar.transferToKefu) return;
 		// 忽略非当前服务号的事件
 		if(profile.currentOfficialAccount !== officialAccount) return;
 	
