@@ -11,6 +11,10 @@ var toKefuBtn;
 module.exports = function(data,isOpen){
 	if(!isOpen){
 		data = []
+		var prevPc = document.querySelector(".swiper-button-prev");
+		var nextPc = document.querySelector(".swiper-button-next");
+		$(prevPc).addClass("hide");
+		$(nextPc).addClass("hide");
 	}
 	$(".em-widget-send-wrapper-top").removeClass("hide")
 		// 自定义主题色
