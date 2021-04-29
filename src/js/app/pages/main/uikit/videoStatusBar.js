@@ -98,7 +98,7 @@ function reset(){
 	var editor = document.querySelector(".toolbar");
 	var ele = document.querySelector(".em-widget-exit-video");
 	if(ele){
-		editor.removeChild(ele)
+		$(ele).addClass("hide");
 	}
 }
 
