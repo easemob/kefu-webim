@@ -222,12 +222,9 @@ function _refreshDialog(){
 		confirm: function(){
 			var el = document.getElementsByTagName("body");
 			if($(el).hasClass("window-demo") ){
-				var chatBox = document.querySelector(".chat-container");
-				$(chatBox).empty();
-				$(modelDom).addClass("hide")
-				_initConnection();
-				_initSecondChannle();
-				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_LIST_GOT, ["reinit"]);
+				// 小窗口集成的页面也刷新防止ws接收错误信息
+				window.location.reload();
+				window.sessionStorage && sessionStorage.setItem("chartIsShow",true)
 			}
 			else{
 				window.location.reload();

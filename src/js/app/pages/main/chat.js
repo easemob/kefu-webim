@@ -1135,6 +1135,13 @@ function _onReady(){
 
 	// onready 回调
 	getToHost.send({ event: _const.EVENTS.ONREADY });
+	var chartIsShow = window.sessionStorage && sessionStorage.getItem("chartIsShow");
+	if(chartIsShow){
+		setTimeout(function () {
+			getToHost.send({ event: _const.EVENTS.SHOW });
+		}, 1000);
+		window.sessionStorage && sessionStorage.removeItem("chartIsShow");
+	}
 }
 
 function _initSDK(){
