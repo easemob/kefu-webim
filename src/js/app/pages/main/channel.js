@@ -178,7 +178,9 @@ function _initConnection(onReadyCallback){
 					return false;
 				}
 				_refreshDialog();
-				clearInterval(receiveMsgTimer);
+				//在收到多端登录信息时候，第二通道轮询暂且不清除。
+				//TODO: 等查清楚重新连接以后第二通通道轮询没开启的原因再把这行注释解开
+				// clearInterval(receiveMsgTimer);   
 				eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
 				eventListener.trigger(_const.SYSTEM_EVENT.CLEAR_AGENTSTATE);
 				eventListener.trigger(_const.SYSTEM_EVENT.CLEAR_AGENTINPUTSTATE);
