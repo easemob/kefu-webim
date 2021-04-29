@@ -279,7 +279,11 @@ function _ready(){
 	typeof me.ready === "function" && me.ready();
 
 	eventListener.add(_const.SYSTEM_EVENT.ACCEPT_INVITATION, function(){
-		me.open();
+		// 此处加一个show的事件，类似于点击客服的按钮
+		me.down2Im.send({ event: _const.EVENTS.SHOW});
+		setTimeout(function() {
+			me.open();
+		}, 50);
 	});
 }
 
