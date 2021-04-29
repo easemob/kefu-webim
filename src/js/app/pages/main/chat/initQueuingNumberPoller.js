@@ -17,12 +17,12 @@ module.exports = function(){
 
 	// 海外集群10秒轮询一次，海外集群的tenantid是1000000开始的
 	var config = commonConfig.getConfig();
-	var t = 5000;
+	var t = 1000;
 	if(config.tenantId >= 1000000){
 		t = 10000;
 	}
 	else{
-		t = 5000;
+		t = 1000;
 	}
 	// 开始轮询排队人数
 	setInterval(function(){
