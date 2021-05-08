@@ -22,6 +22,7 @@ function genMsgContent(msg){
 	var ruleId;
 	var answerId;
 	var relatedRuleIds;
+	
 
 	switch(type){
 	case "txt":
@@ -62,7 +63,6 @@ function genMsgContent(msg){
 			}
 			break;
 		}
-
 	case "txtLink":
 		html = value;
 		break;
@@ -113,8 +113,6 @@ function genMsgContent(msg){
 			html = "<div class='list-title'>" + value + "</div>" + msg.list;
 			break;
 		}
-
-
 	case "file":
 		// 历史会话中 filesize = 0
 		// 访客端发文件消息 filesize = undefined
@@ -188,6 +186,140 @@ function genMsgContent(msg){
 			msgContent.item_url ? "<a target='_blank' href='" + msgContent.item_url + "'></a>" : "",
 		].join("");
 		break;
+	case "article":
+		var msgArticles = utils.getDataByPath(msg, "ext.msgtype.articles");
+		var articleNode = "";
+		var showDirectly = utils.getDataByPath(msg, "ext.msgtype.showDirectly");
+		var cardViewOption = utils.getDataByPath(msg, "ext.msgtype.cardViewOption");
+		if(showDirectly){
+			if(cardViewOption == "SLIDE"){
+				html = "<div class=\"article-msg-outer more-articles specialArticle directly-article-drawer\" style=\"margin-bottom:6px;\">"
+				+ _.map(msgArticles, function(item, index){
+					var str = "";
+					articleDom = apiHelper.getArticleHtml(msgArticles[index].url);
+					// var uuid = utils.uuid();
+					articleTextDom = utils.createElementArticleFromHTML(articleDom.responseText);
+					// msgArticles[index].url = msgArticles[index].url.replace("http:", "https:");
+					// str =  "<div><iframe id=" + uuid + " src=" + msgArticles[index].url + " height=\"500px%\" width=\"100%\" frameborder=\"0\"></iframe></div>";
+					utils.addClass(articleTextDom.getElementsByTagName("img"), "em-widget-imgview");
+					str =  "<div>" + articleTextDom.getElementsByTagName("div")[0].innerHTML + "</div>";
+					
+					return str;
+				}).join("") || ""
+				+ "<div></div></div>";
+			}
+			else{
+				html = _.map(msgArticles, function(item, index){
+					var str = "";
+					articleDom = apiHelper.getArticleHtml(msgArticles[index].url);
+					articleTextDom = utils.createElementArticleFromHTML(articleDom.responseText);
+					utils.addClass(articleTextDom.getElementsByTagName("img"), "em-widget-imgview");
+						// var uuid = utils.uuid();
+						// item.url = item.url.replace("http:", "https:");
+					str =  "<div class=\"article-msg-outer more-articles specialArticle\">" + articleTextDom.getElementsByTagName("div")[0].innerHTML;
+					return str;
+				}).join("") || ""
+				+ "</div>";
+			}
+			
+		}
+		else if(cardViewOption == "SLIDE"){
+
+			html = "<div class=\"article-msg-outer more-articles  article-drawer\" style=\"margin-bottom:10px;\">"
+								+ _.map(msgArticles, function(item, index){
+									var date = msgArticles[index].createdTime ? moment(msgArticles[index].createdTime).format(__("config.article_timestamp_format"))
+									: moment(msgArticles[index].date).format(__("config.article_timestamp_format"));
+									var str = "";
+									str = "" +
+										"<div class=\"article-msg-outer article-item only-one-article\">" +
+											"<div class=\"body\">" +
+												"<h3 class=\"title\">" + msgArticles[index].title + "</h3>" +
+												"<p class=\"create-time\">" + date + "</p>" +
+												"<img class=\"cover\" src=\"" + msgArticles[index].picurl + "\"/>" +
+												"<div class=\"desc\"><p>" + msgArticles[index].description + "</p></div>" +
+											"</div>" +
+											"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
+											// "<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
+											"<div class=\"article-link\" data-status=\"" + msgArticles[index].sendCustomer + "\"><span>" + msgArticles[index].url + "</span></div>" +
+										"</div>";
+									return str;
+
+								}).join("") || ""
+								+ "</div>";
+		}
+		else if(msgArticles.length === 1){
+			var date = msgArticles[0].createdTime ? moment(msgArticles[0].createdTime).format(__("config.article_timestamp_format"))
+								: moment(msgArticles[0].date).format(__("config.article_timestamp_format"));
+			html = "" +
+								"<div class=\"article-msg-outer article-item only-one-article\">" +
+									"<div class=\"body\">" +
+										"<h3 class=\"title\">" + msgArticles[0].title + "</h3>" +
+										"<p class=\"create-time\">" + date + "</p>" +
+										"<img class=\"cover\" src=\"" + msgArticles[0].picurl + "\"/>" +
+										"<div class=\"desc\"><p>" + msgArticles[0].description + "</p></div>" +
+									"</div>" +
+									"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
+									// "<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
+									"<div class=\"article-link\" data-status=\"" + msgArticles[0].sendCustomer + "\"><span>" + msgArticles[0].url + "</span></div>" +
+								"</div>";
+		}
+		else{
+			html = "<div class=\"article-msg-outer more-articles\">"
+								+ _.map(msgArticles, function(item, index){
+									var str = "";
+									if(index === 0){
+										str = "<div class=\"article-item first-item\">" +
+										"<h3 class=\"title\">" + item.title + "</h3>";
+									}
+									else{
+										str = "<div class=\"article-item rest-item\">" +
+										"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
+									}
+									str += "<img class=\"cover-img\" src=\"" + item.picurl + "\"/>" +
+										// "<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
+										"<div class=\"article-link\"><span>" + item.url + "</span></div>" +
+										"</div>";
+									return str;
+								}).join("") || ""
+								+ "</div>";
+		}
+		
+		// dom.className = "article-message-wrapper";
+
+		// 单独的转人工按钮（txt、）
+		if(!utils.getDataByPath(msg, "ext.msgtype.choice") && utils.getDataByPath(msg, "ext.weichat.ctrlType") === "TransferToKfHint"){
+			var articleTransferNode;
+			var ctrlArgs = msg.ext.weichat.ctrlArgs;
+			var transferToHumanButtonInfo = msg.ext.weichat.transferToHumanButtonInfo;
+			var disabledClass = profile.shouldMsgActivated(ctrlArgs.serviceSessionId) ? "" : "disabled";
+
+			if(transferToHumanButtonInfo && transferToHumanButtonInfo.suggestionTransferToHumanLabel != null){
+				html += "<div class=\"em-btn-list\" style=\"max-width: 360px;margin: 0 auto;\">"
+				+ "<button "
+					+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
+					+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
+					+ "data-id=\"" + ctrlArgs.id + "\" "
+					+ "data-transferToHumanId=\"" + transferToHumanButtonInfo.transferToHumanId + "\" "
+				+ ">" + transferToHumanButtonInfo.suggestionTransferToHumanLabel + "</button>"
+			+ "</div>";
+			}
+			// 英文状态开关可能会有问题，这里用语言状态来判断
+			else{
+				ctrlArgs.label = __("config.language") === "zh-CN" ? ctrlArgs.label : "Chat with agent";
+				html += "<div class=\"em-btn-list\" style=\"max-width: 360px;margin: 0 auto;\">"
+					+ "<button "
+						+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
+						+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
+						+ "data-id=\"" + ctrlArgs.id + "\" "
+					+ ">" + ctrlArgs.label + "</button>"
+				+ "</div>";
+			}
+		}
+
+		// dom.innerHTML = articleNode;
+		
+		// return dom;
+		break;
 	default:
 		throw new Error("unexpected value type.");
 	}
@@ -197,7 +329,7 @@ function genMsgContent(msg){
 		ruleId = relatedRules.ruleId;
 		answerId = relatedRules.answerId;
 		relatedRuleIds = relatedRules.relatedRuleIds;
-		html += "<div class=\"em-btn-list\">" + _.map(msg.ext.relatedRules.questions, function(question, index){ return "<button class=\"js_robotRelateListbtn \" data-ruleId=" + ruleId + " data-answerId=" + answerId + " data-relatedRuleId=" + relatedRuleIds[index] + ">" + question + "</button>";}).join("") || "";
+		html += "<div class=\"em-btn-list\">"  + _.map(msg.ext.relatedRules.questions, function(question, index){ return "<li><button class=\"js_robotRelateListbtn fg-color\" data-ruleId=" + ruleId + " data-answerId=" + answerId + " data-relatedRuleId=" + relatedRuleIds[index] + ">" + question + "</button><i class='icon-arrow-right'></i></li>";}).join("") || "";
 	}
 
 	return html;
@@ -238,140 +370,11 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	var direction = isReceived ? "left" : "right";
 	var articleDom;
 	var articleTextDom;
+	var satisfactionCommentInfo;
+	var agentId;
+	var satisfactionCommentInvitation;
 
-	if(type === "article"){
-		var msgArticles = utils.getDataByPath(msg, "ext.msgtype.articles");
-		var articleNode;
-		var showDirectly = utils.getDataByPath(msg, "ext.msgtype.showDirectly");
-		var cardViewOption = utils.getDataByPath(msg, "ext.msgtype.cardViewOption");
-		if(showDirectly){
-			if(cardViewOption == "SLIDE"){
-				articleNode = "<div class=\"article-msg-outer more-articles specialArticle directly-article-drawer\" style=\"margin-bottom:6px;\">"
-				+ _.map(msgArticles, function(item, index){
-					var str = "";
-					articleDom = apiHelper.getArticleHtml(msgArticles[index].url);
-					// var uuid = utils.uuid();
-					articleTextDom = utils.createElementArticleFromHTML(articleDom.responseText);
-					// msgArticles[index].url = msgArticles[index].url.replace("http:", "https:");
-					// str =  "<div><iframe id=" + uuid + " src=" + msgArticles[index].url + " height=\"500px%\" width=\"100%\" frameborder=\"0\"></iframe></div>";
-					utils.addClass(articleTextDom.getElementsByTagName("img"), "em-widget-imgview");
-					str =  "<div>" + articleTextDom.getElementsByTagName("div")[0].innerHTML + "</div>";
-					
-					return str;
-				}).join("") || ""
-				+ "<div></div></div>";
-			}
-			else{
-				articleNode = ""
-					+ _.map(msgArticles, function(item, index){
-						var str = "";
-						articleDom = apiHelper.getArticleHtml(msgArticles[index].url);
-						articleTextDom = utils.createElementArticleFromHTML(articleDom.responseText);
-						utils.addClass(articleTextDom.getElementsByTagName("img"), "em-widget-imgview");
-						// var uuid = utils.uuid();
-						// item.url = item.url.replace("http:", "https:");
-						str =  "<div class=\"article-msg-outer more-articles specialArticle\" style=\"margin-bottom:6px;\">" + articleTextDom.getElementsByTagName("div")[0].innerHTML + "</div>";
-						return str;
-					}).join("") || "";
-			}
-			
-		}
-		else if(cardViewOption == "SLIDE"){
-
-			articleNode = "<div class=\"article-msg-outer more-articles  article-drawer\" >"
-								+ _.map(msgArticles, function(item, index){
-									var date = msgArticles[index].createdTime ? moment(msgArticles[index].createdTime).format(__("config.article_timestamp_format"))
-									: moment(msgArticles[index].date).format(__("config.article_timestamp_format"));
-									var str = "";
-									str = "" +
-										"<div class=\"article-msg-outer article-item only-one-article\">" +
-											"<div class=\"body\">" +
-												"<h3 class=\"title\">" + msgArticles[index].title + "</h3>" +
-												"<p class=\"create-time\">" + date + "</p>" +
-												"<img class=\"cover\" src=\"" + msgArticles[index].picurl + "\"/>" +
-												"<div class=\"desc\"><p>" + msgArticles[index].description + "</p></div>" +
-											"</div>" +
-											"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
-											// "<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
-											"<div class=\"article-link\" data-status=\"" + msgArticles[index].sendCustomer + "\"><span>" + msgArticles[index].url + "</span></div>" +
-										"</div>";
-									return str;
-
-								}).join("") || ""
-								+ "</div>";
-		}
-		else if(msgArticles.length === 1){
-			var date = msgArticles[0].createdTime ? moment(msgArticles[0].createdTime).format(__("config.article_timestamp_format"))
-								: moment(msgArticles[0].date).format(__("config.article_timestamp_format"));
-			articleNode = "" +
-								"<div class=\"article-msg-outer article-item only-one-article\">" +
-									"<div class=\"body\">" +
-										"<h3 class=\"title\">" + msgArticles[0].title + "</h3>" +
-										"<p class=\"create-time\">" + date + "</p>" +
-										"<img class=\"cover\" src=\"" + msgArticles[0].picurl + "\"/>" +
-										"<div class=\"desc\"><p>" + msgArticles[0].description + "</p></div>" +
-									"</div>" +
-									"<div class=\"footer\"><span class=\"look-article\">" + __("chat.read_full_version") + "</span><i class=\"icon-arrow-right\"></i></div>" +
-									// "<a class=\"article-link\" target=\"_blank\" href=\"" + msgArticles[0].url + "\"></a>" +
-									"<div class=\"article-link\" data-status=\"" + msgArticles[0].sendCustomer + "\"><span>" + msgArticles[0].url + "</span></div>" +
-								"</div>";
-		}
-		else{
-			articleNode = "<div class=\"article-msg-outer more-articles\">"
-								+ _.map(msgArticles, function(item, index){
-									var str = "";
-									if(index === 0){
-										str = "<div class=\"article-item first-item\">" +
-										"<h3 class=\"title\">" + item.title + "</h3>";
-									}
-									else{
-										str = "<div class=\"article-item rest-item\">" +
-										"<div class=\"title-wrapper\"><p class=\"title\">" + item.title + "</p></div>";
-									}
-									str += "<img class=\"cover-img\" src=\"" + item.picurl + "\"/>" +
-										// "<a class=\"article-link\" target=\"_blank\" href=\"" + item.url + "\"></a>" +
-										"<div class=\"article-link\"><span>" + item.url + "</span></div>" +
-										"</div>";
-									return str;
-								}).join("") || ""
-								+ "</div>";
-		}
-		
-		dom.className = "article-message-wrapper";
-
-		// 单独的转人工按钮（txt、）
-		if(!utils.getDataByPath(msg, "ext.msgtype.choice") && utils.getDataByPath(msg, "ext.weichat.ctrlType") === "TransferToKfHint"){
-			var articleTransferNode;
-			var ctrlArgs = msg.ext.weichat.ctrlArgs;
-			var transferToHumanButtonInfo = msg.ext.weichat.transferToHumanButtonInfo;
-			var disabledClass = profile.shouldMsgActivated(ctrlArgs.serviceSessionId) ? "" : "disabled";
-
-			if(transferToHumanButtonInfo && transferToHumanButtonInfo.suggestionTransferToHumanLabel != null){
-				articleNode += "<div class=\"em-btn-list\" style=\"max-width: 360px;margin: 0 auto;\">"
-				+ "<button "
-					+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
-					+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
-					+ "data-id=\"" + ctrlArgs.id + "\" "
-					+ "data-transferToHumanId=\"" + transferToHumanButtonInfo.transferToHumanId + "\" "
-				+ ">" + transferToHumanButtonInfo.suggestionTransferToHumanLabel + "</button>"
-			+ "</div>";
-			}
-			// 英文状态开关可能会有问题，这里用语言状态来判断
-			else{
-				ctrlArgs.label = __("config.language") === "zh-CN" ? ctrlArgs.label : "Chat with agent";
-				articleNode += "<div class=\"em-btn-list\" style=\"max-width: 360px;margin: 0 auto;\">"
-					+ "<button "
-						+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
-						+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
-						+ "data-id=\"" + ctrlArgs.id + "\" "
-					+ ">" + ctrlArgs.label + "</button>"
-				+ "</div>";
-			}
-		}
-
-		dom.innerHTML = articleNode;
-		return dom;
-	}
+	
 
 	// 设置消息气泡显示在左侧还是右侧
 	// .em-widget-right, .em-widget-left used here
@@ -395,7 +398,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 
 	// wrapper 开始
 	if(direction === "left"){
-		if(type === "customMagicEmoji" || type === "img" || type === "video"){
+		if(type === "customMagicEmoji" || type === "video"){
 			html += "<div class=\"em-widget-msg-wrapper no-bg msgtype-" + (msg.subtype || type) + "\">";
 		}
 		else{
@@ -500,7 +503,6 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		}
 	}
 
-
 	// container 结束
 	html += "</div>";
 
@@ -528,7 +530,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		// }
 
 		if(transferToHumanButtonInfo && transferToHumanButtonInfo.suggestionTransferToHumanLabel != null){
-			html += "<div class=\"em-btn-list\">"
+			html += "<div class=\"em-btn-list\" style=\"padding:0\">"
 			+ "<button "
 				+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
 				+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
@@ -540,7 +542,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		// 英文状态开关可能会有问题，这里用语言状态来判断
 		else{
 			ctrlArgs.label = __("config.language") === "zh-CN" ? ctrlArgs.label : "Chat with agent";
-			html += "<div class=\"em-btn-list\">"
+			html += "<div class=\"em-btn-list\" style=\"padding:0\">"
 				+ "<button "
 					+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
 					+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
@@ -550,9 +552,16 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		}
 	}
 
+	satisfactionCommentInfo = utils.getDataByPath(msg, "ext.weichat.extRobot.satisfactionCommentInfo");
+	satisfactionCommentInvitation = utils.getDataByPath(msg, "ext.weichat.extRobot.satisfactionCommentInvitation");
+	agentId = utils.getDataByPath(msg, "ext.weichat.agent.userId");
+
+	if(msg.ext &&  satisfactionCommentInvitation){
+		html +=  "<div class='statisfy'><span class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'><i class=\"icon-resolved\"></i><span>" + __("evaluation.resolved") + "</span></span><span class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'><i class=\"icon-unresolved\"></i><span>" + __("evaluation.unsolved") + "</span></span></div>";
+	}
+
 	// wrapper 结尾
 	html += "</div>";
-
 	dom.innerHTML = html;
 	return dom;
 }
