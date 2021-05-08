@@ -317,9 +317,10 @@ function _checkGradeType(){
 		var avatar = entity.avatar;
 		var topBar = document.querySelector(".em-widget-header");
 		$agentFace = topBar.querySelector(".em-agent-face");
-		if(avatar) { 
+		if(avatar){
 			$agentFace.src = avatar;
-		}else{
+		}
+		else{
 			$agentFace.src = defaultAvatar;
 		}
 		utils.removeClass($agentFace, "hide");
@@ -455,12 +456,12 @@ function _bindEvents(){
 				}
 			});
 
-			// 关闭并且结束会话 
+			// 关闭并且结束会话
 			var agentType = officialAccount.agentType;
 			var isRobotAgent = agentType === _const.AGENT_ROLE.ROBOT;
 			// 仅机器人接待时关闭会话
 			if(isRobotAgent && officialAccount.isSessionOpen && profile.grayList.visitorLeave && config.options.closeSessionWhenCloseWindow == "true"){
-				sessionId && apiHelper.visitorCloseSession({serviceSessionId: sessionId});
+				sessionId && apiHelper.visitorCloseSession({ serviceSessionId: sessionId });
 			}
 			
 		});
@@ -484,7 +485,8 @@ function _bindEvents(){
 			if(inputBoxPosition === "up"){
 				doms.chatWrapper.style.bottom = "0";
 				doms.queuingNumberStatus.style.top = height + "px";
-			}else{
+			}
+			else{
 				doms.chatWrapper.style.bottom = height + "px";
 
 			}
@@ -495,11 +497,12 @@ function _bindEvents(){
 		// toolbar-mobile 隐藏
 		if(utils.isMobile && !utils.hasClass(doms.toolBar, "hide")){
 			utils.addClass(doms.toolBar, "hide");
-			var height = doms.editorView.getBoundingClientRect().height; 
+			var height = doms.editorView.getBoundingClientRect().height;
 			if(inputBoxPosition === "up"){
 				doms.chatWrapper.style.bottom = "0";
 				doms.queuingNumberStatus.style.top = height + "px";
-			}else{
+			}
+			else{
 				doms.chatWrapper.style.bottom = height + "px";
 			}
 			emojiPanel.move(inputBoxPosition, height);
@@ -535,7 +538,7 @@ function _bindEvents(){
 			var url = this.previousSibling.dataset.url;
 			utils.removeClass(doms.videoPlayContainer, "hide");
 			var html = "<video controls autoplay x5-video-player-fullscreen='false' x5-video-player-type='h5' x5-playsinline='true' data-url=\"" + url + " \" src=\"" + url + " \">"
-				+ "<source  src=\"" + url + " \" type=\"video/mp4\"></source>"  
+				+ "<source  src=\"" + url + " \" type=\"video/mp4\"></source>"
 				+ "<source  src=\"" + url + " \" type=\"video/webm\"></source>"
 				+ "<source  src=\"" + url + " \" type=\"video/ogg\"></source>"
 				+ "</video>";
@@ -545,8 +548,8 @@ function _bindEvents(){
 		// 退出视频全屏
 		utils.on(doms.videoBoxClose, "click", function(){
 			utils.addClass(doms.videoPlayContainer, "hide");
-			doms.videoPlayBox.innerHTML = '';
-		})
+			doms.videoPlayBox.innerHTML = "";
+		});
 	}
 	
 
@@ -714,7 +717,7 @@ function _bindEvents(){
 	});
 
 	// 解决
-	utils.live("a.statisfyYes", "click", function(){
+	utils.live(".statisfyYes", "click", function(){
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
 		apiHelper.getStatisfyYes(robotAgentId, satisfactionCommentKey).then(function(data){
@@ -727,7 +730,7 @@ function _bindEvents(){
 	});
 
 	// 未解决
-	utils.live("a.statisfyNo", "click", function(){
+	utils.live(".statisfyNo", "click", function(){
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
 
@@ -842,7 +845,8 @@ function _bindEvents(){
 				}
 				doms.emojiToggleButton.style.right = "40px";
 	
-			}else{
+			}
+			else{
 				utils.addClass(doms.addBtn, "hide");
 				if(utils.hasClass(toKefuBtn, "hide")){
 					doms.textInput.style.maxWidth = "calc(100% - 80px)";
@@ -852,7 +856,7 @@ function _bindEvents(){
 				}
 				doms.emojiToggleButton.style.right = "75px";
 			}
-		}	
+		}
 	}
 
 	if(Modernizr.oninput){
@@ -962,14 +966,13 @@ function _bindEvents(){
 				// 访客主动评价
 				satisfaction.show(null, null, "visitor");
 			}
-			else{
-				if(resp.errorCode == "WEBIM_338"){
-					uikit.tip(__("evaluation.WEBIM_338"));
-				}else{
-					uikit.tip(__("evaluation.WEBIM_OTHER"));
-				}
+			else if(resp.errorCode == "WEBIM_338"){
+				uikit.tip(__("evaluation.WEBIM_338"));
 			}
-		})
+			else{
+				uikit.tip(__("evaluation.WEBIM_OTHER"));
+			}
+		});
 	});
 
 	// ios patch: scroll page when keyboard is visible ones
@@ -1047,13 +1050,14 @@ function _bindEvents(){
 			doms.chatWrapper.style.bottom = "0";
 			doms.queuingNumberStatus.style.top = height + "px";
 			
-		}else{
+		}
+		else{
 			doms.chatWrapper.style.bottom = height + "px";
 		}
 		emojiPanel.move(inputBoxPosition, height);
 		_scrollToBottom();
 		// 由于移动端时候轮播图的元素没有家在无法获取到 所以需要在加载完成以后改变主题色
-		if(utils.isMobile) {
+		if(utils.isMobile){
 			// 获取主题色
 			var color = "";
 			var themeClassName;
@@ -1067,19 +1071,19 @@ function _bindEvents(){
 			else{
 				themeClassName = _const.themeMap[config.themeName];
 			}
-			var hoverColor = $("body."+ themeClassName +" .border-color").css("borderColor")
+			var hoverColor = $("body." + themeClassName + " .border-color").css("borderColor");
 			// 设置主题色
 			setTimeout(function(){
-				var el = document.querySelector(".swiper-pagination-bullet-active")
+				var el = document.querySelector(".swiper-pagination-bullet-active");
 				if(color){
-					$(el).css("backgroundColor",color)
+					$(el).css("backgroundColor", color);
 				}
 				else{
-					$(el).css("backgroundColor",hoverColor)
+					$(el).css("backgroundColor", hoverColor);
 				}
-			},300)
+			}, 300);
 		}
-	})
+	});
 }
 
 function _close(){
@@ -1137,7 +1141,7 @@ function _onReady(){
 	getToHost.send({ event: _const.EVENTS.ONREADY });
 	var chartIsShow = window.sessionStorage && sessionStorage.getItem("chartIsShow");
 	if(chartIsShow){
-		setTimeout(function () {
+		setTimeout(function(){
 			getToHost.send({ event: _const.EVENTS.SHOW });
 		}, 1000);
 		window.sessionStorage && sessionStorage.removeItem("chartIsShow");
@@ -1220,12 +1224,12 @@ function _init(){
 		});
 	}
 	var url;
-    if(profile.grayList.poweredByEasemob){
+	if(profile.grayList.poweredByEasemob){
         // utils.addClass(el, "paddingTo48");
         // utils.addClass(noMoreMsg, "top34");
-        url = "http://www.easemob.com/product/cs?utm_source=csw&tenantid=" + commonConfig.getConfig().tenantId;
+		url = "http://www.easemob.com/product/cs?utm_source=csw&tenantid=" + commonConfig.getConfig().tenantId;
 		if(!utils.isMobile){
-			utils.appendHTMLTo(editorView, "<div class=\"easemob-copyright\"><a target=\"_blank\" href=" + url + "><span><i class=\"icon-easemob\"></i>"+ __("chat.powered_by_easemob") +"</a></div>");
+			utils.appendHTMLTo(editorView, "<div class=\"easemob-copyright\"><a target=\"_blank\" href=" + url + "><span><i class=\"icon-easemob\"></i>" + __("chat.powered_by_easemob") + "</a></div>");
 			utils.addClass(editorView, "height-170");
 			utils.addClass($(editorView).find(".em-widget-send"), "bottom-30");
 			utils.addClass(document.querySelector(".chat-wrapper"), "chat-padding-40");
@@ -1253,16 +1257,14 @@ function _displayOrHideSatisfactionBtn(officialAccount){
 	var isRobotAgent = agentType === _const.AGENT_ROLE.ROBOT;
 
 	if(state === _const.SESSION_STATE.PROCESSING){
-		utils.toggleClass(doms.satisfaction, "hide", isRobotAgent); 
+		utils.toggleClass(doms.satisfaction, "hide", isRobotAgent);
 	}
 	else if(state === _const.SESSION_STATE.WAIT){
 		// 待接入状态 隐藏按钮
 		utils.addClass(doms.satisfaction, "hide");
 	}
-	else{
-		if(profile.isAgentStateOnline){
-			utils.removeClass(doms.satisfaction, "hide");
-		}
+	else if(profile.isAgentStateOnline){
+		utils.removeClass(doms.satisfaction, "hide");
 	}
 }
 
@@ -1394,28 +1396,31 @@ function _InitH5AndInputTop(isShowSatis){
 	apiHelper.getInputTopStatus().then(function(res){
 		var isOpen = res.entity;
 		apiHelper.getInputTopButton().then(function(res){
-			initInputTopButton(res.entities,isOpen);
-		})
-	})
+			if(res.entities.length != 0){
+				initInputTopButton(res.entities, isOpen);
+			}
+		});
+	});
 
-	if(utils.isMobile) {
+	if(utils.isMobile){
 		// document.querySelector(".em-widget-send-wrapper-top").style.bottom = "60" + "px";
 		// $(".em-widget-send-wrapper-top").addClass("hide");
 		apiHelper.getInputH5Status().then(function(res){
-			//如果开关打开渲染输入框上边的快捷操作按钮
+			// 如果开关打开渲染输入框上边的快捷操作按钮
 			if(res.entity){
 				apiHelper.getInputH5Button().then(function(res){
-					if(res.entities.length !=0){
-						initInputH5Button(res.entities,isShowSatis);
+					if(res.entities.length != 0){
+						initInputH5Button(res.entities, isShowSatis);
 					}
-				})
+				});
 			}
 			else{
 				// $(".em-widget-send-wrapper-top").addClass("hide");
 			}
 
-		})
-	} else {
+		});
+	}
+	else{
 
 	}
 }

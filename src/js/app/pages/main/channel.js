@@ -49,7 +49,7 @@ var _open = tools.retryThrottle(function(){
 }, {
 	resetTime: 10 * 60 * 1000,
 	waitTime: 2000,
-	retryLimit: 100 //重连次数改为100次
+	retryLimit: 100 // 重连次数改为100次
 });
 
 
@@ -155,7 +155,7 @@ function _initConnection(onReadyCallback){
 			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.OFFLINE, []);
 		},
 		onError: function(e){
-			console.log(e)
+			console.log(e);
 			if(e.reconnect){
 				// _open();
 				// 在移动端会触发多次重连，导致自己多次登录，影响多端登录的判断
@@ -178,9 +178,9 @@ function _initConnection(onReadyCallback){
 					return false;
 				}
 				_refreshDialog();
-				//在收到多端登录信息时候，第二通道轮询暂且不清除。
-				//TODO: 等查清楚重新连接以后第二通通道轮询没开启的原因再把这行注释解开
-				// clearInterval(receiveMsgTimer);   
+				// 在收到多端登录信息时候，第二通道轮询暂且不清除。
+				// TODO: 等查清楚重新连接以后第二通通道轮询没开启的原因再把这行注释解开
+				// clearInterval(receiveMsgTimer);
 				eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
 				eventListener.trigger(_const.SYSTEM_EVENT.CLEAR_AGENTSTATE);
 				eventListener.trigger(_const.SYSTEM_EVENT.CLEAR_AGENTINPUTSTATE);
@@ -194,16 +194,16 @@ function _initConnection(onReadyCallback){
 	// 在刚开始执行的时候获取满意度时效的值
 	apiHelper.getEvaluatePrescription().then(function(res){
 		if(res){
-			evaluateTime = res
+			evaluateTime = res;
 		}
 		else{
-			evaluateTime = 8*3600
+			evaluateTime = 8 * 3600;
 		}
 	});
 	// 添加一个监听事件判断是否调用历史消息
 	eventListener.add(_const.SYSTEM_EVENT.IS_PULL_HISTORY, function(){
 		receiveMsgDict = new Dict();
-	})
+	});
 }
 function _refreshDialog(){
 	var modelDom = utils.createElementFromHTML("<div class=\"em-model\"></div>");
@@ -217,21 +217,21 @@ function _refreshDialog(){
 		].join(""),
 		className: "refresh-dialog"
 	}).addButton({
-		hideCancel:true,
+		hideCancel: true,
 		confirmText: __("common.re_consultation"),
 		confirm: function(){
 			var el = document.getElementsByTagName("body");
-			if($(el).hasClass("window-demo") ){
+			if($(el).hasClass("window-demo")){
 				// 小窗口集成的页面也刷新防止ws接收错误信息
 				window.location.reload();
-				window.sessionStorage && sessionStorage.setItem("chartIsShow",true)
+				window.sessionStorage && sessionStorage.setItem("chartIsShow", true);
 			}
 			else{
 				window.location.reload();
 			}
 		}
 	});
-	dialog.show()
+	dialog.show();
 }
 function _reSend(type, id){
 	if(!id) return;
@@ -578,175 +578,175 @@ function _handleMessage(msg, options){
 	// 消息结构构造
 	// ===========
 	switch(type){
-		case "txt":
-			message = msg;
-			message.type = type;
-			message.data = (msg && msg.data) || "";
-			message.brief = textParser.getTextMessageBrief(message.data);
-			break;
-		case "img":
-			message = msg;
-			message.type = type;
-			message.brief = __("message_brief.picture");
-			break;
-		case "file":
-			message = msg;
-			message.type = type;
-			message.brief = __("message_brief.file");
-			break;
-		case "video":
-			message = msg;
-			message.type = type;
-			message.brief = __("message_brief.video");	// 页面接收提示视频
-			break;
-		case "article":
-		case "track":
-		case "order":
-			message = msg;
-			message.type = type;
-			break;
-		case "customMagicEmoji":
-			message = customMagicEmoji;
-			message.type = type;
-			message.brief = __("message_brief.emoji");
-			break;
-		case "html-form":
-			message = msg;
-			message.type = type;
-			message.brief = __("message_brief.unknown");
-			break;
+	case "txt":
+		message = msg;
+		message.type = type;
+		message.data = (msg && msg.data) || "";
+		message.brief = textParser.getTextMessageBrief(message.data);
+		break;
+	case "img":
+		message = msg;
+		message.type = type;
+		message.brief = __("message_brief.picture");
+		break;
+	case "file":
+		message = msg;
+		message.type = type;
+		message.brief = __("message_brief.file");
+		break;
+	case "video":
+		message = msg;
+		message.type = type;
+		message.brief = __("message_brief.video");	// 页面接收提示视频
+		break;
+	case "article":
+	case "track":
+	case "order":
+		message = msg;
+		message.type = type;
+		break;
+	case "customMagicEmoji":
+		message = customMagicEmoji;
+		message.type = type;
+		message.brief = __("message_brief.emoji");
+		break;
+	case "html-form":
+		message = msg;
+		message.type = type;
+		message.brief = __("message_brief.unknown");
+		break;
 	
 	
 	
 	
 	
-		case "cmd":
-			var action = msg.action;
-			if(action === "KF-ACK"){
+	case "cmd":
+		var action = msg.action;
+		if(action === "KF-ACK"){
 				// 清除 ack 对应的 site item
-				_clearTS(msg.ext.weichat.ack_for_msg_id);
-				return;
-			}
-			else if(action === "KEFU_MESSAGE_RECALL"){
+			_clearTS(msg.ext.weichat.ack_for_msg_id);
+			return;
+		}
+		else if(action === "KEFU_MESSAGE_RECALL"){
 				// 撤回消息命令
-				var recallMsgId = msg.ext.weichat.recall_msg_id;
-				var dom = document.getElementById(recallMsgId);
-				utils.addClass(dom, "hide");
-			}
-			break;
-		case "rtcVideoTicket":
-			!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket, videoExtend]);
-			break;
+			var recallMsgId = msg.ext.weichat.recall_msg_id;
+			var dom = document.getElementById(recallMsgId);
+			utils.addClass(dom, "hide");
+		}
+		break;
+	case "rtcVideoTicket":
+		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket, videoExtend]);
+		break;
 	
 	
 	
 	
 	
-		case "satisfactionEvaluation":
-			if(!evaluateTime){
-				evaluateTime = 8*3600
-			}
-			var time;
-			var closeArrDate = JSON.parse(utils.getStore("closDate")) 
-			serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
-			var closid = [];
+	case "satisfactionEvaluation":
+		if(!evaluateTime){
+			evaluateTime = 8 * 3600;
+		}
+		var time;
+		var closeArrDate = JSON.parse(utils.getStore("closDate"));
+		serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
+		var closid = [];
 			// 处理历史消息
-			if(closeArrDate){
-				if(closeArrDate.length!= 0 ){
-					for(var i=0;i<closeArrDate.length;i++){
-						if(serviceSessionId === closeArrDate[i].id){
-							time = closeArrDate[i].timp
-						}
-						closid.push(closeArrDate[i].id)
+		if(closeArrDate){
+			if(closeArrDate.length != 0){
+				for(var i = 0; i < closeArrDate.length; i++){
+					if(serviceSessionId === closeArrDate[i].id){
+						time = closeArrDate[i].timp;
 					}
-				}
-				else{
-					time = new Date().getTime()
+					closid.push(closeArrDate[i].id);
 				}
 			}
 			else{
-				time = new Date().getTime()
+				time = new Date().getTime();
 			}
+		}
+		else{
+			time = new Date().getTime();
+		}
 			
 			// 过来的即时消息不计算过期时间，在结束时候计算
-			if(closid.indexOf(serviceSessionId) < 0){
-				time = new Date().getTime()
-			}
-			var SessionId = profile.currentOfficialAccount.sessionId;
+		if(closid.indexOf(serviceSessionId) < 0){
+			time = new Date().getTime();
+		}
+		var SessionId = profile.currentOfficialAccount.sessionId;
 			// evaluateFlag是个标志位，处理会话结束后发来的邀请评价
-			if((closid.indexOf(serviceSessionId) < 0) && !evaluateFlag&& serviceSessionId != SessionId){
+		if((closid.indexOf(serviceSessionId) < 0) && !evaluateFlag && serviceSessionId != SessionId){
 				// 此处的时间：历史消息获取是10条一组，会话结束的事件跟评价可能不在同一组，这里无法取到，取当前消息的时间
-				time = msg.timestamp
-			}
+			time = msg.timestamp;
+		}
 
-			var isInvalid = new Date().getTime() - time;
-			if(evaluateTime*1000 > isInvalid){
-				inviteId = msg.ext.weichat.ctrlArgs.inviteId;
+		var isInvalid = new Date().getTime() - time;
+		if(evaluateTime * 1000 > isInvalid){
+			inviteId = msg.ext.weichat.ctrlArgs.inviteId;
 				// serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
-				message = msg;
-				message.type = "list";
-				message.subtype = type;
-				message.data = __("chat.evaluate_agent_title");
-				message.list = [
-					"<div class=\"em-btn-list\">"
+			message = msg;
+			message.type = "list";
+			message.subtype = type;
+			message.data = __("chat.evaluate_agent_title");
+			message.list = [
+				"<div class=\"em-btn-list\">"
 					+ "<button class=\" js_satisfybtn fg-color\" data-inviteid=\""
 					+ inviteId
 					+ "\" data-servicesessionid=\""
 					+ serviceSessionId
 					+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
-				];
-				message.brief = __("message_brief.menu");
-				!isHistory && config.ui.enquiryShowMode === "popup" && eventListener.excuteCallbacks(
+			];
+			message.brief = __("message_brief.menu");
+			!isHistory && config.ui.enquiryShowMode === "popup" && eventListener.excuteCallbacks(
 					_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
 					[targetOfficialAccount, inviteId, serviceSessionId]
 				);
 				// isInvalid 本轮会话结束时间距离这条消息刚创建的时间（是否超过设置的评价失效时间）
 				// evaluateTime 客服系统设置的评价超时的时间
 				// 判断是否是过来的即时评价消息，是的话不失效，在结束会话时候处理（即时评价消息有主动邀请和结束会话两种）
-				if(!(closid.indexOf(serviceSessionId) < 0) || evaluateFlag){
-					setTimeout(function () {
-						var btn = $(".em-btn-list>button[data-servicesessionid=" + serviceSessionId + "]")
-						btn.removeClass("bg-hover-color")
-						btn.removeClass("js_satisfybtn")
-						btn.text(__("chat.invalid"))
-						btn.addClass("invalid-btn")
-						evaluateFlag = false
-					}, evaluateTime*1000 - isInvalid);
-				}
+			if(!(closid.indexOf(serviceSessionId) < 0) || evaluateFlag){
+				setTimeout(function(){
+					var btn = $(".em-btn-list>button[data-servicesessionid=" + serviceSessionId + "]");
+					btn.removeClass("bg-hover-color");
+					btn.removeClass("js_satisfybtn");
+					btn.text(__("chat.invalid"));
+					btn.addClass("invalid-btn");
+					evaluateFlag = false;
+				}, evaluateTime * 1000 - isInvalid);
 			}
-			else{
-				inviteId = msg.ext.weichat.ctrlArgs.inviteId;
-				serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
-				message = msg;
-				message.type = "list";
-				message.subtype = type;
-				message.data = __("chat.evaluate_agent_title");
-				message.list = [
-					"<div class=\"em-btn-list\">"
+		}
+		else{
+			inviteId = msg.ext.weichat.ctrlArgs.inviteId;
+			serviceSessionId = msg.ext.weichat.ctrlArgs.serviceSessionId;
+			message = msg;
+			message.type = "list";
+			message.subtype = type;
+			message.data = __("chat.evaluate_agent_title");
+			message.list = [
+				"<div class=\"em-btn-list\">"
 					+ "<button class=\"invalid-btn\" data-inviteid=\""
 					+ inviteId
 					+ "\" data-servicesessionid=\""
 					+ serviceSessionId
 					+ "\">" + __("chat.invalid") + "</button></div>"
-				];
-				message.brief = __("message_brief.menu");
-				!isHistory && config.ui.enquiryShowMode === "popup" && eventListener.excuteCallbacks(
+			];
+			message.brief = __("message_brief.menu");
+			!isHistory && config.ui.enquiryShowMode === "popup" && eventListener.excuteCallbacks(
 					_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
 					[targetOfficialAccount, inviteId, serviceSessionId]
 				);
-			}
-			break;
-		case "robotList":
+		}
+		break;
+	case "robotList":
 			// 如果取不到，就默认 true 打开菜单
 			// 这个 service_session 对象，对于欢迎语类的消息，是没有的
-			serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
-			message = msg;
-			message.type = "list";
-			message.subtype = type;
-			message.list = "<div class=\"em-btn-list\">"
+		serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
+		message = msg;
+		message.type = "list";
+		message.subtype = type;
+		message.list = "<div class=\"em-btn-list\">"
 				+ _.map(msg.ext.msgtype.choice.items, function(item){
 					var className = "";
-					var color = ""
+					var color = "";
 					if(profile.shouldMsgActivated(serviceSessionId)){
 						className = themeCustomColor ? "" : "fg-color";
 						color = themeCustomColor;
@@ -763,15 +763,15 @@ function _handleMessage(msg, options){
 					+ ">" + item.name + "</button> <i class='icon-arrow-right'></i> </li>";
 				}).join("") || ""
 				+ "</div>";
-			message.data = msg.ext.msgtype.choice.title;
-			message.brief = __("message_brief.menu");
-			break;
-		case "transferManualGuide":
-			serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
-			message = msg;
-			message.type = "list";
-			message.subtype = type;
-			message.list = "<div class=\"em-btn-list\">"
+		message.data = msg.ext.msgtype.choice.title;
+		message.brief = __("message_brief.menu");
+		break;
+	case "transferManualGuide":
+		serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
+		message = msg;
+		message.type = "list";
+		message.subtype = type;
+		message.list = "<div class=\"em-btn-list\">"
 				+ _.map(msg.ext.msgtype.choice.items, function(item){
 					if(item.queueType == "video"){
 						if(
@@ -787,7 +787,7 @@ function _handleMessage(msg, options){
 					}
 
 					var className = "";
-					var color = ""
+					var color = "";
 					if(profile.shouldMsgActivated(serviceSessionId)){
 						className = themeCustomColor ? "" : "fg-color";
 						color = themeCustomColor;
@@ -806,14 +806,14 @@ function _handleMessage(msg, options){
 					+ ">" + item.name + "</button>";
 				}).join("") || ""
 				+ "</div>";
-			message.data = msg.ext.msgtype.choice.title;
-			message.brief = __("message_brief.menu");
-			break;
-		case "skillgroupMenu":
-			message = msg;
-			message.type = "list";
-			message.subtype = type;
-			message.list = "<div class=\"em-btn-list\">"
+		message.data = msg.ext.msgtype.choice.title;
+		message.brief = __("message_brief.menu");
+		break;
+	case "skillgroupMenu":
+		message = msg;
+		message.type = "list";
+		message.subtype = type;
+		message.list = "<div class=\"em-btn-list\">"
 				+ _.map(msg.data.children, function(item){
 					var queueName = item.queueName;
 					var label = item.menuName;
@@ -826,26 +826,26 @@ function _handleMessage(msg, options){
 						+ label + "</button><i class='icon-arrow-right'></i></li>";
 				}).join("") || ""
 				+ "</div>";
-			message.data = msg.data.menuName;
-			message.brief = __("message_brief.menu");
-			break;
+		message.data = msg.data.menuName;
+		message.brief = __("message_brief.menu");
+		break;
 		// 入口指定
-		case "transferManualMenu":
-			message = msg;
-			message.type = "list";
-			message.subtype = type;
-			var array = msg.data.children;
-			if(msg.data.hasTransferNote){
-				var transferChild = {
-					queueName: "hasTransferNote",
-					itemName: "转留言",
-					queueType: "transfer"
-				};
-				array.push(transferChild);
-			}
+	case "transferManualMenu":
+		message = msg;
+		message.type = "list";
+		message.subtype = type;
+		var array = msg.data.children;
+		if(msg.data.hasTransferNote){
+			var transferChild = {
+				queueName: "hasTransferNote",
+				itemName: "转留言",
+				queueType: "transfer"
+			};
+			array.push(transferChild);
+		}
 			// 判断没有视频功能时，隐藏type为video的item
 	
-			message.list = "<div class=\"em-btn-list\">"
+		message.list = "<div class=\"em-btn-list\">"
 				+ _.map(array, function(item){
 					var queueName = item.queueName;
 					var label = item.itemName;
@@ -864,54 +864,54 @@ function _handleMessage(msg, options){
 					return "<button class=\"" + className + "\" data-queue-name=\"" + queueName + "\" data-queue-type=\"" + queueType + "\">" + label + "</button>";
 				}).join("") || ""
 				+ "</div>";
-			message.data = msg.data.itemName;
-			message.brief = __("message_brief.menu");
-			break;
-		case "robotTransfer":
-			var ctrlArgs = msg.ext.weichat.ctrlArgs;
-			message = msg;
-			message.type = "list";
-			message.subtype = type;
-			message.data = message.data || utils.getDataByPath(msg, "ext.weichat.ctrlArgs.label");
+		message.data = msg.data.itemName;
+		message.brief = __("message_brief.menu");
+		break;
+	case "robotTransfer":
+		var ctrlArgs = msg.ext.weichat.ctrlArgs;
+		message = msg;
+		message.type = "list";
+		message.subtype = type;
+		message.data = message.data || utils.getDataByPath(msg, "ext.weichat.ctrlArgs.label");
 			// msg.ext.weichat.ctrlArgs.label 未知是否有用，暂且保留
 			// 此处修改为了修复取出历史消息时，转人工评价标题改变的 bug
 			// 还有待测试其他带有转人工的情况
-			message.list = [
-				"<div class=\"em-btn-list\">",
-				"<button class=\"white fg-color js_robotTransferBtn\" ",
-				"data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" ",
-				"data-id=\"" + ctrlArgs.id + "\">" + ctrlArgs.label + "</button>",
-				"</div>"
-			].join("");
-			message.brief = __("message_brief.menu");
-			break;
-		case "transferToTicket":
-			message = msg;
-			message.type = "list";
-			message.subtype = type;
-			message.list = [
-				"<div class=\"em-btn-list\">",
-				"<button class=\"white fg-color js-transfer-to-ticket\">", 
-				__("chat.click_to_ticket"),
-				"</button>",
-				"</div>"
-			].join("");
-			message.brief = __("message_brief.menu");
-			break;
+		message.list = [
+			"<div class=\"em-btn-list\">",
+			"<button class=\"white fg-color js_robotTransferBtn\" ",
+			"data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" ",
+			"data-id=\"" + ctrlArgs.id + "\">" + ctrlArgs.label + "</button>",
+			"</div>"
+		].join("");
+		message.brief = __("message_brief.menu");
+		break;
+	case "transferToTicket":
+		message = msg;
+		message.type = "list";
+		message.subtype = type;
+		message.list = [
+			"<div class=\"em-btn-list\">",
+			"<button class=\"white fg-color js-transfer-to-ticket\">",
+			__("chat.click_to_ticket"),
+			"</button>",
+			"</div>"
+		].join("");
+		message.brief = __("message_brief.menu");
+		break;
 	
 	
 	
 	
 	
 	
-		default:
-			console.error("unexpected msg type");
-			break;
-		}
+	default:
+		console.error("unexpected msg type");
+		break;
+	}
 	
-		if(!isHistory){
+	if(!isHistory){
 			// 实时消息需要处理系统事件
-			marketingTaskId
+		marketingTaskId
 				&& type === "txt"
 				&& eventListener.excuteCallbacks(
 					_const.SYSTEM_EVENT.MARKETING_MESSAGE_RECEIVED,
@@ -922,23 +922,23 @@ function _handleMessage(msg, options){
 					]
 				);
 	
-			if(eventName){ 
-				_handleSystemEvent(eventName, eventObj, msg);
-			}
-			else{
-				var agentInfo = utils.getDataByPath(msg, "ext.weichat.agent");
-				if(agentInfo){
-					targetOfficialAccount.agentNickname = agentInfo.userNickname;
-					targetOfficialAccount.agentAvatar = agentInfo.avatar;
-					eventListener.excuteCallbacks(_const.SYSTEM_EVENT.AGENT_INFO_UPDATE, [targetOfficialAccount]);
-				}
+		if(eventName){
+			_handleSystemEvent(eventName, eventObj, msg);
+		}
+		else{
+			var agentInfo = utils.getDataByPath(msg, "ext.weichat.agent");
+			if(agentInfo){
+				targetOfficialAccount.agentNickname = agentInfo.userNickname;
+				targetOfficialAccount.agentAvatar = agentInfo.avatar;
+				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.AGENT_INFO_UPDATE, [targetOfficialAccount]);
 			}
 		}
+	}
 	
 		// ===========
 		// 消息类型上屏
 		// ===========
-		if(
+	if(
 			!message
 			// 空文本消息不上屏
 			|| (type === "txt" && !message.data)
@@ -949,51 +949,41 @@ function _handleMessage(msg, options){
 			// 订单轨迹按条件上屏
 			|| ((type === "track" || type === "order") && !profile.isShowTrackMsg)
 		){
-			return;
-		}
+		return;
+	}
 	
 		// 给收到的消息加 id，用于撤回消息
-		message.id = msgId;
+	message.id = msgId;
 	
 		// 消息上屏
 	
-		message.laiye = laiye;
-		var dat = message.data;
+	message.laiye = laiye;
+	var dat = message.data;
 		// 来也机器人多条消息逐条展示
-		if(laiye && !isJsonString(dat)){
-			dat = dat.replace(/&amp;amp;quot;|&amp;quot;/g, "\"");
-		}
-		if(profile.grayList.multipleMsgOneByOne && laiye && isJsonString(dat)){
-			dat = JSON.parse(dat);
-			dat.forEach(function(item, index){
-				var arr = [item];
-				message.data = JSON.stringify(arr);
-				if(item.type == "text"){
-					message.type = "txt";
-				}
-				else if(item.type == "image"){
-					message.type = "img";
-					message.url = item.content;
-				}
-				else if(item.type == "richtext"){
-					var articleDom = apiHelper.getlaiyeHtml(item.content);
-					message.data = articleDom.response;
-					message.type = "txt";
-				}
-				else{
-					message.type = item.type;
-				}
-				message.multipleMsgOneByOne = true;
-				_appendMsg(message, {
-					isReceived: isReceived,
-					isHistory: isHistory,
-					officialAccount: targetOfficialAccount,
-					timestamp: msg.timestamp,
-					noPrompt: noPrompt,
-				});
-			});
-		}
-		else{
+	if(laiye && !isJsonString(dat)){
+		dat = dat.replace(/&amp;amp;quot;|&amp;quot;/g, "\"");
+	}
+	if(profile.grayList.multipleMsgOneByOne && laiye && isJsonString(dat)){
+		dat = JSON.parse(dat);
+		dat.forEach(function(item, index){
+			var arr = [item];
+			message.data = JSON.stringify(arr);
+			if(item.type == "text"){
+				message.type = "txt";
+			}
+			else if(item.type == "image"){
+				message.type = "img";
+				message.url = item.content;
+			}
+			else if(item.type == "richtext"){
+				var articleDom = apiHelper.getlaiyeHtml(item.content);
+				message.data = articleDom.response;
+				message.type = "txt";
+			}
+			else{
+				message.type = item.type;
+			}
+			message.multipleMsgOneByOne = true;
 			_appendMsg(message, {
 				isReceived: isReceived,
 				isHistory: isHistory,
@@ -1001,33 +991,43 @@ function _handleMessage(msg, options){
 				timestamp: msg.timestamp,
 				noPrompt: noPrompt,
 			});
-		}
+		});
+	}
+	else{
+		_appendMsg(message, {
+			isReceived: isReceived,
+			isHistory: isHistory,
+			officialAccount: targetOfficialAccount,
+			timestamp: msg.timestamp,
+			noPrompt: noPrompt,
+		});
+	}
 	
 		// 是否发送解决未解决 msg.ext.extRobot.satisfactionCommentInvitation
-		if(satisfactionCommentInvitation && !isHistory){
-			_appendMsg({
-				data: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
-				type: "txtLink",
-			}, {
-				isReceived: true,
-				isHistory: false
-			});
-		}
+		// if(satisfactionCommentInvitation && !isHistory){
+		// 	_appendMsg({
+		// 		data: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
+		// 		type: "txtLink",
+		// 	}, {
+		// 		isReceived: true,
+		// 		isHistory: false
+		// 	});
+		// }
 	
-		if(!isHistory){
-			!noPrompt && _messagePrompt(message, targetOfficialAccount);
+	if(!isHistory){
+		!noPrompt && _messagePrompt(message, targetOfficialAccount);
 			// 兼容旧的消息格式
-			message.value = message.data;
+		message.value = message.data;
 			// 收消息回调
-			isReceived && getToHost.send({
-				event: _const.EVENTS.ONMESSAGE,
-				data: {
-					from: msg.from,
-					to: msg.to,
-					message: message
-				}
-			});
-		}
+		isReceived && getToHost.send({
+			event: _const.EVENTS.ONMESSAGE,
+			data: {
+				from: msg.from,
+				to: msg.to,
+				message: message
+			}
+		});
+	}
 }
 function isJsonString(str){
 	try{
@@ -1207,20 +1207,20 @@ function _handleSystemEvent(event, eventObj, msg){
 		break;
 	case _const.SYSTEM_EVENT.SESSION_CLOSED:
 		// 如果在会话结束前已经发起了满意度评价，在结束时开始计算失效时间
-		evaluateFlag = true
+		evaluateFlag = true;
 		var serviceId = msg.ext.weichat.service_session.serviceSessionId;
-		var btnInvalid = $(".em-btn-list>button[data-servicesessionid=" + serviceId + "]")
+		var btnInvalid = $(".em-btn-list>button[data-servicesessionid=" + serviceId + "]");
 		if(btnInvalid){
 			apiHelper.getEvaluatePrescription().then(function(res){
 				if(!res){
-					res = 8*3600
+					res = 8 * 3600;
 				}
-				setTimeout(function () {
-					btnInvalid.removeClass("bg-hover-color")
-					btnInvalid.removeClass("js_satisfybtn")
-					btnInvalid.text(__("chat.invalid"))
-					btnInvalid.addClass("invalid-btn")
-				}, res*1000);
+				setTimeout(function(){
+					btnInvalid.removeClass("bg-hover-color");
+					btnInvalid.removeClass("js_satisfybtn");
+					btnInvalid.text(__("chat.invalid"));
+					btnInvalid.addClass("invalid-btn");
+				}, res * 1000);
 			});
 		}
 		officialAccount.sessionState = _const.SESSION_STATE.ABORT;
@@ -1301,14 +1301,14 @@ function _appendMsg(msg, options){
 		);
 	}
 	// 设置list主题色
-	var themeCustomColor = config.themeCustomColor; 
+	var themeCustomColor = config.themeCustomColor;
 	if(themeCustomColor){
 		var bgColor = $(".theme_custom .bg-hover-color").css("background");
 		$(".theme_custom .bg-hover-color").hover(function(){
-		　　　$(this).css("cssText","background-color: " + themeCustomColor + " !important"); 
-		},function(){
-			$(this).css("cssText","background-color: " + bgColor + " !important");
-		})
+			　　　$(this).css("cssText", "background-color: " + themeCustomColor + " !important");
+		}, function(){
+			$(this).css("cssText", "background-color: " + bgColor + " !important");
+		});
 	}
 }
 
