@@ -1394,9 +1394,7 @@ function _InitH5AndInputTop(isShowSatis){
 	apiHelper.getInputTopStatus().then(function(res){
 		var isOpen = res.entity;
 		apiHelper.getInputTopButton().then(function(res){
-			if(res.entities.length !=0){
-				initInputTopButton(res.entities,isOpen);
-			}
+			initInputTopButton(res.entities,isOpen);
 		})
 	})
 
