@@ -9,10 +9,14 @@ var commonConfig = require("@/common/config");
 var toKefuBtn;
 
 module.exports = function(data,isOpen){
+	var prevPc = document.querySelector(".swiper-button-prev");
+	var nextPc = document.querySelector(".swiper-button-next");
 	if(!isOpen){
 		data = []
-		var prevPc = document.querySelector(".swiper-button-prev");
-		var nextPc = document.querySelector(".swiper-button-next");
+		$(prevPc).addClass("hide");
+		$(nextPc).addClass("hide");
+	}
+	if(data.length == 0){
 		$(prevPc).addClass("hide");
 		$(nextPc).addClass("hide");
 	}
