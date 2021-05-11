@@ -142,7 +142,23 @@ function overseasTest(){
 	if(config.tenantId == "78882"){
 		return !phone.value;
 	}
-	return !phone.value || !(/^1[3456789]\d{9}$/.test(phone.value));
+	if(!phone.value && !mail.value){
+		uikit.tip(__("请正确输入手机号码或邮箱"));
+		return true;
+	}else{
+		if(phone.value){
+			if((/^1[3456789]\d{9}$/.test(phone.value))){
+				return false
+			}else{
+				uikit.tip(__("请正确输入手机号码"));
+				return true
+			}
+		}
+		if(mail.value){
+			return !checkEmail()
+		}
+	}
+	// return !phone.value || !(/^1[3456789]\d{9}$/.test(phone.value));
 }
 // 添加邮箱的校验
 function checkEmail(){
@@ -150,6 +166,7 @@ function checkEmail(){
 	if(check.test(mail.value)){
 		return true
 	}else{
+		uikit.tip(__("请正确输入邮箱"));
 		return false
 	}
 }
@@ -163,11 +180,11 @@ utils.on(confirmBtn, "click", function(){
 		uikit.tip(__("ticket.invalid_name"));
 	}
 	else if(overseasTest()){
-		uikit.tip(__("请正确输入手机号码"));
+		// uikit.tip(__("请正确输入手机号码"));
 	}
-	else if(!checkEmail()){
-		uikit.tip(__("请正确输入邮箱"));
-	}
+	// else if(!checkEmail()){
+	// 	uikit.tip(__("请正确输入邮箱"));
+	// }
 	else if(!content.value || content.value.length > 1500){
 		uikit.tip(__("ticket.invalid_content"));
 	}
