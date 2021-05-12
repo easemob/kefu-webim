@@ -228,6 +228,16 @@ module.exports = function(data,isOpen){
 
 	// $(topButtonBox).addClass(themeClassName);
 	// topButtonBox.addClass(themeClassName)
+	utils.on(document.querySelector(".em-widget-out-of-line"), "click", function(e){
+		console.log("访客退队")
+		var officialAccount = profile.currentOfficialAccount;
+		if(!officialAccount){
+			return;
+		}
+		var isSessionOpen = officialAccount.isSessionOpen;
+		var sessionId = officialAccount.sessionId;
+		isSessionOpen && apiHelper.closeServiceSession(sessionId);
+	})
 
 };
 
