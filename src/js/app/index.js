@@ -26,6 +26,9 @@ var fromUserClick = false;
 var Tab = require("@/common/uikit/tab");
 
 var ISIFRAME = false; //网页插件为true
+var slideSwitch;
+var slideFoldedrState;
+var slideWidth;
 load_html();
 if(utils.isTop){
 	commonConfig.h5_mode_init();
@@ -247,18 +250,29 @@ function initRelevanceList(tenantId){
 	
 
 	function getRelevanceList(){
-		apiHelper.getRelevanceList()
-		.then(function(_relevanceList){
-			relevanceList = _relevanceList;
-			return initFunctionStatus();
-		}, function(err){
-			main.initRelevanceError(err);
+		apiHelper.getSlidebarSwitch().then(function(res){
+			if(!res.entity){
+				slideSwitch = false;
+			}
+			if(res.entity.value === "true"){
+				slideSwitch = true;
+			}
+			else{
+				slideSwitch = false;
+			}
+			apiHelper.getRelevanceList()
+			.then(function(_relevanceList){
+				relevanceList = _relevanceList;
+				return initFunctionStatus();
+			}, function(err){
+				main.initRelevanceError(err);
+			})
+			.then(function(results){
+				handleCfgData(relevanceList, results);
+			}, function(){
+				handleCfgData(relevanceList || [], []);
+			});
 		})
-		.then(function(results){
-			handleCfgData(relevanceList, results);
-		}, function(){
-			handleCfgData(relevanceList || [], []);
-		});
 	}
 }
 
@@ -491,6 +505,17 @@ function renderUI(resultStatus){
 		return initSidePage(resultStatus);
 	}
 	function initSidePage(resultStatus){
+		if(!slideSwitch){
+			return false;
+		}
+		apiHelper.getSidebarWidth().then(function(res){
+			if(!res.entity){
+				slideWidth = 360;
+			}
+			else{
+				slideWidth = res.entity.value;
+			}
+		})
 		var commonIssueEnable = resultStatus[0];
 		var selfServiceEnable = resultStatus[1];
 		var iframeEnable = resultStatus[2];
@@ -527,18 +552,71 @@ function renderUI(resultStatus){
 		}
 		// iframe 开关开启并且信息完备时
 		if(!utils.isMobile && iframeEnable && iframeSettings && iframeSettings.url){
-			tab.addTab({
-				sign: "iframe",
-				text: iframeSettings.name,
-				ins: [side_page.iframe],
-			});
+			for(var i=0;i<resultStatus[3].length;i++){
+				tab.addTab({
+					sign: "iframe" + i,
+					text: resultStatus[3][i].name,
+					ins: [side_page.iframeList[i]],
+				});
+			}
 		}
 		// 优先第一个
 		if(tab.selectFirstTab()){
 			$("#em-kefu-webim-self").append(tab.$el);
+			apiHelper.getSidebarFoldedrSwitch().then(function(res){
+				if(!res.entity){
+					slideFoldedrState = false;
+					return;
+				}
+				if(res.entity.value === "true"){
+					slideFoldedrState = true;
+					$(".expand").removeClass("hide");
+				}
+				else{
+					slideFoldedrState = false;
+				}
+			})
+			var Url = $("#em-kefu-webim-chat>.expand>img").attr("src").split("rightOpen.png")[0];
+			utils.on($("#em-kefu-webim-chat>.expand"), "click", function(e){
+				var chatWidth = $(".em-widget-content-box").width() - slideWidth;
+				var closeWidth = 0;
+				var closeChat = $(".em-widget-content-box").width() - closeWidth;
+
+				if(!slideFoldedrState){
+					// $("#em-kefu-webim-chat").removeClass("em-widget-wrapper-close")
+					$("#em-kefu-webim-self").css("width",slideWidth + "px");
+					$("#em-kefu-webim-chat").css("width",chatWidth + "px");
+					$("#em-kefu-webim-chat>.expand>img").attr("src",Url + "rightOpen.png");
+					slideFoldedrState = true;
+				}
+				else{
+					// $("#em-kefu-webim-self").addClass("close")
+					// $("#em-kefu-webim-chat").addClass("em-widget-wrapper-close")
+					$("#em-kefu-webim-self").css("width",closeWidth + "px");
+					$("#em-kefu-webim-chat").css("width",closeChat + "px");
+					$("#em-kefu-webim-chat>.expand>img").attr("src",Url + "leftOpen.png");
+					slideFoldedrState = false;
+				}
+				
+			})
 			return true;
 		}
 		return false;
+	}
+	if(slideSwitch){
+		// 获取坐席端设置的宽度并设置
+		apiHelper.getSidebarWidth().then(function(res){
+			var sideWidth;
+			if(!res.entity){
+				sideWidth = 360 + "px";
+			}
+			else{
+				sideWidth = res.entity.value + "px";
+			}
+			var chatWidth = $(".em-widget-content-box").width() - Number(res.entity.value)
+			$("#em-kefu-webim-chat").css("width",chatWidth+"px");
+			$("#em-kefu-webim-self").css("width",sideWidth);
+		})
 	}
 }
 

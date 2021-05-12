@@ -1443,6 +1443,47 @@ function getInputH5Status(){
 		});
 	});
 }
+function getSlidebarSwitch(){
+	return new Promise(function(resolve, reject){
+		api("getSlidebarSwitch", {
+			tenantId: config.tenantId,
+			configId: config.configId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+function getSidebarFoldedrSwitch(){
+	return new Promise(function(resolve, reject){
+		api("getSidebarFoldedrSwitch", {
+			tenantId: config.tenantId,
+			configId: config.configId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+function putSidebarFoldedrSwitch(val){
+	return new Promise(function(resolve, reject){
+		api("putSidebarFoldedrSwitch", {
+			tenantId: config.tenantId,
+			configId: config.configId,
+			value:val
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 
 module.exports = {
 	getGrayList: getGrayList,
@@ -1517,6 +1558,9 @@ module.exports = {
 	getInputTopButton:getInputTopButton,
 	getInputH5Button:getInputH5Button,
 	getInputH5Status:getInputH5Status,
+	// getSlidebarSwitch:getSlidebarSwitch,//获取侧边栏开关状态
+	// getSidebarFoldedrSwitch:getSidebarFoldedrSwitch,//获取侧边栏展开折叠状态
+	// putSidebarFoldedrSwitch:putSidebarFoldedrSwitch,//修改侧边栏展开折叠状态
 	update: function(cfg){
 		config = cfg;
 	}

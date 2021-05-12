@@ -26,6 +26,11 @@ function init(obj){
 	if(resultStatus[2]){
 		// settings
 		iframe = new FaqIframe(resultStatus[3][0]);
+		var iframeList = [];
+			for(var i=0;i<resultStatus[3].length;i++){
+				console.log(resultStatus[3][i]);
+				iframeList.push(new FaqIframe(resultStatus[3][i]))
+			}
 	}
 	show();
 
@@ -34,6 +39,7 @@ function init(obj){
 		ss: selfService,
 		iframe: iframe,
 		contact: new ContactBtn(),
+		iframeList:iframeList
 	};
 }
 

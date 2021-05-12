@@ -404,6 +404,65 @@ function getQualificationStatus(tenantId) {
 	});
 }
 
+function getSlidebarSwitch(){
+	var config = commonConfig.getConfig();
+	return new Promise(function(resolve, reject){
+		api("getSlidebarSwitch", {
+			tenantId: config.tenantId,
+			configId: config.configId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+function getSidebarWidth(){
+	var config = commonConfig.getConfig();
+	return new Promise(function(resolve, reject){
+		api("getSidebarWidth", {
+			tenantId: config.tenantId,
+			configId: config.configId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+function getSidebarFoldedrSwitch(){
+	var config = commonConfig.getConfig();
+	return new Promise(function(resolve, reject){
+		api("getSidebarFoldedrSwitch", {
+			tenantId: config.tenantId,
+			configId: config.configId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+function putSidebarFoldedrSwitch(val){
+	var config = commonConfig.getConfig();
+	return new Promise(function(resolve, reject){
+		api("putSidebarFoldedrSwitch", {
+			tenantId: config.tenantId,
+			configId: config.configId,
+			val:val
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
+
 module.exports = {
 	getTheme: getTheme,
 	getPassword: getPassword,
@@ -422,6 +481,10 @@ module.exports = {
 	getIframeEnable: getIframeEnable,
 	getIframeSetting: getIframeSetting,
 	getQualificationStatus: getQualificationStatus,
+	getSlidebarSwitch:getSlidebarSwitch,//获取侧边栏开关状态
+	getSidebarFoldedrSwitch:getSidebarFoldedrSwitch,//获取侧边栏展开折叠状态
+	putSidebarFoldedrSwitch:putSidebarFoldedrSwitch,//修改侧边栏展开折叠状态
+	getSidebarWidth:getSidebarWidth,//获取侧边栏宽度
 
 	update: function(cfg){
 		config = cfg;
