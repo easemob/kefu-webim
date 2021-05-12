@@ -605,7 +605,7 @@ function renderUI(resultStatus){
 		}
 		return false;
 	}
-	if(slideSwitch){
+	if(slideSwitch && !utils.isMobile){
 		// 获取坐席端设置的宽度并设置
 		apiHelper.getSidebarWidth().then(function(res){
 			var sideWidth;
