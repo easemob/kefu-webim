@@ -254,11 +254,13 @@ function initRelevanceList(tenantId){
 			if(!res.entity){
 				slideSwitch = false;
 			}
-			if(res.entity.value === "true"){
-				slideSwitch = true;
-			}
 			else{
-				slideSwitch = false;
+				if(res.entity.value === "true"){
+					slideSwitch = true;
+				}
+				else{
+					slideSwitch = false;
+				}
 			}
 			apiHelper.getRelevanceList()
 			.then(function(_relevanceList){
