@@ -1024,6 +1024,41 @@ up2Im.listen(function(msg){
 			type: "GET"
 		});
 		break;
+	case "getSlidebarSwitch":
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/"+ tenantId +"/configs/"+params.configId+"/options/sidebar/value",
+		emitAjax({
+			url: url,
+			msg: msg,
+			excludeData: true,
+			type: "GET"
+		});
+		break;
+	case "getSidebarFoldedrSwitch":
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/"+ tenantId +"/configs/"+params.configId+"/options/sidebar-folded/value",
+		emitAjax({
+			url: url,
+			msg: msg,
+			excludeData: true,
+			type: "GET"
+		});
+		break;	
+	case "getSidebarWidth":
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/"+ tenantId +"/configs/"+params.configId+"/options/sidebar-width/value",
+		emitAjax({
+			url: url,
+			msg: msg,
+			excludeData: true,
+			type: "GET"
+		});
+		break;	
+	case "putSidebarFoldedrSwitch":
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/"+ tenantId +"/configs/"+params.configId+"/options/sidebar-folded/value",
+		emitAjax({
+			url: url,
+			msg: msg,
+			type: "PUT"
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;

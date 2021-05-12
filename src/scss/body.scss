@@ -61,13 +61,35 @@ body.big-window{
 }
 body.big-window-h5{
 	.em-widget-wrapper{
-		width: calc(100% - 360px);
+		// width: calc(100% - 360px);
+		width: calc(100% - 240px);
 		min-width: 300px;
+		transition: width 1s ease-in-out; 
+		.expand{
+			position: absolute;
+			top: 45%;
+			z-index: 9999;
+			cursor: pointer;
+			right: -5px;
+			>img{
+				width: 30px;
+			}
+		}
 	}
 	.em-self-wrapper{
 		// width: 50%;
-		width: 360px;
+		// width: 360px;
 		display: block;
+		transition: width 1s ease-in-out; 
+	}
+	.open{
+		width: 360px;
+	}
+	.close{
+		width: 10px;
+	}
+	.em-widget-wrapper-close{
+		width: calc(100% - 20px);
 	}
 	.em-widget-box{
 		height: 726px;
@@ -751,4 +773,14 @@ body.big-window-h5{
 #em-kefu-webim-self{
 	border-left: 1px solid #f3f3f3;
 	background: #fff;
+	.expand{
+		position: absolute;
+		top: 45%;
+		z-index: 9999;
+		cursor: pointer;
+		>img{
+			width: 30px;
+		}
+	} 
+
 }

@@ -2,7 +2,7 @@ var _const = require("@/common/const");
 var utils = require("@/common/utils");
 var profile = require("@/app/tools/profile");
 var eventListener = require("@/app/tools/eventListener");
-// var apiHelper = require("../apis");
+var apiHelper = require("../apis");
 var channel = require("../channel");
 var commonConfig = require("@/common/config");
 
@@ -196,6 +196,36 @@ module.exports = function(data,isOpen){
 			mySwiper.update();
 		}
 	}
+	var exitBtn = document.querySelector("button.js-transfer-to-ticket")
+	utils.on(document.querySelector(".swiper-slide.em-widget-out-of-line"), "click", function(e){
+		console.log("访客退队")
+		var officialAccount = profile.currentOfficialAccount;
+		if(!officialAccount){
+			return;
+		}
+		var isSessionOpen = officialAccount.isSessionOpen;
+		var sessionId = officialAccount.sessionId;
+		isSessionOpen && apiHelper.closeServiceSession(sessionId);
+		// utils.trigger(exitBtn, "click");
+	})
+
+	// utils.live("button.js-transfer-to-ticket", "click", function(){
+	// 	var officialAccount = profile.currentOfficialAccount;
+	// 	if(!officialAccount){
+	// 		return;
+	// 	}
+	// 	var isSessionOpen = officialAccount.isSessionOpen;
+	// 	var sessionId = officialAccount.sessionId;
+	// 	isSessionOpen && apiHelper.closeServiceSession(sessionId);
+	// 	noteIframe.open({
+	// 		preData: {
+	// 			name: config.visitor.trueName,
+	// 			phone: config.visitor.phone,
+	// 			mail: config.visitor.email,
+	// 		}
+	// 	});
+	// });
+
 	// $(topButtonBox).addClass(themeClassName);
 	// topButtonBox.addClass(themeClassName)
 
