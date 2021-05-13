@@ -70,6 +70,9 @@ eventListener.add(_const.SYSTEM_EVENT.CONSULT_AGENT, function(){
 
 function widgetBoxShow(){
 	utils.removeClass(document.querySelector(".em-widget-box"), "hide");
+	if(!$("body").hasClass("window-demo")){
+		return false;
+	}
 	if(slideSwitch && !utils.isMobile){
 		// 获取坐席端设置的宽度并设置，js集成网页的时候
 		apiHelper.getSidebarWidth().then(function(res){
@@ -84,21 +87,21 @@ function widgetBoxShow(){
 			$("#em-kefu-webim-chat").css("width",chatWidth+"px");
 			$("#em-kefu-webim-self").css("width",sideWidth);
 		})
+		// 展开按钮的状态
+		apiHelper.getSidebarFoldedrSwitch().then(function(res){
+			if(!res.entity){
+				slideFoldedrState = false;
+				return;
+			}
+			if(res.entity.value === "true"){
+				slideFoldedrState = true;
+				$(".expand").removeClass("hide");
+			}
+			else{
+				slideFoldedrState = false;
+			}
+		})
 	}
-	console.log("getSidebarFoldedrSwitch")
-	apiHelper.getSidebarFoldedrSwitch().then(function(res){
-		if(!res.entity){
-			slideFoldedrState = false;
-			return;
-		}
-		if(res.entity.value === "true"){
-			slideFoldedrState = true;
-			$(".expand").removeClass("hide");
-		}
-		else{
-			slideFoldedrState = false;
-		}
-	})
 }
 function widgetBoxHide(){
 	utils.addClass(document.querySelector(".em-widget-box"), "hide");

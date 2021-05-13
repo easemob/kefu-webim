@@ -47,8 +47,8 @@ body.window-demo{
 body.big-window{
 	// min-width: 720px;
 	.em-widget-wrapper{
-		// width: calc(100% - 240px);
-		width: calc(100% - 100px);
+		width: calc(100% - 240px);
+		// width: calc(100% - 100px);
 		min-width: 360px;
 		transition: width 1s ease-in-out; 
 		.expand{
