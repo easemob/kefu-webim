@@ -599,7 +599,7 @@ function renderUI(resultStatus){
 					$("#em-kefu-webim-chat>.expand>img").attr("src",Url + "leftOpen.png");
 					slideFoldedrState = false;
 				}
-				
+				eventListener.trigger("swiper.update");
 			})
 			return true;
 		}

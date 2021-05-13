@@ -77,6 +77,7 @@ module.exports = function(data,isOpen){
 	
 	eventListener.add("video.conform", _conformVideo);
 	eventListener.add("video.cancel", _cancelVideo);
+	eventListener.add("swiper.update", updateSwiper);
 
 
 	if(utils.isMobile) {
@@ -152,6 +153,19 @@ module.exports = function(data,isOpen){
 		var videoBtn =  document.querySelector(".swiper-wrapper>.em-widget-exit-video");
 		$(videoBtn).addClass("hide");
 		mySwiper.update();
+	}
+	function updateSwiper(){
+		setTimeout(function() {
+			mySwiper.update();
+			if($(nextPc).hasClass("swiper-button-disabled")){
+				$(prevPc).addClass("hide");
+				$(nextPc).addClass("hide");
+			}
+			else{
+				$(prevPc).removeClass("hide");
+				$(nextPc).removeClass("hide");
+			}
+		}, 1100);
 	}
 
 	function _displayOrHideTransferToKefuBtn(officialAccount){
