@@ -76,7 +76,21 @@ function updateCustomerInfo(e){
 	}
 }
 
+function DOMEval(code){
+	console.log('code', code)
+	var script = document.createElement("script");
+
+	script.src = code;
+	document.body.appendChild(script);
+}
+
 function initChat(){
+	apiHelper.getisWeidian(commonConfig.getConfig().tenantId).then(function(res){
+		console.log('isweidian',res)
+		if("Y" == res){
+			DOMEval('https://isee-uat.metlife.com.cn/isee/eye.js')
+		}
+	})
 	handleMsgData();
 	utils.removeClass(document.querySelector(".em-widget-wrapper"), "hide");
 	apiHelper.getGrayList(commonConfig.getConfig().tenantId).then(function(grayList){

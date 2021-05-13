@@ -1328,6 +1328,20 @@ function getSessionEnquires(serviceSessionId){
 	});
 }
 
+function getisWeidian(tenantId){
+	return new Promise(function(resolve, reject){
+		api("getisWeidian", {
+			tenantId: tenantId,
+			serviceSessionId: '1'
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data.entity");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getGrayList: getGrayList,
 	getToken: getToken,
@@ -1388,6 +1402,7 @@ module.exports = {
 	startKeep: startKeep,
 	closeChatDialog: closeChatDialog,
 	getSessionEnquires: getSessionEnquires,
+	getisWeidian: getisWeidian,
 
 	update: function(cfg){
 		config = cfg;

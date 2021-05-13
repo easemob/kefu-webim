@@ -933,6 +933,14 @@ up2Im.listen(function(msg){
 			type: "GET"
 		});
 		break;
+	case "getisWeidian":
+		emitAjax({
+			// url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/servicesessions/" + params.serviceSessionId + "/enquiries",
+			url: "/v1/tenants/" + tenantId + "/servicesessions/" + params.serviceSessionId + "/isWeidian",
+			msg: msg,
+			type: "GET"
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;
