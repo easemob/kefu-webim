@@ -1400,7 +1400,8 @@ function getInputTopButton(){
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
 		}, function(err){
-			reject(err);
+			// reject(err);
+			resolve(err);
 		});
 	});
 }
@@ -1413,7 +1414,8 @@ function getInputTopStatus(){
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
 		}, function(err){
-			reject(err);
+			// reject(err);
+			resolve(err);
 		});
 	});
 }
@@ -1426,7 +1428,8 @@ function getInputH5Button(){
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
 		}, function(err){
-			reject(err);
+			// reject(err);
+			resolve(err);
 		});
 	});
 }
@@ -1439,7 +1442,8 @@ function getInputH5Status(){
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
 		}, function(err){
-			reject(err);
+			// reject(err);
+			resolve(err);
 		});
 	});
 }
