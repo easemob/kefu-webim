@@ -414,7 +414,8 @@ function getSlidebarSwitch(){
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
 		}, function(err){
-			reject(err);
+			// reject(err);
+			resolve(err);// 由于访客集成方式不一样，所以configId获取不到，做特殊处理
 		});
 	});
 }
@@ -428,7 +429,8 @@ function getSidebarWidth(){
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
 		}, function(err){
-			reject(err);
+			// reject(err);
+			resolve(err);
 		});
 	});
 }
