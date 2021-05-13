@@ -47,8 +47,20 @@ body.window-demo{
 body.big-window{
 	// min-width: 720px;
 	.em-widget-wrapper{
-		width: calc(100% - 240px);
+		// width: calc(100% - 240px);
+		width: calc(100% - 100px);
 		min-width: 360px;
+		transition: width 1s ease-in-out; 
+		.expand{
+			position: absolute;
+			top: 30%;
+			z-index: 9999;
+			cursor: pointer;
+			right: -10px;
+			>img{
+				width: 30px;
+			}
+		}
 	}
 	.em-self-wrapper{
 		width: 240px;
