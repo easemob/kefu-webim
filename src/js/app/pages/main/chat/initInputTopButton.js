@@ -210,7 +210,6 @@ module.exports = function(data,isOpen){
 			mySwiper.update();
 		}
 	}
-	var exitBtn = document.querySelector("button.js-transfer-to-ticket")
 	utils.on(document.querySelector(".swiper-slide.em-widget-out-of-line"), "click", function(e){
 		console.log("访客退队")
 		var officialAccount = profile.currentOfficialAccount;
@@ -220,39 +219,7 @@ module.exports = function(data,isOpen){
 		var isSessionOpen = officialAccount.isSessionOpen;
 		var sessionId = officialAccount.sessionId;
 		isSessionOpen && apiHelper.closeServiceSession(sessionId);
-		// utils.trigger(exitBtn, "click");
 	})
-
-	// utils.live("button.js-transfer-to-ticket", "click", function(){
-	// 	var officialAccount = profile.currentOfficialAccount;
-	// 	if(!officialAccount){
-	// 		return;
-	// 	}
-	// 	var isSessionOpen = officialAccount.isSessionOpen;
-	// 	var sessionId = officialAccount.sessionId;
-	// 	isSessionOpen && apiHelper.closeServiceSession(sessionId);
-	// 	noteIframe.open({
-	// 		preData: {
-	// 			name: config.visitor.trueName,
-	// 			phone: config.visitor.phone,
-	// 			mail: config.visitor.email,
-	// 		}
-	// 	});
-	// });
-
-	// $(topButtonBox).addClass(themeClassName);
-	// topButtonBox.addClass(themeClassName)
-	utils.on(document.querySelector(".em-widget-out-of-line"), "click", function(e){
-		console.log("访客退队")
-		var officialAccount = profile.currentOfficialAccount;
-		if(!officialAccount){
-			return;
-		}
-		var isSessionOpen = officialAccount.isSessionOpen;
-		var sessionId = officialAccount.sessionId;
-		isSessionOpen && apiHelper.closeServiceSession(sessionId);
-	})
-
 };
 
 
