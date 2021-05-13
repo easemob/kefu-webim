@@ -70,6 +70,35 @@ eventListener.add(_const.SYSTEM_EVENT.CONSULT_AGENT, function(){
 
 function widgetBoxShow(){
 	utils.removeClass(document.querySelector(".em-widget-box"), "hide");
+	if(slideSwitch && !utils.isMobile){
+		// 获取坐席端设置的宽度并设置，js集成网页的时候
+		apiHelper.getSidebarWidth().then(function(res){
+			var sideWidth;
+			if(!res.entity){
+				sideWidth = 360 + "px";
+			}
+			else{
+				sideWidth = res.entity.value + "px";
+			}
+			var chatWidth = $(".em-widget-content-box").width() - Number(res.entity.value)
+			$("#em-kefu-webim-chat").css("width",chatWidth+"px");
+			$("#em-kefu-webim-self").css("width",sideWidth);
+		})
+	}
+	console.log("getSidebarFoldedrSwitch")
+	apiHelper.getSidebarFoldedrSwitch().then(function(res){
+		if(!res.entity){
+			slideFoldedrState = false;
+			return;
+		}
+		if(res.entity.value === "true"){
+			slideFoldedrState = true;
+			$(".expand").removeClass("hide");
+		}
+		else{
+			slideFoldedrState = false;
+		}
+	})
 }
 function widgetBoxHide(){
 	utils.addClass(document.querySelector(".em-widget-box"), "hide");
