@@ -28,7 +28,6 @@ function init(obj){
 		iframe = new FaqIframe(resultStatus[3][0]);
 		var iframeList = [];
 			for(var i=0;i<resultStatus[3].length;i++){
-				console.log(resultStatus[3][i]);
 				iframeList.push(new FaqIframe(resultStatus[3][i]))
 			}
 	}
