@@ -127,6 +127,13 @@ body.big-window-h5{
 		bottom: 0;
 	}
 }
+body.window-demo{
+	.em-widget-wrapper{
+		width: calc(100% - 240px);
+		min-width: 100px;
+		transition: width 1s ease-in-out; 
+	}
+}
 
 .auth-box-PC{
 	width: 100%;
