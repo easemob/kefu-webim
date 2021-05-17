@@ -149,8 +149,8 @@
 		font-size: 12px;
 	}
 	> img.avatar {
-		width: 30px;
-		height: 30px;
+		width: 36px;
+		height: 36px;
 		margin-left: 5px;
 		float: left;
 		border-radius: 50%;
@@ -159,7 +159,8 @@
 		clear: both;
 		left: 20px;
 		background: #fff;
-		color:#566477;
+		// color:#566477;
+		color: #263C5C;
 		border-radius: 0 8px 8px 8px;
 		&.no-bg{
 			background:none;
@@ -194,6 +195,11 @@
 	.em-btn-list{
 		li{
 			position: relative;
+			border-bottom: 1px solid #F5F7FA;
+		}
+		li:nth-last-child(1){
+			position: relative;
+			border: none;
 		}
 		.icon-arrow-right{
 			position: absolute;
@@ -244,6 +250,11 @@
 			// >span{
 			// 	color:#fff;
 			// }
+			>span{
+				a{
+					color:#fff;
+				}
+			}
 		}
 	}
 }
@@ -814,6 +825,9 @@
 			&::before{
 				border:none;
 			}
+		}
+		.js_skillgroupbtn{
+
 		}
 	}
 }
