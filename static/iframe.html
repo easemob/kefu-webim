@@ -32,6 +32,8 @@ a){var b=F.exec(a);b&&(b[1]=(b[1]||"").toLowerCase(),b[3]=b[3]&&new RegExp("(?:^
 	<br/>
 	<br/>
 	<div>webim 测试访客展示信息</div>
+	<div id="test">同步客户消息</div>	
+
 	<!-- <form action="http://baidu.com">
 		<input type="text" value="dcw"/>
 		<input type="submit"/>
@@ -147,7 +149,13 @@ a){var b=F.exec(a);b&&(b[1]=(b[1]||"").toLowerCase(),b[3]=b[3]&&new RegExp("(?:^
 			}
 			window.data = data;
 			return false;
-	    }, false);
+		}, false);
+		window.addEventListener('message',function  (e) {
+			if(e.data){
+				console.log(e.data)
+				document.getElementById("test").innerHTML = JSON.stringify(e.data);
+			}
+    	})
 
 		
 	});

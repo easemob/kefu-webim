@@ -594,6 +594,21 @@ function renderUI(resultStatus){
 				});
 			}
 		}
+		// 监听tab点击，在点击的时候发送postMessage，传递参数给iframe
+		eventListener.add("ui.tab.click", function(e,sing){
+			if(sing && sing!= "faq"){
+				var iframeParent = $("div[sign='"+ sing +"']")[0];
+				setTimeout(function  () {
+					var msg = JSON.parse(utils.getStore("visitorInfo"));
+					var obj = {
+						phone:msg.phone,
+						userId:msg.userId,
+						username:msg.username
+					}
+					$(iframeParent).find("iframe")[0].contentWindow.postMessage(obj,"*")
+				},1000)
+			}
+		});
 		// 优先第一个
 		if(tab.selectFirstTab()){
 			$("#em-kefu-webim-self").append(tab.$el);

@@ -223,6 +223,8 @@ function getVisitorId(){
 					imServiceNumber: config.toUser,
 					token: token
 				}, function(msg){
+					// 存储访客信息
+					utils.setStore("visitorInfo", JSON.stringify(msg.data.entity));
 					var visitorId = utils.getDataByPath(msg, "data.entity.userId");
 					if(visitorId){
 						// cache visitor id
