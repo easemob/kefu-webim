@@ -376,6 +376,7 @@ function _initAutoGrow(){
 
 	// todo: 高度不改变时，不更新dom
 	function update(){
+		console.log("qweqwewqe")
 		var height = this.value ? this.scrollHeight : originHeight;
 		this.style.height = height + "px";
 		this.scrollTop = 9999;
@@ -868,6 +869,7 @@ function _bindEvents(){
 
 	if(utils.isMobile){
 		utils.on(doms.textInput, "focus touchstart", function(){
+			console.log("表情++++++")
 			doms.textInput.style.overflowY = "auto";
 			_scrollToBottom();
 		});
@@ -1401,6 +1403,7 @@ function _InitH5AndInputTop(isShowSatis){
 	});
 
 	if(utils.isMobile){
+
 		// document.querySelector(".em-widget-send-wrapper-top").style.bottom = "60" + "px";
 		// $(".em-widget-send-wrapper-top").addClass("hide");
 		apiHelper.getInputH5Status().then(function(res){
