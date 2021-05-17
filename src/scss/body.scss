@@ -129,8 +129,8 @@ body.big-window-h5{
 }
 body.window-demo{
 	.em-widget-wrapper{
-		width: calc(100% - 240px);
-		min-width: 100px;
+		width: 100%;
+		// min-width: 200px;
 		transition: width 1s ease-in-out; 
 	}
 }
