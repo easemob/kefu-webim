@@ -29,6 +29,7 @@ var ISIFRAME = false; //网页插件为true
 var slideSwitch;
 var slideFoldedrState;
 var slideWidth;
+var slideSwitchAndMore;
 load_html();
 if(utils.isTop){
 	commonConfig.h5_mode_init();
@@ -74,6 +75,9 @@ function widgetBoxShow(){
 		return false;
 	}
 	if(slideSwitch && !utils.isMobile){
+		if(!slideSwitchAndMore){
+			return false;
+		}
 		// 获取坐席端设置的宽度并设置，js集成网页的时候
 		apiHelper.getSidebarWidth().then(function(res){
 			var sideWidth;
@@ -441,6 +445,9 @@ function renderUI(resultStatus){
 		commonIssueEnable = resultStatus[0];
 		selfServiceEnable = resultStatus[1];
 		iframeEnable = resultStatus[2];
+		if(commonIssueEnable || selfServiceEnable  || iframeEnable){
+			slideSwitchAndMore = true;
+		}
 		// pc 端判断三个开关
 		if(!utils.isMobile){
 			// 任意一个打开
@@ -653,6 +660,13 @@ function renderUI(resultStatus){
 		return false;
 	}
 	if(slideSwitch && !utils.isMobile){
+		// resultStatus
+		var commonIssueEnable = resultStatus[0];
+		var selfServiceEnable = resultStatus[1];
+		var iframeEnable = resultStatus[2];
+		if(!slideSwitchAndMore){
+			return false;
+		}
 		// 获取坐席端设置的宽度并设置
 		apiHelper.getSidebarWidth().then(function(res){
 			var sideWidth;
