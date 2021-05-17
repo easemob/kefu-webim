@@ -74,6 +74,14 @@ function widgetBoxShow(){
 	if(!$("body").hasClass("window-demo")){
 		return false;
 	}
+	
+	if(!slideSwitch){
+		$(".em-self-wrapper").addClass("hide");
+		if(!$("body").hasClass("window-demo") && !utils.isMobile){
+			$(".em-widget-box").css("width", "735px"); 
+		}
+		main.initChat();
+	}
 	if(slideSwitch && !utils.isMobile){
 		if(!slideSwitchAndMore){
 			return false;
@@ -106,6 +114,7 @@ function widgetBoxShow(){
 			}
 		})
 	}
+	
 }
 function widgetBoxHide(){
 	utils.addClass(document.querySelector(".em-widget-box"), "hide");
