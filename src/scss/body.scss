@@ -24,6 +24,12 @@ body.window-pc{
 			display:none;
 		}
 	}
+	.em-widget-wrapper{
+		transition: width 1s ease-in-out; 
+	}
+	.em-self-wrapper{
+		transition: width 1s ease-in-out; 
+	}
 }
 body.window-demo{
 	.em-widget-to-kefu{
@@ -125,6 +131,16 @@ body.big-window-h5{
 		left: 0;
 		right: 0;
 		bottom: 0;
+		.expand {
+			position: absolute;
+			top: 45%;
+			z-index: 9999;
+			cursor: pointer;
+			right: -10px;
+			>img{
+				width: 30px;
+			}
+		}
 	}
 }
 body.window-demo{
@@ -239,7 +255,7 @@ body.window-demo{
 		}
 	}
 	.content {
-		width: 85%;
+		width: 84%;
 		text-align: justify;
 		line-height: 16px;
 		margin-left: 30px;

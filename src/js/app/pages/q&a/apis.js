@@ -1,5 +1,6 @@
 var utils = require("@/common/utils");
 var apiHelper = require("@/app/common/apiHelper");
+var commonConfig = require("@/common/config");
 
 // 以下调用会缓存参数
 // getVisitorId
@@ -10,6 +11,7 @@ var config;
 var api = apiHelper.api;
 
 function getFaqList(){
+	var config = commonConfig.getConfig()
 	return new Promise(function(resolve, reject){
 		api("getFaqList", {
 			tenantId: config.tenantId,
@@ -47,6 +49,7 @@ function recordFaqClick(issueId){
 	});
 }
 function getSelfServiceList(){
+	var config = commonConfig.getConfig()
 	return new Promise(function(resolve, reject){
 		api("getSelfServiceList", {
 			tenantId: config.tenantId,
@@ -66,6 +69,16 @@ function getSelfServiceList(){
 	});
 }
 
+function getSelfServiceAndFaq(){
+	return new Promise(function(resolve, reject){
+		Promise.all([
+			getSelfServiceList(),
+			getFaqList()
+		]).then(function(result){
+			resolve(result);
+		});
+	});
+}
 
 
 
@@ -73,6 +86,7 @@ module.exports = {
 	getFaqList: getFaqList,
 	getSelfServiceList: getSelfServiceList,
 	recordFaqClick: recordFaqClick,
+	getSelfServiceAndFaq:getSelfServiceAndFaq,
 	update: function(cfg){
 		config = cfg;
 	}

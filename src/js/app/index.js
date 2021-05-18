@@ -24,12 +24,14 @@ var getToHost = require("@/app/common/transfer");
 var eventListener = require("@/app/tools/eventListener");
 var fromUserClick = false;
 var Tab = require("@/common/uikit/tab");
+var slideApi = require("./pages/q&a/apis");
 
 var ISIFRAME = false; //网页插件为true
 var slideSwitch;
 var slideFoldedrState;
 var slideWidth;
 var slideSwitchAndMore;
+var iframeContent = [];
 load_html();
 if(utils.isTop){
 	commonConfig.h5_mode_init();
@@ -74,7 +76,6 @@ function widgetBoxShow(){
 	if(!$("body").hasClass("window-demo")){
 		return false;
 	}
-	
 	if(!slideSwitch){
 		$(".em-self-wrapper").addClass("hide");
 		if(!$("body").hasClass("window-demo") && !utils.isMobile){
@@ -82,38 +83,52 @@ function widgetBoxShow(){
 		}
 		main.initChat();
 	}
-	if(slideSwitch && !utils.isMobile){
-		if(!slideSwitchAndMore){
-			return false;
+	slideApi.getSelfServiceAndFaq()
+	.then(function(data){
+		if(data[0].length == 0 && data[1].length == 0 && iframeContent.length == 0){
+			$(".em-self-wrapper").addClass("hide");
+			$(".expand").addClass("hide");
+			var chatWidth = $(".em-widget-content-box").width() - slideWidth;
+			var closeWidth = 0;
+			var closeChat = $(".em-widget-content-box").width() - closeWidth;
+			$("#em-kefu-webim-self").css("width",closeWidth + "px");
+			$("#em-kefu-webim-chat").css("width",closeChat + "px");
+		}else{
+			if(slideSwitch && !utils.isMobile){
+				if(!slideSwitchAndMore){
+					return false;
+				}
+				// 获取坐席端设置的宽度并设置，js集成网页的时候
+				apiHelper.getSidebarWidth().then(function(res){
+					var sideWidth;
+					if(!res.entity){
+						sideWidth = 360 + "px";
+					}
+					else{
+						sideWidth = res.entity.value + "px";
+					}
+					var chatWidth = $(".em-widget-content-box").width() - Number(res.entity.value)
+					$("#em-kefu-webim-chat").css("width",chatWidth+"px");
+					$("#em-kefu-webim-self").css("width",sideWidth);
+				})
+				// 展开按钮的状态
+				apiHelper.getSidebarFoldedrSwitch().then(function(res){
+					if(!res.entity){
+						slideFoldedrState = false;
+						return;
+					}
+					if(res.entity.value === "true"){
+						slideFoldedrState = true;
+						$(".expand").removeClass("hide");
+					}
+					else{
+						slideFoldedrState = false;
+					}
+				})
+			}
 		}
-		// 获取坐席端设置的宽度并设置，js集成网页的时候
-		apiHelper.getSidebarWidth().then(function(res){
-			var sideWidth;
-			if(!res.entity){
-				sideWidth = 360 + "px";
-			}
-			else{
-				sideWidth = res.entity.value + "px";
-			}
-			var chatWidth = $(".em-widget-content-box").width() - Number(res.entity.value)
-			$("#em-kefu-webim-chat").css("width",chatWidth+"px");
-			$("#em-kefu-webim-self").css("width",sideWidth);
-		})
-		// 展开按钮的状态
-		apiHelper.getSidebarFoldedrSwitch().then(function(res){
-			if(!res.entity){
-				slideFoldedrState = false;
-				return;
-			}
-			if(res.entity.value === "true"){
-				slideFoldedrState = true;
-				$(".expand").removeClass("hide");
-			}
-			else{
-				slideFoldedrState = false;
-			}
-		})
-	}
+	})
+
 	
 }
 function widgetBoxHide(){
@@ -454,6 +469,7 @@ function renderUI(resultStatus){
 		commonIssueEnable = resultStatus[0];
 		selfServiceEnable = resultStatus[1];
 		iframeEnable = resultStatus[2];
+		iframeContent = resultStatus[3];
 		if(commonIssueEnable || selfServiceEnable  || iframeEnable){
 			slideSwitchAndMore = true;
 		}
@@ -668,28 +684,38 @@ function renderUI(resultStatus){
 		}
 		return false;
 	}
-	if(slideSwitch && !utils.isMobile){
-		// resultStatus
-		var commonIssueEnable = resultStatus[0];
-		var selfServiceEnable = resultStatus[1];
-		var iframeEnable = resultStatus[2];
-		if(!slideSwitchAndMore){
-			return false;
+	slideApi.getSelfServiceAndFaq()
+	.then(function(data){
+		console.log(data);
+		if(data[0].length == 0 && data[1].length == 0 && iframeContent.length == 0){
+			$(".em-self-wrapper").addClass("hide");
+			$(".expand").addClass("hide");
+			var chatWidth = $(".em-widget-content-box").width() - slideWidth;
+			var closeWidth = 0;
+			var closeChat = $(".em-widget-content-box").width() - closeWidth;
+			$("#em-kefu-webim-self").css("width",closeWidth + "px");
+			$("#em-kefu-webim-chat").css("width",closeChat + "px");
+		}else{
+			if(slideSwitch && !utils.isMobile){
+				if(!slideSwitchAndMore){
+					return false;
+				}
+				// 获取坐席端设置的宽度并设置
+				apiHelper.getSidebarWidth().then(function(res){
+					var sideWidth;
+					if(!res.entity){
+						sideWidth = 360 + "px";
+					}
+					else{
+						sideWidth = res.entity.value + "px";
+					}
+					var chatWidth = $(".em-widget-content-box").width() - Number(res.entity.value)
+					$("#em-kefu-webim-chat").css("width",chatWidth+"px");
+					$("#em-kefu-webim-self").css("width",sideWidth);
+				})
+			}
 		}
-		// 获取坐席端设置的宽度并设置
-		apiHelper.getSidebarWidth().then(function(res){
-			var sideWidth;
-			if(!res.entity){
-				sideWidth = 360 + "px";
-			}
-			else{
-				sideWidth = res.entity.value + "px";
-			}
-			var chatWidth = $(".em-widget-content-box").width() - Number(res.entity.value)
-			$("#em-kefu-webim-chat").css("width",chatWidth+"px");
-			$("#em-kefu-webim-self").css("width",sideWidth);
-		})
-	}
+	})
 }
 
 
