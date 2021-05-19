@@ -32,6 +32,9 @@ var slideFoldedrState;
 var slideWidth;
 var slideSwitchAndMore;
 var iframeContent = [];
+var commonIssueEnable;
+var selfServiceEnable;
+var iframeEnable;
 load_html();
 if(utils.isTop){
 	commonConfig.h5_mode_init();
@@ -456,9 +459,7 @@ function renderUI(resultStatus){
 		}
 	}
 
-	var commonIssueEnable;
-	var selfServiceEnable;
-	var iframeEnable;
+
 	// 用于预览模式
 	if(commonConfig.getConfig().previewObj){
 		handleSettingIframeSize();
@@ -684,6 +685,9 @@ function renderUI(resultStatus){
 		}
 		return false;
 	}
+// 	var commonIssueEnable;
+// var selfServiceEnable;
+// var iframeEnable;
 	slideApi.getSelfServiceAndFaq()
 	.then(function(data){
 		console.log(data);
