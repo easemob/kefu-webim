@@ -85,6 +85,7 @@ function widgetBoxShow(){
 			$(".em-widget-box").css("width", "735px"); 
 		}
 		main.initChat();
+		eventListener.trigger("swiper.update");
 	}
 	slideApi.getSelfServiceAndFaq()
 	.then(function(data){
@@ -96,6 +97,7 @@ function widgetBoxShow(){
 			var closeChat = $(".em-widget-content-box").width() - closeWidth;
 			$("#em-kefu-webim-self").css("width",closeWidth + "px");
 			$("#em-kefu-webim-chat").css("width",closeChat + "px");
+			eventListener.trigger("swiper.update");
 		}else{
 			if(slideSwitch && !utils.isMobile){
 				if(!slideSwitchAndMore){
@@ -113,6 +115,7 @@ function widgetBoxShow(){
 					var chatWidth = $(".em-widget-content-box").width() - Number(res.entity.value)
 					$("#em-kefu-webim-chat").css("width",chatWidth+"px");
 					$("#em-kefu-webim-self").css("width",sideWidth);
+					eventListener.trigger("swiper.update");
 				})
 				// 展开按钮的状态
 				apiHelper.getSidebarFoldedrSwitch().then(function(res){
@@ -696,6 +699,7 @@ function renderUI(resultStatus){
 			var closeChat = $(".em-widget-content-box").width() - closeWidth;
 			$("#em-kefu-webim-self").css("width",closeWidth + "px");
 			$("#em-kefu-webim-chat").css("width",closeChat + "px");
+			eventListener.trigger("swiper.update");
 		}else{
 			if(slideSwitch && !utils.isMobile){
 				if(!slideSwitchAndMore){
@@ -713,6 +717,7 @@ function renderUI(resultStatus){
 					var chatWidth = $(".em-widget-content-box").width() - Number(res.entity.value)
 					$("#em-kefu-webim-chat").css("width",chatWidth+"px");
 					$("#em-kefu-webim-self").css("width",sideWidth);
+					eventListener.trigger("swiper.update");
 				})
 			}
 		}
