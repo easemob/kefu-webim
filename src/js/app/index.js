@@ -88,7 +88,7 @@ function widgetBoxShow(){
 	}
 	slideApi.getSelfServiceAndFaq()
 	.then(function(data){
-		if(data[0].length == 0 && data[1].length == 0 && iframeContent.length == 0){
+		if((data[0].length == 0 || !selfServiceEnable) && (data[1].length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
 			$(".em-self-wrapper").addClass("hide");
 			$(".expand").addClass("hide");
 			var chatWidth = $(".em-widget-content-box").width() - slideWidth;
@@ -685,13 +685,10 @@ function renderUI(resultStatus){
 		}
 		return false;
 	}
-// 	var commonIssueEnable;
-// var selfServiceEnable;
-// var iframeEnable;
 	slideApi.getSelfServiceAndFaq()
 	.then(function(data){
-		console.log(data);
-		if(data[0].length == 0 && data[1].length == 0 && iframeContent.length == 0){
+		if((data[0].length == 0 || !selfServiceEnable) && (data[1].length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
+		// if(data[0].length == 0 && data[1].length == 0 && iframeContent.length == 0){
 			$(".em-self-wrapper").addClass("hide");
 			$(".expand").addClass("hide");
 			var chatWidth = $(".em-widget-content-box").width() - slideWidth;
