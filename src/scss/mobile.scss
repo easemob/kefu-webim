@@ -252,6 +252,7 @@
 				height: 95%;
 				// height: 205px;
 				.swiper-slide{
+					font-size: 0px;
 					>div{
 						width:24%;
 						text-align: center;
@@ -289,8 +290,8 @@
 							margin: 0 auto;
 							border-radius: 4px;
 							>img{
-								width: 100%;
-								height: 100%;
+								width: 30px;
+								height: 30px;
 							}
 						}
 					}
