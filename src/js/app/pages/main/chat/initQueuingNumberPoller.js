@@ -76,15 +76,18 @@ function _getQueuingNumber(officialAccount){
 
 function _update(waitingNumber){
 	var exit = document.querySelector(".em-widget-out-of-line"); //访客退队按钮
+	var logo = document.querySelector(".easemob-copyright"); 
 	// 没有人排队会返回 no
 	if(!waitingNumber || waitingNumber === "no"){
 		utils.addClass($queuingNumberStatus, "hide");
 		$(exit).addClass("hide")
+		$(logo).css("marginTop","30px")
 	}
 	else{
 		utils.removeClass($queuingNumberStatus, "hide");
 		$queuingNumberLabel.innerHTML = waitingNumber;
 		// document.querySelector(".em-widget-out-of-line")
 		$(exit).removeClass("hide")
+		$(logo).css("marginTop","5px")
 	}
 }
