@@ -647,8 +647,6 @@ function renderUI(resultStatus){
 						}
 					}
 					if(iframeParent){
-						console.log($(iframeParent).find("iframe")[0])
-						console.log(msg)
 						$(iframeParent).find("iframe")[0].contentWindow.postMessage(obj,"*")
 					}
 				},1000)
