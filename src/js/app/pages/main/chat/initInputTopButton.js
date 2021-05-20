@@ -211,7 +211,6 @@ module.exports = function(data,isOpen){
 		}
 	}
 	utils.on(document.querySelector(".swiper-slide.em-widget-out-of-line"), "click", function(e){
-		console.log("访客退队")
 		var officialAccount = profile.currentOfficialAccount;
 		if(!officialAccount){
 			return;
