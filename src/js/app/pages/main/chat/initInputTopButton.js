@@ -157,7 +157,7 @@ module.exports = function(data,isOpen){
 	function updateSwiper(){
 		setTimeout(function() {
 			mySwiper.update();
-			if($(nextPc).hasClass("swiper-button-disabled")){
+			if($(nextPc).hasClass("swiper-button-disabled")&& $(prevPc).hasClass("swiper-button-disabled")){
 				$(prevPc).addClass("hide");
 				$(nextPc).addClass("hide");
 			}
