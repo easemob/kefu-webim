@@ -82,6 +82,7 @@ function _update(waitingNumber){
 		utils.addClass($queuingNumberStatus, "hide");
 		$(exit).addClass("hide")
 		$(logo).css("marginTop","30px")
+		eventListener.trigger("swiper.update");
 	}
 	else{
 		utils.removeClass($queuingNumberStatus, "hide");
@@ -89,5 +90,6 @@ function _update(waitingNumber){
 		// document.querySelector(".em-widget-out-of-line")
 		$(exit).removeClass("hide")
 		$(logo).css("marginTop","5px")
+		eventListener.trigger("swiper.update");
 	}
 }
