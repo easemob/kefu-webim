@@ -3,6 +3,7 @@ var apiHelper = require("@/app/common/apiHelper");
 var _const = require("@/common/const");
 var emajax = require("@/common/ajax");
 var profile = require("@/app/tools/profile");
+var commonConfig = require("@/common/config");
 
 // 以下调用会缓存参数
 // getVisitorId
@@ -223,8 +224,11 @@ function getVisitorId(){
 					imServiceNumber: config.toUser,
 					token: token
 				}, function(msg){
+					console.log(msg,"访客信息")
 					// 存储访客信息
-					utils.setStore("visitorInfo", JSON.stringify(msg.data.entity));
+					commonConfig.setConfig({
+						visitorInfo: msg.data.entity
+					});
 					var visitorId = utils.getDataByPath(msg, "data.entity.userId");
 					if(visitorId){
 						// cache visitor id

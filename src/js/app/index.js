@@ -72,6 +72,9 @@ main.init(setUserInfo);
 eventListener.add(_const.SYSTEM_EVENT.CONSULT_AGENT, function(){
 	$(".em-self-wrapper").addClass("hide");
 	main.initChat();
+	if(utils.isMobile){
+		$(".expand").addClass("hide");
+	}
 });
 
 function widgetBoxShow(){
@@ -635,16 +638,37 @@ function renderUI(resultStatus){
 			if(sing && sing!= "faq"){
 				var iframeParent = $("div[sign='"+ sing +"']")[0];
 				setTimeout(function  () {
-					var msg = JSON.parse(utils.getStore("visitorInfo"));
+					var msg = commonConfig.getConfig().visitorInfo;
+					if(msg){
+						var obj = {
+							phone:msg.phone,
+							userId:msg.userId,
+							username:msg.username
+						}
+					}
+					if(iframeParent){
+						console.log($(iframeParent).find("iframe")[0])
+						console.log(msg)
+						$(iframeParent).find("iframe")[0].contentWindow.postMessage(obj,"*")
+					}
+				},1000)
+			}
+		});
+		// 第一个tab在页面渲染完成时候再触发事件
+		if(tab.tabs!=0&&tab.tabs[0].sign != "faq"){
+			setTimeout(function  () {
+				var iframeParent = $("div[sign='"+ tab.tabs[0].sign +"']")[0];
+				var msg = commonConfig.getConfig().visitorInfo;
+				if(msg){
 					var obj = {
 						phone:msg.phone,
 						userId:msg.userId,
 						username:msg.username
 					}
-					$(iframeParent).find("iframe")[0].contentWindow.postMessage(obj,"*")
-				},1000)
-			}
-		});
+				}
+				$(iframeParent).find("iframe")[0].contentWindow.postMessage(obj,"*")
+			},5000)
+		}
 		// 优先第一个
 		if(tab.selectFirstTab()){
 			$("#em-kefu-webim-self").append(tab.$el);
