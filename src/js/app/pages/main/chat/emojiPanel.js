@@ -40,12 +40,14 @@ function init(option){
 	container.appendChild(dom);
 
 	utils.on(toggleButton, utils.click, function(){
-		if($(document.querySelector(".toolbar-mobile")).hasClass("hide")){
-			utils.trigger(document.querySelector(".em-widget-add"), "click");
-		}
-		else{
-			if(!$(dom).hasClass("hide")){
+		if(utils.isMobile){
+			if($(document.querySelector(".toolbar-mobile")).hasClass("hide")){
 				utils.trigger(document.querySelector(".em-widget-add"), "click");
+			}
+			else{
+				if(!$(dom).hasClass("hide")){
+					utils.trigger(document.querySelector(".em-widget-add"), "click");
+				}
 			}
 		}
 		textInput.blur();

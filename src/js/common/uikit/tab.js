@@ -16,7 +16,7 @@ Tab.prototype.addTab = function(tabInfo){
 		throw new Error("不允许空实例");
 	};
 	var liWidth;
-	var $headItemTmp = $("<li sign=\"" + tabInfo.sign + "\"><span>" + tabInfo.text + "</span></li>");
+	var $headItemTmp = $("<li title=\"" + tabInfo.text + "\"  sign=\"" + tabInfo.sign + "\"><span>" + tabInfo.text + "</span></li>");
 	var $bodyItemTmp = $("<div class='hide' sign=" + tabInfo.sign + ">");
 	// frame append
 	this.$head.append($headItemTmp);
