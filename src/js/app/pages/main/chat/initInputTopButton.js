@@ -165,6 +165,10 @@ module.exports = function(data,isOpen){
 				$(prevPc).removeClass("hide");
 				$(nextPc).removeClass("hide");
 			}
+			if(utils.isMobile){
+				$(prevPc).addClass("hide");
+				$(nextPc).addClass("hide");
+			}
 		}, 1100);
 	}
 
