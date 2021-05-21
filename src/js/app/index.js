@@ -92,6 +92,11 @@ function widgetBoxShow(){
 	}
 	slideApi.getSelfServiceAndFaq()
 	.then(function(data){
+		if(utils.isMobile && !slideSwitch){
+			$(".em-self-wrapper").addClass("hide");
+			main.initChat();
+			return false
+		}
 		if((data[0].length == 0 || !selfServiceEnable) && (data[1].length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
 			$(".em-self-wrapper").addClass("hide");
 			$(".expand").addClass("hide");
@@ -712,6 +717,11 @@ function renderUI(resultStatus){
 	}
 	slideApi.getSelfServiceAndFaq()
 	.then(function(data){
+		if(utils.isMobile && !slideSwitch){
+			$(".em-self-wrapper").addClass("hide");
+			main.initChat();
+			return false
+		}
 		if((data[0].length == 0 || !selfServiceEnable) && (data[1].length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
 		// if(data[0].length == 0 && data[1].length == 0 && iframeContent.length == 0){
 			$(".em-self-wrapper").addClass("hide");
