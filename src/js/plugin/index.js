@@ -53,8 +53,9 @@ DEFAULT_CONFIG = {
 	fromUrl: window.location.href,
 	referer: document.referrer
 };
-console.log(window.location.href)
-
+if(DEFAULT_CONFIG.fromUrl == "about:blank"){
+	DEFAULT_CONFIG.fromUrl = window.frameElement.baseURI
+}
 
 // init _config & concat config and global easemobim.config
 function reset(config){
