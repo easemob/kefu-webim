@@ -118,14 +118,14 @@ function widgetBoxShow(){
 				apiHelper.getSidebarWidth().then(function(res){
 					var sideWidth;
 					if(!res.entity){
-						sideWidth = 360 + "px";
+						sideWidth = 360;
 					}
 					else{
-						sideWidth = res.entity.value + "px";
+						sideWidth = res.entity.value;
 					}
-					var chatWidth = $(".em-widget-content-box").width() - Number(res.entity.value)
-					$("#em-kefu-webim-chat").css("width",chatWidth+"px");
-					$("#em-kefu-webim-self").css("width",sideWidth);
+					var chatWidth = $(".em-widget-content-box").width() - Number(sideWidth);
+					$("#em-kefu-webim-chat").css("width",chatWidth + "px");
+					$("#em-kefu-webim-self").css("width",sideWidth + "px");
 					eventListener.trigger("swiper.update");
 				})
 				// 展开按钮的状态
@@ -745,18 +745,18 @@ function renderUI(resultStatus){
 				if(!slideSwitchAndMore){
 					return false;
 				}
-				// 获取坐席端设置的宽度并设置
+				// 获取坐席端设置的宽度并设置，js集成网页的时候
 				apiHelper.getSidebarWidth().then(function(res){
 					var sideWidth;
 					if(!res.entity){
-						sideWidth = 360 + "px";
+						sideWidth = 360;
 					}
 					else{
-						sideWidth = res.entity.value + "px";
+						sideWidth = res.entity.value;
 					}
-					var chatWidth = $(".em-widget-content-box").width() - Number(res.entity.value)
-					$("#em-kefu-webim-chat").css("width",chatWidth+"px");
-					$("#em-kefu-webim-self").css("width",sideWidth);
+					var chatWidth = $(".em-widget-content-box").width() - Number(sideWidth);
+					$("#em-kefu-webim-chat").css("width",chatWidth + "px");
+					$("#em-kefu-webim-self").css("width",sideWidth + "px");
 					eventListener.trigger("swiper.update");
 				})
 			}
