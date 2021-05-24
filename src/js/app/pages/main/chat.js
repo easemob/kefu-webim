@@ -376,7 +376,6 @@ function _initAutoGrow(){
 
 	// todo: 高度不改变时，不更新dom
 	function update(){
-		console.log("qweqwewqe")
 		var height = this.value ? this.scrollHeight : originHeight;
 		this.style.height = height + "px";
 		this.scrollTop = 9999;
