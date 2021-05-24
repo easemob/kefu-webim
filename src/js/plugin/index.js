@@ -53,7 +53,7 @@ DEFAULT_CONFIG = {
 	fromUrl: window.location.href,
 	referer: document.referrer
 };
-
+console.log(window.location.href)
 
 
 // init _config & concat config and global easemobim.config
