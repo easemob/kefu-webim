@@ -150,6 +150,7 @@ function _init(){
 		service: service,
 		dispatcher: dispatcher,
 	});
+	$(".em-widget-exit-video").on("click",_onConfirmExitvideo);
 }
 
 function init(option){
@@ -237,7 +238,6 @@ function _onConfirm(){
 	// var editor = document.querySelector(".toolbar");
 	// editor.appendChild(el);
 	// var el = utils.createElementFromHTML("<div class=\"swiper-slide em-widget-exit-video\">取消视频通话</div>");
-	$(".em-widget-exit-video").on("click",_onConfirmExitvideo)
 
 }
 

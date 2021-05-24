@@ -219,6 +219,9 @@ module.exports = function(data,isOpen){
 		if(!officialAccount){
 			return;
 		}
+		var videoBtn =  document.querySelector(".swiper-wrapper>.em-widget-exit-video");
+		$(videoBtn).addClass("hide");
+		mySwiper.update();
 		var isSessionOpen = officialAccount.isSessionOpen;
 		var sessionId = officialAccount.sessionId;
 		isSessionOpen && apiHelper.closeServiceSession(sessionId);
