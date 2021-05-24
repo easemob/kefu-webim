@@ -724,6 +724,11 @@ function renderUI(resultStatus){
 		}
 		if((data[0].length == 0 || !selfServiceEnable) && (data[1].length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
 		// if(data[0].length == 0 && data[1].length == 0 && iframeContent.length == 0){
+			if(utils.isMobile && slideSwitch){
+				$(".em-self-wrapper").addClass("hide");
+				main.initChat();
+				return false
+			}
 			$(".em-self-wrapper").addClass("hide");
 			$(".expand").addClass("hide");
 			var chatWidth = $(".em-widget-content-box").width() - slideWidth;
