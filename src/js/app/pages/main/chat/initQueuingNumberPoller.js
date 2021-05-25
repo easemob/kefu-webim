@@ -81,13 +81,6 @@ function _getQueuingNumber(officialAccount){
 }
 function _getExitState(officialAccount){
 	var exit = document.querySelector(".em-widget-out-of-line"); //访客退队按钮
-	if(
-		officialAccount !== profile.currentOfficialAccount
-		|| !officialAccount
-		|| !profile.isChatWindowOpen
-		|| utils.isBrowserMinimized()
-	) return;
-
 	var state = officialAccount.sessionState;
 	var sessionId = officialAccount.sessionId;
 	if(state === _const.SESSION_STATE.WAIT && sessionId){
