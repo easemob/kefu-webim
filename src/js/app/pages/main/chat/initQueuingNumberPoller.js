@@ -10,6 +10,12 @@ var $queuingNumberStatus;
 var $queuingNumberLabel;
 
 module.exports = function(){
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _getExitState);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, _getExitState);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _getExitState);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_CREATED, _getExitState);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _getExitState);
+	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _getExitState);
 	if(!profile.grayList.waitListNumberEnable) return;
 	var editorView = document.querySelector(".em-widget-send-wrapper");
 	$queuingNumberStatus = editorView.querySelector(".queuing-number-status");
@@ -71,6 +77,26 @@ function _getQueuingNumber(officialAccount){
 	}
 	else{
 		_update(null);
+	}
+}
+function _getExitState(officialAccount){
+	var exit = document.querySelector(".em-widget-out-of-line"); //访客退队按钮
+	if(
+		officialAccount !== profile.currentOfficialAccount
+		|| !officialAccount
+		|| !profile.isChatWindowOpen
+		|| utils.isBrowserMinimized()
+	) return;
+
+	var state = officialAccount.sessionState;
+	var sessionId = officialAccount.sessionId;
+	if(state === _const.SESSION_STATE.WAIT && sessionId){
+		$(exit).removeClass("hide");
+		eventListener.trigger("swiper.update");
+	}
+	else{
+		$(exit).addClass("hide");
+		eventListener.trigger("swiper.update");
 	}
 }
 
