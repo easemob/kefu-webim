@@ -35,7 +35,7 @@ var iframeContent = [];
 var commonIssueEnable;
 var selfServiceEnable;
 var iframeEnable;
-var initIframeState;
+var initIframeStateDate;
 load_html();
 if(utils.isTop){
 	commonConfig.h5_mode_init();
@@ -348,11 +348,7 @@ function initRelevanceList(tenantId){
 			}
 			slideApi.getSelfServiceAndFaq()
 			.then(function(data){
-				if((data[0].length == 0 || !selfServiceEnable) && (data[1].length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
-					initIframeState = false;
-				}else{
-					initIframeState = true;
-				}
+				initIframeStateDate = data;
 			})
 			apiHelper.getRelevanceList()
 			.then(function(_relevanceList){
@@ -612,13 +608,13 @@ function renderUI(resultStatus){
 				slideWidth = res.entity.value;
 			}
 		})
-		if(!initIframeState){
-			return false;
-		}
 		var commonIssueEnable = resultStatus[0];
 		var selfServiceEnable = resultStatus[1];
 		var iframeEnable = resultStatus[2];
 		var iframeSettings = resultStatus[3][0];	// 只取第一个
+		if((initIframeStateDate[0].length == 0 || !selfServiceEnable) && (initIframeStateDate[1].length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
+			return false;
+		}
 		var side_page = functionView.init({
 			resultStatus: resultStatus
 		});

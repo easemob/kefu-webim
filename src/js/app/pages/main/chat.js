@@ -868,7 +868,6 @@ function _bindEvents(){
 
 	if(utils.isMobile){
 		utils.on(doms.textInput, "focus touchstart", function(){
-			console.log("表情++++++")
 			doms.textInput.style.overflowY = "auto";
 			_scrollToBottom();
 		});
