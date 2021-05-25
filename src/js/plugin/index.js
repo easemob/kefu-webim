@@ -53,6 +53,7 @@ DEFAULT_CONFIG = {
 	fromUrl: window.location.href,
 	referer: document.referrer
 };
+// 店匠：两层iframe 着陆页获取特殊处理！！
 if(DEFAULT_CONFIG.fromUrl == "about:blank"){
 	DEFAULT_CONFIG.fromUrl = window.frameElement.baseURI
 }
