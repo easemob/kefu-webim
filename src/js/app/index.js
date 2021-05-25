@@ -35,6 +35,7 @@ var iframeContent = [];
 var commonIssueEnable;
 var selfServiceEnable;
 var iframeEnable;
+var initIframeState;
 load_html();
 if(utils.isTop){
 	commonConfig.h5_mode_init();
@@ -345,6 +346,14 @@ function initRelevanceList(tenantId){
 					slideSwitch = false;
 				}
 			}
+			slideApi.getSelfServiceAndFaq()
+			.then(function(data){
+				if((data[0].length == 0 || !selfServiceEnable) && (data[1].length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
+					initIframeState = false;
+				}else{
+					initIframeState = true;
+				}
+			})
 			apiHelper.getRelevanceList()
 			.then(function(_relevanceList){
 				relevanceList = _relevanceList;
@@ -603,6 +612,9 @@ function renderUI(resultStatus){
 				slideWidth = res.entity.value;
 			}
 		})
+		if(!initIframeState){
+			return false;
+		}
 		var commonIssueEnable = resultStatus[0];
 		var selfServiceEnable = resultStatus[1];
 		var iframeEnable = resultStatus[2];
