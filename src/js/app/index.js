@@ -101,6 +101,12 @@ function widgetBoxShow(){
 			return false
 		}
 		if((data[0].length == 0 || !selfServiceEnable) && (data[1].length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
+			if(utils.isMobile && slideSwitch){
+				$(".em-self-wrapper").addClass("hide");
+				main.initChat();
+				$(".expand").addClass("hide");
+				return false
+			}
 			$(".em-self-wrapper").addClass("hide");
 			$(".expand").addClass("hide");
 			var chatWidth = $(".em-widget-content-box").width() - slideWidth;
@@ -730,6 +736,7 @@ function renderUI(resultStatus){
 			if(utils.isMobile && slideSwitch){
 				$(".em-self-wrapper").addClass("hide");
 				main.initChat();
+				$(".expand").addClass("hide");
 				return false
 			}
 			$(".em-self-wrapper").addClass("hide");
