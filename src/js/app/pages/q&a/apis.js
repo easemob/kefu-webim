@@ -70,14 +70,22 @@ function getSelfServiceList(){
 }
 
 function getSelfServiceAndFaq(){
-	return new Promise(function(resolve, reject){
-		Promise.all([
-			getSelfServiceList(),
-			getFaqList()
-		]).then(function(result){
-			resolve(result);
+	var config = commonConfig.getConfig()
+	if(config.configId){
+		return new Promise(function(resolve, reject){
+			Promise.all([
+				getSelfServiceList(),
+				getFaqList()
+			]).then(function(result){
+				resolve(result);
+			});
 		});
-	});
+	}
+	else{
+		return new Promise(function(resolve, reject){
+			resolve([[],[]]);
+		});
+	}
 }
 
 

@@ -16,6 +16,7 @@ module.exports = function(){
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_CREATED, _getExitState);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _getExitState);
 	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _getExitState);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, _getExitState);
 	if(!profile.grayList.waitListNumberEnable) return;
 	var editorView = document.querySelector(".em-widget-send-wrapper");
 	$queuingNumberStatus = editorView.querySelector(".queuing-number-status");
@@ -94,12 +95,10 @@ function _getExitState(officialAccount){
 }
 
 function _update(waitingNumber){
-	var exit = document.querySelector(".em-widget-out-of-line"); //访客退队按钮
 	var logo = document.querySelector(".easemob-copyright"); 
 	// 没有人排队会返回 no
 	if(!waitingNumber || waitingNumber === "no"){
 		utils.addClass($queuingNumberStatus, "hide");
-		$(exit).addClass("hide")
 		$(logo).css("marginTop","30px")
 		eventListener.trigger("swiper.update");
 	}
@@ -107,7 +106,6 @@ function _update(waitingNumber){
 		utils.removeClass($queuingNumberStatus, "hide");
 		$queuingNumberLabel.innerHTML = waitingNumber;
 		// document.querySelector(".em-widget-out-of-line")
-		$(exit).removeClass("hide")
 		$(logo).css("marginTop","5px")
 		eventListener.trigger("swiper.update");
 	}

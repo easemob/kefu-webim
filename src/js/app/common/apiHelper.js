@@ -444,7 +444,8 @@ function getSidebarFoldedrSwitch(){
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
 		}, function(err){
-			reject(err);
+			// reject(err);
+			resolve(err);
 		});
 	});
 }
