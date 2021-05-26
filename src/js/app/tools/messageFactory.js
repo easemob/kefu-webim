@@ -462,7 +462,16 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		data = JSON.parse(data);
 		data.forEach(function(item){
 			if(item.type == "richText"){
-				msg.data = item.content;
+				var newContent = "";
+				if(item.content.indexOf("<img") > -1){
+					var reg = new RegExp("<img", "g");
+					newContent = item.content.replace(reg, "<img class='em-widget-imgview' ");
+				}
+				else{
+					newContent = item.content;
+				}
+
+				msg.data = newContent;
 				msg.rulai = true;
 				html += genMsgContent(msg);
 			}
