@@ -149,6 +149,12 @@ body.window-demo{
 		min-width: 200px;
 		transition: width 1s ease-in-out; 
 	}
+	.em-widget-send-wrapper{
+		height: 140px !important;
+	}
+	.chat-wrapper{
+		bottom: 140px !important;
+	}
 }
 
 .auth-box-PC{

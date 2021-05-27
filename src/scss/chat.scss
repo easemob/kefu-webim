@@ -196,6 +196,9 @@
 		li{
 			position: relative;
 			border-bottom: 1px solid #F5F7FA;
+			button{
+				margin:0;
+			}
 		}
 		li:nth-last-child(1){
 			position: relative;
