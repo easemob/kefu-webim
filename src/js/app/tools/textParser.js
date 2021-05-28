@@ -66,7 +66,7 @@ function parse(text){
 
 	return _.reduce([
 		_emojiParser,
-		// _customLinkParser,
+		_customLinkParser,
 		_linkParser,
 		_encodeParser,
 	], function(result, parser){
