@@ -276,7 +276,7 @@ function initConfig(){
 						document.querySelector(".auth-box-H5 >div span.is-auth").innerHTML = str;
 						utils.removeClass(document.querySelector(".auth-box-H5"), "hide");
 					} else {
-						str += "咨询通道暂不可用";
+						str += "认证未通过前，咨询通道暂不可用";
 						document.querySelector(".auth-box-PC >div span").innerHTML = str;
 						utils.removeClass(document.querySelector(".auth-box-PC"), "hide");
 					}
@@ -320,7 +320,7 @@ function initRelevanceList(tenantId){
 					document.querySelector(".auth-box-H5 >div span.is-auth").innerHTML = str;
 					utils.removeClass(document.querySelector(".auth-box-H5"), "hide");
 				} else {
-					str += "咨询通道暂不可用";
+					str += "认证未通过前，咨询通道暂不可用";
 					document.querySelector(".auth-box-PC >div span").innerHTML = str;
 					utils.removeClass(document.querySelector(".auth-box-PC"), "hide");
 				}
