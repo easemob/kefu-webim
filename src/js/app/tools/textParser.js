@@ -61,15 +61,23 @@ function getTextMessageBrief(text){
 	}).join("");
 }
 
-function parse(text){
+function parse(text, opt){
+	opt = opt || {};
 	if(typeof text !== "string") return "";
-
-	return _.reduce([
+	var list = [
 		_emojiParser,
 		_customLinkParser,
 		_linkParser,
-		_encodeParser,
-	], function(result, parser){
+		_encodeParser
+	]
+	if(opt.default){
+		list = [
+			_emojiParser,
+			_linkParser,
+			_encodeParser
+		]
+	}
+	return _.reduce(list, function(result, parser){
 		return _parseMap(result, parser);
 	}, [{
 		type: "UNPARSED",

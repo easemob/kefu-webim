@@ -41,7 +41,7 @@ function genMsgContent(msg){
 			break;
 		}
 		else{
-			value = textParser.parse(value);
+			value = textParser.parse(value, {default: true});
 			// 历史消息以及收到的实时消息
 			if(utils.isMobile && value[0].type == "ENCODED_TEXT"){
 				html = "<span class=\"text\">";
