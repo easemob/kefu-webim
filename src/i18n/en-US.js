@@ -125,5 +125,9 @@ module.exports = {
 		too_many_words: "Message too long",
 		default_off_duty_word: "We are currently offline.",
 		_10_mb_file_limit: "The file size cannot exceed 10 MB.",
+		not_certified:		"Not certified.",
+		certification_failed:	"Certification failed.",
+		unavailable:			"The consultation channel is unavailable until the certification is passed.",
+		risk_alert:				"Risk reminder: This  is a test system, and no formal business has been opened yet. Please be cautious when dealing with payment and other transactions!"
 	},
 };

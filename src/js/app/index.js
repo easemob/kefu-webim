@@ -266,20 +266,10 @@ function initConfig(){
 			apiHelper.getQualificationStatus(entity.tenantId).then(function(res) {
 				if(res) {
 					widgetBoxHide();
-					var str = "";
-					if(res === 1) {
-						str = "未进行认证，";
-					} else if(res === 2){
-						str = "认证未通过，";
-					}
-					if(utils.isMobile) {
-						document.querySelector(".auth-box-H5 >div span.is-auth").innerHTML = str;
-						utils.removeClass(document.querySelector(".auth-box-H5"), "hide");
-					} else {
-						str += "认证未通过前，咨询通道暂不可用";
-						document.querySelector(".auth-box-PC >div span").innerHTML = str;
-						utils.removeClass(document.querySelector(".auth-box-PC"), "hide");
-					}
+					var str = __("prompt.unavailable");
+					console.log(str)
+					document.querySelector(".auth-box-PC >div span").innerHTML = str;
+					utils.removeClass(document.querySelector(".auth-box-PC"), "hide");
 				}
 			})
 		}
@@ -828,6 +818,8 @@ function load_html(){
 		send_video: __("toolbar.send_video"),
 		out_of_line: __("toolbar.out_of_line"),
 		exit_video: __("toolbar.exit_video"),
+		unavailable:__("prompt.unavailable"),
+		risk_alert:__("prompt.risk_alert"),
 	}));
 
 	chat.getDom();
