@@ -104,6 +104,7 @@ module.exports = {
 		waiting_confirm: "Video call request. Waiting for your confirmation",
 		can_not_connected: "Video call can’t be connected. Please try again.",
 		can_not_open_camera: "Can’t open camera.",
+		invite_exit_video: "Visitors cancel live video",
 	},
 	toolbar: {
 		emoji: "Emoticon",
@@ -114,6 +115,8 @@ module.exports = {
 		evaluate_agent: "Satisfaction",
 		transfer_to_kefu: "Agent",
 		send_video: "SendVideo",
+		out_of_line: "Out of line",
+		exit_video:	 "Cancel video call"
 	},
 	prompt: {
 		new_message_title_notice: "New message",

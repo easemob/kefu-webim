@@ -826,6 +826,8 @@ function load_html(){
 		transfer_to_kefu: __("toolbar.transfer_to_kefu"),
 		press_save_img: __("common.press_save_img"),
 		send_video: __("toolbar.send_video"),
+		out_of_line: __("toolbar.out_of_line"),
+		exit_video: __("toolbar.exit_video"),
 	}));
 
 	chat.getDom();
