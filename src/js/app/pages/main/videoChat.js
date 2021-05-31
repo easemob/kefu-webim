@@ -246,14 +246,14 @@ function _onConfirmExitvideo(){
 	var serviceSessionId = profile.currentOfficialAccount.sessionId;
 	apiHelper.deleteVideoInvitation(serviceSessionId)
 	.then(function(res){
-			// channel.sendText(__("video.invite_exit_video"), {
-			channel.sendText("访客取消实时视频", {
+			channel.sendText(__("video.invite_exit_video"), {
+			// channel.sendText("访客取消实时视频", {
 				ext: {
 					type: "rtcmedia/video",
 					msgtype: {
 						visitorCancelInvitation: {
-							// msg: __("video.invite_exit_video"),
-							msg: "访客取消实时视频",
+							msg: __("video.invite_exit_video"),
+							// msg: "访客取消实时视频",
 							orgName: config.orgName,
 							appName: config.appName,
 							userName: config.user.username,

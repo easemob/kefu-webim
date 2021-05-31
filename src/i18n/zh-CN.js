@@ -114,6 +114,8 @@ module.exports = {
 		evaluate_agent: "评价客服",
 		transfer_to_kefu: "转人工",
 		send_video: "发送小视频",
+		out_of_line: "退出排队",
+		exit_video:	 "取消视频通话"
 	},
 	prompt: {
 		new_message_title_notice: "新消息提醒",
