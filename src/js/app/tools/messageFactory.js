@@ -9,7 +9,16 @@ var apiHelper = require("../pages/main/apis");
 var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com__WEBIM_SLASH_KEY_PATH__/webim/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
 
 // channel.js 放着消息列表的构建，是不对的
-function genMsgContent(msg){
+function genMsgContent(msg, opt){
+	var notFromSystem = false;
+	// 历史消息里的
+	if(msg.fromUser){
+		notFromSystem = msg.fromUser.user_type == "Visitor" || msg.fromUser.user_type == "Agent"
+	}
+	// 实时消息里的
+	if(opt.notFromSystem){
+		notFromSystem = opt.notFromSystem;
+	}
 
 	// console.log(msg)
 	var type = msg.type;
@@ -41,7 +50,8 @@ function genMsgContent(msg){
 			break;
 		}
 		else{
-			value = textParser.parse(value, {default: true});
+			value =  notFromSystem ? textParser.parse(value, {default: true}) : textParser.parse(value);
+			
 			// 历史消息以及收到的实时消息
 			if(utils.isMobile && value[0].type == "ENCODED_TEXT"){
 				html = "<span class=\"text\">";
@@ -360,8 +370,8 @@ function _getRulaiHtml(content){
 
 }
 
-function genDomFromMsg(msg, isReceived, isHistory){
-	
+function genDomFromMsg(msg, isReceived, isHistory, opt){
+	opt = opt || {};
 	// console.log(msg)
 	var id = msg.id;
 	var type = msg.type;
@@ -373,9 +383,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 	var satisfactionCommentInfo;
 	var agentId;
 	var satisfactionCommentInvitation;
-
 	
-
 	// 设置消息气泡显示在左侧还是右侧
 	// .em-widget-right, .em-widget-left used here
 	dom.className = "em-widget-" + direction;
@@ -473,7 +481,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 
 				msg.data = newContent;
 				msg.rulai = true;
-				html += genMsgContent(msg);
+				html += genMsgContent(msg, opt);
 			}
 		});
 	}
@@ -498,7 +506,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 				msg.type = item.type;
 			}
 			msg.laiye = laiye;
-			html += genMsgContent(msg);
+			html += genMsgContent(msg, opt);
 
 		});
 		if(laiyeType == "list" || (msg.multipleMsgOneByOne && msg.list)){
@@ -506,7 +514,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		}
 	}
 	else{
-		html += genMsgContent(msg);
+		html += genMsgContent(msg, opt);
 		if(msg.multipleMsgOneByOne && msg.list){
 			html += msg.list;
 		}

@@ -132,7 +132,7 @@ function _initConnection(onReadyCallback){
 			onReadyCallback(info);
 		},
 		onTextMessage: function(message){
-			_handleMessage(message, { type: "txt" });
+			_handleMessage(message, { type: "txt", notFromSystem: true });
 		},
 		onPictureMessage: function(message){
 			_handleMessage(message, { type: "img" });
@@ -275,7 +275,7 @@ function _sendText(message, ext){
 
 	_handleMessage(
 		_transfromImMessage(msg),
-		{ isReceived: false, isHistory: false, type: "txt" }
+		{ isReceived: false, isHistory: false, type: "txt", notFromSystem: true }
 	);
 }
 
@@ -1001,6 +1001,7 @@ function _handleMessage(msg, options){
 			officialAccount: targetOfficialAccount,
 			timestamp: msg.timestamp,
 			noPrompt: noPrompt,
+			notFromSystem: opt.notFromSystem
 		});
 	}
 	

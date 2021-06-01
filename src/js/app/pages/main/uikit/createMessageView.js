@@ -91,7 +91,7 @@ module.exports = function(opt){
 		var isReceived = opt.isReceived;
 		var isHistory = opt.isHistory;
 		var date = opt.timestamp || _.now();
-		var dom = genDomFromMsg(msg, isReceived, isHistory);
+		var dom = genDomFromMsg(msg, isReceived, isHistory, opt);
 		var img = dom.querySelector(".em-widget-imgview");
 
 		if(isHistory){
