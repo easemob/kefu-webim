@@ -221,6 +221,9 @@
 	.swiper-wrapper{
 		height: 30px;
 		margin-bottom: 4px;
+		>.em-widget-out-of-line{
+			display: none !important;
+		}
 		>.swiper-slide{
 			width: auto!important;
 			line-height: 30px;
