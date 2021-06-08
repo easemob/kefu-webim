@@ -13,11 +13,23 @@ function genMsgContent(msg, opt){
 	var notFromSystem = false;
 	// 历史消息里的
 	if(msg.fromUser){
-		notFromSystem = msg.fromUser.user_type == "Visitor" || msg.fromUser.user_type == "Agent"
+		var fromType = utils.getDataByPath(msg, "fromUser.user_type");
+		if(fromType !== "Scheduler" && fromType !== "Robot"){
+			notFromSystem = true
+		}
 	}
 	// 实时消息里的
 	if(opt.notFromSystem){
-		notFromSystem = opt.notFromSystem;
+		var fromType = utils.getDataByPath(msg, "ext.weichat.agent.userType");
+		if(msg.ext.weichat.agent && fromType == "Agent"){
+			notFromSystem = false;
+		}
+		else if(msg.ext.weichat.agent && fromType == "Robot"){
+			notFromSystem = false;
+		}
+		else{
+			notFromSystem = opt.notFromSystem;
+		}
 	}
 
 	// console.log(msg)
