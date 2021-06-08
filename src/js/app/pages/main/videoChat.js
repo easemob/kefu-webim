@@ -161,7 +161,7 @@ function init(option){
 
 	if(
 		window.location.protocol !== "https:"
-		|| !Modernizr.peerconnection
+		|| !Modernizr.peerconnection // UC 和 夸克 该方法返回false，不支持webRtc
 		|| !profile.grayList.audioVideo
 	) return;
 

@@ -221,6 +221,7 @@ function _refreshDialog(){
 		confirmText: __("common.re_consultation"),
 		confirm: function(){
 			var el = document.getElementsByTagName("body");
+			getToHost.send({ event: _const.EVENTS.CLOSE });
 			if($(el).hasClass("window-demo")){
 				// 小窗口集成的页面也刷新防止ws接收错误信息
 				window.location.reload();
