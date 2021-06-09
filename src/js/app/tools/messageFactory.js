@@ -22,9 +22,12 @@ function genMsgContent(msg, opt){
 	if(opt.notFromSystem){
 		var fromType = utils.getDataByPath(msg, "ext.weichat.agent.userType");
 		if(msg.ext.weichat.agent && fromType == "Agent"){
-			notFromSystem = false;
+			notFromSystem = true;
 		}
 		else if(msg.ext.weichat.agent && fromType == "Robot"){
+			notFromSystem = false;
+		}
+		else if(msg.ext.weichat.agent && !fromType){
 			notFromSystem = false;
 		}
 		else{
