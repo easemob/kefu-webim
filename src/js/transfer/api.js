@@ -1059,6 +1059,16 @@ up2Im.listen(function(msg){
 			type: "PUT"
 		});
 		break;
+	// 需要申请相机的权限的开关
+	case "getSendImgTips":
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/"+ tenantId +"/configs/"+params.configId+"/visitors/options/sendImgTips/status",
+		emitAjax({
+			url: url,
+			msg: msg,
+			excludeData: true,
+			type: "GET"
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;

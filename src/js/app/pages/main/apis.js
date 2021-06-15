@@ -1454,6 +1454,21 @@ function getInputH5Status(){
 	});
 }
 
+function getSendImgTips(){
+	return new Promise(function(resolve, reject){
+		api("getSendImgTips", {
+			tenantId: config.tenantId,
+			configId: config.configId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			// reject(err);
+			resolve(err);
+		});
+	});
+}
+
 
 module.exports = {
 	getGrayList: getGrayList,
@@ -1528,6 +1543,7 @@ module.exports = {
 	getInputTopButton:getInputTopButton,
 	getInputH5Button:getInputH5Button,
 	getInputH5Status:getInputH5Status,
+	getSendImgTips: getSendImgTips,
 	update: function(cfg){
 		config = cfg;
 	}

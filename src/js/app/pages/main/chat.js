@@ -948,7 +948,7 @@ function _bindEvents(){
 
 	// 弹出图片框
 	utils.on(doms.sendImgBtn, "click", function(){
-		if(utils.isMobile && commonConfig.getConfig().toolbar.sendImgTips){
+		if(utils.isMobile && profile.sendImgTips){ 
 			utils.removeClass(doms.mobileModel, "hide");
 		}
 		else{
@@ -1241,6 +1241,11 @@ function _init(){
 			profile.isManualMenuGuide = yes;
 		});
 	}
+	// 查询是否开启申请相机的权限开关
+	apiHelper.getSendImgTips().then(function(yes){
+		profile.sendImgTips = yes.entity
+	})
+
 	var url;
 	if(profile.grayList.poweredByEasemob){
         // utils.addClass(el, "paddingTo48");
