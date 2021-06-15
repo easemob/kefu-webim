@@ -224,7 +224,7 @@ function getVisitorId(){
 					imServiceNumber: config.toUser,
 					token: token
 				}, function(msg){
-					console.log(msg,"访客信息")
+					// console.log(msg,"访客信息")
 					// 存储访客信息
 					commonConfig.setConfig({
 						visitorInfo: msg.data.entity

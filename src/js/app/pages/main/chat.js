@@ -948,7 +948,21 @@ function _bindEvents(){
 
 	// 弹出图片框
 	utils.on(doms.sendImgBtn, "click", function(){
+		if(utils.isMobile && commonConfig.getConfig().toolbar.sendImgTips){
+			utils.removeClass(doms.mobileModel, "hide");
+		}
+		else{
+			doms.imgInput.click();
+		}
+	});
+	// allow
+	utils.on(doms.allowBtn, "click", function(){
 		doms.imgInput.click();
+		utils.addClass(doms.mobileModel, "hide");
+	});
+	// refuse
+	utils.on(doms.refuseBtn, "click", function(){
+		utils.addClass(doms.mobileModel, "hide");
 	});
 
 	// 显示留言页面
@@ -1194,6 +1208,10 @@ function _getDom(){
 		videoPlayContainer: document.querySelector(".em-video-container"),
 		videoPlayBox: document.querySelector(".full-video-box"),
 		videoBoxClose: document.querySelector(".video-container-close"),
+
+		mobileModel: document.querySelector(".mobile-model"),
+		allowBtn: document.querySelector("span[allow]"),
+		refuseBtn: document.querySelector("span[refuse]"),
 		
 		toolBar: toolBar,
 		topBar: topBar,
