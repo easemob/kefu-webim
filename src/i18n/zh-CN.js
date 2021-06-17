@@ -25,7 +25,10 @@ module.exports = {
 		faq: "常见问题",
 		consult_agent: "点此咨询客服",
 		refresh_tip: "您已在其他页面发起咨询，当前咨询已失效，您可以重新发起咨询。",
-		re_consultation:"重新连接"
+		re_consultation:"重新连接",
+		camera_permissions:"程序需要访问您的图库并且使用相机权限，是否允许？",
+		allow:"允许",
+		refuse:"拒绝"
 	},
 	chat: {
 		agent_is_typing: "正在输入...",

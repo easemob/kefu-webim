@@ -806,7 +806,7 @@ function load_html(){
 		agent_is_typing: __("chat.agent_is_typing"),
 		current_queue_number: __("chat.current_queue_number"),
 		connecting: __("chat.connecting"),
-		input_placeholder: __("chat.input_placeholder"),
+		input_placeholder: __("chat.input_placeholder"), 
 		emoji: __("toolbar.emoji"),
 		picture: __("toolbar.picture"),
 		attachment: __("toolbar.attachment"),
@@ -820,6 +820,9 @@ function load_html(){
 		exit_video: __("toolbar.exit_video"),
 		unavailable:__("prompt.unavailable"),
 		risk_alert:__("prompt.risk_alert"),
+		camera_permissions:__("common.camera_permissions"),
+		allow:__("common.allow"),
+		refuse:__("common.refuse")
 	}));
 
 	chat.getDom();
