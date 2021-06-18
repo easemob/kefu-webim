@@ -3,13 +3,14 @@ var _const = require("@/common/const");
 var EMOJI_PATH = _const.EMOJI_PATH;
 var EMOJI_MAP = _const.EMOJI_MAP;
 
-var protocol = /(((ftp|https?):)?\/\/)?/;
+var protocol = /(((ftp|https?):)?\/\/)/;
 var auth = /([-._0-9a-zA-Z]+(:[-._0-9a-zA-Z]+)?@)?/;
 var host = /((\d+\.\d+\.\d+\.\d+)|(([-_0-9a-zA-Z_]+\.)+[a-zA-Z]+))/;
 var port = /(:\d+)?/;
-var path = /(\/[^ ?\n]*)*/;
+var path = /(\/[^ ?<">\n]*)*/;
 var query = /(\?([-+._%0-9a-zA-Z]+=[^ &#'"\n]*&)*([-+._%0-9a-zA-Z]+=[^ &#'"\n]*))?/;
 var hash = /(#[-+._%0-9a-zA-Z/]*)?/;
+
 var URL_RE = new RegExp(
 	[protocol, auth, host, port, path, query, hash]
 	.map(function(regExp){
