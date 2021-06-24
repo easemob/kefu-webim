@@ -948,7 +948,7 @@ function _bindEvents(){
 
 	// 弹出图片框
 	utils.on(doms.sendImgBtn, "click", function(){
-		if(utils.isMobile && profile.sendImgTips && utils.getStore("sendImgMobileModel")){ 
+		if(utils.isMobile && profile.sendImgTips && !utils.getStore("sendImgMobileModel")){ 
 			utils.removeClass(doms.mobileModel, "hide");
 			utils.setStore("sendImgMobileModel", true);
 		}
