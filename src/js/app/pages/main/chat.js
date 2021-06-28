@@ -950,7 +950,6 @@ function _bindEvents(){
 	utils.on(doms.sendImgBtn, "click", function(){
 		if(utils.isMobile && profile.sendImgTips && !utils.getStore("sendImgMobileModel")){ 
 			utils.removeClass(doms.mobileModel, "hide");
-			utils.setStore("sendImgMobileModel", true);
 		}
 		else{
 			doms.imgInput.click();
@@ -960,6 +959,7 @@ function _bindEvents(){
 	utils.on(doms.allowBtn, "click", function(){
 		doms.imgInput.click();
 		utils.addClass(doms.mobileModel, "hide");
+		utils.setStore("sendImgMobileModel", true);
 	});
 	// refuse
 	utils.on(doms.refuseBtn, "click", function(){
