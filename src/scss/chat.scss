@@ -164,10 +164,13 @@
 		border-radius: 0 8px 8px 8px;
 		&.no-bg{
 			background:none;
-			overflow: hidden;
+			// overflow: hidden;
 			.em-widget-msg-container{
 				padding: 0px;
 			}
+		}
+		.em-widget-msg-img{
+			border-radius: 0 8px 8px 8px;
 		}
 		.icon-corner-left {
 			position: absolute;
@@ -225,10 +228,13 @@
 		border-radius: 8px 0 8px 8px;
 		&.no-bg{
 			background:none;
-			overflow: hidden;
+			// overflow: hidden;
 			.em-widget-msg-container{
 				padding: 0px;
 			}
+		}
+		.em-widget-msg-img{
+			border-radius: 8px 0 8px 8px;
 		}
 		
 		.icon-corner-right {
@@ -918,9 +924,10 @@
 .msgtype-img{
 	background-color: #fff;
     text-align: center;
-	overflow: hidden;
+	// overflow: hidden;
 	.em-widget-msg-img{
 		padding: 0;
+		overflow: hidden;
 	}
 	.statisfy{
 		background-color: #fff;

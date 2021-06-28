@@ -1,3 +1,4 @@
+require("underscore");
 var WebIM = require("easemob-kefu-webim");
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
@@ -1082,8 +1083,15 @@ function _transformMessageFormat(element){
 }
 
 function _showFailed(msgId){
-	utils.addClass(document.getElementById(msgId + "_loading"), "hide");
-	utils.removeClass(document.getElementById(msgId + "_failed"), "hide");
+	if(_.isObject(msgId)){
+		utils.addClass(document.getElementById(msgId.id + "_loading"), "hide");
+		utils.removeClass(document.getElementById(msgId.id + "_failed"), "hide");	
+	}
+	else{
+		utils.addClass(document.getElementById(msgId + "_loading"), "hide");
+		utils.removeClass(document.getElementById(msgId + "_failed"), "hide");
+	}
+	
 }
 
 function _hideFailedAndLoading(msgId){
