@@ -399,6 +399,12 @@ function handleCfgData(relevanceList, status){
 	// 未指定appKey, toUser时，或未找到符合条件的关联时，默认使用关联列表中的第一项
 	if(!targetItem){
 		targetItem = targetItem || relevanceList[0];
+		// 防止关联列表是空的情况js报错（海外环境）
+		if(!targetItem){
+			targetItem = {
+				imServiceNumber:""
+			}
+		}
 		console.log("mismatched channel, use default.");
 	}
 	// console.log(commonConfig.getConfig())
