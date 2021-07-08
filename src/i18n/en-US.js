@@ -28,7 +28,8 @@ module.exports = {
 		re_consultation:"Reconnecting",
 		camera_permissions:"The program needs to access your gallery and use camera permissions. Do you want to allow it?",
 		allow:"Allow",
-		refuse:"Refuse"
+		refuse:"Refuse",
+		self_service:"Self service"
 	},
 	chat: {
 		agent_is_typing: "Agent is typing...",

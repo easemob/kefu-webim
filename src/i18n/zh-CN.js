@@ -28,7 +28,8 @@ module.exports = {
 		re_consultation:"重新连接",
 		camera_permissions:"程序需要访问您的图库并且使用相机权限，是否允许？",
 		allow:"允许",
-		refuse:"拒绝"
+		refuse:"拒绝",
+		self_service:"自助服务"
 	},
 	chat: {
 		agent_is_typing: "正在输入...",

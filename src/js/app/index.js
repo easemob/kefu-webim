@@ -619,14 +619,14 @@ function renderUI(resultStatus){
 			var faqInsArr = [];
 			if(selfServiceEnable){
 				faqInsArr.push(side_page.ss);
-				faqTxt = "自助服务";
+				faqTxt = __("common.self_service");
 			}
 			if(commonIssueEnable){
 				faqInsArr.push(side_page.faq);
-				faqTxt = "常见问题";
+				faqTxt = __("common.faq");
 			}
 			if(selfServiceEnable && commonIssueEnable){
-				faqTxt = "自助服务";
+				faqTxt = __("common.self_service");
 			}
 			if(utils.isMobile){
 				faqInsArr.push(side_page.contact);
