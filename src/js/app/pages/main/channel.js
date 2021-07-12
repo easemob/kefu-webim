@@ -800,7 +800,7 @@ function _handleMessage(msg, options){
 					}
 	
 					return "<button "
-					+ "class=\"js_transferManualbtn" + className + "\" "
+					+ "class=\"js_transferManualbtn " + className + "\" "
 					+ "style=\"color: " + color + " \""
 					+ "data-id=\"" + item.id + "\" "
 					+ "data-queue-id=\"" + item.queueId + "\" "
