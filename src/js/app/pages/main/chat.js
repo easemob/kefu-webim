@@ -880,7 +880,7 @@ function _bindEvents(){
 		if(!fileInput.value){
 		}
 		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
-			uikit.tip(__("prompt._10_mb_file_limit"));  // ("文件大小不能超过10MB");
+			uikit.tip(__("prompt._10_mb_file_limit"));  // ("文件大小不能超过10MB"); 文案修改为20，参数也作了修改
 			fileInput.value = "";
 		}
 		else{
