@@ -127,7 +127,7 @@ module.exports = {
 		new_message: "新消息",
 		too_many_words: "输入字数过多",
 		default_off_duty_word: "现在是下班时间。",
-		_10_mb_file_limit: "文件大小不能超过10MB",
+		_10_mb_file_limit: "文件大小不能超过20MB",
 		not_certified:		"未进行认证。",
 		certification_failed:	"认证未通过。",
 		unavailable:			"认证未通过前，咨询通道暂不可用。",
