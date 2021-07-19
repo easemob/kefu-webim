@@ -179,7 +179,7 @@ module.exports = {
 	},
 
 	// 上传文件大小限制
-	UPLOAD_FILESIZE_LIMIT: 1024 * 1024 * 20,
+	UPLOAD_FILESIZE_LIMIT: 1024 * 1024 * 10,
 
 	// 超时未收到 kefu-ack 启用第二通道发消息
 	FIRST_CHANNEL_MESSAGE_TIMEOUT: 2000,
