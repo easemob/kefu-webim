@@ -880,7 +880,7 @@ function _bindEvents(){
 		if(!fileInput.value){
 		}
 		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
-			uikit.tip(__("prompt._10_mb_file_limit"));  // ("文件大小不能超过10MB"); 文案修改为20，参数也作了修改
+			uikit.tip(__("prompt._10_mb_file_limit"));  // ("文件大小不能超过10MB");
 			fileInput.value = "";
 		}
 		else{
@@ -891,14 +891,23 @@ function _bindEvents(){
 
 	// 发送文件
 	utils.on(doms.fileInput, "change", function(){
+		var maxSize,tip;
+		if(profile.grayList.uploadFileLimit){
+			maxSize = 1024 * 1024 * 20;
+			tip = __("prompt._20_mb_file_limit")
+		}
+		else{
+			maxSize = _const.UPLOAD_FILESIZE_LIMIT;
+			tip = __("prompt._10_mb_file_limit")
+		}
 		var fileInput = doms.fileInput;
 		var filesize = utils.getDataByPath(fileInput, "files.0.size");
 
 		if(!fileInput.value){
 			// 未选择文件
 		}
-		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
-			uikit.tip(__("prompt._10_mb_file_limit"));
+		else if(filesize > maxSize){
+			uikit.tip(tip);
 			fileInput.value = "";
 		}
 		else{
