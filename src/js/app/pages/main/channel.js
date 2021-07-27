@@ -173,8 +173,8 @@ function _initConnection(onReadyCallback){
 				console.error(e);
 			}
 			// 当多端登录挤掉上一个ws链接的时候给出提示
-			if(e.type === 8){
-				
+			
+			if(conn.getStrophe().__streamerror__ == "Replaced by new connection"){
 				if(config.tenantId == "66639"){
 					return false;
 				}
