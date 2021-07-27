@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "crypto-js": "^3.1.9-1",
-    "easemob-kefu-webim": "^1.1.2",
+    "easemob-kefu-webim": "^1.1.3",
     "es6-promise": "=4.1.1",
     "jquery": "^1.12.4",
     "moment": "=2.18.1",
