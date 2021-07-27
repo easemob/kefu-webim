@@ -173,8 +173,7 @@ function _initConnection(onReadyCallback){
 				console.error(e);
 			}
 			// 当多端登录挤掉上一个ws链接的时候给出提示
-			
-			if(conn.getStrophe().__streamerror__ == "Replaced by new connection"){
+			if(e.type == "Replaced by new connection"){
 				if(config.tenantId == "66639"){
 					return false;
 				}
@@ -186,9 +185,12 @@ function _initConnection(onReadyCallback){
 				eventListener.trigger(_const.SYSTEM_EVENT.CLEAR_AGENTSTATE);
 				eventListener.trigger(_const.SYSTEM_EVENT.CLEAR_AGENTINPUTSTATE);
 				eventListener.trigger(_const.SYSTEM_EVENT.IS_PULL_HISTORY);
+				return false;
 			}
 		}
 	});
+
+
 
 	// open connection
 	_open();
