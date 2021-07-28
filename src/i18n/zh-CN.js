@@ -79,6 +79,8 @@ module.exports = {
 		email: "邮箱",
 		content_placeholder: "请输入留言",
 		is_sending: "留言提交中...",
+		invalid_name_no: "请输入姓名",
+		invalid_content_no: "请输入留言内容",
 		invalid_name: "姓名输入不正确",
 		invalid_phone: "手机号输入不正确",
 		invalid_email: "邮箱输入不正确",

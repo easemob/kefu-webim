@@ -10,8 +10,8 @@ const debug = require("debug");
 const DEFAULT_PORT = 8008;
 // const DEFAULT_DOMAIN = "sandbox.kefu.easemob.com";
 // const DEFAULT_DOMAIN = "metlife-kefuim.easemob.com";
-// const DEFAULT_DOMAIN = "kefuim-uat.metlife.com.cn";
-const DEFAULT_DOMAIN = "opsim-uat.metlife.com.cn";
+const DEFAULT_DOMAIN = "kefuim-uat.metlife.com.cn";
+// const DEFAULT_DOMAIN = "opsim-uat.metlife.com.cn";
 // http://localhost:8008/webim/im.html?configId=6b3b9442-a44a-4bba-aae4-e4b2e250700f&menutype=1
 
 const DEFAULT_SERVER = `http://${DEFAULT_DOMAIN}`;

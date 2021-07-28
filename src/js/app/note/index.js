@@ -41,6 +41,11 @@ var confirmBtn = document.querySelector(".confirm-btn");
 var config = getNoteConfig().config || {};
 api.update(config);
 
+// 测试使用，后期删掉
+name.value = "王大大"
+phone.value = "18300613030"
+content.value = "测试一下"
+
 // 根据配置隐藏取消按钮
 config.hideCloseBtn && utils.addClass(cancelBtn, "hide");
 
@@ -88,6 +93,7 @@ function _createTicket(){
 		var token = result[0];
 		var projectId = result[1];
 		var sessionId = config.sessionId || "";
+		console.log(111, token, projectId, sessionId);
 
 		api.createTicket({
 			token: token,
@@ -110,6 +116,7 @@ function _createTicket(){
 		});
 	})
 	["catch"](function(err){
+		console.log('["catch"] 的 err：', err);
 		isSending = false;
 		uikit.tip(__("留言失败，请重试"));
 		// uikit.tip(__("ticket.send_failed_invalid_token"));
@@ -136,6 +143,7 @@ config.preData && _writePreDate(config.preData);
 
 // 海外用户，不验证手机号格式 新增敦煌用户不校验格式2020-05-06
 function overseasTest(){
+	console.log('config.tenantId：', config.tenantId);
 	if(config.tenantId == "76141"){
 		return !phone.value;
 	}
@@ -143,11 +151,15 @@ function overseasTest(){
 		return !phone.value;
 	}
 	if(!phone.value && !mail.value){
-		uikit.tip(__("请正确输入手机号码或邮箱"));
+		// uikit.tip(__("请正确输入手机号码或邮箱"));
+		uikit.tip(__("请输入手机号或邮箱"));
 		return true;
 	}else{
 		if(phone.value){
 			if((/^1[3456789]\d{9}$/.test(phone.value))){
+				if(mail.value){
+					return !checkEmail()
+				}
 				return false
 			}else{
 				uikit.tip(__("请正确输入手机号码"));
@@ -176,7 +188,10 @@ utils.on(confirmBtn, "click", function(){
 	if(isSending){
 		uikit.tip(__("ticket.is_sending"));
 	}
-	else if(!name.value || name.value.length > 140){
+	else if (!name.value) {
+		uikit.tip(__("ticket.invalid_name_no"));
+	}
+	else if(name.value.length > 140){
 		uikit.tip(__("ticket.invalid_name"));
 	}
 	else if(overseasTest()){
@@ -185,12 +200,16 @@ utils.on(confirmBtn, "click", function(){
 	// else if(!checkEmail()){
 	// 	uikit.tip(__("请正确输入邮箱"));
 	// }
-	else if(!content.value || content.value.length > 1500){
+	else if (!content.value) {
+		uikit.tip(__("ticket.invalid_content_no"));
+	}
+	else if(content.value.length > 1500){
 		uikit.tip(__("ticket.invalid_content"));
 	}
 	else{
-		isSending = true;
-		setTimeout(function(){ isSending = false; }, 10000);
+		isSending = false
+		// isSending = true;
+		// setTimeout(function(){ isSending = false; }, 10000);
 		_createTicket();
 	}
 });

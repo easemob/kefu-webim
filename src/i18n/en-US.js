@@ -79,6 +79,8 @@ module.exports = {
 		email: "Email",
 		content_placeholder: "Type your note here",
 		is_sending: "Submiting note...",
+		invalid_name_no: "Please enter your name",
+		invalid_content_no: "Please enter the message content",
 		invalid_name: "Name is incorrect",
 		invalid_phone: "Phone number is incorrect",
 		invalid_email: "Email address is incorrect",
