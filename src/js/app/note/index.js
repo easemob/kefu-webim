@@ -41,11 +41,6 @@ var confirmBtn = document.querySelector(".confirm-btn");
 var config = getNoteConfig().config || {};
 api.update(config);
 
-// 测试使用，后期删掉
-name.value = "王大大"
-phone.value = "18300613030"
-content.value = "测试一下"
-
 // 根据配置隐藏取消按钮
 config.hideCloseBtn && utils.addClass(cancelBtn, "hide");
 
@@ -93,7 +88,6 @@ function _createTicket(){
 		var token = result[0];
 		var projectId = result[1];
 		var sessionId = config.sessionId || "";
-		console.log(111, token, projectId, sessionId);
 
 		api.createTicket({
 			token: token,
@@ -116,7 +110,6 @@ function _createTicket(){
 		});
 	})
 	["catch"](function(err){
-		console.log('["catch"] 的 err：', err);
 		isSending = false;
 		uikit.tip(__("留言失败，请重试"));
 		// uikit.tip(__("ticket.send_failed_invalid_token"));
@@ -143,7 +136,6 @@ config.preData && _writePreDate(config.preData);
 
 // 海外用户，不验证手机号格式 新增敦煌用户不校验格式2020-05-06
 function overseasTest(){
-	console.log('config.tenantId：', config.tenantId);
 	if(config.tenantId == "76141"){
 		return !phone.value;
 	}

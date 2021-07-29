@@ -55,18 +55,17 @@ commonConfig = {
 	},
 	plugins: [
 		// 代码压缩
-		// 测试使用，后期删掉
-		// new webpack.optimize.UglifyJsPlugin({
-		// 	compress: {
-		// 		warnings: false,
-		// 	},
-		// 	test: /\.js$/i,
-		// 	sourceMap: true,
-		// 	comments: false,
-		// 	mangle: {
-		// 		screw_ie8: false,
-		// 	},
-		// }),
+		new webpack.optimize.UglifyJsPlugin({
+			compress: {
+				warnings: false,
+			},
+			test: /\.js$/i,
+			sourceMap: true,
+			comments: false,
+			mangle: {
+				screw_ie8: false,
+			},
+		}),
 	],
 	module: {
 		loaders: [

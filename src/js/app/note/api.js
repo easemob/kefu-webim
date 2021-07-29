@@ -11,8 +11,6 @@ function getToken(){
 	return new Promise(function(resolve, reject){
 		var token = profile.imToken;
 
-		console.log('111 token', token);
-
 		// 超时降级
 		setTimeout(function(){
 			if(profile.imToken === null){
@@ -44,7 +42,6 @@ function getToken(){
 				resolve(token);
 			},
 			error: function(err){
-				console.log('getToken 的 error', err);
 				if(err.error_description === "user not found"){
 					reject(err);
 				}
@@ -65,7 +62,6 @@ function getProjectId(){
 		}
 		else{
 			getToken().then(function(token){
-				console.log('getProjectId 的 getToken 的 token：', token);
 				emajax({
 					url: "__WEBIM_SLASH_KEY_PATH__/tenants/" + config.tenantId + "/projects",
 					dataType: "json",
