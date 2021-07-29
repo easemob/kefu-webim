@@ -19,6 +19,7 @@ function getToken(){
 			}
 		}, 5000);
 		// if(token !== null || profile.imRestDown){
+		// 判断 token 是否存在
 		if ((token !== null || profile.imRestDown) && token != '') {
 			resolve(token);
 			return;
