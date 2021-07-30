@@ -562,6 +562,18 @@ function _bindEvents(){
 		utils.addClass(this, "hide");
 		utils.removeClass(document.getElementById(id + "_loading"), "hide");
 	});
+	// 点击感叹号resend
+	utils.live("div.em-widget-msg-status .icon-exclamation", "click", function(){
+		var that = this.parentElement.parentElement;
+		var id = that.getAttribute("id").slice(0, -"_failed".length);
+		var type = that.getAttribute("data-type");
+
+		channel.reSend(type, id);
+		utils.addClass(that, "hide");
+		utils.removeClass(document.getElementById(id + "_loading"), "hide");
+	});
+	
+	
 
 	utils.live("button.js_robotTransferBtn", "click", function(e){
 		var id = this.getAttribute("data-id");
