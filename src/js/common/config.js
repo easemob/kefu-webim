@@ -13,6 +13,11 @@ function h5_mode_init(){
 	config.pageCode = utils.query("pageCode");
 	config.customerId = utils.query("customerId");
 	config.isVipTsr = utils.query("isVipTsr");
+	// 新加参数 --- 开始
+	config.visitorName = utils.query("visitorName");
+	config.cardNumber = utils.query("cardNumber");
+	config.phoneNumber = utils.query("phoneNumber");
+	// 新加参数 --- 结束
 	config.tenantId = utils.query("tenantId");
 	config.configId = utils.query("configId");
 	config.offDutyType = utils.query("offDutyType");
