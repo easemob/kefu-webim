@@ -46,9 +46,13 @@ function init(option){
 	dispatcher.addEventListener("addOrUpdateStream", _addOrUpdateStream);
 	dispatcher.addEventListener("removeStream", _removeStream);
 
+	// 大小
 	utils.on(returnButtonDom, "click", _returnToMultivideo);
+	// 声音
 	utils.on(toggleMicroPhoneButtonDom, "click", _toggleMicroPhone);
+	// 是否可见
 	utils.on(toggleCameraButtonDom, "click", _toggleCarema);
+	// 全屏
 	utils.on(toggleFullScreenButtonDom, "click", _toggleFullScreen);
 
 	if(utils.isMobile){

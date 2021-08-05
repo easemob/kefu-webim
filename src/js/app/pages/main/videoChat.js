@@ -34,6 +34,7 @@ var dispatcher;
 var config;
 var dialog;
 var service;
+var inviteByVisitor = false; //访客邀请的
 
 var STATIC_PATH = __("config.language") === "zh-CN" ? "static" : "../static";
 
@@ -209,10 +210,24 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 		extend: ticketExtend
 	});
 	statusBar.reset();
+
+	// 访客邀请的，不显示，直接打开视频
+	if(inviteByVisitor){
+		var wrapperDom = videoWidget.querySelector(".status-bar");
+		var acceptButtonDom = wrapperDom.querySelector(".accept-button");
+		acceptButtonDom.click();
+		utils.addClass(acceptButtonDom, "hide");
+		inviteByVisitor = false;
+	}
+	else{
+		utils.removeClass(acceptButtonDom, "hide");
+	}
 	statusBar.show();
+	
 }
 
 function _onConfirm(){
+	inviteByVisitor = true;
 	eventListener.trigger("video.conform");
 	channel.sendText(__("video.invite_agent_video"), {
 		ext: {
