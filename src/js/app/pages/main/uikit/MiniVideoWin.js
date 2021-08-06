@@ -93,7 +93,11 @@ MiniVideoWin.prototype.updateStream = function(stream){
 	switch(stream.type){
 	case _const.STREAM_TYPE.NORMAL:
 		this.stream = stream;
-		this.videoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
+		if(mediaStream){
+			this.videoDom.srcObject = mediaStream
+		}else{
+			this.videoDom.src = "";
+		}
 		this.nicknameDom.innerText = isLocalStream
 			? __("video.me")
 			: utils.getDataByPath(stream, "owner.ext.nickname");
@@ -103,7 +107,11 @@ MiniVideoWin.prototype.updateStream = function(stream){
 		break;
 	case _const.STREAM_TYPE.NO_AUDIO:
 		this.noAudioStream = stream;
-		this.noAudioVideoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
+		if(mediaStream){
+			this.noAudioStream.srcObject = mediaStream;
+		}else{
+			this.noAudioStream.src = "";
+		}
 		utils.addClass(this.videoDom, "hide");
 		utils.removeClass(this.noAudioVideoDom, "hide");
 		break;
