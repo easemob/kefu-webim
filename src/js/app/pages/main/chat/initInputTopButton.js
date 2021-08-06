@@ -48,6 +48,7 @@ module.exports = function(data,isOpen){
 
 	$(".em-widget-send-wrapper-top>.swiper-container>.swiper-wrapper .swiper-slide").hover(function(){
 		var hoverColor = $("body."+ themeClassName +" .border-color").css("borderColor")
+		hoverColor = hoverColor?hoverColor:"#42b8f4";
 		if($(this).hasClass("em-widget-exit-video")){
 			return false
 		}
