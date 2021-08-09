@@ -40,6 +40,7 @@ module.exports = {
 
 		SESSION_RESTORED: "session.restored",
 		SESSION_NOT_CREATED: "session.not.created",
+		CLEAR_TIMEOUT: "clear.answersGroup.timeout",
 
 		AGENT_INFO_UPDATE: "agent.info.update",
 		OFFICIAL_ACCOUNT_SWITCHED: "official.account.switched",
@@ -68,9 +69,9 @@ module.exports = {
 		// 关闭 会话聊天框
 		CHAT_CLOSED: "chat.closed",
 
-		//清除agentState定时器
+		// 清除agentState定时器
 		CLEAR_AGENTSTATE: "clear.agentstate",
-		//清除agentState定时器
+		// 清除agentState定时器
 		CLEAR_AGENTINPUTSTATE: "clear.agentinputstate",
 		// 判断是否调用历史消息
 		IS_PULL_HISTORY: "is.pull.history"

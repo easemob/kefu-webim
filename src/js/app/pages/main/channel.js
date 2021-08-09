@@ -280,6 +280,8 @@ function _sendText(message, ext){
 		_transfromImMessage(msg),
 		{ isReceived: false, isHistory: false, type: "txt", notFromSystem: true }
 	);
+
+	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
 }
 
 // 这个临时使用，下个版本会去掉
@@ -1087,7 +1089,7 @@ function _transformMessageFormat(element){
 function _showFailed(msgId){
 	if(_.isObject(msgId)){
 		utils.addClass(document.getElementById(msgId.id + "_loading"), "hide");
-		utils.removeClass(document.getElementById(msgId.id + "_failed"), "hide");	
+		utils.removeClass(document.getElementById(msgId.id + "_failed"), "hide");
 	}
 	else{
 		utils.addClass(document.getElementById(msgId + "_loading"), "hide");
