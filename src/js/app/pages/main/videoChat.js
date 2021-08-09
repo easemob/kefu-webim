@@ -25,6 +25,7 @@ var statusBar = require("./uikit/videoStatusBar");
 var videoPanel = require("./uikit/videoPanel");
 var videoChatTemplate = require("../../../../template/videoChat.html");
 var apiHelper = require("./apis");
+var TimerLabel = require("./uikit/TimerLabel");
 
 var _initOnce = _.once(_init);
 var parentContainer;
@@ -32,7 +33,8 @@ var videoWidget;
 var dispatcher;
 
 var config;
-var dialog;
+var dialog, agentInviteDialog;
+var timerBarDom, timerLabel;
 var service;
 var inviteByVisitor = false; //访客邀请的
 
@@ -127,6 +129,21 @@ function _init(){
 		className: "rtc-video-confirm",
 	}).addButton({ confirm: _onConfirm });
 
+	agentInviteDialog = uikit.createDialog({
+		contentDom: [
+			"<div>",
+			"<p class=\"time\"><p>",
+			"<i class=\"icon-answer\"></i><span class=\"prompt\">",
+			__("video.confirm_prompt_agent"),
+			"</span>",
+			"</div>"
+		].join(""),
+		className: "agent-invite-video-confirm",
+	}).addButton({ confirmText: __("common.accept"), cancelText: __("common.refuse"), confirm: _onAgentInviteConfirm, cancel: _onAgentInviteCancel });
+
+	timerBarDom = agentInviteDialog.el.querySelector(".time");
+	timerLabel = new TimerLabel(timerBarDom);
+
 	statusBar.init({
 		wrapperDom: videoWidget.querySelector(".status-bar"),
 		acceptCallback: function(){
@@ -152,6 +169,10 @@ function _init(){
 		dispatcher: dispatcher,
 	});
 	$(".em-widget-exit-video").on("click",_onConfirmExitvideo);
+}
+
+function startTimer(){
+	timerLabel.start();
 }
 
 function init(option){
@@ -218,11 +239,14 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 		acceptButtonDom.click();
 		utils.addClass(acceptButtonDom, "hide");
 		inviteByVisitor = false;
+		statusBar.show();
 	}
 	else{
 		utils.removeClass(acceptButtonDom, "hide");
+		// 弹 “客服邀请” 窗
+		agentInviteDialog.show();
+		startTimer();
 	}
-	statusBar.show();
 	
 }
 
@@ -254,6 +278,17 @@ function _onConfirm(){
 	// editor.appendChild(el);
 	// var el = utils.createElementFromHTML("<div class=\"swiper-slide em-widget-exit-video\">取消视频通话</div>");
 
+}
+
+function _onAgentInviteConfirm(){
+	timerLabel.stop();
+	statusBar.show();
+	statusBar.accept();
+}
+
+function _onAgentInviteCancel(){
+	timerLabel.stop();
+	statusBar.end();
 }
 
 function _onConfirmExitvideo(){

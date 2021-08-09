@@ -440,6 +440,65 @@
 			}
 		}
 	}
+	&.agent-invite-video-confirm{
+		position: absolute;
+		width: 220px;
+		height: auto;
+		padding: 20px 10px 15px;
+		margin: auto;
+		top: calc(50% - 80px);
+		bottom: auto;
+		left: 0;
+		right: 0;
+		color: white;
+		background-color: rgba(0, 0, 0, .8);
+		border-radius: 4px;
+		box-shadow: 5px 5px 5px rgba(0, 0, 0, .5);
+		border: none;
+		.time{
+			text-align: center;
+			font-size: 18px;
+			margin-bottom: 10px;
+		}
+		i{
+			background: #70ba26;
+			width: 30px;
+			height: 30px;
+			line-height: 30px;
+			text-align: center;
+			display: inline-block;
+			border-radius: 50%;
+			margin-right:10px;
+			&:before{
+				font-size: 22px;
+			}
+		}
+		.footer {
+			display: flex;
+			flex-flow: row nowrap;
+			width: 100%;
+			margin: 10px 0;
+			button {
+				font-size: 14px;
+				border-radius: 5px;
+				height: 35px;
+				text-align: center;
+				flex-grow: 1;
+				line-height: 35px;
+				margin: 0 5px;
+				cursor: pointer;
+				&.cancel-btn {
+					color: white;
+					background: #db2400;
+					border:none;
+				}
+				&.confirm-btn {
+					color: white;
+					background: #1ba8ed;
+				}
+			}
+		}
+	}
 	// 提交成功提示
 	&.em-success-prompt {
 		p {

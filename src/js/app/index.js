@@ -828,7 +828,8 @@ function load_html(){
 		risk_alert:__("prompt.risk_alert"),
 		camera_permissions:__("common.camera_permissions"),
 		allow:__("common.allow"),
-		refuse:__("common.refuse")
+		refuse:__("common.refuse"),
+		accept:__("common.accept"),
 	}));
 
 	chat.getDom();

@@ -77,16 +77,18 @@ function _createDialog(options){
 			opt = opt || {};
 			var hideCancel = opt.hideCancel;
 			var confirmText = opt.confirmText || __("common.confirm");
+			var cancelText = opt.cancelText || __("common.cancel");
 			cancel = opt.cancel || EMPTY_FUNCTION;
 			confirm = opt.confirm || EMPTY_FUNCTION;
 			var footer = utils.createElementFromHTML([
 				"<div class=\"footer\">",
-				"<button class=\"cancel-btn\">" + __("common.cancel") + "</button>",
+				"<button class=\"cancel-btn\"></button>",
 				"<button class=\"confirm-btn bg-color\"></button>",
 				"</div>"
 			].join(""));
 
 			cancelBtn = footer.querySelector(".cancel-btn");
+			cancelBtn.innerText = cancelText;
 			confirmBtn = footer.querySelector(".confirm-btn");
 			confirmBtn.innerText = confirmText;
 			hideCancel && utils.addClass(cancelBtn, "hide");

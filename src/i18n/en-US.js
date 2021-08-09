@@ -6,7 +6,7 @@ module.exports = {
 		transfer_to_kefu_words: "Chat with agent",
 		scheduler_role_nickname: "Scheduler",
 	},
-	common: {
+	common: { 
 		confirm: "Confirm",
 		cancel: "Cancel",
 		contact_agent: "Contact us",
@@ -29,6 +29,7 @@ module.exports = {
 		camera_permissions:"The program needs to access your gallery and use camera permissions. Do you want to allow it?",
 		allow:"Allow",
 		refuse:"Refuse",
+		accept:"Accept",
 		self_service:"Self service"
 	},
 	chat: {
@@ -102,6 +103,7 @@ module.exports = {
 		me: "Me",
 		video_ended: "Video call ended",
 		confirm_prompt: "Invite the agent to a video call? Send the invite and wait for the agent to join the video call.",
+		confirm_prompt_agent: "The agent invite you to enter the video call",
 		invite_agent_video: "Invite the agent to a video call",
 		// 这个文案待确认
 		connecting: "Recording",

@@ -61,7 +61,6 @@ function init(option){
 	utils.on(toggleFullScreenButtonDom, "click", _toggleFullScreen);
 
 
-
 	if(utils.isMobile){
 		utils.removeClass(toggleFullScreenButtonDom, "hide");
 
@@ -134,7 +133,7 @@ function _updateButtonStatus(){
 	utils.toggleClass(toggleMicroPhoneButtonDom, "hide", !isLocal);
 	utils.toggleClass(toggleCameraButtonDom, "hide", !isLocal);
 
-	if(deviceInfosArr.length > 1){
+	if(deviceInfosArr.length && deviceInfosArr.length > 1){
 		utils.toggleClass(changeCameraButtonDom, "hide", !isLocal);
 	}
 
@@ -172,6 +171,7 @@ function hide(){
 }
 
 function _addOrUpdateStream(stream){
+
 	var ownerName = utils.getDataByPath(stream, "owner.name");
 	var isLocalStream = stream.located();
 	var mediaStream;
@@ -209,14 +209,15 @@ function _addOrUpdateStream(stream){
 	default:
 		throw new Error("unexpected stream type.");
 	}
+
 	// 检查摄像头配置
 	if(utils.isMobile && !checkCamare){
 		navigator.mediaDevices
 		.enumerateDevices()
 		.then(gotDevices)
-
 		checkCamare = true;
 	}
+	
 	_updateButtonStatus();
 
 }

@@ -337,12 +337,20 @@ body.window-demo{
 		position: relative;
 		height: 88px;
 		background-color: rgba(0,0,0,.8);
+		>div{
+			display: flex;
+			align-items: center;
+			justify-content: space-around;
+			height:35px;
+		}
 		.status-text {
-			padding: 10px;
-			font-size: 12px;
+			padding: 8px;
+			font-size: 13px;
+			position: absolute;
+			left: 2px;
+			top: 2px;
 		}
 		.time-escape {
-			padding-left: 10px;
 			font-size: 18px;
 		}
 		.control-panel {
@@ -357,10 +365,11 @@ body.window-demo{
 				cursor: pointer;
 				border-radius: 50%;
 				&:before {
-					font-size: 24px;
+					font-size: 22px;
 					position: relative;
-					left: 4px;
-				}
+					left: 5px;
+					top: -3px;
+				} 
 				&.accept-button {
 					background-color: #70ba26;
 					margin-right: 8px;
@@ -425,17 +434,18 @@ body.window-demo{
 			.control-panel {
 				background: linear-gradient(to bottom, rgba(0,0,0,0), black, black);
 				box-sizing: border-box;
-				line-height: 32px;
+				line-height: 40px;
 				position: absolute;
 				bottom: 0;
 				width: 100%;
-				height: 32px;
+				height: 40px;
 				padding: 0 10px;
 				i {
 					cursor: pointer;
 					float: right;
+					margin-right: 5px;
 					&:before {
-						font-size: 24px;
+						font-size: 28px;
 					}
 					&.return-to-multi-video {
 						float: left;

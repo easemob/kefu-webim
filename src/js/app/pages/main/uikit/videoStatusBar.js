@@ -26,6 +26,9 @@ module.exports = {
 	reset: reset,
 	hideAcceptButton: hideAcceptButton,
 	setStatusText: setStatusText,
+	accept: accept,
+	end: end,
+
 };
 
 function init(option){
@@ -90,7 +93,7 @@ function showClosing(){
 function reset(){
 	toggleCollapse(false);
 	utils.removeClass(wrapperDom, "terminated");
-	utils.removeClass(acceptButtonDom, "hide");
+	// utils.removeClass(acceptButtonDom, "hide");
 	showClosingTimerHandler = clearTimeout(showClosingTimerHandler);
 	timerLabel.stop();
 	setStatusText(__("video.waiting"));
@@ -105,3 +108,12 @@ function reset(){
 function hideAcceptButton(){
 	utils.addClass(acceptButtonDom, "hide");
 }
+
+function accept(){
+	acceptButtonDom.click()
+}
+
+function end(){
+	endButtonDom.click()
+}
+
