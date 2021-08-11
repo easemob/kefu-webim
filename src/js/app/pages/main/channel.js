@@ -1051,7 +1051,6 @@ function _setExt(msg){
 
 	msg.body.ext = msg.body.ext || {};
 	msg.body.ext.weichat = msg.body.ext.weichat || {};
-	msg.body.ext.weichat.visitor = msg.body.ext.weichat.visitor || {};
 
 	msg.body.ext.weichat.language = language;
 
@@ -1105,7 +1104,17 @@ function _setExt(msg){
 	if(!_.isEmpty(config.isVipTsr)){
 		msg.body.ext.isVipTsr = config.isVipTsr;
 	}
-	
+	// 新加参数 --- 开始
+	if(!_.isEmpty(config.visitorName)){
+		msg.body.ext.visitorName = config.visitorName;
+	}
+	if(!_.isEmpty(config.cardNumber)){
+		msg.body.ext.cardNumber = config.cardNumber;
+	}
+	if(!_.isEmpty(config.phoneNumber)){
+		msg.body.ext.phoneNumber = config.phoneNumber;
+	}
+	// 新加参数 --- 结束
 	console.log('[msg]',msg)
 	// bind agent username
 	if(bindAgentUsername){
@@ -1117,20 +1126,9 @@ function _setExt(msg){
 
 	// set growingio id
 	if(config.grUserId){
-		// msg.body.ext.weichat.visitor = msg.body.ext.weichat.visitor || {};
+		msg.body.ext.weichat.visitor = msg.body.ext.weichat.visitor || {};
 		msg.body.ext.weichat.visitor.gr_user_id = config.grUserId;
 	}
-	// 新加参数 --- 开始
-	if(!_.isEmpty(config.visitorName)){
-		msg.body.ext.weichat.visitor.trueName = config.visitorName;
-	}
-	if(!_.isEmpty(config.cardNumber)){
-		msg.body.ext.cardNumber = config.cardNumber;
-	}
-	if(!_.isEmpty(config.phoneNumber)){
-		msg.body.ext.weichat.visitor.phone = config.phoneNumber;
-	}
-	// 新加参数 --- 结束
 
 	// 初始化时系统服务号的ID为defaut，此时不用传
 	if(officialAccountId !== "default"){
