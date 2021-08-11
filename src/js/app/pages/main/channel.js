@@ -1051,6 +1051,7 @@ function _setExt(msg){
 
 	msg.body.ext = msg.body.ext || {};
 	msg.body.ext.weichat = msg.body.ext.weichat || {};
+	msg.body.ext.weichat.visitor = msg.body.ext.weichat.visitor || {};
 
 	msg.body.ext.weichat.language = language;
 
@@ -1116,7 +1117,7 @@ function _setExt(msg){
 
 	// set growingio id
 	if(config.grUserId){
-		msg.body.ext.weichat.visitor = msg.body.ext.weichat.visitor || {};
+		// msg.body.ext.weichat.visitor = msg.body.ext.weichat.visitor || {};
 		msg.body.ext.weichat.visitor.gr_user_id = config.grUserId;
 	}
 	// 新加参数 --- 开始
