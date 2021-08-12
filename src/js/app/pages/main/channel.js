@@ -1106,7 +1106,7 @@ function _setExt(msg){
 	}
 	// 新加参数 --- 开始
 	if(!_.isEmpty(config.visitorName)){
-		msg.body.ext.visitorName = config.visitorName;
+		msg.body.ext.visitorName = decodeURIComponent(config.visitorName);
 	}
 	if(!_.isEmpty(config.cardNumber)){
 		msg.body.ext.cardNumber = config.cardNumber;
