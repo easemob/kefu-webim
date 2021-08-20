@@ -371,6 +371,33 @@ function getInviteInfo(){
 	});
 }
 
+// 查询当前租户是否官微租户
+function getIsGuanwei(tenantId) {
+	return new Promise(function(resolve, reject) {
+		emajax({
+			url: '/v1/tenants/' + tenantId + '/isGuanweiTenantId',
+			type: 'GET',
+			success: function(res) {
+				console.log('查询当前租户是否官微租户', res);
+				var newRes;
+				try {
+					newRes = JSON.parse(res);
+				} catch(e) {}
+
+				if((newRes && newRes.status) === "OK"){
+					resolve(newRes.entity);
+				}
+				else{
+					reject();
+				}
+			},
+			error: function(err) {
+				reject(err);
+			}
+		});
+	});
+}
+
 module.exports = {
 	getTheme: getTheme,
 	getPassword: getPassword,
@@ -388,6 +415,7 @@ module.exports = {
 	getInviteInfo: getInviteInfo,
 	getIframeEnable: getIframeEnable,
 	getIframeSetting: getIframeSetting,
+	getIsGuanwei: getIsGuanwei,
 
 	update: function(cfg){
 		config = cfg;

@@ -16,10 +16,15 @@ var tagContainer;
 var dialog;
 
 var starList;
+var gradeLiList;
 
 var session;
 var invite;
 var score;
+var scoreName;
+var grade;
+var gradeCon;
+var resolveCon;
 var evaluationDegreeId;
 var isSingleTag;
 var resolvedDom;
@@ -44,50 +49,113 @@ function _init(){
 		sessionResolved = resp;
 	});
 	apiHelper.getSatisfactionTipWord().then(function(tipWord){
-		dom = sessionResolved ? utils.createElementFromHTML([
-			"<div class=\"wrapper\">",
-			"<div class=\"resolveCon\"><span class=\"title\">" + resolveTip + "</span>",
-			"<div><span class=\"resolve-btn selected resolved\" data-num = \"1\"><i class=\"icon-resolved\"></i><span>" + __("evaluation.resolved") + "</span></span>",
-			"<span class=\"resolve-btn unresolved\" data-num = \"2\"><i class=\"icon-unresolved\"></i><span>" + __("evaluation.unsolved") + "</span></span></div></div>",
-			"<span class=\"title\">" + tipWord + "</span>",
-			"<ul></ul>",
-			"<div class=\"tag-container\"></div>",
-			"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
-			"</div>"
-		].join(""))
-			:
-			utils.createElementFromHTML([
+		// 判断是否为官微租户，Y 的话分三步实现
+		if (_const.isGuanwei == 'Y') {
+			var title1 = '您对本次客服人员的服务是否满意'
+			var title2 = '您向朋友推荐大都会人寿的可能性有多大'
+			var title3 = '“10”分代表愿意推荐，请在10到0之间选择'
+			var title4 = '请问本次服务是否解决您的问题'
+			dom = utils.createElementFromHTML([
 				"<div class=\"wrapper\">",
+				"<span class=\"title guan-wei\">" + title1 + "</span>",
+				"<ul class=\"satisfactionUl guan-wei\"></ul>",
+				"<div class=\"tag-container\"></div>",
+				"<div class=\"gradeCon hide\"><p class=\"title guan-wei\">" + title2 + "</p>",
+				"<p class=\"title guan-wei no-top\">" + title3 + "</p>",
+				"<ul class=\"gradeUl guan-wei\"></ul></div>",
+				"<div class=\"resolveCon mbot-20 hide\"><span class=\"title guan-wei\">" + title4 + "</span>",
+				"<div><span class=\"resolve-btn resolved\" data-num = \"1\"><span>" + __("evaluation.resolved") + "</span></span>",
+				"<span class=\"resolve-btn unresolved\" data-num = \"2\"><span>" + __("evaluation.unsolved") + "</span></span></div></div>",
+				"</div>"
+			].join(""));
+
+			// 满意度点击js
+			starsUl = dom.querySelector(".satisfactionUl");
+			gradeCon = dom.querySelector(".gradeCon");
+			utils.live("li", "click", function(){
+				var level = +this.getAttribute("data-level");
+				evaluationDegreeId = this.getAttribute("data-evaluate-id");
+				score = this.getAttribute("data-score");
+				scoreName = this.getAttribute("title");
+				isSingleTag = this.getAttribute("data-isSingleTag");
+				level && _.each(starList, function(elem, i){
+					utils.toggleClass(elem, "sel", i + 1 == level);
+				});
+				evaluationDegreeId && _createLabel(evaluationDegreeId);
+				utils.removeClass(gradeCon, 'hide')
+			}, starsUl);
+
+			// 渲染评分ul
+			var gradeUl = dom.querySelector(".gradeUl");
+			resolveCon = dom.querySelector(".resolveCon");
+			var gradeArr = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+			gradeUl.innerHTML = gradeArr.map(function(elem) {
+				return "<li class=\"guan-wei\" data-grade=\"" + elem + "\">" + elem + "</li>";
+			}).join("");
+
+			// 评分点击js
+			gradeLiList = gradeUl.querySelectorAll("li")
+			utils.live("li", "click", function(){
+				grade = this.getAttribute("data-grade");
+				utils.removeClass(gradeLiList, "sel");
+				utils.addClass(this, "sel");
+				utils.removeClass(resolveCon, 'hide')
+			}, gradeUl);
+
+			// 是否已解决点击js
+			resolvedBtn = dom.querySelectorAll(".resolve-btn");
+			utils.live(".resolve-btn", "click", function(){
+				utils.removeClass(resolvedBtn, "selected-guan-wei");
+				utils.addClass(this, "selected-guan-wei");
+				resolvedId = this.dataset.num;
+			});
+			tagContainer = dom.querySelector(".tag-container");
+		} else {
+			dom = sessionResolved ? utils.createElementFromHTML([
+				"<div class=\"wrapper\">",
+				"<div class=\"resolveCon\"><span class=\"title\">" + resolveTip + "</span>",
+				"<div><span class=\"resolve-btn selected resolved\" data-num = \"1\"><i class=\"icon-resolved\"></i><span>" + __("evaluation.resolved") + "</span></span>",
+				"<span class=\"resolve-btn unresolved\" data-num = \"2\"><i class=\"icon-unresolved\"></i><span>" + __("evaluation.unsolved") + "</span></span></div></div>",
 				"<span class=\"title\">" + tipWord + "</span>",
 				"<ul></ul>",
 				"<div class=\"tag-container\"></div>",
 				"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
 				"</div>"
-			].join(""));
-		starsUl = dom.querySelector("ul");
-		commentDom = dom.querySelector("textarea");
-		tagContainer = dom.querySelector(".tag-container");
-		resolvedBtn = dom.querySelectorAll(".resolve-btn");
-		resolvedDom = dom.querySelector(".resolved");
-
-		utils.live(".resolve-btn", "click", function(){
-			utils.removeClass(resolvedBtn, "selected");
-			utils.addClass(this, "selected");
-			resolvedId = this.dataset.num;
-		});
-
-		utils.live("li", "click", function(){
-			var level = +this.getAttribute("data-level");
-
-			evaluationDegreeId = this.getAttribute("data-evaluate-id");
-			score = this.getAttribute("data-score");
-			isSingleTag = this.getAttribute("data-isSingleTag");
-			level && _.each(starList, function(elem, i){
-				utils.toggleClass(elem, "sel", i < level);
+			].join(""))
+				:
+				utils.createElementFromHTML([
+					"<div class=\"wrapper\">",
+					"<span class=\"title\">" + tipWord + "</span>",
+					"<ul></ul>",
+					"<div class=\"tag-container\"></div>",
+					"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
+					"</div>"
+				].join(""));
+			starsUl = dom.querySelector("ul");
+			commentDom = dom.querySelector("textarea");
+			tagContainer = dom.querySelector(".tag-container");
+			resolvedBtn = dom.querySelectorAll(".resolve-btn");
+			resolvedDom = dom.querySelector(".resolved");
+	
+			utils.live(".resolve-btn", "click", function(){
+				utils.removeClass(resolvedBtn, "selected");
+				utils.addClass(this, "selected");
+				resolvedId = this.dataset.num;
 			});
-
-			evaluationDegreeId && _createLabel(evaluationDegreeId);
-		}, starsUl);
+	
+			utils.live("li", "click", function(){
+				var level = +this.getAttribute("data-level");
+	
+				evaluationDegreeId = this.getAttribute("data-evaluate-id");
+				score = this.getAttribute("data-score");
+				isSingleTag = this.getAttribute("data-isSingleTag");
+				level && _.each(starList, function(elem, i){
+					utils.toggleClass(elem, "sel", i < level);
+				});
+	
+				evaluationDegreeId && _createLabel(evaluationDegreeId);
+			}, starsUl);
+		}
 
 		utils.live("span.tag", "click", function(){
 			var selectedTagNodeList = tagContainer.querySelectorAll(".selected");
@@ -151,6 +219,9 @@ function _sendSatisfaction(score, content, session, invite, appraiseTags, resolu
 	if(!sessionResolved){
 		delete data.ext.weichat.ctrlArgs.resolutionParam;
 	}
+	console.log(666, score, content);
+	// 记得删除下面的 return ！！！！ 记得删除下面的 return ！！！！ 记得删除下面的 return ！！！！
+	return
 	channel.sendText("", data);
 }
 
@@ -165,13 +236,21 @@ function _setSatisfaction(){
 			var id = elem.id;
 			var score = elem.score;
 			var isSingleTag = elem.isSingleTag;
-
-			return "<li data-level=\"" + level
-				+ "\" title=\"" + name
-				+ "\" data-evaluate-id=\"" + id
-				+ "\" data-score=\"" + score
-				+ "\" data-isSingleTag=\"" + isSingleTag
-				+ "\">H</li>";
+			if (_const.isGuanwei == 'Y') {
+				return "<li class=\"guan-wei\" data-level=\"" + level
+					+ "\" title=\"" + name
+					+ "\" data-evaluate-id=\"" + id
+					+ "\" data-score=\"" + score
+					+ "\" data-isSingleTag=\"" + isSingleTag
+					+ "\">" + name + "</li>";
+			} else {
+				return "<li data-level=\"" + level
+					+ "\" title=\"" + name
+					+ "\" data-evaluate-id=\"" + id
+					+ "\" data-score=\"" + score
+					+ "\" data-isSingleTag=\"" + isSingleTag
+					+ "\">H</li>";
+			}
 		})
 		.value()
 		.join("");
@@ -195,7 +274,13 @@ function _createLabel(evaluateId){
 function _confirm(){
 	var selectedTagNodeList = tagContainer.querySelectorAll(".selected");
 	var tagNodeList = tagContainer.querySelectorAll(".tag");
-	var content = commentDom.value;
+	// 判断是否为官微租户，Y 的话 content 就是 score 对应的中文
+	var content;
+	if (_const.isGuanwei == 'Y') {
+		content = scoreName
+	} else {
+		content = commentDom.value;
+	}
 	var appraiseTags = _.map(selectedTagNodeList, function(elem){
 		return {
 			id: elem.getAttribute("data-label-id"),
@@ -209,8 +294,8 @@ function _confirm(){
 		resolutionParamTags: []
 	}];
 
-	// 必须选择星级
-	if(!score){
+	// 必须选择星级（非官微租户）
+	if(!score && _const.isGuanwei != 'Y'){
 		uikit.tip(__("evaluation.select_level_please"));
 		// 防止对话框关闭
 		return false;
@@ -221,6 +306,20 @@ function _confirm(){
 		// 防止对话框关闭
 		return false;
 	}
+
+	// 官微租户满意度评价 - 保存
+	var datas = {
+		visitorUserId: _const.visitorUserId,
+		agentUserId: _const.agentUserId,
+		inviteId: +score,
+		score: +grade,
+		resolve: +resolvedId
+	}
+	apiHelper.satisfactionSave(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', datas).then(function(res) {
+		// console.log(666, res);
+	}, function(err){
+		console.warn(err);
+	});
 
 	_sendSatisfaction(score, content, session, invite, appraiseTags, resolutionParam, evaluationDegreeId);
 	uikit.showSuccess(__("evaluation.submit_success"));
@@ -234,10 +333,38 @@ function _confirm(){
 			getToHost.send({ event: _const.EVENTS.CLOSE });
 		}
 	}, 2000);
-	_clear();
+	// 非官微租户
+	if (_const.isGuanwei != 'Y') {
+		_clear();
+	}
 }
 
 function show(inviteId, serviceSessionId, evaluateWay){
+	// console.log(111, session || profile.currentOfficialAccount.sessionId || '');
+	// 官微租户满意度评价 - 查询
+	// apiHelper.satisfactionQuery(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '').then(function(res) {
+	// 	// console.log(666, res);
+	// }, function(err){
+	// 	console.warn(err);
+	// });
+
+	// 初始化（解决已经选择了满意度等数据，但是点击取消按钮，等再进入评价页面时，数据残留问题）
+	score = null;
+	resolvedId = 1
+	if (dom) {
+		tagContainer.innerHTML = ""
+		if (_const.isGuanwei == 'Y') {
+			utils.addClass(gradeCon, 'hide')
+			utils.addClass(resolveCon, 'hide')
+			scoreName = null;
+			grade = null;
+			utils.removeClass(gradeLiList, "sel");
+			utils.removeClass(resolvedBtn, "selected-guan-wei");
+		} else {
+			commentDom.value = ""
+		}
+	}
+
 	_initOnce();
 	session = serviceSessionId;
 	invite = inviteId;

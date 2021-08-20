@@ -35,6 +35,8 @@ function _setAgentStatus(officialAccount){
 	) return;
 
 	var agentId = officialAccount.agentId;
+	// 储存坐席 id
+	_const.agentUserId = agentId
 	var agentType = officialAccount.agentType;
 	var isSessionOpen = officialAccount.isSessionOpen;
 

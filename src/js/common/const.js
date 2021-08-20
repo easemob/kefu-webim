@@ -254,4 +254,8 @@ module.exports = {
 
 	SELFSERVICE_PATH: __("config.language") === "zh-CN" ? "static/img/selfServiceIcon/" : "../static/img/selfServiceIcon/",
 
+	isGuanwei: 'N', // 默认 N 不是官微租户，Y 是官微租户
+	tenantId: null, // 租户 id
+	visitorUserId: '', // 访客 id
+	agentUserId: '' // 坐席 id
 };

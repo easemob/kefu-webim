@@ -203,6 +203,9 @@
 			margin: auto;
 			.resolveCon{
 				margin-bottom:15px;
+				&.mbot-20 {
+					margin-bottom: 20px;
+				}
 				>div{
 					width: 305px;
 					margin: 0 auto;
@@ -243,6 +246,13 @@
 				    color: #fff;
 					i{color:#fff}
 				}
+				.selected-guan-wei {
+					border-color: rgb(242,145,0);
+					color: rgb(242,145,0);
+					i {
+						color: rgb(242,145,0)
+					}
+				}
 				i{
 					margin-right: 8px;
 				    position: relative;
@@ -253,11 +263,20 @@
 				font-size: 14px;
 				display: inline-block;
 				margin-top: 15px;
+				&.guan-wei {
+					color: #8A2BE2;
+				}
+				&.no-top {
+					margin-top: 0;
+				}
 			}
 			ul {
 				width: 100%;
 				margin: 15px 0;
 				text-align: center;
+				&.guan-wei {
+					text-align: right;
+				}
 				li {
 					// fake: IE8 满意度评价会有兼容问题，修改图标需替换字符
 					font-family: 'easemobim' !important;
@@ -272,6 +291,15 @@
 					width: 80px\9;
 					height: 80px\9;
 					zoom: 50%\9;
+					&.guan-wei {
+						font-family: normal !important;
+						width: auto;
+						height: auto;
+						line-height: 20px;
+						font-size: 18px;
+						color: #000;
+						margin-right: 10px;
+					}
 					&.sel {
 						color: #ffb31a;
 					}

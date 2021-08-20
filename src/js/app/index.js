@@ -180,6 +180,15 @@ function initConfig(){
 		handleSettingIframeSize();
 		initRelevanceList();
 		initInvite({ themeName: entity.configJson.ui.themeName });
+
+		// 储存租户 id
+		_const.tenantId = entity.tenantId
+		// 查询当前租户是否官微租户
+		apiHelper.getIsGuanwei(entity.tenantId).then(function(res) {
+			_const.isGuanwei = res
+		}, function(err){
+			console.warn(err);
+		});
 	});
 }
 
