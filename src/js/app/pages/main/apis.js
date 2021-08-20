@@ -1346,27 +1346,22 @@ function getisWeidian(tenantId){
 
 // 官微租户满意度评价 - 保存
 function satisfactionSave(tenantId, serviceSessionId, datas) {
-	console.log(111, tenantId);
-	console.log(222, serviceSessionId);
-	console.log(333, datas);
 	return new Promise(function(resolve, reject) {
 		emajax({
 			url: '/v6/tenants/' + tenantId + '/serviceSessions/' + serviceSessionId + '/inviteEnquiry/metlifeEnquiry',
 			data: datas,
 			type: 'POST',
 			success: function(res) {
-				console.log('官微租户满意度评价 - 保存', res);
-				// var newRes;
-				// try {
-				// 	newRes = JSON.parse(res);
-				// } catch(e) {}
+				var newRes;
+				try {
+					newRes = JSON.parse(res);
+				} catch(e) {}
 
-				// if((newRes && newRes.status) === "OK"){
-				// 	resolve(newRes.entity);
-				// }
-				// else{
-				// 	reject();
-				// }
+				if ((newRes && newRes.status) === "OK") {
+					resolve(newRes.entity);
+				} else {
+					reject();
+				}
 			},
 			error: function(err) {
 				reject(err);
@@ -1377,24 +1372,22 @@ function satisfactionSave(tenantId, serviceSessionId, datas) {
 
 // 官微租户满意度评价 - 查询
 function satisfactionQuery(tenantId, serviceSessionId) {
-	console.log(111, tenantId, serviceSessionId);
+	console.log(333, tenantId, serviceSessionId);
 	return new Promise(function(resolve, reject) {
 		emajax({
 			url: '/v6/tenants/' + tenantId + '/serviceSessions/' + serviceSessionId + '/inviteEnquiry/metlifeEnquiry',
 			type: 'GET',
 			success: function(res) {
-				console.log('官微租户满意度评价 - 查询', res);
-				// var newRes;
-				// try {
-				// 	newRes = JSON.parse(res);
-				// } catch(e) {}
+				var newRes;
+				try {
+					newRes = JSON.parse(res);
+				} catch(e) {}
 
-				// if((newRes && newRes.status) === "OK"){
-				// 	resolve(newRes.entity);
-				// }
-				// else{
-				// 	reject();
-				// }
+				if ((newRes && newRes.status) === "OK" && newRes.entity) {
+					resolve(newRes.entity);
+				} else {
+					reject();
+				}
 			},
 			error: function(err) {
 				reject(err);
@@ -1411,18 +1404,16 @@ function satisfactionEdit(tenantId, serviceSessionId, datas, id) {
 			type: 'PUT',
 			data: datas,
 			success: function(res) {
-				console.log('官微租户满意度评价 - 修改', res);
-				// var newRes;
-				// try {
-				// 	newRes = JSON.parse(res);
-				// } catch(e) {}
+				var newRes;
+				try {
+					newRes = JSON.parse(res);
+				} catch(e) {}
 
-				// if((newRes && newRes.status) === "OK"){
-				// 	resolve(newRes.entity);
-				// }
-				// else{
-				// 	reject();
-				// }
+				if ((newRes && newRes.status) === "OK") {
+					resolve(newRes.entity);
+				} else {
+					reject();
+				}
 			},
 			error: function(err) {
 				reject(err);

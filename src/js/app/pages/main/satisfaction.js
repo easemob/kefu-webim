@@ -25,6 +25,7 @@ var scoreName;
 var grade;
 var gradeCon;
 var resolveCon;
+var satisfactionId; // 已经评价过后的 id
 var evaluationDegreeId;
 var isSingleTag;
 var resolvedDom;
@@ -219,9 +220,6 @@ function _sendSatisfaction(score, content, session, invite, appraiseTags, resolu
 	if(!sessionResolved){
 		delete data.ext.weichat.ctrlArgs.resolutionParam;
 	}
-	console.log(666, score, content);
-	// 记得删除下面的 return ！！！！ 记得删除下面的 return ！！！！ 记得删除下面的 return ！！！！
-	return
 	channel.sendText("", data);
 }
 
@@ -307,19 +305,28 @@ function _confirm(){
 		return false;
 	}
 
-	// 官微租户满意度评价 - 保存
-	var datas = {
-		visitorUserId: _const.visitorUserId,
-		agentUserId: _const.agentUserId,
-		inviteId: +score,
-		score: +grade,
-		resolve: +resolvedId
+	// 官微租户的 保存/修改
+	if (_const.isGuanwei == 'Y') {
+		
+		var datas = {
+			visitorUserId: _const.visitorUserId,
+			agentUserId: _const.agentUserId,
+			inviteId: score ? +score : null,
+			score: grade ? +grade : null,
+			resolve: +resolvedId
+		}
+		// satisfactionId 有值说明评价过走修改接口
+		if (satisfactionId) {
+			// 官微租户满意度评价 - 修改
+			apiHelper.satisfactionEdit(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', datas, satisfactionId).then(function(res) {
+				console.log(666, res);
+			});
+		} else {
+			// 官微租户满意度评价 - 保存
+			apiHelper.satisfactionSave(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', datas).then(function(res) {
+			});
+		}
 	}
-	apiHelper.satisfactionSave(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', datas).then(function(res) {
-		// console.log(666, res);
-	}, function(err){
-		console.warn(err);
-	});
 
 	_sendSatisfaction(score, content, session, invite, appraiseTags, resolutionParam, evaluationDegreeId);
 	uikit.showSuccess(__("evaluation.submit_success"));
@@ -340,14 +347,13 @@ function _confirm(){
 }
 
 function show(inviteId, serviceSessionId, evaluateWay){
-	// console.log(111, session || profile.currentOfficialAccount.sessionId || '');
 	// 官微租户满意度评价 - 查询
-	// apiHelper.satisfactionQuery(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '').then(function(res) {
-	// 	// console.log(666, res);
-	// }, function(err){
-	// 	console.warn(err);
-	// });
-
+	if (_const.isGuanwei == 'Y') {
+		apiHelper.satisfactionQuery(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '').then(function(res) {
+			console.log(111, res);
+			satisfactionId = res.id
+		})
+	}
 	// 初始化（解决已经选择了满意度等数据，但是点击取消按钮，等再进入评价页面时，数据残留问题）
 	score = null;
 	resolvedId = 1
@@ -358,6 +364,7 @@ function show(inviteId, serviceSessionId, evaluateWay){
 			utils.addClass(resolveCon, 'hide')
 			scoreName = null;
 			grade = null;
+			satisfactionId = null;
 			utils.removeClass(gradeLiList, "sel");
 			utils.removeClass(resolvedBtn, "selected-guan-wei");
 		} else {

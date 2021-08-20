@@ -186,8 +186,6 @@ function initConfig(){
 		// 查询当前租户是否官微租户
 		apiHelper.getIsGuanwei(entity.tenantId).then(function(res) {
 			_const.isGuanwei = res
-		}, function(err){
-			console.warn(err);
 		});
 	});
 }

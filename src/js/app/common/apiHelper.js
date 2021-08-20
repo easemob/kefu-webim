@@ -384,10 +384,9 @@ function getIsGuanwei(tenantId) {
 					newRes = JSON.parse(res);
 				} catch(e) {}
 
-				if((newRes && newRes.status) === "OK"){
+				if ((newRes && newRes.status) === "OK") {
 					resolve(newRes.entity);
-				}
-				else{
+				} else {
 					reject();
 				}
 			},

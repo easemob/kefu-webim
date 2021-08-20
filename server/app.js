@@ -19,8 +19,10 @@ const DEFAULT_SERVER = `http://${DEFAULT_DOMAIN}`;
 // package 中的 KEY_PATH 必须填，当活文档
 const KEY_PATH = process.env.KEY_PATH;		// 默认 "webim"
 const SLASH_KEY_PATH = KEY_PATH == "webim" ? "" : ("/" + KEY_PATH);
+// 代理！！！
 const PROXY_REGEX = [
-	new RegExp(SLASH_KEY_PATH + "/v1", "i")
+	new RegExp(SLASH_KEY_PATH + "/v1", "i"),
+	new RegExp(SLASH_KEY_PATH + "/v6", "i")
 ];
 
 const logProxy = debug("webim:proxy");
