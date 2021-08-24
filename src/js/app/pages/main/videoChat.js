@@ -232,7 +232,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 	});
 	statusBar.reset();
 
-	// 访客邀请的，直接打开视频
+	// 访客邀请的，不显示，直接打开视频
 	if(inviteByVisitor){
 		var wrapperDom = videoWidget.querySelector(".status-bar");
 		var acceptButtonDom = wrapperDom.querySelector(".accept-button");
@@ -327,6 +327,3 @@ function _onConfirmExitvideo(){
 
 
 }
-
-
-

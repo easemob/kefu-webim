@@ -17,8 +17,6 @@ var service;
 var currentStream;
 var currentNoAudioStream;
 var currentOwnerName;
-var checkCamare = false;
-var deviceInfosArr = [] //摄像头设备数
 
 module.exports = {
 	init: init,
@@ -44,9 +42,6 @@ function init(option){
 	toggleMicroPhoneButtonDom = wrapperDom.querySelector(".toggle-microphone-btn");
 	toggleCameraButtonDom = wrapperDom.querySelector(".toggle-carema-btn");
 	toggleFullScreenButtonDom = wrapperDom.querySelector(".toggle-full-screen-btn");
-	changeCameraButtonDom = wrapperDom.querySelector(".change-camera-btn");
-
-	
 
 	dispatcher.addEventListener("addOrUpdateStream", _addOrUpdateStream);
 	dispatcher.addEventListener("removeStream", _removeStream);
@@ -63,29 +58,8 @@ function init(option){
 
 	if(utils.isMobile){
 		utils.removeClass(toggleFullScreenButtonDom, "hide");
-
-		// 切换摄像头
-		changeCameraButtonDom.onclick = function () {
-			service.switchMobileCamera(currentStream.id, function fail(evt) {
-				console.log("切换摄像头失败" + evt.message());
-			});
-		};
 	}
 }
-
-function gotDevices(deviceInfos) {
-	for (var i = 0; i !== deviceInfos.length; ++i) {
-	  var deviceInfo = deviceInfos[i];
-	//   var option = document.createElement("option");
-	//   option.value = deviceInfo.deviceId;
-	  if (deviceInfo.kind === "videoinput"){
-		// 手机显示：  前置相机、后置镜头
-		// option.text = deviceInfo.label || "camera " + (videoSelect.length + 1);
-		deviceInfosArr.push(deviceInfo)
-	  }
-	}
-}
-
 
 function _returnToMultivideo(){
 	dispatcher.trigger("returnToMultiVideoWindow");
@@ -133,10 +107,6 @@ function _updateButtonStatus(){
 	utils.toggleClass(toggleMicroPhoneButtonDom, "hide", !isLocal);
 	utils.toggleClass(toggleCameraButtonDom, "hide", !isLocal);
 
-	if(deviceInfosArr.length && deviceInfosArr.length > 1){
-		utils.toggleClass(changeCameraButtonDom, "hide", !isLocal);
-	}
-
 	if(isLocal){
 		isMicroPhoneDisabled = !!currentStream.aoff;
 		isCameraDisabled = !!currentStream.voff;
@@ -180,16 +150,10 @@ function _addOrUpdateStream(stream){
 
 	mediaStream = stream.getMediaStream();
 
-	this.mediaStream = mediaStream;
-	
 	switch(stream.type){
 	case _const.STREAM_TYPE.NORMAL:
 		currentStream = stream;
-		if(mediaStream){
-			videoDom.srcObject = mediaStream
-		}else{
-			videoDom.src = "";
-		}
+		videoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
 		// 本地视频需要 muted
 		videoDom.muted = isLocalStream;
 		nicknameDom.innerText = isLocalStream
@@ -198,30 +162,15 @@ function _addOrUpdateStream(stream){
 		break;
 	case _const.STREAM_TYPE.NO_AUDIO:
 		currentNoAudioStream = stream;
-		if(mediaStream){
-			noAudioVideoDom.srcObject = mediaStream;
-		}else{
-			noAudioVideoDom.src = "";
-		}
+		noAudioVideoDom.src = mediaStream ? URL.createObjectURL(mediaStream) : "";
 		utils.addClass(videoDom, "hide");
 		utils.removeClass(noAudioVideoDom, "hide");
 		break;
 	default:
 		throw new Error("unexpected stream type.");
 	}
-
-	// 检查摄像头配置
-	if(utils.isMobile && !checkCamare){
-		navigator.mediaDevices
-		.enumerateDevices()
-		.then(gotDevices)
-		checkCamare = true;
-	}
-	
 	_updateButtonStatus();
-
 }
-
 
 function _removeStream(stream){
 	switch(stream.type){
