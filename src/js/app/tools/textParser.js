@@ -10,6 +10,7 @@ var port = /(:\d+)?/;
 var path = /(\/[^ ?<">\n]*)*/;
 var query = /(\?([-+._%0-9a-zA-Z]+=[^ &#'"\n]*&)*([-+._%0-9a-zA-Z]+=[^ &#'"\n]*))?/;
 var hash = /(#[-+._%0-9a-zA-Z/]*)?/;
+var commonConfig = require("@/common/config");
 
 var URL_RE = new RegExp(
 	[protocol, auth, host, port, path, query, hash]
@@ -114,7 +115,23 @@ function _linkParser(text){
 	targetLink = result[0];
 	index = result.index;
 	hasProtocol = /^https?/i.test(targetLink);
-	taggedLink = "<a href=\""
+	var color = "";
+	var themeClassName;
+	var config = commonConfig.getConfig();
+	var themeName = config.ui.themeName;
+	if(themeName && themeName.indexOf("theme_custom") > -1){
+		var arr = themeName.split("theme_custom");
+		color = arr[1];
+		themeClassName = "theme_custom";
+	}
+	else{
+		themeClassName = _const.themeMap[config.themeName];
+	}
+	var hoverColor = $("body." + themeClassName + " .border-color").css("borderColor");
+	if(!color){
+		color = hoverColor;
+	}
+	taggedLink = "<a  style=\"color:" +color+ ";\" href=\""
 		+ (hasProtocol ? targetLink : "//" + targetLink)
 		+ "\" target=\"_blank\">"
 		+ targetLink
