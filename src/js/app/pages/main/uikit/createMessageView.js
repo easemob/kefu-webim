@@ -217,6 +217,14 @@ module.exports = function(opt){
 
 	function _scrollToBottom(){
 		parentContainer.scrollTop = parentContainer.scrollHeight - parentContainer.offsetHeight + 9999;
+
+		var listEle =  $(".em-widget-left");
+		var scroBox = $(".chat-wrapper")[0];
+		var top = scroBox.scrollTop;
+		var divEl = $(listEle[listEle.length -1]).find(".em-widget-msg-wrapper");
+		if($(divEl).hasClass("msgtype-skillgroupMenu")){
+			$(scroBox).scrollTop(top - 150)
+		}
 	}
 
 	function _hide(){
