@@ -25,6 +25,7 @@ var scoreName;
 var grade;
 var gradeCon;
 var resolveCon;
+var resolvedGuanwei; // 官微的是否解决
 var satisfactionId; // 已经评价过后的 id
 var evaluationDegreeId;
 var isSingleTag;
@@ -108,7 +109,7 @@ function _init(){
 			utils.live(".resolve-btn", "click", function(){
 				utils.removeClass(resolvedBtn, "selected-guan-wei");
 				utils.addClass(this, "selected-guan-wei");
-				resolvedId = this.dataset.num;
+				resolvedGuanwei = this.dataset.num;
 			});
 			tagContainer = dom.querySelector(".tag-container");
 		} else {
@@ -312,7 +313,7 @@ function _confirm(){
 			agentUserId: _const.agentUserId,
 			inviteId: score ? +score : '',
 			score: grade ? +grade : '',
-			resolve: resolvedId ? +resolvedId : ''
+			resolve: resolvedGuanwei ? +resolvedGuanwei : ''
 		}
 		// satisfactionId 有值说明评价过走修改接口
 		if (satisfactionId) {
@@ -361,6 +362,7 @@ function show(inviteId, serviceSessionId, evaluateWay){
 			utils.addClass(resolveCon, 'hide')
 			scoreName = null;
 			grade = null;
+			resolvedGuanwei = null;
 			satisfactionId = null;
 			utils.removeClass(gradeLiList, "sel");
 			utils.removeClass(resolvedBtn, "selected-guan-wei");
