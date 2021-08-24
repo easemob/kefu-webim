@@ -311,9 +311,9 @@ function _confirm(){
 		var datas = {
 			visitorUserId: _const.visitorUserId,
 			agentUserId: _const.agentUserId,
-			inviteId: score ? +score : '',
-			score: grade ? +grade : '',
-			resolve: resolvedGuanwei ? +resolvedGuanwei : ''
+			inviteId: score ? score : '',
+			score: grade ? grade : '',
+			resolve: resolvedGuanwei ? resolvedGuanwei : ''
 		}
 		// satisfactionId 有值说明评价过走修改接口
 		if (satisfactionId) {
