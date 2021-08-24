@@ -52,6 +52,10 @@ if(themeCustomColor){
 	// color = config.themeColor;
 	$(".theme_custom").find(".bg-color").css("cssText","background-color: " + themeCustomColor + " !important");
 }
+var color = config.themeColor;
+if(color){
+	$(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important");
+}
 
 var _getCategories = _.once(function(){
 	api.getNoteCategories().then(function(list){
