@@ -1069,6 +1069,22 @@ up2Im.listen(function(msg){
 			type: "GET"
 		});
 		break;
+	case "getOnlyCloseWindow":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/onlyCloseWindow",
+			type: "GET",
+			msg: msg,
+			excludeData: true,
+		});
+		break;
+	case "getOnlyCloseSession":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/onlyCloseSession",
+			type: "GET",
+			msg: msg,
+			excludeData: true,
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;

@@ -830,6 +830,7 @@ function load_html(){
 		allow:__("common.allow"),
 		refuse:__("common.refuse"),
 		accept:__("common.accept"),
+		min_window:__("common.min_window"),
 	}));
 
 	chat.getDom();

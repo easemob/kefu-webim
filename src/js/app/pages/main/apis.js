@@ -1468,6 +1468,38 @@ function getSendImgTips(){
 		});
 	});
 }
+function getOnlyCloseWindow(){
+	return new Promise(function(resolve, reject){
+		var webim = false;
+		api("getOnlyCloseWindow", { tenantId: config.tenantId }, function(res){
+			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
+			if(typeof val === "string"){
+				if(val == "true"){
+					webim = true;
+				}
+			}
+			resolve(webim);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+function getOnlyCloseSession(){
+	return new Promise(function(resolve, reject){
+		var webim = false;
+		api("getOnlyCloseSession", { tenantId: config.tenantId }, function(res){
+			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
+			if(typeof val === "string"){
+				if(val == "true"){
+					webim = true;
+				}
+			}
+			resolve(webim);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
 
 
 module.exports = {
@@ -1544,6 +1576,8 @@ module.exports = {
 	getInputH5Button:getInputH5Button,
 	getInputH5Status:getInputH5Status,
 	getSendImgTips: getSendImgTips,
+	getOnlyCloseSession: getOnlyCloseSession,
+	getOnlyCloseWindow: getOnlyCloseWindow,
 	update: function(cfg){
 		config = cfg;
 	}

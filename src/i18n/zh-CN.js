@@ -15,6 +15,7 @@ module.exports = {
 		agent: "客服坐席",
 		visitor: "访客",
 		close: "关闭",
+		min_window:"最小化",
 		reply: "回复",
 		tip: "提示",
 		send_failed: "发送失败",

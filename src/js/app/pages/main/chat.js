@@ -40,6 +40,8 @@ var topBar;
 var editorView;
 var doms;
 var noteIframe;
+var OnlyCloseSession;
+var OnlyCloseWindow;
 
 var _reCreateImUser = _.once(function(){
 	console.warn("user not found in current appKey, attempt to recreate user.");
@@ -440,13 +442,24 @@ function _bindEvents(){
 			// 调用关闭会话框接口记录访客离开
 			var officialAccount = profile.currentOfficialAccount;
 			var sessionId = officialAccount.sessionId;
+			var isHaveCustomerMsg = utils.getStore("isHaveCustomerMsg")
 
 			// 查询会话是否已经评价，评价了就不弹出评价邀请框了
 			apiHelper.getSessionEnquires(sessionId)
 			.then(function(res){
 				if(!res.length){
 					// 弹出评价邀请框
-					satisfaction.show(null, sessionId, "system");
+					if(config.options.closeSessionWhenCloseWindow == "true" && OnlyCloseSession && isHaveCustomerMsg == "true"){
+						satisfaction.show(null, sessionId, "system");
+					}
+					else if(config.options.closeSessionWhenCloseWindow == "false" && OnlyCloseWindow && isHaveCustomerMsg == "true"  ){
+						satisfaction.show(null, sessionId, "system");
+					}else{
+						eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
+						sessionId && apiHelper.closeChatDialog({ serviceSessionId: sessionId });
+						getToHost.send({ event: _const.EVENTS.CLOSE });
+						utils.setStore("isHaveCustomerMsg",false);
+					}
 				}
 				else{
 					// 取消轮询接口
@@ -739,6 +752,7 @@ function _bindEvents(){
 				uikit.tip("已评价");
 			}
 		});
+		utils.setStore("isHaveCustomerMsg",false);
 	});
 
 	// 未解决
@@ -761,6 +775,7 @@ function _bindEvents(){
 						uikit.tip("已评价");
 					}
 				});
+				utils.setStore("isHaveCustomerMsg",false);
 			}
 		});
 	});
@@ -1076,6 +1091,7 @@ function _bindEvents(){
 			if(profile.grayList.guessUSay){
 				guessInfo.resetStyle();
 			}
+			utils.setStore("isHaveCustomerMsg",true);
 		}
 	});
 
@@ -1243,6 +1259,13 @@ function _getDom(){
 }
 
 function _init(){
+	apiHelper.getOnlyCloseSession().then(function(res){
+		OnlyCloseSession = res;
+	});
+	apiHelper.getOnlyCloseWindow().then(function(res){
+		OnlyCloseWindow = res;
+	});
+	utils.setStore("isHaveCustomerMsg",false);
 	// 根据灰度设置 是否添加猜你想问功能
 	if(profile.grayList.guessUSay){
 		guessInfo.addEvents();
