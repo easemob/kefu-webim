@@ -1372,7 +1372,6 @@ function satisfactionSave(tenantId, serviceSessionId, datas) {
 
 // 官微租户满意度评价 - 查询
 function satisfactionQuery(tenantId, serviceSessionId) {
-	console.log(333, tenantId, serviceSessionId);
 	return new Promise(function(resolve, reject) {
 		emajax({
 			url: '/v6/tenants/' + tenantId + '/serviceSessions/' + serviceSessionId + '/inviteEnquiry/metlifeEnquiry',

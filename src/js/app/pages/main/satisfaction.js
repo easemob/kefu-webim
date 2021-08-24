@@ -307,19 +307,17 @@ function _confirm(){
 
 	// 官微租户的 保存/修改
 	if (_const.isGuanwei == 'Y') {
-		
 		var datas = {
 			visitorUserId: _const.visitorUserId,
 			agentUserId: _const.agentUserId,
-			inviteId: score ? +score : null,
-			score: grade ? +grade : null,
-			resolve: +resolvedId
+			inviteId: score ? +score : '',
+			score: grade ? +grade : '',
+			resolve: resolvedId ? +resolvedId : ''
 		}
 		// satisfactionId 有值说明评价过走修改接口
 		if (satisfactionId) {
 			// 官微租户满意度评价 - 修改
 			apiHelper.satisfactionEdit(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', datas, satisfactionId).then(function(res) {
-				console.log(666, res);
 			});
 		} else {
 			// 官微租户满意度评价 - 保存
@@ -350,7 +348,6 @@ function show(inviteId, serviceSessionId, evaluateWay){
 	// 官微租户满意度评价 - 查询
 	if (_const.isGuanwei == 'Y') {
 		apiHelper.satisfactionQuery(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '').then(function(res) {
-			console.log(111, res);
 			satisfactionId = res.id
 		})
 	}

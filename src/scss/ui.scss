@@ -299,6 +299,9 @@
 						font-size: 18px;
 						color: #000;
 						margin-right: 10px;
+						&.sel {
+							font-weight: bold;
+						}
 					}
 					&.sel {
 						color: #ffb31a;
