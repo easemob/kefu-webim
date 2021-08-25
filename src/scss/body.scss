@@ -25,10 +25,10 @@ body.window-pc{
 		}
 	}
 	.em-widget-wrapper{
-		transition: width 1s ease-in-out; 
+		transition: width .5s ease-in; 
 	}
 	.em-self-wrapper{
-		transition: width 1s ease-in-out; 
+		transition: width .5s ease-in; 
 	}
 }
 body.window-demo{
@@ -53,10 +53,11 @@ body.window-demo{
 body.big-window{
 	// min-width: 720px;
 	.em-widget-wrapper{
-		width: calc(100% - 240px);
+		width: 100%;
+		// width: calc(100% - 240px);
 		// width: calc(100% - 100px);
 		min-width: 360px;
-		transition: width 1s ease-in-out; 
+		transition: width .5s ease-in; 
 		.expand{
 			position: absolute;
 			top: 45%;
@@ -69,7 +70,7 @@ body.big-window{
 		}
 	}
 	.em-self-wrapper{
-		width: 240px;
+		// width: 240px;
 		display: block;
 	}
 	.em-widget-send-wrapper{
@@ -80,9 +81,10 @@ body.big-window{
 body.big-window-h5{
 	.em-widget-wrapper{
 		// width: calc(100% - 360px);
-		width: calc(100% - 240px);
+		// width: calc(100% - 240px);
+		width: 100%;
 		min-width: 300px;
-		transition: width 1s ease-in-out; 
+		transition: width .5s ease-in; 
 		.expand{
 			position: absolute;
 			top: 45%;
@@ -98,7 +100,7 @@ body.big-window-h5{
 		// width: 50%;
 		// width: 360px;
 		display: block;
-		transition: width 1s ease-in-out; 
+		transition: width .5s ease-in; 
 	}
 	.open{
 		width: 360px;
@@ -147,7 +149,7 @@ body.window-demo{
 	.em-widget-wrapper{
 		width: 100%;
 		min-width: 200px;
-		transition: width 1s ease-in-out; 
+		transition: width .5s ease-in; 
 	}
 	.em-widget-send-wrapper{
 		height: 140px !important;
