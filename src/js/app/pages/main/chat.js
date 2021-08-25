@@ -315,7 +315,7 @@ function _checkGradeType(){
 		var entity = data.entity;
 		var grade = entity.grade;
 
-		var defaultAvatar = commonConfig.getConfig().staticPath + "/img/default_avatar.png";
+		var defaultAvatar = commonConfig.getConfig().staticPath + "/img/qiye.png";
 		var avatar = entity.avatar;
 		var topBar = document.querySelector(".em-widget-header");
 		$agentFace = topBar.querySelector(".em-agent-face");
