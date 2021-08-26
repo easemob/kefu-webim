@@ -1,6 +1,6 @@
 
 .chat-container {
-	padding: 24px 0 40px;
+	padding: 24px 0 55px;
 	overflow: hidden;
 	position: relative;
 	&.paddingTo48{
@@ -36,6 +36,7 @@
 		text-align: center;
 		color: white;
 		font-size: 13px;
+		margin-bottom: 40px;
 		> span {
 			color: #8794A5;
 			border-radius: 4px;
