@@ -424,26 +424,37 @@ function getTransferManualMenu(){
 
 function getExSession(){
 	return new Promise(function(resolve, reject){
-		api("getExSession_2", {
-			username: config.user.username,
-			orgName: config.orgName,
-			appName: config.appName,
-			imServiceNumber: config.toUser,
-			channelType: "easemob",
-			originType: "webim",
-			channelId: config.channelId,
-			queueName: encodeURIComponent(config.emgroup),
-			agentUsername: config.agentName,
-			tenantId: config.tenantId
-		}, function(msg){
-			var entity = utils.getDataByPath(msg, "data.entity");
-			if(entity){
-				resolve(entity);
-			}
-			else{
-				reject(new Error("unexpected data format."));
-			}
-		}, function(err){
+		Promise.all([getNoEmptyAgentEnable(), getNoEmptyAgentMessage()]).then(function(datas) {
+			var enableData  = datas[0];
+			var messageData = datas[1];
+
+			api("getExSession_2", {
+				username: config.user.username,
+				orgName: config.orgName,
+				appName: config.appName,
+				imServiceNumber: config.toUser,
+				channelType: "easemob",
+				originType: "webim",
+				channelId: config.channelId,
+				queueName: encodeURIComponent(config.emgroup),
+				agentUsername: config.agentName,
+				tenantId: config.tenantId
+			}, function(msg){
+				var entity = utils.getDataByPath(msg, "data.entity");
+				if(entity){
+					if (enableData.length && enableData[0].optionValue && messageData.length) {
+						entity.tip_content = messageData[0].optionValue;
+					}
+
+					resolve(entity);
+				}
+				else{
+					reject(new Error("unexpected data format."));
+				}
+			}, function(err){
+				reject(err);
+			});
+		}).catch(function(err) {
 			reject(err);
 		});
 	});
@@ -1333,6 +1344,52 @@ function getRobotNotReachableENEnable(){
 	});
 }
 
+function getNoEmptyAgentEnable(){
+	return new Promise(function(resolve, reject) {
+		emajax({
+			url: "/v1/webimplugin/tenants/"
+					+ config.tenantId
+					+ "/options/noEmptyAgentTipEnable",
+			type: "GET",
+			async: false,
+			success: function(data) {
+				data = JSON.parse(data);
+				if (data.status && data.status == 'OK' && data.entities && data.entities) {
+					resolve(data.entities);
+				} else {
+					reject('');
+				}
+			},
+			error: function(err) {
+				reject(err);
+			}
+		});
+	});
+}
+
+function getNoEmptyAgentMessage(){
+	return new Promise(function(resolve, reject) {
+		emajax({
+			url: "/v1/webimplugin/tenants/"
+					+ config.tenantId
+					+ "/options/noEmptyAgentTipMessage",
+			type: "GET",
+			async: false,
+			success: function(data) {
+				data = JSON.parse(data);
+				if (data.status && data.status == 'OK' && data.entities && data.entities) {
+					resolve(data.entities);
+				} else {
+					reject('');
+				}
+			},
+			error: function(err) {
+				reject(err);
+			},
+		});
+	});
+}
+
 function getOnlineCustomerStatus(){
 	return new Promise(function(resolve, reject){
 		api("getOnlineCustomerStatus", {
@@ -1579,6 +1636,9 @@ module.exports = {
 	getRobotNotReachableENEnable: getRobotNotReachableENEnable, // 获取机器人英文开关状态
 	getDefaultFiveStarEnable: getDefaultFiveStarEnable,  // 获取默认五星评价的开关
 	getEvaluatePrescription: getEvaluatePrescription,   // 满意度评价时效开关
+	getNoEmptyAgentEnable: getNoEmptyAgentEnable, // 无空闲坐席提示文案自定义开关
+	getNoEmptyAgentMessage: getNoEmptyAgentMessage, // 无空闲坐席提示文案自定义回复
+
 	// opt获取是否隐藏状态
 	getOnlineCustomerStatus: getOnlineCustomerStatus,
 	deleteVideoInvitation: deleteVideoInvitation, // 取消视频邀请
