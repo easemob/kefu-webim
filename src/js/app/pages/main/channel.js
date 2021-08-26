@@ -1188,7 +1188,7 @@ function _promptNoAgentOnlineIfNeeded(opt){
 		if(
 			!profile.hasHumanAgentOnline
 		){
-			_appendEventMsg(_const.eventMessageText.NOTE, { ext: { weichat: { official_account: officialAccount } } });
+			_appendEventMsg(data.tip_content ? data.tip_content : _const.eventMessageText.NOTE, { ext: { weichat: { official_account: officialAccount } } });
 		}
 	});
 }
