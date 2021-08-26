@@ -442,17 +442,17 @@ function _bindEvents(){
 			// 调用关闭会话框接口记录访客离开
 			var officialAccount = profile.currentOfficialAccount;
 			var sessionId = officialAccount.sessionId;
-			var isHaveCustomerMsg = utils.getStore("isHaveCustomerMsg")
+			var currentState = 	officialAccount.sessionState;		
 
 			// 查询会话是否已经评价，评价了就不弹出评价邀请框了
 			apiHelper.getSessionEnquires(sessionId)
 			.then(function(res){
 				if(!res.length){
 					// 弹出评价邀请框
-					if(config.options.closeSessionWhenCloseWindow == "true" && OnlyCloseSession && isHaveCustomerMsg == "true"){
+					if(config.options.closeSessionWhenCloseWindow == "true" && OnlyCloseSession && (currentState == "Wait" || currentState == "Processing" )){
 						satisfaction.show(null, sessionId, "system");
 					}
-					else if(config.options.closeSessionWhenCloseWindow == "false" && OnlyCloseWindow && isHaveCustomerMsg == "true"  ){
+					else if(config.options.closeSessionWhenCloseWindow == "false" && OnlyCloseWindow && (currentState == "Wait" || currentState == "Processing" )){
 						satisfaction.show(null, sessionId, "system");
 					}else{
 						eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
