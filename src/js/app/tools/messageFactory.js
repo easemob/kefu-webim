@@ -15,7 +15,7 @@ function genMsgContent(msg, opt){
 	if(msg.fromUser && msg.type !== "customMagicEmoji"){
 		var fromType = utils.getDataByPath(msg, "fromUser.user_type");
 		if(fromType !== "Scheduler" && fromType !== "Robot"){
-			notFromSystem = true
+			notFromSystem = true;
 		}
 	}
 	// 实时消息里的
@@ -65,7 +65,7 @@ function genMsgContent(msg, opt){
 			break;
 		}
 		else{
-			value =  notFromSystem ? textParser.parse(value, {default: true}) : textParser.parse(value);
+			value =  notFromSystem ? textParser.parse(value, { "default": true }) : textParser.parse(value);
 			
 			// 历史消息以及收到的实时消息
 			if(utils.isMobile && value[0].type == "ENCODED_TEXT"){
@@ -354,7 +354,7 @@ function genMsgContent(msg, opt){
 		ruleId = relatedRules.ruleId;
 		answerId = relatedRules.answerId;
 		relatedRuleIds = relatedRules.relatedRuleIds;
-		html += "<div class=\"em-btn-list\">"  + _.map(msg.ext.relatedRules.questions, function(question, index){ return "<li><button class=\"js_robotRelateListbtn fg-color\" data-ruleId=" + ruleId + " data-answerId=" + answerId + " data-relatedRuleId=" + relatedRuleIds[index] + ">" + question + "</button><i class='icon-arrow-right'></i></li>";}).join("") || "";
+		html += "<div style='border-top: 1px solid #e5e5e5;margin: 10px -10px 4px;' ></div><div class=\"em-btn-list\">"  + _.map(msg.ext.relatedRules.questions, function(question, index){ return "<li><button class=\"js_robotRelateListbtn fg-color\" data-ruleId=" + ruleId + " data-answerId=" + answerId + " data-relatedRuleId=" + relatedRuleIds[index] + ">" + question + "</button><i class='icon-arrow-right'></i></li>";}).join("") || "";
 	}
 
 	return html;
@@ -460,7 +460,7 @@ function genDomFromMsg(msg, isReceived, isHistory, opt){
 	
 
 	// 发出的消息增加状态显示
-	if(!isReceived && !isHistory && id){ 
+	if(!isReceived && !isHistory && id){
 		// todo: 只拼一遍 id
 		// todo: 去掉 type
 		if(type == "img"){
