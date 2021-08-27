@@ -264,9 +264,13 @@ body.window-demo{
 			position:absolute;
 			top: 15px;
 		}
+		.icon-close::before{
+			font-size: 25px;
+			color: #D9BF97;
+		}
 	}
 	.content {
-		width: 84%;
+		// width: 84%;
 		text-align: justify;
 		line-height: 16px;
 		margin-left: 30px;
@@ -277,12 +281,13 @@ body.window-demo{
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 		font-size:12px;
+		margin-right: 40px;
 	}
 	i{
 		position: absolute;
 		// height:30px;
 		margin:auto;
-		right: 0;
+		right: 15px;
 		top: 7px;
 		bottom:0;
 		cursor:pointer;
@@ -572,9 +577,13 @@ body.window-demo{
 			position:absolute;
 			top: 15px;
 		}
+		.icon-close::before{
+			font-size: 25px;
+			color: #D9BF97;
+		}
 	}
 	.content {
-		width: 85%;
+		// width: 85%;
 		line-height: 18px;
 		margin-left: 30px;
 		word-break: break-word;
@@ -585,11 +594,12 @@ body.window-demo{
 		-webkit-box-orient: vertical;
 		font-size:12px;
 		text-align: justify;
+		margin-right: 40px;
 	}
 	.tip-close {
 		position: absolute;
 		top: 6px;
-		right: -2px;
+		right: 15px;
 		height: 30px;
 		color: #c3c3c3;
 		cursor:pointer;
