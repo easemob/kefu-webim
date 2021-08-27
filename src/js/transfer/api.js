@@ -1024,6 +1024,17 @@ up2Im.listen(function(msg){
 			type: "GET"
 		});
 		break;
+		
+	// 视频通话允许访客二次确认
+	case "getVideoH5Status":
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/"+ tenantId +"/configs/"+params.configId+"/visitors/options/video-second-confirm/status",
+		emitAjax({
+			url: url,
+			msg: msg,
+			excludeData: true,
+			type: "GET"
+		});
+		break;
 	case "getSlidebarSwitch":
 		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/"+ tenantId +"/configs/"+params.configId+"/options/sidebar/value",
 		emitAjax({

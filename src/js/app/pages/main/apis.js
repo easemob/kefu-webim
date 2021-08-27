@@ -1453,6 +1453,19 @@ function getInputH5Status(){
 		});
 	});
 }
+function getVideoH5Status(){
+	return new Promise(function(resolve, reject){
+		api("getVideoH5Status", {
+			tenantId: config.tenantId,
+			configId: config.configId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			resolve(err);
+		});
+	});
+}
 
 function getSendImgTips(){
 	return new Promise(function(resolve, reject){
@@ -1578,6 +1591,7 @@ module.exports = {
 	getSendImgTips: getSendImgTips,
 	getOnlyCloseSession: getOnlyCloseSession,
 	getOnlyCloseWindow: getOnlyCloseWindow,
+	getVideoH5Status: getVideoH5Status,
 	update: function(cfg){
 		config = cfg;
 	}

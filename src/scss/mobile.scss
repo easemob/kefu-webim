@@ -1,5 +1,32 @@
 .em-mobile {
 	border-radius: 0;
+	.multi-video-container{
+		max-width: 800px;
+		margin: 0 auto;
+		position: relative;
+		height: 245px;
+		.mini-video-window {
+			display: inline-block;
+			position: absolute!important;
+			width: 33%;
+			right: 0;
+			border: 1px solid rgba(255,255,255,0.5); 
+			z-index: 2;
+			height: 100px;
+			&.current-video{
+				height:245px;
+				width: 100%;
+				border:none;
+				z-index: 1;
+			}
+			.nickname{
+				text-align: center;
+			}
+		}
+		.mini-video-window:nth-child(3){
+			top:120px;
+		}
+	}
 	.em-video-container{
 		position: fixed;
 		top: 0;

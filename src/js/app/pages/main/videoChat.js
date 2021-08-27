@@ -53,6 +53,14 @@ function _init(){
 
 	config = commonConfig.getConfig();
 
+	if(config.videoH5Status == ""){
+		apiHelper.getVideoH5Status().then(function(res){
+			if(res.entity){
+				config.videoH5Status = res.entity
+			}
+		})
+	}
+
 	// init emedia config
 	// window.emedia.config({ autoSub: false });
 
@@ -209,6 +217,7 @@ function init(option){
 			dialog.show();
 		});
 	});
+	
 }
 
 function _pushStream(){
@@ -232,10 +241,11 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 	});
 	statusBar.reset();
 
-	// 访客邀请的，不显示，直接打开视频
-	if(inviteByVisitor){
-		var wrapperDom = videoWidget.querySelector(".status-bar");
-		var acceptButtonDom = wrapperDom.querySelector(".accept-button");
+	// 访客邀请的，不显示，直接打开视频, 
+	// 开启“视频通话允许访客二次确认”，需要确认
+	var wrapperDom = videoWidget.querySelector(".status-bar"); 
+	var acceptButtonDom = wrapperDom.querySelector(".accept-button");
+	if(inviteByVisitor && config.videoH5Status == false){
 		acceptButtonDom.click();
 		utils.addClass(acceptButtonDom, "hide");
 		inviteByVisitor = false;
@@ -243,9 +253,15 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 	}
 	else{
 		utils.removeClass(acceptButtonDom, "hide");
-		// 弹 “客服邀请” 窗
-		agentInviteDialog.show();
-		startTimer();
+		// 访客二次确认
+		if(inviteByVisitor && config.videoH5Status){
+			statusBar.show();
+		}
+		else{
+			// 弹 “客服邀请” 窗
+			agentInviteDialog.show();
+			startTimer();
+		}
 	}
 	
 }

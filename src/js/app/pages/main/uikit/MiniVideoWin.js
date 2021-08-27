@@ -12,7 +12,7 @@ var template = _.template([
 
 var MiniVideoWin;
 
-module.exports = MiniVideoWin = function(option){
+module.exports = MiniVideoWin = function(option){ 
 	var opt = option || {};
 	var stream = opt.stream;
 	var me = this;
@@ -99,6 +99,10 @@ MiniVideoWin.prototype.updateStream = function(stream){
 			: utils.getDataByPath(stream, "owner.ext.nickname");
 
 		isLocalStream && utils.addClass(this.videoDom, "me-video"); 
+		if(utils.isMobile){
+			!isLocalStream && utils.addClass(this.dom, "current-video");
+		}
+		 
 		
 		break;
 	case _const.STREAM_TYPE.NO_AUDIO:

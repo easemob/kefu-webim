@@ -102,6 +102,7 @@ function handleConfig(configJson){
 	config.hideStatus = configJson.chat.hideStatus;
 	config.timeScheduleId = configJson.chat.timeScheduleId || 0;
 	config.options = configJson.options;
+	config.videoH5Status = "";
 
 }
 
