@@ -839,6 +839,7 @@ body.window-demo{
 #em-kefu-webim-self{
 	border-left: 1px solid #f3f3f3;
 	background: #fff;
+	display: none;
 	.expand{
 		position: absolute;
 		top: 45%;
@@ -852,7 +853,7 @@ body.window-demo{
 		display: flex;
 	}
 	.ui-cmp-tab{
-		display: none;
+		// display: none;
 	}
 
 }

@@ -116,8 +116,8 @@ function widgetBoxShow(){
 			$("#em-kefu-webim-self").css("width",closeWidth + "px");
 			$("#em-kefu-webim-chat").css("width",closeChat + "px");
 			setTimeout(function() {
-				$("#em-kefu-webim-self >.ui-cmp-tab").css("display","block");
-			}, 300);
+				$("#em-kefu-webim-self").css("display","block");
+			}, 500);
 			eventListener.trigger("swiper.update");
 		}else{
 			if(slideSwitch && !utils.isMobile){
@@ -137,8 +137,8 @@ function widgetBoxShow(){
 					$("#em-kefu-webim-chat").css("width",chatWidth + "px");
 					$("#em-kefu-webim-self").css("width",sideWidth + "px");
 					setTimeout(function() {
-						$("#em-kefu-webim-self >.ui-cmp-tab").css("display","block");
-					}, 300);
+						$("#em-kefu-webim-self").css("display","block");
+					}, 500);
 					eventListener.trigger("swiper.update");
 				})
 				// 展开按钮的状态
@@ -548,6 +548,11 @@ function renderUI(resultStatus){
 			else{
 				mobileAnyEnable();
 			}
+			// initSidePage
+			var domTab = document.querySelector(".em-self-wrapper");
+			setTimeout(function() {
+				$(domTab).css("display","block");
+			}, 500);
 		}
 	}
 	// tenantId
@@ -767,8 +772,8 @@ function renderUI(resultStatus){
 			$("#em-kefu-webim-self").css("width",closeWidth + "px");
 			$("#em-kefu-webim-chat").css("width",closeChat + "px");
 			setTimeout(function() {
-				$("#em-kefu-webim-self >.ui-cmp-tab").css("display","block");
-			}, 300);
+				$("#em-kefu-webim-self").css("display","block");
+			}, 500);
 			eventListener.trigger("swiper.update");
 		}else{
 			if(slideSwitch && !utils.isMobile){
@@ -788,8 +793,8 @@ function renderUI(resultStatus){
 					$("#em-kefu-webim-chat").css("width",chatWidth + "px");
 					$("#em-kefu-webim-self").css("width",sideWidth + "px");
 					setTimeout(function() {
-						$("#em-kefu-webim-self >.ui-cmp-tab").css("display","block");
-					}, 300);
+						$("#em-kefu-webim-self").css("display","block");
+					}, 500);
 					eventListener.trigger("swiper.update");
 				})
 			}
