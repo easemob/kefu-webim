@@ -12,12 +12,19 @@
 			right: 0;
 			border: 1px solid rgba(255,255,255,0.5); 
 			z-index: 2;
-			height: 100px;
+			height: 115px;
+			background:#000;
+			video{
+				height: 90px; 
+			}
 			&.current-video{
 				height:245px;
 				width: 100%;
 				border:none;
 				z-index: 1;
+				video{
+					height: 210px;
+				}
 			}
 			.nickname{
 				text-align: center;
