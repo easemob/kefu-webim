@@ -115,6 +115,9 @@ function widgetBoxShow(){
 			var closeChat = $(".em-widget-content-box").width() - closeWidth;
 			$("#em-kefu-webim-self").css("width",closeWidth + "px");
 			$("#em-kefu-webim-chat").css("width",closeChat + "px");
+			setTimeout(function() {
+				$("#em-kefu-webim-self >.ui-cmp-tab").css("display","block");
+			}, 300);
 			eventListener.trigger("swiper.update");
 		}else{
 			if(slideSwitch && !utils.isMobile){
@@ -133,10 +136,23 @@ function widgetBoxShow(){
 					var chatWidth = $(".em-widget-content-box").width() - Number(sideWidth);
 					$("#em-kefu-webim-chat").css("width",chatWidth + "px");
 					$("#em-kefu-webim-self").css("width",sideWidth + "px");
+					setTimeout(function() {
+						$("#em-kefu-webim-self >.ui-cmp-tab").css("display","block");
+					}, 300);
 					eventListener.trigger("swiper.update");
 				})
 				// 展开按钮的状态
 				apiHelper.getSidebarFoldedrSwitch().then(function(res){
+					var listEle =  $(".em-widget-left");
+					var scroBox = $(".chat-wrapper")[0];
+					$(scroBox).scrollTop(9999)
+					var top = scroBox.scrollTop;
+					console.log( top,"TOP")
+					var divEl = $(listEle[listEle.length -1]).find(".em-widget-msg-wrapper");
+					var elHeight = $(divEl).outerHeight() - 150;
+					if($(divEl).hasClass("msgtype-skillgroupMenu")){
+						$(scroBox).scrollTop(top - elHeight)
+					}
 					if(!res.entity){
 						slideFoldedrState = false;
 						return;
@@ -750,6 +766,9 @@ function renderUI(resultStatus){
 			var closeChat = $(".em-widget-content-box").width() - closeWidth;
 			$("#em-kefu-webim-self").css("width",closeWidth + "px");
 			$("#em-kefu-webim-chat").css("width",closeChat + "px");
+			setTimeout(function() {
+				$("#em-kefu-webim-self >.ui-cmp-tab").css("display","block");
+			}, 300);
 			eventListener.trigger("swiper.update");
 		}else{
 			if(slideSwitch && !utils.isMobile){
@@ -768,6 +787,9 @@ function renderUI(resultStatus){
 					var chatWidth = $(".em-widget-content-box").width() - Number(sideWidth);
 					$("#em-kefu-webim-chat").css("width",chatWidth + "px");
 					$("#em-kefu-webim-self").css("width",sideWidth + "px");
+					setTimeout(function() {
+						$("#em-kefu-webim-self >.ui-cmp-tab").css("display","block");
+					}, 300);
 					eventListener.trigger("swiper.update");
 				})
 			}

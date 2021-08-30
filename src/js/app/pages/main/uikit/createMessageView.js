@@ -115,6 +115,17 @@ module.exports = function(opt){
 				// 非图片消息直接滚到底
 				el.appendChild(dom);
 				_scrollToBottom();
+
+				// var listEle =  $(".em-widget-left");
+				// var scroBox = $(".chat-wrapper")[0];
+				// var top = scroBox.scrollTop;
+				// var divEl = $(listEle[listEle.length -1]).find(".em-widget-msg-wrapper");
+				// if($(divEl).hasClass("msgtype-skillgroupMenu")){
+				// 	$(scroBox).scrollTop(top + 270)
+				// }
+				// else{
+				// 	_scrollToBottom();
+				// }
 			}
 		}
 	}
@@ -222,8 +233,9 @@ module.exports = function(opt){
 		var scroBox = $(".chat-wrapper")[0];
 		var top = scroBox.scrollTop;
 		var divEl = $(listEle[listEle.length -1]).find(".em-widget-msg-wrapper");
+		var elHeight = $(divEl).outerHeight() - 150;
 		if($(divEl).hasClass("msgtype-skillgroupMenu")){
-			$(scroBox).scrollTop(top - 150)
+			$(scroBox).scrollTop(top - elHeight)
 		}
 	}
 
