@@ -147,7 +147,6 @@ function widgetBoxShow(){
 					var scroBox = $(".chat-wrapper")[0];
 					$(scroBox).scrollTop(9999)
 					var top = scroBox.scrollTop;
-					console.log( top,"TOP")
 					var divEl = $(listEle[listEle.length -1]).find(".em-widget-msg-wrapper");
 					var elHeight = $(divEl).outerHeight() - 150;
 					if($(divEl).hasClass("msgtype-skillgroupMenu")){
@@ -283,7 +282,6 @@ function initConfig(){
 				if(res) {
 					widgetBoxHide();
 					var str = __("prompt.unavailable");
-					console.log(str)
 					document.querySelector(".auth-box-PC >div span").innerHTML = str;
 					utils.removeClass(document.querySelector(".auth-box-PC"), "hide");
 				}
