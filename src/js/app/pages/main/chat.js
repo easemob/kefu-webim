@@ -1301,13 +1301,15 @@ function _init(){
 			utils.addClass(editorView, "height-170");
 			utils.addClass($(editorView).find(".em-widget-send"), "bottom-30");
 			utils.addClass(document.querySelector(".chat-wrapper"), "chat-padding-40");
+			$(".em-widget-send-wrapper").css("height","170px");
+			$(".chat-wrapper").css("bottom","170px");
 		}
-		$(".em-widget-send-wrapper").css("height","170px");
-		$(".chat-wrapper").css("bottom","170px");
 	}
 	else{
-		$(".em-widget-send-wrapper").css("height","140px");
-		$(".chat-wrapper").css("bottom","140px");
+		if(!utils.isMobile){
+			$(".em-widget-send-wrapper").css("height","140px");
+			$(".chat-wrapper").css("bottom","140px");
+		}
 	}
 
 }
