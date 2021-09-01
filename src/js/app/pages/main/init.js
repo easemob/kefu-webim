@@ -85,12 +85,14 @@ function DOMEval(code){
 }
 
 function initChat(){
-	apiHelper.getisWeidian(commonConfig.getConfig().tenantId).then(function(res){
-		console.log('isweidian',res)
-		if("Y" == res){
-			DOMEval('https://isee-uat.metlife.com.cn/isee/eye.js')
-		}
-	})
+	// 可回溯插件，上生产需要注释掉！！！
+	// apiHelper.getisWeidian(commonConfig.getConfig().tenantId).then(function(res){
+	// 	console.log('isweidian',res)
+	// 	if("Y" == res){
+	// 		DOMEval('https://isee-uat.metlife.com.cn/isee/eye.js')
+	// 	}
+	// })
+
 	handleMsgData();
 	utils.removeClass(document.querySelector(".em-widget-wrapper"), "hide");
 	apiHelper.getGrayList(commonConfig.getConfig().tenantId).then(function(grayList){

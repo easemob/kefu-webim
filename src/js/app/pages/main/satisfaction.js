@@ -52,7 +52,7 @@ function _init(){
 	});
 	apiHelper.getSatisfactionTipWord().then(function(tipWord){
 		// 判断是否为官微租户，Y 的话分三步实现
-		if (_const.isGuanwei == 'Y') {
+		/*if (_const.isGuanwei == 'Y') {
 			var title1 = '您对本次客服人员的服务是否满意'
 			var title2 = '您向朋友推荐大都会人寿的可能性有多大'
 			var title3 = '“10”分代表愿意推荐，请在10到0之间选择'
@@ -112,7 +112,7 @@ function _init(){
 				resolvedGuanwei = this.dataset.num;
 			});
 			tagContainer = dom.querySelector(".tag-container");
-		} else {
+		} else {*/
 			dom = sessionResolved ? utils.createElementFromHTML([
 				"<div class=\"wrapper\">",
 				"<div class=\"resolveCon\"><span class=\"title\">" + resolveTip + "</span>",
@@ -157,7 +157,7 @@ function _init(){
 	
 				evaluationDegreeId && _createLabel(evaluationDegreeId);
 			}, starsUl);
-		}
+		// }
 
 		utils.live("span.tag", "click", function(){
 			var selectedTagNodeList = tagContainer.querySelectorAll(".selected");
@@ -235,21 +235,21 @@ function _setSatisfaction(){
 			var id = elem.id;
 			var score = elem.score;
 			var isSingleTag = elem.isSingleTag;
-			if (_const.isGuanwei == 'Y') {
-				return "<li class=\"guan-wei\" data-level=\"" + level
-					+ "\" title=\"" + name
-					+ "\" data-evaluate-id=\"" + id
-					+ "\" data-score=\"" + score
-					+ "\" data-isSingleTag=\"" + isSingleTag
-					+ "\">" + name + "</li>";
-			} else {
+			// if (_const.isGuanwei == 'Y') {
+			// 	return "<li class=\"guan-wei\" data-level=\"" + level
+			// 		+ "\" title=\"" + name
+			// 		+ "\" data-evaluate-id=\"" + id
+			// 		+ "\" data-score=\"" + score
+			// 		+ "\" data-isSingleTag=\"" + isSingleTag
+			// 		+ "\">" + name + "</li>";
+			// } else {
 				return "<li data-level=\"" + level
 					+ "\" title=\"" + name
 					+ "\" data-evaluate-id=\"" + id
 					+ "\" data-score=\"" + score
 					+ "\" data-isSingleTag=\"" + isSingleTag
 					+ "\">H</li>";
-			}
+			// }
 		})
 		.value()
 		.join("");
@@ -275,11 +275,11 @@ function _confirm(){
 	var tagNodeList = tagContainer.querySelectorAll(".tag");
 	// 判断是否为官微租户，Y 的话 content 就是 score 对应的中文
 	var content;
-	if (_const.isGuanwei == 'Y') {
-		content = scoreName
-	} else {
+	// if (_const.isGuanwei == 'Y') {
+	// 	content = scoreName
+	// } else {
 		content = commentDom.value;
-	}
+	// }
 	var appraiseTags = _.map(selectedTagNodeList, function(elem){
 		return {
 			id: elem.getAttribute("data-label-id"),
@@ -294,7 +294,8 @@ function _confirm(){
 	}];
 
 	// 必须选择星级（非官微租户）
-	if(!score && _const.isGuanwei != 'Y'){
+	// if(!score && _const.isGuanwei != 'Y'){
+	if(!score){
 		uikit.tip(__("evaluation.select_level_please"));
 		// 防止对话框关闭
 		return false;
@@ -307,25 +308,25 @@ function _confirm(){
 	}
 
 	// 官微租户的 保存/修改
-	if (_const.isGuanwei == 'Y') {
-		var datas = {
-			visitorUserId: _const.visitorUserId,
-			agentUserId: _const.agentUserId,
-			inviteId: score ? score : '',
-			score: grade ? grade : '',
-			resolve: resolvedGuanwei ? resolvedGuanwei : ''
-		}
-		// satisfactionId 有值说明评价过走修改接口
-		if (satisfactionId) {
-			// 官微租户满意度评价 - 修改
-			apiHelper.satisfactionEdit(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', datas, satisfactionId).then(function(res) {
-			});
-		} else {
-			// 官微租户满意度评价 - 保存
-			apiHelper.satisfactionSave(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', datas).then(function(res) {
-			});
-		}
-	}
+	// if (_const.isGuanwei == 'Y') {
+	// 	var datas = {
+	// 		visitorUserId: _const.visitorUserId,
+	// 		agentUserId: _const.agentUserId,
+	// 		inviteId: score ? score : '',
+	// 		score: grade ? grade : '',
+	// 		resolve: resolvedGuanwei ? resolvedGuanwei : ''
+	// 	}
+	// 	// satisfactionId 有值说明评价过走修改接口
+	// 	if (satisfactionId) {
+	// 		// 官微租户满意度评价 - 修改
+	// 		apiHelper.satisfactionEdit(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', datas, satisfactionId).then(function(res) {
+	// 		});
+	// 	} else {
+	// 		// 官微租户满意度评价 - 保存
+	// 		apiHelper.satisfactionSave(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', datas).then(function(res) {
+	// 		});
+	// 	}
+	// }
 
 	_sendSatisfaction(score, content, session, invite, appraiseTags, resolutionParam, evaluationDegreeId);
 	uikit.showSuccess(__("evaluation.submit_success"));
@@ -340,35 +341,35 @@ function _confirm(){
 		}
 	}, 2000);
 	// 非官微租户
-	if (_const.isGuanwei != 'Y') {
+	// if (_const.isGuanwei != 'Y') {
 		_clear();
-	}
+	// }
 }
 
 function show(inviteId, serviceSessionId, evaluateWay){
 	// 官微租户满意度评价 - 查询
-	if (_const.isGuanwei == 'Y') {
-		apiHelper.satisfactionQuery(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '').then(function(res) {
-			satisfactionId = res.id
-		})
-	}
+	// if (_const.isGuanwei == 'Y') {
+	// 	apiHelper.satisfactionQuery(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '').then(function(res) {
+	// 		satisfactionId = res.id
+	// 	})
+	// }
 	// 初始化（解决已经选择了满意度等数据，但是点击取消按钮，等再进入评价页面时，数据残留问题）
 	score = null;
 	resolvedId = 1
 	if (dom) {
 		tagContainer.innerHTML = ""
-		if (_const.isGuanwei == 'Y') {
-			utils.addClass(gradeCon, 'hide')
-			utils.addClass(resolveCon, 'hide')
-			scoreName = null;
-			grade = null;
-			resolvedGuanwei = null;
-			satisfactionId = null;
-			utils.removeClass(gradeLiList, "sel");
-			utils.removeClass(resolvedBtn, "selected-guan-wei");
-		} else {
+		// if (_const.isGuanwei == 'Y') {
+		// 	utils.addClass(gradeCon, 'hide')
+		// 	utils.addClass(resolveCon, 'hide')
+		// 	scoreName = null;
+		// 	grade = null;
+		// 	resolvedGuanwei = null;
+		// 	satisfactionId = null;
+		// 	utils.removeClass(gradeLiList, "sel");
+		// 	utils.removeClass(resolvedBtn, "selected-guan-wei");
+		// } else {
 			commentDom.value = ""
-		}
+		// }
 	}
 
 	_initOnce();
