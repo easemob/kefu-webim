@@ -149,7 +149,7 @@ function widgetBoxShow(){
 					var top = scroBox.scrollTop;
 					var divEl = $(listEle[listEle.length -1]).find(".em-widget-msg-wrapper");
 					var elHeight = $(divEl).outerHeight() - 150;
-					if($(divEl).hasClass("msgtype-skillgroupMenu")){
+					if($(divEl).hasClass("msgtype-skillgroupMenu") || $(divEl).hasClass("msgtype-robotList")){
 						$(scroBox).scrollTop(top - elHeight)
 					}
 					if(!res.entity){

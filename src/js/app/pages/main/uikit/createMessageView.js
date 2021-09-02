@@ -233,8 +233,27 @@ module.exports = function(opt){
 		var scroBox = $(".chat-wrapper")[0];
 		var top = scroBox.scrollTop;
 		var divEl = $(listEle[listEle.length -1]).find(".em-widget-msg-wrapper");
+		var color;
+		var config = commonConfig.getConfig();
+		var themeName = config.ui.themeName;
+		if(themeName && themeName.indexOf("theme_custom") > -1){
+			var arr = themeName.split("theme_custom");
+			color = arr[1];
+			themeClassName = "theme_custom";
+		}
+		else{
+			themeClassName = _const.themeMap[config.themeName];
+		}
+		var hoverColor = $("body." + themeClassName + " .border-color").css("borderColor");
+		if(!color){
+			color = hoverColor;
+		}
+		var aEl = $(".em-widget-left .msgtype-txt a");
+		for(var i=0;i<aEl.length;i++){
+			aEl[i].style.color = color;
+		}
 		var elHeight = $(divEl).outerHeight() - 150;
-		if($(divEl).hasClass("msgtype-skillgroupMenu")){
+		if($(divEl).hasClass("msgtype-skillgroupMenu") || $(divEl).hasClass("msgtype-robotList")){
 			$(scroBox).scrollTop(top - elHeight)
 		}
 	}
