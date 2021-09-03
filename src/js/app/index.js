@@ -448,6 +448,8 @@ function handleCfgData(relevanceList, status){
 		},
 		chat: commonConfig.getConfig().chat || {},
 		options: commonConfig.getConfig().options || {
+			onlyCloseWindow: "true", // 访客离开下面的开关，默认不会传该值，默认为true 这样不影响之前的逻辑
+			onlyCloseSession: "true", // 访客离开下面的开关，默认不会传该值，默认为true 这样不影响之前的逻辑
 			showEnquiryButtonInAllTime: "false", //是否在所有时间段显示主动评价按钮,默认不会传该值，默认值为"false"，即只在坐席接待时显示主动评价按钮
 			closeSessionWhenCloseWindow: "false" // 是否在关闭聊窗的时候关闭会话，默认不会传该值，默认值为"false"
 		}
