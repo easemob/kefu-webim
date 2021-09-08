@@ -218,6 +218,21 @@
 				font-size:20px;
 			}
 		}
+		.welcome-change{
+			float:right;
+			margin:4px 0;
+			cursor: pointer;
+			color: #42b8f4;
+			>i{
+				margin-right: -4px;
+				&:before{
+					font-size: 24px;
+				}
+			}
+			>span{
+				vertical-align: middle;
+			}
+		}
 	}
 }
 .margin-bottom-important{

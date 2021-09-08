@@ -42,6 +42,7 @@ var doms;
 var noteIframe;
 var OnlyCloseSession;
 var OnlyCloseWindow;
+var welcomeListCount = 0;
 
 var _reCreateImUser = _.once(function(){
 	console.warn("user not found in current appKey, attempt to recreate user.");
@@ -449,22 +450,23 @@ function _bindEvents(){
 			.then(function(res){
 				if(!res.length){
 					// 弹出评价邀请框
-					if(typeof(config.options.onlyCloseSession) == "undefined"){
-						config.options.onlyCloseSession = "true"
+					if(typeof (config.options.onlyCloseSession) == "undefined"){
+						config.options.onlyCloseSession = "true";
 					}
-					if(typeof(config.options.onlyCloseWindow) == "undefined"){
-						config.options.onlyCloseWindow = "true"
+					if(typeof (config.options.onlyCloseWindow) == "undefined"){
+						config.options.onlyCloseWindow = "true";
 					}
-					if(config.options.closeSessionWhenCloseWindow == "true" && config.options.onlyCloseSession == "true" && (currentState == "Wait" || currentState == "Processing" )){
+					if(config.options.closeSessionWhenCloseWindow == "true" && config.options.onlyCloseSession == "true" && (currentState == "Wait" || currentState == "Processing")){
 						satisfaction.show(null, sessionId, "system");
 					}
-					else if(config.options.closeSessionWhenCloseWindow == "false" && config.options.onlyCloseWindow == "true" && (currentState == "Wait" || currentState == "Processing" )){
+					else if(config.options.closeSessionWhenCloseWindow == "false" && config.options.onlyCloseWindow == "true" && (currentState == "Wait" || currentState == "Processing")){
 						satisfaction.show(null, sessionId, "system");
-					}else{
+					}
+					else{
 						eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
 						sessionId && apiHelper.closeChatDialog({ serviceSessionId: sessionId });
 						getToHost.send({ event: _const.EVENTS.CLOSE });
-						utils.setStore("isHaveCustomerMsg",false);
+						utils.setStore("isHaveCustomerMsg", false);
 					}
 				}
 				else{
@@ -639,6 +641,34 @@ function _bindEvents(){
 		}
 	});
 
+	// 机器人列表
+	utils.live(".welcome-change", "click", function(e){
+		var allDom = e.target.parentElement.parentElement.children;
+		var buttonDomList = [];
+		
+		_.each(allDom, function(ele){
+			if(ele != e.target.parentElement){
+				buttonDomList.push(ele);
+			}
+		});
+
+		if((welcomeListCount + 1) * 5 > buttonDomList.length){
+			welcomeListCount = 0;
+		}
+		else{
+			welcomeListCount++;
+		}
+
+		_.each(buttonDomList, function(ele, index){
+			if((index + 1) > welcomeListCount * 5 && (index + 1) <= (welcomeListCount * 5 + 5)){
+				utils.removeClass(ele, "hide");
+			}
+			else{
+				utils.addClass(ele, "hide");
+			}
+		});
+	});
+
 	// 机器人关联规则列表
 	utils.live("button.js_robotRelateListbtn", "click", function(e){
 		var menuData;
@@ -758,7 +788,7 @@ function _bindEvents(){
 				uikit.tip("已评价");
 			}
 		});
-		utils.setStore("isHaveCustomerMsg",false);
+		utils.setStore("isHaveCustomerMsg", false);
 	});
 
 	// 未解决
@@ -781,7 +811,7 @@ function _bindEvents(){
 						uikit.tip("已评价");
 					}
 				});
-				utils.setStore("isHaveCustomerMsg",false);
+				utils.setStore("isHaveCustomerMsg", false);
 			}
 		});
 	});
@@ -924,14 +954,14 @@ function _bindEvents(){
 
 	// 发送文件
 	utils.on(doms.fileInput, "change", function(){
-		var maxSize,tip;
+		var maxSize, tip;
 		if(profile.grayList.uploadFileLimit){
 			maxSize = 1024 * 1024 * 20;
-			tip = __("prompt._20_mb_file_limit")
+			tip = __("prompt._20_mb_file_limit");
 		}
 		else{
 			maxSize = _const.UPLOAD_FILESIZE_LIMIT;
-			tip = __("prompt._10_mb_file_limit")
+			tip = __("prompt._10_mb_file_limit");
 		}
 		var fileInput = doms.fileInput;
 		var filesize = utils.getDataByPath(fileInput, "files.0.size");
@@ -990,7 +1020,7 @@ function _bindEvents(){
 
 	// 弹出图片框
 	utils.on(doms.sendImgBtn, "click", function(){
-		if(utils.isMobile && profile.sendImgTips && !utils.getStore("sendImgMobileModel")){ 
+		if(utils.isMobile && profile.sendImgTips && !utils.getStore("sendImgMobileModel")){
 			utils.removeClass(doms.mobileModel, "hide");
 		}
 		else{
@@ -1097,7 +1127,7 @@ function _bindEvents(){
 			if(profile.grayList.guessUSay){
 				guessInfo.resetStyle();
 			}
-			utils.setStore("isHaveCustomerMsg",true);
+			utils.setStore("isHaveCustomerMsg", true);
 		}
 	});
 
@@ -1271,7 +1301,7 @@ function _init(){
 	apiHelper.getOnlyCloseWindow().then(function(res){
 		OnlyCloseWindow = res;
 	});
-	utils.setStore("isHaveCustomerMsg",false);
+	utils.setStore("isHaveCustomerMsg", false);
 	// 根据灰度设置 是否添加猜你想问功能
 	if(profile.grayList.guessUSay){
 		guessInfo.addEvents();
@@ -1294,8 +1324,8 @@ function _init(){
 	}
 	// 查询是否开启申请相机的权限开关
 	apiHelper.getSendImgTips().then(function(yes){
-		profile.sendImgTips = yes.entity
-	})
+		profile.sendImgTips = yes.entity;
+	});
 
 	var url;
 	if(profile.grayList.poweredByEasemob){
@@ -1307,15 +1337,13 @@ function _init(){
 			utils.addClass(editorView, "height-170");
 			utils.addClass($(editorView).find(".em-widget-send"), "bottom-30");
 			utils.addClass(document.querySelector(".chat-wrapper"), "chat-padding-40");
-			$(".em-widget-send-wrapper").css("height","170px");
-			$(".chat-wrapper").css("bottom","170px");
+			$(".em-widget-send-wrapper").css("height", "170px");
+			$(".chat-wrapper").css("bottom", "170px");
 		}
 	}
-	else{
-		if(!utils.isMobile){
-			$(".em-widget-send-wrapper").css("height","140px");
-			$(".chat-wrapper").css("bottom","140px");
-		}
+	else if(!utils.isMobile){
+		$(".em-widget-send-wrapper").css("height", "140px");
+		$(".chat-wrapper").css("bottom", "140px");
 	}
 
 }
