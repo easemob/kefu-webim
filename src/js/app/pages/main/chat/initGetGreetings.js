@@ -81,6 +81,7 @@ function _getGreetings(officialAccount){
 			}, {
 				type: "txt",
 				noPrompt: true,
+				answerSource: "WELCOME",
 				laiye: laiye
 			});
 			break;
@@ -188,6 +189,7 @@ function answersGroupHandleMessage(index, greetingData){
 				}, {
 					type: "txt",
 					noPrompt: true,
+					answerSource: "WELCOME",
 					laiye: laiye
 				});
 				break;

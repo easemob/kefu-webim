@@ -749,26 +749,39 @@ function _handleMessage(msg, options){
 		message = msg;
 		message.type = "list";
 		message.subtype = type;
-		message.list = "<div class=\"em-btn-list\">"
-				+ _.map(msg.ext.msgtype.choice.items, function(item){
-					var className = "";
-					var color = "";
-					if(profile.shouldMsgActivated(serviceSessionId)){
-						className = themeCustomColor ? "" : "fg-color";
-						color = themeCustomColor;
-					}
-					else{
-						className = "disabled";
-						color = "";
-					}
+		message.list = "<div class=\"em-btn-list\">";
+		_.each(msg.ext.msgtype.choice.items, function(item, index){
+			var className = "";
+			var color = "";
+			if(profile.shouldMsgActivated(serviceSessionId)){
+				className = themeCustomColor ? "" : "fg-color";
+				color = themeCustomColor;
+			}
+			else{
+				className = "disabled";
+				color = "";
+			}
 
-					return "<li><button "
-					+ "class=\"js_robotbtn " + className + "\" "
-					+ "style=\"color: " + color  + " \""
-					+ "data-id=\"" + item.id + "\" "
-					+ ">" + item.name + "</button> <i class='icon-arrow-right'></i> </li>";
-				}).join("") || ""
-				+ "</div>";
+
+			if(index < 5){
+				message.list += "<li  data-index=" + index + "><button "
+				+ "class=\"js_robotbtn " + className + "\" "
+				+ "style=\"color: " + color  + " \""
+				+ "data-id=\"" + item.id + "\" "
+				+ ">" + item.name + "</button> <i class='icon-arrow-right'></i> </li>";
+			}
+			else{
+				message.list += "<li class='hide'  data-index=" + index + "><button "
+				+ "class=\"js_robotbtn " + className + "\" "
+				+ "style=\"color: " + color  + " \""
+				+ "data-id=\"" + item.id + "\" "
+				+ ">" + item.name + "</button> <i class='icon-arrow-right'></i> </li>";
+			}
+		});
+		if(options.answerSource == "WELCOME" && msg.ext.msgtype.choice.items.length > 5){
+			message.list += "<span class='welcome-change'><i class='icon-change-copy'></i> <span>换一换</span></span>";
+		}
+		message.list += "</div>";
 		message.data = msg.ext.msgtype.choice.title;
 		message.brief = __("message_brief.menu");
 		break;
