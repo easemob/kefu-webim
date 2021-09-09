@@ -291,6 +291,7 @@ function getIframeSetting(){
 	});
 }
 
+// 集成用户体系，只有新访客才会调用
 function createVisitor(specifiedUserName){
 	var cfg = commonConfig.getConfig();
 	return new Promise(function(resolve, reject){

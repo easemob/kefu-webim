@@ -1104,17 +1104,17 @@ function _setExt(msg){
 	if(!_.isEmpty(config.isVipTsr)){
 		msg.body.ext.isVipTsr = config.isVipTsr;
 	}
-	// 新加参数 --- 开始
-	if(!_.isEmpty(config.visitorName)){
-		msg.body.ext.visitorName = decodeURIComponent(config.visitorName);
-	}
-	if(!_.isEmpty(config.cardNumber)){
-		msg.body.ext.cardNumber = config.cardNumber;
-	}
-	if(!_.isEmpty(config.phoneNumber)){
-		msg.body.ext.phoneNumber = config.phoneNumber;
-	}
-	// 新加参数 --- 结束
+	// // 新加参数 --- 开始
+	// if(!_.isEmpty(config.visitorName)){
+	// 	msg.body.ext.visitorName = decodeURIComponent(config.visitorName);
+	// }
+	// if(!_.isEmpty(config.cardNumber)){
+	// 	msg.body.ext.cardNumber = config.cardNumber;
+	// }
+	// if(!_.isEmpty(config.phoneNumber)){
+	// 	msg.body.ext.phoneNumber = config.phoneNumber;
+	// }
+	// // 新加参数 --- 结束
 	console.log('[msg]',msg)
 	// bind agent username
 	if(bindAgentUsername){
