@@ -898,6 +898,7 @@ function _bindEvents(){
 			&& messagePredict(doms.textInput.value);
 
 		if(utils.isMobile){
+			utils.removeClass(doms.emojiToggleButton, "hide");
 			if(utils.hasClass(doms.sendBtn, "disabled")){
 				utils.removeClass(doms.addBtn, "hide");
 				if(utils.hasClass(toKefuBtn, "hide")){
