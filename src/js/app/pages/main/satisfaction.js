@@ -45,7 +45,7 @@ function _init(){
 	if(themeName && themeName.indexOf("theme_custom") > -1){
 		var arr = themeName.split("theme_custom");
 		var color = arr[1];
-	} 
+	}
 
 	loading.show("satisfaction");
 	//默认五星评价的开关
@@ -61,8 +61,11 @@ function _init(){
 			"<span class=\"resolve-btn unresolved\" data-num = \"2\"><i class=\"icon-unresolved\"></i><span>" + __("evaluation.unsolved") + "</span></span></div></div>",
 			"<span class=\"title\">" + tipWord + "</span>",
 			"<ul></ul>",
+			"<div class=\"tip hide\"></div>",
 			"<div class=\"tag-container\"></div>",
 			"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
+			"<div class=\"confirm\">"+  __("evaluation.submit_evaluation")  +"</div>",
+			"<div class=\"cancel hide\">" + __("evaluation.no_evaluation") + "</div>",
 			"</div>"
 		].join(""))
 			:
@@ -110,6 +113,10 @@ function _init(){
 			level && _.each(starList, function(elem, i){
 				utils.toggleClass(elem, "sel", i < level);
 			});
+			var tipBox = $(".satisfaction .tip")
+			var tipText = [__("evaluation.level1"),__("evaluation.level2"),__("evaluation.level3"),__("evaluation.level4"),__("evaluation.level5")]
+			tipBox.removeClass("hide");
+			tipBox.text(tipText[level - 1]);
 
 			evaluationDegreeId && _createLabel(evaluationDegreeId);
 		}, starsUl);
@@ -125,14 +132,22 @@ function _init(){
 			}
 
 		}, tagContainer);
+		utils.live(".confirm","click",_confirm);
+		utils.live(".cancel","click",function(){
+			dialog && dialog.hide();
+		});
 
 		dialog = uikit.createDialog({
 			contentDom: dom,
 			className: "satisfaction"
-		}).addButton({
-			confirmText: __("common.submit"),
-			confirm: _confirm,
 		});
+		// dialog = uikit.createDialog({
+		// 	contentDom: dom,
+		// 	className: "satisfaction"
+		// }).addButton({
+		// 	confirmText: __("common.submit"),
+		// 	confirm: _confirm,
+		// });
 		loading.hide("satisfaction");
 		dialog.show();
 
@@ -140,7 +155,16 @@ function _init(){
 		_setSatisfaction();
 
 		// 自定义主题色
-		color && $(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important"); 
+		color && $(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important");
+		if($("body").hasClass("window-demo")){
+			$(".wrapper > .cancel").addClass("hide");
+		}
+		else{
+			$(".wrapper > .cancel").removeClass("hide");
+			if(!utils.isMobile){
+				$(".satisfaction >.wrapper").addClass("wrapperTpo");
+			}
+		}
 	});
 }
 
@@ -322,6 +346,13 @@ function show(inviteId, serviceSessionId, evaluateWay){
 	invite = inviteId;
 	evaluateType = evaluateWay;
 	_setDefaultScore();
+	var mask = utils.createElementFromHTML([
+		"<div class=\"mask\"></div>"
+	].join(""))
+	$(".em-widget-content-box").append(mask)
+	if(evaluateType === "system"){
+		$(".cancel").removeClass("hide");
+	}
 	dialog && dialog.show();
 }
 

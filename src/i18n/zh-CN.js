@@ -82,6 +82,13 @@ module.exports = {
 		resolved: "已解决",
 		unsolved: "未解决",
 		WEBIM_338: "访客评价超时",
+		level1:"极不满意",
+		level2:"不满意",
+		level3:"满意",
+		level4:"较满意",
+		level5:"非常满意",
+		submit_evaluation:"提交评价",
+		no_evaluation:"暂不评价",
 		WEBIM_OTHER: "其他错误"
 	},
 	ticket: {
