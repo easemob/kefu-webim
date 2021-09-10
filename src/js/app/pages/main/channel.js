@@ -1105,15 +1105,18 @@ function _setExt(msg){
 		msg.body.ext.isVipTsr = config.isVipTsr;
 	}
 	// // 新加参数 --- 开始
-	// if(!_.isEmpty(config.visitorName)){
+	// if (!_.isEmpty(config.visitorName)) {
 	// 	msg.body.ext.visitorName = decodeURIComponent(config.visitorName);
 	// }
-	// if(!_.isEmpty(config.cardNumber)){
+	// if (!_.isEmpty(config.cardNumber)) {
 	// 	msg.body.ext.cardNumber = config.cardNumber;
 	// }
-	// if(!_.isEmpty(config.phoneNumber)){
+	// if (!_.isEmpty(config.phoneNumber)) {
 	// 	msg.body.ext.phoneNumber = config.phoneNumber;
 	// }
+	if (!_.isEmpty(config.metlifeCustomerId)) {
+		msg.body.ext.metlifeCustomerId = config.metlifeCustomerId;
+	}
 	// // 新加参数 --- 结束
 	console.log('[msg]',msg)
 	// bind agent username

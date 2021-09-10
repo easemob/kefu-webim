@@ -17,6 +17,7 @@ function h5_mode_init(){
 	// config.visitorName = utils.query("visitorName");
 	// config.cardNumber = utils.query("cardNumber");
 	// config.phoneNumber = utils.query("phoneNumber");
+	config.metlifeCustomerId = utils.query("user");
 	// // 新加参数 --- 结束
 	config.tenantId = utils.query("tenantId");
 	config.configId = utils.query("configId");

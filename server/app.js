@@ -10,11 +10,13 @@ const debug = require("debug");
 const DEFAULT_PORT = 8008;
 // const DEFAULT_DOMAIN = "sandbox.kefu.easemob.com";
 // const DEFAULT_DOMAIN = "metlife-kefuim.easemob.com";
-const DEFAULT_DOMAIN = "kefuim-uat.metlife.com.cn";
+const DEFAULT_DOMAIN = "kefuim-uat.metlife.com.cn"; // 大都会 uat环境
+// const DEFAULT_DOMAIN = "ddim-bau.metlife.com.cn"; // 大都会 bau环境
 // const DEFAULT_DOMAIN = "opsim-uat.metlife.com.cn";
 // http://localhost:8008/webim/im.html?configId=6b3b9442-a44a-4bba-aae4-e4b2e250700f&menutype=1
 
 const DEFAULT_SERVER = `http://${DEFAULT_DOMAIN}`;
+// const DEFAULT_SERVER = `https://${DEFAULT_DOMAIN}`; // 只有在 bau 环境 https 才放开！！！
 
 // package 中的 KEY_PATH 必须填，当活文档
 const KEY_PATH = process.env.KEY_PATH;		// 默认 "webim"
@@ -63,6 +65,7 @@ app.use((req, res, next) => {
 	){
 		logProxy(pathname);
 		req.url = req.url.replace(SLASH_KEY_PATH, "");
+		// 增加代理域名（只有在 bau 环境 https 才放开！！！）
 		// req.headers.host = DEFAULT_DOMAIN
 		proxy.web(req, res, { target }, next);
 	}
