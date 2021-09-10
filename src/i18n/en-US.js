@@ -82,6 +82,13 @@ module.exports = {
 		resolved: "Resolved",
 		unsolved: "Unsolved",
 		WEBIM_338: "Visitor evaluate timeout",
+		level1:"Very dissatisfied",
+		level2:"Dissatisfied",
+		level3:"Satisfied",
+		level4:"Good",
+		level5:"Very satisfied",
+		submit_evaluation:"Submit evaluation",
+		no_evaluation:"No evaluation",
 		WEBIM_OTHER: "Other errors"
 	},
 	ticket: {

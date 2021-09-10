@@ -229,12 +229,47 @@
 	&.satisfaction {
 		font-size: 13px;
 		overflow-y:auto;
+		background: rgba(0,0,0,.3);
+		.wrapperTpo{
+			margin-top: 80px !important;
+		}
 		.wrapper {
+			padding: 0 35px;
 			width: 95%;
 			max-width: 400px;
 			margin: auto;
+			background: rgba(255,255,255,1);
+			padding-bottom: 10px;
+			border-radius: 5px;
+			.tip{
+				text-align: center;
+				color: #ffb31a;
+				line-height: 30px;
+				margin-top: -20px;
+			}
+			.confirm,.cancel{
+				width: 40%;
+				padding: 0;
+				height: 30px;
+				line-height: 30px;
+				border-radius: 4px;
+				color: #fff;
+				border: none;
+				font-size: 13px;
+				background-color: #ffb31a;
+				margin: 10px auto;
+				text-align: center;
+				cursor: pointer;
+			}
+			.cancel{
+				background-color: #fff;
+				color: rgb(214, 214, 214);
+			}
 			.resolveCon{
 				margin-bottom:15px;
+				.selected{
+					background-color: #ffb31a !important;
+				}
 				>div{
 					width: 305px;
 					margin: 0 auto;

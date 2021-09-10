@@ -216,11 +216,13 @@
 	.swiper-container {
 		width: 90%;
 		height: 100%;
+		padding: 0 5px;
 		display: flex;
 	} 
 	.swiper-wrapper{
 		height: 30px;
 		margin-bottom: 4px;
+		margin-top: 5px !important;
 		>.em-widget-out-of-line{
 			display: none !important;
 		}
@@ -230,12 +232,9 @@
 			height: 25px;
 			line-height: 25px;
 			// border: 1px solid #d7d7d7;
-			border: 1px solid #E6E6E6;
+			// border: 1px solid #E6E6E6;
 			// max-width: 100px;
 			float: left;
-			// margin-right: 10px;
-			// margin-left: 10px;
-			// margin-top: 4px;
 			padding: 0 12px;
 			border-radius: 12px;
 			background-color: white;
@@ -244,6 +243,7 @@
 			white-space:nowrap;
 			cursor: pointer;
 			color: #566477;
+			box-shadow: 0px 0px 5px #566477;
 		}
 		.input-top-btn{
 			height: 25px;
