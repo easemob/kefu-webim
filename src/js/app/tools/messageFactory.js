@@ -20,8 +20,6 @@ function genMsgContent(msg){
 	var ruleId;
 	var answerId;
 	var relatedRuleIds;
-	// 判断当前环境是否为 https
-	var ishttps = 'https:' == document.location.protocol ? true: false;
 
 	switch(type){
 	case "txt":
@@ -48,9 +46,11 @@ function genMsgContent(msg){
 		html = value;
 		break;
 	case "img":
+		// 判断当前环境是否为 https
+		var isHttps = 'https:' == document.location.protocol ? true: false;
 		// 判断当前环境是否为 https，是的话图片地址换成 htpps
-		if (msg.url && ishttps) {
-			msg.url = msg.url.replace('http', 'https')
+		if (msg.url && isHttps) {
+			msg.url = msg.url.replace('http:', 'https:')
 		}
 		// todo: remove a
 		html = "<a href=\"javascript:;\"><img class=\"em-widget-imgview\" src=\""
