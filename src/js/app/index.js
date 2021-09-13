@@ -504,17 +504,18 @@ function renderUI(resultStatus){
 	}
 	// configId
 	else if(commonConfig.getConfig().configId){
+		var slideState = commonConfig.getConfig().options.sidebar;
 		commonIssueEnable = resultStatus[0];
 		selfServiceEnable = resultStatus[1];
 		iframeEnable = resultStatus[2];
 		iframeContent = resultStatus[3];
-		if(commonIssueEnable || selfServiceEnable  || iframeEnable){
+		if((commonIssueEnable || selfServiceEnable || iframeEnable) && slideState == "true" ){
 			slideSwitchAndMore = true;
 		}
 		// pc 端判断三个开关
 		if(!utils.isMobile){
 			// 任意一个打开
-			if(commonIssueEnable || selfServiceEnable || iframeEnable){
+			if((commonIssueEnable || selfServiceEnable || iframeEnable) && slideState == "true" ){
 				utils.addClass(document.body, "big-window");
 				// iframe 没有 url 时，初始化 tab 条件满足，但是没有内容！
 				if(!pcAnyEnable()){
