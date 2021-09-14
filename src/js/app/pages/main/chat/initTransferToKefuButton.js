@@ -12,8 +12,8 @@ module.exports = function(){
 	if(!commonConfig.getConfig().toolbar.transferToKefu) return;
 
 	var editorView = document.querySelector(".em-widget-send-wrapper");
-	// toKefuBtn = editorView.querySelector(".em-widget-to-kefu");
-	toKefuBtn = document.querySelector(".em-widget-to-kefu-input-button");
+	toKefuBtn = editorView.querySelector(".em-widget-to-kefu");
+	// toKefuBtn = document.querySelector(".em-widget-to-kefu-input-button");
 	textareaBtn = editorView.querySelector(".em-widget-textarea");
 
 	// 人工客服接起会话
@@ -24,12 +24,12 @@ module.exports = function(){
 
 
 	// 把注册事件和方法提取到新增的输入框上方按钮文件
-	// eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideTransferToKefuBtn);
-	// eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, _displayOrHideTransferToKefuBtn);
-	// eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _displayOrHideTransferToKefuBtn);
-	// eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideTransferToKefuBtn);
-	// eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideTransferToKefuBtn);
-	// eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _displayOrHideTransferToKefuBtn);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideTransferToKefuBtn);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, _displayOrHideTransferToKefuBtn);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERED, _displayOrHideTransferToKefuBtn);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideTransferToKefuBtn);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideTransferToKefuBtn);
+	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _displayOrHideTransferToKefuBtn);
 };
 
 function _displayOrHideTransferToKefuBtn(officialAccount){
