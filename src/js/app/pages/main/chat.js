@@ -323,16 +323,16 @@ function _scrollToBottom(){
 }
 
 function _checkGradeType(){
-	var riskWarning = document.querySelector(".em-widget-risk-warning");
+	// var riskWarning = document.querySelector(".em-widget-risk-warning");
 	apiHelper.getGradeType().then(function(data){
 		var entity = data.entity;
 		var grade = entity.grade;
 		if(grade == "TRIAL"){
-			riskWarning.style.display = "block";
+			// riskWarning.style.display = "block";
 			utils.addClass(doms.imChat, "has-risk-tip");
 		}
 		else{
-			riskWarning.style.display = "none";
+			// riskWarning.style.display = "none";
 			utils.removeClass(doms.imChat, "has-risk-tip");
 		}
 	});
