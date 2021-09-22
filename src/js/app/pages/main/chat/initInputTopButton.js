@@ -5,6 +5,7 @@ var eventListener = require("@/app/tools/eventListener");
 var apiHelper = require("../apis");
 var channel = require("../channel");
 var commonConfig = require("@/common/config");
+var Swiper = require('swiper');  
 
 var toKefuBtn;
 

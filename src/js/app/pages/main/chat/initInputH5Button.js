@@ -6,6 +6,7 @@ var apiHelper = require("../apis");
 var channel = require("../channel");
 var commonConfig = require("@/common/config");
 var uikit = require("../uikit");
+var Swiper = require('swiper');  
 
 
 var toKefuBtn;
