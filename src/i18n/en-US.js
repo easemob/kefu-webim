@@ -130,7 +130,9 @@ module.exports = {
 		transfer_to_kefu: "Agent",
 		send_video: "SendVideo",
 		out_of_line: "Exit the queue",
-		exit_video:	 "Abandon the video call"
+		exit_video:	 "Abandon the video call",
+		screen_shotTip: "Screenshot command + shift + 5",
+		screen_shotTip_win: "Screenshot win + shift + s"
 	},
 	prompt: {
 		new_message_title_notice: "New message",

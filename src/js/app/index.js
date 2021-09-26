@@ -36,6 +36,35 @@ var commonIssueEnable;
 var selfServiceEnable;
 var iframeEnable;
 var initIframeStateDate;
+var domData = {
+	contact_agent: __("common.contact_agent"),
+	close: __("common.close"),
+	video_ended: __("video.video_ended"),
+	agent_is_typing: __("chat.agent_is_typing"),
+	current_queue_number: __("chat.current_queue_number"),
+	connecting: __("chat.connecting"),
+	input_placeholder: __("chat.input_placeholder"), 
+	emoji: __("toolbar.emoji"),
+	picture: __("toolbar.picture"),
+	attachment: __("toolbar.attachment"),
+	ticket: __("toolbar.ticket"),
+	video_invite: __("toolbar.video_invite"),
+	evaluate_agent: __("toolbar.evaluate_agent"),
+	transfer_to_kefu: __("toolbar.transfer_to_kefu"),
+	press_save_img: __("common.press_save_img"),
+	send_video: __("toolbar.send_video"),
+	out_of_line: __("toolbar.out_of_line"),
+	exit_video: __("toolbar.exit_video"),
+	unavailable:__("prompt.unavailable"),
+	risk_alert:__("prompt.risk_alert"),
+	camera_permissions:__("common.camera_permissions"),
+	allow:__("common.allow"),
+	refuse:__("common.refuse"),
+	accept:__("common.accept"),
+	min_window:__("common.min_window"),
+	screenShot:''
+}
+screenShot()
 load_html();
 if(utils.isTop){
 	commonConfig.h5_mode_init();
@@ -830,36 +859,20 @@ function initCrossOriginIframe(){
 		commonConfig.getConfig().configId ? initConfig() : initRelevanceList();
 	});
 }
+function screenShot(){
+	var system = /Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent) ? true :  false;
+	if(system) $('.screenshot').addClass('hide');
+	var agent = navigator.userAgent.toLowerCase();
+	var isMac = /macintosh|mac os x/i.test(navigator.userAgent);
+	if (agent.indexOf("win32") >= 0 || agent.indexOf("wow32") >= 0) tips = domData.screenShot =   __("toolbar.screen_shotTip_win");
+	if (agent.indexOf("win64") >= 0 || agent.indexOf("wow64") >= 0) tips = domData.screenShot =   __("toolbar.screen_shotTip_win");
+	if(isMac) domData.screenShot =   __("toolbar.screen_shotTip");
+}
+
 
 // body.html 显示词语
 function load_html(){
-	utils.appendHTMLToBody(_.template(body_template)({
-		contact_agent: __("common.contact_agent"),
-		close: __("common.close"),
-		video_ended: __("video.video_ended"),
-		agent_is_typing: __("chat.agent_is_typing"),
-		current_queue_number: __("chat.current_queue_number"),
-		connecting: __("chat.connecting"),
-		input_placeholder: __("chat.input_placeholder"), 
-		emoji: __("toolbar.emoji"),
-		picture: __("toolbar.picture"),
-		attachment: __("toolbar.attachment"),
-		ticket: __("toolbar.ticket"),
-		video_invite: __("toolbar.video_invite"),
-		evaluate_agent: __("toolbar.evaluate_agent"),
-		transfer_to_kefu: __("toolbar.transfer_to_kefu"),
-		press_save_img: __("common.press_save_img"),
-		send_video: __("toolbar.send_video"),
-		out_of_line: __("toolbar.out_of_line"),
-		exit_video: __("toolbar.exit_video"),
-		unavailable:__("prompt.unavailable"),
-		risk_alert:__("prompt.risk_alert"),
-		camera_permissions:__("common.camera_permissions"),
-		allow:__("common.allow"),
-		refuse:__("common.refuse"),
-		accept:__("common.accept"),
-		min_window:__("common.min_window"),
-	}));
+	utils.appendHTMLToBody(_.template(body_template)(domData));
 
 	chat.getDom();
 }

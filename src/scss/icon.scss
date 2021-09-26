@@ -598,3 +598,10 @@
 		content: "\3ba";
 	}
 }
+.em-widget-send-wrapper .toolbar .icon-screenshot{
+	&:before {
+		@extend .icon-base;
+		content: "\e69b";
+		font-size: 16px;
+	}
+}
