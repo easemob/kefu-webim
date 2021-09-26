@@ -120,7 +120,7 @@ module.exports = {
 		can_not_open_camera: "打开摄像头失败",
 	},
 	toolbar: {
-		emoji: "表情",
+		emoji: "表情1",
 		picture: "图片",
 		attachment: "附件",
 		ticket: "留言",
@@ -129,7 +129,9 @@ module.exports = {
 		transfer_to_kefu: "转人工",
 		send_video: "发送小视频",
 		out_of_line: "退出排队",
-		exit_video:	 "取消视频通话"
+		exit_video:	 "取消视频通话",
+		screen_shotTip: "屏幕截图 command + shift + 5",
+		screen_shotTip_win: "屏幕截图 win + shift + s"
 	},
 	prompt: {
 		new_message_title_notice: "新消息提醒",
