@@ -120,7 +120,7 @@ module.exports = {
 		can_not_open_camera: "打开摄像头失败",
 	},
 	toolbar: {
-		emoji: "表情1",
+		emoji: "表情",
 		picture: "图片",
 		attachment: "附件",
 		ticket: "留言",
