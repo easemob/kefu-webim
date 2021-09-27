@@ -100,10 +100,13 @@
 		padding: 0 5px;
 		border-top: 1px solid #f3f3f3;
 		// background: rgba(251,251,251, 0.5);
+		.screenshot{
+			margin-left: 2px;
+		}
 		> i {
 			float: left;
 			top: 5px;
-			left: 5px;
+			left: 6px;
 			position: relative;
 			color: #919191;
 			&:hover {
