@@ -525,6 +525,15 @@ up2Im.listen(function(msg){
 			excludeData: true
 		});
 		break;
+	// 网页插件设置的开关 配置整合到一个接口获取，并放在config里。
+	case "getConfigOption":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId +"/fusion?page=0&size=8",
+			msg: msg,
+			type: "GET",
+			excludeData: true
+		});
+		break;
 	// 会话创建前 获取该会话  是否将于机器人进行
 	case "getRobertIsOpen":
 		emitAjax({

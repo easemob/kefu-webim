@@ -28,6 +28,7 @@ function h5_mode_init(){
 	config.emgroup = decodeURIComponent(utils.query("emgroup"));
 
 	config.user = {};
+	config.configOption = {};
 	var usernameFromUrl = utils.query("user");
 
 	var usernameFromCookie = utils.get("root" + (config.configId || (config.tenantId + config.emgroup)));

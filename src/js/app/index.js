@@ -28,7 +28,7 @@ var slideApi = require("./pages/q&a/apis");
 
 var ISIFRAME = false; //网页插件为true
 var slideSwitch;
-var slideFoldedrState;
+var slideFoldedrState = true;
 var slideWidth;
 var slideSwitchAndMore;
 var iframeContent = [];
@@ -65,6 +65,9 @@ var domData = {
 	screenShot:''
 }
 screenShot()
+var selfServiceData; // 自助服务的数据
+var issueData; // 常见问题的数据
+var iframeData; // 新菜单页的数据
 load_html();
 if(utils.isTop){
 	commonConfig.h5_mode_init();
@@ -123,79 +126,54 @@ function widgetBoxShow(){
 		main.initChat();
 		eventListener.trigger("swiper.update");
 	}
-	slideApi.getSelfServiceAndFaq()
-	.then(function(data){
-		if(utils.isMobile && !slideSwitch){
+
+	if(utils.isMobile && !slideSwitch){
+		$(".em-self-wrapper").addClass("hide");
+		main.initChat();
+		return false
+	}
+	if((selfServiceData.length == 0 || !selfServiceEnable) && (issueData.length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
+		if(utils.isMobile && slideSwitch){
 			$(".em-self-wrapper").addClass("hide");
 			main.initChat();
+			$(".expand").addClass("hide");
 			return false
 		}
-		if((data[0].length == 0 || !selfServiceEnable) && (data[1].length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
-			if(utils.isMobile && slideSwitch){
-				$(".em-self-wrapper").addClass("hide");
-				main.initChat();
-				$(".expand").addClass("hide");
-				return false
+		$(".em-self-wrapper").addClass("hide");
+		$(".expand").addClass("hide");
+		var chatWidth = $(".em-widget-content-box").width() - slideWidth;
+		var closeWidth = 0;
+		var closeChat = $(".em-widget-content-box").width() - closeWidth;
+		$("#em-kefu-webim-self").css("width",closeWidth + "px");
+		$("#em-kefu-webim-chat").css("width",closeChat + "px");
+		setTimeout(function() {
+			$("#em-kefu-webim-self").css("display","block");
+		}, 500);
+		eventListener.trigger("swiper.update");
+	}else{
+		if(slideSwitch && !utils.isMobile){
+			if(!slideSwitchAndMore){
+				return false;
 			}
-			$(".em-self-wrapper").addClass("hide");
-			$(".expand").addClass("hide");
-			var chatWidth = $(".em-widget-content-box").width() - slideWidth;
-			var closeWidth = 0;
-			var closeChat = $(".em-widget-content-box").width() - closeWidth;
-			$("#em-kefu-webim-self").css("width",closeWidth + "px");
-			$("#em-kefu-webim-chat").css("width",closeChat + "px");
-			setTimeout(function() {
-				$("#em-kefu-webim-self").css("display","block");
-			}, 500);
-			eventListener.trigger("swiper.update");
-		}else{
-			if(slideSwitch && !utils.isMobile){
-				if(!slideSwitchAndMore){
-					return false;
+			// 获取坐席端设置的宽度并设置，js集成网页的时候
+			apiHelper.getSidebarWidth().then(function(res){
+				var sideWidth;
+				if(!res.entity){
+					sideWidth = 360;
 				}
-				// 获取坐席端设置的宽度并设置，js集成网页的时候
-				apiHelper.getSidebarWidth().then(function(res){
-					var sideWidth;
-					if(!res.entity){
-						sideWidth = 360;
-					}
-					else{
-						sideWidth = res.entity.value;
-					}
-					var chatWidth = $(".em-widget-content-box").width() - Number(sideWidth);
-					$("#em-kefu-webim-chat").css("width",chatWidth + "px");
-					$("#em-kefu-webim-self").css("width",sideWidth + "px");
-					setTimeout(function() {
-						$("#em-kefu-webim-self").css("display","block");
-					}, 500);
-					eventListener.trigger("swiper.update");
-				})
-				// 展开按钮的状态
-				apiHelper.getSidebarFoldedrSwitch().then(function(res){
-					var listEle =  $(".em-widget-left");
-					var scroBox = $(".chat-wrapper")[0];
-					$(scroBox).scrollTop(9999)
-					var top = scroBox.scrollTop;
-					var divEl = $(listEle[listEle.length -1]).find(".em-widget-msg-wrapper");
-					var elHeight = $(divEl).outerHeight() - 150;
-					if($(divEl).hasClass("msgtype-skillgroupMenu") || $(divEl).hasClass("msgtype-robotList")){
-						$(scroBox).scrollTop(top - elHeight)
-					}
-					if(!res.entity){
-						slideFoldedrState = false;
-						return;
-					}
-					if(res.entity.value === "true"){
-						slideFoldedrState = true;
-						$(".expand").removeClass("hide");
-					}
-					else{
-						slideFoldedrState = false;
-					}
-				})
-			}
+				else{
+					sideWidth = res.entity.value;
+				}
+				var chatWidth = $(".em-widget-content-box").width() - Number(sideWidth);
+				$("#em-kefu-webim-chat").css("width",chatWidth + "px");
+				$("#em-kefu-webim-self").css("width",sideWidth + "px");
+				setTimeout(function() {
+					$("#em-kefu-webim-self").css("display","block");
+				}, 500);
+				eventListener.trigger("swiper.update");
+			})
 		}
-	})
+	}
 
 	
 }
@@ -303,6 +281,8 @@ function initConfig(){
 		entity.configJson.tenantId = entity.tenantId;
 		entity.configJson.configName = entity.configName;
 		handleConfig(entity.configJson);
+
+
 		handleSettingIframeSize();
 		initRelevanceList(entity.tenantId);
 		initInvite({ themeName: entity.configJson.ui.themeName });
@@ -333,6 +313,11 @@ function initInvite(opt){
 }
 
 function initRelevanceList(tenantId){
+	apiHelper.getConfigOption(commonConfig.getConfig().configId)
+	.then(function(value){
+		commonConfig.setConfig({
+			configOption: _.extend({}, commonConfig.getConfig().configOption, value)
+		});
 	// 获取关联信息（targetChannel）
 	var relevanceList;
 	var tId = tenantId || utils.query("tenantId");
@@ -367,36 +352,68 @@ function initRelevanceList(tenantId){
 	
 
 	function getRelevanceList(){
-		apiHelper.getSlidebarSwitch().then(function(res){
-			if(!res.entity){
-				slideSwitch = false;
+		// TODO 接口替换为 配置文件
+		if(commonConfig.getConfig().configOption && commonConfig.getConfig().configOption.option){
+			var slideOption = commonConfig.getConfig().configOption.option;
+			for(var i=0;i<slideOption.length;i++){
+				if(slideOption[i].name === "sidebar-width"){
+					slideWidth = slideOption[i].value ? slideOption[i].value : 360;
+				}
+				else if(slideOption[i].name === "sidebar"){
+					slideSwitch = slideOption[i].value ? slideOption[i].value : false;
+				}
+			}
+			selfServiceData = commonConfig.getConfig().configOption["self-service"].content;
+			issueData = commonConfig.getConfig().configOption["issue"].content;
+			iframeData = commonConfig.getConfig().configOption["webim-menu"].content;
+			// slideWidth = commonConfig.getConfig().configOption.option.filter(item => item.name==="sidebar-width" );
+			// slideSwitch = commonConfig.getConfig().configOption.option.filter(item => item.name==="sidebar" );
+			if(slideSwitch === "true"){
+				slideSwitch = true;
 			}
 			else{
-				if(res.entity.value === "true"){
-					slideSwitch = true;
-				}
-				else{
-					slideSwitch = false;
-				}
+				slideSwitch = false;
 			}
-			slideApi.getSelfServiceAndFaq()
-			.then(function(data){
-				initIframeStateDate = data;
-			})
-			apiHelper.getRelevanceList()
-			.then(function(_relevanceList){
-				relevanceList = _relevanceList;
-				return initFunctionStatus();
-			}, function(err){
-				main.initRelevanceError(err);
-			})
-			.then(function(results){
-				handleCfgData(relevanceList, results);
-			}, function(){
-				handleCfgData(relevanceList || [], []);
-			});
+		}
+		else{
+			slideWidth = 360;
+			slideSwitch = false;
+		}
+
+		if(commonConfig.getConfig().configOption["self-service"] && commonConfig.getConfig().configOption["self-service"].content){
+			selfServiceData = commonConfig.getConfig().configOption["self-service"].content;
+		}
+		else{
+			selfServiceData = []
+		}
+
+		if(commonConfig.getConfig().configOption["issue"] && commonConfig.getConfig().configOption["issue"].content){
+			issueData = commonConfig.getConfig().configOption["issue"].content;
+		}
+		else{
+			issueData = []
+		}
+
+		if(commonConfig.getConfig().configOption["webim-menu"] && commonConfig.getConfig().configOption["webim-menu"].content){
+			iframeData = commonConfig.getConfig().configOption["webim-menu"].content;
+		}
+		else{
+			iframeData = []
+		}
+		apiHelper.getRelevanceList()
+		.then(function(_relevanceList){
+			relevanceList = _relevanceList;
+			return initFunctionStatus();
+		}, function(err){
+			main.initRelevanceError(err);
 		})
+		.then(function(results){
+			handleCfgData(relevanceList, results);
+		}, function(){
+			handleCfgData(relevanceList || [], []);
+		});
 	}
+	});
 }
 
 
@@ -450,7 +467,6 @@ function handleCfgData(relevanceList, status){
 		}
 		console.log("mismatched channel, use default.");
 	}
-	// console.log(commonConfig.getConfig())
 	commonConfig.setConfig({
 		logo: commonConfig.getConfig().logo || { enabled: !!targetItem.tenantLogo, url: targetItem.tenantLogo },
 		toUser: targetItem.imServiceNumber,
@@ -647,19 +663,19 @@ function renderUI(resultStatus){
 		if(!slideSwitch){
 			return false;
 		}
-		apiHelper.getSidebarWidth().then(function(res){
-			if(!res.entity){
-				slideWidth = 360;
-			}
-			else{
-				slideWidth = res.entity.value;
-			}
-		})
+		// apiHelper.getSidebarWidth().then(function(res){
+		// 	if(!res.entity){
+		// 		slideWidth = 360;
+		// 	}
+		// 	else{
+		// 		slideWidth = res.entity.value;
+		// 	}
+		// })
 		var commonIssueEnable = resultStatus[0];
 		var selfServiceEnable = resultStatus[1];
 		var iframeEnable = resultStatus[2];
 		var iframeSettings = resultStatus[3][0];	// 只取第一个
-		if((initIframeStateDate[0].length == 0 || !selfServiceEnable) && (initIframeStateDate[1].length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
+		if((selfServiceData.length == 0 || !selfServiceEnable) && (issueData.length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
 			return false;
 		}
 		var side_page = functionView.init({
@@ -739,19 +755,25 @@ function renderUI(resultStatus){
 		// 优先第一个
 		if(tab.selectFirstTab()){
 			$("#em-kefu-webim-self").append(tab.$el);
-			apiHelper.getSidebarFoldedrSwitch().then(function(res){
-				if(!res.entity){
-					slideFoldedrState = false;
-					return;
-				}
-				if(res.entity.value === "true"){
-					slideFoldedrState = true;
-					$(".expand").removeClass("hide");
-				}
-				else{
-					slideFoldedrState = false;
-				}
-			})
+			// apiHelper.getSidebarFoldedrSwitch().then(function(res){
+			// 	if(!res.entity){
+			// 		slideFoldedrState = false;
+			// 		return;
+			// 	}
+			// 	if(res.entity.value === "true"){
+			// 		slideFoldedrState = true;
+			// 		$(".expand").removeClass("hide");
+			// 	}
+			// 	else{
+			// 		slideFoldedrState = false;
+			// 	}
+			// })
+			if(slideSwitch === true){
+				$(".expand").removeClass("hide");
+			}
+			else{
+				$(".expand").addClass("hide");
+			}
 			var Url = $("#em-kefu-webim-chat>.expand>img").attr("src").split("rightOpen.png")[0];
 			utils.on($("#em-kefu-webim-chat>.expand"), "click", function(e){
 				var chatWidth = $(".em-widget-content-box").width() - slideWidth;
@@ -779,57 +801,53 @@ function renderUI(resultStatus){
 		}
 		return false;
 	}
-	slideApi.getSelfServiceAndFaq()
-	.then(function(data){
-		if(utils.isMobile && !slideSwitch){
+	if(utils.isMobile && !slideSwitch){
+		$(".em-self-wrapper").addClass("hide");
+		main.initChat();
+		return false
+	}
+	if((selfServiceData.length == 0 || !selfServiceEnable) && (issueData.length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
+		if(utils.isMobile && slideSwitch){
 			$(".em-self-wrapper").addClass("hide");
 			main.initChat();
+			$(".expand").addClass("hide");
 			return false
 		}
-		if((data[0].length == 0 || !selfServiceEnable) && (data[1].length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
-		// if(data[0].length == 0 && data[1].length == 0 && iframeContent.length == 0){
-			if(utils.isMobile && slideSwitch){
-				$(".em-self-wrapper").addClass("hide");
-				main.initChat();
-				$(".expand").addClass("hide");
-				return false
+		$(".em-self-wrapper").addClass("hide");
+		$(".expand").addClass("hide");
+		var chatWidth = $(".em-widget-content-box").width() - slideWidth;
+		var closeWidth = 0;
+		var closeChat = $(".em-widget-content-box").width() - closeWidth;
+		$("#em-kefu-webim-self").css("width",closeWidth + "px");
+		$("#em-kefu-webim-chat").css("width",closeChat + "px");
+		setTimeout(function() {
+			$("#em-kefu-webim-self").css("display","block");
+		}, 500);
+		eventListener.trigger("swiper.update");
+	}else{
+		if(slideSwitch && !utils.isMobile){
+			if(!slideSwitchAndMore){
+				return false;
 			}
-			$(".em-self-wrapper").addClass("hide");
-			$(".expand").addClass("hide");
-			var chatWidth = $(".em-widget-content-box").width() - slideWidth;
-			var closeWidth = 0;
-			var closeChat = $(".em-widget-content-box").width() - closeWidth;
-			$("#em-kefu-webim-self").css("width",closeWidth + "px");
-			$("#em-kefu-webim-chat").css("width",closeChat + "px");
-			setTimeout(function() {
-				$("#em-kefu-webim-self").css("display","block");
-			}, 500);
-			eventListener.trigger("swiper.update");
-		}else{
-			if(slideSwitch && !utils.isMobile){
-				if(!slideSwitchAndMore){
-					return false;
+			// 获取坐席端设置的宽度并设置，js集成网页的时候
+			apiHelper.getSidebarWidth().then(function(res){
+				var sideWidth;
+				if(!res.entity){
+					sideWidth = 360;
 				}
-				// 获取坐席端设置的宽度并设置，js集成网页的时候
-				apiHelper.getSidebarWidth().then(function(res){
-					var sideWidth;
-					if(!res.entity){
-						sideWidth = 360;
-					}
-					else{
-						sideWidth = res.entity.value;
-					}
-					var chatWidth = $(".em-widget-content-box").width() - Number(sideWidth);
-					$("#em-kefu-webim-chat").css("width",chatWidth + "px");
-					$("#em-kefu-webim-self").css("width",sideWidth + "px");
-					setTimeout(function() {
-						$("#em-kefu-webim-self").css("display","block");
-					}, 500);
-					eventListener.trigger("swiper.update");
-				})
-			}
+				else{
+					sideWidth = res.entity.value;
+				}
+				var chatWidth = $(".em-widget-content-box").width() - Number(sideWidth);
+				$("#em-kefu-webim-chat").css("width",chatWidth + "px");
+				$("#em-kefu-webim-self").css("width",sideWidth + "px");
+				setTimeout(function() {
+					$("#em-kefu-webim-self").css("display","block");
+				}, 500);
+				eventListener.trigger("swiper.update");
+			})
 		}
-	})
+	}
 }
 
 

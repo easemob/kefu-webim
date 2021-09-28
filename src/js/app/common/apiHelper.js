@@ -72,6 +72,21 @@ function getConfig(configId){
 	});
 }
 
+function getConfigOption(configId){
+	var cfg = commonConfig.getConfig();
+	return new Promise(function(resolve, reject){
+		api("getConfigOption", {
+			tenantId: cfg.tenantId,
+			configId: configId
+		}, function(msg){
+			var entity = utils.getDataByPath(msg, "data.entity");
+			resolve(entity);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 function getWechatComponentId(){
 	return new Promise(function(resolve, reject){
 		emajax({
@@ -473,6 +488,7 @@ module.exports = {
 	initApiTransfer: initApiTransfer,
 	api: api,
 	getConfig: getConfig,
+	getConfigOption: getConfigOption,
 	getFaqOrSelfServiceStatus: getFaqOrSelfServiceStatus,
 	createVisitor: createVisitor,
 	getCurrentServiceSession: getCurrentServiceSession,
