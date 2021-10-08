@@ -442,8 +442,10 @@ function getExSession(){
 			}, function(msg){
 				var entity = utils.getDataByPath(msg, "data.entity");
 				if(entity){
-					if (enableData.length && enableData[0].optionValue && messageData.length) {
-						entity.tip_content = messageData[0].optionValue;
+					// undefined展示默认，其他按照开关展示 tip_content:undefined 就是关
+					if (enableData.length == 0 || enableData[0].optionValue) {
+						// 没设置，默认开
+						entity.tip_content = messageData.length ? messageData[0].optionValue : _const.eventMessageText.NOTE;
 					}
 
 					resolve(entity);
@@ -1354,7 +1356,7 @@ function getNoEmptyAgentEnable(){
 			async: false,
 			success: function(data) {
 				data = JSON.parse(data);
-				if (data.status && data.status == 'OK' && data.entities && data.entities) {
+				if (data.status && data.status == 'OK' && data.entities) {
 					resolve(data.entities);
 				} else {
 					reject('');

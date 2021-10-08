@@ -1199,9 +1199,9 @@ function _promptNoAgentOnlineIfNeeded(opt){
 		isNoAgentOnlineTipShowed = true;
 		// 显示无坐席在线(只显示一次)
 		if(
-			!profile.hasHumanAgentOnline
+			!profile.hasHumanAgentOnline && data.tip_content !== undefined
 		){
-			_appendEventMsg(data.tip_content ? data.tip_content : _const.eventMessageText.NOTE, { ext: { weichat: { official_account: officialAccount } } });
+			_appendEventMsg(data.tip_content, { ext: { weichat: { official_account: officialAccount } } });
 		}
 	});
 }
