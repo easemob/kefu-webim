@@ -443,7 +443,7 @@ function getExSession(){
 				var entity = utils.getDataByPath(msg, "data.entity");
 				if(entity){
 					// undefined展示默认，其他按照开关展示 tip_content:undefined 就是关
-					if (enableData.length == 0 || enableData[0].optionValue) {
+					if (enableData.length == 0 || enableData[0].optionValue == 'true') {
 						// 没设置，默认开
 						entity.tip_content = messageData.length ? messageData[0].optionValue : _const.eventMessageText.NOTE;
 					}
