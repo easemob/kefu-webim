@@ -1348,7 +1348,7 @@ function getisWeidian(tenantId){
 function satisfactionSave(tenantId, serviceSessionId, datas) {
 	return new Promise(function(resolve, reject) {
 		emajax({
-			url: '/v6/tenants/' + tenantId + '/serviceSessions/' + serviceSessionId + '/metlifeEnquiry',
+			url: '/v1/tenants/' + tenantId + '/serviceSessions/' + serviceSessionId + '/metlifeEnquiry',
 			data: datas,
 			type: 'POST',
 			success: function(res) {
@@ -1374,7 +1374,7 @@ function satisfactionSave(tenantId, serviceSessionId, datas) {
 function satisfactionQuery(tenantId, serviceSessionId) {
 	return new Promise(function(resolve, reject) {
 		emajax({
-			url: '/v6/tenants/' + tenantId + '/serviceSessions/' + serviceSessionId + '/metlifeEnquiry',
+			url: '/v1/tenants/' + tenantId + '/serviceSessions/' + serviceSessionId + '/metlifeEnquiry',
 			type: 'GET',
 			success: function(res) {
 				var newRes;
@@ -1399,7 +1399,7 @@ function satisfactionQuery(tenantId, serviceSessionId) {
 function satisfactionEdit(tenantId, serviceSessionId, datas, id) {
 	return new Promise(function(resolve, reject) {
 		emajax({
-			url: '/v6/tenants/' + tenantId + '/serviceSessions/' + serviceSessionId + '/metlifeEnquiry/' + id,
+			url: '/v1/tenants/' + tenantId + '/serviceSessions/' + serviceSessionId + '/metlifeEnquiry/' + id,
 			type: 'PUT',
 			data: datas,
 			success: function(res) {
