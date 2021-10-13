@@ -652,7 +652,7 @@ function _bindEvents(){
 			}
 		});
 
-		if((welcomeListCount + 1) * 5 > buttonDomList.length){
+		if((welcomeListCount + 1) * 5 >= buttonDomList.length){
 			welcomeListCount = 0;
 		}
 		else{

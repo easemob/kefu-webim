@@ -5,10 +5,18 @@ var apiHelper = require("../apis");
 var channel = require("../channel");
 var commonConfig = require("@/common/config");
 var answersGroupTimeout;
+var answerIndex = 0;
+var answerLoop = 1;
+var greetingData;
+var waitTimeout;
+var AnswersGroupShowFlag = true;
+var greetingRotate = false;
 module.exports = function(){
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _getGreetings);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _getGreetings);
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_ALREADY_CREATED, _getGreetingsData);
 	eventListener.add(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, clearAnswersGroupTimeout);
+	eventListener.add(_const.SYSTEM_EVENT.STOP_TIMEOUT, stopAnswerTimeout);
 };
 function htmlDecodeByRegExp(str){
 	var temp = "";
@@ -47,6 +55,7 @@ function _getGreetings(officialAccount){
 		var greetingTextType = robotGreetingObj.greetingTextType;
 		var greetingText = robotGreetingObj.greetingText;
 		var laiye = robotGreetingObj.laiye;
+		greetingRotate = robotGreetingObj.rotate;
 		var greetingObj = {};
 
 		// 系统欢迎语
@@ -103,7 +112,8 @@ function _getGreetings(officialAccount){
 		case 5:
 			// 答案组
 			greetingText = JSON.parse(htmlDecodeByRegExp2(greetingText));
-			answersGroupHandleMessage(0, greetingText);
+			greetingData = greetingText;
+			answersGroupHandleMessage();
 			break;
 		case undefined:
 			// 未设置机器人欢迎语
@@ -146,24 +156,46 @@ function _getGreetings(officialAccount){
 	});
 }
 
-function answersGroupHandleMessage(index, greetingData){
+function _getGreetingsData(){
+	Promise.all([
+		apiHelper.getSystemGreeting(),
+		apiHelper.getRobertGreeting(),
+		apiHelper.getSkillgroupMenu(),
+	]).then(function(result){
+		var robotGreetingObj = result[1];
+		var greetingText = robotGreetingObj.greetingText;
+		var greetingTextType = robotGreetingObj.greetingTextType;
+		greetingRotate = robotGreetingObj.rotate;
+
+		if(greetingTextType){
+			// 答案组
+			greetingText = JSON.parse(htmlDecodeByRegExp2(greetingText));
+			greetingData = greetingText;
+			clearAnswersGroupTimeout();
+		}
+	});
+}
+
+function answersGroupHandleMessage(){
 	var answersLength = greetingData.length;
 	var randomTime;
 	var greetingTextType;
 	var laiye;
 	var greetingText;
 	var greetingObj = {};
-	if(index < answersLength){
-		if(index == 0){
+	if(answerIndex < answersLength){
+		if(answerIndex == 0){
 			randomTime = 0;
 		}
 		else{
-			randomTime = Math.floor((parseInt(Math.random() * 3) + 1) * 1000);
+			// randomTime = 1000;
+			randomTime = Math.floor((parseInt(Math.random() * 10) + 25) * 1000);
 		}
+		console.log(randomTime / 1000);
 
-		greetingTextType = greetingData[index].greetingTextType;
-		laiye = greetingData[index].laiye;
-		greetingText = greetingData[index].greetingText;
+		greetingTextType = greetingData[answerIndex].greetingTextType;
+		laiye = greetingData[answerIndex].laiye;
+		greetingText = greetingData[answerIndex].greetingText;
 
 		answersGroupTimeout = setTimeout(function(){
 			switch(greetingTextType){
@@ -215,11 +247,35 @@ function answersGroupHandleMessage(index, greetingData){
 				console.error("unknown robot greeting type.");
 				break;
 			}
-			index++;
-			answersGroupHandleMessage(index, greetingData);
+			answerIndex++;
+			answersGroupHandleMessage();
 		}, randomTime);
 	}
+	else{
+		answerLoop++;
+		answerIndex = 0;
+		clearAnswersGroupTimeout();
+	}
 }
+
 function clearAnswersGroupTimeout(){
-	clearTimeout(answersGroupTimeout);
+	var time;
+	clearTimeout(waitTimeout);
+	if(AnswersGroupShowFlag && greetingRotate){
+		if(answerLoop <= 5){
+			time = 60 * 1000 * answerLoop;
+			clearTimeout(answersGroupTimeout);
+			waitTimeout = setTimeout(function(){
+				answersGroupHandleMessage();
+				console.log("date内", new Date());
+			}, time);
+		}
+		console.log("answerLoop", answerLoop);
+	}
+}
+
+function stopAnswerTimeout(){
+	AnswersGroupShowFlag = false;
+	console.log("stopAnswerTimeout");
+	clearTimeout(waitTimeout);
 }

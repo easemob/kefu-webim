@@ -1231,6 +1231,7 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.sessionState = _const.SESSION_STATE.WAIT;
 		officialAccount.isSessionOpen = true;
 		officialAccount.skillGroupId = null;
+		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.STOP_TIMEOUT, [officialAccount]);
 		break;
 	case _const.SYSTEM_EVENT.SESSION_CLOSED:
 		// 如果在会话结束前已经发起了满意度评价，在结束时开始计算失效时间

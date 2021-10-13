@@ -40,7 +40,9 @@ module.exports = {
 
 		SESSION_RESTORED: "session.restored",
 		SESSION_NOT_CREATED: "session.not.created",
+		SESSION_ALREADY_CREATED: "session.already.created",
 		CLEAR_TIMEOUT: "clear.answersGroup.timeout",
+		STOP_TIMEOUT: "stop.answersGroup.timeout",
 
 		AGENT_INFO_UPDATE: "agent.info.update",
 		OFFICIAL_ACCOUNT_SWITCHED: "official.account.switched",

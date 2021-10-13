@@ -349,7 +349,7 @@ function genMsgContent(msg, opt){
 		throw new Error("unexpected value type.");
 	}
 
-	if(msg.ext &&  msg.ext.relatedRules){
+	if(msg.ext &&  msg.ext.relatedRules && msg.ext.relatedRules.questions.length > 0){
 		relatedRules = msg.ext.relatedRules;
 		ruleId = relatedRules.ruleId;
 		answerId = relatedRules.answerId;
