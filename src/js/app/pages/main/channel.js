@@ -1226,6 +1226,7 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.agentNickname = eventObj.agentUserNiceName;
 		officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
 		officialAccount.isSessionOpen = true;
+		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.STOP_TIMEOUT, [officialAccount]);
 		break;
 	case _const.SYSTEM_EVENT.SESSION_TRANSFERING:
 		officialAccount.sessionState = _const.SESSION_STATE.WAIT;
