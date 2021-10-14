@@ -13,6 +13,10 @@ module.exports = function(){
 	// 开始轮询坐席状态
 	setInterval(function(){
 		var officialAccount = profile.currentOfficialAccount;
+		// 储存坐席 id
+		if (!_const.agentUserId) {
+			_const.agentUserId = officialAccount.agentId
+		}
 		_setAgentStatus(officialAccount);
 	}, 5000);
 
@@ -35,8 +39,6 @@ function _setAgentStatus(officialAccount){
 	) return;
 
 	var agentId = officialAccount.agentId;
-	// 储存坐席 id
-	_const.agentUserId = agentId
 	var agentType = officialAccount.agentType;
 	var isSessionOpen = officialAccount.isSessionOpen;
 
