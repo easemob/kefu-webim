@@ -1276,6 +1276,7 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.sessionId = eventObj.sessionId;
 		officialAccount.isSessionOpen = true;
 		getToHost.send({ event: _const.EVENTS.ONSESSIONCREAT });
+		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.STOP_TIMEOUT, [officialAccount]);
 		break;
 	default:
 		break;
