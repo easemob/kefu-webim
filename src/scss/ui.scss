@@ -156,8 +156,8 @@
 		> button {
 			width: 40%;
 			padding: 0;
-			height: 30px;
-			line-height: 30px;
+			height: 40px;
+			line-height: 40px;
 			border-radius: 4px;
 			color: white;
 			border: none;
@@ -230,12 +230,12 @@
 				}
 				.resolved,.unresolved{
 					text-align: center;
-				    display: inline-block;
-				    width: 130px;
-				    height: 40px;
-				    line-height: 40px;
-				    font-size: 15px;
-				    border-radius: 5px;
+					display: inline-block;
+					width: 130px;
+					height: 30px;
+					line-height: 30px;
+					font-size: 15px;
+					border-radius: 5px;
 					border:1px solid #ccc;
 					cursor:pointer;
 					i{color:#666}
@@ -274,9 +274,6 @@
 				width: 100%;
 				margin: 15px 0;
 				text-align: center;
-				&.guan-wei {
-					text-align: right;
-				}
 				li {
 					// fake: IE8 满意度评价会有兼容问题，修改图标需替换字符
 					font-family: 'easemobim' !important;
@@ -347,6 +344,7 @@
 			max-width: 400px;
 			height: 30px;
 			padding: 0 15px;
+			margin-top: 150px;
 		}
 	}
 	// 留言

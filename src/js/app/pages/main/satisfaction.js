@@ -60,7 +60,7 @@ function _init(){
 			dom = utils.createElementFromHTML([
 				"<div class=\"wrapper\">",
 				"<span class=\"title guan-wei\">" + title1 + "</span>",
-				"<ul class=\"satisfactionUl guan-wei\"></ul>",
+				"<ul class=\"satisfactionUl\"></ul>",
 				"<div class=\"tag-container\"></div>",
 				"<div class=\"gradeCon hide\"><p class=\"title guan-wei\">" + title2 + "</p>",
 				"<p class=\"title guan-wei no-top\">" + title3 + "</p>",
