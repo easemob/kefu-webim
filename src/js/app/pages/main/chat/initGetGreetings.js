@@ -277,5 +277,6 @@ function clearAnswersGroupTimeout(){
 function stopAnswerTimeout(){
 	AnswersGroupShowFlag = false;
 	console.log("stopAnswerTimeout");
+	clearTimeout(answersGroupTimeout);
 	clearTimeout(waitTimeout);
 }
