@@ -316,6 +316,7 @@ function _sendTransferToKf(tid, sessionId, transferToHumanId){
 	_detectSendTextMsgByApi(id);
 
 	_promptNoAgentOnlineIfNeeded({ hasTransferedToKefu: true });
+	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
 }
 
 function _sendImg(fileMsg){
@@ -352,6 +353,7 @@ function _sendImg(fileMsg){
 	// 自己发出去的图片要缓存File对象，用于全屏显示图片
 	profile.imgFileList.set(fileMsg.url, fileMsg.data);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
+	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
 }
 
 function _sendFile(fileMsg){
@@ -383,6 +385,7 @@ function _sendFile(fileMsg){
 	});
 	conn.send(msg.body);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
+	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
 }
 
 // 小视频发送
@@ -415,6 +418,7 @@ function _sendVideo(fileMsg){
 	});
 	conn.send(msg.body);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
+	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
 }
 
 // 新增 视频格式发送
@@ -1276,7 +1280,6 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.sessionId = eventObj.sessionId;
 		officialAccount.isSessionOpen = true;
 		getToHost.send({ event: _const.EVENTS.ONSESSIONCREAT });
-		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.STOP_TIMEOUT, [officialAccount]);
 		break;
 	default:
 		break;
