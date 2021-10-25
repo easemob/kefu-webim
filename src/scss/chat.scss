@@ -36,7 +36,7 @@
 		text-align: center;
 		color: white;
 		font-size: 13px;
-		margin-bottom: 40px;
+		// margin-bottom: 40px;
 		> span {
 			color: #8794A5;
 			border-radius: 4px;
@@ -139,8 +139,10 @@
 
 .em-widget-left {
 	position: relative;
-	margin-bottom: 30px;
-	margin-top: 20px;
+	// margin-bottom: 30px;
+	// margin-top: 20px;
+	margin-bottom: 25px;
+    margin-top: 7px;
 	left: 8px;
 
 	.userNickname{
@@ -160,9 +162,11 @@
 	.em-widget-msg-wrapper {
 		clear: both;
 		left: 20px;
-		background: #fff;
+		// background: #fff;
+		background: #EFEFEF;
 		// color:#566477;
-		color: #263C5C;
+		// color: #263C5C;
+		color: #595959;
 		border-radius: 0 8px 8px 8px;
 		&.no-bg{
 			background:none;
@@ -306,7 +310,8 @@
 		position: relative;
 		text-align: left;
 		clear: both;
-		background:#fff;
+		// background:#fff;
+		background: #EFEFEF;
 		padding-bottom: 8px; 
 		padding-right: 12px;
 		&:after {
@@ -325,7 +330,8 @@
 			cursor: pointer;
 			word-break: break-word;
 			white-space: pre-wrap;
-			background:#fff;
+			// background:#fff;
+			background: #EFEFEF;
 			&:hover {
 				color: white;
 			}
@@ -335,10 +341,10 @@
 			&.disabled {
 				cursor: default;
 				color: silver;
-				background-color: white!important;
+				background-color: #EFEFEF !important;
 				// border-color: #e5e5e5!important;
 				&:hover {
-					background-color: white!important;
+					background-color: #EFEFEF !important;
 					color: silver;
 				}
 			}
@@ -568,7 +574,8 @@
 		// background-color: rgb(251, 251, 251);
 		> .list-title { 
 			padding: 10px;
-			background-color: white;
+			// background-color: white;
+			background-color: #EFEFEF;
 			word-break: break-word; 
 			white-space: pre-wrap;
 			font-size:14px;
@@ -813,7 +820,7 @@
 		position: relative;
 		text-align: left;
 		clear: both;
-		background:#fff;
+		// background:#fff;
 		&:after {
 			content: '';
 			clear: both;
@@ -827,7 +834,7 @@
 			text-align: left;
 			margin: 4px 0;
 			color: #000;
-			background-color: white;
+			// background-color: white;
 			border: none;
 			cursor: pointer;
 			word-break: break-word;
@@ -841,10 +848,10 @@
 			&.disabled {
 				cursor: default;
 				color: silver;
-				background-color: white!important;
+				background-color: #EFEFEF !important;
 				// border-color: #e5e5e5!important;
 				&:hover {
-					background-color: white!important;
+					background-color: #EFEFEF  !important;
 					color: silver;
 				}
 			}

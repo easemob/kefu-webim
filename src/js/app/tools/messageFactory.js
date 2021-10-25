@@ -411,7 +411,7 @@ function genDomFromMsg(msg, isReceived, isHistory, opt){
 	// 坐席消息头像
 	if(direction === "left"){
 		if(utils.isMobile){
-			html += "<img class=\"avatar\" src=\"" + _getAvatar(msg) + "\">";
+			// html += "<img class=\"avatar\" src=\"" + _getAvatar(msg) + "\">";
 		}
 		else if(msg.ext && msg.ext.weichat){
 			var name = msg.ext.weichat.agent.userNickname || msg.ext.weichat.official_account.name;

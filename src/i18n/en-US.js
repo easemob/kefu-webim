@@ -89,7 +89,8 @@ module.exports = {
 		level5:"Very satisfied",
 		submit_evaluation:"Submit evaluation",
 		no_evaluation:"No evaluation",
-		WEBIM_OTHER: "Other errors"
+		WEBIM_OTHER: "Other errors",
+		title: "Service evaluation",
 	},
 	ticket: {
 		title: "Please fill in your contact info.",
@@ -105,6 +106,7 @@ module.exports = {
 		send_success: "Note sent successfully",
 		send_failed_retry: "Failed to submit the note. Please try again later.",
 		send_failed_invalid_token: "Failed to submit the note due to invalid token.",
+		note_title: "Note",
 	},
 	video: {
 		waiting: "Waiting",

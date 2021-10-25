@@ -11,7 +11,7 @@
 
 @mixin icon-base {
 	font-family: "easemobim" !important;
-	font-size: 30px;
+	font-size: 22px;
 	font-style: normal;
 	text-align: center;
 	vertical-align: middle;
@@ -29,7 +29,7 @@
 
 .icon-camera:before {
 	@extend .icon-base;
-	content: "\63";
+	content: "\e61e";
 }
 
 .icon-change:before {
@@ -59,22 +59,34 @@
 
 .icon-close:before {
 	@extend .icon-base;
-	content: "\43";
+	content: "\e608";
+}
+.icon-back-new:before{
+	@extend .icon-base;
+	content: "\e601";
+}
+.icon-mobile-close:before {
+	@extend .icon-base;
+	content: "\e612";
+}
+.icon-radio:before{
+	@extend .icon-base;
+	content: "\e60d";
 }
 
 .icon-face:before {
 	@extend .icon-base;
-	content: "\44";
+	content: "\e607";
 }
 
 .icon-easemob:before {
 	@extend .icon-base;
-	content: "\45";
+	content: "\e63a";
 }
 
 .icon-min:before {
 	@extend .icon-base;
-	content: "\46";
+	content: "\e606";
 }
 
 .icon-good:before {
@@ -95,17 +107,17 @@
 
 .icon-corner-left:before {
 	@extend .icon-base;
-	content: "\4b";
+	content: "\e646";
 }
 
 .icon-corner-right:before {
 	@extend .icon-base;
-	content: "\4a";
+	content: "\e647";
 }
 
 .icon-picture:before {
 	@extend .icon-base;
-	content: "\4c";
+	content: "\e60b";
 }
 
 .icon-M:before {
@@ -115,12 +127,12 @@
 
 .icon-bell:before {
 	@extend .icon-base;
-	content: "\78";
+	content: "\e602";
 }
 
 .icon-slience:before {
 	@extend .icon-base;
-	content: "\a073";
+	content: "\e603";
 }
 
 .icon-sound:before {
@@ -130,12 +142,12 @@
 
 .icon-keyboard-down:before {
 	@extend .icon-base;
-	content: "\4f";
+	content: "\e63e";
 }
 
 .icon-keyboard-up:before {
 	@extend .icon-base;
-	content: "\4e";
+	content: "\e63d";
 }
 
 .icon-qianbao:before {
@@ -185,12 +197,12 @@
 
 .icon-decline:before {
 	@extend .icon-base;
-	content: "\62";
+	content: "\e612";
 }
 
 .icon-note:before {
 	@extend .icon-base;
-	content: "\31";
+	content: "\e60e";
 }
 
 .icon-headset:before {
@@ -200,17 +212,18 @@
 
 .icon-video:before {
 	@extend .icon-base;
-	content: "\74";
+	content: "\e618";
+	font-size: 13px !important;
 }
 
 .icon-flower:before {
 	@extend .icon-base;
-	content: "\68";
+	content: "\e60c";
 }
 
 .icon-attachment:before {
 	@extend .icon-base;
-	content: "\76"
+	content: "\e60a"
 }
 
 .icon-download:before {
@@ -241,7 +254,7 @@
 
 .icon-arrow-right:before {
 	@extend .icon-base;
-	content: "\69"
+	content: "\e639"
 }
 
 .icon-exit:before {
@@ -266,7 +279,7 @@
 
 .icon-benz-video:before {
 	@extend .icon-base;
-	content: "\86"
+	content: "\e619"
 }
 
 .icon-benz-face:before {
@@ -301,7 +314,7 @@
 
 .icon-microphone:before {
 	@extend .icon-base;
-	content: "\3b5"
+	content: "\e61f"
 }
 
 .icon-hung-up:before {
@@ -321,12 +334,12 @@
 
 .icon-disable-camera:before {
 	@extend .icon-base;
-	content: "\3b9"
+	content: "\e61d"
 }
 
 .icon-disable-microphone:before {
 	@extend .icon-base;
-	content: "\3b8"
+	content: "\e620"
 }
 
 .icon-minimize-window:before {
@@ -405,130 +418,132 @@
 .icon-yinlexianxing {
 	&:before {
 		@extend .icon-base;
-		content: "\a008";
+		content: "\e626";
 	}
 }
 .icon-weixin {
 	&:before {
 		@extend .icon-base;
-		content: "\a009";
+		content: "\e627";
 	}
 }
 .icon-address {
 	&:before {
 		@extend .icon-base;
-		content: "\a010";
+		content: "\e628";
 	}
 }
 .icon-dianhua {
 	&:before {
 		@extend .icon-base;
-		content: "\a011";
+		content: "\e629";
 	}
 }
 .icon-gengduo {
 	&:before {
 		@extend .icon-base;
-		content: "\a012";
+		content: "\e62a";
 	}
 }
 .icon-renzheng {
 	&:before {
 		@extend .icon-base;
-		content: "\a013";
+		content: "\e62b";
 	}
 }
 .icon-caidan {
 	&:before {
 		@extend .icon-base;
-		content: "\a014";
+		content: "\e62c";
 	}
 }
 .icon-dizhi {
 	&:before {
 		@extend .icon-base;
-		content: "\a015";
+		content: "\e62d";
 	}
 }
 .icon-yuyin {
 	&:before {
 		@extend .icon-base;
-		content: "\a016";
+		content: "\e62e";
 	}
 }
 .icon-gerensvg {
 	&:before {
 		@extend .icon-base;
-		content: "\a017";
+		content: "\e62f";
 	}
 }
 .icon-shipin1 {
 	&:before {
 		@extend .icon-base;
-		content: "\a018";
+		content: "\e630";
 	}
 }
 .icon-biaodan {
 	&:before {
 		@extend .icon-base;
-		content: "\a019";
+		content: "\e632";
 	}
 }
 .icon-zhuye {
 	&:before {
 		@extend .icon-base;
-		content: "\a020";
+		content: "\e631";
 	}
 }
 .icon-sousuo {
 	&:before {
 		@extend .icon-base;
-		content: "\a021";
+		content: "\e633";
 	}
 }
 .icon-shapecopy {
 	&:before {
 		@extend .icon-base;
-		content: "\a022";
+		content: "\e634";
 	}
 }
 .icon-erweima {
 	&:before {
 		@extend .icon-base;
-		content: "\a023";
+		content: "\e635";
 	}
 }
 .icon-youhui {
 	&:before {
 		@extend .icon-base;
-		content: "\a024";
+		content: "\e622";
 	}
 }
 .icon-sendvideo {
 	&:before {
 		@extend .icon-base;
-		content: "\a025";
+		content: "\e60f";
 	}
 }
 .icon-resolved{
 	&:before {
 		@extend .icon-base;
-		content: "\e661";
+		content: "\e614";
+		font-size: 22px;
 	}
 }
 .icon-unresolved{
 	&:before {
 		@extend .icon-base;
-		content: "\e621";
+		content: "\e615";
+		font-size: 22px;
 	}
 }
 .icon-add:before {
 	@extend .icon-base;
-	content: "\e60f";
+	content: "\e609";
 }
 .icon-transform:before {
 	@extend .icon-base;
-	content: "\e610";
+	content: "\e62f";
 }
 .icon-transform1:before {
 	@extend .icon-base;
@@ -539,6 +554,34 @@
 	&:before {
 		@extend .icon-base;
 		content: "\e649";
+	}
+}
+// 五角星
+.icon-start{
+	&:before {
+		@extend .icon-base;
+		content: "\e611";
+		font-size: 40px;
+	}
+}
+// 接听
+.icon-answer{
+	&:before {
+		@extend .icon-base;
+		content: "\e61b";
+		color: #5EF61E ;
+		background-color: #fff;
+		// background: linear-gradient(172deg, #5EF61E 0%, #44D434 100%);
+	}
+}
+// 挂断
+.icon-huang{
+	&:before {
+		@extend .icon-base;
+		content: "\e61c";
+		color: #F5515F;
+		background-color: #fff;
+		// background: linear-gradient(172deg, #F5515F 0%, #E92744 100%);
 	}
 }
 // 全屏
@@ -559,25 +602,26 @@
 .icon-picture-new {
 	&:before {
 		@extend .icon-base;
-		content: "\e696";
+		content: "\e643";
 	}
 }
 .icon-attachment-new {
 	&:before {
 		@extend .icon-base;
-		content: "\e64a";
+		content: "\e621";
+		font-size:25px;
 	}
 }
 .icon-sendvideo-new {
 	&:before {
 		@extend .icon-base;
-		content: "\e64d";
+		content: "\e644";
 	}
 }
 .icon-note-new {
 	&:before {
 		@extend .icon-base;
-		content: "\e623";
+		content: "\e645";
 	}
 }
 .icon-video-new {
@@ -589,13 +633,13 @@
 .icon-flower-new {
 	&:before {
 		@extend .icon-base;
-		content: "\e680";
+		content: "\e641";
 	}
 }
 .icon-change-copy {
 	&:before {
 		@extend .icon-base;
-		content: "\3ba";
+		content: "\e63b";
 	}
 }
 .em-widget-send-wrapper .toolbar .icon-screenshot{

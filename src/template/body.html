@@ -50,7 +50,7 @@
 			<span class="em-agent-input-state hide"><%=agent_is_typing%></span>
 		</div>
 		<!-- 关闭按钮 -->
-		<i title="<%=close%>" class="icon-close btn-close border-color bg-hover-color-light hide"></i>
+		<i title="<%=close%>" class="icon-mobile-close btn-close border-color bg-hover-color-light hide"></i>
 
 		<!-- 最小化按钮 -->
 		<i title="<%=min_window%>" class="icon-min btn-min border-color bg-hover-color-light hide"></i>
@@ -81,9 +81,10 @@
 
 			<!-- 信息栏 -->
 			<div class="em-widget-tip">
-				<div>
+				<div class="">
 					<div class="contentDom">
-						<img src="/webim/static/img/tip.png" alt="">
+						<!-- <img src="/webim/static/img/radio.png" alt=""> -->
+						<i class="icon-radio"></i>
 						<span class="content"></span>
 						<i class="icon-close tip-close"></i>
 					</div>
@@ -111,7 +112,7 @@
 						<div class="swiper-wrapper">
 							<div class="swiper-slide em-widget-out-of-line hide"><%=out_of_line%> </div>
 							<div class="swiper-slide em-widget-exit-video hide"><%=exit_video%></div>
-							<div class="swiper-slide em-widget-to-kefu-input-button hide"><%=transfer_to_kefu%> </div>
+							<!-- <div class="swiper-slide em-widget-to-kefu-input-button hide"><%=transfer_to_kefu%> </div> -->
 						</div>
 					</div>
 					
@@ -213,6 +214,11 @@
 	</div>
 </div>
 
+<div class="em-kefu-webim-note-mobile hide">
+	<div class="note-top">
+		<i class="icon-close"></i>
+	</div>
+</div>
 <div class="auth-box-PC hide">
 	<div>
 		<img src="/webim/static/img/u1447.png" alt="">

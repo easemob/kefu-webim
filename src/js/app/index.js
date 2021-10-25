@@ -164,7 +164,7 @@ function widgetBoxShow(){
 				else{
 					sideWidth = res.entity.value;
 				}
-				var chatWidth = $(".em-widget-content-box").width() - Number(sideWidth);
+				var chatWidth = $(".em-widget-content-box").width() - Number(sideWidth)  - 20;
 				$("#em-kefu-webim-chat").css("width",chatWidth + "px");
 				$("#em-kefu-webim-self").css("width",sideWidth + "px");
 				setTimeout(function() {
@@ -355,11 +355,25 @@ function initRelevanceList(tenantId){
 		// TODO 接口替换为 配置文件
 		if(commonConfig.getConfig().configOption && commonConfig.getConfig().configOption.option){
 			var slideOption = commonConfig.getConfig().configOption.option;
+			// for(var i=0;i<slideOption.length;i++){
+			// 	if(slideOption[i]  && slideOption[i].name === "sidebar-width"){
+			// 		slideWidth = slideOption[i].value ? slideOption[i].value : 360;
+			// 	}
+			// 	else{
+			// 		slideWidth = 360;
+			// 	}
+			// 	if( slideOption[i]  && slideOption[i].name === "sidebar"){
+			// 		slideSwitch = slideOption[i].value ? slideOption[i].value : false;
+			// 	}
+			// 	else{
+			// 		slideSwitch = false;
+			// 	}
+			// }
 			for(var i=0;i<slideOption.length;i++){
-				if(slideOption[i].name === "sidebar-width"){
+				if(slideOption[i] && slideOption[i].name === "sidebar-width"){
 					slideWidth = slideOption[i].value ? slideOption[i].value : 360;
 				}
-				else if(slideOption[i].name === "sidebar"){
+				else if( slideOption[i] && slideOption[i].name === "sidebar"){
 					slideSwitch = slideOption[i].value ? slideOption[i].value : false;
 				}
 			}
@@ -755,48 +769,6 @@ function renderUI(resultStatus){
 		// 优先第一个
 		if(tab.selectFirstTab()){
 			$("#em-kefu-webim-self").append(tab.$el);
-			// apiHelper.getSidebarFoldedrSwitch().then(function(res){
-			// 	if(!res.entity){
-			// 		slideFoldedrState = false;
-			// 		return;
-			// 	}
-			// 	if(res.entity.value === "true"){
-			// 		slideFoldedrState = true;
-			// 		$(".expand").removeClass("hide");
-			// 	}
-			// 	else{
-			// 		slideFoldedrState = false;
-			// 	}
-			// })
-			if(slideSwitch === true){
-				$(".expand").removeClass("hide");
-			}
-			else{
-				$(".expand").addClass("hide");
-			}
-			var Url = $("#em-kefu-webim-chat>.expand>img").attr("src").split("rightOpen.png")[0];
-			utils.on($("#em-kefu-webim-chat>.expand"), "click", function(e){
-				var chatWidth = $(".em-widget-content-box").width() - slideWidth;
-				var closeWidth = 0;
-				var closeChat = $(".em-widget-content-box").width() - closeWidth;
-
-				if(!slideFoldedrState){
-					// $("#em-kefu-webim-chat").removeClass("em-widget-wrapper-close")
-					$("#em-kefu-webim-self").css("width",slideWidth + "px");
-					$("#em-kefu-webim-chat").css("width",chatWidth + "px");
-					$("#em-kefu-webim-chat>.expand>img").attr("src",Url + "rightOpen.png");
-					slideFoldedrState = true;
-				}
-				else{
-					// $("#em-kefu-webim-self").addClass("close")
-					// $("#em-kefu-webim-chat").addClass("em-widget-wrapper-close")
-					$("#em-kefu-webim-self").css("width",closeWidth + "px");
-					$("#em-kefu-webim-chat").css("width",closeChat + "px");
-					$("#em-kefu-webim-chat>.expand>img").attr("src",Url + "leftOpen.png");
-					slideFoldedrState = false;
-				}
-				eventListener.trigger("swiper.update");
-			})
 			return true;
 		}
 		return false;
@@ -838,7 +810,7 @@ function renderUI(resultStatus){
 				else{
 					sideWidth = res.entity.value;
 				}
-				var chatWidth = $(".em-widget-content-box").width() - Number(sideWidth);
+				var chatWidth = $(".em-widget-content-box").width() - Number(sideWidth) - 20;
 				$("#em-kefu-webim-chat").css("width",chatWidth + "px");
 				$("#em-kefu-webim-self").css("width",sideWidth + "px");
 				setTimeout(function() {

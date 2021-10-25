@@ -36,8 +36,9 @@ module.exports = function(data,isOpen){
 			themeClassName = _const.themeMap[config.themeName];
 		}
 
-	toKefuBtn = document.querySelector(".em-widget-to-kefu-input-button");
+	// toKefuBtn = document.querySelector(".em-widget-to-kefu-input-button");
 
+	toKefuBtn = document.querySelector(".em-widget-to-kefu");
 	var topButtonBox = document.querySelector(".em-widget-send-wrapper-top>.swiper-container>.swiper-wrapper");
 	for(var i=0;i<data.length;i++){
 		var el = utils.createElementFromHTML("<div class=\"swiper-slide\"  content=\""+ data[i].content +"\" type=\""+ data[i].operateType +"\" title=\""+ data[i].name +"\" id=\"" + data[i].id+ "\" class=\"input-top-btn  "+themeClassName+"\">"+ data[i].name +" </div>");
@@ -47,28 +48,28 @@ module.exports = function(data,isOpen){
 
 
 
-	$(".em-widget-send-wrapper-top>.swiper-container>.swiper-wrapper .swiper-slide").hover(function(){
-		var hoverColor = $("body."+ themeClassName +" .border-color").css("borderColor")
-		hoverColor = hoverColor?hoverColor:"#42b8f4";
-		if($(this).hasClass("em-widget-exit-video")){
-			return false
-		}
-		if(color){
-			$(this).css("color",color)
-			$(this).css("borderColor",color)
-		}
-		else{
-			$(this).css("color",hoverColor)
-			$(this).css("borderColor",hoverColor)
-		}
+	// $(".em-widget-send-wrapper-top>.swiper-container>.swiper-wrapper .swiper-slide").hover(function(){
+	// 	var hoverColor = $("body."+ themeClassName +" .border-color").css("borderColor")
+	// 	hoverColor = hoverColor?hoverColor:"#42b8f4";
+	// 	if($(this).hasClass("em-widget-exit-video")){
+	// 		return false
+	// 	}
+	// 	if(color){
+	// 		$(this).css("color",color)
+	// 		$(this).css("borderColor",color)
+	// 	}
+	// 	else{
+	// 		$(this).css("color",hoverColor)
+	// 		$(this).css("borderColor",hoverColor)
+	// 	}
 
-	},function(){
-		if($(this).hasClass("em-widget-exit-video")){
-			return false
-		}
-		$(this).css("color","#566477")
-		$(this).css("borderColor","#E6E6E6")
-	})
+	// },function(){
+	// 	if($(this).hasClass("em-widget-exit-video")){
+	// 		return false
+	// 	}
+	// 	$(this).css("color","#566477")
+	// 	$(this).css("borderColor","#E6E6E6")
+	// })
 
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideTransferToKefuBtn);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, _displayOrHideTransferToKefuBtn);
@@ -77,8 +78,8 @@ module.exports = function(data,isOpen){
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideTransferToKefuBtn);
 	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _displayOrHideTransferToKefuBtn);
 	
-	eventListener.add("video.conform", _conformVideo);
-	eventListener.add("video.cancel", _cancelVideo);
+	// eventListener.add("video.conform", _conformVideo);
+	// eventListener.add("video.cancel", _cancelVideo);
 	eventListener.add("swiper.update", updateSwiper);
 
 
@@ -144,18 +145,18 @@ module.exports = function(data,isOpen){
 		}
 
 	});
-	// 确定视频通话
-	function _conformVideo(){
-		var videoBtn =  document.querySelector(".swiper-wrapper>.em-widget-exit-video");
-		$(videoBtn).removeClass("hide");
-		mySwiper.update();
-	}
-	// 取消视频通话
-	function _cancelVideo(){
-		var videoBtn =  document.querySelector(".swiper-wrapper>.em-widget-exit-video");
-		$(videoBtn).addClass("hide");
-		mySwiper.update();
-	}
+	// // 确定视频通话
+	// function _conformVideo(){
+	// 	var videoBtn =  document.querySelector(".swiper-wrapper>.em-widget-exit-video");
+	// 	$(videoBtn).removeClass("hide");
+	// 	mySwiper.update();
+	// }
+	// // 取消视频通话
+	// function _cancelVideo(){
+	// 	var videoBtn =  document.querySelector(".swiper-wrapper>.em-widget-exit-video");
+	// 	$(videoBtn).addClass("hide");
+	// 	mySwiper.update();
+	// }
 	function updateSwiper(){
 		setTimeout(function() {
 			mySwiper.update();

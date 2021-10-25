@@ -40,12 +40,19 @@ function _createDialog(options){
 	var opt = options || {};
 	var className = opt.className;
 	var contentDom = opt.contentDom;
+	var isFullSreen = opt.isFullSreen || false;
 	var el = utils.createElementFromHTML("<div class=\"em-dialog hide\"></div>");
 	var cancelBtn;
 	var confirmBtn;
 	var cancel;
 	var confirm;
-	var widgetWrapper = document.querySelector(".em-widget-wrapper");
+	// 增加适配全屏的dialog
+	if(isFullSreen){
+		var widgetWrapper = document.querySelector("body");
+	}
+	else{
+		var widgetWrapper = document.querySelector(".em-widget-wrapper");
+	}
 
 	className && utils.addClass(el, className);
 	if(typeof contentDom === "string"){
