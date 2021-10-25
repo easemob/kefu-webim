@@ -8,7 +8,7 @@ var channel = require("../channel");
 var commonConfig = require("@/common/config");
 
 var tpl = require("../../../../../template/chatContainer.html");
-var closDate = []
+var closDate = [];
 
 module.exports = function(opt){
 	// 当下全部都是 profile.systemOfficialAccount
@@ -54,6 +54,13 @@ module.exports = function(opt){
 			_getHistory(_scrollToBottom);
 			// 初始化滚动拉取历史消息
 			_initHistoryPuller();
+			// 客服会话接起时不再显示欢迎语追问
+			if(officialAccount.agentType == 6){
+				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_ALREADY_CREATED, [officialAccount]);
+			}
+			else{
+				// eventListener.excuteCallbacks(_const.SYSTEM_EVENT.STOP_TIMEOUT, [officialAccount]);
+			}
 			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);
 		}, function(err){
 			if(err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
@@ -167,20 +174,20 @@ module.exports = function(opt){
 			noMoreHistoryMessage = length < _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME || nextMsgSeq <= 0;
 			noMoreHistoryMessage && utils.removeClass(noMoreMsg, "hide");
 			// var closDate = []
-			//存储满意度评价时效的结束时间
+			// 存储满意度评价时效的结束时间
 			_.each(msgList, function(itm){
 				if(itm.body.ext.weichat.event){
-					if(itm.body.ext.weichat.event.eventName === "ServiceSessionClosedEvent" || 
-					itm.body.ext.weichat.event.eventName === "ServiceSessionAbortedEvent" ){
+					if(itm.body.ext.weichat.event.eventName === "ServiceSessionClosedEvent" ||
+					itm.body.ext.weichat.event.eventName === "ServiceSessionAbortedEvent"){
 						var obj = {
-							id:itm.body.ext.weichat.service_session.serviceSessionId,
-							timp:itm.body.timestamp
-						}
-						closDate.push(obj)
+							id: itm.body.ext.weichat.service_session.serviceSessionId,
+							timp: itm.body.timestamp
+						};
+						closDate.push(obj);
 					}
 				}
 			});
-			utils.setStore("closDate",JSON.stringify(closDate));
+			utils.setStore("closDate", JSON.stringify(closDate));
 			_.each(msgList, channel.handleHistoryMsg);
 			typeof callback === "function" && callback();
 		});
@@ -232,7 +239,7 @@ module.exports = function(opt){
 		var listEle =  $(".em-widget-left");
 		var scroBox = $(".chat-wrapper")[0];
 		var top = scroBox.scrollTop;
-		var divEl = $(listEle[listEle.length -1]).find(".em-widget-msg-wrapper");
+		var divEl = $(listEle[listEle.length - 1]).find(".em-widget-msg-wrapper");
 		var color;
 		var config = commonConfig.getConfig();
 		var themeName = config.ui.themeName;
@@ -249,12 +256,12 @@ module.exports = function(opt){
 			color = hoverColor;
 		}
 		var aEl = $(".em-widget-left .msgtype-txt a");
-		for(var i=0;i<aEl.length;i++){
+		for(var i = 0; i < aEl.length; i++){
 			aEl[i].style.color = color;
 		}
 		var elHeight = $(divEl).outerHeight() - 150;
 		if($(divEl).hasClass("msgtype-skillgroupMenu") || $(divEl).hasClass("msgtype-robotList")){
-			$(scroBox).scrollTop(top - elHeight)
+			$(scroBox).scrollTop(top - elHeight);
 		}
 	}
 
