@@ -48,28 +48,28 @@ module.exports = function(data,isOpen){
 
 
 
-	// $(".em-widget-send-wrapper-top>.swiper-container>.swiper-wrapper .swiper-slide").hover(function(){
-	// 	var hoverColor = $("body."+ themeClassName +" .border-color").css("borderColor")
-	// 	hoverColor = hoverColor?hoverColor:"#42b8f4";
-	// 	if($(this).hasClass("em-widget-exit-video")){
-	// 		return false
-	// 	}
-	// 	if(color){
-	// 		$(this).css("color",color)
-	// 		$(this).css("borderColor",color)
-	// 	}
-	// 	else{
-	// 		$(this).css("color",hoverColor)
-	// 		$(this).css("borderColor",hoverColor)
-	// 	}
+	$(".em-widget-send-wrapper-top>.swiper-container>.swiper-wrapper .swiper-slide").hover(function(){
+		var hoverColor = $("body."+ themeClassName +" .border-color").css("borderColor")
+		hoverColor = hoverColor?hoverColor:"#42b8f4";
+		if($(this).hasClass("em-widget-exit-video")){
+			return false
+		}
+		if(color){
+			$(this).css("color",color)
+			$(this).css("borderColor",color)
+		}
+		else{
+			$(this).css("color",hoverColor)
+			$(this).css("borderColor",hoverColor)
+		}
 
-	// },function(){
-	// 	if($(this).hasClass("em-widget-exit-video")){
-	// 		return false
-	// 	}
-	// 	$(this).css("color","#566477")
-	// 	$(this).css("borderColor","#E6E6E6")
-	// })
+	},function(){
+		if($(this).hasClass("em-widget-exit-video")){
+			return false
+		}
+		$(this).css("color","#566477")
+		$(this).css("borderColor","#E6E6E6")
+	})
 
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideTransferToKefuBtn);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_TRANSFERING, _displayOrHideTransferToKefuBtn);
