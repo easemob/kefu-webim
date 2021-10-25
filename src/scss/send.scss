@@ -21,7 +21,9 @@
 		top: -26px;
 		color: rgb(76, 76, 76);
 		background-color: rgba(223, 233, 252, .7);
-		// top: 50%;
+		position: relative;
+		padding-left: 15px;
+		top: -37px;
 	}
 	//猜你想说
 	.guess-area{
@@ -197,6 +199,7 @@
 	position: absolute;
 	top: -35px;
 	background-color: rgba(255,255,255,0);
+	top: -10px;
 	// margin-bottom: 5px;
 	.swiper-button-prev.swiper-button-black{
 		opacity: 0.6;
