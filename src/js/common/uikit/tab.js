@@ -76,9 +76,13 @@ Tab.prototype.selectTab = function($tab, silent){
 	}
 	this.clearSelected();
 	$tab.addClass("selected");
-	$tab.find("span").addClass("border-color fg-color");
+	// $tab.find("li")["context"].addClass("border-color");
+	var elActive = $tab.find("li")["context"];
+	if(elActive){
+		$(elActive).addClass("border-color");
+	}
 	if(this.fgColor){
-		$tab.find("span").css("cssText","border-color: " + this.fgColor + " !important ; color: " + this.fgColor + " !important");
+		$tab.find("li").css("cssText","border-color: " + this.fgColor + " !important ; color: " + this.fgColor + " !important");
 	}
 	
 	this.bodies[sign].removeClass("hide");

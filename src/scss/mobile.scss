@@ -158,19 +158,23 @@
 		font-size: 1rem;
 	}
 	.em-widget-header {
-		height: 40px;
-    	line-height: 40px;
+		height: 60px;
+		line-height: 60px;
 		font-size: 1.1rem;
 		border-radius: 0;
 		box-shadow: none;
 		.em-agent-face{
-			width: 30px;
-			height: 30px;
-			display:none;
+			width: 40px !important;
+			height: 40px !important;
+			// display:none;
+		}
+		.btn-keyboard:before{
+			font-size: 30px;
 		}
 	}
 	.em-widget-content-box{
-		top: 40px;
+		top: 60px;
+		background-color: #fff;
 	}
 	
 	.em-btn-list button {
@@ -246,6 +250,7 @@
 		padding: 0;
 		bottom: 44px;
 		.emoji-container {
+			background-color: #eee;
 			.line-container {
 				.emoji-bg {
 					width: 10%;
@@ -286,7 +291,7 @@
 		padding: 0px 0px 15px 0;
 		padding-bottom: unquote('max(3px, env(safe-area-inset-bottom))');//iOS 底下圆弧的高度
 		box-sizing: border-box;
-		background-color: #fbfbfb;
+		background-color: #eee;
 		border-right: none;
 		.queuing-number-status{
 			font-size:1.2rem;
@@ -297,6 +302,7 @@
 		.toolbar-mobile{ 
 			height: 205px;
 			padding: 0 5px;
+			background-color: #eee;
 			.swiper-pagination{
 				height: 5%;
 				width: 100%;
@@ -342,7 +348,7 @@
 							display: flex;
 							align-items: center;
 							justify-content: space-around;
-							background: #fff;
+							background: #eee;
 							margin: 0 auto;
 							border-radius: 4px;
 							>img{
@@ -360,13 +366,14 @@
 			width:100%;
 			display:flex;
 			align-items:center;
+			background-color: #eee;
 			// height: 40px;
 			.em-bar-emoji{
 				position: absolute;
 				right: 40px;
 				top:13px;
 				&:before{
-					font-size:35px;
+					font-size:28px;
 				}
 			}
 		}
@@ -418,7 +425,7 @@
 			top:13px;
 			right:0px;
 			i:before{
-				font-size:35px;
+				font-size:28px;
 			}
 		}
 	}

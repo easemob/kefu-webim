@@ -12,21 +12,42 @@ var Selector = require("../pages/main/uikit/selector");
 var isSending = false;
 
 var dom = utils.createElementFromHTML([
-	"<div class=\"em-dialog ticket\">",
+	"<div class=\"em-dialog ticket satisfaction \">",
 	"<div class=\"wrapper\">",
+	"<div class=\"wrapper-title\">" + __("ticket.note_title") + " <i class=\"icon-close\"></i></div>",
 	"<h3>" + __("ticket.title") + "</h3>",
-	"<input type=\"text\" class=\"name\" placeholder=\"" + __("ticket.name") + "\">",
-	"<input type=\"text\" class=\"phone\" placeholder=\"" + __("ticket.phone_number") + "\">",
+	"<input type=\"text\" class=\"name\" placeholder=\"" + __("ticket.name") + "\"> <span class=\"font-red\">*</span>",
+	"<input type=\"text\" class=\"phone\" placeholder=\"" + __("ticket.phone_number") + "\"> <span class=\"font-red\">*</span>",
 	"<input type=\"text\" class=\"mail\" placeholder=\"" + __("ticket.email") + "\">",
 	"<div class=\"note-category hide\"></div>",
-	"<textarea spellcheck=\"false\" placeholder=\"" + __("ticket.content_placeholder") + "\"></textarea>",
+	"<textarea spellcheck=\"false\" placeholder=\"" + __("ticket.content_placeholder") + "\"></textarea><span class=\"font-red-text\">*</span>",
+	"<div class=\"cancel\">" + __("common.cancel") + "</div>",
+	"<div class=\"confirm bg-color\">"+ __("common.ticket") +"</div>",
 	"</div>",
-	"<div class=\"footer\">",
-	"<button class=\"cancel-btn\">" + __("common.cancel") + "</button>",
-	"<button class=\"confirm-btn bg-color\">" + __("common.ticket") + "</button>",
-	"</div>",
+	// "<div class=\"footer\">",
+	// "<button class=\"cancel-btn\">" + __("common.cancel") + "</button>",
+	// "<button class=\"confirm-btn bg-color\">" + __("common.ticket") + "</button>",
+	// "</div>",
 	"</div>"
 ].join(""));
+
+if(utils.isMobile || ($("body",parent.document).hasClass("window-demo") && !$("#em-kefu-webim-self").hasClass("hide"))){
+	var dom = utils.createElementFromHTML([
+		"<div  class=\"em-dialog note\">",
+		"<div class=\"wrapper\">",
+		"<div class=\"wrapper-title bg-color\">" + __("ticket.note_title") + " <i class=\"icon-back-new\"></i></div>",
+		"<h3>" + __("ticket.title") + "</h3>",
+		"<input type=\"text\" class=\"name\" placeholder=\"" + __("ticket.name") + "\"> <span class=\"font-red\">*</span>",
+		"<input type=\"text\" class=\"phone\" placeholder=\"" + __("ticket.phone_number") + "\"> <span class=\"font-red\">*</span>",
+		"<input type=\"text\" class=\"mail\" placeholder=\"" + __("ticket.email") + "\">",
+		"<div class=\"note-category hide\"></div>",
+		"<textarea spellcheck=\"false\" placeholder=\"" + __("ticket.content_placeholder") + "\"></textarea><span class=\"font-red-text\">*</span>",
+		"<div class=\"cancel\">" + __("common.cancel") + "</div>",
+		"<div class=\"confirm bg-color\">"+ __("common.ticket") +"</div>",
+		"</div>",
+		"</div>"
+	].join(""));
+}
 document.body.appendChild(dom);
 
 var content = document.querySelector("textarea");
@@ -38,8 +59,10 @@ var noteCategoryList = new Selector({
 	list: [],
 	container: noteCategory,
 });
-var cancelBtn = document.querySelector(".cancel-btn");
-var confirmBtn = document.querySelector(".confirm-btn");
+// var cancelBtn = document.querySelector(".cancel-btn");
+// var confirmBtn = document.querySelector(".confirm-btn");
+var cancelBtn = document.querySelector(".cancel");
+var confirmBtn = document.querySelector(".confirm");
 // url 传递的参数
 var config = getNoteConfig().config || {};
 api.update(config);
@@ -199,5 +222,11 @@ utils.on(confirmBtn, "click", function(){
 
 // 取消
 utils.on(cancelBtn, "click", function(){
+	window.parent.postMessage({ closeNote: true }, "*");
+});
+utils.live(".wrapper-title .icon-close","click",function(){
+	window.parent.postMessage({ closeNote: true }, "*");
+});
+utils.live(".wrapper-title .icon-back-new","click",function(){
 	window.parent.postMessage({ closeNote: true }, "*");
 });

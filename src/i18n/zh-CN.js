@@ -89,7 +89,8 @@ module.exports = {
 		level5:"非常满意",
 		submit_evaluation:"提交评价",
 		no_evaluation:"暂不评价",
-		WEBIM_OTHER: "其他错误"
+		WEBIM_OTHER: "其他错误",
+		title: "服务评价",
 	},
 	ticket: {
 		title: "请填写以下内容以方便我们及时联系您",
@@ -105,6 +106,7 @@ module.exports = {
 		send_success: "留言发送成功",
 		send_failed_retry: "留言失败，请稍后重试",
 		send_failed_invalid_token: "留言失败，token无效",
+		note_title: "留言",
 	},
 	video: {
 		waiting: "等待中",

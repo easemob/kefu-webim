@@ -99,7 +99,7 @@ function reset(){
 	setStatusText(__("video.waiting"));
 	// 移除取消通话按钮
 	var editor = document.querySelector(".toolbar");
-	var ele = document.querySelector(".em-widget-exit-video");
+	var ele = document.querySelector(".visitor-invite-video-confirms");
 	if(ele){
 		$(ele).addClass("hide");
 	}

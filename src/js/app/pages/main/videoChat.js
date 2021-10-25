@@ -33,7 +33,7 @@ var videoWidget;
 var dispatcher;
 
 var config;
-var dialog, agentInviteDialog;
+var dialog, agentInviteDialog, visitorDialog;
 var timerBarDom, timerLabel;
 var service;
 var inviteByVisitor = false; //访客邀请的
@@ -137,17 +137,38 @@ function _init(){
 		className: "rtc-video-confirm",
 	}).addButton({ confirm: _onConfirm });
 
+	var $agentNickname = document.querySelector(".em-widget-header-nickname").innerText;
+	var $agentFace = document.querySelector(".em-agent-face").src;
 	agentInviteDialog = uikit.createDialog({
 		contentDom: [
 			"<div>",
+			"<p class=\"title\">视频通话</p>",
 			"<p class=\"time\"><p>",
-			"<i class=\"icon-answer\"></i><span class=\"prompt\">",
-			__("video.confirm_prompt_agent"),
-			"</span>",
+			"<p> <img src=\"img"+ $agentFace +"\" class=\"\"/> </p>",
+			"<p class=\"nickname\">"+ $agentNickname +"</p>",
+			"<p class=\"title\">"+ __("video.confirm_prompt_agent")+"</p>",
+			// "<div class=\"foot\"> <svg class=\"icon svg-icon\" aria-hidden=\"true\"><use xlink:href=\"#newim-a-anwser1x\"></use> </svg></div>",
+			"<div class=\"foot\"> <div class=\"button\"><i class=\"icon-answer\"></i> <span>接听</span></div> <div class=\"button\"><i class=\"icon-huang\"></i> <span>拒绝</span></div> </div>",
 			"</div>"
 		].join(""),
 		className: "agent-invite-video-confirm",
-	}).addButton({ confirmText: __("common.accept"), cancelText: __("common.refuse"), confirm: _onAgentInviteConfirm, cancel: _onAgentInviteCancel });
+	})
+	// .addButton({ confirmText: __("common.accept"), cancelText: __("common.refuse"), confirm: _onAgentInviteConfirm, cancel: _onAgentInviteCancel });
+
+	utils.live(".icon-answer","click",_onAgentInviteConfirm);
+	utils.live(".icon-huang","click",_onAgentInviteCancel);
+
+	// agentInviteDialog = uikit.createDialog({
+	// 	contentDom: [
+	// 		"<div>",
+	// 		"<p class=\"time\"><p>",
+	// 		"<i class=\"icon-answer\"></i><span class=\"prompt\">",
+	// 		__("video.confirm_prompt_agent"),
+	// 		"</span>",
+	// 		"</div>"
+	// 	].join(""),
+	// 	className: "agent-invite-video-confirm",
+	// }).addButton({ confirmText: __("common.accept"), cancelText: __("common.refuse"), confirm: _onAgentInviteConfirm, cancel: _onAgentInviteCancel });
 
 	timerBarDom = agentInviteDialog.el.querySelector(".time");
 	timerLabel = new TimerLabel(timerBarDom);
@@ -161,6 +182,7 @@ function _init(){
 				statusBar.startTimer();
 				statusBar.setStatusText(__("video.connecting"));
 				_pushStream();
+				visitorDialog && visitorDialog.hide();
 			}, function(evt){
 				service.exit();
 				throw new Error("failed to join conference: " + evt.message());
@@ -176,7 +198,6 @@ function _init(){
 		service: service,
 		dispatcher: dispatcher,
 	});
-	$(".em-widget-exit-video").on("click",_onConfirmExitvideo);
 }
 
 function startTimer(){
@@ -294,17 +315,37 @@ function _onConfirm(){
 	// editor.appendChild(el);
 	// var el = utils.createElementFromHTML("<div class=\"swiper-slide em-widget-exit-video\">取消视频通话</div>");
 
+	var $agentNickname = document.querySelector(".em-widget-header-nickname").innerText;
+	var $agentFace = document.querySelector(".em-agent-face").src;
+	visitorDialog = uikit.createDialog({
+		contentDom: [
+			"<div>",
+			"<p class=\"title\">视频通话</p>",
+			"<p class=\"time\"><p>",
+			"<p> <img src=\"img"+ $agentFace +"\" class=\"\"/> </p>",
+			"<p class=\"nickname\">"+ $agentNickname +"</p>",
+			"<p class=\"title\">"+ __("video.confirm_prompt_agent")+"</p>",
+			// "<div class=\"foot\"> <svg class=\"icon svg-icon\" aria-hidden=\"true\"><use xlink:href=\"#newim-a-anwser1x\"></use> </svg></div>",
+			"<div class=\"foot\">  <div class=\"button\"><i class=\"icon-huang\"></i> <span>拒绝</span></div> </div>",
+			"</div>"
+		].join(""),
+		className: "visitor-invite-video-confirm",
+	})
+	visitorDialog.show();
+	$(".visitor-invite-video-confirm .icon-huang").on("click",_onConfirmExitvideo);
 }
 
 function _onAgentInviteConfirm(){
 	timerLabel.stop();
 	statusBar.show();
 	statusBar.accept();
+	agentInviteDialog.hide();
 }
 
 function _onAgentInviteCancel(){
 	timerLabel.stop();
 	statusBar.end();
+	agentInviteDialog.hide();
 }
 
 function _onConfirmExitvideo(){
@@ -333,6 +374,7 @@ function _onConfirmExitvideo(){
 					},
 				},
 			});
+			visitorDialog.hide();
 			// // 取消通话移除按钮
 			// var editor = document.querySelector(".toolbar");
 			// var ele = document.querySelector(".em-widget-exit-video");

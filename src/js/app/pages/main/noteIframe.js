@@ -48,7 +48,17 @@ function Iframe(config){
 	iframe.id = id;
 	iframe.className = className;
 	iframe.allow = "microphone; camera";
-	this.noteWrapper = document.querySelector(".em-kefu-webim-note");
+	if(utils.isMobile){
+		this.noteWrapper = document.querySelector(".em-kefu-webim-note-mobile");
+	}
+	else{
+		if($("body").hasClass("window-demo") && $("#em-kefu-webim-self").hasClass("hide")){
+			this.noteWrapper = document.querySelector(".em-kefu-webim-note-mobile");
+		}
+		else{
+			this.noteWrapper = document.querySelector(".em-kefu-webim-note");
+		}
+	}
 	this.noteWrapper.appendChild(iframe);
 
 	this.iframe = iframe;

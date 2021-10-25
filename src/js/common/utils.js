@@ -110,8 +110,36 @@ function _appendHtmlToElement(element, html){
 	element.appendChild(documentFragment);
 	return el;
 }
+function _changeToRgb(color){
+	var reg  = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
+	var sColor = color.toLowerCase();
+	if (sColor && reg.test(sColor)) {
+		if (sColor.length === 4) {
+			var sColorNew = "#";
+			for (var i = 1; i < 4; i += 1) {
+				sColorNew += sColor.slice(i, i + 1).concat(sColor.slice(i, i + 1));
+			}
+			sColor = sColorNew;
+		}
+		//处理六位的颜色值
+		var sColorChange = [];
+		for (var i = 1; i < 6; i += 2) {
+			sColorChange.push(parseInt("0x" + sColor.slice(i, i + 2)));
+		}
+		//此处是返回的颜色 如需要透明度,0.3是指透明度30%&#xff0c;直接返回
+		//"rgba(" + sColorChange.join(",") + "0.3)";
+		return "rgba(" + sColorChange.join(",") + ",0.15)";
+	} 
+	else if(sColor.indexOf("rgb") != -1){
+		return "rgba" + sColor.split("rgb")[1].split(")")[0] + ",0.15)";
+	}
+	else {
+		return sColor;
+	}
+}
 
 module.exports = {
+	changeToRgb:_changeToRgb,		
 	isTop: window.top === window.self,
 	isNodeList: _isNodeList,
 	isAndroid: /android/i.test(navigator.userAgent),

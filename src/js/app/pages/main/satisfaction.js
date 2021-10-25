@@ -42,11 +42,17 @@ function _init(){
 	// 自定义主题色
 	var config = commonConfig.getConfig();
 	var themeName = config.ui.themeName;
+	var themeClassName;
 	if(themeName && themeName.indexOf("theme_custom") > -1){
 		var arr = themeName.split("theme_custom");
 		var color = arr[1];
 	}
-
+	else{
+		themeClassName = _const.themeMap[config.themeName];
+	}
+	color = !color? $("body." + themeClassName + " .border-color").css("borderColor") : color;
+	var bgColor = color;
+	color = utils.changeToRgb(color);
 	loading.show("satisfaction");
 	//默认五星评价的开关
 	apiHelper.getDefaultFiveStarEnable()
@@ -56,6 +62,7 @@ function _init(){
 	apiHelper.getSatisfactionTipWord().then(function(tipWord){
 		dom = sessionResolved ? utils.createElementFromHTML([
 			"<div class=\"wrapper\">",
+			"<div class=\"wrapper-title\">" + __("evaluation.title") + "<i class=\"icon-close\"></i></div>",
 			"<div class=\"resolveCon\"><span class=\"title\">" + resolveTip + "</span>",
 			"<div><span class=\"resolve-btn selected bg-color resolved\" data-num = \"1\"><i class=\"icon-resolved\"></i><span>" + __("evaluation.resolved") + "</span></span>",
 			"<span class=\"resolve-btn unresolved\" data-num = \"2\"><i class=\"icon-unresolved\"></i><span>" + __("evaluation.unsolved") + "</span></span></div></div>",
@@ -64,8 +71,8 @@ function _init(){
 			"<div class=\"tip hide\"></div>",
 			"<div class=\"tag-container\"></div>",
 			"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
-			"<div class=\"confirm\">"+  __("evaluation.submit_evaluation")  +"</div>",
-			"<div class=\"cancel hide\">" + __("evaluation.no_evaluation") + "</div>",
+			"<div class=\"cancel hidden\">" + __("evaluation.no_evaluation") + "</div>",
+			"<div class=\"confirm bg-color\">"+  __("evaluation.submit_evaluation")  +"</div>",
 			"</div>"
 		].join(""))
 			:
@@ -77,6 +84,32 @@ function _init(){
 				"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
 				"</div>"
 			].join(""));
+		if(utils.isMobile || ($("body").hasClass("window-demo") && $("#em-kefu-webim-self").hasClass("hide"))){
+			dom = sessionResolved ? utils.createElementFromHTML([
+				"<div id=\"satisfaction-mobile\" class=\"wrapper\">",
+				"<div class=\"wrapper-title bg-color\">" + __("evaluation.title") + " <i class=\"icon-back-new\"></i></div>",
+				"<div class=\"resolveCon\"><span class=\"title\">" + resolveTip + "</span>",
+				"<div><span class=\"resolve-btn selected bg-color resolved\" data-num = \"1\"><i class=\"icon-resolved\"></i><span>" + __("evaluation.resolved") + "</span></span>",
+				"<span class=\"resolve-btn unresolved\" data-num = \"2\"><i class=\"icon-unresolved\"></i><span>" + __("evaluation.unsolved") + "</span></span></div></div>",
+				"<span class=\"title\">" + tipWord + "</span>",
+				"<ul></ul>",
+				"<div class=\"tip hide\"></div>",
+				"<div class=\"tag-container\"></div>",
+				"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
+				"<div class=\"cancel hidden\">" + __("evaluation.no_evaluation") + "</div>",
+				"<div class=\"confirm bg-color\">"+  __("evaluation.submit_evaluation")  +"</div>",
+				"</div>"
+			].join(""))
+				:
+				utils.createElementFromHTML([
+					"<div class=\"wrapper\">",
+					"<span class=\"title\">" + tipWord + "</span>",
+					"<ul></ul>",
+					"<div class=\"tag-container\"></div>",
+					"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
+					"</div>"
+				].join(""));
+		}
 		starsUl = dom.querySelector("ul");
 		commentDom = dom.querySelector("textarea");
 		tagContainer = dom.querySelector(".tag-container");
@@ -85,10 +118,14 @@ function _init(){
 
 		utils.live(".resolve-btn", "click", function(){
 			utils.removeClass(resolvedBtn, "selected bg-color");
+			$(".resolve-btn").css("cssText","background:none !important");
+			$(".resolve-btn i").css("cssText","color:#000"+  bgColor +"!important"); 
+			$(".resolve-btn span").css("cssText","color:#000"+  bgColor +"!important");  
 			utils.addClass(this, "selected bg-color");
 			if(color){
-				$(".resolve-btn").css("cssText","background-color: #fff !important"); 
-				$(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important");
+				$(".resolveCon .selected").css("cssText","background-color:"+  color +"!important"); 
+				$(".resolveCon .selected i").css("cssText","color:"+  bgColor +"!important"); 
+				$(".resolveCon .selected span").css("cssText","color:"+  bgColor +"!important"); 
 			}
 			resolvedId = this.dataset.num;
 			if(fiveStarState){
@@ -136,11 +173,27 @@ function _init(){
 		utils.live(".cancel","click",function(){
 			dialog && dialog.hide();
 		});
-
-		dialog = uikit.createDialog({
-			contentDom: dom,
-			className: "satisfaction"
+		utils.live(".icon-back-new","click",function(){
+			dialog && dialog.hide();
 		});
+		utils.live(".wrapper-title .icon-close","click",function(){
+			dialog && dialog.hide();
+		});
+
+		if(utils.isMobile || ($("body").hasClass("window-demo") && $("#em-kefu-webim-self").hasClass("hide"))){
+			dialog = uikit.createDialog({
+				isFullSreen: true,
+				contentDom: dom,
+				className: "satisfaction"
+			});
+		}
+		else{
+			dialog = uikit.createDialog({
+				isFullSreen: false,
+				contentDom: dom,
+				className: "satisfaction"
+			});
+		}
 		// dialog = uikit.createDialog({
 		// 	contentDom: dom,
 		// 	className: "satisfaction"
@@ -151,19 +204,30 @@ function _init(){
 		loading.hide("satisfaction");
 		dialog.show();
 
+		if(!$(document.querySelector(".em-self-wrapper")).hasClass("hide")){
+			dialog.el.style.cssText='left:10px;top:10px;';
+		}
+		else{
+			dialog.el.style.cssText='left:0;top:0;';
+		}
 		// 火狐浏览器 _setSatisfaction时找不到starsUl，所以必须先执行完init
 		_setSatisfaction();
 
 		// 自定义主题色
 		color && $(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important");
 		if($("body").hasClass("window-demo")){
-			$(".wrapper > .cancel").addClass("hide");
+			// $(".wrapper > .cancel").addClass("hidden");
 		}
 		else{
-			$(".wrapper > .cancel").removeClass("hide");
+			// $(".wrapper > .cancel").removeClass("hidden");
 			if(!utils.isMobile){
 				$(".satisfaction >.wrapper").addClass("wrapperTpo");
 			}
+		}
+		if(color){
+			$(".resolveCon .selected").css("cssText","background-color:"+  color +"!important"); 
+			$(".resolveCon .selected i").css("cssText","color:"+  bgColor +"!important"); 
+			$(".resolveCon .selected span").css("cssText","color:"+  bgColor +"!important"); 
 		}
 	});
 }
@@ -228,12 +292,13 @@ function _setSatisfaction(){
 			lastScore = score;
 			lastEvaluationDegreeId = id;
 			 
-			return "<li data-level=\"" + level
+			return "<li  data-level=\"" + level
 				+ "\" title=\"" + name
 				+ "\" data-evaluate-id=\"" + id
 				+ "\" data-score=\"" + score
 				+ "\" data-isSingleTag=\"" + isSingleTag
-				+ "\">H</li>";
+				+ "\" class=\"" + "icon-start"
+				+ "\"></li>";
 		})
 		.value()
 		.join("");
@@ -318,6 +383,7 @@ function _confirm(){
 				}
 			}, 2000);
 			_clear();
+			dialog && dialog.hide();
 		}
 		else{	
 			if(resp.errorCode == "WEBIM_338"){
@@ -325,6 +391,7 @@ function _confirm(){
 			}else{
 				uikit.tip(__("evaluation.WEBIM_OTHER"));
 			}
+			dialog && dialog.hide();
 		}
 	});
 
@@ -351,9 +418,13 @@ function show(inviteId, serviceSessionId, evaluateWay){
 	].join(""))
 	$(".em-widget-content-box").append(mask)
 	if(evaluateType === "system"){
-		$(".cancel").removeClass("hide");
+		$(".cancel").removeClass("hidden");
+	}
+	else{
+		$(".cancel").addClass("hidden");
 	}
 	dialog && dialog.show();
+
 }
 
 function _setDefaultScore(){ 

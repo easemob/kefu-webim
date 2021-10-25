@@ -1359,6 +1359,7 @@ function _initSatisfactionButton(){
 }
 
 function _displayOrHideSatisfactionBtn(officialAccount){
+	console.log(officialAccount, "监听事件+++++")
 	// 忽略非当前服务号的事件
 	if(profile.currentOfficialAccount !== officialAccount) return;
 
