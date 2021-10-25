@@ -100,7 +100,9 @@ function _update(waitingNumber){
 	if(!waitingNumber || waitingNumber === "no"){
 		utils.addClass($queuingNumberStatus, "hide");
 		$(logo).css("marginTop","30px")
+		// 改变button的top todo
 		eventListener.trigger("swiper.update");
+		$(".em-widget-send-wrapper-top").css("top","-40px");
 	}
 	else{
 		utils.removeClass($queuingNumberStatus, "hide");
@@ -108,5 +110,6 @@ function _update(waitingNumber){
 		// document.querySelector(".em-widget-out-of-line")
 		$(logo).css("marginTop","5px")
 		eventListener.trigger("swiper.update");
+		$(".em-widget-send-wrapper-top").css("top","-13px");
 	}
 }

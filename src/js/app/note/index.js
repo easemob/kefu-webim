@@ -20,7 +20,7 @@ var dom = utils.createElementFromHTML([
 	"<input type=\"text\" class=\"phone\" placeholder=\"" + __("ticket.phone_number") + "\"> <span class=\"font-red\">*</span>",
 	"<input type=\"text\" class=\"mail\" placeholder=\"" + __("ticket.email") + "\">",
 	"<div class=\"note-category hide\"></div>",
-	"<textarea spellcheck=\"false\" placeholder=\"" + __("ticket.content_placeholder") + "\"></textarea><span class=\"font-red-text\">*</span>",
+	"<textarea spellcheck=\"false\" placeholder=\"" + __("ticket.content_placeholder") + "\"></textarea>",
 	"<div class=\"cancel\">" + __("common.cancel") + "</div>",
 	"<div class=\"confirm bg-color\">"+ __("common.ticket") +"</div>",
 	"</div>",
