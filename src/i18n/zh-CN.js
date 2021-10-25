@@ -31,6 +31,7 @@ module.exports = {
 		allow:"允许",
 		refuse:"拒绝",
 		accept:"接受",
+		Hangup:"挂断",
 		self_service:"自助服务"
 	},
 	chat: {
@@ -113,7 +114,8 @@ module.exports = {
 		me: "我",
 		video_ended: "视频已结束",
 		confirm_prompt: "您要邀请客服为您进行实时视频服务么？点击确认发送邀请，等待客服接受后即可体验实时视频服务。",
-		confirm_prompt_agent: "客服邀请您进入视频通话", 
+		confirm_prompt_agent: "客服邀请您进入视频通话 ", 
+		confirm_prompt_visitor:"您正邀请客服进行视频通话",
 		invite_agent_video: "邀请客服进行实时视频",
 		invite_exit_video: "访客取消实时视频",
 		connecting: "视频通话中",

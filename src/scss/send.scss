@@ -100,7 +100,7 @@
 	.toolbar {
 		height: 36px;
 		padding: 0 5px;
-		// border-top: 1px solid #f3f3f3;
+		border-top: 1px solid #f3f3f3;
 		// background: rgba(251,251,251, 0.5);
 		.screenshot{
 			margin-left: 2px;
@@ -197,9 +197,8 @@
 	// padding: 10px 30px;
 	padding: 3px 0px;
 	position: absolute;
-	top: -35px;
+	top: -40px;
 	background-color: rgba(255,255,255,0);
-	top: -10px;
 	// margin-bottom: 5px;
 	.swiper-button-prev.swiper-button-black{
 		opacity: 0.6;

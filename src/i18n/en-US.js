@@ -30,6 +30,7 @@ module.exports = {
 		camera_permissions:"The program needs to access your gallery and use camera permissions. Do you want to allow it?",
 		allow:"Allow",
 		refuse:"Refuse",
+		Hangup:"Hang up",
 		accept:"Accept",
 		self_service:"Self service"
 	},
@@ -114,6 +115,7 @@ module.exports = {
 		video_ended: "Video call ended",
 		confirm_prompt: "Invite the agent to a video call? Send the invite and wait for the agent to join the video call.",
 		confirm_prompt_agent: "The agent invite you to enter the video call",
+		confirm_prompt_visitor:"You are inviting customer service for a video call",
 		invite_agent_video: "Invite the agent to a video call",
 		// 这个文案待确认
 		connecting: "Recording",

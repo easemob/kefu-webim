@@ -272,6 +272,12 @@
 				top: -36px;
 				color: red;
 			}
+			.font-red-text{
+				position: relative;
+				right: -90%;
+				top: -100px;
+				color: red;
+			}
 			.hidden{
 				visibility: hidden;
 			}
@@ -717,7 +723,7 @@
 		height: auto;
 		padding: 20px 10px 15px;
 		margin: auto;
-		top: calc(40% - 80px);
+		top: calc(30% - 80px);
 		bottom: auto;
 		left: 0;
 		right: 0;
