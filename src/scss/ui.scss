@@ -274,8 +274,8 @@
 			}
 			.font-red-text{
 				position: relative;
-				right: -90%;
-				top: -100px;
+				right: -390px;
+				top: -90px;
 				color: red;
 			}
 			.hidden{
@@ -470,7 +470,13 @@
 				font-size: 14px;
 				font-weight: normal;
 				width: 100%;
-				margin: 10px 26px;
+				margin: 0 26px;
+			}
+			.line{
+				margin: 0 auto;
+				width: 390px;
+				border: 1px solid #EDEDED;
+				margin-bottom: 17px;
 			}
 			input,
 			textarea {
@@ -479,6 +485,9 @@
 				padding: 10px;
 				width: 360px;
 				box-sizing: border-box;
+			}
+			textarea{
+				margin-top: 15px;
 			}
 			h3 {
 				margin: 0 26px;
@@ -556,7 +565,7 @@
 				font-size: 14px;
 				font-weight: normal;
 				width: 75%;
-				margin: 10px auto;
+				margin: 0 auto;
 			}
 			input,
 			textarea {
@@ -568,9 +577,13 @@
 			}
 			h3 {
 				margin-top: 15px;
+				margin-bottom: 15px;
 			}
 			input {
 				height: 36px;
+			}
+			textarea{
+				margin-top: 15px;
 			}
 			.note-category {
 				font-size: 14px;
@@ -594,7 +607,7 @@
 			.font-red-text{
 				position: relative;
 				right: -90%;
-				top: -100px;
+				top: -90px;
 				color: red;
 			}
 			.wrapper-title{
@@ -1109,11 +1122,10 @@
 }
 #demo-wrapper{
 	.wrapper {
-		// width: 95%;
-		// max-width: 400px;
 		width: 100%;
-		margin: auto;
+		height:100%;
 		margin-top: 0;
+		padding: 0;
 		h3,
 		p,
 		input,
@@ -1121,20 +1133,29 @@
 			display: block;
 			font-size: 14px;
 			font-weight: normal;
-			width: 100%;
-			margin: 10px 26px;
+			width: 75%;
+			margin: 0 26px;
+			margin: auto;
 		}
 		input,
 		textarea {
 			border: 1px solid #D8D9DA;
 			border-radius: 4px;
 			padding: 10px;
-			width: 360px;
+			width: 75%;
 			box-sizing: border-box;
 		}
-		h3 {
-			margin: 0 26px;
+		textarea{
 			margin-top: 15px;
+		}
+		.line{
+			margin: 0 auto;
+			width: 75%;
+			border: 1px solid #EDEDED;
+			margin-bottom: 17px;
+		}
+		h3 {
+			margin: 15px 26px;
 		}
 		input {
 			height: 36px;
@@ -1152,7 +1173,18 @@
 			height: 36px;
 			cursor: pointer;
 		}
-
+		.font-red{
+			position: relative;
+			right: -360px;
+			top: -36px;
+			color: red;
+		}
+		.font-red-text{
+			position: relative;
+			right: -360px;
+			top: -90px;
+			color: red;
+		}
 	}
 	.confirm{
 		// width: 40%;
@@ -1168,7 +1200,7 @@
 		margin: 10px auto;
 		text-align: center;
 		cursor: pointer;
-		display: inline-block;
+		display: block;
 	}
 	.cancel{
 		background-color: #fff;
@@ -1184,9 +1216,9 @@
 		margin: 10px auto;
 		text-align: center;
 		cursor: pointer;
-		display: inline-block;
-		margin-left: 150px;
-		margin-right: 15px;
+		display: block;
+		// margin-left: 150px;
+		// margin-right: 15px;
 	}
 	.footer{
 		max-width: 400px;
@@ -1351,7 +1383,7 @@
 				margin-top:10px;
 				box-sizing: border-box;
 				// border-bottom: 2px solid #fff;
-				color:#65758C;
+				// color:#65758C;
 			}
 			&:last-of-type {
 				border: 0;
@@ -1360,10 +1392,10 @@
 				border-top: 3px solid #2096FF;
 				font-weight: 600;
 				background-color: #fff;
-				>span{
-					border-color:#009BF2;
-					color:#009BF2;
-				}
+				// >span{
+				// 	border-color:#009BF2;
+				// 	color:#009BF2;
+				// }
 			}
 		}
 		>li[sign]{

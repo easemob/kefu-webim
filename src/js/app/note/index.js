@@ -20,18 +20,15 @@ var dom = utils.createElementFromHTML([
 	"<input type=\"text\" class=\"phone\" placeholder=\"" + __("ticket.phone_number") + "\"> <span class=\"font-red\">*</span>",
 	"<input type=\"text\" class=\"mail\" placeholder=\"" + __("ticket.email") + "\">",
 	"<div class=\"note-category hide\"></div>",
-	"<textarea spellcheck=\"false\" placeholder=\"" + __("ticket.content_placeholder") + "\"></textarea>",
+	"<textarea spellcheck=\"false\" placeholder=\"" + __("ticket.content_placeholder") + "\"></textarea><span class=\"font-red-text\">*</span>",
+	"<div class=\"line\"></div>",
 	"<div class=\"cancel\">" + __("common.cancel") + "</div>",
 	"<div class=\"confirm bg-color\">"+ __("common.ticket") +"</div>",
 	"</div>",
-	// "<div class=\"footer\">",
-	// "<button class=\"cancel-btn\">" + __("common.cancel") + "</button>",
-	// "<button class=\"confirm-btn bg-color\">" + __("common.ticket") + "</button>",
-	// "</div>",
 	"</div>"
 ].join(""));
 
-if(utils.isMobile || ($("body",parent.document).hasClass("window-demo") && !$("#em-kefu-webim-self").hasClass("hide"))){
+if(utils.isMobile  || ($("body",parent.document).hasClass("window-demo") && $("#em-kefu-webim-self",parent.document).hasClass("hide"))){
 	var dom = utils.createElementFromHTML([
 		"<div  class=\"em-dialog note\">",
 		"<div class=\"wrapper\">",
@@ -42,6 +39,25 @@ if(utils.isMobile || ($("body",parent.document).hasClass("window-demo") && !$("#
 		"<input type=\"text\" class=\"mail\" placeholder=\"" + __("ticket.email") + "\">",
 		"<div class=\"note-category hide\"></div>",
 		"<textarea spellcheck=\"false\" placeholder=\"" + __("ticket.content_placeholder") + "\"></textarea><span class=\"font-red-text\">*</span>",
+		"<div class=\"line\"></div>",
+		"<div class=\"cancel\">" + __("common.cancel") + "</div>",
+		"<div class=\"confirm bg-color\">"+ __("common.ticket") +"</div>",
+		"</div>",
+		"</div>"
+	].join(""));
+}
+else if($("body",parent.document).hasClass("window-demo") && !$("#em-kefu-webim-self",parent.document).hasClass("hide")){
+	var dom = utils.createElementFromHTML([
+		"<div id=\"demo-wrapper\" class=\"em-dialog ticket satisfaction \">",
+		"<div class=\"wrapper\">",
+		"<div class=\"wrapper-title\">" + __("ticket.note_title") + " <i class=\"icon-close\"></i></div>",
+		"<h3>" + __("ticket.title") + "</h3>",
+		"<input type=\"text\" class=\"name\" placeholder=\"" + __("ticket.name") + "\"> <span class=\"font-red\">*</span>",
+		"<input type=\"text\" class=\"phone\" placeholder=\"" + __("ticket.phone_number") + "\"> <span class=\"font-red\">*</span>",
+		"<input type=\"text\" class=\"mail\" placeholder=\"" + __("ticket.email") + "\">",
+		"<div class=\"note-category hide\"></div>",
+		"<textarea spellcheck=\"false\" placeholder=\"" + __("ticket.content_placeholder") + "\"></textarea><span class=\"font-red-text\">*</span>",
+		"<div class=\"line\"></div>",
 		"<div class=\"cancel\">" + __("common.cancel") + "</div>",
 		"<div class=\"confirm bg-color\">"+ __("common.ticket") +"</div>",
 		"</div>",

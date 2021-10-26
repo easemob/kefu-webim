@@ -82,11 +82,12 @@ function getConfigOption(configId){
 			var entity = utils.getDataByPath(msg, "data.entity");
 			resolve(entity);
 		}, function(err){
-			reject(err);
+			// reject(err);
+			console.log(err );
+			resolve(err);// 由于访客集成方式不一样，所以configId获取不到，做特殊处理
 		});
 	});
 }
-
 function getWechatComponentId(){
 	return new Promise(function(resolve, reject){
 		emajax({

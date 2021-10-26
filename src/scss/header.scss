@@ -50,6 +50,9 @@
 	position: relative;
 	padding-left: 10px;
 	color: white;
+	.icon-mobile-close{
+		margin-right: 15px;
+	}
 	.em-agent-face{
 		width: 40px;
 		height: 40px;
@@ -107,6 +110,7 @@
 
 	.btn-audio {
 		float: right;
+		margin-right: 15px;
 		&:before {
 			text-align: center;
 		}

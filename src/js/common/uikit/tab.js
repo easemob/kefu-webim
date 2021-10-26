@@ -76,6 +76,8 @@ Tab.prototype.selectTab = function($tab, silent){
 	}
 	this.clearSelected();
 	$tab.addClass("selected");
+	$(".ui-cmp-tab>ul>li").removeClass("fg-color");
+	$tab.addClass("fg-color");
 	// $tab.find("li")["context"].addClass("border-color");
 	var elActive = $tab.find("li")["context"];
 	if(elActive){

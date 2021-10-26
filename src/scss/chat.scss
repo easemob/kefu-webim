@@ -167,7 +167,8 @@
 		// color:#566477;
 		// color: #263C5C;
 		color: #595959;
-		border-radius: 0 8px 8px 8px;
+		// border-radius: 0 8px 8px 8px;
+		border-radius: 0px 12px 12px 12px;
 		&.no-bg{
 			background:none;
 			// overflow: hidden;
@@ -249,7 +250,8 @@
 		float: right;
 		margin-right: 8px;
 		background: #fff;
-		border-radius: 8px 0 8px 8px;
+		// border-radius: 8px 0 8px 8px;
+		border-radius: 12px 0 12px 12px;
 		&.no-bg{
 			background:none;
 			// overflow: hidden;
@@ -258,7 +260,8 @@
 			}
 		}
 		.em-widget-msg-img{
-			border-radius: 8px 0 8px 8px;
+			// border-radius: 8px 0 8px 8px;
+			border-radius: 12px 0 12px 12px;
 		}
 		
 		.icon-corner-right {
