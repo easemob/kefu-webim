@@ -6,6 +6,13 @@
   "description": "新版网页访客端icon",
   "glyphs": [
     {
+      "icon_id": "4658308",
+      "name": "icon-53",
+      "font_class": "select",
+      "unicode": "e648",
+      "unicode_decimal": 58952
+    },
+    {
       "icon_id": "363032",
       "name": "icon_60_triangle_left",
       "font_class": "pop-right",
