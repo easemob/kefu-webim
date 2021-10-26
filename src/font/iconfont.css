@@ -1,9 +1,9 @@
 @font-face {
   font-family: "newim"; /* Project id 2812636 */
-  src: url('iconfont.eot?t=1634890704648'); /* IE9 */
-  src: url('iconfont.eot?t=1634890704648#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('iconfont.woff?t=1634890704648') format('woff'),
-       url('iconfont.ttf?t=1634890704648') format('truetype');
+  src: url('iconfont.eot?t=1635246727009'); /* IE9 */
+  src: url('iconfont.eot?t=1635246727009#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('iconfont.woff?t=1635246727009') format('woff'),
+       url('iconfont.ttf?t=1635246727009') format('truetype');
 }
 
 .newim {
@@ -12,6 +12,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.newim-select:before {
+  content: "\e648";
 }
 
 .newim-pop-right:before {

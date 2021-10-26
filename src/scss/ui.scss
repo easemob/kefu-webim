@@ -502,12 +502,15 @@
 				margin: 10px 0;
 				position: relative;
 				display: block;
-			    width: 100%;
+			    // width: 100%;
 				border: 1px solid #D8D9DA;
 				border-radius: 4px;
 				box-sizing: border-box;
 				height: 36px;
 				cursor: pointer;
+				width: 360px;
+				margin: auto;
+				margin-top: 15px;
 			}
 
 		}
@@ -591,12 +594,15 @@
 				margin: 10px 0;
 				position: relative;
 				display: block;
-				width: 100%;
+				// width: 100%;
 				border: 1px solid #D8D9DA;
 				border-radius: 4px;
 				box-sizing: border-box;
 				height: 36px;
 				cursor: pointer;
+				width: 75%;
+				margin: auto;
+				margin-top: 15px;
 			}
 			.font-red{
 				position: relative;
@@ -1172,6 +1178,9 @@
 			box-sizing: border-box;
 			height: 36px;
 			cursor: pointer;
+			width: 75%;
+			margin: auto;
+			margin-top: 15px;
 		}
 		.font-red{
 			position: relative;
