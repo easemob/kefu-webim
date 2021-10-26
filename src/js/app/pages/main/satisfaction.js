@@ -224,37 +224,44 @@ function _sendSatisfaction(score, content, session, invite, appraiseTags, resolu
 	channel.sendText("", data);
 }
 
-function _setSatisfaction(){
-	apiHelper.getEvaluationDegrees().then(function(entities){
-		starsUl.innerHTML = _.chain(entities)
-		.sortBy("level")
-		.map(function(elem, index){
-			// stat level 1-based
-			var level = index + 1;
-			var name = elem.name;
-			var id = elem.id;
-			var score = elem.score;
-			var isSingleTag = elem.isSingleTag;
-			// 官微租户
-			if (_const.isGuanwei == 'Y') {
+function _setSatisfaction() {
+	apiHelper.getEvaluationDegrees().then(function(entities) {
+		// 官微租户
+		if (_const.isGuanwei == 'Y') {
+			// 更改排序，按照 downLevel 的升序排
+			var newEntities = entities.map(function(item) {
+				item.downLevel = -item.level
+				return item
+			})
+			starsUl.innerHTML = _.chain(newEntities).sortBy("downLevel").map(function(elem, index) {
+				var level = index + 1;
+				var name = elem.name;
+				var id = elem.id;
+				var score = elem.score;
+				var isSingleTag = elem.isSingleTag;
 				return "<li class=\"guan-wei\" data-level=\"" + level
 					+ "\" title=\"" + name
 					+ "\" data-evaluate-id=\"" + id
 					+ "\" data-score=\"" + score
 					+ "\" data-isSingleTag=\"" + isSingleTag
 					+ "\">" + name + "</li>";
-			} else {
+			}).value().join("");
+		} else {
+			starsUl.innerHTML = _.chain(entities).sortBy("level").map(function(elem, index) {
+				// stat level 1-based
+				var level = index + 1;
+				var name = elem.name;
+				var id = elem.id;
+				var score = elem.score;
+				var isSingleTag = elem.isSingleTag;
 				return "<li data-level=\"" + level
 					+ "\" title=\"" + name
 					+ "\" data-evaluate-id=\"" + id
 					+ "\" data-score=\"" + score
 					+ "\" data-isSingleTag=\"" + isSingleTag
 					+ "\">H</li>";
-			}
-		})
-		.value()
-		.join("");
-
+			}).value().join("");
+		}
 		starList = starsUl.querySelectorAll("li");
 	});
 }
