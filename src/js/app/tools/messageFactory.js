@@ -22,10 +22,9 @@ function genMsgContent(msg){
 	var answerId;
 	var relatedRuleIds;
 	// 储存坐席 id
-	if (!_const.agentUserId) {
-		var agentUserId = utils.getDataByPath(msg, "ext.weichat.service_session.agentUserId");
-		_const.agentUserId = agentUserId
-	}
+	var agentUserId = utils.getDataByPath(msg, "ext.weichat.service_session.agentUserId");
+	console.log('agentUserId', agentUserId)
+	_const.agentUserId = agentUserId
 
 	// // 针对默写特殊格式url不统一的，输出统一url
   // function _generateUrl(msg) {
