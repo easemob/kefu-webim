@@ -396,6 +396,7 @@ Message.video.prototype.set = function(opt){
 
 
 function _handleMessage(msg, options){
+	// console.log('_handleMessage 消息列表：', msg)
 	var opt = options || {};
 	var type = opt.type || (msg && msg.type);
 	var noPrompt = opt.noPrompt;

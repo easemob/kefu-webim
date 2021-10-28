@@ -10,6 +10,7 @@ var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easem
 
 // channel.js 放着消息列表的构建，是不对的
 function genMsgContent(msg){
+	console.log('genMsgContent', msg)
 	var type = msg.type;
 	var value = msg.data;
 	var laiye = msg.laiye;
@@ -20,6 +21,22 @@ function genMsgContent(msg){
 	var ruleId;
 	var answerId;
 	var relatedRuleIds;
+	// 储存坐席 id
+	if (!_const.agentUserId) {
+		var agentUserId = utils.getDataByPath(msg, "ext.weichat.service_session.agentUserId");
+		_const.agentUserId = agentUserId
+	}
+
+	// // 针对默写特殊格式url不统一的，输出统一url
+  // function _generateUrl(msg) {
+	// 	console.log('_generateUrl', msg)
+  //   if(msg.url.slice(0, 2) === '//' || msg.url.indexOf('http') > -1 || msg.url.indexOf('blob') > -1) {
+  //     // 对不同的格式的url进行特殊处理
+  //     return msg.url
+  //   } else {
+  //     return location.protocol + "//" + profile.config.restServer + msg.url
+  //   }
+  // }
 
 	switch(type){
 	case "txt":
@@ -52,6 +69,7 @@ function genMsgContent(msg){
 		if (msg.url && isHttps) {
 			msg.url = msg.url.replace('http:', 'https:')
 		}
+		console.log('img111', msg.url)
 		// todo: remove a
 		html = "<a href=\"javascript:;\"><img class=\"em-widget-imgview\" src=\""
 			+ msg.url + "\"/></a>";
@@ -61,6 +79,7 @@ function genMsgContent(msg){
 		if(msg.url && !/^https?/.test(msg.url)){
 			msg.url = location.protocol + commonConfig.getConfig().domain + msg.url;
 		}
+		console.log('customMagicEmoji', msg.url)
 		// todo: remove a
 		html = "<a href=\"javascript:;\"><img class=\"em-widget-imgview\" src=\""
 			+ msg.url + "\"/></a>";

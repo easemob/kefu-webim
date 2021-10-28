@@ -20,6 +20,7 @@ function _init(){
 
 module.exports = function(imgData){
 	var imgFile = imgData.imgFile;
+	console.log('imgFile：', imgFile)
 
 	if(!isInitialized){
 		_init();
@@ -32,5 +33,6 @@ module.exports = function(imgData){
 	else{
 		imgDom.src = imgData.imgSrc;
 	}
+	console.log('imgDom.src：', imgDom.src)
 	imgWrapper.style.display = "block";
 };
