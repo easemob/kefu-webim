@@ -21,7 +21,7 @@ var conn;
 var evaluateTime;
 var evaluateFlag = false;
 // var isPullHistory = false;
-
+var activeAnswerTimeout;
 
 // 监听ack的timer, 每条消息启动一个
 var ackTimerDict = new Dict();
@@ -282,6 +282,7 @@ function _sendText(message, ext){
 	);
 
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
+	clearActiveAnswerTimeout();
 }
 
 // 这个临时使用，下个版本会去掉
@@ -317,6 +318,7 @@ function _sendTransferToKf(tid, sessionId, transferToHumanId){
 
 	_promptNoAgentOnlineIfNeeded({ hasTransferedToKefu: true });
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
+	clearActiveAnswerTimeout();
 }
 
 function _sendImg(fileMsg){
@@ -354,6 +356,7 @@ function _sendImg(fileMsg){
 	profile.imgFileList.set(fileMsg.url, fileMsg.data);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
+	clearActiveAnswerTimeout();
 }
 
 function _sendFile(fileMsg){
@@ -386,6 +389,7 @@ function _sendFile(fileMsg){
 	conn.send(msg.body);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
+	clearActiveAnswerTimeout();
 }
 
 // 小视频发送
@@ -419,6 +423,7 @@ function _sendVideo(fileMsg){
 	conn.send(msg.body);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
+	clearActiveAnswerTimeout();
 }
 
 // 新增 视频格式发送
@@ -491,6 +496,7 @@ function _handleMessage(msg, options){
 	var videoTicket = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.ticket");
 	var videoExtend = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.extend");
 	var customMagicEmoji = utils.getDataByPath(msg, "ext.msgtype.customMagicEmoji");
+	var activeAnswerBundle = utils.getDataByPath(msg, "ext.activeAnswerBundle");
 	var targetOfficialAccount;
 	var message;
 	var inviteId;
@@ -625,11 +631,6 @@ function _handleMessage(msg, options){
 		message.type = type;
 		message.brief = __("message_brief.unknown");
 		break;
-	
-	
-	
-	
-	
 	case "cmd":
 		var action = msg.action;
 		if(action === "KF-ACK"){
@@ -647,11 +648,6 @@ function _handleMessage(msg, options){
 	case "rtcVideoTicket":
 		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, [videoTicket, videoExtend]);
 		break;
-	
-	
-	
-	
-	
 	case "satisfactionEvaluation":
 		if(!evaluateTime){
 			evaluateTime = 8 * 3600;
@@ -921,12 +917,6 @@ function _handleMessage(msg, options){
 		].join("");
 		message.brief = __("message_brief.menu");
 		break;
-	
-	
-	
-	
-	
-	
 	default:
 		console.error("unexpected msg type");
 		break;
@@ -1026,6 +1016,11 @@ function _handleMessage(msg, options){
 			notFromSystem: opt.notFromSystem
 		});
 	}
+
+	// 挽回
+	if(!isHistory && activeAnswerBundle && activeAnswerBundle.activeAnswers && activeAnswerBundle.activeAnswers.length > 0){
+		activeAnswerMessage(activeAnswerBundle, 0);
+	}
 	
 		// 是否发送解决未解决 msg.ext.extRobot.satisfactionCommentInvitation
 		// if(satisfactionCommentInvitation && !isHistory){
@@ -1052,6 +1047,36 @@ function _handleMessage(msg, options){
 			}
 		});
 	}
+}
+
+function activeAnswerMessage(activeAnswerBundle, index){
+	var activeAnswerMsg;
+	var activeAnswerTime = Math.floor((parseInt(Math.random() * 10) + 25) * 1000);
+	// var activeAnswerTime = 1000;
+
+	if(index < activeAnswerBundle.activeAnswers.length){
+		activeAnswerMsg = {
+			type: "txt",
+			data: activeAnswerBundle.activeAnswers[index]
+		};
+		
+		activeAnswerTimeout = setTimeout(function(){
+			// _handleMessage(activeAnswerMsg);
+			_appendMsg(activeAnswerMsg, {
+				isReceived: true,
+				isHistory: false,
+			});
+			activeAnswerMessage(activeAnswerBundle, ++index);
+			console.log("挽回时间：", new Date());
+			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
+		}, activeAnswerTime);
+	}
+	else{
+		clearActiveAnswerTimeout();
+	}
+}
+function clearActiveAnswerTimeout(){
+	clearTimeout(activeAnswerTimeout);
 }
 function isJsonString(str){
 	try{
