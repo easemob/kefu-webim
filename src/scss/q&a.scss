@@ -44,9 +44,10 @@
 		padding: 0 10px;
 		margin-bottom: 0.5em;
 		position: relative;
-		font-size: 14px;
+		font-size: 16px;
 		background: rgba(243,243,243,0.3);
-		color:#65758c;
+		color:#595959;
+		font-weight: 500;
 	}
 	.gray-line{
 		width:50%;
@@ -63,18 +64,20 @@
 		text-align: justify;
 		margin-bottom: 5px;
 		>p{
-			line-height: 32px;
+			line-height: 20px;
 			background: #fff;
 		}
 		.question{
-			color: #65758c;
-			font-size: 13px;
+			color: #595959;
+			font-size: 14px;
 			
 			.icon-arrow-right{
 				transform: rotate(90deg);
 				display: inline-block;
+				line-height: 20px;
 				&:before{
 					font-size:20px;
+					line-height: 20px;
 				}
 			}
 		}
@@ -88,6 +91,8 @@
 			padding: 10px;
 			line-height: 22px;
 			font-size: 13px;
+			background-color: #f8f8f8;
+			color: #595959;
 		}
 		&.hide-answer{
 			.answer{

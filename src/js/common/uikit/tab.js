@@ -1,6 +1,8 @@
 var utils = require("@/common/utils");
 var tpl = require("./template/tabTpl.html");
 var eventListener = require("@/app/tools/eventListener");
+var commonConfig = require("@/common/config");
+var _const = require("@/common/const");
 
 function Tab(opt){
 	opt = opt || {};
@@ -83,8 +85,25 @@ Tab.prototype.selectTab = function($tab, silent){
 	if(elActive){
 		$(elActive).addClass("border-color");
 	}
+	$(".ui-cmp-tab>ul>li").css("cssText","color:#000 !important;" );
 	if(this.fgColor){
 		$tab.find("li").css("cssText","border-color: " + this.fgColor + " !important ; color: " + this.fgColor + " !important");
+	}
+	else{
+		// 自定义主题色
+		var color = "";
+		var themeClassName;
+		var config = commonConfig.getConfig();
+		var themeName = config.ui.themeName;
+		if(themeName && themeName.indexOf("theme_custom") > -1){
+			var arr = themeName.split("theme_custom");
+			color = arr[1];
+			themeClassName = "theme_custom";
+		}
+		else{
+			themeClassName = _const.themeMap[config.themeName];
+		}
+		$tab.css("cssText","border-color: " + color + " !important; fg-color: " + color + " !important; color:" + color+ " !important;" );
 	}
 	
 	this.bodies[sign].removeClass("hide");

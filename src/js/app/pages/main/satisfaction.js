@@ -32,6 +32,8 @@ var sessionResolved;// 问题解决评价
 var fiveStarState;//默认五星评价
 var defaultScore;
 var defaultEvaluationDegreeId;
+var color;
+var bgColor;
 
 module.exports = {
 	init: init,
@@ -45,13 +47,13 @@ function _init(){
 	var themeClassName;
 	if(themeName && themeName.indexOf("theme_custom") > -1){
 		var arr = themeName.split("theme_custom");
-		var color = arr[1];
+		color = arr[1];
 	}
 	else{
 		themeClassName = _const.themeMap[config.themeName];
 	}
 	color = !color? $("body." + themeClassName + " .border-color").css("borderColor") : color;
-	var bgColor = color;
+	bgColor = color;
 	color = utils.changeToRgb(color);
 	loading.show("satisfaction");
 	//默认五星评价的开关
@@ -119,8 +121,8 @@ function _init(){
 		utils.live(".resolve-btn", "click", function(){
 			utils.removeClass(resolvedBtn, "selected bg-color");
 			$(".resolve-btn").css("cssText","background:none !important");
-			$(".resolve-btn i").css("cssText","color:#000"+  bgColor +"!important"); 
-			$(".resolve-btn span").css("cssText","color:#000"+  bgColor +"!important");  
+			$(".resolve-btn i").css("cssText","color:#000!important"); 
+			$(".resolve-btn span").css("cssText","color:#000!important");  
 			utils.addClass(this, "selected bg-color");
 			if(color){
 				$(".resolveCon .selected").css("cssText","background-color:"+  color +"!important"); 
@@ -214,7 +216,8 @@ function _init(){
 		_setSatisfaction();
 
 		// 自定义主题色
-		color && $(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important");
+		// color && $(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important");
+		bgColor && $(".theme_custom").find(".bg-color").css("cssText","background-color: " + bgColor + " !important");
 		if($("body").hasClass("window-demo")){
 			// $(".wrapper > .cancel").addClass("hidden");
 		}
@@ -400,6 +403,15 @@ function _confirm(){
 
 function show(inviteId, serviceSessionId, evaluateWay){
 
+	$(".resolve-btn").css("cssText","background:none !important");
+	$(".resolve-btn i").css("cssText","color:#000!important"); 
+	$(".resolve-btn span").css("cssText","color:#000!important");  
+	if(color){
+		$(".resolveCon .selected").css("cssText","background-color:"+  color +"!important"); 
+		$(".resolveCon .selected i").css("cssText","color:"+  bgColor +"!important"); 
+		$(".resolveCon .selected span").css("cssText","color:"+  bgColor +"!important"); 
+	}
+	$(".satisfaction .tip").addClass("hide");
 	apiHelper.getEvaluteSolveWord().then(function(tip){
 		resolveTip = tip;
 	});

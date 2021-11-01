@@ -1,9 +1,9 @@
 @font-face {
   font-family: "newim"; /* Project id 2812636 */
-  src: url('iconfont.eot?t=1635246727009'); /* IE9 */
-  src: url('iconfont.eot?t=1635246727009#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('iconfont.woff?t=1635246727009') format('woff'),
-       url('iconfont.ttf?t=1635246727009') format('truetype');
+  src: url('iconfont.eot?t=1635503827858'); /* IE9 */
+  src: url('iconfont.eot?t=1635503827858#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('iconfont.woff?t=1635503827858') format('woff'),
+       url('iconfont.ttf?t=1635503827858') format('truetype');
 }
 
 .newim {
@@ -12,6 +12,22 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.newim-mix:before {
+  content: "\e64b";
+}
+
+.newim-shipinwenjian:before {
+  content: "\e64a";
+}
+
+.newim-shipin2:before {
+  content: "\e80a";
+}
+
+.newim-point-1:before {
+  content: "\e649";
 }
 
 .newim-select:before {

@@ -272,6 +272,9 @@ function _setNotice(){
 			utils.on(noticeCloseBtn, utils.click, function(){
 				// 隐藏信息栏
 				utils.removeClass(doms.imChat, "has-tip");
+				if(!utils.isMobile && !$("#em-kefu-webim-self").hasClass("hide")){
+					document.querySelector(".chat-wrapper").style.cssText='top:10px;';
+				}
 			});
 		}
 	});
@@ -356,7 +359,7 @@ function _initAutoGrow(){
 		case "up":
 			doms.editorView.style.bottom = "auto";
 			doms.editorView.style.zIndex = "3";
-			doms.editorView.style.top = "0";
+			doms.editorView.style.top = "";
 			doms.chatWrapper.style.bottom = "0";
 			doms.queuingNumberStatus.style.top = height + "px";
 			doms.editorView.style.paddingBottom = "0";
@@ -366,7 +369,8 @@ function _initAutoGrow(){
 			doms.editorView.style.zIndex = "3";
 			doms.editorView.style.top = "auto";
 			doms.chatWrapper.style.bottom = height + "px";
-			doms.queuingNumberStatus.style.top = "-26px";
+			// doms.queuingNumberStatus.style.top = "-26px";
+			doms.queuingNumberStatus.style.top = "-40px";
 			doms.editorView.style.paddingBottom = "max(3px,env(safe-area-inset-bottom))";
 			_scrollToBottom();
 			break;
@@ -1359,7 +1363,6 @@ function _initSatisfactionButton(){
 }
 
 function _displayOrHideSatisfactionBtn(officialAccount){
-	console.log(officialAccount, "监听事件+++++")
 	// 忽略非当前服务号的事件
 	if(profile.currentOfficialAccount !== officialAccount) return;
 

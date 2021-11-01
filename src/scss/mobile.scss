@@ -275,7 +275,7 @@
 		}
 	}
 	.em-widget-send-wrapper-top{
-		top: -40px !important;
+		// top: -17px !important;
 		.swiper-wrapper{
 			height: 31px;
 			.swiper-slide{
@@ -291,10 +291,11 @@
 		padding: 0px 0px 15px 0;
 		padding-bottom: unquote('max(3px, env(safe-area-inset-bottom))');//iOS 底下圆弧的高度
 		box-sizing: border-box;
-		background-color: #eee;
+		// background-color: #eee;
 		border-right: none;
 		.queuing-number-status{
 			font-size:1.2rem;
+			top: -40px;
 		}
 		.toolbar-pc{
 			display:none;
@@ -373,7 +374,7 @@
 				right: 40px;
 				top:13px;
 				&:before{
-					font-size:28px;
+					// font-size:28px;
 				}
 			}
 		}
@@ -425,7 +426,7 @@
 			top:13px;
 			right:0px;
 			i:before{
-				font-size:28px;
+				font-size:24px;
 			}
 		}
 	}
