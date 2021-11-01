@@ -249,6 +249,9 @@
 				text-align: center;
 				border-radius: 6px 6px 0px 0px;
 				line-height: 53px;
+				font-size: 16px;
+				color: #555555;
+				font-weight: 500;
 				// margin-bottom: 27px;
 				.icon-close::before{
 					font-size: 10px;
@@ -359,7 +362,7 @@
 				    line-height: 40px;
 				    font-size: 15px;
 				    border-radius: 5px;
-					border:1px solid #ccc;
+					// border:1px solid #ccc;
 					cursor:pointer;
 					background-color: #F7F7F7;
 					border-radius: 24px;
@@ -490,8 +493,7 @@
 				margin-top: 15px;
 			}
 			h3 {
-				margin: 0 26px;
-				margin-top: 15px;
+				margin: 15px 26px;
 			}
 			input {
 				height: 36px;
@@ -622,6 +624,9 @@
 				border-bottom: 1px solid #EDEDED;
 				text-align: center;
 				line-height: 53px;
+				font-size: 16px;
+				color: #555555;
+				font-weight: 500;
 				// margin-bottom: 27px;
 				.icon-back-new:before{
 					font-size: 10px;
@@ -1392,7 +1397,7 @@
 				margin-top:10px;
 				box-sizing: border-box;
 				// border-bottom: 2px solid #fff;
-				// color:#65758C;
+				color:#595959;
 			}
 			&:last-of-type {
 				border: 0;

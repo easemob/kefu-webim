@@ -6,6 +6,34 @@
   "description": "新版网页访客端icon",
   "glyphs": [
     {
+      "icon_id": "4658286",
+      "name": "icon-33",
+      "font_class": "mix",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
+    },
+    {
+      "icon_id": "25287653",
+      "name": "视频文件",
+      "font_class": "shipinwenjian",
+      "unicode": "e64a",
+      "unicode_decimal": 58954
+    },
+    {
+      "icon_id": "1231919",
+      "name": "视频",
+      "font_class": "shipin2",
+      "unicode": "e80a",
+      "unicode_decimal": 59402
+    },
+    {
+      "icon_id": "4658300",
+      "name": "icon-48",
+      "font_class": "point-1",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
       "icon_id": "4658308",
       "name": "icon-53",
       "font_class": "select",

@@ -49,7 +49,7 @@
 
 .icon-circle:before {
 	@extend .icon-base;
-	content: "\41";
+	content: "\e649";
 }
 
 .icon-exclamation:before {
@@ -323,7 +323,7 @@
 
 .icon-return-to-multi-video:before {
 	@extend .icon-base;
-	content: "\3b6"
+	content: "\e64b"
 }
 
 .icon-remote-desktop:before {
@@ -552,7 +552,7 @@
 .icon-hrefscreen {
 	&:before {
 		@extend .icon-base;
-		content: "\e649";
+		content: "\e617";
 	}
 }
 // 五角星
@@ -587,7 +587,7 @@
 .icon-fullscreen {
 	&:before {
 		@extend .icon-base;
-		content: "\e611";
+		content: "\e604";
 	}
 }
 // 播放
@@ -602,37 +602,42 @@
 	&:before {
 		@extend .icon-base;
 		content: "\e643";
+		font-size: 28px;
 	}
 }
 .icon-attachment-new {
 	&:before {
 		@extend .icon-base;
 		content: "\e621";
-		font-size:25px;
+		font-size:28px;
 	}
 }
 .icon-sendvideo-new {
 	&:before {
 		@extend .icon-base;
 		content: "\e644";
+		font-size: 28px;
 	}
 }
 .icon-note-new {
 	&:before {
 		@extend .icon-base;
 		content: "\e645";
+		font-size: 28px;
 	}
 }
 .icon-video-new {
 	&:before {
 		@extend .icon-base;
 		content: "\e80a";
+		font-size: 28px;
 	}
 }
 .icon-flower-new {
 	&:before {
 		@extend .icon-base;
 		content: "\e641";
+		font-size: 28px;
 	}
 }
 .icon-change-copy {

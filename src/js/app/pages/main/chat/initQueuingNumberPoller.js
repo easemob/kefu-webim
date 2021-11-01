@@ -110,6 +110,6 @@ function _update(waitingNumber){
 		// document.querySelector(".em-widget-out-of-line")
 		$(logo).css("marginTop","5px")
 		eventListener.trigger("swiper.update");
-		$(".em-widget-send-wrapper-top").css("top","-13px");
+		$(".em-widget-send-wrapper-top").css("top","-17px");
 	}
 }

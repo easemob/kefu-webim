@@ -191,7 +191,6 @@ function answersGroupHandleMessage(){
 			// randomTime = 1000;
 			randomTime = Math.floor((parseInt(Math.random() * 10) + 25) * 1000);
 		}
-		console.log(randomTime / 1000);
 
 		greetingTextType = greetingData[answerIndex].greetingTextType;
 		laiye = greetingData[answerIndex].laiye;
@@ -267,16 +266,13 @@ function clearAnswersGroupTimeout(){
 			clearTimeout(answersGroupTimeout);
 			waitTimeout = setTimeout(function(){
 				answersGroupHandleMessage();
-				console.log("date内", new Date());
 			}, time);
 		}
-		console.log("answerLoop", answerLoop);
 	}
 }
 
 function stopAnswerTimeout(){
 	AnswersGroupShowFlag = false;
-	console.log("stopAnswerTimeout");
 	clearTimeout(answersGroupTimeout);
 	clearTimeout(waitTimeout);
 }

@@ -83,6 +83,10 @@ body {
 	&.theme-11 {
 		@include theme(#FFA0BE, #FF91B4, #FFAFC9);
 	}
+    // 蔚蓝科技
+    &.theme-12 {
+        @include theme(#2189FF, #2EB9FF, #1E7EEB);
+    }
 	
 	&.theme_custom{
 		@include theme(#42b8f4, #00a0e7, #7dcdf7);
