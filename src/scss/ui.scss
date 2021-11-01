@@ -1389,6 +1389,7 @@
 			height: 50px;
 			line-height: 35px;
 			overflow: hidden;
+			color:#595959;
 			> span {
 				font-size: 14px;
 				padding: 0 5px;
@@ -1397,7 +1398,6 @@
 				margin-top:10px;
 				box-sizing: border-box;
 				// border-bottom: 2px solid #fff;
-				color:#595959;
 			}
 			&:last-of-type {
 				border: 0;
