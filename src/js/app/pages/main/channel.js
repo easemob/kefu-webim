@@ -763,20 +763,30 @@ function _handleMessage(msg, options){
 			}
 
 
-			if(index < 5){
+			if(options.answerSource == "WELCOME"){
+				if(index < 5){
+					message.list += "<li  data-index=" + index + "><button "
+					+ "class=\"js_robotbtn " + className + "\" "
+					+ "style=\"color: " + color  + " \""
+					+ "data-id=\"" + item.id + "\" "
+					+ ">" + item.name + "</button> <i class='icon-arrow-right'></i> </li>";
+				}
+				else{
+					message.list += "<li class='hide'  data-index=" + index + "><button "
+					+ "class=\"js_robotbtn " + className + "\" "
+					+ "style=\"color: " + color  + " \""
+					+ "data-id=\"" + item.id + "\" "
+					+ ">" + item.name + "</button> <i class='icon-arrow-right'></i> </li>";
+				}
+			}
+			else{
 				message.list += "<li  data-index=" + index + "><button "
 				+ "class=\"js_robotbtn " + className + "\" "
 				+ "style=\"color: " + color  + " \""
 				+ "data-id=\"" + item.id + "\" "
 				+ ">" + item.name + "</button> <i class='icon-arrow-right'></i> </li>";
 			}
-			else{
-				message.list += "<li class='hide'  data-index=" + index + "><button "
-				+ "class=\"js_robotbtn " + className + "\" "
-				+ "style=\"color: " + color  + " \""
-				+ "data-id=\"" + item.id + "\" "
-				+ ">" + item.name + "</button> <i class='icon-arrow-right'></i> </li>";
-			}
+			
 		});
 		if(options.answerSource == "WELCOME" && msg.ext.msgtype.choice.items.length > 5){
 			message.list += "<span class='welcome-change'><i class='icon-change-copy'></i> <span>换一换</span></span>";
