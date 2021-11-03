@@ -488,21 +488,20 @@
 			}
 		}
 	}
+	.em-widget-left{
+		margin-bottom: 6px;
+		.em-widget-msg-wrapper{
+			left: 10px;
+		}
+	}
+	.em-widget-right{
+		margin-bottom: 6px;
+	}
 }
 /* 图片展示控件 */
 .img-view {
 	.cover-floor{
 		opacity: 0.8;
 	}
-}
-.em-widget-left{
-	margin-bottom: 6px;
-	.em-widget-msg-wrapper{
-		left: 10px;
-	}
-}
-
-.em-widget-right{
-	margin-bottom: 6px;
 }
 @media (-webkit-min-device-pixel-ratio: 2) {}
