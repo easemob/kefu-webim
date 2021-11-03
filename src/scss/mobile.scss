@@ -183,10 +183,12 @@
 		box-shadow: none;
 	}
 	.em-widget-msg-container { 
-		font-size: 1.2rem;
+		// font-size: 1.2rem;
 		padding: 8px;
+		font-size: 14px;
 		.list-title{
-			font-size:1.2rem;
+			// font-size:1.2rem;
+			font-size: 14px;
 		}
 		&.em-widget-msg-file,
 		&.em-widget-msg-html-form {
@@ -294,8 +296,9 @@
 		// background-color: #eee;
 		border-right: none;
 		.queuing-number-status{
-			font-size:1.2rem;
+			// font-size:1.2rem;
 			top: -40px;
+			font-size: 14px;
 		}
 		.toolbar-pc{
 			display:none;
@@ -480,7 +483,8 @@
 	.ticket{
 		.wrapper{
 			h3{
-				font-size:1.2rem;
+				// font-size:1.2rem;
+				font-size: 14px;
 			}
 		}
 	}
