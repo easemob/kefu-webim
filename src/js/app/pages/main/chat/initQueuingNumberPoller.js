@@ -102,7 +102,7 @@ function _update(waitingNumber){
 		$(logo).css("marginTop","30px")
 		// 改变button的top todo
 		eventListener.trigger("swiper.update");
-		$(".em-widget-send-wrapper-top").css("top","-40px");
+		$(".em-widget-send-wrapper-top").css("top","-45px");
 	}
 	else{
 		utils.removeClass($queuingNumberStatus, "hide");

@@ -7,6 +7,7 @@
 	// border-right: 1px solid #e5e9f3;
 	box-sizing: border-box;
 	-webkit-backface-visibility: hidden;
+	border-radius: 6px;
 	
 
 	.queuing-number-status {
@@ -110,7 +111,7 @@
 			top: 5px;
 			left: 6px;
 			position: relative;
-			color: #919191;
+			color: #565656;
 			margin-right: 10px;
 			&:hover {
 				cursor: pointer;

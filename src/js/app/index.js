@@ -639,7 +639,6 @@ function renderUI(resultStatus){
 
 		// 自定义主题色
 		if(themeName && themeName.indexOf("theme_custom") > -1){
-			console.log(color )
 			var fgColor = $(".theme_custom .fg-hover-color").css("color");
 			$(".theme_custom .fg-color").css("cssText","color: " + color + " !important");
 			$(".theme_custom .selected .border-color").css("cssText","border-color: " + color + " !important ; color: " + color + " !important");

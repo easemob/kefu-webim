@@ -78,6 +78,10 @@
 	@extend .icon-base;
 	content: "\e607";
 }
+.icon-face-new:before {
+	@extend .icon-base;
+	content: "\e600";
+}
 
 .icon-easemob:before {
 	@extend .icon-base;

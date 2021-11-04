@@ -896,6 +896,29 @@ function _bindEvents(){
 			doms.sendBtn,
 			"disabled", !isMessageChannelReady || isEmpty
 		);
+		utils.toggleClass(
+			doms.sendBtn,
+			"bg-color", !isEmpty
+		);
+		// 自定义主题色
+		var color = "";
+		var themeClassName;
+		var config = commonConfig.getConfig();
+		var themeName = config.ui.themeName;
+		if(themeName && themeName.indexOf("theme_custom") > -1){
+			var arr = themeName.split("theme_custom");
+			color = arr[1];
+			themeClassName = "theme_custom";
+		}
+		else{
+			themeClassName = _const.themeMap[config.themeName];
+		}
+		if(!isEmpty && color){
+			$(".em-widget-send").css("cssText","background-color: " + color + " !important");
+		}
+		else if(isEmpty && color){
+			$(".em-widget-send").css("cssText","background-color:#e4e6e9 !important");
+		}
 		profile.grayList.msgPredictEnable
 			&& !isEmpty
 			&& isMessageChannelReady
