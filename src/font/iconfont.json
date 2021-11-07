@@ -6,18 +6,67 @@
   "description": "新版网页访客端icon",
   "glyphs": [
     {
+      "icon_id": "25467324",
+      "name": "anwser",
+      "font_class": "anwser",
+      "unicode": "e64e",
+      "unicode_decimal": 58958
+    },
+    {
+      "icon_id": "25467082",
+      "name": "camera off",
+      "font_class": "a-cameraoff1",
+      "unicode": "e652",
+      "unicode_decimal": 58962
+    },
+    {
+      "icon_id": "25467083",
+      "name": "mute",
+      "font_class": "mute1",
+      "unicode": "e653",
+      "unicode_decimal": 58963
+    },
+    {
+      "icon_id": "25466981",
+      "name": "camera on",
+      "font_class": "a-cameraon",
+      "unicode": "e64a",
+      "unicode_decimal": 58954
+    },
+    {
+      "icon_id": "25466991",
+      "name": "off",
+      "font_class": "off",
+      "unicode": "e650",
+      "unicode_decimal": 58960
+    },
+    {
+      "icon_id": "25466992",
+      "name": "voice",
+      "font_class": "voice",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
+      "icon_id": "25464847",
+      "name": "attachment",
+      "font_class": "attachment",
+      "unicode": "e64c",
+      "unicode_decimal": 58956
+    },
+    {
+      "icon_id": "25464848",
+      "name": "视频文件",
+      "font_class": "shipinwenjian1",
+      "unicode": "e64d",
+      "unicode_decimal": 58957
+    },
+    {
       "icon_id": "4658286",
       "name": "icon-33",
       "font_class": "mix",
       "unicode": "e64b",
       "unicode_decimal": 58955
-    },
-    {
-      "icon_id": "25287653",
-      "name": "视频文件",
-      "font_class": "shipinwenjian",
-      "unicode": "e64a",
-      "unicode_decimal": 58954
     },
     {
       "icon_id": "1231919",

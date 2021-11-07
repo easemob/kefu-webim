@@ -174,6 +174,9 @@ module.exports = {
 	formatDate: function(date){
 		return moment(date || _.now()).format(__("config.message_timestamp_format"));
 	},
+	formatHHmm: function(date){
+		return moment(date || _.now()).format("HH:mm");
+	},
 
 	formatProtocol: function(val){
 		return val.replace(/(http:|https:)?(\/\/)?(.+)/, function(match, $1, $2, $3){

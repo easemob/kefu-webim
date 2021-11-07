@@ -246,10 +246,11 @@
 }
 
 .em-widget-right {
+	width: 100%;
 	margin-bottom:20px;
 	.em-widget-msg-wrapper {
 		float: right;
-		margin-right: 8px;
+		margin-right: 15px;
 		background: #fff;
 		// border-radius: 8px 0 8px 8px;
 		border-radius: 12px 0 12px 12px;
@@ -278,7 +279,6 @@
 		.em-widget-msg-container {
 			// background-color: #e3ecfc;
 			float: right;
-			text-align: center;
 			.video-btn{
 				width: 100%;
 				height: 100%;
@@ -412,7 +412,7 @@
 		border-radius: 6px;
 		padding: 5px 10px;
 		// max-width: 98%;		// 这种数字不要再用了
-		min-width: 20px;
+		// min-width: 20px;
 		min-height: 20px;
 		vertical-align: middle;
 		text-align: left;

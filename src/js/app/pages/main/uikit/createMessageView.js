@@ -6,6 +6,7 @@ var eventListener = require("@/app/tools/eventListener");
 var apiHelper = require("../apis");
 var channel = require("../channel");
 var commonConfig = require("@/common/config");
+var moment = require("moment");
 
 var tpl = require("../../../../../template/chatContainer.html");
 var closDate = [];
@@ -97,7 +98,7 @@ module.exports = function(opt){
 		var opt = options || {};
 		var isReceived = opt.isReceived;
 		var isHistory = opt.isHistory;
-		var date = opt.timestamp || _.now();
+		var date = opt.timestamp || new Date().getTime();
 		var dom = genDomFromMsg(msg, isReceived, isHistory, opt);
 		var img = dom.querySelector(".em-widget-imgview");
 
@@ -138,9 +139,16 @@ module.exports = function(opt){
 	}
 
 	function _appendDate(timestamp, isHistory){
+		var showTime;
+		if(_timestampToTime(timestamp) == _timestampToTime(new Date().getTime())){
+			showTime = utils.formatHHmm(timestamp)
+		}
+		else{
+			showTime = utils.formatDate(timestamp);
+		}
 		var dom = utils.createElementFromHTML([
 			"<div class=\"em-widget-date\">",
-			"<span>" + utils.formatDate(timestamp) + "</span>",
+			"<span>" + showTime + "</span>",
 			"</div>"
 		].join(""));
 		var date = timestamp || _.now();
@@ -271,5 +279,12 @@ module.exports = function(opt){
 
 	function _show(){
 		utils.removeClass(el, "hide");
+	}
+	function _timestampToTime(timestamp){
+		var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
+		var Y = date.getFullYear() + '-';
+		var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+		var D = date.getDate() + ' ';
+		return Y+M+D;
 	}
 };

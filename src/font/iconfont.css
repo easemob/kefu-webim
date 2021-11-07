@@ -1,9 +1,9 @@
 @font-face {
   font-family: "newim"; /* Project id 2812636 */
-  src: url('iconfont.eot?t=1635503827858'); /* IE9 */
-  src: url('iconfont.eot?t=1635503827858#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('iconfont.woff?t=1635503827858') format('woff'),
-       url('iconfont.ttf?t=1635503827858') format('truetype');
+  src: url('iconfont.eot?t=1636014933520'); /* IE9 */
+  src: url('iconfont.eot?t=1636014933520#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('iconfont.woff?t=1636014933520') format('woff'),
+       url('iconfont.ttf?t=1636014933520') format('truetype');
 }
 
 .newim {
@@ -14,12 +14,40 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.newim-mix:before {
-  content: "\e64b";
+.newim-anwser:before {
+  content: "\e64e";
 }
 
-.newim-shipinwenjian:before {
+.newim-a-cameraoff1:before {
+  content: "\e652";
+}
+
+.newim-mute1:before {
+  content: "\e653";
+}
+
+.newim-a-cameraon:before {
   content: "\e64a";
+}
+
+.newim-off:before {
+  content: "\e650";
+}
+
+.newim-voice:before {
+  content: "\e651";
+}
+
+.newim-attachment:before {
+  content: "\e64c";
+}
+
+.newim-shipinwenjian1:before {
+  content: "\e64d";
+}
+
+.newim-mix:before {
+  content: "\e64b";
 }
 
 .newim-shipin2:before {
