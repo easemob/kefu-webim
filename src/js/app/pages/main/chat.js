@@ -43,6 +43,7 @@ var noteIframe;
 var OnlyCloseSession;
 var OnlyCloseWindow;
 var welcomeListCount = 0;
+var restLength = 0;
 
 var _reCreateImUser = _.once(function(){
 	console.warn("user not found in current appKey, attempt to recreate user.");
@@ -1200,6 +1201,37 @@ function _bindEvents(){
 			}, 300);
 		}
 	});
+	utils.on($(".ui-cmp-tab>.ul-left"), "click", function(){
+		onLeft();
+	})
+	utils.on($(".ui-cmp-tab>.ul-right"), "click", function(){
+		onRight();
+	})
+	function onLeft() {
+		console.log("left" )
+		if ($('.ui-cmp-tab > ul li').length < 2 || 0 == restLength) {
+			return false;
+		}
+		restLength--;
+		var slideW = Math.floor($('.ui-cmp-tab > ul').width() / 2);
+	
+		$('.ui-cmp-tab > ul').animate({
+			left: -slideW * restLength + 'px'
+		});
+	}
+	function onRight() {
+		console.log("right+" )	
+		if ($('.ui-cmp-tab > ul li').length < 2 || $('.ui-cmp-tab > ul li').length - 2 == restLength) {
+			return false;
+		}
+		restLength++;
+		var slideW = Math.floor($('.ui-cmp-tab > ul').width() / 2);
+	
+		$('.ui-cmp-tab > ul').animate({
+			left: -slideW * restLength + 'px'
+		});
+
+	}
 }
 
 function _close(){

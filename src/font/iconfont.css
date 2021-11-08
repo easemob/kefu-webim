@@ -1,9 +1,9 @@
 @font-face {
   font-family: "newim"; /* Project id 2812636 */
-  src: url('iconfont.eot?t=1636014933520'); /* IE9 */
-  src: url('iconfont.eot?t=1636014933520#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('iconfont.woff?t=1636014933520') format('woff'),
-       url('iconfont.ttf?t=1636014933520') format('truetype');
+  src: url('iconfont.eot?t=1636341771559'); /* IE9 */
+  src: url('iconfont.eot?t=1636341771559#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('iconfont.woff?t=1636341771559') format('woff'),
+       url('iconfont.ttf?t=1636341771559') format('truetype');
 }
 
 .newim {
@@ -12,6 +12,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.newim-close1:before {
+  content: "\e64f";
 }
 
 .newim-anwser:before {

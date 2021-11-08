@@ -61,6 +61,11 @@
 	@extend .icon-base;
 	content: "\e608";
 }
+.icon-close-new:before {
+	@extend .icon-base;
+	content: "\e64f";
+	font-size: 10px;
+}
 .icon-back-new:before{
 	@extend .icon-base;
 	content: "\e601";

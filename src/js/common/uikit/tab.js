@@ -87,7 +87,7 @@ Tab.prototype.selectTab = function($tab, silent){
 	}
 	$(".ui-cmp-tab>ul>li").css("cssText","color:#000 !important;" );
 	if(this.fgColor){
-		$tab.find("li").css("cssText","border-color: " + this.fgColor + " !important ; color: " + this.fgColor + " !important");
+		$tab.find("li").css("cssText","border-top-color: " + this.fgColor + " !important ; color: " + this.fgColor + " !important");
 	}
 	else{
 		// 自定义主题色
@@ -103,7 +103,7 @@ Tab.prototype.selectTab = function($tab, silent){
 		else{
 			themeClassName = _const.themeMap[config.themeName];
 		}
-		$tab.css("cssText","border-color: " + color + " !important; fg-color: " + color + " !important; color:" + color+ " !important;" );
+		$tab.css("cssText","border-top-color: " + color + " !important; fg-color: " + color + " !important; color:" + color+ " !important;" );
 	}
 	
 	this.bodies[sign].removeClass("hide");
