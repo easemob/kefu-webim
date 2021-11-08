@@ -1208,8 +1208,8 @@ function _bindEvents(){
 		onRight();
 	})
 	function onLeft() {
-		console.log("left" )
 		if ($('.ui-cmp-tab > ul li').length < 2 || 0 == restLength) {
+			$(".ul-left").removeClass("hover");
 			return false;
 		}
 		restLength--;
@@ -1218,10 +1218,17 @@ function _bindEvents(){
 		$('.ui-cmp-tab > ul').animate({
 			left: -slideW * restLength + 'px'
 		});
+		if ($('.ui-cmp-tab > ul li').length < 2 || 0 == restLength) {
+			$(".ul-left").removeClass("hover");
+		}
+		else{
+			$(".ul-left").addClass("hover");
+		}
+		$(".ul-right").addClass("hover");
 	}
 	function onRight() {
-		console.log("right+" )	
 		if ($('.ui-cmp-tab > ul li').length < 2 || $('.ui-cmp-tab > ul li').length - 2 == restLength) {
+			$(".ul-right").removeClass("hover");
 			return false;
 		}
 		restLength++;
@@ -1230,7 +1237,13 @@ function _bindEvents(){
 		$('.ui-cmp-tab > ul').animate({
 			left: -slideW * restLength + 'px'
 		});
-
+		if ($('.ui-cmp-tab > ul li').length < 2 || $('.ui-cmp-tab > ul li').length - 2 == restLength) {
+			$(".ul-right").removeClass("hover");
+		}
+		else{
+			$(".ul-right").addClass("hover");
+		}
+		$(".ul-left").addClass("hover");
 	}
 }
 

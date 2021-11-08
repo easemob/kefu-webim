@@ -347,13 +347,14 @@
 			}
 			&.disabled {
 				cursor: default;
-				color: silver;
+				// color: silver;
 				// background-color: #EFEFEF !important;
-				background-color: #BBBBBB !important;
+				background-color: #DFDFDF !important;
+				color: #BBBBBB !important;
 				// border-color: #e5e5e5!important;
 				&:hover {
-					background-color: #EFEFEF !important;
-					color: silver;
+					background-color: #DFDFDF !important;
+					color: #BBBBBB;
 				}
 			}
 			&::after{
@@ -860,13 +861,13 @@
 			}
 			&.disabled {
 				cursor: default;
-				color: silver;
+				// color: silver;
 				// background-color: #EFEFEF !important;
-				background-color: #BBBBBB !important;
-				// border-color: #e5e5e5!important;
+				background-color: #DFDFDF !important;
+				color: #BBBBBB !important;
 				&:hover {
-					background-color: #EFEFEF  !important;
-					color: silver;
+					background-color: #DFDFDF  !important;
+					color: #BBBBBB;
 				}
 			}
 			&::after{
