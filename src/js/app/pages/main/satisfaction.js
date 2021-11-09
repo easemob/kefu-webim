@@ -154,8 +154,8 @@ function _init(){
 				level && _.each(starList, function(elem, i){
 					utils.toggleClass(elem, "sel", i < level);
 				});
-	
-				evaluationDegreeId && _createLabel(evaluationDegreeId);
+				// 去掉其他租户的 已解决未解决tag
+				// evaluationDegreeId && _createLabel(evaluationDegreeId);
 			}, starsUl);
 		}
 
@@ -180,6 +180,18 @@ function _init(){
 		});
 		loading.hide("satisfaction");
 		dialog.show();
+	});
+}
+
+function _createLabel(evaluateId){
+	apiHelper.getAppraiseTags(evaluateId).then(function(entities){
+		tagContainer.innerHTML = _.map(entities, function(elem){
+			var name = elem.name;
+			var id = elem.id;
+
+			return "<span data-label-id = \"" + id + "\"  class=\"tag\">" + name + "</span>";
+		}).join("");
+		utils.removeClass(tagContainer, "hide");
 	});
 }
 
@@ -266,21 +278,11 @@ function _setSatisfaction() {
 	});
 }
 
-function _createLabel(evaluateId){
-	apiHelper.getAppraiseTags(evaluateId).then(function(entities){
-		tagContainer.innerHTML = _.map(entities, function(elem){
-			var name = elem.name;
-			var id = elem.id;
-
-			return "<span data-label-id = \"" + id + "\"  class=\"tag\">" + name + "</span>";
-		}).join("");
-		utils.removeClass(tagContainer, "hide");
-	});
-}
-
 function _confirm(){
 	var selectedTagNodeList = tagContainer.querySelectorAll(".selected");
 	var tagNodeList = tagContainer.querySelectorAll(".tag");
+	// console.log('selectedTagNodeList', selectedTagNodeList)
+	// console.log('tagNodeList', tagNodeList)
 	// 判断是否为官微租户，Y 的话 content 就是 score 对应的中文
 	var content;
 	if (_const.isGuanwei == 'Y') {
@@ -294,6 +296,7 @@ function _confirm(){
 			name: elem.innerText
 		};
 	});
+	// console.log('appraiseTags', appraiseTags)
 	var resolutionParam = [{
 		id: resolvedId,
 		name: resolvedId == 1 ? "已解决" : "未解决",
@@ -301,6 +304,7 @@ function _confirm(){
 		resolutionParamTags: []
 	}];
 
+	// console.log('resolutionParam', resolutionParam)
 	// 必须选择星级（非官微租户）
 	if(!score && _const.isGuanwei != 'Y'){
 		uikit.tip(__("evaluation.select_level_please"));
