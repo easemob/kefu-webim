@@ -6,6 +6,27 @@
   "description": "新版网页访客端icon",
   "glyphs": [
     {
+      "icon_id": "2076218",
+      "name": "播放2",
+      "font_class": "play",
+      "unicode": "e87c",
+      "unicode_decimal": 59516
+    },
+    {
+      "icon_id": "25478106",
+      "name": "screen cut",
+      "font_class": "a-screencut",
+      "unicode": "e675",
+      "unicode_decimal": 58997
+    },
+    {
+      "icon_id": "25530475",
+      "name": "download files",
+      "font_class": "a-downloadfiles",
+      "unicode": "e654",
+      "unicode_decimal": 58964
+    },
+    {
       "icon_id": "25496671",
       "name": "close1",
       "font_class": "close1",

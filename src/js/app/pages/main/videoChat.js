@@ -279,6 +279,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 		// 访客二次确认
 		if(inviteByVisitor && config.videoH5Status){
 			statusBar.show();
+			$(".visitor-invite-video-confirm").addClass("hide")
 		}
 		else{
 			// 弹 “客服邀请” 窗
@@ -324,7 +325,7 @@ function _onConfirm(){
 			"<div>",
 			"<p class=\"title\">视频通话</p>",
 			"<p class=\"time\"><p>",
-			"<p> <img src=\"img"+ $agentFace +"\" class=\"\"/> </p>",
+			"<p> <img src=\""+ $agentFace +"\" class=\"\"/> </p>",
 			"<p class=\"nickname\">"+ $agentNickname +"</p>",
 			"<p class=\"title\">"+ __("video.confirm_prompt_visitor")+"</p>",
 			// "<div class=\"foot\"> <svg class=\"icon svg-icon\" aria-hidden=\"true\"><use xlink:href=\"#newim-a-anwser1x\"></use> </svg></div>",

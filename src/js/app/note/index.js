@@ -81,6 +81,7 @@ var cancelBtn = document.querySelector(".cancel");
 var confirmBtn = document.querySelector(".confirm");
 // url 传递的参数
 var config = getNoteConfig().config || {};
+console.log(config,"offDutyType++" )
 api.update(config);
 utils.addClass(document.body, config.themeClassName || "theme-1");
 // 根据配置隐藏取消按钮
@@ -151,6 +152,9 @@ function _createTicket(){
 			category_id: noteCategoryList.getSelectedValue(),
 			session_id: sessionId,
 		}).then(function(){
+			if(config.offDutyType == ""){
+				return;
+			}
 			isSending = false;
 			uikit.showSuccess(__("ticket.send_success"));
 
@@ -238,11 +242,28 @@ utils.on(confirmBtn, "click", function(){
 
 // 取消
 utils.on(cancelBtn, "click", function(){
-	window.parent.postMessage({ closeNote: true }, "*");
+	if(config.offDutyType == ""){
+		
+	}
+	else{
+		window.parent.postMessage({ closeNote: true }, "*");
+	}
 });
 utils.live(".wrapper-title .icon-close","click",function(){
-	window.parent.postMessage({ closeNote: true }, "*");
+	// window.parent.postMessage({ closeNote: true }, "*");
+	if(config.offDutyType == ""){
+		
+	}
+	else{
+		window.parent.postMessage({ closeNote: true }, "*");
+	}
 });
 utils.live(".wrapper-title .icon-back-new","click",function(){
-	window.parent.postMessage({ closeNote: true }, "*");
+	// window.parent.postMessage({ closeNote: true }, "*");
+	if(config.offDutyType == ""){
+		
+	}
+	else{
+		window.parent.postMessage({ closeNote: true }, "*");
+	}
 });

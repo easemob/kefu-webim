@@ -398,7 +398,8 @@ body.window-demo{
 					top: -3px;
 				} 
 				&.accept-button {
-					background-color: #70ba26;
+					// background-color: #70ba26;
+					background: linear-gradient(172deg, #5EF61E 0%, #44D434 100%);
 					margin-right: 8px;
 				}
 				&.end-button {

@@ -384,43 +384,43 @@
 .icon-try {
 	&:before {
 		@extend .icon-base;
-		content: "\a001";
+		content: "\e636";
 	}
 }
 .icon-intro {
 	&:before {
 		@extend .icon-base;
-		content: "\a002";
+		content: "\e637";
 	}
 }
 .icon-guide {
 	&:before {
 		@extend .icon-base;
-		content: "\a003";
+		content: "\e638";
 	}
 }
 .icon-lianjie {
 	&:before {
 		@extend .icon-base;
-		content: "\a004";
+		content: "\e621";
 	}
 }
 .icon-zixunfuwu {
 	&:before {
 		@extend .icon-base;
-		content: "\a005";
+		content: "\e623";
 	}
 }
 .icon-xiaoyouxi {
 	&:before {
 		@extend .icon-base;
-		content: "\a006";
+		content: "\e624";
 	}
 }
 .icon-star {
 	&:before {
 		@extend .icon-base;
-		content: "\a007";
+		content: "\e625";
 	}
 }
 .icon-yinlexianxing {
@@ -561,7 +561,9 @@
 .icon-hrefscreen {
 	&:before {
 		@extend .icon-base;
-		content: "\e617";
+		// content: "\e617";
+		content: "\e604";
+
 	}
 }
 // 五角星
@@ -576,34 +578,35 @@
 .icon-answer{
 	&:before {
 		@extend .icon-base;
-		content: "\e61b";
-		color: #5EF61E ;
-		background-color: #fff;
-		// background: linear-gradient(172deg, #5EF61E 0%, #44D434 100%);
+		content: "\e64e";
+		// color: #5EF61E ;
+		// background-color: #fff;
+		background: linear-gradient(172deg, #5EF61E 0%, #44D434 100%);
 	}
 }
 // 挂断
 .icon-huang{
 	&:before {
 		@extend .icon-base;
-		content: "\e61c";
-		color: #F5515F;
-		background-color: #fff;
-		// background: linear-gradient(172deg, #F5515F 0%, #E92744 100%);
+		content: "\e650";
+		// color: #F5515F;
+		// background-color: #fff;
+		background: linear-gradient(172deg, #F5515F 0%, #E92744 100%);
 	}
 }
 // 全屏
 .icon-fullscreen {
 	&:before {
 		@extend .icon-base;
-		content: "\e604";
+		// content: "\e604";
+		content: "\e617";
 	}
 }
 // 播放
 .icon-play {
 	&:before {
 		@extend .icon-base;
-		content: "\cc11";
+		content: "\e87c";
 	}
 }
 // h5 新图标

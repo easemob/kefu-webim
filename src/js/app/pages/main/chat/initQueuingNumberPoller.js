@@ -102,7 +102,7 @@ function _update(waitingNumber){
 		$(logo).css("marginTop","30px")
 		// 改变button的top todo
 		eventListener.trigger("swiper.update");
-		$(".em-widget-send-wrapper-top").css("top","-45px");
+		$(".em-widget-send-wrapper-top").css("top","-17px");
 	}
 	else{
 		utils.removeClass($queuingNumberStatus, "hide");
@@ -110,6 +110,6 @@ function _update(waitingNumber){
 		// document.querySelector(".em-widget-out-of-line")
 		$(logo).css("marginTop","5px")
 		eventListener.trigger("swiper.update");
-		$(".em-widget-send-wrapper-top").css("top","-17px");
+		$(".em-widget-send-wrapper-top").css("top","-40px");
 	}
 }

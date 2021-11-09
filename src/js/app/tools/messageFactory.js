@@ -443,7 +443,7 @@ function genDomFromMsg(msg, isReceived, isHistory, opt){
 			html += "<div class=\"em-widget-msg-wrapper no-bg msgtype-" + (msg.subtype || type) + "\">";
 		}
 		// 原背景
-		else if(type === "file" || type === "order" || type === "track"){
+		else if(type === "file" || type === "order" || type === "track"  || type === "article"){
 			html += "<div class=\"em-widget-msg-wrapper msgtype-" + (msg.subtype || type) + "\">";
 		}
 		else if(color){

@@ -301,7 +301,10 @@ function _setOffline(){
 		break;
 	default:
 		// 只允许留言此时无法关闭留言页面
-		noteIframe.open({ hideCloseBtn: true });
+		noteIframe.open({ hideCloseBtn: true, offDutyType: config.offDutyType });
+		// utils.on($(".ticket .wrapper-title>.icon-close"), "click", function(){
+		// 	window.close();
+		// })
 		break;
 	}
 

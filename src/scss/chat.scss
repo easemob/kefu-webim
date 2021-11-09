@@ -254,6 +254,13 @@
 		background: #fff;
 		// border-radius: 8px 0 8px 8px;
 		border-radius: 12px 0 12px 12px;
+		.em-widget-msg-article{
+			width: 100%;
+			overflow-x: auto;
+			box-sizing: border-box;
+			background: #dbecff;
+			border-radius: 12px 0 12px 12px;
+		}
 		&.no-bg{
 			background:none;
 			// overflow: hidden;
@@ -1007,7 +1014,7 @@
 		overflow: hidden;
 	}
 	.statisfy{
-		background-color: #fff;
+		// background-color: #fff;
 		>span{
 			border-top: none;
 		}
