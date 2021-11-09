@@ -337,8 +337,6 @@
 			white-space: pre-wrap;
 			// background:#fff;
 			background: #EFEFEF;
-			border-bottom-left-radius: 10px;
-			border-bottom-right-radius: 10px;
 			&:hover {
 				color: white;
 			}
@@ -356,6 +354,12 @@
 					background-color: #DFDFDF !important;
 					color: #BBBBBB;
 				}
+			}
+			&.js_robotTransferBtn{
+				background-color: #DFDFDF !important;
+				color: #BBBBBB !important;
+				border-bottom-left-radius: 10px;
+				border-bottom-right-radius: 10px;
 			}
 			&::after{
 				border:none;
@@ -508,8 +512,11 @@
 		padding: 0;
 		max-width: initial;
 		width: 200px;
-		height: 60px;
+		height: 75px;
 		overflow: hidden;
+		border-radius: 12px 0px 12px 12px;
+		background: #DBECFF;
+		// padding-top: 2px;
 		.container-icon-attachment {
 			display: inline-block;
 			width: 52px;
@@ -525,12 +532,33 @@
 				line-height: 50px;
 			}
 		}
+		.img-download{
+			position: absolute;
+			right: 12px;
+			width: 27px;
+			top: 15px;
+		}
+		.filesize {
+			line-height: 20px;
+			color: rgb(165, 165, 165);
+			font-size: 12px;
+			vertical-align: middle;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 100%;
+			overflow: hidden;
+			padding-left: 10px;
+		}
 		.file-info {
 			display: inline-block;
 			overflow: hidden;
 			float: left;
 			width: 80px;
 			margin: 10px;
+			max-width: 150px;
+			height: 35px;
+			display: flex;
+			align-items: center;
 			// font-family: Arial, Helvetica, sans-serif;
 			font-family: PingFangSC-Regular, PingFang SC;
 			p {
@@ -539,6 +567,7 @@
 				white-space: nowrap;
 				width: 100%;
 				overflow: hidden;
+				line-height: 16px;
 				&.filename {
 					color: #606b7b;
 					font-size: 14px;
@@ -851,8 +880,8 @@
 			cursor: pointer;
 			word-break: break-word;
 			white-space: pre-wrap;
-			border-bottom-left-radius: 10px;
-			border-bottom-right-radius: 10px;
+			// border-bottom-left-radius: 10px;
+			// border-bottom-right-radius: 10px;
 			&:hover {
 				color: white;
 			}
@@ -869,6 +898,12 @@
 					background-color: #DFDFDF  !important;
 					color: #BBBBBB;
 				}
+			}
+			&.js_robotTransferBtn{
+				background-color: #DFDFDF !important;
+				color: #BBBBBB !important;
+				border-bottom-left-radius: 10px;
+				border-bottom-right-radius: 10px;
 			}
 			&::after{
 				border:none;

@@ -149,14 +149,15 @@ function genMsgContent(msg, opt){
 		else{
 			newUrl = msg.url.replace("http:", "https:");
 		}
-		html = "<i class=\"icon-attachment container-icon-attachment\"></i>"
+		html = "<i class=\"icon-attachment container-icon-attachment hide\"></i>"
 			+ "<span class=\"file-info\">"
 			+ "<p class=\"filename\">" + msg.filename + "</p>"
-			+ "<p class=\"filesize\">" + utils.filesizeFormat(msg.fileLength) + "</p>"
 			+ "</span>"
+			+ "<img src=\"/webim/static/img/downloadfiles.png\"  class=\"img-download\">"
 			+ "<a target=\"_blank\" href=\"" + newUrl
-			+ "\" class=\"icon-download container-icon-download\" title=\""
-			+ msg.filename + "\" download=\"" + msg.filename + "\"></a>";
+			+ "\" class=\" container-icon-download\" title=\""
+			+ msg.filename + "\" download=\"" + msg.filename + "\"></a>"
+			+ "<p class=\"filesize\">" + utils.filesizeFormat(msg.fileLength) + "</p>";
 		break;
 		// 小视频类型
 	case "video":

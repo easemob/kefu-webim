@@ -75,7 +75,8 @@ function _addEvents(){
 						// 创建模板
 					createTemplate(res.data.entities);
 						// 设置聊天框内容样式
-					doms.chatWrapper.style.bottom = 300 + "px";
+					// doms.chatWrapper.style.bottom = 300 + "px";
+					doms.chatWrapper.style.bottom = 140 + "px";
 				}
 				else{
 							// 检索不到值时恢复 默认样式

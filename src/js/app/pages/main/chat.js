@@ -274,7 +274,8 @@ function _setNotice(){
 				// 隐藏信息栏
 				utils.removeClass(doms.imChat, "has-tip");
 				if(!utils.isMobile && !$("#em-kefu-webim-self").hasClass("hide")){
-					document.querySelector(".chat-wrapper").style.cssText='top:10px;left: 10px;padding-right: 10px;bottom: 170px;';
+					var bottomEl = $(".chat-wrapper").css("bottom")
+					document.querySelector(".chat-wrapper").style.cssText='top:10px;left: 10px;padding-right: 10px;bottom:' + bottomEl;
 				}
 			});
 		}

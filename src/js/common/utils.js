@@ -111,6 +111,10 @@ function _appendHtmlToElement(element, html){
 	return el;
 }
 function _changeToRgb(color){
+	console.log(color,"color+++" )
+	if(!color){
+		return "#42b8f4"
+	}
 	var reg  = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/;
 	var sColor = color.toLowerCase();
 	if (sColor && reg.test(sColor)) {

@@ -136,6 +136,24 @@ module.exports = function(opt){
 				// }
 			}
 		}
+		var color = "";
+		var themeClassName;
+		var config = commonConfig.getConfig();
+		var themeName = config.ui.themeName;
+		if(themeName && themeName.indexOf("theme_custom") > -1){
+			var arr = themeName.split("theme_custom");
+			color = arr[1];
+			themeClassName = "theme_custom";
+		}
+		else{
+			themeClassName = _const.themeMap[config.themeName];
+		}
+		var button = dom.querySelector(".msgtype-satisfactionEvaluation .em-btn-list>button");
+		if(color && button){
+			if($(button).hasClass("fg-color")){
+				$(button).css("cssText","color: " + color + " !important");
+			}
+		}
 	}
 
 	function _appendDate(timestamp, isHistory){

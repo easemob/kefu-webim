@@ -130,6 +130,12 @@
 	.em-widget-header-nickname{
 		font-size:1.2rem;
 	}
+	.em-service-title{
+		width: 100%;
+		text-align: center;
+		margin: 0 auto;
+		display: inline-block;
+	}
 	.chat-wrapper {
 		bottom: 77px;
 		// bottom: 100px !important;
@@ -325,7 +331,7 @@
 						color: #666666;
 					}
 					>div{
-						width:24%;
+						width:25%;
 						text-align: center;
 						display: inline-block;
 						margin-bottom:10px;
