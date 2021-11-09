@@ -51,7 +51,7 @@ function _addEvents(){
 	utils.on(doms.closeBtn, "click", function(){
 		doms.guessArea.style.display = "none";
 		doms.chatWrapper.style.bottom = 140 + "px";
-		doms.guessTips.innerText = "猜你想问";
+		doms.guessTips.innerText = "请点击您想咨询的问题！";
 		doms.loading.style.display = "block";
 		doms.guessList.innerHTML = "";
 	});
@@ -70,7 +70,7 @@ function _addEvents(){
 			apiHelper.getGuessList(value).then(function(res){
 				if(res && res.data && res.data.entities){
 					doms.guessArea.style.display = "block";
-					doms.guessTips.innerText = "猜你想问";
+					doms.guessTips.innerText = "请点击您想咨询的问题！";
 					doms.loading.style.display = "none";
 						// 创建模板
 					createTemplate(res.data.entities);
@@ -118,7 +118,7 @@ function resetStyle(){
 	doms.guessArea.style.display = "none";
 	doms.chatWrapper.style.bottom = 140 + "px";
 	doms.guessList.innerHTML = "";
-	doms.guessTips.innerText = "猜你想问";
+	doms.guessTips.innerText = "请点击您想咨询的问题！";
 	doms.loading.style.display = "block";
 }
 
