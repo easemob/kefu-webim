@@ -149,7 +149,7 @@ function _init(){
 			"<p class=\"title\">"+ __("video.confirm_prompt_agent")+"</p>",
 			// "<p class=\"title\">客服邀请您进入视频通话</p>",
 			// "<div class=\"foot\"> <svg class=\"icon svg-icon\" aria-hidden=\"true\"><use xlink:href=\"#newim-a-anwser1x\"></use> </svg></div>",
-			"<div class=\"foot\"> <div class=\"button\"><i class=\"icon-answer\"></i> <span>接听</span></div> <div class=\"button\"><i class=\"icon-huang\"></i> <span>"+ __("common.refuse")+"</span></div> </div>",
+			"<div class=\"foot\"> <div class=\"button answer\"><i class=\"icon-answer\"></i> <span>接听</span></div> <div class=\"button huang\"><i class=\"icon-huang\"></i> <span>"+ __("common.refuse")+"</span></div> </div>",
 			"</div>"
 		].join(""),
 		className: "agent-invite-video-confirm",

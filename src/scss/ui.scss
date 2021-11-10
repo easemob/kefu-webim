@@ -775,22 +775,36 @@
 			}
 		}
 		.foot{
-			// height: 60px;
+			height: 60px;
 			.button{
 				// width: 60px;
 				float: left;
 				text-align: center;
 				margin-left: 48px;
+				width: 50px;
+				height: 50px;
 				i{
 					display: block;
 				}
 			}
+			.huang{
+				width: 50px;
+				height: 50px;
+				border-radius: 50%;
+				background: linear-gradient(172deg, #F5515F 0%, #E92744 100%);
+			}
+			.answer{
+				width: 50px;
+				height: 50px;
+				border-radius: 50%;
+				background: linear-gradient(172deg, #5EF61E 0%, #44D434 100%);
+			}
 		}
 		i{
 			cursor: pointer;
-			height: 45px;
+			height: 50px;
 			&:before{
-				font-size: 46px;
+				font-size: 36px;
 				border-radius: 50%;
 			}
 		}
@@ -839,6 +853,8 @@
 				float: none;
 				width: 50px;
 				margin: 0 auto;
+				border-radius: 50%;
+				background: linear-gradient(172deg, #F5515F 0%, #E92744 100%);
 			}
 		}
 	}

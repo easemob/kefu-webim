@@ -576,22 +576,34 @@
 }
 // 接听
 .icon-answer{
+	position: relative;
 	&:before {
 		@extend .icon-base;
 		content: "\e64e";
+		position: absolute;
+		font-size: 36px;
+		position: absolute;
+		left: 7px;
+		top: 9px;
 		// color: #5EF61E ;
 		// background-color: #fff;
-		background: linear-gradient(172deg, #5EF61E 0%, #44D434 100%);
+		// background: linear-gradient(172deg, #5EF61E 0%, #44D434 100%);
 	}
 }
 // 挂断
 .icon-huang{
+	position: relative;
 	&:before {
 		@extend .icon-base;
 		content: "\e650";
+		position: absolute;
+		font-size: 36px;
+		position: absolute;
+		left: 7px;
+		top: 9px;
 		// color: #F5515F;
 		// background-color: #fff;
-		background: linear-gradient(172deg, #F5515F 0%, #E92744 100%);
+		// background: linear-gradient(172deg, #F5515F 0%, #E92744 100%);
 	}
 }
 // 全屏

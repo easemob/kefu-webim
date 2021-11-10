@@ -124,8 +124,8 @@ function _init(){
 		utils.live(".resolve-btn", "click", function(){
 			utils.removeClass(resolvedBtn, "selected bg-color");
 			$(".resolve-btn").css("cssText","background-color:#f7f7f7 !important");
-			$(".resolve-btn i").css("cssText","color:#000!important"); 
-			$(".resolve-btn span").css("cssText","color:#000!important");  
+			$(".resolve-btn i").css("cssText","color:##595959 !important"); 
+			$(".resolve-btn span").css("cssText","color:##595959 !important");  
 			utils.addClass(this, "selected bg-color");
 			if(color){
 				$(".resolveCon .selected").css("cssText","background-color:"+  color +"!important"); 
