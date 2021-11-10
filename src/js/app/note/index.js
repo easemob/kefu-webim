@@ -96,6 +96,12 @@ var color = config.themeColor;
 if(color){
 	$(".theme_custom").find(".bg-color").css("cssText","background-color: " + color + " !important");
 }
+if(config.offDutyType == ""){
+	var closeEl = $(".ticket>.wrapper .icon-close");
+	var ticketEl = $(".ticket>.wrapper .confirm");
+	closeEl&&closeEl.remove();
+	$(ticketEl).css("cssText","margin-left: 280px;");
+}
 
 var _getCategories = _.once(function(){
 	api.getNoteCategories().then(function(list){
@@ -152,9 +158,6 @@ function _createTicket(){
 			category_id: noteCategoryList.getSelectedValue(),
 			session_id: sessionId,
 		}).then(function(){
-			if(config.offDutyType == ""){
-				return;
-			}
 			isSending = false;
 			uikit.showSuccess(__("ticket.send_success"));
 

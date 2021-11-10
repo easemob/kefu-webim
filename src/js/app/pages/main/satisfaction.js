@@ -406,9 +406,8 @@ function _confirm(){
 
 function show(inviteId, serviceSessionId, evaluateWay){
 
-	$(".resolve-btn").css("cssText","background:none !important");
-	$(".resolve-btn i").css("cssText","color:#000!important"); 
-	$(".resolve-btn span").css("cssText","color:#000!important");  
+	$(".resolve-btn i").css("cssText","color:#595959!important"); 
+	$(".resolve-btn span").css("cssText","color:#595959!important");  
 	if(color){
 		$(".resolveCon .selected").css("cssText","background-color:"+  color +"!important"); 
 		$(".resolveCon .selected i").css("cssText","color:"+  bgColor +"!important"); 
