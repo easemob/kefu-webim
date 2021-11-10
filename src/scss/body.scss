@@ -1,4 +1,9 @@
 body.window-pc{
+	::-webkit-scrollbar { 
+		width: 1px; 
+		// height: 8px; 
+		background:#b9b9b9; 
+	}
 	background: #f7f7f7;
 	.em-widget-box{
 		height: 726px;
@@ -37,6 +42,11 @@ body.window-pc{
 	}
 }
 body.window-demo{
+	::-webkit-scrollbar { 
+		width: 1px; 
+		// height: 8px; 
+		background:#b9b9b9; 
+	}
 	.em-widget-to-kefu{
 		float: right;
 		cursor: pointer;
@@ -597,7 +607,7 @@ body.window-demo{
 		box-sizing: border-box;
 		align-items:center;
 		padding-left:5px;
-		display: flex;
+		display: flex; 
 		img{
 			width: 30px;
 			position:absolute;

@@ -111,7 +111,6 @@ function _appendHtmlToElement(element, html){
 	return el;
 }
 function _changeToRgb(color){
-	console.log(color,"color+++" )
 	if(!color){
 		return "#42b8f4"
 	}
