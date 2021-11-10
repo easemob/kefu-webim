@@ -343,6 +343,7 @@ function getDutyStatus(){
 
 function getRobertGreeting(){
 	var referer = parseReferer(config.referer);
+	// !!! 2020年7月之后，百度将word、wd等推广词封了，目前此方式取不到了
 	var keyword1 = referer.word || referer.wd; // 百度
 	var keyword2 = referer.q; // 360/神马
 	var keyword3 = referer.query || referer.keyword; // 搜狗
