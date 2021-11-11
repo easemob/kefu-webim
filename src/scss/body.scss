@@ -1,9 +1,4 @@
 body.window-pc{
-	::-webkit-scrollbar { 
-		width: 1px; 
-		// height: 8px; 
-		background:#b9b9b9; 
-	}
 	background: #f7f7f7;
 	.em-widget-box{
 		height: 726px;
@@ -42,11 +37,6 @@ body.window-pc{
 	}
 }
 body.window-demo{
-	::-webkit-scrollbar { 
-		width: 1px; 
-		// height: 8px; 
-		background:#b9b9b9; 
-	}
 	.em-widget-to-kefu{
 		float: right;
 		cursor: pointer;
@@ -608,6 +598,8 @@ body.window-demo{
 		align-items:center;
 		padding-left:5px;
 		display: flex; 
+		scrollbar-width: none; /* firefox */
+		-ms-overflow-style: none; /* IE 10+ */
 		img{
 			width: 30px;
 			position:absolute;
@@ -626,12 +618,15 @@ body.window-demo{
 			color: #2189FF;
 		}
 	}
+	.contentDom::-webkit-scrollbar {
+		display: none; 
+	}
 	.content {
 		// width: 85%;
 		line-height: 18px;
 		margin-left: 30px;
 		word-break: break-word;
-		overflow: hidden;
+		// overflow: hidden;
 		text-overflow: ellipsis;
 		display: inline-block;
 		-webkit-line-clamp: 2;
@@ -639,6 +634,7 @@ body.window-demo{
 		font-size:12px;
 		text-align: justify;
 		margin-right: 40px;
+		max-height: 48px;
 	}
 	.tip-close {
 		position: absolute;
