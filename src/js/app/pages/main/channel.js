@@ -598,7 +598,7 @@ function _handleMessage(msg, options){
 		message = msg;
 		message.type = type;
 		message.data = (msg && msg.data) || "";
-		message.brief = textParser.getTextMessageBrief(message.data);
+		message.brief = textParser.getTextMessageBrief(message.data,isReceived);
 		break;
 	case "img":
 		message = msg;

@@ -1520,6 +1520,9 @@ function _initSession(){
 				apiHelper.getOnlineCustomerStatus().then(function(yes){
 					profile.isHideCustomerStatus = yes;
 				}),
+				apiHelper.getIsNoLink().then(function(yes){
+					profile.isNoLink = yes;
+				}),
 			])
 			.then(function(){
 				return Promise.all([

@@ -959,6 +959,14 @@ up2Im.listen(function(msg){
 			excludeData: true,
 		});
 		break;
+	case "getIsNoLink":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/isNoLink",
+			type: "GET",
+			msg: msg,
+			excludeData: true,
+		});
+		break;
 	case "deleteVideoInvitation":
 		emitAjax({
 			url: "__WEBIM_SLASH_KEY_PATH__/v1/rtcmedia/serviceSession/" + params.serviceSessionId + "/conferences",

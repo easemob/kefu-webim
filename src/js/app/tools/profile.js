@@ -18,6 +18,7 @@ var profile = {
 	defaultAvatar: null,
 	currentOfficialAccount: {},
 	systemOfficialAccount: {},
+	isNoLink:null,
 	// systemOfficialAccount 相关方法
 	shouldMsgActivated: function(curSSID){
 		if(typeof curSSID !== "string"){
