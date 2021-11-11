@@ -1413,6 +1413,26 @@ function getOnlineCustomerStatus(){
 		});
 	});
 }
+function getIsNoLink(){
+	return new Promise(function(resolve, reject){
+		api("getIsNoLink", {
+			tenantId: config.tenantId,
+		}, function(res){
+			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
+			if(typeof val === "string"){
+				if(val == (false + "")){
+					val = false;
+				}
+				else if(val == (true + "")){
+					val = true;
+				}
+			}
+			resolve(val);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
 
 function deleteVideoInvitation(serviceSessionId){
 	return new Promise(function(resolve, reject){
@@ -1642,6 +1662,7 @@ module.exports = {
 	getNoEmptyAgentEnable: getNoEmptyAgentEnable, // 无空闲坐席提示文案自定义开关
 	getNoEmptyAgentMessage: getNoEmptyAgentMessage, // 无空闲坐席提示文案自定义回复
 
+	getIsNoLink:getIsNoLink, // 获取是否开启不解析html的开关
 	// opt获取是否隐藏状态
 	getOnlineCustomerStatus: getOnlineCustomerStatus,
 	deleteVideoInvitation: deleteVideoInvitation, // 取消视频邀请

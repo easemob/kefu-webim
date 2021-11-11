@@ -11,6 +11,7 @@ var path = /(\/[^ ?<">\n]*)*/;
 var query = /(\?([-+._%0-9a-zA-Z]+=[^ &#'"\n]*&)*([-+._%0-9a-zA-Z]+=[^ &#'"\n]*))?/;
 var hash = /(#[-+._%0-9a-zA-Z/]*)?/;
 var commonConfig = require("@/common/config");
+var profile = require("@/app/tools/profile");
 
 var URL_RE = new RegExp(
 	[protocol, auth, host, port, path, query, hash]
@@ -39,8 +40,8 @@ function _unescape(str){
 	.replace(/&amp;/g, "&");
 }
 
-function getTextMessageBrief(text){
-	var textMap = parse(text);
+function getTextMessageBrief(text,isReceived){
+	var textMap = parse(text,null,isReceived);
 	return _.map(textMap, function(fragment){
 		var value = fragment.value;
 		var type = fragment.type;
@@ -63,22 +64,34 @@ function getTextMessageBrief(text){
 	}).join("");
 }
 
-function parse(text, opt){
+function parse(text,opt,isReceived){
 	opt = opt || {};
+	var isNoLink = profile.isNoLink;
 	if(typeof text !== "string") return "";
-	var list = [
-		_emojiParser,
-		_customLinkParser,
-		_linkParser,
-		_encodeParser
-	]
-	if(opt.default){
+	var list;
+	// 开了不解析访客端链接的开关情况
+	if(!!isNoLink && typeof(isReceived) != "undefined" && !isReceived){
 		list = [
 			_emojiParser,
-			_linkParser,
 			_encodeParser
 		]
 	}
+	else{
+		list = [
+			_emojiParser,
+			_customLinkParser,
+			_linkParser,
+			_encodeParser
+		]
+		if(opt.default){
+			list = [
+				_emojiParser,
+				_linkParser,
+				_encodeParser
+			]
+		}
+	}
+
 	return _.reduce(list, function(result, parser){
 		return _parseMap(result, parser);
 	}, [{
