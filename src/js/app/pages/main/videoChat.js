@@ -144,7 +144,7 @@ function _init(){
 			"<div>",
 			"<p class=\"title\">视频通话</p>",
 			"<p class=\"time\"><p>",
-			"<p> <img src=\"img"+ $agentFace +"\" class=\"\"/> </p>",
+			"<p> <img src=\""+ $agentFace +"\" class=\"\"/> </p>",
 			"<p class=\"nickname\">"+ $agentNickname +"</p>",
 			"<p class=\"title\">"+ __("video.confirm_prompt_agent")+"</p>",
 			// "<p class=\"title\">客服邀请您进入视频通话</p>",
