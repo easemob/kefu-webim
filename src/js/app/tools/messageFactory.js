@@ -65,7 +65,7 @@ function genMsgContent(msg, opt){
 			break;
 		}
 		else{
-			value =  notFromSystem ? textParser.parse(value, { "default": true }) : textParser.parse(value);
+			value =  notFromSystem ? textParser.parse(value, { "default": true },opt.isReceived) : textParser.parse(value);
 			
 			// 历史消息以及收到的实时消息
 			if(utils.isMobile && value[0].type == "ENCODED_TEXT"){
@@ -398,6 +398,7 @@ function genDomFromMsg(msg, isReceived, isHistory, opt){
 	var satisfactionCommentInfo;
 	var agentId;
 	var satisfactionCommentInvitation;
+	opt.isReceived = isReceived;
 	
 	// 设置消息气泡显示在左侧还是右侧
 	// .em-widget-right, .em-widget-left used here
