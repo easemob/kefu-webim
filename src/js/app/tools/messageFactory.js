@@ -153,10 +153,11 @@ function genMsgContent(msg, opt){
 			+ "<span class=\"file-info\">"
 			+ "<p class=\"filename\">" + msg.filename + "</p>"
 			+ "</span>"
-			+ "<img src=\"/webim/static/img/downloadfiles.png\"  class=\"img-download\">"
 			+ "<a target=\"_blank\" href=\"" + newUrl
 			+ "\" class=\" container-icon-download\" title=\""
-			+ msg.filename + "\" download=\"" + msg.filename + "\"></a>"
+			+ msg.filename + "\" download=\"" + msg.filename + "\">"
+			+ "<img src=\"/webim/static/img/downloadfiles.png\"  class=\"img-download\"/>"
+			+"</a>"
 			+ "<p class=\"filesize\">" + utils.filesizeFormat(msg.fileLength) + "</p>";
 		break;
 		// 小视频类型
