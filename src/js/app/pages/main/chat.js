@@ -267,6 +267,7 @@ function _setNotice(){
 		}
 
 		function renderSlogan(){
+			document.querySelector(".chat-wrapper").style.cssText='top:65px;left:10px;background: #fff;padding-right:10px;';
 			// 设置信息栏内容
 			noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
 			// 隐藏信息栏按钮
