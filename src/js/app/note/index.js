@@ -8,6 +8,8 @@ var commonConfig = require("@/common/config");
 var uikit = require("../pages/main/uikit");
 var api = require("./api");
 var Selector = require("../pages/main/uikit/selector");
+var getToHost = require("@/app/common/transfer");
+var _const = require("@/common/const");
 
 var isSending = false;
 
@@ -65,6 +67,25 @@ else if($("body",parent.document).hasClass("window-demo") && !$("#em-kefu-webim-
 	].join(""));
 }
 document.body.appendChild(dom);
+console.log(config, 'offDutyType+++')
+if( $("body",parent.document).hasClass("window-demo") && config.offDutyType == ""){
+	console.log("下班时间隐藏留言" )
+	dom.addClass(hide);
+	getToHost.listen(function(msg){
+		var event = msg.event;
+
+		switch(event){
+		case _const.EVENTS.SHOW:
+			console.log("收到点击消息，展开留言" )
+			dom.removeClass(hide);
+		case _const.EVENTS.CLOSE:
+			
+			break;
+		default:
+			break;
+		}
+	}, ["down2Im"]);
+}
 
 var content = document.querySelector("textarea");
 var name = document.querySelector(".name");
