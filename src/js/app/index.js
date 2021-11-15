@@ -142,15 +142,15 @@ function widgetBoxShow(){
 		}
 		$(".em-self-wrapper").addClass("hide");
 		$(".expand").addClass("hide");
-		var chatWidth = $(".em-widget-content-box").width() - slideWidth;
-		var closeWidth = 0;
-		var closeChat = $(".em-widget-content-box").width() - closeWidth;
-		$("#em-kefu-webim-self").css("width",closeWidth + "px");
-		$("#em-kefu-webim-chat").css("width",closeChat + "px");
 		setTimeout(function() {
+			// var chatWidth = $(".em-widget-content-box").width() - slideWidth;
+			var closeWidth = 0;
+			var closeChat = $(".em-widget-content-box").width() - closeWidth;
+			$("#em-kefu-webim-self").css("width",closeWidth + "px");
+			$("#em-kefu-webim-chat").css("width",closeChat + "px");
 			$("#em-kefu-webim-self").css("display","block");
-		}, 500);
-		eventListener.trigger("swiper.update");
+			eventListener.trigger("swiper.update");
+		}, 50);
 	}else{
 		if(slideSwitch && !utils.isMobile){
 			if(!slideSwitchAndMore){
