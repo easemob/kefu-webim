@@ -285,8 +285,14 @@ module.exports = function(opt){
 		for(var i = 0; i < aEl.length; i++){
 			aEl[i].style.color = color;
 		}
-		var elHeight = $(divEl).outerHeight() - 150;
+		if($("body").hasClass("window-demo")){
+			var elHeight = $(divEl).outerHeight() + 200;
+		}
+		else{
+			var elHeight = $(disvEl).outerHeight() - 150;
+		}
 		if($(divEl).hasClass("msgtype-skillgroupMenu") || $(divEl).hasClass("msgtype-robotList")){
+			console.log(top, "top++")
 			$(scroBox).scrollTop(top - elHeight);
 		}
 	}

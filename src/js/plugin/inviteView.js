@@ -126,7 +126,9 @@ module.exports = function(info, config){
 	}
 
 	function show(){
-		inviteBox.style.display = "block";
+		setTimeout(function(){
+			inviteBox.style.display = "block";
+		},1200)
 	}
 
 	function hide(){
