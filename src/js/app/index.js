@@ -112,6 +112,8 @@ eventListener.add(_const.SYSTEM_EVENT.CONSULT_AGENT, function(){
 });
 
 function widgetBoxShow(){
+	$(".note").hasClass("hide") && $(".note").removeClass("hide");
+	console.log(9999999999)
 	utils.removeClass(document.querySelector(".em-widget-box"), "hide");
 	if(!$("body").hasClass("window-demo")){
 		if(utils.isMobile){
