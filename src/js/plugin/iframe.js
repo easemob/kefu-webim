@@ -378,7 +378,6 @@ Iframe.prototype._updatePosition = function(newData){
 };
 
 Iframe.prototype.open = function(){
-	console.log("接受++++" )
 	var iframe = this.iframe;
 	inviteBox && inviteBox.clearInvitation();
 	isOpened = true;
@@ -395,7 +394,6 @@ Iframe.prototype.open = function(){
 	utils.removeClass(iframe, "easemobim-minimized");
 	utils.removeClass(iframe, "easemobim-hide");
 
-	console.log(this.down2Im )
 	this.down2Im && this.down2Im.send({ event: _const.EVENTS.SHOW });
 
 	return this;

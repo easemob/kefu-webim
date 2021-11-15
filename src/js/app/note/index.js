@@ -65,6 +65,7 @@ else if($("body",parent.document).hasClass("window-demo") && !$("#em-kefu-webim-
 	].join(""));
 }
 document.body.appendChild(dom);
+
 var content = document.querySelector("textarea");
 var name = document.querySelector(".name");
 var phone = document.querySelector(".phone");
@@ -81,10 +82,6 @@ var confirmBtn = document.querySelector(".confirm");
 // url 传递的参数
 var config = getNoteConfig().config || {};
 console.log(config,"offDutyType++" )
-if( $("body",parent.document).hasClass("window-demo") && config.offDutyType == ""){
-	console.log("下班时间隐藏留言" )
-	$(dom).addClass("hide");
-}
 api.update(config);
 utils.addClass(document.body, config.themeClassName || "theme-1");
 // 根据配置隐藏取消按钮
