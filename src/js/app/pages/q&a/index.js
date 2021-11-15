@@ -47,7 +47,7 @@ function show(){
 	utils.removeClass(domSelfWrapper, "hide");
 	// document.querySelector(".em-kefu-webim-chat").style.cssText='left:10px;';
 	if(!utils.isMobile){
-		document.querySelector(".chat-wrapper").style.cssText='top:65px;left:10px;background: #fff;padding-right:10px;';
+		document.querySelector(".chat-wrapper").style.cssText='top:10px;left:10px;background: #fff;padding-right:10px;';
 		document.querySelector(".em-self-wrapper").style.cssText='top:10px;right:10px;background: #F0F0F0;padding-bottom:10px;';
 		document.querySelector(".em-widget-content-box").style.cssText='padding-bottom: 10px;';
 		document.querySelector(".em-widget-send-wrapper").style.cssText='left:10px;padding-right:10px;';
