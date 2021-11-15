@@ -292,7 +292,6 @@ module.exports = function(opt){
 			var elHeight = $(disvEl).outerHeight() - 150;
 		}
 		if($(divEl).hasClass("msgtype-skillgroupMenu") || $(divEl).hasClass("msgtype-robotList")){
-			console.log(top, "top++")
 			$(scroBox).scrollTop(top - elHeight);
 		}
 	}
