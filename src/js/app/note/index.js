@@ -67,7 +67,22 @@ else if($("body",parent.document).hasClass("window-demo") && !$("#em-kefu-webim-
 	].join(""));
 }
 document.body.appendChild(dom);
-console.log(config, 'offDutyType+++')
+var content = document.querySelector("textarea");
+var name = document.querySelector(".name");
+var phone = document.querySelector(".phone");
+var mail = document.querySelector(".mail");
+var noteCategory = document.querySelector(".note-category");
+var noteCategoryList = new Selector({
+	list: [],
+	container: noteCategory,
+});
+// var cancelBtn = document.querySelector(".cancel-btn");
+// var confirmBtn = document.querySelector(".confirm-btn");
+var cancelBtn = document.querySelector(".cancel");
+var confirmBtn = document.querySelector(".confirm");
+// url 传递的参数
+var config = getNoteConfig().config || {};
+console.log(config,"offDutyType++" )
 if( $("body",parent.document).hasClass("window-demo") && config.offDutyType == ""){
 	console.log("下班时间隐藏留言" )
 	$(dom).addClass("hide");
@@ -86,23 +101,6 @@ if( $("body",parent.document).hasClass("window-demo") && config.offDutyType == "
 		}
 	}, ["down2Im"]);
 }
-
-var content = document.querySelector("textarea");
-var name = document.querySelector(".name");
-var phone = document.querySelector(".phone");
-var mail = document.querySelector(".mail");
-var noteCategory = document.querySelector(".note-category");
-var noteCategoryList = new Selector({
-	list: [],
-	container: noteCategory,
-});
-// var cancelBtn = document.querySelector(".cancel-btn");
-// var confirmBtn = document.querySelector(".confirm-btn");
-var cancelBtn = document.querySelector(".cancel");
-var confirmBtn = document.querySelector(".confirm");
-// url 传递的参数
-var config = getNoteConfig().config || {};
-console.log(config,"offDutyType++" )
 api.update(config);
 utils.addClass(document.body, config.themeClassName || "theme-1");
 // 根据配置隐藏取消按钮
