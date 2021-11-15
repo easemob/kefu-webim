@@ -70,14 +70,14 @@ document.body.appendChild(dom);
 console.log(config, 'offDutyType+++')
 if( $("body",parent.document).hasClass("window-demo") && config.offDutyType == ""){
 	console.log("下班时间隐藏留言" )
-	dom.addClass(hide);
+	$(dom).addClass("hide");
 	getToHost.listen(function(msg){
 		var event = msg.event;
 
 		switch(event){
 		case _const.EVENTS.SHOW:
 			console.log("收到点击消息，展开留言" )
-			dom.removeClass(hide);
+			$(dom).removeClass("hide");
 		case _const.EVENTS.CLOSE:
 			
 			break;
