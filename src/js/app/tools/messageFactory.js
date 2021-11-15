@@ -587,7 +587,7 @@ function genDomFromMsg(msg, isReceived, isHistory, opt){
 			ctrlArgs.label = __("config.language") === "zh-CN" ? ctrlArgs.label : "Chat with agent";
 			html += "<div class=\"em-btn-list\" style=\"padding:0\">"
 				+ "<button "
-					+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
+					+ "class=\"white fg-color border-color  js_robotTransferBtn  TransferBtnColor" + disabledClass + "\" "
 					+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
 					+ "data-id=\"" + ctrlArgs.id + "\" "
 				+ ">" + ctrlArgs.label + "</button>"
