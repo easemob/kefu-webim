@@ -286,7 +286,7 @@ module.exports = function(opt){
 			aEl[i].style.color = color;
 		}
 		if($("body").hasClass("window-demo")){
-			var elHeight = $(divEl).outerHeight() + 200;
+			var elHeight = $(divEl).outerHeight() + 280;
 		}
 		else{
 			var elHeight = $(divEl).outerHeight() - 150;
