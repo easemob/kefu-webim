@@ -575,7 +575,7 @@ body.window-demo{
 	height: 58px;
 	// color: #ff7474;
 	color: #595959;
-	padding: 5px;
+	// padding: 5px;
 	background:#fff;
 	box-sizing: border-box;
 	z-index: 10;
@@ -589,6 +589,7 @@ body.window-demo{
 		height: 100%;
 		// padding: 5px 0 7px 0;
 		box-sizing: border-box;
+		padding: 5px;
 	}
 	.contentDom{
 		width: 100%;

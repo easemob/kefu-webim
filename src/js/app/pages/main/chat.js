@@ -269,7 +269,7 @@ function _setNotice(){
 		function renderSlogan(){
 			if(!profile.grayList.poweredByEasemob && !utils.isMobile){
 				$(".em-widget-send-wrapper").css("height", "140px !important");
-				$(".chat-wrapper").css("bottom", "140px !important");
+				document.querySelector(".chat-wrapper").style.cssText='top:65px;bottom", "140px !important;left:10px;background: #fff;padding-right:10px;';
 			}
 			else{
 				if(!utils.isMobile ){
