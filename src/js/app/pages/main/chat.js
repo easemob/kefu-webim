@@ -1420,8 +1420,8 @@ function _init(){
 		}
 	}
 	else if(!utils.isMobile){
-		$(".em-widget-send-wrapper").css("height", "140px");
-		$(".chat-wrapper").css("bottom", "140px");
+		$(".em-widget-send-wrapper").css("height", "140px !important");
+		$(".chat-wrapper").css("bottom", "140px !important");
 	}
 
 }
