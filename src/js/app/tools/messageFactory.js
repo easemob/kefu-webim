@@ -575,7 +575,7 @@ function genDomFromMsg(msg, isReceived, isHistory, opt){
 		if(transferToHumanButtonInfo && transferToHumanButtonInfo.suggestionTransferToHumanLabel != null){
 			html += "<div class=\"em-btn-list\" style=\"padding:0\">"
 			+ "<button "
-				+ "class=\"white bg-color border-color bg-hover-color-dark js_robotTransferBtn " + disabledClass + "\" "
+				+ "class=\"white fg-color border-color  js_robotTransferBtn " + disabledClass + "\" "
 				+ "data-sessionid=\"" + ctrlArgs.serviceSessionId + "\" "
 				+ "data-id=\"" + ctrlArgs.id + "\" "
 				+ "data-transferToHumanId=\"" + transferToHumanButtonInfo.transferToHumanId + "\" "

@@ -100,7 +100,7 @@ if(config.offDutyType == ""){
 	var closeEl = $(".ticket>.wrapper .icon-close");
 	var ticketEl = $(".ticket>.wrapper .confirm");
 	closeEl&&closeEl.remove();
-	$(ticketEl).css("cssText","margin-left: 280px;");
+	$(ticketEl).css("cssText","margin-left: 280px;display:block;margin:auto;margin-bottom: 65px;");
 }
 
 var _getCategories = _.once(function(){
