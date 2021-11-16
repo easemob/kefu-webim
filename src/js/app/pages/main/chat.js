@@ -272,7 +272,9 @@ function _setNotice(){
 				$(".chat-wrapper").css("bottom", "140px !important");
 			}
 			else{
-				document.querySelector(".chat-wrapper").style.cssText='top:65px;left:10px;background: #fff;padding-right:10px;bottom:170px';
+				if(!utils.isMobile ){
+					document.querySelector(".chat-wrapper").style.cssText='top:65px;left:10px;background: #fff;padding-right:10px;bottom:170px';
+				}
 			}
 			// 设置信息栏内容
 			noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
