@@ -701,6 +701,10 @@
 			display: block;
 			margin: 10px auto;
 		}
+		textarea{
+			width: 90%;
+			margin: auto;
+		}
 	}
 	// 视频确认对话框
 	&.rtc-video-confirm {

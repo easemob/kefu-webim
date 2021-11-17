@@ -25,6 +25,7 @@ module.exports = function(){
 };
 
 function _updateAgentNickname(officialAccount){
+	$(".em-service-title").addClass("hide");
 	if(officialAccount !== profile.currentOfficialAccount) return;
 
 	var agentNickname = officialAccount.agentNickname;

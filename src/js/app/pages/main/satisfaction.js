@@ -107,11 +107,15 @@ function _init(){
 			].join(""))
 				:
 				utils.createElementFromHTML([
-					"<div class=\"wrapper\">",
+					"<div id=\"satisfaction-mobile\" class=\"wrapper\">",
+					"<div class=\"wrapper-title bg-color\">" + __("evaluation.title") + " <i class=\"icon-back-new\"></i></div>",
 					"<span class=\"title\">" + tipWord + "</span>",
 					"<ul></ul>",
+					"<div class=\"tip hide\"></div>",
 					"<div class=\"tag-container\"></div>",
 					"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
+					"<div class=\"cancel hidden\">" + __("evaluation.no_evaluation") + "</div>",
+					"<div class=\"confirm bg-color\">"+  __("evaluation.submit_evaluation")  +"</div>",
 					"</div>"
 				].join(""));
 		}
