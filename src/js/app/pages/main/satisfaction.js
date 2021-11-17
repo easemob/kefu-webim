@@ -215,6 +215,9 @@ function _init(){
 
 		if(!$(document.querySelector(".em-self-wrapper")).hasClass("hide")){
 			dialog.el.style.cssText='left:10px;top:10px;';
+			if(!utils.isMobile && $("body").hasClass("window-demo")){
+				dom.querySelector(".icon-close").style.cssText='margin-right:20px;';
+			}
 		}
 		else{
 			dialog.el.style.cssText='left:0;top:0;';

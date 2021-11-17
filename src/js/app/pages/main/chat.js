@@ -272,8 +272,11 @@ function _setNotice(){
 				document.querySelector(".chat-wrapper").style.cssText='top:65px;bottom", "140px !important;left:10px;background: #fff;padding-right:10px;';
 			}
 			else{
-				if(!utils.isMobile ){
+				if(!utils.isMobile && !$("#em-kefu-webim-self").hasClass("hide")){
 					document.querySelector(".chat-wrapper").style.cssText='top:65px;left:10px;background: #fff;padding-right:10px;bottom:170px';
+				}
+				else if(!utils.isMobile && $("#em-kefu-webim-self").hasClass("hide") ){
+					document.querySelector(".chat-wrapper").style.cssText='top:45px;background: #fff;bottom:170px';
 				}
 			}
 			// 设置信息栏内容

@@ -15,6 +15,7 @@ module.exports = {
 		agent: "Agent",
 		visitor: "Visitor",
 		close: "Close",
+		close_sound:"Mute",
 		min_window:"Minimize",
 		reply: "Reply",
 		tip: "Tips",

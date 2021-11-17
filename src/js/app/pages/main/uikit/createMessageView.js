@@ -281,7 +281,7 @@ module.exports = function(opt){
 		if(!color){
 			color = hoverColor;
 		}
-		var aEl = $(".em-widget-left .msgtype-txt a");
+		var aEl = $(".em-widget-left a");
 		for(var i = 0; i < aEl.length; i++){
 			aEl[i].style.color = color;
 		}

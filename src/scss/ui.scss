@@ -1121,7 +1121,7 @@
 .window-demo{
 	.em-dialog{
 		&.satisfaction{
-			width: 360px;
+			// width: 360px;
 			// left: 10px;
 			// top: 10px;
 			.wrapper{
@@ -1212,13 +1212,13 @@
 		}
 		.font-red{
 			position: relative;
-			right: -360px;
+			// right: -360px;
 			top: -36px;
 			color: red;
 		}
 		.font-red-text{
 			position: relative;
-			right: -360px;
+			// right: -360px;
 			top: -90px;
 			color: red;
 		}

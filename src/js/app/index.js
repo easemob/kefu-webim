@@ -62,6 +62,7 @@ var domData = {
 	refuse:__("common.refuse"),
 	accept:__("common.accept"),
 	min_window:__("common.min_window"),
+	close_sound:__("common.close_sound"),
 	screenShot:''
 }
 screenShot()
@@ -108,7 +109,7 @@ eventListener.add(_const.SYSTEM_EVENT.CONSULT_AGENT, function(){
 	if(utils.isMobile){
 		$(".expand").addClass("hide");
 		$(".em-service-title").addClass("hide");
-		
+
 	}
 });
 

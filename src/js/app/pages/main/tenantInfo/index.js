@@ -3,6 +3,7 @@ var PopupList = require("@/app/pages/main/uikit/popupList");
 var utils = require("@/common/utils");
 var channel = require("@/app/pages/main/channel");
 var tpl = require("./template/indexTpl.html");
+var profile = require("@/app/tools/profile");
 
 module.exports = function(){
 	// 二级菜单实例
@@ -11,6 +12,21 @@ module.exports = function(){
 	var container = document.querySelector(".em-widget-tip");
 	container.innerHTML = "";
 	utils.addClass(container, "new");
+	if(!profile.grayList.poweredByEasemob && !utils.isMobile){
+		$(".em-widget-send-wrapper").css("height", "140px !important");
+		document.querySelector(".chat-wrapper").style.cssText='top:45px;bottom", "140px !important;left:10px;background: #fff;padding-right:10px;';
+	}
+	else{
+		if(!utils.isMobile && !$("#em-kefu-webim-self").hasClass("hide")){
+			document.querySelector(".chat-wrapper").style.cssText='top:40px;left:10px;background: #fff;padding-right:10px;bottom:170px';
+		}
+		else if(!utils.isMobile && $("#em-kefu-webim-self").hasClass("hide")){
+			document.querySelector(".chat-wrapper").style.cssText='top:42px;background: #fff;bottom:170px'
+		}
+		else if(utils.isMobile){
+			document.querySelector(".chat-wrapper").style.cssText='top:32px;'
+		}
+	}
 
 	apiHelper.getNotice()
 	.then(function(notice){
