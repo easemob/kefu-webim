@@ -16,6 +16,7 @@ module.exports = {
 		visitor: "访客",
 		close: "结束会话",
 		close_sound:"静音",
+		close_mute:"取消静音",
 		min_window:"最小化",
 		reply: "回复",
 		tip: "提示",

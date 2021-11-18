@@ -192,6 +192,12 @@ function _initSoundReminder(){
 		isSlienceEnable = !isSlienceEnable;
 		utils.toggleClass(slienceSwitch, "icon-slience", isSlienceEnable);
 		utils.toggleClass(slienceSwitch, "icon-bell", !isSlienceEnable);
+		if(isSlienceEnable){
+			$(slienceSwitch).attr("title",__("common.close_mute"))
+		}
+		else{
+			$(slienceSwitch).attr("title",__("common.close_sound"))
+		}
 	});
 
 	eventListener.add(_const.SYSTEM_EVENT.MESSAGE_PROMPT, function(){

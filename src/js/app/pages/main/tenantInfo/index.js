@@ -13,8 +13,13 @@ module.exports = function(){
 	container.innerHTML = "";
 	utils.addClass(container, "new");
 	if(!profile.grayList.poweredByEasemob && !utils.isMobile){
-		$(".em-widget-send-wrapper").css("height", "140px !important");
-		document.querySelector(".chat-wrapper").style.cssText='top:45px;bottom", "140px !important;left:10px;background: #fff;padding-right:10px;';
+		if(!$("#em-kefu-webim-self").hasClass("hide")){
+			$(".em-widget-send-wrapper").css("height", "140px !important");
+			document.querySelector(".chat-wrapper").style.cssText='top:45px;bottom", "140px !important;left:10px;background: #fff;padding-right:10px;';
+		}
+		else{
+			document.querySelector(".chat-wrapper").style.cssText='top:45px;background: #fff;';
+		}
 	}
 	else{
 		if(!utils.isMobile && !$("#em-kefu-webim-self").hasClass("hide")){

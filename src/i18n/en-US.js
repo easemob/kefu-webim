@@ -16,6 +16,7 @@ module.exports = {
 		visitor: "Visitor",
 		close: "Close",
 		close_sound:"Mute",
+		close_mute:"Close Mute",
 		min_window:"Minimize",
 		reply: "Reply",
 		tip: "Tips",
