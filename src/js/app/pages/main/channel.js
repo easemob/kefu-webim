@@ -1377,6 +1377,14 @@ function _appendMsg(msg, options){
 		}, function(){
 			$(this).css("cssText", "background-color: " + bgColor + " !important");
 		});
+		// 留言文字颜色
+		$(".js-transfer-to-ticket").css("cssText", "color: " + themeCustomColor + " !important");
+		// 换一换语文字颜色
+		$(".welcome-change").css("cssText", "color: " + themeCustomColor + " !important");
+	}
+	else{
+		// 换一换语文字颜色
+		$(".welcome-change").addClass("fg-color");
 	}
 }
 

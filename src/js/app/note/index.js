@@ -81,7 +81,6 @@ var cancelBtn = document.querySelector(".cancel");
 var confirmBtn = document.querySelector(".confirm");
 // url 传递的参数
 var config = getNoteConfig().config || {};
-console.log(config,"offDutyType++" )
 api.update(config);
 utils.addClass(document.body, config.themeClassName || "theme-1");
 // 根据配置隐藏取消按钮
