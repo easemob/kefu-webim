@@ -10,6 +10,8 @@ var api = require("./api");
 var Selector = require("../pages/main/uikit/selector");
 
 var isSending = false;
+// url 传递的参数
+var config = getNoteConfig().config || {};
 
 var dom = utils.createElementFromHTML([
 	"<div class=\"em-dialog ticket satisfaction \">",
@@ -28,7 +30,8 @@ var dom = utils.createElementFromHTML([
 	"</div>"
 ].join(""));
 
-if(utils.isMobile  || ($("body",parent.document).hasClass("window-demo") && $("#em-kefu-webim-self",parent.document).hasClass("hide"))){
+// 不要用parent 获取元素。
+if(utils.isMobile  || (config.showBody && config.showSelf)){
 	var dom = utils.createElementFromHTML([
 		"<div  class=\"em-dialog note\">",
 		"<div class=\"wrapper\">",
@@ -79,8 +82,7 @@ var noteCategoryList = new Selector({
 // var confirmBtn = document.querySelector(".confirm-btn");
 var cancelBtn = document.querySelector(".cancel");
 var confirmBtn = document.querySelector(".confirm");
-// url 传递的参数
-var config = getNoteConfig().config || {};
+
 api.update(config);
 utils.addClass(document.body, config.themeClassName || "theme-1");
 // 根据配置隐藏取消按钮

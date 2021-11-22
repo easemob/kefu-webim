@@ -174,12 +174,12 @@
 			width: 100%;
 			overflow-x: auto;
 			box-sizing: border-box;
-			background: #dbecff;
-			border-radius: 12px 0 12px 12px;
+			border-radius: 0px 12px 12px 12px;
+			background: #efefef;
 			padding: 0 !important;
 			min-width: 200px;
 			.article-msg-outer{
-				background: #dbecff;
+				background: #efefef;
 			}
 			.icon-arrow-right{
 				right: unset !important;
@@ -466,9 +466,15 @@
 		// 图片消息、表情
 		img {
 			border-radius: 2px;
-			max-width: 190px;
+			// max-width: 190px;
 			word-wrap: break-word;
 			vertical-align: middle;
+		}
+		.desc{
+			line-height: 20px;
+			height: 20px;
+			margin-top: 11px;
+			margin-bottom: 13px;
 		}
 		// 坏掉的图片
 		.icon-broken-pic {
@@ -705,7 +711,7 @@
 	// float: left;
 	// width: 100%;
 	.article-item{
-		padding:10px 0;
+		// padding:10px 0;
 		position: relative;
 		.article-link {
 			position: absolute;

@@ -40,6 +40,8 @@ function Iframe(config){
 		sessionId: "",
 		hideCloseBtn: false,
 		themeClassName: themeClassName,
+		showBody: $("body").hasClass("window-demo"),// 获取元素判断留言页面样式，不能在ifram里直接获取外边元素会造成
+		showSelf: $("#em-kefu-webim-self").hasClass("hide"),
 		themeColor: color
 	};
 	
