@@ -49,7 +49,7 @@ if(utils.isMobile  || (config.showBody && config.showSelf)){
 		"</div>"
 	].join(""));
 }
-else if($("body",parent.document).hasClass("window-demo") && !$("#em-kefu-webim-self",parent.document).hasClass("hide")){
+else if(config.showBody && !config.showSelf){
 	var dom = utils.createElementFromHTML([
 		"<div id=\"demo-wrapper\" class=\"em-dialog ticket satisfaction \">",
 		"<div class=\"wrapper\">",
