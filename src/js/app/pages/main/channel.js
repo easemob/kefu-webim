@@ -375,6 +375,7 @@ function _sendFile(fileMsg){
 			_showFailed(id);
 		},
 	});
+	msg.fileLength = fileMsg.data.size;
 	_setExt(msg);
 	_appendMsg({
 		id: id,
@@ -501,6 +502,7 @@ function _handleMessage(msg, options){
 	var message;
 	var inviteId;
 	var serviceSessionId;
+	msg.fileLength = msg.fileLength || msg.file_length || "";
 
 	// 重复消息不处理
 	if(receiveMsgDict.get(msgId)){
@@ -1105,10 +1107,13 @@ function _transformMessageFormat(element){
 	var timestamp = moment(element.created_at, "YYYY-MM-DDTHH:mm:ss.SSSZZ").valueOf();
 	var fileLength;
 	var thumb;
-	// 只有坐席发出的消息里边的file_length是准确的
-	if(msgBody.from !== config.user.username){
-		fileLength = msg.file_length;
-	}
+	// // 只有坐席发出的消息里边的file_length是准确的
+	// if(msgBody.from !== config.user.username){
+	// 	fileLength = msg.file_length;
+	// }
+	// 去掉之前的判断逻辑，双方发送的file_length 都需要展示
+	fileLength = msg.file_length;
+
 
 	// 给图片消息或附件消息的 url 拼上 hostname
 	if(url && !/^https?/.test(url)){
@@ -1171,6 +1176,7 @@ function _setExt(msg){
 
 	msg.body.ext = msg.body.ext || {};
 	msg.body.ext.weichat = msg.body.ext.weichat || {};
+	msg.body.ext.file_length = msg.fileLength;
 
 	msg.body.ext.weichat.language = language;
 
