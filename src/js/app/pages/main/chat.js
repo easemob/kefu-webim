@@ -273,16 +273,26 @@ function _setNotice(){
 		}
 
 		function renderSlogan(){
-			if(!profile.grayList.poweredByEasemob && !utils.isMobile){
-				$(".em-widget-send-wrapper").css("height", "140px !important");
-				document.querySelector(".chat-wrapper").style.cssText='top:65px;bottom", "140px !important;left:10px;background: #fff;padding-right:10px;';
+
+			if(!profile.grayList.poweredByEasemob){
+				if(!utils.isMobile){
+					if(!$("#em-kefu-webim-self").hasClass("hide")){
+						$(".em-widget-send-wrapper").css("height", "140px !important");
+						document.querySelector(".chat-wrapper").style.cssText='top:65px;bottom", "140px !important;left:10px;background: #fff;padding-right:10px;';
+					}
+					else{
+						// document.querySelector(".chat-wrapper").style.cssText='top:65px;bottom", "140px !important;background: #fff;';
+					}
+				}
 			}
 			else{
-				if(!utils.isMobile && !$("#em-kefu-webim-self").hasClass("hide")){
-					document.querySelector(".chat-wrapper").style.cssText='top:65px;left:10px;background: #fff;padding-right:10px;bottom:170px';
-				}
-				else if(!utils.isMobile && $("#em-kefu-webim-self").hasClass("hide") ){
-					document.querySelector(".chat-wrapper").style.cssText='top:45px;background: #fff;bottom:170px';
+				if(!utils.isMobile){
+					if(!$("#em-kefu-webim-self").hasClass("hide")){
+						document.querySelector(".chat-wrapper").style.cssText='top:65px;left:10px;background: #fff;padding-right:10px;bottom:170px';
+					}
+					else{
+						document.querySelector(".chat-wrapper").style.cssText='top:45px;background: #fff;bottom:170px';
+					}
 				}
 			}
 			// 设置信息栏内容
@@ -294,6 +304,9 @@ function _setNotice(){
 				if(!utils.isMobile && !$("#em-kefu-webim-self").hasClass("hide")){
 					var bottomEl = $(".chat-wrapper").css("bottom")
 					document.querySelector(".chat-wrapper").style.cssText='top:10px;left: 10px;padding-right: 10px;bottom:' + bottomEl;
+				}
+				else if($("#em-kefu-webim-self").hasClass("hide") && !utils.isMobile){
+					document.querySelector(".chat-wrapper").style.cssText='top:0px;'
 				}
 			});
 		}
