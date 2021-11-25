@@ -16,10 +16,12 @@ module.exports = function(data,isOpen){
 		data = []
 		$(prevPc).addClass("hide");
 		$(nextPc).addClass("hide");
+		$(".swiper-container").css("width","96%")
 	}
 	if(data.length == 0){
 		$(prevPc).addClass("hide");
 		$(nextPc).addClass("hide");
+		$(".swiper-container").css("width","96%")
 	}
 	$(".em-widget-send-wrapper-top").removeClass("hide")
 		// 自定义主题色
@@ -110,6 +112,7 @@ module.exports = function(data,isOpen){
 		if($(nextPc).hasClass("swiper-button-disabled")){
 			$(prevPc).addClass("hide");
 			$(nextPc).addClass("hide");
+			$(".swiper-container").css("width","96%")
 		}
 	}
 	// 输入框上方的按钮
@@ -163,6 +166,7 @@ module.exports = function(data,isOpen){
 			if($(nextPc).hasClass("swiper-button-disabled")&& $(prevPc).hasClass("swiper-button-disabled")){
 				$(prevPc).addClass("hide");
 				$(nextPc).addClass("hide");
+				$(".swiper-container").css("width","96%")
 			}
 			else{
 				$(prevPc).removeClass("hide");

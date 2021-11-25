@@ -718,6 +718,7 @@ function _handleMessage(msg, options){
 					btn.removeClass("js_satisfybtn");
 					btn.text(__("chat.invalid"));
 					btn.addClass("invalid-btn");
+					btn.addClass("disabled");
 					evaluateFlag = false;
 				}, evaluateTime * 1000 - isInvalid);
 			}
@@ -1357,6 +1358,12 @@ function _appendMsg(msg, options){
 		var all = _.toArray(allListBtn1);
 		_.each(all, function(robotBtn){
 			utils.addClass(robotBtn, "disabled");
+		});
+		// 对应的箭头也置灰
+		var allListBtn2 = document.querySelectorAll(".msgtype-robotList .em-btn-list i");
+		var allI = _.toArray(allListBtn2);
+		_.each(allI, function(i){
+			utils.addClass(i, "disabled");
 		});
 	}
 

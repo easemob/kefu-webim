@@ -18,7 +18,7 @@ module.exports = function(){
 			document.querySelector(".chat-wrapper").style.cssText='top:45px;bottom", "140px !important;left:10px;background: #fff;padding-right:10px;';
 		}
 		else{
-			document.querySelector(".chat-wrapper").style.cssText='top:45px;background: #fff;';
+			document.querySelector(".chat-wrapper").style.cssText='top:42px;background: #fff;';
 		}
 	}
 	else{
