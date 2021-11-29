@@ -1394,6 +1394,8 @@ function _appendMsg(msg, options){
 		$(".js-transfer-to-ticket").css("cssText", "color: " + themeCustomColor + " !important");
 		// 换一换语文字颜色
 		$(".welcome-change").css("cssText", "color: " + themeCustomColor + " !important");
+		// 转人工按钮
+		$(".js_robotTransferBtn").css("cssText", "color: " + themeCustomColor + " !important");
 	}
 	else{
 		// 换一换语文字颜色
