@@ -8,6 +8,8 @@ var commonConfig = require("@/common/config");
 var uikit = require("../pages/main/uikit");
 var api = require("./api");
 var Selector = require("../pages/main/uikit/selector");
+var getToHost = require("@/app/common/transfer");
+var _const = require("@/common/const");
 
 var isSending = false;
 // url 传递的参数
@@ -265,7 +267,7 @@ utils.live(".wrapper-title .icon-close","click",function(){
 utils.live(".wrapper-title .icon-back-new","click",function(){
 	// window.parent.postMessage({ closeNote: true }, "*");
 	if(config.offDutyType == ""){
-		
+		window.parent.postMessage({ closeChat: true }, "*");
 	}
 	else{
 		window.parent.postMessage({ closeNote: true }, "*");

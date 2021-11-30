@@ -1493,11 +1493,13 @@ function _initNote(){
 	if(window.addEventListener){
 		window.addEventListener("message", function(e){
 			closeNoteIframe(e);
+			closeChat(e);
 		}, false);
 	}
 	else if(window.attachEvent){
 		window.attachEvent("onmessage", function(e){
 			closeNoteIframe(e);
+			closeChat(e);
 		});
 	}
 
@@ -1511,6 +1513,13 @@ function _initNote(){
 			data = JSON.parse(data);
 		}
 		data.closeNote && noteIframe.close();
+	}
+	function closeChat(e){
+		data = e.data;
+		if(typeof data === "string" && data != "undefined"){
+			data = JSON.parse(data);
+		}
+		data.closeChat && getToHost.send({ event: _const.EVENTS.CLOSE });
 	}
 }
 
