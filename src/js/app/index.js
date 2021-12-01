@@ -178,6 +178,15 @@ function widgetBoxShow(){
 		}
 	}
 
+	//点击接受邀请的时候也需要滚动
+	var listEle =  $(".em-widget-left");
+	var scroBox = $(".chat-wrapper")[0];
+	var top = scroBox.scrollTop;
+	var divEl = $(listEle[listEle.length - 1]).find(".em-widget-msg-wrapper");
+	var elHeight = $(divEl).outerHeight() - 150;
+	if($(divEl).hasClass("msgtype-skillgroupMenu") || $(divEl).hasClass("msgtype-robotList")){
+		$(scroBox).scrollTop(top - elHeight);
+	}
 	
 }
 function widgetBoxHide(){
