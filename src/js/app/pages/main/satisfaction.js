@@ -379,7 +379,7 @@ function _confirm(){
 		return false;
 	}
 	// 判断评价是否超时
-	apiHelper.getEvaluateVerify(profile.currentOfficialAccount.sessionId)
+	apiHelper.getEvaluateVerify(session || profile.currentOfficialAccount.sessionId || "")
 	.then(function(resp){
 		if(resp.status == "OK"){
 			_sendSatisfaction(score, content, session, invite, appraiseTags, resolutionParam, evaluationDegreeId);
@@ -391,7 +391,12 @@ function _confirm(){
 				if(evaluateType === "system" && profile.grayList.visitorLeave){
 					// 取消轮询接口
 					eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
-					profile.currentOfficialAccount.sessionId && apiHelper.closeChatDialog({ serviceSessionId: profile.currentOfficialAccount.sessionId });
+					if(session){
+						apiHelper.closeChatDialog({ serviceSessionId: session });
+					}
+					else{
+						profile.currentOfficialAccount.sessionId && apiHelper.closeChatDialog({ serviceSessionId: profile.currentOfficialAccount.sessionId });
+					}
 					getToHost.send({ event: _const.EVENTS.CLOSE });
 				}
 			}, 2000);
