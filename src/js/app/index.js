@@ -183,7 +183,7 @@ function widgetBoxShow(){
 	var scroBox = $(".chat-wrapper")[0];
 	var top = scroBox.scrollTop;
 	var divEl = $(listEle[listEle.length - 1]).find(".em-widget-msg-wrapper");
-	var elHeight = $(divEl).outerHeight() - 230;
+	var elHeight = $(divEl).outerHeight() - 330;
 	if($(divEl).hasClass("msgtype-skillgroupMenu") || $(divEl).hasClass("msgtype-robotList")){
 		$(scroBox).scrollTop(top - elHeight);
 	}
