@@ -64,13 +64,13 @@ function genMsgContent(msg){
 		break;
 	case "img":
 		// 判断当前环境是否为 https
-		console.log('protocol', document.location.protocol)
+		// console.log('protocol', document.location.protocol)
 		var isHttps = 'https:' == document.location.protocol ? true: false;
 		// 判断当前环境是否为 https，是的话图片地址换成 htpps
 		if (msg.url && isHttps) {
 			msg.url = msg.url.replace('http:', 'https:')
 		}
-		console.log('img111', msg.url)
+		// console.log('img111', msg.url)
 		// todo: remove a
 		html = "<a href=\"javascript:;\"><img class=\"em-widget-imgview\" src=\""
 			+ msg.url + "\"/></a>";

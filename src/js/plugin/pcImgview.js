@@ -19,7 +19,7 @@ function _init(){
 }
 
 module.exports = function(imgData) {
-	console.log('imgData', imgData)
+	// console.log('imgData', imgData)
 	var imgFile = imgData.imgFile;
 
 	if (!isInitialized) {
@@ -39,6 +39,6 @@ module.exports = function(imgData) {
 	} else {
 		imgDom.src = imgData.imgSrc;
 	}
-	console.log('imgDom.src：', imgDom.src)
+	// console.log('imgDom.src：', imgDom.src)
 	imgWrapper.style.display = "block";
 };
