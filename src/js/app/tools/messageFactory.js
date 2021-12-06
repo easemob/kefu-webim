@@ -10,7 +10,7 @@ var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easem
 
 // channel.js 放着消息列表的构建，是不对的
 function genMsgContent(msg){
-	console.log('genMsgContent', msg)
+	// console.log('genMsgContent', msg)
 	var type = msg.type;
 	var value = msg.data;
 	var laiye = msg.laiye;

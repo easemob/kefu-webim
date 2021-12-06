@@ -232,7 +232,6 @@ function _ready(){
 			me.down2Im.send({ event: _const.EVENTS.UPDATE_URL, data: location.href });
 			break;
 		case _const.EVENTS.SHOW_IMG:
-			console.log('pcImgView', data)
 			pcImgView(data);
 			break;
 		case _const.EVENTS.RESET_IFRAME:

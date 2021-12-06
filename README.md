@@ -27,6 +27,8 @@
 		>	npm run server
 	- 此时可以用浏览器打开 `http://localhost:8008/webim/demo.html`
 
+3. 发版
+	直接 `npm run release` 然后回车即可
 ## 定制开发（`目前标准版已支持所有功能，绝大多数情形无需定制开发`）
 
 - 在上述步骤的基础上还要执行下面的命令，推荐使用OSX 或 Linux，Window下安装依赖可能会有问题
