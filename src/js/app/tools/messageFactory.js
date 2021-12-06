@@ -23,8 +23,9 @@ function genMsgContent(msg){
 	var relatedRuleIds;
 	// 储存坐席 id
 	var agentUserId = utils.getDataByPath(msg, "ext.weichat.service_session.agentUserId");
-	console.log('agentUserId', agentUserId)
+	// console.log('agentUserId', agentUserId)
 	_const.agentUserId = agentUserId
+	console.log('agentUserId', _const.agentUserId)
 
 	// // 针对默写特殊格式url不统一的，输出统一url
   // function _generateUrl(msg) {
@@ -63,6 +64,7 @@ function genMsgContent(msg){
 		break;
 	case "img":
 		// 判断当前环境是否为 https
+		console.log('protocol', document.location.protocol)
 		var isHttps = 'https:' == document.location.protocol ? true: false;
 		// 判断当前环境是否为 https，是的话图片地址换成 htpps
 		if (msg.url && isHttps) {

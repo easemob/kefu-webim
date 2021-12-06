@@ -19,8 +19,9 @@ function _init(){
 }
 
 module.exports = function(imgData){
-	var imgFile = imgData.imgFile;
-	console.log('imgFile：', imgFile)
+	console.log('imgData', imgData)
+	// var imgFile = imgData.imgFile;
+	var imgFile = imgData.imgSrc;
 
 	if(!isInitialized){
 		_init();
@@ -28,7 +29,8 @@ module.exports = function(imgData){
 	}
 
 	if(imgFile){
-		imgDom.src = window.URL.createObjectURL(imgFile);
+		// imgDom.src = window.URL.createObjectURL(imgFile);
+		imgDom.src = imgFile
 	}
 	else{
 		imgDom.src = imgData.imgSrc;

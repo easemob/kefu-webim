@@ -1119,7 +1119,7 @@ function _setExt(msg){
 		msg.body.ext.metlifeCustomerId = config.metlifeCustomerId;
 	}
 	// // 新加参数 --- 结束
-	console.log('[msg]',msg)
+	// console.log('[msg]',msg)
 	// bind agent username
 	if(bindAgentUsername){
 		msg.body.ext.weichat.agentUsername = bindAgentUsername;

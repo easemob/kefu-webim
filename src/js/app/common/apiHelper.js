@@ -379,7 +379,7 @@ function getIsGuanwei(tenantId) {
 			url: '/v1/tenants/' + tenantId + '/isGuanweiTenantId',
 			type: 'GET',
 			success: function(res) {
-				console.log('查询当前租户是否官微租户', res);
+				// console.log('查询当前租户是否官微租户', res);
 				var newRes;
 				try {
 					newRes = JSON.parse(res);
