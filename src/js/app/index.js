@@ -24,7 +24,7 @@ var getToHost = require("@/app/common/transfer");
 var eventListener = require("@/app/tools/eventListener");
 var fromUserClick = false;
 var Tab = require("@/common/uikit/tab");
-var slideApi = require("./pages/q&a/apis");
+var Apis = require("./pages/main/apis");
 
 var ISIFRAME = false; //网页插件为true
 var slideSwitch;
@@ -832,6 +832,8 @@ function renderUI(resultStatus){
 			})
 		}
 	}
+	// 监听页面状态
+	listenPageState();
 }
 
 
@@ -870,6 +872,32 @@ function screenShot(){
 	if (agent.indexOf("win64") >= 0 || agent.indexOf("wow64") >= 0) tips = domData.screenShot =   __("toolbar.screen_shotTip_win");
 	if(isMac) domData.screenShot =   __("toolbar.screen_shotTip");
 }
+// 监听页面的状态
+function listenPageState(){
+	var hiddenProperty = 'hidden' in document ? 'hidden' :    
+	'webkitHidden' in document ? 'webkitHidden' :    
+	'mozHidden' in document ? 'mozHidden' :    
+	null;
+	var visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
+	var onVisibilityChange = function(){
+		if (!document[hiddenProperty]) {    
+			console.log('页面激活');
+			commonConfig.setConfig({
+				pageState: true
+			});
+			// 每次页面激活时候需要调用已读消息接口
+			var SessionId = profile.currentOfficialAccount.sessionId;
+			Apis.readMessageLastRead(SessionId)
+		}else{
+			// console.log('页面非激活')
+			commonConfig.setConfig({
+				pageState: false
+			});
+		}
+	}
+	document.addEventListener(visibilityChangeEvent, onVisibilityChange);	
+}
+
 
 
 // body.html 显示词语

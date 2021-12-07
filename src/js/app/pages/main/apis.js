@@ -1594,6 +1594,19 @@ function getOnlyCloseSession(){
 	});
 }
 
+function readMessageLastRead(serviceSessionId){
+	return new Promise(function(resolve, reject){
+		api("readMessageLastRead", {
+			tenantId: config.tenantId,
+			serviceSessionId:serviceSessionId,
+		}, function(res){
+			resolve(res);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 
 module.exports = {
 	getGrayList: getGrayList,
@@ -1676,6 +1689,7 @@ module.exports = {
 	getOnlyCloseSession: getOnlyCloseSession,
 	getOnlyCloseWindow: getOnlyCloseWindow,
 	getVideoH5Status: getVideoH5Status,
+	readMessageLastRead: readMessageLastRead,
 	update: function(cfg){
 		config = cfg;
 	}
