@@ -150,6 +150,9 @@ function chat_window_mode_init(){
 		case _const.EVENTS.UPDATE_URL:
 			profile.currentBrowsingURL = data;
 			break;
+		case _const.EVENTS.HIDE_DEFAULT_BTN:
+			utils.addClass($contactAgentBtn, "hide");
+			break;
 		default:
 			break;
 		}

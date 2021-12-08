@@ -157,6 +157,7 @@ module.exports = {
 		SCROLL_TO_BOTTOM: "scroll.to.bottom",
 		INVITATION_INIT: "invitation_init",
 		REOPEN: "reopen",
+		HIDE_DEFAULT_BTN:"hideDefaultBtn",
 		EVALUATIONSUBMIT: "evaluation_submit"
 	},
 

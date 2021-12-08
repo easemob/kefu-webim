@@ -437,5 +437,9 @@ Iframe.prototype.sendText = function(msg){
 		this.textMessageList.push(msg);
 	}
 };
+// 隐藏默认联系客服按钮
+Iframe.prototype.hideDefaultBtn = function(){
+	this.down2Im.send({ event: _const.EVENTS.HIDE_DEFAULT_BTN, data: {} });
+};
 
 module.exports = Iframe;

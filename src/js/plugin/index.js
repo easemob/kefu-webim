@@ -264,6 +264,12 @@ easemobim.restore = function(){
 		iframe.open();
 	}
 };
+// 隐藏默认联系客服按钮
+easemobim.hideDefaultBtn = function(){
+	if(iframe){
+		iframe.hideDefaultBtn();
+	}
+};
 
 
 // user click
