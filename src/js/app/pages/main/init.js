@@ -152,6 +152,7 @@ function chat_window_mode_init(){
 			break;
 		case _const.EVENTS.HIDE_DEFAULT_BTN:
 			utils.addClass($contactAgentBtn, "hide");
+			profile.isHideBtn = true;
 			break;
 		default:
 			break;

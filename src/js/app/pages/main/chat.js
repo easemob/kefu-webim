@@ -1305,7 +1305,7 @@ function _close(){
 
 	if(config && !config.hide){
 		utils.addClass(doms.imChat, "hide");
-		utils.removeClass(doms.imBtn, "hide");
+		!profile.isHideBtn && utils.removeClass(doms.imBtn, "hide");
 	}
 
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CHAT_WINDOW_CLOSED, []);

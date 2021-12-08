@@ -19,6 +19,7 @@ var profile = {
 	currentOfficialAccount: {},
 	systemOfficialAccount: {},
 	isNoLink:null,
+	isHideBtn:false,
 	// systemOfficialAccount 相关方法
 	shouldMsgActivated: function(curSSID){
 		if(typeof curSSID !== "string"){
