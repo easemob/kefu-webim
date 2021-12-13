@@ -1063,6 +1063,7 @@ function getArticleJson(data){
 // 猜你想说 接口列表
 function getGuessList(data){
 	var officialAccount = profile.currentOfficialAccount;
+	
 	if(!officialAccount) return;
 	return new Promise(function(resolve, reject){
 		api("getGuessList", {
@@ -1366,6 +1367,34 @@ function getNoEmptyAgentEnable(){
 			error: function(err) {
 				reject(err);
 			}
+		});
+	});
+}
+
+function getMsgTransTimelyType(){
+	return new Promise.all([getMsgTransTimelyEnable()]).then(function(datas) {
+
+	})
+}
+function getMsgTransTimelyEnable(){
+	return new Promise(function(resolve, reject) {
+		emajax({
+			url: "/v1/webimplugin/tenants/"
+					+ config.tenantId
+					+ "/options/sendMsgTransTimely-" + agentId,
+			type: "GET",
+			async: false,
+			success: function(data) {
+				data = JSON.parse(data);
+				if (data.status && data.status == 'OK' && data.entities && data.entities) {
+					resolve(data.entities);
+				} else {
+					reject('');
+				}
+			},
+			error: function(err) {
+				reject(err);
+			},
 		});
 	});
 }
