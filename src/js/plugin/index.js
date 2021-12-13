@@ -270,6 +270,12 @@ easemobim.hideDefaultBtn = function(){
 		iframe.hideDefaultBtn();
 	}
 };
+easemobim.setDefaultConfig = function(config){
+	if(iframe){
+		iframe.open();
+		config && iframe._updatePosition(config);
+	}
+};
 
 
 // user click
