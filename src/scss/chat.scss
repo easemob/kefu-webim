@@ -174,7 +174,8 @@
 		hr{
 			height:1px;
 			border:none;
-			border-top: dotted;
+			// border-top: dotted;
+			border-top: 1px dashed #222;
 		}
 		.em-widget-msg-article{
 			width: 100%;
