@@ -1272,6 +1272,9 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.agentNickname = eventObj.agentUserNiceName;
 		officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
 		officialAccount.isSessionOpen = true;
+		apiHelper.getMsgTransTimelyType().then(function(res){
+			profile.isTranslateMsg = res;
+		})
 		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.STOP_TIMEOUT, [officialAccount]);
 		break;
 	case _const.SYSTEM_EVENT.SESSION_TRANSFERING:
@@ -1316,6 +1319,9 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.agentAvatar = eventObj.avatar;
 		officialAccount.agentNickname = eventObj.agentUserNiceName;
 		officialAccount.isSessionOpen = true;
+		apiHelper.getMsgTransTimelyType().then(function(res){
+			profile.isTranslateMsg = res;
+		})
 		break;
 	case _const.SYSTEM_EVENT.SESSION_CREATED:
 		officialAccount.sessionState = _const.SESSION_STATE.WAIT;

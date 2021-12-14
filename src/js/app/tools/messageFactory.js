@@ -86,6 +86,22 @@ function genMsgContent(msg, opt){
 					return fragment.value;
 				}).join("") + "</span>";
 			}
+			// 处理翻译的消息
+			if(opt.isReceived && msg.ext && msg.ext.translatedMsg){
+				if(profile.isTranslateMsg === "0"){
+					html = "<span class=\"text\">";
+					html += msg.ext.translatedMsg;
+					html += "</span>";
+					html = textParser.unescape(html);
+				}
+				else if(profile.isTranslateMsg === "1"){
+					var transHtml = "<span class=\"text\">";
+					transHtml += msg.ext.translatedMsg;
+					transHtml  += "</span><hr/>";
+					html = transHtml + html;
+					html = textParser.unescape(html);
+				}
+			}
 			break;
 		}
 	case "txtLink":

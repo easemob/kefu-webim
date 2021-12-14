@@ -1372,16 +1372,51 @@ function getNoEmptyAgentEnable(){
 }
 
 function getMsgTransTimelyType(){
-	return new Promise.all([getMsgTransTimelyEnable()]).then(function(datas) {
+	var officialAccount = profile.currentOfficialAccount;
+	return new Promise(function(resolve, reject){
+		Promise.all([
+			getMsgTransTimelyEnable(),
+		]).then(function(result){
+			if(result){
+				emajax({
+					url: "/v1/webimplugin/tenants/"
+							+ config.tenantId
+							+ "/options/sendMsgTransTimelyType-" + officialAccount.agentId,
+					type: "GET",
+					async: false,
+					success: function(data) {
+						data = JSON.parse(data);
+						if (data.status && data.status == 'OK' && data.entities && data.entities) {
+							if(data.entities.length){
+								resolve(data.entities[0].optionValue);
+							}
+							else{
+								resolve("2");
+							}
+							
+						} else {
+							reject('');
+						}
+					},
+					error: function(err) {
+						reject(err);
+					},
+				});
+			}
+			else{
+				resolve("2");
+			}
 
-	})
+		});
+	});
 }
 function getMsgTransTimelyEnable(){
+	var officialAccount = profile.currentOfficialAccount;
 	return new Promise(function(resolve, reject) {
 		emajax({
 			url: "/v1/webimplugin/tenants/"
 					+ config.tenantId
-					+ "/options/sendMsgTransTimely-" + agentId,
+					+ "/options/sendMsgTransTimely-" + officialAccount.agentId,
 			type: "GET",
 			async: false,
 			success: function(data) {
@@ -1705,6 +1740,7 @@ module.exports = {
 	getOnlyCloseSession: getOnlyCloseSession,
 	getOnlyCloseWindow: getOnlyCloseWindow,
 	getVideoH5Status: getVideoH5Status,
+	getMsgTransTimelyType: getMsgTransTimelyType, // 获取实时翻译消息的类型 0：仅发送译文  1：同时发送原文和译文  2：不作处理
 	update: function(cfg){
 		config = cfg;
 	}
