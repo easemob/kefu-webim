@@ -47,6 +47,9 @@ module.exports = function(opt){
 			officialAccount.sessionState = entity.state;
 			officialAccount.agentType = entity.agent_type;
 			officialAccount.skillGroupId = entity.skill_group_id;
+			apiHelper.getMsgTransTimelyType().then(function(res){
+				profile.isTranslateMsg = res;
+			})
 			officialAccount.isSessionOpen = (
 				entity.state === _const.SESSION_STATE.PROCESSING
 				|| entity.state === _const.SESSION_STATE.WAIT

@@ -171,6 +171,11 @@
 		color: #595959;
 		// border-radius: 0 8px 8px 8px;
 		border-radius: 0px 12px 12px 12px;
+		hr{
+			height:1px;
+			border:none;
+			border-top: dotted;
+		}
 		.em-widget-msg-article{
 			width: 100%;
 			overflow-x: auto;
