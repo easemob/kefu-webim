@@ -47,6 +47,7 @@ module.exports = function(opt){
 			officialAccount.sessionState = entity.state;
 			officialAccount.agentType = entity.agent_type;
 			officialAccount.skillGroupId = entity.skill_group_id;
+			profile.latestNiceName = entity.agent_nice_name;
 			apiHelper.getMsgTransTimelyType().then(function(res){
 				profile.isTranslateMsg = res;
 			})

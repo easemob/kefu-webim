@@ -73,6 +73,7 @@ function _getQueuingNumber(officialAccount){
 		else{
 			apiHelper.getLastSession(officialAccountId).then(function(entity){
 				officialAccount.skillGroupId = entity.skill_group_id;
+				profile.latestNiceName = entity.agent_nice_name;
 			});
 		}
 	}
