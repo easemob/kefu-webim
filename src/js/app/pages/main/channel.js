@@ -1060,6 +1060,11 @@ function _handleMessage(msg, options){
 			}
 		});
 	}
+	serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
+	if(isReceived && !isHistory && commonConfig.getConfig().pageState && serviceSessionId){
+		// TODO 调用已读消息接口
+		apiHelper.readMessageLastRead(serviceSessionId)
+	}
 }
 
 function activeAnswerMessage(activeAnswerBundle, index){

@@ -1113,6 +1113,14 @@ up2Im.listen(function(msg){
 			excludeData: true,
 		});
 		break;
+	case "readMessageLastRead":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/servicesessions/" + params.serviceSessionId + "/read",
+			type: "POST",
+			msg: msg,
+			excludeData: true,
+		});
+		break;
 	default:
 		console.error("unexpect api name: " + apiName);
 		break;
