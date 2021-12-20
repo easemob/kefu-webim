@@ -133,6 +133,10 @@ function _initConnection(onReadyCallback){
 			onReadyCallback(info);
 		},
 		onTextMessage: function(message){
+			// 有 ws消息时候调用获取翻译开关接口，下一期改为通知暂且放在监听ws消息的位置
+			apiHelper.getMsgTransTimelyType().then(function(res){
+				profile.isTranslateMsg = res;
+			})
 			_handleMessage(message, { type: "txt", notFromSystem: true });
 		},
 		onPictureMessage: function(message){
