@@ -1004,19 +1004,10 @@ function _bindEvents(){
 	utils.on(doms.videoInput, "change", function(){
 		var fileInput = doms.videoInput;
 		var filesize = utils.getDataByPath(fileInput, "files.0.size");
-		var maxSize, tip;
-		if(profile.grayList.uploadFileLimit){
-			maxSize = 1024 * 1024 * 20;
-			tip = __("prompt._20_mb_file_limit");
-		}
-		else{
-			maxSize = _const.UPLOAD_FILESIZE_LIMIT;
-			tip = __("prompt._10_mb_file_limit");
-		}
 		if(!fileInput.value){
 		}
-		else if(filesize > maxSize){
-			uikit.tip(tip);  // ("文件大小不能超过10MB");
+		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
+			uikit.tip(__("prompt._10_mb_file_limit"));  // ("文件大小不能超过10MB");
 			fileInput.value = "";
 		}
 		else{
@@ -1057,15 +1048,6 @@ function _bindEvents(){
 	if(utils.isQQBrowser && utils.isAndroid){
 		doms.imgInput.setAttribute("accept", "image/*");
 	}
-	var maxSize, tip;
-	if(profile.grayList.uploadFileLimit){
-		maxSize = 1024 * 1024 * 20;
-		tip = __("prompt._20_mb_file_limit");
-	}
-	else{
-		maxSize = _const.UPLOAD_FILESIZE_LIMIT;
-		tip = __("prompt._10_mb_file_limit");
-	}
 	// 发送图片
 	utils.on(doms.imgInput, "change", function(){
 		var fileInput = doms.imgInput;
@@ -1080,8 +1062,8 @@ function _bindEvents(){
 		// uikit.tip('unsupported picture format');
 		// }
 		// 某些浏览器无法获取文件大小, 忽略
-		else if(filesize > maxSize){
-			uikit.tip(tip);
+		else if(filesize > _const.UPLOAD_FILESIZE_LIMIT){
+			uikit.tip(__("prompt._10_mb_file_limit"));
 			fileInput.value = "";
 		}
 		else{
