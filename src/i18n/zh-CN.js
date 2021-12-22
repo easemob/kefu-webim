@@ -39,7 +39,9 @@ module.exports = {
 	chat: {
 		agent_is_typing: "正在输入...",
 		current_queue_number: "当前排队人数为",
-		connecting: "连接中...",
+		// connecting: "连接中...",
+		// 暂且去掉连接中状态
+		connecting: "发送",
 		send: "发送",
 		input_placeholder: "点击输入内容...",
 		click_to_ticket: "留言",

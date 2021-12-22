@@ -1658,6 +1658,19 @@ function getOnlyCloseSession(){
 	});
 }
 
+function readMessageLastRead(serviceSessionId){
+	return new Promise(function(resolve, reject){
+		api("readMessageLastRead", {
+			tenantId: config.tenantId,
+			serviceSessionId:serviceSessionId,
+		}, function(res){
+			resolve(res);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 
 module.exports = {
 	getGrayList: getGrayList,
@@ -1741,6 +1754,7 @@ module.exports = {
 	getOnlyCloseWindow: getOnlyCloseWindow,
 	getVideoH5Status: getVideoH5Status,
 	getMsgTransTimelyType: getMsgTransTimelyType, // 获取实时翻译消息的类型 0：仅发送译文  1：同时发送原文和译文  2：不作处理
+	readMessageLastRead: readMessageLastRead,
 	update: function(cfg){
 		config = cfg;
 	}

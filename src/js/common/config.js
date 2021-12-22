@@ -104,6 +104,7 @@ function handleConfig(configJson){
 	config.timeScheduleId = configJson.chat.timeScheduleId || 0;
 	config.options = configJson.options;
 	config.videoH5Status = "";
+	config.pageState = true;
 
 }
 
