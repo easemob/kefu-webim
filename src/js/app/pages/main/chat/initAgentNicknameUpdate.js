@@ -65,7 +65,7 @@ function _updateAgentNickname(officialAccount){
 	){
 		$agentNickname.innerText = agentNickname;
 	}
-	else if(profile.latestNiceName){
+	else if(profile.latestNiceName && isSessionOpen){
 		$agentNickname.innerText = profile.latestNiceName;
 	}
 	else{

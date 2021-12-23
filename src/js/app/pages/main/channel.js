@@ -1284,6 +1284,7 @@ function _handleSystemEvent(event, eventObj, msg){
 		apiHelper.getMsgTransTimelyType().then(function(res){
 			profile.isTranslateMsg = res;
 		})
+		profile.latestNiceName = null;  // 转接时把最近一次名称置空
 		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.STOP_TIMEOUT, [officialAccount]);
 		break;
 	case _const.SYSTEM_EVENT.SESSION_TRANSFERING:
@@ -1291,6 +1292,7 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.isSessionOpen = true;
 		officialAccount.skillGroupId = null;
 		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.STOP_TIMEOUT, [officialAccount]);
+		profile.latestNiceName = null;  // 转接时把最近一次名称置空
 		break;
 	case _const.SYSTEM_EVENT.SESSION_CLOSED:
 		// 如果在会话结束前已经发起了满意度评价，在结束时开始计算失效时间
@@ -1317,6 +1319,7 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.skillGroupId = null;
 		officialAccount.isSessionOpen = false;
 		officialAccount.hasReportedAttributes = false;
+		profile.latestNiceName = null;  // 结束会话把最近一次名称置空
 		// to topLayer
 		getToHost.send({ event: _const.EVENTS.ONSESSIONCLOSED });
 		break;
