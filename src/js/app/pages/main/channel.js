@@ -354,7 +354,7 @@ function _sendImg(fileMsg){
 	});
 	conn.send(msg.body);
 	sendMsgDict.set(id, msg);
-	_detectUploadImgMsgByApi(id, fileMsg.data);
+	_detectUploadImgMsgByApi(id, fileMsg.data, "img");
 
 	// 自己发出去的图片要缓存File对象，用于全屏显示图片
 	profile.imgFileList.set(fileMsg.url, fileMsg.data);
@@ -391,7 +391,10 @@ function _sendFile(fileMsg){
 		isReceived: false,
 		isHistory: false,
 	});
+	_appendAck(msg, id);
 	conn.send(msg.body);
+	sendMsgDict.set(id, msg);
+	_detectUploadImgMsgByApi(id, fileMsg.data, "file");
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
 	clearActiveAnswerTimeout();
@@ -425,7 +428,10 @@ function _sendVideo(fileMsg){
 		isReceived: false,
 		isHistory: false,
 	});
+	_appendAck(msg, id);
 	conn.send(msg.body);
+	sendMsgDict.set(id, msg);
+	_detectUploadImgMsgByApi(id, fileMsg.data, "video");
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
 	clearActiveAnswerTimeout();
@@ -506,7 +512,7 @@ function _handleMessage(msg, options){
 	var message;
 	var inviteId;
 	var serviceSessionId;
-	msg.fileLength = msg.fileLength || msg.file_length || "";
+	msg.fileLength = msg.fileLength || msg.file_length || msg.ext.file_length || "";
 
 	// 重复消息不处理
 	if(receiveMsgDict.get(msgId)){
@@ -1485,6 +1491,7 @@ function _sendMsgChannle(id, retryCount){
 		? retryCount
 		: _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
 
+	console.log("第二通道发消息  msg",msg)
 	apiHelper.sendMsgChannel(body, ext).then(function(){
 		// 发送成功清除
 		_clearTS(id);
@@ -1500,7 +1507,7 @@ function _sendMsgChannle(id, retryCount){
 }
 
 // 第二通道上传图片消息
-function _uploadImgMsgChannle(id, file, retryCount){
+function _uploadImgMsgChannle(type,id, file, retryCount){
 	var msg = sendMsgDict.get(id);
 	var count = typeof retryCount === "number"
 		? retryCount
@@ -1508,15 +1515,33 @@ function _uploadImgMsgChannle(id, file, retryCount){
 
 
 	apiHelper.uploadImgMsgChannel(file).then(function(resp){
-		msg.body.body = {
-			filename: resp.fileName,
-			type: "img",
-			url: resp.url
-		};
+		if(type == "img"){
+			msg.body.body = {
+				filename: resp.fileName,
+				type: "img",
+				url: resp.url
+			};
+		}
+		else if(type == "video"){
+			msg.body.body = {
+				filename: resp.fileName,
+				type: "video",
+				url: resp.url
+			};
+		}
+		else{
+			msg.body.body = {
+				filename: resp.fileName,
+				type: "file",
+				fileLength:file.size,
+				file_length:file.size,
+				url: resp.url
+			};
+		}
 		_sendMsgChannle(id, 0);
 	}, function(){
 		if(count > 0){
-			_uploadImgMsgChannle(msg, file, --count);
+			_uploadImgMsgChannle(type,msg, file, --count);
 		}
 		else{
 			_showFailed(id);
@@ -1544,11 +1569,11 @@ function _detectSendTextMsgByApi(id){
 }
 
 // 监听ack，超时则开启api通道, 上传图片消息时调用
-function _detectUploadImgMsgByApi(id, file){
+function _detectUploadImgMsgByApi(id, file, type){
 	ackTimerDict.set(
 		id,
 		setTimeout(function(){
-			_uploadImgMsgChannle(id, file);
+			_uploadImgMsgChannle(type,id, file);
 		}, _const.FIRST_CHANNEL_IMG_MESSAGE_TIMEOUT)
 	);
 }
