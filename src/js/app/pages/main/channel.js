@@ -93,6 +93,9 @@ function _initSecondChannle(){
 		tab = commonConfig.getConfig().tabIdSession;
 		apiHelper.receiveMsgChannel(tab).then(function(msgList){
 			_.each(msgList, function(elem){
+				if(elem.bodies[0]&& elem.bodies[0].url && elem.bodies[0].url.indexOf("http")){
+					elem.bodies[0].url = document.domain + elem.bodies[0].url;
+				}
 				_handleMessage(_transformMessageFormat({ body: elem }), { isHistory: false });
 			});
 		});
