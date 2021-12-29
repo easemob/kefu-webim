@@ -512,7 +512,7 @@ function _handleMessage(msg, options){
 	var message;
 	var inviteId;
 	var serviceSessionId;
-	msg.fileLength = msg.fileLength || msg.file_length || msg.ext.file_length || "";
+	msg.fileLength = msg.fileLength || msg.file_length || (msg.ext&& msg.ext.file_length) || "";
 
 	// 重复消息不处理
 	if(receiveMsgDict.get(msgId)){
@@ -1491,7 +1491,6 @@ function _sendMsgChannle(id, retryCount){
 		? retryCount
 		: _const.SECOND_MESSAGE_CHANNEL_MAX_RETRY_COUNT;
 
-	console.log("第二通道发消息  msg",msg)
 	apiHelper.sendMsgChannel(body, ext).then(function(){
 		// 发送成功清除
 		_clearTS(id);

@@ -881,7 +881,6 @@ function listenPageState(){
 	var visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
 	var onVisibilityChange = function(){
 		if (!document[hiddenProperty]) {    
-			console.log('页面激活');
 			commonConfig.setConfig({
 				pageState: true
 			});
