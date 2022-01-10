@@ -84,6 +84,7 @@ function _init(){
 				"<div class=\"wrapper-title\">" + __("evaluation.title") + "<i class=\"icon-close\"></i></div>",
 				"<span class=\"title\">" + tipWord + "</span>",
 				"<ul></ul>",
+				"<div class=\"tip hide\"></div>",
 				"<div class=\"tag-container\"></div>",
 				"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.review") + "\"></textarea>",
 				"<div class=\"cancel hidden\">" + __("evaluation.no_evaluation") + "</div>",
@@ -162,7 +163,7 @@ function _init(){
 			});
 			var tipBox = $(".satisfaction .tip")
 			// var tipText = [__("evaluation.level1"),__("evaluation.level2"),__("evaluation.level3"),__("evaluation.level4"),__("evaluation.level5")]
-			var tipText = tipNameArr.reverse() || [];
+			var tipText = tipNameArr || [];
 			tipBox.removeClass("hide");
 			tipBox.text(tipText[level - 1]);
 
@@ -298,6 +299,7 @@ function _setSatisfaction(){
 		for(var i=0;i<entities.length;i++){
 			tipNameArr.push(entities[i].name);
 		}
+		tipNameArr = tipNameArr.reverse();
 		starsUl.innerHTML = _.chain(entities)
 		.sortBy("level")
 		.map(function(elem, index){
