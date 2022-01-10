@@ -162,7 +162,7 @@ function _init(){
 			});
 			var tipBox = $(".satisfaction .tip")
 			// var tipText = [__("evaluation.level1"),__("evaluation.level2"),__("evaluation.level3"),__("evaluation.level4"),__("evaluation.level5")]
-			var tipText = tipNameArr || [];
+			var tipText = tipNameArr.reverse() || [];
 			tipBox.removeClass("hide");
 			tipBox.text(tipText[level - 1]);
 
