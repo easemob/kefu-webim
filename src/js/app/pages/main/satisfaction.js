@@ -34,6 +34,7 @@ var defaultScore;
 var defaultEvaluationDegreeId;
 var color;
 var bgColor;
+var tipNameArr;
 
 module.exports = {
 	init: init,
@@ -160,7 +161,8 @@ function _init(){
 				utils.toggleClass(elem, "sel", i < level);
 			});
 			var tipBox = $(".satisfaction .tip")
-			var tipText = [__("evaluation.level1"),__("evaluation.level2"),__("evaluation.level3"),__("evaluation.level4"),__("evaluation.level5")]
+			// var tipText = [__("evaluation.level1"),__("evaluation.level2"),__("evaluation.level3"),__("evaluation.level4"),__("evaluation.level5")]
+			var tipText = tipNameArr || [];
 			tipBox.removeClass("hide");
 			tipBox.text(tipText[level - 1]);
 
@@ -288,10 +290,14 @@ function _sendSatisfaction(score, content, session, invite, appraiseTags, resolu
 }
 
 function _setSatisfaction(){
+	tipNameArr = [];
 	apiHelper.getEvaluationDegrees().then(function(entities){
 		var labelID;
 		var lastScore;
 		var lastEvaluationDegreeId;
+		for(var i=0;i<entities.length;i++){
+			tipNameArr.push(entities[i].name);
+		}
 		starsUl.innerHTML = _.chain(entities)
 		.sortBy("level")
 		.map(function(elem, index){
