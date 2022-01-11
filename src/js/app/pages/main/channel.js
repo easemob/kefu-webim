@@ -1239,6 +1239,9 @@ function _setExt(msg){
 			official_account_id: officialAccountId
 		};
 	}
+	if(!!config.routingRuleFlag){
+		msg.body.ext.weichat.routingRuleFlag = config.routingRuleFlag;
+	}
 }
 
 function _promptNoAgentOnlineIfNeeded(opt){

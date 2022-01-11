@@ -509,6 +509,7 @@ function handleCfgData(relevanceList, status){
 
 		user: commonConfig.getConfig().user || {},
 		visitor: commonConfig.getConfig().visitor || {},
+		routingRuleFlag: commonConfig.getConfig().routingRuleFlag || "",
 		channel: commonConfig.getConfig().channel || {},
 		ui: commonConfig.getConfig().ui || {
 			H5Title: {}
