@@ -1349,9 +1349,6 @@ function _onReady(){
 		getToHost.send({ event: _const.EVENTS.SHOW });
 	}
 
-	apiHelper.getMsgTransTimelyType().then(function(res){
-		profile.isTranslateMsg = res;
-	})
 	eventListener.trigger(_const.SYSTEM_EVENT.MESSAGE_CHANNEL_READY);
 
 	// onready 回调

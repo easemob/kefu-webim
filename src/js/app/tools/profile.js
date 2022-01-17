@@ -20,7 +20,6 @@ var profile = {
 	systemOfficialAccount: {},
 	isNoLink:null,
 	isHideBtn:false,
-	isTranslateMsg:null,
 	// systemOfficialAccount 相关方法
 	shouldMsgActivated: function(curSSID){
 		if(typeof curSSID !== "string"){
