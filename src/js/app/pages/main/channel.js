@@ -136,10 +136,6 @@ function _initConnection(onReadyCallback){
 			onReadyCallback(info);
 		},
 		onTextMessage: function(message){
-			// 有 ws消息时候调用获取翻译开关接口，下一期改为通知暂且放在监听ws消息的位置
-			apiHelper.getMsgTransTimelyType().then(function(res){
-				profile.isTranslateMsg = res;
-			})
 			_handleMessage(message, { type: "txt", notFromSystem: true });
 		},
 		onPictureMessage: function(message){
@@ -1293,10 +1289,7 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.agentNickname = eventObj.agentUserNiceName;
 		officialAccount.sessionState = _const.SESSION_STATE.PROCESSING;
 		officialAccount.isSessionOpen = true;
-		apiHelper.getMsgTransTimelyType().then(function(res){
-			profile.isTranslateMsg = res;
-		})
-		profile.latestNiceName = null;  // 转接时把最近一次名称置空
+		profile.latestNiceName = null;
 		eventListener.excuteCallbacks(_const.SYSTEM_EVENT.STOP_TIMEOUT, [officialAccount]);
 		break;
 	case _const.SYSTEM_EVENT.SESSION_TRANSFERING:
@@ -1343,9 +1336,6 @@ function _handleSystemEvent(event, eventObj, msg){
 		officialAccount.agentAvatar = eventObj.avatar;
 		officialAccount.agentNickname = eventObj.agentUserNiceName;
 		officialAccount.isSessionOpen = true;
-		apiHelper.getMsgTransTimelyType().then(function(res){
-			profile.isTranslateMsg = res;
-		})
 		break;
 	case _const.SYSTEM_EVENT.SESSION_CREATED:
 		officialAccount.sessionState = _const.SESSION_STATE.WAIT;
