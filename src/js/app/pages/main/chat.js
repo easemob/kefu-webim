@@ -64,6 +64,7 @@ var _reCreateImUser = _.once(function(){
 
 		if(utils.isTop){
 			utils.set("root" + (config.configId || (config.tenantId + config.emgroup)), entity.userId);
+			utils.set(entity.userId, entity.nicename);
 		}
 		else{
 			getToHost.send({
