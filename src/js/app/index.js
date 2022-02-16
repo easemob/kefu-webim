@@ -280,7 +280,8 @@ function createVisitor(username){
 		commonConfig.setConfig({
 			user: _.extend({}, commonConfig.getConfig().user, {
 				username: entity.userId,
-				password: entity.userPassword
+				password: entity.userPassword,
+				userNickname: entity.nicename
 			})
 		});
 		return Promise.resolve();

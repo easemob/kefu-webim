@@ -307,6 +307,7 @@ function _createVisitor(){
 	}
 	if(utils.isTop){
 		utils.set("root" + (commonConfig.getConfig().configId || (commonConfig.getConfig().tenantId + commonConfig.getConfig().emgroup)), commonConfig.getConfig().user.username);
+		utils.set(commonConfig.getConfig().user.username, commonConfig.getConfig().user.userNickname);
 	}
 	else{
 		getToHost.send({

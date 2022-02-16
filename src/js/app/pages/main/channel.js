@@ -1211,8 +1211,16 @@ function _setExt(msg){
 	}
 
 	// bind visitor
+	// 访客将nicename放在第一条消息的扩展字段中
+	var imId = utils.get("root" + (config.configId || (config.tenantId + config.emgroup)));
 	if(!_.isEmpty(config.visitor)){
 		msg.body.ext.weichat.visitor = config.visitor;
+		msg.body.ext.weichat.visitor.userNickname = utils.get(imId);
+	}
+	else{
+		msg.body.ext.weichat.visitor = {
+			userNickname:utils.get(imId)
+		}
 	}
 
 	// bind agent username
