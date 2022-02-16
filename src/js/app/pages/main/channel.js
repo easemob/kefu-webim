@@ -283,6 +283,9 @@ function _sendText(message, ext){
 
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
 	clearActiveAnswerTimeout();
+	// 发完消息清除nicename
+	var imId = utils.get("root" + (config.configId || (config.tenantId + config.emgroup)));
+	utils.set(imId,"",-1);
 }
 
 // 这个临时使用，下个版本会去掉
@@ -319,6 +322,9 @@ function _sendTransferToKf(tid, sessionId, transferToHumanId){
 	_promptNoAgentOnlineIfNeeded({ hasTransferedToKefu: true });
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
 	clearActiveAnswerTimeout();
+	// 发完消息清除nicename
+	var imId = utils.get("root" + (config.configId || (config.tenantId + config.emgroup)));
+	utils.set(imId,"",-1);
 }
 
 function _sendImg(fileMsg){
@@ -357,6 +363,9 @@ function _sendImg(fileMsg){
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
 	clearActiveAnswerTimeout();
+	// 发完消息清除nicename
+	var imId = utils.get("root" + (config.configId || (config.tenantId + config.emgroup)));
+	utils.set(imId,"",-1);
 }
 
 function _sendFile(fileMsg){
@@ -394,6 +403,9 @@ function _sendFile(fileMsg){
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
 	clearActiveAnswerTimeout();
+	// 发完消息清除nicename
+	var imId = utils.get("root" + (config.configId || (config.tenantId + config.emgroup)));
+	utils.set(imId,"",-1);
 }
 
 // 小视频发送
@@ -431,6 +443,9 @@ function _sendVideo(fileMsg){
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.MESSAGE_SENT, []);
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
 	clearActiveAnswerTimeout();
+	// 发完消息清除nicename
+	var imId = utils.get("root" + (config.configId || (config.tenantId + config.emgroup)));
+	utils.set(imId,"",-1);
 }
 
 // 新增 视频格式发送
@@ -1215,7 +1230,7 @@ function _setExt(msg){
 	var imId = utils.get("root" + (config.configId || (config.tenantId + config.emgroup)));
 	if(!_.isEmpty(config.visitor)){
 		msg.body.ext.weichat.visitor = config.visitor;
-		if(utils.get(imId) === "null"){
+		if(utils.get(imId) === "null"  || utils.get(imId)==""){
 			msg.body.ext.weichat.visitor.userNickname = null;
 		}
 		else{
@@ -1223,7 +1238,7 @@ function _setExt(msg){
 		}
 	}
 	else{
-		if(utils.get(imId) === "null"){
+		if(utils.get(imId) === "null" || utils.get(imId)==""){
 			msg.body.ext.weichat.visitor = {
 				userNickname:null
 			}
