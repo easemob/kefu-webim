@@ -1215,11 +1215,23 @@ function _setExt(msg){
 	var imId = utils.get("root" + (config.configId || (config.tenantId + config.emgroup)));
 	if(!_.isEmpty(config.visitor)){
 		msg.body.ext.weichat.visitor = config.visitor;
-		msg.body.ext.weichat.visitor.userNickname = utils.get(imId);
+		if(utils.get(imId) === "null"){
+			msg.body.ext.weichat.visitor.userNickname = null;
+		}
+		else{
+			msg.body.ext.weichat.visitor.userNickname = utils.get(imId);
+		}
 	}
 	else{
-		msg.body.ext.weichat.visitor = {
-			userNickname:utils.get(imId)
+		if(utils.get(imId) === "null"){
+			msg.body.ext.weichat.visitor = {
+				userNickname:null
+			}
+		}
+		else{
+			msg.body.ext.weichat.visitor = {
+				userNickname:utils.get(imId)
+			}
 		}
 	}
 
