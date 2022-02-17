@@ -32,14 +32,14 @@ function h5_mode_init(){
 	var usernameFromUrl = utils.query("user");
 
 	var usernameFromCookie = utils.get("root" + (config.configId || (config.tenantId + config.emgroup)));
-	var userNickname = utils.get(usernameFromCookie);
+	// var userNickname = utils.get(usernameFromCookie);
 
 	if(usernameFromUrl){
 		config.user.username = usernameFromUrl;
 	}
 	else if(usernameFromCookie){
 		config.user.username = usernameFromCookie;
-		config.user.userNickname = userNickname;
+		// config.user.userNickname = userNickname;
 		config.isUsernameFromCookie = true;
 	}
 	else{}

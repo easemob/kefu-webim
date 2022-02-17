@@ -203,11 +203,12 @@ function setUserInfo(targetUserInfo){
 			return Promise.resolve("userWithToken");
 		}
 		return new Promise(function(resolve){
-			apiHelper.getPassword().then(function(password){
+			apiHelper.getPassword().then(function(res){
 				commonConfig.setConfig({
 					user: _.extend({}, commonConfig.getConfig().user, {
-						password: password
-					})
+						password: res.password
+					}),
+					userNicknameFlg:res.nicename
 				});
 				resolve("userWithPassword");
 			}, function(err){
@@ -248,11 +249,12 @@ function setUserInfo(targetUserInfo){
 	}
 	else if(commonConfig.getConfig().user.username){
 		return new Promise(function(resolve){
-			apiHelper.getPassword().then(function(password){
+			apiHelper.getPassword().then(function(res){
 				commonConfig.setConfig({
 					user: _.extend({}, commonConfig.getConfig().user, {
-						password: password
-					})
+						password: res.password
+					}),
+					userNicknameFlg:res.nicename
 				});
 				resolve("widthPassword");
 			}, function(){
@@ -282,7 +284,8 @@ function createVisitor(username){
 				username: entity.userId,
 				password: entity.userPassword,
 				userNickname: entity.nicename
-			})
+			}),
+			userNicknameFlg:entity.nicename
 		});
 		return Promise.resolve();
 	});

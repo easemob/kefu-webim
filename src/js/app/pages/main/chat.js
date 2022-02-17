@@ -54,7 +54,8 @@ var _reCreateImUser = _.once(function(){
 				{},
 				commonConfig.getConfig().user,
 				{ username: entity.userId, password: entity.userPassword }
-			)
+			),
+			userNicknameFlg:nicename
 		});
 		if(entity.userPassword === ""){
 			profile.imRestDown = true;
@@ -64,7 +65,7 @@ var _reCreateImUser = _.once(function(){
 
 		if(utils.isTop){
 			utils.set("root" + (config.configId || (config.tenantId + config.emgroup)), entity.userId);
-			utils.set(entity.userId, entity.nicename);
+			// utils.set(entity.userId, entity.nicename);
 		}
 		else{
 			getToHost.send({

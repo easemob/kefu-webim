@@ -439,8 +439,9 @@ function _sendVideo(fileMsg){
 }
 function _clearNiceName(){
 	// 发完消息清除nicename
-	var imId = utils.get("root" + (config.configId || (config.tenantId + config.emgroup)));
-	utils.set(imId,"",-1);
+	commonConfig.setConfig({
+		userNicknameFlg: null
+	});
 }
 
 // 新增 视频格式发送
@@ -1225,23 +1226,13 @@ function _setExt(msg){
 	var imId = utils.get("root" + (config.configId || (config.tenantId + config.emgroup)));
 	if(!_.isEmpty(config.visitor)){
 		msg.body.ext.weichat.visitor = config.visitor;
-		if(utils.get(imId) === "null"  || utils.get(imId)==""){
-			msg.body.ext.weichat.visitor.userNickname = null;
-		}
-		else{
-			msg.body.ext.weichat.visitor.userNickname = utils.get(imId);
+		if(config.visitor && !config.visitor.userNickname){
+			msg.body.ext.weichat.visitor.userNickname = commonConfig.getConfig().userNicknameFlg;
 		}
 	}
 	else{
-		if(utils.get(imId) === "null" || utils.get(imId)==""){
-			msg.body.ext.weichat.visitor = {
-				userNickname:null
-			}
-		}
-		else{
-			msg.body.ext.weichat.visitor = {
-				userNickname:utils.get(imId)
-			}
+		msg.body.ext.weichat.visitor = {
+			userNickname:commonConfig.getConfig().userNicknameFlg
 		}
 	}
 

@@ -168,8 +168,9 @@ function getPassword(){
 			var status = utils.getDataByPath(msg, "data.status");
 			var password = utils.getDataByPath(msg, "data.entity.userPassword");
 
+			var nicename = utils.getDataByPath(msg, "data.entity.nicename");
 			if(status === "OK"){
-				resolve(password);
+				resolve({password:password,nicename:nicename});
 			}
 			else{
 				reject(new Error("unable to get password."));
