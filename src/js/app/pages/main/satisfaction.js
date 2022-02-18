@@ -337,6 +337,8 @@ function _confirm(){
 			apiHelper.satisfactionSave(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', datas).then(function(res) {
 			});
 		}
+		// 为了获取禁用【立即评价】按钮的状态，需要刷新页面
+		location.reload();
 	}
 
 	_sendSatisfaction(score, content, session, invite, appraiseTags, resolutionParam, evaluationDegreeId);

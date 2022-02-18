@@ -199,6 +199,11 @@
 			&:hover {
 				color: white;
 			}
+			&.js_satisfybtn {
+				&:hover {
+					color: #000;
+				}
+			}
 			&.white {
 				color: #fff;
 			}

@@ -1250,6 +1250,27 @@ function getOptForManualMenuGuide(){
 	});
 }
 
+// 获取开关状态：多次满意度评价只取第一次
+function getNotOverrideOldEnquiry() {
+	return new Promise(function(resolve, reject) {
+		api("getNotOverrideOldEnquiry", {
+			tenantId: config.tenantId,
+		}, function(res) {
+			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
+			if (typeof val === "string") {
+				if (val == (false + "")) {
+					val = false;
+				} else if(val == (true + "")) {
+					val = true;
+				}
+			}
+			resolve(val);
+		}, function(err) {
+			reject(err);
+		});
+	});
+}
+
 function getlaiyeHtml(url){
 	return emajax({
 		url: url,
@@ -1475,6 +1496,7 @@ module.exports = {
 	// opts
 	getOptForShowTrackMsg: getOptForShowTrackMsg,
 	getOptForManualMenuGuide: getOptForManualMenuGuide,
+	getNotOverrideOldEnquiry: getNotOverrideOldEnquiry,
 	getlaiyeHtml: getlaiyeHtml,
 	getEvaluteSolveWord: getEvaluteSolveWord,
 	getServiceSessionResolved: getServiceSessionResolved,

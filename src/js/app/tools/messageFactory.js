@@ -25,7 +25,7 @@ function genMsgContent(msg){
 	var agentUserId = utils.getDataByPath(msg, "ext.weichat.service_session.agentUserId");
 	// console.log('agentUserId', agentUserId)
 	_const.agentUserId = agentUserId
-	console.log('agentUserId', _const.agentUserId)
+	// console.log('agentUserId', _const.agentUserId)
 
 	// // 针对默写特殊格式url不统一的，输出统一url
   // function _generateUrl(msg) {

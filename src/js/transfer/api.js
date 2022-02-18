@@ -341,6 +341,15 @@ up2Im.listen(function(msg){
 			excludeData: true
 		});
 		break;
+	// 获取开关状态：多次满意度评价只取第一次
+	case "getNotOverrideOldEnquiry":
+		emitAjax({
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/notOverrideOldEnquiry",
+			msg: msg,	// cfg
+			type: "GET",
+			excludeData: true
+		});
+		break;
 	// 此接口使用的是单独的微服务，无需限流
 	case "reportEvent":
 		emitAjax({

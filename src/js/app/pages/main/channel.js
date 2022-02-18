@@ -648,14 +648,27 @@ function _handleMessage(msg, options){
 		message.type = "list";
 		message.subtype = type;
 		message.data = __("chat.evaluate_agent_title");
-		message.list = [
-			"<div class=\"em-btn-list\">"
-			+ "<button class=\"bg-hover-color js_satisfybtn\" data-inviteid=\""
-			+ inviteId
-			+ "\" data-servicesessionid=\""
-			+ serviceSessionId
-			+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
-		];
+		if (_const.isDisabledSatisfaction) {
+			var style= "background-color: #ccc; cursor:not-allowed;"
+			// 禁用【立即评价】按钮
+			message.list = [
+				"<div class=\"em-btn-list\">"
+				+ "<button disabled style=\"" + style + "\" class=\"js_satisfybtn\" data-inviteid=\""
+				+ inviteId
+				+ "\" data-servicesessionid=\""
+				+ serviceSessionId
+				+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
+			];
+		} else {
+			message.list = [
+				"<div class=\"em-btn-list\">"
+				+ "<button class=\"bg-hover-color js_satisfybtn\" data-inviteid=\""
+				+ inviteId
+				+ "\" data-servicesessionid=\""
+				+ serviceSessionId
+				+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
+			];
+		}
 		message.brief = __("message_brief.menu");
 		!isHistory && config.ui.enquiryShowMode === "popup" && eventListener.excuteCallbacks(
 			_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
