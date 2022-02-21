@@ -104,6 +104,8 @@ module.exports = {
 	toolbar: {
 		emoji: "Emoticon",
 		picture: "Image",
+		fangda: "Amplify",
+		suoxiao: "Reduce",
 		attachment: "File",
 		ticket: "Note",
 		video_invite: "Video call",

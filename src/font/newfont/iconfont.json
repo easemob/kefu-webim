@@ -1,0 +1,23 @@
+{
+  "id": "3195722",
+  "name": "大都会",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "7587934",
+      "name": "放大",
+      "font_class": "fangda",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "7587962",
+      "name": "缩小",
+      "font_class": "suoxiao",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    }
+  ]
+}

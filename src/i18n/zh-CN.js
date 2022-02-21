@@ -103,6 +103,8 @@ module.exports = {
 	toolbar: {
 		emoji: "表情",
 		picture: "图片",
+		fangda: "放大",
+		suoxiao: "缩小",
 		attachment: "附件",
 		ticket: "留言",
 		video_invite: "视频通话",
