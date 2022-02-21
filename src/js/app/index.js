@@ -490,6 +490,8 @@ function load_html(){
 		input_placeholder: __("chat.input_placeholder"),
 		emoji: __("toolbar.emoji"),
 		picture: __("toolbar.picture"),
+		fangda: __("toolbar.fangda"),
+		suoxiao: __("toolbar.suoxiao"),
 		attachment: __("toolbar.attachment"),
 		ticket: __("toolbar.ticket"),
 		video_invite: __("toolbar.video_invite"),
