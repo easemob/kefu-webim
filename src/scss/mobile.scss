@@ -491,6 +491,7 @@
 		}
 	}
 	.faq-list{
+		-webkit-overflow-scrolling: touch;
 		>p{
 			font-size:1.2rem;
 		}
@@ -500,6 +501,9 @@
 		.answer{
 			font-size:1rem;
 		}
+	}
+	.faq-list > * {
+		-webkit-transform: translateZ(0px);
 	}
 	.contact-customer-service{
 		font-size:1.1rem;
