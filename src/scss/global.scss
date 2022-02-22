@@ -46,10 +46,11 @@ body {
 			font-size: 18px !important;
 		}
 	}
+	// 20px 的话，满意度调查的 title 会变成 4 行
 	&.big-font-mobile {
-		font-size: 20px !important;
+		font-size: 18px !important;
 		button, textarea, ul, li {
-			font-size: 20px !important;
+			font-size: 18px !important;
 		}
 	}
 }
