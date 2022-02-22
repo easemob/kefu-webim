@@ -941,6 +941,17 @@ function _bindEvents(){
 		doms.imgInput.click();
 	});
 
+	// 点击放大
+	utils.on(doms.fangdaBtn, "click", function() {
+		utils.addClass(doms.fangdaBtn, "hide");
+		utils.removeClass(doms.suoxiaoBtn, "hide");
+	});
+	// 点击缩小
+	utils.on(doms.suoxiaoBtn, "click", function() {
+		utils.addClass(doms.suoxiaoBtn, "hide");
+		utils.removeClass(doms.fangdaBtn, "hide");
+	});
+
 	// 显示留言页面
 	utils.on(doms.noteBtn, "click", function(){
 		noteIframe.open();
@@ -1103,6 +1114,8 @@ function _getDom(){
 		emojiToggleButton: editorView.querySelector(".em-bar-emoji"),
 		// 获取文件上传，图片，小视频按钮dom
 		sendImgBtn: editorView.querySelector(".em-widget-img"),
+		fangdaBtn: editorView.querySelector(".em-widget-fangda"),
+		suoxiaoBtn: editorView.querySelector(".em-widget-suoxiao"),
 		sendFileBtn: editorView.querySelector(".em-widget-file"),
 		sendVideoBtn: editorView.querySelector(".em-widget-video"),
 		sendBtn: editorView.querySelector(".em-widget-send"),
