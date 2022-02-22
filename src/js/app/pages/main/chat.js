@@ -945,11 +945,21 @@ function _bindEvents(){
 	utils.on(doms.fangdaBtn, "click", function() {
 		utils.addClass(doms.fangdaBtn, "hide");
 		utils.removeClass(doms.suoxiaoBtn, "hide");
+		if (utils.isMobile) {
+			utils.addClass(document.body, "big-font-mobile");
+		} else {
+			utils.addClass(document.body, "big-font");
+		}
 	});
 	// 点击缩小
 	utils.on(doms.suoxiaoBtn, "click", function() {
 		utils.addClass(doms.suoxiaoBtn, "hide");
 		utils.removeClass(doms.fangdaBtn, "hide");
+		if (utils.isMobile) {
+			utils.removeClass(document.body, "big-font-mobile");
+		} else {
+			utils.removeClass(document.body, "big-font");
+		}
 	});
 
 	// 显示留言页面
