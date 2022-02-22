@@ -798,6 +798,7 @@ up2Im.listen(function(msg){
 			+ "?userId=" + params.userId
 			+ "&orgName=" + params.orgName
 			+ "&appName=" + params.appName
+			+ "&tenantId=" + params.tenantId
 			+ "&imServiceNumber=" + params.imServiceNumber,
 			type: "GET",
 			msg: msg,

@@ -163,6 +163,7 @@ function getPassword(){
 			userId: cfg.user.username,
 			orgName: cfg.orgName,
 			appName: cfg.appName,
+			tenantId: cfg.tenantId,
 			imServiceNumber: cfg.toUser,
 		}, function(msg){
 			var status = utils.getDataByPath(msg, "data.status");
