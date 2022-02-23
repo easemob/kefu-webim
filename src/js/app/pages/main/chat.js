@@ -941,6 +941,7 @@ function _bindEvents(){
 		doms.imgInput.click();
 	});
 
+	// 官微租户下，放大缩小功能
 	// 点击放大
 	utils.on(doms.fangdaBtn, "click", function() {
 		utils.addClass(doms.fangdaBtn, "hide");
@@ -961,6 +962,7 @@ function _bindEvents(){
 			utils.removeClass(document.body, "big-font");
 		}
 	});
+
 
 	// 显示留言页面
 	utils.on(doms.noteBtn, "click", function(){
@@ -1124,8 +1126,8 @@ function _getDom(){
 		emojiToggleButton: editorView.querySelector(".em-bar-emoji"),
 		// 获取文件上传，图片，小视频按钮dom
 		sendImgBtn: editorView.querySelector(".em-widget-img"),
-		fangdaBtn: editorView.querySelector(".em-widget-fangda"),
-		suoxiaoBtn: editorView.querySelector(".em-widget-suoxiao"),
+		fangdaBtn: editorView.querySelector(".em-widget-fangda"), // 放大
+		suoxiaoBtn: editorView.querySelector(".em-widget-suoxiao"), // 缩小
 		sendFileBtn: editorView.querySelector(".em-widget-file"),
 		sendVideoBtn: editorView.querySelector(".em-widget-video"),
 		sendBtn: editorView.querySelector(".em-widget-send"),
@@ -1168,6 +1170,10 @@ function _init(){
 		});
 	}
 	
+	// 判断是否官微租户，展示放大按钮
+	if (_const.isGuanwei == 'Y') {
+		utils.removeClass(doms.fangdaBtn, "hide");
+	}
 }
 
 function _initNote(){
