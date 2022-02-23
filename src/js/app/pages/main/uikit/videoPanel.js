@@ -9,6 +9,7 @@ var singleVideoContainer;
 
 var videoWindowList;
 var dispatcher;
+var userNum = 0;
 
 module.exports = {
 	init: init,
@@ -72,6 +73,7 @@ function addOrUpdateStream(stream){
 			parentContainer: multiVideoContainer,
 			stream: stream,
 			dispatcher: dispatcher,
+			id: userNum++
 		}));
 	}
 

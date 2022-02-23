@@ -27,6 +27,7 @@ var videoChatTemplate = require("../../../../template/videoChat.html");
 var apiHelper = require("./apis");
 var TimerLabel = require("./uikit/TimerLabel");
 var videoChatAgora = require("./uikit/videoChatAgora");
+var videoConnecting = false; // 是否正在视频通话
 var _initOnce = _.once(_init);
 var parentContainer;
 var videoWidget;
@@ -36,6 +37,9 @@ var config;
 var dialog, agentInviteDialog, visitorDialog;
 var timerBarDom, timerLabel;
 var service;
+var serviceAgora;
+var cfgAgora;
+var callId;
 var inviteByVisitor = false; //访客邀请的
 
 var STATIC_PATH = __("config.language") === "zh-CN" ? "static" : "../static";
@@ -54,6 +58,7 @@ function _init(){
 	config = commonConfig.getConfig();
 
 	if(config.videoH5Status == ""){
+		// 允许访客二次确认接口
 		apiHelper.getVideoH5Status().then(function(res){
 			if(res.entity){
 				config.videoH5Status = res.entity
@@ -61,72 +66,7 @@ function _init(){
 		})
 	}
 
-	// init emedia config
-	// window.emedia.config({ autoSub: false });
-
-	// disable emedia log
-	window.emedia.LOG_LEVEL = 5;
-
 	dispatcher = new Dispatcher();
-
-	service = new window.emedia.Service({
-		// 这个目前没有定义，前段可写 web
-		resource: "web",
-		// 这个人的昵称，可以不写。比如 jid 中的name
-		nickName: config.user.username,
-
-		// 以下监听，this object == me == service.current
-		listeners: {
-			// 退出，服务端强制退出，进入会议失败，sdk重连失败等 均会调用到此处
-			onMeExit: function(errorCode){
-				// var errorMessage = _const.E_MEDIA_SDK_ERROR_CODE_MAP[errorCode] || "unknown error code.";
-
-				statusBar.showClosing();
-				videoPanel.hide();
-
-				// if(errorCode !== 0) throw new Error(errorMessage);
-			},
-			// 某人进入会议
-			onAddMember: function(member){
-				console.info({
-					type: "memberEnter",
-					memberId: member.id,
-					memberNickname: member.nickName,
-				});
-			},
-			// 某人退出会议
-			onRemoveMember: function(member){
-				console.info({
-					type: "memberExit",
-					memberId: member.id,
-					memberNickname: member.nickName,
-				});
-			},
-			// 某人 发布 一个流 （音视频流，共享桌面等）（包含本地流）
-			onAddStream: videoPanel.addOrUpdateStream,
-			// 某人 取消 一个流 （音视频流，共享桌面等）（包含本地流）
-			onRemoveStream: videoPanel.removeStream,
-			// 更新 一个流 （音视频流，共享桌面等）。
-			// 可能是 断网后，重新获取到远端媒体流，或者对方静音或关闭摄像头
-			onUpdateStream: videoPanel.addOrUpdateStream,
-			// 这个事件比较多，以后业务拓展时，根据需要再给开放一些回调，目前忽略
-			onNotifyEvent: function(evt){
-				// 接听 打开本地摄像头 并成功推流
-				if(evt instanceof window.emedia.event.PushSuccess){}
-				// 接听 打开本地摄像头 推流失败
-				else if(evt instanceof window.emedia.event.PushFail){
-					uikit.tip(__("video.can_not_connected"));
-					service.exit();
-				}
-				// 接听 打开摄像头失败
-				else if(evt instanceof window.emedia.event.OpenMediaError){
-					uikit.tip(__("video.can_not_open_camera"));
-					service.exit();
-				}
-				else{}
-			},
-		}
-	});
 
 	dialog = uikit.createDialog({
 		contentDom: [
@@ -147,29 +87,15 @@ function _init(){
 			"<p> <img src=\""+ $agentFace +"\" class=\"\"/> </p>",
 			"<p class=\"nickname\">"+ $agentNickname +"</p>",
 			"<p class=\"title\">"+ __("video.confirm_prompt_agent")+"</p>",
-			// "<p class=\"title\">客服邀请您进入视频通话</p>",
-			// "<div class=\"foot\"> <svg class=\"icon svg-icon\" aria-hidden=\"true\"><use xlink:href=\"#newim-a-anwser1x\"></use> </svg></div>",
 			"<div class=\"foot\"> <div class=\"button answer\"><i class=\"icon-answer\"></i> <span>接听</span></div> <div class=\"button huang\"><i class=\"icon-huang\"></i> <span>"+ __("common.refuse")+"</span></div> </div>",
 			"</div>"
 		].join(""),
 		className: "agent-invite-video-confirm",
 	})
-	// .addButton({ confirmText: __("common.accept"), cancelText: __("common.refuse"), confirm: _onAgentInviteConfirm, cancel: _onAgentInviteCancel });
 
-	utils.live(".icon-answer","click",_onAgentInviteConfirm);
-	utils.live(".icon-huang","click",_onAgentInviteCancel);
+	utils.live(".agent-invite-video-confirm .icon-answer","click",_onAgentInviteConfirm);
+	utils.live(".agent-invite-video-confirm .icon-huang","click",_onAgentInviteCancel);
 
-	// agentInviteDialog = uikit.createDialog({
-	// 	contentDom: [
-	// 		"<div>",
-	// 		"<p class=\"time\"><p>",
-	// 		"<i class=\"icon-answer\"></i><span class=\"prompt\">",
-	// 		__("video.confirm_prompt_agent"),
-	// 		"</span>",
-	// 		"</div>"
-	// 	].join(""),
-	// 	className: "agent-invite-video-confirm",
-	// }).addButton({ confirmText: __("common.accept"), cancelText: __("common.refuse"), confirm: _onAgentInviteConfirm, cancel: _onAgentInviteCancel });
 
 	timerBarDom = agentInviteDialog.el.querySelector(".time");
 	timerLabel = new TimerLabel(timerBarDom);
@@ -177,26 +103,67 @@ function _init(){
 	statusBar.init({
 		wrapperDom: videoWidget.querySelector(".status-bar"),
 		acceptCallback: function(){
-			service.join(function(/* _memId */){
-				videoPanel.show();
+			serviceAgora.join(cfgAgora).then(function(){
+				videoConnecting = true;
 				statusBar.hideAcceptButton();
-				statusBar.startTimer();
-				statusBar.setStatusText(__("video.connecting"));
-				_pushStream();
-				visitorDialog && visitorDialog.hide();
-			}, function(evt){
-				service.exit();
-				throw new Error("failed to join conference: " + evt.message());
-			});
+				$(".video-chat-wrapper").removeClass("hide");
+				$(".mini-video-argo").removeClass("hide");
+				serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("mini-video-visitor");
+				serviceAgora.localAudioTrack && serviceAgora.localAudioTrack.setMuted(false);
+				// 访客头像大图展示
+				utils.on($("#mini-video-visitor"), "click", function(){
+					$(".big-video-argo").removeClass("hide");
+					$(".mini-video-argo").addClass("hide");
+					$(".toggle-microphone-btn").removeClass("hide");
+					$(".toggle-carema-btn").removeClass("hide");
+					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("big-video-argo");
+				});
+				utils.on($(".return-to-multi-video"), "click", function(){
+					$(".big-video-argo").addClass("hide");
+					$(".mini-video-argo").removeClass("hide");
+					$(".toggle-microphone-btn").addClass("hide");
+					$(".toggle-carema-btn").addClass("hide");
+					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("mini-video-visitor");
+				});
+				// 静音
+				utils.on($(".toggle-microphone-btn"), "click", function(e){
+					if($(e.target).hasClass("icon-microphone")){
+						serviceAgora.localAudioTrack && serviceAgora.localAudioTrack.setMuted(true);
+						$(e.target).addClass("icon-disable-microphone");
+						$(e.target).removeClass("icon-microphone");
+					}
+					else{
+						$(e.target).removeClass("icon-disable-microphone");
+						$(e.target).addClass("icon-microphone");
+						serviceAgora.localAudioTrack && serviceAgora.localAudioTrack.setMuted(false);
+					}
+				});
+				// 关闭摄像头
+				utils.on($(".toggle-carema-btn"), "click", function(e){
+					if($(e.target).hasClass("icon-camera")){
+						serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.setMuted(true);
+						$(e.target).addClass("icon-disable-camera");
+						$(e.target).removeClass("icon-camera");
+					}
+					else{
+						$(e.target).removeClass("icon-disable-camera");
+						$(e.target).addClass("icon-camera");
+						serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.setMuted(false);
+					}
+				});
+			})
 		},
 		endCallback: function(){
-			service && service.exit();
+			serviceAgora.leave();
+			$(".video-chat-wrapper").addClass("hide")
+			videoConnecting = false;
+			// service && service.exit();
 		},
 	});
 
 	videoPanel.init({
 		wrapperDom: videoWidget.querySelector(".video-panel"),
-		service: service,
+		// service: service,
 		dispatcher: dispatcher,
 	});
 }
@@ -224,10 +191,10 @@ function init(option){
 	adapterPath = STATIC_PATH + "/js/lib/adapter.min.js?v=unknown-000";
 	eMediaSdkPath = STATIC_PATH + "/js/lib/EMedia_sdk.min.js?v=1.1.2";
 
-	// todo: resolve promise sequentially
+	var eMediaSdkPathSW = STATIC_PATH + "/js/lib/AgoraRTC_N-4.8.0.js";
 	tools.loadScript(adapterPath)
 	.then(function(){
-		return tools.loadScript(eMediaSdkPath);
+		return tools.loadScript(eMediaSdkPathSW);
 	})
 	.then(function(){
 		eventListener.add(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, _reveiveTicket);
@@ -236,37 +203,81 @@ function init(option){
 		utils.removeClass(triggerButton, "hide");
 		utils.on(triggerButton, "click", function(){
 			_initOnce();
-			// dialog.show();
+			 serviceAgora = new videoChatAgora({});
 			_onConfirm();
+			//  serviceAgora.createLocalTracks();
 		});
 	});
 	
 }
 
-function _pushStream(){
-	var myStream = new service.AVPubstream({ voff: 0, aoff: 0, name: "video" });
-
-	service.openUserMedia(myStream).then(function(){
-		service.push(myStream);
-	});
-}
-
+// 收到ticket通知
 function _reveiveTicket(ticketInfo, ticketExtend){
+	if(videoConnecting) return;
+	$(".video-chat-wrapper").removeClass("hide");
 	// 有可能收到客服的主动邀请，此时需要初始化
 	_initOnce();
-
 	// 加入会议
-	service.setup(ticketInfo, {
-		identity: "visitor",
-		nickname: config.visitor.trueName || config.user.username,
-		avatarUrl: "",
-		extend: ticketExtend
-	});
-	statusBar.reset();
+	
+	cfgAgora= {
+		appid:ticketInfo.appId,
+		channel:ticketInfo.channel,
+		token:ticketInfo.token,
+		uid:ticketInfo.uid
+	}
+	// callId 拒绝视频邀请要用
+	callId = ticketInfo.callId;
+	// 初始化声网SDK
+ 	serviceAgora = new videoChatAgora({onRemoteUserChange:function(remoteUSer){
+		 	var userVideo0,userVideo1;
+			remoteUSer.forEach(function (item,index){
+				item.videoTrack && item.videoTrack.play("mini-video-agent" + index);
+				item.audioTrack && item.audioTrack.play();
+				if(index === 1){
+					userVideo1 = item;
+				}
+				else{
+					userVideo0 = item;
+				}
+				videoConnecting = true;
+			});
+			// 坐席的视频
+			utils.on($("#mini-video-agent0"), "click", function(){
+				$(".big-video-argo").removeClass("hide");
+				$(".mini-video-argo").addClass("hide");
+				userVideo0._videoTrack && userVideo0._videoTrack.play("big-video-argo");
+				userVideo0._audioTrack && userVideo0._audioTrack.play();
+			});
+			utils.on($(".return-to-multi-video"), "click", function(){
+				$(".big-video-argo").addClass("hide");
+				$(".mini-video-argo").removeClass("hide");
+				userVideo0._videoTrack && userVideo0._videoTrack.play("mini-video-agent0");
+				userVideo0._audioTrack && userVideo0._audioTrack.play();
+			});
 
+			// 第三方客服
+			utils.on($("#mini-video-agent1"), "click", function(){
+				$(".big-video-argo").removeClass("hide");
+				$(".mini-video-argo").addClass("hide");
+				userVideo1._videoTrack && userVideo1._videoTrack.play("big-video-argo");
+				userVideo1._audioTrack && userVideo1._audioTrack.play();
+			});
+			utils.on($(".return-to-multi-video"), "click", function(){
+				$(".big-video-argo").addClass("hide");
+				$(".mini-video-argo").removeClass("hide");
+				userVideo1._videoTrack && userVideo1._videoTrack.play("mini-video-agent1");
+				userVideo1._audioTrack && userVideo1._audioTrack.play();
+			});
+		},
+		onUserLeft:function(){
+			serviceAgora.leave();
+			$(".video-chat-wrapper").addClass("hide")
+			videoConnecting = false;
+		}
+	});
 	// 访客邀请的，不显示，直接打开视频, 
 	// 开启“视频通话允许访客二次确认”，需要确认
-	var wrapperDom = videoWidget.querySelector(".status-bar"); 
+	var wrapperDom = videoWidget.querySelector(".status-bar");
 	var acceptButtonDom = wrapperDom.querySelector(".accept-button");
 	if(inviteByVisitor && config.videoH5Status == false){
 		acceptButtonDom.click();
@@ -285,9 +296,9 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			// 弹 “客服邀请” 窗
 			agentInviteDialog.show();
 			startTimer();
+			$(".video-chat-wrapper").addClass("hide");
 		}
 	}
-	
 }
 
 function _onConfirm(){
@@ -295,7 +306,8 @@ function _onConfirm(){
 	eventListener.trigger("video.conform");
 	channel.sendText(__("video.invite_agent_video"), {
 		ext: {
-			type: "rtcmedia/video",
+			// type: "rtcmedia/video",
+			type: "agorartcmedia/video",
 			msgtype: {
 				liveStreamInvitation: {
 					msg: __("video.invite_agent_video"),
@@ -339,52 +351,41 @@ function _onConfirm(){
 }
 
 function _onAgentInviteConfirm(){
+	$(".video-chat-wrapper").removeClass("hide");
 	timerLabel.stop();
 	statusBar.show();
 	statusBar.accept();
 	agentInviteDialog.hide();
+	statusBar.hideAcceptButton();
 }
 
 function _onAgentInviteCancel(){
+	channel.sendCmdExitVideo(callId,{
+		ext: {
+			type: "agorartcmedia/video",
+			msgtype: {
+				visitorRejectInvitation:{
+					callId:callId
+				}
+			},
+		},
+	})
+	agentInviteDialog.hide();
 	timerLabel.stop();
 	statusBar.end();
 	agentInviteDialog.hide();
 }
 
 function _onConfirmExitvideo(){
-	eventListener.trigger("video.cancel");
-	var serviceSessionId = profile.currentOfficialAccount.sessionId;
-	apiHelper.deleteVideoInvitation(serviceSessionId)
-	.then(function(res){
-			channel.sendText(__("video.invite_exit_video"), {
-			// channel.sendText("访客取消实时视频", {
-				ext: {
-					type: "rtcmedia/video",
-					msgtype: {
-						visitorCancelInvitation: {
-							msg: __("video.invite_exit_video"),
-							// msg: "访客取消实时视频",
-							orgName: config.orgName,
-							appName: config.appName,
-							userName: config.user.username,
-							imServiceNumber: config.toUser,
-							restServer: config.restServer,
-							xmppServer: config.xmppServer,
-							resource: "webim",
-							// isNewInvitation: true,
-							userAgent: navigator.userAgent,
-						},
-					},
-				},
-			});
-			visitorDialog.hide();
-			// // 取消通话移除按钮
-			// var editor = document.querySelector(".toolbar");
-			// var ele = document.querySelector(".em-widget-exit-video");
-			// editor.removeChild(ele)
-	});
-	// return false;
-
-
-
+	channel.sendCmdExitVideo(callId,{
+		ext: {
+			type: "agorartcmedia/video",
+			msgtype: {
+				visitorCancelInvitation:{
+					callId:callId
+				}
+			},
+		},
+	})
+	visitorDialog.hide();
 }
