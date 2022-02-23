@@ -12,6 +12,7 @@ var imgView = require("./imgview");
 var NoteIframe = require("./noteIframe");
 var initPasteImage = require("./paste");
 var videoChat = require("./videoChat");
+var videoChatAgora = require("./videoChatAgora");
 var guessInfo = require("./guess/guessInfo");
 
 var TagSelector = require("./chat/tagSelector");
@@ -1557,10 +1558,18 @@ function _initSession(){
 				toggleButton: doms.emojiToggleButton,
 				textInput: doms.textInput,
 			});
-			videoChat.init({
-				triggerButton: doms.videoInviteButton,
-				parentContainer: doms.imChat,
-			});
+			if(profile.grayList.agoraVideo){
+				videoChatAgora.init({
+					triggerButton: doms.videoInviteButton,
+					parentContainer: doms.imChat,
+				});
+			}
+			else{
+				videoChat.init({
+					triggerButton: doms.videoInviteButton,
+					parentContainer: doms.imChat,
+				});
+			}
 			extendMessageSender.init();
 
 			Promise.all([

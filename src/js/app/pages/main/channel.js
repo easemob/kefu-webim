@@ -61,6 +61,7 @@ module.exports = {
 	},
 	initConnection: _initConnection,
 	reSend: _reSend,
+	sendCmdExitVideo:_sendCmdExitVideo,
 	sendTransferToKf: _sendTransferToKf,
 	sendText: _sendText,
 	sendImg: _sendImg,
@@ -321,6 +322,27 @@ function _sendTransferToKf(tid, sessionId, transferToHumanId){
 	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
 	clearActiveAnswerTimeout();
 	_clearNiceName();
+}
+function _sendCmdExitVideo(callId,ext){
+	var id = utils.uuid();
+	var msg = new WebIM.message.cmd(id);
+	var msgAction =  "Agorartcmedia";
+	msg.set({
+		to: config.toUser,
+		action: msgAction,
+	});
+	if(ext){
+		_.extend(msg.body, ext);
+	}
+	_setExt(msg);
+	_appendAck(msg, id);
+	conn.send(msg.body);
+	sendMsgDict.set(id, msg);
+	_detectSendTextMsgByApi(id);
+
+	_promptNoAgentOnlineIfNeeded({ hasTransferedToKefu: true });
+	eventListener.excuteCallbacks(_const.SYSTEM_EVENT.CLEAR_TIMEOUT, []);
+	clearActiveAnswerTimeout();
 }
 
 function _sendImg(fileMsg){

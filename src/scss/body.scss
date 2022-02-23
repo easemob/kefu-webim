@@ -561,6 +561,44 @@ body.window-demo{
 			}
 		}
 	}
+	#main-video-argo{
+		background-color: #000000;
+		.mini-video-argo{
+			height: 187px;
+		}
+		#mini-video-visitor,#mini-video-agent,.mini-video-agent{
+			height: 186px;
+			width: 33%;
+			float: left;
+		}
+		.big-video-argo{
+			height: 270px;
+		}
+		#big-video-argo{
+			width: 400px;
+			height: 270px;
+			margin: auto;
+		}
+		.icon-camera{
+			position: absolute;
+			right: 10px;
+			bottom: 10px;
+		}
+		.toggle-carema-btn{
+			position: absolute;
+			right: 10px;
+			bottom: 10px;
+		}
+		.toggle-microphone-btn{
+			position: absolute;
+			right: 40px;
+			bottom: 10px;
+		}
+		.return-to-multi-video{
+			position: absolute;
+    		left: 10px;
+		}
+	}
 }
 
 //
