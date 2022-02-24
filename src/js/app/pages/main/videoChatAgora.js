@@ -116,6 +116,7 @@ function _init(){
 					$(".mini-video-argo").addClass("hide");
 					$(".toggle-microphone-btn").removeClass("hide");
 					$(".toggle-carema-btn").removeClass("hide");
+					$(".video-chat-wrapper").addClass("big-video");
 					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("big-video-argo");
 				});
 				utils.on($(".return-to-multi-video"), "click", function(){
@@ -123,6 +124,7 @@ function _init(){
 					$(".mini-video-argo").removeClass("hide");
 					$(".toggle-microphone-btn").addClass("hide");
 					$(".toggle-carema-btn").addClass("hide");
+					$(".video-chat-wrapper").removeClass("big-video");
 					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("mini-video-visitor");
 				});
 				// 静音

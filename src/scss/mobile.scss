@@ -1,5 +1,8 @@
 .em-mobile {
 	border-radius: 0;
+	.big-video{
+		height: 100%;
+	}
 	.multi-video-container{
 		max-width: 800px;
 		margin: 0 auto;
@@ -76,6 +79,7 @@
 	}
 	#main-video-argo{
 		background-color: #000000;
+		height: 100%;
 		.mini-video-argo{
 			height: 187px;
 		}
@@ -85,11 +89,13 @@
 			float: left;
 		}
 		.big-video-argo{
-			height: 370px;
+			// height: 370px;
+			height: 60%;
+			position: relative;
 		}
 		#big-video-argo{
 			// width: 400px;
-			height: 370px;
+			height: 100%;
 			margin: auto;
 		}
 		.icon-camera{
