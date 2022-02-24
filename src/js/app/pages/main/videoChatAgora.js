@@ -301,6 +301,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			$(".video-chat-wrapper").addClass("hide");
 		}
 	}
+	$(".visitor-invite-video-confirm").addClass("hide")
 }
 
 function _onConfirm(){
