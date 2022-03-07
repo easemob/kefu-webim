@@ -173,6 +173,15 @@ function _init(){
 		// service: service,
 		dispatcher: dispatcher,
 	});
+	// 展开折叠
+	utils.on($(".collapse-toggle-button"), "click", function(){
+		if($(".video-chat-wrapper>.status-bar").hasClass("collapsed")){
+			$("#main-video-argo").addClass("hide");
+		}
+		else{
+			$("#main-video-argo").removeClass("hide");
+		}
+	});
 }
 
 function startTimer(){
@@ -188,7 +197,7 @@ function init(option){
 	if(
 		window.location.protocol !== "https:"
 		|| !Modernizr.peerconnection // UC 和 夸克 该方法返回false，不支持webRtc
-		|| !profile.grayList.audioVideo
+		|| !profile.grayList.agoraVideo
 	) return;
 
 	opt = option || {};
