@@ -1,14 +1,12 @@
 /*
 	视频流程
-	1.
+	1.加载声网sdk
+	2.
 		a. 访客发起邀请
 		b. 坐席发起邀请
-	2. 访客收到ticket
-	3. 初始化sdk，回调
-	4. 访客加入会议
-	5. 振铃
-	6. 访客接起
-	7. 访客推流
+	3. 访客收到ticket
+	4初始化sdk，回调
+	5. 访客加入会议
 */
 
 var _const = require("@/common/const");
@@ -28,6 +26,7 @@ var apiHelper = require("./apis");
 var TimerLabel = require("./uikit/TimerLabel");
 var videoChatAgora = require("./uikit/videoChatAgora");
 var videoConnecting = false; // 是否正在视频通话
+var videoInviteButton = false;
 var _initOnce = _.once(_init);
 var parentContainer;
 var videoWidget;
@@ -204,9 +203,11 @@ function init(option){
 		// 显示视频邀请按钮，并绑定事件
 		utils.removeClass(triggerButton, "hide");
 		utils.on(triggerButton, "click", function(){
+			if(videoInviteButton) return;
 			_initOnce();
 			 serviceAgora = new videoChatAgora({});
 			_onConfirm();
+			videoInviteButton = true;
 			//  serviceAgora.createLocalTracks();
 		});
 	});
@@ -377,6 +378,7 @@ function _onAgentInviteCancel(){
 	timerLabel.stop();
 	statusBar.end();
 	agentInviteDialog.hide();
+	videoInviteButton = false;
 }
 
 function _onConfirmExitvideo(){
@@ -391,4 +393,5 @@ function _onConfirmExitvideo(){
 		},
 	})
 	visitorDialog.hide();
+	videoInviteButton = false;
 }
