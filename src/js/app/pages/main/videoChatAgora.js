@@ -155,9 +155,15 @@ function _init(){
 			})
 		},
 		endCallback: function(){
+			$("#main-video-argo").addClass("hide")
 			serviceAgora.leave();
-			$(".video-chat-wrapper").addClass("hide")
 			videoConnecting = false;
+			videoInviteButton = false;
+			statusBar.showClosing();
+			setTimeout(function(){
+				$(".video-chat-wrapper").addClass("hide")
+				$("#main-video-argo").removeClass("hide")
+			}, 3000);
 			// service && service.exit();
 		},
 	});
@@ -273,10 +279,15 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			});
 		},
 		onUserLeft:function(){
+			$("#main-video-argo").addClass("hide")
 			serviceAgora.leave();
-			$(".video-chat-wrapper").addClass("hide")
 			videoConnecting = false;
 			videoInviteButton = false;
+			statusBar.showClosing();
+			setTimeout(function(){
+				$(".video-chat-wrapper").addClass("hide")
+				$("#main-video-argo").removeClass("hide")
+			}, 3000);
 		}
 	});
 	// 访客邀请的，不显示，直接打开视频, 
