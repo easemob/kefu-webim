@@ -27,6 +27,7 @@ var videoChatTemplate = require("../../../../template/videoChat.html");
 var apiHelper = require("./apis");
 var TimerLabel = require("./uikit/TimerLabel");
 var videoChatAgora = require("./uikit/videoChatAgora");
+var videoInviteButton = false;
 var _initOnce = _.once(_init);
 var parentContainer;
 var videoWidget;
@@ -235,9 +236,11 @@ function init(option){
 		// 显示视频邀请按钮，并绑定事件
 		utils.removeClass(triggerButton, "hide");
 		utils.on(triggerButton, "click", function(){
+			if(videoInviteButton) return;
 			_initOnce();
 			// dialog.show();
 			_onConfirm();
+			videoInviteButton = true;
 		});
 	});
 	
@@ -349,6 +352,7 @@ function _onAgentInviteCancel(){
 	timerLabel.stop();
 	statusBar.end();
 	agentInviteDialog.hide();
+	videoInviteButton = false;
 }
 
 function _onConfirmExitvideo(){
@@ -378,6 +382,7 @@ function _onConfirmExitvideo(){
 				},
 			});
 			visitorDialog.hide();
+			videoInviteButton = false;
 			// // 取消通话移除按钮
 			// var editor = document.querySelector(".toolbar");
 			// var ele = document.querySelector(".em-widget-exit-video");
