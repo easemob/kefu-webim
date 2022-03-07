@@ -276,6 +276,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			serviceAgora.leave();
 			$(".video-chat-wrapper").addClass("hide")
 			videoConnecting = false;
+			videoInviteButton = false;
 		}
 	});
 	// 访客邀请的，不显示，直接打开视频, 
