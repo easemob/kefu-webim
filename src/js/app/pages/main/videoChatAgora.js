@@ -160,6 +160,17 @@ function _init(){
 			videoConnecting = false;
 			videoInviteButton = false;
 			statusBar.showClosing();
+			// 挂断通知
+			channel.sendCmdExitVideo(callId,{
+				ext: {
+					type: "agorartcmedia/video",
+					msgtype: {
+						visitorRejectInvitation:{
+							callId:callId
+						}
+					},
+				},
+			})
 			setTimeout(function(){
 				$(".video-chat-wrapper").addClass("hide")
 				$("#main-video-argo").removeClass("hide")
@@ -293,6 +304,17 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			videoConnecting = false;
 			videoInviteButton = false;
 			statusBar.showClosing();
+			// 挂断通知
+			channel.sendCmdExitVideo(callId,{
+				ext: {
+					type: "agorartcmedia/video",
+					msgtype: {
+						visitorRejectInvitation:{
+							callId:callId
+						}
+					},
+				},
+			})
 			setTimeout(function(){
 				$(".video-chat-wrapper").addClass("hide")
 				$("#main-video-argo").removeClass("hide")
@@ -403,12 +425,12 @@ function _onAgentInviteCancel(){
 }
 
 function _onConfirmExitvideo(){
-	channel.sendCmdExitVideo(callId,{
+	channel.sendCmdExitVideo(null,{
 		ext: {
 			type: "agorartcmedia/video",
 			msgtype: {
 				visitorCancelInvitation:{
-					callId:callId
+					callId:null
 				}
 			},
 		},
