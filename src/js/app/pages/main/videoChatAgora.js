@@ -27,6 +27,7 @@ var TimerLabel = require("./uikit/TimerLabel");
 var videoChatAgora = require("./uikit/videoChatAgora");
 var videoConnecting = false; // 是否正在视频通话
 var videoInviteButton = false;
+var thirdAgentName = null;
 var _initOnce = _.once(_init);
 var parentContainer;
 var videoWidget;
@@ -117,6 +118,7 @@ function _init(){
 					$(".toggle-carema-btn").removeClass("hide");
 					$(".video-chat-wrapper").addClass("big-video");
 					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("big-video-argo");
+					$("#big-video-argo>.nickname").html("我")
 				});
 				utils.on($(".return-to-multi-video"), "click", function(){
 					$(".big-video-argo").addClass("hide");
@@ -242,6 +244,9 @@ function init(option){
 
 // 收到ticket通知
 function _reveiveTicket(ticketInfo, ticketExtend){
+	if(ticketInfo.isThirdAgent && ticketInfo.agentTicket){
+		thirdAgentName = ticketInfo.agentTicket.niceName;
+	}
 	if(videoConnecting) return;
 	$(".video-chat-wrapper").removeClass("hide");
 	// 有可能收到客服的主动邀请，此时需要初始化
@@ -276,6 +281,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 				$(".mini-video-argo").addClass("hide");
 				userVideo0._videoTrack && userVideo0._videoTrack.play("big-video-argo");
 				userVideo0._audioTrack && userVideo0._audioTrack.play();
+				$("#big-video-argo>.nickname").html(profile.newNickName)
 			});
 			utils.on($(".return-to-multi-video"), "click", function(){
 				$(".big-video-argo").addClass("hide");
@@ -290,6 +296,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 				$(".mini-video-argo").addClass("hide");
 				userVideo1._videoTrack && userVideo1._videoTrack.play("big-video-argo");
 				userVideo1._audioTrack && userVideo1._audioTrack.play();
+				$("#big-video-argo>.nickname").html(thirdAgentName);
 			});
 			utils.on($(".return-to-multi-video"), "click", function(){
 				$(".big-video-argo").addClass("hide");

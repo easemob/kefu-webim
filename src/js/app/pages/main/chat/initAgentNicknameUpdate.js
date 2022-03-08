@@ -71,4 +71,5 @@ function _updateAgentNickname(officialAccount){
 	else{
 		$agentNickname.innerText = profile.defaultAgentName;
 	}
+	profile.newNickName = $agentNickname.innerText;
 }

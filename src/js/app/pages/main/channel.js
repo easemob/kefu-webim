@@ -992,7 +992,8 @@ function _handleMessage(msg, options){
 		}
 		else{
 			var agentInfo = utils.getDataByPath(msg, "ext.weichat.agent");
-			if(agentInfo){
+			var isThirdAgent = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.ticket.isThirdAgent");
+			if(agentInfo&&!isThirdAgent){
 				targetOfficialAccount.agentNickname = agentInfo.userNickname;
 				targetOfficialAccount.agentAvatar = agentInfo.avatar;
 				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.AGENT_INFO_UPDATE, [targetOfficialAccount]);
