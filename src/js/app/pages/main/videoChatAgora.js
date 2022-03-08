@@ -299,6 +299,9 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			});
 		},
 		onUserLeft:function(){
+			if(serviceAgora.remoteUsers.length != 1){
+				return;
+			}
 			$("#main-video-argo").addClass("hide")
 			serviceAgora.leave();
 			videoConnecting = false;
