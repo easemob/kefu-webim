@@ -63,6 +63,7 @@ module.exports = {
 		MESSAGE_APPENDED: "message.appended",
 
 		VIDEO_TICKET_RECEIVED: "video.ticket.received",
+		VIDEO_ARGO_END: "video.argo.end", // 声网音视频结束的通知
 		MESSAGE_CHANNEL_READY: "message.channel.ready",
 
 		CONSULT_AGENT: "consult.agent",

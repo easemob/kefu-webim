@@ -106,6 +106,7 @@ function _init(){
 			serviceAgora.join(cfgAgora).then(function(){
 				videoConnecting = true;
 				statusBar.hideAcceptButton();
+				$("#main-video-argo").removeClass("hide");
 				$(".video-chat-wrapper").removeClass("hide");
 				$(".mini-video-argo").removeClass("hide");
 				statusBar.setStatusText(__("video.connecting"));
@@ -159,6 +160,7 @@ function _init(){
 			serviceAgora.leave();
 			videoConnecting = false;
 			videoInviteButton = false;
+			inviteByVisitor = false;
 			statusBar.showClosing();
 			// 挂断通知
 			channel.sendCmdExitVideo(callId,{
@@ -232,7 +234,7 @@ function init(option){
 	})
 	.then(function(){
 		eventListener.add(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, _reveiveTicket);
-
+		eventListener.add(_const.SYSTEM_EVENT.VIDEO_ARGO_END, _closeVideo);
 		// 显示视频邀请按钮，并绑定事件
 		utils.removeClass(triggerButton, "hide");
 		utils.on(triggerButton, "click", function(){
@@ -323,6 +325,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			videoConnecting = false;
 			videoInviteButton = false;
 			statusBar.showClosing();
+			inviteByVisitor = false;
 			// 挂断通知
 			channel.sendCmdExitVideo(callId,{
 				ext: {
@@ -355,12 +358,14 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 		// 访客二次确认
 		if(inviteByVisitor && config.videoH5Status){
 			statusBar.show();
+			$("#main-video-argo").addClass("hide");
 			$(".visitor-invite-video-confirm").addClass("hide")
 		}
 		else{
 			// 弹 “客服邀请” 窗
 			agentInviteDialog.show();
 			startTimer();
+			videoInviteButton = true;
 			$(".video-chat-wrapper").addClass("hide");
 		}
 	}
@@ -456,4 +461,18 @@ function _onConfirmExitvideo(){
 	})
 	visitorDialog.hide();
 	videoInviteButton = false;
+}
+function _closeVideo(){
+	returnToMuti();
+	$("#main-video-argo").addClass("hide")
+	serviceAgora = serviceAgora.leave();
+	videoConnecting = false;
+	videoInviteButton = false;
+	inviteByVisitor = false;
+	statusBar.showClosing();
+	setTimeout(function(){
+		$(".video-chat-wrapper").addClass("hide")
+		$("#main-video-argo").removeClass("hide")
+	}, 3000);
+	agentInviteDialog && agentInviteDialog.hide();
 }

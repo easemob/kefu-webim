@@ -535,6 +535,7 @@ function _handleMessage(msg, options){
 	var officialAccountId = officialAccount && officialAccount.official_account_id;
 	var videoTicket = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.ticket");
 	var videoExtend = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.extend");
+	var videoEndArgo = utils.getDataByPath(msg, "ext.msgtype.videoPlayback");
 	var customMagicEmoji = utils.getDataByPath(msg, "ext.msgtype.customMagicEmoji");
 	var activeAnswerBundle = utils.getDataByPath(msg, "ext.activeAnswerBundle");
 	var targetOfficialAccount;
@@ -613,6 +614,9 @@ function _handleMessage(msg, options){
 	// 视频 ticket
 	else if(videoTicket){
 		type = "rtcVideoTicket";
+	}
+	else if(videoEndArgo){
+		type = "videoEndArgo";
 	}
 	else if(customMagicEmoji){
 		type = "customMagicEmoji";
@@ -968,6 +972,9 @@ function _handleMessage(msg, options){
 			"</div>"
 		].join("");
 		message.brief = __("message_brief.menu");
+		break;
+	case "videoEndArgo":
+		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_ARGO_END, [videoEndArgo]);
 		break;
 	default:
 		console.error("unexpected msg type");
