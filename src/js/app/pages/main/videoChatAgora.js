@@ -108,6 +108,7 @@ function _init(){
 				statusBar.hideAcceptButton();
 				$(".video-chat-wrapper").removeClass("hide");
 				$(".mini-video-argo").removeClass("hide");
+				statusBar.setStatusText(__("video.connecting"));
 				serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("mini-video-visitor");
 				serviceAgora.localAudioTrack && serviceAgora.localAudioTrack.setMuted(false);
 				// 访客头像大图展示
@@ -121,15 +122,11 @@ function _init(){
 					$("#big-video-argo>.nickname").html("我")
 				});
 				utils.on($(".return-to-multi-video"), "click", function(){
-					$(".big-video-argo").addClass("hide");
-					$(".mini-video-argo").removeClass("hide");
-					$(".toggle-microphone-btn").addClass("hide");
-					$(".toggle-carema-btn").addClass("hide");
-					$(".video-chat-wrapper").removeClass("big-video");
+					returnToMuti();
 					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("mini-video-visitor");
 				});
 				// 静音
-				utils.on($(".toggle-microphone-btn"), "click", function(e){
+				$('#big-video-argo>.toggle-microphone-btn').unbind('click').bind('click',function (e){
 					if($(e.target).hasClass("icon-microphone")){
 						serviceAgora.localAudioTrack && serviceAgora.localAudioTrack.setMuted(true);
 						$(e.target).addClass("icon-disable-microphone");
@@ -142,7 +139,7 @@ function _init(){
 					}
 				});
 				// 关闭摄像头
-				utils.on($(".toggle-carema-btn"), "click", function(e){
+				$('#big-video-argo>.toggle-carema-btn').unbind('click').bind('click',function (e){
 					if($(e.target).hasClass("icon-camera")){
 						serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.setMuted(true);
 						$(e.target).addClass("icon-disable-camera");
@@ -157,6 +154,7 @@ function _init(){
 			})
 		},
 		endCallback: function(){
+			returnToMuti();
 			$("#main-video-argo").addClass("hide")
 			serviceAgora.leave();
 			videoConnecting = false;
@@ -195,6 +193,13 @@ function _init(){
 			$("#main-video-argo").removeClass("hide");
 		}
 	});
+}
+function returnToMuti(){
+	$(".big-video-argo").addClass("hide");
+	$(".mini-video-argo").removeClass("hide");
+	$(".toggle-microphone-btn").addClass("hide");
+	$(".toggle-carema-btn").addClass("hide");
+	$(".video-chat-wrapper").removeClass("big-video");
 }
 
 function startTimer(){
@@ -263,7 +268,9 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 	callId = ticketInfo.callId;
 	// 初始化声网SDK
  	serviceAgora = new videoChatAgora({onRemoteUserChange:function(remoteUSer){
-		 	var userVideo0,userVideo1;
+			var userVideo0,userVideo1;
+			returnToMuti();
+			// statusBar.setStatusText(__("video.connecting"));
 			remoteUSer.forEach(function (item,index){
 				item.videoTrack && item.videoTrack.play("mini-video-agent" + index);
 				item.audioTrack && item.audioTrack.play();
@@ -309,6 +316,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			if(serviceAgora.remoteUsers.length != 1){
 				return;
 			}
+			returnToMuti();
 			$("#main-video-argo").addClass("hide")
 			serviceAgora.leave();
 			videoConnecting = false;
