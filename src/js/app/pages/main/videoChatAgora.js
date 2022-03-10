@@ -298,7 +298,8 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			});
 
 			// 第三方客服
-			utils.on($("#mini-video-agent1"), "click", function(){
+			utils.on($("#mini-video-agent1"), "click", function(e){
+				if(!e.currentTarget.children.length) return;
 				$(".big-video-argo").removeClass("hide");
 				$(".mini-video-argo").addClass("hide");
 				userVideo1._videoTrack && userVideo1._videoTrack.play("big-video-argo");
