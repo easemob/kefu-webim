@@ -431,6 +431,18 @@ function _onAgentInviteConfirm(){
 }
 
 function _onAgentInviteCancel(){
+	// 拒绝的消息先注释跟原来保持一致
+	// channel.sendText(__("video.invite_reject_video"), {
+	// 	ext: {
+	// 		type: "rtcmedia/video",
+	// 		msgtype: {
+	// 			visitorCancelInvitation: {
+	// 				msg: __("video.invite_reject_video"),
+	// 				callId:callId,
+	// 			},
+	// 		},
+	// 	},
+	// });
 	channel.sendCmdExitVideo(callId,{
 		ext: {
 			type: "agorartcmedia/video",
@@ -446,9 +458,21 @@ function _onAgentInviteCancel(){
 	statusBar.end();
 	agentInviteDialog.hide();
 	videoInviteButton = false;
+	inviteByVisitor = false;
 }
 
 function _onConfirmExitvideo(){
+	channel.sendText(__("video.invite_exit_video"), {
+		ext: {
+			type: "rtcmedia/video",
+			msgtype: {
+				visitorCancelInvitation: {
+					msg: __("video.invite_exit_video"),
+					callId:callId,
+				},
+			},
+		},
+	});
 	channel.sendCmdExitVideo(null,{
 		ext: {
 			type: "agorartcmedia/video",
@@ -461,6 +485,7 @@ function _onConfirmExitvideo(){
 	})
 	visitorDialog.hide();
 	videoInviteButton = false;
+	inviteByVisitor = false;
 }
 function _closeVideo(){
 	returnToMuti();
