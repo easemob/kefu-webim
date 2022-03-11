@@ -202,6 +202,8 @@ function returnToMuti(){
 	$(".toggle-microphone-btn").addClass("hide");
 	$(".toggle-carema-btn").addClass("hide");
 	$(".video-chat-wrapper").removeClass("big-video");
+	$(".toggle-microphone-btn").removeClass("icon-disable-microphone").addClass("icon-microphone");
+	$(".toggle-carema-btn").removeClass("icon-disable-camera").addClass("icon-camera");
 }
 
 function startTimer(){
