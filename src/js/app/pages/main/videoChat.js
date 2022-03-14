@@ -118,11 +118,13 @@ function _init(){
 				else if(evt instanceof window.emedia.event.PushFail){
 					uikit.tip(__("video.can_not_connected"));
 					service.exit();
+					inviteByVisitor = false;
 				}
 				// 接听 打开摄像头失败
 				else if(evt instanceof window.emedia.event.OpenMediaError){
 					uikit.tip(__("video.can_not_open_camera"));
 					service.exit();
+					inviteByVisitor = false;
 				}
 				else{}
 			},
@@ -192,6 +194,7 @@ function _init(){
 		},
 		endCallback: function(){
 			service && service.exit();
+			inviteByVisitor = false;
 		},
 	});
 
@@ -353,6 +356,7 @@ function _onAgentInviteCancel(){
 	statusBar.end();
 	agentInviteDialog.hide();
 	videoInviteButton = false;
+	inviteByVisitor = false;
 }
 
 function _onConfirmExitvideo(){
@@ -383,6 +387,7 @@ function _onConfirmExitvideo(){
 			});
 			visitorDialog.hide();
 			videoInviteButton = false;
+			inviteByVisitor = false;
 			// // 取消通话移除按钮
 			// var editor = document.querySelector(".toolbar");
 			// var ele = document.querySelector(".em-widget-exit-video");

@@ -974,6 +974,10 @@ function _handleMessage(msg, options){
 		message.brief = __("message_brief.menu");
 		break;
 	case "videoEndArgo":
+		message = msg;
+		message.type = "txt";
+		message.data = (msg && msg.data) || "";
+		message.brief = textParser.getTextMessageBrief(message.data,isReceived);
 		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_ARGO_END, [videoEndArgo]);
 		break;
 	default:
