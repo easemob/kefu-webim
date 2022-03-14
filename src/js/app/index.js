@@ -25,6 +25,7 @@ var eventListener = require("@/app/tools/eventListener");
 var fromUserClick = false;
 var Tab = require("@/common/uikit/tab");
 var Apis = require("./pages/main/apis");
+var loading = require("./pages/main/uikit/loading");
 
 var ISIFRAME = false; //网页插件为true
 var slideSwitch;
@@ -114,12 +115,16 @@ eventListener.add(_const.SYSTEM_EVENT.CONSULT_AGENT, function(){
 });
 
 function widgetBoxShow(){
-	setTimeout(function() {
-		utils.removeClass(document.querySelector(".em-widget-box"), "hide");
-	}, 800);
+	if(utils.isMobile){
+		loading.show("mobile-uni")
+	}
+	utils.removeClass(document.querySelector(".em-widget-box"), "hide");
 	if(!$("body").hasClass("window-demo")){
 		if(utils.isMobile){
 			$(".expand").addClass("hide");
+			setTimeout(function(){
+				loading.hide("mobile-uni")
+			},1000)
 		}
 		return false;
 	}
@@ -135,6 +140,9 @@ function widgetBoxShow(){
 	if(utils.isMobile && !slideSwitch){
 		$(".em-self-wrapper").addClass("hide");
 		main.initChat();
+		setTimeout(function(){
+			loading.hide("mobile-uni")
+		},1000)
 		return false
 	}
 	if((selfServiceData.length == 0 || !selfServiceEnable) && (issueData.length == 0 || !commonIssueEnable) && (iframeContent.length == 0 || !iframeEnable)){
@@ -142,6 +150,9 @@ function widgetBoxShow(){
 			$(".em-self-wrapper").addClass("hide");
 			main.initChat();
 			$(".expand").addClass("hide");
+			setTimeout(function(){
+				loading.hide("mobile-uni")
+			},1000)
 			return false
 		}
 		$(".em-self-wrapper").addClass("hide");
