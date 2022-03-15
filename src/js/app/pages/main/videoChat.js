@@ -84,6 +84,7 @@ function _init(){
 
 				statusBar.showClosing();
 				videoPanel.hide();
+				videoInviteButton = false;
 
 				// if(errorCode !== 0) throw new Error(errorMessage);
 			},
@@ -119,12 +120,14 @@ function _init(){
 					uikit.tip(__("video.can_not_connected"));
 					service.exit();
 					inviteByVisitor = false;
+					videoInviteButton = false;
 				}
 				// 接听 打开摄像头失败
 				else if(evt instanceof window.emedia.event.OpenMediaError){
 					uikit.tip(__("video.can_not_open_camera"));
 					service.exit();
 					inviteByVisitor = false;
+					videoInviteButton = false;
 				}
 				else{}
 			},
