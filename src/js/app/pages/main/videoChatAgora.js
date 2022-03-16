@@ -109,6 +109,7 @@ function _init(){
 				$("#main-video-argo").removeClass("hide");
 				$(".video-chat-wrapper").removeClass("hide");
 				$(".mini-video-argo").removeClass("hide");
+				$("#mini-video-agent0>.nickname").html(profile.newNickName);
 				statusBar.setStatusText(__("video.connecting"));
 				serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("mini-video-visitor");
 				serviceAgora.localAudioTrack && serviceAgora.localAudioTrack.setMuted(false);
@@ -274,6 +275,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
  	serviceAgora = new videoChatAgora({onRemoteUserChange:function(remoteUSer){
 			var userVideo0,userVideo1;
 			returnToMuti();
+			$("#mini-video-agent0>.nickname").html(profile.newNickName);
 			// statusBar.setStatusText(__("video.connecting"));
 			remoteUSer.forEach(function (item,index){
 				item.videoTrack && item.videoTrack.play("mini-video-agent" + index);
