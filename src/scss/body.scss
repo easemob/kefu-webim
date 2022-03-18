@@ -540,3 +540,17 @@ body.big-window-h5{
 		background: #fff;
 	}
 }
+
+.header-right-box {
+	position: absolute;
+	right: 0;
+	top: 0;
+	display: flex;
+	justify-content: space-between;
+	&.w-84 {
+		width: 84px;
+	}
+	&.w-90 {
+		width: 90px;
+	}
+}
