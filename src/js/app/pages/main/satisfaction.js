@@ -54,18 +54,16 @@ function _init(){
 		// 判断是否为官微租户，Y 的话分三步实现
 		if (_const.isGuanwei == 'Y') {
 			var title1 = '您对本次客服人员的服务是否满意'
-			var title2 = '您向朋友推荐大都会人寿的可能性有多大'
-			var title3 = '“10”分代表愿意推荐，请在10到0之间选择'
-			var title4 = '请问本次服务是否解决您的问题'
+			var title2 = '您向朋友推荐大都会人寿的可能性有多大，“10”分代表愿意推荐，请在10到0之间选择'
+			var title3 = '请问本次服务是否解决您的问题'
 			dom = utils.createElementFromHTML([
 				"<div class=\"wrapper\">",
 				"<span class=\"title guan-wei\">" + title1 + "</span>",
 				"<ul class=\"satisfactionUl\"></ul>",
 				"<div class=\"tag-container\"></div>",
 				"<div class=\"gradeCon hide\"><p class=\"title guan-wei\">" + title2 + "</p>",
-				"<p class=\"title guan-wei no-top\">" + title3 + "</p>",
 				"<ul class=\"gradeUl guan-wei\"></ul></div>",
-				"<div class=\"resolveCon mbot-20 hide\"><span class=\"title guan-wei\">" + title4 + "</span>",
+				"<div class=\"resolveCon mbot-20 hide\"><span class=\"title guan-wei\">" + title3 + "</span>",
 				"<div><span class=\"resolve-btn resolved\" data-num = \"1\"><span>" + __("evaluation.resolved") + "</span></span>",
 				"<span class=\"resolve-btn unresolved\" data-num = \"2\"><span>" + __("evaluation.unsolved") + "</span></span></div></div>",
 				"</div>"

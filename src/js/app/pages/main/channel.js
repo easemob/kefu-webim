@@ -460,28 +460,6 @@ function _handleMessage(msg, options){
 	// 满意度评价
 	if(utils.getDataByPath(msg, "ext.weichat.ctrlType") === "inviteEnquiry"){
 		type = "satisfactionEvaluation";
-		if (_const.isGuanwei == 'Y') {
-			var isOpen, isEvaluate
-			// 获取开关状态：多次满意度评价只取第一次
-			apiHelper.getNotOverrideOldEnquiry().then(function(res) {
-				console.log(111, res)
-				isOpen = res
-				// 官微租户满意度评价 - 查询
-				apiHelper.satisfactionQuery(_const.tenantId, serviceSessionId).then(function(ress) {
-					console.log(222, ress)
-					if (ress.entity) {
-						isEvaluate = ress.entity.id ? true : false
-						if (isOpen && isEvaluate) {
-							_const.isDisabledSatisfaction = true
-							// _const.isDisabledSatisfaction[serviceSessionId] = true
-							// console.log(333, _const.isDisabledSatisfaction)
-						}
-					} else {
-						_const.isDisabledSatisfaction = false
-					}
-				});
-			});
-		}
 	}
 	// 机器人自定义菜单
 	// 需要判断：收到的 choice 显示为菜单，发出的 choice 渲染为文本消息
@@ -670,31 +648,30 @@ function _handleMessage(msg, options){
 		message.type = "list";
 		message.subtype = type;
 		message.data = __("chat.evaluate_agent_title");
-		// setTimeout(function() {
-		// console.log(999, _const.isDisabledSatisfaction)
-		// if (_const.isDisabledSatisfaction.serviceSessionId) {
-			if (_const.isDisabledSatisfaction) {
-				var style= "background-color: #ccc; cursor:not-allowed;"
-				// 禁用【立即评价】按钮
-				message.list = [
-					"<div class=\"em-btn-list\">"
-					+ "<button disabled style=\"" + style + "\" class=\"js_satisfybtn\" data-inviteid=\""
-					+ inviteId
-					+ "\" data-servicesessionid=\""
-					+ serviceSessionId
-					+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
-				];
-			} else {
-				message.list = [
-					"<div class=\"em-btn-list\">"
-					+ "<button class=\"bg-hover-color js_satisfybtn\" data-inviteid=\""
-					+ inviteId
-					+ "\" data-servicesessionid=\""
-					+ serviceSessionId
-					+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
-				];
-			}
-		// }, 50)
+		console.log(111, msg)
+		// if (_const.isGuanwei == 'Y') {
+		// 	var ctrlType = utils.getDataByPath(msg, "ext.weichat.ctrlType");
+		// 	console.log(222, ctrlType)
+		// 	var style= "background-color: #ccc; cursor:not-allowed;"
+		// 	// 禁用【立即评价】按钮
+		// 	message.list = [
+		// 		"<div class=\"em-btn-list\">"
+		// 		+ "<button disabled style=\"" + style + "\" class=\"js_satisfybtn\" data-inviteid=\""
+		// 		+ inviteId
+		// 		+ "\" data-servicesessionid=\""
+		// 		+ serviceSessionId
+		// 		+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
+		// 	];
+		// } else {
+			message.list = [
+				"<div class=\"em-btn-list\">"
+				+ "<button class=\"bg-hover-color js_satisfybtn\" data-inviteid=\""
+				+ inviteId
+				+ "\" data-servicesessionid=\""
+				+ serviceSessionId
+				+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
+			];
+		// }
 		message.brief = __("message_brief.menu");
 		!isHistory && config.ui.enquiryShowMode === "popup" && eventListener.excuteCallbacks(
 			_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,

@@ -52,8 +52,6 @@ module.exports = function(opt){
 			_initHistoryPuller();
 			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_RESTORED, [officialAccount]);
 
-			// 获取状态，是否禁用【立即评价】按钮
-			getIsDisabledSatisfaction(entity.session_id)
 		}, function(err){
 			if(err === _const.ERROR_MSG.SESSION_DOES_NOT_EXIST){
 				eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, [officialAccount]);
@@ -63,27 +61,6 @@ module.exports = function(opt){
 			}
 		});
 	});
-
-	function getIsDisabledSatisfaction(sessionId) {
-		if (_const.isGuanwei == 'Y') {
-			var isOpen, isEvaluate
-			// 获取开关状态：多次满意度评价只取第一次
-			apiHelper.getNotOverrideOldEnquiry().then(function(res) {
-				isOpen = res
-				// 官微租户满意度评价 - 查询
-				apiHelper.satisfactionQuery(_const.tenantId, sessionId).then(function(ress) {
-					if (ress.entity) {
-						isEvaluate = ress.entity.id ? true : false
-						if (isOpen && isEvaluate) {
-							_const.isDisabledSatisfaction = true
-						}
-					} else {
-						_const.isDisabledSatisfaction = false
-					}
-				});
-			});
-		}
-	}
 
 	return {
 		show: _show,

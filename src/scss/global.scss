@@ -41,16 +41,16 @@ body {
 	overflow: hidden;
 	-webkit-font-smoothing: antialiased;
 	&.big-font {
-		font-size: 19px !important;
+		font-size: 21px !important;
 		button, textarea, ul, li {
-			font-size: 19px !important;
+			font-size: 21px !important;
 		}
 	}
 	// 20px 的话，满意度调查的 title 会变成 4 行
 	&.big-font-mobile {
-		font-size: 19px !important;
+		font-size: 21px !important;
 		button, textarea, ul, li {
-			font-size: 19px !important;
+			font-size: 21px !important;
 		}
 	}
 }
