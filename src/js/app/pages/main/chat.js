@@ -1133,8 +1133,8 @@ function _getDom(){
 		// fangdaBtn: editorView.querySelector(".em-widget-fangda"), // 放大
 		// suoxiaoBtn: editorView.querySelector(".em-widget-suoxiao"), // 缩小
 		headerRightBox: document.querySelector(".header-right-box"),
-		fangdaBtn: document.querySelector(".em-widget-fangda"), // 常规版
-		suoxiaoBtn: document.querySelector(".em-widget-suoxiao"), // 大字版
+		fangdaBtn: document.querySelector(".em-widget-fangda"), // 大字版
+		suoxiaoBtn: document.querySelector(".em-widget-suoxiao"), // 常规版
 		sendFileBtn: editorView.querySelector(".em-widget-file"),
 		sendVideoBtn: editorView.querySelector(".em-widget-video"),
 		sendBtn: editorView.querySelector(".em-widget-send"),
