@@ -71,10 +71,14 @@ module.exports = function(opt){
 			apiHelper.getNotOverrideOldEnquiry().then(function(res) {
 				isOpen = res
 				// 官微租户满意度评价 - 查询
-				apiHelper.satisfactionQuery(_const.tenantId, sessionId).then(function(res) {
-					isEvaluate = res.id ? true : false
-					if (isOpen && isEvaluate) {
-						_const.isDisabledSatisfaction = true
+				apiHelper.satisfactionQuery(_const.tenantId, sessionId).then(function(ress) {
+					if (ress.entity) {
+						isEvaluate = ress.entity.id ? true : false
+						if (isOpen && isEvaluate) {
+							_const.isDisabledSatisfaction = true
+						}
+					} else {
+						_const.isDisabledSatisfaction = false
 					}
 				});
 			});

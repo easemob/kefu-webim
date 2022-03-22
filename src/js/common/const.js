@@ -259,4 +259,5 @@ module.exports = {
 	visitorUserId: '', // 访客 id
 	agentUserId: '', // 坐席 id
 	isDisabledSatisfaction: false, // 是否禁用【立即评价】按钮
+	// isDisabledSatisfaction: {}, // 是否禁用【立即评价】按钮
 };

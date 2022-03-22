@@ -1398,16 +1398,7 @@ function satisfactionQuery(tenantId, serviceSessionId) {
 			url: '/v1/tenants/' + tenantId + '/serviceSessions/' + serviceSessionId + '/metlifeEnquiry',
 			type: 'GET',
 			success: function(res) {
-				var newRes;
-				try {
-					newRes = JSON.parse(res);
-				} catch(e) {}
-
-				if ((newRes && newRes.status) === "OK" && newRes.entity) {
-					resolve(newRes.entity);
-				} else {
-					reject();
-				}
+				resolve(JSON.parse(res))
 			},
 			error: function(err) {
 				reject(err);
