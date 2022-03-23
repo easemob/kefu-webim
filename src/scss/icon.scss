@@ -29,7 +29,7 @@
 
 .icon-camera:before {
 	@extend .icon-base;
-	content: "\e61e";
+	content: "\e76c";
 }
 
 .icon-change:before {
@@ -322,7 +322,7 @@
 
 .icon-microphone:before {
 	@extend .icon-base;
-	content: "\e61f"
+	content: "\e6ef"
 }
 
 .icon-hung-up:before {
@@ -342,12 +342,12 @@
 
 .icon-disable-camera:before {
 	@extend .icon-base;
-	content: "\e61d"
+	content: "\e659"
 }
 
 .icon-disable-microphone:before {
 	@extend .icon-base;
-	content: "\e620"
+	content: "\e6a7"
 }
 
 .icon-minimize-window:before {
@@ -675,5 +675,17 @@
 		@extend .icon-base;
 		content: "\e675";
 		font-size: 19px;
+	}
+}
+.icon-desktop{
+	&:before {
+		@extend .icon-base;
+		content: "\e6ff";
+	}
+}
+.icon-desktop-selected{
+	&:before {
+		@extend .icon-base;
+		content: "\e657";
 	}
 }

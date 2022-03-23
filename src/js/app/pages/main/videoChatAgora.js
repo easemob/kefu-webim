@@ -28,6 +28,7 @@ var videoChatAgora = require("./uikit/videoChatAgora");
 var videoConnecting = false; // 是否正在视频通话
 var videoInviteButton = false;
 var thirdAgentName = null;
+var shaDesktopSuccFlag = false;
 var _initOnce = _.once(_init);
 var parentContainer;
 var videoWidget;
@@ -119,13 +120,24 @@ function _init(){
 					$(".mini-video-argo").addClass("hide");
 					$(".toggle-microphone-btn").removeClass("hide");
 					$(".toggle-carema-btn").removeClass("hide");
+					$(".desktop-share").removeClass("hide");
 					$(".video-chat-wrapper").addClass("big-video");
-					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("big-video-argo");
+					if(shaDesktopSuccFlag){
+						serviceAgora.localScreenTrack && serviceAgora.localScreenTrack.play("big-video-argo");
+					}
+					else{
+						serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("big-video-argo");
+					}
 					$("#big-video-argo>.nickname").html("我")
 				});
 				utils.on($(".return-to-multi-video"), "click", function(){
 					returnToMuti();
-					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("mini-video-visitor");
+					if(shaDesktopSuccFlag){
+						serviceAgora.localScreenTrack && serviceAgora.localScreenTrack.play("mini-video-visitor");
+					}
+					else{
+						serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("mini-video-visitor");
+					}
 				});
 				// 静音
 				$('#big-video-argo>.toggle-microphone-btn').unbind('click').bind('click',function (e){
@@ -196,12 +208,17 @@ function _init(){
 			$("#main-video-argo").removeClass("hide");
 		}
 	});
+
+	$('#big-video-argo>.icon-desktop').unbind('click').bind('click',function (e){
+		onDesktopControl();
+	});
 }
 function returnToMuti(){
 	$(".big-video-argo").addClass("hide");
 	$(".mini-video-argo").removeClass("hide");
 	$(".toggle-microphone-btn").addClass("hide");
 	$(".toggle-carema-btn").addClass("hide");
+	$(".icon-desktop").addClass("hide");
 	$(".video-chat-wrapper").removeClass("big-video");
 	$(".toggle-microphone-btn").removeClass("icon-disable-microphone").addClass("icon-microphone");
 	$(".toggle-carema-btn").removeClass("icon-disable-camera").addClass("icon-camera");
@@ -330,6 +347,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			videoInviteButton = false;
 			statusBar.showClosing();
 			inviteByVisitor = false;
+			shaDesktopSuccFlag = false;
 			// 挂断通知
 			channel.sendCmdExitVideo(callId,{
 				ext: {
@@ -504,4 +522,38 @@ function _closeVideo(){
 		$("#main-video-argo").removeClass("hide")
 	}, 3000);
 	agentInviteDialog && agentInviteDialog.hide();
+	shaDesktopSuccFlag = false;
+}
+
+// 共享桌面的打开关闭
+function onDesktopControl(e){
+	if(shaDesktopSuccFlag) {
+  		shaDesktopSuccFlag = false;
+
+  		serviceAgora.client.unpublish(serviceAgora.localScreenTrack);
+  		serviceAgora.localScreenTrack.stop();
+
+  		serviceAgora.publish(serviceAgora.localVideoTrack);
+  		serviceAgora.localVideoTrack.play("big-video-argo");
+  		$(".desktop-share").removeClass("icon-desktop-selected");
+  		$(".desktop-share").addClass("icon-desktop");
+  		return;
+	}
+  
+	serviceAgora.createScreenVideoTrack()
+    	.then(function(localScreenTrack){
+			if(!localScreenTrack){
+				$(".desktop-share").removeClass("icon-desktop-selected");
+				$(".desktop-share").addClass("icon-desktop");
+				return;
+			};
+			shaDesktopSuccFlag = true;
+			serviceAgora.client.unpublish(serviceAgora.localVideoTrack);
+			serviceAgora.localVideoTrack.stop();
+
+			serviceAgora.publish(localScreenTrack);
+			localScreenTrack.play("big-video-argo");
+			$(".desktop-share").addClass("icon-desktop-selected");
+			$(".desktop-share").removeClass("icon-desktop");
+  		})
 }

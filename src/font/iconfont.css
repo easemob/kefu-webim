@@ -1,9 +1,9 @@
 @font-face {
   font-family: "newim"; /* Project id 2812636 */
-  src: url('iconfont.eot?t=1636602212023'); /* IE9 */
-  src: url('iconfont.eot?t=1636602212023#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('iconfont.woff?t=1636602212023') format('woff'),
-       url('iconfont.ttf?t=1636602212023') format('truetype');
+  src: url('iconfont.eot?t=1648018498850'); /* IE9 */
+  src: url('iconfont.eot?t=1648018498850#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('iconfont.woff?t=1648018498850') format('woff'),
+       url('iconfont.ttf?t=1648018498850') format('truetype');
 }
 
 .newim {
@@ -12,6 +12,66 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.newim-maikefeng1:before {
+  content: "\e6ef";
+}
+
+.newim-shexiangtou1:before {
+  content: "\e76c";
+}
+
+.newim-guanbishexiangtou1:before {
+  content: "\e659";
+}
+
+.newim-jinmai-1-copy-copy:before {
+  content: "\e6a7";
+}
+
+.newim-pingmugongxiang-copy-copy-copy-copy:before {
+  content: "\ecbf";
+}
+
+.newim-pingmugongxiang2:before {
+  content: "\e6ff";
+}
+
+.newim-pingmugongxiang-copy-copy1:before {
+  content: "\eca8";
+}
+
+.newim-pingmugongxiang-copy-copy:before {
+  content: "\e658";
+}
+
+.newim-pingmugongxiang:before {
+  content: "\e657";
+}
+
+.newim-bumanyi:before {
+  content: "\e7d2";
+}
+
+.newim-yiban:before {
+  content: "\e656";
+}
+
+.newim-manyi4:before {
+  content: "\e661";
+}
+
+.newim-henbumanyi2:before {
+  content: "\e65a";
+}
+
+.newim-manyi3:before {
+  content: "\e660";
+}
+
+.newim-a-toolboxrate:before {
+  content: "\e655";
 }
 
 .newim-play:before {
