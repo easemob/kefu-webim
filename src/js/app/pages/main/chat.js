@@ -653,7 +653,8 @@ function _bindEvents(){
 	utils.live("button.js_satisfybtn", "click", function(){
 		var serviceSessionId = this.getAttribute("data-servicesessionid");
 		var inviteId = this.getAttribute("data-inviteid");
-		satisfaction.show(inviteId, serviceSessionId, "agent");
+		var messageId = this.getAttribute("data-messageid");
+		satisfaction.show(inviteId, serviceSessionId, "agent", messageId);
 	});
 	// 产品推荐
 	utils.live(".js_productdetail", "click", function(){
@@ -944,8 +945,6 @@ function _bindEvents(){
 	// 官微租户下，放大缩小功能
 	// 点击放大
 	utils.on(doms.fangdaBtn, "click", function() {
-		utils.addClass(doms.headerRightBox, "w-90");
-		utils.removeClass(doms.headerRightBox, "w-84");
 		utils.addClass(doms.fangdaBtn, "hide");
 		utils.removeClass(doms.suoxiaoBtn, "hide");
 		if (utils.isMobile) {
@@ -956,8 +955,6 @@ function _bindEvents(){
 	});
 	// 点击缩小
 	utils.on(doms.suoxiaoBtn, "click", function() {
-		utils.addClass(doms.headerRightBox, "w-84");
-		utils.removeClass(doms.headerRightBox, "w-90");
 		utils.addClass(doms.suoxiaoBtn, "hide");
 		utils.removeClass(doms.fangdaBtn, "hide");
 		if (utils.isMobile) {
@@ -1132,7 +1129,6 @@ function _getDom(){
 		sendImgBtn: editorView.querySelector(".em-widget-img"),
 		// fangdaBtn: editorView.querySelector(".em-widget-fangda"), // 放大
 		// suoxiaoBtn: editorView.querySelector(".em-widget-suoxiao"), // 缩小
-		headerRightBox: document.querySelector(".header-right-box"),
 		fangdaBtn: document.querySelector(".em-widget-fangda"), // 大字版
 		suoxiaoBtn: document.querySelector(".em-widget-suoxiao"), // 常规版
 		sendFileBtn: editorView.querySelector(".em-widget-file"),

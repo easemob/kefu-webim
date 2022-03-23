@@ -1433,6 +1433,31 @@ function satisfactionEdit(tenantId, serviceSessionId, datas, id) {
 	});
 }
 
+// 官微租户 - 修改消息体数据接口
+function updateMsgBody(tenantId, serviceSessionId, messageId, datas) {
+	return new Promise(function(resolve, reject) {
+		emajax({
+			url: '/v1/tenants/' + tenantId + '/servicesessions/' + serviceSessionId + '/messages/' + messageId + '/updatebody',
+			type: 'PUT',
+			data: datas,
+			success: function(res) {
+				var newRes;
+				try {
+					newRes = JSON.parse(res);
+				} catch(e) {}
+
+				if ((newRes && newRes.status) === "OK") {
+					resolve(newRes.entity);
+				} else {
+					reject();
+				}
+			},
+			error: function(err) {
+				reject(err);
+			}
+		});
+	});
+}
 
 module.exports = {
 	getGrayList: getGrayList,
@@ -1499,6 +1524,7 @@ module.exports = {
 	satisfactionSave: satisfactionSave,
 	satisfactionQuery: satisfactionQuery,
 	satisfactionEdit: satisfactionEdit,
+	updateMsgBody: updateMsgBody,
 
 	update: function(cfg){
 		config = cfg;

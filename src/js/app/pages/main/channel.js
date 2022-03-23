@@ -648,21 +648,25 @@ function _handleMessage(msg, options){
 		message.type = "list";
 		message.subtype = type;
 		message.data = __("chat.evaluate_agent_title");
-		console.log(111, msg)
-		// if (_const.isGuanwei == 'Y') {
-		// 	var ctrlType = utils.getDataByPath(msg, "ext.weichat.ctrlType");
-		// 	console.log(222, ctrlType)
-		// 	var style= "background-color: #ccc; cursor:not-allowed;"
-		// 	// 禁用【立即评价】按钮
-		// 	message.list = [
-		// 		"<div class=\"em-btn-list\">"
-		// 		+ "<button disabled style=\"" + style + "\" class=\"js_satisfybtn\" data-inviteid=\""
-		// 		+ inviteId
-		// 		+ "\" data-servicesessionid=\""
-		// 		+ serviceSessionId
-		// 		+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
-		// 	];
-		// } else {
+		// console.log('444 msg', msg)
+		// console.log('555 msgId', msgId)
+		// 官微租户的 禁用【立即评价】按钮
+		var isEnquiry = utils.getDataByPath(msg, "guanweiMsgBody.isEnquiry");
+		// console.log(666, isEnquiry)
+		if (_const.isGuanwei == 'Y' && isEnquiry == 'yes') {
+			var style= "background-color: #ccc; cursor:not-allowed;"
+			// 禁用
+			message.list = [
+				"<div class=\"em-btn-list\">"
+				+ "<button disabled style=\"" + style + "\" class=\"js_satisfybtn\" data-inviteid=\""
+				+ inviteId
+				+ "\" data-servicesessionid=\""
+				+ serviceSessionId
+				+ "\" data-messageid=\""
+				+ msgId
+				+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
+			];
+		} else {
 			message.list = [
 				"<div class=\"em-btn-list\">"
 				+ "<button class=\"bg-hover-color js_satisfybtn\" data-inviteid=\""
@@ -671,11 +675,11 @@ function _handleMessage(msg, options){
 				+ serviceSessionId
 				+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
 			];
-		// }
+		}
 		message.brief = __("message_brief.menu");
 		!isHistory && config.ui.enquiryShowMode === "popup" && eventListener.excuteCallbacks(
 			_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
-			[targetOfficialAccount, inviteId, serviceSessionId]
+			[targetOfficialAccount, inviteId, serviceSessionId, msgId]
 		);
 		break;
 	case "robotList":
@@ -1038,7 +1042,8 @@ function _transformMessageFormat(element){
 		fileLength: fileLength,
 		ext: msgBody.ext,
 		to: msgBody.to,
-		from: msgBody.from
+		from: msgBody.from,
+		guanweiMsgBody: msgBody
 	};
 }
 

@@ -35,6 +35,7 @@ var resolvedId = 1;
 var _initOnce = _.once(_init);
 var evaluateType; // 评价方式
 var sessionResolved;// 问题解决评价
+var msgId; // 消息体的 id
 
 module.exports = {
 	init: init,
@@ -175,6 +176,10 @@ function _init(){
 		}).addButton({
 			confirmText: __("common.submit"),
 			confirm: _confirm,
+			// cancel: function() {
+			// 	// 为了获取禁用【立即评价】按钮的状态，需要刷新页面
+			// 	location.reload();
+			// }
 		});
 		loading.hide("satisfaction");
 		dialog.show();
@@ -335,6 +340,13 @@ function _confirm(){
 			apiHelper.satisfactionSave(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', datas).then(function(res) {
 			});
 		}
+
+		// 官微租户 - 修改消息体数据接口
+		var paramsData = {
+			isEnquiry: 'yes'
+		}
+		apiHelper.updateMsgBody(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', msgId, paramsData).then(function(res) {
+		});
 		// 为了获取禁用【立即评价】按钮的状态，需要刷新页面
 		location.reload();
 	}
@@ -357,7 +369,7 @@ function _confirm(){
 	}
 }
 
-function show(inviteId, serviceSessionId, evaluateWay){
+function show(inviteId, serviceSessionId, evaluateWay, messageId){
 	// 官微租户满意度评价 - 查询
 	if (_const.isGuanwei == 'Y') {
 		apiHelper.satisfactionQuery(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '').then(function(res) {
@@ -365,6 +377,7 @@ function show(inviteId, serviceSessionId, evaluateWay){
 				satisfactionId = res.entity.id
 			}
 		})
+		msgId = messageId
 	}
 	// 初始化（解决已经选择了满意度等数据，但是点击取消按钮，等再进入评价页面时，数据残留问题）
 	score = null;
@@ -397,9 +410,9 @@ function show(inviteId, serviceSessionId, evaluateWay){
 function init(){
 	eventListener.add(
 		_const.SYSTEM_EVENT.SATISFACTION_EVALUATION_MESSAGE_RECEIVED,
-		function(officialAccount, inviteId, serviceSessionId){
+		function(officialAccount, inviteId, serviceSessionId, msgId){
 			if(officialAccount !== profile.currentOfficialAccount) return;
-			show(inviteId, serviceSessionId, "system");
+			show(inviteId, serviceSessionId, "system", msgId);
 		}
 	);
 }
