@@ -653,19 +653,32 @@ function _handleMessage(msg, options){
 		// 官微租户的 禁用【立即评价】按钮
 		var isEnquiry = utils.getDataByPath(msg, "guanweiMsgBody.isEnquiry");
 		// console.log(666, isEnquiry)
-		if (_const.isGuanwei == 'Y' && isEnquiry == 'yes') {
-			var style= "background-color: #ccc; cursor:not-allowed;"
-			// 禁用
-			message.list = [
-				"<div class=\"em-btn-list\">"
-				+ "<button disabled style=\"" + style + "\" class=\"js_satisfybtn\" data-inviteid=\""
-				+ inviteId
-				+ "\" data-servicesessionid=\""
-				+ serviceSessionId
-				+ "\" data-messageid=\""
-				+ msgId
-				+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
-			];
+		if (_const.isGuanwei == 'Y') {
+			if (isEnquiry == 'yes') {
+				var style= "background-color: #ccc; cursor:not-allowed;"
+				// 禁用
+				message.list = [
+					"<div class=\"em-btn-list\">"
+					+ "<button disabled style=\"" + style + "\" class=\"js_satisfybtn\" data-inviteid=\""
+					+ inviteId
+					+ "\" data-servicesessionid=\""
+					+ serviceSessionId
+					+ "\" data-messageid=\""
+					+ msgId
+					+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
+				];
+			} else {
+				message.list = [
+					"<div class=\"em-btn-list\">"
+					+ "<button class=\"bg-hover-color js_satisfybtn\" data-inviteid=\""
+					+ inviteId
+					+ "\" data-servicesessionid=\""
+					+ serviceSessionId
+					+ "\" data-messageid=\""
+					+ msgId
+					+ "\">" + __("chat.click_to_evaluate") + "</button></div>"
+				];
+			}
 		} else {
 			message.list = [
 				"<div class=\"em-btn-list\">"
