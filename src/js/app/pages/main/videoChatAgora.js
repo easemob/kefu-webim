@@ -531,7 +531,7 @@ function onDesktopControl(e){
   		shaDesktopSuccFlag = false;
 
   		serviceAgora.client.unpublish(serviceAgora.localScreenTrack);
-  		serviceAgora.localScreenTrack.stop();
+  		serviceAgora.localScreenTrack.close();
 
   		serviceAgora.publish(serviceAgora.localVideoTrack);
   		serviceAgora.localVideoTrack.play("big-video-argo");
