@@ -293,6 +293,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 		else{
 			// 弹 “客服邀请” 窗
 			agentInviteDialog.show();
+			videoInviteButton = true;
 			startTimer();
 		}
 	}
