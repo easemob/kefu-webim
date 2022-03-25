@@ -553,6 +553,18 @@ function onDesktopControl(e){
 
 			serviceAgora.publish(localScreenTrack);
 			localScreenTrack.play("big-video-argo");
+			// 浏览器停止共享按钮事件监听
+			localScreenTrack.on("track-ended", function(){
+				// 关闭共享
+				shaDesktopSuccFlag = false;
+				serviceAgora.client.unpublish(serviceAgora.localScreenTrack);
+				serviceAgora.localScreenTrack && serviceAgora.localScreenTrack.close();
+				// 打开本地摄像头
+				serviceAgora.publish(serviceAgora.localVideoTrack);
+				serviceAgora.localVideoTrack.play("big-video-argo");
+				$(".desktop-share").removeClass("icon-desktop-selected");
+				$(".desktop-share").addClass("icon-desktop");
+			});
 			$(".desktop-share").addClass("icon-desktop-selected");
 			$(".desktop-share").removeClass("icon-desktop");
   		})
