@@ -561,7 +561,13 @@ function onDesktopControl(e){
 				serviceAgora.localScreenTrack && serviceAgora.localScreenTrack.close();
 				// 打开本地摄像头
 				serviceAgora.publish(serviceAgora.localVideoTrack);
-				serviceAgora.localVideoTrack.play("big-video-argo");
+				
+				if($(".big-video-argo").hasClass("hide")){
+					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("mini-video-visitor");
+				}
+				else{
+					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("big-video-argo");
+				}
 				$(".desktop-share").removeClass("icon-desktop-selected");
 				$(".desktop-share").addClass("icon-desktop");
 			});
