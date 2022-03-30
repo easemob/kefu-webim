@@ -123,7 +123,7 @@ function _init(){
 					$(".desktop-share").removeClass("hide");
 					$(".video-chat-wrapper").addClass("big-video");
 					if(shaDesktopSuccFlag){
-						serviceAgora.localScreenTrack && serviceAgora.localScreenTrack.play("big-video-argo");
+						serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.play("big-video-argo");
 					}
 					else{
 						serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("big-video-argo");
@@ -133,7 +133,7 @@ function _init(){
 				utils.on($(".return-to-multi-video"), "click", function(){
 					returnToMuti();
 					if(shaDesktopSuccFlag){
-						serviceAgora.localScreenTrack && serviceAgora.localScreenTrack.play("mini-video-visitor");
+						serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.play("mini-video-visitor");
 					}
 					else{
 						serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("mini-video-visitor");
@@ -186,6 +186,10 @@ function _init(){
 					},
 				},
 			})
+			shaDesktopSuccFlag = false;
+			serviceAgora.client.unpublish(serviceAgora.localScreenVideoTrack);
+			serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.close();
+			serviceAgora.localScreenAudioTrack && serviceAgora.localScreenAudioTrack.close();
 			setTimeout(function(){
 				$(".video-chat-wrapper").addClass("hide")
 				$("#main-video-argo").removeClass("hide")
@@ -523,6 +527,9 @@ function _closeVideo(){
 	}, 3000);
 	agentInviteDialog && agentInviteDialog.hide();
 	shaDesktopSuccFlag = false;
+	serviceAgora.client.unpublish(serviceAgora.localScreenVideoTrack);
+	serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.close();
+	serviceAgora.localScreenAudioTrack && serviceAgora.localScreenAudioTrack.close();
 }
 
 // 共享桌面的打开关闭
@@ -530,8 +537,9 @@ function onDesktopControl(e){
 	if(shaDesktopSuccFlag) {
   		shaDesktopSuccFlag = false;
 
-  		serviceAgora.client.unpublish(serviceAgora.localScreenTrack);
-  		serviceAgora.localScreenTrack.close();
+  		serviceAgora.client.unpublish(serviceAgora.localScreenVideoTrack);
+		serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.close();
+		serviceAgora.localScreenAudioTrack && serviceAgora.localScreenAudioTrack.close();
 
   		serviceAgora.publish(serviceAgora.localVideoTrack);
   		serviceAgora.localVideoTrack.play("big-video-argo");
@@ -540,25 +548,33 @@ function onDesktopControl(e){
   		return;
 	}
   
-	serviceAgora.createScreenVideoTrack()
+	serviceAgora.createScreenVideoTrack({TrackInitConfig:{},withAudio:"auto"})
     	.then(function(localScreenTrack){
 			if(!localScreenTrack){
 				$(".desktop-share").removeClass("icon-desktop-selected");
 				$(".desktop-share").addClass("icon-desktop");
 				return;
 			};
-			shaDesktopSuccFlag = true;
 			serviceAgora.client.unpublish(serviceAgora.localVideoTrack);
 			serviceAgora.localVideoTrack.stop();
 
-			serviceAgora.publish(localScreenTrack);
-			localScreenTrack.play("big-video-argo");
+			if(serviceAgora.localScreenAudioTrack == null){
+				serviceAgora.publish([serviceAgora.localScreenVideoTrack]);
+			}
+			else{
+				serviceAgora.publish([serviceAgora.localScreenVideoTrack, serviceAgora.localScreenAudioTrack]);
+			}
+			serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.play("big-video-argo");
+			serviceAgora.localScreenAudioTrack && serviceAgora.localScreenAudioTrack.play("");
+			shaDesktopSuccFlag = true;
 			// 浏览器停止共享按钮事件监听
-			localScreenTrack.on("track-ended", function(){
+			serviceAgora.localScreenVideoTrack.on("track-ended", function(){
 				// 关闭共享
 				shaDesktopSuccFlag = false;
-				serviceAgora.client.unpublish(serviceAgora.localScreenTrack);
-				serviceAgora.localScreenTrack && serviceAgora.localScreenTrack.close();
+				serviceAgora.client.unpublish(serviceAgora.localScreenVideoTrack);
+				serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.close();
+				serviceAgora.localScreenAudioTrack && serviceAgora.localScreenAudioTrack.close();
+				// localScreenVideoTrack
 				// 打开本地摄像头
 				serviceAgora.publish(serviceAgora.localVideoTrack);
 				

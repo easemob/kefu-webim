@@ -55,6 +55,8 @@ var HxVideo = function () {
     this.localAudioTrack = null; //本地音频轨道
     this.localVideoTrack = null; //本地视频轨道
     this.localScreenTrack = null; //本地p屏幕轨道
+    this.localScreenVideoTrack = null; //本地屏幕视频轨道
+    this.localScreenAudioTrack = null; //本地屏幕音频轨道
 
 
     this.onRemoteUserChange = onRemoteUserChange.bind(this); //远端用户change回调
@@ -103,8 +105,14 @@ var HxVideo = function () {
     value: function createScreenVideoTrack(config) {
       var _this2 = this;
 
-      return AgoraRTC.createScreenVideoTrack(config).then(function (localScreenTrack) {
-        _this2.localScreenTrack = localScreenTrack;
+      return AgoraRTC.createScreenVideoTrack(config&&config.TrackInitConfig,config&&config.withAudio).then(function (localScreenTrack) {
+        if(localScreenTrack instanceof Array){
+          _this2.localScreenVideoTrack = localScreenTrack[0];
+          _this2.localScreenAudioTrack = localScreenTrack[1];
+        }
+        else{
+          _this2.localScreenVideoTrack = localScreenTrack;
+        }
         return localScreenTrack;
       }).catch(function (error) {
         _this2.onErrorNotify(error.code);
