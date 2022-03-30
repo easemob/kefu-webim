@@ -168,6 +168,9 @@ function _init(){
 			})
 		},
 		endCallback: function(){
+			serviceAgora.client.unpublish(serviceAgora.localScreenVideoTrack);
+			serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.close();
+			serviceAgora.localScreenAudioTrack && serviceAgora.localScreenAudioTrack.close();
 			returnToMuti();
 			$("#main-video-argo").addClass("hide")
 			serviceAgora.leave();
@@ -187,8 +190,6 @@ function _init(){
 				},
 			})
 			shaDesktopSuccFlag = false;
-			serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.close();
-			serviceAgora.localScreenAudioTrack && serviceAgora.localScreenAudioTrack.close();
 			setTimeout(function(){
 				$(".video-chat-wrapper").addClass("hide")
 				$("#main-video-argo").removeClass("hide")
@@ -513,6 +514,9 @@ function _onConfirmExitvideo(){
 	inviteByVisitor = false;
 }
 function _closeVideo(){
+	serviceAgora.client.unpublish(serviceAgora.localScreenVideoTrack);
+	serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.close();
+	serviceAgora.localScreenAudioTrack && serviceAgora.localScreenAudioTrack.close();
 	returnToMuti();
 	$("#main-video-argo").addClass("hide")
 	serviceAgora = serviceAgora.leave();
@@ -526,8 +530,6 @@ function _closeVideo(){
 	}, 3000);
 	agentInviteDialog && agentInviteDialog.hide();
 	shaDesktopSuccFlag = false;
-	serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.close();
-	serviceAgora.localScreenAudioTrack && serviceAgora.localScreenAudioTrack.close();
 }
 
 // 共享桌面的打开关闭
