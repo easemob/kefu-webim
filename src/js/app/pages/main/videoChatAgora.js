@@ -187,7 +187,6 @@ function _init(){
 				},
 			})
 			shaDesktopSuccFlag = false;
-			serviceAgora.client.unpublish(serviceAgora.localScreenVideoTrack);
 			serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.close();
 			serviceAgora.localScreenAudioTrack && serviceAgora.localScreenAudioTrack.close();
 			setTimeout(function(){
@@ -527,7 +526,6 @@ function _closeVideo(){
 	}, 3000);
 	agentInviteDialog && agentInviteDialog.hide();
 	shaDesktopSuccFlag = false;
-	serviceAgora.client.unpublish(serviceAgora.localScreenVideoTrack);
 	serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.close();
 	serviceAgora.localScreenAudioTrack && serviceAgora.localScreenAudioTrack.close();
 }
@@ -559,10 +557,10 @@ function onDesktopControl(e){
 			serviceAgora.localVideoTrack.stop();
 
 			if(serviceAgora.localScreenAudioTrack == null){
-				serviceAgora.publish([serviceAgora.localScreenVideoTrack]);
+				serviceAgora.client.publish([serviceAgora.localScreenVideoTrack]);
 			}
 			else{
-				serviceAgora.publish([serviceAgora.localScreenVideoTrack, serviceAgora.localScreenAudioTrack]);
+				serviceAgora.client.publish([serviceAgora.localScreenVideoTrack, serviceAgora.localScreenAudioTrack]);
 			}
 			serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.play("big-video-argo");
 			serviceAgora.localScreenAudioTrack && serviceAgora.localScreenAudioTrack.play("");
