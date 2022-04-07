@@ -46,7 +46,7 @@ var OnlyCloseWindow;
 var welcomeListCount = 0;
 var restLength = 0;
 var noUploadDialog;
-var blackList = ["ASP", "EXE", "ASA", "VBS", "BAT", "VBS", "PIF", "SCR"];
+var blackList = ["ASP", "EXE", "ASA", "VBS", "BAT", "PIF", "SCR"];
 
 var _reCreateImUser = _.once(function(){
 	console.warn("user not found in current appKey, attempt to recreate user.");
