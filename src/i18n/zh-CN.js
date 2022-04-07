@@ -143,6 +143,8 @@ module.exports = {
 		screen_shotTip_win: "屏幕截图 win + shift + s"
 	},
 	prompt: {
+		mini_notip:"不支持类型:",
+		not_upload:"该文件格式不支持发送，请重新选择",
 		new_message_title_notice: "新消息提醒",
 		no_valid_channel: "未创建关联",
 		new_message: "新消息",

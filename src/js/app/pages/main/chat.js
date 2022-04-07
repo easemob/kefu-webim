@@ -45,6 +45,8 @@ var OnlyCloseSession;
 var OnlyCloseWindow;
 var welcomeListCount = 0;
 var restLength = 0;
+var noUploadDialog;
+var blackList = ["ASP", "EXE", "ASA", "VBS", "BAT", "VBS", "PIF", "SCR"];
 
 var _reCreateImUser = _.once(function(){
 	console.warn("user not found in current appKey, attempt to recreate user.");
@@ -1023,6 +1025,12 @@ function _bindEvents(){
 			fileInput.value = "";
 		}
 		else{
+			var nameList = WebIM.utils.getFileUrl(fileInput) && WebIM.utils.getFileUrl(fileInput).filename.split(".");
+			if(blackList.indexOf(nameList[nameList.length - 1].toLocaleUpperCase())  != -1){
+				fileInput.value = "";
+				noUploadTip();
+				return;
+			}
 			channel.sendVideo(WebIM.utils.getFileUrl(fileInput)); // sendVideo 取自 channel.js
 			fileInput.value = "";
 		}
@@ -1050,6 +1058,12 @@ function _bindEvents(){
 			fileInput.value = "";
 		}
 		else{
+			var nameList = WebIM.utils.getFileUrl(fileInput) && WebIM.utils.getFileUrl(fileInput).filename.split(".");
+			if(blackList.indexOf(nameList[nameList.length - 1].toLocaleUpperCase())  != -1){
+				fileInput.value = "";
+				noUploadTip();
+				return;
+			}
 			channel.sendFile(WebIM.utils.getFileUrl(fileInput));
 			fileInput.value = "";
 		}
@@ -1088,6 +1102,12 @@ function _bindEvents(){
 			fileInput.value = "";
 		}
 		else{
+			var nameList = WebIM.utils.getFileUrl(fileInput) && WebIM.utils.getFileUrl(fileInput).filename.split(".");
+			if(blackList.indexOf(nameList[nameList.length - 1].toLocaleUpperCase())  != -1){
+				fileInput.value = "";
+				noUploadTip();
+				return;
+			}
 			channel.sendImg(WebIM.utils.getFileUrl(fileInput));
 			fileInput.value = "";
 		}
@@ -1300,6 +1320,25 @@ function _bindEvents(){
 			$(".ul-right").addClass("hover");
 		}
 		$(".ul-left").addClass("hover");
+	}
+	function noUploadTip(){
+		var content = __("prompt.mini_notip")+ blackList.join("、");
+		if(noUploadDialog){
+			noUploadDialog.show();
+			return;
+		}
+		noUploadDialog = uikit.createDialog({
+			contentDom: [
+				"<div class=\"wrapper\">",
+				"<p class=\"prompt\">" +  __("prompt.not_upload") + "</p>",
+				"<p class=\"no-tip\">"+ content+"</p>",
+				"</div>"
+			].join(""),
+			className: "no-upload refresh-dialog",
+		}).addButton({ confirm: function(){
+			noUploadDialog.hide();
+		},hideCancel: true, });
+		noUploadDialog.show();
 	}
 }
 

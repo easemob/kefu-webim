@@ -215,6 +215,34 @@
 			}
 		}
 	}
+	&.no-upload{
+		background-color: #f0f0f0;
+
+		.wrapper{
+			.prompt{
+				line-height: 20px;
+				text-align: left;
+				padding: 25px 25px 10px;
+				font-size: 14px;
+			}
+			.no-tip{
+				font-size: 10px;
+				// color: red;
+				line-height: 20px;
+				text-align: left;
+				padding: 0px 25px 10px;
+				// text-indent: 2em;
+			}
+			>.footer{
+				>.confirm-btn{
+					float: none !important;
+				}
+			}
+		}
+		// >.footer{
+		// 	margin-top: 30px;
+		// }
+	}
 	// 粘贴上传对话框
 	&.paste-image {
 		line-height: 300px;

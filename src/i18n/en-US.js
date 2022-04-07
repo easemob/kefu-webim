@@ -141,6 +141,8 @@ module.exports = {
 		screen_shotTip_win: "Screenshot win + shift + s"
 	},
 	prompt: {
+		mini_notip:"Type not supported:",
+		not_upload:"This file format does not support sending, please select again",
 		new_message_title_notice: "New message",
 		no_valid_channel: "There is no channel account.",
 		new_message: "New message",
