@@ -122,6 +122,9 @@ function _init(){
 					$(".toggle-carema-btn").removeClass("hide");
 					$(".desktop-share").removeClass("hide");
 					$(".video-chat-wrapper").addClass("big-video");
+					if(!profile.grayList.shareDesktop){
+						$('#big-video-argo>.desktop-share').addClass("hide");
+					}
 					if(shaDesktopSuccFlag){
 						serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.play("big-video-argo");
 					}
@@ -534,6 +537,9 @@ function _closeVideo(){
 
 // 共享桌面的打开关闭
 function onDesktopControl(e){
+	if(!profile.grayList.shareDesktop){
+		return;
+	}
 	if(shaDesktopSuccFlag) {
   		shaDesktopSuccFlag = false;
 

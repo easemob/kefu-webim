@@ -588,25 +588,30 @@ body.window-demo{
 			position: absolute;
 			right: 35px;
 			bottom: 10px;
+			z-index: 1;
 		}
 		.icon-desktop{
 			position: absolute;
 			right: 10px;
 			bottom: 10px;
+			z-index: 1;
 		}
 		.icon-desktop-selected{
 			position: absolute;
 			right: 10px;
 			bottom: 10px;
+			z-index: 1;
 		}
 		.toggle-microphone-btn{
 			position: absolute;
 			right: 60px;
 			bottom: 10px;
+			z-index: 1;
 		}
 		.return-to-multi-video{
 			position: absolute;
-    		left: 10px;
+			left: 10px;
+			z-index: 1;
 		}
 		.nickname{
 			position: absolute;
