@@ -1,9 +1,9 @@
 @font-face {
   font-family: "newim"; /* Project id 2812636 */
-  src: url('iconfont.eot?t=1648032733331'); /* IE9 */
-  src: url('iconfont.eot?t=1648032733331#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('iconfont.woff?t=1648032733331') format('woff'),
-       url('iconfont.ttf?t=1648032733331') format('truetype');
+  src: url('iconfont.eot?t=1650262671586'); /* IE9 */
+  src: url('iconfont.eot?t=1650262671586#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('iconfont.woff?t=1650262671586') format('woff'),
+       url('iconfont.ttf?t=1650262671586') format('truetype');
 }
 
 .newim {
@@ -12,6 +12,38 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.newim-jinmai2:before {
+  content: "\e6eb";
+}
+
+.newim-maikefeng5-copy:before {
+  content: "\ecb1";
+}
+
+.newim--zuidahua:before {
+  content: "\e65d";
+}
+
+.newim--zuixiaohua:before {
+  content: "\e65e";
+}
+
+.newim-2zuixiaohua-2:before {
+  content: "\e65c";
+}
+
+.newim-maximizezuidahua:before {
+  content: "\e6db";
+}
+
+.newim-zoomin:before {
+  content: "\e65b";
+}
+
+.newim-baiban:before {
+  content: "\e6a5";
 }
 
 .newim-maikefeng1:before {

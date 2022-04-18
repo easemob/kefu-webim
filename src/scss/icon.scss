@@ -31,6 +31,12 @@
 	@extend .icon-base;
 	content: "\e76c";
 }
+.icon-camera-agora:before {
+	@extend .icon-base;
+	content: "\e76c";
+	color: #3689f7;
+	font-size: 27px;
+}
 
 .icon-change:before {
 	@extend .icon-base;
@@ -323,6 +329,12 @@
 .icon-microphone:before {
 	@extend .icon-base;
 	content: "\e6ef"
+}
+.icon-microphone-agora:before {
+	@extend .icon-base;
+	content: "\e6ef";
+	color: #3689f7;
+	font-size: 27px;
 }
 
 .icon-hung-up:before {
@@ -683,9 +695,81 @@
 		content: "\e6ff";
 	}
 }
+.icon-desktop-agora{
+	&:before {
+		@extend .icon-base;
+		content: "\e6ff";
+		color: #3689f7;
+		font-size: 27px;
+	}
+}
 .icon-desktop-selected{
 	&:before {
 		@extend .icon-base;
 		content: "\e6ff";
 	}
+}
+.icon-white-board{
+	&:before {
+		@extend .icon-base;
+		content: "\e6a5";
+		color: #3689f7;
+		font-size: 27px;
+	}
+}
+.icon-huang-agora{
+	&:before {
+		@extend .icon-base;
+		content: "\e650";
+		color: #d7474a;
+		font-size: 27px;
+	}
+}
+.icon-disable-camera-agora:before {
+	@extend .icon-base;
+	content: "\e659";
+	color: #3689f7;
+	font-size: 27px;
+}
+.icon-disable-microphone-agora:before {
+	@extend .icon-base;
+	content: "\e6a7";
+	color: #3689f7;
+	font-size: 27px;
+}
+.icon-enlarge:before{
+	@extend .icon-base;
+	content: "\e65d";
+	color: #3689f7;
+	font-size: 20px;
+}
+.icon-narrow:before{
+	@extend .icon-base;
+	content: "\e65c";
+	color: #3689f7;
+	font-size: 20px;
+}
+.icon-reduction:before{
+	@extend .icon-base;
+	content: "\e65e";
+	color: #3689f7;
+	font-size: 20px;
+}
+.icon-microphone-enable:before{
+	@extend .icon-base;
+	content: "\ecb1";
+	color: #3689f7;
+	font-size: 20px;
+	top: -5px;
+    position: absolute;
+    left: 0px;
+}
+.icon-microphone-disabled:before{
+	@extend .icon-base;
+	content: "\e6eb";
+	color: #d7474a;
+	font-size: 20px;
+	top: -5px;
+    position: absolute;
+    left: 0px;
 }
