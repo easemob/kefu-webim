@@ -22,6 +22,7 @@ var commonConfig = require("@/common/config");
 var statusBar = require("./uikit/videoStatusBar");
 var videoPanel = require("./uikit/videoPanel");
 var videoChatTemplate = require("../../../../template/videoChat.html");
+var videoAgoraTemplate = require("../../../../template/videoChatAgora.html");
 var apiHelper = require("./apis");
 var TimerLabel = require("./uikit/TimerLabel");
 var videoChatAgora = require("./uikit/videoChatAgora");

@@ -12,7 +12,8 @@ var imgView = require("./imgview");
 var NoteIframe = require("./noteIframe");
 var initPasteImage = require("./paste");
 var videoChat = require("./videoChat");
-var videoChatAgora = require("./videoChatAgora");
+// var videoChatAgora = require("./videoChatAgora");
+var videoChatAgora = require("./agoraVideo/videoChatAgora");
 var guessInfo = require("./guess/guessInfo");
 
 var TagSelector = require("./chat/tagSelector");
