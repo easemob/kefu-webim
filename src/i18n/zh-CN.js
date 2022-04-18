@@ -55,7 +55,8 @@ module.exports = {
 		offline: "(离线)",
 	},
 	event_message: {
-		no_agent_online: "当前暂无客服在线，请您留下联系方式，稍后我们将主动联系您",
+		no_agent_online: "当前暂无客服在线",
+		// no_agent_online: "当前暂无客服在线，请您留下联系方式，稍后我们将主动联系您",
 		session_created: "会话创建成功",
 		session_opened: "会话已被客服接起",
 		sessing_transfering: "会话转接中，请稍候",

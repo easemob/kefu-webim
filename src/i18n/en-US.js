@@ -55,7 +55,8 @@ module.exports = {
 		offline: "(Offline)",
 	},
 	event_message: {
-		no_agent_online: "Agent is offline. Please leave your contact info.",
+		no_agent_online: "Agent is offline",
+		// no_agent_online: "Agent is offline. Please leave your contact info.",
 		session_created: "Conversation is created",
 		session_opened: "Conversation is opened",
 		sessing_transfering: "Transferring. Please wait...",
