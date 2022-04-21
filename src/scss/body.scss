@@ -181,7 +181,7 @@ body.window-demo{
 	.video-agora-wrapper {
 		width: 360px;
 		height: 416px;
-		z-index:100;
+		z-index:1000;
 		position: absolute;
 		// left: 0;
 		// top: 0;
@@ -934,7 +934,7 @@ body.window-demo{
 .video-agora-wrapper {
 	width: 360px;
 	height: 516px;
-	z-index:100;
+	z-index:1000;
 	position: absolute;
 	// left: 0;
 	// top: 0;

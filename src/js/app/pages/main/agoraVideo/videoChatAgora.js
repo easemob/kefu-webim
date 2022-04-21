@@ -902,7 +902,6 @@ function onDesktopControl(e){
 			else{
 				serviceAgora.client.publish([serviceAgora.localScreenVideoTrack, serviceAgora.localScreenAudioTrack]);
 			}
-			console.log(serviceAgora.localScreenVideoTrack )
 			serviceAgora.client.unpublish(serviceAgora.localVideoTrack);
 			serviceAgora.localVideoTrack.stop();
 			if(bigVideoEl() == "0"){
