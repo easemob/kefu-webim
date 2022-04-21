@@ -161,7 +161,7 @@ function _init(){
 					}
 				});
 				// 关闭摄像头
-				utils.on($(".foot>.toggle-carema-btn-agora"), "click", function(e){
+				$(".foot>.toggle-carema-btn-agora").unbind('click').bind('click',function (e){
 					if($(e.target).hasClass("icon-camera-agora")){
 						serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.setMuted(true);
 						$(e.target).addClass("icon-disable-camera-agora");
