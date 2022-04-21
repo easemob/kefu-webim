@@ -279,7 +279,7 @@ function _init(){
 function returnToMuti(){
 	$(".toggle-microphone-btn-agora").removeClass("icon-disable-microphone-agora").addClass("icon-microphone-agora");
 	$(".toggle-carema-btn-agora").removeClass("icon-disable-camera-agora").addClass("icon-camera-agora");
-	$(".video-agora-wrapper").css({ 'width': narrowEl.width + 'px', 'height': narrowEl.height + 'px','top': narrowEl.top + 'px','left':narrowEl.left + 'px','margin-left': '0px', 'margin-top': '0px','position': 'absolute'  });
+	// $(".video-agora-wrapper").css({ 'width': narrowEl.width + 'px', 'height': narrowEl.height + 'px','top': narrowEl.top + 'px','left':narrowEl.left + 'px','margin-left': '0px', 'margin-top': '0px','position': 'absolute'  });
 	$(".small-video").addClass("hide");
 	$("#visitor-video").removeClass("visitor-big");
 	$("#agent-video").removeClass("agent-big");
