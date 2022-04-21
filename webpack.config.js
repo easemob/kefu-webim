@@ -195,7 +195,7 @@ commonConfig = {
 	},
 };
 if(!argv.production){
-	commonConfig.devtool = "source-map";
+	commonConfig.devtool = "eval";
 }
 
 transfer = Object.assign({}, commonConfig, {
