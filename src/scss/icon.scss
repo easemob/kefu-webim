@@ -760,16 +760,15 @@
 	content: "\ecb1";
 	color: #3689f7;
 	font-size: 20px;
-	top: -5px;
-    position: absolute;
-    left: 0px;
+	position: relative;
+    top: -5px;
 }
 .icon-microphone-disabled:before{
 	@extend .icon-base;
 	content: "\e6eb";
 	color: #d7474a;
 	font-size: 20px;
-	top: -5px;
-    position: absolute;
-    left: 0px;
+	font-size: 20px;
+	position: relative;
+    top: -5px;
 }

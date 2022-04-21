@@ -383,15 +383,15 @@ body.window-demo{
 					color: #fff;
 				}
 				.toggle-microphone-state{
+    				z-index: 11;
+    				color: #fff;
+    				background-color: #fff;
+    				border-radius: 50%;
+    				display: inline-block;
+    				width: 20px;
+    				height: 20px;
+					vertical-align: text-bottom;
 					position: absolute;
-					top: 0px;
-					z-index: 11;
-					color: white;
-					background-color: white;
-					border-radius: 50%;
-					display: inline-block;
-					width: 20px;
-					height: 20px;
 				}
 			}
 		}
@@ -421,25 +421,20 @@ body.window-demo{
 			height: 30px;
 			position: absolute;
 			.nickName{
-				position: absolute;
 				text-align: center;
-				width: 100%;
 				top: 5px;
 				color: #fff;
+				display: inline;
 			}
 			.toggle-microphone-state{
-				position: absolute;
-				top: -18px;
 				z-index: 11;
-				color: white;
-				background-color: white;
+				color: #fff;
+				background-color: #fff;
 				border-radius: 50%;
 				display: inline-block;
 				width: 20px;
 				height: 20px;
-				left: 0;
-    			right: 0;
-    			margin: auto;
+				vertical-align: text-bottom;
 			}
 		}
 		>span{
@@ -1219,15 +1214,15 @@ body.window-demo{
 				color: #fff;
 			}
 			.toggle-microphone-state{
-				position: absolute;
-				top: 0px;
 				z-index: 11;
-				color: white;
-				background-color: white;
+				color: #fff;
+				background-color: #fff;
 				border-radius: 50%;
 				display: inline-block;
 				width: 20px;
 				height: 20px;
+				vertical-align: text-bottom;
+				position: absolute;
 			}
 		}
 	}
@@ -1257,25 +1252,20 @@ body.window-demo{
 		height: 30px;
 		position: absolute;
 		.nickName{
-			position: absolute;
 			text-align: center;
-			width: 100%;
 			top: 5px;
 			color: #fff;
+			display: inline;
 		}
 		.toggle-microphone-state{
-			position: absolute;
-			top: -18px;
 			z-index: 11;
-			color: white;
-			background-color: white;
+			color: #fff;
+			background-color: #fff;
 			border-radius: 50%;
 			display: inline-block;
 			width: 20px;
 			height: 20px;
-			left: 0;
-			right: 0;
-			margin: auto;
+			vertical-align: text-bottom;
 		}
 	}
 	>span{

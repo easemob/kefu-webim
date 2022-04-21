@@ -36,7 +36,7 @@ var videoWidget;
 var dispatcher;
 var enlargeEl = {};
 var narrowEl = {};
-
+var enlargeBefore = {};
 var config;
 var dialog, agentInviteDialog, visitorDialog;
 var timerBarDom, timerLabel;
@@ -245,13 +245,17 @@ function _init(){
 		if($(e.currentTarget).hasClass("icon-enlarge") ){
 			$(".toggle-enlarge").addClass("icon-reduction");
 			$(".toggle-enlarge").removeClass("icon-enlarge");
+			enlargeBefore.top = $(".video-agora-wrapper").offset().top;
+			enlargeBefore.left = $(".video-agora-wrapper").offset().left;
+			enlargeBefore.width = $(".video-agora-wrapper").width();
+			enlargeBefore.height = $(".video-agora-wrapper").height();
 			$(".video-agora-wrapper").css({ 'width': enlargeEl.width + 'px', 'height': enlargeEl.height + 'px','top':'0','left':'0','margin-left': '0px', 'margin-top': '0px','position': 'absolute' });
 		}
 		else{
 			// 还原
 			$(".toggle-enlarge").addClass("icon-enlarge");
 			$(".toggle-enlarge").removeClass("icon-reduction");
-			$(".video-agora-wrapper").css({ 'width': narrowEl.width + 'px', 'height': narrowEl.height + 'px','top': narrowEl.top + 'px','left':narrowEl.left + 'px','position': 'absolute' });
+			$(".video-agora-wrapper").css({ 'width': enlargeBefore.width + 'px', 'height': enlargeBefore.height + 'px','top': enlargeBefore.top + 'px','left':enlargeBefore.left + 'px','position': 'fixed' });
 		}
 	});
 	// 缩小
