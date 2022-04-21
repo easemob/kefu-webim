@@ -35,7 +35,6 @@ var parentContainer;
 var videoWidget;
 var dispatcher;
 var enlargeEl = {};
-var narrowEl = {};
 var enlargeBefore = {};
 var config;
 var dialog, agentInviteDialog, visitorDialog;
@@ -174,10 +173,6 @@ function _init(){
 					}
 				});
 				// 获取视频弹窗的宽高
-				narrowEl.top = $(".video-agora-wrapper").offset().top/2;
-				narrowEl.left = $(".video-agora-wrapper").offset().left/2;
-				narrowEl.width = $(".video-agora-wrapper").width();
-				narrowEl.height = $(".video-agora-wrapper").height();
 
 				enlargeEl.width = $("#em-kefu-webim-chat").width();
 				enlargeEl.height = $("#em-kefu-webim-chat").height();
@@ -279,7 +274,7 @@ function _init(){
 function returnToMuti(){
 	$(".toggle-microphone-btn-agora").removeClass("icon-disable-microphone-agora").addClass("icon-microphone-agora");
 	$(".toggle-carema-btn-agora").removeClass("icon-disable-camera-agora").addClass("icon-camera-agora");
-	// $(".video-agora-wrapper").css({ 'width': narrowEl.width + 'px', 'height': narrowEl.height + 'px','top': narrowEl.top + 'px','left':narrowEl.left + 'px','margin-left': '0px', 'margin-top': '0px','position': 'absolute'  });
+	$(".video-agora-wrapper").css({ 'width':'360px', 'height':'516px','top':'50%','left':'50%','margin-left': '-180px', 'margin-top': '-258px','position': 'absolute'  });
 	$(".small-video").addClass("hide");
 	$("#visitor-video").removeClass("visitor-big");
 	$("#agent-video").removeClass("agent-big");
