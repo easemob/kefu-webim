@@ -44,6 +44,7 @@ var domData = {
 	agent_is_typing: __("chat.agent_is_typing"),
 	current_queue_number: __("chat.current_queue_number"),
 	connecting: __("chat.connecting"),
+	video_connecting:__("video.connecting"),
 	input_placeholder: __("chat.input_placeholder"), 
 	emoji: __("toolbar.emoji"),
 	picture: __("toolbar.picture"),

@@ -37,6 +37,12 @@
 	color: #3689f7;
 	font-size: 27px;
 }
+.icon-camera-small:before {
+	@extend .icon-base;
+	content: "\e619";
+	color: #3689f7;
+	font-size: 27px;
+}
 
 .icon-change:before {
 	@extend .icon-base;

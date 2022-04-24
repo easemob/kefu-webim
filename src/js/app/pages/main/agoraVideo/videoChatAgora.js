@@ -257,6 +257,7 @@ function _init(){
 	utils.on($(".icon-narrow"), "click", function(){
 		$(".video-agora-wrapper").addClass("hide");
 		$(".small-video").removeClass("hide");
+		$(".small-video-box").removeClass("hide");
 	});
 	utils.on($(".small-video-box"), "mousedown", function(e){
 		var oldTim = new Date().getTime();
@@ -266,6 +267,7 @@ function _init(){
 			}
 			$(".video-agora-wrapper").removeClass("hide");
 			$(".small-video").addClass("hide");
+			$(".small-video-box").addClass("hide");
 		});
 	});
 	$('.end-button').addClass("hide");
@@ -275,6 +277,7 @@ function returnToMuti(){
 	$(".toggle-microphone-btn-agora").removeClass("icon-disable-microphone-agora").addClass("icon-microphone-agora");
 	$(".toggle-carema-btn-agora").removeClass("icon-disable-camera-agora").addClass("icon-camera-agora");
 	$(".small-video").addClass("hide");
+	$(".small-video-box").addClass("hide");
 	$("#visitor-video").removeClass("visitor-big");
 	$("#agent-video").removeClass("agent-big");
 	if($("body").hasClass("window-demo")){
@@ -983,6 +986,6 @@ function _dragVideo(){
 function _dragIconVideo(){
 	dragMove.drag({
 		parentdraf : '.small-video-box' , // 拖拽元素父级
-		draftin : '.small-video-box .small-video' , // 拖拽元素
+		draftin : '.small-video-box' , // 拖拽元素
 	});
 }

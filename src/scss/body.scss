@@ -1718,8 +1718,21 @@ body.window-demo{
 		position: absolute;
 		right: 5px;
 		top: 80px;
-		width: 25px;
-		height: 30px;
+		width: 55px;
+		height: 55px;
 		cursor: pointer;
+		background-color: #EFEFEF;
+		border-radius: 10px;
+		display: flex;
+		flex-direction: column;
+		align-content: center;
+		align-items: center;
+		z-index: 1000;
+		.small-video{
+			margin-top: 5px;
+		}
+		span{
+			font-size: 10px;
+		}
 	}
 }
