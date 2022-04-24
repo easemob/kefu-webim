@@ -274,10 +274,15 @@ function _init(){
 function returnToMuti(){
 	$(".toggle-microphone-btn-agora").removeClass("icon-disable-microphone-agora").addClass("icon-microphone-agora");
 	$(".toggle-carema-btn-agora").removeClass("icon-disable-camera-agora").addClass("icon-camera-agora");
-	$(".video-agora-wrapper").css({ 'width':'360px', 'height':'516px','top':'50%','left':'50%','margin-left': '-180px', 'margin-top': '-258px','position': 'absolute'  });
 	$(".small-video").addClass("hide");
 	$("#visitor-video").removeClass("visitor-big");
 	$("#agent-video").removeClass("agent-big");
+	if($("body").hasClass("window-demo")){
+		$(".video-agora-wrapper").css({ 'width':'360px', 'height':'416px','top':'50%','left':'50%','margin-left': '-180px', 'margin-top': '-208px','position': 'absolute'  });
+	}
+	else{
+		$(".video-agora-wrapper").css({ 'width':'360px', 'height':'516px','top':'50%','left':'50%','margin-left': '-180px', 'margin-top': '-258px','position': 'absolute'  });
+	}
 }
 
 function startTimer(){
