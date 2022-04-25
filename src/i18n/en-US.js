@@ -49,6 +49,7 @@ module.exports = {
 		paste_image_submit: "Send",
 		read_full_version: "Read all",
 		default_emoji: "default",
+		agent: "Agent ",
 		powered_by_easemob: "powered by easemob"
 	},
 	message_brief: {
@@ -125,6 +126,7 @@ module.exports = {
 		can_not_connected: "Video call can’t be connected. Please try again.",
 		can_not_open_camera: "Can’t open camera.",
 		invite_exit_video: "The visitor abandoned the video call",
+		answer:"Answer"
 	},
 	toolbar: {
 		emoji: "Emoticon",

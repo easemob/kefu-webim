@@ -148,7 +148,7 @@ function _init(){
 	agentInviteDialog = uikit.createDialog({
 		contentDom: [
 			"<div>",
-			"<p class=\"title\">视频通话</p>",
+			"<p class=\"title\">"+ __("toolbar.video_invite") +"</p>",
 			"<p class=\"time\"><p>",
 			"<p> <img src=\""+ $agentFace +"\" class=\"\"/> </p>",
 			"<p class=\"nickname\">"+ $agentNickname +"</p>",
@@ -333,7 +333,7 @@ function _onConfirm(){
 	visitorDialog = uikit.createDialog({
 		contentDom: [
 			"<div>",
-			"<p class=\"title\">视频通话</p>",
+			"<p class=\"title\">"+ __("toolbar.video_invite") +"</p>",
 			"<p class=\"time\"><p>",
 			"<p> <img src=\""+ $agentFace +"\" class=\"\"/> </p>",
 			"<p class=\"nickname\">"+ $agentNickname +"</p>",

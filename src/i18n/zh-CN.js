@@ -51,6 +51,7 @@ module.exports = {
 		paste_image_submit: "发送",
 		read_full_version: "阅读全文",
 		default_emoji: "默认",
+		agent: "客服",
 		powered_by_easemob: "环信提供技术支持"
 	},
 	message_brief: {
@@ -127,6 +128,7 @@ module.exports = {
 		waiting_confirm: "视频连接请求，等待你的确认",
 		can_not_connected: "视频无法接通，请重试",
 		can_not_open_camera: "打开摄像头失败",
+		answer:"接听"
 	},
 	toolbar: {
 		emoji: "表情",

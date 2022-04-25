@@ -84,7 +84,7 @@ function _init(){
 	agentInviteDialog = uikit.createDialog({
 		contentDom: [
 			"<div>",
-			"<p class=\"title\">视频通话</p>",
+			"<p class=\"title\">"+ __("toolbar.video_invite") + "</p>",
 			"<p class=\"time\"><p>",
 			"<p> <img src=\""+ $agentFace +"\" class=\"\"/> </p>",
 			"<p class=\"nickname\">"+ $agentNickname +"</p>",
@@ -425,18 +425,13 @@ function _onConfirm(){
 			},
 		},
 	});
-	// 开启视频通话添加取消按钮
-	// var el = utils.createElementFromHTML("<span class=\"em-widget-exit-video\">取消视频通话</span>");
-	// var editor = document.querySelector(".toolbar");
-	// editor.appendChild(el);
-	// var el = utils.createElementFromHTML("<div class=\"swiper-slide em-widget-exit-video\">取消视频通话</div>");
 
 	var $agentNickname = document.querySelector(".em-widget-header-nickname").innerText;
 	var $agentFace = document.querySelector(".em-agent-face").src;
 	visitorDialog = uikit.createDialog({
 		contentDom: [
 			"<div>",
-			"<p class=\"title\">视频通话</p>",
+			"<p class=\"title\">"+ __("toolbar.video_invite") +"</p>",
 			"<p class=\"time\"><p>",
 			"<p> <img src=\""+ $agentFace +"\" class=\"\"/> </p>",
 			"<p class=\"nickname\">"+ $agentNickname +"</p>",
