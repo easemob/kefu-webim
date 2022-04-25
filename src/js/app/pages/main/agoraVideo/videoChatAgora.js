@@ -966,7 +966,7 @@ function bigVideoEl(){
 function _dragVideo(){
 	dragMove.drag({
 		parentdraf : '.video-agora-wrapper' , // 拖拽元素父级
-		draftin : '.video-agora-wrapper .top' , // 拖拽元素
+		draftin : '.video-agora-wrapper' , // 拖拽元素
 		// sizeLeft : '.video-agora-wrapper  .barl', // 改变大小左边
 		sizeRight : '.video-agora-wrapper  .barr', // 改变大小右边
 		// sizeTop : '.video-agora-wrapper  .bart', // 改变大小上边
