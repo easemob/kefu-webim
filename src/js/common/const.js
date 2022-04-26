@@ -64,6 +64,7 @@ module.exports = {
 
 		VIDEO_TICKET_RECEIVED: "video.ticket.received",
 		VIDEO_ARGO_END: "video.argo.end", // 声网音视频结束的通知
+		WHITE_BOARD_RECEIVED: "board.received", // 电子白板的通知
 		MESSAGE_CHANNEL_READY: "message.channel.ready",
 
 		CONSULT_AGENT: "consult.agent",

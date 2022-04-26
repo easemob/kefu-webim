@@ -360,6 +360,13 @@ body.window-demo{
 				width: 100%;
 				height: calc(100% - 88px);
 			}
+			.white-board{
+				width: 100%;
+				height: calc(100% - 88px);
+				background-color: white;
+				position: relative;
+				z-index: 11111;
+			}
 			.mini-wraper{
 				min-width: 340px;
 				min-height: 68px;
@@ -1190,6 +1197,12 @@ body.window-demo{
 			// height: 237px;
 			width: 100%;
 			height: calc(100% - 88px);
+		}
+		.white-board{
+			width: 100%;
+			height: calc(100% - 88px);
+			background-color: white;
+			position: relative;
 		}
 		.mini-wraper{
 			min-width: 340px;
