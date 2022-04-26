@@ -293,8 +293,9 @@ function _init(){
 			$("#white-board").addClass("hide")
 			$("#big-video").removeClass("hide")
 		}
+		creatWhiteboard.destoryWhiteboard(document.getElementById("white-board"));
 		whiteVideo.addClass("hide");
-		$("#white-board").empty();
+		// $("#white-board").empty();
 		whiteBoardConnect = false;
 	});
 	$('.end-button').addClass("hide");
@@ -375,9 +376,6 @@ function init(option){
 			//  serviceAgora.createLocalTracks();
 		});
 	});
-	// tools.loadScript(whiteBoardPath).then(function(){
-	// 	console.log("加载 whiteBoardPath" )
-	// });
 	
 }
 
@@ -998,12 +996,10 @@ function _closeVideo(){
 	statusBar.showClosing();
 	whiteBoardConnect = false;
 	$(".toggle-enlarge").removeClass("icon-reduction").addClass("icon-enlarge")
-	// setTimeout(function(){
-	// 	$(".video-agora-wrapper").addClass("hide")
-	// }, 3000);
 	$(".video-agora-wrapper").addClass("hide")
 	agentInviteDialog && agentInviteDialog.hide();
 	shaDesktopSuccFlag = false;
+	creatWhiteboard && creatWhiteboard.destoryWhiteboard(document.getElementById("white-board"));
 }
 
 // 共享桌面的打开关闭
@@ -1113,7 +1109,7 @@ function bigVideoEl(){
 function _dragVideo(){
 	dragMove.drag({
 		parentdraf : '.video-agora-wrapper' , // 拖拽元素父级
-		draftin : '.video-agora-wrapper' , // 拖拽元素
+		draftin : '.video-agora-wrapper .top' , // 拖拽元素
 		// sizeLeft : '.video-agora-wrapper  .barl', // 改变大小左边
 		sizeRight : '.video-agora-wrapper  .barr', // 改变大小右边
 		// sizeTop : '.video-agora-wrapper  .bart', // 改变大小上边
@@ -1169,7 +1165,7 @@ function whiteBoardInitDom(uuid,callId,identity,region,roomToken,appIdentifier,t
 		$("#big-video").addClass("hide");
         // const {uuid, userId, identity,region,roomToken,appIdentifier,tenantId,callId} = this.props;
 
-		creatWhiteboard.default(document.getElementById("white-board"),{uuid:uuid,userId:callId,identity:identity,region:region,roomToken:roomToken,appIdentifier:appIdentifier,tenantId:tenantId,callId:callId})
+		creatWhiteboard.creatWhiteboard(document.getElementById("white-board"),{uuid:uuid,userId:callId,identity:identity,region:region,roomToken:roomToken,appIdentifier:appIdentifier,tenantId:tenantId,callId:callId})
 		whiteBoardConnect = true;
 	}
 }
