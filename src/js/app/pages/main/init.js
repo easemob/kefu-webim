@@ -49,7 +49,12 @@ function updateCustomerInfo(e){
 	var temp;
 	var data = e.data;
 	if(typeof data === "string" && data != "undefined"){
-		data = JSON.parse(data);
+		try{
+			data = JSON.parse(data);
+		}
+		catch(err){
+			console.log( err)
+		}
 	}
 	temp = utils.getDataByPath(data, "easemob.kefu.cta");
 	if(temp){
