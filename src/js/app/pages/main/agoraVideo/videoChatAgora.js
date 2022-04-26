@@ -271,6 +271,31 @@ function _init(){
 			$(".small-video-box").addClass("hide");
 		});
 	});
+	// 关闭白板
+	utils.on($("#close-white"), "click", function(){
+		console.log("关闭白板  close-white" )
+		if(whiteVideo.hasClass("visitor-white")){
+			serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("big-video");
+			whiteVideo.css("backgroundColor","white");
+			whiteVideo.removeClass("visitor-white");
+			$("#white-board").addClass("hide")
+			$("#big-video").removeClass("hide")
+		}
+		else if(whiteVideo.hasClass("agent0-white")){
+			userVideo0._videoTrack && userVideo0._videoTrack.play("big-video");
+			whiteVideo.css("backgroundColor","white");
+			whiteVideo.removeClass("agent0-white");
+			$("#white-board").addClass("hide")
+			$("#big-video").removeClass("hide")
+		}
+		else if(whiteVideo.hasClass("agent1-white")){
+			userVideo1._videoTrack && userVideo1._videoTrack.play("big-video");
+			whiteVideo.css("backgroundColor","white");
+			whiteVideo.removeClass("agent1-white");
+			$("#white-board").addClass("hide")
+			$("#big-video").removeClass("hide")
+		}
+	});
 	$('.end-button').addClass("hide");
 	_dragIconVideo();
 	// 白板
@@ -292,7 +317,7 @@ function returnToMuti(){
 	else{
 		$(".video-agora-wrapper").css({ 'width':'360px', 'height':'516px','top':'50%','left':'50%','margin-left': '-180px', 'margin-top': '-258px','position': 'absolute'  });
 	}
-	$("#white-video").removeClass("agent0").removeClass("agent1").removeClass("visitor");
+	$("#white-video").removeClass("visitor agent0 agent1 visitor-white agent0-white agent1-white").css("backgroundColor","white");
 	$("#white-board").addClass("hide");
 	$("#big-video").removeClass("hide");
 }
@@ -373,9 +398,11 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			// statusBar.setStatusText(__("video.connecting"));
 			var microphoneState = $(".nickNameWraper >.toggle-microphone-state");
 			var visitorMicrophoneState = $("#visitor-video >.toggle-microphone-state");
+			var whiteVideo = $("#white-video");
 			remoteUSer.forEach(function (item,index){
 				if(index === 1){
 					userVideo1 = item;
+					$("agent-video").removeClass("hide")
 					userVideo1._videoTrack && userVideo1._videoTrack.play("agent-video");
 					userVideo1.audioTrack && userVideo1.audioTrack.play();
 					if(userVideo1._audio_muted_){
@@ -540,14 +567,13 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					// creatWhiteboard.default(document.getElementById("white-video"),{uuid:"0c7c3e80bd5d11ec97cdebb70556e411",userId:"0c7c3e80bd5d11ec97cdebb70556e411",identity:"joiner",region:"cn-hz"})
 					$("#white-board").addClass("hide")
 					$("#big-video").removeClass("hide")
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("visitor agent0 agent1 visitor-white agent0-white agent1-white").removeClass("agent0").removeClass("agent1");
-					// whiteAddClass();
+					whiteVideo.css("backgroundColor","white");
+					whiteVideo.removeClass("visitor agent0 agent1 visitor-white agent0-white agent1-white");
 				}
 				if($(e.currentTarget).hasClass("agent-big") && !$("#visitor-video").hasClass("visitor-big")){
 					userVideo0._videoTrack && userVideo0._videoTrack.play("big-video");
 					userVideo1._videoTrack && userVideo1._videoTrack.play("agent-video");
-					$("#white-video").addClass("agent0");
+					whiteVideo.addClass("agent0");
 					$(e.currentTarget).removeClass("agent-big")
 					$(".video-agora-wrapper .nickNameWraper >.nickName").html(__("chat.agent") + profile.newNickName);
 					$("#agent-video >.small-name").html(__("chat.agent") + thirdAgentName);
@@ -570,7 +596,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 				else if(!$(e.currentTarget).hasClass("agent-big") && !$("#visitor-video").hasClass("visitor-big")){
 					userVideo0._videoTrack && userVideo0._videoTrack.play("agent-video");
 					userVideo1._videoTrack && userVideo1._videoTrack.play("big-video");
-					$("#white-video").addClass("agent1");
+					whiteVideo.addClass("agent1");
 					$(e.currentTarget).addClass("agent-big")
 					$(".video-agora-wrapper .nickNameWraper >.nickName").html(__("chat.agent") + thirdAgentName);
 					$("#agent-video >.small-name").html(__("chat.agent") +  profile.newNickName);
@@ -592,7 +618,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 				else if(!$(e.currentTarget).hasClass("agent-big") && $("#visitor-video").hasClass("visitor-big")){
 					userVideo1._videoTrack && userVideo1._videoTrack.play("big-video");
 					userVideo0._videoTrack && userVideo0._videoTrack.play("agent-video");
-					$("#white-video").addClass("agent1");
+					whiteVideo.addClass("agent1");
 					// serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("visitor-video");
 					if(serviceAgora.localScreenVideoTrack && !serviceAgora.localScreenVideoTrack._isClosed){
 						serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.play("visitor-video");
@@ -628,13 +654,12 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					// creatWhiteboard.default(document.getElementById("white-video"),{uuid:"0c7c3e80bd5d11ec97cdebb70556e411",userId:"0c7c3e80bd5d11ec97cdebb70556e411",identity:"joiner",region:"cn-hz"})
 					$("#white-board").addClass("hide")
 					$("#big-video").removeClass("hide")
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("visitor agent0 agent1 visitor-white agent0-white agent1-white").removeClass("agent0").removeClass("agent1");
-					// whiteAddClass();
+					whiteVideo.css("backgroundColor","white");
+					whiteVideo.removeClass("visitor agent0 agent1 visitor-white agent0-white agent1-white");
 				}
 				if($(e.currentTarget).hasClass("visitor-big")  && !$("#agent-video").hasClass("agent-big") ){
 					userVideo0._videoTrack && userVideo0._videoTrack.play("big-video");
-					$("#white-video").addClass("agent0");
+					whiteVideo.addClass("agent0");
 					if(serviceAgora.localScreenVideoTrack && !serviceAgora.localScreenVideoTrack._isClosed){
 						serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.play("visitor-video");
 					}
@@ -661,7 +686,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 				}
 				else if(!$(e.currentTarget).hasClass("visitor-big")  && !$("#agent-video").hasClass("agent-big") ){
 					userVideo0._videoTrack && userVideo0._videoTrack.play("visitor-video");
-					$("#white-video").addClass("visitor");
+					whiteVideo.addClass("visitor");
 					if(serviceAgora.localScreenVideoTrack && !serviceAgora.localScreenVideoTrack._isClosed){
 						serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.play("big-video");
 					}
@@ -696,7 +721,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					}
 					userVideo0._videoTrack && userVideo0._videoTrack.play("visitor-video");
 					userVideo1._videoTrack && userVideo1._videoTrack.play("agent-video");
-					$("#white-video").addClass("visitor");
+					whiteVideo.addClass("visitor");
 					$(e.currentTarget).addClass("visitor-big");
 					$("#agent-video").removeClass("agent-big");
 					$(".video-agora-wrapper .nickNameWraper >.nickName").html(__("video.me"));
@@ -706,51 +731,53 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 
 			});
 			// 白板
-			$("#white-video").unbind('click').bind('click',function (e){
-				if($("#white-video").hasClass("visitor")){
+			whiteVideo.unbind('click').bind('click',function (e){
+				if(whiteVideo.hasClass("visitor")){
 					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("white-video");
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("visitor");
+					whiteVideo.css("backgroundColor","white");
+					whiteVideo.removeClass("visitor");
 					$("#white-board").removeClass("hide")
 					$("#big-video").addClass("hide")
-
 					$("#white-video >.small-name").html("我");
+					whiteState();
 				}
-				else if($("#white-video").hasClass("agent0")){
+				else if(whiteVideo.hasClass("agent0")){
 					userVideo0._videoTrack && userVideo0._videoTrack.play("white-video");
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("agent0");
+					whiteVideo.css("backgroundColor","white");
+					whiteVideo.removeClass("agent0");
 					$("#white-board").removeClass("hide")
 					$("#big-video").addClass("hide")
 
 					$("#white-video >.small-name").html("客服" + profile.newNickName);
+					whiteState();
 				}
-				else if($("#white-video").hasClass("agent1")){
+				else if(whiteVideo.hasClass("agent1")){
 					userVideo1._videoTrack && userVideo1._videoTrack.play("white-video");
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("agent1");
+					whiteVideo.css("backgroundColor","white");
+					whiteVideo.removeClass("agent1");
 					$("#white-board").removeClass("hide")
 					$("#big-video").addClass("hide")
 					$("#white-video >.small-name").html("客服" + thirdAgentName);
+					whiteState();
 				}
-				else if($("#white-video").hasClass("visitor-white")){
+				else if(whiteVideo.hasClass("visitor-white")){
 					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("big-video");
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("visitor-white");
+					whiteVideo.css("backgroundColor","white");
+					whiteVideo.removeClass("visitor-white");
 					$("#white-board").addClass("hide")
 					$("#big-video").removeClass("hide")
 				}
-				else if($("#white-video").hasClass("agent0-white")){
+				else if(whiteVideo.hasClass("agent0-white")){
 					userVideo0._videoTrack && userVideo0._videoTrack.play("big-video");
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("agent0-white");
+					whiteVideo.css("backgroundColor","white");
+					whiteVideo.removeClass("agent0-white");
 					$("#white-board").addClass("hide")
 					$("#big-video").removeClass("hide")
 				}
-				else if($("#white-video").hasClass("agent1-white")){
+				else if(whiteVideo.hasClass("agent1-white")){
 					userVideo1._videoTrack && userVideo1._videoTrack.play("big-video");
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("agent1-white");
+					whiteVideo.css("backgroundColor","white");
+					whiteVideo.removeClass("agent1-white");
 					$("#white-board").addClass("hide")
 					$("#big-video").removeClass("hide")
 				}
@@ -1077,7 +1104,7 @@ function _receiveWhiteBoard(roomInfo){
 	console.log("_receiveWhiteBoard" )
 	console.log(roomInfo )
 	if(roomInfo){
-		whiteBoardInitDom(roomInfo.roomUUID,callId,"joiner","cn-hz",roomInfo.roomToken,roomInfo.appIdentifier);
+		whiteBoardInitDom(roomInfo.roomUUID,callId,"joiner","cn-hz",roomInfo.roomToken,roomInfo.appIdentifier,config.tenantId,callId);
 	}
 }
 function _inviteWhiteBoard(){
@@ -1092,7 +1119,7 @@ function _inviteWhiteBoard(){
 		},
 	});
 }
-function whiteBoardInitDom(uuid,callId,identity,region,roomToken,appIdentifier){
+function whiteBoardInitDom(uuid,callId,identity,region,roomToken,appIdentifier,tenantId,callId){
 	if(bigVideoEl() === "0"){
 		serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("white-video");
 		$("#white-video").addClass("visitor-white");
@@ -1115,20 +1142,10 @@ function whiteBoardInitDom(uuid,callId,identity,region,roomToken,appIdentifier){
 		$("#white-board").removeClass("hide")
 		$("#white-video").removeClass("hide");
 		$("#big-video").addClass("hide");
-		creatWhiteboard.default(document.getElementById("white-board"),{uuid:uuid,userId:callId,identity:identity,region:region,roomToken:roomToken,appIdentifier:appIdentifier})
+        // const {uuid, userId, identity,region,roomToken,appIdentifier,tenantId,callId} = this.props;
+
+		creatWhiteboard.default(document.getElementById("white-board"),{uuid:uuid,userId:callId,identity:identity,region:region,roomToken:roomToken,appIdentifier:appIdentifier,tenantId:tenantId,callId:callId})
 		whiteBoardConnect = true;
-	}
-}
-function whiteAddClass(){
-	$("#white-video").removeClass("visitor").removeClass("agent0").removeClass("agent1");
-	if(bigVideoEl() === "0"){
-		$("#white-video").addClass("visitor");
-	}
-	else if(bigVideoEl() === "1"){
-		$("#white-video").addClass("agent1");
-	}
-	else{
-		$("#white-video").addClass("agent0");
 	}
 }
 function whiteState(){
