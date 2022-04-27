@@ -273,39 +273,33 @@ function _init(){
 	});
 	// 关闭白板
 	utils.on($("#close-white"), "click", function(){
-		console.log("关闭白板")
-		var whiteVideo = $("#white-video");
+		console.log("关闭白板  close-white" )
 		if(whiteVideo.hasClass("visitor-white")){
 			serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("big-video");
-			whiteVideo.css("backgroundColor","none");
+			whiteVideo.css("backgroundColor","white");
 			whiteVideo.removeClass("visitor-white");
 			$("#white-board").addClass("hide")
 			$("#big-video").removeClass("hide")
 		}
 		else if(whiteVideo.hasClass("agent0-white")){
 			userVideo0._videoTrack && userVideo0._videoTrack.play("big-video");
-			whiteVideo.css("backgroundColor","none");
+			whiteVideo.css("backgroundColor","white");
 			whiteVideo.removeClass("agent0-white");
 			$("#white-board").addClass("hide")
 			$("#big-video").removeClass("hide")
 		}
 		else if(whiteVideo.hasClass("agent1-white")){
 			userVideo1._videoTrack && userVideo1._videoTrack.play("big-video");
-			whiteVideo.css("backgroundColor","none");
+			whiteVideo.css("backgroundColor","white");
 			whiteVideo.removeClass("agent1-white");
 			$("#white-board").addClass("hide")
 			$("#big-video").removeClass("hide")
 		}
-		$(".realtime-box").remove();
-		whiteBoardConnect = false;
 	});
 	$('.end-button').addClass("hide");
 	_dragIconVideo();
 	// 白板
 	utils.on($(".toggle-white-board-agora"), "click", function(){
-		if($(".toggle-enlarge").hasClass("icon-enlarge") ){
-			$(".toggle-enlarge").click();
-		}
 		// whiteBoardInitDom();
 		_inviteWhiteBoard();
 	});
@@ -1107,8 +1101,10 @@ function _dragIconVideo(){
 	});
 }
 function _receiveWhiteBoard(roomInfo){
+	console.log("_receiveWhiteBoard" )
+	console.log(roomInfo )
 	if(roomInfo){
-		whiteBoardInitDom(roomInfo.roomUUID,callId,"creator","cn-hz",roomInfo.roomToken,roomInfo.appIdentifier,config.tenantId,callId);
+		whiteBoardInitDom(roomInfo.roomUUID,callId,"joiner","cn-hz",roomInfo.roomToken,roomInfo.appIdentifier,config.tenantId,callId);
 	}
 }
 function _inviteWhiteBoard(){
