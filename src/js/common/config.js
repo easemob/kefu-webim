@@ -56,7 +56,6 @@ function handleConfig(configJson){
 		configJson.options = {};
 	}
 	config.tenantId = configJson.tenantId;
-	window.sessionStorage && sessionStorage.setItem("white_tenantId", config.tenantId);
 	// todo: 把配置转换为新的
 	// 用于config标记是否是来自于坐席端网页配置
 	config.isWebChannelConfig = true;
