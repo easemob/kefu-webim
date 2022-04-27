@@ -535,6 +535,7 @@ function _handleMessage(msg, options){
 	var officialAccountId = officialAccount && officialAccount.official_account_id;
 	var videoTicket = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.ticket");
 	var videoExtend = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.extend");
+	var whiteBoardTicket = utils.getDataByPath(msg, "ext.msgtype.roomData");
 	var videoEndArgo = utils.getDataByPath(msg, "ext.msgtype.videoPlayback");
 	var customMagicEmoji = utils.getDataByPath(msg, "ext.msgtype.customMagicEmoji");
 	var activeAnswerBundle = utils.getDataByPath(msg, "ext.activeAnswerBundle");
@@ -617,6 +618,9 @@ function _handleMessage(msg, options){
 	}
 	else if(videoEndArgo){
 		type = "videoEndArgo";
+	}
+	else if(whiteBoardTicket){
+		type = "whiteBoardTicket";
 	}
 	else if(customMagicEmoji){
 		type = "customMagicEmoji";
@@ -980,6 +984,13 @@ function _handleMessage(msg, options){
 		message.brief = textParser.getTextMessageBrief(message.data,isReceived);
 		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.VIDEO_ARGO_END, [videoEndArgo]);
 		break;
+	case "whiteBoardTicket":
+		message = msg;
+		message.type = "txt";
+		message.data = (msg && msg.data) || "";
+		message.brief = textParser.getTextMessageBrief(message.data,isReceived);
+		!isHistory && eventListener.excuteCallbacks(_const.SYSTEM_EVENT.WHITE_BOARD_RECEIVED, [whiteBoardTicket]);
+		break;
 	default:
 		console.error("unexpected msg type");
 		break;
@@ -1023,6 +1034,8 @@ function _handleMessage(msg, options){
 			|| (type === "article" && _.isEmpty(utils.getDataByPath(msg, "ext.msgtype.articles")))
 			// 视频邀请不上屏
 			|| (type === "rtcVideoTicket")
+			// 白板消息不上屏
+			|| (type === "whiteBoardTicket")
 			// 订单轨迹按条件上屏
 			|| ((type === "track" || type === "order") && !profile.isShowTrackMsg)
 		){
