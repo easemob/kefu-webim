@@ -122,7 +122,6 @@ module.exports = {
 		confirm_prompt_agent: "客服邀请您进入视频通话 ", 
 		confirm_prompt_visitor:"您正邀请客服进行视频通话",
 		invite_agent_video: "邀请客服进行实时视频",
-		invite_white_board: "邀请客服进行白板互动",
 		invite_exit_video: "访客取消实时视频",
 		invite_reject_video: "访客拒绝实时视频",
 		connecting: "通话中",

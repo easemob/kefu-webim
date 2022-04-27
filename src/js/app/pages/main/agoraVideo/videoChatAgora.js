@@ -44,7 +44,6 @@ var serviceAgora;
 var cfgAgora;
 var callId;
 var inviteByVisitor = false; //访客邀请的
-var whiteBoardConnect = false;
 var userVideo0,userVideo1;
 var dragMove = require("../uikit/drag")
 
@@ -272,11 +271,6 @@ function _init(){
 	});
 	$('.end-button').addClass("hide");
 	_dragIconVideo();
-	// 白板
-	utils.on($(".toggle-white-board-agora"), "click", function(){
-		whiteBoardInitDom();
-		// _inviteWhiteBoard();
-	});
 }
 function returnToMuti(){
 	$(".toggle-microphone-btn-agora").removeClass("icon-disable-microphone-agora").addClass("icon-microphone-agora");
@@ -291,9 +285,6 @@ function returnToMuti(){
 	else{
 		$(".video-agora-wrapper").css({ 'width':'360px', 'height':'516px','top':'50%','left':'50%','margin-left': '-180px', 'margin-top': '-258px','position': 'absolute'  });
 	}
-	$("#white-video").removeClass("agent0").removeClass("agent1").removeClass("visitor");
-	$("#white-board").addClass("hide");
-	$("#big-video").removeClass("hide");
 }
 
 function startTimer(){
@@ -320,7 +311,6 @@ function init(option){
 	eMediaSdkPath = STATIC_PATH + "/js/lib/EMedia_sdk.min.js?v=1.1.2";
 
 	var eMediaSdkPathSW = STATIC_PATH + "/js/lib/AgoraRTC_N-4.8.0.js";
-	var whiteBoardPath = STATIC_PATH + "/js/lib/white_board.js";
 	tools.loadScript(adapterPath)
 	.then(function(){
 		return tools.loadScript(eMediaSdkPathSW);
@@ -328,7 +318,6 @@ function init(option){
 	.then(function(){
 		eventListener.add(_const.SYSTEM_EVENT.VIDEO_TICKET_RECEIVED, _reveiveTicket);
 		eventListener.add(_const.SYSTEM_EVENT.VIDEO_ARGO_END, _closeVideo);
-		eventListener.add(_const.SYSTEM_EVENT.WHITE_BOARD_RECEIVED, _receiveWhiteBoard);
 		// 显示视频邀请按钮，并绑定事件
 		utils.removeClass(triggerButton, "hide");
 		utils.on(triggerButton, "click", function(){
@@ -340,9 +329,6 @@ function init(option){
 			//  serviceAgora.createLocalTracks();
 		});
 	});
-	// tools.loadScript(whiteBoardPath).then(function(){
-	// 	console.log("加载 whiteBoardPath" )
-	// });
 	
 }
 
@@ -533,18 +519,9 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			}
 			// 第三方客服
 			$('#agent-video').unbind('click').bind('click',function (e){
-				if(whiteBoardConnect){
-					// creatWhiteboard.default(document.getElementById("white-video"),{uuid:"0c7c3e80bd5d11ec97cdebb70556e411",userId:"0c7c3e80bd5d11ec97cdebb70556e411",identity:"joiner",region:"cn-hz"})
-					$("#white-board").addClass("hide")
-					$("#big-video").removeClass("hide")
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("visitor agent0 agent1 visitor-white agent0-white agent1-white").removeClass("agent0").removeClass("agent1");
-					// whiteAddClass();
-				}
 				if($(e.currentTarget).hasClass("agent-big") && !$("#visitor-video").hasClass("visitor-big")){
 					userVideo0._videoTrack && userVideo0._videoTrack.play("big-video");
 					userVideo1._videoTrack && userVideo1._videoTrack.play("agent-video");
-					$("#white-video").addClass("agent0");
 					$(e.currentTarget).removeClass("agent-big")
 					$(".video-agora-wrapper .nickNameWraper >.nickName").html(__("chat.agent") + profile.newNickName);
 					$("#agent-video >.small-name").html(__("chat.agent") + thirdAgentName);
@@ -567,7 +544,6 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 				else if(!$(e.currentTarget).hasClass("agent-big") && !$("#visitor-video").hasClass("visitor-big")){
 					userVideo0._videoTrack && userVideo0._videoTrack.play("agent-video");
 					userVideo1._videoTrack && userVideo1._videoTrack.play("big-video");
-					$("#white-video").addClass("agent1");
 					$(e.currentTarget).addClass("agent-big")
 					$(".video-agora-wrapper .nickNameWraper >.nickName").html(__("chat.agent") + thirdAgentName);
 					$("#agent-video >.small-name").html(__("chat.agent") +  profile.newNickName);
@@ -589,7 +565,6 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 				else if(!$(e.currentTarget).hasClass("agent-big") && $("#visitor-video").hasClass("visitor-big")){
 					userVideo1._videoTrack && userVideo1._videoTrack.play("big-video");
 					userVideo0._videoTrack && userVideo0._videoTrack.play("agent-video");
-					$("#white-video").addClass("agent1");
 					// serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("visitor-video");
 					if(serviceAgora.localScreenVideoTrack && !serviceAgora.localScreenVideoTrack._isClosed){
 						serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.play("visitor-video");
@@ -621,17 +596,8 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 
 			// 访客的视频
 			$('#visitor-video').unbind('click').bind('click',function (e){
-				if(whiteBoardConnect){
-					// creatWhiteboard.default(document.getElementById("white-video"),{uuid:"0c7c3e80bd5d11ec97cdebb70556e411",userId:"0c7c3e80bd5d11ec97cdebb70556e411",identity:"joiner",region:"cn-hz"})
-					$("#white-board").addClass("hide")
-					$("#big-video").removeClass("hide")
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("visitor agent0 agent1 visitor-white agent0-white agent1-white").removeClass("agent0").removeClass("agent1");
-					// whiteAddClass();
-				}
 				if($(e.currentTarget).hasClass("visitor-big")  && !$("#agent-video").hasClass("agent-big") ){
 					userVideo0._videoTrack && userVideo0._videoTrack.play("big-video");
-					$("#white-video").addClass("agent0");
 					if(serviceAgora.localScreenVideoTrack && !serviceAgora.localScreenVideoTrack._isClosed){
 						serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.play("visitor-video");
 					}
@@ -658,7 +624,6 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 				}
 				else if(!$(e.currentTarget).hasClass("visitor-big")  && !$("#agent-video").hasClass("agent-big") ){
 					userVideo0._videoTrack && userVideo0._videoTrack.play("visitor-video");
-					$("#white-video").addClass("visitor");
 					if(serviceAgora.localScreenVideoTrack && !serviceAgora.localScreenVideoTrack._isClosed){
 						serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.play("big-video");
 					}
@@ -693,7 +658,6 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					}
 					userVideo0._videoTrack && userVideo0._videoTrack.play("visitor-video");
 					userVideo1._videoTrack && userVideo1._videoTrack.play("agent-video");
-					$("#white-video").addClass("visitor");
 					$(e.currentTarget).addClass("visitor-big");
 					$("#agent-video").removeClass("agent-big");
 					$(".video-agora-wrapper .nickNameWraper >.nickName").html(__("video.me"));
@@ -702,62 +666,8 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 				}
 
 			});
-			// 白板
-			$("#white-video").unbind('click').bind('click',function (e){
-				if($("#white-video").hasClass("visitor")){
-					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("white-video");
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("visitor");
-					$("#white-board").removeClass("hide")
-					$("#big-video").addClass("hide")
-
-					$("#white-video >.small-name").html("我");
-				}
-				else if($("#white-video").hasClass("agent0")){
-					userVideo0._videoTrack && userVideo0._videoTrack.play("white-video");
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("agent0");
-					$("#white-board").removeClass("hide")
-					$("#big-video").addClass("hide")
-
-					$("#white-video >.small-name").html("客服" + profile.newNickName);
-				}
-				else if($("#white-video").hasClass("agent1")){
-					userVideo1._videoTrack && userVideo1._videoTrack.play("white-video");
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("agent1");
-					$("#white-board").removeClass("hide")
-					$("#big-video").addClass("hide")
-					$("#white-video >.small-name").html("客服" + thirdAgentName);
-				}
-				else if($("#white-video").hasClass("visitor-white")){
-					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("big-video");
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("visitor-white");
-					$("#white-board").addClass("hide")
-					$("#big-video").removeClass("hide")
-				}
-				else if($("#white-video").hasClass("agent0-white")){
-					userVideo0._videoTrack && userVideo0._videoTrack.play("big-video");
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("agent0-white");
-					$("#white-board").addClass("hide")
-					$("#big-video").removeClass("hide")
-				}
-				else if($("#white-video").hasClass("agent1-white")){
-					userVideo1._videoTrack && userVideo1._videoTrack.play("big-video");
-					$("#white-video").css("backgroundColor","white");
-					$("#white-video").removeClass("agent1-white");
-					$("#white-board").addClass("hide")
-					$("#big-video").removeClass("hide")
-				}
-				else{
-					whiteState();
-					$("#white-board").removeClass("hide")
-					$("#big-video").addClass("hide")
-				}
-				// creatWhiteboard.default(document.getElementById("white-video"),{uuid:"0c7c3e80bd5d11ec97cdebb70556e411",userId:"0c7c3e80bd5d11ec97cdebb70556e411",identity:"joiner",region:"cn-hz"})
-			});
+			// // 拖拽 缩放
+			// _drag();
 		},
 		onUserLeft:function(){
 			if(serviceAgora.remoteUsers.length != 1){
@@ -1069,87 +979,4 @@ function _dragIconVideo(){
 		parentdraf : '.small-video-box' , // 拖拽元素父级
 		draftin : '.small-video-box' , // 拖拽元素
 	});
-}
-function _receiveWhiteBoard(){
-	console.log("_receiveWhiteBoard" )
-}
-function _inviteWhiteBoard(){
-	channel.sendText(__("video.invite_white_board"), {
-		ext: {
-			type: "agorartcmedia/video",
-			msgtype: {
-				whiteboardInvitaion: {
-					msg: __("video.invite_white_board"),
-					orgName: config.orgName,
-					appName: config.appName,
-					userName: config.user.username,
-					imServiceNumber: config.toUser,
-					restServer: config.restServer,
-					xmppServer: config.xmppServer,
-					resource: "webim",
-					isNewInvitation: true,
-					userAgent: navigator.userAgent,
-				},
-			},
-		},
-	});
-}
-function whiteBoardInitDom(){
-	if(bigVideoEl() === "0"){
-		serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("white-video");
-		$("#white-video").addClass("visitor-white");
-		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
-		$("#white-video >.small-name").html("我");
-	}
-	else if(bigVideoEl() === "1"){
-		userVideo1._videoTrack && userVideo1._videoTrack.play("white-video");
-		$("#white-video").addClass("agent1-white");
-		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
-		$("#white-video >.small-name").html("客服" + thirdAgentName);
-	}
-	else{
-		userVideo0._videoTrack && userVideo0._videoTrack.play("white-video");
-		$("#white-video").addClass("agent0-white");
-		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
-		$("#white-video >.small-name").html("客服" + profile.newNickName);
-	}
-	if($("#white-board").hasClass("hide")){
-		$("#white-board").removeClass("hide")
-		$("#big-video").addClass("hide")
-		creatWhiteboard.default(document.getElementById("white-board"),{uuid:"0c7c3e80bd5d11ec97cdebb70556e411",userId:"0c7c3e80bd5d11ec97cdebb70556e411",identity:"joiner",region:"cn-hz"})
-	}
-	whiteBoardConnect = true;
-}
-function whiteAddClass(){
-	$("#white-video").removeClass("visitor").removeClass("agent0").removeClass("agent1");
-	if(bigVideoEl() === "0"){
-		$("#white-video").addClass("visitor");
-	}
-	else if(bigVideoEl() === "1"){
-		$("#white-video").addClass("agent1");
-	}
-	else{
-		$("#white-video").addClass("agent0");
-	}
-}
-function whiteState(){
-	$("#white-video").removeClass("visitor").removeClass("agent0").removeClass("agent1");
-	if(bigVideoEl() === "0"){
-		serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("white-video");
-		$("#white-video").addClass("visitor-white");
-		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
-		$("#white-video >.small-name").html("我");
-	}
-	else if(bigVideoEl() === "1"){
-		userVideo1._videoTrack && userVideo1._videoTrack.play("white-video");
-		$("#white-video").addClass("agent1-white");
-		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
-		$("#white-video >.small-name").html("客服" + thirdAgentName);
-	}
-	else{
-		userVideo0._videoTrack && userVideo0._videoTrack.play("white-video");
-		$("#white-video").addClass("agent0-white");
-		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
-		$("#white-video >.small-name").html("客服" + profile.newNickName);
-	}
 }
