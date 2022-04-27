@@ -1569,18 +1569,24 @@ function _initNote(){
 	});
 
 	function closeNoteIframe(e){
-		data = e.data;
-		if(typeof data === "string" && data != "undefined"){
-			data = JSON.parse(data);
+		try{
+			data = e.data;
+			if(typeof data === "string" && data != "undefined"){
+				data = JSON.parse(data);
+			}
+			data.closeNote && noteIframe.close();
 		}
-		data.closeNote && noteIframe.close();
+		catch(e){}
 	}
 	function closeChat(e){
-		data = e.data;
-		if(typeof data === "string" && data != "undefined"){
-			data = JSON.parse(data);
-		}
-		data.closeChat && getToHost.send({ event: _const.EVENTS.CLOSE });
+		try{
+			data = e.data;
+			if(typeof data === "string" && data != "undefined"){
+				data = JSON.parse(data);
+			}
+			data.closeChat && getToHost.send({ event: _const.EVENTS.CLOSE });
+
+		}catch(e){}
 	}
 }
 

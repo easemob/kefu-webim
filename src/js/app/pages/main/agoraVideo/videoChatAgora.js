@@ -44,7 +44,7 @@ var serviceAgora;
 var cfgAgora;
 var callId;
 var inviteByVisitor = false; //访客邀请的
-var whiteBoardConnect = false;
+var whiteBoardConnect = false; //白板是否处于连接中
 var userVideo0,userVideo1;
 var dragMove = require("../uikit/drag")
 
@@ -376,6 +376,10 @@ function init(option){
 			//  serviceAgora.createLocalTracks();
 		});
 	});
+	// 加载白板JS
+	tools.loadScript(whiteBoardPath).then(function(){
+		window.lodash = _.noConflict();
+	})
 	
 }
 
@@ -772,7 +776,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					$("#white-board").removeClass("hide")
 					$("#big-video").addClass("hide")
 
-					$("#white-video >.small-name").html("客服" + profile.newNickName);
+					$("#white-video >.small-name").html(__("chat.agent") + profile.newNickName);
 					whiteState();
 				}
 				else if(whiteVideo.hasClass("agent1")){
@@ -780,7 +784,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					whiteVideo.removeClass("agent1 hide");
 					$("#white-board").removeClass("hide")
 					$("#big-video").addClass("hide")
-					$("#white-video >.small-name").html("客服" + thirdAgentName);
+					$("#white-video >.small-name").html(__("chat.agent") + thirdAgentName);
 					whiteState();
 				}
 				else if(whiteVideo.hasClass("visitor-white")){
@@ -809,7 +813,6 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					$("#white-board").removeClass("hide")
 					$("#big-video").addClass("hide")
 				}
-				// creatWhiteboard.default(document.getElementById("white-video"),{uuid:"0c7c3e80bd5d11ec97cdebb70556e411",userId:"0c7c3e80bd5d11ec97cdebb70556e411",identity:"joiner",region:"cn-hz"})
 			});
 		},
 		onUserLeft:function(){
@@ -985,11 +988,11 @@ function _onConfirmExitvideo(){
 	inviteByVisitor = false;
 }
 function _closeVideo(){
-	serviceAgora.client.unpublish(serviceAgora.localScreenVideoTrack);
+	serviceAgora.client && serviceAgora.client.unpublish(serviceAgora.localScreenVideoTrack);
 	serviceAgora.localScreenVideoTrack && serviceAgora.localScreenVideoTrack.close();
 	serviceAgora.localScreenAudioTrack && serviceAgora.localScreenAudioTrack.close();
 	returnToMuti();
-	serviceAgora = serviceAgora.leave();
+	serviceAgora && serviceAgora.leave();
 	videoConnecting = false;
 	videoInviteButton = false;
 	inviteByVisitor = false;
@@ -1124,7 +1127,10 @@ function _dragIconVideo(){
 	});
 }
 function _receiveWhiteBoard(roomInfo){
-	if(roomInfo){
+	if(roomInfo && !whiteBoardConnect){
+		if($(".toggle-enlarge").hasClass("icon-enlarge") ){
+			$(".toggle-enlarge").click();
+		}
 		whiteBoardInitDom(roomInfo.roomUUID,callId,"creator","cn-hz",roomInfo.roomToken,roomInfo.appIdentifier,config.tenantId,callId);
 	}
 }
@@ -1151,13 +1157,13 @@ function whiteBoardInitDom(uuid,callId,identity,region,roomToken,appIdentifier,t
 		userVideo1._videoTrack && userVideo1._videoTrack.play("white-video");
 		$("#white-video").addClass("agent1-white");
 		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
-		$("#white-video >.small-name").html("客服" + thirdAgentName);
+		$("#white-video >.small-name").html(__("chat.agent") + thirdAgentName);
 	}
 	else{
 		userVideo0._videoTrack && userVideo0._videoTrack.play("white-video");
 		$("#white-video").addClass("agent0-white");
 		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
-		$("#white-video >.small-name").html("客服" + profile.newNickName);
+		$("#white-video >.small-name").html(__("chat.agent") + profile.newNickName);
 	}
 	if($("#white-board").hasClass("hide")){
 		$("#white-board").removeClass("hide")
@@ -1182,12 +1188,12 @@ function whiteState(){
 		userVideo1._videoTrack && userVideo1._videoTrack.play("white-video");
 		$("#white-video").addClass("agent1-white");
 		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
-		$("#white-video >.small-name").html("客服" + thirdAgentName);
+		$("#white-video >.small-name").html(__("chat.agent")+ thirdAgentName);
 	}
 	else{
 		userVideo0._videoTrack && userVideo0._videoTrack.play("white-video");
 		$("#white-video").addClass("agent0-white");
 		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
-		$("#white-video >.small-name").html("客服" + profile.newNickName);
+		$("#white-video >.small-name").html(__("chat.agent") + profile.newNickName);
 	}
 }
