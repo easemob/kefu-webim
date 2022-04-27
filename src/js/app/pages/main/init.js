@@ -53,7 +53,7 @@ function updateCustomerInfo(e){
 			data = JSON.parse(data);
 		}
 		catch(err){
-			console.log( err)
+			
 		}
 	}
 	temp = utils.getDataByPath(data, "easemob.kefu.cta");
