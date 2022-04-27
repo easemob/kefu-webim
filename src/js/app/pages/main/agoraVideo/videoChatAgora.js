@@ -793,6 +793,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					whiteVideo.removeClass("visitor-white");
 					$("#white-board").addClass("hide")
 					$("#big-video").removeClass("hide")
+					$("#white-video  >.toggle-microphone-state").addClass("hide");
 				}
 				else if(whiteVideo.hasClass("agent0-white")){
 					userVideo0._videoTrack && userVideo0._videoTrack.play("big-video");
@@ -800,6 +801,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					whiteVideo.removeClass("agent0-white");
 					$("#white-board").addClass("hide")
 					$("#big-video").removeClass("hide")
+					$("#white-video  >.toggle-microphone-state").addClass("hide");
 				}
 				else if(whiteVideo.hasClass("agent1-white")){
 					userVideo1._videoTrack && userVideo1._videoTrack.play("big-video");
@@ -807,6 +809,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					whiteVideo.removeClass("agent1-white");
 					$("#white-board").addClass("hide")
 					$("#big-video").removeClass("hide")
+					$("#white-video  >.toggle-microphone-state").addClass("hide");
 				}
 				else{
 					whiteState();
@@ -1152,18 +1155,37 @@ function whiteBoardInitDom(uuid,callId,identity,region,roomToken,appIdentifier,t
 		$("#white-video").addClass("visitor-white");
 		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
 		$("#white-video >.small-name").html("我");
+		if(serviceAgora.localAudioTrack._muted){
+			// 静音
+			$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
+		}
+		else{
+			$("#white-video  >.toggle-microphone-state").addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
+		}
 	}
 	else if(bigVideoEl() === "1"){
 		userVideo1._videoTrack && userVideo1._videoTrack.play("white-video");
 		$("#white-video").addClass("agent1-white");
-		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
 		$("#white-video >.small-name").html(__("chat.agent") + thirdAgentName);
+		if(userVideo1._audio_muted_){
+			// 静音
+			$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
+		}
+		else{
+			$("#white-video  >.toggle-microphone-state").addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
+		}
 	}
 	else{
 		userVideo0._videoTrack && userVideo0._videoTrack.play("white-video");
 		$("#white-video").addClass("agent0-white");
-		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
 		$("#white-video >.small-name").html(__("chat.agent") + profile.newNickName);
+		if(userVideo0._audio_muted_){
+			// 静音
+			$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
+		}
+		else{
+			$("#white-video  >.toggle-microphone-state").addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
+		}
 	}
 	if($("#white-board").hasClass("hide")){
 		$("#white-board").removeClass("hide")
@@ -1181,19 +1203,37 @@ function whiteState(){
 	if(bigVideoEl() === "0"){
 		serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("white-video");
 		$("#white-video").addClass("visitor-white");
-		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
 		$("#white-video >.small-name").html("我");
+		if(serviceAgora.localAudioTrack._muted){
+			// 静音
+			$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
+		}
+		else{
+			$("#white-video  >.toggle-microphone-state").addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
+		}
 	}
 	else if(bigVideoEl() === "1"){
 		userVideo1._videoTrack && userVideo1._videoTrack.play("white-video");
 		$("#white-video").addClass("agent1-white");
-		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
 		$("#white-video >.small-name").html(__("chat.agent")+ thirdAgentName);
+		if(userVideo1._audio_muted_){
+			// 静音
+			$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
+		}
+		else{
+			$("#white-video  >.toggle-microphone-state").addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
+		}
 	}
 	else{
 		userVideo0._videoTrack && userVideo0._videoTrack.play("white-video");
 		$("#white-video").addClass("agent0-white");
-		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
 		$("#white-video >.small-name").html(__("chat.agent") + profile.newNickName);
+		if(userVideo0._audio_muted_){
+			// 静音
+			$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
+		}
+		else{
+			$("#white-video  >.toggle-microphone-state").addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
+		}
 	}
 }
