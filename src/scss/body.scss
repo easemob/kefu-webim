@@ -360,6 +360,13 @@ body.window-demo{
 				width: 100%;
 				height: calc(100% - 88px);
 			}
+			.white-board{
+				width: 100%;
+				height: calc(100% - 88px);
+				background-color: white;
+				position: relative;
+				z-index: 11111;
+			}
 			.mini-wraper{
 				min-width: 340px;
 				min-height: 68px;
@@ -371,6 +378,7 @@ body.window-demo{
 				height: 68px;
 				margin-right: 10px;
 				position: relative;
+				overflow: hidden;
 				.small-name{
 					position: absolute;
 					width: 100%;
@@ -391,6 +399,11 @@ body.window-demo{
     				width: 20px;
     				height: 20px;
 					vertical-align: text-bottom;
+					position: absolute;
+				}
+				img{
+					width: 100%;
+					height: 100%;
 					position: absolute;
 				}
 			}
@@ -1191,6 +1204,13 @@ body.window-demo{
 			width: 100%;
 			height: calc(100% - 88px);
 		}
+		.white-board{
+			width: 100%;
+			height: calc(100% - 88px);
+			background-color: white;
+			position: relative;
+			z-index: 11111;
+		}
 		.mini-wraper{
 			min-width: 340px;
 			min-height: 68px;
@@ -1202,6 +1222,7 @@ body.window-demo{
 			height: 68px;
 			margin-right: 10px;
 			position: relative;
+			overflow: hidden;
 			.small-name{
 				position: absolute;
 				width: 100%;
@@ -1222,6 +1243,11 @@ body.window-demo{
 				width: 20px;
 				height: 20px;
 				vertical-align: text-bottom;
+				position: absolute;
+			}
+			img{
+				width: 100%;
+				height: 100%;
 				position: absolute;
 			}
 		}
