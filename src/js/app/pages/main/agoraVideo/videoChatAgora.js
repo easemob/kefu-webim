@@ -227,8 +227,8 @@ function _init(){
 	utils.on($(".toggle-huang-agora"), "click", function(){
 		_closeVideo();
 	});
-	// 共享桌面灰度，集成端共享桌面按钮先隐藏
-	if(!profile.grayList.shareDesktop || $("body").hasClass("window-demo")){
+	// 共享桌面灰度，集成端 手机端共享桌面按钮先隐藏
+	if(!profile.grayList.shareDesktop || $("body").hasClass("window-demo") || utils.isMobile){
 		$('.foot>.desktop-share-agora').addClass("hide");
 	}
 	// 白板灰度

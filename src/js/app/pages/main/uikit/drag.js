@@ -41,6 +41,35 @@ function myPlugin(options,isVideo) {
 			$(settings.parentdraf).css({ 'left': mouseX + 'px', 'top': mouseY + 'px', 'margin-left': '0px', 'margin-top': '0px', 'position': 'fixed' });
 		};
 	};
+	// 移动端
+	$(settings.draftin).on('touchstart', dragmove);
+	function dragmove(event) {
+		event = event || window.event;
+		event = event.originalEvent.targetTouches && event.originalEvent.targetTouches[0];
+		var disX = (event && event.pageX) - $(settings.parentdraf).offset().left;
+		var disY = (event && event.pageY) - $(settings.parentdraf).offset().top;
+		$doc.on('touchmove', move);
+		function move(event) {
+			event.stopPropagation();
+			event = event || window.event;
+			event = event.originalEvent && event.originalEvent.targetTouches[0];
+			var mouseX = event.pageX - disX;
+			var mouseY = event.pageY - disY;
+			var maxX = document.documentElement.clientWidth - $(settings.parentdraf).outerWidth(),
+				maxY = document.documentElement.clientHeight - $(settings.parentdraf).outerHeight();
+			if (mouseX < 0) {
+				mouseX = 0;
+			} else if (mouseX > maxX) {
+				mouseX = maxX;
+			}
+			if (mouseY < 0) {
+				mouseY = 0;
+			} else if (mouseY > maxY) {
+				mouseY = maxY;
+			}
+			$(settings.parentdraf).css({ 'left': mouseX + 'px', 'top': mouseY + 'px', 'margin-left': '0px', 'margin-top': '0px', 'position': 'fixed' });
+		};
+	};
 
 	/* 左边 */
 	$(settings.sizeLeft).on('mousedown', function (event) {
@@ -131,6 +160,8 @@ function myPlugin(options,isVideo) {
 	$doc.mouseup(function () {
 		$doc.off('mousedown')
 		$doc.off('mousemove')
+		$doc.off('touchstart')
+		$doc.off('touchmove')
 	});
 };
 
