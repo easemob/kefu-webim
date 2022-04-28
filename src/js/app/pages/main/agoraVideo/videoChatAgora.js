@@ -246,9 +246,13 @@ function _init(){
 			enlargeBefore.width = $(".video-agora-wrapper").width();
 			enlargeBefore.height = $(".video-agora-wrapper").height();
 			$(".video-agora-wrapper").css({ 'width': enlargeEl.width + 'px', 'height': enlargeEl.height + 'px','top':'0','left':'0','margin-left': '0px', 'margin-top': '0px','position': 'absolute' });
+			if(whiteBoardConnect){
+				dragMove.offDarg('.video-agora-wrapper');  // 禁止拖拽
+			}
 		}
 		else{
 			// 还原
+			_dragVideo();
 			$(".toggle-enlarge").addClass("icon-enlarge");
 			$(".toggle-enlarge").removeClass("icon-reduction");
 			$(".video-agora-wrapper").css({ 'width': enlargeBefore.width + 'px', 'height': enlargeBefore.height + 'px','top': enlargeBefore.top + 'px','left':enlargeBefore.left + 'px','position': 'fixed' });
@@ -259,6 +263,7 @@ function _init(){
 		$(".video-agora-wrapper").addClass("hide");
 		$(".small-video").removeClass("hide");
 		$(".small-video-box").removeClass("hide");
+		_dragIconVideo();
 	});
 	utils.on($(".small-video-box"), "mousedown", function(e){
 		var oldTim = new Date().getTime();
@@ -297,6 +302,8 @@ function _init(){
 		whiteVideo.addClass("hide");
 		// $("#white-board").empty();
 		whiteBoardConnect = false;
+		_dragVideo();
+		_dragIconVideo();
 	});
 	$('.end-button').addClass("hide");
 	_dragIconVideo();
@@ -325,7 +332,7 @@ function returnToMuti(){
 		$(".video-agora-wrapper").css({ 'width':'360px', 'height':'416px','top':'50%','left':'50%','margin-left': '-180px', 'margin-top': '-208px','position': 'absolute'  });
 	}
 	else{
-		$(".video-agora-wrapper").css({ 'width':'360px', 'height':'516px','top':'50%','left':'50%','margin-left': '-180px', 'margin-top': '-258px','position': 'absolute'  });
+		$(".video-agora-wrapper").css({ 'width':'400px', 'height':'616px','top':'50%','left':'50%','margin-left': '-180px', 'margin-top': '-308px','position': 'absolute'  });
 	}
 	$("#white-video").removeClass("visitor agent0 agent1 visitor-white agent0-white agent1-white").addClass("hide");
 	$("#white-board").addClass("hide");
@@ -1115,25 +1122,26 @@ function bigVideoEl(){
 function _dragVideo(){
 	dragMove.drag({
 		parentdraf : '.video-agora-wrapper' , // 拖拽元素父级
-		draftin : '.video-agora-wrapper .top' , // 拖拽元素
+		draftin : '.video-agora-wrapper' , // 拖拽元素
 		// sizeLeft : '.video-agora-wrapper  .barl', // 改变大小左边
 		sizeRight : '.video-agora-wrapper  .barr', // 改变大小右边
 		// sizeTop : '.video-agora-wrapper  .bart', // 改变大小上边
 		sizeBottom : '.video-agora-wrapper  .barb',  // 改变大小下边
 		sizeSkew : '.video-agora-wrapper .bar'
-	},true);
+	},utils.isMobile);
 }
 function _dragIconVideo(){
 	dragMove.drag({
 		parentdraf : '.small-video-box' , // 拖拽元素父级
 		draftin : '.small-video-box' , // 拖拽元素
-	});
+	},utils.isMobile);
 }
 function _receiveWhiteBoard(roomInfo){
 	if(roomInfo && !whiteBoardConnect){
 		if($(".toggle-enlarge").hasClass("icon-enlarge") ){
 			$(".toggle-enlarge").click();
 		}
+		dragMove.offDarg('.video-agora-wrapper');  // 禁止拖拽
 		whiteBoardInitDom(roomInfo.roomUUID,callId,"creator","cn-hz",roomInfo.roomToken,roomInfo.appIdentifier,config.tenantId,callId);
 	}
 }

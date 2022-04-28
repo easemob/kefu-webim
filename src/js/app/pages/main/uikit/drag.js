@@ -1,7 +1,8 @@
 module.exports = {
-	drag: myPlugin
+	drag: myPlugin,
+	offDarg:offDarg
 };
-function myPlugin(options,isVideo) {
+function myPlugin(options,isMobil) {
 	var $doc = $(document);
 	var defaults = {
 		parentdraf: '.J-xloginPanel', // 拖拽元素父级
@@ -16,6 +17,10 @@ function myPlugin(options,isVideo) {
 
 	/* 拖拽 */
 	$(settings.draftin).on('mousedown', dragmove);
+	// 移动端
+	if(isMobil){
+		$(settings.draftin).on('touchstart', dragmoveMobil);
+	}
 	function dragmove(event) {
 		event = event || window.event;
 		var disX = event.pageX - $(settings.parentdraf).offset().left;
@@ -41,9 +46,7 @@ function myPlugin(options,isVideo) {
 			$(settings.parentdraf).css({ 'left': mouseX + 'px', 'top': mouseY + 'px', 'margin-left': '0px', 'margin-top': '0px', 'position': 'fixed' });
 		};
 	};
-	// 移动端
-	$(settings.draftin).on('touchstart', dragmove);
-	function dragmove(event) {
+	function dragmoveMobil(event) {
 		event = event || window.event;
 		event = event.originalEvent.targetTouches && event.originalEvent.targetTouches[0];
 		var disX = (event && event.pageX) - $(settings.parentdraf).offset().left;
@@ -164,4 +167,12 @@ function myPlugin(options,isVideo) {
 		$doc.off('touchmove')
 	});
 };
+function offDarg(el){
+	if(el){
+		$(el).off('mousedown')
+		$(el).off('mousemove')
+		$(el).off('touchstart')
+		$(el).off('touchmove')
+	}
+}
 
