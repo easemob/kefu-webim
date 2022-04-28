@@ -246,13 +246,8 @@ function _init(){
 			enlargeBefore.width = $(".video-agora-wrapper").width();
 			enlargeBefore.height = $(".video-agora-wrapper").height();
 			$(".video-agora-wrapper").css({ 'width': enlargeEl.width + 'px', 'height': enlargeEl.height + 'px','top':'0','left':'0','margin-left': '0px', 'margin-top': '0px','position': 'absolute' });
-			if(whiteBoardConnect){
-				dragMove.offDarg('.video-agora-wrapper');  // 禁止拖拽
-			}
 		}
 		else{
-			// 还原
-			_dragVideo();
 			$(".toggle-enlarge").addClass("icon-enlarge");
 			$(".toggle-enlarge").removeClass("icon-reduction");
 			$(".video-agora-wrapper").css({ 'width': enlargeBefore.width + 'px', 'height': enlargeBefore.height + 'px','top': enlargeBefore.top + 'px','left':enlargeBefore.left + 'px','position': 'fixed' });
@@ -1142,6 +1137,14 @@ function _receiveWhiteBoard(roomInfo){
 			$(".toggle-enlarge").click();
 		}
 		dragMove.offDarg('.video-agora-wrapper');  // 禁止拖拽
+		dragMove.drag({
+			parentdraf : '.video-agora-wrapper' , // 拖拽元素父级
+			draftin : '.video-agora-wrapper .foot' , // 拖拽元素
+		},utils.isMobile);
+		dragMove.drag({
+			parentdraf : '.video-agora-wrapper' , // 拖拽元素父级
+			draftin : '.video-agora-wrapper .top' , // 拖拽元素
+		},utils.isMobile);
 		whiteBoardInitDom(roomInfo.roomUUID,callId,"creator","cn-hz",roomInfo.roomToken,roomInfo.appIdentifier,config.tenantId,callId);
 	}
 }
