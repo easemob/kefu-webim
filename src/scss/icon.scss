@@ -713,6 +713,8 @@
 	&:before {
 		@extend .icon-base;
 		content: "\e6ff";
+		color: #b4b4b4;
+		font-size: 27px;
 	}
 }
 .icon-white-board{
@@ -720,6 +722,14 @@
 		@extend .icon-base;
 		content: "\e6a5";
 		color: #3689f7;
+		font-size: 27px;
+	}
+}
+.icon-white-board-connect{
+	&:before {
+		@extend .icon-base;
+		content: "\e6a5";
+		color: #b4b4b4;
 		font-size: 27px;
 	}
 }

@@ -297,6 +297,10 @@ function _init(){
 		whiteVideo.addClass("hide");
 		// $("#white-board").empty();
 		whiteBoardConnect = false;
+		$(".desktop-share-agora").css({"pointer-events":"auto"});
+		$(".desktop-share-agora").removeClass("icon-desktop-selected");
+		$(".toggle-white-board-agora").css({"pointer-events":"auto"});
+		$(".toggle-white-board-agora").removeClass("icon-white-board-connect");
 		_dragVideo();
 		_dragIconVideo();
 	});
@@ -332,6 +336,11 @@ function returnToMuti(){
 	$("#white-video").removeClass("visitor agent0 agent1 visitor-white agent0-white agent1-white").addClass("hide");
 	$("#white-board").addClass("hide");
 	$("#big-video").removeClass("hide");
+	// 恢复共享 白板按钮状态
+	$(".desktop-share-agora").css({"pointer-events":"auto"});
+	$(".desktop-share-agora").removeClass("icon-desktop-selected");
+	$(".toggle-white-board-agora").css({"pointer-events":"auto"});
+	$(".toggle-white-board-agora").removeClass("icon-white-board-connect");
 }
 
 function startTimer(){
@@ -596,10 +605,11 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			// 第三方客服
 			$('#agent-video').unbind('click').bind('click',function (e){
 				if(whiteBoardConnect){
-					// creatWhiteboard.default(document.getElementById("white-video"),{uuid:"0c7c3e80bd5d11ec97cdebb70556e411",userId:"0c7c3e80bd5d11ec97cdebb70556e411",identity:"joiner",region:"cn-hz"})
 					$("#white-board").addClass("hide")
 					$("#big-video").removeClass("hide")
 					$("#white-video>img").removeClass("hide");
+					$("#white-video >.small-name").addClass("hide")
+					$("#white-video  >.toggle-microphone-state").addClass("hide");
 					whiteVideo.removeClass("visitor agent0 agent1 visitor-white agent0-white agent1-white");
 				}
 				if($(e.currentTarget).hasClass("agent-big") && !$("#visitor-video").hasClass("visitor-big")){
@@ -686,6 +696,8 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					// creatWhiteboard.default(document.getElementById("white-video"),{uuid:"0c7c3e80bd5d11ec97cdebb70556e411",userId:"0c7c3e80bd5d11ec97cdebb70556e411",identity:"joiner",region:"cn-hz"})
 					$("#white-board").addClass("hide")
 					$("#big-video").removeClass("hide")
+					$("#white-video >.small-name").addClass("hide")
+					$("#white-video  >.toggle-microphone-state").addClass("hide");
 					$("#white-video>img").removeClass("hide");
 					whiteVideo.removeClass("visitor agent0 agent1 visitor-white agent0-white agent1-white");
 				}
@@ -764,59 +776,67 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 			});
 			// 白板
 			whiteVideo.unbind('click').bind('click',function (e){
+				var whitSmallName = $("#white-video >.small-name");
+				var white_board =  $("#white-board");
+				var big_video = $("#big-video");
 				if(whiteVideo.hasClass("visitor")){
 					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("white-video");
 					whiteVideo.removeClass("visitor hide");
-					$("#white-board").removeClass("hide")
-					$("#big-video").addClass("hide")
-					$("#white-video >.small-name").html("我");
+					white_board.removeClass("hide")
+					big_video.addClass("hide")
+					whitSmallName.removeClass("hide");
+					whitSmallName.html(__("video.me"));
 					whiteState();
 				}
 				else if(whiteVideo.hasClass("agent0")){
 					userVideo0._videoTrack && userVideo0._videoTrack.play("white-video");
 					whiteVideo.removeClass("agent0 hide");
-					$("#white-board").removeClass("hide")
-					$("#big-video").addClass("hide")
-
-					$("#white-video >.small-name").html(__("chat.agent") + profile.newNickName);
+					white_board.removeClass("hide")
+					big_video.addClass("hide")
+					whitSmallName.removeClass("hide");
+					whitSmallName.html(__("chat.agent") + profile.newNickName);
 					whiteState();
 				}
 				else if(whiteVideo.hasClass("agent1")){
 					userVideo1._videoTrack && userVideo1._videoTrack.play("white-video");
 					whiteVideo.removeClass("agent1 hide");
-					$("#white-board").removeClass("hide")
-					$("#big-video").addClass("hide")
-					$("#white-video >.small-name").html(__("chat.agent") + thirdAgentName);
+					white_board.removeClass("hide")
+					big_video.addClass("hide")
+					whitSmallName.removeClass("hide");
+					whitSmallName.html(__("chat.agent") + thirdAgentName);
 					whiteState();
 				}
 				else if(whiteVideo.hasClass("visitor-white")){
 					serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("big-video");
 					$("#white-video>img").removeClass("hide");
 					whiteVideo.removeClass("visitor-white");
-					$("#white-board").addClass("hide")
-					$("#big-video").removeClass("hide")
+					white_board.addClass("hide")
+					big_video.removeClass("hide")
+					whitSmallName.addClass("hide");
 					$("#white-video  >.toggle-microphone-state").addClass("hide");
 				}
 				else if(whiteVideo.hasClass("agent0-white")){
 					userVideo0._videoTrack && userVideo0._videoTrack.play("big-video");
 					$("#white-video>img").removeClass("hide");
 					whiteVideo.removeClass("agent0-white");
-					$("#white-board").addClass("hide")
-					$("#big-video").removeClass("hide")
+					white_board.addClass("hide")
+					big_video.removeClass("hide")
+					whitSmallName.addClass("hide");
 					$("#white-video  >.toggle-microphone-state").addClass("hide");
 				}
 				else if(whiteVideo.hasClass("agent1-white")){
 					userVideo1._videoTrack && userVideo1._videoTrack.play("big-video");
 					$("#white-video>img").removeClass("hide");
 					whiteVideo.removeClass("agent1-white");
-					$("#white-board").addClass("hide")
-					$("#big-video").removeClass("hide")
+					white_board.addClass("hide")
+					big_video.removeClass("hide")
+					whitSmallName.addClass("hide");
 					$("#white-video  >.toggle-microphone-state").addClass("hide");
 				}
 				else{
 					whiteState();
-					$("#white-board").removeClass("hide")
-					$("#big-video").addClass("hide")
+					white_board.removeClass("hide")
+					big_video.addClass("hide")
 				}
 			});
 		},
@@ -1145,6 +1165,10 @@ function _receiveWhiteBoard(roomInfo){
 			parentdraf : '.video-agora-wrapper' , // 拖拽元素父级
 			draftin : '.video-agora-wrapper .top' , // 拖拽元素
 		},utils.isMobile);
+		$(".desktop-share-agora").css({"pointer-events":"none"});
+		$(".desktop-share-agora").addClass("icon-desktop-selected");
+		$(".toggle-white-board-agora").css({"pointer-events":"none"});
+		$(".toggle-white-board-agora").addClass("icon-white-board-connect");
 		whiteBoardInitDom(roomInfo.roomUUID,callId,"creator","cn-hz",roomInfo.roomToken,roomInfo.appIdentifier,config.tenantId,callId);
 	}
 }
@@ -1161,17 +1185,18 @@ function _inviteWhiteBoard(){
 	});
 }
 function whiteBoardInitDom(uuid,callId,identity,region,roomToken,appIdentifier,tenantId,callId){
+	var whiteMicrophone = $("#white-video  >.toggle-microphone-state");
 	if(bigVideoEl() === "0"){
 		serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("white-video");
 		$("#white-video").addClass("visitor-white");
-		$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
-		$("#white-video >.small-name").html("我");
+		whiteMicrophone.removeClass("icon-microphone-enable").addClass("icon-microphone-disabled");
+		$("#white-video >.small-name").html(__("video.me"));
 		if(serviceAgora.localAudioTrack._muted){
 			// 静音
-			$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
+			whiteMicrophone.removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
 		}
 		else{
-			$("#white-video  >.toggle-microphone-state").addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
+			whiteMicrophone.addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
 		}
 	}
 	else if(bigVideoEl() === "1"){
@@ -1180,10 +1205,10 @@ function whiteBoardInitDom(uuid,callId,identity,region,roomToken,appIdentifier,t
 		$("#white-video >.small-name").html(__("chat.agent") + thirdAgentName);
 		if(userVideo1._audio_muted_){
 			// 静音
-			$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
+			whiteMicrophone.removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
 		}
 		else{
-			$("#white-video  >.toggle-microphone-state").addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
+			whiteMicrophone.addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
 		}
 	}
 	else{
@@ -1192,10 +1217,10 @@ function whiteBoardInitDom(uuid,callId,identity,region,roomToken,appIdentifier,t
 		$("#white-video >.small-name").html(__("chat.agent") + profile.newNickName);
 		if(userVideo0._audio_muted_){
 			// 静音
-			$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
+			whiteMicrophone.removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
 		}
 		else{
-			$("#white-video  >.toggle-microphone-state").addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
+			whiteMicrophone.addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
 		}
 	}
 	if($("#white-board").hasClass("hide")){
@@ -1209,42 +1234,44 @@ function whiteBoardInitDom(uuid,callId,identity,region,roomToken,appIdentifier,t
 	}
 }
 function whiteState(){
+	var whiteVideo = $("#white-video");
+	var whiteMicrophone = $("#white-video  >.toggle-microphone-state");
 	$("#white-video>img").addClass("hide");
-	$("#white-video").removeClass("visitor agent0 agent1");
+	whiteVideo.removeClass("visitor agent0 agent1");
 	if(bigVideoEl() === "0"){
 		serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("white-video");
-		$("#white-video").addClass("visitor-white");
-		$("#white-video >.small-name").html("我");
+		whiteVideo.addClass("visitor-white");
+		$("#white-video >.small-name").html(__("video.me"));
 		if(serviceAgora.localAudioTrack._muted){
 			// 静音
-			$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
+			whiteMicrophone.removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
 		}
 		else{
-			$("#white-video  >.toggle-microphone-state").addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
+			whiteMicrophone.addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
 		}
 	}
 	else if(bigVideoEl() === "1"){
 		userVideo1._videoTrack && userVideo1._videoTrack.play("white-video");
-		$("#white-video").addClass("agent1-white");
+		whiteVideo.addClass("agent1-white");
 		$("#white-video >.small-name").html(__("chat.agent")+ thirdAgentName);
 		if(userVideo1._audio_muted_){
 			// 静音
-			$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
+			whiteMicrophone.removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
 		}
 		else{
-			$("#white-video  >.toggle-microphone-state").addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
+			whiteMicrophone.addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
 		}
 	}
 	else{
 		userVideo0._videoTrack && userVideo0._videoTrack.play("white-video");
-		$("#white-video").addClass("agent0-white");
+		whiteVideo.addClass("agent0-white");
 		$("#white-video >.small-name").html(__("chat.agent") + profile.newNickName);
 		if(userVideo0._audio_muted_){
 			// 静音
-			$("#white-video  >.toggle-microphone-state").removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
+			whiteMicrophone.removeClass("icon-microphone-enable hide").addClass("icon-microphone-disabled");
 		}
 		else{
-			$("#white-video  >.toggle-microphone-state").addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
+			whiteMicrophone.addClass("icon-microphone-enable").removeClass("icon-microphone-disabled hide");
 		}
 	}
 }
