@@ -39,7 +39,7 @@ DEFAULT_CONFIG = {
 	staticPath: "",
 	buttonText: __("common.contact_agent"),
 	dialogWidth: "360px",
-	dialogHeight: "550px",
+	dialogHeight: "650px",
 	dragenable: true,
 	minimum: true,
 	soundReminder: true,
