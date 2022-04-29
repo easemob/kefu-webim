@@ -181,12 +181,15 @@ body.window-demo{
 	.video-agora-wrapper {
 		width: 360px;
 		height: 416px;
+		// width: 360px;
+		// height: 570px;
 		z-index:1000;
 		position: absolute;
 		left: 50%;
 		top: 50%;
 		margin-left: -180px; 
 		margin-top: -208px; 
+		// margin-top: -285px; 
 		background-color: #fff;
 		border-radius: 5px;
 		box-shadow: 0px 10px 20px 0 rgba(0, 0, 0, 0.3);
@@ -369,7 +372,7 @@ body.window-demo{
 				span{
 					font-size: 12px;
 					color: white;
-					background: rgba(0, 0, 0, 0.75);
+					background: rgba(0, 0, 0, 0.5);
 					padding: 2px 5px;
 					display: inline-block;
 					word-break: keep-all;
@@ -975,8 +978,8 @@ body.window-demo{
 	}
 }
 .video-agora-wrapper {
-	width: 400px;
-	height: 616px;
+	width: 370px;
+	height: 580px;
 	z-index:1000;
 	position: absolute;
 	// left: 0;
@@ -1269,7 +1272,7 @@ body.window-demo{
 			span{
 				font-size: 12px;
 				color: white;
-				background: rgba(0, 0, 0, 0.75);
+				background: rgba(0, 0, 0, 0.5);
 				padding: 2px 5px;
 				display: inline-block;
 				word-break: keep-all;
