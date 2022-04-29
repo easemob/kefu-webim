@@ -179,17 +179,17 @@ body.window-demo{
 		border-radius: unset;
 	}
 	.video-agora-wrapper {
-		width: 360px;
-		height: 416px;
 		// width: 360px;
-		// height: 570px;
+		// height: 416px;
+		width: 360px;
+		height: 570px;
 		z-index:1000;
 		position: absolute;
 		left: 50%;
 		top: 50%;
 		margin-left: -180px; 
-		margin-top: -208px; 
-		// margin-top: -285px; 
+		// margin-top: -208px; 
+		margin-top: -285px; 
 		background-color: #fff;
 		border-radius: 5px;
 		box-shadow: 0px 10px 20px 0 rgba(0, 0, 0, 0.3);
