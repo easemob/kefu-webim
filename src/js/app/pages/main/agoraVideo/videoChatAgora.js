@@ -301,6 +301,7 @@ function _init(){
 		$(".desktop-share-agora").removeClass("icon-desktop-selected");
 		$(".toggle-white-board-agora").css({"pointer-events":"auto"});
 		$(".toggle-white-board-agora").removeClass("icon-white-board-connect");
+		$(".nickNameWraper").removeClass("hide");
 		_dragVideo();
 		_dragIconVideo();
 	});
@@ -813,6 +814,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					white_board.addClass("hide")
 					big_video.removeClass("hide")
 					whitSmallName.addClass("hide");
+					$(".nickNameWraper").removeClass("hide");
 					$("#white-video  >.toggle-microphone-state").addClass("hide");
 				}
 				else if(whiteVideo.hasClass("agent0-white")){
@@ -822,6 +824,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					white_board.addClass("hide")
 					big_video.removeClass("hide")
 					whitSmallName.addClass("hide");
+					$(".nickNameWraper").removeClass("hide");
 					$("#white-video  >.toggle-microphone-state").addClass("hide");
 				}
 				else if(whiteVideo.hasClass("agent1-white")){
@@ -831,6 +834,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 					white_board.addClass("hide")
 					big_video.removeClass("hide")
 					whitSmallName.addClass("hide");
+					$(".nickNameWraper").removeClass("hide");
 					$("#white-video  >.toggle-microphone-state").addClass("hide");
 				}
 				else{
@@ -1227,6 +1231,7 @@ function whiteBoardInitDom(uuid,callId,identity,region,roomToken,appIdentifier,t
 		$("#white-board").removeClass("hide")
 		$("#white-video").removeClass("hide");
 		$("#big-video").addClass("hide");
+		$(".nickNameWraper").addClass("hide");
         // const {uuid, userId, identity,region,roomToken,appIdentifier,tenantId,callId} = this.props;
 
 		creatWhiteboard.creatWhiteboard(document.getElementById("white-board"),{uuid:uuid,userId:callId,identity:identity,region:region,roomToken:roomToken,appIdentifier:appIdentifier,tenantId:tenantId,callId:callId,language:__("config.language"),floatBar:!utils.isMobile})
