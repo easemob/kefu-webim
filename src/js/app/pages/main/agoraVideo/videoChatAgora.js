@@ -1229,7 +1229,7 @@ function whiteBoardInitDom(uuid,callId,identity,region,roomToken,appIdentifier,t
 		$("#big-video").addClass("hide");
         // const {uuid, userId, identity,region,roomToken,appIdentifier,tenantId,callId} = this.props;
 
-		creatWhiteboard.creatWhiteboard(document.getElementById("white-board"),{uuid:uuid,userId:callId,identity:identity,region:region,roomToken:roomToken,appIdentifier:appIdentifier,tenantId:tenantId,callId:callId,language:__("config.language")})
+		creatWhiteboard.creatWhiteboard(document.getElementById("white-board"),{uuid:uuid,userId:callId,identity:identity,region:region,roomToken:roomToken,appIdentifier:appIdentifier,tenantId:tenantId,callId:callId,language:__("config.language"),floatBar:!utils.isMobile})
 		whiteBoardConnect = true;
 	}
 }
