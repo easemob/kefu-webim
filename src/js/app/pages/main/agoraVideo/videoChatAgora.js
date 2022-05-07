@@ -1243,6 +1243,7 @@ function whiteState(){
 	var whiteMicrophone = $("#white-video  >.toggle-microphone-state");
 	$("#white-video>img").addClass("hide");
 	whiteVideo.removeClass("visitor agent0 agent1");
+	$(".nickNameWraper").addClass("hide");
 	if(bigVideoEl() === "0"){
 		serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("white-video");
 		whiteVideo.addClass("visitor-white");
