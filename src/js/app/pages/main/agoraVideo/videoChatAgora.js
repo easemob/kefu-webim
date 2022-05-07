@@ -693,6 +693,7 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 
 			// 访客的视频
 			$('#visitor-video').unbind('click').bind('click',function (e){
+				$(".nickNameWraper").removeClass("hide");
 				if(whiteBoardConnect){
 					// creatWhiteboard.default(document.getElementById("white-video"),{uuid:"0c7c3e80bd5d11ec97cdebb70556e411",userId:"0c7c3e80bd5d11ec97cdebb70556e411",identity:"joiner",region:"cn-hz"})
 					$("#white-board").addClass("hide")
@@ -1244,6 +1245,7 @@ function whiteState(){
 	$("#white-video>img").addClass("hide");
 	whiteVideo.removeClass("visitor agent0 agent1");
 	$(".nickNameWraper").addClass("hide");
+	$("#white-video >.small-name").removeClass("hide");
 	if(bigVideoEl() === "0"){
 		serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.play("white-video");
 		whiteVideo.addClass("visitor-white");
