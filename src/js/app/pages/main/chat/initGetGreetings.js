@@ -27,6 +27,7 @@ function htmlDecodeByRegExp(str){
 	temp = temp.replace(/&nbsp;/g, " ");
 	temp = temp.replace(/&#39;/g, "'");
 	temp = temp.replace(/&quot;/g, "\"");
+	temp = translate(temp);  //处理后端多次转义
 	return temp;
 }
 function htmlDecodeByRegExp2(str){
@@ -38,7 +39,7 @@ function htmlDecodeByRegExp2(str){
 	temp = temp.replace(/&amp;amp;amp;#39;|&amp;amp;#39;|＆amp;#39;/g, "'");
 	temp = temp.replace(/&amp;amp;quot;|&amp;quot;/g, "\"");
 
-	temp = translate(temp)
+	temp = translate(temp);//处理后端多次转义
 	return temp;
 }
 function translate(val) {
