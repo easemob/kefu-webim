@@ -38,7 +38,11 @@ function htmlDecodeByRegExp2(str){
 	temp = temp.replace(/&amp;amp;amp;#39;|&amp;amp;#39;|＆amp;#39;/g, "'");
 	temp = temp.replace(/&amp;amp;quot;|&amp;quot;/g, "\"");
 
+	temp = translate(temp)
 	return temp;
+}
+function translate(val) {
+	return $("<div>"+ val +"</div>").text()
 }
 function _getGreetings(officialAccount){
 	if(officialAccount !== profile.systemOfficialAccount) return;
@@ -65,6 +69,7 @@ function _getGreetings(officialAccount){
 			type: "txt",
 			noPrompt: true
 		});
+
 		// 机器人欢迎语
 		
 		switch(greetingTextType){
