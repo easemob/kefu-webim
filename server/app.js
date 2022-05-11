@@ -6,13 +6,35 @@ const program = require("commander");
 const https = require("https");
 const http = require("http");
 const debug = require("debug");
+const os = require('os')
 
+/**
+ * 获取当前机器的ip地址
+ */
+function getIpAddress() {
+  var interfaces=os.networkInterfaces()
+
+  for (var dev in interfaces) {
+    let iface = interfaces[dev]
+
+    for (let i = 0; i < iface.length; i++) {
+      let {family, address, internal} = iface[i]
+
+      if (family === 'IPv4' && address !== '127.0.0.1' && !internal) {
+        return address
+      }
+    }
+  }
+}
+
+const ipAddress = getIpAddress()
+console.log("ipAddress", ipAddress)
 const DEFAULT_PORT = 8008;
 // const DEFAULT_DOMAIN = "sandbox.kefu.easemob.com";
 // const DEFAULT_DOMAIN = "metlife-kefuim.easemob.com";
-const DEFAULT_DOMAIN = "kefuim-uat.metlife.com.cn"; // 大都会 uat环境
-// const DEFAULT_DOMAIN = "ddim-bau.metlife.com.cn"; // 大都会 bau环境
-// const DEFAULT_DOMAIN = "opsim-uat.metlife.com.cn";
+const DEFAULT_DOMAIN = "kefuim-uat.metlife.com.cn"; // 大都会 uat环境//218.97.57.168
+// const DEFAULT_DOMAIN = "ddim-bau.metlife.com.cn"; // 大都会 bau环境//218.97.57.157
+// const DEFAULT_DOMAIN = "opsim-uat.metlife.com.cn";//218.97.57.168
 // http://localhost:8008/webim/im.html?configId=6b3b9442-a44a-4bba-aae4-e4b2e250700f&menutype=1
 
 const DEFAULT_SERVER = `http://${DEFAULT_DOMAIN}`;
@@ -80,7 +102,7 @@ console.log(`backend: ${target}`);
 http.createServer(app)
 .listen(port, () => console.log(`
 http SERVER running @:
-http://localhost:${port}${SLASH_KEY_PATH}/webim/demo.html
+http://${ipAddress}:${port}${SLASH_KEY_PATH}/webim/demo.html
 `));
 
 // https server
@@ -90,5 +112,5 @@ https.createServer({
 }, app)
 .listen(port + 1, () => console.log(`
 https SERVER running @:
-https://localhost:${port+1}${SLASH_KEY_PATH}/webim/demo.html
+https://${ipAddress}:${port+1}${SLASH_KEY_PATH}/webim/demo.html
 `));

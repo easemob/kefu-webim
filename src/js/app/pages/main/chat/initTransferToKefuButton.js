@@ -42,14 +42,26 @@ function _displayOrHideTransferToKefuBtn(officialAccount){
 	}
 	else if(state === _const.SESSION_STATE.PROCESSING){
 		utils.toggleClass(toKefuBtn, "hide", !isRobotAgent);
+		utils.toggleClass(document.querySelector(".toolbar"), "hide", isRobotAgent);
+		utils.toggleClass(document.querySelector(".em-widget-send"), "toolbarhidemode", isRobotAgent);
+		utils.toggleClass(document.querySelector(".em-widget-send-wrapper"), "toolbarhidemode", isRobotAgent);
+		utils.toggleClass(document.querySelector(".chat-wrapper"), "toolbarhidemode", isRobotAgent);
 	}
 	else if(state === _const.SESSION_STATE.WAIT){
 		// 待接入状态 隐藏按钮
 		utils.addClass(toKefuBtn, "hide");
+		utils.addClass(document.querySelector(".toolbar"), "hide");
+		utils.addClass(document.querySelector(".em-widget-send"), "toolbarhidemode");
+		utils.addClass(document.querySelector(".em-widget-send-wrapper"), "toolbarhidemode");
+		utils.addClass(document.querySelector(".chat-wrapper"), "toolbarhidemode");
 	}
 	else{
 		apiHelper.getRobertIsOpen().then(function(isRobotEnable){
 			utils.toggleClass(toKefuBtn, "hide", !isRobotEnable);
+			utils.toggleClass(document.querySelector(".toolbar"), "hide", isRobotEnable);
+			utils.toggleClass(document.querySelector(".em-widget-send"), "toolbarhidemode", isRobotEnable);
+			utils.toggleClass(document.querySelector(".em-widget-send-wrapper"), "toolbarhidemode", isRobotEnable);
+			utils.toggleClass(document.querySelector(".chat-wrapper"), "toolbarhidemode", isRobotEnable);
 		});
 	}
 }

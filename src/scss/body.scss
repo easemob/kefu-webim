@@ -70,7 +70,9 @@ body.big-window-h5{
 	}
 }
 /* 消息窗 */
-
+.chat-wrapper.toolbarhidemode{
+	bottom: 110px;
+}
 .chat-wrapper {
 	position: absolute;
 	top: 0;
