@@ -13,6 +13,7 @@ function h5_mode_init(){
 	config.pageCode = utils.query("pageCode");
 	config.customerId = utils.query("customerId");
 	config.isVipTsr = utils.query("isVipTsr");
+	config.weChatEntryType = utils.query("weChatEntryType");
 	// // 新加参数 --- 开始
 	// config.visitorName = utils.query("visitorName");
 	// config.cardNumber = utils.query("cardNumber");

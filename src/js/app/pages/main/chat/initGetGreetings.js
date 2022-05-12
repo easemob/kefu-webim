@@ -4,6 +4,7 @@ var eventListener = require("@/app/tools/eventListener");
 var apiHelper = require("../apis");
 var channel = require("../channel");
 var commonConfig = require("@/common/config");
+var utils = require("@/common/utils");
 
 module.exports = function(){
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _getGreetings);
@@ -13,11 +14,28 @@ module.exports = function(){
 function _getGreetings(officialAccount){
 	if(officialAccount !== profile.systemOfficialAccount) return;
 	if(officialAccount.isSessionOpen) return;
+	var username = utils.getDataByPath(commonConfig.getConfig(), "user.username");
+	var weChatEntryType = utils.getDataByPath(commonConfig.getConfig(), "weChatEntryType");
 	Promise.all([
 		apiHelper.getSystemGreeting(),
 		apiHelper.getRobertGreeting(),
 		apiHelper.getSkillgroupMenu(),
 	]).then(function(result){
+		weChatEntryType && apiHelper.getrobotDirection(username, weChatEntryType).then(function(res){
+			var robotDirection = res;
+			console.log('[robotDirection]', robotDirection);
+			robotDirection && channel.handleMessage({
+				data: robotDirection,
+				// data: {
+				// 	title:"aaa",
+				// 	list:['aa','bb'],
+				// 	footer:"aaa"
+				// },
+			}, { 
+				type: "robotDirectionlist",
+				noPrompt: true
+			});
+		})
 		// console.log(999, result)
 		var systemGreetingText = result[0];
 		var robotGreetingObj = result[1];

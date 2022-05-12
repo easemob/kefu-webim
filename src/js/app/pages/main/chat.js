@@ -547,7 +547,12 @@ function _bindEvents(){
 			});
 		}
 	});
-
+	utils.live("button.js_robotdirection", "click", function(e){
+		if(!utils.hasClass(e.target, "disabled")){
+			var text = this.innerText.substr(this.innerText.indexOf("、")+1)
+			channel.sendText(text);
+		}
+	});
 	// 机器人关联规则列表
 	utils.live("button.js_robotRelateListbtn", "click", function(e){
 		var menuData;

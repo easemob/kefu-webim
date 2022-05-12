@@ -695,6 +695,37 @@ function _handleMessage(msg, options){
 			[targetOfficialAccount, inviteId, serviceSessionId, msgId]
 		);
 		break;
+	case "robotDirectionlist":
+		console.log('')
+		// 如果取不到，就默认 true 打开菜单
+		// 这个 service_session 对象，对于欢迎语类的消息，是没有的
+		// serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
+		message = msg.data;
+		message.type = "list";
+		message.subtype = "robotDirectionList";
+		// message.subtype = robotList;
+		message.list = "<div class=\"em-btn-list\">"
+			+ (_.map(msg.data.items, function(item){
+				// var id = item.id;
+				// var label = item.name;
+				// var className = "js_robotbtn ";
+				// // 为以后转人工按钮样式调整做准备
+				// if(item.id === "TransferToKf"){
+				// 	className += "bg-hover-color";
+				// }
+				// else{
+				// 	className += "bg-hover-color";
+				// }
+				return "<button "
+				+ "class=\"js_robotdirection bg-hover-color \""
+				// + "data-id=\"" + item.id + "\" "
+				+ ">" + item + "</button>";
+			}).join("") || "")
+			+ "</div>"
+			+"<p>"+msg.data.prompt+"</p>";
+		message.data = msg.data.title;
+		message.brief = __("message_brief.menu");
+		break
 	case "robotList":
 		// 如果取不到，就默认 true 打开菜单
 		// 这个 service_session 对象，对于欢迎语类的消息，是没有的
@@ -1209,6 +1240,7 @@ function _handleSystemEvent(event, eventObj, msg){
 	var officialAccountId = utils.getDataByPath(msg, "ext.weichat.official_account.official_account_id");
 	var officialAccount = _getOfficialAccountById(officialAccountId);
 	var agentType = utils.getDataByPath(msg, "ext.weichat.event.eventObj.agentType");
+	console.log('[event]',event);
 
 	// 系统消息上屏
 	if(eventMessageText && !isSessionOpenEvent){

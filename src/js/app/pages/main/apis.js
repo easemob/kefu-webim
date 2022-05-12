@@ -1107,6 +1107,46 @@ function getStatisfyYes(robotAgentId, satisfactionCommentKey){
 		});
 	});
 }
+
+function getrobotDirection(visitorId, weChatEntryType){
+	return new Promise(function(resolve, reject){
+		emajax({
+			url: "/v1/robot/integration/tenants/" + config.tenantId + "/visitors/"+ visitorId +"/robotDirection",
+			data: {
+				channelType: weChatEntryType,
+			},
+			type: "POST",
+			success: function(resp){
+				var parsed;
+
+				try{
+					parsed = JSON.parse(resp);
+				}
+				catch(e){}
+
+				if((parsed && parsed.status) === "OK"){
+					// var data = parsed.entity.content.split("\r\n")
+					// var title = data.shift()
+					// var footer = data.pop()
+					// var list = data
+					// resolve({
+					// 	title:title,
+					// 	list:list,
+					// 	footer:footer
+					// });
+					var data = parsed.entity.director;
+					resolve(data)
+				}
+				else{
+					reject(parsed);
+				}
+			},
+			error: function(e){
+				reject(e);
+			}
+		});
+	});
+}
 function getStatisfyNo(robotAgentId, satisfactionCommentKey){
 	return new Promise(function(resolve, reject){
 		emajax({
@@ -1502,6 +1542,7 @@ module.exports = {
 	getGuessList: getGuessList,
 
 	getStatisfyYes: getStatisfyYes,
+	getrobotDirection: getrobotDirection,
 	getStatisfyNo: getStatisfyNo,
 	newStatisfy: newStatisfy,
 	getSatisfactionCommentTags: getSatisfactionCommentTags,
