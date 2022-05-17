@@ -269,6 +269,7 @@ function _sendText(message, ext){
 	}
 	_setExt(msg);
 	_appendAck(msg, id);
+	msg.body.ext.weichat.official_account = null;
 	conn.send(msg.body);
 	sendMsgDict.set(id, msg);
 	_detectSendTextMsgByApi(id);

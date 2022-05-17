@@ -915,6 +915,7 @@ function _onConfirm(){
 		ext: {
 			// type: "rtcmedia/video",
 			type: "agorartcmedia/video",
+			targetSystem:"kefurtc",
 			msgtype: {
 				liveStreamInvitation: {
 					msg: __("video.invite_agent_video"),
