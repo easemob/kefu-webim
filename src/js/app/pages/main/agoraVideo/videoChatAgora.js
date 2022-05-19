@@ -993,20 +993,21 @@ function _onAgentInviteCancel(){
 }
 
 function _onConfirmExitvideo(){
-	channel.sendText(__("video.invite_exit_video"), {
-		ext: {
-			type: "rtcmedia/video",
-			msgtype: {
-				visitorCancelInvitation: {
-					msg: __("video.invite_exit_video"),
-					callId:callId,
-				},
-			},
-		},
-	});
+	// channel.sendText(__("video.invite_exit_video"), {
+	// 	ext: {
+	// 		type: "rtcmedia/video",
+	// 		msgtype: {
+	// 			visitorCancelInvitation: {
+	// 				msg: __("video.invite_exit_video"),
+	// 				callId:callId,
+	// 			},
+	// 		},
+	// 	},
+	// });
 	channel.sendCmdExitVideo(null,{
 		ext: {
 			type: "agorartcmedia/video",
+			targetSystem:"kefurtc",
 			msgtype: {
 				visitorCancelInvitation:{
 					callId:null
