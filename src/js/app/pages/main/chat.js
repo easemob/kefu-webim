@@ -549,7 +549,7 @@ function _bindEvents(){
 	});
 	utils.live("button.js_robotdirection", "click", function(e){
 		if(!utils.hasClass(e.target, "disabled")){
-			var text = this.innerText.substr(this.innerText.indexOf("、")+1)
+			var text = this.innerText
 			channel.sendText(text);
 		}
 	});

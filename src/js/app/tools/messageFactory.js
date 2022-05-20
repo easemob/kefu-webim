@@ -101,7 +101,7 @@ function genMsgContent(msg){
 		else{
 			value = textParser.parse(value);
 			value = _.map(value, function(fragment){ return fragment.value; }).join("");
-			html = "<p>" + value + "</p>" + msg.list;
+			html = (value ? ("<p>" + value + "</p>") : "") + msg.list;
 			break;
 		}
 

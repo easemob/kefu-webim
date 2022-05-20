@@ -37,8 +37,8 @@ const DEFAULT_DOMAIN = "kefuim-uat.metlife.com.cn"; // 大都会 uat环境//218.
 // const DEFAULT_DOMAIN = "opsim-uat.metlife.com.cn";//218.97.57.168
 // http://localhost:8008/webim/im.html?configId=6b3b9442-a44a-4bba-aae4-e4b2e250700f&menutype=1
 
-const DEFAULT_SERVER = `http://${DEFAULT_DOMAIN}`;
-// const DEFAULT_SERVER = `https://${DEFAULT_DOMAIN}`; // 只有在 bau 环境 https 才放开！！！
+// const DEFAULT_SERVER = `http://${DEFAULT_DOMAIN}`;
+const DEFAULT_SERVER = `https://${DEFAULT_DOMAIN}`; // 只有在 bau 环境 https 才放开！！！
 
 // package 中的 KEY_PATH 必须填，当活文档
 const KEY_PATH = process.env.KEY_PATH;		// 默认 "webim"
@@ -88,7 +88,7 @@ app.use((req, res, next) => {
 		logProxy(pathname);
 		req.url = req.url.replace(SLASH_KEY_PATH, "");
 		// 增加代理域名（只有在 bau 环境 https 才放开！！！）
-		// req.headers.host = DEFAULT_DOMAIN
+		req.headers.host = DEFAULT_DOMAIN
 		proxy.web(req, res, { target }, next);
 	}
 	else{
@@ -102,7 +102,7 @@ console.log(`backend: ${target}`);
 http.createServer(app)
 .listen(port, () => console.log(`
 http SERVER running @:
-http://${ipAddress}:${port}${SLASH_KEY_PATH}/webim/demo.html
+http://localhost:${port}${SLASH_KEY_PATH}/webim/demo.html
 `));
 
 // https server
@@ -112,5 +112,5 @@ https.createServer({
 }, app)
 .listen(port + 1, () => console.log(`
 https SERVER running @:
-https://${ipAddress}:${port+1}${SLASH_KEY_PATH}/webim/demo.html
+https://localhost:${port+1}${SLASH_KEY_PATH}/webim/demo.html
 `));

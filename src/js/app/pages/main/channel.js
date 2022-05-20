@@ -465,11 +465,12 @@ function _handleMessage(msg, options){
 	// 需要判断：收到的 choice 显示为菜单，发出的 choice 渲染为文本消息
 	else if(
 		isReceived
-		&& utils.getDataByPath(msg, "ext.msgtype.choice.title")
+		// && utils.getDataByPath(msg, "ext.msgtype.choice.title")
 		&& utils.getDataByPath(msg, "ext.msgtype.choice.items")
 		&& !utils.getDataByPath(msg, "ext.msgtype.choice.mode")
 	){
 		type = "robotList";
+		msg.ext.msgtype.choice.title = msg.ext.msgtype.choice.title|| ""
 	}
 	// 待接入超时转留言
 	else if(
