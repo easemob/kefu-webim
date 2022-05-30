@@ -470,7 +470,9 @@ function _handleMessage(msg, options){
 		&& !utils.getDataByPath(msg, "ext.msgtype.choice.mode")
 	){
 		type = "robotList";
-		msg.ext.msgtype.choice.title = msg.ext.msgtype.choice.title|| ""
+		// msg.ext.msgtype.choice.title = msg.ext.msgtype.choice.title|| ""
+		msg.ext.msgtype.choice.title = utils.getDataByPath(msg, "ext.msgtype.choice.title") || "";
+		msg.ext.msgtype.choice.foot = utils.getDataByPath(msg, "ext.msgtype.choice.foot") || "";
 	}
 	// 待接入超时转留言
 	else if(
@@ -735,7 +737,7 @@ function _handleMessage(msg, options){
 		message.type = "list";
 		message.subtype = type;
 		message.list = "<div class=\"em-btn-list\">"
-			+ _.map(msg.ext.msgtype.choice.items, function(item){
+			+ (_.map(msg.ext.msgtype.choice.items, function(item){
 				// var id = item.id;
 				// var label = item.name;
 				// var className = "js_robotbtn ";
@@ -750,9 +752,10 @@ function _handleMessage(msg, options){
 				+ "class=\"js_robotbtn bg-hover-color " + (profile.shouldMsgActivated(serviceSessionId) ? "" : "disabled") + "\" "
 				+ "data-id=\"" + item.id + "\" "
 				+ ">" + item.name + "</button>";
-			}).join("") || ""
+			}).join("") || "")
 			+ "</div>";
 		message.data = msg.ext.msgtype.choice.title;
+		message.foot = msg.ext.msgtype.choice.foot;
 		message.brief = __("message_brief.menu");
 		break;
 	case "transferManualGuide":
@@ -930,9 +933,11 @@ function _handleMessage(msg, options){
 	// 消息上屏
 	var transferData = utils.getDataByPath(message, "brief") || ''
 	var istransfer = transferData.indexOf('[acs]转人工[/acs]') != -1;
+	var content = ""
 	if(istransfer){
+		content = transferData.split("[acs]")[0]
 		_appendMsg({
-			data: '<p>本次会话即将结束，是否需要接通专家咨询？</p>'+
+			data: '<p>' + content + '</p>'+
 			'<div class="em-btn-list">'+
 				'<button class="js_transfertokefu bg-hover-color">转接人工</button>' +
 			'</div>',

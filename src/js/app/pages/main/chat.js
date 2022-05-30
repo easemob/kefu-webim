@@ -741,9 +741,11 @@ function _bindEvents(){
 		}
 		apiHelper.newStatisfy(para).then(function(resp){
 			var istransfer = resp.indexOf('[acs]转人工[/acs]') != -1;
+			var content = ""
 			if(istransfer){
+				content = resp.split("[acs]")[0]
 				channel.appendMsg({
-					data: '<p>本次会话即将结束，是否需要接通专家咨询？</p>'+
+					data: '<p>' + content + '</p>'+
 					'<div class="em-btn-list">'+
 						'<button class="js_transfertokefu bg-hover-color">转接人工</button>' +
 					'</div>',

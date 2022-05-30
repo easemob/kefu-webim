@@ -11,6 +11,7 @@ var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easem
 // channel.js 放着消息列表的构建，是不对的
 function genMsgContent(msg){
 	// console.log('genMsgContent', msg)
+	var foot = utils.getDataByPath(msg, "foot");
 	var type = msg.type;
 	var value = msg.data;
 	var laiye = msg.laiye;
@@ -91,17 +92,19 @@ function genMsgContent(msg){
 			html = "<span class=\"text\">";
 			html += value;
 			html += "</span>";
-			html += msg.list;
+			html += msg.list + (foot ? ("<p>" + foot + "</p>") : "");
 			break;
 		}
 		else if(laiye){
-			html = "<p>" + value + "</p>" + msg.list;
+			html = "<p>" + value + "</p>" + msg.list + (foot ? ("<p>" + foot + "</p>") : "");;
 			break;
 		}
 		else{
 			value = textParser.parse(value);
 			value = _.map(value, function(fragment){ return fragment.value; }).join("");
-			html = (value ? ("<p>" + value + "</p>") : "") + msg.list;
+			foot = textParser.parse(foot);
+			foot = _.map(foot, function(fragment){ return fragment.value; }).join("");
+			html = (value ? ("<p>" + value + "</p>") : "") + msg.list + (foot ? ("<p>" + foot + "</p>") : "");
 			break;
 		}
 
