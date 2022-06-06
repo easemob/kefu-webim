@@ -334,10 +334,15 @@ function _confirm(){
 		if (satisfactionId) {
 			// 官微租户满意度评价 - 修改
 			apiHelper.satisfactionEdit(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', datas, satisfactionId).then(function(res) {
+				utils.addClass(document.body.querySelector("button.js_satisfybtn[data-messageid='"+msgId+"']"), "disabled");
+				document.body.querySelector("button.js_satisfybtn[data-messageid='"+msgId+"']").style = "background-color: #ccc !important; cursor:not-allowed;color: #000 !important;";
+				
 			});
 		} else {
 			// 官微租户满意度评价 - 保存
 			apiHelper.satisfactionSave(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', datas).then(function(res) {
+				utils.addClass(document.body.querySelector("button.js_satisfybtn[data-messageid='"+msgId+"']"), "disabled");
+				document.body.querySelector("button.js_satisfybtn[data-messageid='"+msgId+"']").style = "background-color: #ccc !important; cursor:not-allowed;color: #000 !important;";
 			});
 		}
 
@@ -348,7 +353,7 @@ function _confirm(){
 		apiHelper.updateMsgBody(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '', msgId, paramsData).then(function(res) {
 		});
 		// 为了获取禁用【立即评价】按钮的状态，需要刷新页面
-		location.reload();
+		// location.reload();
 	}
 
 	_sendSatisfaction(score, content, session, invite, appraiseTags, resolutionParam, evaluationDegreeId);

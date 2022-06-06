@@ -655,7 +655,12 @@ function _bindEvents(){
 
 
 	// 满意度评价
-	utils.live("button.js_satisfybtn", "click", function(){
+	utils.live("button.js_satisfybtn", "click", function(e){
+		if(utils.hasClass(e.target, "disabled")){
+			//禁止发送
+			uikit.tip(__("您已评价，无需再次评价"));  // ("文件大小不能超过10MB");
+			return
+		}
 		var serviceSessionId = this.getAttribute("data-servicesessionid");
 		var inviteId = this.getAttribute("data-inviteid");
 		var messageId = this.getAttribute("data-messageid");
