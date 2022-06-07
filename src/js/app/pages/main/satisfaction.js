@@ -183,13 +183,16 @@ function _init(){
 		}, tagContainer);
 		utils.live(".confirm","click",_confirm);
 		utils.live(".cancel","click",function(){
-			dialog && dialog.hide();
+			// dialog && dialog.hide();
+			dialog && dialog.el.remove();
 		});
 		utils.live(".icon-back-new","click",function(){
-			dialog && dialog.hide();
+			// dialog && dialog.hide();
+			dialog && dialog.el.remove();
 		});
 		utils.live(".wrapper-title .icon-close","click",function(){
-			dialog && dialog.hide();
+			// dialog && dialog.hide();
+			dialog && dialog.el.remove();
 		});
 
 		if(utils.isMobile || ($("body").hasClass("window-demo") && $("#em-kefu-webim-self").hasClass("hide"))){
@@ -409,7 +412,8 @@ function _confirm(){
 				}
 			}, 2000);
 			_clear();
-			dialog && dialog.hide();
+			// dialog && dialog.hide();
+			dialog && dialog.el.remove();
 		}
 		else{	
 			if(resp.errorCode == "WEBIM_338"){
@@ -417,7 +421,8 @@ function _confirm(){
 			}else{
 				uikit.tip(__("evaluation.WEBIM_OTHER"));
 			}
-			dialog && dialog.hide();
+			// dialog && dialog.hide();
+			dialog && dialog.el.remove();
 		}
 	});
 
@@ -440,7 +445,8 @@ function show(inviteId, serviceSessionId, evaluateWay){
 	apiHelper.getServiceSessionResolved()
 	.then(function(resp){
 		sessionResolved = resp;
-		_initOnce();
+		_init();
+		// _initOnce();
 	});
 	
 	session = serviceSessionId;

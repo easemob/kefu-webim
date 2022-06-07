@@ -721,6 +721,7 @@ up2Im.listen(function(msg){
 				+ "?orgName=" + params.orgName
 				+ "&appName=" + params.appName
 				+ "&userName=" + params.userName
+				+ "&serviceSessionId=" + params.serviceSessionId
 				+ "&token=" + params.token,
 			msg: msg,
 			type: "GET",
@@ -737,6 +738,7 @@ up2Im.listen(function(msg){
 				+ "?orgName=" + params.orgName
 				+ "&appName=" + params.appName
 				+ "&userName=" + params.userName
+				+ "&serviceSessionId=" + params.serviceSessionId
 				+ "&token=" + params.token,
 			msg: msg,
 			type: "GET",
@@ -769,7 +771,8 @@ up2Im.listen(function(msg){
 		break;
 	case "getSatisfactionTipWord":
 		emitAjax({
-			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/GreetingMsgEnquiryInvite",
+				
+				url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/GreetingMsgEnquiryInvite"+ "?serviceSessionId=" + params.serviceSessionId,
 			type: "GET",
 			msg: msg,
 			excludeData: true,
@@ -786,7 +789,7 @@ up2Im.listen(function(msg){
 
 	case "getEvaluteSolveWord":
 		emitAjax({
-			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/evaluteSolveWord",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/evaluteSolveWord"+ "?serviceSessionId=" + params.serviceSessionId,
 			type: "GET",
 			msg: msg,
 			excludeData: true,

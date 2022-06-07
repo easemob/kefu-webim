@@ -851,6 +851,8 @@ function getLatestMarketingTask(officialAccountId){
 }
 
 function getEvaluationDegrees(){
+	var officialAccount = profile.currentOfficialAccount;
+	console.log("getEvaluationDegrees", officialAccount)
 	return new Promise(function(resolve, reject){
 		if(cache.evaluationDegrees){
 			resolve(cache.evaluationDegrees);
@@ -862,6 +864,7 @@ function getEvaluationDegrees(){
 					orgName: config.orgName,
 					appName: config.appName,
 					userName: config.user.username,
+					serviceSessionId:officialAccount.sessionId,
 					token: token
 				}, function(msg){
 					var entities = utils.getDataByPath(msg, "data.entities");
@@ -881,6 +884,8 @@ function getEvaluationDegrees(){
 }
 
 function getAppraiseTags(evaluateId){
+	var officialAccount = profile.currentOfficialAccount;
+	console.log("getAppraiseTags", officialAccount)
 	return new Promise(function(resolve, reject){
 		if(cache.appraiseTags[evaluateId]){
 			resolve(cache.appraiseTags[evaluateId]);
@@ -893,6 +898,7 @@ function getAppraiseTags(evaluateId){
 					appName: config.appName,
 					userName: config.user.username,
 					token: token,
+					serviceSessionId:officialAccount.sessionId,
 					evaluateId: evaluateId
 				}, function(msg){
 					var entities = utils.getDataByPath(msg, "data.entities");
@@ -946,9 +952,12 @@ function getCustomEmojiFiles(){
 }
 
 function getSatisfactionTipWord(){
+	var officialAccount = profile.currentOfficialAccount;
+	console.log("getSatisfactionTipWord", officialAccount)
 	return new Promise(function(resolve, reject){
 		api("getSatisfactionTipWord", {
-			tenantId: config.tenantId
+			tenantId: config.tenantId,
+			serviceSessionId:officialAccount.sessionId
 		}, function(msg){
 			var tipWord = utils.getDataByPath(msg, "data.entities.0.optionValue") || __("evaluation.rate_my_service");
 			resolve(tipWord);
@@ -961,9 +970,12 @@ function getSatisfactionTipWord(){
 }
 
 function getEvaluteSolveWord(){
+	var officialAccount = profile.currentOfficialAccount;
+	console.log("getSatisfactionTipWord", officialAccount)
 	return new Promise(function(resolve, reject){
 		api("getEvaluteSolveWord", {
-			tenantId: config.tenantId
+			tenantId: config.tenantId,
+			serviceSessionId:officialAccount.sessionId
 		}, function(msg){
 			var tipWord = utils.getDataByPath(msg, "data.entities.0.optionValue") || __("evaluation.rate_my_evalute");
 			resolve(tipWord);
