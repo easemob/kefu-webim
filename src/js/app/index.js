@@ -511,6 +511,7 @@ function handleCfgData(relevanceList, status){
 		}
 		console.log("mismatched channel, use default.");
 	}
+	var initlanguage = __("config.language") === "zh-CN"?"zh":"en";
 	commonConfig.setConfig({
 		logo: commonConfig.getConfig().logo || { enabled: !!targetItem.tenantLogo, url: targetItem.tenantLogo },
 		toUser: targetItem.imServiceNumber,
@@ -528,6 +529,7 @@ function handleCfgData(relevanceList, status){
 		user: commonConfig.getConfig().user || {},
 		visitor: commonConfig.getConfig().visitor || {},
 		routingRuleFlag: commonConfig.getConfig().routingRuleFlag || "",
+		initLanuage: commonConfig.getConfig().initLanuage || initlanguage,
 		channel: commonConfig.getConfig().channel || {},
 		ui: commonConfig.getConfig().ui || {
 			H5Title: {}

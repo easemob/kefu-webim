@@ -389,9 +389,11 @@ function init(option){
 		});
 	});
 	// 加载白板JS
-	tools.loadScript(whiteBoardPath).then(function(){
-		window.lodash = _.noConflict();
-	})
+	if(profile.grayList.whiteBoard){
+		tools.loadScript(whiteBoardPath).then(function(){
+			window.lodash = _.noConflict();
+		})
+	}
 	
 }
 

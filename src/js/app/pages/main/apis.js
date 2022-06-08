@@ -1618,6 +1618,19 @@ function readMessageLastRead(serviceSessionId){
 		});
 	});
 }
+function initLanguage(language,visitorUserName){
+	return new Promise(function(resolve, reject){
+		api("initLanguage", {
+			tenantId: config.tenantId,
+			language:language,
+			visitorUserName:visitorUserName,
+		}, function(res){
+			resolve(res);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
 
 
 module.exports = {
@@ -1702,6 +1715,7 @@ module.exports = {
 	getOnlyCloseWindow: getOnlyCloseWindow,
 	getVideoH5Status: getVideoH5Status,
 	readMessageLastRead: readMessageLastRead,
+	initLanguage:initLanguage,
 	update: function(cfg){
 		config = cfg;
 	}

@@ -217,12 +217,14 @@ function initChatEntry(targetUserInfo){
 			break;
 
 		case "userWidthNameAndPassword":
+			_initLanuage(commonConfig.getConfig().user);
 			profile.imPassword = commonConfig.getConfig().user.password;
 			chat.init();
 			break;
 
 		case "wechatAuth":
 		case "widthPassword":
+			_initLanuage(commonConfig.getConfig().user);
 			chat.init();
 			break;
 
@@ -298,6 +300,7 @@ function userWithPasswordEntry(targetUserInfo){
 function userNameAndTokenEntry(){
 	// todo: move imToken to an independent key
 	profile.imToken = commonConfig.getConfig().user.token;
+	_initLanuage(commonConfig.getConfig().user);
 	chat.init();
 }
 
@@ -305,6 +308,7 @@ function userNameAndTokenEntry(){
 
 
 function _createVisitor(){
+	_initLanuage(commonConfig.getConfig().user);
 	var cacheKeyName = (commonConfig.getConfig().configId || (commonConfig.getConfig().to + commonConfig.getConfig().tenantId + commonConfig.getConfig().emgroup));
 
 	if(commonConfig.getConfig().user.password === ""){
@@ -324,4 +328,7 @@ function _createVisitor(){
 		});
 	}
 	chat.init();
+}
+function _initLanuage(user){
+	apiHelper.initLanguage(commonConfig.getConfig().initLanuage,user.username);
 }
