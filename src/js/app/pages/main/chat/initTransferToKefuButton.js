@@ -58,10 +58,17 @@ function _displayOrHideTransferToKefuBtn(officialAccount){
 	else{
 		apiHelper.getRobertIsOpen().then(function(isRobotEnable){
 			utils.toggleClass(toKefuBtn, "hide", !isRobotEnable);
+			if(_const.isGuanwei == "Y"){
 			utils.toggleClass(document.querySelector(".toolbar"), "hide", isRobotEnable);
 			utils.toggleClass(document.querySelector(".em-widget-send"), "toolbarhidemode", isRobotEnable);
 			utils.toggleClass(document.querySelector(".em-widget-send-wrapper"), "toolbarhidemode", isRobotEnable);
 			utils.toggleClass(document.querySelector(".chat-wrapper"), "toolbarhidemode", isRobotEnable);
+			}else{
+				utils.toggleClass(document.querySelector(".toolbar"), "hide", !isRobotEnable);
+				utils.toggleClass(document.querySelector(".em-widget-send"), "toolbarhidemode", !isRobotEnable);
+				utils.toggleClass(document.querySelector(".em-widget-send-wrapper"), "toolbarhidemode", !isRobotEnable);
+				utils.toggleClass(document.querySelector(".chat-wrapper"), "toolbarhidemode", !isRobotEnable);
+			}
 		});
 	}
 }

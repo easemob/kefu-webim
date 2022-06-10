@@ -1246,7 +1246,6 @@ function _handleSystemEvent(event, eventObj, msg){
 	var officialAccountId = utils.getDataByPath(msg, "ext.weichat.official_account.official_account_id");
 	var officialAccount = _getOfficialAccountById(officialAccountId);
 	var agentType = utils.getDataByPath(msg, "ext.weichat.event.eventObj.agentType");
-	console.log('[event]',event);
 
 	// 系统消息上屏
 	if(eventMessageText && !isSessionOpenEvent){
@@ -1296,6 +1295,7 @@ function _handleSystemEvent(event, eventObj, msg){
 	default:
 		break;
 	}
+	console.log('[event]',event);
 	eventListener.excuteCallbacks(event, [officialAccount]);
 	_promptNoAgentOnlineIfNeeded({ officialAccountId: officialAccountId });
 }

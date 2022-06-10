@@ -40,6 +40,9 @@
 var tenantIdInput = document.getElementById("testvalue");
 tenantIdInput.value = (window.localStorage && localStorage.getItem("easemobtest")) || "";
 
+var domain = "//kefuim-uat.metlife.com.cn"
+var configId = "f4d635e3-aeec-4341-8954-c2787296e12e"//guanwei
+// var configId = "46caf212-540e-4701-b5a8-404ae35b2634"//dianxiao
 function test(){
 	// window.easemobim.bind({ tenantId: getTenantId() });
 	// 电销
@@ -54,7 +57,10 @@ function test(){
 		// configId: '6b3b9442-a44a-4bba-aae4-e4b2e250700f',
 		// configId: 'f4d635e3-aeec-4341-8954-c2787296e12e',
 		// configId: '39f1e235-4572-4ccf-9eb7-ec25ee15510b',
-		configId: "f4d635e3-aeec-4341-8954-c2787296e12e",
+		// configId: "f4d635e3-aeec-4341-8954-c2787296e12e",//guanwei
+		// configId: "46caf212-540e-4701-b5a8-404ae35b2634",//dianxiao
+		configId: configId,//dianxiao
+
 			onready: function(){
 				console.log("--------测试消息");
 			},
@@ -113,7 +119,7 @@ function query(key){
 window.easemobim = window.easemobim || {};
 
 window.easemobim.config = {
-
+	domain: domain,
 	// 访客自动上报
 	// eventCollector: true,
 	satisfaction: true,
