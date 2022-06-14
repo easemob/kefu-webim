@@ -217,12 +217,14 @@ function initChatEntry(targetUserInfo){
 			break;
 
 		case "userWidthNameAndPassword":
+			_initLanuage(commonConfig.getConfig().user);
 			profile.imPassword = commonConfig.getConfig().user.password;
 			chat.init();
 			break;
 
 		case "wechatAuth":
 		case "widthPassword":
+			_initLanuage(commonConfig.getConfig().user);
 			chat.init();
 			break;
 
@@ -298,6 +300,7 @@ function userWithPasswordEntry(targetUserInfo){
 function userNameAndTokenEntry(){
 	// todo: move imToken to an independent key
 	profile.imToken = commonConfig.getConfig().user.token;
+	_initLanuage(commonConfig.getConfig().user);
 	chat.init();
 }
 
