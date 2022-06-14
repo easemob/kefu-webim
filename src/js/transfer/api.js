@@ -432,7 +432,7 @@ up2Im.listen(function(msg){
 		break;
 	case "getSkillgroupMenu":
 		emitAjax({
-			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/skillgroup-menu",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/skillgroup-menu?visitorUserName="  + params.visitorUserName ,
 			type: "GET",
 			msg: msg,
 			excludeData: true
