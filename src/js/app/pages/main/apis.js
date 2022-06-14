@@ -342,7 +342,6 @@ function getDutyStatus(){
 }
 
 function getRobertGreeting(){
-	var user = commonConfig.getConfig().user
 	var referer = parseReferer(config.referer);
 	// !!! 2020年7月之后，百度将word、wd等推广词封了，目前此方式取不到了
 	var keyword1 = referer.word || referer.wd; // 百度
@@ -357,7 +356,7 @@ function getRobertGreeting(){
 			tenantId: config.tenantId,
 			agentUsername: config.agentName,
 			queueName: encodeURIComponent(config.emgroup),
-			visitorUserName:user.username,
+			visitorUserName:config.user.username,
 			keyword: keyword || ""
 		}, function(msg){
 			resolve(msg.data.entity || {});
@@ -393,11 +392,10 @@ function getRobertIsOpen(){
 }
 
 function getSystemGreeting(visitorUserName){
-	var user = commonConfig.getConfig().user
 	return new Promise(function(resolve, reject){
 		api("getSystemGreeting", {
 			tenantId: config.tenantId,
-			visitorUserName:user.username,
+			visitorUserName:config.user.username,
 		}, function(msg){
 			resolve(msg.data);
 		}, function(err){
@@ -530,12 +528,10 @@ function getLastSession(officialAccountId){
 }
 
 function getSkillgroupMenu(){
-	var user = commonConfig.getConfig().user
-	console.log(user, "getSkillgroupMenu")
 	return new Promise(function(resolve, reject){
 		api("getSkillgroupMenu", {
 			tenantId: config.tenantId,
-			visitorUserName:user.username
+			visitorUserName:config.user.username
 		}, function(msg){
 			resolve(utils.getDataByPath(msg, "data.entities.0"));
 		}, function(err){
@@ -1394,7 +1390,7 @@ function getNoEmptyAgentMessage(){
 		emajax({
 			url: "/v1/webimplugin/tenants/"
 					+ config.tenantId
-					+ "/options/noEmptyAgentTipMessage",
+					+ "/options/noEmptyAgentTipMessage?visitorUserName=" + config.user.username,
 			type: "GET",
 			async: false,
 			success: function(data) {
