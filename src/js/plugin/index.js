@@ -14,6 +14,7 @@ var bind;
 window.easemobim = window.easemobim || {};
 window.easemobim.config = window.easemobim.config || {};
 window.easemobim.version = "__WEBIM_PLUGIN_VERSION__";
+window._ = require("underscore");
 
 if(
 	/MSIE 7\.0/.test(navigator.userAgent)
