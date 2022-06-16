@@ -48,6 +48,6 @@
     "jquery": "^1.12.4",
     "moment": "=2.18.1",
     "swiper": "=4.2.0",
-    "underscore": "=1.8.3"
+    "underscore": "=1.13.1"
   }
 }
