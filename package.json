@@ -46,7 +46,7 @@
     "easemob-kefu-webim": "^1.1.9",
     "es6-promise": "=4.1.1",
     "jquery": "^1.12.4",
-    "moment": "=2.18.1",
+    "moment": "=2.29.2",
     "swiper": "=4.2.0",
     "underscore": "=1.13.1"
   }
