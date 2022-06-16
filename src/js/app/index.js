@@ -8,6 +8,7 @@ require("./libs/modernizr");
 require("./libs/sdk/webim.config");
 require("underscore");
 require("jquery");
+window._ = require("underscore");
 
 var utils = require("@/common/utils");
 var chat = require("./pages/main/chat");
