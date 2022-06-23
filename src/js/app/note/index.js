@@ -2,6 +2,7 @@ require("underscore");
 require("es6-promise").polyfill();
 require("@/common/polyfill");
 require("jquery");
+window._ = require("underscore");
 
 var utils = require("@/common/utils");
 var commonConfig = require("@/common/config");

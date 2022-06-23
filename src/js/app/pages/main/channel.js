@@ -1,4 +1,5 @@
 require("underscore");
+window._ = require("underscore");
 var WebIM = require("easemob-kefu-webim");
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
