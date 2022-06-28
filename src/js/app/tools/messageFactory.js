@@ -64,6 +64,16 @@ function genMsgContent(msg, opt){
 			html = "<span class=\"text\">" + value + "</span>";
 			break;
 		}
+		else if(isJsonString(value)){
+			value = JSON.parse(value);
+			if(value.type == "richtext"){
+				var txtDom = apiHelper.getlaiyeHtml(value.content);
+				value = txtDom.response;
+			}
+			else{
+				value = JSON.stringify(value);
+			}
+		}
 		else{
 			value =  notFromSystem ? textParser.parse(value, { "default": true },opt.isReceived) : textParser.parse(value);
 			
