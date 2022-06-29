@@ -38,6 +38,8 @@ function genMsgContent(msg, opt){
 	// console.log(msg)
 	var type = msg.type;
 	var value = msg.data;
+	// 来自智能辅助的客服消息也会转译两次（和历史会话一样），这里转译处理。
+	value = textParser.unescape(textParser.unescape(value))
 	var laiye = msg.laiye;
 	var rulai = msg.rulai;
 	var relatedRules;
