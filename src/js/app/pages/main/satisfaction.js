@@ -377,7 +377,8 @@ function _confirm(){
 function show(inviteId, serviceSessionId, evaluateWay, messageId){
 	// 官微租户满意度评价 - 查询
 	if (_const.isGuanwei == 'Y') {
-		apiHelper.satisfactionQuery(_const.tenantId, session || profile.currentOfficialAccount.sessionId || '').then(function(res) {
+		console.log('[serviceSessionId]',serviceSessionId)
+		apiHelper.satisfactionQuery(_const.tenantId, serviceSessionId || profile.currentOfficialAccount.sessionId || '').then(function(res) {
 			if (res.entity) {
 				satisfactionId = res.entity.id
 			}

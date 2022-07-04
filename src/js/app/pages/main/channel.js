@@ -1295,7 +1295,7 @@ function _handleSystemEvent(event, eventObj, msg){
 	default:
 		break;
 	}
-	console.log('[event]',event);
+	console.log('[event]',event, eventObj);
 	eventListener.excuteCallbacks(event, [officialAccount]);
 	_promptNoAgentOnlineIfNeeded({ officialAccountId: officialAccountId });
 }
