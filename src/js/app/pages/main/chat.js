@@ -167,6 +167,10 @@ function _initToolbar() {
 	else {
 		utils.addClass(doms.sendVideoBtn, "hide");
 	}
+	// 上传图片按钮
+	if (config.toolbar.sendImage) {
+		utils.removeClass(doms.sendImgBtn, "hide");
+	}
 	// 上传附件按钮
 	if (WebIM.utils.isCanUploadFileAsync && config.toolbar.sendAttachment) {
 		utils.removeClass(doms.sendFileBtn, "hide");
@@ -1114,20 +1118,36 @@ function _bindEvents() {
 		}
 	});
 
-	// 弹出文件框
+	// 弹出文件框(附件)
 	utils.on(doms.sendFileBtn, "click", function () {
-		doms.fileInput.click();
+		if (utils.isMobile && config.toolbar.authConfirm && !utils.getStore("sendFileMobileModel")) {
+			utils.removeClass(doms.mobileModel, "hide");
+			doms.mobileContent.innerText = __("common.file_permissions");
+			utils.addClass(doms.mobileModel, "send_file");
+		}
+		else {
+			doms.fileInput.click();
+		}
 	});
 
 	// 弹出小视频框
 	utils.on(doms.sendVideoBtn, "click", function () {
-		doms.videoInput.click();
+		if (utils.isMobile && config.toolbar.authConfirm && !utils.getStore("sendVideoMobileModel")) {
+			utils.removeClass(doms.mobileModel, "hide");
+			doms.mobileContent.innerText = __("common.video_permissions");
+			utils.addClass(doms.mobileModel, "send_video");
+		}
+		else {
+			doms.videoInput.click();
+		}
 	});
 
 	// 弹出图片框
 	utils.on(doms.sendImgBtn, "click", function () {
-		if (utils.isMobile && profile.sendImgTips && !utils.getStore("sendImgMobileModel")) {
+		if (utils.isMobile && config.toolbar.authConfirm && !utils.getStore("sendImgMobileModel")) {
 			utils.removeClass(doms.mobileModel, "hide");
+			doms.mobileContent.innerText = __("common.camera_permissions");
+			utils.addClass(doms.mobileModel, "send_img");
 		}
 		else {
 			doms.imgInput.click();
@@ -1136,11 +1156,25 @@ function _bindEvents() {
 	// allow
 	utils.on(doms.allowBtn, "click", function () {
 		doms.imgInput.click();
+		if (utils.hasClass(doms.mobileModel, "send_img")) {
+			utils.setStore("sendImgMobileModel", true);
+			utils.removeClass(doms.mobileModel, "send_img");
+		}
+		else if (utils.hasClass(doms.mobileModel, "send_file")) {
+			utils.setStore("sendFileMobileModel", true);
+			utils.removeClass(doms.mobileModel, "send_file");
+		}
+		else if (utils.hasClass(doms.mobileModel, "send_video")) {
+			utils.setStore("sendVideoMobileModel", true);
+			utils.removeClass(doms.mobileModel, "send_video");
+		} else { }
 		utils.addClass(doms.mobileModel, "hide");
-		utils.setStore("sendImgMobileModel", true);
 	});
 	// refuse
 	utils.on(doms.refuseBtn, "click", function () {
+		utils.removeClass(doms.mobileModel, "send_img");
+		utils.removeClass(doms.mobileModel, "send_file");
+		utils.removeClass(doms.mobileModel, "send_video");
 		utils.addClass(doms.mobileModel, "hide");
 	});
 
@@ -1235,6 +1269,15 @@ function _bindEvents() {
 			}
 			utils.setStore("isHaveCustomerMsg", true);
 		}
+	});
+
+	// 放弃排队 
+	utils.on(doms.abandonQueueBtn, "click", function () {
+		var officialAccount = profile.currentOfficialAccount;
+		var sessionId = officialAccount.sessionId;
+		apiHelper.closeServiceSession(sessionId, true).then(function () {
+			utils.addClass(doms.abandonQueueBtn, "hide");
+		})
 	});
 
 	utils.on(doms.addBtn, "click", function () {
@@ -1455,8 +1498,12 @@ function _getDom() {
 		videoBoxClose: document.querySelector(".video-container-close"),
 
 		mobileModel: document.querySelector(".mobile-model"),
+		mobileContent: document.querySelector(".mobile-model-content"),
 		allowBtn: document.querySelector("span[allow]"),
 		refuseBtn: document.querySelector("span[refuse]"),
+
+		// 放弃排队
+		abandonQueueBtn: editorView.querySelector(".em-widget-abandon-queue"),
 
 		toolBar: toolBar,
 		topBar: topBar,
@@ -1494,9 +1541,9 @@ function _init() {
 		});
 	}
 	// 查询是否开启申请相机的权限开关
-	apiHelper.getSendImgTips().then(function (yes) {
-		profile.sendImgTips = yes.entity;
-	});
+	// apiHelper.getSendImgTips().then(function (yes) {
+	// 	profile.sendImgTips = yes.entity;
+	// });
 
 	var url;
 	if (profile.grayList.poweredByEasemob) {
