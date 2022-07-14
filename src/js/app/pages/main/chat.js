@@ -171,6 +171,9 @@ function _initToolbar() {
 	if (config.toolbar.sendImage) {
 		utils.removeClass(doms.sendImgBtn, "hide");
 	}
+	else {
+		utils.addClass(doms.sendImgBtn, "hide");
+	}
 	// 上传附件按钮
 	if (WebIM.utils.isCanUploadFileAsync && config.toolbar.sendAttachment) {
 		utils.removeClass(doms.sendFileBtn, "hide");
