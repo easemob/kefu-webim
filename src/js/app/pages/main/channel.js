@@ -69,6 +69,7 @@ module.exports = {
 	sendFile: _sendFile,
 	sendVideo: _sendVideo, // 新增小视频发送类型
 	attemptToAppendOfficialAccount: _attemptToAppendOfficialAccount,
+	appendEventMsg: _appendEventMsg,
 
 	// todo: move this to message view
 	handleHistoryMsg: function (element) {

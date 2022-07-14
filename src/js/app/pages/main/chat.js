@@ -1280,6 +1280,8 @@ function _bindEvents() {
 		var sessionId = officialAccount.sessionId;
 		apiHelper.closeServiceSession(sessionId, true).then(function () {
 			utils.addClass(doms.abandonQueueBtn, "hide");
+			// 会话结束上屏
+			channel.appendEventMsg(__("event_message.sessing_closed"), { ext: { weichat: { official_account: officialAccount } } })
 		})
 	});
 
