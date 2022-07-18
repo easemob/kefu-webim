@@ -637,7 +637,7 @@ function getNickNameOption() {
 	});
 }
 
-function closeServiceSession(sessionId, isVisitorActive) {
+function closeServiceSession(sessionId, visitorActive) {
 	return new Promise(function (resolve, reject) {
 		getToken().then(function (token) {
 			api("closeServiceSession", {
@@ -647,7 +647,7 @@ function closeServiceSession(sessionId, isVisitorActive) {
 				userName: config.user.username,
 				token: token,
 				serviceSessionId: sessionId,
-				isVisitorActive: isVisitorActive || false
+				visitorActive: visitorActive || false
 			}, function () {
 				resolve();
 			}, function (err) {
