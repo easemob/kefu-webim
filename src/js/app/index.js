@@ -603,8 +603,15 @@ function renderUI(resultStatus) {
 		selfServiceEnable = resultStatus[1];
 		iframeEnable = resultStatus[2];
 		iframeContent = resultStatus[3];
-		var serviceTitle = $('.em-service-title');
-		slideState == "true" ? serviceTitle.removeClass("hide") : serviceTitle.addClass("hide");
+		var serviceTitle = $('.em-service-title'); // issue self-servire
+		selfServiceData = commonConfig.getConfig().configOption["self-service"].content;
+		issueData = commonConfig.getConfig().configOption["issue"].content;
+		if (slideState == 'true' &&((selfServiceData.length !== 0 && selfServiceEnable) || (issueData.length !== 0 && commonIssueEnable))) {
+			serviceTitle.removeClass("hide")
+		} else {
+			serviceTitle.addClass("hide")
+		}
+		
 		if ((commonIssueEnable || selfServiceEnable || iframeEnable) && slideState == "true") {
 			slideSwitchAndMore = true;
 		}
