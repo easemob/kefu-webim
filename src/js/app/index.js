@@ -603,6 +603,8 @@ function renderUI(resultStatus) {
 		selfServiceEnable = resultStatus[1];
 		iframeEnable = resultStatus[2];
 		iframeContent = resultStatus[3];
+		var serviceTitle = $('.em-service-title');
+		slideState == "true" ? serviceTitle.removeClass("hide") : serviceTitle.addClass("hide");
 		if ((commonIssueEnable || selfServiceEnable || iframeEnable) && slideState == "true") {
 			slideSwitchAndMore = true;
 		}
