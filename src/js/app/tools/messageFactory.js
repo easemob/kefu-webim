@@ -12,6 +12,8 @@ var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easem
 function genMsgContent(msg){
 	// console.log('genMsgContent', msg)
 	var foot = utils.getDataByPath(msg, "foot");
+	var satisbtns = utils.getDataByPath(msg, "satisbtns");
+	
 	var type = msg.type;
 	var value = msg.data;
 	var laiye = msg.laiye;
@@ -92,11 +94,11 @@ function genMsgContent(msg){
 			html = "<span class=\"text\">";
 			html += value;
 			html += "</span>";
-			html += msg.list + (foot ? ("<p>" + foot + "</p>") : "");
+			html += msg.list + (foot ? ("<p style=\"border-bottom: 1px solid #f4f7fa;\">" + foot + "</p>") : "") + (satisbtns ? satisbtns : "");
 			break;
 		}
 		else if(laiye){
-			html = "<p>" + value + "</p>" + msg.list + (foot ? ("<p>" + foot + "</p>") : "");;
+			html = "<p>" + value + "</p>" + msg.list + (foot ? ("<p> style=\"border-bottom: 1px solid #f4f7fa;\"" + foot + "</p>") : "") + (satisbtns ? satisbtns : "");
 			break;
 		}
 		else{
@@ -104,7 +106,7 @@ function genMsgContent(msg){
 			value = _.map(value, function(fragment){ return fragment.value; }).join("");
 			foot = textParser.parse(foot);
 			foot = _.map(foot, function(fragment){ return fragment.value; }).join("");
-			html = (value ? ("<p>" + value + "</p>") : "") + msg.list + (foot ? ("<p>" + foot + "</p>") : "");
+			html = (value ? ("<p>" + value + "</p>") : "") + msg.list + (foot ? ("<p style=\"border-bottom: 1px solid #f4f7fa;\">" + foot + "</p>") : "") + (satisbtns ? satisbtns : "");
 			break;
 		}
 

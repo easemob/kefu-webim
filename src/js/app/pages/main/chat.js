@@ -698,12 +698,13 @@ function _bindEvents(){
 	});
 
 	// 解决
-	utils.live("a.statisfyYes", "click", function(e){
-		if(utils.hasClass(e.target, "disabled")){
+	utils.live(".statisfyYes", "click", function(e){
+		if(utils.hasClass(this, "disabled")){
 			//禁止发送
 			return
 		}
-		utils.addClass(e.target, "disabled");
+		utils.addClass(this, "disabled");
+		utils.addClass(document.querySelector(".statisfyNo"), "disabled");
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
 		var origintype = this.getAttribute("data-origintype");
@@ -714,7 +715,8 @@ function _bindEvents(){
 		}
 		apiHelper.newStatisfy(para).then(function(resp){
 			if(resp){
-				uikit.tip(resp);
+				// uikit.tip(resp);
+				channel.sendText(resp);
 			}
 		}).catch(function(e){console.log(e)})
 		// apiHelper.getStatisfyYes(robotAgentId, satisfactionCommentKey).then(function(data){
@@ -730,12 +732,13 @@ function _bindEvents(){
 	utils.live("button.js_transfertokefu", "click", function(){
 		channel.sendText('转人工');
 	});
-	utils.live("a.statisfyNo", "click", function(e){
-		if(utils.hasClass(e.target, "disabled")){
+	utils.live(".statisfyNo", "click", function(e){
+		if(utils.hasClass(this, "disabled")){
 			//禁止发送
 			return
 		}
-		utils.addClass(e.target, "disabled");
+		utils.addClass(this, "disabled");
+		utils.addClass(document.querySelector(".statisfyYes"), "disabled");
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
 		var origintype = this.getAttribute("data-origintype");

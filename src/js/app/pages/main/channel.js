@@ -757,6 +757,12 @@ function _handleMessage(msg, options){
 		message.data = msg.ext.msgtype.choice.title;
 		message.foot = msg.ext.msgtype.choice.foot;
 		message.brief = __("message_brief.menu");
+		if(satisfactionCommentInvitation && !isHistory){
+			message.satisbtns = "<p class=\"satis-btns-container\" style=\"text-align: right;\">" +
+			"<span style=\"margin-right: 10px;\" class='statisfyYes' data-origintype='" + origintype + "' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'><span class=\"icon-resolved\"></span><span style=\"position: relative;top: 3px;\">解决</span></span>" +
+			"<span class='statisfyNo'  data-origintype='" + origintype + "'  data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'><span class=\"icon-unresolved\"></span><span style=\"position: relative;top: 3px;\">未解决</span></span>" +
+			"</p>"
+		}
 		break;
 	case "transferManualGuide":
 		serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
@@ -1019,6 +1025,7 @@ function _handleMessage(msg, options){
 		});
 	}
 	else{
+		console.log("[type1]", type)
 		_appendMsg(message, {
 			isReceived: isReceived,
 			isHistory: isHistory,
@@ -1029,7 +1036,8 @@ function _handleMessage(msg, options){
 	}
 
 	// 是否发送解决未解决 msg.ext.extRobot.satisfactionCommentInvitation
-	if(satisfactionCommentInvitation && !isHistory){
+	if(satisfactionCommentInvitation && !isHistory && type != "robotList"){
+		console.log("[type]", type)
 		_appendMsg({
 			data: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-origintype='" + origintype + "' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo'  data-origintype='" + origintype + "'  data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
 			type: "txtLink",

@@ -174,7 +174,8 @@
 	.em-btn-list {
 		min-width: 190px;
 		position: relative;
-		margin: 4px;
+		// margin: 4px;
+		margin: 0;
 		text-align: left;
 		clear: both;
 		&:after {
@@ -185,14 +186,18 @@
 			// font-size: 13px;
 			display: block;
 			width: 100%;
-			padding: 5px 10px;
+			padding: 7px 10px;
 			min-height: 30px;
 			text-align: left;
-			margin: 4px 0;
-			color: #000;
+			// margin: 4px 0;
+			margin: 0 0;
+			// color: #000;
+			color: #42b8f4;
 			background-color: white;
 			border-radius: 2px;
-			border: 1px solid #e5e5e5;
+			// border: 1px solid #e5e5e5;
+			border: none;
+			border-bottom: 1px solid #f4f7fa;
 			cursor: pointer;
 			word-break: break-word;
 			white-space: pre-wrap;
@@ -218,6 +223,22 @@
 				}
 			}
 		}
+	}
+	.satis-btns-container{
+		.statisfyYes,.statisfyNo{
+			&.disabled {
+				cursor: default;
+				color: silver;
+				background-color: white!important;
+				border-color: #e5e5e5!important;
+				&:hover {
+					background-color: white!important;
+					color: silver;
+				}
+			}
+		}
+
+
 	}
 	a {
 		&.disabled {
