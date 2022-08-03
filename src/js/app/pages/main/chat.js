@@ -141,7 +141,7 @@ function _initUI(){
 
 function _initToolbar(){
 	apiHelper.getVisitorSendMsgConfig().then(function(res){
-		console.log('[resssss]',res)
+		console.log('[VisitorSendMsgConfig]',res)
 		var video = utils.getDataByPath(res,"video");
 		var appendix = utils.getDataByPath(res,"appendix");
 		var picture = utils.getDataByPath(res,"picture");
@@ -669,7 +669,6 @@ function _bindEvents(){
 	// 产品推荐
 	utils.live(".js_productdetail", "click", function(){
 		var href = this.getAttribute("data-redirecturl");
-		console.log(111,href)
 		if(href){
 			// window.location.href = href;
 			window.open(href, "_blank");
@@ -679,7 +678,6 @@ function _bindEvents(){
 	});	
 	utils.live(".js_authllink", "click", function(){
 		var href = this.getAttribute("data-redirecturl");
-		console.log(111,href)
 		if(href){
 			// window.location.href = href;
 			window.open(href, "_blank");
@@ -704,7 +702,7 @@ function _bindEvents(){
 			return
 		}
 		utils.addClass(this, "disabled");
-		utils.addClass(document.querySelector(".statisfyNo"), "disabled");
+		utils.addClass(this.nextElementSibling, "disabled");
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
 		var origintype = this.getAttribute("data-origintype");
@@ -738,7 +736,7 @@ function _bindEvents(){
 			return
 		}
 		utils.addClass(this, "disabled");
-		utils.addClass(document.querySelector(".statisfyYes"), "disabled");
+		utils.addClass(this.previousElementSibling, "disabled");
 		var satisfactionCommentKey = this.getAttribute("data-satisfactionCommentInfo");
 		var robotAgentId = this.getAttribute("data-agentId");
 		var origintype = this.getAttribute("data-origintype");

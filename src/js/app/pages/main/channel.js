@@ -396,7 +396,6 @@ Message.video.prototype.set = function(opt){
 
 
 function _handleMessage(msg, options){
-	// console.log('_handleMessage 消息列表：', msg)
 	var opt = options || {};
 	var type = opt.type || (msg && msg.type);
 	var noPrompt = opt.noPrompt;
@@ -527,7 +526,6 @@ function _handleMessage(msg, options){
 		redirectUrl = utils.getDataByPath(msg, "ext.msgtype.redirectUrl");
 		if(redirectUrl){
 			// var detail = utils.getDataByPath(msg, "ext.entity");
-			console.log(detail,33333)
 			if(extMsg){
 				_appendMsg({
 					data:[
@@ -619,7 +617,6 @@ function _handleMessage(msg, options){
 			// }
 		}else if(action === "authlink"){
 			var detail = utils.getDataByPath(msg, "ext.entity");
-			console.log(detail,4444)
 			if(detail){
 				_appendMsg({
 					data:[
@@ -651,11 +648,8 @@ function _handleMessage(msg, options){
 		message.type = "list";
 		message.subtype = type;
 		message.data = __("chat.evaluate_agent_title");
-		// console.log('444 msg', msg)
-		// console.log('555 msgId', msgId)
 		// 官微租户的 禁用【立即评价】按钮
 		var isEnquiry = utils.getDataByPath(msg, "guanweiMsgBody.isEnquiry");
-		// console.log(666, isEnquiry)
 		if (_const.isGuanwei == 'Y') {
 			if (isEnquiry == 'yes') {
 				var style= "background-color: #ccc; cursor:not-allowed;"
@@ -699,7 +693,6 @@ function _handleMessage(msg, options){
 		);
 		break;
 	case "robotDirectionlist":
-		console.log('')
 		// 如果取不到，就默认 true 打开菜单
 		// 这个 service_session 对象，对于欢迎语类的消息，是没有的
 		// serviceSessionId = utils.getDataByPath(msg, "ext.weichat.service_session.serviceSessionId");
@@ -957,7 +950,6 @@ function _handleMessage(msg, options){
 	var busiData = utils.getDataByPath(message, "data") || ''
 	var btnListIndex = busiData.indexOf('[menu]');
 	if(btnListIndex != -1){
-		console.log('message.data',message.data)
 		var title = busiData.substr(0,btnListIndex)
 		var body = busiData.substr(btnListIndex)
 		var bodyArr = []
@@ -1025,7 +1017,6 @@ function _handleMessage(msg, options){
 		});
 	}
 	else{
-		console.log("[type1]", type)
 		_appendMsg(message, {
 			isReceived: isReceived,
 			isHistory: isHistory,
@@ -1037,7 +1028,6 @@ function _handleMessage(msg, options){
 
 	// 是否发送解决未解决 msg.ext.extRobot.satisfactionCommentInvitation
 	if(satisfactionCommentInvitation && !isHistory && type != "robotList"){
-		console.log("[type]", type)
 		_appendMsg({
 			data: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-origintype='" + origintype + "' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo'  data-origintype='" + origintype + "'  data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
 			type: "txtLink",
@@ -1198,7 +1188,6 @@ function _setExt(msg){
 		msg.body.ext.metlifeCustomerId = config.metlifeCustomerId;
 	}
 	// // 新加参数 --- 结束
-	// console.log('[msg]',msg)
 	// bind agent username
 	if(bindAgentUsername){
 		msg.body.ext.weichat.agentUsername = bindAgentUsername;
