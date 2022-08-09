@@ -714,7 +714,14 @@ function _bindEvents(){
 		apiHelper.newStatisfy(para).then(function(resp){
 			if(resp){
 				// uikit.tip(resp);
-				channel.sendText(resp);
+				// channel.sendText(resp);
+				channel.appendMsg({
+					data: resp,
+					type: "txt",
+				}, {
+					isReceived: true,
+					isHistory: false
+				})
 			}
 		}).catch(function(e){console.log(e)})
 		// apiHelper.getStatisfyYes(robotAgentId, satisfactionCommentKey).then(function(data){
