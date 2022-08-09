@@ -95,9 +95,11 @@ function _initSystemEventListener(){
 	], function(officialAccount){
 		// 所有的 list 子类消息
 		var allListBtn1 = document.querySelectorAll(".msgtype-robotList .em-btn-list button");
+		var allListBtn11 = document.querySelectorAll(".msgtype-robotList .satis-btns-container>span");
 		var allListBtn2 = document.querySelectorAll(".msgtype-txt .em-btn-list button");
 		var allListBtn3 = document.querySelectorAll(".msgtype-img .em-btn-list button");
 		var all = _.toArray(allListBtn1)
+		.concat(_.toArray(allListBtn11))
 		.concat(_.toArray(allListBtn2))
 		.concat(_.toArray(allListBtn3));
 		_.each(all, function(robotBtn){
@@ -768,7 +770,14 @@ function _bindEvents(){
 					isHistory: false
 				});
 			}else{
-				uikit.tip(resp);
+				// uikit.tip(resp);
+				channel.appendMsg({
+					data: resp,
+					type: "txt",
+				}, {
+					isReceived: true,
+					isHistory: false
+				})
 			}
 		}).catch(function(e){console.log(e)})
 		// apiHelper.getSatisfactionCommentTags(robotAgentId, satisfactionCommentKey)

@@ -58,7 +58,7 @@ function genMsgContent(msg){
 			// 历史消息以及收到的实时消息
 			html = "<span class=\"text\">" + _.map(value, function(fragment){
 				return fragment.value;
-			}).join("") + "</span>";
+			}).join("") + "</span>" + (satisbtns ? satisbtns : "");
 			break;
 		}
 
