@@ -107,6 +107,18 @@ commonConfig = {
 				],
 			},
 			{
+				test: /satisfy\.html$/,
+				loaders: [
+					"file-loader?name=../../[name].[ext]",
+					"extract-loader",
+					"html-loader",
+					"string-replace-loader"
+						+ "?search=__STATIC_PATH__"
+						+ "&replace=" + staticPath
+						+ "&flags=g",
+				],
+			},
+			{
 				test: /transfer\.html$/,
 				loaders: [
 					"file-loader?name=../../[name].[ext]",
@@ -251,6 +263,16 @@ note = Object.assign({}, commonConfig, {
 		path: path.resolve(__dirname, distPath, "static/js"),
 	},
 });
+satisfy = Object.assign({}, commonConfig, {
+	name: "satisfy",
+	entry: [
+		"./src/html/satisfy.html",
+	],
+	output: {
+		filename: "satisfy.js",
+		path: path.resolve(__dirname, distPath, "static/js"),
+	},
+});
 
 appPageCached = Object.assign({}, commonConfig, {
 	name: "appCached",
@@ -297,6 +319,7 @@ taskList = [
 	app,
 	note,
 	appPageCached,
+	satisfy
 	// test
 ];
 
