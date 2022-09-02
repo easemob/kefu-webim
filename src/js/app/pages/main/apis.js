@@ -856,7 +856,6 @@ function getLatestMarketingTask(officialAccountId) {
 
 function getEvaluationDegrees() {
 	var officialAccount = profile.currentOfficialAccount;
-	console.log("getEvaluationDegrees", officialAccount)
 	return new Promise(function (resolve, reject) {
 		if (cache.evaluationDegrees) {
 			resolve(cache.evaluationDegrees);
@@ -889,7 +888,6 @@ function getEvaluationDegrees() {
 
 function getAppraiseTags(evaluateId) {
 	var officialAccount = profile.currentOfficialAccount;
-	console.log("getAppraiseTags", officialAccount)
 	return new Promise(function (resolve, reject) {
 		if (cache.appraiseTags[evaluateId]) {
 			resolve(cache.appraiseTags[evaluateId]);
@@ -957,7 +955,6 @@ function getCustomEmojiFiles() {
 
 function getSatisfactionTipWord() {
 	var officialAccount = profile.currentOfficialAccount;
-	console.log("getSatisfactionTipWord", officialAccount)
 	return new Promise(function (resolve, reject) {
 		api("getSatisfactionTipWord", {
 			tenantId: config.tenantId,
@@ -975,7 +972,6 @@ function getSatisfactionTipWord() {
 
 function getEvaluteSolveWord() {
 	var officialAccount = profile.currentOfficialAccount;
-	console.log("getSatisfactionTipWord", officialAccount)
 	return new Promise(function (resolve, reject) {
 		api("getEvaluteSolveWord", {
 			tenantId: config.tenantId,

@@ -54,7 +54,7 @@ function _init(){
 		themeClassName = _const.themeMap[config.themeName];
 	}
 	color = !color? $("body." + themeClassName + " .border-color").css("borderColor") : color;
-	bgColor = color;
+	bgColor = $("body." + themeClassName + " .border-color").css("borderColor") ? $("body." + themeClassName + " .border-color").css("borderColor") : color;
 	color = utils.changeToRgb(color);
 	loading.show("satisfaction");
 	//默认五星评价的开关
@@ -430,7 +430,6 @@ function _confirm(){
 }
 
 function show(inviteId, serviceSessionId, evaluateWay){
-
 	$(".resolve-btn i").css("cssText","color:#595959!important"); 
 	$(".resolve-btn span").css("cssText","color:#595959!important");  
 	if(color){

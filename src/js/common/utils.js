@@ -133,7 +133,7 @@ function _changeToRgb(color){
 		//"rgba(" + sColorChange.join(",") + "0.3)";
 		return "rgba(" + sColorChange.join(",") + ",0.15)";
 	} 
-	else if(sColor.indexOf("rgb") != -1){
+	else if(sColor.indexOf("rgb") != -1 && sColor.indexOf("rgba") === -1) {
 		return "rgba" + sColor.split("rgb")[1].split(")")[0] + ",0.15)";
 	}
 	else {
