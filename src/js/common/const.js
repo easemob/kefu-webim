@@ -44,6 +44,8 @@ module.exports = {
 		CLEAR_TIMEOUT: "clear.answersGroup.timeout",
 		STOP_TIMEOUT: "stop.answersGroup.timeout",
 
+		SEND_MESSAGE: "send.message",
+
 		AGENT_INFO_UPDATE: "agent.info.update",
 		OFFICIAL_ACCOUNT_SWITCHED: "official.account.switched",
 		NEW_OFFICIAL_ACCOUNT_FOUND: "new.official.account.found",
@@ -94,7 +96,7 @@ module.exports = {
 		theme_lake: "theme-9",
 		theme_business: "theme-10",
 		theme_cherry: "theme-11",
-		theme_science:"theme-12",
+		theme_science: "theme-12",
 		theme_custom: "theme_custom",
 		天空之城: "theme-1",
 		丛林物语: "theme-2",
@@ -120,7 +122,7 @@ module.exports = {
 		Lake: "theme-9",
 		Business: "theme-10",
 		Cherry: "theme-11",
-		Science:"theme-12",
+		Science: "theme-12",
 		Custom: "theme_custom",
 	},
 
@@ -159,7 +161,7 @@ module.exports = {
 		SCROLL_TO_BOTTOM: "scroll.to.bottom",
 		INVITATION_INIT: "invitation_init",
 		REOPEN: "reopen",
-		HIDE_DEFAULT_BTN:"hideDefaultBtn",
+		HIDE_DEFAULT_BTN: "hideDefaultBtn",
 		EVALUATIONSUBMIT: "evaluation_submit"
 	},
 
