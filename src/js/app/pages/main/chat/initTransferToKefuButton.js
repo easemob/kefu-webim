@@ -7,6 +7,7 @@ var channel = require("../channel");
 var commonConfig = require("@/common/config");
 
 var toKefuBtn;
+var sendMsgNumber = 1;
 
 module.exports = function(){
 	if(!commonConfig.getConfig().toolbar.transferToKefu) return;
@@ -20,8 +21,13 @@ module.exports = function(){
 
 	utils.on(toKefuBtn, "click", _.throttle(function(){
 		channel.sendTransferToKf();
-	},8000, {trailing: false}));
+	}, 8000, { trailing: false }));
 
+	// 获取发送几次消息显示转人工按钮配置
+	apiHelper.getMsgNumberOption().then(function(data){
+		sendMsgNumber = data[0] ? Number(data[0].optionValue) : 0;
+		console.log(11111, sendMsgNumber);
+	});
 
 	// 把注册事件和方法提取到新增的输入框上方按钮文件
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_OPENED, _displayOrHideTransferToKefuBtn);
@@ -30,7 +36,19 @@ module.exports = function(){
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_RESTORED, _displayOrHideTransferToKefuBtn);
 	eventListener.add(_const.SYSTEM_EVENT.SESSION_NOT_CREATED, _displayOrHideTransferToKefuBtn);
 	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _displayOrHideTransferToKefuBtn);
+
+	eventListener.add(_const.SYSTEM_EVENT.SEND_MESSAGE, _reduceMsgNumber);
 };
+
+function _reduceMsgNumber(officialAccount){
+	if(sendMsgNumber && sendMsgNumber > 0){
+		sendMsgNumber--;
+	}
+
+	if(sendMsgNumber == 0){
+		_displayOrHideTransferToKefuBtn(officialAccount);
+	}
+}
 
 function _displayOrHideTransferToKefuBtn(officialAccount){
 	// 忽略非当前服务号的事件
@@ -45,15 +63,19 @@ function _displayOrHideTransferToKefuBtn(officialAccount){
 		// 营销号一律不显示转人工按钮
 		utils.addClass(toKefuBtn, "hide");
 	}
+	// Processing
 	else if(state === _const.SESSION_STATE.PROCESSING){
-		utils.toggleClass(toKefuBtn, "hide", !isRobotAgent);
+		if(sendMsgNumber <= 0){
+			utils.toggleClass(toKefuBtn, "hide", !isRobotAgent);
+		}
 	}
+	// Wait
 	else if(state === _const.SESSION_STATE.WAIT){
 		// 待接入状态 隐藏按钮
 		utils.addClass(toKefuBtn, "hide");
 	}
 	else{
-		if(!officialAccount.isSessionOpen) return
+		if(!officialAccount.isSessionOpen) return;
 		apiHelper.getRobertIsOpen().then(function(isRobotEnable){
 			utils.toggleClass(toKefuBtn, "hide", !isRobotEnable);
 		});

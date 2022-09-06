@@ -103,6 +103,11 @@ module.exports = function(opt){
 		var dom = genDomFromMsg(msg, isReceived, isHistory, opt);
 		var img = dom.querySelector(".em-widget-imgview");
 
+		// 不是历史消息，不是接收到的消息，开始计数。几次后，显示转人工按钮。
+		if(!isHistory && !isReceived){
+			eventListener.excuteCallbacks(_const.SYSTEM_EVENT.SEND_MESSAGE, [officialAccount]);
+		}
+
 		if(isHistory){
 			el.insertBefore(dom, el.firstChild);
 			// 历史消息是向前插入，所以时间戳应在消息之后上屏
@@ -152,7 +157,7 @@ module.exports = function(opt){
 		var button = dom.querySelector(".msgtype-satisfactionEvaluation .em-btn-list>button");
 		if(color && button){
 			if($(button).hasClass("fg-color")){
-				$(button).css("cssText","color: " + color + " !important");
+				$(button).css("cssText", "color: " + color + " !important");
 			}
 		}
 	}
@@ -160,7 +165,7 @@ module.exports = function(opt){
 	function _appendDate(timestamp, isHistory){
 		var showTime;
 		if(_timestampToTime(timestamp) == _timestampToTime(new Date().getTime())){
-			showTime = utils.formatHHmm(timestamp)
+			showTime = utils.formatHHmm(timestamp);
 		}
 		else{
 			showTime = utils.formatDate(timestamp);
@@ -305,10 +310,10 @@ module.exports = function(opt){
 		utils.removeClass(el, "hide");
 	}
 	function _timestampToTime(timestamp){
-		var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-		var Y = date.getFullYear() + '-';
-		var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-		var D = date.getDate() + ' ';
-		return Y+M+D;
+		var date = new Date(timestamp);// 时间戳为10位需*1000，时间戳为13位的话不需乘1000
+		var Y = date.getFullYear() + "-";
+		var M = (date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1) + "-";
+		var D = date.getDate() + " ";
+		return Y + M + D;
 	}
 };
