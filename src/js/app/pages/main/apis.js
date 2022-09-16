@@ -15,14 +15,14 @@ var cache = {
 };
 var api = apiHelper.api;
 
-function getGrayList(tenantId){
-	return new Promise(function(resolve/* , reject */){
+function getGrayList(tenantId) {
+	return new Promise(function (resolve/* , reject */) {
 		api("grayScale", {
 			tenantId: tenantId,
-		}, function(msg){
+		}, function (msg) {
 			var grayScaleDescription = utils.getDataByPath(msg, "data.entities") || [];
 			var grayScaleList = _.chain(grayScaleDescription)
-				.map(function(item){
+				.map(function (item) {
 					var keyName = item.grayName;
 					var status = item.status;
 					var enable = status !== "Disable";
@@ -33,7 +33,7 @@ function getGrayList(tenantId){
 				.value();
 
 			resolve(grayScaleList);
-		}, function(err){
+		}, function (err) {
 			console.error("unable to get gray list: ", err);
 			// 获取失败返回空对象
 			resolve({});
@@ -41,18 +41,18 @@ function getGrayList(tenantId){
 	});
 }
 
-function getToken(){
-	return new Promise(function(resolve, reject){
+function getToken() {
+	return new Promise(function (resolve, reject) {
 		var token = profile.imToken;
 
 		// 超时降级
-		setTimeout(function(){
-			if(profile.imToken === null){
+		setTimeout(function () {
+			if (profile.imToken === null) {
 				profile.imToken = "";
 				resolve("");
 			}
 		}, 5000);
-		if(token !== null || profile.imRestDown){
+		if (token !== null || profile.imRestDown) {
 			resolve(token);
 			return;
 		}
@@ -67,18 +67,18 @@ function getToken(){
 				password: config.user.password
 			},
 			type: "POST",
-			success: function(resp){
+			success: function (resp) {
 				var token = resp.access_token;
 
 				// cache token
 				profile.imToken = token;
 				resolve(token);
 			},
-			error: function(err){
-				if(err.error_description === "user not found"){
+			error: function (err) {
+				if (err.error_description === "user not found") {
 					reject(err);
 				}
-				else{
+				else {
 					// 未知错误降级走第二通道
 					profile.imToken = "";
 					resolve("");
@@ -87,22 +87,22 @@ function getToken(){
 		});
 	});
 }
-function getNotice(){
-	return new Promise(function(resolve, reject){
-		if(config.isWebChannelConfig){
+function getNotice() {
+	return new Promise(function (resolve, reject) {
+		if (config.isWebChannelConfig) {
 			resolve(config.notice);
 		}
-		else{
+		else {
 			api("getSlogan", {
 				tenantId: config.tenantId
-			}, function(msg){
+			}, function (msg) {
 				var content = utils.getDataByPath(msg, "data.0.optionValue");
 				var notice = {
 					enabled: !!content,
 					content: content
 				};
 				resolve(notice);
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		}
@@ -110,30 +110,30 @@ function getNotice(){
 }
 
 
-function getProjectId(){
-	return new Promise(function(resolve, reject){
-		if(cache.projectId){
+function getProjectId() {
+	return new Promise(function (resolve, reject) {
+		if (cache.projectId) {
 			resolve(cache.projectId);
 		}
-		else{
-			getToken().then(function(token){
+		else {
+			getToken().then(function (token) {
 				api("getProject", {
 					tenantId: config.tenantId,
 					"easemob-target-username": config.toUser,
 					"easemob-appkey": config.appKey.replace("#", "%23"),
 					"easemob-username": config.user.username,
 					headers: { Authorization: "Easemob IM " + token }
-				}, function(msg){
+				}, function (msg) {
 					var projectId = utils.getDataByPath(msg, "data.entities.0.id");
-					if(projectId){
+					if (projectId) {
 						// cache projectId
 						cache.projectId = projectId;
 						resolve(projectId);
 					}
-					else{
+					else {
 						reject(new Error("no project id exist."));
 					}
-				}, function(err){
+				}, function (err) {
 					reject(err);
 				});
 			});
@@ -141,12 +141,12 @@ function getProjectId(){
 	});
 }
 
-function getNoteCategories(){
-	return new Promise(function(resolve, reject){
+function getNoteCategories() {
+	return new Promise(function (resolve, reject) {
 		Promise.all([
 			getToken(),
 			getProjectId()
-		]).then(function(result){
+		]).then(function (result) {
 			var token = result[0];
 			var projectId = result[1];
 
@@ -157,19 +157,19 @@ function getNoteCategories(){
 				"easemob-username": config.user.username,
 				headers: { Authorization: "Easemob IM " + token },
 				projectId: projectId,
-			}, function(msg){
+			}, function (msg) {
 				var list = utils.getDataByPath(msg, "data.entities");
 				resolve(list);
 
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		});
 	});
 }
 
-function createTicket(opt){
-	return new Promise(function(resolve, reject){
+function createTicket(opt) {
+	return new Promise(function (resolve, reject) {
 		api("createTicket", {
 			tenantId: config.tenantId,
 			"easemob-target-username": config.toUser,
@@ -196,26 +196,26 @@ function createTicket(opt){
 				description: ""
 			},
 			attachments: null
-		}, function(msg){
-			if(utils.getDataByPath(msg, "data.id")){
+		}, function (msg) {
+			if (utils.getDataByPath(msg, "data.id")) {
 				resolve();
 			}
-			else{
+			else {
 				reject(new Error("unknown error."));
 			}
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getVisitorId(){
-	return new Promise(function(resolve, reject){
-		if(cache.visitorId){
+function getVisitorId() {
+	return new Promise(function (resolve, reject) {
+		if (cache.visitorId) {
 			resolve(cache.visitorId);
 		}
-		else{
-			getToken().then(function(token){
+		else {
+			getToken().then(function (token) {
 				api("getVisitorInfo", {
 					tenantId: config.tenantId,
 					orgName: config.orgName,
@@ -223,22 +223,22 @@ function getVisitorId(){
 					userName: config.user.username,
 					imServiceNumber: config.toUser,
 					token: token
-				}, function(msg){
+				}, function (msg) {
 					// console.log(msg,"访客信息")
 					// 存储访客信息
 					commonConfig.setConfig({
 						visitorInfo: msg.data.entity
 					});
 					var visitorId = utils.getDataByPath(msg, "data.entity.userId");
-					if(visitorId){
+					if (visitorId) {
 						// cache visitor id
 						cache.visitorId = visitorId;
 						resolve(visitorId);
 					}
-					else{
+					else {
 						reject(_const.ERROR_MSG.VISITOR_DOES_NOT_EXIST);
 					}
-				}, function(err){
+				}, function (err) {
 					reject(err);
 				});
 			});
@@ -246,12 +246,12 @@ function getVisitorId(){
 	});
 }
 
-function getOfficalAccounts(){
-	return new Promise(function(resolve, reject){
+function getOfficalAccounts() {
+	return new Promise(function (resolve, reject) {
 		Promise.all([
 			getVisitorId(),
 			getToken()
-		]).then(function(result){
+		]).then(function (result) {
 			var visitorId = result[0];
 			var token = result[1];
 
@@ -262,32 +262,32 @@ function getOfficalAccounts(){
 				userName: config.user.username,
 				visitorId: visitorId,
 				token: token
-			}, function(msg){
+			}, function (msg) {
 				var list = utils.getDataByPath(msg, "data.entities");
-				if(_.isArray(list)){
+				if (_.isArray(list)) {
 					resolve(list);
 				}
-				else{
+				else {
 					resolve([]);
 					console.error("unexpect data format: ", list);
 				}
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		})
 		// 未创建会话时 visitor不存在，此时 getVisitorId 会reject 特定error，需要捕获此错误
-		["catch"](function(err){
+		["catch"](function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getOfficalAccountMessage(officialAccountId, startId){
-	return new Promise(function(resolve, reject){
+function getOfficalAccountMessage(officialAccountId, startId) {
+	return new Promise(function (resolve, reject) {
 		Promise.all([
 			getVisitorId(),
 			getToken()
-		]).then(function(result){
+		]).then(function (result) {
 			var visitorId = result[0];
 			var token = result[1];
 
@@ -302,27 +302,27 @@ function getOfficalAccountMessage(officialAccountId, startId){
 				direction: "before",
 				size: _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME,
 				startId: startId
-			}, function(msg){
+			}, function (msg) {
 				var list = utils.getDataByPath(msg, "data.entities");
-				if(_.isArray(list)){
+				if (_.isArray(list)) {
 					resolve(list);
 				}
-				else{
+				else {
 					reject(new Error("unexpect data format."));
 				}
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		})
-		["catch"](function(err){
+		["catch"](function (err) {
 			reject(err);
 		});
 	});
 }
 
 // 获取上下班状态，false 代表上班，true 代表下班
-function getDutyStatus(){
-	return new Promise(function(resolve/* , reject */){
+function getDutyStatus() {
+	return new Promise(function (resolve/* , reject */) {
 		api("getDutyStatus_2", {
 			channelType: "easemob",
 			originType: "webim",
@@ -331,9 +331,9 @@ function getDutyStatus(){
 			queueName: encodeURIComponent(config.emgroup),
 			agentUsername: config.agentName,
 			timeScheduleId: config.timeScheduleId,
-		}, function(msg){
+		}, function (msg) {
 			resolve(!utils.getDataByPath(msg, "data.entity"));
-		}, function(err){
+		}, function (err) {
 			console.error("unable to get duty state: ", err);
 			// 获取状态失败则置为上班状态
 			resolve(true);
@@ -341,14 +341,14 @@ function getDutyStatus(){
 	});
 }
 
-function getRobertGreeting(){
+function getRobertGreeting() {
 	var referer = parseReferer(config.referer);
 	// !!! 2020年7月之后，百度将word、wd等推广词封了，目前此方式取不到了
 	var keyword1 = referer.word || referer.wd; // 百度
 	var keyword2 = referer.q; // 360/神马
 	var keyword3 = referer.query || referer.keyword; // 搜狗
 	var keyword = keyword1 || keyword2 || keyword3;
-	return new Promise(function(resolve, reject){
+	return new Promise(function (resolve, reject) {
 		api("getRobertGreeting_2", {
 			channelType: "easemob",
 			originType: "webim",
@@ -358,20 +358,20 @@ function getRobertGreeting(){
 			queueName: encodeURIComponent(config.emgroup),
 			visitorUserName: config.user.username,
 			keyword: keyword || ""
-		}, function(msg){
+		}, function (msg) {
 			resolve(msg.data.entity || {});
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getRobertIsOpen(){
-	return new Promise(function(resolve, reject){
-		if(typeof cache.isRobotOpen === "boolean"){
+function getRobertIsOpen() {
+	return new Promise(function (resolve, reject) {
+		if (typeof cache.isRobotOpen === "boolean") {
 			resolve(cache.isRobotOpen);
 		}
-		else{
+		else {
 			api("getRobertIsOpen", {
 				channelType: "easemob",
 				originType: "webim",
@@ -379,67 +379,55 @@ function getRobertIsOpen(){
 				tenantId: config.tenantId,
 				agentUsername: config.agentName,
 				queueName: encodeURIComponent(config.emgroup)
-			}, function(msg){
+			}, function (msg) {
 				var entity = msg.data.entity;
 
 				cache.isRobotOpen = entity;
 				resolve(entity);
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		}
 	});
 }
 
-function getMsgNumberOption(){
-	return new Promise(function(resolve, reject){
-		api("getMsgNumberOption", {
-			tenantId: config.tenantId,
-		}, function(msg){
-			resolve(msg.data.entities);
-		}, function(err){
-			reject(err);
-		});
-	});
-}
-
-function getSystemGreeting(visitorUserName){
-	return new Promise(function(resolve, reject){
+function getSystemGreeting(visitorUserName) {
+	return new Promise(function (resolve, reject) {
 		api("getSystemGreeting", {
 			tenantId: config.tenantId,
 			visitorUserName: config.user.username,
-		}, function(msg){
+		}, function (msg) {
 			resolve(msg.data);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getTransferManualMenu(){
-	return new Promise(function(resolve, reject){
+function getTransferManualMenu() {
+	return new Promise(function (resolve, reject) {
 		api("getTransferManualMenu", {
 			tenantId: config.tenantId,
 			channelId: config.channelId,
 			channelType: "easemob"
-		}, function(msg){
+		}, function (msg) {
 			var entity = utils.getDataByPath(msg, "data.entity");
-			if(entity){
+			if (entity) {
 				resolve(entity);
 			}
-			else{
+			else {
 				reject(new Error("unexpected data format."));
 			}
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
 
-function getExSession(){
-	return new Promise(function(resolve, reject){
-		Promise.all([getNoEmptyAgentEnable(), getNoEmptyAgentMessage()]).then(function(datas){
+function getExSession() {
+	return new Promise(function (resolve, reject) {
+		Promise.all([getNoEmptyAgentEnable(), getNoEmptyAgentMessage()]).then(function (datas) {
 			var enableData = datas[0];
 			var messageData = datas[1];
 
@@ -454,34 +442,34 @@ function getExSession(){
 				queueName: encodeURIComponent(config.emgroup),
 				agentUsername: config.agentName,
 				tenantId: config.tenantId
-			}, function(msg){
+			}, function (msg) {
 				var entity = utils.getDataByPath(msg, "data.entity");
-				if(entity){
+				if (entity) {
 					// undefined展示默认，其他按照开关展示 tip_content:undefined 就是关
-					if(enableData.length == 0 || enableData[0].optionValue == "true"){
+					if (enableData.length == 0 || enableData[0].optionValue == 'true') {
 						// 没设置，默认开
 						entity.tip_content = messageData.length ? messageData[0].optionValue : _const.eventMessageText.NOTE;
 					}
 
 					resolve(entity);
 				}
-				else{
+				else {
 					reject(new Error("unexpected data format."));
 				}
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
-		})["catch"](function(err){
+		}).catch(function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getAgentStatus(agentUserId){
-	return new Promise(function(resolve, reject){
+function getAgentStatus(agentUserId) {
+	return new Promise(function (resolve, reject) {
 		// todo: discard this
 		// 没有token 不发送请求 也不报错
-		if(!profile.imToken){
+		if (!profile.imToken) {
 			resolve();
 			return;
 		}
@@ -494,20 +482,20 @@ function getAgentStatus(agentUserId){
 			userName: config.user.username,
 			token: profile.imToken,
 			imServiceNumber: config.toUser
-		}, function(msg){
+		}, function (msg) {
 			resolve(utils.getDataByPath(msg, "data.state"));
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getLastSession(officialAccountId){
-	return new Promise(function(resolve, reject){
+function getLastSession(officialAccountId) {
+	return new Promise(function (resolve, reject) {
 		Promise.all([
 			getVisitorId(),
 			getToken()
-		]).then(function(result){
+		]).then(function (result) {
 			var visitorId = result[0];
 			var token = result[1];
 
@@ -520,41 +508,41 @@ function getLastSession(officialAccountId){
 				userName: config.user.username,
 				visitorId: visitorId,
 				token: token
-			}, function(msg){
+			}, function (msg) {
 				var entity = utils.getDataByPath(msg, "data.entity");
-				if(entity){
+				if (entity) {
 					resolve(entity);
 				}
-				else{
+				else {
 					reject(_const.ERROR_MSG.SESSION_DOES_NOT_EXIST);
 				}
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		})
 		// 未创建会话时 visitor不存在，此时 getVisitorId 会reject 特定error，需要捕获此错误
-		["catch"](function(err){
+		["catch"](function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getSkillgroupMenu(){
-	return new Promise(function(resolve, reject){
+function getSkillgroupMenu() {
+	return new Promise(function (resolve, reject) {
 		api("getSkillgroupMenu", {
 			tenantId: config.tenantId,
 			visitorUserName: config.user.username
-		}, function(msg){
+		}, function (msg) {
 			resolve(utils.getDataByPath(msg, "data.entities.0"));
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function reportVisitorAttributes(sessionId){
-	return new Promise(function(resolve, reject){
-		getToken().then(function(token){
+function reportVisitorAttributes(sessionId) {
+	return new Promise(function (resolve, reject) {
+		getToken().then(function (token) {
 			api("reportVisitorAttributes", {
 				tenantId: config.tenantId,
 				orgName: config.orgName,
@@ -566,21 +554,21 @@ function reportVisitorAttributes(sessionId){
 				token: token,
 				fromUrl: config.fromUrl,
 				docReferer: config.referer
-			}, function(){
+			}, function () {
 				resolve();
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		});
 	});
 }
 
-function reportPredictMessage(sessionId, content){
-	return new Promise(function(resolve, reject){
+function reportPredictMessage(sessionId, content) {
+	return new Promise(function (resolve, reject) {
 		Promise.all([
 			getVisitorId(), // 获取访客信息
 			getToken()
-		]).then(function(result){
+		]).then(function (result) {
 			var visitorId = result[0];
 			var token = result[1];
 
@@ -594,18 +582,18 @@ function reportPredictMessage(sessionId, content){
 				userName: config.user.username,
 				imServiceNumber: config.toUser,
 				token: token
-			}, function(){
+			}, function () {
 				resolve();
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		});
 	});
 }
 
-function getAgentInputState(sessionId){
-	return new Promise(function(resolve, reject){
-		getToken().then(function(token){
+function getAgentInputState(sessionId) {
+	return new Promise(function (resolve, reject) {
+		getToken().then(function (token) {
 			api("getAgentInputState", {
 				username: config.user.username,
 				orgName: config.orgName,
@@ -613,45 +601,45 @@ function getAgentInputState(sessionId){
 				tenantId: config.tenantId,
 				serviceSessionId: sessionId,
 				token: token,
-			}, function(msg){
+			}, function (msg) {
 				resolve(msg.data.entity);
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		});
 	});
 }
 
-function getWaitListNumber(sessionId, queueId){
-	return new Promise(function(resolve, reject){
+function getWaitListNumber(sessionId, queueId) {
+	return new Promise(function (resolve, reject) {
 		api("getWaitListNumber", {
 			tenantId: config.tenantId,
 			queueId: queueId,
 			serviceSessionId: sessionId
-		}, function(msg){
+		}, function (msg) {
 			resolve(msg.data.entity);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getNickNameOption(){
-	return new Promise(function(resolve, reject){
+function getNickNameOption() {
+	return new Promise(function (resolve, reject) {
 		api("getNickNameOption", {
 			tenantId: config.tenantId
-		}, function(msg){
+		}, function (msg) {
 			var optionValue = utils.getDataByPath(msg, "data.0.optionValue");
 			resolve(optionValue === "true");
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function closeServiceSession(sessionId, visitorActive){
-	return new Promise(function(resolve, reject){
-		getToken().then(function(token){
+function closeServiceSession(sessionId, visitorActive) {
+	return new Promise(function (resolve, reject) {
+		getToken().then(function (token) {
 			api("closeServiceSession", {
 				tenantId: config.tenantId,
 				orgName: config.orgName,
@@ -660,29 +648,29 @@ function closeServiceSession(sessionId, visitorActive){
 				token: token,
 				serviceSessionId: sessionId,
 				visitorActive: visitorActive || false
-			}, function(){
+			}, function () {
 				resolve();
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		});
 	});
 }
 
-function deleteEvent(gid){
-	return new Promise(function(resolve, reject){
+function deleteEvent(gid) {
+	return new Promise(function (resolve, reject) {
 		api("deleteEvent", {
 			userId: gid
-		}, function(){
+		}, function () {
 			resolve();
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function receiveMsgChannel(tabId){
-	return new Promise(function(resolve, reject){
+function receiveMsgChannel(tabId) {
+	return new Promise(function (resolve, reject) {
 		api("receiveMsgChannel", {
 			orgName: config.orgName,
 			appName: config.appName,
@@ -690,24 +678,24 @@ function receiveMsgChannel(tabId){
 			tenantId: config.tenantId,
 			visitorEasemobId: config.user.username,
 			tabId: tabId
-		}, function(msg){
+		}, function (msg) {
 			var status = utils.getDataByPath(msg, "data.status");
 			var entities = utils.getDataByPath(msg, "data.entities");
 
-			if(status === "OK"){
+			if (status === "OK") {
 				resolve(entities);
 			}
-			else{
+			else {
 				reject(new Error("unexpected response data."));
 			}
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function sendMsgChannel(body, ext){
-	return new Promise(function(resolve, reject){
+function sendMsgChannel(body, ext) {
+	return new Promise(function (resolve, reject) {
 		api("sendMsgChannel", {
 			from: config.user.username,
 			to: config.toUser,
@@ -717,17 +705,17 @@ function sendMsgChannel(body, ext){
 			orgName: config.orgName,
 			appName: config.appName,
 			originType: "webim"
-		}, function(msg){
+		}, function (msg) {
 			resolve(msg.data);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function uploadImgMsgChannel(file){
-	return new Promise(function(resolve, reject){
-		getToken().then(function(token){
+function uploadImgMsgChannel(file) {
+	return new Promise(function (resolve, reject) {
+		getToken().then(function (token) {
 			api("uploadImgMsgChannel", {
 				userName: config.user.username,
 				tenantId: config.tenantId,
@@ -735,21 +723,21 @@ function uploadImgMsgChannel(file){
 				auth: "Bearer " + token,
 				orgName: config.orgName,
 				appName: config.appName,
-			}, function(msg){
+			}, function (msg) {
 				resolve(msg.data);
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		});
 	});
 }
 
-function reportMarketingTaskDelivered(marketingTaskId){
-	return new Promise(function(resolve, reject){
+function reportMarketingTaskDelivered(marketingTaskId) {
+	return new Promise(function (resolve, reject) {
 		Promise.all([
 			getVisitorId(),
 			getToken()
-		]).then(function(result){
+		]).then(function (result) {
 			var visitorId = result[0];
 			var token = result[1];
 
@@ -761,29 +749,29 @@ function reportMarketingTaskDelivered(marketingTaskId){
 				userName: config.user.username,
 				token: token,
 				visitor_id: visitorId,
-			}, function(msg){
+			}, function (msg) {
 				var status = utils.getDataByPath(msg, "data.status");
 
-				if(status === "OK"){
+				if (status === "OK") {
 					resolve();
 				}
-				else{
+				else {
 					reject(new Error("unexpected reaponse status."));
 				}
 				resolve(msg.data);
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		});
 	});
 }
 
-function reportMarketingTaskOpened(marketingTaskId){
-	return new Promise(function(resolve, reject){
+function reportMarketingTaskOpened(marketingTaskId) {
+	return new Promise(function (resolve, reject) {
 		Promise.all([
 			getVisitorId(),
 			getToken()
-		]).then(function(result){
+		]).then(function (result) {
 			var visitorId = result[0];
 			var token = result[1];
 
@@ -795,29 +783,29 @@ function reportMarketingTaskOpened(marketingTaskId){
 				userName: config.user.username,
 				token: token,
 				visitor_id: visitorId,
-			}, function(msg){
+			}, function (msg) {
 				var status = utils.getDataByPath(msg, "data.status");
 
-				if(status === "OK"){
+				if (status === "OK") {
 					resolve();
 				}
-				else{
+				else {
 					reject(new Error("unexpected reaponse status."));
 				}
 				resolve(msg.data);
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		});
 	});
 }
 
-function reportMarketingTaskReplied(marketingTaskId){
-	return new Promise(function(resolve, reject){
+function reportMarketingTaskReplied(marketingTaskId) {
+	return new Promise(function (resolve, reject) {
 		Promise.all([
 			getVisitorId(),
 			getToken()
-		]).then(function(result){
+		]).then(function (result) {
 			var visitorId = result[0];
 			var token = result[1];
 
@@ -829,26 +817,26 @@ function reportMarketingTaskReplied(marketingTaskId){
 				userName: config.user.username,
 				token: token,
 				visitor_id: visitorId,
-			}, function(msg){
+			}, function (msg) {
 				var status = utils.getDataByPath(msg, "data.status");
 
-				if(status === "OK"){
+				if (status === "OK") {
 					resolve();
 				}
-				else{
+				else {
 					reject(new Error("unexpected reaponse status."));
 				}
 				resolve(msg.data);
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		});
 	});
 }
 
-function getLatestMarketingTask(officialAccountId){
-	return new Promise(function(resolve, reject){
-		getToken().then(function(token){
+function getLatestMarketingTask(officialAccountId) {
+	return new Promise(function (resolve, reject) {
+		getToken().then(function (token) {
 			api("getLatestMarketingTask", {
 				tenantId: config.tenantId,
 				orgName: config.orgName,
@@ -856,24 +844,24 @@ function getLatestMarketingTask(officialAccountId){
 				officialAccountId: officialAccountId,
 				userName: config.user.username,
 				token: token
-			}, function(msg){
+			}, function (msg) {
 				var entity = utils.getDataByPath(msg, "data.entity");
 				resolve(entity);
-			}, function(err){
+			}, function (err) {
 				reject(err);
 			});
 		});
 	});
 }
 
-function getEvaluationDegrees(){
+function getEvaluationDegrees() {
 	var officialAccount = profile.currentOfficialAccount;
-	return new Promise(function(resolve, reject){
-		if(cache.evaluationDegrees){
+	return new Promise(function (resolve, reject) {
+		if (cache.evaluationDegrees) {
 			resolve(cache.evaluationDegrees);
 		}
-		else{
-			getToken().then(function(token){
+		else {
+			getToken().then(function (token) {
 				api("getEvaluationDegrees", {
 					tenantId: config.tenantId,
 					orgName: config.orgName,
@@ -881,16 +869,16 @@ function getEvaluationDegrees(){
 					userName: config.user.username,
 					serviceSessionId: officialAccount.sessionId,
 					token: token
-				}, function(msg){
+				}, function (msg) {
 					var entities = utils.getDataByPath(msg, "data.entities");
-					if(_.isArray(entities)){
+					if (_.isArray(entities)) {
 						cache.evaluationDegrees = entities;
 						resolve(entities);
 					}
-					else{
+					else {
 						reject(new Error("unexpected reaponse value."));
 					}
-				}, function(err){
+				}, function (err) {
 					reject(err);
 				});
 			});
@@ -898,14 +886,14 @@ function getEvaluationDegrees(){
 	});
 }
 
-function getAppraiseTags(evaluateId){
+function getAppraiseTags(evaluateId) {
 	var officialAccount = profile.currentOfficialAccount;
-	return new Promise(function(resolve, reject){
-		if(cache.appraiseTags[evaluateId]){
+	return new Promise(function (resolve, reject) {
+		if (cache.appraiseTags[evaluateId]) {
 			resolve(cache.appraiseTags[evaluateId]);
 		}
-		else{
-			getToken().then(function(token){
+		else {
+			getToken().then(function (token) {
 				api("getAppraiseTags", {
 					tenantId: config.tenantId,
 					orgName: config.orgName,
@@ -914,16 +902,16 @@ function getAppraiseTags(evaluateId){
 					token: token,
 					serviceSessionId: officialAccount.sessionId,
 					evaluateId: evaluateId
-				}, function(msg){
+				}, function (msg) {
 					var entities = utils.getDataByPath(msg, "data.entities");
-					if(entities){
+					if (entities) {
 						cache.appraiseTags[evaluateId] = entities;
 						resolve(entities);
 					}
-					else{
+					else {
 						reject(new Error("unexpected reaponse value."));
 					}
-				}, function(err){
+				}, function (err) {
 					reject(err);
 				});
 			});
@@ -931,50 +919,50 @@ function getAppraiseTags(evaluateId){
 	});
 }
 
-function getCustomEmojiPackages(){
-	return new Promise(function(resolve, reject){
-		api("getCustomEmojiPackages", { tenantId: config.tenantId }, function(msg){
+function getCustomEmojiPackages() {
+	return new Promise(function (resolve, reject) {
+		api("getCustomEmojiPackages", { tenantId: config.tenantId }, function (msg) {
 			var entities = utils.getDataByPath(msg, "data.entities");
 
-			if(_.isArray(entities)){
+			if (_.isArray(entities)) {
 				resolve(entities);
 			}
-			else{
+			else {
 				reject(new Error("unexpected emoji package list."));
 			}
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getCustomEmojiFiles(){
-	return new Promise(function(resolve, reject){
-		api("getCustomEmojiFiles", { tenantId: config.tenantId }, function(msg){
+function getCustomEmojiFiles() {
+	return new Promise(function (resolve, reject) {
+		api("getCustomEmojiFiles", { tenantId: config.tenantId }, function (msg) {
 			var entities = utils.getDataByPath(msg, "data.entities");
 
-			if(_.isArray(entities)){
+			if (_.isArray(entities)) {
 				resolve(entities);
 			}
-			else{
+			else {
 				reject(new Error("unexpected emoji package list."));
 			}
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getSatisfactionTipWord(){
+function getSatisfactionTipWord() {
 	var officialAccount = profile.currentOfficialAccount;
-	return new Promise(function(resolve, reject){
+	return new Promise(function (resolve, reject) {
 		api("getSatisfactionTipWord", {
 			tenantId: config.tenantId,
 			serviceSessionId: officialAccount.sessionId
-		}, function(msg){
+		}, function (msg) {
 			var tipWord = utils.getDataByPath(msg, "data.entities.0.optionValue") || __("evaluation.rate_my_service");
 			resolve(tipWord);
-		}, function(){
+		}, function () {
 			// 异常时，满意度提示语为默认提示语，无reject
 			var tipWord = __("evaluation.rate_my_service");
 			resolve(tipWord);
@@ -982,16 +970,16 @@ function getSatisfactionTipWord(){
 	});
 }
 
-function getEvaluteSolveWord(){
+function getEvaluteSolveWord() {
 	var officialAccount = profile.currentOfficialAccount;
-	return new Promise(function(resolve, reject){
+	return new Promise(function (resolve, reject) {
 		api("getEvaluteSolveWord", {
 			tenantId: config.tenantId,
 			serviceSessionId: officialAccount.sessionId
-		}, function(msg){
+		}, function (msg) {
 			var tipWord = utils.getDataByPath(msg, "data.entities.0.optionValue") || __("evaluation.rate_my_evalute");
 			resolve(tipWord);
-		}, function(){
+		}, function () {
 			// 异常时，问题解决评价引导语为默认提示语，无reject
 			var tipWord = __("evaluation.rate_my_evalute");
 			resolve(tipWord);
@@ -999,59 +987,59 @@ function getEvaluteSolveWord(){
 	});
 }
 
-function getServiceSessionResolved(){
-	return new Promise(function(resolve, reject){
+function getServiceSessionResolved() {
+	return new Promise(function (resolve, reject) {
 		var webim = false;
-		api("getServiceSessionResolved", { tenantId: config.tenantId }, function(res){
+		api("getServiceSessionResolved", { tenantId: config.tenantId }, function (res) {
 			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
-			if(typeof val === "string"){
+			if (typeof val === "string") {
 				val = val.replace(/&quot;/g, "\"");
 				val = JSON.parse(val);
-				if(val.webim){
+				if (val.webim) {
 					webim = true;
 				}
 			}
 			resolve(webim);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getDefaultFiveStarEnable(){
-	return new Promise(function(resolve, reject){
+function getDefaultFiveStarEnable() {
+	return new Promise(function (resolve, reject) {
 		var webim = false;
-		api("getDefaultFiveStarEnable", { tenantId: config.tenantId }, function(res){
+		api("getDefaultFiveStarEnable", { tenantId: config.tenantId }, function (res) {
 			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
-			if(typeof val === "string"){
-				if(val == "true"){
+			if (typeof val === "string") {
+				if (val == "true") {
 					webim = true;
 				}
 			}
 			resolve(webim);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getEvaluatePrescription(){
-	return new Promise(function(resolve, reject){
-		api("getEvaluatePrescription", { tenantId: config.tenantId }, function(res){
+function getEvaluatePrescription() {
+	return new Promise(function (resolve, reject) {
+		api("getEvaluatePrescription", { tenantId: config.tenantId }, function (res) {
 			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
 			resolve(val);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function updateCustomerInfo(data){
-	return new Promise(function(resolve, reject){
+function updateCustomerInfo(data) {
+	return new Promise(function (resolve, reject) {
 		Promise.all([
 			getVisitorId(),
 			getToken()
-		]).then(function(result){
+		]).then(function (result) {
 			var visitorId = result[0];
 			var token = result[1];
 			data.visitorId = visitorId;
@@ -1060,17 +1048,17 @@ function updateCustomerInfo(data){
 			data.appName = config.appName;
 			data.userName = config.user.username;
 			data.token = token;
-			api("updateCustomerInfo", data, function(msg){
+			api("updateCustomerInfo", data, function (msg) {
 				// resolve(msg.data);
-			}, function(err){
+			}, function (err) {
 				// reject(err);
 			});
 		});
 	});
 }
 
-function getArticleJson(data){
-	return new Promise(function(resolve, reject){
+function getArticleJson(data) {
+	return new Promise(function (resolve, reject) {
 		api("getArticleJson", {
 			media_id: data.media_id,
 			tenantId: config.tenantId,
@@ -1078,30 +1066,30 @@ function getArticleJson(data){
 			orgName: config.orgName,
 			appName: config.appName,
 			token: 0,
-		}, function(ret){
+		}, function (ret) {
 			var articles = utils.getDataByPath(ret, "data.entity.articles");
 			resolve(articles);
 		});
 	});
 }
 // 猜你想说 接口列表
-function getGuessList(data){
+function getGuessList(data) {
 	var officialAccount = profile.currentOfficialAccount;
-	if(!officialAccount) return;
-	return new Promise(function(resolve, reject){
+	if (!officialAccount) return;
+	return new Promise(function (resolve, reject) {
 		api("getGuessList", {
 			tenantId: config.tenantId,
 			sessionId: officialAccount.sessionId,
 			robotId: officialAccount.agentId,
 			inputValue: data
-		}, function(msg){
+		}, function (msg) {
 			resolve(msg);
 		});
 	});
 }
 
-function getStatisfyYes(robotAgentId, satisfactionCommentKey){
-	return new Promise(function(resolve, reject){
+function getStatisfyYes(robotAgentId, satisfactionCommentKey) {
+	return new Promise(function (resolve, reject) {
 		emajax({
 			url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
 			data: {
@@ -1109,29 +1097,29 @@ function getStatisfyYes(robotAgentId, satisfactionCommentKey){
 				type: 1
 			},
 			type: "POST",
-			success: function(resp){
+			success: function (resp) {
 				var parsed;
 
-				try{
+				try {
 					parsed = JSON.parse(resp);
 				}
-				catch(e){ }
+				catch (e) { }
 
-				if((parsed && parsed.status) === "OK"){
+				if ((parsed && parsed.status) === "OK") {
 					resolve(parsed.entity);
 				}
-				else{
+				else {
 					reject(parsed);
 				}
 			},
-			error: function(e){
+			error: function (e) {
 				reject(e);
 			}
 		});
 	});
 }
-function getStatisfyNo(robotAgentId, satisfactionCommentKey){
-	return new Promise(function(resolve, reject){
+function getStatisfyNo(robotAgentId, satisfactionCommentKey) {
+	return new Promise(function (resolve, reject) {
 		emajax({
 			url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
 			data: {
@@ -1139,148 +1127,148 @@ function getStatisfyNo(robotAgentId, satisfactionCommentKey){
 				type: 2
 			},
 			type: "POST",
-			success: function(resp){
+			success: function (resp) {
 				var parsed;
 
-				try{
+				try {
 					parsed = JSON.parse(resp);
 				}
-				catch(e){ }
+				catch (e) { }
 
-				if((parsed && parsed.status) === "OK"){
+				if ((parsed && parsed.status) === "OK") {
 					resolve(parsed.entity);
 				}
-				else{
+				else {
 					reject(parsed);
 				}
 			},
-			error: function(e){
+			error: function (e) {
 				reject(e);
 			}
 		});
 	});
 }
 
-function getSatisfactionCommentTags(robotAgentId){
-	return new Promise(function(resolve, reject){
+function getSatisfactionCommentTags(robotAgentId) {
+	return new Promise(function (resolve, reject) {
 		api("getSatisfactionCommentTags", {
 			tenantId: config.tenantId,
 			robotAgentId: robotAgentId
-		}, function(msg){
+		}, function (msg) {
 			var status = utils.getDataByPath(msg, "data.status");
 			var entities = utils.getDataByPath(msg, "data.entities");
-			if(status === "OK"){
+			if (status === "OK") {
 				resolve(entities);
 			}
-			else{
+			else {
 				reject(msg.data);
 			}
-		}, function(error){
+		}, function (error) {
 			reject(error);
 		});
 	});
 }
-function confirmSatisfaction(robotAgentId, satisfactionCommentKey, selected){
+function confirmSatisfaction(robotAgentId, satisfactionCommentKey, selected) {
 	var data = {
 		satisfactionCommentKey: satisfactionCommentKey,
 		type: 2,
 	};
 	selected && (data.reasonTag = selected);
 
-	return new Promise(function(resolve, reject){
+	return new Promise(function (resolve, reject) {
 		emajax({
 			url: "/v1/webimplugin/tenants/" + config.tenantId + "/robot-agents/" + robotAgentId + "/satisfaction-comment",
 			data: data,
 			type: "POST",
-			success: function(resp){
+			success: function (resp) {
 				var parsed;
 
-				try{
+				try {
 					parsed = JSON.parse(resp);
 				}
-				catch(e){ }
+				catch (e) { }
 
-				if((parsed && parsed.status) === "OK"){
+				if ((parsed && parsed.status) === "OK") {
 					resolve(parsed.entity);
 				}
-				else{
+				else {
 					reject(parsed);
 				}
 			},
-			error: function(e){
+			error: function (e) {
 				reject(e);
 			}
 		});
 	});
 }
 
-function getGradeType(){
-	return new Promise(function(resolve, reject){
+function getGradeType() {
+	return new Promise(function (resolve, reject) {
 		api("getInfo", {
 			tenantId: config.tenantId,
-		}, function(resp){
-			if(resp){
+		}, function (resp) {
+			if (resp) {
 				resolve(resp.data);
 			}
-			else{
+			else {
 				reject(new Error("unexpected response value."));
 			}
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getOptForShowTrackMsg(){
-	return new Promise(function(resolve, reject){
+function getOptForShowTrackMsg() {
+	return new Promise(function (resolve, reject) {
 		api("getOptForShowTrackMsg", {
 			tenantId: config.tenantId,
-		}, function(res){
+		}, function (res) {
 			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
-			if(typeof val === "string"){
-				if(val == (false + "")){
+			if (typeof val === "string") {
+				if (val == (false + "")) {
 					val = false;
 				}
-				else if(val == (true + "")){
+				else if (val == (true + "")) {
 					val = true;
 				}
 			}
 			resolve(val);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getOptForManualMenuGuide(){
-	return new Promise(function(resolve, reject){
+function getOptForManualMenuGuide() {
+	return new Promise(function (resolve, reject) {
 		api("getOptForManualMenuGuide", {
 			tenantId: config.tenantId,
-		}, function(res){
+		}, function (res) {
 			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
-			if(typeof val === "string"){
-				if(val == (false + "")){
+			if (typeof val === "string") {
+				if (val == (false + "")) {
 					val = false;
 				}
-				else if(val == (true + "")){
+				else if (val == (true + "")) {
 					val = true;
 				}
 			}
 			resolve(val);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getlaiyeHtml(url){
+function getlaiyeHtml(url) {
 	return emajax({
 		url: url,
 		type: "GET",
 		async: false
 	});
 }
-function getArticleHtml(articleUrl){
+function getArticleHtml(articleUrl) {
 	var url = "/v1/robot/integration/tenants/material/news/article/html?url=" + articleUrl;
 	return emajax({
 		url: url,
@@ -1289,7 +1277,7 @@ function getArticleHtml(articleUrl){
 	});
 }
 
-function parseReferer(ref){
+function parseReferer(ref) {
 	var i;
 	var len;
 	var idx;
@@ -1297,7 +1285,7 @@ function parseReferer(ref){
 	var referer = {};
 	var arr;
 	var elementA;
-	if(!ref){
+	if (!ref) {
 		return {};
 	}
 	ref = utils.decode(ref);
@@ -1306,62 +1294,62 @@ function parseReferer(ref){
 	idx = ref.indexOf("?");
 	referer.domain = elementA.origin;
 	arr = ref.slice(idx + 1).split("&");
-	for(i = 0, len = arr.length; i < len; i++){
+	for (i = 0, len = arr.length; i < len; i++) {
 		tmp = arr[i].split("=");
 		referer[tmp[0]] = tmp.length > 1 ? tmp[1] : "";
 	}
 	return referer;
 }
 
-function startKeep(data){
-	return new Promise(function(resolve, reject){
+function startKeep(data) {
+	return new Promise(function (resolve, reject) {
 		Promise.all([
 			getVisitorId(),
-		]).then(function(result){
+		]).then(function (result) {
 			var visitorId = result[0];
 			data.visitorId = visitorId;
 			data.tenantId = config.tenantId;
-			api("startKeep", data, function(msg){
+			api("startKeep", data, function (msg) {
 				// resolve(msg.data);
-			}, function(err){
+			}, function (err) {
 				// reject(err);
 			});
 		});
 	});
 }
 
-function closeChatDialog(data){
-	return new Promise(function(resolve, reject){
+function closeChatDialog(data) {
+	return new Promise(function (resolve, reject) {
 		Promise.all([
 			getVisitorId(),
-		]).then(function(result){
+		]).then(function (result) {
 			var visitorId = result[0];
 			data.visitorId = visitorId;
 			data.tenantId = config.tenantId;
-			api("closeChatDialog", data, function(msg){
+			api("closeChatDialog", data, function (msg) {
 				// resolve(msg.data);
-			}, function(err){
+			}, function (err) {
 				// reject(err);
 			});
 		});
 	});
 }
 
-function getSessionEnquires(serviceSessionId){
-	return new Promise(function(resolve, reject){
+function getSessionEnquires(serviceSessionId) {
+	return new Promise(function (resolve, reject) {
 		api("getSessionEnquires", {
 			tenantId: config.tenantId,
 			serviceSessionId: serviceSessionId
-		}, function(msg){
+		}, function (msg) {
 			var result = utils.getDataByPath(msg, "data.entities");
 			resolve(result);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getRobotNotReachableENEnable(){
+function getRobotNotReachableENEnable() {
 	return emajax({
 		url: "/v1/webimplugin/tenants/"
 			+ config.tenantId
@@ -1371,276 +1359,274 @@ function getRobotNotReachableENEnable(){
 	});
 }
 
-function getNoEmptyAgentEnable(){
-	return new Promise(function(resolve, reject){
+function getNoEmptyAgentEnable() {
+	return new Promise(function (resolve, reject) {
 		emajax({
 			url: "/v1/webimplugin/tenants/"
 				+ config.tenantId
 				+ "/options/noEmptyAgentTipEnable",
 			type: "GET",
 			async: false,
-			success: function(data){
+			success: function (data) {
 				data = JSON.parse(data);
-				if(data.status && data.status == "OK" && data.entities){
+				if (data.status && data.status == 'OK' && data.entities) {
 					resolve(data.entities);
-				}
-				else{
-					reject("");
+				} else {
+					reject('');
 				}
 			},
-			error: function(err){
+			error: function (err) {
 				reject(err);
 			}
 		});
 	});
 }
 
-function getNoEmptyAgentMessage(){
-	return new Promise(function(resolve, reject){
+function getNoEmptyAgentMessage() {
+	return new Promise(function (resolve, reject) {
 		emajax({
 			url: "/v1/webimplugin/tenants/"
 				+ config.tenantId
 				+ "/options/noEmptyAgentTipMessage?visitorUserName=" + config.user.username,
 			type: "GET",
 			async: false,
-			success: function(data){
+			success: function (data) {
 				data = JSON.parse(data);
-				if(data.status && data.status == "OK" && data.entities && data.entities){
+				if (data.status && data.status == 'OK' && data.entities && data.entities) {
 					resolve(data.entities);
-				}
-				else{
-					reject("");
+				} else {
+					reject('');
 				}
 			},
-			error: function(err){
+			error: function (err) {
 				reject(err);
 			},
 		});
 	});
 }
 
-function getOnlineCustomerStatus(){
-	return new Promise(function(resolve, reject){
+function getOnlineCustomerStatus() {
+	return new Promise(function (resolve, reject) {
 		api("getOnlineCustomerStatus", {
 			tenantId: config.tenantId,
-		}, function(res){
+		}, function (res) {
 			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
-			if(typeof val === "string"){
-				if(val == (false + "")){
+			if (typeof val === "string") {
+				if (val == (false + "")) {
 					val = false;
 				}
-				else if(val == (true + "")){
+				else if (val == (true + "")) {
 					val = true;
 				}
 			}
 			resolve(val);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
-function getIsNoLink(){
-	return new Promise(function(resolve, reject){
+function getIsNoLink() {
+	return new Promise(function (resolve, reject) {
 		api("getIsNoLink", {
 			tenantId: config.tenantId,
-		}, function(res){
+		}, function (res) {
 			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
-			if(typeof val === "string"){
-				if(val == (false + "")){
+			if (typeof val === "string") {
+				if (val == (false + "")) {
 					val = false;
 				}
-				else if(val == (true + "")){
+				else if (val == (true + "")) {
 					val = true;
 				}
 			}
 			resolve(val);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function deleteVideoInvitation(serviceSessionId){
-	return new Promise(function(resolve, reject){
+function deleteVideoInvitation(serviceSessionId) {
+	return new Promise(function (resolve, reject) {
 		api("deleteVideoInvitation", {
 			serviceSessionId: serviceSessionId,
-		}, function(){
+		}, function () {
 			resolve();
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function visitorCloseSession(data){
-	return new Promise(function(resolve, reject){
+function visitorCloseSession(data) {
+	return new Promise(function (resolve, reject) {
 		Promise.all([
 			getVisitorId(),
-		]).then(function(result){
+		]).then(function (result) {
 			var visitorId = result[0];
 			data.visitorId = visitorId;
 			data.tenantId = config.tenantId;
-			api("visitorCloseSession", data, function(msg){
+			api("visitorCloseSession", data, function (msg) {
 				// resolve(msg.data);
-			}, function(err){
+			}, function (err) {
 				// reject(err);
 			});
 		});
 	});
 }
 
-function getEvaluateVerify(serviceSessionId){
-	return new Promise(function(resolve, reject){
+function getEvaluateVerify(serviceSessionId) {
+	return new Promise(function (resolve, reject) {
 		api("getEvaluateVerify", {
 			tenantId: config.tenantId,
 			serviceSessionId: serviceSessionId
-		}, function(msg){
+		}, function (msg) {
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function getInputTopButton(){
-	return new Promise(function(resolve, reject){
+function getInputTopButton() {
+	return new Promise(function (resolve, reject) {
 		api("getInputTopButton", {
 			tenantId: config.tenantId,
 			configId: config.configId
-		}, function(msg){
+		}, function (msg) {
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
-		}, function(err){
+		}, function (err) {
 			// reject(err);
 			resolve(err);
 		});
 	});
 }
-function getInputTopStatus(){
-	return new Promise(function(resolve, reject){
+function getInputTopStatus() {
+	return new Promise(function (resolve, reject) {
 		api("getInputTopStatus", {
 			tenantId: config.tenantId,
 			configId: config.configId
-		}, function(msg){
+		}, function (msg) {
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
-		}, function(err){
+		}, function (err) {
 			// reject(err);
 			resolve(err);
 		});
 	});
 }
-function getInputH5Button(){
-	return new Promise(function(resolve, reject){
+function getInputH5Button() {
+	return new Promise(function (resolve, reject) {
 		api("getInputH5Button", {
 			tenantId: config.tenantId,
 			configId: config.configId
-		}, function(msg){
+		}, function (msg) {
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
-		}, function(err){
+		}, function (err) {
 			// reject(err);
 			resolve(err);
 		});
 	});
 }
-function getInputH5Status(){
-	return new Promise(function(resolve, reject){
+function getInputH5Status() {
+	return new Promise(function (resolve, reject) {
 		api("getInputH5Status", {
 			tenantId: config.tenantId,
 			configId: config.configId
-		}, function(msg){
+		}, function (msg) {
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
-		}, function(err){
+		}, function (err) {
 			// reject(err);
 			resolve(err);
 		});
 	});
 }
-function getVideoH5Status(){
-	return new Promise(function(resolve, reject){
+function getVideoH5Status() {
+	return new Promise(function (resolve, reject) {
 		api("getVideoH5Status", {
 			tenantId: config.tenantId,
 			configId: config.configId
-		}, function(msg){
+		}, function (msg) {
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
-		}, function(err){
+		}, function (err) {
 			resolve(err);
 		});
 	});
 }
 
-function getSendImgTips(){
-	return new Promise(function(resolve, reject){
+function getSendImgTips() {
+	return new Promise(function (resolve, reject) {
 		api("getSendImgTips", {
 			tenantId: config.tenantId,
 			configId: config.configId
-		}, function(msg){
+		}, function (msg) {
 			var result = utils.getDataByPath(msg, "data");
 			resolve(result);
-		}, function(err){
+		}, function (err) {
 			// reject(err);
 			resolve(err);
 		});
 	});
 }
-function getOnlyCloseWindow(){
-	return new Promise(function(resolve, reject){
+function getOnlyCloseWindow() {
+	return new Promise(function (resolve, reject) {
 		var webim = false;
-		api("getOnlyCloseWindow", { tenantId: config.tenantId }, function(res){
+		api("getOnlyCloseWindow", { tenantId: config.tenantId }, function (res) {
 			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
-			if(typeof val === "string"){
-				if(val == "true"){
+			if (typeof val === "string") {
+				if (val == "true") {
 					webim = true;
 				}
 			}
 			resolve(webim);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
-function getOnlyCloseSession(){
-	return new Promise(function(resolve, reject){
+function getOnlyCloseSession() {
+	return new Promise(function (resolve, reject) {
 		var webim = false;
-		api("getOnlyCloseSession", { tenantId: config.tenantId }, function(res){
+		api("getOnlyCloseSession", { tenantId: config.tenantId }, function (res) {
 			var val = utils.getDataByPath(res, "data.entities.0.optionValue");
-			if(typeof val === "string"){
-				if(val == "true"){
+			if (typeof val === "string") {
+				if (val == "true") {
 					webim = true;
 				}
 			}
 			resolve(webim);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
 
-function readMessageLastRead(serviceSessionId){
-	return new Promise(function(resolve, reject){
+function readMessageLastRead(serviceSessionId) {
+	return new Promise(function (resolve, reject) {
 		api("readMessageLastRead", {
 			tenantId: config.tenantId,
 			serviceSessionId: serviceSessionId,
-		}, function(res){
+		}, function (res) {
 			resolve(res);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
 }
-function initLanguage(language, visitorUserName){
-	return new Promise(function(resolve, reject){
+function initLanguage(language, visitorUserName) {
+	return new Promise(function (resolve, reject) {
 		api("initLanguage", {
 			tenantId: config.tenantId,
 			language: language,
 			visitorUserName: visitorUserName,
-		}, function(res){
+		}, function (res) {
 			resolve(res);
-		}, function(err){
+		}, function (err) {
 			reject(err);
 		});
 	});
@@ -1659,7 +1645,6 @@ module.exports = {
 	getDutyStatus: getDutyStatus,
 	getRobertGreeting: getRobertGreeting,
 	getRobertIsOpen: getRobertIsOpen,
-	getMsgNumberOption: getMsgNumberOption,
 	getSystemGreeting: getSystemGreeting,
 	getExSession: getExSession,
 	getAgentStatus: getAgentStatus,
@@ -1731,7 +1716,7 @@ module.exports = {
 	getVideoH5Status: getVideoH5Status,
 	readMessageLastRead: readMessageLastRead,
 	initLanguage: initLanguage,
-	update: function(cfg){
+	update: function (cfg) {
 		config = cfg;
 	}
 

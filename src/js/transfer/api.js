@@ -214,14 +214,6 @@ up2Im.listen(function(msg){
 			msg: msg
 		});
 		break;
-	case "getMsgNumberOption":
-		emitAjax({
-			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/canTransferMsgNumber",
-			type: "GET",
-			msg: msg,
-			excludeData: true
-		});
-		break;
 	case "getTransferManualMenu":
 		emitAjax({
 			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/welcome/transfer-manual-menu",
@@ -440,7 +432,7 @@ up2Im.listen(function(msg){
 		break;
 	case "getSkillgroupMenu":
 		emitAjax({
-			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/skillgroup-menu?visitorUserName="  + params.visitorUserName,
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/skillgroup-menu?visitorUserName="  + params.visitorUserName ,
 			type: "GET",
 			msg: msg,
 			excludeData: true
@@ -536,7 +528,7 @@ up2Im.listen(function(msg){
 	// 网页插件设置的开关 配置整合到一个接口获取，并放在config里。
 	case "getConfigOption":
 		emitAjax({
-			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/fusion?page=0&size=8",
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId +"/fusion?page=0&size=8",
 			msg: msg,
 			type: "GET",
 			excludeData: true
@@ -780,7 +772,7 @@ up2Im.listen(function(msg){
 	case "getSatisfactionTipWord":
 		emitAjax({
 				
-			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/GreetingMsgEnquiryInvite" + "?serviceSessionId=" + params.serviceSessionId,
+				url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/GreetingMsgEnquiryInvite"+ "?serviceSessionId=" + params.serviceSessionId,
 			type: "GET",
 			msg: msg,
 			excludeData: true,
@@ -797,7 +789,7 @@ up2Im.listen(function(msg){
 
 	case "getEvaluteSolveWord":
 		emitAjax({
-			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/evaluteSolveWord" + "?serviceSessionId=" + params.serviceSessionId,
+			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/options/evaluteSolveWord"+ "?serviceSessionId=" + params.serviceSessionId,
 			type: "GET",
 			msg: msg,
 			excludeData: true,
@@ -1015,7 +1007,7 @@ up2Im.listen(function(msg){
 		break;
 	// 获取输入框上边的快捷按钮信息
 	case "getInputTopButton":
-		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/" + tenantId + "/configs/" + params.configId + "/information/shortcut",
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/"+ tenantId +"/configs/"+params.configId+"/information/shortcut",
 		emitAjax({
 			url: url,
 			msg: msg,
@@ -1025,27 +1017,27 @@ up2Im.listen(function(msg){
 		break;
 	// 获取输入框上边的快捷按钮的开关
 	case "getInputTopStatus":
-		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/visitors/options/shortcut/status",
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/"+ tenantId +"/configs/"+params.configId+"/visitors/options/shortcut/status",
 		emitAjax({
 			url: url,
 			msg: msg,
 			excludeData: true,
 			type: "GET"
 		});
-		break;
+		break;	
 	// 获取H5扩展的开关
 	case "getInputH5Status":
-		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/visitors/options/toolbar-expand/status",
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/"+ tenantId +"/configs/"+params.configId+"/visitors/options/toolbar-expand/status",
 		emitAjax({
 			url: url,
 			msg: msg,
 			excludeData: true,
 			type: "GET"
 		});
-		break;
+		break;	
 	// 获取H5扩展按钮信息
 	case "getInputH5Button":
-		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/" + tenantId + "/configs/" + params.configId + "/information/toolbar-expand",
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/"+ tenantId +"/configs/"+params.configId+"/information/toolbar-expand",
 		emitAjax({
 			url: url,
 			msg: msg,
@@ -1056,7 +1048,7 @@ up2Im.listen(function(msg){
 		
 	// 视频通话允许访客二次确认
 	case "getVideoH5Status":
-		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/visitors/options/video-second-confirm/status",
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/"+ tenantId +"/configs/"+params.configId+"/visitors/options/video-second-confirm/status",
 		emitAjax({
 			url: url,
 			msg: msg,
@@ -1065,7 +1057,7 @@ up2Im.listen(function(msg){
 		});
 		break;
 	case "getSlidebarSwitch":
-		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/" + tenantId + "/configs/" + params.configId + "/options/sidebar/value",
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/"+ tenantId +"/configs/"+params.configId+"/options/sidebar/value",
 		emitAjax({
 			url: url,
 			msg: msg,
@@ -1074,25 +1066,25 @@ up2Im.listen(function(msg){
 		});
 		break;
 	case "getSidebarFoldedrSwitch":
-		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/" + tenantId + "/configs/" + params.configId + "/options/sidebar-folded/value",
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/"+ tenantId +"/configs/"+params.configId+"/options/sidebar-folded/value",
 		emitAjax({
 			url: url,
 			msg: msg,
 			excludeData: true,
 			type: "GET"
 		});
-		break;
+		break;	
 	case "getSidebarWidth":
-		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/" + tenantId + "/configs/" + params.configId + "/options/sidebar-width/value",
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/"+ tenantId +"/configs/"+params.configId+"/options/sidebar-width/value",
 		emitAjax({
 			url: url,
 			msg: msg,
 			excludeData: true,
 			type: "GET"
 		});
-		break;
+		break;	
 	case "putSidebarFoldedrSwitch":
-		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/options/sidebar-folded/value",
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/"+ tenantId +"/configs/"+params.configId+"/options/sidebar-folded/value",
 		emitAjax({
 			url: url,
 			msg: msg,
@@ -1101,7 +1093,7 @@ up2Im.listen(function(msg){
 		break;
 	// 需要申请相机的权限的开关
 	case "getSendImgTips":
-		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/" + tenantId + "/configs/" + params.configId + "/visitors/options/sendImgTips/status",
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/settings/tenants/"+ tenantId +"/configs/"+params.configId+"/visitors/options/sendImgTips/status",
 		emitAjax({
 			url: url,
 			msg: msg,
