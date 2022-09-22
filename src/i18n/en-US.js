@@ -52,7 +52,9 @@ module.exports = {
 		read_full_version: "Read all",
 		default_emoji: "default",
 		agent: "Agent ",
-		powered_by_easemob: "powered by easemob"
+		powered_by_easemob: "powered by easemob",
+		ticket_Introduction: "You can click the message below to feed back your questions!",
+		ticket: "ticket"
 	},
 	message_brief: {
 		link: "[Link]",
@@ -138,6 +140,7 @@ module.exports = {
 		video_invite: "Video call",
 		evaluate_agent: "Satisfaction",
 		transfer_to_kefu: "Agent",
+		transfer_to_ticket: "Ticket",
 		abandon_queue: "Abandon queue",
 		send_video: "SendVideo",
 		out_of_line: "Exit the queue",

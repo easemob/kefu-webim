@@ -298,14 +298,14 @@ function _setNotice(){
 					}
 				}
 			}
-			elseif (!utils.isMobile) {
-					if (!$("#em-kefu-webim-self").hasClass("hide")) {
-						document.querySelector(".chat-wrapper").style.cssText = 'top:65px;left:10px;background: #fff;padding-right:10px;bottom:170px';
-					}
-					else {
-						document.querySelector(".chat-wrapper").style.cssText = 'top:45px;background: #fff;bottom:170px';
-					}
+			else if(!utils.isMobile){
+				if(!$("#em-kefu-webim-self").hasClass("hide")){
+					document.querySelector(".chat-wrapper").style.cssText = "top:65px;left:10px;background: #fff;padding-right:10px;bottom:170px";
 				}
+				else{
+					document.querySelector(".chat-wrapper").style.cssText = "top:45px;background: #fff;bottom:170px";
+				}
+			}
 			// 设置信息栏内容
 			noticeContent.innerHTML = WebIM.utils.parseLink(slogan);
 			// 隐藏信息栏按钮
@@ -330,13 +330,13 @@ function _setOffline(){
 			// 下班禁止留言、禁止接入会话
 		var modelDom = utils.createElementFromHTML("<div class=\"em-model\"></div>");
 		var offDutyPromptDom = utils.createElementFromHTML([
-				"<div class=\"em-dialog off-duty-prompt\">",
-				"<div class=\"bg-color header\">" + __("common.tip") + "</div>",
-				"<div class=\"body\">",
-				"<p class=\"content\">" + config.offDutyWord + "</p>",
-				"</div>",
-				"</div>"
-			].join(""));
+			"<div class=\"em-dialog off-duty-prompt\">",
+			"<div class=\"bg-color header\">" + __("common.tip") + "</div>",
+			"<div class=\"body\">",
+			"<p class=\"content\">" + config.offDutyWord + "</p>",
+			"</div>",
+			"</div>"
+		].join(""));
 		doms.imChat.appendChild(modelDom);
 		doms.imChat.appendChild(offDutyPromptDom);
 		doms.sendBtn.innerHTML = __("chat.send");
@@ -499,34 +499,34 @@ function _bindEvents(){
 			// 查询会话是否已经评价，评价了就不弹出评价邀请框了
 			apiHelper.getSessionEnquires(sessionId)
 			.then(function(res){
-					if(!res.length){
+				if(!res.length){
 						// 弹出评价邀请框
-						if(typeof (config.options.onlyCloseSession) == "undefined"){
-							config.options.onlyCloseSession = "true";
-						}
-						if(typeof (config.options.onlyCloseWindow) == "undefined"){
-							config.options.onlyCloseWindow = "true";
-						}
-						if(config.options.closeSessionWhenCloseWindow == "true" && config.options.onlyCloseSession == "true" && (currentState == "Wait" || currentState == "Processing")){
-							satisfaction.show(null, sessionId, "system");
-						}
-						else if(config.options.closeSessionWhenCloseWindow == "false" && config.options.onlyCloseWindow == "true" && (currentState == "Wait" || currentState == "Processing")){
-							satisfaction.show(null, sessionId, "system");
-						}
-						else{
-							eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
-							sessionId && apiHelper.closeChatDialog({ serviceSessionId: sessionId });
-							getToHost.send({ event: _const.EVENTS.CLOSE });
-							utils.setStore("isHaveCustomerMsg", false);
-						}
+					if(typeof (config.options.onlyCloseSession) == "undefined"){
+						config.options.onlyCloseSession = "true";
+					}
+					if(typeof (config.options.onlyCloseWindow) == "undefined"){
+						config.options.onlyCloseWindow = "true";
+					}
+					if(config.options.closeSessionWhenCloseWindow == "true" && config.options.onlyCloseSession == "true" && (currentState == "Wait" || currentState == "Processing")){
+						satisfaction.show(null, sessionId, "system");
+					}
+					else if(config.options.closeSessionWhenCloseWindow == "false" && config.options.onlyCloseWindow == "true" && (currentState == "Wait" || currentState == "Processing")){
+						satisfaction.show(null, sessionId, "system");
 					}
 					else{
-						// 取消轮询接口
 						eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
 						sessionId && apiHelper.closeChatDialog({ serviceSessionId: sessionId });
 						getToHost.send({ event: _const.EVENTS.CLOSE });
+						utils.setStore("isHaveCustomerMsg", false);
 					}
-				});
+				}
+				else{
+						// 取消轮询接口
+					eventListener.trigger(_const.SYSTEM_EVENT.CHAT_CLOSED);
+					sessionId && apiHelper.closeChatDialog({ serviceSessionId: sessionId });
+					getToHost.send({ event: _const.EVENTS.CLOSE });
+				}
+			});
 
 			// 关闭并且结束会话
 			var agentType = officialAccount.agentType;
@@ -849,22 +849,22 @@ function _bindEvents(){
 
 		apiHelper.getSatisfactionCommentTags(robotAgentId, satisfactionCommentKey)
 		.then(function(dat){
-				if(dat.length > 0){
+			if(dat.length > 0){
 					// tagSelector = new TagSelector(dat, robotAgentId, satisfactionCommentKey);
-					tagSelector.show(dat, robotAgentId, satisfactionCommentKey);
-				}
-				else{
-					apiHelper.confirmSatisfaction(robotAgentId, satisfactionCommentKey)
-					.then(function(){
-							uikit.tip("谢谢");
-						}, function(err){
-							if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
-								uikit.tip("已评价");
-							}
-						});
-					utils.setStore("isHaveCustomerMsg", false);
-				}
-			});
+				tagSelector.show(dat, robotAgentId, satisfactionCommentKey);
+			}
+			else{
+				apiHelper.confirmSatisfaction(robotAgentId, satisfactionCommentKey)
+				.then(function(){
+					uikit.tip("谢谢");
+				}, function(err){
+					if(err.errorCode === "KEFU_ROBOT_INTEGRATION_0207"){
+						uikit.tip("已评价");
+					}
+				});
+				utils.setStore("isHaveCustomerMsg", false);
+			}
+		});
 	});
 
 	utils.live("#em-article-close .icon-back", "click", function(){
@@ -936,6 +936,7 @@ function _bindEvents(){
 
 	function handleSendBtn(){
 		var toKefuBtn = document.querySelector(".em-widget-to-kefu");
+		var toTicketBtn = document.querySelector(".em-widget-to-ticket");
 		// var toKefuBtn = document.querySelector(".em-widget-to-kefu-input-button");
 		var isEmpty = !doms.textInput.value.trim();
 
@@ -995,6 +996,11 @@ function _bindEvents(){
 				doms.emojiToggleButton.style.right = "75px";
 			}
 		}
+
+		eventListener.add(_const.eventMessageText.TICKET, function(){
+			utils.addClass(toKefuBtn, "hide");
+			utils.removeClass(toTicketBtn, "hide");
+		});
 	}
 
 	if(Modernizr.oninput){
@@ -1169,7 +1175,7 @@ function _bindEvents(){
 			utils.setStore("sendVideoMobileModel", true);
 			utils.removeClass(doms.mobileModel, "send_video");
 		}
-else{ }
+		else{ }
 		utils.addClass(doms.mobileModel, "hide");
 	});
 	// refuse
@@ -1180,9 +1186,43 @@ else{ }
 		utils.addClass(doms.mobileModel, "hide");
 	});
 
+	// 消息中的留言
+	utils.live(".msgTicketButton", "click", function(){
+		// 是否使用第三方留言
+		var config = commonConfig.getConfig();
+		if(config.toolbar.ticketUrlStatus){
+			window.open(config.toolbar.ticketUrl);
+		}
+		else{
+			noteIframe.open();
+		}
+		apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
+	});
+
+	// 输入框中的留言
+	utils.live(".em-widget-to-ticket", "click", function(){
+		// 是否使用第三方留言
+		var config = commonConfig.getConfig();
+		if(config.toolbar.ticketUrlStatus){
+			window.open(config.toolbar.ticketUrl);
+		}
+		else{
+			noteIframe.open();
+		}
+		apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
+	});
+
 	// 显示留言页面
 	utils.on(doms.noteBtn, "click", function(){
-		noteIframe.open();
+		// 是否使用第三方留言
+		var config = commonConfig.getConfig();
+		if(config.toolbar.ticketUrlStatus){
+			window.open(config.toolbar.ticketUrl);
+		}
+		else{
+			noteIframe.open();
+		}
+		apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
 	});
 
 	// 满意度评价
@@ -1191,17 +1231,17 @@ else{ }
 		// 判断评价是否超时
 		apiHelper.getEvaluateVerify(profile.currentOfficialAccount.sessionId)
 		.then(function(resp){
-				if(resp.status == "OK"){
+			if(resp.status == "OK"){
 					// 访客主动评价
-					satisfaction.show(null, null, "visitor");
-				}
-				else if(resp.errorCode == "WEBIM_338"){
-					uikit.tip(__("evaluation.WEBIM_338"));
-				}
-				else{
-					uikit.tip(__("evaluation.WEBIM_OTHER"));
-				}
-			});
+				satisfaction.show(null, null, "visitor");
+			}
+			else if(resp.errorCode == "WEBIM_338"){
+				uikit.tip(__("evaluation.WEBIM_338"));
+			}
+			else{
+				uikit.tip(__("evaluation.WEBIM_OTHER"));
+			}
+		});
 	});
 
 	// ios patch: scroll page when keyboard is visible ones
@@ -1331,6 +1371,7 @@ else{ }
 	utils.on($(".ui-cmp-tab>.ul-right"), "click", function(){
 		onRight();
 	});
+
 	function onLeft(){
 		if($(".ui-cmp-tab > ul li").length < 2 || restLength == 0){
 			$(".ul-left").removeClass("hover");
@@ -1640,7 +1681,7 @@ function _initNote(){
 			data.closeChat && getToHost.send({ event: _const.EVENTS.CLOSE });
 
 		}
-catch(e){ }
+		catch(e){ }
 	}
 }
 
@@ -1694,11 +1735,11 @@ function _initSession(){
 				}),
 			])
 			.then(function(){
-					return Promise.all([
-						_initOfficialAccount(),
-						_initSDK()
-					]);
-				})
+				return Promise.all([
+					_initOfficialAccount(),
+					_initSDK()
+				]);
+			})
 			.then(_onReady);
 
 

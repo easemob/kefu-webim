@@ -26,7 +26,6 @@ module.exports = function(){
 	// 获取发送几次消息显示转人工按钮配置
 	apiHelper.getMsgNumberOption().then(function(data){
 		sendMsgNumber = data[0] ? Number(data[0].optionValue) : 0;
-		console.log(11111, sendMsgNumber);
 	});
 
 	// 把注册事件和方法提取到新增的输入框上方按钮文件

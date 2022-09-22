@@ -1,6 +1,7 @@
 var utils = require("@/common/utils");
 var _const = require("@/common/const");
 var commonConfig = require("@/common/config");
+var eventListener = require("@/app/tools/eventListener");
 var profile = require("./profile");
 var textParser = require("./textParser");
 var moment = require("moment");
@@ -39,7 +40,7 @@ function genMsgContent(msg, opt){
 	var type = msg.type;
 	var value = msg.data;
 	// 来自智能辅助的客服消息也会转译两次（和历史会话一样），这里转译处理。
-	value = textParser.unescape(textParser.unescape(value))
+	value = textParser.unescape(textParser.unescape(value));
 	var laiye = msg.laiye;
 	var rulai = msg.rulai;
 	var relatedRules;
@@ -76,8 +77,14 @@ function genMsgContent(msg, opt){
 				value = JSON.stringify(value);
 			}
 		}
+		// 留言
+		else if(utils.getDataByPath(msg, "ext.weichat.ctrlType") === "TransferToTickets"){
+			html = "<div>" + __("chat.ticket_Introduction") + "</div><a href=\"javascript:;\" class='msgTicketButton'>" + __("chat.ticket") + "</a>";
+			eventListener.excuteCallbacks(_const.eventMessageText.TICKET, []);
+			break;
+		}
 		else{
-			value =  notFromSystem ? textParser.parse(value, { "default": true },opt.isReceived) : textParser.parse(value);
+			value =  notFromSystem ? textParser.parse(value, { "default": true }, opt.isReceived) : textParser.parse(value);
 			
 			// 历史消息以及收到的实时消息
 			if(utils.isMobile && value[0].type == "ENCODED_TEXT"){
@@ -169,7 +176,7 @@ function genMsgContent(msg, opt){
 			+ "\" class=\" container-icon-download\" title=\""
 			+ msg.filename + "\" download=\"" + msg.filename + "\">"
 			+ "<img src=\"/webim/static/img/downloadfiles.png\"  class=\"img-download\"/>"
-			+"</a>"
+			+ "</a>"
 			+ "<p class=\"filesize\">" + utils.filesizeFormat(msg.fileLength) + "</p>";
 		break;
 		// 小视频类型

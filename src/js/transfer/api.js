@@ -988,7 +988,7 @@ up2Im.listen(function(msg){
 		break;
 	case "visitorCloseSession":
 		url = "__WEBIM_SLASH_KEY_PATH__/webimplugin/tenants/" + tenantId + "/visitors/" + params.visitorId + "/servicesessions/" + params.serviceSessionId + "/stop";
-		delete msg.data;
+		// delete msg.data;
 		emitAjax({
 			url: url,
 			msg: msg,

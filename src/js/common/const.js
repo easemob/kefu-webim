@@ -21,6 +21,7 @@ module.exports = {
 
 	eventMessageText: {
 		NOTE: __("event_message.no_agent_online"),
+		TICKET: __("event_message.ticket"),
 	},
 
 	SYSTEM_EVENT_MSG_TEXT: {

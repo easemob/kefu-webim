@@ -54,7 +54,9 @@ module.exports = {
 		read_full_version: "阅读全文",
 		default_emoji: "默认",
 		agent: "客服",
-		powered_by_easemob: "环信提供技术支持"
+		powered_by_easemob: "环信提供技术支持",
+		ticket_Introduction: "可以点击下方留言，来反馈您的问题哦！",
+		ticket: "留言"
 	},
 	message_brief: {
 		link: "[链接]",
@@ -141,6 +143,7 @@ module.exports = {
 		video_invite: "视频通话",
 		evaluate_agent: "评价客服",
 		transfer_to_kefu: "转人工",
+		transfer_to_ticket: "留言",
 		abandon_queue: "放弃排队",
 		send_video: "发送小视频",
 		out_of_line: "退出排队",
