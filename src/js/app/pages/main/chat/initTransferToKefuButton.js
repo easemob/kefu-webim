@@ -9,6 +9,7 @@ var commonConfig = require("@/common/config");
 var toKefuBtn;
 var toTicketBtn;
 var sendMsgNumber = 1;
+var msgOptionNumber;
 
 module.exports = function(){
 	if(!commonConfig.getConfig().toolbar.transferToKefu) return;
@@ -27,7 +28,8 @@ module.exports = function(){
 
 	// 获取发送几次消息显示转人工按钮配置
 	apiHelper.getMsgNumberOption().then(function(data){
-		sendMsgNumber = data[0] ? Number(data[0].optionValue) : 0;
+		msgOptionNumber = data[0] ? Number(data[0].optionValue) : 0;
+		sendMsgNumber = msgOptionNumber;
 	});
 
 	// 把注册事件和方法提取到新增的输入框上方按钮文件
@@ -39,6 +41,10 @@ module.exports = function(){
 	eventListener.add(_const.SYSTEM_EVENT.OFFICIAL_ACCOUNT_SWITCHED, _displayOrHideTransferToKefuBtn);
 
 	eventListener.add(_const.SYSTEM_EVENT.SEND_MESSAGE, _reduceMsgNumber);
+	// 结束会话，计数重新计算
+	eventListener.add(_const.SYSTEM_EVENT.SESSION_CLOSED, function(){
+		sendMsgNumber = msgOptionNumber;
+	});
 };
 
 function _reduceMsgNumber(officialAccount){
