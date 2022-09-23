@@ -67,7 +67,7 @@ function _displayOrHideTransferToKefuBtn(officialAccount){
 	// Processing
 	else if(state === _const.SESSION_STATE.PROCESSING){
 		if(sendMsgNumber <= 0){
-			if(!utils.hasClass(toTicketBtn, "hide")){
+			if(utils.hasClass(toTicketBtn, "hide")){
 				utils.toggleClass(toKefuBtn, "hide", !isRobotAgent);
 			}
 		}
