@@ -119,8 +119,8 @@ function _initSystemEventListener(){
 		// 会话关闭，隐藏，转人工按钮，留言按钮
 		var toKefuBtn = document.querySelector(".em-widget-to-kefu");
 		var toTicketBtn = document.querySelector(".em-widget-to-ticket");
-		utils.removeClass(toKefuBtn, "hide");
-		utils.removeClass(toTicketBtn, "hide");
+		utils.addClass(toKefuBtn, "hide");
+		utils.addClass(toTicketBtn, "hide");
 	});
 }
 
