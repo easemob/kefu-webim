@@ -7,6 +7,7 @@ var channel = require("../channel");
 var commonConfig = require("@/common/config");
 
 var toKefuBtn;
+var toTicketBtn;
 var sendMsgNumber = 1;
 
 module.exports = function(){
@@ -14,6 +15,7 @@ module.exports = function(){
 
 	var editorView = document.querySelector(".em-widget-send-wrapper");
 	toKefuBtn = editorView.querySelector(".em-widget-to-kefu");
+	toTicketBtn = editorView.querySelector(".em-widget-to-ticket");
 	// toKefuBtn = document.querySelector(".em-widget-to-kefu-input-button");
 	textareaBtn = editorView.querySelector(".em-widget-textarea");
 
@@ -65,7 +67,9 @@ function _displayOrHideTransferToKefuBtn(officialAccount){
 	// Processing
 	else if(state === _const.SESSION_STATE.PROCESSING){
 		if(sendMsgNumber <= 0){
-			utils.toggleClass(toKefuBtn, "hide", !isRobotAgent);
+			if(!utils.hasClass(toTicketBtn, "hide")){
+				utils.toggleClass(toKefuBtn, "hide", !isRobotAgent);
+			}
 		}
 	}
 	// Wait
