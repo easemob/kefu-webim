@@ -1004,8 +1004,10 @@ function _bindEvents(){
 		}
 
 		eventListener.add(_const.eventMessageText.TICKET, function(){
-			utils.addClass(toKefuBtn, "hide");
-			utils.removeClass(toTicketBtn, "hide");
+			if(!utils.hasClass(toKefuBtn, "hide")){
+				utils.addClass(toKefuBtn, "hide");
+				utils.removeClass(toTicketBtn, "hide");
+			}
 		});
 	}
 
