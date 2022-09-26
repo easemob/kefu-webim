@@ -674,13 +674,19 @@ function _bindEvents(){
 		var isSessionOpen = officialAccount.isSessionOpen;
 		var sessionId = officialAccount.sessionId;
 		isSessionOpen && apiHelper.closeServiceSession(sessionId);
-		noteIframe.open({
-			preData: {
-				name: config.visitor.trueName,
-				phone: config.visitor.phone,
-				mail: config.visitor.email,
-			}
-		});
+		var config = commonConfig.getConfig();
+		if(config.toolbar.ticketUrlStatus){
+			window.open(config.toolbar.ticketUrl);
+		}
+		else{
+			noteIframe.open({
+				preData: {
+					name: config.visitor.trueName,
+					phone: config.visitor.phone,
+					mail: config.visitor.email,
+				}
+			});
+		}
 	});
 
 	// 机器人列表
