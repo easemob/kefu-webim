@@ -14,6 +14,8 @@ var resolvedBtn;
 var commentDom;
 var tagContainer;
 var dialog;
+var adviceWrapper = null;
+var adviceContentTextarea = null;
 
 var starList;
 var gradeLiList;
@@ -54,9 +56,10 @@ function _init(){
 	apiHelper.getSatisfactionTipWord().then(function(tipWord){
 		// 判断是否为官微租户，Y 的话分三步实现
 		if (_const.isGuanwei == 'Y') {
-			var title1 = '您对本次客服人员的服务是否满意'
-			var title2 = '您向朋友推荐大都会人寿的可能性有多大，“10”分代表愿意推荐，请在10到0之间选择'
-			var title3 = '请问本次服务是否解决您的问题'
+			var title1 = '1 您对本次客服人员的服务是否满意'
+			var title2 = '2 您向朋友推荐大都会人寿的可能性有多大，“10”分代表愿意推荐，请在10到0之间选择'
+			var title3 = '3 请问本次服务是否解决您的问题'
+			var title4 = '4 请问您对我司还有什么其他意见建议（可在下框中直接输入，字数不可多于100字）'
 			dom = utils.createElementFromHTML([
 				"<div class=\"wrapper\">",
 				"<span class=\"title guan-wei\">" + title1 + "</span>",
@@ -67,6 +70,9 @@ function _init(){
 				"<div class=\"resolveCon mbot-20 hide\"><span class=\"title guan-wei\">" + title3 + "</span>",
 				"<div><span class=\"resolve-btn resolved\" data-num = \"1\"><span>" + __("evaluation.resolved") + "</span></span>",
 				"<span class=\"resolve-btn unresolved\" data-num = \"2\"><span>" + __("evaluation.unsolved") + "</span></span></div></div>",
+				"<div class=\"advice hide\"><p class=\"title guan-wei\">" + title4 + "</p>",
+				"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.advice") + "\" value=\"\" maxlength=\"10\"></textarea>",
+				"</div>",
 				"</div>"
 			].join(""));
 
@@ -105,10 +111,13 @@ function _init(){
 
 			// 是否已解决点击js
 			resolvedBtn = dom.querySelectorAll(".resolve-btn");
+			adviceWrapper = dom.querySelector(".advice");
+			adviceContentTextarea = dom.querySelector("textarea");
 			utils.live(".resolve-btn", "click", function(){
 				utils.removeClass(resolvedBtn, "selected-guan-wei");
 				utils.addClass(this, "selected-guan-wei");
 				resolvedGuanwei = this.dataset.num;
+				utils.removeClass(adviceWrapper, 'hide')
 			});
 			tagContainer = dom.querySelector(".tag-container");
 		} else {
@@ -328,7 +337,13 @@ function _confirm(){
 			agentUserId: _const.agentUserId,
 			inviteId: score ? score : '',
 			score: grade ? grade : '',
-			resolve: resolvedGuanwei ? resolvedGuanwei : ''
+			resolve: resolvedGuanwei ? resolvedGuanwei : '',
+			comment: adviceContentTextarea.value ? adviceContentTextarea.value : ''
+		}
+		if(!score){
+			uikit.tip(__("evaluation.select_level_please_or_cancel"),3000);
+			$(".em-widget-error-prompt").addClass("isguanwei")
+			return false;
 		}
 		// satisfactionId 有值说明评价过走修改接口
 		if (satisfactionId) {
@@ -394,6 +409,8 @@ function show(inviteId, serviceSessionId, evaluateWay, messageId){
 		if (_const.isGuanwei == 'Y') {
 			utils.addClass(gradeCon, 'hide')
 			utils.addClass(resolveCon, 'hide')
+			utils.addClass(adviceWrapper, 'hide')
+			adviceContentTextarea.value = ""
 			scoreName = null;
 			grade = null;
 			resolvedGuanwei = null;

@@ -28,12 +28,13 @@ function _showPrompt(msg){
 
 function _hidePrompt(){
 	utils.addClass(promptDom, "hide");
+	$(".em-widget-error-prompt").removeClass("isguanwei")
 }
 
-function tip(msg){
+function tip(msg,during){
 	_initPrompt();
 	_showPrompt(msg);
-	setTimeout(_hidePrompt, 2000);
+	setTimeout(_hidePrompt, during * 1 || 2000);
 }
 
 function _createDialog(options){

@@ -151,6 +151,10 @@
 	}
 	.em-widget-error-prompt {
 		font-size: 15px;
+		&.isguanwei{
+			line-height: 20px;
+			height: 40px;	
+		}
 	}
 }
 
