@@ -338,7 +338,7 @@ function _confirm(){
 			inviteId: score ? score : '',
 			score: grade ? grade : '',
 			resolve: resolvedGuanwei ? resolvedGuanwei : '',
-			comment: adviceContentTextarea.value ? adviceContentTextarea.value : ''
+			comments: adviceContentTextarea.value ? adviceContentTextarea.value : ''
 		}
 		if(!score){
 			uikit.tip(__("evaluation.select_level_please_or_cancel"),3000);
