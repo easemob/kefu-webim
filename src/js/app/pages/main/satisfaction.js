@@ -51,7 +51,7 @@ function _init(){
 		color = arr[1];
 	}
 	else{
-		themeClassName = _const.themeMap[config.themeName];
+		themeClassName = _const.themeMap[config.themeName || 'theme_sky']; // 默认为theme_sky
 	}
 	color = !color? $("body." + themeClassName + " .border-color").css("borderColor") : color;
 	bgColor = $("body." + themeClassName + " .border-color").css("borderColor") ? $("body." + themeClassName + " .border-color").css("borderColor") : color;
