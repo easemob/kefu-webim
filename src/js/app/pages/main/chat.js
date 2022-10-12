@@ -1206,11 +1206,11 @@ function _bindEvents(){
 		var config = commonConfig.getConfig();
 		if(config.toolbar.ticketUrlStatus){
 			window.open(config.toolbar.ticketUrl);
+			apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
 		}
 		else{
 			noteIframe.open();
 		}
-		apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
 	});
 
 	// 输入框中的留言
@@ -1219,11 +1219,11 @@ function _bindEvents(){
 		var config = commonConfig.getConfig();
 		if(config.toolbar.ticketUrlStatus){
 			window.open(config.toolbar.ticketUrl);
+			apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
 		}
 		else{
 			noteIframe.open();
 		}
-		apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
 	});
 
 	// 显示留言页面
@@ -1232,11 +1232,11 @@ function _bindEvents(){
 		var config = commonConfig.getConfig();
 		if(config.toolbar.ticketUrlStatus){
 			window.open(config.toolbar.ticketUrl);
+			apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
 		}
 		else{
 			noteIframe.open();
 		}
-		apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
 	});
 
 	// 满意度评价
