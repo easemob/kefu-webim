@@ -70,7 +70,7 @@ function handleConfig(configJson){
 	config.appKey = configJson.channel.appKey;
 	config.to = configJson.channel.to;
 	// config.agentName = configJson.channel.agentName;
-	config.emgroup = configJson.channel.emgroup;
+	config.emgroup = config.emgroup || configJson.channel.emgroup;
 
 	// config.buttonText = configJson.ui.buttonText;
 	// config.dialogHeight = configJson.ui.dialogHeight;
