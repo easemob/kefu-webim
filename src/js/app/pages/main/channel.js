@@ -1262,7 +1262,7 @@ function _setExt(msg){
 		_.assign(msg.body.ext, rulaiExtendMessage);
 	}
 
-	// bind skill group
+	// bind skill group im服务号or自动消息(已下架)
 	if(bindSkillGroupName){
 		msg.body.ext.weichat.queueName = bindSkillGroupName;
 	}

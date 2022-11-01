@@ -758,7 +758,7 @@ function _bindEvents(){
 		channel.sendText(this.innerText, {
 			ext: {
 				weichat: {
-					queueName: this.getAttribute("data-queue-name")
+					queueName: this.getAttribute("data-queue-name") === 'null' ? null : this.getAttribute("data-queue-name")
 				}
 			}
 		});
@@ -815,7 +815,7 @@ function _bindEvents(){
 			channel.sendText(this.innerText, {
 				ext: {
 					weichat: {
-						queueName: this.getAttribute("data-queue-name")
+						queueName: this.getAttribute("data-queue-name") === 'null' ? null : this.getAttribute("data-queue-name")
 					}
 				}
 			});
