@@ -71,7 +71,7 @@ function _init(){
 				"<div><span class=\"resolve-btn resolved\" data-num = \"1\"><span>" + __("evaluation.resolved") + "</span></span>",
 				"<span class=\"resolve-btn unresolved\" data-num = \"2\"><span>" + __("evaluation.unsolved") + "</span></span></div></div>",
 				"<div class=\"advice hide\"><p class=\"title guan-wei\">" + title4 + "</p>",
-				"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.advice") + "\" value=\"\" maxlength=\"10\"></textarea>",
+				"<textarea spellcheck=\"false\" placeholder=\"" + __("evaluation.advice") + "\" value=\"\" maxlength=\"100\"></textarea>",
 				"</div>",
 				"</div>"
 			].join(""));
