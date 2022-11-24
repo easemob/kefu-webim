@@ -1156,6 +1156,9 @@ function _setExt(msg){
 	if(!_.isEmpty(config.menutype)){
 		msg.body.ext.menutype = config.menutype;
 	}
+	if(!_.isEmpty(config.weChatEntryType)){
+		msg.body.ext.entryChannelType = config.weChatEntryType;
+	}
 	if(!_.isEmpty(config.queueName)){
 		msg.body.ext.weichat.queueName = window.decodeURI(config.queueName);
 	}
