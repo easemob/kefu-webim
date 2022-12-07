@@ -66,6 +66,7 @@ var domData = {
 	allow: __("common.allow"),
 	refuse: __("common.refuse"),
 	accept: __("common.accept"),
+	self_service: __("common.self_service"),
 	min_window: __("common.min_window"),
 	close_sound: __("common.close_sound"),
 	screenShot: ""
