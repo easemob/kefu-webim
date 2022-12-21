@@ -443,7 +443,7 @@ up2Im.listen(function(msg){
 			url: "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/skillgroup-menu?visitorUserName="  + params.visitorUserName,
 			type: "GET",
 			msg: msg,
-			excludeData: true
+			// excludeData: true
 		});
 		break;
 	case "getAgentInputState":

@@ -408,6 +408,9 @@ function getSystemGreeting(visitorUserName){
 		api("getSystemGreeting", {
 			tenantId: config.tenantId,
 			visitorUserName: config.user.username,
+			orgName: config.orgName,
+			appName: config.appName,
+			easeMobIMNumber: config.to,
 		}, function(msg){
 			resolve(msg.data);
 		}, function(err){
@@ -543,7 +546,10 @@ function getSkillgroupMenu(){
 	return new Promise(function(resolve, reject){
 		api("getSkillgroupMenu", {
 			tenantId: config.tenantId,
-			visitorUserName: config.user.username
+			visitorUserName: config.user.username,
+			orgName: config.orgName,
+			appName: config.appName,
+			easeMobIMNumber: config.to
 		}, function(msg){
 			resolve(utils.getDataByPath(msg, "data.entities.0"));
 		}, function(err){
