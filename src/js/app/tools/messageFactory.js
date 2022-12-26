@@ -79,7 +79,7 @@ function genMsgContent(msg, opt){
 		}
 		// 留言
 		else if(utils.getDataByPath(msg, "ext.weichat.ctrlType") === "TransferToTickets"){
-			html = "<div>" + __("chat.ticket_Introduction") + "</div><a href=\"javascript:;\" class='msgTicketButton'>" + __("chat.ticket") + "</a>";
+			html = "<div>" + (value != "NoTransferToTicketsTitle" ? value : "") + "</div><a href=\"javascript:;\" class='msgTicketButton'>" + __("chat.ticket") + "</a>";
 			eventListener.excuteCallbacks(_const.eventMessageText.TICKET, []);
 			break;
 		}
