@@ -758,7 +758,7 @@ function _bindEvents(){
 		channel.sendText(this.innerText, {
 			ext: {
 				weichat: {
-					queueName: this.getAttribute("data-queue-name") === 'null' ? null : this.getAttribute("data-queue-name")
+					queueName: this.getAttribute("data-queue-name") === "null" ? null : this.getAttribute("data-queue-name")
 				}
 			}
 		});
@@ -815,7 +815,7 @@ function _bindEvents(){
 			channel.sendText(this.innerText, {
 				ext: {
 					weichat: {
-						queueName: this.getAttribute("data-queue-name") === 'null' ? null : this.getAttribute("data-queue-name")
+						queueName: this.getAttribute("data-queue-name") === "null" ? null : this.getAttribute("data-queue-name")
 					}
 				}
 			});
@@ -1205,6 +1205,10 @@ function _bindEvents(){
 		// 是否使用第三方留言
 		var config = commonConfig.getConfig();
 		if(config.toolbar.ticketUrlStatus){
+			if(config.visitor && config.visitor.userNickname){
+				// 传递昵称
+				config.toolbar.ticketUrl = config.toolbar.ticketUrl + "&visitor_nickname=" + config.visitor.userNickname;
+			}
 			window.open(config.toolbar.ticketUrl);
 			apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
 		}
@@ -1218,6 +1222,10 @@ function _bindEvents(){
 		// 是否使用第三方留言
 		var config = commonConfig.getConfig();
 		if(config.toolbar.ticketUrlStatus){
+			if(config.visitor && config.visitor.userNickname){
+				// 传递昵称
+				config.toolbar.ticketUrl = config.toolbar.ticketUrl + "&visitor_nickname=" + config.visitor.userNickname;
+			}
 			window.open(config.toolbar.ticketUrl);
 			apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
 		}
@@ -1231,6 +1239,10 @@ function _bindEvents(){
 		// 是否使用第三方留言
 		var config = commonConfig.getConfig();
 		if(config.toolbar.ticketUrlStatus){
+			if(config.visitor && config.visitor.userNickname){
+				// 传递昵称
+				config.toolbar.ticketUrl = config.toolbar.ticketUrl + "&visitor_nickname=" + config.visitor.userNickname;
+			}
 			window.open(config.toolbar.ticketUrl);
 			apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
 		}
