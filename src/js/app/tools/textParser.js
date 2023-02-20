@@ -142,7 +142,7 @@ function _linkParser(text){
 	}
 	var hoverColor = $("body." + themeClassName + " .border-color").css("borderColor");
 	if(!color){
-		color = hoverColor;
+		color = hoverColor || '#fff !important';
 	}
 	taggedLink = "<a  style=\"color:" +color+ ";\" href=\""
 		+ (hasProtocol ? targetLink : "//" + targetLink)
