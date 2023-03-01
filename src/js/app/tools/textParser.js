@@ -40,8 +40,8 @@ function _unescape(str){
 	.replace(/&amp;/g, "&");
 }
 
-function getTextMessageBrief(text,isReceived){
-	var textMap = parse(text,null,isReceived);
+function getTextMessageBrief(text, isReceived){
+	var textMap = parse(text, null, isReceived);
 	return _.map(textMap, function(fragment){
 		var value = fragment.value;
 		var type = fragment.type;
@@ -64,17 +64,17 @@ function getTextMessageBrief(text,isReceived){
 	}).join("");
 }
 
-function parse(text,opt,isReceived){
+function parse(text, opt, isReceived){
 	opt = opt || {};
 	var isNoLink = profile.isNoLink;
 	if(typeof text !== "string") return "";
 	var list;
 	// 开了不解析访客端链接的开关情况
-	if(!!isNoLink && typeof(isReceived) != "undefined" && !isReceived){
+	if(!!isNoLink && typeof (isReceived) != "undefined" && !isReceived){
 		list = [
 			_emojiParser,
 			_encodeParser
-		]
+		];
 	}
 	else{
 		list = [
@@ -82,13 +82,13 @@ function parse(text,opt,isReceived){
 			_customLinkParser,
 			_linkParser,
 			_encodeParser
-		]
-		if(opt.default){
+		];
+		if(opt["default"]){
 			list = [
 				_emojiParser,
 				_linkParser,
 				_encodeParser
-			]
+			];
 		}
 	}
 
@@ -142,9 +142,9 @@ function _linkParser(text){
 	}
 	var hoverColor = $("body." + themeClassName + " .border-color").css("borderColor");
 	if(!color){
-		color = hoverColor || '#fff !important';
+		color = hoverColor;
 	}
-	taggedLink = "<a  style=\"color:" +color+ ";\" href=\""
+	taggedLink = "<a  style=\"color:" + color + ";\" href=\""
 		+ (hasProtocol ? targetLink : "//" + targetLink)
 		+ "\" target=\"_blank\">"
 		+ targetLink
