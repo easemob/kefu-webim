@@ -58,6 +58,9 @@ function _init(){
 	if(videoWidget) return;
 	// init dom
 	videoWidget = utils.createElementFromHTML(_.template(videoAgoraTemplate)());
+	if (!utils.isMobile) {
+		$(videoWidget.querySelector('.toggle-carematurn-btn-agora')).addClass('hide');
+	}
 
 	parentContainer.appendChild(videoWidget);
 	// parentContainer.appendChild(utils.createElementFromHTML(_.template(videoAgoraTemplate)()));
@@ -167,12 +170,33 @@ function _init(){
 						serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.setMuted(true);
 						$(e.target).addClass("icon-disable-camera-agora");
 						$(e.target).removeClass("icon-camera-agora");
+						$('.foot > .toggle-carematurn-btn-agora').addClass('gray');
 					}
 					else{
 						$(e.target).removeClass("icon-disable-camera-agora");
 						$(e.target).addClass("icon-camera-agora");
 						serviceAgora.localVideoTrack && serviceAgora.localVideoTrack.setMuted(false);
+						$('.foot > .toggle-carematurn-btn-agora').removeClass('gray');
 					}
+				});
+				// 切换摄像头
+				$('.foot > .toggle-carematurn-btn-agora').unbind('click').bind('click', function(e) {
+					// 关闭摄像头的时候，关闭切换
+					if ($('.foot > .icon-disable-camera-agora').length) {
+						return false;
+					}
+
+					AgoraRTC.getCameras().then(function(cams) {
+						let decideId = cams.find(item => item.label != serviceAgora.localVideoTrack._deviceName).deviceId;
+						// 切换摄像头
+						serviceAgora.localVideoTrack.setDevice(decideId).then(() => {
+							console.log("set device success");
+						}).catch(e => {
+							console.log("set device error", e);
+						});
+					}, function(err) {
+						console.error(err);
+					});
 				});
 				// 获取视频弹窗的宽高
 
@@ -324,6 +348,7 @@ function _init(){
 function returnToMuti(){
 	$(".toggle-microphone-btn-agora").removeClass("icon-disable-microphone-agora").addClass("icon-microphone-agora");
 	$(".toggle-carema-btn-agora").removeClass("icon-disable-camera-agora").addClass("icon-camera-agora");
+	$('.toggle-carematurn-btn-agora').removeClass('gray');
 	$(".small-video").addClass("hide");
 	$(".small-video-box").addClass("hide");
 	$("#visitor-video").removeClass("visitor-big");

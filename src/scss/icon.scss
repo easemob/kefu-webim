@@ -31,6 +31,12 @@
 	@extend .icon-base;
 	content: "\e76c";
 }
+.icon-cameraturn-agora:before {
+	@extend .icon-base;
+	content: "\e664";
+	color: #3689f7;
+	font-size: 27px;
+}
 .icon-camera-agora:before {
 	@extend .icon-base;
 	content: "\e76c";

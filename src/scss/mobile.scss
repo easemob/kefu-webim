@@ -270,6 +270,11 @@
 				display: inline-grid;
 				margin-right: 15px;
 				align-items: center;
+				&.gray {
+					&::before {
+						color: #ccc;
+					}
+				}
 			}
 		}
 		.nickName{

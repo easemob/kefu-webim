@@ -1,9 +1,9 @@
 @font-face {
   font-family: "newim"; /* Project id 2812636 */
-  src: url('iconfont.eot?t=1650262671586'); /* IE9 */
-  src: url('iconfont.eot?t=1650262671586#iefix') format('embedded-opentype'), /* IE6-IE8 */
-       url('iconfont.woff?t=1650262671586') format('woff'),
-       url('iconfont.ttf?t=1650262671586') format('truetype');
+  src: url('iconfont.eot?t=1678171676881'); /* IE9 */
+  src: url('iconfont.eot?t=1678171676881#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('iconfont.woff?t=1678171676881') format('woff'),
+       url('iconfont.ttf?t=1678171676881') format('truetype');
 }
 
 .newim {
@@ -14,8 +14,28 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.newim-jinmai2:before {
-  content: "\e6eb";
+.newim-fanzhuanshexiangtou:before {
+  content: "\e664";
+}
+
+.newim-yuyueguahaomianxing:before {
+  content: "\e663";
+}
+
+.newim-yuyueguahao:before {
+  content: "\e693";
+}
+
+.newim-lvzhou_tianjia_changsuo:before {
+  content: "\e662";
+}
+
+.newim-jinmai2-copy:before {
+  content: "\ecb5";
+}
+
+.newim-a-videocall1:before {
+  content: "\e65f";
 }
 
 .newim-maikefeng5-copy:before {

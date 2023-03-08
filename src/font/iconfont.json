@@ -6,11 +6,46 @@
   "description": "新版网页访客端icon",
   "glyphs": [
     {
-      "icon_id": "17754790",
+      "icon_id": "1350383",
+      "name": "翻转摄像头",
+      "font_class": "fanzhuanshexiangtou",
+      "unicode": "e664",
+      "unicode_decimal": 58980
+    },
+    {
+      "icon_id": "26847478",
+      "name": "预约挂号面性",
+      "font_class": "yuyueguahaomianxing",
+      "unicode": "e663",
+      "unicode_decimal": 58979
+    },
+    {
+      "icon_id": "27340869",
+      "name": "预约挂号",
+      "font_class": "yuyueguahao",
+      "unicode": "e693",
+      "unicode_decimal": 59027
+    },
+    {
+      "icon_id": "3607107",
+      "name": "绿洲_添加_场所",
+      "font_class": "lvzhou_tianjia_changsuo",
+      "unicode": "e662",
+      "unicode_decimal": 58978
+    },
+    {
+      "icon_id": "29587684",
       "name": "禁麦",
-      "font_class": "jinmai2",
-      "unicode": "e6eb",
-      "unicode_decimal": 59115
+      "font_class": "jinmai2-copy",
+      "unicode": "ecb5",
+      "unicode_decimal": 60597
+    },
+    {
+      "icon_id": "25103627",
+      "name": "video call",
+      "font_class": "a-videocall1",
+      "unicode": "e65f",
+      "unicode_decimal": 58975
     },
     {
       "icon_id": "27514246",
