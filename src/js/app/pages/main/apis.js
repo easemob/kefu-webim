@@ -1509,6 +1509,20 @@ function getEvaluateVerify(serviceSessionId){
 	});
 }
 
+function getTransferTicketsEvent(serviceSessionId){
+	return new Promise(function(resolve, reject){
+		api("getTransferTicketsEvent", {
+			tenantId: config.tenantId,
+			serviceSessionId: serviceSessionId
+		}, function(msg){
+			var result = utils.getDataByPath(msg, "data");
+			resolve(result);
+		}, function(err){
+			reject(err);
+		});
+	});
+}
+
 function getInputTopButton(){
 	return new Promise(function(resolve, reject){
 		api("getInputTopButton", {
@@ -1726,6 +1740,7 @@ module.exports = {
 	getOnlineCustomerStatus: getOnlineCustomerStatus,
 	deleteVideoInvitation: deleteVideoInvitation, // 取消视频邀请
 	getEvaluateVerify: getEvaluateVerify,
+	getTransferTicketsEvent: getTransferTicketsEvent,
 	getInputTopButton: getInputTopButton,
 	getInputTopStatus: getInputTopStatus,
 	getInputTopButton: getInputTopButton,

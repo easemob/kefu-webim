@@ -1215,6 +1215,8 @@ function _bindEvents(){
 		else{
 			noteIframe.open();
 		}
+
+		transferTicketsEvent();
 	});
 
 	// 输入框中的留言
@@ -1232,7 +1234,17 @@ function _bindEvents(){
 		else{
 			noteIframe.open();
 		}
+
+		transferTicketsEvent();
 	});
+
+	// 点击留言，调用后端接口，统计是否转接应该是“是”
+	function transferTicketsEvent(){
+		apiHelper.getTransferTicketsEvent(profile.currentOfficialAccount.sessionId)
+		.then(function(resp){
+			
+		});
+	}
 
 	// 显示留言页面
 	utils.on(doms.noteBtn, "click", function(){
@@ -1249,6 +1261,8 @@ function _bindEvents(){
 		else{
 			noteIframe.open();
 		}
+
+		transferTicketsEvent();
 	});
 
 	// 满意度评价

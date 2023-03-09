@@ -1013,6 +1013,15 @@ up2Im.listen(function(msg){
 			type: "GET"
 		});
 		break;
+	case "getTransferTicketsEvent":
+		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/tenants/" + tenantId + "/servicesessions/" + params.serviceSessionId + "/transfertickets/event";
+		emitAjax({
+			url: url,
+			msg: msg,
+			excludeData: true,
+			type: "GET"
+		});
+		break;
 	// 获取输入框上边的快捷按钮信息
 	case "getInputTopButton":
 		url = "__WEBIM_SLASH_KEY_PATH__/v1/webimplugin/visitor/tenants/" + tenantId + "/configs/" + params.configId + "/information/shortcut",
