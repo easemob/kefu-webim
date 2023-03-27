@@ -47,6 +47,7 @@ var inviteByVisitor = false; //访客邀请的
 var whiteBoardConnect = false; //白板是否处于连接中
 var userVideo0,userVideo1;
 var dragMove = require("../uikit/drag")
+var cams = []
 
 var STATIC_PATH = __("config.language") === "zh-CN" ? "static" : "../static";
 
@@ -61,6 +62,12 @@ function _init(){
 	if (!utils.isMobile) {
 		$(videoWidget.querySelector('.toggle-carematurn-btn-agora')).addClass('hide');
 	}
+	AgoraRTC.getCameras().then(function(camsArr) {
+		cams = camsArr;
+		cams.length < 2 && $(videoWidget.querySelector('.toggle-carematurn-btn-agora')).addClass('gray');
+	}, function(err) {
+		console.error(err);
+	});
 
 	parentContainer.appendChild(videoWidget);
 	// parentContainer.appendChild(utils.createElementFromHTML(_.template(videoAgoraTemplate)()));
@@ -182,7 +189,7 @@ function _init(){
 				// 切换摄像头
 				$('.foot > .toggle-carematurn-btn-agora').unbind('click').bind('click', function(e) {
 					// 关闭摄像头的时候，关闭切换
-					if ($('.foot > .icon-disable-camera-agora').length) {
+					if ($('.foot > .icon-disable-camera-agora').length || cams.length < 2) {
 						return false;
 					}
 
@@ -406,6 +413,9 @@ function init(option){
 		utils.removeClass(triggerButton, "hide");
 		utils.on(triggerButton, "click", function(){
 			if(videoInviteButton) return;
+			if (videoWidget) {
+				cams.length < 2 && $(videoWidget.querySelector('.toggle-carematurn-btn-agora')).addClass('gray');
+			}
 			_initOnce();
 			 serviceAgora = new videoChatAgora({});
 			_onConfirm();
@@ -428,6 +438,9 @@ function _reveiveTicket(ticketInfo, ticketExtend){
 		thirdAgentName = ticketInfo.agentTicket.niceName;
 	}
 	if(videoConnecting) return;
+	if (videoWidget) {
+		cams.length < 2 && $(videoWidget.querySelector('.toggle-carematurn-btn-agora')).addClass('gray');
+	}
 	$(".video-agora-wrapper").removeClass("hide");
 	// 有可能收到客服的主动邀请，此时需要初始化
 	_initOnce();
