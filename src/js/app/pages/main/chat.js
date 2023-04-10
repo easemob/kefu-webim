@@ -1207,8 +1207,13 @@ function _bindEvents(){
 		if(config.toolbar.ticketUrlStatus){
 			if(config.visitor && config.visitor.userNickname){
 				// 传递昵称
-				config.toolbar.ticketUrl = config.toolbar.ticketUrl + "&visitor_nickname=" + config.visitor.userNickname + "&visitor_userId=" + config.visitorInfo.userId;
+				config.toolbar.ticketUrl = config.toolbar.ticketUrl + "&visitor_nickname=" + config.visitor.userNickname;
 			}
+
+			if(config.visitorInfo && config.visitorInfo.userId){
+				config.toolbar.ticketUrl = config.toolbar.ticketUrl + "&visitor_userId=" + config.visitorInfo.userId;
+			}
+
 			window.open(config.toolbar.ticketUrl);
 			apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
 		}
@@ -1226,8 +1231,13 @@ function _bindEvents(){
 		if(config.toolbar.ticketUrlStatus){
 			if(config.visitor && config.visitor.userNickname){
 				// 传递昵称
-				config.toolbar.ticketUrl = config.toolbar.ticketUrl + "&visitor_nickname=" + config.visitor.userNickname + "&visitor_userId=" + config.visitorInfo.userId;
+				config.toolbar.ticketUrl = config.toolbar.ticketUrl + "&visitor_nickname=" + config.visitor.userNickname;
 			}
+
+			if(config.visitorInfo && config.visitorInfo.userId){
+				config.toolbar.ticketUrl = config.toolbar.ticketUrl + "&visitor_userId=" + config.visitorInfo.userId;
+			}
+
 			window.open(config.toolbar.ticketUrl);
 			apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
 		}
@@ -1253,8 +1263,13 @@ function _bindEvents(){
 		if(config.toolbar.ticketUrlStatus){
 			if(config.visitor && config.visitor.userNickname){
 				// 传递昵称
-				config.toolbar.ticketUrl = config.toolbar.ticketUrl + "&visitor_nickname=" + config.visitor.userNickname + "&visitor_userId=" + config.visitorInfo.userId;
+				config.toolbar.ticketUrl = config.toolbar.ticketUrl + "&visitor_nickname=" + config.visitor.userNickname;
 			}
+
+			if(config.visitorInfo && config.visitorInfo.userId){
+				config.toolbar.ticketUrl = config.toolbar.ticketUrl + "&visitor_userId=" + config.visitorInfo.userId;
+			}
+
 			window.open(config.toolbar.ticketUrl);
 			apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
 		}
