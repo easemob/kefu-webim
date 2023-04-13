@@ -783,7 +783,7 @@ function _bindEvents(){
 				}
 			});
 		}
-		else if(this.getAttribute("data-queue-type") == "video"){
+		else if(this.getAttribute("data-queue-type") == "video" || this.getAttribute("data-queue-type") == 'independentVideo'){ // 独立视频先使用融合
 			channel.sendText(this.innerText, {
 				ext: {
 					msgtype: {
@@ -820,7 +820,7 @@ function _bindEvents(){
 				}
 			});
 		}
-		else if(this.getAttribute("data-queue-type") == "video"){
+		else if(this.getAttribute("data-queue-type") == "video" || this.getAttribute("data-queue-type") == "independentVideo"){
 			doms.videoInviteButton.click();
 		}
 		else if(this.getAttribute("data-queue-type") == "transfer"){
