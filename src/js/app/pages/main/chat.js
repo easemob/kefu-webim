@@ -14,6 +14,7 @@ var initPasteImage = require("./paste");
 var videoChat = require("./videoChat");
 // var videoChatAgora = require("./videoChatAgora");
 var videoChatAgora = require("./agoraVideo/videoChatAgora");
+var videoVec = require('./agoraVideo/videoVec');
 var guessInfo = require("./guess/guessInfo");
 
 var TagSelector = require("./chat/tagSelector");
@@ -797,6 +798,12 @@ function _bindEvents(){
 				}
 			});
 		}
+		else if (this.getAttribute("data-queue-type") == "independentVideo") {
+			// 结束会话
+			apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
+			videoVec.createSrc(this.getAttribute("data-config-id")); // 创建src
+			$('.video-vec-container').removeClass('hide'); // 展示vec
+		}
 		else if(this.getAttribute("data-queue-type") == "transfer"){
 			noteIframe.open();
 		}
@@ -822,6 +829,12 @@ function _bindEvents(){
 		}
 		else if(this.getAttribute("data-queue-type") == "video" || this.getAttribute("data-queue-type") == "independentVideo"){
 			doms.videoInviteButton.click();
+		}
+		else if (this.getAttribute("data-queue-type") == "independentVideo") {
+			// 同时结束会话
+			apiHelper.visitorCloseSession({ serviceSessionId: profile.currentOfficialAccount.sessionId });
+			videoVec.createSrc(this.getAttribute("data-config-id")); // 创建src
+			$('.video-vec-container').removeClass('hide'); // 展示vec
 		}
 		else if(this.getAttribute("data-queue-type") == "transfer"){
 			noteIframe.open();
@@ -1757,6 +1770,9 @@ function _initSession(){
 			if(profile.grayList.agoraVideo){
 				videoChatAgora.init({
 					triggerButton: doms.videoInviteButton,
+					parentContainer: doms.imChat,
+				});
+				videoVec.init({
 					parentContainer: doms.imChat,
 				});
 			}

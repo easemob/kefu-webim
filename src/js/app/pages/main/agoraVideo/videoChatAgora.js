@@ -268,7 +268,7 @@ function _init(){
 	if(!profile.grayList.whiteBoard){
 		$('.foot>.toggle-white-board-agora').addClass("hide");
 	}
-	utils.on($(".toggle-enlarge"), "click", function(e){
+	utils.on($(".video-agora-wrapper .toggle-enlarge"), "click", function(e){
 		if($(e.currentTarget).hasClass("icon-enlarge") ){
 			$(".toggle-enlarge").addClass("icon-reduction");
 			$(".toggle-enlarge").removeClass("icon-enlarge");
@@ -285,7 +285,7 @@ function _init(){
 		}
 	});
 	// 缩小
-	utils.on($(".icon-narrow"), "click", function(){
+	utils.on($(".video-agora-wrapper .icon-narrow"), "click", function(){
 		$(".video-agora-wrapper").addClass("hide");
 		$(".small-video").removeClass("hide");
 		$(".small-video-box").removeClass("hide");
