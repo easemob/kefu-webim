@@ -420,6 +420,7 @@ function _handleMessage(msg, options){
 	var videoTicket = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.ticket");
 	var videoExtend = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.extend");
 	var customMagicEmoji = utils.getDataByPath(msg, "ext.msgtype.customMagicEmoji");
+	var guideData = utils.getDataByPath(msg, "ext.guideData");
 	var targetOfficialAccount;
 	var message;
 	var inviteId;
@@ -427,6 +428,9 @@ function _handleMessage(msg, options){
 	var extMsg
 	var redirectUrl
 
+	if(!isReceived){
+		$(document).find(".guide-container a.order-guide-sele").addClass("disabled")
+	}
 	// 重复消息不处理
 	if(receiveMsgDict.get(msgId)){
 		return;
@@ -501,6 +505,9 @@ function _handleMessage(msg, options){
 	}
 	else if(customMagicEmoji){
 		type = "customMagicEmoji";
+	}
+	else if(utils.getDataByPath(msg, "ext.guideData")){
+		type = "chat";
 	}
 	else if(
 		isReceived
@@ -879,6 +886,11 @@ function _handleMessage(msg, options){
 		message.brief = __("message_brief.menu");
 		break;
 
+	case "chat":
+		message = msg
+		message.type = "orderGuide"
+		console.log("guideData",guideData)
+		break;
 
 
 

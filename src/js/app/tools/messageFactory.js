@@ -9,7 +9,7 @@ var apiHelper = require("../pages/main/apis");
 var LOADING = Modernizr.inlinesvg ? _const.loadingSvg : "<img src=\"//kefu.easemob.com__WEBIM_SLASH_KEY_PATH__/webim/static/img/loading.gif\" width=\"20\" style=\"margin-top:10px;\"/>";
 
 // channel.js 放着消息列表的构建，是不对的
-function genMsgContent(msg){
+function genMsgContent(msg, isReceived, isHistory){
 	// console.log('genMsgContent', msg)
 	var foot = utils.getDataByPath(msg, "foot");
 	var satisbtns = utils.getDataByPath(msg, "satisbtns");
@@ -110,6 +110,42 @@ function genMsgContent(msg){
 			break;
 		}
 
+	// 这个消息类型包含了很多子类型
+	case "orderGuide":
+		console.log("orderGuide", value);
+		value = msg.ext.guideData
+		var guideDataType = value.type
+		if(value.datas.length == 1){
+			html="<div class=\"order-gide-item\">"+
+					"<div>保单号：" + value.datas[0].policyNumber + "</div>"+
+					(guideDataType == "INSURACE" ? "<div>绑定扣款银行：" + value.datas[0].bankName + "</div>" : "<div>服务人员：" + value.datas[0].agentName + "</div>")+
+					(guideDataType == "INSURACE" ? "<div>账号：" + value.datas[0].bankAccNo + "</div>" : "<div>联系电话：" + value.datas[0].agentMobile + "</div>")+
+				"<div>"
+			break;
+		}
+		else if(value.datas.length >= 1){
+			var tablect = $("<div><div class=\"guide-container\"><div style=\"text-align:left;margin-bottom:4px;\"><span class=\"order-guide-close\">请“选择”您需要查询哪份保单</span></div></div></div>");
+			var table = $("<table border=\"1\" cellpadding=\"0\";cellspacing=\"0\">"+
+				_.map(value.datas, function(ele){ 
+					return "<tr>"+
+								"<td>保单号</td>"+
+								"<td>" + ele.policyNumber + "</td>"+
+								"<td>保单状态</td>"+
+								"<td>" + ele.state + "</td>"+
+								"<td rowspan=\"2\" style=\"min-width: 40px;\"><span><a data-policynumber=\"" + ele.policyNumber + "\" style=\"cursor: pointer;\" class=\"order-guide-sele " + (isHistory ? "disabled " : "") + "\">请选择</a></span></td></tr>"+
+							"<tr>"+
+								"<td>被保险人</td>"+
+								"<td>" + ele.mainInsuredName + "</td>"+
+								"<td>投保人</td>"+
+								"<td>" + ele.holderName + "</td>"+
+							"</tr>"
+				}).join("")+
+			+"</table>");
+			tablect.find(".guide-container").append(table);
+			// tablect.find(".guide-container").append("<span class=\"order-guide-close\">x</span>");
+			html = tablect.html();
+			break;
+		}
 
 	case "file":
 		// 历史会话中 filesize = 0
@@ -294,7 +330,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 			if(item.type == "richText"){
 				msg.data = item.content;
 				msg.rulai = true;
-				html += genMsgContent(msg);
+				html += genMsgContent(msg, isReceived, isHistory);
 			}
 		});
 	}
@@ -319,7 +355,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 				msg.type = item.type;
 			}
 			msg.laiye = laiye;
-			html += genMsgContent(msg);
+			html += genMsgContent(msg, isReceived, isHistory);
 
 		});
 		if(laiyeType == "list" || (msg.multipleMsgOneByOne && msg.list)){
@@ -327,7 +363,7 @@ function genDomFromMsg(msg, isReceived, isHistory){
 		}
 	}
 	else{
-		html += genMsgContent(msg);
+		html += genMsgContent(msg, isReceived, isHistory);
 		if(msg.multipleMsgOneByOne && msg.list){
 			html += msg.list;
 		}

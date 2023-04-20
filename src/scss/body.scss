@@ -550,3 +550,11 @@ body.big-window-h5{
 	display: flex;
 	justify-content: space-between;
 }
+
+table,table tr th, table tr td { 
+	border:1px solid #ccc;
+	padding: 2px;
+}
+table{ 
+	border-collapse: collapse;
+} 

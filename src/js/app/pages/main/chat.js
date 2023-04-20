@@ -1075,6 +1075,14 @@ function _bindEvents(){
 			}
 		}
 	});
+	utils.live("a.order-guide-sele", "click", function(e){	
+		var policynumber = e.target.dataset.policynumber;
+		if(!utils.hasClass(this, "disabled") && policynumber){
+			channel.sendText("保单号：" + policynumber);
+			$(this).parents(".guide-container").find("a.order-guide-sele").addClass("disabled")
+		}
+	});
+	
 }
 
 function _close(){
