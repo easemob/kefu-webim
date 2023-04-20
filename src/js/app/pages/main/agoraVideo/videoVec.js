@@ -47,8 +47,6 @@ function _init() {
 	videoWidget = utils.createElementFromHTML(_.template(videoAgoraTemplate)());
     parentContainer.appendChild(videoWidget);
 
-    // videoWidget.querySelector('iframe').src = 'http://localhost:8888/index.html?configId=8cbf2c9e-3503-494f-8325-5492a167a359&lang=zh-CN&frompage=webim'
-
     // 获取视频弹窗的宽高
     enlargeEl.width = $("#em-kefu-webim-chat").width();
     enlargeEl.height = $("#em-kefu-webim-chat").height();
@@ -57,6 +55,12 @@ function _init() {
 
     // 关闭
     utils.on($('.video-vec-container .icon-close'), 'click', function() {
+		// 发送结束会话事件
+		videoWidget.querySelector('iframe').contentWindow.postMessage({
+			event: 'webimVecClose',
+			data: null
+		}, '*');
+
         $(".video-vec-container").addClass("hide");
 		$(".small-video-box-vec").addClass("hide");
     });
