@@ -863,6 +863,9 @@ function _handleMessage(msg, options){
 							return "";
 						}
 					}
+					if (item.queueType == 'independentVideo' && !profile.grayList.vecIndependentVideo) {
+						return '';
+					}
 					if(item.id == "hasTransferNote"){
 						item.queueType = "transfer";
 					}
@@ -941,6 +944,9 @@ function _handleMessage(msg, options){
 						){
 							return "";
 						}
+					}
+					if (item.queueType == 'independentVideo' && !profile.grayList.vecIndependentVideo) {
+						return '';
 					}
 
 					return "<button class=\"" + className + "\" data-queue-name=\"" + queueName + "\" data-queue-type=\"" + queueType + "\">" + 
