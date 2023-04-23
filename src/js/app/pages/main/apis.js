@@ -356,7 +356,7 @@ function getRobertGreeting(){
 			tenantId: config.tenantId,
 			agentUsername: config.agentName,
 			queueName: encodeURIComponent(config.emgroup),
-			visitorUserName: config.user.username,
+			userName: config.user.username,
 			keyword: keyword || ""
 		}, function(msg){
 			resolve(msg.data.entity || {});
