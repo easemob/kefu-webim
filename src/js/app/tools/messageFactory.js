@@ -135,9 +135,9 @@ function genMsgContent(msg, isReceived, isHistory){
 		var guideDataType = value.type
 		if(value.datas.length == 1){
 			html="<div class=\"order-gide-item\">"+
-					"<div>保单号：" + value.datas[0].policyNumber + "</div>"+
-					(guideDataType == "INSURACE" ? "<div>绑定扣款银行：" + value.datas[0].bankName + "</div>" : "<div>服务人员：" + value.datas[0].agentName + "</div>")+
-					(guideDataType == "INSURACE" ? "<div>账号：" + value.datas[0].bankAccNo + "</div>" : "<div>联系电话：" + value.datas[0].agentMobile + "</div>")+
+					"<div>您保单号(" + value.datas[0].policyNumber + ")，"+
+					(guideDataType == "INSURACE" ? "绑定扣款银行(" + value.datas[0].bankName + ")，" : "服务人员(" + value.datas[0].agentName + ")，")+
+					(guideDataType == "INSURACE" ? "账号(" + value.datas[0].bankAccNo + ")。" : "联系电话(" + value.datas[0].agentMobile + ")。")+
 				"<div>"
 			break;
 		}
