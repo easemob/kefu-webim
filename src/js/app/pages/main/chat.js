@@ -1076,10 +1076,31 @@ function _bindEvents(){
 		}
 	});
 	utils.live("a.order-guide-sele", "click", function(e){	
-		var policynumber = e.target.dataset.policynumber;
-		if(!utils.hasClass(this, "disabled") && policynumber){
-			channel.sendText("保单号：" + policynumber);
-			$(this).parents(".guide-container").find("a.order-guide-sele").addClass("disabled")
+		var id = e.target.dataset.id;
+		if(!utils.hasClass(this, "disabled") && id){
+			// channel.sendText("保单号：" + policynumber);
+			// channel.sendText("                 ", { ext: {
+			// 	policyId: id
+			// } })
+			channel.sendCmd("PolicyDetail", { ext: {
+				policyId: id
+			} })
+			$(document).find("a.order-guide-sele,a.send-guide-data").addClass("disabled")
+		}else{
+			uikit.tip(__("此链接已失效，您可重新提问。"));
+		}
+	});
+	utils.live("a.send-guide-data", "click", function(e){	
+		var question = e.target.dataset.question;
+		if(!utils.hasClass(this, "disabled")){
+			// channel.sendText("保单扣款查询");
+
+			channel.sendCmd("PolicyDetail", { ext: {
+				sceneFlag: question
+			} })
+			$(document).find("a.order-guide-sele,a.send-guide-data").addClass("disabled")
+		}else{
+			uikit.tip(__("此链接已失效，您可重新提问。"));
 		}
 	});
 	

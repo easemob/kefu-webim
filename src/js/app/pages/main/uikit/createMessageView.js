@@ -152,7 +152,9 @@ module.exports = function(opt){
 			currHistoryMsgSeqId = nextMsgSeq;
 			noMoreHistoryMessage = length < _const.GET_HISTORY_MESSAGE_COUNT_EACH_TIME || nextMsgSeq <= 0;
 			noMoreHistoryMessage && utils.removeClass(noMoreMsg, "hide");
+			window.senddataflag = false
 			_.each(msgList, channel.handleHistoryMsg);
+			window.senddataflag = true
 			typeof callback === "function" && callback();
 		});
 	}

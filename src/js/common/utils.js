@@ -308,6 +308,11 @@ module.exports = {
 		var matches = reg.exec(location.search);
 		return matches ? matches[1] : "";
 	},
+	queryStr: function(str, key){
+		var reg = new RegExp("[?&]" + key + "=([^&]*)(?=&|$)");
+		var matches = reg.exec(str);
+		return matches ? matches[1] : "";
+	},
 	sameProtocol: function(url){
 		url = url || "";
 		// 全清理

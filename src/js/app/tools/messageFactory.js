@@ -53,6 +53,24 @@ function genMsgContent(msg, isReceived, isHistory){
 			html = "<span class=\"text\">" + value + "</span>";
 			break;
 		}
+		else if(msg.clchereData){
+			html = "<span class=\"text\">" + value + "</span>";
+			if(!isHistory){
+				var timerNum = setTimeout(function() {
+					$("#"+msg.id).find(".send-guide-data").addClass("disabled")
+					clearTimeout(timerNum)
+				}, 2 * 60 * 1000);
+			}else{
+				
+				var timestamp = utils.getDataByPath(msg, "timestamp");
+				var range = 2 * 60 * 1000 - (new Date().getTime() - timestamp);
+				var timerNum = setTimeout(function() {
+					$("#"+msg.id).find(".send-guide-data").addClass("disabled")
+					clearTimeout(timerNum)
+				}, range);
+			}
+			break;
+		}
 		else{
 			value = textParser.parse(value);
 			// 历史消息以及收到的实时消息
@@ -124,26 +142,53 @@ function genMsgContent(msg, isReceived, isHistory){
 			break;
 		}
 		else if(value.datas.length >= 1){
-			var tablect = $("<div><div class=\"guide-container\"><div style=\"text-align:left;margin-bottom:4px;\"><span class=\"order-guide-close\">请“选择”您需要查询哪份保单</span></div></div></div>");
-			var table = $("<table border=\"1\" cellpadding=\"0\";cellspacing=\"0\">"+
-				_.map(value.datas, function(ele){ 
-					return "<tr>"+
-								"<td>保单号</td>"+
-								"<td>" + ele.policyNumber + "</td>"+
-								"<td>保单状态</td>"+
-								"<td>" + ele.state + "</td>"+
-								"<td rowspan=\"2\" style=\"min-width: 40px;\"><span><a data-policynumber=\"" + ele.policyNumber + "\" style=\"cursor: pointer;\" class=\"order-guide-sele " + (isHistory ? "disabled " : "") + "\">请选择</a></span></td></tr>"+
+			var tablect = $("<div><div class=\"guide-container\"><div style=\"text-align:left;margin-bottom:4px;\"><span class=\"order-guide-close\">请“选择”您需要查询哪份保单</span></div></div></div>")
+			var guidetable = $("<table style= \"\" cellpadding=\"0\";cellspacing=\"0\">"+
+					_.map(value.datas, function(ele,index){ 
+					return 	"<tr>"+
+								"<td style= \"min-width: 38px; " + (index!=0 ? "border-top:none" : "")  + "\">保单号</td>"+
+								"<td style= \"" + (index!=0 ? "border-top:none" : "")  + "\">" + (ele.policyNumber || "") + "</td>"+
+								"<td style= \"min-width: 50px; " + (index!=0 ? "border-top:none" : "")  + "\">保单状态</td>"+
+								"<td style= \"" + (index!=0 ? "border-top:none" : "")  + "\">" + (ele.state || "") + "</td>"+
+								"<td style= \"min-width: 25px; " + (index!=0 ? "border-top:none;" : "") + (index!=value.datas.length-1 ? " border-bottom-color: black" : "")  + "\" rowspan=\"2\"><span><a data-id=\"" + ele.id + "\" style=\"cursor: pointer;\" class=\"order-guide-sele " + (window.senddataflag && isHistory ? " disabled" : "") + "\">选择</a></span></td></tr>"+
+								// "<td style= \"min-width: 25px; " + (index!=0 ? "border-top:none;" : "") + (index!=value.datas.length-1 ? " border-bottom-color: black" : "")  + "\" rowspan=\"2\"><span><a data-id=\"" + ele.id + "\" style=\"cursor: pointer;\" class=\"order-guide-sele " + (isHistory ? "disabled " : "") + "\">选择</a></span></td></tr>"+
 							"<tr>"+
-								"<td>被保险人</td>"+
-								"<td>" + ele.mainInsuredName + "</td>"+
-								"<td>投保人</td>"+
-								"<td>" + ele.holderName + "</td>"+
+								"<td style=\"min-width: 38px; " + (index!=value.datas.length-1 ? "border-bottom-color: black" : "")  + "\">被保人</td>"+
+								"<td style=\"" + (index!=value.datas.length-1 ? "border-bottom-color: black" : "")  + "\">" + (ele.mainInsuredName || "") + "</td>"+
+								"<td style=\"min-width: 50px;" + (index!=value.datas.length-1 ? "border-bottom-color: black" : "")  + "\">投保人</td>"+
+								"<td style=\"" + (index!=value.datas.length-1 ? "border-bottom-color: black" : "")  + "\">" + (ele.holderName || "") + "</td>"+
 							"</tr>"
-				}).join("")+
-			+"</table>");
-			tablect.find(".guide-container").append(table);
+							// "<tr>"+
+							// 	"<td style= \"" + (index!=0 ? "border-top:none" : "")  + "\">保单号</td>"+
+							// 	"<td style= \"" + (index!=0 ? "border-top:none" : "")  + "\">" + ele.policyNumber + "</td>"+
+							// 	"<td style= \"" + (index!=0 ? "border-top:none" : "")  + "\">保单状态</td>"+
+							// 	"<td style= \"" + (index!=0 ? "border-top:none" : "")  + "\">" + ele.state + "</td>"+
+							// 	"<td style= \"" + (index!=0 ? "border-top:none" : "")  + "\" rowspan=\"2\"><span><a data-policynumber=\"" + ele.policyNumber + "\" style=\"cursor: pointer;\" class=\"order-guide-sele " + (isHistory ? "disabled " : "") + "\">选择</a></span></td></tr>"+
+							// "<tr>"+
+							// 	"<td style=\"" + (index!=value.datas.length-1 ? "border-bottom-color: black" : "")  + "\">被保人</td>"+
+							// 	"<td style=\"" + (index!=value.datas.length-1? "border-bottom-color: black" : "")  + "\">" + ele.mainInsuredName + "</td>"+
+							// 	"<td style=\"" + (index!=value.datas.length-1 ? "border-bottom-color: black" : "")  + "\">投保人</td>"+
+							// 	"<td style=\"" + (index!=value.datas.length-1 ? "border-bottom-color: black" : "")  + "\">" + ele.holderName + "</td>"+
+							// "</tr>"
+					}).join("")+
+				+"</table>")
+			tablect.find(".guide-container").append(guidetable);
 			// tablect.find(".guide-container").append("<span class=\"order-guide-close\">x</span>");
 			html = tablect.html();
+			if(!isHistory){
+				var timerNum = setTimeout(function() {
+					$("#"+msg.id).find(".order-guide-sele").addClass("disabled")
+					clearTimeout(timerNum)
+				}, 2 * 60 * 1000);
+			}else{
+				console.log("aaaaa", msg)
+				var timestamp = utils.getDataByPath(msg, "timestamp");
+				var range = 2 * 60 * 1000 - (new Date().getTime() - timestamp);
+				var timerNum = setTimeout(function() {
+					$("#"+msg.id).find(".order-guide-sele").addClass("disabled")
+					clearTimeout(timerNum)
+				}, range);
+			}
 			break;
 		}
 

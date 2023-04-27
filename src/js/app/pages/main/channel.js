@@ -63,6 +63,7 @@ module.exports = {
 	initConnection: _initConnection,
 	reSend: _reSend,
 	sendTransferToKf: _sendTransferToKf,
+	sendCmd:_sendCmd,
 	sendText: _sendText,
 	sendImg: _sendImg,
 	sendFile: _sendFile,
@@ -215,6 +216,25 @@ function _sendText(message, ext){
 		_transfromImMessage(msg),
 		{ isReceived: false, isHistory: false, type: "txt" }
 	);
+}
+function _sendCmd(action, ext){
+	var id = utils.uuid();
+	var msg = new WebIM.message.cmd(id);
+	msg.set({
+		to: config.toUser,
+		action: action,
+		ext: {
+			weichat: {
+			}
+		}
+	});
+	if(ext){
+		_.extend(msg.body, ext);
+	}
+	_setExt(msg);
+	_appendAck(msg, id);
+	conn.send(msg.body);
+	sendMsgDict.set(id, msg);
 }
 
 // 这个临时使用，下个版本会去掉
@@ -421,15 +441,27 @@ function _handleMessage(msg, options){
 	var videoExtend = utils.getDataByPath(msg, "ext.msgtype.sendVisitorTicket.extend");
 	var customMagicEmoji = utils.getDataByPath(msg, "ext.msgtype.customMagicEmoji");
 	var guideData = utils.getDataByPath(msg, "ext.guideData");
+	var clchereData = utils.getDataByPath(msg, "data");
+	var clchereaction = utils.getDataByPath(msg, "action");
 	var targetOfficialAccount;
 	var message;
 	var inviteId;
 	var serviceSessionId;
 	var extMsg
 	var redirectUrl
-
-	if(!isReceived){
-		$(document).find(".guide-container a.order-guide-sele").addClass("disabled")
+	console.log("isReceived_"+isReceived+ "_"+ isHistory, msg)
+	if(!isReceived && !isHistory && clchereData){
+		$(document).find("a.order-guide-sele,a.send-guide-data").addClass("disabled")
+	}
+	if((!isReceived && isHistory && clchereData) || (type == "cmd" && clchereaction == "PolicyDetail")){
+		window.senddataflag = true
+	}
+	console.log("clchereData", clchereData);
+	if(clchereData && (clchereData.indexOf("[button]点击此处[button]") != -1)){
+		var clchearArr = clchereData.split("?")		
+		var clchearpara =  utils.queryStr(clchereData,"question");
+		msg.data = clchearArr[0].replace("[button]点击此处[button]","<a style=\"cursor: pointer;\" href=\"#\" data-question=\"" + clchearpara + "\" class=\"send-guide-data " + (window.senddataflag && isHistory ? "disabled" : "") + "\" >点击此处</a>")
+		msg.clchereData = true
 	}
 	// 重复消息不处理
 	if(receiveMsgDict.get(msgId)){
