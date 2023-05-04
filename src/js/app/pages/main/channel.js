@@ -919,9 +919,16 @@ function _handleMessage(msg, options){
 		break;
 
 	case "chat":
+		type = "orderGuide";
 		message = msg
 		message.type = "orderGuide"
 		console.log("guideData",guideData)
+		if(satisfactionCommentInvitation && !isHistory){
+			message.satisbtns = "<p class=\"satis-btns-container\" style=\"text-align: right;\">" +
+			"<span style=\"margin-right: 10px;\" class='statisfyYes' data-origintype='" + origintype + "' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'><span class=\"icon-resolved\"></span><span style=\"position: relative;top: 3px;\">解决</span></span>" +
+			"<span class='statisfyNo'  data-origintype='" + origintype + "'  data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'><span class=\"icon-unresolved\"></span><span style=\"position: relative;top: 3px;\">未解决</span></span>" +
+			"</p>"
+		}
 		break;
 
 
@@ -1077,7 +1084,7 @@ function _handleMessage(msg, options){
 	}
 
 	// 是否发送解决未解决 msg.ext.extRobot.satisfactionCommentInvitation
-	if(satisfactionCommentInvitation && !isHistory && type != "robotList" && type != "txt"){
+	if(satisfactionCommentInvitation && !isHistory && type != "robotList" && type != "txt" && type != "orderGuide"){
 		_appendMsg({
 			data: "<p>此次服务是否已解决您的问题：</p><a class='statisfyYes' data-origintype='" + origintype + "' data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>解决</a>/<a class='statisfyNo'  data-origintype='" + origintype + "'  data-satisfactionCommentInfo='" + satisfactionCommentInfo + "' data-agentId='" + agentId + "'>未解决</a>",
 			type: "txtLink",

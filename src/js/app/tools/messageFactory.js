@@ -54,7 +54,7 @@ function genMsgContent(msg, isReceived, isHistory){
 			break;
 		}
 		else if(msg.clchereData){
-			html = "<span class=\"text\">" + value + "</span>";
+			html = "<span class=\"text\">" + value + "</span>" + (satisbtns ? satisbtns : "");
 			if(!isHistory){
 				var timerNum = setTimeout(function() {
 					$("#"+msg.id).find(".send-guide-data").addClass("disabled")
@@ -138,7 +138,7 @@ function genMsgContent(msg, isReceived, isHistory){
 					"<div>您保单号(" + value.datas[0].policyNumber + ")，"+
 					(guideDataType == "INSURACE" ? "绑定扣款银行(" + value.datas[0].bankName + ")，" : "服务人员(" + value.datas[0].agentName + ")，")+
 					(guideDataType == "INSURACE" ? "账号(" + value.datas[0].bankAccNo + ")。" : "联系电话(" + value.datas[0].agentMobile + ")。")+
-				"<div>"
+				"<div>"+ (satisbtns ? satisbtns : "");
 			break;
 		}
 		else if(value.datas.length >= 1){
@@ -173,6 +173,9 @@ function genMsgContent(msg, isReceived, isHistory){
 					}).join("")+
 				+"</table>")
 			tablect.find(".guide-container").append(guidetable);
+			if(satisbtns){
+				tablect.find(".guide-container").append($(satisbtns));
+			}
 			// tablect.find(".guide-container").append("<span class=\"order-guide-close\">x</span>");
 			html = tablect.html();
 			if(!isHistory){
