@@ -53,7 +53,7 @@ function genMsgContent(msg, isReceived, isHistory){
 			html = "<span class=\"text\">" + value + "</span>";
 			break;
 		}
-		else if(msg.clchereData){
+		else if(msg.clchereData === true){
 			html = "<span class=\"text\">" + value + "</span>" + (satisbtns ? satisbtns : "");
 			if(!isHistory){
 				var timerNum = setTimeout(function() {

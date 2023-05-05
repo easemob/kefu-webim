@@ -457,7 +457,7 @@ function _handleMessage(msg, options){
 		window.senddataflag = true
 	}
 	console.log("clchereData", clchereData);
-	if(clchereData && (clchereData.indexOf("[button]点击此处[button]") != -1)){
+	if(clchereData && _.isString(clchereData) && (clchereData.indexOf("[button]点击此处[button]") != -1)){
 		var clchearArr = clchereData.split("?")		
 		var clchearpara =  utils.queryStr(clchereData,"question");
 		msg.data = clchearArr[0].replace("[button]点击此处[button]","<a style=\"cursor: pointer;\" href=\"#\" data-question=\"" + clchearpara + "\" class=\"send-guide-data " + (window.senddataflag && isHistory ? "disabled" : "") + "\" >点击此处</a>")
